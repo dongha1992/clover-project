@@ -1,4 +1,6 @@
-export const globalStyle = `
+import { createGlobalStyle } from 'styled-components';
+
+const globalStyle = createGlobalStyle`
     html, body, div, span, applet, object, iframe,
     h1, h2, h3, h4, h5, h6, p, blockquote, pre,
     a, abbr, acronym, address, big, cite, code,
@@ -66,11 +68,33 @@ export const globalStyle = `
     a, a:link, a:visited, a:focus, a:hover, a:active {
         text-decoration: none; 
     }
+
     * {
         box-sizing: border-box;
-        font-family:  Noto Sans KR, Spoqa Han Sans !important;
+        font-family: "Noto Sans CJK KR", "Helvetica", "Arial", sans-serif !important;
     }
+
     a {
         -webkit-tap-highlight-color: transparent;
     }
+
+@font-face {
+    font-family: 'Noto Sans CJK KR';
+    font-style: normal;
+    font-weight: normal;
+    src: url("./fonts/NotoSansKR-Regular.woff2") format('woff2'),
+    url("./fonts/NotoSansKR-Regular.woff") format('woff'),
+    url("./fonts/NotoSansKR-Regular.otf") format('truetype')
+}
+
+@font-face {
+    font-family: 'Noto Sans CJK KR';
+    font-style: normal;
+    font-weight: bold;
+    src: url("styles/fonts/NotoSansKR-Bold.woff2") format('woff2'),
+    url("styles/fonts/NotoSansKR-Bold.woff") format('woff'),
+    url("styles/fonts/NotoSansKR-Bold.otf") format('truetype')
+}
 `;
+
+export default globalStyle;
