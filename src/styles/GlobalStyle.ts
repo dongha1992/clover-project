@@ -91,9 +91,9 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Noto Sans CJK KR';
     font-style: normal;
     font-weight: bold;
-    src: url("styles/fonts/NotoSansKR-Bold.woff2") format('woff2'),
-    url("styles/fonts/NotoSansKR-Bold.woff") format('woff'),
-    url("styles/fonts/NotoSansKR-Bold.otf") format('truetype')
+    src: url("./fonts/NotoSansKR-Bold.woff2") format('woff2'),
+    url("./fonts/NotoSansKR-Bold.woff") format('woff'),
+    url("./fonts/NotoSansKR-Bold.otf") format('truetype')
 }
 `;
 

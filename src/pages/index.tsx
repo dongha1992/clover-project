@@ -1,12 +1,18 @@
 import type { NextPage } from 'next';
 import styled, { css } from 'styled-components';
-import { useMediaQuery } from '@hooks/useMediaQuery';
+import Home from '@components/Home';
+import Bottom from '@components/Bottom';
+import Header from '@components/Header';
 
-const Home: NextPage = () => {
+const index: NextPage = () => {
   return (
     <Container>
-      <Left>레프트</Left>
-      <Right>라이트</Right>
+      <Left>광고</Left>
+      <Right>
+        <Header />
+        <Home />
+        <Bottom />
+      </Right>
     </Container>
   );
 };
@@ -14,21 +20,37 @@ const Home: NextPage = () => {
 const Container = styled.div`
   width: 100%;
   display: flex;
+  position: relative;
+  ${({ theme }) => {
+    if (!theme.isWithContentsSection) {
+      return css`
+        width: 100%;
+        justify-content: center;
+        background-color: gray;
+      `;
+    }
+  }}
 `;
 
 const Left = styled.main`
   display: ${({ theme }) => (theme.isWithContentsSection ? 'flex' : 'none')};
   width: 100%;
 `;
+
 const Right = styled.main`
   ${({ theme }) => {
-    if (theme.isWithContentsSection) {
+    if (!theme.isWithContentsSection) {
       return css`
         display: flex;
-        justify-content: center;
       `;
     }
   }}
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 504px;
+  min-width: 360px;
+  background-color: yellow;
 `;
 
-export default Home;
+export default index;
