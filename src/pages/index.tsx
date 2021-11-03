@@ -26,7 +26,6 @@ const Container = styled.div`
       return css`
         width: 100%;
         justify-content: center;
-        background-color: gray;
       `;
     }
   }}
@@ -50,7 +49,6 @@ const Right = styled.main`
   width: 100%;
   max-width: 504px;
   min-width: 360px;
-  background-color: yellow;
 `;
 
 export default index;

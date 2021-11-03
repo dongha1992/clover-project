@@ -1,17 +1,18 @@
 import React from 'react';
+import Carousel from '@components/Carousel';
 import styled from 'styled-components';
-import Banner from '@components/Banner';
 
-function Home() {
+function Banner() {
   return (
     <Container>
-      <Banner />
+      <Carousel />
     </Container>
   );
 }
 
 const Container = styled.div`
-  margin-top: 56px;
+  width: 504px;
+  height: 378px;
 `;
 
-export default Home;
+export default Banner;

@@ -13,9 +13,9 @@ function Header() {
         </Left>
         <Right>
           <div>
-            <SVGIcon name="location" />
+            <SVGIcon name="search" />
           </div>
-          <SVGIcon name="location" />
+          <SVGIcon name="cart" />
         </Right>
       </Wrapper>
     </Container>
