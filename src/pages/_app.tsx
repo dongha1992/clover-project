@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { globalStyle } from '@styles/GlobalStyle';
+import GlobalStyle from '@styles/GlobalStyle';
 import { Wrapper } from '@components/Layout/Wrapper';
 import { theme } from '@styles/theme';
 import { mediaQuery } from '@utils/getMediaQuery';
@@ -11,9 +11,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>프레시코드</title>
-        <style>{globalStyle}</style>
       </Head>
       <ThemeProvider theme={{ ...theme, ...mediaQuery }}>
+        <GlobalStyle />
         <Wrapper>
           <Component {...pageProps} />
         </Wrapper>
