@@ -6,7 +6,6 @@ import { textH3, homePadding, theme } from '@styles/theme';
 import { TextB3R } from '@components/Text';
 import axios from 'axios';
 import Item from '@components/Item';
-import ScrollMenu from 'react-horizontal-scrolling-menu';
 
 function Home() {
   const [itemList, setItemList] = useState([]);
@@ -40,9 +39,12 @@ function Home() {
         <TextB3R color={theme.greyScale65}>더보기</TextB3R>
       </FlexSpace>
       <Banner />
-      <SectionWrapper>
-        <ItemListRow></ItemListRow>
-      </SectionWrapper>
+
+      <ItemListRow>
+        {itemList.map((item, index) => {
+          return <Item item={item} key={index} />;
+        })}
+      </ItemListRow>
     </Container>
   );
 }

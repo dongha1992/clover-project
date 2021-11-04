@@ -33,25 +33,21 @@ const Container = styled.div`
   left: 50%;
   background-color: white;
 
-  ${({ theme }) => {
-    if (!theme.isWithContentsSection) {
-      return css`
-        margin: 0 auto;
-        left: 50%;
-        margin-left: -252px;
-      `;
-    } else if (theme.isMobile) {
-      return css`
-        margin: 0 auto;
-      `;
-    }
-  }}
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 50%;
+    margin-left: -252px;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
 `;
 
 const Wrapper = styled.div`
   position: relative;
   display: flex;
-  justify-content: space-between;
   margin: 16px 24px;
 `;
 
@@ -64,7 +60,9 @@ const Left = styled.div`
   display: flex;
 `;
 const Right = styled.div`
+  position: absolute;
   display: flex;
+  right: 10px;
   > div {
     padding-right: 24px;
   }

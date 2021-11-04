@@ -10,7 +10,6 @@ type TProps = {
 };
 
 function Item({ item }: TProps) {
-  console.log(item);
   return (
     <Container>
       <ImageWrapper src={item.url} alt="상품이미지" />
@@ -73,8 +72,6 @@ const CartBtn = styled.div`
 const ImageWrapper = styled.img`
   position: relative;
   width: 100%;
-  height: 220px;
-  object-fit: contain;
 `;
 
 const PriceWrapper = styled.div`

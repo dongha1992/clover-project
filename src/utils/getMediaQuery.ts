@@ -1,8 +1,9 @@
 import { css, FlattenSimpleInterpolation } from 'styled-components';
 
 export const breakpoints: { [index: string]: number } = {
-  desktop: 1024,
-  mobile: 504,
+  desktop: 1023,
+  mobile: 503,
+  sm: 360,
 };
 
 export const mediaQuery = Object.keys(breakpoints)

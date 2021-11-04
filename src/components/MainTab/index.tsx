@@ -1,13 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
-import { textH4 } from '@styles/theme';
-const TABS = ['전체메뉴', '프코추천', '이벤트', '기획전', '기획전2'];
+import Link from 'next/link';
+import { TextH4B } from '@components/Text';
+const TABS = [
+  { title: '전체메뉴', link: '/menu' },
+  { title: '프코추천', link: '/recommendation' },
+  { title: '이벤트', link: '/' },
+  { title: '기획전', link: '/' },
+  { title: '기획전2', link: '/' },
+];
 
 function MainTab() {
   return (
     <Container>
       {TABS.map((tab, index) => {
-        return <Tab key={tab}>{tab}</Tab>;
+        return (
+          <Link href={tab.link} key={index}>
+            <TextH4B padding="12px 0" pointer>
+              {tab.title}
+            </TextH4B>
+          </Link>
+        );
       })}
     </Container>
   );
@@ -18,11 +31,6 @@ const Container = styled.div`
   width: 100%;
   justify-content: space-between;
   margin-top: 19px;
-`;
-
-const Tab = styled.div`
-  ${textH4}
-  padding: 12px 0px
 `;
 
 export default MainTab;
