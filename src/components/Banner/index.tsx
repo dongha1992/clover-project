@@ -11,8 +11,7 @@ function Banner() {
 }
 
 const Container = styled.div`
-  width: 504px;
-  height: 378px;
+  width: 100%;
 `;
 
 export default Banner;

@@ -31,6 +31,7 @@ const Container = styled.div`
   z-index: 10;
   height: 56px;
   left: 50%;
+  background-color: white;
 
   ${({ theme }) => {
     if (!theme.isWithContentsSection) {
@@ -38,6 +39,10 @@ const Container = styled.div`
         margin: 0 auto;
         left: 50%;
         margin-left: -252px;
+      `;
+    } else if (theme.isMobile) {
+      return css`
+        margin: 0 auto;
       `;
     }
   }}

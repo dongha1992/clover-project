@@ -10,6 +10,7 @@ const BANNERS = [
 ];
 
 const settings = {
+  arrows: false,
   dots: false,
   spped: 500,
   sliderToShow: 1,
@@ -40,10 +41,11 @@ function Carousel() {
 }
 
 const Container = styled.div`
-  width: 100%;
-  height: 100%;
+  max-width: 504px;
+  min-width: 360px;
   .slick-slider {
     .slick-list {
+      padding: 0 !important;
       .slick-track {
         .slick-slide {
         }
@@ -68,8 +70,9 @@ const Container = styled.div`
 `;
 
 const ImageWrapper = styled.img<{ isLast: boolean }>`
-  height: 100%;
   width: 100%;
+  height: 378px;
+  object-fit: cover;
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;
 

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 export const theme = {
   brandColor: '#35AD73',
   fontFamily: "'Noto Sans KR', sans-serif;",
-  greyScale100: '#FFFFFF',
+  white: '#FFFFFF',
   greyScale3: '#F8F8F8',
   greyScale6: '#F2F2F2',
   greyScale15: '#DEDEDE',
@@ -16,6 +16,16 @@ export const theme = {
   systemRed: '#D32F2F',
   systemYellow: '#F4D740',
 };
+
+export const flexCenter = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const homePadding = css`
+  padding: 0 24px;
+`;
 
 export const textH1 = css`
   font-size: 24px;
