@@ -45,7 +45,6 @@ const Container = styled.div`
   max-width: 220px;
   height: 372px;
   background-color: #fff;
-  border-radius: 20px;
   margin-bottom: 24px;
   display: flex;
   flex-direction: column;
@@ -72,6 +71,7 @@ const CartBtn = styled.div`
 const ImageWrapper = styled.img`
   position: relative;
   width: 100%;
+  border-radius: 20px;
 `;
 
 const PriceWrapper = styled.div`

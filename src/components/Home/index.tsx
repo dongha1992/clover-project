@@ -56,6 +56,7 @@ const Container = styled.div`
 
 const SectionWrapper = styled.section`
   ${homePadding}
+  width: 100%;
 `;
 
 const SectionTitle = styled.div`

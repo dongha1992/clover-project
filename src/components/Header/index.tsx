@@ -30,7 +30,7 @@ const Container = styled.div`
   right: 0;
   z-index: 10;
   height: 56px;
-  left: 50%;
+  left: calc(50% + 29px);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
@@ -41,7 +41,7 @@ const Container = styled.div`
 
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
-    left: 0
+    left: 0px;
   `};
 `;
 

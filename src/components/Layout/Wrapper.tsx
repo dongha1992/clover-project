@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import Bottom from '@components/Bottom';
+import Header from '@components/Header';
 
 export const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
@@ -16,7 +18,16 @@ export const Wrapper: React.FC = ({ children }) => {
 
   return (
     <Container>
-      <Center>{children}</Center>
+      <Center>
+        <Left>
+          <div className="left-contents">광고</div>
+        </Left>
+        <Right>
+          <Header />
+          {children}
+          <Bottom />
+        </Right>
+      </Center>
     </Container>
   );
 };
@@ -26,19 +37,43 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  background-color: gray;
   box-sizing: border-box;
+  background-color: gray;
 `;
 
 const Center = styled.div`
+  background-color: white;
+  display: flex;
   width: 100%;
   max-width: 1024px;
   height: 100%;
   min-height: calc(var(--vh, 1vh) * 100);
-  background-color: #fff;
   --ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const Right = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 504px;
+  left: 50%;
+  background-color: red;
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    width: 100%;
+    left:0px;
+    width:100%;
+    max-width: 504px;
+  `};
+`;
+
+const Left = styled.div`
+  left: 50%;
+  ${({ theme }) => theme.desktop`  
+  display: none;
+  `}
 `;
