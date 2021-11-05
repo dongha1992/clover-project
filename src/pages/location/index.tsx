@@ -2,16 +2,25 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '@components/Header';
 import TextInput from '@components/TextInput';
-import { defaultRightScreen } from '@styles/theme';
-import { TextH6B } from '@components/Text';
+import { HomeContainer } from '@styles/theme';
+import { TextH6B, TextH5B, TextB2R } from '@components/Text';
 import SVGIcon from '@utils/SVGIcon';
+import { useRouter } from 'next/router';
+
+/* TODO: 검색 결과 리스트 */
 
 function location() {
+  const router = useRouter();
+
   const clickSetCurrentLoc = (): void => {};
+  const goToMapScreen = (): void => {
+    router.push('/location/address-detaill');
+  };
+
   return (
-    <>
+    <HomeContainer>
       <Header title={'내 위치 설정하기'} />
-      <Container>
+      <Wrapper>
         <TextInput
           width="100%"
           height="48px"
@@ -29,14 +38,17 @@ function location() {
             현 위치로 설정하기
           </TextH6B>
         </CurrentLocBtn>
-      </Container>
-    </>
+        <ResultList>
+          <TextH5B padding="0 0 17px 0">검색 결과 15개</TextH5B>
+          <TextB2R onClick={goToMapScreen}>성수동 머시기</TextB2R>
+        </ResultList>
+      </Wrapper>
+    </HomeContainer>
   );
 }
 
-const Container = styled.div`
-  ${defaultRightScreen}
-  padding:  8px 0px 24px;
+const Wrapper = styled.div`
+  padding: 8px 0px 24px;
 `;
 
 const CurrentLocBtn = styled.div`
@@ -44,5 +56,7 @@ const CurrentLocBtn = styled.div`
   justify-content: flex-end;
   padding-top: 16px;
 `;
+
+const ResultList = styled.div``;
 
 export default location;

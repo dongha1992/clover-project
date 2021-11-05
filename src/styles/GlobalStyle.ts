@@ -71,7 +71,7 @@ const GlobalStyle = createGlobalStyle`
 
     * {
         box-sizing: border-box;
-        font-family: "Noto Sans CJK KR", "Helvetica", "Arial", sans-serif !important;
+        font-family: 'NotoSansKR', sans-serif !important;
     }
 
     a {
@@ -79,7 +79,7 @@ const GlobalStyle = createGlobalStyle`
         color: inherit;
     }
 
-@font-face {
+/* @font-face {
     font-family: 'Noto Sans CJK KR';
     font-style: normal;
     font-weight: normal;
@@ -95,7 +95,7 @@ const GlobalStyle = createGlobalStyle`
     src: url("./fonts/NotoSansKR-Bold.woff2") format('woff2'),
     url("./fonts/NotoSansKR-Bold.woff") format('woff'),
     url("./fonts/NotoSansKR-Bold.otf") format('truetype')
-}
+} */
 `;
 
 export default GlobalStyle;
