@@ -1,7 +1,7 @@
 import { theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
-
+import { TextH5B } from '@components/Text';
 export interface IButtonProps {
   id?: string;
   className?: string;
@@ -35,7 +35,7 @@ const Button = (props: IButtonProps) => {
 
 Button.defaultProps = defaultProps as IButtonProps;
 
-export const Container = styled.div<IButtonProps>`
+export const Container = styled(TextH5B)<IButtonProps>`
   display: flex;
   justify-content: center;
   align-items: center;

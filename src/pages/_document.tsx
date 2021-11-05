@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 import Document, {
   DocumentContext,
   Head,
   Html,
   Main,
   NextScript,
-} from "next/document";
-import { ServerStyleSheet } from "styled-components";
+} from 'next/document';
+import { ServerStyleSheet } from 'styled-components';
 
 interface IProps {
   styleTags: Array<React.ReactElement<any>>;
@@ -24,7 +24,14 @@ class MyDocument extends Document<IProps> {
   render() {
     return (
       <Html>
-        <Head>{this.props.styleTags}</Head>
+        <Head>
+          {this.props.styleTags}
+          <meta charSet="utf-8" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Alata&family=Noto+Sans+KR:wght@300;400;500&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />

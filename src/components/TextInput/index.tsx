@@ -48,7 +48,11 @@ export interface ITextFieldProps {
 
 const defaultProps = {
   width: '100%',
+  height: '48px',
+  name: 'input',
+  padding: '12px 16px',
   inputType: 'string',
+  style: { minWidth: 312 },
 };
 
 function TextInput({
@@ -104,6 +108,8 @@ function TextInput({
     </Container>
   );
 }
+
+TextInput.defaultProps = defaultProps as ITextFieldProps;
 
 const Container = styled.div<{
   width?: string;

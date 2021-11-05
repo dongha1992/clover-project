@@ -2,16 +2,25 @@ import React from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Text';
+import { useRouter } from 'next/router';
 
 type TProps = {
   title: string;
 };
 
 function Header({ title }: TProps) {
+  const router = useRouter();
+
+  const goBack = (): void => {
+    router.back();
+  };
+
   return (
     <Container>
       <Wrapper>
-        <SVGIcon name="arrowLeft" />
+        <div className="arrow" onClick={goBack}>
+          <SVGIcon name="arrowLeft" />
+        </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
       </Wrapper>
     </Container>
@@ -19,6 +28,7 @@ function Header({ title }: TProps) {
 }
 
 const Container = styled.div`
+  position: relative;
   width: 100%;
   max-width: 504px;
   position: fixed;
@@ -46,10 +56,13 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   padding: 16px 24px;
-
-  > svg {
-    position: absolute;
-    left: 0px;
+  .arrow {
+    cursor: pointer;
+    > svg {
+      position: absolute;
+      left: 24px;
+      bottom: 16px;
+    }
   }
 `;
 

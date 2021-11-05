@@ -176,6 +176,28 @@ const svgMap: TSvg = {
       <circle cx="9" cy="7" r="2" fill="white" />
     </svg>
   ),
+  selectedBottomIcon: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M3.3953 8.27604C3.14626 8.46512 3 8.7598 3 9.07249V20.0002C3 20.5524 3.44772 21.0002 4 21.0002H9.75V13.0708H14.25V21.0002H20C20.5523 21.0002 21 20.5524 21 20.0002V9.07249C21 8.7598 20.8537 8.46512 20.6047 8.27604L12.6047 2.20208C12.2472 1.93069 11.7528 1.93069 11.3953 2.20208L3.3953 8.27604Z"
+        fill="#242424"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M8 13.5C8 12.6716 8.67157 12 9.5 12H14.5C15.3284 12 16 12.6716 16 13.5V21H14V14H10V21H8V13.5Z"
+        fill="#242424"
+      />
+    </svg>
+  ),
 };
 
 export default function SVGIcon({ name }: TProps) {

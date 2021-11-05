@@ -31,6 +31,11 @@ export const homePadding = css`
   padding: 0 24px;
 `;
 
+export const HomeContainer = styled.div`
+  ${homePadding}
+  ${defaultRightScreen}
+`;
+
 export const textH1 = css`
   font-size: 24px;
   letter-spacing: -0.4;
