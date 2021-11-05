@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/MainTab';
-import { textH3, homePadding, theme } from '@styles/theme';
+import { textH3, homePadding, theme, defaultRightScreen } from '@styles/theme';
 import { TextB3R } from '@components/Text';
 import axios from 'axios';
 import Item from '@components/Item';
@@ -39,18 +39,19 @@ function Home() {
         <TextB3R color={theme.greyScale65}>더보기</TextB3R>
       </FlexSpace>
       <Banner />
-
-      <ItemListRow>
-        {itemList.map((item, index) => {
-          return <Item item={item} key={index} />;
-        })}
-      </ItemListRow>
+      <ItemListRowWrapper>
+        <ItemListRow>
+          {itemList.map((item, index) => {
+            return <Item item={item} key={index} />;
+          })}
+        </ItemListRow>
+      </ItemListRowWrapper>
     </Container>
   );
 }
 
 const Container = styled.div`
-  margin-top: 56px;
+  ${defaultRightScreen}
   width: 100%;
 `;
 
@@ -84,6 +85,24 @@ const FlexSpace = styled.div`
   align-items: center;
 `;
 
-const ItemListRow = styled.div``;
+const ItemListRowWrapper = styled.div`
+  padding: 16px 0px 16px 16px;
+  width: auto;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  margin-bottom: 48px;
+`;
+
+const ItemListRow = styled.div`
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  > div {
+    padding-right: 10px;
+    width: 194px;
+  }
+`;
 
 export default Home;

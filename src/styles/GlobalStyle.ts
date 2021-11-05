@@ -76,6 +76,7 @@ const GlobalStyle = createGlobalStyle`
 
     a {
         -webkit-tap-highlight-color: transparent;
+        color: inherit;
     }
 
 @font-face {

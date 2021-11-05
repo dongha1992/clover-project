@@ -29,7 +29,7 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
-  search: () => (
+  searchIcon: () => (
     <svg
       width="24"
       height="24"
@@ -119,6 +119,61 @@ const svgMap: TSvg = {
         d="M6.1499 13.7036C6.1499 12.8752 6.82148 12.2036 7.6499 12.2036H11.1499C11.9783 12.2036 12.6499 12.8752 12.6499 13.7036V20.0003H10.6499V14.2036H8.1499V20.0003H6.1499V13.7036Z"
         fill="#242424"
       />
+    </svg>
+  ),
+  arrowDown: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9.31696 11.5883C9.15684 11.7963 8.84316 11.7963 8.68304 11.5883L6.03165 8.144C5.82917 7.88097 6.01667 7.5 6.34861 7.5L11.6514 7.5C11.9833 7.5 12.1708 7.88097 11.9684 8.144L9.31696 11.5883Z"
+        fill="#242424"
+      />
+    </svg>
+  ),
+  arrowLeft: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        x="4"
+        y="14"
+        width="2"
+        height="18"
+        rx="1"
+        transform="rotate(-90 4 14)"
+        fill="#242424"
+      />
+      <path
+        d="M10.5 5.5L3 13L10.5 20.5"
+        stroke="#242424"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  locationBlack: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M14.5 7.6C14.5 11.623 10.881 14.6465 9.51425 15.6449C9.20524 15.8707 8.79476 15.8707 8.48575 15.6449C7.11903 14.6465 3.5 11.623 3.5 7.6C3.5 4.50721 5.96243 2 9 2C12.0376 2 14.5 4.50721 14.5 7.6Z"
+        fill="#242424"
+      />
+      <circle cx="9" cy="7" r="2" fill="white" />
     </svg>
   ),
 };

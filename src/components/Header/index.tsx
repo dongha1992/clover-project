@@ -1,22 +1,18 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import { textH5 } from '@styles/theme';
+import styled from 'styled-components';
+import { TextH4B } from '@components/Text';
 
-function Header() {
+type TProps = {
+  title: string;
+};
+
+function Header({ title }: TProps) {
   return (
     <Container>
       <Wrapper>
-        <Left>
-          <SVGIcon name="location" />
-          <AddressWrapper>내 위치 찾기</AddressWrapper>
-        </Left>
-        <Right>
-          <div>
-            <SVGIcon name="search" />
-          </div>
-          <SVGIcon name="cart" />
-        </Right>
+        <SVGIcon name="arrowLeft" />
+        <TextH4B padding="2px 0 0 0">{title}</TextH4B>
       </Wrapper>
     </Container>
   );
@@ -46,25 +42,14 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  position: relative;
   display: flex;
-  margin: 16px 24px;
-`;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
 
-const AddressWrapper = styled.div`
-  ${textH5}
-  padding-left: 8px;
-`;
-
-const Left = styled.div`
-  display: flex;
-`;
-const Right = styled.div`
-  position: absolute;
-  display: flex;
-  right: 10px;
-  > div {
-    padding-right: 24px;
+  > svg {
+    position: absolute;
+    left: 0px;
   }
 `;
 

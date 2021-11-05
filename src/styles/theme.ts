@@ -17,6 +17,10 @@ export const theme = {
   systemYellow: '#F4D740',
 };
 
+export const defaultRightScreen = css`
+  margin-top: 56px;
+`;
+
 export const flexCenter = css`
   display: flex;
   justify-content: center;
@@ -73,24 +77,24 @@ export const textH7 = css`
 export const textBody1 = css`
   font-size: 16px;
   letter-spacing: -0.4;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 24px;
 `;
 export const textBody2 = css`
   font-size: 14px;
   letter-spacing: -0.4;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 24px;
 `;
 export const textBody3 = css`
   font-size: 12px;
   letter-spacing: -0.4;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 18px;
 `;
 export const textBody4 = css`
   font-size: 10px;
   letter-spacing: -0.4;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 16px;
 `;

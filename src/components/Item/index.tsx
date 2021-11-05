@@ -12,10 +12,13 @@ type TProps = {
 function Item({ item }: TProps) {
   return (
     <Container>
-      <ImageWrapper src={item.url} alt="상품이미지" />
-      <CartBtn>
-        <SVGIcon name="cart" />
-      </CartBtn>
+      <ImageWrapper>
+        <ItemImage src={item.url} alt="상품이미지" />
+        <CartBtn>
+          <SVGIcon name="cart" />
+        </CartBtn>
+      </ImageWrapper>
+
       <TextB3R margin="8px 0 0 0">{item.name}</TextB3R>
       <PriceWrapper>
         <TextH5B color={theme.brandColor} padding={'0 4px 0 0'}>
@@ -41,12 +44,11 @@ function Item({ item }: TProps) {
 }
 
 const Container = styled.div`
-  position: relative;
   max-width: 220px;
-  height: 372px;
+  height: auto;
   background-color: #fff;
   margin-bottom: 24px;
-  display: flex;
+  display: inline-block;
   flex-direction: column;
   align-items: flex-start;
 `;
@@ -54,7 +56,7 @@ const Container = styled.div`
 const CartBtn = styled.div`
   position: absolute;
   right: 3%;
-  bottom: 43%;
+  bottom: 3%;
   border-radius: 50%;
   background-color: white;
   width: 32px;
@@ -68,10 +70,14 @@ const CartBtn = styled.div`
     height: 16px;
   }
 `;
-const ImageWrapper = styled.img`
+const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  border-radius: 20px;
+`;
+
+const ItemImage = styled.img`
+  width: 100%;
+  border-radius: 8px;
 `;
 
 const PriceWrapper = styled.div`
@@ -92,6 +98,8 @@ const Like = styled.div`
   align-items: center;
 `;
 
-const TagWrapper = styled.div``;
+const TagWrapper = styled.div`
+  white-space: wrap;
+`;
 
 export default Item;

@@ -15,11 +15,9 @@ function MainTab() {
     <Container>
       {TABS.map((tab, index) => {
         return (
-          <Link href={tab.link} key={index}>
-            <TextH4B padding="12px 0" pointer>
-              {tab.title}
-            </TextH4B>
-          </Link>
+          <TextH4B padding="12px 0" pointer key={index}>
+            <Link href={tab.link}>{tab.title}</Link>
+          </TextH4B>
         );
       })}
     </Container>
