@@ -24,6 +24,7 @@ export interface IProps {
   textDecoration?: string;
   pointer?: boolean;
   opacity?: number;
+  center?: boolean;
 }
 
 const Text = (props: IProps) => {
@@ -48,6 +49,7 @@ const Container = styled.div<IProps>`
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
   opacity: ${(props) => props.opacity && props.opacity};
   white-space: pre-wrap;
+  text-align: ${(props) => (props.center ? 'center' : '')};
 `;
 
 export const TextH1B = styled(Text)`

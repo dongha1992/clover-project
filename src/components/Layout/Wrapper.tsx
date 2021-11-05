@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import Bottom from '@components/Bottom';
-import Header from '@components/Header';
 
 export const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
@@ -22,11 +20,7 @@ export const Wrapper: React.FC = ({ children }) => {
         <Left>
           <div className="left-contents">광고</div>
         </Left>
-        <Right>
-          <Header />
-          {children}
-          <Bottom />
-        </Right>
+        <Right>{children}</Right>
       </Center>
     </Container>
   );
@@ -60,7 +54,8 @@ const Right = styled.div`
   width: 100%;
   max-width: 504px;
   left: 50%;
-  background-color: red;
+  background-color: white;
+  padding-bottom: 62px;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
