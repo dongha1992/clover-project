@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import ModalLayout from '../../components/Modal';
+import { TextH5B } from '@components/Text';
 
 type TProps = {
   alertMessage: string;
@@ -26,8 +27,8 @@ function Alert({
   type,
   selectedMenu,
   setSelectedMenu,
-  width = '200px',
-  height = '100px',
+  width = '242px',
+  height = '160px',
 }: TProps): JSX.Element {
   const dispatch = useDispatch();
 
@@ -46,16 +47,18 @@ function Alert({
       width={width}
       height={height}
       padding="10px"
-      style={{ borderRadius: '15px' }}
-      closeModal={() => dispatch(setAlert(null))}
+      style={{ borderRadius: '8px' }}
     >
       <AlertBox>
         <AlertText>{alertMessage}</AlertText>
         <AlertBtnBox>
-          <button onClick={cancelHandler}>
+          <button className="cancelBtn" onClick={cancelHandler}>
             {closeBtnText} {type}
           </button>
-          <button onClick={submitHandler}>{submitBtnText}</button>
+          <div className="col" />
+          <button className="confirmBtn" onClick={submitHandler}>
+            {submitBtnText}
+          </button>
         </AlertBtnBox>
       </AlertBox>
     </ModalLayout>
@@ -79,24 +82,40 @@ const AlertText = styled.div`
 
 const AlertBtnBox = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+  margin-bottom: 24px;
+
+  .cancelBtn {
+    margin-right: 23px;
+  }
+
+  .confirmBtn {
+    margin-left: 23px;
+  }
 
   button {
     width: 50px;
     height: 30px;
-    border-radius: 8px;
     border: none;
     outline: none;
     cursor: pointer;
-  }
-
-  button:not(:last-child) {
-    margin-right: 10px;
+    background-color: white;
+    font-size: 14px;
+    letter-spacing: -0.4px;
+    font-weight: bold;
+    line-height: 24px;
   }
 
   button:hover {
     opacity: 0.8;
+  }
+
+  .col {
+    background-color: ${({ theme }) => theme.greyScale6};
+    width: 1px;
+    height: 16px;
   }
 `;
 

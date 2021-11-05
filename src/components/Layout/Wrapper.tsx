@@ -21,19 +21,19 @@ export const Wrapper: React.FC = ({ children }) => {
 
   return (
     <Container>
-      {alert && (
-        <Alert
-          alertMessage={alert.alertMessage}
-          submitBtnText={alert.submitBtnText}
-          closeBtnText={alert.closeBtnText}
-          onSubmit={alert.onSubmit}
-          onClose={alert.onClose}
-          type={alert.type}
-          setSelectedMenu={alert.setSelectedMenu}
-          selectedMenu={alert.selectedMenu}
-        />
-      )}
       <Center>
+        {alert && (
+          <Alert
+            alertMessage={alert.alertMessage}
+            submitBtnText={alert.submitBtnText}
+            closeBtnText={alert.closeBtnText}
+            onSubmit={alert.onSubmit}
+            onClose={alert.onClose}
+            type={alert.type}
+            setSelectedMenu={alert.setSelectedMenu}
+            selectedMenu={alert.selectedMenu}
+          />
+        )}
         <Left>
           <div className="left-contents">광고</div>
         </Left>

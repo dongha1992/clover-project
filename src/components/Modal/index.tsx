@@ -49,13 +49,24 @@ const Dimmer = styled.div`
   align-items: center;
   position: fixed;
   top: 0px;
-  left: 0px;
+  left: calc(50% + 28px);
   right: 0px;
   bottom: 0px;
-  width: 100vw;
-  height: 100vh;
+  max-width: 504px;
+  height: 100%;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.3);
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 50%;
+    margin-left: -252px;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
 `;
 
 const ModalBox = styled.div<{
@@ -64,9 +75,8 @@ const ModalBox = styled.div<{
   padding: string | undefined;
 }>`
   position: relative;
-  /* ${({ width }) => width && `width: ${width}`}; */
-  width: 100%;
-  max-width: 80%;
+  max-width: 504px;
+  width: 80%;
   ${({ height }) => height && `height: ${height}`}
   padding: ${({ padding }) => (padding ? padding : `10px`)};
   border-radius: 3px;
@@ -75,6 +85,7 @@ const ModalBox = styled.div<{
     14px 14px 20px rgba(0, 0, 0, 0.05);
   z-index: 11;
   box-sizing: border-box;
+
   .btnClose {
     position: absolute;
     top: 0;

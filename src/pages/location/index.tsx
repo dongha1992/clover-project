@@ -6,13 +6,28 @@ import { HomeContainer } from '@styles/theme';
 import { TextH6B, TextH5B, TextB2R } from '@components/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
-
+import { useDispatch } from 'react-redux';
+import { setAlert } from '@store/alert';
 /* TODO: 검색 결과 리스트 */
 
 function location() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const clickSetCurrentLoc = (): void => {};
+  const clickSetCurrentLoc = (): void => {
+    const locationInfoMsg = `서울 성동구 성수동1가 
+    헤이그라운드 서울숲점(으)로 
+    설정되었습니다.`;
+    dispatch(
+      setAlert({
+        alertMessage: locationInfoMsg,
+        onSubmit: () => {},
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
+  };
+
   const goToMapScreen = (): void => {
     router.push('/location/address-detaill');
   };

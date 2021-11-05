@@ -6,6 +6,8 @@ import { theme } from '@styles/theme';
 import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
+import { Provider } from 'react-redux';
+import { store } from '@store/index';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -20,14 +22,16 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>프레시코드</title>
       </Head>
-      <ThemeProvider
-        theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
-      >
-        <GlobalStyle />
-        <Wrapper>
-          <Component {...pageProps} />
-        </Wrapper>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider
+          theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
+        >
+          <GlobalStyle />
+          <Wrapper>
+            <Component {...pageProps} />
+          </Wrapper>
+        </ThemeProvider>
+      </Provider>
     </>
   );
 }

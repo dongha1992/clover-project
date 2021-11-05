@@ -36,7 +36,7 @@ const Container = styled.div`
   right: 0;
   z-index: 10;
   height: 56px;
-  left: calc(50% + 29px);
+  left: calc(50% + 27px);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
