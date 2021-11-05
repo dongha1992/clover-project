@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import styled, { css } from 'styled-components';
+import Alert from '@components/Alert';
+import { alertForm } from '@store/alert';
+import { useSelector } from 'react-redux';
 
 export const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
@@ -14,8 +17,22 @@ export const Wrapper: React.FC = ({ children }) => {
     return () => window.removeEventListener('resize', calcBrowserScreenSize);
   }, []);
 
+  const alert = useSelector(alertForm);
+
   return (
     <Container>
+      {alert && (
+        <Alert
+          alertMessage={alert.alertMessage}
+          submitBtnText={alert.submitBtnText}
+          closeBtnText={alert.closeBtnText}
+          onSubmit={alert.onSubmit}
+          onClose={alert.onClose}
+          type={alert.type}
+          setSelectedMenu={alert.setSelectedMenu}
+          selectedMenu={alert.selectedMenu}
+        />
+      )}
       <Center>
         <Left>
           <div className="left-contents">광고</div>
