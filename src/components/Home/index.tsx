@@ -6,9 +6,12 @@ import { textH3, homePadding, theme, defaultRightScreen } from '@styles/theme';
 import { TextB3R } from '@components/Text';
 import axios from 'axios';
 import Item from '@components/Item';
+import { useDispatch } from 'react-redux';
+import { setMenu } from '@store/menu';
 
 function Home() {
   const [itemList, setItemList] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getBanners();
@@ -19,6 +22,7 @@ function Home() {
       'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/2088b0c308d7f0c9350e0109b4c78cee8bcfb73e/items.json'
     );
     setItemList(data);
+    dispatch(setMenu(data));
   };
 
   return (
@@ -66,7 +70,7 @@ const SectionTitle = styled.div`
   margin-bottom: 24px;
 `;
 
-const ItemListCol = styled.div`
+export const ItemListCol = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 16px;
@@ -94,7 +98,7 @@ const ItemListRowWrapper = styled.div`
   margin-bottom: 48px;
 `;
 
-const ItemListRow = styled.div`
+export const ItemListRow = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;

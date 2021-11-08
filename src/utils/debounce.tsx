@@ -7,11 +7,9 @@ export default function debounce<T extends any[]>(
   return (...args: T) => {
     if (lastTimeoutId) {
       clearTimeout(lastTimeoutId);
-      lastTimeoutId = null;
     }
     lastTimeoutId = setTimeout(() => {
       fn(...args);
-      lastTimeoutId = null;
     }, wait);
   };
 }

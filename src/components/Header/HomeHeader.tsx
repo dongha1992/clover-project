@@ -11,12 +11,18 @@ function HomeHeader() {
         <Left>
           <SVGIcon name="location" />
           <AddressWrapper>
-            <Link href="/location">내 위치 찾기</Link>
+            <Link href="/location">
+              <a>내 위치 찾기</a>
+            </Link>
           </AddressWrapper>
         </Left>
         <Right>
           <div>
-            <SVGIcon name="searchIcon" />
+            <Link href="/search" passHref>
+              <a>
+                <SVGIcon name="searchIcon" />
+              </a>
+            </Link>
           </div>
           <SVGIcon name="cart" />
         </Right>
@@ -61,10 +67,12 @@ const AddressWrapper = styled.div`
 
 const Left = styled.div`
   display: flex;
+  align-items: center;
 `;
 const Right = styled.div`
   position: absolute;
   display: flex;
+  align-items: center;
   right: 10px;
   > div {
     padding-right: 24px;

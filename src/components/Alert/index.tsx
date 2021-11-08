@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import ModalLayout from '../../components/Modal';
-import { TextH5B } from '@components/Text';
 
 type TProps = {
   alertMessage: string;

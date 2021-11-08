@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 type TSvg = {
   [key: string]: () => React.SVGProps<SVGSVGElement> | any;
@@ -198,10 +198,51 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  filter: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="5.50006" cy="6" r="1.75" stroke="#242424" strokeWidth="1.5" />
+      <line
+        x1="7.75006"
+        y1="6.0498"
+        x2="14.2501"
+        y2="6.0498"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <circle
+        cx="12.4999"
+        cy="12"
+        r="1.75"
+        transform="rotate(180 12.4999 12)"
+        stroke="#242424"
+        strokeWidth="1.5"
+      />
+      <line
+        x1="10.2499"
+        y1="11.9502"
+        x2="3.74994"
+        y2="11.9502"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
 };
 
-export default function SVGIcon({ name }: TProps) {
+/* TODO: ref */
+
+function SVGIcon({ name }: TProps) {
   const MappedSVG = svgMap[name];
 
   return <MappedSVG />;
 }
+
+export default SVGIcon;
