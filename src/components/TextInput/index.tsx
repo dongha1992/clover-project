@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
-import debounce from '@utils/debounce';
+import debounce from 'lodash-es/debounce';
 import SVGIcon from '@utils/SVGIcon';
 import { textBody2 } from '@styles/theme';
 
@@ -32,6 +32,7 @@ export type InputType =
 export interface ITextFieldProps {
   eventHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setStateAction?: React.Dispatch<React.SetStateAction<string>>;
+  keyPressHandler?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   error?: boolean;
   inputType?: InputType;
   placeholder?: string;
@@ -57,6 +58,7 @@ const defaultProps = {
 
 function TextInput({
   eventHandler,
+  keyPressHandler,
   setStateAction,
   inputType,
   placeholder,
@@ -103,6 +105,7 @@ function TextInput({
           }
           placeholder={placeholder}
           name={name}
+          onKeyPress={keyPressHandler}
         />
       </div>
     </Container>
@@ -164,4 +167,4 @@ const Container = styled.div<{
   }
 `;
 
-export default TextInput;
+export default React.memo(TextInput);
