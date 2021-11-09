@@ -56,61 +56,67 @@ const defaultProps = {
   style: { minWidth: 312 },
 };
 
-function TextInput({
-  eventHandler,
-  keyPressHandler,
-  setStateAction,
-  inputType,
-  placeholder,
-  name,
-  value,
-  width,
-  height,
-  size,
-  style,
-  search,
-  padding,
-  svg,
-}: ITextFieldProps) {
-  const debounceChangeEvent = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    eventHandler && eventHandler(e);
-  };
+const TextInput = React.forwardRef(
+  (
+    {
+      eventHandler,
+      keyPressHandler,
+      setStateAction,
+      inputType,
+      placeholder,
+      name,
+      value,
+      width,
+      height,
+      size,
+      style,
+      search,
+      padding,
+      svg,
+    }: ITextFieldProps,
+    ref: React.ForwardedRef<HTMLInputElement>
+  ) => {
+    const debounceChangeEvent = (
+      e: React.ChangeEvent<HTMLInputElement>
+    ): void => {
+      eventHandler && eventHandler(e);
+    };
 
-  const debounceSetStateValue = useRef(
-    debounce((value) => setStateAction && setStateAction(value), 500)
-  ).current;
+    const debounceSetStateValue = useRef(
+      debounce((value) => setStateAction && setStateAction(value), 500)
+    ).current;
 
-  return (
-    <Container
-      width={width}
-      height={height}
-      size={size}
-      search={search ?? false}
-      style={style}
-      padding={padding}
-      svg={svg}
-    >
-      <div className="wrapper">
-        {svg ? <SVGIcon name={svg} /> : ''}
-        <input
-          style={style}
-          type={inputType ? inputType : 'string'}
-          defaultValue={value}
-          onChange={(e) =>
-            eventHandler
-              ? debounceChangeEvent(e)
-              : debounceSetStateValue(e.target.value)
-          }
-          placeholder={placeholder}
-          name={name}
-          onKeyPress={keyPressHandler}
-        />
-      </div>
-    </Container>
-  );
-}
+    return (
+      <Container
+        width={width}
+        height={height}
+        size={size}
+        search={search ?? false}
+        style={style}
+        padding={padding}
+        svg={svg}
+      >
+        <div className="wrapper">
+          {svg ? <SVGIcon name={svg} /> : ''}
+          <input
+            style={style}
+            type={inputType ? inputType : 'string'}
+            defaultValue={value}
+            onChange={(e) =>
+              eventHandler
+                ? debounceChangeEvent(e)
+                : debounceSetStateValue(e.target.value)
+            }
+            placeholder={placeholder}
+            name={name}
+            onKeyPress={keyPressHandler}
+            ref={ref}
+          />
+        </div>
+      </Container>
+    );
+  }
+);
 
 TextInput.defaultProps = defaultProps as ITextFieldProps;
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-function index() {
-  return <Container>메뉴</Container>;
+function category() {
+  return <Container>전체메뉴</Container>;
 }
 
 const Container = styled.div`
@@ -10,4 +10,4 @@ const Container = styled.div`
   height: 1000px;
 `;
 
-export default index;
+export default category;
