@@ -6,7 +6,6 @@ import Item from '@components/Item';
 import { ItemListCol } from '@components/Home';
 
 function index({ searchResult }: any) {
-  console.log(searchResult);
   return (
     <>
       <FilterRow>
@@ -17,9 +16,13 @@ function index({ searchResult }: any) {
         </FilterWrapper>
       </FilterRow>
       <ItemListCol>
-        {searchResult.map((item: any, index: number) => {
-          return <Item item={item} key={index} />;
-        })}
+        {searchResult.length > 0 ? (
+          searchResult.map((item: any, index: number) => {
+            return <Item item={item} key={index} />;
+          })
+        ) : (
+          <div>검색결과가 없습니다.</div>
+        )}
       </ItemListCol>
     </>
   );

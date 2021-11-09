@@ -1,26 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export const useLocalStorage = <T>(key: string) => {
-  const [storedValue, setStoredValue] = useState<T>(() => {
+/*TODO: 렌더 3번 됨 */
+/* TODO: useLocalStorage 정리해야함 */
+export const useLocalStorage = (key: string, initialValue?: any) => {
+  const [storedValue, setStoredValue] = useState<any>(() => {
     try {
       const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : [];
+      return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.error(error);
-      return [];
+      return initialValue;
     }
   });
 
-  const setLocalStorageValue = (value: T): void => {
-    try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(storedValue));
+    console.log(storedValue);
+  }, [key, storedValue]);
 
-  return [storedValue, setLocalStorageValue] as const;
+  return [storedValue, setStoredValue] as const;
 };
