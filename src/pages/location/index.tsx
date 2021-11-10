@@ -34,7 +34,6 @@ function location() {
 
   return (
     <HomeContainer>
-      <Header title={'내 위치 설정하기'} />
       <Wrapper>
         <TextInput
           width="100%"

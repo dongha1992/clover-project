@@ -1,58 +1,47 @@
-import SVGIcon from '@utils/SVGIcon';
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { TextH7B } from '@components/Text';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Router, useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+import { Obj } from '@model/index';
+import styled from 'styled-components';
+
+const HomeBottom = dynamic(() => import('./HomeBottom'));
+
+/*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 function Bottom() {
-  return (
-    <Container>
-      <MenuWrapper>
-        <MenuItem>
-          <SVGIcon name="home" />
-          <TextH7B padding="4px 0 0 0">간편주문</TextH7B>
-        </MenuItem>
-        <SVGIcon name="home" />
-        <SVGIcon name="home" />
-        <SVGIcon name="home" />
-        <SVGIcon name="home" />
-      </MenuWrapper>
-    </Container>
+  const router = useRouter();
+  const [currentPath, setCurrentPath] = useState<string>(router.pathname);
+
+  useEffect(() => {
+    setCurrentPath(router.pathname);
+  }, [router.pathname]);
+
+  const renderComponent = useCallback(
+    (currentPath: string) => {
+      const headerTitleMap: Obj = {
+        '/search': '검색',
+        '/location': '내 위치 설정하기',
+        '/locationaddress-detaill': '내 위치 설정하기',
+        '/category': '전체메뉴',
+        '/category/salad': '샐러드',
+      };
+
+      switch (currentPath) {
+        case '/': {
+          return <HomeBottom />;
+        }
+        default: {
+          return;
+        }
+      }
+    },
+    [currentPath]
   );
+
+  return <Container>{renderComponent(currentPath)}</Container>;
 }
 
 const Container = styled.div`
-  width: 100%;
-  max-width: 504px;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 10;
-  height: 56px;
-  left: calc(50% + 27px);
-  background-color: white;
-
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
-  `};
-
-  ${({ theme }) => theme.mobile`
-    margin: 0 auto;
-    left: 0
-  `};
+  margin-top: 62px;
 `;
-
-const MenuWrapper = styled.div`
-  display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
-`;
-
-const MenuItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-export default Bottom;
+export default React.memo(Bottom);

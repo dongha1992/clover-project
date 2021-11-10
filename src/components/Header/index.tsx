@@ -1,69 +1,51 @@
-import React from 'react';
-import SVGIcon from '@utils/SVGIcon';
-import styled from 'styled-components';
-import { TextH4B } from '@components/Text';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Router, useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+import { Obj } from '@model/index';
 
-type TProps = {
-  title: string;
-};
+const HomeHeader = dynamic(() => import('./HomeHeader'));
+const DefaultHeader = dynamic(() => import('./DefaultHeader'));
+const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 
-function Header({ title }: TProps) {
+/*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
+
+function Header() {
   const router = useRouter();
+  const [currentPath, setCurrentPath] = useState<string>(router.pathname);
 
-  const goBack = (): void => {
-    router.back();
-  };
+  useEffect(() => {
+    setCurrentPath(router.pathname);
+  }, [router.pathname]);
 
-  return (
-    <Container>
-      <Wrapper>
-        <div className="arrow" onClick={goBack}>
-          <SVGIcon name="arrowLeft" />
-        </div>
-        <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-      </Wrapper>
-    </Container>
+  const renderComponent = useCallback(
+    (currentPath: string) => {
+      const headerTitleMap: Obj = {
+        '/search': '검색',
+        '/location': '내 위치 설정하기',
+        '/locationaddress-detaill': '내 위치 설정하기',
+        '/category': '전체메뉴',
+        '/category/salad': '샐러드',
+      };
+
+      const title = headerTitleMap[currentPath];
+
+      switch (true) {
+        case currentPath.includes('location'):
+        case currentPath.includes('locationaddress-detaill'):
+        case currentPath.includes('search'): {
+          return <DefaultHeader title={title} />;
+        }
+        case currentPath.includes('category'): {
+          return <CategorySubHeader title={title} />;
+        }
+        default: {
+          return <HomeHeader />;
+        }
+      }
+    },
+    [currentPath]
   );
+
+  return <>{renderComponent(currentPath)}</>;
 }
-
-const Container = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 504px;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 10;
-  height: 56px;
-  left: calc(50% + 27px);
-  background-color: white;
-
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
-  `};
-
-  ${({ theme }) => theme.mobile`
-    margin: 0 auto;
-    left: 0px;
-  `};
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 24px;
-  .arrow {
-    cursor: pointer;
-    > svg {
-      position: absolute;
-      left: 24px;
-      bottom: 16px;
-    }
-  }
-`;
-
-export default Header;
+export default React.memo(Header);

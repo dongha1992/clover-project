@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components';
 import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
 import { useSelector } from 'react-redux';
+import Header from '@components/Header';
+import Bottom from '@components/Bottom';
 
 export const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
@@ -37,7 +39,11 @@ export const Wrapper: React.FC = ({ children }) => {
         <Left>
           <div className="left-contents">광고</div>
         </Left>
-        <Right>{children}</Right>
+        <Right>
+          <Header />
+          <Main>{children}</Main>
+          <Bottom />
+        </Right>
       </Center>
     </Container>
   );
@@ -72,7 +78,6 @@ const Right = styled.div`
   max-width: 504px;
   left: 50%;
   background-color: white;
-  padding-bottom: 62px;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -88,4 +93,8 @@ const Left = styled.div`
   ${({ theme }) => theme.desktop`  
   display: none;
   `}
+`;
+
+const Main = styled.main`
+  margin-top: 56px;
 `;

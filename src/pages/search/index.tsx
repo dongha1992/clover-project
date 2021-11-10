@@ -104,7 +104,6 @@ function search() {
   return (
     <Container>
       <Wrapper>
-        <Header title="검색" />
         <TextInput
           placeholder="원하시는 상품을 검색해보세요."
           svg="searchIcon"
@@ -159,9 +158,7 @@ function search() {
   );
 }
 
-const Container = styled.main`
-  margin-top: 56px;
-`;
+const Container = styled.main``;
 
 const Wrapper = styled.div`
   padding: 8px 24px;

@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import CategorySubHeader from '@components/Header/CategorySubHeader';
 
 function category() {
-  return <Container>전체메뉴</Container>;
+  return <Container></Container>;
 }
 
 const Container = styled.div`
-  background-color: red;
-  height: 1000px;
+  width: 100%;
 `;
 
 export default category;

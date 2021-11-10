@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { homePadding, theme, defaultRightScreen } from '@styles/theme';
+import { homePadding, theme } from '@styles/theme';
 import Header from '@components/Header';
 import Button from '@components/Button';
 import Map from '@components/Map';
@@ -12,7 +12,6 @@ import TextInput from '@components/TextInput';
 function addressDetaill() {
   return (
     <Container>
-      <Header title={'내 위치 설정하기'} />
       <Map />
       <AddressDetailContainer>
         <TextB2R padding="8px 0 0 0">선택한 주소</TextB2R>
@@ -29,7 +28,6 @@ function addressDetaill() {
 }
 
 const Container = styled.div`
-  ${defaultRightScreen}
   position: relative;
 `;
 
