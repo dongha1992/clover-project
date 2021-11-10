@@ -25,6 +25,7 @@ export interface IProps {
   pointer?: boolean;
   opacity?: number;
   center?: boolean;
+  whiteSpace?: string;
 }
 
 const Text = (props: IProps) => {
@@ -48,7 +49,7 @@ const Container = styled.div<IProps>`
   text-decoration: ${(props) => props.textDecoration && props.textDecoration};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
   opacity: ${(props) => props.opacity && props.opacity};
-  white-space: pre-wrap;
+  white-space: ${(props) => (props.whiteSpace ? props.whiteSpace : 'pre-wrap')};
   text-align: ${(props) => (props.center ? 'center' : '')};
 `;
 
@@ -105,6 +106,13 @@ export const TextB1R = styled(Text)`
   font-size: 16px;
   letter-spacing: -0.4px;
   font-weight: normal;
+  line-height: 24px;
+`;
+
+export const TextB1B = styled(Text)`
+  font-size: 16px;
+  letter-spacing: -0.4px;
+  font-weight: bold;
   line-height: 24px;
 `;
 

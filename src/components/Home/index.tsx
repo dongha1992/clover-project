@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/MainTab';
-import { textH3, homePadding, theme, defaultRightScreen } from '@styles/theme';
+import { textH3, homePadding, theme } from '@styles/theme';
 import { TextB3R } from '@components/Text';
 import axios from 'axios';
 import Item from '@components/Item';
@@ -55,7 +55,6 @@ function Home() {
 }
 
 const Container = styled.div`
-  ${defaultRightScreen}
   width: 100%;
 `;
 

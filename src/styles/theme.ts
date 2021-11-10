@@ -17,10 +17,6 @@ export const theme = {
   systemYellow: '#F4D740',
 };
 
-export const defaultRightScreen = css`
-  margin-top: 56px;
-`;
-
 export const flexCenter = css`
   display: flex;
   justify-content: center;
@@ -33,7 +29,6 @@ export const homePadding = css`
 
 export const HomeContainer = styled.div`
   ${homePadding}
-  ${defaultRightScreen}
 `;
 
 export const textH1 = css`
