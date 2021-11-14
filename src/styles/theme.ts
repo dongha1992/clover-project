@@ -31,6 +31,12 @@ export const HomeContainer = styled.div`
   ${homePadding}
 `;
 
+export const ItemListCol = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 16px;
+`;
+
 export const textH1 = css`
   font-size: 24px;
   letter-spacing: -0.4;

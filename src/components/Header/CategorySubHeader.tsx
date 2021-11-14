@@ -13,16 +13,27 @@ type TProps = {
 };
 
 function CategorySubHeader({ title }: TProps) {
-  const [selectedTab, setSelectedTab] = useState<string>('전체');
+  const [selectedTab, setSelectedTab] = useState<string>('/category');
   const router = useRouter();
+
+  useEffect(() => {
+    const queryString = router.asPath;
+    setSelectedTab(queryString);
+  }, [router]);
 
   const goBack = (): void => {
     router.back();
   };
 
-  const clickTabHandler = (category: string) => {
-    setSelectedTab(category);
-  };
+  const clickTabHandler = useCallback(
+    (category: any) => {
+      setSelectedTab(category.title);
+      router.push(`${category.link}`);
+    },
+    [router]
+  );
+
+  const goToCart = () => {};
 
   return (
     <Container>
@@ -31,6 +42,9 @@ function CategorySubHeader({ title }: TProps) {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
+        <div className="cart" onClick={goToCart}>
+          <SVGIcon name="cart" />
+        </div>
       </Wrapper>
       <CategroyTab onClick={clickTabHandler} selectedTab={selectedTab} />
     </Container>
@@ -45,7 +59,7 @@ const Container = styled.div`
   top: 0;
   right: 0;
   z-index: 10;
-  height: 56px;
+  height: auto;
   left: calc(50% + 27px);
   background-color: white;
 
@@ -64,14 +78,11 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 16px 24px;
+  justify-content: space-between;
+  padding: 14px 27px;
   .arrow {
     cursor: pointer;
     > svg {
-      position: absolute;
-      left: 24px;
-      bottom: 16px;
     }
   }
 `;
