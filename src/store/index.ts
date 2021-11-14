@@ -1,9 +1,11 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import alert from './alert';
 import menu from './menu';
+import style from './style';
 
 export const store = configureStore({
   reducer: {
+    style,
     alert,
     menu,
   },

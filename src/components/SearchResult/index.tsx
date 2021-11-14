@@ -35,7 +35,7 @@ const FilterRow = styled.div`
   padding-bottom: 17px;
 `;
 
-const FilterWrapper = styled.div`
+export const FilterWrapper = styled.div`
   display: flex;
   align-items: center;
 `;

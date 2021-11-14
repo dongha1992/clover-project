@@ -2,10 +2,9 @@ import React from 'react';
 import { CATEGORY } from '@constants/search';
 import styled from 'styled-components';
 import Tab from '@components/CategoryTab/Tab';
-import { homePadding } from '@styles/theme';
+import { homePadding, theme } from '@styles/theme';
 
 function CategroyTab({ onClick, selectedTab }: any) {
-  console.log(selectedTab);
   return (
     <Container>
       <TabWrapper>
@@ -14,7 +13,7 @@ function CategroyTab({ onClick, selectedTab }: any) {
             category={category}
             key={index}
             onClick={onClick}
-            selectedTab={selectedTab === category.title ? true : false}
+            selectedTab={selectedTab === category.link ? true : false}
           />
         ))}
       </TabWrapper>
@@ -28,6 +27,7 @@ const Container = styled.div`
   justify-content: space-between;
   width: auto;
   ${homePadding}
+  background-color: ${theme.white};
 `;
 
 const TabWrapper = styled.div`

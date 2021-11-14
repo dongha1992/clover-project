@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useEffect, useRef } from 'react';
+import styled from 'styled-components';
 import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
 import { useSelector } from 'react-redux';

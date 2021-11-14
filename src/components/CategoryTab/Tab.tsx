@@ -9,7 +9,7 @@ function Tab({ category, onClick, selectedTab }: any) {
     pointer: true,
   };
   return (
-    <Wrapper onClick={() => onClick(category.title)} selectedTab={selectedTab}>
+    <Wrapper onClick={() => onClick(category)} selectedTab={selectedTab}>
       <Border>
         {selectedTab ? (
           <TextB1B {...style}> {category.title}</TextB1B>
