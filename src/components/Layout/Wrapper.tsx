@@ -1,10 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import dynamic from 'next/dynamic';
 import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
 import { useSelector } from 'react-redux';
 import Header from '@components/Header';
 import Bottom from '@components/Bottom';
+
+// import BottomLayer from '@components/BottomSheet/BottomLayer';
+
+const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
+  ssr: false,
+});
 
 export const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
@@ -22,30 +29,33 @@ export const Wrapper: React.FC = ({ children }) => {
   const alert = useSelector(alertForm);
 
   return (
-    <Container>
-      <Center>
-        {alert && (
-          <Alert
-            alertMessage={alert.alertMessage}
-            submitBtnText={alert.submitBtnText}
-            closeBtnText={alert.closeBtnText}
-            onSubmit={alert.onSubmit}
-            onClose={alert.onClose}
-            type={alert.type}
-            setSelectedMenu={alert.setSelectedMenu}
-            selectedMenu={alert.selectedMenu}
-          />
-        )}
-        <Left>
-          <div className="left-contents">광고</div>
-        </Left>
-        <Right>
-          <Header />
-          <Main>{children}</Main>
-          <Bottom />
-        </Right>
-      </Center>
-    </Container>
+    <>
+      <Container>
+        <Center>
+          {alert && (
+            <Alert
+              alertMessage={alert.alertMessage}
+              submitBtnText={alert.submitBtnText}
+              closeBtnText={alert.closeBtnText}
+              onSubmit={alert.onSubmit}
+              onClose={alert.onClose}
+              type={alert.type}
+              setSelectedMenu={alert.setSelectedMenu}
+              selectedMenu={alert.selectedMenu}
+            />
+          )}
+          <Left>
+            <div className="left-contents">광고</div>
+          </Left>
+          <Right>
+            <Header />
+            <Main>{children}</Main>
+            <Bottom />
+          </Right>
+        </Center>
+      </Container>
+      <BottomSheet isActive />
+    </>
   );
 };
 
