@@ -1,7 +1,7 @@
 import React from 'react';
 
-function index() {
+function salad() {
   return <div>샐러드</div>;
 }
 
-export default index;
+export default salad;
