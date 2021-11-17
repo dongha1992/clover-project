@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
+import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
 import Header from '@components/Header';
 import Bottom from '@components/Bottom';
@@ -27,6 +28,7 @@ export const Wrapper: React.FC = ({ children }) => {
   }, []);
 
   const alert = useSelector(alertForm);
+  const bottomSheet = useSelector(bottomSheetForm);
 
   return (
     <>
@@ -54,7 +56,7 @@ export const Wrapper: React.FC = ({ children }) => {
           </Right>
         </Center>
       </Container>
-      <BottomSheet isActive />
+      {bottomSheet?.content && <BottomSheet />}
     </>
   );
 };

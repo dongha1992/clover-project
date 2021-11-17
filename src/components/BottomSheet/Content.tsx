@@ -1,7 +1,16 @@
 import React from 'react';
+import styled from 'styled-components';
+import styeld from 'styled-components';
 
-function Content() {
-  return <div>콘텐트</div>;
+type TProps = {
+  content: JSX.Element;
+};
+
+function Content({ content }: TProps) {
+  return <ContentContainer>{content}</ContentContainer>;
 }
 
-export default Content;
+const ContentContainer = styled.div`
+  width: 100%;
+`;
+export default React.memo(Content);

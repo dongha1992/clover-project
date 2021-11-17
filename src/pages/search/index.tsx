@@ -127,7 +127,7 @@ function search() {
                     return (
                       <TextB1R key={index} width="148px" padding="8px 0">
                         <Link href={item.link}>
-                          <a> {item.title}</a>
+                          <a>{item.title}</a>
                         </Link>
                       </TextB1R>
                     );

@@ -1,28 +1,70 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useBottomSheet } from '@hooks/useBottomSheet';
-import useDimensions from '@hooks/useDimensions';
 import Content from '@components/BottomSheet/Content';
+import Button from '@components/Button';
+import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
+import { useDispatch, useSelector } from 'react-redux';
 
-type TProps = {
-  isActive: boolean;
-};
-
-function BottomSheet({ isActive }: TProps) {
+function BottomSheet() {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
+  const dispatch = useDispatch();
+  const { content }: any = useSelector(bottomSheetForm);
 
-  console.log(size, height);
+  useEffect(() => {
+    if (sheetRef.current && size.maxY) {
+      sheetRef.current.style.setProperty(
+        'transform',
+        `translateY(${size.minY - size.maxY}px)`
+      );
+    }
+  }, []);
 
-  useEffect(() => {}, []);
+  const clickButtonHandler = () => {
+    dispatch(initBottomSheet());
+  };
 
   return (
-    <Container ref={sheetRef} height={height}>
-      <BottomSheetContent>
-        <Content />
-      </BottomSheetContent>
-    </Container>
+    <Background>
+      <Container ref={sheetRef} height={height}>
+        <BottomSheetContent ref={contentRef}>
+          <Content content={content} />
+        </BottomSheetContent>
+      </Container>
+      <ButtonContainer onClick={() => clickButtonHandler()}>
+        <Button height="48px" width="100%" margin="0 8px 0 0" borderRadius="0">
+          적용하기
+        </Button>
+      </ButtonContainer>
+    </Background>
   );
 }
+
+const Background = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0px;
+  left: calc(50% + 28px);
+  right: 0px;
+  bottom: 0px;
+  max-width: 504px;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 50%;
+    margin-left: -252px;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
+`;
 
 const Container = styled.div<{ height: number | null }>`
   display: flex;
@@ -30,25 +72,41 @@ const Container = styled.div<{ height: number | null }>`
   align-items: center;
 
   width: 100%;
-  max-width: 1024px;
+  max-width: 504px;
   position: fixed;
-  z-index: 1;
+  z-index: 10000;
   top: ${({ height }) => height}px;
-  left: 0;
+  left: calc(50% + 28px);
   right: 0;
 
-  margin: 0 auto;
-
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
   background-color: #fff;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
   height: ${({ height }) => height}px;
   transition: transform 150ms ease-out;
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 50%;
+    margin-left: -252px;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
 `;
+
 const BottomSheetContent = styled.div`
+  width: 100%;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+`;
+
+const ButtonContainer = styled.div`
+  z-index: 10000;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
 `;
 
 export default BottomSheet;
