@@ -1,13 +1,13 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import alert from './alert';
 import menu from './menu';
-import style from './style';
+import bottomSheet from './bottomSheet';
 
 export const store = configureStore({
   reducer: {
-    style,
     alert,
     menu,
+    bottomSheet,
   },
   middleware: [
     ...getDefaultMiddleware({

@@ -258,6 +258,80 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  uncheckedRectBox: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        x="1.75"
+        y="1.75"
+        width="14.5"
+        height="14.5"
+        rx="1.25"
+        fill="white"
+        stroke="#DEDEDE"
+        strokeWidth="1.5"
+      />
+    </svg>
+  ),
+  checkedRectBox: () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="16" height="16" rx="2" fill="#35AD73" />
+      <path
+        d="M12 5.5L7 11L4 7"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  uncheckedRoundBox: () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="8"
+        cy="8"
+        r="7.25"
+        fill="white"
+        stroke="#DEDEDE"
+        strokeWidth="1.5"
+      />
+    </svg>
+  ),
+  checkedRoundBox: () => (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="8"
+        cy="8"
+        r="5.5"
+        fill="white"
+        stroke="#35AD73"
+        strokeWidth="5"
+      />
+    </svg>
+  ),
 };
 
 /* TODO: ref */

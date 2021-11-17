@@ -3,11 +3,27 @@ import styled from 'styled-components';
 import { homePadding } from '@styles/theme';
 import { TextH6B, TextH3B } from '@components/Text';
 import SVGIcon from '@utils/SVGIcon';
+import { useDispatch } from 'react-redux';
+import { setBottomSheet } from '@store/bottomSheet';
+import dynamic from 'next/dynamic';
+
+const CategoryFilterGroup = dynamic(
+  () => import('@components/Filter/CategoryFilterGroup')
+);
 
 function CategoryFilter({ title }: any) {
+  const dispatch = useDispatch();
+
+  const clickFilterHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: <CategoryFilterGroup />,
+      })
+    );
+  };
   return (
     <PageTitleWrapper>
-      <CategroyTabWrapper>
+      <CategroyTabWrapper onClick={clickFilterHandler}>
         <SVGIcon name="filter" />
         <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
       </CategroyTabWrapper>
