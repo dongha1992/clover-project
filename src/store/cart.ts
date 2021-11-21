@@ -3,12 +3,14 @@ import { AppState } from '.';
 
 type TProps = {
   cartLists: any;
-  cartItem: any;
+  cartModalObj: any;
+  selectedMenus: any;
 };
 
 const initialState: TProps = {
   cartLists: [],
-  cartItem: {},
+  cartModalObj: {},
+  selectedMenus: [],
 };
 
 export const cart = createSlice({
@@ -16,12 +18,15 @@ export const cart = createSlice({
   initialState,
   reducers: {
     setCartLists: (state, action: PayloadAction<TProps>) => {},
-    setCartItem: (state, action: PayloadAction<TProps>) => {
-      state.cartItem = action.payload;
+    setCartModalObj: (state, action: PayloadAction<TProps>) => {
+      state.cartModalObj = action.payload;
+    },
+    setSelectedMenus: (state, action: PayloadAction<TProps>) => {
+      state.selectedMenus.push(action.payload);
     },
   },
 });
 
-export const { setCartLists, setCartItem } = cart.actions;
+export const { setCartLists, setCartModalObj, setSelectedMenus } = cart.actions;
 export const cartForm = (state: AppState): TProps => state.cart;
 export default cart.reducer;

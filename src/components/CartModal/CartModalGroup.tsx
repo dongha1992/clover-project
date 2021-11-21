@@ -4,32 +4,17 @@ import { TextH5B, TextB2R } from '@components/Text';
 import { Select, Option } from '@components/Dropdown';
 import { theme } from '@styles/theme';
 import BorderLine from '@components/BorderLine';
+import { useSelector } from 'react-redux';
+import { cartForm } from '@store/cart';
+import CartModalItem from './CartModalItem';
 
-const MAIN_OPTIONS = [
-  { id: 1, text: '닭가슴살 아몬드 샐러드 (M)', price: 10000, type: 'main' },
-  { id: 2, text: '닭가슴살 아몬드 샐러드 (L)', price: 5000, type: 'main' },
-  { id: 3, text: '닭가슴살 아몬드 샐러드 (L)', price: 100000, type: 'main' },
-];
-const SECONDRY_OPTIONS = [
-  {
-    id: 3,
-    text: '[프코메이드] 하루과일 스테비아 방울토마토',
-    price: 1000,
-    type: 'optional',
-  },
-  {
-    id: 4,
-    text: '[프코메이드] 하루과일 파인애플',
-    price: 200,
-    type: 'optional',
-  },
-];
+function CartModalGroup() {
+  const [selectedMenus, setSelectedMenus] = useState<any>([]);
 
-function CartModalGroup({ item }: any) {
-  const [selectedMenus, setSelectedMenus] = useState({});
+  const { cartModalObj } = useSelector(cartForm);
 
   const selectMenuHandler = (menu: any) => {
-    setSelectedMenus({ ...selectedMenus, [menu.type]: menu });
+    setSelectedMenus([...selectedMenus, menu]);
   };
 
   return (
@@ -38,16 +23,12 @@ function CartModalGroup({ item }: any) {
         옵션 선택
       </TextH5B>
       <Wrapper>
-        <Main>
+        <MainOption>
           <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
             필수옵션
           </TextH5B>
-          <Select
-            placeholder="필수옵션"
-            type={'main'}
-            selectedMenus={selectedMenus}
-          >
-            {MAIN_OPTIONS.map((option, index) => (
+          <Select placeholder="필수옵션" type={'main'}>
+            {cartModalObj?.main.map((option: any, index: number) => (
               <Option
                 key={index}
                 option={option}
@@ -55,19 +36,15 @@ function CartModalGroup({ item }: any) {
               />
             ))}
           </Select>
-        </Main>
-        <Optional>
-          {SECONDRY_OPTIONS.length ? (
+        </MainOption>
+        <OptionalOption>
+          {cartModalObj?.secondary.length > 0 ? (
             <>
               <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
                 선택옵션
               </TextH5B>
-              <Select
-                placeholder="선택옵션"
-                type={'optional'}
-                selectedMenus={selectedMenus}
-              >
-                {SECONDRY_OPTIONS.map((option, index) => (
+              <Select placeholder="선택옵션" type={'optional'}>
+                {cartModalObj?.secondary.map((option: any, index: number) => (
                   <Option
                     key={index}
                     option={option}
@@ -77,7 +54,16 @@ function CartModalGroup({ item }: any) {
               </Select>
             </>
           ) : null}
-        </Optional>
+        </OptionalOption>
+        {selectedMenus.length > 0 ? (
+          <SelectedCartItemContainer>
+            {selectedMenus.map((menu: any, index: number) => (
+              <CartModalItem menu={menu} key={index} />
+            ))}
+          </SelectedCartItemContainer>
+        ) : null}
+      </Wrapper>
+      <OrderInfoContainer>
         <TotalSumContainer>
           <TextH5B>총 개</TextH5B>
           <TextH5B>0원</TextH5B>
@@ -89,7 +75,7 @@ function CartModalGroup({ item }: any) {
             <TextH5B padding="0px 4px">새벽 7시 전</TextH5B>도착
           </TextB2R>
         </DeliveryInforContainer>
-      </Wrapper>
+      </OrderInfoContainer>
     </Container>
   );
 }
@@ -103,11 +89,23 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const Main = styled.div`
+const MainOption = styled.div`
   width: 100%;
 `;
-const Optional = styled.div`
+const OptionalOption = styled.div`
   width: 100%;
+`;
+
+const OrderInfoContainer = styled.div`
+  padding: 0 24px;
+  width: 100%;
+`;
+
+const SelectedCartItemContainer = styled.div`
+  margin-top: 16px;
+  width: 100%;
+  overflow-y: scroll;
+  max-height: 220px;
 `;
 
 const TotalSumContainer = styled.div`

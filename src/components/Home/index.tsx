@@ -19,7 +19,7 @@ function Home() {
 
   const getBanners = async () => {
     const { data } = await axios.get(
-      'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/2088b0c308d7f0c9350e0109b4c78cee8bcfb73e/items.json'
+      'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/db01ea2292c02c6526d479c7cc294f62b25904ee/items.json'
     );
     setItemList(data);
     dispatch(setMenu(data));

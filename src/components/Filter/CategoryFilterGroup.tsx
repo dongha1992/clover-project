@@ -4,7 +4,7 @@ import BorderLine from '@components/BorderLine';
 import { TextH5B } from '@components/Text';
 import styled from 'styled-components';
 import { MUTILPLE_CHECKBOX, RADIO_CHECKBOX } from '@constants/filter';
-import { useDispatch } from 'react-redux';
+
 /* 
 
 DefaultFilter : 다중 선택 필터

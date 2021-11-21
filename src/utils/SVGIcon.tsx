@@ -332,6 +332,55 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  minus: () => (
+    <svg
+      width="4"
+      height="3"
+      viewBox="0 0 4 3"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0.367297 2.192H3.6433V0.932H0.367297V2.192Z" fill="#242424" />
+    </svg>
+  ),
+  plus: () => (
+    <svg
+      width="8"
+      height="7"
+      viewBox="0 0 8 7"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.3468 6.68H4.6548V4.136H7.0788V2.876H4.6548V0.319999H3.3468V2.876H0.922797V4.136H3.3468V6.68Z"
+        fill="#242424"
+      />
+    </svg>
+  ),
+  defaultCancel: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="1.5"
+        height="12.5253"
+        rx="0.75"
+        transform="matrix(0.707107 0.707107 -0.689737 0.72406 12.854 4)"
+        fill="#242424"
+      />
+      <rect
+        width="1.5"
+        height="12.5253"
+        rx="0.75"
+        transform="matrix(-0.707107 0.707107 -0.72406 -0.689737 14.1299 12.854)"
+        fill="#242424"
+      />
+    </svg>
+  ),
 };
 
 /* TODO: ref */

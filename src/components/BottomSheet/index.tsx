@@ -5,7 +5,7 @@ import Content from '@components/BottomSheet/Content';
 import Button from '@components/Button';
 import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { setAlert } from '@store/alert';
 /* TODO: height 조절해야함 */
 
 function BottomSheet() {
@@ -23,7 +23,11 @@ function BottomSheet() {
   }, []);
 
   const clickButtonHandler = () => {
+    const isCart = buttonTitle.includes('장바구니');
+    console.log(isCart);
     dispatch(initBottomSheet());
+    /* TODO: 장바구니 add 로직 */
+    isCart && dispatch();
   };
 
   return (

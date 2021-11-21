@@ -14,7 +14,7 @@ function SingleMenu({ category }: any) {
 
   const getBanners = async () => {
     const { data } = await axios.get(
-      'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/2088b0c308d7f0c9350e0109b4c78cee8bcfb73e/items.json'
+      'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/4de8b9d3f331d6b4b185c0e548c5c0034f34bb52/items.json'
     );
     setItemList(data);
   };
