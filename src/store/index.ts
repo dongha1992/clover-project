@@ -2,12 +2,16 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import alert from './alert';
 import menu from './menu';
 import bottomSheet from './bottomSheet';
+import cart from './cart';
+import dropdown from './dropdown';
 
 export const store = configureStore({
   reducer: {
     alert,
+    cart,
     menu,
     bottomSheet,
+    dropdown,
   },
   middleware: [
     ...getDefaultMiddleware({

@@ -18,6 +18,7 @@ function CategoryFilter({ title }: any) {
     dispatch(
       setBottomSheet({
         content: <CategoryFilterGroup />,
+        buttonTitle: '적용하기',
       })
     );
   };

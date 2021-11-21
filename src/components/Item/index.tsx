@@ -4,17 +4,31 @@ import { TextB3R, TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Tag';
+import { useDispatch } from 'react-redux';
+import { setBottomSheet } from '@store/bottomSheet';
+import CartModalGroup from '@components/CartModal/CartModalGroup';
 
 type TProps = {
   item: any;
 };
 
 function Item({ item }: TProps) {
+  const dispatch = useDispatch();
+
+  const goToCartModal = () => {
+    /* TODO: thunk로? */
+    dispatch(
+      setBottomSheet({
+        content: <CartModalGroup item={item} />,
+        buttonTitle: '장바구니에 담기',
+      })
+    );
+  };
   return (
     <Container>
       <ImageWrapper>
         <ItemImage src={item.url} alt="상품이미지" />
-        <CartBtn>
+        <CartBtn onClick={goToCartModal}>
           <SVGIcon name="cart" />
         </CartBtn>
       </ImageWrapper>
@@ -55,12 +69,13 @@ const Container = styled.div`
 
 const CartBtn = styled.div`
   position: absolute;
-  right: 3%;
-  bottom: 3%;
+  right: 8px;
+  bottom: 12px;
   border-radius: 50%;
   background-color: white;
   width: 32px;
   height: 32px;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
   > svg {
     position: absolute;
     top: 8px;
