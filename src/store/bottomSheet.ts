@@ -3,10 +3,12 @@ import { AppState } from '.';
 
 type TProps = {
   content: JSX.Element | null;
+  buttonTitle?: string | null;
 };
 
 const initialState: TProps = {
   content: null,
+  buttonTitle: '',
 };
 
 export const style = createSlice({
@@ -18,6 +20,7 @@ export const style = createSlice({
     },
     initBottomSheet: (state, action: PayloadAction) => {
       state.content = null;
+      state.buttonTitle = '';
     },
   },
 });

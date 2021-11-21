@@ -6,10 +6,12 @@ import Button from '@components/Button';
 import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 
+/* TODO: height 조절해야함 */
+
 function BottomSheet() {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
-  const { content }: any = useSelector(bottomSheetForm);
+  const { content, buttonTitle }: any = useSelector(bottomSheetForm);
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
@@ -33,7 +35,7 @@ function BottomSheet() {
       </Container>
       <ButtonContainer onClick={() => clickButtonHandler()}>
         <Button height="48px" width="100%" margin="0 8px 0 0" borderRadius="0">
-          적용하기
+          {buttonTitle}
         </Button>
       </ButtonContainer>
     </Background>
@@ -97,7 +99,8 @@ const Container = styled.div<{ height: number | null }>`
 
 const BottomSheetContent = styled.div`
   width: 100%;
-  overflow: auto;
+  height: 100%;
+  /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
 `;
 

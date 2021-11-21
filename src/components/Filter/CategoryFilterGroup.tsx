@@ -13,7 +13,6 @@ OrderFilter: 단일 선택 필터
 */
 
 function CategoryFilterGroup() {
-  const dispatch = useDispatch();
   const checkboxHandler = () => {};
   const radioButtonHandler = () => {};
   return (

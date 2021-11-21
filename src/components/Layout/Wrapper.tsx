@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
+import { cartForm } from '@store/cart';
 import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
 import Header from '@components/Header';
@@ -29,6 +30,7 @@ export const Wrapper: React.FC = ({ children }) => {
 
   const alert = useSelector(alertForm);
   const bottomSheet = useSelector(bottomSheetForm);
+  const cart = useSelector(cartForm);
 
   return (
     <>

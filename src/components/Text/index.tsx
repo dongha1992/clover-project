@@ -26,13 +26,25 @@ export interface IProps {
   opacity?: number;
   center?: boolean;
   whiteSpace?: string;
+  display?: string;
 }
+
+/* 사용법 
+
+<TextH5B padding="24px 0 16px 0" center>필터 및 정렬</TextH5B>
+<TextB1R color={theme.brandColor} padding='0 4px 0 0' cursor>10%</TextB1R>
+
+- 디자인 시스템 기반으로 작성된 Text Component 사용
+- 필요한 style은 props으로 주거나 추가해서 사용하면 됨
+
+*/
 
 const Text = (props: IProps) => {
   return <Container {...props}>{props.children}</Container>;
 };
 
 const Container = styled.div<IProps>`
+  display: ${(props) => props.display && props.display};
   box-sizing: border-box;
   position: ${(props) => props.position && props.position};
   top: ${(props) => props.top && `${props.top}px`};
