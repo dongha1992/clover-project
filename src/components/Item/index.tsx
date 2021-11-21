@@ -6,6 +6,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
+import { setCartModalObj } from '@store/cart';
 import CartModalGroup from '@components/CartModal/CartModalGroup';
 
 type TProps = {
@@ -17,9 +18,10 @@ function Item({ item }: TProps) {
 
   const goToCartModal = () => {
     /* TODO: thunk로? */
+    dispatch(setCartModalObj(item));
     dispatch(
       setBottomSheet({
-        content: <CartModalGroup item={item} />,
+        content: <CartModalGroup />,
         buttonTitle: '장바구니에 담기',
       })
     );

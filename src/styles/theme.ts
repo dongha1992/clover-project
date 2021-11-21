@@ -27,6 +27,11 @@ export const homePadding = css`
   padding: 0 24px;
 `;
 
+export const verticalCenter = css`
+  display: flex;
+  align-self: center;
+`;
+
 export const HomeContainer = styled.div`
   ${homePadding}
 `;

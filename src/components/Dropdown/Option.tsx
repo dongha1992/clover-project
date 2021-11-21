@@ -1,6 +1,4 @@
 import React, { useState, ReactNode } from 'react';
-import { setDropdownOption } from '../../store/dropdown';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { TextB3R, TextH6B } from '@components/Text';
 
@@ -12,10 +10,6 @@ type TProps = {
 };
 
 function Option({ option, selectMenuHandler }: TProps) {
-  console.log(option);
-  // {"main": { 메뉴 객체 }}
-  const dispatch = useDispatch();
-
   return (
     <OptionList onClick={() => selectMenuHandler(option)}>
       <TextB3R>{option.text}</TextB3R>

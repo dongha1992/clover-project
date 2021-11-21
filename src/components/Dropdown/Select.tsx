@@ -11,30 +11,22 @@ type TProps = {
   defaultValue?: string;
   placeholder?: string;
   type: string;
-  selectedMenus: any;
 };
 
-function Select({
-  children,
-  defaultValue,
-  placeholder,
-  type,
-  selectedMenus,
-}: TProps) {
+function Select({ children, defaultValue, placeholder, type }: TProps) {
   const selectContainerRef = useRef<HTMLDivElement>(null);
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
 
   const selectPlaceholder = placeholder || '디폴트 플레이스 홀더입니다.';
 
   const showDropdownHandler = (): void => {
-    console.log(isShowDropdown);
     setIsShowDropdown(!isShowDropdown);
   };
 
   const clickOutsideHandler = (): void => {
     setIsShowDropdown(false);
   };
-  console.log(selectedMenus);
+
   useClickOutside(selectContainerRef, clickOutsideHandler);
 
   return (
@@ -44,9 +36,7 @@ function Select({
         onClick={showDropdownHandler}
         color={theme.greyScale45}
       >
-        {Object.keys(selectedMenus).length && selectedMenus[type]?.text
-          ? selectedMenus[type].text
-          : selectPlaceholder}
+        {selectPlaceholder}
       </TextB2R>
       <OptionContainer
         isShowDropdown={isShowDropdown}
