@@ -3,3 +3,6 @@ export const SEARCH_RESULT = [
   { main: '서울 성동구 성수동1가', sub: '' },
   { main: '전북 임실군 성수면', sub: '관련주소: 도인리, 봉강리, 상봉리' },
 ];
+
+export const BASE_URL =
+  'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/ab2138b957d98b92ba700d7b20a50ead742b1d36';

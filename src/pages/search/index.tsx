@@ -11,9 +11,9 @@ import axios from 'axios';
 import debounce from 'lodash-es/debounce';
 import SearchResult from '@components/SearchResult';
 import { homePadding } from '@styles/theme';
-import { useLocalStorage } from '@hooks/useLocalStorage';
 import RecentSearch from '@components/RecentSearch';
 import Link from 'next/link';
+import { BASE_URL } from '@constants/mock';
 
 function search() {
   /* TODO: useLocalStorage 정리해야함 */
@@ -39,9 +39,7 @@ function search() {
   }, [recentKeywords]);
 
   const getBanners = async () => {
-    const { data } = await axios.get(
-      'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/4de8b9d3f331d6b4b185c0e548c5c0034f34bb52/items.json'
-    );
+    const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
   };
 
@@ -134,9 +132,9 @@ function search() {
                   })}
                 </CatetoryList>
               </CategoryWrapper>
-              <BorderLine />
+              <BorderLine padding="0 24px" />
               <MdRecommendationWrapper>
-                <TextH3B padding="24px 0">MD 추천</TextH3B>
+                <TextH3B padding="24px">MD 추천</TextH3B>
                 <ItemListCol>
                   {itemList.map((item, index) => {
                     return <Item item={item} key={index} />;
@@ -166,7 +164,8 @@ const Wrapper = styled.div`
 
 const CategoryWrapper = styled.div`
   margin-top: 24px;
-  ${homePadding}
+  margin-bottom: 16px;
+  ${homePadding};
 `;
 
 const CatetoryList = styled.div`

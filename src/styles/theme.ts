@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const theme = {
   brandColor: '#35AD73',
+  brandColor5: '#EDF3F0',
   fontFamily: "'Noto Sans KR', sans-serif;",
   white: '#FFFFFF',
   greyScale3: '#F8F8F8',
@@ -36,10 +37,25 @@ export const HomeContainer = styled.div`
   ${homePadding}
 `;
 
+export const showMoreText = css`
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export const ItemListCol = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 16px;
+`;
+
+export const ScrollHorizonList = styled.div`
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  width: auto;
+  display: flex;
 `;
 
 export const textH1 = css`

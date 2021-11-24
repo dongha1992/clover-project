@@ -8,6 +8,7 @@ import axios from 'axios';
 import Item from '@components/Item';
 import { useDispatch } from 'react-redux';
 import { setMenu } from '@store/menu';
+import { BASE_URL } from '@constants/mock';
 
 function Home() {
   const [itemList, setItemList] = useState([]);
@@ -18,9 +19,7 @@ function Home() {
   }, []);
 
   const getBanners = async () => {
-    const { data } = await axios.get(
-      'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/db01ea2292c02c6526d479c7cc294f62b25904ee/items.json'
-    );
+    const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
     dispatch(setMenu(data));
   };

@@ -13,6 +13,8 @@ type TProps = {
   type: string;
 };
 
+/* TODO: 드랍다운 absolute 말고 height 차지해야함 */
+
 function Select({ children, defaultValue, placeholder, type }: TProps) {
   const selectContainerRef = useRef<HTMLDivElement>(null);
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
@@ -52,7 +54,7 @@ const SelectContainer = styled.div`
   display: inline-block;
   position: relative;
   width: 100%;
-  height: 100%;
+  height: auto;
   background-color: ${theme.white};
   border-radius: 5px;
   border: 1px solid #dedede;
