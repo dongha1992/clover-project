@@ -18,6 +18,7 @@ export const Tag = ({
   color = theme.greyScale45,
   children,
 }: ITagProps) => {
+  console.log(children);
   return (
     <Container
       padding={padding}

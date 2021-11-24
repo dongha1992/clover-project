@@ -6,6 +6,7 @@ import { Obj } from '@model/index';
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
+const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
@@ -35,8 +36,10 @@ function Header() {
         case currentPath.includes('search'): {
           return <DefaultHeader title={title} />;
         }
-        case currentPath.includes('category'): {
+        case currentPath.includes('category'):
           return <CategorySubHeader title={title} />;
+        case currentPath.includes('menu'): {
+          return <MenuDetailHeader />;
         }
         default: {
           return <HomeHeader />;

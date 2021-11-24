@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
 import { cartForm } from '@store/cart';
+import { toastSelector } from '@store/toast';
 import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
 import Header from '@components/Header';
@@ -12,6 +13,9 @@ import Bottom from '@components/Bottom';
 // import BottomLayer from '@components/BottomSheet/BottomLayer';
 
 const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
+  ssr: false,
+});
+const Toast = dynamic(() => import('@components/Toast'), {
   ssr: false,
 });
 
@@ -31,7 +35,7 @@ export const Wrapper: React.FC = ({ children }) => {
   const alert = useSelector(alertForm);
   const bottomSheet = useSelector(bottomSheetForm);
   const cart = useSelector(cartForm);
-
+  const toast = useSelector(toastSelector);
   return (
     <>
       <Container>
@@ -48,6 +52,7 @@ export const Wrapper: React.FC = ({ children }) => {
               selectedMenu={alert.selectedMenu}
             />
           )}
+          {toast && <Toast />}
           <Left>
             <div className="left-contents">광고</div>
           </Left>

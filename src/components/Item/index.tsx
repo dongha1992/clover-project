@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { setCartModalObj } from '@store/cart';
 import CartModalGroup from '@components/CartModal/CartModalGroup';
+import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
@@ -15,6 +16,7 @@ type TProps = {
 
 function Item({ item }: TProps) {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const goToCartModal = () => {
     /* TODO: thunk로? */
@@ -26,8 +28,12 @@ function Item({ item }: TProps) {
       })
     );
   };
+
+  const goToDetail = (id: number) => {
+    router.push(`/menu/${id}`);
+  };
   return (
-    <Container>
+    <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>
         <ItemImage src={item.url} alt="상품이미지" />
         <CartBtn onClick={goToCartModal}>
@@ -52,7 +58,7 @@ function Item({ item }: TProps) {
       </LikeAndReview>
       <TagWrapper>
         {item.tags.map((tag: string, index: number) => (
-          <Tag children={tag} key={index} />
+          <Tag key={index}>{tag}</Tag>
         ))}
       </TagWrapper>
     </Container>

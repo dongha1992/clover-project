@@ -5,13 +5,15 @@ import Content from '@components/BottomSheet/Content';
 import Button from '@components/Button';
 import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { useToast } from '../../hooks/useToast';
+import router from 'next/router';
 /* TODO: height 조절해야함 */
 
 function BottomSheet() {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
   const { content, buttonTitle }: any = useSelector(bottomSheetForm);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
@@ -24,10 +26,15 @@ function BottomSheet() {
 
   const clickButtonHandler = () => {
     const isCart = buttonTitle.includes('장바구니');
-    console.log(isCart);
     dispatch(initBottomSheet());
+    if (isCart) {
+      router.push('/').then((res) => {
+        setTimeout(() => {
+          showToast({ message: '장바구니에 담겼습니다.' });
+        }, 1000);
+      });
+    }
     /* TODO: 장바구니 add 로직 */
-    isCart && dispatch();
   };
 
   return (

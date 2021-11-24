@@ -4,6 +4,7 @@ import menu from './menu';
 import bottomSheet from './bottomSheet';
 import cart from './cart';
 import dropdown from './dropdown';
+import toast from './toast';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     menu,
     bottomSheet,
     dropdown,
+    toast,
   },
   middleware: [
     ...getDefaultMiddleware({
