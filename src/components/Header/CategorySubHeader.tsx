@@ -3,10 +3,11 @@ import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Text';
 import { useRouter } from 'next/router';
-
+import { CATEGORY } from '@constants/search';
+import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import dynamic from 'next/dynamic';
 
-const CategroyTab = dynamic(() => import('../CategoryTab'));
+const TabList = dynamic(() => import('../TabList'));
 
 type TProps = {
   title?: string;
@@ -26,9 +27,9 @@ function CategorySubHeader({ title }: TProps) {
   };
 
   const clickTabHandler = useCallback(
-    (category: any) => {
-      setSelectedTab(category.title);
-      router.push(`${category.link}`);
+    (tabItem: any) => {
+      setSelectedTab(tabItem.text);
+      router.push(`${tabItem.link}`);
     },
     [router]
   );
@@ -41,12 +42,20 @@ function CategorySubHeader({ title }: TProps) {
         <div className="arrow" onClick={goBack}>
           <SVGIcon name="arrowLeft" />
         </div>
-        <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        <div className="cart" onClick={goToCart}>
-          <SVGIcon name="cart" />
-        </div>
+        {title ? (
+          <>
+            <TextH4B padding="2px 0 0 0">{title}</TextH4B>
+            <div className="cart" onClick={goToCart}>
+              <SVGIcon name="cart" />
+            </div>
+          </>
+        ) : null}
       </Wrapper>
-      <CategroyTab onClick={clickTabHandler} selectedTab={selectedTab} />
+      <TabList
+        onClick={clickTabHandler}
+        selectedTab={selectedTab}
+        tabList={title ? CATEGORY : MENU_DETAIL_INFORMATION}
+      />
     </Container>
   );
 }

@@ -11,7 +11,7 @@ export interface ITagProps {
   children: React.ReactNode;
 }
 
-export const Tag = ({
+const Tag = ({
   padding,
   margin,
   backgroundColor = theme.greyScale6,
@@ -40,3 +40,5 @@ const Container = styled(TextH7B)<ITagProps>`
     props.backgroundColor && props.backgroundColor};
   color: ${(props) => props.color && props.color};
 `;
+
+export default React.memo(Tag);

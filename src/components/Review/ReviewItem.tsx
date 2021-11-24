@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import { Tag } from '@components/Tag';
+import Tag from '@components/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Text';
 

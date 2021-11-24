@@ -29,7 +29,7 @@ function location() {
   };
 
   const goToMapScreen = (): void => {
-    router.push('/location/address-detaill');
+    router.push('/location/address-detail');
   };
 
   return (

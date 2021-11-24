@@ -1,19 +1,18 @@
 import React from 'react';
-import { CATEGORY } from '@constants/search';
 import styled from 'styled-components';
-import Tab from '@components/CategoryTab/Tab';
+import Tab from '@components/TabList/Tab';
 import { homePadding, theme } from '@styles/theme';
 
-function CategroyTab({ onClick, selectedTab }: any) {
+function TabList({ onClick, selectedTab, tabList }: any) {
   return (
     <Container>
       <TabWrapper>
-        {CATEGORY.map((category, index) => (
+        {tabList.map((tabItem: any, index: number) => (
           <Tab
-            category={category}
+            tabItem={tabItem}
             key={index}
             onClick={onClick}
-            selectedTab={selectedTab === category.link ? true : false}
+            selectedTab={selectedTab === tabItem.link ? true : false}
           />
         ))}
       </TabWrapper>
@@ -25,12 +24,13 @@ const Container = styled.div`
   display: flex;
   height: 48px;
   justify-content: space-between;
-  width: auto;
+  width: 100%;
   ${homePadding}
   background-color: ${theme.white};
 `;
 
 const TabWrapper = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
   overflow-x: scroll;
@@ -42,4 +42,4 @@ const TabWrapper = styled.div`
   }
 `;
 
-export default React.memo(CategroyTab);
+export default React.memo(TabList);

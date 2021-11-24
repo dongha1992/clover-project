@@ -11,6 +11,7 @@ type TProps = {
 /* TODO: Header props으로 svg만 추가 */
 
 function MenuDetailHeader({ title }: TProps) {
+  console.log(title);
   const router = useRouter();
 
   const goBack = (): void => {
