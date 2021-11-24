@@ -9,7 +9,7 @@ import TextInput from '@components/TextInput';
 
 /*TODO: 버튼 위치 */
 
-function addressDetaill() {
+function addressDetail() {
   return (
     <Container>
       <Map />
@@ -47,4 +47,4 @@ const ButtonWrapper = styled.div`
   width: 100%;
 `;
 
-export default addressDetaill;
+export default addressDetail;

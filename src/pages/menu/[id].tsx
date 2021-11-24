@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import router from 'next/router';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -15,13 +15,14 @@ import {
 } from '@components/Text';
 import Image from 'next/image';
 import Loading from '@components/Loading';
-import { Tag } from '@components/Tag';
+import Tag from '@components/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import BorderLine from '@components/BorderLine';
 import ReviewList from '@components/Review/ReviewList';
 import { BASE_URL } from '@constants/mock';
-import { MENU_DETAIL_INFORMATION } from '@constants/menu';
+import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
+import StickyTab from '@components/TabList/StickyTab';
 /* TODO: 영양 정보 리팩토링 */
 
 interface IMenuItem {
@@ -41,10 +42,33 @@ interface IMenuItem {
 
 function menuDetail({ id }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
+  const [isSticky, setIsStikcy] = useState<boolean>(false);
+  const tabRef = useRef<HTMLDivElement>(null);
+
+  const HEADER_HEIGHT = 56;
 
   useEffect(() => {
     getMenuDetail();
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', onScrollHandler);
+    return () => {
+      window.removeEventListener('scroll', onScrollHandler);
+    };
+  }, [tabRef?.current?.offsetTop]);
+
+  const onScrollHandler = (e: any) => {
+    const offset = tabRef?.current?.offsetTop;
+    const scrollTop = e?.srcElement.scrollingElement.scrollTop;
+    if (offset) {
+      if (scrollTop + HEADER_HEIGHT > offset + 10) {
+        setIsStikcy(true);
+      } else {
+        setIsStikcy(false);
+      }
+    }
+  };
 
   const getMenuDetail = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -152,24 +176,36 @@ function menuDetail({ id }: any) {
         </ReviewContainer>
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
-            <>
+            <div key={index}>
               <DetailInfoWrapper>
                 <TextH4B>{info.text}</TextH4B>
                 <Link href={`${info.link}`} passHref>
-                  <TextH6B textDecoration="underLine" color={theme.greyScale65}>
-                    자세히
-                  </TextH6B>
+                  <a>
+                    <TextH6B
+                      textDecoration="underLine"
+                      color={theme.greyScale65}
+                    >
+                      자세히
+                    </TextH6B>
+                  </a>
                 </Link>
               </DetailInfoWrapper>
               {index !== MENU_DETAIL_INFORMATION.length - 1 ? (
                 <BorderLine height={1} margin="16px 0" />
               ) : null}
-            </>
+            </div>
           ))}
         </DetailInfoContainer>
       </Top>
-      <BorderLine height={8} />
-      <Bottom></Bottom>
+      <BorderLine height={8} ref={tabRef} />
+      <Bottom>
+        <StickyTab
+          tabList={MENU_REVIEW_AND_FAQ}
+          numebrOfReview={menuItem.review}
+          isSticky={isSticky}
+        />
+        <InfoContent></InfoContent>
+      </Bottom>
     </Container>
   );
 }
@@ -260,7 +296,10 @@ const DetailInfoWrapper = styled.div`
   align-items: center;
 `;
 
-const Bottom = styled.div``;
+const Bottom = styled.div`
+  height: 10000px;
+`;
+const InfoContent = styled.div``;
 
 export async function getServerSideProps(context: any) {
   const { id } = context.query;

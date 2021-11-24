@@ -5,10 +5,16 @@ type TProps = {
   height?: number;
   margin?: string;
   padding?: string;
+  ref?: React.ForwardedRef<HTMLDivElement>;
 };
 
-function BorderLine({ height, margin, padding }: TProps) {
-  return <Container height={height} margin={margin} padding={padding} />;
+function BorderLine(
+  { height, margin, padding }: TProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <Container height={height} margin={margin} padding={padding} ref={ref} />
+  );
 }
 
 const Container = styled.div<{
@@ -24,4 +30,4 @@ const Container = styled.div<{
   padding: ${({ padding }) => padding && padding};
 `;
 
-export default BorderLine;
+export default React.forwardRef(BorderLine);

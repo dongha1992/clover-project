@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 
 type TSvg = {
   [key: string]: () => React.SVGProps<SVGSVGElement> | any;

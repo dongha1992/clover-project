@@ -12,3 +12,18 @@ export const MENU_DETAIL_INFORMATION = [
     link: '/menu/detail/delivery',
   },
 ];
+
+export const MENU_REVIEW_AND_FAQ = [
+  {
+    text: '상세 정보',
+    link: '/menu/[id]',
+  },
+  {
+    text: '후기',
+    link: '/menu/detail/review',
+  },
+  {
+    text: 'FAQ',
+    link: '/menu/detail/faq',
+  },
+];

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextB3R, TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import { Tag } from '@components/Tag';
+import Tag from '@components/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { setCartModalObj } from '@store/cart';

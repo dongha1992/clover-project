@@ -7,7 +7,6 @@ const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
-
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 function Header() {
@@ -23,24 +22,33 @@ function Header() {
       const headerTitleMap: Obj = {
         '/search': '검색',
         '/location': '내 위치 설정하기',
-        '/locationaddress-detaill': '내 위치 설정하기',
+        '/location/address-detail': '내 위치 설정하기',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
       };
 
       const title = headerTitleMap[currentPath];
+      console.log(currentPath);
 
       switch (true) {
-        case currentPath.includes('location'):
-        case currentPath.includes('locationaddress-detaill'):
-        case currentPath.includes('search'): {
+        case ['/location', '/location/address-detail', '/search'].includes(
+          currentPath
+        ): {
           return <DefaultHeader title={title} />;
         }
-        case currentPath.includes('category'):
+        case [
+          '/category',
+          '/category/salad',
+          '/menu/detail/product',
+          '/menu/detail/nutrition',
+          '/menu/detail/delivery',
+        ].includes(currentPath):
           return <CategorySubHeader title={title} />;
-        case currentPath.includes('menu'): {
+
+        case ['/menu/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
+
         default: {
           return <HomeHeader />;
         }
