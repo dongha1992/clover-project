@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from '../../hooks/useToast';
 import router from 'next/router';
 /* TODO: height 조절해야함 */
+/* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
 function BottomSheet() {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
@@ -17,10 +18,7 @@ function BottomSheet() {
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
-      sheetRef.current.style.setProperty(
-        'transform',
-        `translateY(${size.minY - size.maxY}px)`
-      );
+      sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
     }
   }, []);
 
@@ -43,12 +41,17 @@ function BottomSheet() {
         <BottomSheetContent ref={contentRef}>
           <Content content={content} />
         </BottomSheetContent>
+        <ButtonContainer onClick={() => clickButtonHandler()}>
+          <Button
+            height="48px"
+            width="100%"
+            margin="0 8px 0 0"
+            borderRadius="0"
+          >
+            {buttonTitle}
+          </Button>
+        </ButtonContainer>
       </Container>
-      <ButtonContainer onClick={() => clickButtonHandler()}>
-        <Button height="48px" width="100%" margin="0 8px 0 0" borderRadius="0">
-          {buttonTitle}
-        </Button>
-      </ButtonContainer>
     </Background>
   );
 }
@@ -88,12 +91,13 @@ const Container = styled.div<{ height: number | null }>`
   max-width: 504px;
   position: fixed;
   z-index: 10000;
-  top: ${({ height }) => height}px;
+
   left: calc(50% + 28px);
   right: 0;
-
+  bottom: -98px;
   background-color: #fff;
-  height: ${({ height }) => height}px;
+  /* top: ${({ height }) => height}px; */
+  /* height: 100%; */
   transition: transform 150ms ease-out;
 
   ${({ theme }) => theme.desktop`
@@ -113,6 +117,7 @@ const BottomSheetContent = styled.div`
   height: 100%;
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
+  margin-bottom: 50px;
 `;
 
 const ButtonContainer = styled.div`

@@ -10,7 +10,6 @@ function StickyTab({
   numebrOfReview,
   isSticky,
 }: any) {
-  console.log(isSticky);
   return (
     <Container isSticky={isSticky}>
       <TabWrapper>
