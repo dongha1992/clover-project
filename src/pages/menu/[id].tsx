@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import router from 'next/router';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -23,6 +23,9 @@ import { BASE_URL } from '@constants/mock';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
 import StickyTab from '@components/TabList/StickyTab';
+import { useDispatch } from 'react-redux';
+import { setBottomSheet } from '@store/bottomSheet';
+import CouponModal from '@components/CouponModal';
 /* TODO: 영양 정보 리팩토링 */
 
 interface IMenuItem {
@@ -43,9 +46,12 @@ interface IMenuItem {
 function menuDetail({ id }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
+  const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
 
   const HEADER_HEIGHT = 56;
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getMenuDetail();
@@ -62,7 +68,7 @@ function menuDetail({ id }: any) {
     const offset = tabRef?.current?.offsetTop;
     const scrollTop = e?.srcElement.scrollingElement.scrollTop;
     if (offset) {
-      if (scrollTop + HEADER_HEIGHT > offset + 10) {
+      if (scrollTop + HEADER_HEIGHT > offset + 7) {
         setIsStikcy(true);
       } else {
         setIsStikcy(false);
@@ -78,7 +84,21 @@ function menuDetail({ id }: any) {
     setMenuItem(selectedMenuItem);
   };
 
-  const couponDownloadHandler = () => {};
+  const couponDownloadHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: <CouponModal />,
+        buttonTitle: '확인',
+      })
+    );
+  };
+
+  const selectTabHandler = useCallback(
+    ({ link }: any) => {
+      setSelectedTab(link);
+    },
+    [selectedTab]
+  );
 
   if (!Object.keys(menuItem).length) {
     return <Loading />;
@@ -203,6 +223,8 @@ function menuDetail({ id }: any) {
           tabList={MENU_REVIEW_AND_FAQ}
           numebrOfReview={menuItem.review}
           isSticky={isSticky}
+          selectedTab={selectedTab}
+          onClick={selectTabHandler}
         />
         <InfoContent></InfoContent>
       </Bottom>

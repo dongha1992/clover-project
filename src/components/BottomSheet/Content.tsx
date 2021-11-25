@@ -12,6 +12,5 @@ function Content({ content }: TProps) {
 
 const ContentContainer = styled.div`
   width: 100%;
-  height: 100%;
 `;
 export default React.memo(Content);

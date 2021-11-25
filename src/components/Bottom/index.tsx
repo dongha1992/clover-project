@@ -5,7 +5,7 @@ import { Obj } from '@model/index';
 import styled from 'styled-components';
 
 const HomeBottom = dynamic(() => import('./HomeBottom'));
-
+const DetailBottom = dynamic(() => import('./DetailBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 function Bottom() {
@@ -26,12 +26,15 @@ function Bottom() {
         '/category/salad': '샐러드',
       };
 
-      switch (currentPath) {
-        case '/': {
+      switch (true) {
+        case ['/'].includes(currentPath): {
           return <HomeBottom />;
         }
+        case ['/menu/[id]'].includes(currentPath): {
+          return <DetailBottom />;
+        }
         default: {
-          return;
+          return <HomeBottom />;
         }
       }
     },
