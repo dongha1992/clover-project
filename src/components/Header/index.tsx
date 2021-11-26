@@ -28,7 +28,6 @@ function Header() {
       };
 
       const title = headerTitleMap[currentPath];
-      console.log(currentPath);
 
       switch (true) {
         case ['/location', '/location/address-detail', '/search'].includes(

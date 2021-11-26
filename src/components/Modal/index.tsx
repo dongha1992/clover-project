@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { breakpoints } from '@utils/getMediaQuery';
 
 type TProps = {
   children: React.ReactNode;
@@ -49,18 +50,17 @@ const Dimmer = styled.div`
   align-items: center;
   position: fixed;
   top: 0px;
-  left: calc(50% + 28px);
+  left: calc(50%);
   right: 0px;
   bottom: 0px;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   height: 100%;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.3);
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0;
   `};
 
   ${({ theme }) => theme.mobile`
@@ -75,7 +75,7 @@ const ModalBox = styled.div<{
   padding: string | undefined;
 }>`
   position: relative;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   width: 80%;
   ${({ height }) => height && `height: ${height}`}
   padding: ${({ padding }) => (padding ? padding : `10px`)};

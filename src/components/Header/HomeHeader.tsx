@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { textH5 } from '@styles/theme';
 import Link from 'next/link';
+import { breakpoints } from '@utils/getMediaQuery';
 
 function HomeHeader() {
   return (
@@ -33,19 +34,19 @@ function HomeHeader() {
 
 const Container = styled.div`
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   position: fixed;
   top: 0;
   right: 0;
   z-index: 10;
   height: 56px;
-  left: calc(50% + 27px);
+  left: calc(50%);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0px;
+
   `};
 
   ${({ theme }) => theme.mobile`

@@ -4,6 +4,7 @@ import { TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Text';
 import Button from '@components/Button';
 import SVGIcon from '@utils/SVGIcon';
 import { SITE_INFO_TITLE } from '@constants/footer';
+import { breakpoints } from '@utils/getMediaQuery';
 
 function Footer() {
   return (
@@ -51,7 +52,7 @@ function Footer() {
 
 const Container = styled.footer`
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   padding: 33px 24px;
   display: flex;
   flex-direction: column;

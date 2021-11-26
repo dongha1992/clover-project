@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { breakpoints } from '@utils/getMediaQuery';
 
 type TProps = {
   height?: number;
@@ -23,7 +24,7 @@ const Container = styled.div<{
   padding?: string;
 }>`
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   background-color: ${({ theme }) => theme.greyScale3};
   height: ${({ height }) => (height ? height : 8)}px;
   margin: ${({ margin }) => margin && margin};

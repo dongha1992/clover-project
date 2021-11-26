@@ -7,6 +7,7 @@ import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from '../../hooks/useToast';
 import router from 'next/router';
+import { breakpoints } from '@utils/getMediaQuery';
 /* TODO: height 조절해야함 */
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
@@ -62,18 +63,17 @@ const Background = styled.div`
   align-items: center;
   position: fixed;
   top: 0px;
-  left: calc(50% + 28px);
+  left: calc(50%);
   right: 0px;
   bottom: 0px;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   height: 100%;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.3);
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0;
   `};
 
   ${({ theme }) => theme.mobile`
@@ -88,11 +88,11 @@ const Container = styled.div<{ height: number | null }>`
   align-items: center;
 
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   position: fixed;
   z-index: 10000;
 
-  left: calc(50% + 28px);
+  left: calc(50%);
   right: 0;
   bottom: -98px;
   background-color: #fff;
@@ -102,8 +102,7 @@ const Container = styled.div<{ height: number | null }>`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0;
   `};
 
   ${({ theme }) => theme.mobile`

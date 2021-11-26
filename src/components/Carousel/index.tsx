@@ -1,6 +1,7 @@
 import React from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
+import { breakpoints } from '@utils/getMediaQuery';
 
 const BANNERS = [
   './images/img1.png',
@@ -41,8 +42,8 @@ function Carousel() {
 }
 
 const Container = styled.div`
-  max-width: 504px;
-  min-width: 360px;
+  max-width: ${breakpoints.mobile}px;
+  min-width: ${breakpoints.sm}px;
   .slick-slider {
     .slick-list {
       padding: 0 !important;

@@ -4,6 +4,7 @@ import { toastSelector } from '@store/toast';
 import { useSelector } from 'react-redux';
 import { TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
+import { breakpoints } from '@utils/getMediaQuery';
 
 /* TODO: width 조절 */
 const Toast = (): JSX.Element | null => {
@@ -28,7 +29,7 @@ const Toast = (): JSX.Element | null => {
   }, []);
 
   useEffect(() => {
-    showToast(toastConfig.duration ?? 100000);
+    showToast(100000);
   }, [toastConfig]);
 
   if (!isToastOpen) {
@@ -36,7 +37,7 @@ const Toast = (): JSX.Element | null => {
   }
   return (
     <ToastContainer
-      duration={toastConfig.duration ?? 100000}
+      duration={100000}
       // dangerouslySetInnerHTML={{ __html: toastConfig.message }}
     >
       <TextContainer>
@@ -54,23 +55,25 @@ const ToastContainer = styled.div<{ duration: number }>`
   top: 50%;
   right: 0px;
   bottom: 0px;
-  left: calc(50% + 28px);
-  width: 80%;
+  left: calc(54%);
+  width: calc((${breakpoints.desktop}px / 2) * 0.8);
   height: 48px;
-  max-width: 504px;
+  /* max-width: ${breakpoints.mobile}px; */
   text-align: center;
   padding: 13px 16px;
   background: rgba(36, 36, 36, 0.9);
   border-radius: 8px;
+  /* margin: 0 auto; */
   z-index: 10;
+
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0px;
   `};
 
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
+    width:80%;
     left: 0px;
   `};
 

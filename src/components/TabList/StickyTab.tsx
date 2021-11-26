@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import Tab from '@components/TabList/Tab';
 import { homePadding, theme } from '@styles/theme';
+import { breakpoints } from '@utils/getMediaQuery';
 
 function StickyTab({
   tabList,
@@ -36,7 +37,7 @@ const Container = styled.div<{ isSticky: boolean }>`
         position: fixed;
         top: 56px;
         width: 100%;
-        max-width: 504px;
+        max-width: ${breakpoints.mobile}px;
       `;
     }
   }}

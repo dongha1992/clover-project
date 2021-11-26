@@ -18,6 +18,7 @@ export interface IButtonProps {
   color?: string;
   backgroundColor: string;
   pointer?: boolean;
+  border?: boolean;
 }
 const defaultProps = {
   filled: true,
@@ -48,6 +49,7 @@ export const Container = styled(TextH5B)<IButtonProps>`
   background-color: ${(props) =>
     props.backgroundColor && props.backgroundColor};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
+  border: ${(props) => (props.border ? '1px solid black' : '')};
   div {
     cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
   }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { CATEGORY } from '@constants/search';
 import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import dynamic from 'next/dynamic';
+import { breakpoints } from '@utils/getMediaQuery';
 
 const TabList = dynamic(() => import('../TabList'));
 
@@ -63,19 +64,18 @@ function CategorySubHeader({ title }: TProps) {
 const Container = styled.div`
   position: relative;
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   position: fixed;
   top: 0;
   right: 0;
   z-index: 10;
   height: auto;
-  left: calc(50% + 27px);
+  left: calc(50%);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0;
   `};
 
   ${({ theme }) => theme.mobile`
