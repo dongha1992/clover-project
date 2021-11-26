@@ -26,6 +26,17 @@ import StickyTab from '@components/TabList/StickyTab';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import CouponModal from '@components/CouponModal';
+import dynamic from 'next/dynamic';
+import DetailBottomInfo from '@components/Detail/DetailBottomInfo';
+
+const DetailBottomFAQ = dynamic(
+  () => import('../../components/Detail/DetailBottomFAQ')
+);
+
+const DetailBottomReview = dynamic(
+  () => import('../../components/Detail/DetailBottomReview')
+);
+
 /* TODO: 영양 정보 리팩토링 */
 
 interface IMenuItem {
@@ -99,6 +110,18 @@ function menuDetail({ id }: any) {
     },
     [selectedTab]
   );
+
+  const renderBottomContent = () => {
+    const { reviews } = menuItem;
+    switch (selectedTab) {
+      case '/menu/detail/review':
+        return <DetailBottomReview reviews={reviews} />;
+      case '/menu/detail/faq':
+        return <DetailBottomFAQ />;
+      default:
+        return <DetailBottomInfo />;
+    }
+  };
 
   if (!Object.keys(menuItem).length) {
     return <Loading />;
@@ -226,7 +249,7 @@ function menuDetail({ id }: any) {
           selectedTab={selectedTab}
           onClick={selectTabHandler}
         />
-        <InfoContent></InfoContent>
+        <BottomContent>{renderBottomContent()}</BottomContent>
       </Bottom>
     </Container>
   );
@@ -318,10 +341,8 @@ const DetailInfoWrapper = styled.div`
   align-items: center;
 `;
 
-const Bottom = styled.div`
-  height: 10000px;
-`;
-const InfoContent = styled.div``;
+const Bottom = styled.div``;
+const BottomContent = styled.div``;
 
 export async function getServerSideProps(context: any) {
   const { id } = context.query;

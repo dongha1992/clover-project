@@ -22,7 +22,7 @@ function CouponModal() {
         </InfoWrapper>
         <CouponListWrapper>
           {COUPON_LIST.map((coupon, index) => (
-            <CouponItem coupon={coupon} ket={index} />
+            <CouponItem coupon={coupon} key={index} />
           ))}
         </CouponListWrapper>
       </Wrapper>

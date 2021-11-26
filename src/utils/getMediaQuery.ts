@@ -2,8 +2,8 @@ import { css, FlattenSimpleInterpolation } from 'styled-components';
 
 export const breakpoints: { [index: string]: number } = {
   full: 1440,
-  desktop: 1023,
-  mobile: 503,
+  desktop: 1024,
+  mobile: 512,
   sm: 360,
 };
 

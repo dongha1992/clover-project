@@ -2,6 +2,7 @@ import SVGIcon from '@utils/SVGIcon';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextH7B } from '@components/Text';
+import { breakpoints } from '@utils/getMediaQuery';
 
 function Bottom() {
   return (
@@ -22,19 +23,18 @@ function Bottom() {
 
 const Container = styled.div`
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   position: fixed;
   bottom: 0;
   right: 0;
   z-index: 10;
   height: 56px;
-  left: calc(50% + 27px);
+  left: calc(50%);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0;
   `};
 
   ${({ theme }) => theme.mobile`

@@ -9,6 +9,7 @@ import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
 import Header from '@components/Header';
 import Bottom from '@components/Bottom';
+import { breakpoints } from '@utils/getMediaQuery';
 
 // import BottomLayer from '@components/BottomSheet/BottomLayer';
 
@@ -52,12 +53,12 @@ export const Wrapper: React.FC = ({ children }) => {
               selectedMenu={alert.selectedMenu}
             />
           )}
-          {toast && <Toast />}
           <Left>
             <div className="left-contents">광고</div>
           </Left>
           <Right>
             <Header />
+            {toast && <Toast />}
             <Main>{children}</Main>
             <Bottom />
           </Right>
@@ -78,10 +79,11 @@ const Container = styled.div`
 `;
 
 const Center = styled.div`
+  position: relative;
   background-color: white;
   display: flex;
   width: 100%;
-  max-width: 1024px;
+  max-width: ${breakpoints.desktop}px;
   height: 100%;
   min-height: calc(var(--vh, 1vh) * 100);
   --ms-overflow-style: none;
@@ -93,22 +95,21 @@ const Center = styled.div`
 
 const Right = styled.div`
   position: relative;
-  width: 100%;
-  max-width: 504px;
-  left: 50%;
+  width: 50%;
+  max-width: ${breakpoints.mobile}px;
   background-color: white;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
     width: 100%;
-    left:0px;
-    width:100%;
-    max-width: 504px;
+    left: 0px;
+    width: 100%;
+    max-width: ${breakpoints.mobile}px;
   `};
 `;
 
 const Left = styled.div`
-  left: 50%;
+  width: 50%;
   ${({ theme }) => theme.desktop`  
   display: none;
   `}

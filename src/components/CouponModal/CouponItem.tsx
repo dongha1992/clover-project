@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { TextH3B, TextB3R, TextB2R } from '@components/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
+import { breakpoints } from '@utils/getMediaQuery';
 
 function CouponItem({ coupon }: any) {
   const isRateDiscount = coupon.type === 'rate';
@@ -44,7 +45,7 @@ const Container = styled.div<{ isDownload: boolean }>`
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   width: 100%;
 
   ${({ isDownload }) => {

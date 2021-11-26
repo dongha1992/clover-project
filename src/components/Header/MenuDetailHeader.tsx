@@ -3,6 +3,7 @@ import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Text';
 import { useRouter } from 'next/router';
+import { breakpoints } from '@utils/getMediaQuery';
 
 type TProps = {
   title?: string;
@@ -44,19 +45,18 @@ function MenuDetailHeader({ title }: TProps) {
 const Container = styled.div`
   position: relative;
   width: 100%;
-  max-width: 504px;
+  max-width: ${breakpoints.mobile}px;
   position: fixed;
   top: 0;
   right: 0;
   z-index: 10;
   height: auto;
-  left: calc(50% + 27px);
+  left: calc(50%);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 50%;
-    margin-left: -252px;
+    left: 0;
   `};
 
   ${({ theme }) => theme.mobile`
