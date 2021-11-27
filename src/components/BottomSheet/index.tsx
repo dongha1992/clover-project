@@ -4,8 +4,9 @@ import { useBottomSheet } from '@hooks/useBottomSheet';
 import Content from '@components/BottomSheet/Content';
 import Button from '@components/Button';
 import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
+import { SET_CART_LISTS, cartForm } from '@store/cart';
 import { useDispatch, useSelector } from 'react-redux';
-import { useToast } from '../../hooks/useToast';
+import { useToast } from '@hooks/useToast';
 import router from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 /* TODO: height 조절해야함 */
@@ -15,6 +16,7 @@ function BottomSheet() {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
   const { content, buttonTitle }: any = useSelector(bottomSheetForm);
+  const { tempSelectedMenus } = useSelector(cartForm);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -23,17 +25,20 @@ function BottomSheet() {
     }
   }, []);
 
+  useEffect(() => {}, []);
+
   const clickButtonHandler = () => {
     const isCart = buttonTitle.includes('장바구니');
     dispatch(initBottomSheet());
+
+    /* redux 안에서 처리 하도록 로직 변경해야 함 */
+
     if (isCart) {
-      router.push('/').then((res) => {
-        setTimeout(() => {
-          showToast({ message: '장바구니에 담겼습니다.' });
-        }, 1000);
-      });
+      dispatch(SET_CART_LISTS(tempSelectedMenus));
+      setTimeout(() => {
+        showToast({ message: '장바구니에 담겼습니다.' });
+      }, 500);
     }
-    /* TODO: 장바구니 add 로직 */
   };
 
   return (

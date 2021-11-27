@@ -4,17 +4,19 @@ import { TextH5B, TextB2R } from '@components/Text';
 import { Select, Option } from '@components/Dropdown';
 import { theme } from '@styles/theme';
 import BorderLine from '@components/BorderLine';
-import { useSelector } from 'react-redux';
-import { cartForm } from '@store/cart';
+import { useSelector, useDispatch } from 'react-redux';
+import { cartForm, SET_TEMP_SELECTED_MENUS } from '@store/cart';
 import CartModalItem from './CartModalItem';
 
 function CartModalGroup() {
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
 
+  const dispatch = useDispatch();
   const { cartModalObj } = useSelector(cartForm);
 
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);
+    dispatch(SET_TEMP_SELECTED_MENUS(menu));
   };
 
   return (

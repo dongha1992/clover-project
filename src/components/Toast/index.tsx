@@ -29,7 +29,7 @@ const Toast = (): JSX.Element | null => {
   }, []);
 
   useEffect(() => {
-    showToast(100000);
+    showToast(toastConfig.duration ?? 3000);
   }, [toastConfig]);
 
   if (!isToastOpen) {
@@ -37,7 +37,7 @@ const Toast = (): JSX.Element | null => {
   }
   return (
     <ToastContainer
-      duration={100000}
+      duration={toastConfig.duration ?? 3000}
       // dangerouslySetInnerHTML={{ __html: toastConfig.message }}
     >
       <TextContainer>

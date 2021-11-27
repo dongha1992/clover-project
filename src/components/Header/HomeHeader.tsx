@@ -4,8 +4,10 @@ import SVGIcon from '@utils/SVGIcon';
 import { textH5 } from '@styles/theme';
 import Link from 'next/link';
 import { breakpoints } from '@utils/getMediaQuery';
+import CartIcon from '@components/Header/Cart';
 
 function HomeHeader() {
+  const goToCart = () => {};
   return (
     <Container>
       <Wrapper>
@@ -25,7 +27,7 @@ function HomeHeader() {
               </a>
             </Link>
           </div>
-          <SVGIcon name="cart" />
+          <CartIcon onClick={goToCart} />
         </Right>
       </Wrapper>
     </Container>
@@ -81,5 +83,7 @@ const Right = styled.div`
     padding-right: 24px;
   }
 `;
+
+const CartBtn = styled.div``;
 
 export default HomeHeader;

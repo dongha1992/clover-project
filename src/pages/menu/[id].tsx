@@ -24,11 +24,11 @@ import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
 import StickyTab from '@components/TabList/StickyTab';
 import { useDispatch } from 'react-redux';
+import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
 import CouponModal from '@components/CouponModal';
 import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Detail/DetailBottomInfo';
-import throttle from 'lodash-es/debounce';
 
 const DetailBottomFAQ = dynamic(
   () => import('../../components/Detail/DetailBottomFAQ')
@@ -40,7 +40,7 @@ const DetailBottomReview = dynamic(
 
 /* TODO: 영양 정보 리팩토링 */
 
-interface IMenuItem {
+export interface IMenuItem {
   description: string;
   discount: number;
   id: number;
@@ -73,6 +73,7 @@ function menuDetail({ id }: any) {
     window.addEventListener('scroll', onScrollHandler);
     return () => {
       window.removeEventListener('scroll', onScrollHandler);
+      dispatch(SET_MENU_ITEM({}));
     };
   }, [tabRef?.current?.offsetTop]);
 
@@ -94,6 +95,7 @@ function menuDetail({ id }: any) {
       (item: any) => item.id === Number(id)
     );
     setMenuItem(selectedMenuItem);
+    dispatch(SET_MENU_ITEM(selectedMenuItem));
   };
 
   const couponDownloadHandler = () => {
@@ -113,7 +115,9 @@ function menuDetail({ id }: any) {
   );
 
   const renderBottomContent = () => {
+    if (!menuItem.reviews) return;
     const { reviews } = menuItem;
+
     switch (selectedTab) {
       case '/menu/detail/review':
         return <DetailBottomReview reviews={reviews} isSticky={isSticky} />;
@@ -139,7 +143,13 @@ function menuDetail({ id }: any) {
           layout="responsive"
           objectFit="cover"
         />
+        <DailySaleNumber>
+          <Tag backgroundColor={theme.brandColor} borderRadius={24} margin="0">
+            <TextH6B color={theme.white}>{'일일 70개 한정'}</TextH6B>
+          </Tag>
+        </DailySaleNumber>
       </ImgWrapper>
+
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
@@ -215,7 +225,7 @@ function menuDetail({ id }: any) {
                 더보기
               </TextH6B>
             </ReviewHeader>
-            <ReviewList reviews={menuItem.reviews} />
+            {menuItem.reviews && <ReviewList reviews={menuItem.reviews} />}
           </ReviewWrapper>
         </ReviewContainer>
         <DetailInfoContainer>
@@ -258,7 +268,9 @@ function menuDetail({ id }: any) {
 
 const Container = styled.section``;
 
-const ImgWrapper = styled.div``;
+const ImgWrapper = styled.div`
+  position: relative;
+`;
 
 const Top = styled.div``;
 
@@ -344,6 +356,11 @@ const DetailInfoWrapper = styled.div`
 
 const Bottom = styled.div``;
 const BottomContent = styled.div``;
+const DailySaleNumber = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+`;
 
 export async function getServerSideProps(context: any) {
   const { id } = context.query;

@@ -440,6 +440,25 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  likeRed: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.5 3.5C5.0151 3.5 3 5.61243 3 8.21864C3 10.3225 3.7875 15.3157 11.5392 20.3632C11.6781 20.4527 11.8375 20.5 12 20.5C12.1625 20.5 12.3219 20.4527 12.4608 20.3632C20.2125 15.3157 21 10.3225 21 8.21864C21 5.61243 18.9849 3.5 16.5 3.5C14.0151 3.5 12 6.35978 12 6.35978C12 6.35978 9.9849 3.5 7.5 3.5Z"
+        fill="#F42D2D"
+        stroke="#F42D2D"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+
   couponDownloadAvailable: () => (
     <svg
       width="64"
