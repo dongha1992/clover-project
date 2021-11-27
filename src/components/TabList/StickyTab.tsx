@@ -46,6 +46,7 @@ const Container = styled.div<{ isSticky: boolean }>`
   width: 100%;
   ${homePadding}
   background-color: ${theme.white};
+  z-index: 100000;
 `;
 
 const TabWrapper = styled.div`

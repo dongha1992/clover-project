@@ -5,6 +5,8 @@ import Tag from '@components/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Text';
 
+/* TODO: 리뷰 사진 클릭 시 이미지 뷰어 */
+
 function ReviewItem({ review }: any) {
   return (
     <Container>
