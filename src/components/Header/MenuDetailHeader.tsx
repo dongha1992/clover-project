@@ -12,7 +12,6 @@ type TProps = {
 /* TODO: Header props으로 svg만 추가 */
 
 function MenuDetailHeader({ title }: TProps) {
-  console.log(title);
   const router = useRouter();
 
   const goBack = (): void => {
@@ -53,6 +52,7 @@ const Container = styled.div`
   height: auto;
   left: calc(50%);
   background-color: white;
+  z-index: 100000;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;

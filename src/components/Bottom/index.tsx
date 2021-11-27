@@ -34,7 +34,7 @@ function Bottom() {
           return <DetailBottom />;
         }
         default: {
-          return <HomeBottom />;
+          return;
         }
       }
     },

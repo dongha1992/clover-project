@@ -8,6 +8,7 @@ const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
+/*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
 function Header() {
   const router = useRouter();
@@ -25,14 +26,20 @@ function Header() {
         '/location/address-detail': '내 위치 설정하기',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
+        '/review': '사진 후기',
+        '/review/[id]': '후기 상세',
       };
 
       const title = headerTitleMap[currentPath];
 
       switch (true) {
-        case ['/location', '/location/address-detail', '/search'].includes(
-          currentPath
-        ): {
+        case [
+          '/location',
+          '/location/address-detail',
+          '/search',
+          '/review',
+          '/review/[id]',
+        ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }
         case [

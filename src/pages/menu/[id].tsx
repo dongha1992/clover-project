@@ -28,6 +28,7 @@ import { setBottomSheet } from '@store/bottomSheet';
 import CouponModal from '@components/CouponModal';
 import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Detail/DetailBottomInfo';
+import throttle from 'lodash-es/debounce';
 
 const DetailBottomFAQ = dynamic(
   () => import('../../components/Detail/DetailBottomFAQ')
@@ -79,7 +80,7 @@ function menuDetail({ id }: any) {
     const offset = tabRef?.current?.offsetTop;
     const scrollTop = e?.srcElement.scrollingElement.scrollTop;
     if (offset) {
-      if (scrollTop + HEADER_HEIGHT > offset + 7) {
+      if (scrollTop + HEADER_HEIGHT > offset + 8) {
         setIsStikcy(true);
       } else {
         setIsStikcy(false);
@@ -115,7 +116,7 @@ function menuDetail({ id }: any) {
     const { reviews } = menuItem;
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -351,4 +352,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default menuDetail;
+export default React.memo(menuDetail);

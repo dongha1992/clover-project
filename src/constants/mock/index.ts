@@ -5,4 +5,6 @@ export const SEARCH_RESULT = [
 ];
 
 export const BASE_URL =
-  'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/ab2138b957d98b92ba700d7b20a50ead742b1d36';
+  'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/533abcef11351c9980c3de35c1160b96a4f6b3fd/items.json';
+
+export const REVIEWS_URL = 'https://jsonplaceholder.typicode.com';

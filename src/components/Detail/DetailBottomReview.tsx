@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Text';
 import Button from '@components/Button';
 import { homePadding, theme } from '@styles/theme';
-import DefaultReview from '@components/Review/DefaultReview';
+import ReviewOnlyImage from '@components/Review/ReviewOnlyImage';
+import BorderLine from '@components/BorderLine';
+import ReviewDetailItem from '@components/Review/ReviewDetailItem';
+import { route } from 'next/dist/server/router';
+import router from 'next/router';
 
-function DetailBottomReview({ reviews }: any) {
+function DetailBottomReview({ reviews, isSticky }: any) {
+  reviews = [...reviews, ...reviews, ...reviews];
   const hasReivew = reviews.length > 0;
+
+  const goToReviewImages = useCallback(() => {
+    router.push('/review');
+  }, []);
+
   return (
-    <Container>
+    <Container isSticky={isSticky}>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
-          <DefaultReview reviews={reviews} />
+          <ReviewOnlyImage
+            reviews={reviews}
+            goToReviewImages={goToReviewImages}
+          />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
             상품의 첫 번째 후기를 작성해주세요 :)
@@ -22,19 +35,35 @@ function DetailBottomReview({ reviews }: any) {
           color={theme.black}
           border
           borderRadius="8"
+          margin="0 0 32px 0"
         >
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
+      <BorderLine height={8} />
+      <ReviewWrapper>
+        {reviews.map((review: any, index: number) => {
+          return <ReviewDetailItem review={review} key={index} />;
+        })}
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          borderRadius="8"
+          onClick={goToReviewImages}
+        >
+          {reviews.length}개 후기 전체보기
+        </Button>
+      </ReviewWrapper>
     </Container>
   );
 }
 
-const Container = styled.div`
-  margin-top: 32px;
+const Container = styled.div<{ isSticky: boolean }>`
+  margin-top: ${({ isSticky }) => (isSticky ? 82 : 32)}px;
 `;
 
-const Wrapper = styled.div<{ hasReivew: boolean }>`
+const Wrapper = styled.div<{ hasReivew?: boolean }>`
   ${homePadding}
   display: flex;
   flex-direction: column;
@@ -49,6 +78,13 @@ const Wrapper = styled.div<{ hasReivew: boolean }>`
       `;
     }
   }}
+`;
+
+const ReviewWrapper = styled.div`
+  width: 100%;
+  margin-top: 32px;
+  margin-bottom: 88px;
+  ${homePadding}
 `;
 
 export default React.memo(DetailBottomReview);
