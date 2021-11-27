@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import Button from '@components/Button';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 
+/*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
+
 function DetailBottom() {
+  const [tempIsLike, setTempIsLike] = useState<boolean>(false);
+  const numOfLike = 10;
+
+  const goToDib = () => {
+    setTempIsLike((prev) => !prev);
+  };
   return (
     <Container>
       <Wrapper>
         <LikeWrapper>
-          <SVGIcon name="likeBlack" />
+          <LikeBtn onClick={goToDib}>
+            <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
+          </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            12
+            {tempIsLike ? numOfLike + 1 : numOfLike}
           </TextH5B>
         </LikeWrapper>
         <Col />
@@ -58,6 +67,7 @@ const Wrapper = styled.div`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
+  width: 25%;
 `;
 
 const Col = styled.div`
@@ -72,5 +82,7 @@ const BtnWrapper = styled.div`
   width: 100%;
   text-align: center;
 `;
+
+const LikeBtn = styled.div``;
 
 export default DetailBottom;

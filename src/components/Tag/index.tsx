@@ -8,6 +8,7 @@ export interface ITagProps {
   margin?: string;
   backgroundColor?: string;
   color?: string;
+  borderRadius?: number;
   children: React.ReactNode;
 }
 
@@ -17,8 +18,8 @@ const Tag = ({
   backgroundColor = theme.greyScale6,
   color = theme.greyScale45,
   children,
+  borderRadius,
 }: ITagProps) => {
-  console.log(children);
   return (
     <Container
       padding={padding}
@@ -35,7 +36,7 @@ const Container = styled(TextH7B)<ITagProps>`
   display: inline-block;
   padding: ${(props) => (props.padding ? props.padding : '4px 8px')};
   margin: ${(props) => (props.margin ? props.margin : '0px 8px 8px 0px')};
-  border-radius: 4px;
+  border-radius: ${(props) => (props.borderRadius ? props.borderRadius : 4)}px;
   background-color: ${(props) =>
     props.backgroundColor && props.backgroundColor};
   color: ${(props) => props.color && props.color};

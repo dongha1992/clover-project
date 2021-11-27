@@ -7,6 +7,11 @@ import { CATEGORY } from '@constants/search';
 import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
+import { useDispatch } from 'react-redux';
+import { setCartModalObj } from '@store/cart';
+import { setBottomSheet } from '@store/bottomSheet';
+import CartModalGroup from '@components/CartModal/CartModalGroup';
+import CartIcon from '@components/Header/Cart';
 
 const TabList = dynamic(() => import('../TabList'));
 
@@ -16,6 +21,8 @@ type TProps = {
 
 function CategorySubHeader({ title }: TProps) {
   const [selectedTab, setSelectedTab] = useState<string>('/category');
+
+  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
@@ -35,7 +42,14 @@ function CategorySubHeader({ title }: TProps) {
     [router]
   );
 
-  const goToCart = () => {};
+  const goToCart = () => {
+    dispatch(
+      setBottomSheet({
+        content: <CartModalGroup />,
+        buttonTitle: '장바구니에 담기',
+      })
+    );
+  };
 
   return (
     <Container>
@@ -46,9 +60,7 @@ function CategorySubHeader({ title }: TProps) {
         {title ? (
           <>
             <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-            <div className="cart" onClick={goToCart}>
-              <SVGIcon name="cart" />
-            </div>
+            <CartIcon onClick={goToCart} />
           </>
         ) : null}
       </Wrapper>

@@ -7,7 +7,7 @@ import { TextB3R } from '@components/Text';
 import axios from 'axios';
 import Item from '@components/Item';
 import { useDispatch } from 'react-redux';
-import { setMenu } from '@store/menu';
+import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
 
 function Home() {
@@ -21,7 +21,7 @@ function Home() {
   const getBanners = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
-    dispatch(setMenu(data));
+    dispatch(SET_MENU(data));
   };
 
   return (

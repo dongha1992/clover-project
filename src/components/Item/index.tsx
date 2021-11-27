@@ -18,7 +18,8 @@ function Item({ item }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const goToCartModal = () => {
+  const goToCartModal = (e: any) => {
+    e.stopPropagation();
     /* TODO: thunk로? */
     dispatch(setCartModalObj(item));
     dispatch(

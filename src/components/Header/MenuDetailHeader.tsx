@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
+import { menuSelector } from '@store/menu';
+import { setCartModalObj } from '@store/cart';
+import CartModalGroup from '@components/CartModal/CartModalGroup';
+import CartIcon from '@components/Header/Cart';
 
 type TProps = {
   title?: string;
@@ -12,14 +18,32 @@ type TProps = {
 /* TODO: Header props으로 svg만 추가 */
 
 function MenuDetailHeader({ title }: TProps) {
+  const dispatch = useDispatch();
+  const { menuItem } = useSelector(menuSelector);
+
   const router = useRouter();
+
+  useEffect(() => {
+    return () => {
+      dispatch(initBottomSheet());
+    };
+  }, []);
 
   const goBack = (): void => {
     router.back();
   };
 
   const goToShare = () => {};
-  const goToCart = () => {};
+
+  const goToCart = () => {
+    dispatch(setCartModalObj(menuItem));
+    dispatch(
+      setBottomSheet({
+        content: <CartModalGroup />,
+        buttonTitle: '장바구니에 담기',
+      })
+    );
+  };
 
   return (
     <Container>
@@ -32,9 +56,7 @@ function MenuDetailHeader({ title }: TProps) {
           <div className="share" onClick={goToShare}>
             <SVGIcon name="share" />
           </div>
-          <div className="cart" onClick={goToCart}>
-            <SVGIcon name="cart" />
-          </div>
+          <CartIcon onClick={goToCart} />
         </BtnWrapper>
       </Wrapper>
     </Container>
