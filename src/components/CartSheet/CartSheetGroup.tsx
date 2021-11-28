@@ -6,13 +6,13 @@ import { theme } from '@styles/theme';
 import BorderLine from '@components/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
 import { cartForm, SET_TEMP_SELECTED_MENUS } from '@store/cart';
-import CartModalItem from './CartModalItem';
+import CartSheetItem from './CartSheetItem';
 
-function CartModalGroup() {
+function CartSheetGroup() {
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
 
   const dispatch = useDispatch();
-  const { cartModalObj } = useSelector(cartForm);
+  const { cartSheetObj } = useSelector(cartForm);
 
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);
@@ -30,7 +30,7 @@ function CartModalGroup() {
             필수옵션
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
-            {cartModalObj?.main.map((option: any, index: number) => (
+            {cartSheetObj?.main.map((option: any, index: number) => (
               <Option
                 key={index}
                 option={option}
@@ -40,13 +40,13 @@ function CartModalGroup() {
           </Select>
         </MainOption>
         <OptionalOption>
-          {cartModalObj?.secondary.length > 0 ? (
+          {cartSheetObj?.secondary.length > 0 ? (
             <>
               <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
                 선택옵션
               </TextH5B>
               <Select placeholder="선택옵션" type={'optional'}>
-                {cartModalObj?.secondary.map((option: any, index: number) => (
+                {cartSheetObj?.secondary.map((option: any, index: number) => (
                   <Option
                     key={index}
                     option={option}
@@ -60,7 +60,7 @@ function CartModalGroup() {
         {selectedMenus.length > 0 ? (
           <SelectedCartItemContainer>
             {selectedMenus.map((menu: any, index: number) => (
-              <CartModalItem menu={menu} key={index} />
+              <CartSheetItem menu={menu} key={index} />
             ))}
           </SelectedCartItemContainer>
         ) : null}
@@ -120,4 +120,4 @@ const DeliveryInforContainer = styled.div`
   display: flex;
 `;
 
-export default React.memo(CartModalGroup);
+export default React.memo(CartSheetGroup);

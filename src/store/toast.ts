@@ -19,9 +19,13 @@ export const toastSlice = createSlice({
       const { message, duration } = action.payload;
       return { message, duration: duration ?? 3000 };
     },
+    initToastConfig: (state, action: PayloadAction) => {
+      state.message = '';
+      state.duration = 0;
+    },
   },
 });
 
-export const { setToastConfig } = toastSlice.actions;
+export const { setToastConfig, initToastConfig } = toastSlice.actions;
 export const toastSelector = (state: AppState) => state.toast;
 export default toastSlice.reducer;

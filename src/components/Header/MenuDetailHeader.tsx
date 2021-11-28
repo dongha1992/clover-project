@@ -7,9 +7,10 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
 import { menuSelector } from '@store/menu';
-import { setCartModalObj } from '@store/cart';
-import CartModalGroup from '@components/CartModal/CartModalGroup';
+import { SET_CART_SHEET_OBJ } from '@store/cart';
+import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
 import CartIcon from '@components/Header/Cart';
+import ShareSheet from '@components/ShareSheet';
 
 type TProps = {
   title?: string;
@@ -33,13 +34,22 @@ function MenuDetailHeader({ title }: TProps) {
     router.back();
   };
 
-  const goToShare = () => {};
-
-  const goToCart = () => {
-    dispatch(setCartModalObj(menuItem));
+  const goToShare = () => {
+    dispatch(initBottomSheet());
+    console.log('D');
     dispatch(
       setBottomSheet({
-        content: <CartModalGroup />,
+        content: <ShareSheet />,
+        buttonTitle: '',
+      })
+    );
+  };
+
+  const goToCart = () => {
+    dispatch(SET_CART_SHEET_OBJ(menuItem));
+    dispatch(
+      setBottomSheet({
+        content: <CartSheetGroup />,
         buttonTitle: '장바구니에 담기',
       })
     );

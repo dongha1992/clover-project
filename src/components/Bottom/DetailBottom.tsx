@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
-
+import { useToast } from '@hooks/useToast';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 
 function DetailBottom() {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
+  const { showToast, hideToast } = useToast();
   const numOfLike = 10;
 
-  const goToDib = () => {
+  const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
-  };
+  }, [tempIsLike]);
+
+  useEffect(() => {
+    /* TODO: 빠르게 눌렀을 때 toast 메시지 엉킴 */
+    const message =
+      tempIsLike === true ? '상품을 찜했어요.' : '찜을 해제했어요.';
+    showToast({ message });
+    /* TODO: warning 왜? */
+    return () => hideToast();
+  }, [goToDib]);
+
   return (
     <Container>
       <Wrapper>

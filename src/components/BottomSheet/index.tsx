@@ -17,21 +17,30 @@ function BottomSheet() {
   const dispatch = useDispatch();
   const { content, buttonTitle }: any = useSelector(bottomSheetForm);
   const { tempSelectedMenus } = useSelector(cartForm);
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   useEffect(() => {
+    console.log('bottomsherr');
     if (sheetRef.current && size.maxY) {
-      sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
+      sheetRef.current.style.setProperty('transform', `translateY(${-95}px)`);
     }
   }, []);
 
-  useEffect(() => {}, []);
+  const closeBottmSheet = ({
+    target,
+    currentTarget,
+  }: React.MouseEvent<HTMLDivElement>): void => {
+    if (target !== currentTarget) {
+      return;
+    }
+    dispatch(initBottomSheet());
+  };
 
   const clickButtonHandler = () => {
     const isCart = buttonTitle.includes('장바구니');
     dispatch(initBottomSheet());
 
-    /* redux 안에서 처리 하도록 로직 변경해야 함 */
+    /* TODO : redux 안에서 처리 하도록 로직 변경해야 함 */
 
     if (isCart) {
       dispatch(SET_CART_LISTS(tempSelectedMenus));
@@ -42,21 +51,23 @@ function BottomSheet() {
   };
 
   return (
-    <Background>
+    <Background onClick={closeBottmSheet}>
       <Container ref={sheetRef} height={height}>
         <BottomSheetContent ref={contentRef}>
           <Content content={content} />
         </BottomSheetContent>
-        <ButtonContainer onClick={() => clickButtonHandler()}>
-          <Button
-            height="48px"
-            width="100%"
-            margin="0 8px 0 0"
-            borderRadius="0"
-          >
-            {buttonTitle}
-          </Button>
-        </ButtonContainer>
+        {buttonTitle ? (
+          <ButtonContainer onClick={() => clickButtonHandler()}>
+            <Button
+              height="48px"
+              width="100%"
+              margin="0 8px 0 0"
+              borderRadius="0"
+            >
+              {buttonTitle}
+            </Button>
+          </ButtonContainer>
+        ) : null}
       </Container>
     </Background>
   );
@@ -121,7 +132,7 @@ const BottomSheetContent = styled.div`
   height: 100%;
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
-  margin-bottom: 50px;
+  margin-bottom: 55px;
 `;
 
 const ButtonContainer = styled.div`
@@ -130,6 +141,7 @@ const ButtonContainer = styled.div`
   width: 100%;
   bottom: 0;
   left: 0;
+  margin-bottom: 5px;
 `;
 
 export default BottomSheet;

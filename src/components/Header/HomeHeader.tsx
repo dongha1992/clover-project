@@ -5,9 +5,12 @@ import { textH5 } from '@styles/theme';
 import Link from 'next/link';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
+import router from 'next/router';
 
 function HomeHeader() {
-  const goToCart = () => {};
+  const goToCart = () => {
+    router.push('/cart');
+  };
   return (
     <Container>
       <Wrapper>
@@ -20,7 +23,7 @@ function HomeHeader() {
           </AddressWrapper>
         </Left>
         <Right>
-          <div>
+          <div className="search">
             <Link href="/search" passHref>
               <a>
                 <SVGIcon name="searchIcon" />
@@ -74,13 +77,14 @@ const Left = styled.div`
   display: flex;
   align-items: center;
 `;
+
 const Right = styled.div`
   position: absolute;
   display: flex;
   align-items: center;
   right: 10px;
-  > div {
-    padding-right: 24px;
+  .search {
+    padding-right: 27px;
   }
 `;
 

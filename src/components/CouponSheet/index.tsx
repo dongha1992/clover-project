@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import { COUPON_LIST } from '@constants/menu';
 import CouponItem from './CouponItem';
 
-function CouponModal() {
+function CouponSheet() {
   return (
     <Container>
       <TextH5B center padding="16px 0 24px 0">
@@ -51,4 +51,4 @@ const CouponListWrapper = styled.div`
   overflow-y: scroll;
 `;
 
-export default CouponModal;
+export default CouponSheet;

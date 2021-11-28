@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
+import { initBottomSheet } from '@store/bottomSheet';
+import { useDispatch } from 'react-redux';
 
 type TProps = {
   children: React.ReactNode;
@@ -19,8 +21,9 @@ export default function ModalLayout({
   width,
   height,
   padding,
-  closeOnclickDimmer,
 }: TProps): JSX.Element {
+  const dispatch = useDispatch();
+
   const handleClickDimmer = ({
     target,
     currentTarget,
@@ -28,7 +31,6 @@ export default function ModalLayout({
     if (target !== currentTarget) {
       return;
     }
-    closeOnclickDimmer && closeModal && closeModal();
   };
   return (
     <Dimmer onClick={handleClickDimmer}>

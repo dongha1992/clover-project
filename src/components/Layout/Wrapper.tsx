@@ -11,8 +11,6 @@ import Header from '@components/Header';
 import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/getMediaQuery';
 
-// import BottomLayer from '@components/BottomSheet/BottomLayer';
-
 const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
   ssr: false,
 });
@@ -31,6 +29,17 @@ export const Wrapper: React.FC = ({ children }) => {
 
     window.addEventListener('resize', calcBrowserScreenSize);
     return () => window.removeEventListener('resize', calcBrowserScreenSize);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
+        window.Kakao.init('8d1316487f948c4c74d76d4da7fc23cd');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   const alert = useSelector(alertForm);
@@ -58,7 +67,7 @@ export const Wrapper: React.FC = ({ children }) => {
           </Left>
           <Right>
             <Header />
-            {toast && <Toast />}
+            {toast.message && <Toast />}
             <Main>{children}</Main>
             <Bottom />
           </Right>

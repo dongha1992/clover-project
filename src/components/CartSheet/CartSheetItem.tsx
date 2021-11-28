@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import CountButton from '@components/Button/CountButton';
 import SVGIcon from '@utils/SVGIcon';
 
-function CartModalItem({ menu }: any) {
+function CartSheetItem({ menu, isShareSheet }: any) {
   console.log(menu);
   const removeCartItemHandler = () => {};
   return (
@@ -15,19 +15,23 @@ function CartModalItem({ menu }: any) {
           <ItemImage src={menu.url} alt="상품이미지" />
         </ImageWrapper>
         <ContentWrapper>
-          <TextB3R>{menu.text}</TextB3R>
+          <TextB3R>{menu.name}</TextB3R>
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding={'0 4px 0 0'}>
               {menu.discount}%
             </TextH5B>
             <TextH5B>{menu.price}원</TextH5B>
           </PriceWrapper>
-          <RemoveBtnContainer onClick={removeCartItemHandler}>
-            <SVGIcon name="defaultCancel" />
-          </RemoveBtnContainer>
-          <CountButtonContainer>
-            <CountButton quantity={menu.quantity} />
-          </CountButtonContainer>
+          {!isShareSheet && (
+            <RemoveBtnContainer onClick={removeCartItemHandler}>
+              <SVGIcon name="defaultCancel" />
+            </RemoveBtnContainer>
+          )}
+          {!isShareSheet && (
+            <CountButtonContainer>
+              <CountButton quantity={menu.quantity} />
+            </CountButtonContainer>
+          )}
         </ContentWrapper>
       </Wrapper>
     </Container>
@@ -78,4 +82,4 @@ const ItemImage = styled.img`
   border-radius: 8px;
 `;
 
-export default React.memo(CartModalItem);
+export default React.memo(CartSheetItem);
