@@ -1,8 +1,9 @@
 import { useDispatch } from 'react-redux';
-import { TToastConfig, setToastConfig } from '@store/toast';
+import { TToastConfig, setToastConfig, initToastConfig } from '@store/toast';
 
 type TUseToast = {
   showToast: (config: TToastConfig) => void;
+  hideToast: () => void;
 };
 
 /**
@@ -20,12 +21,16 @@ export const useToast = (): TUseToast => {
 
   /**
    * 토스트를 띄우는 `action`을 `dispatch`하는 함수.
-   * @param config duration의 단위는 ms, 기본값 `3000` message는 innerHTML로 집어넣어서 `hello<br />world!` 가능쓰
+   * @param config duration의 단위는 ms, 기본값 `3000` message는 children으로
    */
 
   const showToast = (config: TToastConfig): void => {
     dispatch(setToastConfig(config));
   };
 
-  return { showToast };
+  const hideToast = (): void => {
+    dispatch(initToastConfig());
+  };
+
+  return { showToast, hideToast };
 };

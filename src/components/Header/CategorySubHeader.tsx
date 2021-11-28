@@ -8,9 +8,8 @@ import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch } from 'react-redux';
-import { setCartModalObj } from '@store/cart';
 import { setBottomSheet } from '@store/bottomSheet';
-import CartModalGroup from '@components/CartModal/CartModalGroup';
+import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
 import CartIcon from '@components/Header/Cart';
 
 const TabList = dynamic(() => import('../TabList'));
@@ -45,7 +44,7 @@ function CategorySubHeader({ title }: TProps) {
   const goToCart = () => {
     dispatch(
       setBottomSheet({
-        content: <CartModalGroup />,
+        content: <CartSheetGroup />,
         buttonTitle: '장바구니에 담기',
       })
     );

@@ -6,8 +6,8 @@ import SVGIcon from '@utils/SVGIcon';
 import Tag from '@components/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import { setCartModalObj } from '@store/cart';
-import CartModalGroup from '@components/CartModal/CartModalGroup';
+import { SET_CART_SHEET_OBJ } from '@store/cart';
+import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
 import { useRouter } from 'next/router';
 
 type TProps = {
@@ -18,13 +18,13 @@ function Item({ item }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const goToCartModal = (e: any) => {
+  const goToCartSheet = (e: any) => {
     e.stopPropagation();
     /* TODO: thunk로? */
-    dispatch(setCartModalObj(item));
+    dispatch(SET_CART_SHEET_OBJ(item));
     dispatch(
       setBottomSheet({
-        content: <CartModalGroup />,
+        content: <CartSheetGroup />,
         buttonTitle: '장바구니에 담기',
       })
     );
@@ -37,7 +37,7 @@ function Item({ item }: TProps) {
     <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>
         <ItemImage src={item.url} alt="상품이미지" />
-        <CartBtn onClick={goToCartModal}>
+        <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
       </ImageWrapper>

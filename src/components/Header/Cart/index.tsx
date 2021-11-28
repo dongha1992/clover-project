@@ -3,16 +3,19 @@ import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
+import { theme } from '@styles/theme';
 
 function CartIcon({ onClick }: any) {
   const { cartLists } = useSelector(cartForm);
 
   return (
-    <Container>
-      <div className="cart" onClick={onClick}>
+    <Container onClick={onClick}>
+      <div className="cart">
         <SVGIcon name="cart" />
       </div>
-      <Count>{cartLists.length}</Count>
+      <CountWrapper>
+        <Count>{cartLists.length}</Count>
+      </CountWrapper>
     </Container>
   );
 }
@@ -20,10 +23,27 @@ function CartIcon({ onClick }: any) {
 const Container = styled.div`
   position: relative;
 `;
-const Count = styled.div`
+
+const CountWrapper = styled.div`
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: -7px;
+  bottom: 12px;
+  width: 6px;
+  height: 12px;
+  background-color: ${theme.brandColor};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  padding: 10px;
+`;
+
+const Count = styled.div`
+  font-weight: 700;
+  line-height: 11.58px;
+  letter-spacing: -0.4px;
+  font-size: 8px;
+  color: ${theme.white};
 `;
 
 export default React.memo(CartIcon);

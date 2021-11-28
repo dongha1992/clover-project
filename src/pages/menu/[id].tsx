@@ -26,7 +26,7 @@ import StickyTab from '@components/TabList/StickyTab';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
-import CouponModal from '@components/CouponModal';
+import CouponSheet from '@components/CouponSheet';
 import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Detail/DetailBottomInfo';
 
@@ -94,14 +94,16 @@ function menuDetail({ id }: any) {
     const selectedMenuItem: IMenuItem = data.find(
       (item: any) => item.id === Number(id)
     );
-    setMenuItem(selectedMenuItem);
+    setMenuItem(() => selectedMenuItem);
+    /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
+
     dispatch(SET_MENU_ITEM(selectedMenuItem));
   };
 
   const couponDownloadHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <CouponModal />,
+        content: <CouponSheet />,
         buttonTitle: '확인',
       })
     );
