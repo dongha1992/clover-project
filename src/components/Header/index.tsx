@@ -28,6 +28,7 @@ function Header() {
         '/category/salad': '샐러드',
         '/review': '사진 후기',
         '/review/[id]': '후기 상세',
+        '/cart': '장바구니',
       };
 
       const title = headerTitleMap[currentPath];
@@ -39,6 +40,7 @@ function Header() {
           '/search',
           '/review',
           '/review/[id]',
+          '/cart',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }

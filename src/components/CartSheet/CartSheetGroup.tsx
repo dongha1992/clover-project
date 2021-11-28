@@ -19,6 +19,11 @@ function CartSheetGroup() {
     dispatch(SET_TEMP_SELECTED_MENUS(menu));
   };
 
+  // TODO: cartSheetObj 가끔 못 찾음 원인 파악
+
+  if (!Object.keys(cartSheetObj).length) {
+    return <div>로딩</div>;
+  }
   return (
     <Container>
       <TextH5B padding="24px 0 16px 0" center>

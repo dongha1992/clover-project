@@ -4,25 +4,26 @@ import styled, { css } from 'styled-components';
 import { TextH5B, TextB2R } from '@components/Text';
 
 type TProps = {
-  item: any;
+  item?: any;
   onChange: React.MouseEventHandler<HTMLElement>;
 };
 
+/* TODO: 체크박스 다시 */
+
 function Checkbox({ item, onChange }: TProps) {
-  const isAllCheck = item.text === '전체';
   return (
     <CheckboxContainer onClick={onChange}>
-      {item.isChecked ? (
+      {/* {item.isChecked ? (
         <SVGIcon name="checkedRectBox" />
       ) : (
         <SVGIcon name="uncheckedRectBox" />
-      )}
+      )} */}
       <TextWrapper>
-        {isAllCheck ? (
+        {/* {isAllCheck ? (
           <TextH5B>{item.text}</TextH5B>
         ) : (
           <TextB2R>{item.text}</TextB2R>
-        )}
+        )} */}
       </TextWrapper>
     </CheckboxContainer>
   );
@@ -31,7 +32,7 @@ function Checkbox({ item, onChange }: TProps) {
 export default React.memo(Checkbox);
 
 const CheckboxContainer = styled.div`
-  width: 100%;
+  /* width: 100%; */
   display: flex;
   flex-direction: row;
   align-items: center;

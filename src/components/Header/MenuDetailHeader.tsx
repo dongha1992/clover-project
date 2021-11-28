@@ -85,6 +85,7 @@ const Container = styled.div`
   left: calc(50%);
   background-color: white;
   z-index: 100000;
+  height: 56px;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -101,7 +102,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 27px;
+  margin: 16px 24px;
   .arrow {
     cursor: pointer;
     > svg {
@@ -112,8 +113,8 @@ const Wrapper = styled.div`
 const BtnWrapper = styled.div`
   display: flex;
   align-items: center;
-  .cart {
-    padding-left: 24px;
+  .share {
+    padding-right: 27px;
   }
 `;
 

@@ -33,6 +33,39 @@ export const verticalCenter = css`
   align-self: center;
 `;
 
+export const FlexBeteewn = styled.div<{ padding?: string }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${({ padding }) => padding && padding};
+`;
+
+export const FlexRow = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const GridWrapper = styled.div<{ col: number }>`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(col, 1fr);
+`;
+
+export const FlexStart = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+export const FlexEnd = styled.div<{ padding?: string }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: ${({ padding }) => padding && padding};
+`;
+
 export const HomeContainer = styled.div`
   ${homePadding}
 `;
