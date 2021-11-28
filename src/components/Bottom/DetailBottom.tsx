@@ -5,18 +5,25 @@ import { TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';
+import { setAlert } from '@store/alert';
+import { useDispatch } from 'react-redux';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
-
+/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 function DetailBottom() {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const { showToast, hideToast } = useToast();
+  const dispatch = useDispatch();
   const numOfLike = 10;
+  const tempStatus = 'isSoldout';
+  const tempNotiOff = false;
+  const isAlreadyStockNoti = true;
 
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
 
   useEffect(() => {
+    /* TODO : 렌더 시 처음에 alert 뜨는 거 */
     /* TODO: 빠르게 눌렀을 때 toast 메시지 엉킴 */
     const message =
       tempIsLike === true ? '상품을 찜했어요.' : '찜을 해제했어요.';
@@ -24,6 +31,42 @@ function DetailBottom() {
     /* TODO: warning 왜? */
     return () => hideToast();
   }, [goToDib]);
+
+  const buttonStatusRender = useCallback((status: string) => {
+    switch (status) {
+      case 'isSoldout': {
+        return '일시품절·재입고 알림받기';
+      }
+      default: {
+        return `5시까지 주문하면 내일 새벽 7시전 도착`;
+      }
+    }
+  }, []);
+
+  const goToRestockSetting = () => {
+    console.log('fire');
+  };
+
+  const clickButtonHandler = () => {
+    if (tempNotiOff) {
+      const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
+      dispatch(
+        setAlert({
+          alertMessage: restockMgs,
+          onSubmit: () => {
+            goToRestockSetting();
+          },
+          submitBtnText: '설정 앱 이동',
+          closeBtnText: '취소',
+        })
+      );
+    } else {
+      const message = isAlreadyStockNoti
+        ? '이미 재입고 알림 신청한 상품이에요!'
+        : '재입고 알림 신청을 완료했어요!';
+      showToast({ message });
+    }
+  };
 
   return (
     <Container>
@@ -37,9 +80,9 @@ function DetailBottom() {
           </TextH5B>
         </LikeWrapper>
         <Col />
-        <BtnWrapper>
+        <BtnWrapper onClick={clickButtonHandler}>
           <TextH5B color={theme.white}>
-            5시까지 주문하면 내일 새벽 7시전 도착
+            {buttonStatusRender(tempStatus)}
           </TextH5B>
         </BtnWrapper>
       </Wrapper>

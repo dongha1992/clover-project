@@ -65,6 +65,8 @@ const Container = styled.div`
 const Wrapper = styled.div`
   position: relative;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin: 16px 24px;
 `;
 
@@ -79,10 +81,9 @@ const Left = styled.div`
 `;
 
 const Right = styled.div`
-  position: absolute;
   display: flex;
   align-items: center;
-  right: 10px;
+
   .search {
     padding-right: 27px;
   }

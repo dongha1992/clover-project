@@ -87,11 +87,12 @@ const AlertBtnBox = styled.div`
   margin-bottom: 24px;
 
   .cancelBtn {
-    margin-right: 23px;
+    width: 100%;
+    font-weight: normal;
   }
 
   .confirmBtn {
-    margin-left: 23px;
+    width: 100%;
   }
 
   button {

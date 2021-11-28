@@ -10,11 +10,14 @@ import { SET_CART_SHEET_OBJ } from '@store/cart';
 import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
 import { useRouter } from 'next/router';
 
+/* TODO: Tag 부분 css 다시 & Height 조정 필요 */
+
 type TProps = {
   item: any;
+  isCart?: boolean;
 };
 
-function Item({ item }: TProps) {
+function Item({ item, isCart }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -49,7 +52,9 @@ function Item({ item }: TProps) {
         </TextH5B>
         <TextH5B>{item.price}원</TextH5B>
       </PriceWrapper>
-      <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
+      {!isCart && (
+        <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
+      )}
       <LikeAndReview>
         <Like>
           <SVGIcon name="like" />

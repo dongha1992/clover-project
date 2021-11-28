@@ -5,8 +5,14 @@ import { theme } from '@styles/theme';
 import CountButton from '@components/Button/CountButton';
 import SVGIcon from '@utils/SVGIcon';
 
-function CartSheetItem({ menu, isShareSheet }: any) {
-  console.log(menu);
+interface IProps {
+  menu: any;
+  isShareSheet?: boolean;
+  isCart?: boolean;
+}
+
+function CartSheetItem({ menu, isShareSheet, isCart }: IProps) {
+  console.log(isCart);
   const removeCartItemHandler = () => {};
   return (
     <Container>
@@ -22,7 +28,7 @@ function CartSheetItem({ menu, isShareSheet }: any) {
             </TextH5B>
             <TextH5B>{menu.price}원</TextH5B>
           </PriceWrapper>
-          {!isShareSheet && (
+          {!isShareSheet && !isCart && (
             <RemoveBtnContainer onClick={removeCartItemHandler}>
               <SVGIcon name="defaultCancel" />
             </RemoveBtnContainer>
