@@ -12,6 +12,18 @@ import TextInput from '@components/TextInput';
 function addressDetail() {
   return (
     <Container>
+      <PlaceInfo>
+        <span className="brandColor">
+          새벽배송
+          <span className="h2B"> 지역입니다.</span>
+        </span>
+        <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+          오후 5시까지 주문 시 다음날 새벽에 도착!
+        </TextB3R>
+        <TextB3R color={theme.greyScale65}>
+          서울 전체, 경기/인천 일부 지역 이용 가능해요
+        </TextB3R>
+      </PlaceInfo>
       <Map />
       <AddressDetailContainer>
         <TextB2R padding="8px 0 0 0">선택한 주소</TextB2R>
@@ -38,6 +50,24 @@ const AddressDetailContainer = styled.div`
 
 const InputWrapper = styled.div`
   padding-top: 16px;
+`;
+
+const PlaceInfo = styled.div`
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+
+  .brandColor {
+    color: ${theme.brandColor};
+    font-size: 20px;
+    letter-spacing: -0.4px;
+    font-weight: bold;
+    line-height: 30px;
+
+    .h2B {
+      color: ${theme.black};
+    }
+  }
 `;
 
 const ButtonWrapper = styled.div`

@@ -1,16 +1,17 @@
 import React from 'react';
-import { TextH5B } from '@components/Text';
+import { TextH5B, TextB2R } from '@components/Text';
 import styled from 'styled-components';
-import { theme } from '@styles/theme';
+import { theme, FlexRow } from '@styles/theme';
 import { RadioButton } from '@components/Button/RadioButton';
 
 type TProps = {
   title: string;
   data: any;
-  changeHandler: React.ChangeEventHandler<HTMLElement>;
+  changeHandler: (id: number) => void;
+  selectedRadioId: number;
 };
 
-function OrderFilter({ title, data, changeHandler }: TProps) {
+function OrderFilter({ title, data, changeHandler, selectedRadioId }: TProps) {
   return (
     <Container>
       <TextH5B padding="0 0 8px 0" color={theme.greyScale65}>
@@ -18,9 +19,23 @@ function OrderFilter({ title, data, changeHandler }: TProps) {
       </TextH5B>
       <BtnContainer>
         {data &&
-          data.map((item: any, index: number) => (
-            <RadioButton item={item} onChange={changeHandler} key={index} />
-          ))}
+          data.map((item: any, index: number) => {
+            const isSelected = selectedRadioId === item.id;
+            return (
+              <FlexRow key={index}>
+                <RadioButton
+                  isSelected={isSelected}
+                  onChange={() => changeHandler(item.id)}
+                  key={index}
+                />
+                {isSelected ? (
+                  <TextH5B padding="0px 0 0 8px">{item.text}</TextH5B>
+                ) : (
+                  <TextB2R padding="0px 0 0 8px">{item.text}</TextB2R>
+                )}
+              </FlexRow>
+            );
+          })}
       </BtnContainer>
     </Container>
   );

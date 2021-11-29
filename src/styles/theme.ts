@@ -33,16 +33,28 @@ export const verticalCenter = css`
   align-self: center;
 `;
 
-export const FlexBeteewn = styled.div<{ padding?: string }>`
+export const FlexBetween = styled.div<{ padding?: string; margin?: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
 `;
 
 export const FlexRow = styled.div`
   display: flex;
   align-items: center;
+`;
+
+export const FlexCol = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const FlexColStart = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
 `;
 
 export const GridWrapper = styled.div<{ col: number }>`

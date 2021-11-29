@@ -1,29 +1,46 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B } from '@components/Text';
 import SVGIcon from '@utils/SVGIcon';
 import Item from '@components/Item';
-import { ItemListCol } from '@components/Home';
+import SpotItem from '@components/Spot/SpotItem';
+import { useDispatch } from 'react-redux';
+import { setBottomSheet } from '@store/bottomSheet';
+import FilterGroup from '@components/Filter/FilterGroup';
 
-function index({ searchResult }: any) {
+function SearchResult({ searchResult, isSpot }: any) {
+  const dispatch = useDispatch();
+
+  const clickFilterHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: <FilterGroup isSpot />,
+        buttonTitle: '적용하기',
+      })
+    );
+  };
   return (
     <>
       <FilterRow>
         <TextH5B>검색결과 {searchResult.length}개</TextH5B>
-        <FilterWrapper>
+        <FilterWrapper onClick={clickFilterHandler}>
           <SVGIcon name="filter" />
           <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
         </FilterWrapper>
       </FilterRow>
-      <ItemListCol>
+      <ItemListWrapper isSpot={isSpot}>
         {searchResult.length > 0 ? (
           searchResult.map((item: any, index: number) => {
-            return <Item item={item} key={index} />;
+            return !isSpot ? (
+              <Item item={item} key={index} />
+            ) : (
+              <SpotItem item={item} key={index} />
+            );
           })
         ) : (
           <div>검색결과가 없습니다.</div>
         )}
-      </ItemListCol>
+      </ItemListWrapper>
     </>
   );
 }
@@ -35,9 +52,26 @@ const FilterRow = styled.div`
   padding-bottom: 17px;
 `;
 
-export const FilterWrapper = styled.div`
+const FilterWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
 
-export default index;
+const ItemListWrapper = styled.div<{ isSpot?: boolean }>`
+  ${({ isSpot }) => {
+    if (isSpot) {
+      return css`
+        display: flex;
+        width: 100%;
+      `;
+    } else {
+      return css`
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 16px;
+      `;
+    }
+  }}
+`;
+
+export default SearchResult;
