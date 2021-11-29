@@ -1,16 +1,22 @@
 import React from 'react';
-import { TextH5B } from '@components/Text';
+import { TextH5B, TextB2R } from '@components/Text';
 import styled from 'styled-components';
-import { theme } from '@styles/theme';
+import { theme, FlexRow } from '@styles/theme';
 import Checkbox from '@components/Checkbox';
 
 type TProps = {
   title: string;
   data: any;
-  changeHandler: React.MouseEventHandler<HTMLElement>;
+  changeHandler: (id: number) => void;
+  selectedCheckboxIds: number[];
 };
 
-function MultipleFilter({ title, data, changeHandler }: TProps) {
+function MultipleFilter({
+  title,
+  data,
+  changeHandler,
+  selectedCheckboxIds,
+}: TProps) {
   return (
     <Container>
       <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
@@ -18,9 +24,23 @@ function MultipleFilter({ title, data, changeHandler }: TProps) {
       </TextH5B>
       <BtnContainer>
         {data &&
-          data.map((item: any, index: number) => (
-            <Checkbox item={item} onChange={changeHandler} key={index} />
-          ))}
+          data.map((item: any, index: number) => {
+            const isSelected = selectedCheckboxIds.includes(item.id);
+            return (
+              <FlexRow key={index}>
+                <Checkbox
+                  isSelected={isSelected}
+                  onChange={() => changeHandler(item.id)}
+                  key={index}
+                />
+                {isSelected ? (
+                  <TextH5B padding="4px 0 0 8px">{item.text}</TextH5B>
+                ) : (
+                  <TextB2R padding="4px 0 0 8px">{item.text}</TextB2R>
+                )}
+              </FlexRow>
+            );
+          })}
       </BtnContainer>
     </Container>
   );
@@ -31,6 +51,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
 `;
+
 const BtnContainer = styled.div`
   width: 100%;
   display: grid;

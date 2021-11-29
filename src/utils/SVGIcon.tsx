@@ -260,8 +260,8 @@ const svgMap: TSvg = {
   ),
   uncheckedRectBox: () => (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -378,6 +378,30 @@ const svgMap: TSvg = {
         rx="0.75"
         transform="matrix(-0.707107 0.707107 -0.72406 -0.689737 14.1299 12.854)"
         fill="#242424"
+      />
+    </svg>
+  ),
+  whiteCancel: () => (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 11 11"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="1.5"
+        height="12.5253"
+        rx="0.75"
+        transform="matrix(0.707107 0.707107 -0.689737 0.72406 8.854 0)"
+        fill="white"
+      />
+      <rect
+        width="1.5"
+        height="12.5253"
+        rx="0.75"
+        transform="matrix(-0.707107 0.707107 -0.72406 -0.689737 10.1296 8.854)"
+        fill="white"
       />
     </svg>
   ),

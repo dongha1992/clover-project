@@ -14,7 +14,7 @@ import {
   homePadding,
   theme,
   ScrollHorizonList,
-  FlexBeteewn,
+  FlexBetween,
   FlexStart,
   FlexEnd,
 } from '@styles/theme';
@@ -29,28 +29,76 @@ import { useDispatch } from 'react-redux';
 import Item from '@components/Item';
 import Tag from '@components/Tag';
 import CountButton from '@components/Button/CountButton';
+import router from 'next/router';
+
+const DISPOSABLE_LIST = [
+  { id: 1, value: 'fork', text: '포크/물티슈', price: 100 },
+  { id: 2, value: 'stick', text: '젓가락/물티슈', price: 100 },
+];
+
+/*TODO: 장바구니 비었을 때 UI */
 
 function Cart() {
   const [itemList, setItemList] = useState([]);
+  const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
+  const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>(
+    []
+  );
+  const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const dispatch = useDispatch();
+
+  const isSoldout = true;
 
   useEffect(() => {
     getLists();
   }, []);
-
-  const DISPOSABLE_LIST = [
-    { value: 'fork', text: '포크/물티슈', price: 100 },
-    { value: 'stick', text: '젓가락/물티슈', price: 100 },
-  ];
 
   const getLists = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
   };
 
-  const handleSelectCartItem = () => {};
-  const handleSelectAllCartItem = () => {};
-  const handleSelectDisposable = () => {};
+  const goToDeliveryInfo = () => {
+    router.push('/cart/delivery-info');
+  };
+  const handleSelectCartItem = (id: any) => {
+    /* TODO: 왜 안됑? */
+    const findItem = checkedMenuList.find((_id: any) => _id === id);
+    let tempCheckedMenuList = checkedMenuList.slice();
+
+    if (findItem) {
+      tempCheckedMenuList.filter((_id: any) => _id !== id);
+    } else {
+      tempCheckedMenuList.push(id);
+    }
+
+    setCheckedMenuList(tempCheckedMenuList);
+  };
+
+  const handleSelectAllCartItem = () => {
+    /*TODO: 하나 해제 했을 때 다 해제 로직 */
+    const checkedMenuId = itemList.map((item: any) => item.id);
+    if (!isAllChecked) {
+      setCheckedMenuList(checkedMenuId);
+    } else {
+      setCheckedMenuList([]);
+    }
+    setIsAllchecked(!isAllChecked);
+  };
+
+  const handleSelectDisposable = (id: any) => {
+    /* TODO: 왜 안됑? */
+    const findItem = checkedDisposableList.find((_id) => _id === id);
+    const tempCheckedDisposableList = checkedDisposableList.slice();
+
+    if (findItem) {
+      tempCheckedDisposableList.filter((_id) => _id !== id);
+    } else {
+      tempCheckedDisposableList.push(id);
+    }
+
+    setCheckedDisposalbleList(tempCheckedDisposableList);
+  };
 
   return (
     <Container>
@@ -59,7 +107,7 @@ function Cart() {
           <TextH4B>배송방법과</TextH4B>
           <TextH4B>배송장소를 설정해주세요</TextH4B>
         </Left>
-        <Right>
+        <Right onClick={goToDeliveryInfo}>
           <TextH6B color={theme.greyScale65} textDecoration="underline">
             설정하기
           </TextH6B>
@@ -69,10 +117,13 @@ function Cart() {
       <CartInfoContainer>
         <CartListWrapper>
           <ListHeader>
-            <Left>
-              <Checkbox onChange={handleSelectAllCartItem} />
+            <div className="itemCheckbox">
+              <Checkbox
+                onChange={handleSelectAllCartItem}
+                isSelected={isAllChecked ? true : false}
+              />
               <TextB2R padding="0 0 0 8px">전체선택 (3/5)</TextB2R>
-            </Left>
+            </div>
             <Right>
               <TextH6B color={theme.greyScale65} textDecoration="underline">
                 선택삭제
@@ -81,11 +132,22 @@ function Cart() {
           </ListHeader>
           <BorderLine height={1} margin="16px 0" />
           <VerticalCartList>
-            {itemList.map((item, index) => (
+            {itemList.map((item: any, index) => (
               <ItemWrapper key={index}>
-                <Checkbox item={item} onChange={handleSelectCartItem} />
-                <CartSheetItem menu={item} isCart />
-                <InfoMessage message={'dd'} />
+                <div className="itemCheckbox">
+                  <Checkbox
+                    onChange={() => handleSelectCartItem(item.id)}
+                    isSelected={checkedMenuList.includes(item.id)}
+                  />
+                  <CartSheetItem
+                    menu={item}
+                    isCart
+                    isSoldout={item.id === 1 && isSoldout}
+                  />
+                </div>
+                <div className="itemInfo">
+                  <InfoMessage message={'dd'} />
+                </div>
                 <BorderLine height={1} margin="16px 0" />
               </ItemWrapper>
             ))}
@@ -102,9 +164,12 @@ function Cart() {
             {DISPOSABLE_LIST.map((item, index) => (
               <DisposableItem key={index}>
                 <div className="disposableLeft">
-                  <Checkbox item={item} onChange={handleSelectDisposable} />
+                  <Checkbox
+                    onChange={() => handleSelectDisposable(item.id)}
+                    isSelected={checkedDisposableList.includes(item.id)}
+                  />
                   <div className="disposableText">
-                    <TextB2R padding="0 4px 0 0">{item.text}</TextB2R>
+                    <TextB2R padding="0 4px 0 8px">{item.text}</TextB2R>
                     <TextH5B>+{item.price}원</TextH5B>
                   </div>
                 </div>
@@ -116,14 +181,14 @@ function Cart() {
           </CheckBoxWrapper>
         </DisposableSelectWrapper>
         <NutritionInfoWrapper>
-          <FlexBeteewn>
-            <span className="H5B">
+          <FlexBetween>
+            <span className="h5B">
               💪 내 장바구니 체크! 현재
               <span className="brandColor"> 관리중</span>
               이신가요?
             </span>
             <SVGIcon name="triangleDown" />
-          </FlexBeteewn>
+          </FlexBetween>
           <InfoWrapper>
             <BorderLine height={1} margin="16px 0" />
             <FlexStart>
@@ -179,23 +244,23 @@ function Cart() {
           </MenuListHeader>
         </MenuListWarpper>
         <TotalPriceWrapper>
-          <FlexBeteewn>
+          <FlexBetween>
             <TextB2R>상품 금액</TextB2R>
             <TextB2R>222원</TextB2R>
-          </FlexBeteewn>
-          <FlexBeteewn padding="8px 0 0 0">
+          </FlexBetween>
+          <FlexBetween padding="8px 0 0 0">
             <TextB2R>상품할인금액</TextB2R>
             <TextB2R>22원</TextB2R>
-          </FlexBeteewn>
-          <FlexBeteewn padding="8px 0 0 0">
+          </FlexBetween>
+          <FlexBetween padding="8px 0 0 0">
             <TextB2R>배송비</TextB2R>
             <TextB2R>22원</TextB2R>
-          </FlexBeteewn>
+          </FlexBetween>
           <BorderLine height={1} margin="16px 0" />
-          <FlexBeteewn padding="8px 0 0 0">
+          <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
             <TextH4B>12312원</TextH4B>
-          </FlexBeteewn>
+          </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag
               backgroundColor={theme.brandColor5}
@@ -224,6 +289,7 @@ const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
 const Left = styled.div`
   display: flex;
   flex-direction: column;
@@ -237,10 +303,28 @@ const ListHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  .itemCheckbox {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 const VerticalCartList = styled.div``;
-const ItemWrapper = styled.div``;
+
+const ItemWrapper = styled.div`
+  .itemCheckbox {
+    display: flex;
+    width: 100%;
+    > div {
+      align-self: flex-start;
+      padding-right: 9px;
+    }
+  }
+  .itemInfo {
+    padding-left: 30px;
+  }
+`;
 
 const DisposableSelectWrapper = styled.div`
   padding: 24px;
@@ -258,9 +342,11 @@ const DisposableItem = styled.div`
   .disposableLeft {
     width: 100%;
     display: flex;
+
     .disposableText {
       width: 100%;
       display: flex;
+      padding-top: 2px;
     }
   }
 `;
@@ -277,7 +363,7 @@ const NutritionInfoWrapper = styled.div`
   padding: 16px 24px;
   background-color: #f8f8f8;
   margin-bottom: 24px;
-  .H5B {
+  .h5B {
     font-size: 14px;
     letter-spacing: -0.4px;
     font-weight: bold;

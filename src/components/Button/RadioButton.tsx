@@ -4,52 +4,19 @@ import { TextH5B, TextB2R } from '@components/Text';
 import SVGIcon from '@utils/SVGIcon';
 
 export interface IRadioProps {
-  id?: string;
-  className?: string;
-  name?: string;
-  value?: string;
-  hideValue?: boolean;
-  status?: boolean;
-  item?: any;
-  onChange?: React.ChangeEventHandler<HTMLElement>;
+  onChange: React.MouseEventHandler<HTMLElement>;
+  isSelected?: boolean;
 }
 
 const defaultProps = {
   name: 'color',
 };
 
-export const RadioButton = ({
-  id,
-  className,
-  name,
-  item,
-  hideValue,
-  status,
-  onChange,
-}: IRadioProps) => {
+export const RadioButton = ({ isSelected, onChange }: IRadioProps) => {
   return (
-    <RadioContainer>
+    <RadioContainer onClick={onChange}>
       <RadioLabel>
-        <InputRadio
-          type="radio"
-          id={item.value}
-          className={className}
-          onChange={onChange}
-        />
-        <IconRadio id={item.value}>
-          {item.isChecked ? (
-            <SVGIcon name="checkedRoundBox" />
-          ) : (
-            <SVGIcon name="uncheckedRoundBox" />
-          )}
-        </IconRadio>
-        <ValueRadio hideValue={hideValue}>
-          {item.isChecked ? (
-            <TextH5B>{item.text}</TextH5B>
-          ) : (
-            <TextB2R>{item.text}</TextB2R>
-          )}
-        </ValueRadio>
+        <SVGIcon name={isSelected ? 'checkedRoundBox' : 'uncheckedRoundBox'} />
       </RadioLabel>
     </RadioContainer>
   );
@@ -57,11 +24,10 @@ export const RadioButton = ({
 
 RadioButton.defaultProps = defaultProps;
 
-const RadioContainer = styled.div<IRadioProps>`
-  width: 100%;
+const RadioContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+
   * {
     cursor: pointer;
   }
@@ -73,17 +39,6 @@ const RadioLabel = styled.label`
   align-items: center;
 `;
 
-const IconRadio = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
-`;
-
 const InputRadio = styled.input<IRadioProps>`
   display: none;
-`;
-
-const ValueRadio = styled.div<IRadioProps>`
-  display: ${(props) => (props.hideValue ? 'none' : 'block')};
 `;

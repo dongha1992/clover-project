@@ -29,6 +29,8 @@ function Header() {
         '/review': '사진 후기',
         '/review/[id]': '후기 상세',
         '/cart': '장바구니',
+        '/cart/delivery-info': '배송정보',
+        '/spot/search': '프코스팟 검색',
       };
 
       const title = headerTitleMap[currentPath];
@@ -41,6 +43,8 @@ function Header() {
           '/review',
           '/review/[id]',
           '/cart',
+          '/cart/delivery-info',
+          '/spot/search',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }

@@ -6,7 +6,6 @@ import { TextH5B } from '@components/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 
-/* TODO: width 조절 */
 const Toast = (): JSX.Element | null => {
   const [isToastOpen, setIsToastOpen] = useState<boolean>(false);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);

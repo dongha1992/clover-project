@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
-import Alert from '@components/Alert';
 import { alertForm } from '@store/alert';
 import { cartForm } from '@store/cart';
 import { toastSelector } from '@store/toast';
@@ -11,9 +10,14 @@ import Header from '@components/Header';
 import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/getMediaQuery';
 
+const Alert = dynamic(() => import('@components/Alert'), {
+  ssr: false,
+});
+
 const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
   ssr: false,
 });
+
 const Toast = dynamic(() => import('@components/Toast'), {
   ssr: false,
 });
@@ -46,6 +50,7 @@ export const Wrapper: React.FC = ({ children }) => {
   const bottomSheet = useSelector(bottomSheetForm);
   const cart = useSelector(cartForm);
   const toast = useSelector(toastSelector);
+
   return (
     <>
       <Container>
@@ -110,10 +115,9 @@ const Right = styled.div`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    width: 100%;
     left: 0px;
     width: 100%;
-    max-width: ${breakpoints.mobile}px;
+    max-width: 512px;
   `};
 `;
 

@@ -10,6 +10,7 @@ export interface ITagProps {
   color?: string;
   borderRadius?: number;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
 const Tag = ({
@@ -19,6 +20,7 @@ const Tag = ({
   color = theme.greyScale45,
   children,
   borderRadius,
+  onClick,
 }: ITagProps) => {
   return (
     <Container
@@ -26,6 +28,7 @@ const Tag = ({
       margin={margin}
       backgroundColor={backgroundColor}
       color={color}
+      onClick={onClick}
     >
       {children}
     </Container>

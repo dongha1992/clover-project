@@ -16,7 +16,7 @@ export interface IButtonProps {
   margin?: string;
   borderRadius?: string;
   color?: string;
-  backgroundColor: string;
+  backgroundColor?: string;
   pointer?: boolean;
   border?: boolean;
 }
