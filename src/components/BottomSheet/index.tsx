@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from '@hooks/useToast';
 import router from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
+import { theme } from '@styles/theme';
 /* TODO: height 조절해야함 */
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
@@ -20,7 +21,6 @@ function BottomSheet() {
   const { showToast, hideToast } = useToast();
 
   useEffect(() => {
-    console.log('bottomsherr');
     if (sheetRef.current && size.maxY) {
       sheetRef.current.style.setProperty('transform', `translateY(${-95}px)`);
     }
@@ -50,24 +50,52 @@ function BottomSheet() {
     }
   };
 
+  const initSpotFilterHandler = () => {};
+
+  const renderButton = () => {
+    switch (buttonTitle) {
+      case '스팟필터': {
+        return (
+          <ButtonContainer>
+            <Button
+              height="100%"
+              width="100%"
+              borderRadius="0"
+              onClick={initSpotFilterHandler}
+            >
+              전체 초기화
+            </Button>
+            <Col />
+            <Button
+              height="100%"
+              width="100%"
+              borderRadius="0"
+              onClick={clickButtonHandler}
+            >
+              적용하기
+            </Button>
+          </ButtonContainer>
+        );
+      }
+      default: {
+        return (
+          <ButtonContainer onClick={() => clickButtonHandler()}>
+            <Button height="100%" width="100%" borderRadius="0">
+              {buttonTitle}
+            </Button>
+          </ButtonContainer>
+        );
+      }
+    }
+  };
+
   return (
     <Background onClick={closeBottmSheet}>
       <Container ref={sheetRef} height={height}>
         <BottomSheetContent ref={contentRef}>
           <Content content={content} />
         </BottomSheetContent>
-        {buttonTitle ? (
-          <ButtonContainer onClick={() => clickButtonHandler()}>
-            <Button
-              height="48px"
-              width="100%"
-              margin="0 8px 0 0"
-              borderRadius="0"
-            >
-              {buttonTitle}
-            </Button>
-          </ButtonContainer>
-        ) : null}
+        {buttonTitle ? renderButton() : null}
       </Container>
     </Background>
   );
@@ -132,16 +160,26 @@ const BottomSheetContent = styled.div`
   height: 100%;
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
-  margin-bottom: 55px;
+  margin-bottom: 60px;
 `;
 
 const ButtonContainer = styled.div`
   z-index: 10000;
   position: absolute;
+  display: flex;
   width: 100%;
   bottom: 0;
   left: 0;
-  margin-bottom: 5px;
+  height: 56px;
 `;
 
-export default BottomSheet;
+const Col = styled.div`
+  position: absolute;
+  left: 50%;
+  bottom: 25%;
+  background-color: ${theme.white};
+  width: 1px;
+  height: 50%;
+`;
+
+export default React.memo(BottomSheet);

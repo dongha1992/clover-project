@@ -19,7 +19,7 @@ const ToggleButton = ({ onChange, status }: IToggleProsp) => {
 
 const Container = styled.label`
   position: relative;
-  display: inline-block;
+  display: flex;
   width: 44px;
   height: 28px;
   input {
@@ -56,7 +56,7 @@ const Slider = styled.span`
     height: 20px;
     width: 20px;
     left: 4px;
-    bottom: 2px;
+    bottom: 4px;
     background-color: ${theme.white};
     border-radius: 50%;
     transition: all 0.4s;

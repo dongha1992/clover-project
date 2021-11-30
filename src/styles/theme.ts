@@ -41,14 +41,18 @@ export const FlexBetween = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexRow = styled.div`
+export const FlexRow = styled.div<{ padding?: string; margin?: string }>`
   display: flex;
   align-items: center;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexCol = styled.div`
+export const FlexCol = styled.div<{ padding?: string; margin?: string }>`
   display: flex;
   flex-direction: column;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
 `;
 
 export const FlexColStart = styled.div`

@@ -8,6 +8,9 @@ import debounce from 'lodash-es/debounce';
 import SearchResult from '@components/SearchResult';
 import { homePadding } from '@styles/theme';
 import { SPOT_URL } from '@constants/mock';
+import { useDispatch } from 'react-redux';
+import { setBottomSheet } from '@store/bottomSheet';
+import PickupSheet from '@components/PickupSheet';
 
 function spotSearch() {
   const [spotList, setSpotList] = useState<any[]>([]);
@@ -17,6 +20,8 @@ function spotSearch() {
   );
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getSpotList();
@@ -63,6 +68,15 @@ function spotSearch() {
     }
   };
 
+  const goToOrder = useCallback(() => {
+    dispatch(
+      setBottomSheet({
+        content: <PickupSheet />,
+        buttonTitle: '주문하기',
+      })
+    );
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -79,13 +93,17 @@ function spotSearch() {
           <RecentPickWrapper>
             <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
             {recentPickedSpotList.map((item: any, index) => (
-              <SpotItem item={item} key={index} />
+              <SpotItem item={item} key={index} onClick={goToOrder} />
             ))}
           </RecentPickWrapper>
         </DefaultSearchContainer>
       ) : (
         <SearchResultContainer>
-          <SearchResult searchResult={searchResult} isSpot />
+          <SearchResult
+            searchResult={searchResult}
+            isSpot
+            onClick={goToOrder}
+          />
         </SearchResultContainer>
       )}
     </Container>
