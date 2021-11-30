@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/BorderLine';
 import {
@@ -17,6 +17,8 @@ import {
   FlexBetween,
   FlexStart,
   FlexEnd,
+  FlexCol,
+  FlexRow,
 } from '@styles/theme';
 import CartSheetItem from '@components/CartSheet/CartSheetItem';
 import Checkbox from '@components/Checkbox';
@@ -25,17 +27,35 @@ import SVGIcon from '@utils/SVGIcon';
 import Button from '@components/Button';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Item from '@components/Item';
 import Tag from '@components/Tag';
 import CountButton from '@components/Button/CountButton';
 import router from 'next/router';
+import Calendar from '@components/Calendar';
+import { RadioButton } from '@components/Button/RadioButton';
+import { useRouter } from 'next/router';
+import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
 
 const DISPOSABLE_LIST = [
   { id: 1, value: 'fork', text: '포크/물티슈', price: 100 },
   { id: 2, value: 'stick', text: '젓가락/물티슈', price: 100 },
 ];
 
+const LUNCH_OR_DINNER = [
+  {
+    id: 1,
+    value: 'lunch',
+    text: '점심',
+    discription: '(오전 9:30까지 주문시 12:00 전 도착)',
+  },
+  {
+    id: 2,
+    value: 'dinner',
+    text: '저녁',
+    discription: '(오전 11:00까지 주문시 17:00 전 도착)',
+  },
+];
 /*TODO: 장바구니 비었을 때 UI */
 
 function Cart() {
@@ -45,13 +65,41 @@ function Cart() {
     []
   );
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
+  const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
+
+  const CalendarRef = useRef<HTMLDivElement>(null);
+
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { isFromDeliveryPage } = useSelector(cartForm);
 
   const isSoldout = true;
+  const hasDeliveryPlace = true;
+
+  const disabledDates = [30, 1, 2, 3, 4];
 
   useEffect(() => {
     getLists();
   }, []);
+
+  useEffect(() => {
+    /* TODO: 초기값 설정 때문에 조금 버벅임 */
+
+    if (CalendarRef && isFromDeliveryPage) {
+      const offsetTop = CalendarRef.current?.offsetTop;
+
+      window.scrollTo({
+        behavior: 'smooth',
+        left: 0,
+        top: offsetTop,
+      });
+    }
+
+    return () => {
+      dispatch(INIT_AFTER_SETTING_DELIVERY());
+    };
+  }, [CalendarRef.current?.offsetTop]);
 
   const getLists = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -61,6 +109,7 @@ function Cart() {
   const goToDeliveryInfo = () => {
     router.push('/cart/delivery-info');
   };
+
   const handleSelectCartItem = (id: any) => {
     /* TODO: 왜 안됑? */
     const findItem = checkedMenuList.find((_id: any) => _id === id);
@@ -98,6 +147,10 @@ function Cart() {
     }
 
     setCheckedDisposalbleList(tempCheckedDisposableList);
+  };
+
+  const handleLunchOrDinner = (id: number) => {
+    setLunchOrDinner(id);
   };
 
   return (
@@ -209,12 +262,41 @@ function Cart() {
             </FlexStart>
           </InfoWrapper>
         </NutritionInfoWrapper>
-        <GetMoreBtn>
+        <GetMoreBtn ref={CalendarRef}>
           <Button backgroundColor={theme.white} color={theme.black} border>
             + 더 담으러 가기
           </Button>
         </GetMoreBtn>
       </CartInfoContainer>
+      {hasDeliveryPlace && (
+        <>
+          <BorderLine height={8} margin="32px 0" />
+          <FlexCol padding="0 24px">
+            <FlexBetween>
+              <FlexRow margin="0 0 16px 0">
+                <TextH3B padding="0 4px 0 0">픽업날짜</TextH3B>
+                <SVGIcon name="questionMark" />
+              </FlexRow>
+              <TextH6B>오늘 12:00 전 도착</TextH6B>
+            </FlexBetween>
+            <Calendar disabledDates={disabledDates} />
+
+            {LUNCH_OR_DINNER.map((item, index) => {
+              return (
+                <FlexRow key={index} padding="16px 0 0 0">
+                  <RadioButton
+                    onChange={() => handleLunchOrDinner(item.id)}
+                    isSelected={lunchOrDinner === item.id}
+                  />
+                  <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
+                  <TextB2R>{item.discription}</TextB2R>
+                </FlexRow>
+              );
+            })}
+          </FlexCol>
+        </>
+      )}
+
       <BorderLine height={8} margin="32px 0" />
       <MenuListContainer>
         <MenuListWarpper>

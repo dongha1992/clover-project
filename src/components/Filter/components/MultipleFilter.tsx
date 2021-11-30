@@ -5,23 +5,14 @@ import { theme, FlexRow } from '@styles/theme';
 import Checkbox from '@components/Checkbox';
 
 type TProps = {
-  title: string;
   data: any;
   changeHandler: (id: number) => void;
   selectedCheckboxIds: number[];
 };
 
-function MultipleFilter({
-  title,
-  data,
-  changeHandler,
-  selectedCheckboxIds,
-}: TProps) {
+function MultipleFilter({ data, changeHandler, selectedCheckboxIds }: TProps) {
   return (
     <Container>
-      <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
-        {title}
-      </TextH5B>
       <BtnContainer>
         {data &&
           data.map((item: any, index: number) => {

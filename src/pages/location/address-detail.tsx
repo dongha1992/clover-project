@@ -6,7 +6,7 @@ import Button from '@components/Button';
 import Map from '@components/Map';
 import { TextB2R, TextB3R } from '@components/Text';
 import TextInput from '@components/TextInput';
-
+import { breakpoints } from '@utils/getMediaQuery';
 /*TODO: 버튼 위치 */
 
 function addressDetail() {
@@ -32,20 +32,23 @@ function addressDetail() {
           <TextInput placeholder="상세주소 입력 (건물명/동/호)" />
         </InputWrapper>
       </AddressDetailContainer>
-      <Button width="100%" margin="34px 0 0 0" borderRadius="0">
-        설정하기
-      </Button>
+      <ButtonWrapper>
+        <Button width="100%" margin="0 0 0 0" borderRadius="0">
+          설정하기
+        </Button>
+      </ButtonWrapper>
     </Container>
   );
 }
 
 const Container = styled.div`
   position: relative;
+  padding-bottom: 20px;
 `;
 
 const AddressDetailContainer = styled.div`
   ${homePadding}
-  margin:8px 0px;
+  margin: 8px 0px;
 `;
 
 const InputWrapper = styled.div`
@@ -71,10 +74,27 @@ const PlaceInfo = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  position: absolute;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  max-width: ${breakpoints.mobile}px;
+  position: fixed;
   bottom: 0px;
-  left: 0px;
-  width: 100%;
+  right: 0px;
+  z-index: 10;
+  height: 56px;
+  left: calc(50%);
+  background-color: ${({ theme }) => theme.black};
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 0;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
 `;
 
 export default addressDetail;

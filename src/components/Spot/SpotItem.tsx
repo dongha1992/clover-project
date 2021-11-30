@@ -18,9 +18,10 @@ export interface ISpotItem {
 
 interface IProps {
   item: ISpotItem;
+  onClick: () => void;
 }
 
-function SpotItem({ item }: IProps) {
+function SpotItem({ item, onClick }: IProps) {
   return (
     <Container>
       <FlexColStart>
@@ -46,7 +47,12 @@ function SpotItem({ item }: IProps) {
         <ImageWrapper>
           <SpotImg src={item.url} />
         </ImageWrapper>
-        <Button backgroundColor={theme.white} color={theme.black} border>
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          onClick={onClick}
+        >
           주문하기
         </Button>
       </FlexCol>
@@ -85,4 +91,4 @@ const Col = styled.div`
   background-color: ${theme.greyScale6};
   margin: 0 4px;
 `;
-export default SpotItem;
+export default React.memo(SpotItem);

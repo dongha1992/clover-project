@@ -8,14 +8,14 @@ import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import FilterGroup from '@components/Filter/FilterGroup';
 
-function SearchResult({ searchResult, isSpot }: any) {
+function SearchResult({ searchResult, goToOrder, isSpot }: any) {
   const dispatch = useDispatch();
 
   const clickFilterHandler = () => {
     dispatch(
       setBottomSheet({
         content: <FilterGroup isSpot />,
-        buttonTitle: '적용하기',
+        buttonTitle: '스팟필터',
       })
     );
   };
@@ -34,7 +34,7 @@ function SearchResult({ searchResult, isSpot }: any) {
             return !isSpot ? (
               <Item item={item} key={index} />
             ) : (
-              <SpotItem item={item} key={index} />
+              <SpotItem item={item} key={index} onClick={goToOrder} />
             );
           })
         ) : (
@@ -74,4 +74,4 @@ const ItemListWrapper = styled.div<{ isSpot?: boolean }>`
   }}
 `;
 
-export default SearchResult;
+export default React.memo(SearchResult);

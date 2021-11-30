@@ -9,6 +9,8 @@ import Button from '@components/Button';
 import Checkbox from '@components/Checkbox';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
+import { useDispatch } from 'react-redux';
+import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 
 const Tooltip = dynamic(() => import('@components/Tooltip'), {
   ssr: false,
@@ -74,6 +76,7 @@ const pickupPlace = {
 
 function deliverInfo() {
   const [selectedMethod, setSelectedMethod] = useState<number>(1);
+  const dispatch = useDispatch();
 
   const checkTermHandler = () => {};
 
@@ -91,6 +94,11 @@ function deliverInfo() {
     },
     [selectedMethod]
   );
+
+  const finishDeliverySetting = () => {
+    router.push('/cart');
+    dispatch(SET_AFTER_SETTING_DELIVERY());
+  };
 
   return (
     <Container>
@@ -243,7 +251,7 @@ function deliverInfo() {
           </BtnWrapper>
         )}
       </Wrapper>
-      <SettingBtnWrapper>
+      <SettingBtnWrapper onClick={finishDeliverySetting}>
         <Button borderRadius="0">설정하기</Button>
       </SettingBtnWrapper>
     </Container>

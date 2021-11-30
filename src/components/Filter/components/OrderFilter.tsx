@@ -5,18 +5,14 @@ import { theme, FlexRow } from '@styles/theme';
 import { RadioButton } from '@components/Button/RadioButton';
 
 type TProps = {
-  title: string;
   data: any;
   changeHandler: (id: number) => void;
   selectedRadioId: number;
 };
 
-function OrderFilter({ title, data, changeHandler, selectedRadioId }: TProps) {
+function OrderFilter({ data, changeHandler, selectedRadioId }: TProps) {
   return (
     <Container>
-      <TextH5B padding="0 0 8px 0" color={theme.greyScale65}>
-        {title}
-      </TextH5B>
       <BtnContainer>
         {data &&
           data.map((item: any, index: number) => {

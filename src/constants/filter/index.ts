@@ -14,24 +14,24 @@ export const RADIO_CHECKBOX = [
   { id: 5, text: '리뷰수 순', value: 'review' },
 ];
 
-export const MUTILPLE_CHECKBOX_SPOT = [
-  { id: 1, text: '가까운 순', value: 'nearest' },
-  { id: 2, text: '자주가는 순', value: 'frequency' },
-];
-
-export const RADIO_CHECKBOX_SPOT = {
+export const MUTILPLE_CHECKBOX_SPOT = {
   public: [
-    { id: 1, text: '전체', value: 'all' },
+    { id: 1, text: '집', value: 'home' },
     { id: 2, text: '공유오피스', value: 'new' },
     { id: 3, text: '가격 낮은 순', value: 'lowPrice' },
     { id: 4, text: '가격 높은 순', value: 'highPrice' },
     { id: 5, text: '리뷰수 순', value: 'review' },
   ],
   etc: [
-    { id: 1, text: '전체', value: 'buy' },
-    { id: 2, text: '취식가능', value: 'new' },
-    { id: 3, text: '가격 낮은 순', value: 'lowPrice' },
-    { id: 4, text: '가격 높은 순', value: 'highPrice' },
-    { id: 5, text: '리뷰수 순', value: 'review' },
+    { id: 6, text: '테스트', value: 'test' },
+    { id: 7, text: '취식가능', value: 'new' },
+    { id: 8, text: '가격 낮은 순', value: 'lowPrice' },
+    { id: 9, text: '가격 높은 순', value: 'highPrice' },
+    { id: 10, text: '리뷰수 순', value: 'review' },
   ],
 };
+
+export const RADIO_CHECKBOX_SPOT = [
+  { id: 1, text: '가까운 순', value: 'nearest' },
+  { id: 2, text: '자주가는 순', value: 'frequency' },
+];
