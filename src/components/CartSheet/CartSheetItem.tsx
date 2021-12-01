@@ -9,6 +9,7 @@ interface IProps {
   menu: any;
   isShareSheet?: boolean;
   isCart?: boolean;
+  isPayment?: boolean;
   isSoldout?: boolean;
 }
 
@@ -42,7 +43,7 @@ function CartSheetItem({ menu, isShareSheet, isCart, isSoldout }: IProps) {
               {isSoldout ? (
                 <Tag
                   backgroundColor={theme.black}
-                  padding="7px 12px"
+                  padding="6px 10px"
                   margin="0"
                   borderRadius={32}
                   onClick={clickRestockNoti}
@@ -81,6 +82,7 @@ const ImageWrapper = styled.div`
 `;
 const ContentWrapper = styled.div`
   margin-left: 8px;
+  width: 70%;
 `;
 
 const PriceWrapper = styled.div`
@@ -96,8 +98,8 @@ const RemoveBtnContainer = styled.div`
 
 const CountButtonContainer = styled.div`
   position: absolute;
-  right: 16px;
-  bottom: 16px;
+  right: 8px;
+  bottom: 8px;
 `;
 
 const ItemImage = styled.img`

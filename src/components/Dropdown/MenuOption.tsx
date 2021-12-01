@@ -9,7 +9,7 @@ type TProps = {
   selectMenuHandler: any;
 };
 
-function Option({ option, selectMenuHandler }: TProps) {
+function MenuOption({ option, selectMenuHandler }: TProps) {
   return (
     <OptionList onClick={() => selectMenuHandler(option)}>
       <TextB3R>{option.text}</TextB3R>
@@ -18,7 +18,7 @@ function Option({ option, selectMenuHandler }: TProps) {
   );
 }
 
-export default React.memo(Option);
+export default React.memo(MenuOption);
 
 const OptionList = styled.li`
   display: flex;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB2R } from '@components/Text';
-import { Select, Option } from '@components/Dropdown';
+import { Select, MenuOption } from '@components/Dropdown';
 import { theme } from '@styles/theme';
 import BorderLine from '@components/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
@@ -36,7 +36,7 @@ function CartSheetGroup() {
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
             {cartSheetObj?.main.map((option: any, index: number) => (
-              <Option
+              <MenuOption
                 key={index}
                 option={option}
                 selectMenuHandler={selectMenuHandler}
@@ -52,7 +52,7 @@ function CartSheetGroup() {
               </TextH5B>
               <Select placeholder="선택옵션" type={'optional'}>
                 {cartSheetObj?.secondary.map((option: any, index: number) => (
-                  <Option
+                  <MenuOption
                     key={index}
                     option={option}
                     selectMenuHandler={selectMenuHandler}

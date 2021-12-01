@@ -41,6 +41,17 @@ export const FlexBetween = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
+export const FlexBetweenStart = styled.div<{
+  padding?: string;
+  margin?: string;
+}>`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
+`;
+
 export const FlexRow = styled.div<{ padding?: string; margin?: string }>`
   display: flex;
   align-items: center;
@@ -55,16 +66,25 @@ export const FlexCol = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
+export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
+`;
+
 export const FlexColStart = styled.div`
   display: flex;
   flex-direction: column;
   align-self: flex-start;
 `;
 
-export const GridWrapper = styled.div<{ col: number }>`
+export const GridWrapper = styled.div<{ gap: number }>`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(col, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: ${({ gap }) => gap && gap}px;
 `;
 
 export const FlexStart = styled.div`

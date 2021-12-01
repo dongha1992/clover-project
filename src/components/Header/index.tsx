@@ -31,6 +31,7 @@ function Header() {
         '/cart': '장바구니',
         '/cart/delivery-info': '배송정보',
         '/spot/search': '프코스팟 검색',
+        '/payment': '결제',
       };
 
       const title = headerTitleMap[currentPath];
@@ -45,6 +46,7 @@ function Header() {
           '/cart',
           '/cart/delivery-info',
           '/spot/search',
+          '/payment',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }

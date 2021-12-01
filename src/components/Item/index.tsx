@@ -45,7 +45,9 @@ function Item({ item, isCart }: TProps) {
         </CartBtn>
       </ImageWrapper>
 
-      <TextB3R margin="8px 0 0 0">{item.name}</TextB3R>
+      <TextB3R margin="8px 0 0 0" height="40px">
+        {item.name}
+      </TextB3R>
       <PriceWrapper>
         <TextH5B color={theme.brandColor} padding={'0 4px 0 0'}>
           {item.discount}%

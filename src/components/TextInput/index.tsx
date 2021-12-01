@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
 import SVGIcon from '@utils/SVGIcon';
-import { textBody2 } from '@styles/theme';
+import { textBody2, theme } from '@styles/theme';
 
 export type InputType =
   | 'button'
@@ -45,6 +45,7 @@ export interface ITextFieldProps {
   search?: boolean;
   padding?: string;
   svg?: string;
+  margin?: string;
 }
 
 const defaultProps = {
@@ -52,8 +53,8 @@ const defaultProps = {
   height: '48px',
   name: 'input',
   padding: '12px 16px',
-  inputType: 'string',
-  style: { minWidth: 312 },
+  inputType: 'text',
+  // style: { minWidth: 312 },
 };
 
 const TextInput = React.forwardRef(
@@ -73,6 +74,7 @@ const TextInput = React.forwardRef(
       search,
       padding,
       svg,
+      margin,
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
@@ -94,6 +96,7 @@ const TextInput = React.forwardRef(
         search={search ?? false}
         style={style}
         padding={padding}
+        margin={margin}
         svg={svg}
       >
         <div className="wrapper">
@@ -128,9 +131,10 @@ const Container = styled.div<{
   style?: Obj;
   padding?: string;
   svg?: string;
+  margin?: string;
 }>`
   position: relative;
-  margin: 5px 0;
+  margin: ${({ margin }) => margin && margin}px;
 
   ${({ search }) =>
     search &&
@@ -138,7 +142,6 @@ const Container = styled.div<{
       background-color: #ffffff1d;
       backdrop-filter: blur(5px);
     `}
-
   .wrapper {
     svg {
       position: absolute;
@@ -152,7 +155,7 @@ const Container = styled.div<{
       padding: ${({ padding }) => padding};
       padding-left: ${({ svg }) => (svg ? 48 : 12)}px;
       ${({ size, search }) => search && `size: calc(${size} + 1rem)`};
-      border: 1px solid rgba(0, 0, 0, 0.2);
+      border: 1px solid ${theme.greyScale15};
       border-radius: 8px;
       outline: none;
       cursor: text;
