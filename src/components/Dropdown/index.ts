@@ -1,4 +1,5 @@
 import Select from './Select';
-import Option from './Option';
+import MenuOption from './MenuOption';
+import AcessMethodOption from './AcessMethodOption';
 
-export { Select, Option };
+export { Select, MenuOption, AcessMethodOption };

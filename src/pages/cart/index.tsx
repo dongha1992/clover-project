@@ -106,10 +106,6 @@ function Cart() {
     setItemList(data);
   };
 
-  const goToDeliveryInfo = () => {
-    router.push('/cart/delivery-info');
-  };
-
   const handleSelectCartItem = (id: any) => {
     /* TODO: 왜 안됑? */
     const findItem = checkedMenuList.find((_id: any) => _id === id);
@@ -151,6 +147,18 @@ function Cart() {
 
   const handleLunchOrDinner = (id: number) => {
     setLunchOrDinner(id);
+  };
+
+  const goToDeliveryInfo = () => {
+    router.push('/cart/delivery-info');
+  };
+
+  const goToCategoryPage = () => {
+    router.push('/category');
+  };
+
+  const goToPayment = () => {
+    router.push('/payment');
   };
 
   return (
@@ -262,7 +270,7 @@ function Cart() {
             </FlexStart>
           </InfoWrapper>
         </NutritionInfoWrapper>
-        <GetMoreBtn ref={CalendarRef}>
+        <GetMoreBtn ref={CalendarRef} onClick={goToCategoryPage}>
           <Button backgroundColor={theme.white} color={theme.black} border>
             + 더 담으러 가기
           </Button>
@@ -356,7 +364,7 @@ function Cart() {
           </FlexEnd>
         </TotalPriceWrapper>
       </MenuListContainer>
-      <OrderBtn>
+      <OrderBtn onClick={goToPayment}>
         <Button borderRadius="0">1232원 주문하기</Button>
       </OrderBtn>
     </Container>

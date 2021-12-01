@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Header from '@components/Header';
 import TextInput from '@components/TextInput';
 import { HomeContainer } from '@styles/theme';
 import { TextH6B, TextH5B, TextB2R } from '@components/Text';
