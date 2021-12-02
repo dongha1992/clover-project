@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { breakpoints } from '@utils/getMediaQuery';
 
 export const theme = {
   brandColor: '#35AD73',
@@ -33,6 +34,14 @@ export const verticalCenter = css`
   align-self: center;
 `;
 
+export const FlexCenter = styled.div<{ padding?: string; margin?: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
+`;
+
 export const FlexBetween = styled.div<{ padding?: string; margin?: string }>`
   display: flex;
   justify-content: space-between;
@@ -48,6 +57,13 @@ export const FlexBetweenStart = styled.div<{
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
+`;
+
+export const FlexRowStart = styled.div<{ padding?: string; margin?: string }>`
+  display: flex;
+  align-items: start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
 `;
@@ -125,6 +141,28 @@ export const ScrollHorizonList = styled.div`
   white-space: nowrap;
   width: auto;
   display: flex;
+`;
+
+export const fixedBottom = css`
+  width: 100%;
+  max-width: ${breakpoints.mobile}px;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 10;
+  height: 56px;
+  left: calc(50%);
+  background-color: ${({ theme }) => theme.black};
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 0;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
 `;
 
 export const textH1 = css`

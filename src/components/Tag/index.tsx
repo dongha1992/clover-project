@@ -29,6 +29,7 @@ const Tag = ({
       backgroundColor={backgroundColor}
       color={color}
       onClick={onClick}
+      borderRadius={borderRadius}
     >
       {children}
     </Container>

@@ -9,6 +9,8 @@ import SVGIcon from '@utils/SVGIcon';
 import getUrlLink from '@utils/getUrlLink';
 import getShare from '@utils/getShare';
 
+/* TODO : og 태그 고려 */
+
 const SHARE_ICONS = [
   { value: 'kakao', name: '카카오톡' },
   { value: 'facebook', name: '페이스북' },
@@ -97,7 +99,7 @@ function ShareSheet() {
         <TextH5B center padding="24px 0 16px 0">
           공유하기
         </TextH5B>
-        <CartSheetItem menu={menuItem} isShareSheet />
+        <CartSheetItem menu={menuItem} isShareSheet padding="16px" />
         <LinkWrapper>
           {SHARE_ICONS.map((item, index) => (
             <LinkGroup key={index} onClick={(e) => shareHandler(e, item.value)}>

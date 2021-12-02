@@ -65,7 +65,7 @@ function CartSheetGroup() {
         {selectedMenus.length > 0 ? (
           <SelectedCartItemContainer>
             {selectedMenus.map((menu: any, index: number) => (
-              <CartSheetItem menu={menu} key={index} />
+              <CartSheetItem menu={menu} key={index} padding="16px" />
             ))}
           </SelectedCartItemContainer>
         ) : null}

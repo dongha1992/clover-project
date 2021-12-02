@@ -97,7 +97,7 @@ export const TextH5B = styled(Text)`
   font-size: 14px;
   letter-spacing: -0.4px;
   font-weight: bold;
-  line-height: 24px;
+  line-height: 22px;
 `;
 
 export const TextH6B = styled(Text)`

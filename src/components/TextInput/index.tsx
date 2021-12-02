@@ -37,7 +37,7 @@ export interface ITextFieldProps {
   inputType?: InputType;
   placeholder?: string;
   name?: string;
-  value?: string;
+  value?: string | number;
   width?: string;
   height?: string;
   size?: string;
@@ -54,7 +54,6 @@ const defaultProps = {
   name: 'input',
   padding: '12px 16px',
   inputType: 'text',
-  // style: { minWidth: 312 },
 };
 
 const TextInput = React.forwardRef(
@@ -135,7 +134,7 @@ const Container = styled.div<{
 }>`
   position: relative;
   margin: ${({ margin }) => margin && margin}px;
-
+  width: 100%;
   ${({ search }) =>
     search &&
     css`
@@ -165,6 +164,9 @@ const Container = styled.div<{
           background-color: #ffffff1d;
           backdrop-filter: blur(5px);
         `};
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
     }
 
     input::placeholder {

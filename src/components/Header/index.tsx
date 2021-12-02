@@ -32,6 +32,9 @@ function Header() {
         '/cart/delivery-info': '배송정보',
         '/spot/search': '프코스팟 검색',
         '/payment': '결제',
+        '/mypage/card': '결제관리',
+        '/mypage/card/register': '카드등록',
+        '/mypage/card/register/term': '이용약관',
       };
 
       const title = headerTitleMap[currentPath];
@@ -47,6 +50,9 @@ function Header() {
           '/cart/delivery-info',
           '/spot/search',
           '/payment',
+          '/mypage/card',
+          '/mypage/card/register',
+          '/mypage/card/register/term',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }
