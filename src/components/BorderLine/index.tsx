@@ -25,7 +25,7 @@ const Container = styled.div<{
 }>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
-  background-color: ${({ theme }) => theme.greyScale3};
+  background-color: ${({ theme }) => theme.greyScale6};
   height: ${({ height }) => (height ? height : 8)}px;
   margin: ${({ margin }) => margin && margin};
   padding: ${({ padding }) => padding && padding};

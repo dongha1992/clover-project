@@ -11,13 +11,22 @@ interface IProps {
   isCart?: boolean;
   isPayment?: boolean;
   isSoldout?: boolean;
+  padding?: string;
 }
 
-function CartSheetItem({ menu, isShareSheet, isCart, isSoldout }: IProps) {
+/* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
+
+function CartSheetItem({
+  menu,
+  isShareSheet,
+  isCart,
+  isSoldout,
+  padding,
+}: IProps) {
   const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
   return (
-    <Container isSoldout={isSoldout}>
+    <Container isSoldout={isSoldout} isCart={isCart} padding={padding}>
       <Wrapper>
         <ImageWrapper>
           <ItemImage src={menu.url} alt="상품이미지" />
@@ -61,19 +70,24 @@ function CartSheetItem({ menu, isShareSheet, isCart, isSoldout }: IProps) {
   );
 }
 
-const Container = styled.div<{ isSoldout?: boolean }>`
+const Container = styled.div<{
+  isSoldout?: boolean;
+  isCart?: boolean;
+  padding?: string;
+}>`
   position: relative;
   width: 100%;
-  height: 92px;
-  background-color: ${theme.greyScale3};
+  height: 100%;
+  background-color: ${({ isCart }) =>
+    !isCart ? theme.greyScale3 : theme.white};
   border-radius: 8px;
   margin-bottom: 8px;
   color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
+  padding: ${({ padding }) => padding && padding};
 `;
 
 const Wrapper = styled.div`
   display: flex;
-  padding: 16px;
 `;
 
 const ImageWrapper = styled.div`

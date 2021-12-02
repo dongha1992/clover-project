@@ -19,6 +19,7 @@ import {
   FlexEnd,
   FlexCol,
   FlexRow,
+  fixedBottom,
 } from '@styles/theme';
 import CartSheetItem from '@components/CartSheet/CartSheetItem';
 import Checkbox from '@components/Checkbox';
@@ -57,6 +58,7 @@ const LUNCH_OR_DINNER = [
   },
 ];
 /*TODO: 장바구니 비었을 때 UI */
+/*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
 function Cart() {
   const [itemList, setItemList] = useState([]);
@@ -513,10 +515,7 @@ const TotalPriceWrapper = styled.div`
 `;
 
 const OrderBtn = styled.div`
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  ${fixedBottom}
 `;
 
 export default Cart;

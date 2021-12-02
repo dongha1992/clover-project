@@ -800,6 +800,86 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  card: () => (
+    <svg
+      width="26"
+      height="20"
+      viewBox="0 0 26 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="26" height="20" rx="2" fill="#242424" />
+      <rect
+        x="3.2666"
+        y="7.59961"
+        width="6.4"
+        height="4.8"
+        rx="1"
+        fill="white"
+      />
+    </svg>
+  ),
+  blackBackgroundCancel: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="9" cy="9" r="7" fill="#242424" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.5263 6.47358C11.7879 6.73519 11.7879 7.15934 11.5263 7.42095L7.42106 11.5262C7.15945 11.7878 6.7353 11.7878 6.47369 11.5262C6.21208 11.2646 6.21208 10.8404 6.47369 10.5788L10.5789 6.47358C10.8406 6.21197 11.2647 6.21197 11.5263 6.47358Z"
+        fill="white"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.5264 11.5263C11.2648 11.7879 10.8407 11.7879 10.5791 11.5263L6.47379 7.42106C6.21218 7.15945 6.21218 6.7353 6.47379 6.47369C6.7354 6.21208 7.15955 6.21208 7.42116 6.47369L11.5264 10.5789C11.788 10.8406 11.788 11.2647 11.5264 11.5263Z"
+        fill="white"
+      />
+    </svg>
+  ),
+  cardRegister: () => (
+    <svg
+      width="112"
+      height="84"
+      viewBox="0 0 112 84"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="112" height="84" rx="8" fill="#242424" />
+      <rect
+        x="12.1082"
+        y="36.3242"
+        width="15.1351"
+        height="11.3514"
+        rx="2"
+        fill="white"
+      />
+    </svg>
+  ),
+  emptyCard: () => (
+    <svg
+      width="42"
+      height="32"
+      viewBox="0 0 42 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="42" height="32" rx="4" fill="#DEDEDE" />
+      <rect
+        x="5.59998"
+        y="12.8008"
+        width="8.4"
+        height="6.4"
+        rx="1"
+        fill="white"
+      />
+    </svg>
+  ),
 };
 
 /* TODO: ref */

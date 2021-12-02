@@ -11,6 +11,7 @@ import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
 import { useRouter } from 'next/router';
 
 /* TODO: Tag 부분 css 다시 & Height 조정 필요 */
+/* TODO: 이름 나오는 부분 한줄, 두줄 */
 
 type TProps = {
   item: any;

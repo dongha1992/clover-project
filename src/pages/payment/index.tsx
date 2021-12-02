@@ -11,10 +11,11 @@ import {
   FlexColEnd,
   FlexBetweenStart,
   GridWrapper,
+  FlexRowStart,
+  fixedBottom,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Text';
 import Tag from '@components/Tag';
-import { RadioButton } from '@components/Button/RadioButton';
 import Button from '@components/Button';
 import Checkbox from '@components/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
@@ -25,6 +26,8 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/TextInput';
 import { Select, AcessMethodOption } from '@components/Dropdown/index';
+import router from 'next/router';
+import CardItem from '@components/Mypage/CardItem';
 
 const ACCESS_METHOD = [
   {
@@ -73,12 +76,16 @@ const PAYMENT_METHOD = [
   },
 ];
 
+const hasRegisteredCart = true;
+const point = 5000;
+
 function payment() {
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
   const [itemlist, setItemList] = useState<any[]>([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -89,38 +96,79 @@ function payment() {
     getCartList();
   }, []);
 
+  const showSectionHandler = (selectedSection: string) => {
+    if (selectedSection === 'customInfo') {
+      setShowSectionObj({
+        ...showSectionObj,
+        showCustomerInfoSection: !showSectionObj.showCustomerInfoSection,
+      });
+    } else {
+      setShowSectionObj({
+        ...showSectionObj,
+        showOrderItemSection: !showSectionObj.showOrderItemSection,
+      });
+    }
+  };
+
   const checkPaymentTermHandler = () => {};
 
   const checkSamePerson = () => {};
 
   const selectOptionHandler = () => {};
 
+  const selectPaymentMethodHanlder = (method: any) => {
+    const { id } = method;
+    setSelectedPaymentMethod(id);
+  };
+
+  const goToFinishPayment = () => {};
+
+  const goToCardManagemnet = () => {
+    router.push('/mypage/card');
+  };
+
+  const goToRegisteredCard = () => {
+    router.push('/mypage/card/register');
+  };
+
   return (
     <Container>
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문상품</TextH4B>
-          <FlexRow>
-            <TextB2R>상품 이름...</TextB2R>
-            <SVGIcon name="triangleDown" />
+          <FlexRow onClick={() => showSectionHandler('orderItem')}>
+            <TextB2R padding="0 13px 0 0">상품 이름...</TextB2R>
+            <SVGIcon
+              name={
+                showSectionObj.showOrderItemSection
+                  ? 'triangleUp'
+                  : 'triangleDown'
+              }
+            />
           </FlexRow>
         </FlexBetween>
-        <OrderListWrapper>
+        <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
           {itemlist.map((menu, index) => {
             return <PaymentItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>
       </OrderItemsWrapper>
-      <BorderLine height={8} />
+      <BorderLine height={8} margin="16px 0 0 0" />
       <CustomerInfoWrapper>
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문자 정보</TextH4B>
-          <ShowBtnWrapper>
-            <TextB2R>주문자 이름...</TextB2R>
-            <SVGIcon name="triangleDown" />
+          <ShowBtnWrapper onClick={() => showSectionHandler('customInfo')}>
+            <TextB2R padding="0 13px 0 0">주문자 이름...</TextB2R>
+            <SVGIcon
+              name={
+                showSectionObj.showCustomerInfoSection
+                  ? 'triangleUp'
+                  : 'triangleDown'
+              }
+            />
           </ShowBtnWrapper>
         </FlexBetween>
-        <FlexCol padding="24px 0">
+        <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
           <FlexBetween>
             <TextH5B>보내는 사람</TextH5B>
             <TextB2R>김프코</TextB2R>
@@ -133,9 +181,9 @@ function payment() {
             <TextH5B>이메일</TextH5B>
             <TextB2R>fco@freshcode.me</TextB2R>
           </FlexBetween>
-        </FlexCol>
+        </CustomInfoList>
       </CustomerInfoWrapper>
-      <BorderLine height={8} />
+      <BorderLine height={8} margin="24px 0 0 0" />
       <ReceiverInfoWrapper>
         <FlexBetween padding="0">
           <TextH4B>받는 사람 정보</TextH4B>
@@ -259,10 +307,15 @@ function payment() {
           </FlexRow>
         </FlexBetween>
         <FlexRow padding="24px 0 0 0">
-          <TextInput width="218px" margin="0 8px 0 0" />
-          <Button height="48px">전액 사용</Button>
+          <TextInput width="100%" margin="0 8px 0 0" value={point} />
+          <DeletePoint>
+            <SVGIcon name="blackBackgroundCancel" />
+          </DeletePoint>
+          <Button width="86px" height="48px">
+            전액 사용
+          </Button>
         </FlexRow>
-        <TextB3R padding="2px 0 0 16px">사용 가능한 포인트 5,000원</TextB3R>
+        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point}원</TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
       <PaymentMethodWrapper>
@@ -274,12 +327,29 @@ function payment() {
           </FlexRow>
         </FlexBetween>
         <GridWrapper gap={16}>
-          {PAYMENT_METHOD.map((method) => (
-            <Button>{method.text}</Button>
-          ))}
+          {PAYMENT_METHOD.map((method, index) => {
+            const isSelected = selectedPaymentMethod === method.id;
+            return (
+              <Button
+                onClick={() => selectPaymentMethodHanlder(method)}
+                backgroundColor={isSelected ? theme.black : theme.white}
+                color={isSelected ? theme.white : theme.black}
+                border
+                key={index}
+              >
+                {method.text}
+              </Button>
+            );
+          })}
         </GridWrapper>
-        <BorderLine height={1} margin="16px 0" />
-        <Button border backgroundColor={theme.white} color={theme.black}>
+        <BorderLine height={1} margin="24px 0" />
+        {hasRegisteredCart && <CardItem onClick={goToCardManagemnet} />}
+        <Button
+          border
+          backgroundColor={theme.white}
+          color={theme.black}
+          onClick={goToRegisteredCard}
+        >
           카드 등록하기
         </Button>
       </PaymentMethodWrapper>
@@ -332,6 +402,9 @@ function payment() {
           </TextH6B>
         </FlexRow>
       </PaymentTermWrapper>
+      <PaymentBtn onClick={goToFinishPayment}>
+        <Button borderRadius="0">1232원 주문하기</Button>
+      </PaymentBtn>
     </Container>
   );
 }
@@ -340,8 +413,10 @@ const Container = styled.div``;
 const OrderItemsWrapper = styled.div`
   ${homePadding}
 `;
-const OrderListWrapper = styled.div`
-  padding: 24px 0 8px 0;
+const OrderListWrapper = styled.div<{ isShow: boolean }>`
+  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
+  flex-direction: column;
+  padding: 24px 0 0 0;
 `;
 const ShowBtnWrapper = styled.div`
   display: flex;
@@ -350,6 +425,12 @@ const ShowBtnWrapper = styled.div`
 const CustomerInfoWrapper = styled.div`
   ${homePadding}
   display: flex;
+  flex-direction: column;
+`;
+
+const CustomInfoList = styled.div<{ isShow: boolean }>`
+  padding-top: 24px;
+  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
   flex-direction: column;
 `;
 const ReceiverInfoWrapper = styled.div`
@@ -374,12 +455,22 @@ const CouponWrapper = styled.div`
   padding: 24px;
 `;
 
+const RegisteredCardWrapper = styled.div`
+  padding-bottom: 24px;
+`;
+
 const PointWrapper = styled.div`
   padding: 24px;
 `;
+
 const PaymentMethodWrapper = styled.div`
   padding: 24px;
   width: 100%;
+`;
+
+const DeletePoint = styled.div`
+  position: absolute;
+  right: 28%;
 `;
 
 const TotalPriceWrapper = styled.div`
@@ -388,11 +479,17 @@ const TotalPriceWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const PaymentTermWrapper = styled.div`
   ${homePadding}
   display: flex;
   flex-direction: column;
   margin-top: 32px;
+  margin-bottom: 160px;
+`;
+
+const PaymentBtn = styled.div`
+  ${fixedBottom}
 `;
 
 export default payment;

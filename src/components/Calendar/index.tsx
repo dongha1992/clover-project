@@ -18,6 +18,9 @@ interface ICalendar {
   disabledDates: number[];
 }
 
+/* TODO: 케이스 나누기, css 다시 해야하나.. */
+/* TODO: 특수 케이스 별로 없어서 굳이 일주이주 나눠야 하나 */
+
 function Calendar({ disabledDates }: ICalendar) {
   const [dateList, setDateList] = useState<number[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
