@@ -35,6 +35,8 @@ function Header() {
         '/mypage/card': '결제관리',
         '/mypage/card/register': '카드등록',
         '/mypage/card/register/term': '이용약관',
+        '/mypage/order-detail': '주문 상세',
+        '/payment/finish': '결제완료',
       };
 
       const title = headerTitleMap[currentPath];
@@ -53,6 +55,8 @@ function Header() {
           '/mypage/card',
           '/mypage/card/register',
           '/mypage/card/register/term',
+          '/payment/finish',
+          '/mypage/order-detail',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }

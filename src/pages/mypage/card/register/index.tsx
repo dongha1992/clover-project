@@ -18,6 +18,8 @@ import { Obj } from '@model/index';
 import Checkbox from '@components/Checkbox';
 import Button from '@components/Button';
 import router from 'next/router';
+import { useDispatch } from 'react-redux';
+import { setAlert } from '@store/alert';
 
 const CARD_TYPE = [
   {
@@ -49,6 +51,8 @@ function cardRegister() {
   const thirdNumberRef = useRef<HTMLInputElement>(null);
   const fourthNumberRef = useRef<HTMLInputElement>(null);
 
+  const dispatch = useDispatch();
+
   const selectCardTypeHandler = (id: number) => {
     setSelectedCardType(id);
   };
@@ -56,9 +60,12 @@ function cardRegister() {
   const cardNumberHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let { name, value, maxLength } = e.target as HTMLInputElement;
 
+    if (value.length > maxLength - 1) {
+      focusNextInputHandler(name);
+    }
+
     if (value.length > maxLength) {
       value = value.slice(0, maxLength);
-      focusNextInputHandler(name);
     }
 
     setCard({
@@ -84,11 +91,24 @@ function cardRegister() {
   };
 
   const selectCheckboxHandler = () => {};
+
   const goToCardRegisterTerm = () => {
     router.push('/mypage/card/register/term');
   };
 
-  const registerCardHandler = () => {};
+  const registerCardHandler = () => {
+    const disabledMsg =
+      '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+
+    const successMsg = '카드를 등록했습니다.';
+    dispatch(
+      setAlert({
+        alertMessage: disabledMsg,
+        onSubmit: () => {},
+        submitBtnText: '확인',
+      })
+    );
+  };
 
   return (
     <Container>
@@ -276,14 +296,18 @@ const CardInputGroup = styled.div`
 `;
 
 const ExpirationAndPasswordWrapper = styled.div`
+  width: 100%;
   display: flex;
   margin-bottom: 24px;
 `;
 const Expiration = styled.div`
   padding-right: 16px;
+  width: 100%;
 `;
 
-const Password = styled.div``;
+const Password = styled.div`
+  width: 100%;
+`;
 
 const CompanyRegistrationNumberWrapper = styled.div`
   margin-bottom: 24px;

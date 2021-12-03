@@ -1,7 +1,8 @@
 import styled, { css } from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
+import { Obj } from '@model/index';
 
-export const theme = {
+export const theme: Obj = {
   brandColor: '#35AD73',
   brandColor5: '#EDF3F0',
   fontFamily: "'Noto Sans KR', sans-serif;",
@@ -42,12 +43,18 @@ export const FlexCenter = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexBetween = styled.div<{ padding?: string; margin?: string }>`
+export const FlexBetween = styled.div<{
+  padding?: string;
+  margin?: string;
+  width?: string;
+}>`
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
 `;
 
 export const FlexBetweenStart = styled.div<{

@@ -1,6 +1,6 @@
 import { theme } from '@styles/theme';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextH5B } from '@components/Text';
 export interface IButtonProps {
   id?: string;
@@ -20,6 +20,7 @@ export interface IButtonProps {
   pointer?: boolean;
   border?: boolean;
 }
+
 const defaultProps = {
   filled: true,
   width: '100%',
@@ -49,7 +50,20 @@ export const Container = styled(TextH5B)<IButtonProps>`
   background-color: ${(props) =>
     props.backgroundColor && props.backgroundColor};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
-  border: ${(props) => (props.border ? '1px solid black' : '')};
+
+  ${({ disabled }) => {
+    if (disabled) {
+      return css`
+        border: 1px solid ${theme.greyScale6};
+        color: ${theme.greyScale25};
+      `;
+    } else {
+      return css`
+        border: 1px solid ${theme.black};
+      `;
+    }
+  }}
+
   div {
     cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
   }

@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import ModalLayout from '../../components/Modal';
+import { TextB2R } from '@components/Text';
+
+/* TODO: alert msg 텍스트 다시 조정 */
 
 type TProps = {
   alertMessage: string;
@@ -20,7 +23,7 @@ type TProps = {
 function Alert({
   alertMessage,
   submitBtnText = '확인',
-  closeBtnText = '취소',
+  closeBtnText,
   onSubmit,
   onClose,
   type,
@@ -51,13 +54,19 @@ function Alert({
       <AlertBox>
         <AlertText>{alertMessage}</AlertText>
         <AlertBtnBox>
-          <button className="cancelBtn" onClick={cancelHandler}>
-            {closeBtnText} {type}
-          </button>
-          <div className="col" />
-          <button className="confirmBtn" onClick={submitHandler}>
-            {submitBtnText}
-          </button>
+          {closeBtnText && (
+            <button className="cancelBtn" onClick={cancelHandler}>
+              {closeBtnText ? closeBtnText : '취소'} {type}
+            </button>
+          )}
+          {submitBtnText && (
+            <>
+              <div className="col" />
+              <button className="confirmBtn" onClick={submitHandler}>
+                {submitBtnText}
+              </button>
+            </>
+          )}
         </AlertBtnBox>
       </AlertBox>
     </ModalLayout>
