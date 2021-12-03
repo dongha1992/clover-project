@@ -84,7 +84,7 @@ function payment() {
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [itemlist, setItemList] = useState<any[]>([]);
+  const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
 
   const getCartList = async () => {
@@ -121,7 +121,9 @@ function payment() {
     setSelectedPaymentMethod(id);
   };
 
-  const goToFinishPayment = () => {};
+  const goToFinishPayment = () => {
+    router.push('/payment/finish');
+  };
 
   const goToCardManagemnet = () => {
     router.push('/mypage/card');
@@ -148,7 +150,7 @@ function payment() {
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {itemlist.map((menu, index) => {
+          {itemList.map((menu, index) => {
             return <PaymentItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>

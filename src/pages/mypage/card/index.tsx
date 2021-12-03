@@ -36,15 +36,15 @@ function card() {
         </EmptyWrapper>
       ) : (
         <Wrapper>
-          s<TextH4B padding="24px 0">카드 관리</TextH4B>
+          <TextH4B padding="24px 0">카드 관리</TextH4B>
           {CARDS &&
             CARDS.map((card, index) => (
-              <>
-                <CardItem onClick={cardHandler} key={index} />
+              <div key={index}>
+                <CardItem onClick={cardHandler} />
                 {CARDS.length !== index - 1 && (
                   <BorderLine height={1} margin="0 0 24px 0" />
                 )}
-              </>
+              </div>
             ))}
           <Button
             backgroundColor={theme.white}
