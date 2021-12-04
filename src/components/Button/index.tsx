@@ -51,15 +51,19 @@ export const Container = styled(TextH5B)<IButtonProps>`
     props.backgroundColor && props.backgroundColor};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
 
-  ${({ disabled }) => {
+  ${({ disabled, border }) => {
     if (disabled) {
       return css`
         border: 1px solid ${theme.greyScale6};
         color: ${theme.greyScale25};
       `;
-    } else {
+    } else if (border) {
       return css`
         border: 1px solid ${theme.black};
+      `;
+    } else {
+      return css`
+        border: 'none';
       `;
     }
   }}

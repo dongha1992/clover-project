@@ -73,8 +73,12 @@ function Header() {
           return <MenuDetailHeader />;
         }
 
-        default: {
+        case ['/home'].includes(currentPath): {
           return <HomeHeader />;
+        }
+
+        default: {
+          return;
         }
       }
     },
