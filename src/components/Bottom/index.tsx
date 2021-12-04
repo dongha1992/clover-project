@@ -27,7 +27,7 @@ function Bottom() {
       };
 
       switch (true) {
-        case ['/'].includes(currentPath): {
+        case ['/home'].includes(currentPath): {
           return <HomeBottom />;
         }
         case ['/menu/[id]'].includes(currentPath): {
