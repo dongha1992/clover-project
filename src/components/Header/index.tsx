@@ -37,6 +37,10 @@ function Header() {
         '/mypage/card/register/term': '이용약관',
         '/mypage/order-detail': '주문 상세',
         '/payment/finish': '결제완료',
+        '/signup': '회원가입',
+        '/signup/auth': '회원가입',
+        '/signup/email-password': '회원가입',
+        '/signup/optional': '회원가입',
       };
 
       const title = headerTitleMap[currentPath];
@@ -57,6 +61,10 @@ function Header() {
           '/mypage/card/register/term',
           '/payment/finish',
           '/mypage/order-detail',
+          '/signup',
+          '/signup/auth',
+          '/signup/email-password',
+          '/signup/optional',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }

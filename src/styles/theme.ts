@@ -75,7 +75,11 @@ export const FlexRowStart = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexRow = styled.div<{ padding?: string; margin?: string }>`
+export const FlexRow = styled.div<{
+  padding?: string;
+  margin?: string;
+  id?: string;
+}>`
   display: flex;
   align-items: center;
   padding: ${({ padding }) => padding && padding};

@@ -1,7 +1,6 @@
 import React from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled, { css } from 'styled-components';
-import { TextH5B, TextB2R } from '@components/Text';
 
 type TProps = {
   isSelected: boolean;

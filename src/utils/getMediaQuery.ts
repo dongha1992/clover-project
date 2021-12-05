@@ -4,7 +4,7 @@ export const breakpoints: { [index: string]: number } = {
   full: 1440,
   desktop: 1024,
   mobile: 512,
-  sm: 360,
+  sm: 320,
 };
 
 export const mediaQuery = Object.keys(breakpoints)

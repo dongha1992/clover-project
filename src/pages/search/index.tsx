@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import Header from '@components/Header';
 import TextInput from '@components/TextInput';
 import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B } from '@components/Text';

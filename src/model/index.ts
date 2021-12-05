@@ -68,3 +68,12 @@ export interface IkakaoLogin {
   accessToken: string;
   tokenType: string;
 }
+
+export interface IConfimTel {
+  authCode: string;
+  tel: string;
+}
+
+export interface IAuthTel {
+  tel: string;
+}
