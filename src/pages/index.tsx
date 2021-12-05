@@ -7,6 +7,7 @@ import { TextH5B, TextH1B, TextH6B } from '@components/Text';
 import { theme, FlexCol } from '@styles/theme';
 import Button from '@components/Button';
 import SVGIcon from '@utils/SVGIcon';
+import router from 'next/router';
 
 const index: NextPage = () => {
   const emailButtonStyle = {
@@ -17,6 +18,10 @@ const index: NextPage = () => {
     backgroundColor: '#F9DF33',
     color: theme.black,
     width: '100%',
+  };
+
+  const EmailSignUpHandler = (): void => {
+    router.push('/signup');
   };
 
   return (
@@ -40,12 +45,14 @@ const index: NextPage = () => {
             <Button>Apple로 시작하기</Button>
             <SVGIcon name="appleIcon" />
           </AppleBtn>
-          <EmailLoginAndSignIn>
+          <EmailLoginAndSignUp>
             <Button {...emailButtonStyle} margin="0 8px 0 0">
               이메일로 로그인
             </Button>
-            <Button {...emailButtonStyle}>이메일로 회원가입</Button>
-          </EmailLoginAndSignIn>
+            <Button {...emailButtonStyle} onClick={EmailSignUpHandler}>
+              이메일로 회원가입
+            </Button>
+          </EmailLoginAndSignUp>
           <TextH6B
             color={theme.white}
             textDecoration="underline"
@@ -64,17 +71,16 @@ const Container = styled.main`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   top: 0;
+  right: 0;
   left: calc(50%);
   z-index: 100;
   height: 100vh;
 
   ${({ theme }) => theme.desktop`
-    height: 100vh;
     margin: 0 auto;
-    left: 25%;
+    left:0px;
   `};
   ${({ theme }) => theme.mobile`
-    width:100%;
     margin: 0 auto;
     left: 0px;
   `};
@@ -102,6 +108,7 @@ const Wrapper = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
+  position: relative;
   margin-bottom: 32px;
   width: 100%;
   display: flex;
@@ -110,7 +117,7 @@ const ButtonWrapper = styled.div`
   align-items: center;
 `;
 
-const EmailLoginAndSignIn = styled.div`
+const EmailLoginAndSignUp = styled.div`
   display: flex;
   width: 100%;
 `;
@@ -122,7 +129,15 @@ const KakaoBtn = styled.div`
   svg {
     position: absolute;
     left: 28%;
-    bottom: 35%;
+    bottom: 36%;
+
+    ${({ theme }) => theme.mobile`
+    left: 20%;
+  `};
+
+    ${({ theme }) => theme.sm`
+    left: 15%;
+  `};
   }
 `;
 
@@ -132,8 +147,16 @@ const AppleBtn = styled.div`
   margin-bottom: 10px;
   svg {
     position: absolute;
-    left: 35%;
-    bottom: 38%;
+    left: 34%;
+    bottom: 36%;
+
+    ${({ theme }) => theme.mobile`
+      left: 28%;
+  `};
+
+    ${({ theme }) => theme.sm`
+      left: 25%;
+  `};
   }
 `;
 
