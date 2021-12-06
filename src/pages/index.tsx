@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import React from 'react';
 import styled from 'styled-components';
 import bg from '@public/images/onBoarding.png';
 import Image from 'next/image';
@@ -9,7 +10,7 @@ import Button from '@components/Button';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import Tag from '@components/Tag';
-
+import { Obj } from '@model/index';
 const index: NextPage = () => {
   const emailButtonStyle = {
     backgroundColor: theme.white,
@@ -22,9 +23,9 @@ const index: NextPage = () => {
     width: '100%',
   };
 
-  const lastLogin = 'kakao';
+  const lastLogin = ['kakao', 'apple', 'email'][Math.floor(Math.random() * 3)];
 
-  const lastLoginTagStyleMapper = {
+  const lastLoginTagStyleMapper: Obj = {
     kakao: 40,
     apple: 40,
     email: 15,
@@ -42,7 +43,7 @@ const index: NextPage = () => {
     router.push('/home');
   };
 
-  const renderLastLoginTag = () => {
+  const renderLastLoginTag = (): JSX.Element => {
     return (
       <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
         <Tag margin="0" color={theme.white} backgroundColor={theme.brandColor}>
@@ -233,4 +234,4 @@ const TagWrapper = styled.div<{ left?: number }>`
   }
 `;
 
-export default index;
+export default React.memo(index);
