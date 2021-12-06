@@ -36,7 +36,6 @@ function MenuDetailHeader({ title }: TProps) {
 
   const goToShare = () => {
     dispatch(initBottomSheet());
-    console.log('D');
     dispatch(
       setBottomSheet({
         content: <ShareSheet />,

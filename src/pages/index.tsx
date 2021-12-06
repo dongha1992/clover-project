@@ -8,20 +8,48 @@ import { theme, FlexCol } from '@styles/theme';
 import Button from '@components/Button';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
+import Tag from '@components/Tag';
 
 const index: NextPage = () => {
   const emailButtonStyle = {
     backgroundColor: theme.white,
     color: theme.black,
   };
+
   const kakaoButtonStyle = {
     backgroundColor: '#F9DF33',
     color: theme.black,
     width: '100%',
   };
 
-  const EmailSignUpHandler = (): void => {
+  const lastLogin = 'kakao';
+
+  const lastLoginTagStyleMapper = {
+    kakao: 40,
+    apple: 40,
+    email: 15,
+  };
+
+  const emailSignUpHandler = (): void => {
     router.push('/signup');
+  };
+
+  const emailLoginHandler = (): void => {
+    router.push('/login');
+  };
+
+  const goToHomeWithoutLogin = (): void => {
+    router.push('/home');
+  };
+
+  const renderLastLoginTag = () => {
+    return (
+      <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
+        <Tag margin="0" color={theme.white} backgroundColor={theme.brandColor}>
+          최근 로그인
+        </Tag>
+      </TagWrapper>
+    );
   };
 
   return (
@@ -40,23 +68,31 @@ const index: NextPage = () => {
           <KakaoBtn>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
+            {lastLogin === 'kakao' && renderLastLoginTag()}
           </KakaoBtn>
           <AppleBtn>
             <Button>Apple로 시작하기</Button>
             <SVGIcon name="appleIcon" />
+            {lastLogin === 'apple' && renderLastLoginTag()}
           </AppleBtn>
           <EmailLoginAndSignUp>
-            <Button {...emailButtonStyle} margin="0 8px 0 0">
+            <Button {...emailButtonStyle} onClick={emailLoginHandler}>
               이메일로 로그인
             </Button>
-            <Button {...emailButtonStyle} onClick={EmailSignUpHandler}>
+            <Button
+              {...emailButtonStyle}
+              onClick={emailSignUpHandler}
+              margin="0 0 0 8px"
+            >
               이메일로 회원가입
             </Button>
+            {lastLogin === 'email' && renderLastLoginTag()}
           </EmailLoginAndSignUp>
           <TextH6B
             color={theme.white}
             textDecoration="underline"
             padding="24px 0 0 0"
+            onClick={goToHomeWithoutLogin}
           >
             먼저 둘러볼게요.
           </TextH6B>
@@ -118,6 +154,7 @@ const ButtonWrapper = styled.div`
 `;
 
 const EmailLoginAndSignUp = styled.div`
+  position: relative;
   display: flex;
   width: 100%;
 `;
@@ -157,6 +194,42 @@ const AppleBtn = styled.div`
     ${({ theme }) => theme.sm`
       left: 25%;
   `};
+  }
+`;
+
+const TagWrapper = styled.div<{ left?: number }>`
+  position: absolute;
+  top: -20%;
+  left: ${({ left }) => left && left + 3}%;
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1))
+    drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+
+  ${({ theme, left }) => theme.mobile`
+     left: ${`${left}%`}
+  `};
+
+  :after,
+  :before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+  :after {
+    left: 45%;
+    bottom: -7px;
+    border-color: ${theme.brandColor} transparent transparent transparent;
+    border-width: 4px;
+  }
+
+  :before {
+    left: 45%;
+    bottom: -7px;
+    border-color: ${theme.brandColor} transparent transparent transparent;
+    border-width: 4px;
   }
 `;
 

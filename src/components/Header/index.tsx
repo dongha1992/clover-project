@@ -7,6 +7,7 @@ const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
+const TabHeader = dynamic(() => import('./TabHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 /*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
@@ -41,10 +42,12 @@ function Header() {
         '/signup/auth': '회원가입',
         '/signup/email-password': '회원가입',
         '/signup/optional': '회원가입',
+        '/login': '로그인',
+        '/login/find-account/email': '아이디/비밀번호 찾기',
+        '/login/find-account/password': '아이디/비밀번호 찾기',
       };
 
       const title = headerTitleMap[currentPath];
-
       switch (true) {
         case [
           '/location',
@@ -62,23 +65,28 @@ function Header() {
           '/payment/finish',
           '/mypage/order-detail',
           '/signup',
+          '/login',
           '/signup/auth',
           '/signup/email-password',
           '/signup/optional',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }
-        case [
-          '/category',
-          '/category/salad',
-          '/menu/detail/product',
-          '/menu/detail/nutrition',
-          '/menu/detail/delivery',
-        ].includes(currentPath):
+        case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
         case ['/menu/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
+        }
+
+        case [
+          '/menu/detail/product',
+          '/menu/detail/nutrition',
+          '/menu/detail/delivery',
+          '/login/find-account/email',
+          '/login/find-account/password',
+        ].includes(currentPath): {
+          return <TabHeader title={title} />;
         }
 
         case ['/home'].includes(currentPath): {
