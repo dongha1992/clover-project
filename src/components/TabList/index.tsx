@@ -25,7 +25,6 @@ const Container = styled.div`
   height: 48px;
   justify-content: space-between;
   width: 100%;
-  ${homePadding}
   background-color: ${theme.white};
 `;
 
@@ -36,7 +35,6 @@ const TabWrapper = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-
   ::-webkit-scrollbar {
     display: none;
   }

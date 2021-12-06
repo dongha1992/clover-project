@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
-import { TextH4B } from '@components/Text';
 import { useRouter } from 'next/router';
-import { CATEGORY } from '@constants/search';
 import { MENU_DETAIL_INFORMATION } from '@constants/menu';
+import { FIND_ACCOUNT } from '@constants/login';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
-import { useDispatch } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
-import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
-import CartIcon from '@components/Header/Cart';
+import { TextH4B } from '@components/Text';
+import { Obj } from '@model/index';
 
 const TabList = dynamic(() => import('../TabList'));
 
@@ -18,10 +15,11 @@ type TProps = {
   title?: string;
 };
 
-function CategorySubHeader({ title }: TProps) {
-  const [selectedTab, setSelectedTab] = useState<string>('/category');
+function TabHeader({ title }: TProps) {
+  const [selectedTab, setSelectedTab] = useState<string>(
+    '/login/find-account/email'
+  );
 
-  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
@@ -41,14 +39,11 @@ function CategorySubHeader({ title }: TProps) {
     [router]
   );
 
-  const goToCart = () => {
-    dispatch(
-      setBottomSheet({
-        content: <CartSheetGroup />,
-        buttonTitle: '장바구니에 담기',
-      })
-    );
+  const mapper: Obj = {
+    '아이디/비밀번호 찾기': `${FIND_ACCOUNT}`,
   };
+
+  const findAccount = title === '아이디/비밀번호 찾기';
 
   return (
     <Container>
@@ -57,12 +52,11 @@ function CategorySubHeader({ title }: TProps) {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        <CartIcon onClick={goToCart} />
       </Wrapper>
       <TabList
         onClick={clickTabHandler}
         selectedTab={selectedTab}
-        tabList={CATEGORY}
+        tabList={findAccount ? FIND_ACCOUNT : MENU_DETAIL_INFORMATION}
       />
     </Container>
   );
@@ -92,15 +86,20 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 27px;
+  height: 56px;
+  justify-content: center;
+  padding: 16px 24px;
   .arrow {
     cursor: pointer;
     > svg {
+      position: absolute;
+      left: 24px;
+      top: 16px;
     }
   }
 `;
 
-export default React.memo(CategorySubHeader);
+export default React.memo(TabHeader);

@@ -89,6 +89,4 @@ const Right = styled.div`
   }
 `;
 
-const CartBtn = styled.div``;
-
 export default HomeHeader;
