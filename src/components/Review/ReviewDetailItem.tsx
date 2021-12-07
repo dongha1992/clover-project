@@ -7,7 +7,6 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Text';
 import BorderLine from '@components/BorderLine';
 
 function ReviewDetailItem({ review, isDetailPage }: any) {
-  console.log(review);
   return (
     <>
       <Container>

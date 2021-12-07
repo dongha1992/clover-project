@@ -19,7 +19,7 @@ const SVGIcon = dynamic(() => import('../../../utils/SVGIcon'), {
 export const EMAIL_REGX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-export const PASSWORD_REGX = /[ \{\}\[\]\/?.,;:|\)~`\-_+┼<>\\'\"\\\(\=]/gi;
+export const PASSWORD_REGX = /[ \{\}\[\]\/?.,;:|\)~`\-_+┼<>\\'\"\\\(\=]/;
 
 https: interface IVaildation {
   message: string;
@@ -49,7 +49,7 @@ function emailAndPassword() {
   const dispatch = useDispatch();
 
   const user = useSelector(userForm);
-  console.log(user);
+
   useEffect(() => {}, []);
 
   const emailInputHandler = (): void => {
@@ -111,20 +111,19 @@ function emailAndPassword() {
         });
       }
 
-      if (passwordLengthValidation.isValid) {
-        if (PASSWORD_REGX.test(password)) {
-          setPasswordValidation({
-            isValid: false,
-            message:
-              '영문자 + 숫자 조합으로 최소 8자 최대 20자 이내여야 합니다.',
-          });
-        } else {
-          setPasswordValidation({
-            isValid: true,
-            message: '',
-          });
-        }
+      if (PASSWORD_REGX.test(password)) {
+        setPasswordValidation({
+          isValid: false,
+          message: '영문자 + 숫자 조합으로 최소 8자 최대 20자 이내여야 합니다.',
+        });
+      } else {
+        setPasswordValidation({
+          isValid: true,
+          message: '',
+        });
       }
+
+      console.log(passwordValidation, passwordLengthValidation);
     }
   };
 
@@ -190,6 +189,14 @@ function emailAndPassword() {
                 passwordLengthValidation.isValid && (
                   <SVGIcon name="confirmCheck" />
                 )}
+              <ValidationWrapper>
+                {!passwordValidation.isValid && (
+                  <Validation>{passwordValidation.message}</Validation>
+                )}
+                {!passwordLengthValidation.isValid && (
+                  <Validation>{passwordLengthValidation.message}</Validation>
+                )}
+              </ValidationWrapper>
             </FirstPasswordWrapper>
             <SecondPasswordWrapper>
               <TextInput
@@ -205,12 +212,6 @@ function emailAndPassword() {
                 )}
             </SecondPasswordWrapper>
             <ValidationWrapper>
-              {!passwordValidation.isValid && (
-                <Validation>{passwordValidation.message}</Validation>
-              )}
-              {!passwordLengthValidation.isValid && (
-                <Validation>{passwordLengthValidation.message}</Validation>
-              )}
               {!passwordSameValidation.isValid && (
                 <Validation>{passwordSameValidation.message}</Validation>
               )}
@@ -219,7 +220,9 @@ function emailAndPassword() {
         </PasswordInputWrapper>
       </Wrapper>
       <NextBtnWrapper onClick={goToOptionalInfo}>
-        <Button>다음</Button>
+        <Button disabled borderRadius="0" height="100%">
+          다음
+        </Button>
       </NextBtnWrapper>
     </Container>
   );

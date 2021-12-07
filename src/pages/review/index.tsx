@@ -12,7 +12,6 @@ function review() {
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
 
-    console.log(target);
     if (target.isIntersecting) {
       setPage((prev) => prev + 1);
     }
@@ -32,8 +31,6 @@ function review() {
     }
     return () => observer.disconnect();
   }, [handleObserver]);
-
-  console.log(list);
 
   const goToReviewDetail = useCallback(({ id }) => {
     router.push(`/review/${id}`);

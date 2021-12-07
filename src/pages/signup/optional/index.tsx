@@ -74,7 +74,6 @@ function signupOptional() {
     );
 
     const data = { ...user, ...optionalForm } as ISignup;
-    console.log(data, 'before api');
     const res = await Api.addSignup(data);
 
     // router.push('/signup/finish');

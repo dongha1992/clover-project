@@ -26,22 +26,36 @@ const moreTextStyle = {
   color: theme.greyScale65,
 };
 
-const termIdList = [2, 3, 4, 5, 6];
+const termIdList = [1, 2, 3, 4];
 
 function signup() {
   const [checkTermList, setCheckTermList] = useState<number[]>([]);
   const [isAllChecked, setIsAllChecked] = useState<boolean>(false);
+  const [isAllMarketinngChecked, setIsAllMarketinngChecked] = useState(false);
 
   const dispatch = useDispatch();
 
   const allCheckTermHandler = () => {
     if (!isAllChecked) {
       setCheckTermList(termIdList);
+      setIsAllMarketinngChecked(true);
     } else {
       setCheckTermList([]);
+      setIsAllMarketinngChecked(false);
     }
 
     setIsAllChecked(!isAllChecked);
+  };
+
+  const allCheckMarketingTermHandler = () => {
+    const filtered = checkTermList.filter((_id) => _id !== 3 && _id !== 4);
+    if (!isAllMarketinngChecked) {
+      setCheckTermList([...checkTermList, 3, 4]);
+    } else {
+      setCheckTermList(filtered);
+    }
+
+    setIsAllMarketinngChecked(!isAllMarketinngChecked);
   };
 
   const checkTermHandler = (id: number) => {
@@ -54,26 +68,25 @@ function signup() {
       copied.push(id);
     }
 
-    if (id === 4) {
-      const marketingTerm = [4, 5, 6];
-      copied = marketingTerm;
-    }
-
     setCheckTermList(copied);
   };
 
   const goToAuthTel = () => {
     /*TODO: 필수항목 */
-    const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 5);
+    const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
 
     dispatch(
       SET_USER({
-        emailReceived: userAgreeMarketingTerm.includes(5),
-        smsReceived: userAgreeMarketingTerm.includes(6),
+        emailReceived: userAgreeMarketingTerm.includes(3),
+        smsReceived: userAgreeMarketingTerm.includes(4),
       })
     );
     router.push('/signup/auth');
   };
+
+  const isAllAgreed =
+    checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
+
   return (
     <Container>
       <TextWrap>
@@ -89,16 +102,16 @@ function signup() {
         <BorderLine height={1} />
         <FlexRow padding="16px 0 0 0">
           <Checkbox
-            onChange={() => checkTermHandler(2)}
-            isSelected={checkTermList.includes(2)}
+            onChange={() => checkTermHandler(1)}
+            isSelected={checkTermList.includes(1)}
           />
           <TextB2R {...textPaddingStyle}>[필수] 이용약관에 동의합니다.</TextB2R>
           <TextH6B {...moreTextStyle}>자세히</TextH6B>
         </FlexRow>
         <FlexRow padding="16px 0">
           <Checkbox
-            onChange={() => checkTermHandler(3)}
-            isSelected={checkTermList.includes(3)}
+            onChange={() => checkTermHandler(2)}
+            isSelected={checkTermList.includes(2)}
           />
           <TextB2R {...textPaddingStyle}>
             [필수] 개인정보처리방침에 동의합니다.
@@ -108,8 +121,8 @@ function signup() {
         <FlexCol>
           <FlexRow>
             <Checkbox
-              onChange={() => checkTermHandler(4)}
-              isSelected={checkTermList.includes(4)}
+              onChange={allCheckMarketingTermHandler}
+              isSelected={isAllMarketinngChecked}
             />
             <TextB2R {...textPaddingStyle}>
               [선택] 마케팅 알림 수신에 동의합니다.
@@ -123,15 +136,15 @@ function signup() {
             <FlexRow>
               <FlexRow>
                 <Checkbox
-                  onChange={() => checkTermHandler(5)}
-                  isSelected={checkTermList.includes(5)}
+                  onChange={() => checkTermHandler(3)}
+                  isSelected={checkTermList.includes(3)}
                 />
                 <TextB2R {...textPaddingStyle}>이메일</TextB2R>
               </FlexRow>
               <FlexRow padding="0 0 0 16px">
                 <Checkbox
-                  onChange={() => checkTermHandler(6)}
-                  isSelected={checkTermList.includes(6)}
+                  onChange={() => checkTermHandler(4)}
+                  isSelected={checkTermList.includes(4)}
                 />
                 <TextB2R {...textPaddingStyle}>SNS</TextB2R>
               </FlexRow>
@@ -140,7 +153,9 @@ function signup() {
         </FlexCol>
       </Wrapper>
       <BtnWrapper onClick={goToAuthTel}>
-        <Button>동의하고 가입하기</Button>
+        <Button disabled={!isAllAgreed} height="100%" borderRadius="0">
+          동의하고 가입하기
+        </Button>
       </BtnWrapper>
     </Container>
   );

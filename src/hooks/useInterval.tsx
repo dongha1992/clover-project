@@ -8,7 +8,6 @@ export const useInterval = (callback: () => void, delay: number | null) => {
   }, [callback]);
 
   useEffect(() => {
-    console.log(delay);
     if (delay !== null) {
       let id = setInterval(() => tick.current(), delay);
       return () => clearInterval(id);
