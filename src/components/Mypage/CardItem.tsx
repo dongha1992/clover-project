@@ -20,7 +20,7 @@ function CardItem({ onClick }: any) {
           <FlexCol padding="0 0 0px 8px">
             <FlexRow padding="0 0 8px 0">
               <TextH5B padding="0 4px 0 0">카드이름</TextH5B>
-              <Tag margin="0">대표카드</Tag>
+              <Tag>대표카드</Tag>
             </FlexRow>
             <TextB3R color={theme.greyScale65}>우리 가득한 어쩌구 12</TextB3R>
           </FlexCol>

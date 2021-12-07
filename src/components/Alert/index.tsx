@@ -52,7 +52,11 @@ function Alert({
       style={{ borderRadius: '8px' }}
     >
       <AlertBox>
-        <AlertText>{alertMessage}</AlertText>
+        <AlertText>
+          <TextB2R center wordWrap="break-word" wordBreak="keep-all">
+            {alertMessage}
+          </TextB2R>
+        </AlertText>
         <AlertBtnBox>
           {closeBtnText && (
             <button className="cancelBtn" onClick={cancelHandler}>
@@ -82,9 +86,7 @@ const AlertBox = styled.div`
 `;
 
 const AlertText = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 17px;
+  text-align: center;
   padding: 45px 30px;
 `;
 

@@ -24,13 +24,14 @@ import {
   IkakaoLogin,
   IConfimTel,
   IAuthTel,
+  IAavilabiltyEmail,
+  ISignup,
 } from '@model/index';
 
 // fetch, remove
 const sendRequest = async ({ url, params, method }: ISendRequestApi) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    Authorization: getCookie({ name: 'authuser' }),
+    // Authorization: getCookie({ name: 'authuser' }),
   };
 
   try {
@@ -38,6 +39,7 @@ const sendRequest = async ({ url, params, method }: ISendRequestApi) => {
       headers,
       params,
     });
+
     if (res.status === 200 && !res.data.error) {
       return res.data;
     }
@@ -60,6 +62,7 @@ const sendRequestForData = async ({
 }: ISendRequestForDataApi) => {
   try {
     const res = await axios[method](CLOVER_URL + url, data);
+    console.log(res, 'res');
     if (res.status === 200 && !res.data.error) {
       return res.data;
     }
@@ -85,11 +88,13 @@ const add = ({ url, data }: IAddApi) =>
 // const edit = (url, data) => sendRequestForData(url, data, 'put');
 
 export const Api = {
-  addKakaoResult: (data: IkakaoLogin) =>
+  addKakaoLogin: (data: IkakaoLogin) =>
     add({ url: '/user/v1/signin-kakao', data }),
-  addSignInInfomation: (data: ISignIn) =>
-    add({ url: '/user/v1/signin-email', data }),
+  addSignIn: (data: ISignIn) => add({ url: '/user/v1/signin-email', data }),
   addAuthTel: (data: IAuthTel) => add({ url: '/user/v1/auth/tel', data }),
   addConfirmTel: (data: IConfimTel) =>
     add({ url: '/user/v1/confirm/tel', data }),
+  fetchAvailabilityEmail: (params: IAavilabiltyEmail) =>
+    fetch({ url: '/user/v1/availability/email', params }),
+  addSignup: (data: ISignup) => add({ url: '/user/v1/users', data }),
 };

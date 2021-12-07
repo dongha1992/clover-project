@@ -354,11 +354,7 @@ function Cart() {
             <TextH4B>12312원</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
-            <Tag
-              backgroundColor={theme.brandColor5}
-              color={theme.brandColor}
-              margin="0"
-            >
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
               프코 회원
             </Tag>
             <TextB3R padding="0 0 0 3px">구매 시</TextB3R>

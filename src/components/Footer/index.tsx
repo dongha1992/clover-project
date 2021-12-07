@@ -17,12 +17,10 @@ function Footer() {
         </TextB2R>
       </TimeInfoWrapper>
       <ButtonWrapper>
-        <Button height="48px" width="148px" margin="0 8px 0 0">
+        <Button width="148px" margin="0 8px 0 0">
           전화걸기
         </Button>
-        <Button height="48px" width="148px">
-          채팅문의
-        </Button>
+        <Button width="148px">채팅문의</Button>
       </ButtonWrapper>
       <FlexWrapper>
         <TextH5B padding="0px 4px 0 0">사업자 정보</TextH5B>

@@ -125,7 +125,6 @@ function deliverInfo() {
                         <TextH5B margin="0 4px 0px 8px">{item.name}</TextH5B>
                         {item.tag && (
                           <Tag
-                            margin="0"
                             backgroundColor={theme.greyScale6}
                             color={theme.greyScale45}
                           >
@@ -173,7 +172,6 @@ function deliverInfo() {
                         <TextH5B margin="0 4px 0 8px">{item.name}</TextH5B>
                         {item.tag && (
                           <Tag
-                            margin="0"
                             backgroundColor={theme.greyScale6}
                             color={theme.greyScale45}
                           >
@@ -216,7 +214,6 @@ function deliverInfo() {
               <PlaceName>
                 <TextH5B padding="0 4px 0 0">{pickupPlace.name}</TextH5B>
                 <Tag
-                  margin="0"
                   backgroundColor={theme.brandColor5}
                   color={theme.brandColor}
                 >

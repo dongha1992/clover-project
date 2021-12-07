@@ -102,7 +102,7 @@ const TextInput = React.forwardRef(
           {svg ? <SVGIcon name={svg} /> : ''}
           <input
             style={style}
-            type={inputType ? inputType : 'string'}
+            type={inputType ? inputType : 'text'}
             defaultValue={value}
             onChange={(e) =>
               eventHandler

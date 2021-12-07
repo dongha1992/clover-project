@@ -146,7 +146,7 @@ function menuDetail({ id }: any) {
           objectFit="cover"
         />
         <DailySaleNumber>
-          <Tag backgroundColor={theme.brandColor} borderRadius={24} margin="0">
+          <Tag backgroundColor={theme.brandColor} borderRadius={24}>
             <TextH6B color={theme.white}>{'일일 70개 한정'}</TextH6B>
           </Tag>
         </DailySaleNumber>

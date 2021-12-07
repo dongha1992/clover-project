@@ -54,7 +54,6 @@ function CartSheetItem({
                   <Tag
                     backgroundColor={theme.black}
                     padding="6px 10px"
-                    margin="0"
                     borderRadius={32}
                     onClick={clickRestockNoti}
                   >

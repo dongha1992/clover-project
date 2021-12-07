@@ -12,6 +12,9 @@ import {
 } from '@styles/theme';
 import Button from '@components/Button';
 import router from 'next/router';
+import { useDispatch } from 'react-redux';
+import { SET_USER } from '@store/user';
+import { Obj } from '@model/index';
 
 const textPaddingStyle = {
   padding: '0 0 0 8px',
@@ -29,6 +32,8 @@ function signup() {
   const [checkTermList, setCheckTermList] = useState<number[]>([]);
   const [isAllChecked, setIsAllChecked] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   const allCheckTermHandler = () => {
     if (!isAllChecked) {
       setCheckTermList(termIdList);
@@ -42,15 +47,31 @@ function signup() {
   const checkTermHandler = (id: number) => {
     const findItem = checkTermList.find((_id) => _id === id);
     let copied = checkTermList.slice();
+
     if (findItem) {
       copied = copied.filter((_id) => _id !== id);
     } else {
       copied.push(id);
     }
+
+    if (id === 4) {
+      const marketingTerm = [4, 5, 6];
+      copied = marketingTerm;
+    }
+
     setCheckTermList(copied);
   };
 
   const goToAuthTel = () => {
+    /*TODO: 필수항목 */
+    const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 5);
+
+    dispatch(
+      SET_USER({
+        emailReceived: userAgreeMarketingTerm.includes(5),
+        smsReceived: userAgreeMarketingTerm.includes(6),
+      })
+    );
     router.push('/signup/auth');
   };
   return (

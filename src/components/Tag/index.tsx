@@ -39,7 +39,7 @@ const Tag = ({
 const Container = styled(TextH7B)<ITagProps>`
   display: inline-block;
   padding: ${(props) => (props.padding ? props.padding : '4px 8px')};
-  margin: ${(props) => (props.margin ? props.margin : '0px 8px 8px 0px')};
+  margin: ${(props) => props.margin && props.margin};
   border-radius: ${(props) => (props.borderRadius ? props.borderRadius : 4)}px;
   background-color: ${(props) =>
     props.backgroundColor && props.backgroundColor};
