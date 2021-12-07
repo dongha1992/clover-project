@@ -43,9 +43,7 @@ function DetailBottom() {
     }
   }, []);
 
-  const goToRestockSetting = () => {
-    console.log('fire');
-  };
+  const goToRestockSetting = () => {};
 
   const clickButtonHandler = () => {
     if (tempNotiOff) {

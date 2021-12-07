@@ -7,7 +7,6 @@ import { theme } from '@styles/theme';
 /* TODO: rate 별 만들기  */
 
 function ReviewOnlyImage({ reviews, goToReviewImages }: any) {
-  console.log(reviews);
   return (
     <Container>
       <Wrapper>

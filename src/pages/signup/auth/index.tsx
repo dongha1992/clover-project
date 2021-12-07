@@ -56,6 +56,7 @@ function signupAuth() {
   }, [second]);
 
   const nameInputHandler = (): void => {
+    console.log('nameInputHandler');
     if (nameRef.current) {
       const name = nameRef.current?.value;
       if (NAME_REGX.test(name)) {
@@ -148,6 +149,8 @@ function signupAuth() {
     router.push('/signup/email-password');
   };
 
+  const isAllValid = nameValidation && phoneValidation && authCodeValidation;
+
   return (
     <Container>
       <Wrapper>
@@ -161,6 +164,7 @@ function signupAuth() {
             placeholder="이름"
             ref={nameRef}
             eventHandler={debounce(nameInputHandler, 300)}
+            value={user.name ? user.name : ''}
           />
           {nameValidation && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
@@ -172,6 +176,7 @@ function signupAuth() {
               ref={phoneNumberRef}
               eventHandler={debounce(phoneNumberInputHandler, 300)}
               inputType="number"
+              value={user.tel ? user.tel : ''}
             />
             <Button
               width="30%"
@@ -212,7 +217,9 @@ function signupAuth() {
         </PhoneNumberInputWrapper>
       </Wrapper>
       <NextBtnWrapper onClick={goToEmailAndPassword}>
-        <Button disabled>다음</Button>
+        <Button disabled={!isAllValid} height="100%" borderRadius="0">
+          다음
+        </Button>
       </NextBtnWrapper>
     </Container>
   );
@@ -273,4 +280,4 @@ const TimerWrapper = styled.div`
   left: 60%;
 `;
 
-export default signupAuth;
+export default React.memo(signupAuth);
