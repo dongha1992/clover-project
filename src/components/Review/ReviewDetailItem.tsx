@@ -32,7 +32,6 @@ function ReviewDetailItem({ review, isDetailPage }: any) {
                 <Tag
                   backgroundColor={theme.brandColor5}
                   color={theme.brandColor}
-                  margin="0 0 0 0"
                 >
                   {review.order}번 째 구매
                 </Tag>

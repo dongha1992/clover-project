@@ -14,36 +14,70 @@ import debounce from 'lodash-es/debounce';
 import router from 'next/router';
 // import { Select, Option } from '@components/Dropdown/index';
 import { RadioButton } from '@components/Button/RadioButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { userForm, SET_USER } from '@store/user';
+import { Api } from '@api/index';
+import { ISignup } from '@model/index';
 
 const GENDER = [
   {
     id: 1,
     text: '여성',
+    value: 'FEMALE',
   },
   {
     id: 2,
     text: '남성',
+    value: 'MALE',
   },
   {
     id: 3,
     text: '선택 안 함',
+    value: '',
   },
 ];
 
-function emailAndPassword() {
+function signupOptional() {
   const [checkGender, setChcekGender] = useState<number>(1);
   const nicknameRef = useRef<HTMLInputElement>(null);
+  const birthDateRef = useRef<HTMLInputElement>(null);
 
-  const nicknameInputHandler = (): void => {
-    const tel = nicknameRef.current?.value.toString();
+  const dispatch = useDispatch();
+  const user = useSelector(userForm);
+
+  const birthDateInputHandler = (): void => {
+    const birthDate = birthDateRef.current?.value.toString();
   };
 
   const checkGenderHandler = (id: number) => {
     setChcekGender(id);
   };
 
-  const goToOptionalInfo = () => {
-    router.push('/signup/finish');
+  const nicknameInputHandler = () => {};
+
+  const goToOptionalInfo = async () => {
+    const nickname = nicknameRef.current?.value;
+    const birthDate = birthDateRef.current?.value;
+    const gender = GENDER.find((item) => item.id === checkGender)?.value;
+
+    /* TODO: 떵크로 회원가입 로직 수정 */
+    const optionalForm = {
+      birthDate,
+      gender,
+      nickname: nickname ? nickname : user.name,
+    };
+
+    dispatch(
+      SET_USER({
+        ...optionalForm,
+      })
+    );
+
+    const data = { ...user, ...optionalForm } as ISignup;
+    console.log(data, 'before api');
+    const res = await Api.addSignup(data);
+
+    // router.push('/signup/finish');
   };
 
   return (
@@ -64,7 +98,11 @@ function emailAndPassword() {
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput placeholder="생년월일 구현해야함" />
+          <TextInput
+            placeholder="생년월일 구현해야함"
+            eventHandler={birthDateInputHandler}
+            ref={birthDateRef}
+          />
         </FlexCol>
         <FlexCol margin="24px 0 28px 0">
           <FlexRow>
@@ -128,4 +166,4 @@ const NextBtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default emailAndPassword;
+export default signupOptional;

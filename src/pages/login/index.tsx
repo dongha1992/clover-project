@@ -28,6 +28,15 @@ function login() {
     router.push('/login/find-account/password');
   };
 
+  const finishLogin = () => {
+    const isDormantAccount = true;
+    if (isDormantAccount) {
+      router.push('/login/dormant');
+    } else {
+      router.push('/home');
+    }
+  };
+
   return (
     <Container>
       <FlexCol padding="32px 0 0 0">
@@ -41,7 +50,7 @@ function login() {
         <Checkbox onChange={checkAutoLoginHandler} isSelected />
         <TextB2R padding="2px 0 0 8px">자동 로그인</TextB2R>
       </FlexRow>
-      <BtnWrapper>
+      <BtnWrapper onClick={finishLogin}>
         <Button disabled>로그인하기</Button>
       </BtnWrapper>
       <FlexCenter>

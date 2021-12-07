@@ -39,7 +39,7 @@ export const Wrapper: React.FC = ({ children }) => {
     try {
       if (typeof window !== 'undefined') {
         // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-        window.Kakao.init('8d1316487f948c4c74d76d4da7fc23cd');
+        window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
       }
     } catch (error) {
       console.error(error);

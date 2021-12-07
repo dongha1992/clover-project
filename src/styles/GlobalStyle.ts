@@ -69,6 +69,17 @@ const GlobalStyle = createGlobalStyle`
         text-decoration: none; 
     }
 
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
     * {
         box-sizing: border-box;
         font-family: 'NotoSansKR', sans-serif !important;

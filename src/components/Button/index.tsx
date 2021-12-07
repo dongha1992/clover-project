@@ -24,8 +24,8 @@ export interface IButtonProps {
 const defaultProps = {
   filled: true,
   width: '100%',
-  height: '52px',
-  padding: '4px 0 0 0',
+  height: '48px',
+  padding: '0px 0 0 0',
   backgroundColor: theme.black,
   color: theme.white,
   pointer: true,

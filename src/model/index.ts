@@ -77,3 +77,20 @@ export interface IConfimTel {
 export interface IAuthTel {
   tel: string;
 }
+
+export interface IAavilabiltyEmail {
+  email: string;
+}
+
+export interface ISignup {
+  authCode: string;
+  birthDate: string;
+  email: string;
+  emailReceived: boolean;
+  gender: string;
+  name: string;
+  nickname: string;
+  password: string;
+  smsReceived: boolean;
+  tel: string;
+}

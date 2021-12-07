@@ -67,7 +67,9 @@ function Item({ item, isCart }: TProps) {
       </LikeAndReview>
       <TagWrapper>
         {item.tags.map((tag: string, index: number) => (
-          <Tag key={index}>{tag}</Tag>
+          <Tag key={index} margin="0px 8px 8px 0px">
+            {tag}
+          </Tag>
         ))}
       </TagWrapper>
     </Container>

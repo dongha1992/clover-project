@@ -35,6 +35,10 @@ class MyDocument extends Document<IProps> {
             defer
             src="https://developers.kakao.com/sdk/js/kakao.js"
           ></script>
+          <script
+            type="text/javascript"
+            src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+          ></script>
         </Head>
         <body>
           <Main />

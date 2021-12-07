@@ -26,7 +26,7 @@ function SpotItem({ item, onClick }: IProps) {
     <Container>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
-        <TextB3R>{item.address}</TextB3R>
+        <TextB3R padding="2px 0 0 0">{item.address}</TextB3R>
         <MeterAndTime>
           <TextH6B>{item.meter}m</TextH6B>
           <Col />
@@ -34,11 +34,7 @@ function SpotItem({ item, onClick }: IProps) {
           <TextH6B>{item.availableTime}</TextH6B>
         </MeterAndTime>
         <div>
-          <Tag
-            margin="0"
-            backgroundColor={theme.brandColor5}
-            color={theme.brandColor}
-          >
+          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
             {item.spaceType}
           </Tag>
         </div>
@@ -50,6 +46,7 @@ function SpotItem({ item, onClick }: IProps) {
         <Button
           backgroundColor={theme.white}
           color={theme.black}
+          height="38px"
           border
           onClick={onClick}
         >

@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import bg from '@public/images/onBoarding.png';
 import Image from 'next/image';
@@ -11,6 +11,9 @@ import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import Tag from '@components/Tag';
 import { Obj } from '@model/index';
+import { Api } from '@api/index';
+import axios from 'axios';
+
 const index: NextPage = () => {
   const emailButtonStyle = {
     backgroundColor: theme.white,
@@ -31,6 +34,45 @@ const index: NextPage = () => {
     email: 15,
   };
 
+  const kakaoLoginHandler = async (): Promise<void> => {
+    window.Kakao.Auth.login({
+      success: async (res: any) => {
+        const data = {
+          accessToken: res.access_token,
+          tokenType: res.token_type,
+        };
+
+        const result = await axios.post(
+          'https://dev-api.freshcode.me/user/v1/signin-kakao',
+          data
+        );
+
+        if (window.Kakao) {
+          window.Kakao.cleanup();
+        }
+      },
+      fail: async (res: any) => {
+        alert(`${res.error}-${res.error_error_description}`);
+      },
+    });
+  };
+
+  /* TODO:  apple login 테스트 해야함 */
+
+  const appleLoginHandler = async () => {
+    AppleID.auth.init({
+      clientId: 'com.freshcode.www',
+      scope: 'email',
+      redirectURI: 'https://www.freshcode.me',
+      usePopup: true,
+    });
+    try {
+      await AppleID.auth.signIn();
+    } catch (error) {
+      console.log(`Error: ${error && error.error}`);
+    }
+  };
+
   const emailSignUpHandler = (): void => {
     router.push('/signup');
   };
@@ -46,7 +88,7 @@ const index: NextPage = () => {
   const renderLastLoginTag = (): JSX.Element => {
     return (
       <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
-        <Tag margin="0" color={theme.white} backgroundColor={theme.brandColor}>
+        <Tag color={theme.white} backgroundColor={theme.brandColor}>
           최근 로그인
         </Tag>
       </TagWrapper>
@@ -66,12 +108,12 @@ const index: NextPage = () => {
           </TextH5B>
         </FlexCol>
         <ButtonWrapper>
-          <KakaoBtn>
+          <KakaoBtn onClick={kakaoLoginHandler}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
             {lastLogin === 'kakao' && renderLastLoginTag()}
           </KakaoBtn>
-          <AppleBtn>
+          <AppleBtn onClick={appleLoginHandler}>
             <Button>Apple로 시작하기</Button>
             <SVGIcon name="appleIcon" />
             {lastLogin === 'apple' && renderLastLoginTag()}

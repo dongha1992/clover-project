@@ -27,6 +27,8 @@ export interface IProps {
   center?: boolean;
   whiteSpace?: string;
   display?: string;
+  wordBreak?: string;
+  wordWrap?: string;
 }
 
 /* 사용법 
@@ -63,6 +65,8 @@ const Container = styled.div<IProps>`
   opacity: ${(props) => props.opacity && props.opacity};
   white-space: ${(props) => (props.whiteSpace ? props.whiteSpace : 'pre-wrap')};
   text-align: ${(props) => (props.center ? 'center' : '')};
+  word-break: ${(props) => props.wordBreak && props.wordBreak};
+  word-wrap: ${(props) => props.wordWrap && props.wordWrap};
 `;
 
 export const TextH1B = styled(Text)`
