@@ -10,7 +10,8 @@ import Validation from '@components/Validation';
 import { Api } from '@api/index';
 import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
-import { userForm, SET_USER } from '@store/user';
+import { userForm, SET_SIGNUP_USER } from '@store/user';
+import { availabilityEmail } from '@api/v2';
 
 const SVGIcon = dynamic(() => import('../../../utils/SVGIcon'), {
   ssr: false,
@@ -21,7 +22,7 @@ export const EMAIL_REGX =
 
 export const PASSWORD_REGX = /[ \{\}\[\]\/?.,;:|\)~`\-_+┼<>\\'\"\\\(\=]/;
 
-https: interface IVaildation {
+interface IVaildation {
   message: string;
   isValid: boolean;
 }
@@ -48,7 +49,7 @@ function emailAndPassword() {
 
   const dispatch = useDispatch();
 
-  const user = useSelector(userForm);
+  const { signupUser } = useSelector(userForm);
 
   useEffect(() => {}, []);
 
@@ -76,10 +77,12 @@ function emailAndPassword() {
   const getAvailabilityEmail = async () => {
     if (emailRef.current) {
       const email = emailRef.current?.value;
-      const data = await Api.fetchAvailabilityEmail({ email });
+      const {
+        data: { data: availability },
+      } = await availabilityEmail({ email });
       /* TODO: 탈퇴 res? */
-      console.log(data);
-      if (data.code === 200) {
+
+      if (availability) {
         setEmailValidataion({
           isValid: true,
           message: '',
@@ -122,8 +125,6 @@ function emailAndPassword() {
           message: '',
         });
       }
-
-      console.log(passwordValidation, passwordLengthValidation);
     }
   };
 
@@ -148,13 +149,19 @@ function emailAndPassword() {
 
   const goToOptionalInfo = () => {
     dispatch(
-      SET_USER({
+      SET_SIGNUP_USER({
         email: emailRef.current?.value,
         password: passwordRef.current?.value,
       })
     );
     router.push('/signup/optional');
   };
+
+  const isAllVaild =
+    passwordSameValidation.isValid &&
+    passwordValidation.isValid &&
+    passwordLengthValidation.isValid &&
+    emailValidation.isValid;
 
   return (
     <Container>
@@ -169,6 +176,7 @@ function emailAndPassword() {
             placeholder="이메일"
             ref={emailRef}
             eventHandler={debounce(emailInputHandler, 300)}
+            value={signupUser.email ? signupUser.email : ''}
           />
           {!emailValidation.isValid ? (
             <Validation>{emailValidation.message}</Validation>
@@ -220,7 +228,7 @@ function emailAndPassword() {
         </PasswordInputWrapper>
       </Wrapper>
       <NextBtnWrapper onClick={goToOptionalInfo}>
-        <Button disabled borderRadius="0" height="100%">
+        <Button disabled={!isAllVaild} borderRadius="0" height="100%">
           다음
         </Button>
       </NextBtnWrapper>
@@ -276,4 +284,4 @@ const SecondPasswordWrapper = styled.div`
   }
 `;
 
-export default emailAndPassword;
+export default React.memo(emailAndPassword);

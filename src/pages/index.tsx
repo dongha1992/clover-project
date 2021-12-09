@@ -13,8 +13,13 @@ import Tag from '@components/Tag';
 import { Obj } from '@model/index';
 import { Api } from '@api/index';
 import axios from 'axios';
+import { SET_SIGNUP_USER, userForm } from '@store/user';
+import { useSelector, useDispatch } from 'react-redux';
+// import { setRefreshToken } from '@components/Auth';
+import { wrapper } from '@store/index';
 
-const index: NextPage = () => {
+const OnBoarding: NextPage = ({ a }: any) => {
+  console.log(a, 'A');
   const emailButtonStyle = {
     backgroundColor: theme.white,
     color: theme.black,
@@ -33,6 +38,9 @@ const index: NextPage = () => {
     apple: 40,
     email: 15,
   };
+
+  const { user } = useSelector(userForm);
+  const dispatch = useDispatch();
 
   const kakaoLoginHandler = async (): Promise<void> => {
     window.Kakao.Auth.login({
@@ -60,17 +68,17 @@ const index: NextPage = () => {
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
-    AppleID.auth.init({
-      clientId: 'com.freshcode.www',
-      scope: 'email',
-      redirectURI: 'https://www.freshcode.me',
-      usePopup: true,
-    });
-    try {
-      await AppleID.auth.signIn();
-    } catch (error) {
-      console.log(`Error: ${error && error.error}`);
-    }
+    // AppleID.auth.init({
+    //   clientId: 'com.freshcode.www',
+    //   scope: 'email',
+    //   redirectURI: 'https://www.freshcode.me',
+    //   usePopup: true,
+    // });
+    // try {
+    //   await AppleID.auth.signIn();
+    // } catch (error) {
+    //   console.log(`Error: ${error && error.error}`);
+    // }
   };
 
   const emailSignUpHandler = (): void => {
@@ -78,11 +86,12 @@ const index: NextPage = () => {
   };
 
   const emailLoginHandler = (): void => {
+    localStorage.setItem('loginType', JSON.stringify('EMAIL'));
     router.push('/login');
   };
 
   const goToHomeWithoutLogin = (): void => {
-    router.push('/home');
+    // router.push('/home');
   };
 
   const renderLastLoginTag = (): JSX.Element => {
@@ -248,7 +257,7 @@ const TagWrapper = styled.div<{ left?: number }>`
     drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 
   ${({ theme, left }) => theme.mobile`
-     left: ${`${left}%`}
+    left: ${`${left}%`}
   `};
 
   :after,
@@ -276,4 +285,26 @@ const TagWrapper = styled.div<{ left?: number }>`
   }
 `;
 
-export default React.memo(index);
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store: any) => async (context: any) => {
+    // await setRefreshToken(context, store);
+    return {
+      props: {},
+    };
+  }
+);
+
+// OnBoarding.getInitialProps = wrapper.getInitialPageProps(
+//   (store) =>
+//     async ({ context, ctx }: any) => {
+//       {
+//         console.log(ctx, '@@@@@@@@@@@@@');
+//         await setRefreshToken(context, store);
+//         return {
+//           props: { a: ctx },
+//         };
+//       }
+//     }
+// );
+
+export default React.memo(OnBoarding);

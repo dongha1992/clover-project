@@ -12,7 +12,8 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
-import { userForm, SET_USER } from '@store/user';
+import { userForm, SET_SIGNUP_USER } from '@store/user';
+import { authTel, confirmTel } from '@api/v2';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -25,13 +26,14 @@ function signupAuth() {
   const [nameValidation, setNameValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
+  const [authCodeConfirm, setAuthCodeConfirm] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneNumberRef = useRef<HTMLInputElement>(null);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(2);
 
   const dispatch = useDispatch();
-  const user = useSelector(userForm);
+  const { signupUser } = useSelector(userForm);
 
   const timerHandler = useCallback((): void => {
     const _minute = Math.floor(authTimerRef.current / 60);
@@ -56,7 +58,6 @@ function signupAuth() {
   }, [second]);
 
   const nameInputHandler = (): void => {
-    console.log('nameInputHandler');
     if (nameRef.current) {
       const name = nameRef.current?.value;
       if (NAME_REGX.test(name)) {
@@ -92,9 +93,9 @@ function signupAuth() {
     if (phoneNumberRef.current) {
       const tel = phoneNumberRef.current?.value.toString();
 
-      const data = await Api.addAuthTel({ tel });
+      const { data } = await authTel({ tel });
 
-      console.log(data);
+      console.log(data, 'after autl tel');
 
       if (data.code === 200) {
         dispatch(
@@ -106,6 +107,8 @@ function signupAuth() {
         setOneMinuteDisabled(true);
         setDelay(1000);
       } else {
+        console.log('fail');
+        return;
         /* 인증번호 요청 실패 시 */
       }
     }
@@ -128,19 +131,24 @@ function signupAuth() {
         const authCode = authCodeNumberRef.current.value;
         const tel = phoneNumberRef.current.value;
 
-        const data = await Api.addConfirmTel({ tel, authCode });
+        const { data } = await confirmTel({ tel, authCode });
         console.log(data);
+        if (data) {
+          setAuthCodeConfirm(true);
+        } else {
+          setAuthCodeConfirm(false);
+        }
       }
     }
   };
 
   const goToEmailAndPassword = () => {
-    if (!nameValidation || !phoneValidation || !authCodeValidation) {
+    if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
 
     dispatch(
-      SET_USER({
+      SET_SIGNUP_USER({
         name: nameRef.current?.value,
         tel: phoneNumberRef.current?.value,
         authCode: authCodeNumberRef.current?.value,
@@ -149,7 +157,7 @@ function signupAuth() {
     router.push('/signup/email-password');
   };
 
-  const isAllValid = nameValidation && phoneValidation && authCodeValidation;
+  const isAllValid = nameValidation && phoneValidation && authCodeConfirm;
 
   return (
     <Container>
@@ -164,7 +172,7 @@ function signupAuth() {
             placeholder="이름"
             ref={nameRef}
             eventHandler={debounce(nameInputHandler, 300)}
-            value={user.name ? user.name : ''}
+            value={signupUser.name ? signupUser.name : ''}
           />
           {nameValidation && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
@@ -176,7 +184,7 @@ function signupAuth() {
               ref={phoneNumberRef}
               eventHandler={debounce(phoneNumberInputHandler, 300)}
               inputType="number"
-              value={user.tel ? user.tel : ''}
+              value={signupUser.tel ? signupUser.tel : ''}
             />
             <Button
               width="30%"

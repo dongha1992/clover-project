@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 import { Obj } from '@model/index';
 
+/* TODO: 주석 */
+
 export const theme: Obj = {
   brandColor: '#35AD73',
   brandColor5: '#EDF3F0',

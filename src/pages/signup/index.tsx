@@ -13,7 +13,7 @@ import {
 import Button from '@components/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { SET_USER } from '@store/user';
+import { SET_SIGNUP_USER } from '@store/user';
 import { Obj } from '@model/index';
 
 const textPaddingStyle = {
@@ -76,7 +76,7 @@ function signup() {
     const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
 
     dispatch(
-      SET_USER({
+      SET_SIGNUP_USER({
         emailReceived: userAgreeMarketingTerm.includes(3),
         smsReceived: userAgreeMarketingTerm.includes(4),
       })
