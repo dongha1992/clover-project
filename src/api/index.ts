@@ -25,7 +25,8 @@ import {
   IConfimTel,
   IAuthTel,
   IAavilabiltyEmail,
-  ISignup,
+  ISignupUser,
+  ILogin,
 } from '@model/index';
 
 // fetch, remove
@@ -39,7 +40,7 @@ const sendRequest = async ({ url, params, method }: ISendRequestApi) => {
       headers,
       params,
     });
-
+    console.log(res, 'RESPONSE');
     if (res.status === 200 && !res.data.error) {
       return res.data;
     }
@@ -62,7 +63,7 @@ const sendRequestForData = async ({
 }: ISendRequestForDataApi) => {
   try {
     const res = await axios[method](CLOVER_URL + url, data);
-    console.log(res, 'res');
+    console.log(res, 'REQUEST');
     if (res.status === 200 && !res.data.error) {
       return res.data;
     }
@@ -97,4 +98,5 @@ export const Api = {
   fetchAvailabilityEmail: (params: IAavilabiltyEmail) =>
     fetch({ url: '/user/v1/availability/email', params }),
   addSignup: (data: ISignup) => add({ url: '/user/v1/users', data }),
+  addLogin: (data: ILogin) => add({ url: 'user/v1/login', data }),
 };

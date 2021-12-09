@@ -32,37 +32,7 @@ export interface IRemoveCookie {
 export interface ILayoutChildren {
   children: any;
 }
-
-type Method = 'get' | 'delete' | 'put' | 'post';
-
 /*TODO: params type 정의 다시  */
-
-export interface ISendRequestApi {
-  url?: string;
-  params?: any;
-  method: Method;
-}
-
-export interface IFetchApi {
-  url?: string;
-  params?: any;
-}
-
-export interface ISendRequestForDataApi {
-  url?: string;
-  data?: any;
-  method: Method;
-}
-
-export interface IAddApi {
-  url?: string;
-  data?: any;
-}
-
-export interface ISignIn {
-  email: string;
-  password: string;
-}
 
 export interface IkakaoLogin {
   accessToken: string;
@@ -82,7 +52,7 @@ export interface IAavilabiltyEmail {
   email: string;
 }
 
-export interface ISignup {
+export interface ISignupUser {
   authCode: string;
   birthDate: string;
   email: string;
@@ -93,4 +63,66 @@ export interface ISignup {
   password: string;
   smsReceived: boolean;
   tel: string;
+}
+
+export interface IUser {
+  id: number;
+  birthDate: string;
+  email: string;
+  emailReceived: boolean;
+  gender: string;
+  name: string;
+  nickname: string;
+  password: string;
+  smsReceived: boolean;
+  tel: string;
+  point: number;
+  emailConfirmed: boolean;
+  telConfirmed: boolean;
+  smsDenied: boolean;
+  promotionCode: string;
+  promotionCount: number;
+  recommendCode: boolean;
+  joinType: string;
+  createdAt: string;
+}
+
+export interface ILogin {
+  accessToken?: string;
+  email: string;
+  loginType: string;
+  password: string;
+}
+
+export interface IResponse {
+  code: number;
+  message: string;
+}
+
+export interface IUserToken {
+  accessToken: string;
+  expiresIn: number;
+  refreshToken: string;
+  refreshTokenExpiresIn: number;
+  tokenType: string;
+  tmpPasswordUsed?: boolean;
+}
+export interface ILoginResponse {
+  code: number;
+  message: string;
+  data?: IUserToken;
+}
+
+export interface ISignupResponse {
+  code: number;
+  message: string;
+  data?: IUserToken;
+}
+
+export interface IConfirmTelResponse {
+  code: number;
+  message: string;
+  data: {
+    availability: boolean;
+  };
 }

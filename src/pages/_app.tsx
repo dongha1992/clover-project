@@ -1,13 +1,14 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import GlobalStyle from '@styles/GlobalStyle';
-import { Wrapper } from '@components/Layout/Wrapper';
+import Wrapper from '@components/Layout/Wrapper';
 import { theme } from '@styles/theme';
 import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { Provider } from 'react-redux';
-import { store } from '@store/index';
+import wrapper from '@store/index';
+import { setRefreshToken } from '@components/Auth';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -29,17 +30,28 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>프레시코드</title>
       </Head>
-      <Provider store={store}>
-        <ThemeProvider
-          theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
-        >
-          <GlobalStyle />
-          <Wrapper>
-            <Component {...pageProps} />
-          </Wrapper>
-        </ThemeProvider>
-      </Provider>
+
+      <ThemeProvider
+        theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
+      >
+        <GlobalStyle />
+        <Wrapper>
+          <Component {...pageProps} />
+        </Wrapper>
+      </ThemeProvider>
     </>
   );
 }
-export default MyApp;
+
+MyApp.getInitialProps = wrapper.getInitialPageProps(
+  (store) => async (context: any) => {
+    {
+      // await setRefreshToken(context, store);
+      return {
+        props: {},
+      };
+    }
+  }
+);
+
+export default wrapper.withRedux(MyApp);

@@ -22,7 +22,7 @@ const Toast = dynamic(() => import('@components/Toast'), {
   ssr: false,
 });
 
-export const Wrapper: React.FC = ({ children }) => {
+const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
   useEffect(() => {
     const calcBrowserScreenSize = () => {
@@ -131,3 +131,5 @@ const Left = styled.div`
 const Main = styled.main`
   margin-top: 56px;
 `;
+
+export default Wrapper;

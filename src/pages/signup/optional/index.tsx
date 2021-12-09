@@ -15,9 +15,10 @@ import router from 'next/router';
 // import { Select, Option } from '@components/Dropdown/index';
 import { RadioButton } from '@components/Button/RadioButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { userForm, SET_USER } from '@store/user';
+import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { Api } from '@api/index';
-import { ISignup } from '@model/index';
+import { ISignupUser } from '@model/index';
+import { signup } from '@api/v2';
 
 const GENDER = [
   {
@@ -43,7 +44,7 @@ function signupOptional() {
   const birthDateRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
-  const user = useSelector(userForm);
+  const { signupUser } = useSelector(userForm);
 
   const birthDateInputHandler = (): void => {
     const birthDate = birthDateRef.current?.value.toString();
@@ -61,21 +62,29 @@ function signupOptional() {
     const gender = GENDER.find((item) => item.id === checkGender)?.value;
 
     /* TODO: 떵크로 회원가입 로직 수정 */
+    /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
+
     const optionalForm = {
       birthDate,
       gender,
-      nickname: nickname ? nickname : user.name,
+      nickname: nickname ? nickname : signupUser.name,
     };
 
     dispatch(
-      SET_USER({
+      SET_SIGNUP_USER({
         ...optionalForm,
       })
     );
 
-    const data = { ...user, ...optionalForm } as ISignup;
-    const res = await Api.addSignup(data);
+    const { data } = await signup({
+      ...signupUser,
+      ...optionalForm,
+    } as ISignupUser);
 
+    if (data.code === 200) {
+      const userTokenObj = data.data;
+      dispatch(SET_USER_AUTH(userTokenObj));
+    }
     // router.push('/signup/finish');
   };
 
@@ -146,7 +155,9 @@ function signupOptional() {
         </FlexCol>
       </Wrapper>
       <NextBtnWrapper onClick={goToOptionalInfo}>
-        <Button>가입하기</Button>
+        <Button height="100%" borderRadius="0">
+          가입하기
+        </Button>
       </NextBtnWrapper>
     </Container>
   );

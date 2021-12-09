@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 function dormantAccount() {
-  return <Container></Container>;
+  return <Container>휴면계정</Container>;
 }
 
 const Container = styled.div``;
