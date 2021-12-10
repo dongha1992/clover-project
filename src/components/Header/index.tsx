@@ -8,6 +8,7 @@ const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 const TabHeader = dynamic(() => import('./TabHeader'));
+const SpotHeader = dynamic(() => import('./SpotHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 /*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
@@ -91,6 +92,10 @@ function Header() {
 
         case ['/home'].includes(currentPath): {
           return <HomeHeader />;
+        }
+
+        case ['/spot'].includes(currentPath): {
+          return <SpotHeader />
         }
 
         default: {
