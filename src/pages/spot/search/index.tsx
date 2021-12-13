@@ -4,7 +4,6 @@ import TextInput from '@components/TextInput';
 import { TextB1R, TextH3B } from '@components/Text';
 import SpotItem, { ISpotItem } from '@components/Spot/SpotItem';
 import axios from 'axios';
-import debounce from 'lodash-es/debounce';
 import SearchResult from '@components/SearchResult';
 import { homePadding } from '@styles/theme';
 import { SPOT_URL } from '@constants/mock';
@@ -83,8 +82,8 @@ function spotSearch() {
         <TextInput
           placeholder="도로명, 건물명 또는 지번으로 검색"
           svg="searchIcon"
-          keyPressHandler={debounce(getSearchResult, 300)}
-          eventHandler={debounce(changeInputHandler, 300)}
+          keyPressHandler={getSearchResult}
+          eventHandler={changeInputHandler}
           ref={inputRef}
         />
       </Wrapper>

@@ -77,11 +77,12 @@ const TextInput = React.forwardRef(
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
-    const debounceChangeEvent = (
-      e: React.ChangeEvent<HTMLInputElement>
-    ): void => {
-      eventHandler && eventHandler(e);
-    };
+    const debounceChangeEvent = debounce(
+      (e: React.ChangeEvent<HTMLInputElement>): void => {
+        eventHandler && eventHandler(e);
+      },
+      500
+    );
 
     const debounceSetStateValue = useRef(
       debounce((value) => setStateAction && setStateAction(value), 500)
