@@ -4,7 +4,6 @@ import { TextH2B, TextH5B, TextB3R } from '@components/Text';
 import { homePadding, fixedBottom, theme } from '@styles/theme';
 import TextInput from '@components/TextInput';
 import Button from '@components/Button';
-import debounce from 'lodash-es/debounce';
 import { Api } from '@api/index';
 import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
@@ -171,7 +170,7 @@ function signupAuth() {
           <TextInput
             placeholder="이름"
             ref={nameRef}
-            eventHandler={debounce(nameInputHandler, 300)}
+            eventHandler={nameInputHandler}
             value={signupUser.name ? signupUser.name : ''}
           />
           {nameValidation && <SVGIcon name="confirmCheck" />}
@@ -182,7 +181,7 @@ function signupAuth() {
             <TextInput
               placeholder="휴대폰 번호"
               ref={phoneNumberRef}
-              eventHandler={debounce(phoneNumberInputHandler, 300)}
+              eventHandler={phoneNumberInputHandler}
               inputType="number"
               value={signupUser.tel ? signupUser.tel : ''}
             />
@@ -200,7 +199,7 @@ function signupAuth() {
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
-              eventHandler={debounce(authCodeInputHandler, 300)}
+              eventHandler={authCodeInputHandler}
               ref={authCodeNumberRef}
               inputType="number"
             />

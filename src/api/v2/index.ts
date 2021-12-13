@@ -11,6 +11,7 @@ import {
   ISignupResponse,
   IResponse,
   IConfirmTelResponse,
+  IHelpEmail,
 } from '@model/index';
 
 export const userLogin = (
@@ -44,8 +45,26 @@ export const signup = (
   return Api.post('/user/v1/users', data);
 };
 
-export const refreshToken = (
+export const userRefreshToken = (
   refreshToken: string
 ): Promise<AxiosResponse<ILoginResponse>> => {
-  return Api.post('/user/v1/token/refresh', { refreshToken });
+  return Api.post('/user/v1/token/refresh', {
+    refreshToken: `Bearer ${refreshToken}`,
+  });
+};
+
+export const userProfile = () => {
+  return Api.get('/user/v1/me');
+};
+
+export const userHelpEmail = (
+  data: IHelpEmail
+): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('/user/v1/help/email', data);
+};
+
+export const userPasswordEmail = (
+  password: any
+): Promise<AxiosResponse<any>> => {
+  return Api.post('/user/v1/confirm/password', password);
 };

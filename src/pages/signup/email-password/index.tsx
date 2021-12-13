@@ -4,7 +4,6 @@ import { TextH2B, TextH5B } from '@components/Text';
 import { homePadding, fixedBottom, FlexCol } from '@styles/theme';
 import TextInput from '@components/TextInput';
 import Button from '@components/Button';
-import debounce from 'lodash-es/debounce';
 import router from 'next/router';
 import Validation from '@components/Validation';
 import { Api } from '@api/index';
@@ -175,7 +174,7 @@ function emailAndPassword() {
           <TextInput
             placeholder="이메일"
             ref={emailRef}
-            eventHandler={debounce(emailInputHandler, 300)}
+            eventHandler={emailInputHandler}
             value={signupUser.email ? signupUser.email : ''}
           />
           {!emailValidation.isValid ? (
@@ -191,7 +190,7 @@ function emailAndPassword() {
               <TextInput
                 placeholder="비밀번호"
                 ref={passwordRef}
-                eventHandler={debounce(passwordInputHandler, 300)}
+                eventHandler={passwordInputHandler}
               />
               {passwordValidation.isValid &&
                 passwordLengthValidation.isValid && (
@@ -210,7 +209,7 @@ function emailAndPassword() {
               <TextInput
                 placeholder="비밀번호 확인"
                 ref={passwordAgainRef}
-                eventHandler={debounce(passwordAginInputHandler, 300)}
+                eventHandler={passwordAginInputHandler}
                 margin="8px 0 0 0"
               />
               {passwordValidation.isValid &&

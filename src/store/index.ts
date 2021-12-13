@@ -17,8 +17,6 @@ import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
 import logger from 'redux-logger';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
-  console.log(state, action.payload, 'root');
-
   if (action.type === HYDRATE) {
     return { ...state, ...action.payload };
   }
@@ -31,22 +29,6 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     toast,
     user,
   })(state, action);
-  // switch (action.type) {
-  //   case HYDRATE:
-  //     return { ...state, ...action.payload };
-  //   default: {
-  //     const combinedReducer = combineReducers({
-  //       alert,
-  //       cart,
-  //       menu,
-  //       bottomSheet,
-  //       dropdown,
-  //       toast,
-  //       user,
-  //     });
-  //     return combinedReducer(state, action);
-  //   }
-  // }
 };
 
 export const store = configureStore({
