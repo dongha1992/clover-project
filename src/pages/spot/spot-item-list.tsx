@@ -3,10 +3,20 @@ import styled, {css} from 'styled-components';
 import {TextH2B, TextH7B, TextB3R, TextH6B, TextB2R, TextH4B, TextH5B} from '@components/Text';
 import {theme} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-
+import { useRouter } from 'next/router';
 
 const SpotItems = ({items, title, subTitle, type}: any) => {
-    const goSpotDetail = (id: number): void => {}
+    const router = useRouter();
+
+    const goToDetail = (id: number) => {
+        router.push(`/spot/detail/${id}`);
+      };
+
+    const goToCart = (e: any) => {
+        e.stopPropagation();
+        router.push('/cart');
+    };
+
     return(
         <>
         {
@@ -16,7 +26,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
                 <ItemListRow>
                     { items.map((item: any, index: number)=> {
                         return (
-                        <Container type='normal' onClick={()=> goSpotDetail(item.id)} key={index}>
+                        <Container type='normal' onClick={()=> goToDetail(item.id)} key={index}>
                             <StorImgWrapper>
                                 <Text>
                                     <SVGIcon name='fcoSpot' />
@@ -47,7 +57,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
                 <ItemListRow >
                     { items.map((item: any, index: number)=> {
                         return (
-                        <Container type='event' onClick={()=> goSpotDetail(item.id)} key={index}>
+                        <Container type='event' onClick={()=> goToDetail(item.id)} key={index}>
                             <StorImgWrapper>
                                 <LikeWrapper type='event'>
                                     <SVGIcon name='likeBlack' />
@@ -59,7 +69,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
                                 <TextH6B margin='8px 0 0 0' color={theme.greyScale65}>{item.location}</TextH6B>
                                 <ButtonWrapper>
                                     <TextH6B color={theme.greyScale65}>{`${item.distance}m`}</TextH6B>
-                                    <Button>주문하기</Button>
+                                    <Button onClick={goToCart}>주문하기</Button>
                                 </ButtonWrapper>
                             </LocationInfoWrapper>
                         </Container>
@@ -78,7 +88,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
                 <ItemListRow >
                     { items.map((item: any, index: number)=> {
                         return (
-                        <Container type='trial' onClick={()=> goSpotDetail(item.id)} key={index}>
+                        <Container type='trial' onClick={()=> goToDetail(item.id)} key={index}>
                             <StorImgWrapper >
                                 <Text>
                                     <SVGIcon name='fcoSpot' />
@@ -95,7 +105,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
                                         <TextH5B margin='8px 0 0 0' color={theme.black}>{item.location}</TextH5B>
                                         <TextH6B color={theme.greyScale65}>{`${item.distance}m`}</TextH6B>
                                     </TextWrapper>
-                                    <Button>주문하기</Button>
+                                    <Button onClick={goToCart}>주문하기</Button>
                             </LocationInfoWrapper>
                         </Container>
                         )

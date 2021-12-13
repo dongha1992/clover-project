@@ -76,7 +76,7 @@ function Header() {
         case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
-        case ['/menu/[id]'].includes(currentPath): {
+        case ['/menu/[id]', '/spot/detail/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
 

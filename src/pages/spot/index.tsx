@@ -4,63 +4,10 @@ import {TextH2B, TextH4B} from '@components/Text';
 import SpotItems from './spot-item-list';
 import {theme, textH6} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-
-const SPOT_ITEMS = [
-  {
-    id: 0,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 10,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-  },
-  {
-    id: 1,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 12,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-  },
-  {
-    id: 2,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 31,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-  },
-  {
-    id: 3,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 31,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-  },
-  {
-    id: 4,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 23,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-  },
-  {
-    id: 5,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 21,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-  },
-];
+import { useDispatch } from 'react-redux';
+import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
+import ShareSheet from '@components/ShareSheet';
+import {SPOT_ITEMS}  from '@constants/mock';
 
 const text =  {
   mainTitle : `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
@@ -74,7 +21,18 @@ const text =  {
   trialSubTitle: '트라이얼 스팟 함께 주문하고 300포인트 받아요',
 };
 
-function spot () {
+const spot = () => {
+  const dispatch = useDispatch();
+
+  const goToShare = () => {
+    dispatch(initBottomSheet());
+    dispatch(
+      setBottomSheet({
+        content: <ShareSheet />,
+        buttonTitle: '',
+      })
+    );
+  };
 
   const isLogin = (isLogin: boolean) => {
     if(isLogin){
@@ -82,22 +40,24 @@ function spot () {
     }
     return false;
   };
-
+  /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
     <Container>
       <TextH2B padding='24px 0 0 0'>
         {text.mainTitle}
       </TextH2B>
       {
-        isLogin(false) ? 
+        isLogin(true) &&
         <HandleBoxWrapper>
           <TextH4B>{text.gotoWrite}</TextH4B>
           <ShareIconWrapper>
-            <SVGIcon name='share' />
+            <SVGIcon name='download' />
           </ShareIconWrapper>
         </HandleBoxWrapper>
-        :
-        <HandleBoxWrapper>
+      }
+      {
+        isLogin(true) &&
+        <HandleBoxWrapper onClick={goToShare}>
           <TextH4B>{text.gotoShare}</TextH4B>
           <ShareIconWrapper>
             <SVGIcon name='share' />
