@@ -14,7 +14,12 @@ import Button from '@components/Button';
 import router from 'next/router';
 import Validation from '@components/Validation';
 import { useSelector, useDispatch } from 'react-redux';
-import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS } from '@store/user';
+import {
+  userForm,
+  SET_USER_AUTH,
+  SET_LOGIN_SUCCESS,
+  SET_TEMP_PASSWORD,
+} from '@store/user';
 import wrapper from '@store/index';
 import { userLogin } from '@api/v2';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
@@ -104,7 +109,11 @@ function login() {
 
         if (data.code === 200) {
           const userTokenObj = data.data;
-
+          if (userTokenObj?.tmpPasswordUsed) {
+            dispatch(SET_TEMP_PASSWORD(password));
+            router.push('/mypage/profile/password');
+            return;
+          }
           dispatch(
             SET_USER_AUTH({
               userTokenObj,

@@ -4,6 +4,7 @@ import { setCookie, removeCookie } from '@utils/cookie';
 import { userLogin } from '@api/v2';
 
 interface IUser {
+  tempPasswordLogin: string;
   isLoginSuccess: boolean;
   signupUser: {
     authCode?: string;
@@ -42,6 +43,7 @@ interface IUser {
 }
 
 const initialState: IUser = {
+  tempPasswordLogin: '',
   isLoginSuccess: false,
   signupUser: {
     authCode: '',
@@ -130,6 +132,10 @@ export const user = createSlice({
       state.isLoginSuccess = payload;
     },
 
+    SET_TEMP_PASSWORD: (state, { payload }: PayloadAction<string>) => {
+      state.tempPasswordLogin = payload;
+    },
+
     SET_USER: (state, { payload }: PayloadAction<IUser['user']>) => {
       state.user = payload;
     },
@@ -144,7 +150,12 @@ export const user = createSlice({
   },
 });
 
-export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS } =
-  user.actions;
+export const {
+  SET_SIGNUP_USER,
+  SET_USER_AUTH,
+  SET_USER,
+  SET_LOGIN_SUCCESS,
+  SET_TEMP_PASSWORD,
+} = user.actions;
 export const userForm = (state: AppState): IUser => state.user;
 export default user.reducer;
