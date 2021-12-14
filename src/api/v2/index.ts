@@ -12,6 +12,8 @@ import {
   IResponse,
   IConfirmTelResponse,
   IHelpEmail,
+  IHelpPassword,
+  IChangePassword,
 } from '@model/index';
 
 export const userLogin = (
@@ -53,7 +55,7 @@ export const userRefreshToken = (
   });
 };
 
-export const userProfile = () => {
+export const userProfile = (): Promise<AxiosResponse<any>> => {
   return Api.get('/user/v1/me');
 };
 
@@ -63,8 +65,20 @@ export const userHelpEmail = (
   return Api.post('/user/v1/help/email', data);
 };
 
-export const userPasswordEmail = (
-  password: any
+export const userHelpPassword = (
+  data: IHelpPassword
+): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('/user/v1/help/password', data);
+};
+
+export const userConfirmPassword = (
+  password: string
 ): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/confirm/password', password);
+};
+
+export const userChangePassword = (
+  data: IChangePassword
+): Promise<AxiosResponse<any>> => {
+  return Api.post('/user/v1/password', data);
 };

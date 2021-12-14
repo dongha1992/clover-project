@@ -94,8 +94,6 @@ function signupAuth() {
 
       const { data } = await authTel({ tel });
 
-      console.log(data, 'after autl tel');
-
       if (data.code === 200) {
         dispatch(
           setAlert({
@@ -106,9 +104,8 @@ function signupAuth() {
         setOneMinuteDisabled(true);
         setDelay(1000);
       } else {
-        console.log('fail');
         return;
-        /* 인증번호 요청 실패 시 */
+        /* TODO: 인증번호 요청 실패 시 */
       }
     }
   };

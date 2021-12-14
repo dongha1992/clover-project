@@ -104,14 +104,6 @@ const OnBoarding: NextPage = () => {
     profileTest();
     profileTest();
     profileTest();
-    emailHelpTest();
-  };
-
-  const emailHelpTest = async () => {
-    const data = {
-      password: '12341234',
-    };
-    await userPasswordEmail(data);
   };
 
   const profileTest = async () => {
@@ -133,7 +125,7 @@ const OnBoarding: NextPage = () => {
       };
 
       sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
-      console.log('sessionStorage');
+
       const refreshTokenObj = JSON.stringify({
         refreshToken: userTokenObj?.refreshToken,
         refreshTokenExpiresIn: userTokenObj?.refreshTokenExpiresIn,
