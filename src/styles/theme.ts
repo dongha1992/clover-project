@@ -88,11 +88,16 @@ export const FlexRow = styled.div<{
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexCol = styled.div<{ padding?: string; margin?: string }>`
+export const FlexCol = styled.div<{
+  padding?: string;
+  margin?: string;
+  width?: string;
+}>`
   display: flex;
   flex-direction: column;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
 `;
 
 export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
@@ -107,6 +112,13 @@ export const FlexColStart = styled.div`
   display: flex;
   flex-direction: column;
   align-self: flex-start;
+`;
+
+export const FlexColCenter = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const GridWrapper = styled.div<{ gap: number }>`
