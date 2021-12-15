@@ -33,8 +33,6 @@ interface IMypageMenu {
 }
 
 function mypage() {
-  const goToOrderAndDeliverDetail = () => {};
-
   return (
     <Container>
       <Wrapper>
@@ -75,7 +73,9 @@ function mypage() {
               <TextH4B>주문/배송 내역</TextH4B>
               <FlexRow>
                 <TextB2R padding="0 8px 0 0">2 건</TextB2R>
-                <div onClick={goToOrderAndDeliverDetail}>
+                <div
+                  onClick={() => router.push('/mypage/order-delivery-history')}
+                >
                   <SVGIcon name="arrowRight" />
                 </div>
               </FlexRow>
