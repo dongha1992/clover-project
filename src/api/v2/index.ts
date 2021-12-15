@@ -26,11 +26,13 @@ export const kakaoLogin = (data: IkakaoLogin): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/signin-kakao', data);
 };
 
-export const authTel = (data: IAuthTel): Promise<AxiosResponse<IResponse>> => {
+export const userAuthTel = (
+  data: IAuthTel
+): Promise<AxiosResponse<IResponse>> => {
   return Api.post('/user/v1/auth/tel', data);
 };
 
-export const confirmTel = (
+export const userConfirmTel = (
   data: IConfimTel
 ): Promise<AxiosResponse<IResponse>> => {
   return Api.post('/user/v1/confirm/tel', data);
