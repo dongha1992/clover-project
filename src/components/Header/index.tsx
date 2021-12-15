@@ -43,6 +43,8 @@ function Header() {
         '/mypage/profile/confirm': '회원정보 수정',
         '/mypage/profile/dormant': '회원정보 수정',
         '/mypage/profile': '회원정보 수정',
+        '/mypage/dib/general': '찜 관리',
+        '/mypage/dib/subscription': '찜 관리',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',
         '/signup/auth': '회원가입',
@@ -55,34 +57,6 @@ function Header() {
 
       const title = headerTitleMap[currentPath];
       switch (true) {
-        case [
-          '/location',
-          '/location/address-detail',
-          '/search',
-          '/review',
-          '/review/[id]',
-          '/cart',
-          '/cart/delivery-info',
-          '/spot/search',
-          '/payment',
-          '/mypage/card',
-          '/mypage/card/register',
-          '/mypage/card/register/term',
-          '/payment/finish',
-          '/mypage/order-detail',
-          '/mypage/order-delivery-history',
-          '/mypage/profile/password',
-          '/mypage/profile/confirm',
-          '/mypage/profile/dormant',
-          '/mypage/profile',
-          '/signup',
-          '/login',
-          '/signup/auth',
-          '/signup/email-password',
-          '/signup/optional',
-        ].includes(currentPath): {
-          return <DefaultHeader title={title} />;
-        }
         case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
@@ -100,6 +74,8 @@ function Header() {
           '/menu/detail/delivery',
           '/login/find-account/email',
           '/login/find-account/password',
+          '/mypage/dib/general',
+          '/mypage/dib/subscription',
         ].includes(currentPath): {
           return <TabHeader title={title} />;
         }
@@ -109,7 +85,7 @@ function Header() {
         }
 
         default: {
-          return;
+          return <DefaultHeader title={title} />;
         }
       }
     },

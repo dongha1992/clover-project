@@ -11,3 +11,8 @@ export const MANAGE_MENU = [
   { id: 10, text: '고객센터', link: '/mypage/customer-service' },
   { id: 11, text: '약관 및 정책', link: '/mypage/term' },
 ];
+
+export const DIB_MENU = [
+  { id: 1, text: '일반 상품', link: '/mypage/dip/general' },
+  { id: 2, text: '구독 상품', link: '/mypage/dip/subscription' },
+];

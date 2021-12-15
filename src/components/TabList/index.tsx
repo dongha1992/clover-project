@@ -4,6 +4,7 @@ import Tab from '@components/TabList/Tab';
 import { homePadding, theme } from '@styles/theme';
 
 function TabList({ onClick, selectedTab, tabList }: any) {
+  console.log(tabList);
   return (
     <Container>
       <TabWrapper>

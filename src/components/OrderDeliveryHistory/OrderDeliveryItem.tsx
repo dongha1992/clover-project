@@ -5,41 +5,55 @@ import { TextB2R, TextH5B, TextB3R } from '@components/Text';
 import Tag from '@components/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import Button from '@components/Button';
-
+import router from 'next/router';
 interface IProps {
   menu: any;
 }
 
 function OrderDeliveryItem({ menu }: IProps) {
+  const addToCart = () => {};
   return (
     <Container>
       <Wrapper>
         <FlexRow margin="0 0 8px 0">
-          <TextH5B color={theme.brancColor}>주문완료</TextH5B>
+          <TextH5B color={theme.brandColor}>주문완료</TextH5B>
           <Tag margin="0 4px 0 8px">스팟배송</Tag>
           <Tag>점심</Tag>
         </FlexRow>
-        <FlexRow>
+        <FlexRow padding="0 0 8px 0">
           <SVGIcon name="deliveryTruckIcon" />
-          <TextH5B>11월 4일 (목) 도착예정</TextH5B>
+          <TextH5B padding="2px 0 0 4px">11월 4일 (목) 도착예정</TextH5B>
         </FlexRow>
         <FlexRow padding="0 0 16px 0">
           <ImageWrapper>
             <ItemImage src={menu.url} alt="상품이미지" />
           </ImageWrapper>
-          <FlexCol padding="0 0 0 16px">
-            <TextB2R padding="0 0 4px 0">
-              프렌치 발사믹 훈제연어 샐러드 / 미디움 (M) 1개 외 4개
-            </TextB2R>
+          <FlexCol width="70%" margin="0 0 0 16px">
+            <TextB2R padding="0 0 4px 0">{menu.name}</TextB2R>
             <FlexBetween>
-              <TextH5B>32,610원</TextH5B>
+              <TextH5B>{menu.price}원</TextH5B>
               <TextB3R color={theme.greyScale65}>11월 2일 (화) 결제</TextB3R>
             </FlexBetween>
           </FlexCol>
         </FlexRow>
         <FlexRow>
-          <Button>장바구니 담기</Button>
-          <Button>주문상세 보기</Button>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            margin="0 8px 0 0"
+            onClick={addToCart}
+          >
+            장바구니 담기
+          </Button>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            onClick={() => router.push('/mypage/order-detail')}
+          >
+            주문상세 보기
+          </Button>
         </FlexRow>
       </Wrapper>
     </Container>
@@ -49,6 +63,7 @@ function OrderDeliveryItem({ menu }: IProps) {
 const Container = styled.div``;
 
 const Wrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
