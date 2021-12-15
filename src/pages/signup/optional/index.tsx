@@ -19,7 +19,7 @@ import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { ISignupUser } from '@model/index';
 import { signup } from '@api/v2';
 
-const GENDER = [
+export const GENDER = [
   {
     id: 1,
     text: '여성',

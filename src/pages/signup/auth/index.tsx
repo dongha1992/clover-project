@@ -12,7 +12,7 @@ import { setAlert } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
-import { authTel, confirmTel } from '@api/v2';
+import { userAuthTel, userConfirmTel } from '@api/v2';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -92,7 +92,7 @@ function signupAuth() {
     if (phoneNumberRef.current) {
       const tel = phoneNumberRef.current?.value.toString();
 
-      const { data } = await authTel({ tel });
+      const { data } = await userAuthTel({ tel });
 
       if (data.code === 200) {
         dispatch(
@@ -127,8 +127,8 @@ function signupAuth() {
         const authCode = authCodeNumberRef.current.value;
         const tel = phoneNumberRef.current.value;
 
-        const { data } = await confirmTel({ tel, authCode });
-        console.log(data);
+        const { data } = await userConfirmTel({ tel, authCode });
+
         if (data) {
           setAuthCodeConfirm(true);
         } else {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH2B, TextH5B } from '@components/Text';
 import { homePadding, FlexCol, theme, fixedBottom } from '@styles/theme';
@@ -6,9 +6,10 @@ import TextInput from '@components/TextInput';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import Validation from '@components/Validation';
 import Button from '@components/Button';
+import { userConfirmPassword } from '@api/v2';
+import router from 'next/router';
 
 function passwordConfirm() {
-  const [loginType, setLoginType] = useState('');
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
@@ -28,7 +29,19 @@ function passwordConfirm() {
     }
   };
 
-  const getConfirmPassword = async () => {};
+  const getConfirmPassword = async () => {
+    if (passwordRef.current) {
+      const password = passwordRef.current.value.toString();
+      try {
+        const { data } = await userConfirmPassword(password);
+        if (data.code === 200) {
+          router.push('/mypage/profile');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   return (
     <Container>

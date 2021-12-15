@@ -33,7 +33,6 @@ interface IMypageMenu {
 }
 
 function mypage() {
-  const goToEditUser = () => {};
   const goToOrderAndDeliverDetail = () => {};
 
   return (
@@ -42,7 +41,7 @@ function mypage() {
         <UserInfoWrapper>
           <FlexRow>
             <TextH2B padding="0 6px 0 0">루이스님</TextH2B>
-            <div onClick={goToEditUser}>
+            <div onClick={() => router.push('/mypage/profile/confirm')}>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
