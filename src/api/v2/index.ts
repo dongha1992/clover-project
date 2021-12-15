@@ -82,3 +82,7 @@ export const userChangePassword = (
 ): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/password', data);
 };
+
+export const userUnlock = (): Promise<AxiosResponse<any>> => {
+  return Api.post('/user/v1/unlock');
+};

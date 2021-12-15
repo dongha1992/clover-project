@@ -42,9 +42,9 @@ function login() {
 
   useEffect(() => {
     if (isLoginSuccess) {
-      const isDormantAccount = false;
+      const isDormantAccount = true;
       if (isDormantAccount) {
-        router.push('/login/dormant');
+        router.push('/mypage/profile/dormant');
       } else {
         router.push('/home');
       }
@@ -114,11 +114,8 @@ function login() {
             router.push('/mypage/profile/password');
             return;
           }
-          dispatch(
-            SET_USER_AUTH({
-              userTokenObj,
-            })
-          );
+
+          dispatch(SET_USER_AUTH(userTokenObj));
           dispatch(SET_LOGIN_SUCCESS(true));
         }
       } catch (error) {
