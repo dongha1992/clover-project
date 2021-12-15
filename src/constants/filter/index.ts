@@ -1,3 +1,5 @@
+/* TODO: 확장성 고려 못하고 변수명 지음 */
+
 export const MUTILPLE_CHECKBOX = [
   { id: 1, text: '전체', value: 'all' },
   { id: 2, text: '비건', value: 'vegan' },
@@ -34,4 +36,10 @@ export const MUTILPLE_CHECKBOX_SPOT = {
 export const RADIO_CHECKBOX_SPOT = [
   { id: 1, text: '가까운 순', value: 'nearest' },
   { id: 2, text: '자주가는 순', value: 'frequency' },
+];
+
+export const ORDER_DATE_RADIO_CHECKBOX = [
+  { id: 1, text: '최근 3개월', value: 'threeMonth' },
+  { id: 2, text: '최근 6개월', value: 'sixMonth' },
+  { id: 3, text: '최근 1년', value: 'oneYear' },
 ];
