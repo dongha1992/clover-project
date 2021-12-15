@@ -173,6 +173,40 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  arrowRight: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6 15L12 9L6 3"
+        stroke="#242424"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  arrowRightGrey: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6 15L12 9L6 3"
+        stroke="#C8C8C8"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
   locationBlack: () => (
     <svg
       width="18"
@@ -1320,6 +1354,37 @@ const svgMap: TSvg = {
       />
       <circle cx="12" cy="12" r="9.25" stroke="#242424" strokeWidth="1.5" />
       <circle cx="12" cy="10" r="3.25" stroke="#35AD73" strokeWidth="1.5" />
+    </svg>
+  ),
+  notification: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12.6761 5.35248L11.3018 5.34963C8.16683 5.34203 5.44532 7.92318 5.42375 11.0496V14.6501C5.42375 15.4006 5.33001 16.1331 4.92595 16.7572L4.65689 17.1733C4.24721 17.8041 4.68783 18.6496 5.42375 18.6496H18.5766C19.3126 18.6496 19.7523 17.8041 19.3435 17.1733L19.0745 16.7572C18.6713 16.1331 18.5766 15.3997 18.5766 14.6492V11.0506C18.5391 7.92318 15.8111 5.36008 12.6761 5.35248V5.35248Z"
+        stroke="#242424"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14.8126 18.6504C14.8126 19.4063 14.5163 20.1312 13.9889 20.6656C13.4615 21.2001 12.7461 21.5004 12.0002 21.5004C11.2543 21.5004 10.5389 21.2001 10.0115 20.6656C9.48405 20.1312 9.18774 19.4063 9.18774 18.6504"
+        stroke="#242424"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12.0002 2.5C12.4975 2.5 12.9744 2.70018 13.326 3.0565C13.6776 3.41282 13.8752 3.89609 13.8752 4.4V5.35H10.1252V4.4C10.1252 3.89609 10.3228 3.41282 10.6744 3.0565C11.026 2.70018 11.5029 2.5 12.0002 2.5Z"
+        stroke="#242424"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
 };
