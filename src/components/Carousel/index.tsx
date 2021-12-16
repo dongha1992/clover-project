@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 
-const settings = {
-  arrows: false,
-  dots: false,
-  spped: 500,
-  sliderToShow: 1,
-  slidersToScroll: 1,
-  centerMode: true,
-  infinite: false,
-  customPagimg: () => <div />,
-  centerPadding: '0px',
-};
+interface IProps {
+  setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
+  images: any;
+}
 
-function Carousel({ images }: any) {
+function Carousel({ images, setCountIndex }: IProps) {
+  const settings = {
+    arrows: false,
+    dots: false,
+    spped: 500,
+    sliderToShow: 1,
+    slidersToScroll: 1,
+    centerMode: true,
+    infinite: false,
+    customPaging: () => <div />,
+    afterChange: (current: number) => setCountIndex && setCountIndex(current),
+    centerPadding: '0px',
+  };
+
   return (
     <Container>
       <Slider {...settings}>

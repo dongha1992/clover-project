@@ -115,7 +115,7 @@ function mypage() {
           <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
           <MypageMenu title="스팟 관리" link="/mypage/spot" />
           <MypageMenu title="후기 관리" link="/mypage/review" />
-          <MypageMenu title="찜 관리" link="/mypage/dib" count={1} />
+          <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
           <MypageMenu title="친구 초대" link="/mypage/friend" count={1} />
           <MypageMenu title="주소 관리" link="/mypage/address" />
           <MypageMenu title="결제 관리" link="/mypage/card" />
