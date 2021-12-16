@@ -13,6 +13,6 @@ export const MANAGE_MENU = [
 ];
 
 export const DIB_MENU = [
-  { id: 1, text: '일반 상품', link: '/mypage/dip/general' },
-  { id: 2, text: '구독 상품', link: '/mypage/dip/subscription' },
+  { id: 1, text: '일반 상품', link: '/mypage/dib/general' },
+  { id: 2, text: '구독 상품', link: '/mypage/dib/subscription' },
 ];

@@ -16,6 +16,8 @@ type TProps = {
   title?: string;
 };
 
+/* TODO: 뒤로가기 시 replace로 교체 */
+
 function TabHeader({ title }: TProps) {
   const [selectedTab, setSelectedTab] = useState<string>(
     '/login/find-account/email'

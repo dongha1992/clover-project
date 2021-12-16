@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ModalFullScreen from '../../components/Modal/ModalFullScreen';
 import Carousel from '@components/Carousel';
 import { TextH5B } from '@components/Text';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
+import { useDispatch } from 'react-redux';
+import { INIT_IMAGE_VIEWER } from '@store/common';
 
 function ImageViewer({ images }: any) {
-  const closeModal = () => {};
+  const [currentImg, setCurrentImg] = useState(0);
+  const disptach = useDispatch();
+
+  const closeModal = () => {
+    disptach(INIT_IMAGE_VIEWER());
+  };
+
+  const totalImg = images.length;
   return (
     <ModalFullScreen
       height={'300px'}
@@ -16,12 +25,14 @@ function ImageViewer({ images }: any) {
     >
       <Container>
         <Header>
-          <TextH5B color={theme.white}>1/2</TextH5B>
+          <TextH5B color={theme.white}>
+            {currentImg + 1}/{totalImg}
+          </TextH5B>
           <div className="close" onClick={closeModal}>
             <SVGIcon name="defaultCancel24White" />
           </div>
         </Header>
-        <Carousel images={images} />
+        <Carousel images={images} setCountIndex={setCurrentImg} />
       </Container>
     </ModalFullScreen>
   );
@@ -53,4 +64,4 @@ const Header = styled.div`
   }
 `;
 
-export default ImageViewer;
+export default React.memo(ImageViewer);
