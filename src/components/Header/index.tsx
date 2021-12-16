@@ -46,6 +46,7 @@ function Header() {
         '/mypage/dib/general': '찜 관리',
         '/mypage/friend': '친구 초대',
         '/mypage/rank': '회원등급',
+        '/mypage/point': '포인트',
         '/mypage/dib/subscription': '찜 관리',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',
