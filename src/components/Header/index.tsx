@@ -44,6 +44,7 @@ function Header() {
         '/mypage/profile/dormant': '회원정보 수정',
         '/mypage/profile': '회원정보 수정',
         '/mypage/dib/general': '찜 관리',
+        '/mypage/friend': '친구 초대',
         '/mypage/dib/subscription': '찜 관리',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',

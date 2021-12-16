@@ -131,7 +131,7 @@ function mypage() {
               height={96}
               layout="responsive"
               objectFit="cover"
-              src="https://lh3.googleusercontent.com/proxy/T77XmPwspxTLSXgJWUSS9lD8sF-D8PUyaYz7r5i8ZcEC7gHORKCXqAJY0B1cuI9JKHwcus8KiIz4R2XQye0C2jw70MYqFkQXgUkzy30_GKJxuTC_WlZVsnIa"
+              src="http://www.newsworks.co.kr/news/photo/202011/502748_392695_2953.jpg"
             />
           </ImageWrapper>
           <MypageMenu title="고객센터" link="/mypage/customer-service" />

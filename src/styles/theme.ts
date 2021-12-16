@@ -81,9 +81,11 @@ export const FlexRow = styled.div<{
   padding?: string;
   margin?: string;
   id?: string;
+  width?: string;
 }>`
   display: flex;
   align-items: center;
+  width: ${({ width }) => width && width};
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
 `;
