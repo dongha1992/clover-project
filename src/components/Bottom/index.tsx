@@ -18,14 +18,6 @@ function Bottom() {
 
   const renderComponent = useCallback(
     (currentPath: string) => {
-      const headerTitleMap: Obj = {
-        '/search': '검색',
-        '/location': '내 위치 설정하기',
-        '/locationaddress-detaill': '내 위치 설정하기',
-        '/category': '전체메뉴',
-        '/category/salad': '샐러드',
-      };
-
       switch (true) {
         case ['/home', '/spot', '/mypage', '/subscription'].includes(
           currentPath
@@ -43,10 +35,14 @@ function Bottom() {
     [currentPath]
   );
 
-  return <Container>{renderComponent(currentPath)}</Container>;
+  return (
+    <Container isShow={renderComponent(currentPath)}>
+      {renderComponent(currentPath)}
+    </Container>
+  );
 }
 
-const Container = styled.div`
-  margin-top: 62px;
+const Container = styled.div<{ isShow: React.ReactNode }>`
+  margin-top: ${({ isShow }) => (isShow ? 62 : 0)}px;
 `;
 export default React.memo(Bottom);
