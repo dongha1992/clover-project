@@ -52,7 +52,13 @@ function mypage() {
                 다음 등급까지 12,000원 남았어요
               </TextB3R>
             </FlexRow>
-            <TextH6B color={theme.greyScale65}>등급 안내</TextH6B>
+            <TextH6B
+              color={theme.greyScale65}
+              textDecoration="underline"
+              onClick={() => router.push('/mypage/rank')}
+            >
+              등급 안내
+            </TextH6B>
           </FlexBetween>
         </UserInfoWrapper>
         <BorderLine height={1} margin="35px 0 16px 0" />
