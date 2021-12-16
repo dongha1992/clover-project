@@ -13,8 +13,8 @@ import cart from './cart';
 import dropdown from './dropdown';
 import toast from './toast';
 import user from './user';
+import common from './common';
 import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
-import logger from 'redux-logger';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
@@ -28,6 +28,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     dropdown,
     toast,
     user,
+    common,
   })(state, action);
 };
 

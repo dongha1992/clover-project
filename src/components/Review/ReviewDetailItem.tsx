@@ -6,7 +6,7 @@ import { theme, showMoreText, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Text';
 import BorderLine from '@components/BorderLine';
 
-function ReviewDetailItem({ review, isDetailPage }: any) {
+function ReviewDetailItem({ review, isDetailPage, clickImgViewHandler }: any) {
   return (
     <>
       <Container>
@@ -40,8 +40,16 @@ function ReviewDetailItem({ review, isDetailPage }: any) {
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
                 {review.images.map((img: any, index: number) => {
-                  if (index > 3) return;
-                  return <ReviewImage src={img} key={index} />;
+                  const isFirst = index === 0;
+                  if (index > 1) return;
+                  return (
+                    <ReviewImage
+                      src={img}
+                      key={index}
+                      isFirst
+                      onClick={() => clickImgViewHandler(review.images)}
+                    />
+                  );
                 })}
               </ImgWrapper>
               {!isDetailPage && review.reply ? (
@@ -117,15 +125,15 @@ const RatingAndUser = styled.div`
 const TagWrapper = styled.div``;
 const ImgWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
   overflow: hidden;
   width: 100%;
   margin: 16px 0 24px 0;
 `;
 
-const ReviewImage = styled.img`
+const ReviewImage = styled.img<{ isFirst?: boolean }>`
   width: calc((100% - 24px) / 4);
   border-radius: 8px;
+  margin-right: ${({ isFirst }) => isFirst && 8}px;
 `;
 
 const ReplyContent = styled.div`

@@ -1,25 +1,24 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
+import { theme } from '@styles/theme';
+import { TextH5B } from '@components/Text';
+import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
+import { INIT_IMAGE_VIEWER } from '@store/common';
 
 type TProps = {
   children: React.ReactNode;
   closeModal?: () => void;
   style?: object;
-  width?: string;
   height?: string;
   padding?: string;
   closeOnclickDimmer?: boolean;
 };
 
-/* TODO: modal open store 에서 관리해서 밖에 클릭시 modal 닫기하기 */
-
 export default function ModalLayout({
   children,
-  closeModal,
   style,
-  width,
   height,
   padding,
 }: TProps): JSX.Element {
@@ -32,15 +31,16 @@ export default function ModalLayout({
     if (target !== currentTarget) {
       return;
     }
+    dispatch(INIT_IMAGE_VIEWER());
   };
+
+  const closeModal = () => {
+    dispatch(INIT_IMAGE_VIEWER());
+  };
+
   return (
     <Dimmer onClick={handleClickDimmer}>
       <ModalBox style={style} height={height} padding={padding}>
-        {closeModal && (
-          <div onClick={closeModal} className="btnClose">
-            닫기
-          </div>
-        )}
         {children}
       </ModalBox>
     </Dimmer>
@@ -49,6 +49,7 @@ export default function ModalLayout({
 
 const Dimmer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   position: fixed;
@@ -57,10 +58,9 @@ const Dimmer = styled.div`
   right: 0px;
   bottom: 0px;
   max-width: ${breakpoints.mobile}px;
-  height: 100%;
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.3);
-
+  height: 100vh;
+  z-index: 1000000;
+  background-color: ${theme.black};
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
     left: 0;
@@ -73,30 +73,13 @@ const Dimmer = styled.div`
 `;
 
 const ModalBox = styled.div<{
-  width?: string;
   height?: string;
   padding: string | undefined;
 }>`
   position: relative;
   max-width: ${breakpoints.mobile}px;
-  width: 80%;
   ${({ height }) => height && `height: ${height}`}
   padding: ${({ padding }) => (padding ? padding : `10px`)};
-  border-radius: 3px;
-  background-color: white;
-  box-shadow: -14px -14px 20px rgba(0, 0, 0, 0.02),
-    14px 14px 20px rgba(0, 0, 0, 0.05);
   z-index: 11;
   box-sizing: border-box;
-
-  .btnClose {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 31px;
-    height: 21px;
-    margin: 5%;
-    color: gray;
-    cursor: pointer;
-  }
 `;
