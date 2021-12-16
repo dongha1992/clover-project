@@ -1019,6 +1019,30 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  defaultCancel24White: () => (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="2.0757"
+        height="22.8327"
+        rx="1.03785"
+        transform="matrix(-0.707107 0.707107 -0.72406 -0.689737 21 19.1406)"
+        fill="white"
+      />
+      <rect
+        width="2.0757"
+        height="22.8327"
+        rx="1.03785"
+        transform="matrix(0.707107 0.707107 -0.689737 0.72406 19.1406 3)"
+        fill="white"
+      />
+    </svg>
+  ),
   confirmCheck: () => (
     <svg
       width="12"

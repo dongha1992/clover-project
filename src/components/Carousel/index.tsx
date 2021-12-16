@@ -3,13 +3,6 @@ import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 
-const BANNERS = [
-  './images/img1.png',
-  './images/img1.png',
-  './images/img1.png',
-  './images/img1.png',
-];
-
 const settings = {
   arrows: false,
   dots: false,
@@ -19,20 +12,20 @@ const settings = {
   centerMode: true,
   infinite: false,
   customPagimg: () => <div />,
-  centerPadding: '20px',
+  centerPadding: '0px',
 };
 
-function Carousel() {
+function Carousel({ images }: any) {
   return (
     <Container>
       <Slider {...settings}>
-        {BANNERS.map((image, index) => {
+        {images.map((image: any, index: number) => {
           return (
             <ImageWrapper
               src={image}
               alt="image"
               key={index}
-              isLast={index === BANNERS.length + 1}
+              isLast={index === images.length + 1}
             />
           );
         })}
@@ -77,4 +70,4 @@ const ImageWrapper = styled.img<{ isLast: boolean }>`
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;
 
-export default Carousel;
+export default React.memo(Carousel);
