@@ -4,13 +4,7 @@ import Tab from '@components/TabList/Tab';
 import { homePadding, theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 
-function StickyTab({
-  tabList,
-  onClick,
-  selectedTab,
-  numebrOfReview,
-  isSticky,
-}: any) {
+function StickyTab({ tabList, onClick, selectedTab, isSticky, countObj }: any) {
   return (
     <Container isSticky={isSticky}>
       <TabWrapper>
@@ -20,7 +14,7 @@ function StickyTab({
             key={index}
             onClick={onClick}
             selectedTab={selectedTab === tabItem.link ? true : false}
-            numebrOfReview={numebrOfReview}
+            countObj={countObj}
           />
         ))}
       </TabWrapper>

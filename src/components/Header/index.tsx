@@ -45,6 +45,8 @@ function Header() {
         '/mypage/profile': '회원정보 수정',
         '/mypage/dib/general': '찜 관리',
         '/mypage/friend': '친구 초대',
+        '/mypage/review': '후기 관리',
+        '/mypage/review/write': '후기 작성',
         '/mypage/rank': '회원등급',
         '/mypage/point': '포인트',
         '/mypage/coupon': '포인트',

@@ -264,7 +264,7 @@ function menuDetail({ id }: any) {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          numebrOfReview={menuItem.review}
+          countObj={{ 후기: menuItem.review }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
