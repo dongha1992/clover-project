@@ -4,7 +4,7 @@ import Tab from '@components/TabList/Tab';
 import { theme } from '@styles/theme';
 
 function TabList(
-  { onClick, selectedTab, tabList }: any,
+  { onClick, selectedTab, tabList, countObj }: any,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
@@ -16,6 +16,7 @@ function TabList(
             key={index}
             onClick={onClick}
             selectedTab={selectedTab === tabItem.link ? true : false}
+            countObj={countObj}
           />
         ))}
       </TabWrapper>
