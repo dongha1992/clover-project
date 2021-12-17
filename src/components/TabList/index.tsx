@@ -3,9 +3,12 @@ import styled from 'styled-components';
 import Tab from '@components/TabList/Tab';
 import { theme } from '@styles/theme';
 
-function TabList({ onClick, selectedTab, tabList }: any) {
+function TabList(
+  { onClick, selectedTab, tabList }: any,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   return (
-    <Container>
+    <Container ref={ref}>
       <TabWrapper>
         {tabList.map((tabItem: any, index: number) => (
           <Tab
@@ -40,4 +43,4 @@ const TabWrapper = styled.div`
   }
 `;
 
-export default React.memo(TabList);
+export default React.memo(React.forwardRef(TabList));
