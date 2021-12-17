@@ -69,7 +69,9 @@ function mypage() {
           </FlexCol>
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>
-            <TextH5B>0 개</TextH5B>
+            <TextH5B onClick={() => router.push('/mypage/coupon')}>
+              0 개
+            </TextH5B>
           </FlexCol>
         </FlexBetweenStart>
         <BorderLine height={8} margin="32px 0 32px 0" />

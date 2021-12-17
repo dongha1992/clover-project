@@ -43,6 +43,7 @@ export const COUPON_LIST = [
     expireDate: ['2021-11-07'],
     type: 'rate',
     isDownload: false,
+    deliveryMethod: '전체',
   },
   {
     id: 2,
@@ -57,6 +58,7 @@ export const COUPON_LIST = [
     expireDate: ['2021-11-07'],
     type: 'fixed',
     isDownload: true,
+    deliveryMethod: '새벽배송 / 정기구독',
   },
   {
     id: 3,
@@ -66,5 +68,6 @@ export const COUPON_LIST = [
     expireDate: ['2021-11-07'],
     type: 'rate',
     isDownload: false,
+    canUseMenu: ['[도레도레] 마들렌 세트'],
   },
 ];
