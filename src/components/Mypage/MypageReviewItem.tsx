@@ -44,7 +44,7 @@ function MypageReviewItem({ menu }: IProps) {
             color={theme.black}
             border
             margin="0 8px 0 0"
-            onClick={() => router.push('/mypage/review/write')}
+            onClick={() => router.push(`/mypage/review/write/${menu.id}`)}
           >
             후기 작성하기
           </Button>
