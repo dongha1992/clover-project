@@ -110,10 +110,11 @@ export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexColStart = styled.div`
+export const FlexColStart = styled.div<{ padding?: string }>`
   display: flex;
   flex-direction: column;
   align-self: flex-start;
+  padding: ${({ padding }) => padding && padding};
 `;
 
 export const FlexColCenter = styled.div`
