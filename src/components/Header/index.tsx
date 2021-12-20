@@ -8,6 +8,7 @@ const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 const TabHeader = dynamic(() => import('./TabHeader'));
+const SpotHeader = dynamic(() => import('./SpotHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 /*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
@@ -45,6 +46,9 @@ function Header() {
         '/login': '로그인',
         '/login/find-account/email': '아이디/비밀번호 찾기',
         '/login/find-account/password': '아이디/비밀번호 찾기',
+        '/spot/spot-req': '신청하기',
+        '/spot/register': '신청하기',
+        '/spot/register/submit': '신청하기',
       };
 
       const title = headerTitleMap[currentPath];
@@ -69,13 +73,16 @@ function Header() {
           '/signup/auth',
           '/signup/email-password',
           '/signup/optional',
+          '/spot/spot-req',
+          '/spot/register',
+          '/spot/register/submit'
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }
         case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
-        case ['/menu/[id]'].includes(currentPath): {
+        case ['/menu/[id]', '/spot/detail/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
 
@@ -91,6 +98,10 @@ function Header() {
 
         case ['/home'].includes(currentPath): {
           return <HomeHeader />;
+        }
+
+        case ['/spot'].includes(currentPath): {
+          return <SpotHeader />
         }
 
         default: {

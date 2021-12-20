@@ -116,11 +116,13 @@ export const GridWrapper = styled.div<{ gap: number }>`
   grid-gap: ${({ gap }) => gap && gap}px;
 `;
 
-export const FlexStart = styled.div`
+export const FlexStart = styled.div<{ padding?: string; margin?:string}>`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
 `;
 
 export const FlexEnd = styled.div<{ padding?: string }>`
