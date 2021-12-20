@@ -9,7 +9,7 @@ import Button from '@components/Shared/Button';
 import { userConfirmPassword } from '@api/user';
 import router from 'next/router';
 
-function passwordConfirm() {
+function PasswordConfirmPage() {
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
@@ -88,4 +88,4 @@ const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default passwordConfirm;
+export default PasswordConfirmPage;

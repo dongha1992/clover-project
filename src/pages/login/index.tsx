@@ -24,7 +24,7 @@ import wrapper from '@store/index';
 import { userLogin } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 
-function login() {
+function LoginPage() {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
   const [loginType, setLoginType] = useState('');
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -192,4 +192,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default login;
+export default LoginPage;

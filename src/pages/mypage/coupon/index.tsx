@@ -7,7 +7,7 @@ import { TextH5B } from '@components/Shared/Text';
 import { COUPON_LIST } from '@constants/menu';
 import MypageCouponItem from '@components/BottomSheet/CouponSheet/MypageCouponItem';
 
-function coupon() {
+function CouponManagementPage() {
   return (
     <Container>
       <Wrapper>
@@ -33,4 +33,4 @@ const Container = styled.div`
 `;
 const Wrapper = styled.div``;
 
-export default coupon;
+export default CouponManagementPage;

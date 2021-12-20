@@ -101,7 +101,7 @@ const MOCK_USE_POINT_HISTORY = [
   },
 ];
 
-function point() {
+function PointPage() {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
   const elementRef = useRef<HTMLDivElement>(null);
@@ -260,4 +260,4 @@ const ScrollView = styled.div<{ customMargin?: number }>`
   padding-top: ${({ customMargin }) => customMargin && customMargin}px;
 `;
 
-export default point;
+export default PointPage;

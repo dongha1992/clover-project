@@ -12,7 +12,7 @@ const Button = dynamic(() => import('@components/Shared/Button'), {
   ssr: false,
 });
 
-function findEmail() {
+function FindEmailPage() {
   const [phoneValid, setPhoneValid] = useState({
     message: '',
     isValid: false,
@@ -113,4 +113,4 @@ const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default findEmail;
+export default FindEmailPage;

@@ -16,7 +16,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function changePassword() {
+function ChangePasswordPage() {
   const [oldPasswordLengthValidation, setOldPasswordLengthValidation] =
     useState<IVaildation>({ message: '', isValid: false });
 
@@ -288,4 +288,4 @@ const NewAgainPasswordWrapper = styled.div`
   }
 `;
 
-export default changePassword;
+export default ChangePasswordPage;

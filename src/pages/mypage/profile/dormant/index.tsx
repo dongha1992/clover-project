@@ -8,7 +8,7 @@ import router from 'next/router';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 
-function dormantAccount() {
+function DormantAccountPage() {
   const dispatch = useDispatch();
 
   const getUserUnlock = async () => {
@@ -63,4 +63,4 @@ const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default dormantAccount;
+export default DormantAccountPage;

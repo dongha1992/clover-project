@@ -1,7 +1,7 @@
 import React from 'react';
 
-function salad() {
+function SaladPage() {
   return <div>샐러드</div>;
 }
 
-export default salad;
+export default SaladPage;

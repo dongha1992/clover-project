@@ -28,7 +28,7 @@ import { setAlert } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
 
-function profile() {
+function ProfilePage() {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
@@ -334,4 +334,4 @@ const DeleteUser = styled.div`
   margin: 32px 0 104px 0;
 `;
 
-export default profile;
+export default ProfilePage;

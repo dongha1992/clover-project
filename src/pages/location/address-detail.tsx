@@ -9,7 +9,7 @@ import TextInput from '@components/Shared/TextInput';
 import { breakpoints } from '@utils/getMediaQuery';
 /*TODO: 버튼 위치 */
 
-function addressDetail() {
+function AddressDetailPage() {
   return (
     <Container>
       <PlaceInfo>
@@ -97,4 +97,4 @@ const ButtonWrapper = styled.div`
   `};
 `;
 
-export default addressDetail;
+export default AddressDetailPage;

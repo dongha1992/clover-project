@@ -55,7 +55,7 @@ export interface IMenuItem {
   reviews: any[];
 }
 
-function menuDetail({ id }: any) {
+function MenuDetailPage({ id }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -378,4 +378,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default React.memo(menuDetail);
+export default React.memo(MenuDetailPage);
