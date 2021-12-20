@@ -27,6 +27,9 @@ function Bottom() {
         case ['/menu/[id]'].includes(currentPath): {
           return <DetailBottom />;
         }
+        case ['/spot/detail/[id]'].includes(currentPath): {
+          return <DetailBottom />;
+        }
         default: {
           return;
         }
