@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import {TextH2B, TextH4B} from '@components/Text';
-import SpotItems from './spot-item-list';
-import {theme, textH6} from '@styles/theme';
+import {theme, homePadding} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
 import ShareSheet from '@components/ShareSheet';
 import {SPOT_ITEMS}  from '@constants/mock';
+import Slider from 'react-slick';
+import { useRouter } from 'next/router';
+import SpotList from '@components/Spot/SpotList';
 
 const text =  {
   mainTitle : `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
@@ -21,10 +23,30 @@ const text =  {
   trialSubTitle: '트라이얼 스팟 함께 주문하고 300포인트 받아요',
 };
 
-const spot = () => {
-  const dispatch = useDispatch();
+const FCO_SPOT_BANNER = [
+  {
+    id: 1,
+    text: '우리회사로 샐러드 당일 무료배송 받기',
+    type: 'private'
+  },
+  {
+    id: 2,
+    text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
+    type: 'public',
+  },
+  {
+    id: 3,
+    text: '내 단골카페에서 샐러드 픽업하기',
+    type: 'normal'
+  },
+];
 
-  const goToShare = () => {
+const spot = () => {
+  const [mouseMoved, setMouseMoved] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const goToShare = (): void => {
     dispatch(initBottomSheet());
     dispatch(
       setBottomSheet({
@@ -34,12 +56,34 @@ const spot = () => {
     );
   };
 
+  const goToSpotReq = (type: string) => {
+    if (!mouseMoved) {
+      router.push({
+        pathname: '/spot/spot-req',
+        query: {type}
+      }
+        );
+    }
+};
+
   const isLogin = (isLogin: boolean) => {
     if(isLogin){
       return true;
     }
     return false;
   };
+
+  const settings = {
+    arrows: false,
+    dots: true,
+    sliderToShow: 1,
+    slidersToScroll: 1,
+    speed: 500,
+    centerMode: true,
+    infinite: false,
+    centerPadding: '20px',
+  };
+
   /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
     <Container>
@@ -64,17 +108,30 @@ const spot = () => {
           </ShareIconWrapper>
         </HandleBoxWrapper>
       }
-      <SpotItems items={SPOT_ITEMS} title={text.normalTitle} type='normal' />
-      <SpotItems items={SPOT_ITEMS} title={text.normalNewSpotTitle} type='normal' />
-      <SpotItems items={SPOT_ITEMS} title={text.normalFcoSpotTitle} type='normal' />
-      <Banner>
-          <TextH4B color={theme.black}>우리회사로 샐러드 무료배송 하기</TextH4B>
-      </Banner>
-      <SpotItems items={SPOT_ITEMS} title={text.eventTitle} type='event' />
-      <SpotItems items={SPOT_ITEMS} title={text.trialTitle} subTitle={text.trialSubTitle} type='trial' />
-      <Banner>
+      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type='normal' />
+      <SpotList items={SPOT_ITEMS} title={text.normalNewSpotTitle} type='normal' />
+      <SpotList items={SPOT_ITEMS} title={text.normalFcoSpotTitle} type='normal' />
+      <SlideWrapper {...settings}>
+          {
+            FCO_SPOT_BANNER.map((item)=>{
+              return(
+                <MidBannerWrapper 
+                  key={item.id} 
+                  onMouseMove={() => setMouseMoved(true)}
+                  onMouseDown={() => setMouseMoved(false)}
+                  onClick={()=>goToSpotReq(item.type)}
+                  >
+                  <TextH4B color={theme.black}>{item.text}</TextH4B>
+                </MidBannerWrapper>
+              )
+            })
+          }
+      </SlideWrapper>
+      <SpotList items={SPOT_ITEMS} title={text.eventTitle} type='event' />
+      <SpotList items={SPOT_ITEMS} title={text.trialTitle} subTitle={text.trialSubTitle} type='trial' />
+      {/* <Banner>
           <TextH4B color={theme.black}>카페 사장님들! 프코스팟으로 고객 유치하세요!</TextH4B>
-      </Banner>
+      </Banner> */}
       <BottomStory>
         프코스팟 스토리
       </BottomStory>
@@ -84,7 +141,7 @@ const spot = () => {
 
 const Container = styled.main`
   width: 100%;
-  padding: 24px;
+  ${homePadding};
 `
 
 const HandleBoxWrapper = styled.div`
@@ -101,31 +158,19 @@ const HandleBoxWrapper = styled.div`
 
 const ShareIconWrapper = styled.div``
 
-const ItemListRowWrapper = styled.div`
-  width: auto;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  margin-bottom: 48px;
-  margin-top: 48px;
-`
-export const ItemListRow = styled.div`
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  > div {
-    padding-right: 10px;
-    width: 194px;
+const SlideWrapper = styled(Slider)`
+  width: 100%;
+  padding: 16px 0 0 0;
+  .slick-slide>div {
+    padding: 0 5px;
   }
 `
 
-const Banner = styled.div`
-  width: 100%;
-  height: 96px;
-  background: ${theme.greyScale6};
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const MidBannerWrapper = styled.div`
+  height: 81px;
+  background: ${theme.greyScale3};
+  border-radius: 8px;
+  padding: 16px;
 `
 
 const BottomStory = styled.div`

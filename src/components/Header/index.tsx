@@ -46,6 +46,9 @@ function Header() {
         '/login': '로그인',
         '/login/find-account/email': '아이디/비밀번호 찾기',
         '/login/find-account/password': '아이디/비밀번호 찾기',
+        '/spot/spot-req': '신청하기',
+        '/spot/register': '신청하기',
+        '/spot/register/submit': '신청하기',
       };
 
       const title = headerTitleMap[currentPath];
@@ -70,6 +73,9 @@ function Header() {
           '/signup/auth',
           '/signup/email-password',
           '/signup/optional',
+          '/spot/spot-req',
+          '/spot/register',
+          '/spot/register/submit'
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }

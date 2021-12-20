@@ -5,14 +5,21 @@ import {theme} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 
-const SpotItems = ({items, title, subTitle, type}: any) => {
+interface IProps {
+    items: any, // API 통신 이후 타입 지정 예정
+    title: string,
+    subTitle?: string,
+    type: string,
+}
+
+const SpotList = ({items, title, subTitle, type}: IProps) => {
     const router = useRouter();
 
-    const goToDetail = (id: number) => {
+    const goToDetail = (id: number): void => {
         router.push(`/spot/detail/${id}`);
       };
 
-    const goToCart = (e: any) => {
+    const goToCart = (e: any): void => {
         e.stopPropagation();
         router.push('/cart');
     };
@@ -21,7 +28,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
         <>
         {
             type === 'normal' && (
-                <ItemListRowWrapper>
+            <ItemListRowWrapper>
                 <TextH2B padding='0 0 24px 0'>{title}</TextH2B>
                 <ItemListRow>
                     { items.map((item: any, index: number)=> {
@@ -52,7 +59,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
         }
         {
             type === 'event' && (
-                <ItemListRowWrapper>
+            <ItemListRowWrapper>
                 <TextH2B padding='0 0 24px 0'>{title}</TextH2B>
                 <ItemListRow >
                     { items.map((item: any, index: number)=> {
@@ -82,7 +89,7 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
         }
         {
             type === 'trial' && (
-                <ItemListRowWrapper>
+            <ItemListRowWrapper>
                 <TextH2B>{title}</TextH2B>
                 <TextB2R color={theme.greyScale65} padding='8px 0 23px 0'>{subTitle}</TextB2R>
                 <ItemListRow >
@@ -112,13 +119,13 @@ const SpotItems = ({items, title, subTitle, type}: any) => {
                         })
                     }
                 </ItemListRow>
-            </ItemListRowWrapper>    
+            </ItemListRowWrapper> 
             )
         }
         </>
     )
 }
-const ItemListRowWrapper = styled.div`
+const ItemListRowWrapper = styled.section`
   width: auto;
   overflow-x: scroll;
   overflow-y: hidden;
@@ -250,4 +257,4 @@ const Button = styled.button`
 
 const TextWrapper = styled.div``
 
-export default SpotItems;
+export default SpotList;
