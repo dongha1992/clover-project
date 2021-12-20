@@ -26,7 +26,7 @@ const textStyle = {
   color: theme.greyScale65,
 };
 
-function inviteFriend() {
+function InviteFriendPaage() {
   const { showToast } = useToast();
 
   const getCodeCopy = (e: any) => {
@@ -149,4 +149,4 @@ const GreyBackground = styled.div`
   margin-bottom: 8px;
 `;
 
-export default inviteFriend;
+export default InviteFriendPaage;

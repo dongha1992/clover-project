@@ -22,7 +22,7 @@ import SVGIcon from '@utils/SVGIcon';
 import debounce from 'lodash-es/debounce';
 import BorderLine from '@components/Shared/BorderLine';
 
-function writeReview({ id }: any) {
+function WriteReviewPage({ id }: any) {
   const [isShow, setIsShow] = useState(false);
   const [item, setItem] = useState<any>({});
   const [rating, setRating] = useState<number>(5);
@@ -202,4 +202,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default writeReview;
+export default WriteReviewPage;

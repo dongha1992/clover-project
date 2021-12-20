@@ -37,7 +37,7 @@ const CARD_TYPE = [
 /*TODO: 카드 번호 ref로 관리해도 되낭 */
 /*TODO: 카드번호 4개 누르면 다음 넘어가기 */
 
-function cardRegister() {
+function CardRegisterPage() {
   const [selectedCardType, setSelectedCardType] = useState(1);
   const [card, setCard] = useState<Obj>({
     number1: '',
@@ -321,4 +321,4 @@ const RegisterBtn = styled.div`
   ${fixedBottom};
 `;
 
-export default cardRegister;
+export default CardRegisterPage;

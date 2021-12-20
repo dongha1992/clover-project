@@ -8,7 +8,7 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
 
-function card() {
+function CardManagementPage() {
   const CARDS = [1, 2] as any[];
 
   const cardHandler = () => {};
@@ -72,4 +72,4 @@ const EmptyWrapper = styled.div`
   align-items: center;
   height: 80vh;
 `;
-export default card;
+export default CardManagementPage;

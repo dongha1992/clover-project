@@ -15,7 +15,7 @@ const OrderDateFilter = dynamic(
   () => import('@components/Filter/OrderDateFilter')
 );
 
-function orderDeliveryHistory() {
+function OrderDeliveryHistoryPage() {
   const [itemList, setItemList] = useState([]);
   const dispatch = useDispatch();
 
@@ -64,4 +64,4 @@ const Wrapper = styled.div`
   ${homePadding}
 `;
 
-export default orderDeliveryHistory;
+export default OrderDeliveryHistoryPage;

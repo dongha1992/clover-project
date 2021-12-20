@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 /* TODO: 검색 결과 리스트 */
 
-function location() {
+function LocationPage() {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -72,4 +72,4 @@ const CurrentLocBtn = styled.div`
 
 const ResultList = styled.div``;
 
-export default location;
+export default LocationPage;

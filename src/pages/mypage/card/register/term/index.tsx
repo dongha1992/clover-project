@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-function term() {
+function CardTermPage() {
   return <Container></Container>;
 }
 const Container = styled.div``;
 
-export default term;
+export default CardTermPage;
