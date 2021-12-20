@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
+import TextInput from '@components/Shared/TextInput';
 import {
   FlexCenter,
   FlexCol,
@@ -8,11 +8,11 @@ import {
   homePadding,
   theme,
 } from '@styles/theme';
-import { TextB2R } from '@components/Text';
-import Checkbox from '@components/Checkbox';
-import Button from '@components/Button';
+import { TextB2R } from '@components/Shared/Text';
+import Checkbox from '@components/Shared/Checkbox';
+import Button from '@components/Shared/Button';
 import router from 'next/router';
-import Validation from '@components/Validation';
+import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   userForm,

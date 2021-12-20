@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextB2R, TextH2B, TextH5B } from '@components/Text';
+import { TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
 import {
   homePadding,
   fixedBottom,
@@ -8,12 +8,12 @@ import {
   FlexRow,
   theme,
 } from '@styles/theme';
-import TextInput from '@components/TextInput';
-import Button from '@components/Button';
+import TextInput from '@components/Shared/TextInput';
+import Button from '@components/Shared/Button';
 import debounce from 'lodash-es/debounce';
 import router from 'next/router';
 // import { Select, Option } from '@components/Dropdown/index';
-import { RadioButton } from '@components/Button/RadioButton';
+import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { ISignupUser } from '@model/index';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import styled, { css } from 'styled-components';
-import { TextH7B, TextB4R } from '@components/Text';
+import { TextH7B, TextB4R } from '@components/Shared/Text';
 import { breakpoints } from '@utils/getMediaQuery';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';

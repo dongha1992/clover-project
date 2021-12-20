@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
-import { TextB1R, TextH3B } from '@components/Text';
-import SpotItem, { ISpotItem } from '@components/Spot/SpotItem';
+import TextInput from '@components/Shared/TextInput';
+import { TextB1R, TextH3B } from '@components/Shared/Text';
+import SpotItem, { ISpotItem } from '@components/Pages/Spot/SpotItem';
 import axios from 'axios';
-import SearchResult from '@components/SearchResult';
+import SearchResult from '@components/Pages/Search/SearchResult';
 import { homePadding } from '@styles/theme';
 import { SPOT_URL } from '@constants/mock';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import PickupSheet from '@components/PickupSheet';
+import PickupSheet from '@components/BottomSheet/PickupSheet';
 
 function spotSearch() {
   const [spotList, setSpotList] = useState<any[]>([]);

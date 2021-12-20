@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ModalFullScreen from '../../components/Modal/ModalFullScreen';
-import Carousel from '@components/Carousel';
-import { TextH5B } from '@components/Text';
+import ModalFullScreen from '../Shared/Modal/ModalFullScreen';
+import Carousel from '@components/Shared/Carousel';
+import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Text';
+import {
+  TextB3R,
+  TextH2B,
+  TextH4B,
+  TextB2R,
+  TextH5B,
+} from '@components/Shared/Text';
 import {
   theme,
   FlexBetween,
@@ -11,12 +17,12 @@ import {
   FlexColEnd,
   fixedBottom,
 } from '@styles/theme';
-import BorderLine from '@components/BorderLine';
+import BorderLine from '@components/Shared/BorderLine';
 import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Payment/PaymentItem';
+import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import Button from '@components/Button';
+import Button from '@components/Shared/Button';
 import router from 'next/router';
 
 function paymentFinish() {

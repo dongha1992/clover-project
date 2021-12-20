@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
-import { TextH4B } from '@components/Text';
+import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 

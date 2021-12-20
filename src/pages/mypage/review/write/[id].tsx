@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import ReviewInfo from '@components/Pages/mypage/review/ReviewInfo';
+import ReviewInfo from '@components/Pages/Mypage/Review/ReviewInfo';
 import {
   homePadding,
   FlexCol,
@@ -8,13 +8,19 @@ import {
   theme,
   FlexBetween,
 } from '@styles/theme';
-import { TextH3B, TextB2R, TextH6B, TextB3R, TextB4R } from '@components/Text';
+import {
+  TextH3B,
+  TextB2R,
+  TextH6B,
+  TextB3R,
+  TextB4R,
+} from '@components/Shared/Text';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import StarRatingComponent from 'react-star-rating-component';
 import SVGIcon from '@utils/SVGIcon';
 import debounce from 'lodash-es/debounce';
-import BorderLine from '@components/BorderLine';
+import BorderLine from '@components/Shared/BorderLine';
 
 function writeReview({ id }: any) {
   const [isShow, setIsShow] = useState(false);

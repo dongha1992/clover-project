@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Checkbox from '@components/Checkbox';
-import { TextB2R, TextB3R, TextH5B, TextH6B, TextH2B } from '@components/Text';
-import BorderLine from '@components/BorderLine';
+import Checkbox from '@components/Shared/Checkbox';
+import {
+  TextB2R,
+  TextB3R,
+  TextH5B,
+  TextH6B,
+  TextH2B,
+} from '@components/Shared/Text';
+import BorderLine from '@components/Shared/BorderLine';
 import {
   FlexRow,
   FlexCol,
@@ -10,7 +16,7 @@ import {
   homePadding,
   fixedBottom,
 } from '@styles/theme';
-import Button from '@components/Button';
+import Button from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';

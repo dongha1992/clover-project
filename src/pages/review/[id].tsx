@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import ReviewDetailItem from '@components/Review/ReviewDetailItem';
+import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { homePadding } from '@styles/theme';
 function reviewDetail({ id }: any) {
   const [selectedReviewDetail, setSelectedReviewDetail] = useState<any>({});

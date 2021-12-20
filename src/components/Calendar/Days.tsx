@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
-import { TextH5B, TextH7B } from '@components/Text';
+import { TextH5B, TextH7B } from '@components/Shared/Text';
 
 type TProps = {
   day: number;
