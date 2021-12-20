@@ -16,11 +16,10 @@ import router from 'next/router';
 import { RadioButton } from '@components/Button/RadioButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
-import { Api } from '@api/index';
 import { ISignupUser } from '@model/index';
-import { signup } from '@api/v2';
+import { signup } from '@api/user';
 
-const GENDER = [
+export const GENDER = [
   {
     id: 1,
     text: '여성',
@@ -75,16 +74,20 @@ function signupOptional() {
         ...optionalForm,
       })
     );
+    try {
+      const { data } = await signup({
+        ...signupUser,
+        ...optionalForm,
+      } as ISignupUser);
 
-    const { data } = await signup({
-      ...signupUser,
-      ...optionalForm,
-    } as ISignupUser);
-
-    if (data.code === 200) {
-      const userTokenObj = data.data;
-      dispatch(SET_USER_AUTH(userTokenObj));
+      if (data.code === 200) {
+        const userTokenObj = data.data;
+        dispatch(SET_USER_AUTH(userTokenObj));
+      }
+    } catch (error) {
+      console.error(error);
     }
+
     // router.push('/signup/finish');
   };
 
@@ -150,7 +153,7 @@ function signupOptional() {
           </FlexRow>
           <TextInput
             placeholder="닉네임 (미입력시 이름이 자동 입력됩니다)"
-            eventHandler={debounce(nicknameInputHandler, 300)}
+            eventHandler={nicknameInputHandler}
           />
         </FlexCol>
       </Wrapper>

@@ -15,6 +15,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   images: {
-    domains: ['data.0app0.com'],
+    domains: ['data.0app0.com', 'www.newsworks.co.kr'],
   },
 });

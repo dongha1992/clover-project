@@ -7,7 +7,14 @@ import router from 'next/router';
 function review() {
   const [page, setPage] = useState<number>(0);
   const { loading, error, list } = useFetch(page);
-  const ref = useRef<HTMLImageElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const option = {
+    root: parentRef.current, // 관찰대상의 부모요소를 지정
+    rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
+    threshold: 1.0,
+  };
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
@@ -18,12 +25,6 @@ function review() {
   }, []);
 
   useEffect(() => {
-    const option = {
-      root: null, // 관찰대상의 부모요소를 지정
-      rootMargin: '20px', // 관찰하는 뷰포트의 마진 지정
-      threshold: 0.1,
-    };
-
     const observer = new IntersectionObserver(handleObserver, option);
 
     if (ref.current) {
@@ -42,30 +43,18 @@ function review() {
 
   return (
     <Container>
-      <Wrapper>
+      <Wrapper ref={parentRef}>
         {list.map((image: any, index: number) => {
-          const isLast = list.length - 1 === index;
-          if (isLast) {
-            return (
-              <ReviewImage
-                src={image.url}
-                alt="리뷰이미지"
-                key={index}
-                ref={ref}
-                onClick={() => goToReviewDetail(image)}
-              />
-            );
-          } else {
-            return (
-              <ReviewImage
-                src={image.url}
-                alt="리뷰이미지"
-                key={index}
-                onClick={() => goToReviewDetail(image)}
-              />
-            );
-          }
+          return (
+            <ReviewImage
+              src={image.url}
+              alt="리뷰이미지"
+              key={index}
+              onClick={() => goToReviewDetail(image)}
+            />
+          );
         })}
+        <div ref={ref} />
       </Wrapper>
     </Container>
   );

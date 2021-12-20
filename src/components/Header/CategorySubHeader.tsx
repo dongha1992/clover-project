@@ -35,7 +35,7 @@ function CategorySubHeader({ title }: TProps) {
 
   const clickTabHandler = useCallback(
     (tabItem: any) => {
-      setSelectedTab(tabItem.text);
+      setSelectedTab(tabItem.link);
       router.push(`${tabItem.link}`);
     },
     [router]

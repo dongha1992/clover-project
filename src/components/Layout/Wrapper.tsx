@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import Header from '@components/Header';
 import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/getMediaQuery';
+import { commonSelector } from '@store/common';
 
 const Alert = dynamic(() => import('@components/Alert'), {
   ssr: false,
@@ -21,6 +22,8 @@ const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
 const Toast = dynamic(() => import('@components/Toast'), {
   ssr: false,
 });
+
+const ImageViewer = dynamic(() => import('@components/ImageViewer'));
 
 const Wrapper: React.FC = ({ children }) => {
   // set 1vh for all devices
@@ -50,7 +53,9 @@ const Wrapper: React.FC = ({ children }) => {
   const bottomSheet = useSelector(bottomSheetForm);
   const cart = useSelector(cartForm);
   const toast = useSelector(toastSelector);
+  const { isModalOn, imagesForViewer } = useSelector(commonSelector);
 
+  const isClickReviewImg = imagesForViewer.length > 0;
   return (
     <>
       <Container>
@@ -67,6 +72,7 @@ const Wrapper: React.FC = ({ children }) => {
               selectedMenu={alert.selectedMenu}
             />
           )}
+          {isClickReviewImg && <ImageViewer images={imagesForViewer} />}
           <Left>
             <div className="left-contents">광고</div>
           </Left>

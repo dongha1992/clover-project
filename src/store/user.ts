@@ -1,28 +1,21 @@
-import {
-  createSlice,
-  PayloadAction,
-  createAsyncThunk,
-  AsyncThunk,
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { setCookie, removeCookie } from '@utils/cookie';
-import { IUserToken } from '@model/index';
-import { HYDRATE } from 'next-redux-wrapper';
-import { userLogin } from '@api/v2';
-import { fstat } from 'fs';
+import { userLogin } from '@api/user';
+
 interface IUser {
-  isSuccessLogin: boolean;
-  accessToken: string;
+  tempPasswordLogin: string;
+  isLoginSuccess: boolean;
   signupUser: {
     authCode?: string;
     birthDate?: string;
     email?: string;
-    emailReceived?: boolean;
+    marketingEmailReceived?: boolean;
     gender?: string;
     name?: string;
     nickname?: string;
     password?: string;
-    smsReceived?: boolean;
+    marketingSmsReceived?: boolean;
     tel?: string;
     loginType?: string;
   };
@@ -30,12 +23,12 @@ interface IUser {
     id: string;
     birthDate: string;
     email: string;
-    emailReceived: boolean;
+    marketingEmailReceived: boolean;
     gender: string;
     name: string;
     nickname: string;
     password: string;
-    smsReceived: boolean;
+    marketingSmsReceived: boolean;
     tel: string;
     point: number;
     emailConfirmed: boolean;
@@ -50,18 +43,18 @@ interface IUser {
 }
 
 const initialState: IUser = {
-  isSuccessLogin: false,
-  accessToken: '',
+  tempPasswordLogin: '',
+  isLoginSuccess: false,
   signupUser: {
     authCode: '',
     birthDate: '',
     email: '',
-    emailReceived: false,
+    marketingEmailReceived: false,
     gender: '',
     name: '',
     nickname: '',
     password: '',
-    smsReceived: false,
+    marketingSmsReceived: false,
     tel: '',
     loginType: '',
   },
@@ -69,12 +62,12 @@ const initialState: IUser = {
     id: '',
     birthDate: '',
     email: '',
-    emailReceived: false,
+    marketingEmailReceived: false,
     gender: '',
     name: '',
     nickname: '',
     password: '',
-    smsReceived: false,
+    marketingSmsReceived: false,
     tel: '',
     point: 0,
     emailConfirmed: false,
@@ -111,22 +104,8 @@ export const user = createSlice({
     ) => {
       state.signupUser = { ...state.signupUser, ...payload };
     },
-    SET_USER_AUTH: (state, action: PayloadAction<any>) => {
-      // state.isSuccessLogin = true;
-    },
-    SET_USER: (state, { payload }: PayloadAction<IUser['user']>) => {
-      state.user = payload;
-    },
-  },
-  extraReducers: {
-    [SET_USER_LOGIN_AUTH.fulfilled.type]: (
-      state,
-      action: PayloadAction<any>
-    ) => {
-      const { payload } = action;
 
-      state.accessToken = payload.accessToken;
-
+    SET_USER_AUTH: (state, { payload }: PayloadAction<any>) => {
       const accessTokenObj = {
         accessToken: payload.accessToken,
         expiresIn: payload.expiresIn,
@@ -147,16 +126,36 @@ export const user = createSlice({
           maxAge: payload.refreshTokenExpiresIn,
         },
       });
-
-      state.isSuccessLogin = true;
-
-      console.log(payload, 'extra');
     },
+
+    SET_LOGIN_SUCCESS: (state, { payload }: PayloadAction<boolean>) => {
+      state.isLoginSuccess = payload;
+    },
+
+    SET_TEMP_PASSWORD: (state, { payload }: PayloadAction<string>) => {
+      state.tempPasswordLogin = payload;
+    },
+
+    SET_USER: (state, { payload }: PayloadAction<IUser['user']>) => {
+      state.user = payload;
+    },
+  },
+  extraReducers: {
+    [SET_USER_LOGIN_AUTH.fulfilled.type]: (
+      state,
+      action: PayloadAction<any>
+    ) => {},
     [SET_USER_LOGIN_AUTH.pending.type]: () => {},
     [SET_USER_LOGIN_AUTH.rejected.type]: () => {},
   },
 });
 
-export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER } = user.actions;
+export const {
+  SET_SIGNUP_USER,
+  SET_USER_AUTH,
+  SET_USER,
+  SET_LOGIN_SUCCESS,
+  SET_TEMP_PASSWORD,
+} = user.actions;
 export const userForm = (state: AppState): IUser => state.user;
 export default user.reducer;

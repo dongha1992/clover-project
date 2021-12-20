@@ -13,7 +13,8 @@ const Toast = (): JSX.Element | null => {
   const toastConfig = useSelector(toastSelector);
 
   const showToast = (duration: number): void => {
-    if (isFirstRender || duration === 0) {
+    /* TODO: isFirstRender? */
+    if (duration === 0) {
       return;
     }
     setIsToastOpen(true);

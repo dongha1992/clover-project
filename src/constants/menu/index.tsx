@@ -2,14 +2,17 @@ export const MENU_DETAIL_INFORMATION = [
   {
     text: '상품 정보',
     link: '/menu/detail/product',
+    value: 'product',
   },
   {
     text: '영양 정보',
     link: '/menu/detail/nutrition',
+    value: 'nutrition',
   },
   {
     text: '배송 정보',
     link: '/menu/detail/delivery',
+    value: 'delivery',
   },
 ];
 
@@ -17,14 +20,17 @@ export const MENU_REVIEW_AND_FAQ = [
   {
     text: '상세 정보',
     link: '/menu/[id]',
+    value: 'info',
   },
   {
     text: '후기',
     link: '/menu/detail/review',
+    value: 'review',
   },
   {
     text: 'FAQ',
     link: '/menu/detail/faq',
+    value: 'faq',
   },
 ];
 
@@ -37,6 +43,7 @@ export const COUPON_LIST = [
     expireDate: ['2021-11-07'],
     type: 'rate',
     isDownload: false,
+    deliveryMethod: '전체',
   },
   {
     id: 2,
@@ -51,6 +58,7 @@ export const COUPON_LIST = [
     expireDate: ['2021-11-07'],
     type: 'fixed',
     isDownload: true,
+    deliveryMethod: '새벽배송 / 정기구독',
   },
   {
     id: 3,
@@ -60,5 +68,6 @@ export const COUPON_LIST = [
     expireDate: ['2021-11-07'],
     type: 'rate',
     isDownload: false,
+    canUseMenu: ['[도레도레] 마들렌 세트'],
   },
 ];

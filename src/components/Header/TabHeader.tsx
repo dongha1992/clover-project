@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import { FIND_ACCOUNT } from '@constants/login';
+import { DIB_MENU } from '@constants/mypage';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
 import { TextH4B } from '@components/Text';
@@ -14,6 +15,8 @@ const TabList = dynamic(() => import('../TabList'));
 type TProps = {
   title?: string;
 };
+
+/* TODO: 뒤로가기 시 replace로 교체 */
 
 function TabHeader({ title }: TProps) {
   const [selectedTab, setSelectedTab] = useState<string>(
@@ -28,7 +31,14 @@ function TabHeader({ title }: TProps) {
   }, [router]);
 
   const goBack = (): void => {
-    router.back();
+    if (
+      router.asPath === '/login/find-account/password' ||
+      router.asPath === '/login/find-account/email'
+    ) {
+      router.push('/login');
+    } else {
+      router.back();
+    }
   };
 
   const clickTabHandler = useCallback(
@@ -40,10 +50,11 @@ function TabHeader({ title }: TProps) {
   );
 
   const mapper: Obj = {
-    '아이디/비밀번호 찾기': `${FIND_ACCOUNT}`,
+    '아이디/비밀번호 찾기': FIND_ACCOUNT,
+    '찜 관리': DIB_MENU,
   };
 
-  const findAccount = title === '아이디/비밀번호 찾기';
+  const data = title && mapper[title];
 
   return (
     <Container>
@@ -56,7 +67,7 @@ function TabHeader({ title }: TProps) {
       <TabList
         onClick={clickTabHandler}
         selectedTab={selectedTab}
-        tabList={findAccount ? FIND_ACCOUNT : MENU_DETAIL_INFORMATION}
+        tabList={data ? data : MENU_DETAIL_INFORMATION}
       />
     </Container>
   );

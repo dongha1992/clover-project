@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import Tab from '@components/TabList/Tab';
-import { homePadding, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
 
-function TabList({ onClick, selectedTab, tabList }: any) {
+function TabList(
+  { onClick, selectedTab, tabList, countObj }: any,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   return (
-    <Container>
+    <Container ref={ref}>
       <TabWrapper>
         {tabList.map((tabItem: any, index: number) => (
           <Tab
@@ -13,6 +16,7 @@ function TabList({ onClick, selectedTab, tabList }: any) {
             key={index}
             onClick={onClick}
             selectedTab={selectedTab === tabItem.link ? true : false}
+            countObj={countObj}
           />
         ))}
       </TabWrapper>
@@ -40,4 +44,4 @@ const TabWrapper = styled.div`
   }
 `;
 
-export default React.memo(TabList);
+export default React.memo(React.forwardRef(TabList));

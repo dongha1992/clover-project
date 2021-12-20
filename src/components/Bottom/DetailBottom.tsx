@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 function DetailBottom() {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
+  const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
   const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
   const numOfLike = 10;
@@ -23,12 +24,18 @@ function DetailBottom() {
   }, [tempIsLike]);
 
   useEffect(() => {
+    setIsFirstToastRender(false);
+  }, []);
+
+  useEffect(() => {
     /* TODO : 렌더 시 처음에 alert 뜨는 거 */
+    if (isFirstToastRender) return;
     /* TODO: 빠르게 눌렀을 때 toast 메시지 엉킴 */
     const message =
       tempIsLike === true ? '상품을 찜했어요.' : '찜을 해제했어요.';
     showToast({ message });
     /* TODO: warning 왜? */
+
     return () => hideToast();
   }, [goToDib]);
 

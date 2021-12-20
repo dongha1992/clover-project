@@ -126,3 +126,18 @@ export interface IConfirmTelResponse {
     availability: boolean;
   };
 }
+
+export interface IHelpEmail {
+  name: string;
+  tel: string;
+}
+
+export interface IHelpPassword {
+  email: string;
+  tel: string;
+}
+
+export interface IChangePassword {
+  newPassword: string;
+  oldPassword?: string;
+}
