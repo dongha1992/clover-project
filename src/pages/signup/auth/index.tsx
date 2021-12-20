@@ -16,7 +16,7 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
 
-function signupAuth() {
+function SignupAuthPage() {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [delay, setDelay] = useState<number | null>(null);
@@ -283,4 +283,4 @@ const TimerWrapper = styled.div`
   left: 60%;
 `;
 
-export default React.memo(signupAuth);
+export default React.memo(SignupAuthPage);

@@ -14,7 +14,7 @@ import RecentSearch from '@components/Pages/Search/RecentSearch';
 import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
 
-function search() {
+function SearchPage() {
   /* TODO: useLocalStorage 정리해야함 */
   // const [storedValue, setLocalStorageValue] = useLocalStorage(
   //   'recentSearch',
@@ -187,4 +187,4 @@ const MdRecommendationWrapper = styled.div`
   padding: 8px 24px;
 `;
 
-export default search;
+export default SearchPage;

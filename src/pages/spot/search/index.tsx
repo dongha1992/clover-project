@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import PickupSheet from '@components/BottomSheet/PickupSheet';
 
-function spotSearch() {
+function SpotSearchPage() {
   const [spotList, setSpotList] = useState<any[]>([]);
   const [searchResult, setSearchResult] = useState<any>([]);
   const [recentPickedSpotList, setRecentPickedSpotList] = useState<string[]>(
@@ -129,4 +129,4 @@ const SearchResultContainer = styled.div`
 
 const RecentSearchContainer = styled.div``;
 
-export default spotSearch;
+export default SpotSearchPage;

@@ -25,7 +25,7 @@ import { BASE_URL } from '@constants/mock';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
 
-function paymentFinish() {
+function PaymentFinishPage() {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
@@ -176,4 +176,4 @@ const Col = styled.div`
   height: 50%;
 `;
 
-export default paymentFinish;
+export default PaymentFinishPage;

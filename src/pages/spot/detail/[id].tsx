@@ -27,7 +27,7 @@ export interface IStoreNoti {
   id: number;
 }
 
-const spotDetail = ({ id }: IStoreNoti) => {
+const SpotDetailPage = ({ id }: IStoreNoti) => {
   const [spotItem, getSpotItem] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
@@ -229,7 +229,7 @@ const NoticeSlider = styled(Slider)`
 
 const NoticeCard = styled.div`
   background: ${theme.white};
-  border: 1px solid: ${theme.greyScale6};
+  border: 1px solid ${theme.greyScale6};
   padding: 16px;
   border-radius: 8px;
 `;
@@ -260,4 +260,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default spotDetail;
+export default SpotDetailPage;

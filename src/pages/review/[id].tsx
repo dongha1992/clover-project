@@ -4,7 +4,8 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { homePadding } from '@styles/theme';
-function reviewDetail({ id }: any) {
+
+function ReviewDetailPage({ id }: any) {
   const [selectedReviewDetail, setSelectedReviewDetail] = useState<any>({});
 
   useEffect(() => {
@@ -41,4 +42,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default reviewDetail;
+export default ReviewDetailPage;

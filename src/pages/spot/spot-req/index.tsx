@@ -5,7 +5,7 @@ import { theme, fixedBottom } from '@styles/theme';
 import Button from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 
-function spotReq() {
+function SpotReqPage() {
   const router = useRouter();
   const text = {
     publicText: '현재 xxxx명이\n프코스팟을 이용해요',
@@ -128,4 +128,4 @@ const FixedButton = styled.section`
   ${fixedBottom}
 `;
 
-export default spotReq;
+export default SpotReqPage;

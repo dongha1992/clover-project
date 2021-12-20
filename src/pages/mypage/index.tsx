@@ -32,7 +32,7 @@ interface IMypageMenu {
   hideBorder?: boolean;
 }
 
-function mypage() {
+function MypagePage() {
   return (
     <Container>
       <Wrapper>
@@ -211,4 +211,4 @@ const ImageWrapper = styled.div`
   padding: 24px 0;
 `;
 
-export default mypage;
+export default MypagePage;

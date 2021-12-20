@@ -85,7 +85,7 @@ const PAYMENT_METHOD = [
 const hasRegisteredCart = true;
 const point = 5000;
 
-function payment() {
+function PaymentPage() {
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
     showCustomerInfoSection: false,
@@ -496,4 +496,4 @@ const PaymentBtn = styled.div`
   ${fixedBottom}
 `;
 
-export default payment;
+export default PaymentPage;

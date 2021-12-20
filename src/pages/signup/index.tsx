@@ -33,7 +33,7 @@ const moreTextStyle = {
 
 const termIdList = [1, 2, 3, 4];
 
-function signup() {
+function SignupPage() {
   const [checkTermList, setCheckTermList] = useState<number[]>([]);
   const [isAllChecked, setIsAllChecked] = useState<boolean>(false);
   const [isAllMarketinngChecked, setIsAllMarketinngChecked] = useState(false);
@@ -180,4 +180,4 @@ const PaddingWrapper = styled.div`
 const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
-export default signup;
+export default SignupPage;

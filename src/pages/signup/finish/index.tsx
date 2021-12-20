@@ -15,7 +15,7 @@ import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 
-function signupFinish() {
+function SignupFinishPage() {
   return (
     <Container>
       <Header>
@@ -102,4 +102,4 @@ const PromotionWrapper = styled.div`
   padding: 24px;
 `;
 
-export default signupFinish;
+export default SignupFinishPage;
