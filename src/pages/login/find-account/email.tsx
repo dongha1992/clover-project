@@ -1,14 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
-import { TextB2R, TextB3R } from '@components/Text';
+import TextInput from '@components/Shared/TextInput';
+import { TextB2R, TextB3R } from '@components/Shared/Text';
 import { fixedBottom, theme } from '@styles/theme';
-import Validation from '@components/Validation';
+import Validation from '@components/Pages/User/Validation';
 import { PHONE_REGX, NAME_REGX } from '@pages/signup/auth';
 import dynamic from 'next/dynamic';
 import { userHelpEmail } from '@api/user';
 
-const Button = dynamic(() => import('@components/Button'), { ssr: false });
+const Button = dynamic(() => import('@components/Shared/Button'), {
+  ssr: false,
+});
 
 function findEmail() {
   const [phoneValid, setPhoneValid] = useState({

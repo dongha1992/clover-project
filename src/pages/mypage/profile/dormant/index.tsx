@@ -1,8 +1,8 @@
 import { fixedBottom, FlexCol, homePadding, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextB2R } from '@components/Text';
-import Button from '@components/Button';
+import { TextH2B, TextB2R } from '@components/Shared/Text';
+import Button from '@components/Shared/Button';
 import { userUnlock } from '@api/user';
 import router from 'next/router';
 import { setAlert } from '@store/alert';

@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
+import TextInput from '@components/Shared/TextInput';
 import { CATEGORY } from '@constants/search';
-import { TextB1R, TextH3B } from '@components/Text';
-import BorderLine from '@components/BorderLine';
+import { TextB1R, TextH3B } from '@components/Shared/Text';
+import BorderLine from '@components/Shared/BorderLine';
 import { ItemListCol } from '@components/Home';
 import Item from '@components/Item';
 import axios from 'axios';
 import debounce from 'lodash-es/debounce';
-import SearchResult from '@components/SearchResult';
+import SearchResult from '@components/Pages/Search/SearchResult';
 import { homePadding } from '@styles/theme';
-import RecentSearch from '@components/RecentSearch';
+import RecentSearch from '@components/Pages/Search/RecentSearch';
 import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
 

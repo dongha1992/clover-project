@@ -8,13 +8,19 @@ import {
   FlexBetweenStart,
   FlexColEnd,
 } from '@styles/theme';
-import { TextH4B, TextB3R, TextB2R, TextH5B, TextH6B } from '@components/Text';
+import {
+  TextH4B,
+  TextB3R,
+  TextB2R,
+  TextH5B,
+  TextH6B,
+} from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import PaymentItem from '@components/Payment/PaymentItem';
-import BorderLine from '@components/BorderLine';
-import Button from '@components/Button';
+import PaymentItem from '@components/Pages/Payment/PaymentItem';
+import BorderLine from '@components/Shared/BorderLine';
+import Button from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 

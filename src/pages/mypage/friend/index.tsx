@@ -7,7 +7,7 @@ import {
   TextH4B,
   TextH5B,
   TextB3R,
-} from '@components/Text';
+} from '@components/Shared/Text';
 import {
   FlexCol,
   homePadding,
@@ -15,9 +15,9 @@ import {
   FlexRow,
   FlexBetween,
 } from '@styles/theme';
-import Button from '@components/Button';
-import BorderLine from '@components/BorderLine';
-import TextInput from '@components/TextInput';
+import Button from '@components/Shared/Button';
+import BorderLine from '@components/Shared/BorderLine';
+import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 

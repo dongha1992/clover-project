@@ -7,7 +7,7 @@ import {
   TextB2R,
   TextH3B,
   TextB4R,
-} from '@components/Text';
+} from '@components/Shared/Text';
 import {
   FlexCol,
   homePadding,
@@ -20,8 +20,8 @@ import {
 import SVGIcon from '@utils/SVGIcon';
 import React from 'react';
 import styled from 'styled-components';
-import Tag from '@components/Tag';
-import BorderLine from '@components/BorderLine';
+import Tag from '@components/Shared/Tag';
+import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
 import Image from 'next/image';
 import { Obj } from '@model/index';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import BorderLine from '@components/BorderLine';
+import BorderLine from '@components/Shared/BorderLine';
 import {
   homePadding,
   FlexBetween,
@@ -14,20 +14,26 @@ import {
   FlexRowStart,
   fixedBottom,
 } from '@styles/theme';
-import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Text';
-import Tag from '@components/Tag';
-import Button from '@components/Button';
-import Checkbox from '@components/Checkbox';
+import {
+  TextB2R,
+  TextH4B,
+  TextB3R,
+  TextH6B,
+  TextH5B,
+} from '@components/Shared/Text';
+import Tag from '@components/Shared/Tag';
+import Button from '@components/Shared/Button';
+import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
-import PaymentItem from '@components/Payment/PaymentItem';
+import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import TextInput from '@components/TextInput';
-import { Select, AcessMethodOption } from '@components/Dropdown/index';
+import TextInput from '@components/Shared/TextInput';
+import { Select, AcessMethodOption } from '@components/Shared/Dropdown/index';
 import router from 'next/router';
-import CardItem from '@components/Mypage/CardItem';
+import CardItem from '@components/Pages/Mypage/Card/CardItem';
 
 const ACCESS_METHOD = [
   {

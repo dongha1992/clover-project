@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { FlexCenter, homePadding, theme } from '@styles/theme';
-import BorderLine from '@components/BorderLine';
-import { TextB2R, TextH4B } from '@components/Text';
-import CardItem from '@components/Mypage/CardItem';
-import Button from '@components/Button';
+import BorderLine from '@components/Shared/BorderLine';
+import { TextB2R, TextH4B } from '@components/Shared/Text';
+import CardItem from '@components/Pages/Mypage/Card/CardItem';
+import Button from '@components/Shared/Button';
 import router from 'next/router';
 
 function card() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SingleMenu from '@components/SingleMenu';
+import SingleMenu from '@components/Pages/Category/SingleMenu';
 
 function category() {
   return (

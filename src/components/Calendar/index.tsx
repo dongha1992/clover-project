@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Days from './Days';
 import { theme } from '@styles/theme';
-import { TextH5B } from '@components/Text';
+import { TextH5B } from '@components/Shared/Text';
 
 let WEEKS: any = {
   0: '일',

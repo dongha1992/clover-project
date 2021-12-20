@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Text';
-import { RadioButton } from '@components/Button/RadioButton';
-import Tag from '@components/Tag';
+import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
+import { RadioButton } from '@components/Shared/Button/RadioButton';
+import Tag from '@components/Shared/Tag';
 import { FlexBetween, homePadding, theme } from '@styles/theme';
-import BorderLine from '@components/BorderLine';
-import Button from '@components/Button';
-import Checkbox from '@components/Checkbox';
+import BorderLine from '@components/Shared/BorderLine';
+import Button from '@components/Shared/Button';
+import Checkbox from '@components/Shared/Checkbox';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 
-const Tooltip = dynamic(() => import('@components/Tooltip'), {
+const Tooltip = dynamic(() => import('@components/Shared/Tooltip'), {
   ssr: false,
 });
 
