@@ -9,7 +9,7 @@ import { userForm } from '@store/user';
 import Validation from '@components/Validation';
 import { PASSWORD_REGX } from '@pages/signup/email-password';
 import SVGIcon from '@utils/SVGIcon';
-import { userChangePassword } from '@api/v2';
+import { userChangePassword } from '@api/user';
 
 interface IVaildation {
   message: string;

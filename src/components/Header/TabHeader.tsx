@@ -27,12 +27,18 @@ function TabHeader({ title }: TProps) {
 
   useEffect(() => {
     const queryString = router.asPath;
-    console.log(queryString);
     setSelectedTab(queryString);
   }, [router]);
 
   const goBack = (): void => {
-    router.back();
+    if (
+      router.asPath === '/login/find-account/password' ||
+      router.asPath === '/login/find-account/email'
+    ) {
+      router.push('/login');
+    } else {
+      router.back();
+    }
   };
 
   const clickTabHandler = useCallback(

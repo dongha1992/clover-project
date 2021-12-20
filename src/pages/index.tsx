@@ -11,13 +11,12 @@ import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import Tag from '@components/Tag';
 import { Obj } from '@model/index';
-import { Api } from '@api/index';
 import axios from 'axios';
 import { SET_USER_LOGIN_AUTH, userForm, SET_USER_AUTH } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
 import { wrapper } from '@store/index';
-import { userProfile, userHelpEmail, userLogin } from '@api/v2';
+import { userProfile, userHelpEmail, userLogin } from '@api/user';
 import { setCookie, removeCookie } from '@utils/cookie';
 import { IUserToken } from '@model/index';
 

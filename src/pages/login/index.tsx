@@ -21,7 +21,7 @@ import {
   SET_TEMP_PASSWORD,
 } from '@store/user';
 import wrapper from '@store/index';
-import { userLogin } from '@api/v2';
+import { userLogin } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 
 function login() {

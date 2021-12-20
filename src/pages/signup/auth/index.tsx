@@ -4,7 +4,6 @@ import { TextH2B, TextH5B, TextB3R } from '@components/Text';
 import { homePadding, fixedBottom, theme } from '@styles/theme';
 import TextInput from '@components/TextInput';
 import Button from '@components/Button';
-import { Api } from '@api/index';
 import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';
@@ -12,7 +11,7 @@ import { setAlert } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
-import { userAuthTel, userConfirmTel } from '@api/v2';
+import { userAuthTel, userConfirmTel } from '@api/user';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -20,7 +19,7 @@ export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
 function signupAuth() {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
-  const [delay, setDelay] = useState<number | null>(1000);
+  const [delay, setDelay] = useState<number | null>(null);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
   const [nameValidation, setNameValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
@@ -29,7 +28,7 @@ function signupAuth() {
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneNumberRef = useRef<HTMLInputElement>(null);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-  const authTimerRef = useRef(2);
+  const authTimerRef = useRef(300);
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
@@ -51,7 +50,7 @@ function signupAuth() {
       setDelay(null);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 440) {
+    if (authTimerRef.current < 290) {
       setOneMinuteDisabled(false);
     }
   }, [second]);

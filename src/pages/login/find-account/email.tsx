@@ -6,7 +6,7 @@ import { fixedBottom, theme } from '@styles/theme';
 import Validation from '@components/Validation';
 import { PHONE_REGX, NAME_REGX } from '@pages/signup/auth';
 import dynamic from 'next/dynamic';
-import { userHelpEmail } from '@api/v2';
+import { userHelpEmail } from '@api/user';
 
 const Button = dynamic(() => import('@components/Button'), { ssr: false });
 

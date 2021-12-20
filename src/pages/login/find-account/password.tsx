@@ -7,7 +7,7 @@ import Button from '@components/Button';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import Validation from '@components/Validation';
-import { userHelpPassword } from '@api/v2';
+import { userHelpPassword } from '@api/user';
 import router from 'next/router';
 
 function findPassword() {

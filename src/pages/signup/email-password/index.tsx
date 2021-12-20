@@ -6,11 +6,10 @@ import TextInput from '@components/TextInput';
 import Button from '@components/Button';
 import router from 'next/router';
 import Validation from '@components/Validation';
-import { Api } from '@api/index';
 import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
-import { availabilityEmail } from '@api/v2';
+import { availabilityEmail } from '@api/user';
 
 const SVGIcon = dynamic(() => import('../../../utils/SVGIcon'), {
   ssr: false,
@@ -98,7 +97,6 @@ function emailAndPassword() {
   const passwordInputHandler = (): void => {
     if (passwordRef.current) {
       const password = passwordRef.current?.value;
-
       const passwordLengthCheck = password.length > 7 && password.length < 21;
 
       if (!passwordLengthCheck) {
@@ -124,6 +122,19 @@ function emailAndPassword() {
           message: '',
         });
       }
+      /* TODO: 비밀번호 동일 체크 함수 따로 빼야함 */
+
+      // if (passwordAgain && password !== passwordAgain) {
+      //   setPasswordSameValidation({
+      //     message: '비밀번호가 다릅니다.',
+      //     isValid: false,
+      //   });
+      // } else {
+      //   setPasswordSameValidation({
+      //     message: '',
+      //     isValid: true,
+      //   });
+      // }
     }
   };
 
