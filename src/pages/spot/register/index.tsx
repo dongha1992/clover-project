@@ -16,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import OptionsSheet from '@components/Pages/Spot/OptionsSheet';
 
-function register() {
+function RegisterPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
@@ -164,4 +164,4 @@ const FixedButton = styled.section`
   ${fixedBottom}
 `;
 
-export default register;
+export default RegisterPage;

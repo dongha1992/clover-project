@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import styeld from 'styled-components';
 
 type TProps = {
   content: JSX.Element;

@@ -21,7 +21,7 @@ import { Obj } from '@model/index';
 import BorderLine from '@components/Shared/BorderLine';
 import ProgressBar from '@components/ProgressBar';
 
-function rank() {
+function RankPage() {
   return (
     <Container>
       <Wrapper>
@@ -235,4 +235,4 @@ const PleaseCheck = styled.div`
   padding-bottom: 24px;
 `;
 
-export default rank;
+export default RankPage;

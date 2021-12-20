@@ -17,7 +17,7 @@ const TAB_LIST = [
   { id: 2, text: '작성 완료', value: 'completed', link: '/use' },
 ];
 
-function reviewPage() {
+function ReviewPage() {
   const [selectedTab, setSelectedTab] = useState('/mypage/review');
   const [isShow, setIsShow] = useState(false);
   const [itemList, setItemList] = useState([]);
@@ -118,4 +118,4 @@ const FixedTab = styled.div`
   `};
 `;
 
-export default reviewPage;
+export default ReviewPage;

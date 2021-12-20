@@ -25,7 +25,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function emailAndPassword() {
+function EmailAndPasswordPage() {
   const [emailValidation, setEmailValidataion] = useState<IVaildation>({
     message: '',
     isValid: false,
@@ -294,4 +294,4 @@ const SecondPasswordWrapper = styled.div`
   }
 `;
 
-export default React.memo(emailAndPassword);
+export default React.memo(EmailAndPasswordPage);

@@ -4,7 +4,7 @@ import { homePadding } from '@styles/theme';
 import useFetch from '@hooks/useFetch';
 import router from 'next/router';
 
-function review() {
+function ReviewPage() {
   const [page, setPage] = useState<number>(0);
   const { loading, error, list } = useFetch(page);
   const ref = useRef<HTMLDivElement>(null);
@@ -74,4 +74,4 @@ const ReviewImage = styled.img`
   margin-bottom: 8px;
 `;
 
-export default React.memo(review);
+export default React.memo(ReviewPage);

@@ -4,7 +4,7 @@ import { TextH2B, TextB2R, TextH5B } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import { useRouter } from 'next/router';
 
-function finish() {
+function FinishPage() {
   const router = useRouter();
   const { type } = router.query;
 
@@ -70,4 +70,4 @@ const Circle = styled.div`
   border-radius: 50%;
 `;
 
-export default finish;
+export default FinishPage;
