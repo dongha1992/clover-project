@@ -2,14 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
 import Header from '@components/Header';
-import Button from '@components/Button';
+import Button from '@components/Shared/Button';
 import Map from '@components/Map';
-import { TextB2R, TextB3R } from '@components/Text';
-import TextInput from '@components/TextInput';
+import { TextB2R, TextB3R } from '@components/Shared/Text';
+import TextInput from '@components/Shared/TextInput';
 import { breakpoints } from '@utils/getMediaQuery';
 /*TODO: 버튼 위치 */
 
-function addressDetail() {
+function AddressDetailPage() {
   return (
     <Container>
       <PlaceInfo>
@@ -97,4 +97,4 @@ const ButtonWrapper = styled.div`
   `};
 `;
 
-export default addressDetail;
+export default AddressDetailPage;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-function index() {
+function EventPage() {
   return <div>이벤트</div>;
 }
 
-export default index;
+export default EventPage;

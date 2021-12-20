@@ -8,12 +8,18 @@ import {
 } from '@styles/theme';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import Button from '@components/Button';
-import { TextH4B, TextH5B, TextH6B, TextB2R, TextB3R } from '@components/Text';
-import TextInput from '@components/TextInput';
-import BorderLine from '@components/BorderLine';
+import Button from '@components/Shared/Button';
+import {
+  TextH4B,
+  TextH5B,
+  TextH6B,
+  TextB2R,
+  TextB3R,
+} from '@components/Shared/Text';
+import TextInput from '@components/Shared/TextInput';
+import BorderLine from '@components/Shared/BorderLine';
 import { GENDER } from '@pages/signup/optional';
-import { RadioButton } from '@components/Button/RadioButton';
+import { RadioButton } from '@components/Shared/Button/RadioButton';
 import router from 'next/router';
 import SVGIcon from '@utils/SVGIcon';
 import { useInterval } from '@hooks/useInterval';
@@ -22,7 +28,7 @@ import { setAlert } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
 
-function profile() {
+function ProfilePage() {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
@@ -328,4 +334,4 @@ const DeleteUser = styled.div`
   margin: 32px 0 104px 0;
 `;
 
-export default profile;
+export default ProfilePage;

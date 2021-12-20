@@ -12,30 +12,30 @@ import {
   TextB3R,
   TextH4B,
   TextB4R,
-} from '@components/Text';
+} from '@components/Shared/Text';
 import Image from 'next/image';
 import Loading from '@components/Loading';
-import Tag from '@components/Tag';
+import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
-import BorderLine from '@components/BorderLine';
-import ReviewList from '@components/Review/ReviewList';
+import BorderLine from '@components/Shared/BorderLine';
+import ReviewList from '@components/Pages/Review/ReviewList';
 import { BASE_URL } from '@constants/mock';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
-import StickyTab from '@components/TabList/StickyTab';
+import StickyTab from '@components/Shared/TabList/StickyTab';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
-import CouponSheet from '@components/CouponSheet';
+import CouponSheet from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
-import DetailBottomInfo from '@components/Detail/DetailBottomInfo';
+import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
 
 const DetailBottomFAQ = dynamic(
-  () => import('../../components/Detail/DetailBottomFAQ')
+  () => import('../../components/Pages/Detail/DetailBottomFAQ')
 );
 
 const DetailBottomReview = dynamic(
-  () => import('../../components/Detail/DetailBottomReview')
+  () => import('../../components/Pages/Detail/DetailBottomReview')
 );
 
 /* TODO: 영양 정보 리팩토링 */
@@ -55,7 +55,7 @@ export interface IMenuItem {
   reviews: any[];
 }
 
-function menuDetail({ id }: any) {
+function MenuDetailPage({ id }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -378,4 +378,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default React.memo(menuDetail);
+export default React.memo(MenuDetailPage);

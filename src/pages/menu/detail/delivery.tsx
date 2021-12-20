@@ -1,7 +1,7 @@
 import React from 'react';
 
-function delivery() {
+function DeliveryInfoPage() {
   return <div></div>;
 }
 
-export default delivery;
+export default DeliveryInfoPage;

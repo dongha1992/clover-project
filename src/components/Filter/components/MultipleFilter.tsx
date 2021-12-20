@@ -1,8 +1,8 @@
 import React from 'react';
-import { TextH5B, TextB2R } from '@components/Text';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme, FlexRow } from '@styles/theme';
-import Checkbox from '@components/Checkbox';
+import Checkbox from '@components/Shared/Checkbox';
 
 type TProps = {
   data: any;

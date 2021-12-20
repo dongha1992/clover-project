@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextB3R, TextH5B } from '@components/Text';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import Tag from '@components/Tag';
+import Tag from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
-import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
+import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
 import { useRouter } from 'next/router';
 
 /* TODO: Tag 부분 css 다시 & Height 조정 필요 */

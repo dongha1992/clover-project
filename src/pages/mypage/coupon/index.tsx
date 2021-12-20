@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FlexCol, FlexRow, homePadding } from '@styles/theme';
-import TextInput from '@components/TextInput';
-import Button from '@components/Button';
-import { TextH5B } from '@components/Text';
+import TextInput from '@components/Shared/TextInput';
+import Button from '@components/Shared/Button';
+import { TextH5B } from '@components/Shared/Text';
 import { COUPON_LIST } from '@constants/menu';
-import MypageCouponItem from '@components/CouponSheet/MypageCouponItem';
+import MypageCouponItem from '@components/BottomSheet/CouponSheet/MypageCouponItem';
 
-function coupon() {
+function CouponManagementPage() {
   return (
     <Container>
       <Wrapper>
@@ -33,4 +33,4 @@ const Container = styled.div`
 `;
 const Wrapper = styled.div``;
 
-export default coupon;
+export default CouponManagementPage;

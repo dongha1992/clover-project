@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
-import TabList from '@components/TabList';
+import TabList from '@components/Shared/TabList';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { TextH6B, TextB3R, TextB2R } from '@components/Text';
-import BorderLine from '@components/BorderLine';
-import MypageReviewItem from '@components/Mypage/MypageReviewItem';
+import { TextH6B, TextB3R, TextB2R } from '@components/Shared/Text';
+import BorderLine from '@components/Shared/BorderLine';
+import MypageReviewItem from '@components/Pages/Mypage/Review/MypageReviewItem';
 import { breakpoints } from '@utils/getMediaQuery';
-import ReviewInfo from '@components/Pages/mypage/review/ReviewInfo';
+import ReviewInfo from '@components/Pages/Mypage/Review/ReviewInfo';
 
 /* 아이템 수 표기헤야해서 HEADER에 TabList 안붙이고 따로 뺌   */
 
@@ -17,7 +17,7 @@ const TAB_LIST = [
   { id: 2, text: '작성 완료', value: 'completed', link: '/use' },
 ];
 
-function reviewPage() {
+function ReviewPage() {
   const [selectedTab, setSelectedTab] = useState('/mypage/review');
   const [isShow, setIsShow] = useState(false);
   const [itemList, setItemList] = useState([]);
@@ -118,4 +118,4 @@ const FixedTab = styled.div`
   `};
 `;
 
-export default reviewPage;
+export default ReviewPage;

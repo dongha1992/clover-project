@@ -5,7 +5,7 @@ import {
   TextH4B,
   TextB3R,
   TextH3B,
-} from '@components/Text';
+} from '@components/Shared/Text';
 import {
   FlexCol,
   FlexRow,
@@ -18,10 +18,10 @@ import {
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
-import BorderLine from '@components/BorderLine';
+import BorderLine from '@components/Shared/BorderLine';
 import ProgressBar from '@components/ProgressBar';
 
-function rank() {
+function RankPage() {
   return (
     <Container>
       <Wrapper>
@@ -235,4 +235,4 @@ const PleaseCheck = styled.div`
   padding-bottom: 24px;
 `;
 
-export default rank;
+export default RankPage;
