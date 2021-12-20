@@ -11,16 +11,16 @@ import StickyTab from '@components/TabList/StickyTab';
 import BorderLine from '@components/BorderLine';
 import { useDispatch } from 'react-redux';
 import { SPOT_DETAIL_INFO } from '@constants/spot';
-import DetailBottomStoreInfo from '../detailBottom/DetailBottomStoreInfo';
-import DetailBottomStory from '../detailBottom/DetailBottomStory';
+import DetailBottomStoreInfo from './DetailBottomStoreInfo';
+import DetailBottomStory from './DetailBottomStory';
 
 export interface IStoreNoti {
     desc: string;
     date: string;
-    index: number;
+    id: number;
 }
 
-const spotDetail = ({id}: any) => {
+const spotDetail = ({id}: IStoreNoti) => {
   const [spotItem, getSpotItem] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
@@ -63,12 +63,12 @@ const spotDetail = ({id}: any) => {
   };
 
   const renderBottomContent = () => {
-        const storyitems: any = spotItem?.detail?.story;
+        const storyitems: any = spotItem?.detail;
         return selectedTab === '/spot/detail/story' 
         ? 
         <DetailBottomStory items={storyitems} /> 
         : 
-        <DetailBottomStoreInfo />;
+        <DetailBottomStoreInfo items={storyitems} />;
   }
 
   const settingsTop = {
@@ -86,12 +86,10 @@ const spotDetail = ({id}: any) => {
   const settingNotice = {
     arrows: false,
     dots: false,
-    speed: 500,
     sliderToShow: 1,
-    slidersToScroll: 0,
+    slidersToScroll: 1,
     centerMode: true,
     infinite: false,
-    adaptiveHeight: true,
     centerPadding: sliceLen >1 ? '30px':'25px',
   }
 
@@ -101,19 +99,17 @@ const spotDetail = ({id}: any) => {
 
   return (
     <Container>
-    <SliderContainer>
-      <Slider {...settingsTop}>
-        {spotItem.detail?.imgUrl?.map((img: string, index: number)=>{
-          return (
-            <StoreImgWrapper
-              src = {img}
-              alt = '스팟 이미지'
-              key = {index}
-            />
-          )
-        })}
-      </Slider>
-    </SliderContainer>
+      <TopBannerSlider {...settingsTop}>
+          {spotItem.detail?.imgUrl?.map((img: string, index: number)=>{
+            return (
+              <StoreImgWrapper
+                src = {img}
+                alt = '스팟 이미지'
+                key = {index}
+              />
+            )
+          })}
+      </TopBannerSlider>
       <StoreWrapper>
         <TagWrapper>
           {
@@ -132,12 +128,11 @@ const spotDetail = ({id}: any) => {
       </StoreWrapper>
       {
         spotItem.detail?.notice &&
-        <NoticeWrapper>
-          <Slider {...settingNotice}>
-          {spotItem.detail.noticeDetail?.map(({desc, date ,index}:IStoreNoti)=>{
+          <NoticeSlider {...settingNotice}>
+          {spotItem.detail.noticeDetail?.map(({desc, date ,id}:IStoreNoti)=>{
             return (
               <NoticeCard
-                key = {index}
+                key = {id}
               >
                   <FlexBetween margin='0 0 15px 0'>
                     <TextH5B color={theme.brandColor}>공지사항</TextH5B>
@@ -146,9 +141,8 @@ const spotDetail = ({id}: any) => {
                 {desc}
               </NoticeCard>
             )
-        })}
-      </Slider>
-        </NoticeWrapper>
+          })}
+          </NoticeSlider>
       }
       <PickupWrapper>
         <TextH5B color={theme.greyScale65} margin='0 0 16px 0'>
@@ -208,27 +202,12 @@ const spotDetail = ({id}: any) => {
     </Container>
   )
 };
+
 const Container = styled.main``;
-const SliderContainer = styled.section`
+
+const TopBannerSlider = styled(Slider)`
   max-width: ${breakpoints.mobile}px;
   min-width: ${breakpoints.sm}px;
-  .slick-slider {
-    .slick-list {
-      padding: 0 !important;
-      .slick-track {
-        .slick-slide {
-        }
-      }
-    }
-    .slick-dots {
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-    }
-    .slick-dots li.slick-active {
-      color: #767e90;
-  }
-}
 `
 
 const StoreImgWrapper = styled.img`
@@ -236,32 +215,20 @@ const StoreImgWrapper = styled.img`
   object-fit: cover;
 `
 
-const StoreWrapper = styled.div`
+const StoreWrapper = styled.section`
   margin: 24px;
 `
 
-const TagWrapper = styled.section`
-`
+const TagWrapper = styled.section``
 
-const NoticeWrapper = styled.section`
+const NoticeSlider = styled(Slider)`
   width: 100%;
   background: ${theme.greyScale6};
   padding: 16px 0;
-  .slick-slider {
-    .slick-list {
-      padding: 0 !important;
-      .slick-track {
-        margin-left: 24px;
-        .slick-slide {
-            margin-right: 8px;
-        }
-      }
-    }
+  .slick-slide>div {padding: 0 5px;}
 `
 
 const NoticeCard = styled.div`
-  width: 100%;
-  height: 100%;
   background: ${theme.white};
   border: 1px solid: ${theme.greyScale6};
   padding: 16px;
@@ -272,10 +239,9 @@ const PickupWrapper = styled.section`
   margin: 24px;
 `
 
-const PickupInfo = styled.div`
-`
+const PickupInfo = styled.div``
 
-const SpotEventBannerWrapper = styled.div`
+const SpotEventBannerWrapper = styled.section`
   width: 100%;
   height: 96px;
   background: ${theme.greyScale6};
@@ -286,7 +252,7 @@ const SpotEventBannerWrapper = styled.div`
 
 const BottomTabWrapper = styled.div``
 
-const BottomContent = styled.div``
+const BottomContent = styled.section``
 
 export async function getServerSideProps(context: any) {
     const { id } = context.query;
