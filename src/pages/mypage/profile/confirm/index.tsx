@@ -6,7 +6,7 @@ import TextInput from '@components/TextInput';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import Validation from '@components/Validation';
 import Button from '@components/Button';
-import { userConfirmPassword } from '@api/v2';
+import { userConfirmPassword } from '@api/user';
 import router from 'next/router';
 
 function passwordConfirm() {
@@ -33,7 +33,7 @@ function passwordConfirm() {
     if (passwordRef.current) {
       const password = passwordRef.current.value.toString();
       try {
-        const { data } = await userConfirmPassword(password);
+        const { data } = await userConfirmPassword({ password });
         if (data.code === 200) {
           router.push('/mypage/profile');
         }

@@ -20,7 +20,7 @@ import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
-import { userAuthTel, userConfirmTel } from '@api/v2';
+import { userAuthTel, userConfirmTel } from '@api/user';
 
 function profile() {
   const [minute, setMinute] = useState<number>(0);

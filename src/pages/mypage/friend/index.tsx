@@ -33,7 +33,6 @@ function inviteFriend() {
     e.preventDefault();
     const { clipboard } = window.navigator;
     clipboard.writeText(code).then(() => {
-      console.log('Ddd');
       showToast({ message: '초대코드를 복사했어요.' });
     });
   };

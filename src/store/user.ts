@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { setCookie, removeCookie } from '@utils/cookie';
-import { userLogin } from '@api/v2';
+import { userLogin } from '@api/user';
 
 interface IUser {
   tempPasswordLogin: string;

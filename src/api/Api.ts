@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { getCookie } from '@utils/cookie';
-import { userRefreshToken } from '../v2';
+import { userRefreshToken } from './user';
 
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];

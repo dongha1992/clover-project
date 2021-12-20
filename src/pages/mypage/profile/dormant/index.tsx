@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextB2R } from '@components/Text';
 import Button from '@components/Button';
-import { userUnlock } from '@api/v2';
+import { userUnlock } from '@api/user';
 import router from 'next/router';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';

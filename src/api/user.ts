@@ -73,10 +73,8 @@ export const userHelpPassword = (
   return Api.post('/user/v1/help/password', data);
 };
 
-export const userConfirmPassword = (
-  password: string
-): Promise<AxiosResponse<any>> => {
-  return Api.post('/user/v1/confirm/password', password);
+export const userConfirmPassword = (data: any): Promise<AxiosResponse<any>> => {
+  return Api.post('/user/v1/confirm/password', data);
 };
 
 export const userChangePassword = (

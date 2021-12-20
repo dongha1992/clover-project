@@ -17,7 +17,7 @@ import { RadioButton } from '@components/Button/RadioButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { ISignupUser } from '@model/index';
-import { signup } from '@api/v2';
+import { signup } from '@api/user';
 
 export const GENDER = [
   {
