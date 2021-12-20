@@ -1,12 +1,12 @@
-import { TextH2B, TextH5B } from '@components/Text';
+import { TextH2B, TextH5B } from '@components/Shared/Text';
 import { homePadding, FlexCol, fixedBottom } from '@styles/theme';
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
-import Button from '@components/Button';
+import TextInput from '@components/Shared/TextInput';
+import Button from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
-import Validation from '@components/Validation';
+import Validation from '@components/Pages/User/Validation';
 import { PASSWORD_REGX } from '@pages/signup/email-password';
 import SVGIcon from '@utils/SVGIcon';
 import { userChangePassword } from '@api/user';
@@ -16,7 +16,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function changePassword() {
+function ChangePasswordPage() {
   const [oldPasswordLengthValidation, setOldPasswordLengthValidation] =
     useState<IVaildation>({ message: '', isValid: false });
 
@@ -288,4 +288,4 @@ const NewAgainPasswordWrapper = styled.div`
   }
 `;
 
-export default changePassword;
+export default ChangePasswordPage;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import { TextH5B } from '@components/Text';
+import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';

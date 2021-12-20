@@ -3,19 +3,19 @@ import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import { TextH6B } from '@components/Text';
+import { TextH6B } from '@components/Shared/Text';
 import dynamic from 'next/dynamic';
 import { FlexCol, FlexEnd, homePadding } from '@styles/theme';
-import OrderDeliveryItem from '@components/Mypage/OrderDeliveryItem';
+import OrderDeliveryItem from '@components/Pages/Mypage/OrderDelivery/OrderDeliveryItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import BorderLine from '@components/BorderLine';
+import BorderLine from '@components/Shared/BorderLine';
 
 const OrderDateFilter = dynamic(
   () => import('@components/Filter/OrderDateFilter')
 );
 
-function orderDeliveryHistory() {
+function OrderDeliveryHistoryPage() {
   const [itemList, setItemList] = useState([]);
   const dispatch = useDispatch();
 
@@ -64,4 +64,4 @@ const Wrapper = styled.div`
   ${homePadding}
 `;
 
-export default orderDeliveryHistory;
+export default OrderDeliveryHistoryPage;

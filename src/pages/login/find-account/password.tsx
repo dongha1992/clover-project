@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
-import { TextB2R } from '@components/Text';
+import TextInput from '@components/Shared/TextInput';
+import { TextB2R } from '@components/Shared/Text';
 import { fixedBottom } from '@styles/theme';
-import Button from '@components/Button';
+import Button from '@components/Shared/Button';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { EMAIL_REGX } from '@pages/signup/email-password';
-import Validation from '@components/Validation';
+import Validation from '@components/Pages/User/Validation';
 import { userHelpPassword } from '@api/user';
 import router from 'next/router';
 
-function findPassword() {
+function FindPasswordPage() {
   const [phoneValid, setPhoneValid] = useState({
     message: '',
     isValid: false,
@@ -106,4 +106,4 @@ const InputWrapper = styled.div`
 const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
-export default findPassword;
+export default FindPasswordPage;

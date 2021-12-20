@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, isValidElement } from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextH5B } from '@components/Text';
+import { TextH2B, TextH5B } from '@components/Shared/Text';
 import { homePadding, fixedBottom, FlexCol } from '@styles/theme';
-import TextInput from '@components/TextInput';
-import Button from '@components/Button';
+import TextInput from '@components/Shared/TextInput';
+import Button from '@components/Shared/Button';
 import router from 'next/router';
-import Validation from '@components/Validation';
+import Validation from '@components/Pages/User/Validation';
 import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
@@ -25,7 +25,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function emailAndPassword() {
+function EmailAndPasswordPage() {
   const [emailValidation, setEmailValidataion] = useState<IVaildation>({
     message: '',
     isValid: false,
@@ -294,4 +294,4 @@ const SecondPasswordWrapper = styled.div`
   }
 `;
 
-export default React.memo(emailAndPassword);
+export default React.memo(EmailAndPasswordPage);

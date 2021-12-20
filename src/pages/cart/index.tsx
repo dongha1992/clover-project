@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import BorderLine from '@components/BorderLine';
+import BorderLine from '@components/Shared/BorderLine';
 import {
   TextB2R,
   TextH4B,
@@ -9,7 +9,7 @@ import {
   TextH7B,
   TextB3R,
   TextH3B,
-} from '@components/Text';
+} from '@components/Shared/Text';
 import {
   homePadding,
   theme,
@@ -21,20 +21,20 @@ import {
   FlexRow,
   fixedBottom,
 } from '@styles/theme';
-import CartSheetItem from '@components/CartSheet/CartSheetItem';
-import Checkbox from '@components/Checkbox';
-import { InfoMessage } from '@components/Message';
+import CartSheetItem from '@components/BottomSheet/CartSheet/CartSheetItem';
+import Checkbox from '@components/Shared/Checkbox';
+import { InfoMessage } from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
-import Button from '@components/Button';
+import Button from '@components/Shared/Button';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import Item from '@components/Item';
-import Tag from '@components/Tag';
-import CountButton from '@components/Button/CountButton';
+import Tag from '@components/Shared/Tag';
+import CountButton from '@components/Shared/Button/CountButton';
 import router from 'next/router';
 import Calendar from '@components/Calendar';
-import { RadioButton } from '@components/Button/RadioButton';
+import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
 
@@ -60,7 +60,7 @@ const LUNCH_OR_DINNER = [
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-function Cart() {
+function CartPaeg() {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>(
@@ -514,4 +514,4 @@ const OrderBtn = styled.div`
   ${fixedBottom}
 `;
 
-export default Cart;
+export default CartPaeg;

@@ -6,7 +6,7 @@ import wrapper from '@store/index';
 // import { setRefreshToken } from '@components/Auth';
 import { useSelector } from 'react-redux';
 
-function home() {
+function HomePage() {
   return (
     <Container>
       <Home />
@@ -31,4 +31,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default home;
+export default HomePage;

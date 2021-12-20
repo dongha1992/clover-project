@@ -1,7 +1,7 @@
 import React from 'react';
 
-function subscription() {
+function SubscriptiopPage() {
   return <div>구독</div>;
 }
 
-export default subscription;
+export default SubscriptiopPage;

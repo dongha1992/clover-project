@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OrderFilter } from '@components/Filter/components';
-import { TextH5B } from '@components/Text';
+import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { ORDER_DATE_RADIO_CHECKBOX } from '@constants/filter';
 import { theme } from '@styles/theme';

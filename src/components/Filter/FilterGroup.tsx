@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MultipleFilter, OrderFilter } from '@components/Filter/components';
-import BorderLine from '@components/BorderLine';
-import { TextB3R, TextH5B } from '@components/Text';
+import BorderLine from '@components/Shared/BorderLine';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import {
   MUTILPLE_CHECKBOX,
@@ -10,7 +10,7 @@ import {
   RADIO_CHECKBOX_SPOT,
 } from '@constants/filter';
 import { theme, FlexCol, FlexBetween } from '@styles/theme';
-import ToggleButton from '@components/Button/ToggleButton ';
+import ToggleButton from '@components/Shared/Button/ToggleButton ';
 
 /* 
 

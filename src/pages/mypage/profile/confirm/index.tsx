@@ -1,15 +1,15 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { TextB2R, TextH2B, TextH5B } from '@components/Text';
+import { TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
 import { homePadding, FlexCol, theme, fixedBottom } from '@styles/theme';
-import TextInput from '@components/TextInput';
+import TextInput from '@components/Shared/TextInput';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
-import Validation from '@components/Validation';
-import Button from '@components/Button';
+import Validation from '@components/Pages/User/Validation';
+import Button from '@components/Shared/Button';
 import { userConfirmPassword } from '@api/user';
 import router from 'next/router';
 
-function passwordConfirm() {
+function PasswordConfirmPage() {
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
@@ -88,4 +88,4 @@ const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default passwordConfirm;
+export default PasswordConfirmPage;

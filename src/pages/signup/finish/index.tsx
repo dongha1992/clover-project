@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Button from '@components/Button';
+import Button from '@components/Shared/Button';
 import {
   fixedBottom,
   homePadding,
@@ -9,13 +9,13 @@ import {
   FlexRow,
 } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Text';
+import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import Image from 'next/image';
 import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
-import TextInput from '@components/TextInput';
+import TextInput from '@components/Shared/TextInput';
 
-function signupFinish() {
+function SignupFinishPage() {
   return (
     <Container>
       <Header>
@@ -102,4 +102,4 @@ const PromotionWrapper = styled.div`
   padding: 24px;
 `;
 
-export default signupFinish;
+export default SignupFinishPage;

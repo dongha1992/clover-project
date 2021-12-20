@@ -7,10 +7,10 @@ import { FIND_ACCOUNT } from '@constants/login';
 import { DIB_MENU } from '@constants/mypage';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
-import { TextH4B } from '@components/Text';
+import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 
-const TabList = dynamic(() => import('../TabList'));
+const TabList = dynamic(() => import('../Shared/TabList'));
 
 type TProps = {
   title?: string;
@@ -31,6 +31,7 @@ function TabHeader({ title }: TProps) {
   }, [router]);
 
   const goBack = (): void => {
+    /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
     if (
       router.asPath === '/login/find-account/password' ||
       router.asPath === '/login/find-account/email'

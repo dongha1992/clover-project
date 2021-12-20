@@ -1,15 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/TextInput';
+import TextInput from '@components/Shared/TextInput';
 import { HomeContainer } from '@styles/theme';
-import { TextH6B, TextH5B, TextB2R } from '@components/Text';
+import { TextH6B, TextH5B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 /* TODO: 검색 결과 리스트 */
 
-function location() {
+function LocationPage() {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -72,4 +72,4 @@ const CurrentLocBtn = styled.div`
 
 const ResultList = styled.div``;
 
-export default location;
+export default LocationPage;

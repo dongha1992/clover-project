@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import SingleMenu from '@components/SingleMenu';
+import SingleMenu from '@components/Pages/Category/SingleMenu';
 
-function category() {
+function CategoryPage() {
   return (
     <Container>
       <SingleMenu category="/" />
@@ -15,4 +15,4 @@ const Container = styled.div`
   padding: 52px 24px;
 `;
 
-export default React.memo(category);
+export default React.memo(CategoryPage);

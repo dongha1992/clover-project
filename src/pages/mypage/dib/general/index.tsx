@@ -1,7 +1,7 @@
 import React from 'react';
 
-function generalDib() {
+function GeneralDibPage() {
   return <div>s</div>;
 }
 
-export default generalDib;
+export default GeneralDibPage;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-function subscriptionDib() {
+function SubscriptionDibPage() {
   return <div>s</div>;
 }
 
-export default subscriptionDib;
+export default SubscriptionDibPage;

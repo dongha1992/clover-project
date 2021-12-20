@@ -9,12 +9,12 @@ import {
   FlexBetween,
   FlexCenter,
 } from '@styles/theme';
-import TextInput from '@components/TextInput';
-import Button from '@components/Button';
-import BorderLine from '@components/BorderLine';
-import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Text';
+import TextInput from '@components/Shared/TextInput';
+import Button from '@components/Shared/Button';
+import BorderLine from '@components/Shared/BorderLine';
+import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import TabList from '@components/TabList';
+import TabList from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
 
 const TAB_LIST = [
@@ -101,7 +101,7 @@ const MOCK_USE_POINT_HISTORY = [
   },
 ];
 
-function point() {
+function PointPage() {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
   const elementRef = useRef<HTMLDivElement>(null);
@@ -260,4 +260,4 @@ const ScrollView = styled.div<{ customMargin?: number }>`
   padding-top: ${({ customMargin }) => customMargin && customMargin}px;
 `;
 
-export default point;
+export default PointPage;

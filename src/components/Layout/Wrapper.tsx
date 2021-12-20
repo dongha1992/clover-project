@@ -11,7 +11,7 @@ import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/getMediaQuery';
 import { commonSelector } from '@store/common';
 
-const Alert = dynamic(() => import('@components/Alert'), {
+const Alert = dynamic(() => import('@components/Shared/Alert'), {
   ssr: false,
 });
 
@@ -19,7 +19,7 @@ const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
   ssr: false,
 });
 
-const Toast = dynamic(() => import('@components/Toast'), {
+const Toast = dynamic(() => import('@components/Shared/Toast'), {
   ssr: false,
 });
 

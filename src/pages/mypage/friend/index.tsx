@@ -7,7 +7,7 @@ import {
   TextH4B,
   TextH5B,
   TextB3R,
-} from '@components/Text';
+} from '@components/Shared/Text';
 import {
   FlexCol,
   homePadding,
@@ -15,9 +15,9 @@ import {
   FlexRow,
   FlexBetween,
 } from '@styles/theme';
-import Button from '@components/Button';
-import BorderLine from '@components/BorderLine';
-import TextInput from '@components/TextInput';
+import Button from '@components/Shared/Button';
+import BorderLine from '@components/Shared/BorderLine';
+import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 
@@ -26,7 +26,7 @@ const textStyle = {
   color: theme.greyScale65,
 };
 
-function inviteFriend() {
+function InviteFriendPaage() {
   const { showToast } = useToast();
 
   const getCodeCopy = (e: any) => {
@@ -149,4 +149,4 @@ const GreyBackground = styled.div`
   margin-bottom: 8px;
 `;
 
-export default inviteFriend;
+export default InviteFriendPaage;

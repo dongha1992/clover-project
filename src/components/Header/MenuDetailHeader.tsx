@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
-import { TextH4B } from '@components/Text';
+import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
 import { menuSelector } from '@store/menu';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
-import CartSheetGroup from '@components/CartSheet/CartSheetGroup';
+import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
 import CartIcon from '@components/Header/Cart';
-import ShareSheet from '@components/ShareSheet';
+import ShareSheet from '@components/BottomSheet/ShareSheet';
 
 type TProps = {
   title?: string;
