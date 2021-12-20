@@ -14,7 +14,6 @@ import Button from '@components/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
-import { Obj } from '@model/index';
 
 const textPaddingStyle = {
   padding: '0 0 0 8px',
@@ -77,8 +76,8 @@ function signup() {
 
     dispatch(
       SET_SIGNUP_USER({
-        emailReceived: userAgreeMarketingTerm.includes(3),
-        smsReceived: userAgreeMarketingTerm.includes(4),
+        marketingEmailReceived: userAgreeMarketingTerm.includes(3),
+        marketingSmsReceived: userAgreeMarketingTerm.includes(4),
       })
     );
     router.push('/signup/auth');

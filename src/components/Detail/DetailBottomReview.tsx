@@ -6,16 +6,24 @@ import { homePadding, theme } from '@styles/theme';
 import ReviewOnlyImage from '@components/Review/ReviewOnlyImage';
 import BorderLine from '@components/BorderLine';
 import ReviewDetailItem from '@components/Review/ReviewDetailItem';
-import { route } from 'next/dist/server/router';
+import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
+import { useDispatch } from 'react-redux';
 
 function DetailBottomReview({ reviews, isSticky }: any) {
   reviews = [...reviews, ...reviews, ...reviews];
+
+  const dispatch = useDispatch();
+
   const hasReivew = reviews.length > 0;
 
   const goToReviewImages = useCallback(() => {
     router.push('/review');
   }, []);
+
+  const clickImgViewHandler = (images: any) => {
+    dispatch(SET_IMAGE_VIEWER(images));
+  };
 
   return (
     <Container isSticky={isSticky}>
@@ -43,7 +51,13 @@ function DetailBottomReview({ reviews, isSticky }: any) {
       <BorderLine height={8} />
       <ReviewWrapper>
         {reviews.map((review: any, index: number) => {
-          return <ReviewDetailItem review={review} key={index} />;
+          return (
+            <ReviewDetailItem
+              review={review}
+              key={index}
+              clickImgViewHandler={clickImgViewHandler}
+            />
+          );
         })}
         <Button
           backgroundColor={theme.white}

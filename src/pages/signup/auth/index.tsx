@@ -4,8 +4,6 @@ import { TextH2B, TextH5B, TextB3R } from '@components/Text';
 import { homePadding, fixedBottom, theme } from '@styles/theme';
 import TextInput from '@components/TextInput';
 import Button from '@components/Button';
-import debounce from 'lodash-es/debounce';
-import { Api } from '@api/index';
 import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';
@@ -13,7 +11,7 @@ import { setAlert } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
-import { authTel, confirmTel } from '@api/v2';
+import { userAuthTel, userConfirmTel } from '@api/user';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -21,7 +19,7 @@ export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
 function signupAuth() {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
-  const [delay, setDelay] = useState<number | null>(1000);
+  const [delay, setDelay] = useState<number | null>(null);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
   const [nameValidation, setNameValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
@@ -30,7 +28,7 @@ function signupAuth() {
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneNumberRef = useRef<HTMLInputElement>(null);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-  const authTimerRef = useRef(2);
+  const authTimerRef = useRef(300);
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
@@ -52,7 +50,7 @@ function signupAuth() {
       setDelay(null);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 440) {
+    if (authTimerRef.current < 290) {
       setOneMinuteDisabled(false);
     }
   }, [second]);
@@ -93,9 +91,7 @@ function signupAuth() {
     if (phoneNumberRef.current) {
       const tel = phoneNumberRef.current?.value.toString();
 
-      const { data } = await authTel({ tel });
-
-      console.log(data, 'after autl tel');
+      const { data } = await userAuthTel({ tel });
 
       if (data.code === 200) {
         dispatch(
@@ -107,9 +103,8 @@ function signupAuth() {
         setOneMinuteDisabled(true);
         setDelay(1000);
       } else {
-        console.log('fail');
         return;
-        /* 인증번호 요청 실패 시 */
+        /* TODO: 인증번호 요청 실패 시 */
       }
     }
   };
@@ -131,8 +126,8 @@ function signupAuth() {
         const authCode = authCodeNumberRef.current.value;
         const tel = phoneNumberRef.current.value;
 
-        const { data } = await confirmTel({ tel, authCode });
-        console.log(data);
+        const { data } = await userConfirmTel({ tel, authCode });
+
         if (data) {
           setAuthCodeConfirm(true);
         } else {
@@ -171,7 +166,7 @@ function signupAuth() {
           <TextInput
             placeholder="이름"
             ref={nameRef}
-            eventHandler={debounce(nameInputHandler, 300)}
+            eventHandler={nameInputHandler}
             value={signupUser.name ? signupUser.name : ''}
           />
           {nameValidation && <SVGIcon name="confirmCheck" />}
@@ -182,7 +177,7 @@ function signupAuth() {
             <TextInput
               placeholder="휴대폰 번호"
               ref={phoneNumberRef}
-              eventHandler={debounce(phoneNumberInputHandler, 300)}
+              eventHandler={phoneNumberInputHandler}
               inputType="number"
               value={signupUser.tel ? signupUser.tel : ''}
             />
@@ -200,7 +195,7 @@ function signupAuth() {
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
-              eventHandler={debounce(authCodeInputHandler, 300)}
+              eventHandler={authCodeInputHandler}
               ref={authCodeNumberRef}
               inputType="number"
             />

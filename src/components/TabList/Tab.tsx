@@ -6,23 +6,29 @@ interface ITabProps {
   tabItem: any;
   onClick: any;
   selectedTab: any;
-  numebrOfReview?: any;
+  countObj?: any;
 }
 
-function Tab({ tabItem, onClick, selectedTab, numebrOfReview }: ITabProps) {
+/* Tab에 Count 붙는 경우 countObj={ tabItem.title : count } props 받아서 맵핑으로 렌더*/
+
+function Tab({ tabItem, onClick, selectedTab, countObj }: ITabProps) {
   const style = {
     padding: '12px 8px',
     whiteSpace: 'nowrap',
     pointer: true,
   };
-  const isReviewTab = tabItem.text === '후기';
-  const tabNameWithNumberOfReview = `${tabItem.text} (${numebrOfReview})`;
+
+  /* Tab에 카운트 있는지 판별 */
+  const hasCount = countObj && countObj[tabItem.text];
+
+  const tabNameWithCount =
+    hasCount && `${tabItem.text} (${countObj[tabItem.text]})`;
 
   return (
     <Wrapper onClick={() => onClick(tabItem)} selectedTab={selectedTab}>
       <Border>
         <TextB1R className="tab" {...style}>
-          {!isReviewTab ? tabItem.text : tabNameWithNumberOfReview}
+          {hasCount ? tabNameWithCount : tabItem.text}
         </TextB1R>
       </Border>
     </Wrapper>

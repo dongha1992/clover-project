@@ -11,15 +11,16 @@ import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import Tag from '@components/Tag';
 import { Obj } from '@model/index';
-import { Api } from '@api/index';
 import axios from 'axios';
-import { SET_SIGNUP_USER, userForm } from '@store/user';
+import { SET_USER_LOGIN_AUTH, userForm, SET_USER_AUTH } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
 import { wrapper } from '@store/index';
+import { userProfile, userHelpEmail, userLogin } from '@api/user';
+import { setCookie, removeCookie } from '@utils/cookie';
+import { IUserToken } from '@model/index';
 
-const OnBoarding: NextPage = ({ a }: any) => {
-  console.log(a, 'A');
+const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
     backgroundColor: theme.white,
     color: theme.black,
@@ -68,6 +69,7 @@ const OnBoarding: NextPage = ({ a }: any) => {
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
+    await loginTest();
     // AppleID.auth.init({
     //   clientId: 'com.freshcode.www',
     //   scope: 'email',
@@ -90,8 +92,48 @@ const OnBoarding: NextPage = ({ a }: any) => {
     router.push('/login');
   };
 
-  const goToHomeWithoutLogin = (): void => {
+  const goToHomeWithoutLogin = () => {
     // router.push('/home');
+
+    profileTest();
+    profileTest();
+    profileTest();
+  };
+
+  const profileTest = async () => {
+    await userProfile();
+  };
+
+  const loginTest = async () => {
+    const { data } = await userLogin({
+      email: 'david@freshcode.me',
+      password: '12341234',
+      loginType: 'EMAIL',
+    });
+
+    if (data.code === 200) {
+      let userTokenObj = data.data;
+      const accessTokenObj = {
+        accessToken: userTokenObj?.accessToken,
+        expiresIn: userTokenObj?.expiresIn,
+      };
+
+      sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+
+      const refreshTokenObj = JSON.stringify({
+        refreshToken: userTokenObj?.refreshToken,
+        refreshTokenExpiresIn: userTokenObj?.refreshTokenExpiresIn,
+      });
+
+      setCookie({
+        name: 'refreshTokenObj',
+        value: refreshTokenObj,
+        option: {
+          path: '/',
+          maxAge: userTokenObj?.refreshTokenExpiresIn,
+        },
+      });
+    }
   };
 
   const renderLastLoginTag = (): JSX.Element => {

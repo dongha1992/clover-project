@@ -1,38 +1,37 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 
-const BANNERS = [
-  './images/img1.png',
-  './images/img1.png',
-  './images/img1.png',
-  './images/img1.png',
-];
+interface IProps {
+  setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
+  images: any;
+}
 
-const settings = {
-  arrows: false,
-  dots: false,
-  spped: 500,
-  sliderToShow: 1,
-  slidersToScroll: 1,
-  centerMode: true,
-  infinite: false,
-  customPagimg: () => <div />,
-  centerPadding: '20px',
-};
+function Carousel({ images, setCountIndex }: IProps) {
+  const settings = {
+    arrows: false,
+    dots: false,
+    spped: 500,
+    sliderToShow: 1,
+    slidersToScroll: 1,
+    centerMode: true,
+    infinite: false,
+    customPaging: () => <div />,
+    afterChange: (current: number) => setCountIndex && setCountIndex(current),
+    centerPadding: '0px',
+  };
 
-function Carousel() {
   return (
     <Container>
       <Slider {...settings}>
-        {BANNERS.map((image, index) => {
+        {images.map((image: any, index: number) => {
           return (
             <ImageWrapper
               src={image}
               alt="image"
               key={index}
-              isLast={index === BANNERS.length + 1}
+              isLast={index === images.length + 1}
             />
           );
         })}
@@ -77,4 +76,4 @@ const ImageWrapper = styled.img<{ isLast: boolean }>`
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;
 
-export default Carousel;
+export default React.memo(Carousel);

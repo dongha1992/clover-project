@@ -8,6 +8,7 @@ const DefaultHeader = dynamic(() => import('./DefaultHeader'));
 const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 const TabHeader = dynamic(() => import('./TabHeader'));
+const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 /*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
@@ -38,6 +39,19 @@ function Header() {
         '/mypage/card/register': '카드등록',
         '/mypage/card/register/term': '이용약관',
         '/mypage/order-detail': '주문 상세',
+        '/mypage/order-delivery-history': '주문/배송 내역',
+        '/mypage/profile/password': '비밀번호 변경',
+        '/mypage/profile/confirm': '회원정보 수정',
+        '/mypage/profile/dormant': '회원정보 수정',
+        '/mypage/profile': '회원정보 수정',
+        '/mypage/dib/general': '찜 관리',
+        '/mypage/friend': '친구 초대',
+        '/mypage/review': '후기 관리',
+        '/mypage/review/write': '후기 작성',
+        '/mypage/rank': '회원등급',
+        '/mypage/point': '포인트',
+        '/mypage/coupon': '포인트',
+        '/mypage/dib/subscription': '찜 관리',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',
         '/signup/auth': '회원가입',
@@ -75,7 +89,7 @@ function Header() {
           '/signup/optional',
           '/spot/spot-req',
           '/spot/register',
-          '/spot/register/submit'
+          '/spot/register/submit',
         ].includes(currentPath): {
           return <DefaultHeader title={title} />;
         }
@@ -86,12 +100,18 @@ function Header() {
           return <MenuDetailHeader />;
         }
 
+        case ['/mypage'].includes(currentPath): {
+          return <MyPageHeader />;
+        }
+
         case [
           '/menu/detail/product',
           '/menu/detail/nutrition',
           '/menu/detail/delivery',
           '/login/find-account/email',
           '/login/find-account/password',
+          '/mypage/dib/general',
+          '/mypage/dib/subscription',
         ].includes(currentPath): {
           return <TabHeader title={title} />;
         }
@@ -101,11 +121,11 @@ function Header() {
         }
 
         case ['/spot'].includes(currentPath): {
-          return <SpotHeader />
+          return <SpotHeader />;
         }
 
         default: {
-          return;
+          return <DefaultHeader title={title} />;
         }
       }
     },

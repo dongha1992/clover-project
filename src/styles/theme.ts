@@ -81,18 +81,25 @@ export const FlexRow = styled.div<{
   padding?: string;
   margin?: string;
   id?: string;
+  width?: string;
 }>`
   display: flex;
   align-items: center;
+  width: ${({ width }) => width && width};
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexCol = styled.div<{ padding?: string; margin?: string }>`
+export const FlexCol = styled.div<{
+  padding?: string;
+  margin?: string;
+  width?: string;
+}>`
   display: flex;
   flex-direction: column;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
 `;
 
 export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
@@ -103,10 +110,18 @@ export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexColStart = styled.div`
+export const FlexColStart = styled.div<{ padding?: string }>`
   display: flex;
   flex-direction: column;
   align-self: flex-start;
+  padding: ${({ padding }) => padding && padding};
+`;
+
+export const FlexColCenter = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const GridWrapper = styled.div<{ gap: number }>`

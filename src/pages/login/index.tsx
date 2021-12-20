@@ -13,27 +13,46 @@ import Checkbox from '@components/Checkbox';
 import Button from '@components/Button';
 import router from 'next/router';
 import Validation from '@components/Validation';
-import { Api } from '@api/index';
-import { useSelector } from 'react-redux';
-import { userForm, SET_USER_AUTH, SET_USER_LOGIN_AUTH } from '@store/user';
-import { userLogin } from '@api/v2';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  userForm,
+  SET_USER_AUTH,
+  SET_LOGIN_SUCCESS,
+  SET_TEMP_PASSWORD,
+} from '@store/user';
 import wrapper from '@store/index';
-// import { setRefreshToken } from '@components/Auth';
+import { userLogin } from '@api/user';
+import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 
 function login() {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
   const [loginType, setLoginType] = useState('');
+  const [isValid, setIsValid] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const { signupUser, isSuccessLogin } = useSelector(userForm);
+  const { isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
 
   useEffect(() => {
     initLocalStorage();
     return () => {};
   }, []);
+
+  useEffect(() => {
+    if (isLoginSuccess) {
+      const isDormantAccount = true;
+      if (isDormantAccount) {
+        router.push('/mypage/profile/dormant');
+      } else {
+        router.push('/home');
+      }
+    }
+    return () => {
+      dispatch(SET_LOGIN_SUCCESS(false));
+    };
+  }, [isLoginSuccess]);
 
   const initLocalStorage = () => {
     try {
@@ -42,6 +61,20 @@ function login() {
     } catch (error) {
       console.error(error);
       return [];
+    }
+  };
+
+  const passwordInputHandler = () => {
+    if (emailRef.current && passwordRef.current) {
+      const email = emailRef.current?.value;
+      const password = passwordRef.current?.value.toString();
+
+      const emailVaildCheck = EMAIL_REGX.test(email);
+      const passwordVaildCheck = password.length > 7 && password.length < 20;
+
+      if (emailVaildCheck && passwordVaildCheck) {
+        setIsValid(true);
+      }
     }
   };
 
@@ -61,27 +94,37 @@ function login() {
   };
 
   const finishLogin = async () => {
+    dispatch(SET_LOGIN_SUCCESS(false));
+
     if (emailRef.current && passwordRef.current) {
       const email = emailRef.current?.value;
       const password = passwordRef.current?.value.toString();
 
-      dispatch(
-        SET_USER_LOGIN_AUTH({
+      try {
+        const { data } = await userLogin({
           email,
           password,
-          loginType: signupUser.loginType ? signupUser.loginType : loginType,
-        })
-      );
+          loginType,
+        });
 
-      console.log(isSuccessLogin, 'isSuccessLogin');
+        if (data.code === 200) {
+          const userTokenObj = data.data;
+          if (userTokenObj?.tmpPasswordUsed) {
+            dispatch(SET_TEMP_PASSWORD(password));
+            router.push('/mypage/profile/password');
+            return;
+          }
 
-      if (isSuccessLogin) {
-        const isDormantAccount = false;
-        if (isDormantAccount) {
-          router.push('/login/dormant');
-        } else {
-          router.push('/home');
+          dispatch(SET_USER_AUTH(userTokenObj));
+          dispatch(SET_LOGIN_SUCCESS(true));
         }
+      } catch (error) {
+        console.error(error);
+
+        /* TODO: 서버에서 내려오는 message에 따라 wrapper 만들어야 함 */
+        setErrorMessage(
+          '가입하지 않은 아이디이거나, 로그인 정보를 확인해주세요.'
+        );
       }
     }
   };
@@ -94,8 +137,9 @@ function login() {
           placeholder="비밀번호"
           inputType="password"
           ref={passwordRef}
+          eventHandler={passwordInputHandler}
         />
-        <Validation>s</Validation>
+        {errorMessage && <Validation>{errorMessage}</Validation>}
       </FlexCol>
       <FlexRow padding="16px 0 24px 0">
         <Checkbox
@@ -105,7 +149,7 @@ function login() {
         <TextB2R padding="2px 0 0 8px">자동 로그인</TextB2R>
       </FlexRow>
       <BtnWrapper onClick={finishLogin}>
-        <Button>로그인하기</Button>
+        <Button disabled={!isValid}>로그인하기</Button>
       </BtnWrapper>
       <FlexCenter>
         <TextB2R color={theme.greyScale75} onClick={goToSignup}>

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
-import { initBottomSheet } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 
 type TProps = {
@@ -13,6 +12,8 @@ type TProps = {
   padding?: string;
   closeOnclickDimmer?: boolean;
 };
+
+/* TODO: modal open store 에서 관리해서 밖에 클릭시 modal 닫기하기 */
 
 export default function ModalLayout({
   children,

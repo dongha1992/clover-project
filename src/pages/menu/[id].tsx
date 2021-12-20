@@ -116,6 +116,8 @@ function menuDetail({ id }: any) {
     [selectedTab]
   );
 
+  const clickImgViwerHandler = () => {};
+
   const renderBottomContent = () => {
     if (!menuItem.reviews) return;
     const { reviews } = menuItem;
@@ -227,7 +229,12 @@ function menuDetail({ id }: any) {
                 더보기
               </TextH6B>
             </ReviewHeader>
-            {menuItem.reviews && <ReviewList reviews={menuItem.reviews} />}
+            {menuItem.reviews && (
+              <ReviewList
+                reviews={menuItem.reviews}
+                onClick={clickImgViwerHandler}
+              />
+            )}
           </ReviewWrapper>
         </ReviewContainer>
         <DetailInfoContainer>
@@ -257,7 +264,7 @@ function menuDetail({ id }: any) {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          numebrOfReview={menuItem.review}
+          countObj={{ 후기: menuItem.review }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
