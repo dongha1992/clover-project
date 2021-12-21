@@ -46,6 +46,7 @@ export interface ITextFieldProps {
   padding?: string;
   svg?: string;
   margin?: string;
+  accept?: string;
 }
 
 const defaultProps = {
@@ -74,6 +75,7 @@ const TextInput = React.forwardRef(
       padding,
       svg,
       margin,
+      accept,
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
@@ -114,6 +116,7 @@ const TextInput = React.forwardRef(
             name={name}
             onKeyPress={keyPressHandler}
             ref={ref}
+            accept={accept}
           />
         </div>
       </Container>
@@ -134,8 +137,9 @@ const Container = styled.div<{
   margin?: string;
 }>`
   position: relative;
-  margin: ${({ margin }) => margin && margin}px;
+  margin: ${({ margin }) => (margin ? margin : 0)}px;
   width: 100%;
+  height: ${({ height }) => height};
   ${({ search }) =>
     search &&
     css`
@@ -143,6 +147,7 @@ const Container = styled.div<{
       backdrop-filter: blur(5px);
     `}
   .wrapper {
+    height: ${({ height }) => height};
     svg {
       position: absolute;
       left: 16px;
