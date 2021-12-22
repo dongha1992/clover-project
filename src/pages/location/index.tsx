@@ -11,7 +11,23 @@ import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/addressItem';
 import { SET_DESTINATION_TEMP } from '@store/destination';
+import { SPECIAL_REGX } from '@constants/regex/index';
 /* TODO: 검색 결과 리스트 */
+
+const KEYWORD_REGX = [
+  'or',
+  'select',
+  'insert',
+  'delete',
+  'update',
+  'create',
+  'drop',
+  'exec',
+  'union',
+  'fetch',
+  'declare',
+  'truncate',
+];
 
 function LocationPage() {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -35,20 +51,29 @@ function LocationPage() {
     );
   };
 
-  const searchAddressHandler = async () => {
-    if (addressRef.current) {
-      const query = addressRef.current?.value;
-      const params = {
-        query,
-        page: 1,
-      };
-      try {
-        let { data } = await searchAddressJuso(params);
-        setResultAddress(data.results.juso);
-        setTotalCount(data.results.common.totalCount);
-        console.log(data.results);
-      } catch (error) {
-        console.error(error);
+  const getSearchAddressResult = async (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === 'Enter') {
+      if (addressRef.current) {
+        let query = addressRef.current?.value;
+        if (SPECIAL_REGX.test(query) || KEYWORD_REGX.includes(query)) {
+          alert('포함할 수 없는 문자입니다.');
+          return;
+        }
+
+        const params = {
+          query,
+          page: 1,
+        };
+        try {
+          let { data } = await searchAddressJuso(params);
+          setResultAddress(data.results.juso);
+          setTotalCount(data.results.common.totalCount);
+          console.log(data.results);
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
   };
@@ -68,7 +93,7 @@ function LocationPage() {
           placeholder="도로명, 건물명 또는 지번으로 검색"
           inputType="text"
           svg="searchIcon"
-          eventHandler={searchAddressHandler}
+          keyPressHandler={getSearchAddressResult}
           ref={addressRef}
         />
         <CurrentLocBtn onClick={clickSetCurrentLoc}>
