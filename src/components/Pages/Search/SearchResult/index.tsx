@@ -6,18 +6,28 @@ import Item from '@components/Item';
 import SpotItem from '@components/Pages/Spot/SpotItem';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import FilterGroup from '@components/Filter/FilterGroup';
+import MenuFilter from '@components/Filter/MenuFilter';
+import SpotSearchFilter from '@components/Pages/Spot/SpotSearchFilter';
 
 function SearchResult({ searchResult, goToOrder, isSpot }: any) {
   const dispatch = useDispatch();
 
   const clickFilterHandler = () => {
-    dispatch(
-      setBottomSheet({
-        content: <FilterGroup isSpot />,
-        buttonTitle: '스팟필터',
-      })
-    );
+    if (!isSpot) {
+      dispatch(
+        setBottomSheet({
+          content: <MenuFilter />,
+          buttonTitle: '적용하기',
+        })
+      );
+    } else {
+      dispatch(
+        setBottomSheet({
+          content: <SpotSearchFilter />,
+          buttonTitle: '스팟필터',
+        })
+      );
+    }
   };
   return (
     <>
@@ -49,6 +59,7 @@ const FilterRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 24px;
   padding-bottom: 17px;
 `;
 
@@ -66,9 +77,10 @@ const ItemListWrapper = styled.div<{ isSpot?: boolean }>`
       `;
     } else {
       return css`
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-gap: 16px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 100%;
       `;
     }
   }}

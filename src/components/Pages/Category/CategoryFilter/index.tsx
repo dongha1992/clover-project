@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import dynamic from 'next/dynamic';
 
-const FilterGroup = dynamic(() => import('@components/Filter/FilterGroup'));
+const MenuFilter = dynamic(() => import('@components/Filter/MenuFilter'));
 
 function CategoryFilter({ title }: any) {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ function CategoryFilter({ title }: any) {
   const clickFilterHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <FilterGroup />,
+        content: <MenuFilter />,
         buttonTitle: '적용하기',
       })
     );
