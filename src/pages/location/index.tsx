@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { HomeContainer } from '@styles/theme';
@@ -10,6 +10,8 @@ import { setAlert } from '@store/alert';
 /* TODO: 검색 결과 리스트 */
 
 function LocationPage() {
+  const addressRef = useRef<HTMLInputElement>(null);
+
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -27,6 +29,8 @@ function LocationPage() {
     );
   };
 
+  const searchAddressHandler = () => {};
+
   const goToMapScreen = (): void => {
     router.push('/location/address-detail');
   };
@@ -35,15 +39,13 @@ function LocationPage() {
     <HomeContainer>
       <Wrapper>
         <TextInput
-          width="100%"
-          height="48px"
           name="input"
-          size="14px"
           style={{ minWidth: 312 }}
-          padding="12px 16px"
           placeholder="도로명, 건물명 또는 지번으로 검색"
           inputType="text"
           svg="searchIcon"
+          eventHandler={searchAddressHandler}
+          ref={addressRef}
         />
         <CurrentLocBtn onClick={clickSetCurrentLoc}>
           <SVGIcon name="locationBlack" />

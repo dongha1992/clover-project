@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 
+/*TODO : 왼쪽오른쪽 버튼 */
+
 const BANNERS = [
   './images/img1.png',
   './images/img1.png',
