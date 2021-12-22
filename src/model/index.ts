@@ -141,3 +141,55 @@ export interface IChangePassword {
   newPassword: string;
   oldPassword?: string;
 }
+
+export interface IJusoRequest {
+  query: string;
+  page: number;
+}
+
+export interface IJusoResponse {
+  common: ICommon;
+  juso: Array<IJuso>;
+}
+
+export interface IAddress {
+  readonly zipCode: string | null;
+  readonly roadAddress: string | null;
+  readonly buildName: string | null;
+  readonly jibunAddress: string | null;
+}
+
+export interface IJuso {
+  readonly roadAddr: string | null;
+  readonly roadAddrPart1: string | null;
+  readonly roadAddrPart2: string | null;
+  readonly jibunAddr: string | null;
+  readonly engAddr: string | null;
+  readonly zipNo: string | null;
+  readonly admCd: string | null;
+  readonly rnMgtSn: string | null;
+  readonly bdMgtSn: string | null;
+  readonly detBdNmList: string | null;
+  readonly bdNm: string | null;
+  readonly bdKdcd: string | null;
+  readonly siNm: string | null;
+  readonly sggNm: string | null;
+  readonly emdNm: string | null;
+  readonly liNm: string | null;
+  readonly rn: string | null;
+  readonly udrtYn: string | null;
+  readonly buldMnnm: string | null;
+  readonly buldSlno: string | null;
+  readonly mtYn: string | null;
+  readonly lnbrMnnm: string | null;
+  readonly lnbrSlno: string | null;
+  readonly emdNo: string | null;
+}
+
+export interface ICommon {
+  totalCount: string;
+  currentPage: string;
+  countPerPage: string;
+  errorCode: string;
+  errorMessage: string;
+}
