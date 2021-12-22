@@ -24,6 +24,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;
+  cursor: pointer;
 `;
 
 export default AddressItem;

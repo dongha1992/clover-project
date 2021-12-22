@@ -1,15 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import { homePadding, theme } from '@styles/theme';
-import Header from '@components/Header';
+import { fixedBottom, theme } from '@styles/theme';
 import Button from '@components/Shared/Button';
 import Map from '@components/Map';
-import { TextB2R, TextB3R } from '@components/Shared/Text';
-import TextInput from '@components/Shared/TextInput';
-import { breakpoints } from '@utils/getMediaQuery';
-/*TODO: 버튼 위치 */
+import { TextB3R } from '@components/Shared/Text';
+import { destinationForm } from '@store/destination';
+import { useSelector } from 'react-redux';
+
+/*TODO: 지도 연동 + 마커 표시 */
 
 function AddressDetailPage() {
+  const { tempDestination } = useSelector(destinationForm);
+  console.log(tempDestination);
   return (
     <Container>
       <PlaceInfo>
@@ -25,15 +27,8 @@ function AddressDetailPage() {
         </TextB3R>
       </PlaceInfo>
       <Map />
-      <AddressDetailContainer>
-        <TextB2R padding="8px 0 0 0">선택한 주소</TextB2R>
-        <TextB3R color={theme.greyScale65}>선택 주소 상세</TextB3R>
-        <InputWrapper>
-          <TextInput placeholder="상세주소 입력 (건물명/동/호)" />
-        </InputWrapper>
-      </AddressDetailContainer>
       <ButtonWrapper>
-        <Button width="100%" margin="0 0 0 0" borderRadius="0">
+        <Button width="100%" height="100%" margin="0 0 0 0" borderRadius="0">
           설정하기
         </Button>
       </ButtonWrapper>
@@ -44,15 +39,6 @@ function AddressDetailPage() {
 const Container = styled.div`
   position: relative;
   padding-bottom: 20px;
-`;
-
-const AddressDetailContainer = styled.div`
-  ${homePadding}
-  margin: 8px 0px;
-`;
-
-const InputWrapper = styled.div`
-  padding-top: 16px;
 `;
 
 const PlaceInfo = styled.div`
@@ -74,27 +60,7 @@ const PlaceInfo = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  max-width: ${breakpoints.mobile}px;
-  position: fixed;
-  bottom: 0px;
-  right: 0px;
-  z-index: 10;
-  height: 56px;
-  left: calc(50%);
-  background-color: ${({ theme }) => theme.black};
-
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 0;
-  `};
-
-  ${({ theme }) => theme.mobile`
-    margin: 0 auto;
-    left: 0
-  `};
+  ${fixedBottom}
 `;
 
 export default AddressDetailPage;

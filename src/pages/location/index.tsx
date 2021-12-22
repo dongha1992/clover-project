@@ -10,6 +10,7 @@ import { setAlert } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/addressItem';
+import { SET_DESTINATION_TEMP } from '@store/destination';
 /* TODO: 검색 결과 리스트 */
 
 function LocationPage() {
@@ -54,6 +55,7 @@ function LocationPage() {
 
   const goToMapScreen = (address: any): void => {
     console.log(address);
+    dispatch(SET_DESTINATION_TEMP(address));
     router.push('/location/address-detail');
   };
 
@@ -62,7 +64,7 @@ function LocationPage() {
       <Wrapper>
         <TextInput
           name="input"
-          style={{ minWidth: 312 }}
+          // style={{ minWidth: 312 }}
           placeholder="도로명, 건물명 또는 지번으로 검색"
           inputType="text"
           svg="searchIcon"
