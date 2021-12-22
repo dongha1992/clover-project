@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { HomeContainer } from '@styles/theme';
@@ -7,9 +7,14 @@ import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
+import { searchAddressJuso } from '@api/search';
+import { IJuso } from '@model/index';
+import AddressItem from '@components/Pages/Location/addressItem';
 /* TODO: 검색 결과 리스트 */
 
 function LocationPage() {
+  const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
+  const [totalCount, setTotalCount] = useState<string>('0');
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -29,9 +34,26 @@ function LocationPage() {
     );
   };
 
-  const searchAddressHandler = () => {};
+  const searchAddressHandler = async () => {
+    if (addressRef.current) {
+      const query = addressRef.current?.value;
+      const params = {
+        query,
+        page: 1,
+      };
+      try {
+        let { data } = await searchAddressJuso(params);
+        setResultAddress(data.results.juso);
+        setTotalCount(data.results.common.totalCount);
+        console.log(data.results);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
-  const goToMapScreen = (): void => {
+  const goToMapScreen = (address: any): void => {
+    console.log(address);
     router.push('/location/address-detail');
   };
 
@@ -54,8 +76,22 @@ function LocationPage() {
           </TextH6B>
         </CurrentLocBtn>
         <ResultList>
-          <TextH5B padding="0 0 17px 0">검색 결과 15개</TextH5B>
-          <TextB2R onClick={goToMapScreen}>성수동 머시기</TextB2R>
+          <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
+          {resultAddress ? (
+            resultAddress.map((address, index) => {
+              return (
+                <AddressItem
+                  key={index}
+                  roadAddr={address.roadAddr}
+                  bdNm={address.bdNm}
+                  jibunAddr={address.jibunAddr}
+                  onClick={() => goToMapScreen(address)}
+                />
+              );
+            })
+          ) : (
+            <div>검색 결과가 없습니다</div>
+          )}
         </ResultList>
       </Wrapper>
     </HomeContainer>
