@@ -131,6 +131,13 @@ export const GridWrapper = styled.div<{ gap: number }>`
   grid-gap: ${({ gap }) => gap && gap}px;
 `;
 
+export const FlexWrapWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+`;
+
 export const FlexStart = styled.div<{ padding?: string; margin?: string }>`
   width: 100%;
   display: flex;

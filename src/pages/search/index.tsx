@@ -4,15 +4,15 @@ import TextInput from '@components/Shared/TextInput';
 import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
-import { ItemListCol } from '@components/Home';
 import Item from '@components/Item';
 import axios from 'axios';
 import debounce from 'lodash-es/debounce';
 import SearchResult from '@components/Pages/Search/SearchResult';
-import { homePadding } from '@styles/theme';
+import { homePadding, FlexWrapWrapper } from '@styles/theme';
 import RecentSearch from '@components/Pages/Search/RecentSearch';
 import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
+import SVGIcon from '@utils/SVGIcon';
 
 function SearchPage() {
   const [itemList, setItemList] = useState<any[]>([]);
@@ -21,6 +21,7 @@ function SearchPage() {
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [isFocus, setIsFocus] = useState<boolean>(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -77,6 +78,17 @@ function SearchPage() {
 
   const onBlurHandler = () => {
     setIsFocus(false);
+    initInputHandler();
+  };
+
+  const clearInputHandler = () => {
+    initInputHandler();
+  };
+
+  const initInputHandler = () => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
   };
 
   const removeRecentSearchItemHandler = useCallback(
@@ -113,6 +125,11 @@ function SearchPage() {
           onBlur={onBlurHandler}
           ref={inputRef}
         />
+        {inputRef.current && inputRef.current?.value.length > 0 && (
+          <div className="removeSvg" onClick={clearInputHandler}>
+            <SVGIcon name="removeItem" />
+          </div>
+        )}
       </Wrapper>
       {keyword && isSearched ? (
         <SearchResultContainer>
@@ -139,11 +156,11 @@ function SearchPage() {
               <BorderLine padding="0 24px" />
               <MdRecommendationWrapper>
                 <TextH3B padding="24px">MD 추천</TextH3B>
-                <ItemListCol>
+                <FlexWrapWrapper>
                   {itemList.map((item, index) => {
                     return <Item item={item} key={index} />;
                   })}
-                </ItemListCol>
+                </FlexWrapWrapper>
               </MdRecommendationWrapper>
             </DefaultSearchContainer>
           ) : (
@@ -164,6 +181,12 @@ const Container = styled.main``;
 
 const Wrapper = styled.div`
   padding: 8px 24px;
+  position: relative;
+  .removeSvg {
+    position: absolute;
+    right: 10%;
+    top: 35%;
+  }
 `;
 
 const CategoryWrapper = styled.div`
