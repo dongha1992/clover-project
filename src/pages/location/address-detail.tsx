@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 
 function AddressDetailPage() {
   const { tempDestination } = useSelector(destinationForm);
-  console.log(tempDestination);
+
   return (
     <Container>
       <PlaceInfo>

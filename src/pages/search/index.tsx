@@ -15,12 +15,6 @@ import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
 
 function SearchPage() {
-  /* TODO: useLocalStorage 정리해야함 */
-  // const [storedValue, setLocalStorageValue] = useLocalStorage(
-  //   'recentSearch',
-  //   []
-  // );
-
   const [itemList, setItemList] = useState<any[]>([]);
   const [searchResult, setSearchResult] = useState<any>([]);
   const [keyword, setKeyword] = useState<string>('');
@@ -104,8 +98,8 @@ function SearchPage() {
         <TextInput
           placeholder="원하시는 상품을 검색해보세요."
           svg="searchIcon"
-          keyPressHandler={debounce(getSearchResult, 300)}
-          eventHandler={debounce(changeInputHandler, 300)}
+          keyPressHandler={getSearchResult}
+          eventHandler={changeInputHandler}
           ref={inputRef}
         />
       </Wrapper>
