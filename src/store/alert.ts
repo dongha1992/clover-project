@@ -19,7 +19,6 @@ export const alert = createSlice({
   initialState: null as null | TAlert,
   reducers: {
     setAlert: (state, action: PayloadAction<TAlert | null>) => {
-      console.log(action.payload);
       return action.payload;
     },
   },
