@@ -148,8 +148,10 @@ export interface IJusoRequest {
 }
 
 export interface IJusoResponse {
-  common: ICommon;
-  juso: Array<IJuso>;
+  results: {
+    common: ICommon;
+    juso: Array<IJuso>;
+  };
 }
 
 export interface IAddress {
