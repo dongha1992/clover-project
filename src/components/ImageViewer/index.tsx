@@ -17,6 +17,7 @@ function ImageViewer({ images }: any) {
   };
 
   const totalImg = images.length;
+
   return (
     <ModalFullScreen
       height={'300px'}
