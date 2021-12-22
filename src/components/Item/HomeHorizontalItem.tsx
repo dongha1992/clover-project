@@ -12,12 +12,11 @@ import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
-  isCart?: boolean;
 };
 
 const isNew = true;
 
-function Item({ item, isCart }: TProps) {
+function HomeHorizontalItem({ item }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -51,7 +50,7 @@ function Item({ item, isCart }: TProps) {
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
-          <TextB3R margin="8px 0 0 0" width="100%" textHide>
+          <TextB3R margin="8px 0 0 0" width="100%" textHideMultiline>
             {item.name}
           </TextB3R>
         </NameWrapper>
@@ -61,16 +60,6 @@ function Item({ item, isCart }: TProps) {
           </TextH5B>
           <TextH5B>{item.price}원</TextH5B>
         </PriceWrapper>
-        {!isCart && (
-          <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
-        )}
-        <LikeAndReview>
-          <Like>
-            <SVGIcon name="like" />
-            <TextB3R>{item.like}</TextB3R>
-          </Like>
-          <TextB3R>리뷰 {item.review}</TextB3R>
-        </LikeAndReview>
         <TagWrapper>
           {item.tags.map((tag: string, index: number) => {
             if (index > 1) return;
@@ -135,30 +124,17 @@ const NewTagWrapper = styled.div`
 `;
 
 const NameWrapper = styled.div`
-  height: 26px;
+  height: 40px;
   width: 100%;
 `;
 
 const PriceWrapper = styled.div`
   display: flex;
-  margin-bottom: 8px;
-`;
-
-const LikeAndReview = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 8px 0px;
-`;
-
-const Like = styled.div`
-  display: flex;
-  align-items: center;
+  margin: 8px 0;
 `;
 
 const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default Item;
+export default HomeHorizontalItem;

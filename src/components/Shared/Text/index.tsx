@@ -30,6 +30,7 @@ export interface IProps {
   wordBreak?: string;
   wordWrap?: string;
   textHide?: boolean;
+  textHideMultiline?: boolean;
 }
 
 /* 사용법 
@@ -75,6 +76,18 @@ const Container = styled.div<IProps>`
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      `;
+    }
+  }}
+
+  ${({ textHideMultiline }) => {
+    if (textHideMultiline) {
+      return css`
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       `;
     }
   }}
