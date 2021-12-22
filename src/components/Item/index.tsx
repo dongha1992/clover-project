@@ -88,6 +88,7 @@ function Item({ item, isCart }: TProps) {
 
 const Container = styled.div`
   max-width: 220px;
+  width: 48%;
   height: auto;
   background-color: #fff;
   margin-bottom: 10px;

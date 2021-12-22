@@ -31,11 +31,11 @@ function Home() {
       <SectionWrapper>
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
-        <ItemListCol>
+        <FlexWrapper>
           {itemList.map((item, index) => {
             return <Item item={item} key={index} />;
           })}
-        </ItemListCol>
+        </FlexWrapper>
       </SectionWrapper>
       <LineBanner />
       <FlexSpace>
@@ -73,6 +73,13 @@ export const ItemListCol = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 16px;
+`;
+
+const FlexWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
 `;
 
 const LineBanner = styled.div`

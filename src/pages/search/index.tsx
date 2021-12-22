@@ -20,6 +20,7 @@ function SearchPage() {
   const [keyword, setKeyword] = useState<string>('');
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
+  const [isFocus, setIsFocus] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -70,6 +71,14 @@ function SearchPage() {
     }
   };
 
+  const onFocusHandler = () => {
+    setIsFocus(true);
+  };
+
+  const onBlurHandler = () => {
+    setIsFocus(false);
+  };
+
   const removeRecentSearchItemHandler = useCallback(
     (keyword: string) => {
       const filtedRecentList = recentKeywords.filter((k) => k !== keyword);
@@ -100,6 +109,8 @@ function SearchPage() {
           svg="searchIcon"
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
+          onFocus={onFocusHandler}
+          onBlur={onBlurHandler}
           ref={inputRef}
         />
       </Wrapper>
@@ -109,7 +120,7 @@ function SearchPage() {
         </SearchResultContainer>
       ) : (
         <>
-          {!keyword.length ? (
+          {!isFocus ? (
             <DefaultSearchContainer>
               <CategoryWrapper>
                 <TextH3B>카테고리</TextH3B>
