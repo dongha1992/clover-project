@@ -14,6 +14,7 @@ export interface ISpotItem {
   availableTime: string;
   spaceType: string;
   url: string;
+  method: string;
 }
 
 interface IProps {
