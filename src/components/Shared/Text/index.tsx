@@ -70,12 +70,13 @@ const Container = styled.div<IProps>`
   word-break: ${(props) => props.wordBreak && props.wordBreak};
   word-wrap: ${(props) => props.wordWrap && props.wordWrap};
 
-  ${({ textHide }) => {
-    if (textHide) {
+  ${(props) => {
+    if (props.textHide) {
       return css`
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        width: ${props.width};
       `;
     }
   }}
