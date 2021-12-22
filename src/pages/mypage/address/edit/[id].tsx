@@ -28,6 +28,8 @@ import { useDispatch } from 'react-redux';
 import { ACCESS_METHOD } from '@pages/payment/index';
 import { Select, AcessMethodOption } from '@components/Shared/Dropdown';
 import SVGIcon from '@utils/SVGIcon';
+import { setBottomSheet } from '@store/bottomSheet';
+import PickupSheet from '@components/BottomSheet/PickupSheet';
 
 const isParcel = true;
 
@@ -50,6 +52,7 @@ function AddressEditPage({ id }: any) {
   };
 
   const checkSamePerson = () => {};
+
   const checkDefaultSpot = () => {
     setIsDefaultSpot(!isDefaultSpot);
   };
@@ -76,7 +79,9 @@ function AddressEditPage({ id }: any) {
 
   const selectOptionHandler = () => {};
 
-  const changePickUpPlace = () => {};
+  const changePickUpPlace = () => {
+    dispatch(setBottomSheet({ content: <PickupSheet />, buttonTitle: '확인' }));
+  };
 
   if (Object.keys(selectedAddress).length < 0) {
     return <div>로딩중</div>;
