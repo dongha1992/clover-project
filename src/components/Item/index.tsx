@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextB3R, TextH5B } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
+import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { theme, FlexCol, showMoreText } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import Tag from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
@@ -17,6 +17,8 @@ type TProps = {
   item: any;
   isCart?: boolean;
 };
+
+const isNew = true;
 
 function Item({ item, isCart }: TProps) {
   const dispatch = useDispatch();
@@ -44,34 +46,45 @@ function Item({ item, isCart }: TProps) {
         <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
+        {isNew && (
+          <NewTagWrapper>
+            <TextH6B color={theme.white}>New</TextH6B>
+          </NewTagWrapper>
+        )}
       </ImageWrapper>
-
-      <TextB3R margin="8px 0 0 0" height="40px">
-        {item.name}
-      </TextB3R>
-      <PriceWrapper>
-        <TextH5B color={theme.brandColor} padding={'0 4px 0 0'}>
-          {item.discount}%
-        </TextH5B>
-        <TextH5B>{item.price}원</TextH5B>
-      </PriceWrapper>
-      {!isCart && (
-        <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
-      )}
-      <LikeAndReview>
-        <Like>
-          <SVGIcon name="like" />
-          <TextB3R>{item.like}</TextB3R>
-        </Like>
-        <TextB3R>리뷰 {item.review}</TextB3R>
-      </LikeAndReview>
-      <TagWrapper>
-        {item.tags.map((tag: string, index: number) => (
-          <Tag key={index} margin="0px 8px 8px 0px">
-            {tag}
-          </Tag>
-        ))}
-      </TagWrapper>
+      <FlexCol>
+        <NameWrapper>
+          <TextB3R margin="8px 0 0 0" width="100%" textHide>
+            {item.name}
+          </TextB3R>
+        </NameWrapper>
+        <PriceWrapper>
+          <TextH5B color={theme.brandColor} padding="0 4px 0 0">
+            {item.discount}%
+          </TextH5B>
+          <TextH5B>{item.price}원</TextH5B>
+        </PriceWrapper>
+        {!isCart && (
+          <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
+        )}
+        <LikeAndReview>
+          <Like>
+            <SVGIcon name="like" />
+            <TextB3R>{item.like}</TextB3R>
+          </Like>
+          <TextB3R>리뷰 {item.review}</TextB3R>
+        </LikeAndReview>
+        <TagWrapper>
+          {item.tags.map((tag: string, index: number) => {
+            if (index > 1) return;
+            return (
+              <Tag key={index} margin="0px 8px 8px 0px">
+                {tag}
+              </Tag>
+            );
+          })}
+        </TagWrapper>
+      </FlexCol>
     </Container>
   );
 }
@@ -80,7 +93,7 @@ const Container = styled.div`
   max-width: 220px;
   height: auto;
   background-color: #fff;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
   display: inline-block;
   flex-direction: column;
   align-items: flex-start;
@@ -104,6 +117,7 @@ const CartBtn = styled.div`
     height: 16px;
   }
 `;
+
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -112,6 +126,20 @@ const ImageWrapper = styled.div`
 const ItemImage = styled.img`
   width: 100%;
   border-radius: 8px;
+`;
+
+const NewTagWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  left: 0;
+  top: 10%;
+  background-color: ${theme.brandColor};
+  padding: 4px 8px;
+`;
+
+const NameWrapper = styled.div`
+  height: 26px;
+  width: 155px;
 `;
 
 const PriceWrapper = styled.div`
