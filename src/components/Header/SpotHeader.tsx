@@ -24,7 +24,7 @@ function SpotHeader() {
         </Left>
         <Right>
           <div className="search">
-            <Link href="/search" passHref>
+            <Link href="/spot/search" passHref>
               <a>
                 <SVGIcon name="searchIcon" />
               </a>

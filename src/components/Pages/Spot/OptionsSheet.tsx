@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { theme, homePadding } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { useRouter } from 'next/router';
 
 const TIME = [
   { id: 1, name: '12:00' },
@@ -11,7 +12,7 @@ const TIME = [
   { id: 4, name: '기타' },
 ];
 
-const PLACE = [
+const PRIVATE_PLACE = [
   { id: 1, name: '회사' },
   { id: 2, name: '학교' },
   { id: 3, name: '공유오피스' },
@@ -38,12 +39,13 @@ const PUBLIC_PLACE = [
   { id: 7, name: '기타' },
 ];
 
-function OptionsSheet({ type }: any) {
+const OptionsSheet = ({ type }: any): ReactElement => {
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
   const changeRadioHandler = (id: number) => {
     setSelectedPickupPlace(id);
   };
-
+  const router = useRouter();
+  const {query} = router.query;
   // const seletedTime = PICK_UP_PLACE.find((item)=> item.id === Number(selectedPickupPlace))?.name;
 
   return (
@@ -71,9 +73,9 @@ function OptionsSheet({ type }: any) {
             })}
           </SelectWrapper>
         )}
-        {type === 'place' && (
+        {type === 'place' && query === 'private' ?
           <SelectWrapper>
-            {PLACE.map((item) => {
+            {PRIVATE_PLACE.map((item) => {
               return (
                 <Selected key={item.id}>
                   <RadioButton
@@ -85,7 +87,21 @@ function OptionsSheet({ type }: any) {
               );
             })}
           </SelectWrapper>
-        )}
+        :
+        <SelectWrapper>
+        {PUBLIC_PLACE.map((item) => {
+          return (
+            <Selected key={item.id}>
+              <RadioButton
+                onChange={() => changeRadioHandler(item.id)}
+                isSelected={selectedPickupPlace === item.id}
+              />
+              <TextH5B padding="0 0 0 8px">{item.name}</TextH5B>
+            </Selected>
+          );
+        })}
+        </SelectWrapper>
+        }
         {type === 'pickUp' && (
           <SelectWrapper>
             {PICKUP.map((item) => {

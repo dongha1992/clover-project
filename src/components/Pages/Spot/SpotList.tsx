@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import {
   TextH2B,
@@ -15,12 +15,12 @@ import { useRouter } from 'next/router';
 
 interface IProps {
   items: any; // API 통신 이후 타입 지정 예정
-  title: string;
+  title?: string;
   subTitle?: string;
   type: string;
 }
 
-const SpotList = ({ items, title, subTitle, type }: IProps) => {
+const SpotList = ({ items, title, subTitle, type }: IProps): ReactElement => {
   const router = useRouter();
 
   const goToDetail = (id: number): void => {

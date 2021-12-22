@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -21,7 +21,7 @@ interface IProps {
   onClick: () => void;
 }
 
-function SpotItem({ item, onClick }: IProps) {
+function SpotItem({ item, onClick }: IProps): ReactElement {
   return (
     <Container>
       <FlexColStart>

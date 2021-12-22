@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextB1R, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 
-function DetailBottomStory({ items }: any) {
+const DetailBottomStory = ({ items }: any): ReactElement => {
   const itemsLeng: number = items?.story?.length;
 
   return (
