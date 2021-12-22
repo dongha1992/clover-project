@@ -23,8 +23,6 @@ const Container = styled.div`
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store: any) => async (context: any) => {
-    // await setRefreshToken(context, store);
-
     return {
       props: {},
     };

@@ -9,6 +9,7 @@ import Item from '@components/Item';
 import { useDispatch } from 'react-redux';
 import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
+import HomeHorizontalItem from '@components/Item/HomeHorizontalItem';
 
 function Home() {
   const [itemList, setItemList] = useState([]);
@@ -45,7 +46,7 @@ function Home() {
       <ItemListRowWrapper>
         <ItemListRow>
           {itemList.map((item, index) => {
-            return <Item item={item} key={index} />;
+            return <HomeHorizontalItem item={item} key={index} />;
           })}
         </ItemListRow>
       </ItemListRowWrapper>
