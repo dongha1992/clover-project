@@ -38,7 +38,6 @@ const OptionList = styled.li`
   border-bottom: 1px solid #e4e4e4;
   background-color: white;
   cursor: pointer;
-  z-index: 10000;
 
   :hover {
     background-color: #d9d9d9;
