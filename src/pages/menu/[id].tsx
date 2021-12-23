@@ -39,6 +39,8 @@ const DetailBottomReview = dynamic(
 );
 
 /* TODO: 영양 정보 리팩토링 */
+/* TODO: 영양 정보 샐러드만 보여줌 */
+/* TODO: 베스트후기 없으면 안 보여줌  */
 
 export interface IMenuItem {
   description: string;
@@ -159,7 +161,12 @@ function MenuDetailPage({ id }: any) {
           <MenuNameWrapper>
             <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
             {menuItem.tags.map((tag: string, index: number) => {
-              return <Tag key={index}>{tag}</Tag>;
+              if (index > 1) return;
+              return (
+                <Tag key={index} margin="0 4px 0 0">
+                  {tag}
+                </Tag>
+              );
             })}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
