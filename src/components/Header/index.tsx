@@ -29,8 +29,9 @@ function Header() {
         '/location/address-detail': '내 위치 설정하기',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
-        '/review': '사진 후기',
-        '/review/[id]': '후기 상세',
+        '/menu/[menuId]/review/photo': '사진 후기',
+        '/menu/[menuId]/review/total': '전체 후기',
+        '/menu/[menuId]/review/[id]': '후기 상세',
         '/cart': '장바구니',
         '/cart/delivery-info': '배송정보',
         '/spot/search': '프코스팟 검색',
@@ -69,36 +70,10 @@ function Header() {
 
       const title = headerTitleMap[currentPath];
       switch (true) {
-        case [
-          '/location',
-          '/location/address-detail',
-          '/search',
-          '/review',
-          '/review/[id]',
-          '/cart',
-          '/cart/delivery-info',
-          '/spot/search',
-          '/payment',
-          '/mypage/card',
-          '/mypage/card/register',
-          '/mypage/card/register/term',
-          '/payment/finish',
-          '/mypage/order-detail',
-          '/signup',
-          '/login',
-          '/signup/auth',
-          '/signup/email-password',
-          '/signup/optional',
-          '/spot/spot-req',
-          '/spot/register',
-          '/spot/register/submit',
-        ].includes(currentPath): {
-          return <DefaultHeader title={title} />;
-        }
         case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
-        case ['/menu/[id]', '/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
 
