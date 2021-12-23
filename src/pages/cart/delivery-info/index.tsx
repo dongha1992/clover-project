@@ -131,8 +131,14 @@ function DeliverInfoPage() {
                             {item.tag}
                           </Tag>
                         )}
-                        {isSelected && <Tooltip message={'asdasdasd'} />}
                       </RowLeft>
+                      {isSelected && (
+                        <Tooltip
+                          message={'새벽배송이 가능해요'}
+                          top="25px"
+                          width="160px"
+                        />
+                      )}
                       {index === 2 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
@@ -282,6 +288,7 @@ const RowLeft = styled.div`
   display: flex;
 `;
 const Content = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;

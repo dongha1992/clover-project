@@ -33,8 +33,8 @@ function Item({ item, isCart }: TProps) {
     );
   };
 
-  const goToDetail = (id: number) => {
-    router.push(`/menu/${id}`);
+  const goToDetail = (menuId: number) => {
+    router.push(`/menu/${menuId}`);
   };
   return (
     <Container onClick={() => goToDetail(item.id)}>

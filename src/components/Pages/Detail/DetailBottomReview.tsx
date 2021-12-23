@@ -28,6 +28,10 @@ function DetailBottomReview({ reviews, isSticky, menuId }: any) {
     router.push(`/menu/${menuId}/review/${id}`);
   };
 
+  const goToWriteReview = () => {
+    router.push(`/mypage//review/write/${menuId}`);
+  };
+
   const clickImgViewHandler = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
@@ -52,6 +56,7 @@ function DetailBottomReview({ reviews, isSticky, menuId }: any) {
           border
           borderRadius="8"
           margin="0 0 32px 0"
+          onClick={goToWriteReview}
         >
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
