@@ -134,7 +134,7 @@ const Container = styled.div<{ height: number | null }>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
-  z-index: 10000;
+  z-index: 100;
 
   left: calc(50%);
   right: 0;
@@ -164,7 +164,7 @@ const BottomSheetContent = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-  z-index: 10000;
+  z-index: 100;
   position: absolute;
   display: flex;
   width: 100%;

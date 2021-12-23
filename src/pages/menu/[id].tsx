@@ -57,6 +57,8 @@ export interface IMenuItem {
   reviews: any[];
 }
 
+const hasAvailableCoupon = true;
+
 function MenuDetailPage({ id }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
@@ -189,10 +191,17 @@ function MenuDetailPage({ id }: any) {
                 </TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
-            <CouponWrapper onClick={couponDownloadHandler}>
-              <TextH6B padding="0 4px 0 0">쿠폰 받기</TextH6B>
-              <SVGIcon name="download" />
-            </CouponWrapper>
+            {hasAvailableCoupon ? (
+              <CouponWrapper onClick={couponDownloadHandler}>
+                <TextH6B padding="4px 4px 0 0">쿠폰 받기</TextH6B>
+                <SVGIcon name="download" />
+              </CouponWrapper>
+            ) : (
+              <CouponWrapper>
+                <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
+                <SVGIcon name="checkBlack18" />
+              </CouponWrapper>
+            )}
           </PriceAndCouponWrapper>
           <BorderLine height={1} margin="16px 0" />
           <NutritionInfo>

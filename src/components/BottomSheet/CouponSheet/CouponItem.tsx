@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
 
-function CouponItem({ coupon }: any) {
+function CouponItem({ coupon, onClick }: any) {
   const isRateDiscount = coupon.type === 'rate';
   return (
     <Container isDownload={coupon.isDownload}>
@@ -28,7 +28,7 @@ function CouponItem({ coupon }: any) {
               <SVGIcon name="couponDownloadComplete" />
             </Complete>
           ) : (
-            <Incomplete>
+            <Incomplete onClick={onClick}>
               <SVGIcon name="couponDownloadAvailable" />
             </Incomplete>
           )}
