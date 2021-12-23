@@ -8,7 +8,9 @@ import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { Provider } from 'react-redux';
 import wrapper from '@store/index';
-import { setRefreshToken } from '@components/Auth';
+import { SET_IS_MOBILE } from '@store/common';
+import MobileDetect from 'mobile-detect';
+import { isMobile } from 'react-device-detect';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -44,14 +46,24 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 MyApp.getInitialProps = wrapper.getInitialPageProps(
-  (store) => async (context: any) => {
-    {
-      // await setRefreshToken(context, store);
-      return {
-        props: {},
-      };
+  (store) =>
+    async ({ ctx }: any) => {
+      {
+        let mobile;
+
+        if (ctx.req) {
+          const md = new MobileDetect(ctx.req.headers['user-agent']);
+          mobile = !!md.mobile();
+        } else {
+          mobile = isMobile;
+        }
+
+        store.dispatch(SET_IS_MOBILE(mobile));
+        return {
+          props: {},
+        };
+      }
     }
-  }
 );
 
 export default wrapper.withRedux(MyApp);
