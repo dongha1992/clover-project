@@ -38,9 +38,20 @@ function MenuDetailHeader({ title }: TProps) {
   };
 
   const goToShare = () => {
-    console.log(isMobile);
     if (isMobile) {
-      console.log('D');
+      if (navigator.share) {
+        navigator
+          .share({
+            title: 'test',
+            url: 'test',
+          })
+          .then(() => {
+            alert('공유가 완료되었습니다.');
+          })
+          .catch(console.error);
+      } else {
+        return 'null';
+      }
     } else {
       dispatch(initBottomSheet());
       dispatch(
