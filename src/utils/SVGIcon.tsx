@@ -403,6 +403,26 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  plus18: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="3" y="8.25" width="12" height="1.5" rx="0.75" fill="#454545" />
+      <rect
+        x="9.75"
+        y="3"
+        width="12"
+        height="1.5"
+        rx="0.75"
+        transform="rotate(90 9.75 3)"
+        fill="#454545"
+      />
+    </svg>
+  ),
   defaultCancel: () => (
     <svg
       width="18"
@@ -888,6 +908,7 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+
   cardRegister: () => (
     <svg
       width="112"

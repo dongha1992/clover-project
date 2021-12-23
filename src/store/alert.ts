@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import React from 'react';
 import { AppState } from '.';
 
 type TAlert = {
@@ -10,6 +11,7 @@ type TAlert = {
   type?: string;
   setSelectedMenu?: React.Dispatch<React.SetStateAction<string>>;
   selectedMenu?: string;
+  children?: JSX.Element;
 };
 
 export const alert = createSlice({
