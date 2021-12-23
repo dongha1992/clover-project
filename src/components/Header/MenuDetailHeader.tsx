@@ -7,6 +7,7 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
 import { menuSelector } from '@store/menu';
+import { commonSelector } from '@store/common';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
 import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
 import CartIcon from '@components/Header/Cart';
@@ -14,6 +15,7 @@ import ShareSheet from '@components/BottomSheet/ShareSheet';
 
 type TProps = {
   title?: string;
+  isMobile?: boolean;
 };
 
 /* TODO: Header props으로 svg만 추가 */
@@ -21,6 +23,7 @@ type TProps = {
 function MenuDetailHeader({ title }: TProps) {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
+  const { isMobile } = useSelector(commonSelector);
 
   const router = useRouter();
 
@@ -35,13 +38,18 @@ function MenuDetailHeader({ title }: TProps) {
   };
 
   const goToShare = () => {
-    dispatch(initBottomSheet());
-    dispatch(
-      setBottomSheet({
-        content: <ShareSheet />,
-        buttonTitle: '',
-      })
-    );
+    console.log(isMobile);
+    if (isMobile) {
+      console.log('D');
+    } else {
+      dispatch(initBottomSheet());
+      dispatch(
+        setBottomSheet({
+          content: <ShareSheet />,
+          buttonTitle: '',
+        })
+      );
+    }
   };
 
   const goToCart = () => {
