@@ -24,6 +24,7 @@ const SpotDetailPage = ({id}: IStoreNoti) => {
   const [spotItem, getSpotItem] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const tabRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +82,9 @@ const SpotDetailPage = ({id}: IStoreNoti) => {
     infinite: true,
     customPagimg: () => <div />,
     centerPadding: '20px',
+    afterChange: (indexOfCurrentSlide: number) => {
+      setCurrentIndex(indexOfCurrentSlide)
+    }
   };
 
   const settingNotice = {
@@ -100,17 +104,20 @@ const SpotDetailPage = ({id}: IStoreNoti) => {
 
   return (
     <Container>
-      <TopBannerSlider {...settingsTop}>
-          {spotItem.detail?.imgUrl?.map((img: string, index: number)=>{
-            return (
-              <StoreImgWrapper
-                src = {img}
-                alt = '스팟 이미지'
-                key = {index}
-              />
-            )
-          })}
-      </TopBannerSlider>
+      <SliderWrapper>
+        <TopBannerSlider {...settingsTop}>
+            {spotItem.detail?.imgUrl?.map((img: string, index: number)=>{
+              return (
+                <StoreImgWrapper
+                  src = {img}
+                  alt = '스팟 이미지'
+                  key = {index}
+                />
+              )
+            })}
+        </TopBannerSlider>
+        <SlideCount>{`${currentIndex+1}/2`}</SlideCount>
+      </SliderWrapper>
       <StoreWrapper>
         <TagWrapper>
           {
@@ -206,9 +213,34 @@ const SpotDetailPage = ({id}: IStoreNoti) => {
 
 const Container = styled.main``;
 
+const SliderWrapper = styled.section`
+  position: relative;
+
+`;
+
 const TopBannerSlider = styled(Slider)`
   max-width: ${breakpoints.mobile}px;
   min-width: ${breakpoints.sm}px;
+  position: absolute;
+`
+
+const SlideCount= styled.div`
+  width: 40px;
+  height: 26px;
+  border-radius: 24px;
+  background: #24242480;
+  color: ${theme.white};
+  text-align: center;
+  padding: 4px 0;
+  display: inline-block;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 50;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0.9px;
 `
 
 const StoreImgWrapper = styled.img`

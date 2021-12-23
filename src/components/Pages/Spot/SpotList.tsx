@@ -18,9 +18,10 @@ interface IProps {
   title?: string;
   subTitle?: string;
   type: string;
+  btnText ?:string;
 }
 
-const SpotList = ({ items, title, subTitle, type }: IProps): ReactElement => {
+const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactElement => {
   const router = useRouter();
 
   const goToDetail = (id: number): void => {
@@ -96,7 +97,7 @@ const SpotList = ({ items, title, subTitle, type }: IProps): ReactElement => {
                       <TextH6B
                         color={theme.greyScale65}
                       >{`${item.distance}m`}</TextH6B>
-                      <Button onClick={goToCart}>주문하기</Button>
+                      <Button onClick={goToCart}>{btnText}</Button>
                     </ButtonWrapper>
                   </LocationInfoWrapper>
                 </Container>
@@ -139,7 +140,7 @@ const SpotList = ({ items, title, subTitle, type }: IProps): ReactElement => {
                         color={theme.greyScale65}
                       >{`${item.distance}m`}</TextH6B>
                     </TextWrapper>
-                    <Button onClick={goToCart}>주문하기</Button>
+                    <Button onClick={goToCart}>{btnText}</Button>
                   </LocationInfoWrapper>
                 </Container>
               );
