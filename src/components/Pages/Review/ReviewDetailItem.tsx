@@ -40,7 +40,6 @@ function ReviewDetailItem({ review, isDetailPage, clickImgViewHandler }: any) {
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
                 {review.images.map((img: any, index: number) => {
-                  const isFirst = index === 0;
                   if (index > 1) return;
                   return (
                     <ReviewImage

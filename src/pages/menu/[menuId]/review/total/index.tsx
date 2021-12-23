@@ -9,9 +9,12 @@ import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { BASE_URL } from '@constants/mock';
 
-function DetailBottomReview({ reviews, isSticky, menuId }: any) {
+function TotalReviewPage({ reviews, menuId }: any) {
   reviews = [...reviews, ...reviews, ...reviews];
+
   const dispatch = useDispatch();
 
   const hasReivew = reviews.length > 0;
@@ -19,10 +22,6 @@ function DetailBottomReview({ reviews, isSticky, menuId }: any) {
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
   }, []);
-
-  const goToTotalReview = () => {
-    router.push(`/menu/${menuId}/review/total`);
-  };
 
   const goToReviewDetail = (id: number) => {
     router.push(`/menu/${menuId}/review/${id}`);
@@ -33,7 +32,7 @@ function DetailBottomReview({ reviews, isSticky, menuId }: any) {
   };
 
   return (
-    <Container isSticky={isSticky}>
+    <Container>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
           <ReviewOnlyImage
@@ -67,23 +66,12 @@ function DetailBottomReview({ reviews, isSticky, menuId }: any) {
             />
           );
         })}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          borderRadius="8"
-          onClick={goToTotalReview}
-        >
-          {reviews.length}개 후기 전체보기
-        </Button>
       </ReviewWrapper>
     </Container>
   );
 }
 
-const Container = styled.div<{ isSticky: boolean }>`
-  margin-top: ${({ isSticky }) => (isSticky ? 82 : 32)}px;
-`;
+const Container = styled.div``;
 
 const Wrapper = styled.div<{ hasReivew?: boolean }>`
   ${homePadding}
@@ -109,4 +97,18 @@ const ReviewWrapper = styled.div`
   ${homePadding}
 `;
 
-export default React.memo(DetailBottomReview);
+export async function getServerSideProps(context: any) {
+  const { menuId } = context.query;
+
+  const { data } = await axios.get(`${BASE_URL}`);
+  const selectedMenuItem: any = data.find(
+    (item: any) => item.id === Number(menuId)
+  );
+
+  const { reviews } = selectedMenuItem;
+  return {
+    props: { menuId, reviews },
+  };
+}
+
+export default TotalReviewPage;

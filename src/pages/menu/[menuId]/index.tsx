@@ -31,11 +31,11 @@ import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
 
 const DetailBottomFAQ = dynamic(
-  () => import('../../components/Pages/Detail/DetailBottomFAQ')
+  () => import('../../../components/Pages/Detail/DetailBottomFAQ')
 );
 
 const DetailBottomReview = dynamic(
-  () => import('../../components/Pages/Detail/DetailBottomReview')
+  () => import('../../../components/Pages/Detail/DetailBottomReview')
 );
 
 /* TODO: 영양 정보 리팩토링 */
@@ -59,7 +59,7 @@ export interface IMenuItem {
 
 const hasAvailableCoupon = true;
 
-function MenuDetailPage({ id }: any) {
+function MenuDetailPage({ menuId }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -96,7 +96,7 @@ function MenuDetailPage({ id }: any) {
   const getMenuDetail = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     const selectedMenuItem: IMenuItem = data.find(
-      (item: any) => item.id === Number(id)
+      (item: any) => item.id === Number(menuId)
     );
     setMenuItem(() => selectedMenuItem);
     /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
@@ -128,7 +128,13 @@ function MenuDetailPage({ id }: any) {
 
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} />;
+        return (
+          <DetailBottomReview
+            reviews={reviews}
+            isSticky={isSticky}
+            menuId={menuId}
+          />
+        );
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -280,7 +286,7 @@ function MenuDetailPage({ id }: any) {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: menuItem.review }}
+          countObj={{ 후기: menuItem.reviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
@@ -388,9 +394,9 @@ const DailySaleNumber = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { id } = context.query;
+  const { menuId } = context.query;
   return {
-    props: { id },
+    props: { menuId },
   };
 }
 
