@@ -70,7 +70,6 @@ function LocationPage() {
           let { data } = await searchAddressJuso(params);
           setResultAddress(data.results.juso);
           setTotalCount(data.results.common.totalCount);
-          console.log(data.results);
         } catch (error) {
           console.error(error);
         }
@@ -79,7 +78,6 @@ function LocationPage() {
   };
 
   const goToMapScreen = (address: any): void => {
-    console.log(address);
     dispatch(SET_DESTINATION_TEMP(address));
     router.push('/location/address-detail');
   };
