@@ -10,7 +10,7 @@ export const BASE_URL =
 export const REVIEWS_URL = 'https://jsonplaceholder.typicode.com';
 
 export const SPOT_URL =
-  'https://gist.githubusercontent.com/dongha1992/27f050e19855da7a14c725eb39cb1c72/raw/bbae99be58fadd6a8678d2c0d10fe1e81c0660ba/spot.json';
+  'https://gist.githubusercontent.com/dongha1992/27f050e19855da7a14c725eb39cb1c72/raw/9694ca856afa50727dca30120f73da59786a9a8b/spot.json';
 
 export const CLOVER_URL = 'https://clover-service-api-dev.freshcode.me';
 
@@ -33,24 +33,24 @@ export const SPOT_ITEMS = [
       notice: true,
       noticeDetail: [
         {
-        id: 1,
-        desc: '1일은 임시공휴일입니다.',
-        date: '2021-11-18',
+          id: 1,
+          desc: '1일은 임시공휴일입니다.',
+          date: '2021-11-18',
         },
         {
           id: 2,
           desc: '2일은 임시공휴일입니다.',
-          date: '2021-11-18',  
+          date: '2021-11-18',
         },
         {
           id: 3,
           desc: '3일은 임시공휴일입니다.',
-          date: '2021-11-18',  
+          date: '2021-11-18',
         },
         {
           id: 4,
           desc: '4일은 임시공휴일입니다.',
-          date: '2021-11-18',  
+          date: '2021-11-18',
         },
       ],
       pickUpInfo: {
@@ -58,7 +58,8 @@ export const SPOT_ITEMS = [
         arrivalText: '10:30 ~ 12:00 (점심)\n13:00 ~ 17:00 (저녁)',
         pickUpTime: '11:30~18:00',
         pickUpSpot: '10층 냉장고',
-        pickUpEtc: '[맴버전용] 엘에스타워 저녁배송 가능 픽업, 취식 가능(음료 구매시) '
+        pickUpEtc:
+          '[맴버전용] 엘에스타워 저녁배송 가능 픽업, 취식 가능(음료 구매시) ',
       },
       noStory: '아직 스토리가 없어요.',
       story: [
@@ -91,8 +92,8 @@ export const SPOT_ITEMS = [
         number: '024661740',
         time: '주중 09:30~22:00\n주말 09:30~19:30',
         off: '연중무휴\n(갑작스런 휴무일은 공지나 소싁을 통해 확인할 수 있어요.)',
-      }
-    }
+      },
+    },
   },
   {
     id: 1,
@@ -112,8 +113,8 @@ export const SPOT_ITEMS = [
       notice: true,
       noticeDetail: [
         {
-        desc: '21일은 임시공휴일입니다.',
-        date: '2021-11-18',
+          desc: '21일은 임시공휴일입니다.',
+          date: '2021-11-18',
         },
       ],
       pickUpInfo: {
@@ -121,7 +122,8 @@ export const SPOT_ITEMS = [
         arrivalText: '10:30 ~ 12:00 (점심)\n13:00 ~ 17:00 (저녁)',
         pickUpTime: '11:30~18:00',
         pickUpSpot: '10층 냉장고',
-        pickUpEtc: '[맴버전용] 엘에스타워 저녁배송 가능 픽업, 취식 가능(음료 구매시)'
+        pickUpEtc:
+          '[맴버전용] 엘에스타워 저녁배송 가능 픽업, 취식 가능(음료 구매시)',
       },
       noStory: '아직 스토리가 없어요.',
       story: [],
@@ -129,8 +131,8 @@ export const SPOT_ITEMS = [
         number: '024661740',
         time: '주중 09:30~22:00\n주말 09:30~19:30',
         off: '연중무휴\n(갑작스런 휴무일은 공지나 소싁을 통해 확인할 수 있어요.)',
-      }
-    }
+      },
+    },
   },
   {
     id: 2,
@@ -154,10 +156,11 @@ export const SPOT_ITEMS = [
         arrivalText: '10:30 ~ 12:00 (점심)\n13:00 ~ 17:00 (저녁)',
         pickUpTime: '11:30~18:00',
         pickUpSpot: '10층 냉장고',
-        pickUpEtc: '[맴버전용] 엘에스타워 저녁배송 가능 픽업, 취식 가능(음료 구매시)'
+        pickUpEtc:
+          '[맴버전용] 엘에스타워 저녁배송 가능 픽업, 취식 가능(음료 구매시)',
       },
       noStory: '아직 스토리가 없어요.',
-      story: [        
+      story: [
         {
         spotName: '이디야',
         date: '2011-02-14',
@@ -171,8 +174,8 @@ export const SPOT_ITEMS = [
         number: '024661740',
         time: '주중 09:30~22:00\n주말 09:30~19:30',
         off: '연중무휴\n(갑작스런 휴무일은 공지나 소싁을 통해 확인할 수 있어요.)',
-      }
-    }
+      },
+    },
   },
   {
     id: 3,
@@ -205,4 +208,3 @@ export const SPOT_ITEMS = [
     detail: {},
   },
 ];
-
