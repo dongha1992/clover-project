@@ -13,16 +13,26 @@ const SpotOnboardingPage = (): ReactElement => {
 
   const checkBox = () => {};
 
-  const goToSubmit = (): void => {
-    router.push({
-      pathname: '/spot/register/submit',
-      query: { type },
-    })
-  }
+  const goToNextPage = (): void => {
+    if(type === 'private'){
+      router.replace({
+        pathname: '/spot/register/submit',
+        query: { type },
+      })
+    }else{
+      router.push({
+        pathname: '/spot/register/submit',
+        query: { type },
+      })  
+    };
+  };
+
   return (
     <Container>
       <Wrapper>
-        <TextH2B margin='0 0 56px 0'>{`예비 프로스팟 파트너에 대한\n정보를 알려주세요`}</TextH2B>
+        <TextH2B margin='0 0 56px 0'>
+          { type === 'private' ? `신청자에 대한\n정보를 알려주세요.` : `예비 프로스팟 파트너에 대한\n정보를 알려주세요`}
+        </TextH2B>
         <InputWrapper>
             <TextH4B margin="0 0 16px 0">이름</TextH4B>
             <TextInput placeholder='이름 입력' />
@@ -35,20 +45,25 @@ const SpotOnboardingPage = (): ReactElement => {
             <TextH4B margin="0 0 16px 0">연락처</TextH4B>
             <TextInput placeholder='휴대폰 번호 (-제외)' />
         </InputWrapper>
-        <InputWrapper>
-            <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
-            <TextInput placeholder='직급 또는 호칭 입력' />
-        </InputWrapper>
-        <BottomWrapper>
-           <FlexRow>
-             <Checkbox onChange={checkBox} isSelected />
-             <TextB2R margin="0 0 0 8px">
-               신청자가 장소관리자임을 확인했습니다.
-            </TextB2R>
-           </FlexRow>
-         </BottomWrapper>
+        {
+          type === 'normal' &&
+          <>
+            <InputWrapper>
+                <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
+                <TextInput placeholder='직급 또는 호칭 입력' />
+            </InputWrapper>
+            <BottomWrapper>
+              <FlexRow>
+                <Checkbox onChange={checkBox} isSelected />
+                <TextB2R margin="0 0 0 8px">
+                  신청자가 장소관리자임을 확인했습니다.
+                </TextB2R>
+              </FlexRow>
+            </BottomWrapper>
+          </>
+        }
       </Wrapper>
-      <FixedButton onClick={goToSubmit}>
+      <FixedButton onClick={goToNextPage}>
         <Button borderRadius="0">다음</Button>
       </FixedButton>
     </Container>

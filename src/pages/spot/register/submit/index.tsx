@@ -22,6 +22,20 @@ function SubmitPage() {
     });
   };
 
+  const goToChangeInfo = (): void => {
+    router.replace({
+      pathname: '/spot/register',
+      query: { type },
+    });
+  };
+
+  const goToChangeUserInfo = (): void => {
+    router.replace({
+      pathname: '/spot/register/spot-onboarding',
+      query: { type },
+    });
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -29,7 +43,7 @@ function SubmitPage() {
         <ContentWrapper>
           <FlexBetween margin='0 0 24px 0'>
             <TextB1B >장소 정보</TextB1B>
-            <TextH6B color={theme.greyScale65} textDecoration="underline">
+            <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToChangeInfo} pointer>
                   변경하기
             </TextH6B>
           </FlexBetween>
@@ -51,16 +65,8 @@ function SubmitPage() {
             <Row />
             <ContentWrapper>
                 <FlexBetween margin='0 0 24px 0'>
-                  {
-                    type === 'private' ? (
-                      <TextB1B>신청자 정보</TextB1B>
-                    )
-                    :
-                    (
-                      <TextB1B>장소 관리자 정보</TextB1B>
-                    )
-                  }
-                  <TextH6B color={theme.greyScale65} textDecoration="underline">
+                  <TextB1B>{type === 'private' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
+                  <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToChangeUserInfo} pointer>
                     변경하기
                   </TextH6B>
                 </FlexBetween>
