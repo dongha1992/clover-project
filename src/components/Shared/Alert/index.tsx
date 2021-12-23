@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children, ReactChild } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
@@ -18,6 +18,7 @@ type TProps = {
   selectedMenu?: string;
   width?: string;
   height?: string;
+  children?: JSX.Element;
 };
 
 function Alert({
@@ -31,6 +32,7 @@ function Alert({
   setSelectedMenu,
   width = '242px',
   height = '160px',
+  children,
 }: TProps): JSX.Element {
   const dispatch = useDispatch();
 
@@ -44,6 +46,7 @@ function Alert({
     dispatch(setAlert(null));
     //  selectedMenu === '로그아웃' && setSelectedMenu && setSelectedMenu('');
   };
+
   return (
     <ModalLayout
       width={width}
@@ -52,6 +55,7 @@ function Alert({
       style={{ borderRadius: '8px' }}
     >
       <AlertBox>
+        {children && children}
         <AlertText>
           <TextB2R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}
@@ -83,6 +87,7 @@ const AlertBox = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+  padding: 24px;
 `;
 
 const AlertText = styled.div`
@@ -95,7 +100,6 @@ const AlertBtnBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-bottom: 24px;
 
   .cancelBtn {
     width: 100%;

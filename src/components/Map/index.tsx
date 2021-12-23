@@ -10,7 +10,7 @@ const Container = styled.div`
   max-width: ${breakpoints.mobile}px;
   width: 100%;
   height: 446px;
-  background-color: gray;
+  background-color: grey;
 `;
 
 export default index;
