@@ -1,9 +1,10 @@
 import React, { ReactElement } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import Button from '@components/Shared/Button';
+import { breakpoints } from '@utils/getMediaQuery';
 
 export interface ISpotItem {
   id: number;
@@ -19,11 +20,12 @@ export interface ISpotItem {
 interface IProps {
   item: ISpotItem;
   onClick: () => void;
+  mapList ?: boolean;
 }
 
-function SpotItem({ item, onClick }: IProps): ReactElement {
+function SpotItem({ item, onClick, mapList }: IProps): ReactElement {
   return (
-    <Container>
+    <Container mapList>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.address}</TextB3R>
@@ -40,7 +42,7 @@ function SpotItem({ item, onClick }: IProps): ReactElement {
         </div>
       </FlexColStart>
       <FlexCol>
-        <ImageWrapper>
+        <ImageWrapper mapList>
           <SpotImg src={item.url} />
         </ImageWrapper>
         <Button
@@ -57,12 +59,24 @@ function SpotItem({ item, onClick }: IProps): ReactElement {
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ mapList: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
   height: 114px;
   margin-bottom: 24px;
+  ${({mapList})=> {
+    if(mapList){
+      return css`
+        background: ${theme.white};
+        max-width: ${breakpoints.desktop}px;
+        max-width: ${breakpoints.mobile}px;
+        height: 146px;
+        padding: 16px;
+        border-radius: 8px;
+      `
+    }
+  }}
 `;
 
 const Left = styled.div``;
@@ -73,9 +87,16 @@ const MeterAndTime = styled.div`
   margin: 8px 0 16px 0;
 `;
 
-const ImageWrapper = styled.div`
+const ImageWrapper = styled.div<{ mapList: boolean}>`
   width: 80px;
   padding-left: 15px;
+  ${({mapList})=> {
+    if(mapList){
+      return css`
+      margin-bottom: 10px;
+      `
+    }
+  }}
 `;
 
 const SpotImg = styled.img`

@@ -1554,7 +1554,55 @@ const svgMap: TSvg = {
           strokeLinejoin="round"
         />
     </svg>
-
+  ),
+  map: () => (
+    <svg 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path 
+        d="M10.5 6.70312L9 6L3 8.8125V21L9 18.1875L15 21L21 18.1875V16.3125" 
+        stroke="#242424" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M9 6V18" 
+        stroke="#242424" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      <path 
+        d="M14.8682 15.7852V20.3398" 
+        stroke="#242424" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      <circle 
+        cx="17.5003" 
+        cy="7.92167" 
+        r="1.10526" 
+        fill="#242424"
+      />
+      <path 
+        d="M20.9212 7.7C20.9212 8.85585 20.3738 9.93396 19.611 10.8669C18.8908 11.7478 18.0416 12.4207 17.5002 12.8033C16.9588 12.4207 16.1096 11.7478 15.3893 10.8669C14.6265 9.93396 14.0791 8.85585 14.0791 7.7C14.0791 5.9804 15.5618 4.5 17.5002 4.5C19.4385 4.5 20.9212 5.9804 20.9212 7.7Z" 
+        stroke="#242424" 
+        strokeWidth="2"
+      />
+    </svg>
+  ),
+  threeLines: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="4.30078" width="16" height="2" rx="1" fill="#242424"/>
+      <rect x="2" y="11.3008" width="20" height="2" rx="1" fill="#242424"/>
+      <rect x="2" y="18.3008" width="16" height="2" rx="1" fill="#242424"/>
+    </svg>
   ),
 };
 

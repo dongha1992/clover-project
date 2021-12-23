@@ -10,6 +10,7 @@ const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
+const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 /*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
@@ -63,6 +64,7 @@ function Header() {
         '/spot/spot-req': '신청하기',
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
+        '/spot/search/location': '프코스팟 검색'
       };
 
       const title = headerTitleMap[currentPath];
@@ -75,7 +77,6 @@ function Header() {
           '/review/[id]',
           '/cart',
           '/cart/delivery-info',
-          '/spot/search',
           '/payment',
           '/mypage/card',
           '/mypage/card/register',
@@ -122,6 +123,10 @@ function Header() {
 
         case ['/spot'].includes(currentPath): {
           return <SpotHeader />;
+        }
+
+        case['/spot/search', '/spot/search/location'].includes(currentPath): {
+          return <SpotSearchHeader title={title} />;
         }
 
         default: {
