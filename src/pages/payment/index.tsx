@@ -25,8 +25,6 @@ import Tag from '@components/Shared/Tag';
 import Button from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
-import { useSelector } from 'react-redux';
-import { cartForm } from '@store/cart';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
@@ -35,7 +33,7 @@ import { Select, AcessMethodOption } from '@components/Shared/Dropdown/index';
 import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 
-const ACCESS_METHOD = [
+export const ACCESS_METHOD = [
   {
     id: 1,
     text: '자유출입 가능',
