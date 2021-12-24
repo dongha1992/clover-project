@@ -123,7 +123,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                   <StorImgWrapper>
                     <Text>
                       <SVGIcon name="fcoSpot" />
-                      {`${item.users}명 이용중`}
+                      {`${item.users}/100명 참여중`}
                     </Text>
                     <LikeWrapper type="trial">
                       <SVGIcon name="likeRed" />
@@ -140,7 +140,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                         color={theme.greyScale65}
                       >{`${item.distance}m`}</TextH6B>
                     </TextWrapper>
-                    <Button onClick={goToCart}>{btnText}</Button>
+                    <Button>{btnText}</Button>
                   </LocationInfoWrapper>
                 </Container>
               );

@@ -38,10 +38,10 @@ function RegisterPage() {
 
   const checkBox = () => {};
 
-  const selectOptions = useCallback((type) => {
+  const selectOptions = useCallback((tab) => {
     dispatch(
       setBottomSheet({
-        content: <OptionsSheet type={type} />,
+        content: <OptionsSheet tab={tab} />,
         buttonTitle: '선택하기',
       })
     );
@@ -73,39 +73,7 @@ function RegisterPage() {
             }
           />
         </Wrapper>
-        <Wrapper>
-          <TextH4B margin="0 0 16px 0">장소 종류</TextH4B>
-          <Button
-             justifyContent='space-between'
-             padding='12px 16px'
-             backgroundColor={theme.white}
-             color = {theme.greyScale45}
-             fontWeight={400}
-             borderGrey15
-             pointer
-             onClick={() => selectOptions('place')}>
-            공간 형태 선택
-            <SVGIcon name='triangleDown' />
-          </Button>
-        </Wrapper>
         {type === 'private' && (
-          <>
-            <Wrapper>
-              <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
-              <Button
-                justifyContent='space-between'
-                backgroundColor={theme.white}
-                padding='12px 16px'
-                color = {theme.greyScale45}
-                fontWeight={400}
-                borderGrey15
-                pointer
-                onClick={() => selectOptions('time')}
-              >
-              시간대 선택
-              <SVGIcon name='triangleDown' />
-              </Button>
-            </Wrapper>
             <Wrapper>
               <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
               <Button
@@ -122,8 +90,40 @@ function RegisterPage() {
               <SVGIcon name='triangleDown' />
               </Button>
             </Wrapper>
-          </>
         )}
+        <Wrapper>
+          <TextH4B margin="0 0 16px 0">장소 종류</TextH4B>
+          <Button
+             justifyContent='space-between'
+             padding='12px 16px'
+             backgroundColor={theme.white}
+             color = {theme.greyScale45}
+             fontWeight={400}
+             borderGrey15
+             pointer
+             onClick={() => selectOptions('place')}>
+            공간 형태 선택
+            <SVGIcon name='triangleDown' />
+          </Button>
+        </Wrapper>
+        {type === 'private' && (
+            <Wrapper>
+              <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
+              <Button
+                justifyContent='space-between'
+                backgroundColor={theme.white}
+                padding='12px 16px'
+                color = {theme.greyScale45}
+                fontWeight={400}
+                borderGrey15
+                pointer
+                onClick={() => selectOptions('time')}
+              >
+              시간대 선택
+              <SVGIcon name='triangleDown' />
+              </Button>
+            </Wrapper>
+          )}
       </FormWrapper>
       {type === 'private' &&
         <BottomWrapper>
