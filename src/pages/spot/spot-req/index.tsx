@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextB3R, TextH3B } from '@components/Shared/Text';
+import { TextH2B, TextB3R, TextH3B , TextH5B } from '@components/Shared/Text';
 import { theme, fixedBottom } from '@styles/theme';
 import Button from '@components/Shared/Button';
 import { useRouter } from 'next/router';
@@ -57,27 +57,9 @@ function SpotReqPage() {
         <Guide></Guide>
       </GuideWrapper>
       <BottomWrapper>
-        {type === 'private' && (
-          <>
-            <BtnWrapper>
-              <TextH3B margin="0 0 24px 0">{text.fcospotText}</TextH3B>
-              <Button
-                pointer
-                backgroundColor={theme.white}
-                color={theme.black}
-                border
-                borderRadius="8"
-                onClick={goToRegister}
-              >
-                {text.registerBtn}
-              </Button>
-            </BtnWrapper>
-            <Row />
-          </>
-        )}
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
-          <TextH3B margin="0 0 24px 0">{text.askText}</TextH3B>
+          <TextH5B margin="0 0 24px 0">{text.askText}</TextH5B>
           <Button
             pointer
             backgroundColor={theme.white}

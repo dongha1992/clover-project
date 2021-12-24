@@ -20,20 +20,20 @@ const text = {
   normalNewSpotTitle: '신규 스팟',
   normalFcoSpotTitle: '배송비 제로! 역세권 프코스팟',
   eventTitle: '이벤트 진행중인 스팟',
-  trialTitle: '정식 오픈을 기다리는 트라이얼스팟',
-  trialSubTitle: '트라이얼 스팟 함께 주문하고 300포인트 받아요',
+  trialTitle: '내가 자주가는 곳을 무표 픽업 스팟으로!',
+  trialSubTitle: '내 주변 가게가 보인다면? 👀함께 참여해요!',
 };
 
 const FCO_SPOT_BANNER = [
   {
     id: 1,
-    text: '우리회사로 샐러드 당일 무료배송 받기',
+    text: '나의 회사∙학교를 프코스팟으로 만들어보세요!',
     type: 'private',
     icon: 'blackCirclePencil',
   },
   {
     id: 2,
-    text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
+    text: '내가 자주가는 장소를 프코스팟으로\n만들어보세요!',
     type: 'public',
     icon: 'blackCirclePencil',
   },
@@ -138,13 +138,6 @@ const SpotPage = () => {
         })}
       </SlideWrapper>
       <SpotList items={SPOT_ITEMS} title={text.eventTitle} type="event" btnText='주문하기' />
-      <SpotList
-        items={SPOT_ITEMS}
-        title={text.trialTitle}
-        subTitle={text.trialSubTitle}
-        type='trial'
-        btnText='주문하기'
-      />
       <SpotList
         items={SPOT_ITEMS}
         title={text.trialTitle}
