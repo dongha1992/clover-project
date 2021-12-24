@@ -4,7 +4,6 @@ import Home from '@components/Home';
 import Footer from '@components/Footer';
 import wrapper from '@store/index';
 // import { setRefreshToken } from '@components/Auth';
-import { useSelector } from 'react-redux';
 
 function HomePage() {
   return (

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { HomeContainer } from '@styles/theme';
@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
-import AddressItem from '@components/Pages/Location/addressItem';
+import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 /* TODO: 검색 결과 리스트 */
@@ -17,6 +17,10 @@ import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 function LocationPage() {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
+  const [isFocus, setIsFocus] = useState(false);
+  const [isBlur, setIsBlur] = useState(false);
+  const [isSearched, setIsSearched] = useState(false);
+
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
@@ -36,6 +40,16 @@ function LocationPage() {
     );
   };
 
+  const addressInputHandler = () => {
+    const keyword = addressRef.current?.value.length;
+    if (addressRef.current) {
+      if (!keyword) {
+        setResultAddress([]);
+        setIsSearched(false);
+      }
+    }
+  };
+
   const getSearchAddressResult = async (
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -52,14 +66,24 @@ function LocationPage() {
           page: 1,
         };
         try {
+          /* data.results.juso 검색결과 없으면 null */
           let { data } = await searchAddressJuso(params);
-          setResultAddress(data.results.juso);
+          setResultAddress(data.results.juso ?? []);
           setTotalCount(data.results.common.totalCount);
+          setIsSearched(true);
         } catch (error) {
           console.error(error);
         }
       }
     }
+  };
+
+  const focusInputHandler = () => {
+    setIsFocus(true);
+  };
+
+  const blurInputHandler = () => {
+    setIsBlur(true);
   };
 
   const goToMapScreen = (address: any): void => {
@@ -72,12 +96,14 @@ function LocationPage() {
       <Wrapper>
         <TextInput
           name="input"
-          // style={{ minWidth: 312 }}
           placeholder="도로명, 건물명 또는 지번으로 검색"
           inputType="text"
           svg="searchIcon"
+          eventHandler={addressInputHandler}
           keyPressHandler={getSearchAddressResult}
           ref={addressRef}
+          onFocus={focusInputHandler}
+          onBlur={blurInputHandler}
         />
         <CurrentLocBtn onClick={clickSetCurrentLoc}>
           <SVGIcon name="locationBlack" />
@@ -86,21 +112,24 @@ function LocationPage() {
           </TextH6B>
         </CurrentLocBtn>
         <ResultList>
-          <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
-          {resultAddress ? (
-            resultAddress.map((address, index) => {
-              return (
-                <AddressItem
-                  key={index}
-                  roadAddr={address.roadAddr}
-                  bdNm={address.bdNm}
-                  jibunAddr={address.jibunAddr}
-                  onClick={() => goToMapScreen(address)}
-                />
-              );
-            })
-          ) : (
-            <div>검색 결과가 없습니다</div>
+          {resultAddress.length > 0 && (
+            <>
+              <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
+              {resultAddress.map((address, index) => {
+                return (
+                  <AddressItem
+                    key={index}
+                    roadAddr={address.roadAddr}
+                    bdNm={address.bdNm}
+                    jibunAddr={address.jibunAddr}
+                    onClick={() => goToMapScreen(address)}
+                  />
+                );
+              })}
+            </>
+          )}
+          {!resultAddress.length && isSearched && (
+            <div>검색 결과가 없습니다.</div>
           )}
         </ResultList>
       </Wrapper>
