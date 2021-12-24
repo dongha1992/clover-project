@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { ItemListCol } from '@styles/theme';
+import { FlexWrapWrapper } from '@styles/theme';
 import axios from 'axios';
 import Item from '@components/Item';
 import CategoryFilter from '@components/Pages/Category/CategoryFilter';
@@ -21,12 +21,12 @@ function SingleMenu({ category }: any) {
   return (
     <Container>
       <CategoryFilter title={category} />
-      <ItemListCol>
+      <FlexWrapWrapper>
         {itemList.length > 0 &&
           itemList.map((item: any, index: number) => {
             return <Item item={item} key={index} />;
           })}
-      </ItemListCol>
+      </FlexWrapWrapper>
     </Container>
   );
 }

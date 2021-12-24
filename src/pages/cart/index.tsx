@@ -29,7 +29,6 @@ import Button from '@components/Shared/Button';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
-import Item from '@components/Item';
 import Tag from '@components/Shared/Tag';
 import CountButton from '@components/Shared/Button/CountButton';
 import router from 'next/router';
@@ -38,6 +37,7 @@ import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
 import HorizontalItem from '@components/Item/HorizontalItem';
+import { setAlert } from '@store/alert';
 
 const DISPOSABLE_LIST = [
   { id: 1, value: 'fork', text: '포크/물티슈', price: 100 },
@@ -153,12 +153,27 @@ function CartPaeg() {
     setLunchOrDinner(id);
   };
 
+  const removeItemHandler = () => {
+    dispatch(
+      setAlert({
+        alertMessage: '선택을 상품을 삭제하시겠어요?',
+        closeBtnText: '취소',
+        submitBtnText: '확인',
+        onSubmit: () => removeItem(),
+      })
+    );
+  };
+
+  const removeItem = () => {
+    console.log('fire');
+  };
+
   const goToDeliveryInfo = () => {
     router.push('/cart/delivery-info');
   };
 
-  const goToCategoryPage = () => {
-    router.push('/category');
+  const goToSearchPage = () => {
+    router.push('/search');
   };
 
   const goToPayment = () => {
@@ -190,7 +205,11 @@ function CartPaeg() {
               <TextB2R padding="0 0 0 8px">전체선택 (3/5)</TextB2R>
             </div>
             <Right>
-              <TextH6B color={theme.greyScale65} textDecoration="underline">
+              <TextH6B
+                color={theme.greyScale65}
+                textDecoration="underline"
+                onClick={removeItemHandler}
+              >
                 선택삭제
               </TextH6B>
             </Right>
@@ -211,7 +230,7 @@ function CartPaeg() {
                   />
                 </div>
                 <div className="itemInfo">
-                  <InfoMessage message={'dd'} />
+                  <InfoMessage message={'품절 임박! 상품이 2개 남았어요'} />
                 </div>
                 <BorderLine height={1} margin="16px 0" />
               </ItemWrapper>
@@ -278,7 +297,7 @@ function CartPaeg() {
             </InfoWrapper>
           )}
         </NutritionInfoWrapper>
-        <GetMoreBtn ref={calendarRef} onClick={goToCategoryPage}>
+        <GetMoreBtn ref={calendarRef} onClick={goToSearchPage}>
           <Button backgroundColor={theme.white} color={theme.black} border>
             + 더 담으러 가기
           </Button>

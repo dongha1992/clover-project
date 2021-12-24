@@ -207,14 +207,18 @@ function DeliverInfoPage() {
         </DeliveryMethodWrapper>
         <BorderLine height={8} margin="32px 0" />
         <FlexBetween>
-          <TextH3B padding="0 0 14px 0">픽업지</TextH3B>
+          <TextH3B padding="0 0 14px 0">픽업장소</TextH3B>
           {Object.keys(pickupPlace).length && (
-            <TextH6B textDecoration="underline" color={theme.greyScale65}>
+            <TextH6B
+              textDecoration="underline"
+              color={theme.greyScale65}
+              onClick={goToFindAddress}
+            >
               변경하기
             </TextH6B>
           )}
         </FlexBetween>
-        {!Object.keys(pickupPlace).length ? (
+        {Object.keys(pickupPlace).length ? (
           <>
             <PickPlaceInfo>
               <PlaceName>
@@ -263,6 +267,7 @@ function DeliverInfoPage() {
 
 const Container = styled.div`
   width: 100%;
+  margin-bottom: 60px;
 `;
 const Wrapper = styled.div`
   width: 100%;
