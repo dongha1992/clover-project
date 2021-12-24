@@ -10,7 +10,7 @@ import { setAlert } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/addressItem';
-import { SET_DESTINATION_TEMP } from '@store/destination';
+import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 /* TODO: 검색 결과 리스트 */
 
@@ -63,7 +63,7 @@ function LocationPage() {
   };
 
   const goToMapScreen = (address: any): void => {
-    dispatch(SET_DESTINATION_TEMP(address));
+    dispatch(SET_LOCATION_TEMP(address));
     router.push('/location/address-detail');
   };
 

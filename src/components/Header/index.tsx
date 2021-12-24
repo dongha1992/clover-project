@@ -67,6 +67,7 @@ function Header() {
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
         '/destination/search': '배송지 검색',
+        '/destination/destination-detail': '배송지 검색',
       };
 
       const title = headerTitleMap[currentPath];

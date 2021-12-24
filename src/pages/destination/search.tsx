@@ -9,6 +9,8 @@ import { ADDRESS_KEYWORD_REGX, SPECIAL_REGX } from '@constants/regex';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import DestinationSearchResult from '@components/Pages/Destination/DestinationSearchResult';
+import router from 'next/router';
+import { SET_DESTINATION_TEMP } from '@store/destination';
 
 const recentDeliveryList = [
   {
@@ -61,7 +63,10 @@ function destinationSearchPage() {
 
   const clickSetCurrentLoc = () => {};
 
-  const clickAddressHandler = () => {};
+  const goToDestinationDetail = (address: any) => {
+    dispatch(SET_DESTINATION_TEMP(address));
+    router.push('/destination/destination-detail');
+  };
 
   const beforeSearch = !resultAddress.length;
 
@@ -87,7 +92,7 @@ function destinationSearchPage() {
         ) : (
           <DestinationSearchResult
             resultAddress={resultAddress}
-            onClick={clickAddressHandler}
+            onClick={goToDestinationDetail}
             totalCount={totalCount}
           />
         )}

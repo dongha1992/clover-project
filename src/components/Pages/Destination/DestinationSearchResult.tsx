@@ -9,13 +9,13 @@ function DestinationSearchResult({ resultAddress, onClick, totalCount }: any) {
     <Container>
       <TextH5B padding="0 0 24px 0">검색 결과 {totalCount}개</TextH5B>
       <FlexCol>
-        {resultAddress.map((item: any, index: number) => {
+        {resultAddress.map((address: any, index: number) => {
           return (
             <AddressItem
-              roadAddr={item.roadAddr}
-              bdNm={item.bdNm}
-              jibunAddr={item.jibunAddr}
-              onClick={onClick}
+              roadAddr={address.roadAddr}
+              bdNm={address.bdNm}
+              jibunAddr={address.jibunAddr}
+              onClick={() => onClick(address)}
               key={index}
             />
           );
