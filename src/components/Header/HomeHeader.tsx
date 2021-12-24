@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { textH5 } from '@styles/theme';
@@ -6,11 +6,51 @@ import Link from 'next/link';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
+import { IJuso } from '@model/index';
+import Tooltip from '@components/Shared/Tooltip';
 
 function HomeHeader() {
+  const [userlocation, setUserLocation] = useState<IJuso>({
+    roadAddr: '',
+    roadAddrPart1: '',
+    roadAddrPart2: '',
+    jibunAddr: '',
+    engAddr: '',
+    zipNo: '',
+    admCd: '',
+    rnMgtSn: '',
+    bdMgtSn: '',
+    detBdNmList: '',
+    bdNm: '',
+    bdKdcd: '',
+    siNm: '',
+    sggNm: '',
+    emdNm: '',
+    liNm: '',
+    rn: '',
+    udrtYn: '',
+    buldMnnm: '',
+    buldSlno: '',
+    mtYn: '',
+    lnbrMnnm: '',
+    lnbrSlno: '',
+    emdNo: '',
+  });
+
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      setUserLocation(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   const goToCart = () => {
     router.push('/cart');
   };
+
+  const hasLocation = Object.keys(userlocation).length > 0;
   return (
     <Container>
       <Wrapper>
@@ -18,8 +58,11 @@ function HomeHeader() {
           <SVGIcon name="location" />
           <AddressWrapper>
             <Link href="/location">
-              <a>내 위치 찾기</a>
+              {hasLocation ? <a>{userlocation?.emdNm}</a> : <a>내 위치 찾기</a>}
             </Link>
+            {hasLocation && (
+              <Tooltip message="무료 스팟배송이 가능해요!" width="170px" />
+            )}
           </AddressWrapper>
         </Left>
         <Right>

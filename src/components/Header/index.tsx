@@ -26,7 +26,7 @@ function Header() {
       const headerTitleMap: Obj = {
         '/search': '검색',
         '/location': '내 위치 설정하기',
-        '/location/address-detail': '내 위치 설정하기',
+        '/location/address-detail': '배송위치',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
         '/menu/[menuId]/review/photo': '사진 후기',

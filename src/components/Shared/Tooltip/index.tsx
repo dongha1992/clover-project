@@ -44,9 +44,7 @@ const Tooltip = ({
   return (
     <TooltipContainer top={top} width={width} bottom={bottom} left={left}>
       <TextContainer>
-        <TextH6B color={theme.white} padding="0 0 2px 0">
-          {message}
-        </TextH6B>
+        <TextH6B color={theme.white}>{message}</TextH6B>
         <div onClick={hideToolTip} className="svg">
           <SVGIcon name="whiteCancel" />
         </div>

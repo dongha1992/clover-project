@@ -2,7 +2,7 @@ import { TextH5B } from '@components/Shared/Text';
 import React from 'react';
 import { FlexCol } from '@styles/theme';
 import styled from 'styled-components';
-import AddressItem from '../Location/addressItem';
+import AddressItem from '../Location/AddressItem';
 
 function DestinationSearchResult({ resultAddress, onClick, totalCount }: any) {
   return (
