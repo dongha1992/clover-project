@@ -161,7 +161,7 @@ export const TextB2R = styled(Text)`
   font-size: 14px;
   letter-spacing: -0.4px;
   font-weight: normal;
-  line-height: 24px;
+  line-height: 22px;
 `;
 export const TextB3R = styled(Text)`
   font-size: 12px;

@@ -306,9 +306,9 @@ const svgMap: TSvg = {
   ),
   uncheckedRectBox: () => (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -320,21 +320,21 @@ const svgMap: TSvg = {
         rx="1.25"
         fill="white"
         stroke="#DEDEDE"
-        strokeWidth="1.5"
+        stroke-width="1.5"
       />
     </svg>
   ),
   checkedRectBox: () => (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="16" height="16" rx="2" fill="#35AD73" />
+      <rect x="1" y="1" width="16" height="16" rx="2" fill="#35AD73" />
       <path
-        d="M12 5.5L7 11L4 7"
+        d="M13 6.5L8 12L5 8"
         stroke="white"
         strokeWidth="2"
         strokeLinecap="round"

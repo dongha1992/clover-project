@@ -1,0 +1,86 @@
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
+import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
+import Map from '@components/Map';
+import Button from '@components/Shared/Button';
+import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
+import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
+import Tag from '@components/Shared/Tag';
+import { destinationForm } from '@store/destination';
+import { useSelector } from 'react-redux';
+import TextInput from '@components/Shared/TextInput';
+import Checkbox from '@components/Shared/Checkbox';
+
+function DestinationDetailPage() {
+  const [isDefaultDestination, setIsDefaultDestination] = useState(false);
+
+  const { tempDestination } = useSelector(destinationForm);
+
+  const destinationNameRef = useRef<HTMLInputElement>(null);
+  const destinationDetailRef = useRef<HTMLInputElement>(null);
+
+  const getDestination = async () => {};
+
+  if (!Object.keys(tempDestination).length) {
+    return;
+  }
+
+  return (
+    <Container>
+      <CheckDeliveryPlace />
+      <Map />
+      <DestinationInfoWrarpper>
+        <FlexCol margin="0 0 24px 0">
+          <TextH5B>{tempDestination.bdNm}</TextH5B>
+          <FlexRow padding="4px 0 6px">
+            <Tag padding="3px">도로명</Tag>
+            <TextB3R margin="0 0 0 4px">{tempDestination.roadAddr}</TextB3R>
+          </FlexRow>
+          <FlexRow>
+            <Tag padding="3px">지번</Tag>
+            <TextB3R margin="0 0 0 4px">{tempDestination.jibunAddr}</TextB3R>
+          </FlexRow>
+        </FlexCol>
+        <TextInput
+          placeholder="상세주소 입력 (필수)"
+          ref={destinationDetailRef}
+        />
+        <FlexCol padding="24px 0">
+          <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
+          <TextInput placeholder="배송지명 입력" ref={destinationNameRef} />
+        </FlexCol>
+        <FlexRow padding="0">
+          <Checkbox
+            onChange={() => setIsDefaultDestination(!isDefaultDestination)}
+            isSelected={isDefaultDestination}
+          />
+          {isDefaultDestination ? (
+            <TextH5B padding="4px 0 0 4px">기본 배송지로 설정</TextH5B>
+          ) : (
+            <TextB2R padding="4px 0 0 4px">기본 배송지로 설정</TextB2R>
+          )}
+        </FlexRow>
+      </DestinationInfoWrarpper>
+      <ButtonWrapper>
+        <Button height="100%" borderRadius="0" onClick={getDestination}>
+          설정하기
+        </Button>
+      </ButtonWrapper>
+    </Container>
+  );
+}
+
+const Container = styled.div`
+  position: relative;
+  margin-bottom: 60px;
+`;
+
+const ButtonWrapper = styled.div`
+  ${fixedBottom}
+`;
+
+const DestinationInfoWrarpper = styled.div`
+  padding: 24px;
+`;
+
+export default DestinationDetailPage;
