@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { theme, homePadding } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { useRouter } from 'next/router';
 
 const TIME = [
-  { id: 1, name: '12:00' },
-  { id: 2, name: '12:30' },
-  { id: 3, name: '14:00' },
-  { id: 4, name: '기타' },
+  { id: 1, name: '11:00' },
+  { id: 2, name: '11:30' },
+  { id: 3, name: '12:00' },
+  { id: 4, name: '12:30' },
+  { id: 5, name: '13:00' },
+  { id: 6, name: '기타' },
 ];
 
-const PLACE = [
+const PRIVATE_PLACE = [
   { id: 1, name: '회사' },
   { id: 2, name: '학교' },
   { id: 3, name: '공유오피스' },
@@ -38,27 +41,44 @@ const PUBLIC_PLACE = [
   { id: 7, name: '기타' },
 ];
 
-function OptionsSheet({ type }: any) {
+interface IProps {
+  tab?: string
+}
+
+const OptionsSheet = ({ tab }: IProps): ReactElement => {
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
   const changeRadioHandler = (id: number) => {
     setSelectedPickupPlace(id);
   };
+  const router = useRouter();
+  const {type} = router.query;
 
+  const selectTab = () =>{
+    if(tab === 'pickUp'){
+      return PICKUP;
+    } else if(tab === 'time'){
+      return TIME;
+    } else if(tab === 'place'&&type === 'private'){
+      return PRIVATE_PLACE;
+    } else if(tab === 'place'){
+      return PUBLIC_PLACE;
+    } 
+  }
   // const seletedTime = PICK_UP_PLACE.find((item)=> item.id === Number(selectedPickupPlace))?.name;
 
   return (
     <Container>
       <Wrapper>
         <TextH5B padding="24px 0 16px 0" center>
-          {type === 'place'
+          {tab === 'place'
             ? '장소 종류'
-            : type === 'time'
-            ? '점심 시간'
-            : '픽업장소'}
+            : tab === 'time'
+              ? '점심 시간'
+              : '픽업장소'
+            }
         </TextH5B>
-        {type === 'time' && (
-          <SelectWrapper>
-            {TIME.map((item) => {
+        <SelectWrapper>
+            {selectTab()?.map((item) => {
               return (
                 <Selected key={item.id}>
                   <RadioButton
@@ -70,37 +90,7 @@ function OptionsSheet({ type }: any) {
               );
             })}
           </SelectWrapper>
-        )}
-        {type === 'place' && (
-          <SelectWrapper>
-            {PLACE.map((item) => {
-              return (
-                <Selected key={item.id}>
-                  <RadioButton
-                    onChange={() => changeRadioHandler(item.id)}
-                    isSelected={selectedPickupPlace === item.id}
-                  />
-                  <TextH5B padding="0 0 0 8px">{item.name}</TextH5B>
-                </Selected>
-              );
-            })}
-          </SelectWrapper>
-        )}
-        {type === 'pickUp' && (
-          <SelectWrapper>
-            {PICKUP.map((item) => {
-              return (
-                <Selected key={item.id}>
-                  <RadioButton
-                    onChange={() => changeRadioHandler(item.id)}
-                    isSelected={selectedPickupPlace === item.id}
-                  />
-                  <TextH5B padding="0 0 0 8px">{item.name}</TextH5B>
-                </Selected>
-              );
-            })}
-          </SelectWrapper>
-        )}
+
       </Wrapper>
     </Container>
   );

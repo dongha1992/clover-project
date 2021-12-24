@@ -140,12 +140,13 @@ export const FlexStart = styled.div<{ padding?: string; margin?:string}>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexEnd = styled.div<{ padding?: string }>`
+export const FlexEnd = styled.div<{ padding?: string; margin?:string }>`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
 `;
 
 export const HomeContainer = styled.div`
