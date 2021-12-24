@@ -105,7 +105,6 @@ function Calendar({ disabledDates }: ICalendar) {
   return (
     <CalendarContainer>
       <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
-      <BtnContainer onClick={showMoreWeeks}>더보기</BtnContainer>
     </CalendarContainer>
   );
 }

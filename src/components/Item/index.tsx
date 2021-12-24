@@ -12,12 +12,11 @@ import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
-  isCart?: boolean;
 };
 
 const isNew = true;
 
-function Item({ item, isCart }: TProps) {
+function Item({ item }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -61,9 +60,7 @@ function Item({ item, isCart }: TProps) {
           </TextH5B>
           <TextH5B>{item.price}원</TextH5B>
         </PriceWrapper>
-        {!isCart && (
-          <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
-        )}
+        <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
         <LikeAndReview>
           <Like>
             <SVGIcon name="like" />
