@@ -84,7 +84,7 @@ function DeliverInfoPage() {
     if (selectedMethod === 1) {
       router.push('/spot/search');
     } else {
-      router.push('/location');
+      router.push('/destination/search');
     }
   };
 
