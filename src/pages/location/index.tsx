@@ -11,23 +11,8 @@ import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/addressItem';
 import { SET_DESTINATION_TEMP } from '@store/destination';
-import { SPECIAL_REGX } from '@constants/regex/index';
+import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 /* TODO: 검색 결과 리스트 */
-
-const KEYWORD_REGX = [
-  'or',
-  'select',
-  'insert',
-  'delete',
-  'update',
-  'create',
-  'drop',
-  'exec',
-  'union',
-  'fetch',
-  'declare',
-  'truncate',
-];
 
 function LocationPage() {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -57,7 +42,7 @@ function LocationPage() {
     if (e.key === 'Enter') {
       if (addressRef.current) {
         let query = addressRef.current?.value;
-        if (SPECIAL_REGX.test(query) || KEYWORD_REGX.includes(query)) {
+        if (SPECIAL_REGX.test(query) || ADDRESS_KEYWORD_REGX.includes(query)) {
           alert('포함할 수 없는 문자입니다.');
           return;
         }
