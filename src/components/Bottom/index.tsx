@@ -19,9 +19,13 @@ function Bottom() {
   const renderComponent = useCallback(
     (currentPath: string) => {
       switch (true) {
-        case ['/home', '/spot', '/mypage', '/subscription'].includes(
-          currentPath
-        ): {
+        case [
+          '/quickorder',
+          '/home',
+          '/spot',
+          '/mypage',
+          '/subscription',
+        ].includes(currentPath): {
           return <HomeBottom />;
         }
         case ['/menu/[id]'].includes(currentPath): {
