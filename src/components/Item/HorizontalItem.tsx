@@ -16,7 +16,7 @@ type TProps = {
 
 const isNew = true;
 
-function HomeHorizontalItem({ item }: TProps) {
+function HorizontalItem({ item }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -137,4 +137,4 @@ const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default HomeHorizontalItem;
+export default HorizontalItem;
