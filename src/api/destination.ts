@@ -8,6 +8,7 @@ import {
   IGetDestinationsResponse,
   IEditDestination,
   IGetDestinations,
+  IGetMainDestinations,
   IGetMainDestinationsResponse,
 } from '@model/index';
 
@@ -44,9 +45,9 @@ export const deleteDestinations = (
 };
 
 export const getMainDestinations = (
-  delivery: string
+  params: IGetMainDestinations
 ): Promise<AxiosResponse<IGetMainDestinationsResponse>> => {
-  return Api.get('destination/v1/destinations/main', { params: delivery });
+  return Api.get('destination/v1/destinations/main', { params });
 };
 
 export const setMainDestinations = (
