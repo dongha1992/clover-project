@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 
-function index() {
+function Map({ latitudeLongitude }: any) {
   return <Container>맵</Container>;
 }
 
@@ -13,4 +13,4 @@ const Container = styled.div`
   background-color: gray;
 `;
 
-export default index;
+export default Map;

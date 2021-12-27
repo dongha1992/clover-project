@@ -27,7 +27,6 @@ export const getDestinations = (
 export const destinationRegister = (
   data: IRegisterDestination
 ): Promise<AxiosResponse<IResponse>> => {
-  console.log(data);
   return Api.post('destination/v1/destinations', data);
 };
 

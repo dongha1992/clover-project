@@ -14,19 +14,19 @@ function CheckDeliveryPlace() {
   }, []);
 
   const checkAvailablePlace = async () => {
-    const userLocation = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
-    const params = {
-      jibunAddress: userLocation.jibunAddr,
-      roadAddress: userLocation.roadAddr,
-      zipCode: userLocation.zipNo,
-      delivery: null,
-    };
-    try {
-      const data = await availabilityDestination(params);
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    }
+    // const userLocation = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+    // const params = {
+    //   jibunAddress: userLocation.jibunAddr,
+    //   roadAddress: userLocation.roadAddr,
+    //   zipCode: userLocation.zipNo,
+    //   delivery: null,
+    // };
+    // try {
+    //   const data = await availabilityDestination(params);
+    //   console.log(data);
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   return (
