@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Router, useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
+import QuickOrderHeader from './QuickOrderHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -66,7 +67,7 @@ function Header() {
         '/spot/spot-req': '신청하기',
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
-        '/spot/search/location': '프코스팟 검색'
+        '/spot/search/location': '프코스팟 검색',
       };
 
       const title = headerTitleMap[currentPath];
@@ -127,7 +128,11 @@ function Header() {
           return <SpotHeader />;
         }
 
-        case['/spot/search', '/spot/search/location'].includes(currentPath): {
+        case ['/quickorder'].includes(currentPath): {
+          return <QuickOrderHeader />;
+        }
+
+        case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
 
