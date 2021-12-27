@@ -12,28 +12,37 @@ interface card {
 }
 interface Props {
   time: number;
-  minutes: number;
-  seconds: number;
   weeks: number;
   pushStatus: string;
+  format: (vlaue: number) => void;
+  getTimer: () => number;
+  setTimer: (value: string) => void;
+  timer: string;
 }
 
 const OrderCardList: React.FC<Props> = ({
   time,
-  minutes,
-  seconds,
   weeks,
   pushStatus,
+  format,
+  getTimer,
+  setTimer,
+  timer,
 }) => {
   const [cardList, setCardList] = useState<card[]>();
-  const [timer, setTimer] = useState<string>('');
-
-  let timerRef = useRef(1799);
+  let timerRef = useRef<number>(1799);
   let timeCount = useRef<any>();
 
   useEffect(() => {
+    return () => clearInterval(timeCount.current);
+  }, []);
+
+  useEffect(() => {
+    clearInterval(timeCount.current);
+
     switch (pushStatus) {
       case 'part1':
+        clearInterval(timeCount.current);
         setCardList([CARD.lunch1, CARD.dinner1, CARD.dawn1, CARD.delivery1]);
 
         if (time >= 9.0 && time < 9.3) {
@@ -41,10 +50,11 @@ const OrderCardList: React.FC<Props> = ({
           timerRef.current = getTimer();
           timeCount.current = setInterval(() => {
             timerHandler();
-          }, 1000);
+          }, 100);
         }
         break;
       case 'part2':
+        clearInterval(timeCount.current);
         setCardList([CARD.dinner1, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
 
         if (time > 10.3 && time < 11.0) {
@@ -52,25 +62,27 @@ const OrderCardList: React.FC<Props> = ({
           timerRef.current = getTimer();
           timeCount.current = setInterval(() => {
             timerHandler();
-          }, 1000);
+          }, 100);
         }
         break;
       case 'part3':
+        clearInterval(timeCount.current);
         if (weeks === 0 || weeks === 6) {
           setCardList([CARD.dawn2, CARD.delivery2, CARD.lunch2, CARD.dinner2]);
         } else {
           setCardList([CARD.dawn1, CARD.delivery1, CARD.lunch2, CARD.dinner2]);
         }
 
-        if (time > 16.3 && time < 17.0) {
+        if (time >= 16.3 && time < 17.0) {
           setCardList([CARD.dawn3, CARD.delivery3, CARD.lunch2, CARD.dinner2]);
           timerRef.current = getTimer();
           timeCount.current = setInterval(() => {
             timerHandler();
-          }, 1000);
+          }, 100);
         }
         break;
       case 'part4':
+        clearInterval(timeCount.current);
         if (weeks === 5 || weeks === 6) {
           setCardList([CARD.dawn2, CARD.delivery2, CARD.lunch2, CARD.dinner2]);
         } else {
@@ -80,25 +92,13 @@ const OrderCardList: React.FC<Props> = ({
       default:
         break;
     }
-
-    return () => clearInterval(timeCount.current);
-  }, [pushStatus, time, weeks]);
+  }, [getTimer, pushStatus, time, weeks]);
 
   useEffect(() => {
     if (timer === '00:00') {
       clearInterval(timeCount.current);
     }
   }, [timer]);
-
-  const format = (t: number) => (t < 10 ? '0' + t : t + '');
-
-  const getTimer = () => {
-    if (minutes >= 30) {
-      return Number(format(60 - minutes)) * 60 - seconds - 1;
-    } else {
-      return Number(format(30 - minutes)) * 60 - seconds - 1;
-    }
-  };
 
   const timerHandler = useCallback((): void => {
     const mm = Math.floor(timerRef.current / 60);
@@ -108,9 +108,10 @@ const OrderCardList: React.FC<Props> = ({
       return `${format(mm)}:${format(ss)}`;
     };
 
-    timerRef.current -= 1;
+    timerRef.current = getTimer();
+
     setTimer(formatTime(mm, ss));
-  }, []);
+  }, [format, getTimer]);
 
   return (
     <CardList>

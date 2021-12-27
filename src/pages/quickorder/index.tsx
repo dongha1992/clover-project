@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH3B, TextH4B } from '@components/Shared/Text';
-import { ScrollHorizonList } from '@styles/theme';
+import { ScrollHorizonList, theme } from '@styles/theme';
 import { userForm } from '@store/user';
 import { useSelector } from 'react-redux';
 import Item from '@components/Item';
@@ -11,12 +11,13 @@ import { BASE_URL } from '@constants/mock';
 import ReOrderList from '@components/Pages/QuickOrder/ReOrderList';
 import OrderCardList from '@components/Pages/QuickOrder/OrderCardList';
 import { MENT } from '@constants/quick';
+import TimerTooltip from '@components/Shared/Tooltip/TimerTooltip';
+
 const QuickOrderPage: React.FC = () => {
-  const day = new Date();
-  const hours = day.getHours();
-  const minutes = day.getMinutes();
-  const seconds = day.getSeconds();
-  const weeks = day.getDay();
+  const hours = new Date().getHours();
+  const minutes = new Date().getMinutes();
+  const seconds = new Date().getSeconds();
+  const weeks = new Date().getDay();
 
   /* 임시 */
   const [user] = useState(true);
@@ -27,6 +28,8 @@ const QuickOrderPage: React.FC = () => {
   const [time, setTime] = useState<number>(Number(`${hours}.${minutes}`));
   const [pushStatus, setPushStatus] = useState('');
   const [ment, setMent] = useState('');
+  const [tooltipMsg, setTooltipMsg] = useState('');
+  const [timer, setTimer] = useState<string>('');
 
   /* 목업 데이터 로직 */
   useEffect(() => {
@@ -37,7 +40,7 @@ const QuickOrderPage: React.FC = () => {
   /* 목업 데이터 로직 END */
 
   useEffect(() => {
-    setTime(Number(`${hours}.${minutes}`));
+    setTime(Number(`${hours}.${format(minutes)}`));
 
     if (hours >= 6 && hours < 18) {
       setNight(false);
@@ -64,6 +67,30 @@ const QuickOrderPage: React.FC = () => {
     }
   }, [hours, minutes, time, ment]);
 
+  useEffect(() => {
+    msgHandler();
+  }, [timer]);
+
+  const format = (t: number) => (t < 10 ? '0' + t : t + '');
+
+  const getTimer = () => {
+    if (new Date().getMinutes() >= 30) {
+      return (
+        Number(format(60 - new Date().getMinutes())) * 60 -
+        new Date().getSeconds()
+      );
+    } else {
+      return (
+        Number(format(30 - new Date().getMinutes())) * 60 -
+        new Date().getSeconds()
+      );
+    }
+  };
+
+  const msgHandler = () => {
+    setTooltipMsg(`${pushStatus} 마감 ${timer} 전`);
+  };
+
   return (
     <Container>
       <GreetingArticle>
@@ -85,10 +112,12 @@ const QuickOrderPage: React.FC = () => {
 
       <OrderCardList
         time={time}
-        minutes={minutes}
-        seconds={seconds}
         weeks={weeks}
         pushStatus={pushStatus}
+        format={format}
+        getTimer={getTimer}
+        timer={timer}
+        setTimer={setTimer}
       />
 
       <PushArticle>
@@ -106,7 +135,13 @@ const QuickOrderPage: React.FC = () => {
 
       <Banner>신규서비스 소개</Banner>
 
-      <ReOrderList />
+      <ReOrderList>
+        <TimerTooltip
+          bgColor={theme.brandColor}
+          color={'#fff'}
+          message={tooltipMsg}
+        ></TimerTooltip>
+      </ReOrderList>
     </Container>
   );
 };
@@ -145,6 +180,9 @@ const ScrollHorizonListGroup = styled.div`
 `;
 
 const Banner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 96px;
   margin-bottom: 34px;
