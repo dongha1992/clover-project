@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IMenuItem } from '@pages/menu/[id]';
-
+import { IMenuItem } from '@pages/menu/[menuId]';
 /* TODO: type 지정 엉망임 */
 
 type TProps = {

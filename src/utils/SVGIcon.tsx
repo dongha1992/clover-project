@@ -306,8 +306,8 @@ const svgMap: TSvg = {
   ),
   uncheckedRectBox: () => (
     <svg
-      width="16"
-      height="16"
+      width="18"
+      height="18"
       viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -326,15 +326,15 @@ const svgMap: TSvg = {
   ),
   checkedRectBox: () => (
     <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="16" height="16" rx="2" fill="#35AD73" />
+      <rect x="1" y="1" width="16" height="16" rx="2" fill="#35AD73" />
       <path
-        d="M12 5.5L7 11L4 7"
+        d="M13 6.5L8 12L5 8"
         stroke="white"
         strokeWidth="2"
         strokeLinecap="round"
@@ -1515,6 +1515,24 @@ const svgMap: TSvg = {
       <path
         d="M15.1252 1.57918C15.5059 0.891927 16.494 0.891929 16.8747 1.57918L21.222 9.42703C21.3599 9.67595 21.5973 9.85434 21.8747 9.91751L30.3922 11.8569C31.1242 12.0235 31.4184 12.9074 30.9322 13.4795L25.0739 20.3733C24.8988 20.5793 24.8146 20.8475 24.8405 21.1167L25.7213 30.2633C25.7953 31.0324 25.0065 31.5913 24.3055 31.2665L16.4204 27.613C16.1537 27.4895 15.8462 27.4895 15.5796 27.613L7.69447 31.2665C6.99346 31.5913 6.20461 31.0324 6.27866 30.2633L7.15943 21.1167C7.18535 20.8475 7.10115 20.5793 6.92605 20.3733L1.06775 13.4795C0.581592 12.9074 0.875735 12.0235 1.60776 11.8569L10.1252 9.91751C10.4027 9.85434 10.6401 9.67595 10.778 9.42703L15.1252 1.57918Z"
         fill="#F2F2F2"
+      />
+    </svg>
+  ),
+
+  checkBlack18: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4 9L7.75 13L14 5"
+        stroke="#242424"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),

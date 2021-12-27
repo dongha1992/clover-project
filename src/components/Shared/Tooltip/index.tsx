@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { TextH5B } from '@components/Shared/Text';
+import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 
@@ -10,9 +10,19 @@ import SVGIcon from '@utils/SVGIcon';
 
 interface ITooltip {
   message: string;
+  top?: string;
+  bottom?: string;
+  width?: string;
+  left?: string;
 }
 
-const Tooltip = ({ message }: ITooltip): JSX.Element | null => {
+const Tooltip = ({
+  message,
+  top,
+  width,
+  bottom,
+  left,
+}: ITooltip): JSX.Element | null => {
   const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false);
 
   const showTooltip = (): void => {
@@ -32,11 +42,9 @@ const Tooltip = ({ message }: ITooltip): JSX.Element | null => {
   }
 
   return (
-    <TooltipContainer>
+    <TooltipContainer top={top} width={width} bottom={bottom} left={left}>
       <TextContainer>
-        <TextH5B color={theme.white} padding="0 0 2px 0">
-          {message}
-        </TextH5B>
+        <TextH6B color={theme.white}>{message}</TextH6B>
         <div onClick={hideToolTip} className="svg">
           <SVGIcon name="whiteCancel" />
         </div>
@@ -45,20 +53,26 @@ const Tooltip = ({ message }: ITooltip): JSX.Element | null => {
   );
 };
 
-const TooltipContainer = styled.div`
+const TooltipContainer = styled.div<{
+  top?: string;
+  bottom?: string;
+  width?: string;
+  left?: string;
+}>`
   display: flex;
   position: absolute;
-  top: 25px;
+  top: ${({ top }) => top && top};
+  width: ${({ width }) => width && width};
   right: 0px;
-  bottom: 0px;
   left: 0px;
-  height: 37px;
+  bottom: ${({ bottom }) => bottom && bottom};
   text-align: center;
-  padding: 13px 16px;
+  margin-left: ${({ left }) => left && left};
+
   background: rgba(36, 36, 36, 0.9);
   border-radius: 8px;
   z-index: 10;
-  width: 100%;
+
   ${({ theme }) => theme.desktop`
     left: 0px;
   `};
@@ -74,6 +88,8 @@ const TextContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding: 8px 12px;
+
   .svg {
     padding-left: 12px;
   }

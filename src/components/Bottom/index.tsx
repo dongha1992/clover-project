@@ -28,10 +28,7 @@ function Bottom() {
         ].includes(currentPath): {
           return <HomeBottom />;
         }
-        case ['/menu/[id]'].includes(currentPath): {
-          return <DetailBottom />;
-        }
-        case ['/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
           return <DetailBottom />;
         }
         default: {

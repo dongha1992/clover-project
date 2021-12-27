@@ -1,7 +1,7 @@
 import React from 'react';
 import { theme } from '@styles/theme';
 import { Obj } from '@model/index';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export interface IProps {
   id?: string;
@@ -29,6 +29,8 @@ export interface IProps {
   display?: string;
   wordBreak?: string;
   wordWrap?: string;
+  textHide?: boolean;
+  textHideMultiline?: boolean;
 }
 
 /* 사용법 
@@ -67,6 +69,29 @@ const Container = styled.div<IProps>`
   text-align: ${(props) => (props.center ? 'center' : '')};
   word-break: ${(props) => props.wordBreak && props.wordBreak};
   word-wrap: ${(props) => props.wordWrap && props.wordWrap};
+
+  ${(props) => {
+    if (props.textHide) {
+      return css`
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: ${props.width};
+      `;
+    }
+  }}
+
+  ${({ textHideMultiline }) => {
+    if (textHideMultiline) {
+      return css`
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      `;
+    }
+  }}
 `;
 
 export const TextH1B = styled(Text)`
@@ -136,7 +161,7 @@ export const TextB2R = styled(Text)`
   font-size: 14px;
   letter-spacing: -0.4px;
   font-weight: normal;
-  line-height: 24px;
+  line-height: 22px;
 `;
 export const TextB3R = styled(Text)`
   font-size: 12px;

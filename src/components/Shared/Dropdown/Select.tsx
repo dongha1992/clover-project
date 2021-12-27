@@ -51,22 +51,23 @@ function Select({ children, defaultValue, placeholder, type }: TProps) {
 }
 
 const SelectContainer = styled.div`
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
   position: relative;
   width: 100%;
-  height: auto;
   background-color: ${theme.white};
   border-radius: 8px;
   border: 1px solid ${theme.greyScale15};
 
   .SelectedText {
+    position: relative;
     padding: 10px 20px;
     cursor: pointer;
     :after {
       content: '';
       position: absolute;
       right: 16px;
-      top: 40%;
+      top: 50%;
       border: 4px solid transparent;
       border-color: black transparent transparent transparent;
     }
@@ -81,12 +82,12 @@ const OptionContainer = styled.ul<{
   text-align: center;
   border-radius: 5px;
 
-  position: absolute;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  margin-top: 5px;
-  z-index: 10000;
 
   border: 1px solid #e4e4e4;
+
   ${({ isShowDropdown }) => {
     if (isShowDropdown) {
       return css`
@@ -97,7 +98,7 @@ const OptionContainer = styled.ul<{
       `;
     } else {
       return css`
-        min-height: 0;
+        height: 0;
         opacity: 0;
         visibility: hidden;
       `;
