@@ -4,7 +4,7 @@ import { TextB3R, TextH4B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { useState } from 'react';
 import { theme } from '@styles/theme';
 
-const ReOrderList: React.FC = () => {
+const ReOrderList: React.FC = ({ children }) => {
   const [active, setActive] = useState(1);
   const [moreBtn, setMoreBtn] = useState(false);
   const setting = {
@@ -20,6 +20,7 @@ const ReOrderList: React.FC = () => {
 
   return (
     <Container>
+      {children}
       <Pagination>
         <TextH6B color="#fff">
           {active} / {3}
