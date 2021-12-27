@@ -266,6 +266,9 @@ export interface IEditDestination {
   zipCode: string | null;
 }
 
+export interface IGetMainDestinations {
+  delivery: string | null;
+}
 export interface IGetMainDestinationsResponse {
   content: string;
   createdAt: string;
