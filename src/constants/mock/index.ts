@@ -68,8 +68,7 @@ export const SPOT_ITEMS = [
           date: '2019-01-04',
           noti: '이벤트',
           desc: '어서오시고~, 오늘 하루 프코 고객에 한하여 2000원 할인해줌',
-          imgUrl:
-            'https://triangleagency.com/wp-content/uploads/2018/02/Cleric-312x175-18.jpg',
+          imgUrl: ['https://triangleagency.com/wp-content/uploads/2018/02/Cleric-312x175-18.jpg'],
           like: 10,
         },
         {
@@ -77,8 +76,7 @@ export const SPOT_ITEMS = [
           date: '2011-02-14',
           noti: '공지',
           desc: '우리가 젤쌈, 오늘 하루 프코 고객에 한하여 2000원 할인해줌',
-          imgUrl:
-            'https://triangleagency.com/wp-content/uploads/2016/05/T47-312x175.jpg',
+          imgUrl: ['https://triangleagency.com/wp-content/uploads/2016/05/T47-312x175.jpg'],
           like: 10,
         },
         {
@@ -164,15 +162,14 @@ export const SPOT_ITEMS = [
       noStory: '아직 스토리가 없어요.',
       story: [
         {
-          spotName: '이디야',
-          date: '2011-02-14',
-          noti: '공지',
-          desc: '우리가 젤쌈, 오늘 하루 프코 고객에 한하여 2000원 할인해줌',
-          imgUrl:
-            'https://triangleagency.com/wp-content/uploads/2016/05/T47-312x175.jpg',
-          like: 10,
-        },
-      ],
+        spotName: '이디야',
+        date: '2011-02-14',
+        noti: '공지',
+        desc: '우리가 젤쌈, 오늘 하루 프코 고객에 한하여 2000원 할인해줌',
+        imgUrl: ['https://triangleagency.com/wp-content/uploads/2016/05/T47-312x175.jpg'],
+        like: 10,
+      },
+],
       storeInfo: {
         number: '024661740',
         time: '주중 09:30~22:00\n주말 09:30~19:30',

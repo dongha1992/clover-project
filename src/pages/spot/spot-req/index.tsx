@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextB3R, TextH3B } from '@components/Shared/Text';
+import { TextH2B, TextB3R, TextH3B , TextH5B } from '@components/Shared/Text';
 import { theme, fixedBottom } from '@styles/theme';
 import Button from '@components/Shared/Button';
 import { useRouter } from 'next/router';
@@ -8,13 +8,14 @@ import { useRouter } from 'next/router';
 function SpotReqPage() {
   const router = useRouter();
   const text = {
-    publicText: '현재 xxxx명이\n프코스팟을 이용해요',
-    publicDesc: '내 주변 단골 가게를 프코스팟으로\n만들고 편하게 픽업하세요!',
+    publicText: '0000번째 프코스팟의\n파트너가 되어보세요.',
+    publicDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
+    normalText: '현재 xxxx명이\n프코스팟을 이용해요',
     normalDesc: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
     fcospotText: '단골카페를 프코스팟으로',
-    privateText: '우리 회사 학교를\n프코스팟으로',
+    privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
     privateDesc:
-      '우리 회사 학교에서 점심 저녁 원하는 시간으로\n샐러드 무료로 배송받기',
+      '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
     privateBtnText: '프라이빗 스팟 신청하기',
     askText: '프코스팟 신청이 어려우신가요?',
     askBtnText: '채팅문의',
@@ -24,16 +25,16 @@ function SpotReqPage() {
   const mainText = () => {
     switch (type) {
       case 'private': {
-        return { text1: text.privateText, text2: text.privateDesc };
+        return { textTitle: text.privateText, textDesc: text.privateDesc };
       }
       case 'public': {
-        return { text1: text.publicText, text2: text.publicDesc };
+        return { textTitle: text.publicText, textDesc: text.publicDesc };
       }
       case 'normal': {
-        return { text1: text.publicText, text2: text.normalDesc };
+        return { textTitle: text.normalText, textDesc: text.normalDesc };
       }
       default: {
-        return;
+        return { textTitle: text.publicText, textDesc: text.publicDesc };
       }
     }
   };
@@ -47,36 +48,18 @@ function SpotReqPage() {
   return (
     <Container>
       <TopWrapper>
-        <TextH2B>{mainText()?.text1}</TextH2B>
+        <TextH2B>{mainText()?.textTitle}</TextH2B>
         <TextB3R margin="33px 0 48px 0" color={theme.greyScale65}>
-          {mainText()?.text2}
+          {mainText()?.textDesc}
         </TextB3R>
       </TopWrapper>
       <GuideWrapper>
         <Guide></Guide>
       </GuideWrapper>
       <BottomWrapper>
-        {type !== 'normal' && (
-          <>
-            <BtnWrapper>
-              <TextH3B margin="0 0 24px 0">{text.fcospotText}</TextH3B>
-              <Button
-                pointer
-                backgroundColor={theme.white}
-                color={theme.black}
-                border
-                borderRadius="8"
-                onClick={goToRegister}
-              >
-                {text.registerBtn}
-              </Button>
-            </BtnWrapper>
-            <Row />
-          </>
-        )}
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
-          <TextH3B margin="0 0 24px 0">{text.askText}</TextH3B>
+          <TextH5B margin="0 0 24px 0">{text.askText}</TextH5B>
           <Button
             pointer
             backgroundColor={theme.white}
@@ -89,11 +72,7 @@ function SpotReqPage() {
         </BtnWrapper>
       </BottomWrapper>
       <FixedButton onClick={goToRegister}>
-        <Button borderRadius="0">
-          {type === 'private'
-            ? '프라이빗 프코스팟 신청하기'
-            : '프코스팟 신청하기'}
-        </Button>
+        <Button borderRadius="0">프코스팟 신청하기</Button>
       </FixedButton>
     </Container>
   );

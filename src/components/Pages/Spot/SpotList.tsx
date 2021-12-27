@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import {
   TextH2B,
@@ -15,12 +15,13 @@ import { useRouter } from 'next/router';
 
 interface IProps {
   items: any; // API 통신 이후 타입 지정 예정
-  title: string;
+  title?: string;
   subTitle?: string;
   type: string;
+  btnText ?:string;
 }
 
-const SpotList = ({ items, title, subTitle, type }: IProps) => {
+const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactElement => {
   const router = useRouter();
 
   const goToDetail = (id: number): void => {
@@ -96,7 +97,7 @@ const SpotList = ({ items, title, subTitle, type }: IProps) => {
                       <TextH6B
                         color={theme.greyScale65}
                       >{`${item.distance}m`}</TextH6B>
-                      <Button onClick={goToCart}>주문하기</Button>
+                      <Button onClick={goToCart}>{btnText}</Button>
                     </ButtonWrapper>
                   </LocationInfoWrapper>
                 </Container>
@@ -122,7 +123,7 @@ const SpotList = ({ items, title, subTitle, type }: IProps) => {
                   <StorImgWrapper>
                     <Text>
                       <SVGIcon name="fcoSpot" />
-                      {`${item.users}명 이용중`}
+                      {`${item.users}/100명 참여중`}
                     </Text>
                     <LikeWrapper type="trial">
                       <SVGIcon name="likeRed" />
@@ -139,7 +140,7 @@ const SpotList = ({ items, title, subTitle, type }: IProps) => {
                         color={theme.greyScale65}
                       >{`${item.distance}m`}</TextH6B>
                     </TextWrapper>
-                    <Button onClick={goToCart}>주문하기</Button>
+                    <Button>{btnText}</Button>
                   </LocationInfoWrapper>
                 </Container>
               );
