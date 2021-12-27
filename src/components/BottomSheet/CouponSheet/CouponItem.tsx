@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
 
-function CouponItem({ coupon }: any) {
+function CouponItem({ coupon, onClick }: any) {
   const isRateDiscount = coupon.type === 'rate';
   return (
     <Container isDownload={coupon.isDownload}>
@@ -28,7 +28,7 @@ function CouponItem({ coupon }: any) {
               <SVGIcon name="couponDownloadComplete" />
             </Complete>
           ) : (
-            <Incomplete>
+            <Incomplete onClick={onClick}>
               <SVGIcon name="couponDownloadAvailable" />
             </Incomplete>
           )}
@@ -60,31 +60,41 @@ const Container = styled.div<{ isDownload: boolean }>`
 `;
 
 const Wrapper = styled.div`
-  padding: 24px;
+  padding: 24px 0 24px 24px;
   display: flex;
+  justify-content: space-between;
   width: 100%;
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
+  margin-right: 8px;
   width: 70%;
 `;
 
 const BtnGroup = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 24px;
+  justify-content: center;
   width: 30%;
-  svg:first-child {
-    margin-right: 16px;
+
+  > svg {
   }
 `;
 
 const Complete = styled.div`
-  padding-left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 `;
 
-const Incomplete = styled.div``;
+const Incomplete = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
 
 export default CouponItem;

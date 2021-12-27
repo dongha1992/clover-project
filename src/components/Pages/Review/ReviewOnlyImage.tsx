@@ -4,9 +4,8 @@ import { TextH2B, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-/* TODO: rate 별 만들기  */
 
-function ReviewOnlyImage({ reviews, goToReviewImages }: any) {
+function ReviewOnlyImage({ reviews, goToReviewImages, goToReviewDetail }: any) {
   return (
     <Container>
       <Wrapper>
@@ -36,7 +35,12 @@ function ReviewOnlyImage({ reviews, goToReviewImages }: any) {
             }
 
             return (
-              <ReviewImage src={review?.url} alt="리뷰이미지" key={index} />
+              <ReviewImage
+                src={review?.url}
+                alt="리뷰이미지"
+                key={index}
+                onClick={() => goToReviewDetail(review.id)}
+              />
             );
           })}
         </ReviewSwipe>

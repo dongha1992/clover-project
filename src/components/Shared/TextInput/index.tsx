@@ -33,6 +33,8 @@ export interface ITextFieldProps {
   eventHandler?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setStateAction?: React.Dispatch<React.SetStateAction<string>>;
   keyPressHandler?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   error?: boolean;
   inputType?: InputType;
   placeholder?: string;
@@ -63,6 +65,8 @@ const TextInput = React.forwardRef(
       eventHandler,
       keyPressHandler,
       setStateAction,
+      onFocus,
+      onBlur,
       inputType,
       placeholder,
       name,
@@ -116,6 +120,8 @@ const TextInput = React.forwardRef(
             name={name}
             onKeyPress={keyPressHandler}
             ref={ref}
+            onFocus={onFocus}
+            onBlur={onBlur}
             accept={accept}
           />
         </div>

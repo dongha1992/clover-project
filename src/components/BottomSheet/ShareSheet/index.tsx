@@ -38,13 +38,6 @@ function ShareSheet() {
       urlIcon: () => {
         getUrlLink(e);
       },
-
-      // nativeShare: async () => {
-      //   const res = await getShare(e, url, title, description);
-      //   if (res) {
-      //     shareMapper['urlIcon']();
-      //   }
-      // },
     };
 
     shareMapper[value]();

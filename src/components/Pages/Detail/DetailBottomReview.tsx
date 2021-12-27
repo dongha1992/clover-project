@@ -10,16 +10,27 @@ import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 
-function DetailBottomReview({ reviews, isSticky }: any) {
+function DetailBottomReview({ reviews, isSticky, menuId }: any) {
   reviews = [...reviews, ...reviews, ...reviews];
-
   const dispatch = useDispatch();
 
   const hasReivew = reviews.length > 0;
 
   const goToReviewImages = useCallback(() => {
-    router.push('/review');
+    router.push(`/menu/${menuId}/review/photo`);
   }, []);
+
+  const goToTotalReview = () => {
+    router.push(`/menu/${menuId}/review/total`);
+  };
+
+  const goToReviewDetail = (id: number) => {
+    router.push(`/menu/${menuId}/review/${id}`);
+  };
+
+  const goToWriteReview = () => {
+    router.push(`/mypage//review/write/${menuId}`);
+  };
 
   const clickImgViewHandler = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
@@ -32,6 +43,7 @@ function DetailBottomReview({ reviews, isSticky }: any) {
           <ReviewOnlyImage
             reviews={reviews}
             goToReviewImages={goToReviewImages}
+            goToReviewDetail={goToReviewDetail}
           />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
@@ -44,6 +56,7 @@ function DetailBottomReview({ reviews, isSticky }: any) {
           border
           borderRadius="8"
           margin="0 0 32px 0"
+          onClick={goToWriteReview}
         >
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
@@ -64,7 +77,7 @@ function DetailBottomReview({ reviews, isSticky }: any) {
           color={theme.black}
           border
           borderRadius="8"
-          onClick={goToReviewImages}
+          onClick={goToTotalReview}
         >
           {reviews.length}개 후기 전체보기
         </Button>
