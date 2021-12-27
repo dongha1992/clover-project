@@ -12,11 +12,13 @@ import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
+  isCart?: boolean;
+  isQuick?: boolean;
 };
 
 const isNew = true;
 
-function Item({ item }: TProps) {
+function Item({ item, isCart, isQuick = false }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -61,23 +63,27 @@ function Item({ item }: TProps) {
           <TextH5B>{item.price}원</TextH5B>
         </PriceWrapper>
         <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
-        <LikeAndReview>
-          <Like>
-            <SVGIcon name="like" />
-            <TextB3R>{item.like}</TextB3R>
-          </Like>
-          <TextB3R>리뷰 {item.review}</TextB3R>
-        </LikeAndReview>
-        <TagWrapper>
-          {item.tags.map((tag: string, index: number) => {
-            if (index > 1) return;
-            return (
-              <Tag key={index} margin="0px 8px 8px 0px">
-                {tag}
-              </Tag>
-            );
-          })}
-        </TagWrapper>
+        {!isQuick && (
+          <>
+            <LikeAndReview>
+              <Like>
+                <SVGIcon name="like" />
+                <TextB3R>{item.like}</TextB3R>
+              </Like>
+              <TextB3R>리뷰 {item.review}</TextB3R>
+            </LikeAndReview>
+            <TagWrapper>
+              {item.tags.map((tag: string, index: number) => {
+                if (index > 1) return;
+                return (
+                  <Tag key={index} margin="0px 8px 8px 0px">
+                    {tag}
+                  </Tag>
+                );
+              })}
+            </TagWrapper>
+          </>
+        )}
       </FlexCol>
     </Container>
   );
