@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB3R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
+import { availabilityDestination } from '@api/destination';
 
-function CheckDeliveryPlace({ type }: any) {
+function CheckDeliveryPlace() {
+  // const { tempDestination } = useSelector(destinationForm);
+
+  useEffect(() => {
+    checkAvailablePlace();
+  }, []);
+
+  const checkAvailablePlace = async () => {
+    const userLocation = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+    const params = {
+      jibunAddress: userLocation.jibunAddr,
+      roadAddress: userLocation.roadAddr,
+      zipCode: userLocation.zipNo,
+      delivery: null,
+    };
+    try {
+      const data = await availabilityDestination(params);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Container>
       <PlaceInfo>
@@ -42,4 +67,4 @@ const PlaceInfo = styled.div`
   }
 `;
 
-export default CheckDeliveryPlace;
+export default React.memo(CheckDeliveryPlace);

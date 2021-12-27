@@ -320,7 +320,7 @@ const svgMap: TSvg = {
         rx="1.25"
         fill="white"
         stroke="#DEDEDE"
-        stroke-width="1.5"
+        strokeWidth="1.5"
       />
     </svg>
   ),

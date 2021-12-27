@@ -9,17 +9,21 @@ function DestinationSearchResult({ resultAddress, onClick, totalCount }: any) {
     <Container>
       <TextH5B padding="0 0 24px 0">검색 결과 {totalCount}개</TextH5B>
       <FlexCol>
-        {resultAddress.map((address: any, index: number) => {
-          return (
-            <AddressItem
-              roadAddr={address.roadAddr}
-              bdNm={address.bdNm}
-              jibunAddr={address.jibunAddr}
-              onClick={() => onClick(address)}
-              key={index}
-            />
-          );
-        })}
+        {resultAddress ? (
+          resultAddress.map((address: any, index: number) => {
+            return (
+              <AddressItem
+                roadAddr={address.roadAddr}
+                bdNm={address.bdNm}
+                jibunAddr={address.jibunAddr}
+                onClick={() => onClick(address)}
+                key={index}
+              />
+            );
+          })
+        ) : (
+          <div>검색 결과가 없습니다.</div>
+        )}
       </FlexCol>
     </Container>
   );

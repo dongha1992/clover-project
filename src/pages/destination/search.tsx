@@ -65,10 +65,11 @@ function destinationSearchPage() {
 
   const goToDestinationDetail = (address: any) => {
     dispatch(SET_DESTINATION_TEMP(address));
+    localStorage.setItem('loc', JSON.stringify(address));
     router.push('/destination/destination-detail');
   };
 
-  const beforeSearch = !resultAddress.length;
+  const beforeSearch = resultAddress && !resultAddress.length;
 
   return (
     <Container>
