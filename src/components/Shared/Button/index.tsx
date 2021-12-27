@@ -19,6 +19,9 @@ export interface IButtonProps {
   backgroundColor?: string;
   pointer?: boolean;
   border?: boolean;
+  justifyContent?: string;
+  fontWeight ?:number;
+  borderGrey15 ?: boolean;
 }
 
 const defaultProps = {
@@ -39,7 +42,7 @@ Button.defaultProps = defaultProps as IButtonProps;
 
 export const Container = styled(TextH5B)<IButtonProps>`
   display: flex;
-  justify-content: center;
+  justify-content: ${(props)=> props.justifyContent ? props.justifyContent : 'center'};
   align-items: center;
   width: ${(props) => props.width && props.width};
   height: ${(props) => props.height && props.height};
@@ -50,8 +53,9 @@ export const Container = styled(TextH5B)<IButtonProps>`
   background-color: ${(props) =>
     props.backgroundColor && props.backgroundColor};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
+  font-weight: ${(props) => props.fontWeight ? props.fontWeight : 700};
 
-  ${({ disabled, border, backgroundColor }) => {
+  ${({ disabled, border, borderGrey15, backgroundColor }) => {
     if (disabled) {
       return css`
         border: 1px solid ${theme.greyScale6};
@@ -62,6 +66,10 @@ export const Container = styled(TextH5B)<IButtonProps>`
       return css`
         border: 1px solid ${theme.black};
       `;
+    } else if (borderGrey15) {
+      return css `
+        border: 1px solid ${theme.greyScale15};
+      `
     } else {
       return css`
         border: 'none';

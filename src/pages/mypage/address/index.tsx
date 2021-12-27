@@ -31,8 +31,12 @@ function AddressManagementPage() {
     const params = {
       delivery: null,
     };
-    const data = await getMainDestinations(params);
-    console.log(data);
+    try {
+      const data = await getMainDestinations(params);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const selectTabHandler = (tabItem: any) => {
