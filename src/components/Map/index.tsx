@@ -9,7 +9,7 @@ function index() {
 const Container = styled.div`
   max-width: ${breakpoints.mobile}px;
   width: 100%;
-  height: 71vh;
+  height: 50vh;
   background-color: gray;
 `;
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
 import Map from '@components/Map';
@@ -10,18 +10,87 @@ import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
+import router from 'next/router';
+import { destinationRegister } from '@api/destination';
 
 function DestinationDetailPage() {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
+  const [userLocation, setUserLocation] = useState({
+    roadAddr: '',
+    roadAddrPart1: '',
+    roadAddrPart2: '',
+    jibunAddr: '',
+    engAddr: '',
+    zipNo: '',
+    admCd: '',
+    rnMgtSn: '',
+    bdMgtSn: '',
+    detBdNmList: '',
+    bdNm: '',
+    bdKdcd: '',
+    siNm: '',
+    sggNm: '',
+    emdNm: '',
+    liNm: '',
+    rn: '',
+    udrtYn: '',
+    buldMnnm: '',
+    buldSlno: '',
+    mtYn: '',
+    lnbrMnnm: '',
+    lnbrSlno: '',
+    emdNo: '',
+  });
 
-  const { tempDestination } = useSelector(destinationForm);
+  // const { tempDestination } = useSelector(destinationForm);
 
   const destinationNameRef = useRef<HTMLInputElement>(null);
   const destinationDetailRef = useRef<HTMLInputElement>(null);
 
-  const getDestination = async () => {};
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      setUserLocation(data);
+    } catch (error) {
+      console.error(error);
+    }
+    console.log(userLocation);
+  }, []);
 
-  if (!Object.keys(tempDestination).length) {
+  const getDestination = async () => {
+    if (destinationDetailRef.current && destinationNameRef.current) {
+      const addressDetail = destinationDetailRef.current.value;
+      const name = destinationNameRef.current.value;
+
+      const reqBody = {
+        // address: userLocation.roadAddrPart1,
+        // addressDetail,
+        // delivery: 'MORNING',
+        // deliveryMessage: '',
+        // dong: userLocation.emdNm,
+        // main: false,
+        // name,
+        // receiverName: '',
+        // receiverTel: '',
+        // zipCode: userLocation.zipNo,
+        address: '서울 송파구 거마로2길 34',
+        addressDetail,
+        delivery: 'SPOT',
+        deliveryMessage: '1',
+        dong: userLocation.emdNm,
+        main: false,
+        name,
+        receiverName: '집',
+        receiverTel: '01012341234',
+        zipCode: userLocation.zipNo,
+      };
+      const { data } = await destinationRegister(reqBody);
+      console.log(data);
+      router.push('cart/delivery-info');
+    }
+  };
+
+  if (!Object.keys(userLocation).length) {
     return;
   }
 
@@ -31,14 +100,14 @@ function DestinationDetailPage() {
       <Map />
       <DestinationInfoWrarpper>
         <FlexCol margin="0 0 24px 0">
-          <TextH5B>{tempDestination.bdNm}</TextH5B>
+          <TextH5B>{userLocation.bdNm}</TextH5B>
           <FlexRow padding="4px 0 6px">
             <Tag padding="3px">도로명</Tag>
-            <TextB3R margin="0 0 0 4px">{tempDestination.roadAddr}</TextB3R>
+            <TextB3R margin="0 0 0 4px">{userLocation.roadAddr}</TextB3R>
           </FlexRow>
           <FlexRow>
             <Tag padding="3px">지번</Tag>
-            <TextB3R margin="0 0 0 4px">{tempDestination.jibunAddr}</TextB3R>
+            <TextB3R margin="0 0 0 4px">{userLocation.jibunAddr}</TextB3R>
           </FlexRow>
         </FlexCol>
         <TextInput

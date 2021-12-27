@@ -195,3 +195,82 @@ export interface ICommon {
   errorCode: string;
   errorMessage: string;
 }
+
+export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
+
+export interface IRegisterDestination {
+  address: string | null;
+  addressDetail: string;
+  delivery: string;
+  deliveryMessage?: string;
+  dong?: string;
+  main: boolean;
+  name: string;
+  receiverName?: string;
+  receiverTel?: string;
+  zipCode: string | null;
+}
+
+export interface IAvilabiltyAddress {
+  jibunAddress: string | null;
+  roadAddress: string | null;
+  zipCode: string | null;
+  delivery?: string | null;
+}
+
+export interface IAvilabiltyAddressResponse {
+  code: number;
+  message: string;
+  data: {
+    morning: boolean;
+    parcel: boolean;
+    quick: boolean;
+  };
+}
+
+export interface IGetDestinationsResponse {
+  code: number;
+  message: string;
+  pagination: {
+    page: number;
+    size: number;
+    total: number;
+    totalPage: number;
+  };
+  pointHistories: {
+    content: string;
+    createdAt: string;
+    expiredDate: string;
+    id: number;
+    type: string;
+    value: number[];
+  };
+}
+
+export interface IGetDestinations {
+  page: number;
+  size: number;
+}
+
+export interface IEditDestination {
+  address: string | null;
+  addressDetail: string;
+  delivery: string;
+  deliveryMessage?: string;
+  dong?: string;
+  main: boolean;
+  name: string;
+  id: number;
+  receiverName?: string;
+  receiverTel?: string;
+  zipCode: string | null;
+}
+
+export interface IGetMainDestinationsResponse {
+  content: string;
+  createdAt: string;
+  expiredDate: string;
+  id: number;
+  type: string;
+  value: number[];
+}
