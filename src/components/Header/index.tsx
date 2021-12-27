@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Router, useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
+import QuickOrderHeader from './QuickOrderHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -103,6 +104,10 @@ function Header() {
 
         case ['/spot'].includes(currentPath): {
           return <SpotHeader />;
+        }
+
+        case ['/quickorder'].includes(currentPath): {
+          return <QuickOrderHeader />;
         }
 
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {
