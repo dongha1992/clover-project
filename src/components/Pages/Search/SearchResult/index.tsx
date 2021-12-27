@@ -1,15 +1,19 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import Item from '@components/Item';
 import SpotItem from '@components/Pages/Spot/SpotItem';
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
 import { setBottomSheet } from '@store/bottomSheet';
 import FilterGroup from '@components/Filter/FilterGroup';
+import { theme } from '@styles/theme';
+import Button from '@components/Shared/Button';
 
 function SearchResult({ searchResult, goToOrder, isSpot }: any) {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const clickFilterHandler = () => {
     dispatch(
@@ -37,9 +41,18 @@ function SearchResult({ searchResult, goToOrder, isSpot }: any) {
               <SpotItem item={item} key={index} onClick={goToOrder} />
             );
           })
-        ) : (
-          <div>검색결과가 없습니다.</div>
-        )}
+        ) : 
+            router.pathname === '/spot/search' ?
+              <NoResultWrapper>
+                <NoResult>
+                  <TextB2R margin='0 0 32px 0' color={theme.greyScale65}>등록된 스팟이 없어 보이네요.😭</TextB2R>
+                  <Button margin='0 0 16px 0' backgroundColor={theme.white} color={theme.black} border>지도로 주변 스팟 찾기</Button>
+                  <Button backgroundColor={theme.white} color={theme.black} border>나의 회사•학교를 프코스팟으로 신청하기</Button>
+                </NoResult>
+              </NoResultWrapper>
+            :
+              <div>검색결과가 없습니다.</div>
+        }
       </ItemListWrapper>
     </>
   );
@@ -74,4 +87,11 @@ const ItemListWrapper = styled.div<{ isSpot?: boolean }>`
   }}
 `;
 
+const NoResultWrapper = styled.div`
+  width: 100%;
+  text-align: center;
+  margin-top: 150px;
+`;
+
+const NoResult = styled.div``;
 export default React.memo(SearchResult);

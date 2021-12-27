@@ -70,6 +70,7 @@ const Wrapper: React.FC = ({ children }) => {
               type={alert.type}
               setSelectedMenu={alert.setSelectedMenu}
               selectedMenu={alert.selectedMenu}
+              children={alert.children}
             />
           )}
           {isClickReviewImg && <ImageViewer images={imagesForViewer} />}
@@ -95,7 +96,7 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  background-color: gray;
+  background-color: grey;
 `;
 
 const Center = styled.div`
@@ -135,7 +136,7 @@ const Left = styled.div`
 `;
 
 const Main = styled.main`
-  margin-top: 56px;
+  margin: 56px 0;
 `;
 
 export default Wrapper;

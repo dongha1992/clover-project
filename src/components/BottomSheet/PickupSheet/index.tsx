@@ -10,7 +10,7 @@ const PICK_UP_PLACE = [
 ];
 
 function PickupSheet() {
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(0);
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
 
   const changeRadioHandler = (id: number) => {
     setSelectedPickupPlace(id);

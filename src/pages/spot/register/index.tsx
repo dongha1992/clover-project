@@ -15,6 +15,7 @@ import Button from '@components/Shared/Button';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import OptionsSheet from '@components/Pages/Spot/OptionsSheet';
+import SVGIcon from '@utils/SVGIcon';
 
 function RegisterPage() {
   const router = useRouter();
@@ -22,18 +23,25 @@ function RegisterPage() {
   const { type } = router.query;
 
   const goToSubmit = (): void => {
-    router.push({
-      pathname: '/spot/register/submit',
-      query: { type },
-    });
+    if(type === 'normal'){
+      router.push({
+        pathname: '/spot/register/spot-onboarding',
+        query: { type },
+      });
+    } else {
+      router.push({
+        pathname: '/spot/register/submit',
+        query: { type },
+      });  
+    }
   };
 
   const checkBox = () => {};
 
-  const selectOptions = useCallback((type) => {
+  const selectOptions = useCallback((tab) => {
     dispatch(
       setBottomSheet({
-        content: <OptionsSheet type={type} />,
+        content: <OptionsSheet tab={tab} />,
         buttonTitle: '선택하기',
       })
     );
@@ -58,37 +66,66 @@ function RegisterPage() {
             </Address> */}
         </Wrapper>
         <Wrapper>
-          <TextH4B margin="0 0 16px 0">상호명</TextH4B>
+          <TextH4B margin="0 0 16px 0">장소명</TextH4B>
           <TextInput
             placeholder={
               type === 'private' ? '회사 및 학교 상호입력' : '상호명'
             }
           />
         </Wrapper>
-        <Wrapper>
-          <TextH4B margin="0 0 16px 0">장소 종류</TextH4B>
-          <BottomSheetBtn onClick={() => selectOptions('place')}>
-            공간 형태 선택
-          </BottomSheetBtn>
-        </Wrapper>
         {type === 'private' && (
-          <>
-            <Wrapper>
-              <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
-              <BottomSheetBtn onClick={() => selectOptions('time')}>
-                시간대 선택
-              </BottomSheetBtn>
-            </Wrapper>
             <Wrapper>
               <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
-              <BottomSheetBtn onClick={() => selectOptions('pickUp')}>
-                픽업 장소 선택
-              </BottomSheetBtn>
+              <Button
+                justifyContent='space-between'
+                backgroundColor={theme.white}
+                padding='12px 16px'
+                color = {theme.greyScale45}
+                fontWeight={400}
+                borderGrey15
+                pointer
+                onClick={() => selectOptions('pickUp')}
+              >
+              픽업 장소 선택
+              <SVGIcon name='triangleDown' />
+              </Button>
             </Wrapper>
-          </>
         )}
+        <Wrapper>
+          <TextH4B margin="0 0 16px 0">장소 종류</TextH4B>
+          <Button
+             justifyContent='space-between'
+             padding='12px 16px'
+             backgroundColor={theme.white}
+             color = {theme.greyScale45}
+             fontWeight={400}
+             borderGrey15
+             pointer
+             onClick={() => selectOptions('place')}>
+            공간 형태 선택
+            <SVGIcon name='triangleDown' />
+          </Button>
+        </Wrapper>
+        {type === 'private' && (
+            <Wrapper>
+              <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
+              <Button
+                justifyContent='space-between'
+                backgroundColor={theme.white}
+                padding='12px 16px'
+                color = {theme.greyScale45}
+                fontWeight={400}
+                borderGrey15
+                pointer
+                onClick={() => selectOptions('time')}
+              >
+              시간대 선택
+              <SVGIcon name='triangleDown' />
+              </Button>
+            </Wrapper>
+          )}
       </FormWrapper>
-      {type === 'private' ? (
+      {type === 'private' &&
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={checkBox} isSelected />
@@ -103,16 +140,7 @@ function RegisterPage() {
             출입 제한 건물)
           </TextB3R>
         </BottomWrapper>
-      ) : type === 'normal' ? (
-        <BottomWrapper>
-          <FlexRow>
-            <Checkbox onChange={checkBox} isSelected />
-            <TextH5B margin="0 0 0 8px">
-              신청자가 장소관리자임을 확인했습니다.
-            </TextH5B>
-          </FlexRow>
-        </BottomWrapper>
-      ) : null}
+        }
       <FixedButton onClick={goToSubmit}>
         <Button borderRadius="0">다음</Button>
       </FixedButton>

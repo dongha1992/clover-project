@@ -96,7 +96,7 @@ const ModalBox = styled.div<{
     width: 31px;
     height: 21px;
     margin: 5%;
-    color: gray;
+    color: grey;
     cursor: pointer;
   }
 `;
