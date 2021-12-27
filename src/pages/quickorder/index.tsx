@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { TextB3R, TextH2B, TextH3B, TextH4B } from '@components/Shared/Text';
+import { TextB2R, TextH2B, TextH3B } from '@components/Shared/Text';
 import { ScrollHorizonList, theme } from '@styles/theme';
-import { userForm } from '@store/user';
-import { useSelector } from 'react-redux';
 import Item from '@components/Item';
 
 import { BASE_URL } from '@constants/mock';
@@ -12,16 +10,16 @@ import ReOrderList from '@components/Pages/QuickOrder/ReOrderList';
 import OrderCardList from '@components/Pages/QuickOrder/OrderCardList';
 import { MENT } from '@constants/quick';
 import TimerTooltip from '@components/Shared/Tooltip/TimerTooltip';
+import Button from '@components/Shared/Button';
 
 const QuickOrderPage: React.FC = () => {
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
-  const seconds = new Date().getSeconds();
   const weeks = new Date().getDay();
 
   /* 임시 */
   const [user] = useState(true);
-  const [list] = useState([]);
+  const [list] = useState([1]);
 
   const [itemList, setItemList] = useState([]);
   const [night, setNight] = useState<Boolean>();
@@ -29,6 +27,7 @@ const QuickOrderPage: React.FC = () => {
   const [pushStatus, setPushStatus] = useState('');
   const [ment, setMent] = useState('');
   const [tooltipMsg, setTooltipMsg] = useState('');
+  const [tooltipShow, setTooltipShow] = useState(false);
   const [timer, setTimer] = useState<string>('');
 
   /* 목업 데이터 로직 */
@@ -121,9 +120,20 @@ const QuickOrderPage: React.FC = () => {
       />
 
       <PushArticle>
-        <TextH3B padding="0 0 24px 0">
-          이전에 구매한 상품으로 또 먹을래요!
-        </TextH3B>
+        {!user || list.length === 0 ? (
+          <TextH3B padding="0 0 8px 0">신규 고객을 위한 아침</TextH3B>
+        ) : (
+          <TextH3B padding="0 0 18px 0">
+            이전에 구매한 상품으로 또 먹을래요!
+          </TextH3B>
+        )}
+
+        {!user || list.length === 0 ? (
+          <TextB2R color={theme.greyScale65} padding="0 0 18px 0">
+            <span>새벽배송</span> 17시까지 주문 시 다음날 새벽 7시 전 도착
+          </TextB2R>
+        ) : null}
+
         <ScrollHorizonList>
           <ScrollHorizonListGroup className="pushSHLG">
             {itemList.map((item, index) => (
@@ -131,17 +141,34 @@ const QuickOrderPage: React.FC = () => {
             ))}
           </ScrollHorizonListGroup>
         </ScrollHorizonList>
+
+        {!user || list.length === 0 ? (
+          <div className="btnWraper">
+            <Button
+              margin="24px 0 0"
+              border
+              backgroundColor="#fff"
+              color={theme.black}
+            >
+              전체 상품 첫 주문하기
+            </Button>
+          </div>
+        ) : null}
       </PushArticle>
 
       <Banner>신규서비스 소개</Banner>
 
-      <ReOrderList>
-        <TimerTooltip
-          bgColor={theme.brandColor}
-          color={'#fff'}
-          message={tooltipMsg}
-        ></TimerTooltip>
-      </ReOrderList>
+      {!user || list.length !== 0 ? (
+        <ReOrderList>
+          {tooltipShow && (
+            <TimerTooltip
+              bgColor={theme.brandColor}
+              color={'#fff'}
+              message={tooltipMsg}
+            />
+          )}
+        </ReOrderList>
+      ) : null}
     </Container>
   );
 };
@@ -168,6 +195,12 @@ const IconBox = styled.div`
 const PushArticle = styled.article`
   padding-left: 24px;
   margin-bottom: 50px;
+  span {
+    font-weight: bold;
+  }
+  .btnWraper {
+    padding-right: 24px;
+  }
 `;
 const ScrollHorizonListGroup = styled.div`
   display: flex;

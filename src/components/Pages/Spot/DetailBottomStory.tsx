@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import styled from 'styled-components';
 import { TextB1R, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
+import dynamic from 'next/dynamic';
+import { useDispatch } from 'react-redux';
+import {SET_IMAGE_VIEWER} from '@store/common';
 
-function DetailBottomStory({ items }: any) {
+const ImageViewer = dynamic(() => import('@components/ImageViewer'));
+
+const DetailBottomStory = ({ items }: any): ReactElement => {
+  const dispatch = useDispatch();
   const itemsLeng: number = items?.story?.length;
+
+  const openImgViewer =  (img: any) => {
+    dispatch(SET_IMAGE_VIEWER(img));
+  };
 
   return (
     <>
@@ -30,7 +40,7 @@ function DetailBottomStory({ items }: any) {
                 </FlexBetween>
                 <TextB2R margin="0 0 8px 0">{item.date}</TextB2R>
                 {item.imgUrl && (
-                  <ImgWrapper src={item.imgUrl} alt="스토리 이미지" />
+                  <ImgWrapper src={item.imgUrl} onClick={()=>openImgViewer(item.imgUrl)}  alt="스토리 이미지" />
                 )}
                 <TextB1R margin="10px 0">{item.desc}</TextB1R>
                 <LikeWrapper>

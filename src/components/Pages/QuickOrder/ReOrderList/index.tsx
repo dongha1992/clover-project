@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 import { TextB3R, TextH4B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { useState } from 'react';
 import { theme } from '@styles/theme';
+import SVGIcon from '@utils/SVGIcon';
 
 const ReOrderList: React.FC = ({ children }) => {
   const [active, setActive] = useState(1);
@@ -37,7 +38,9 @@ const ReOrderList: React.FC = ({ children }) => {
               </article>
               <article className="row2">
                 <div className="address">
-                  <TextH4B color="#fff">맵 헤이그라운드 서울숲점</TextH4B>
+                  <TextH4B color="#fff">
+                    <SVGIcon name={'whiteMapIcon'} /> 헤이그라운드 서울숲점
+                  </TextH4B>
                   <TextB3R color={theme.greyScale25}>
                     서울시 성동구 왕십리로 115, 708호
                   </TextB3R>
@@ -105,6 +108,11 @@ const Slide = styled.div`
     width: 100%;
     justify-content: space-between;
     padding-bottom: 16px;
+    .address {
+      svg {
+        margin-right: 4px;
+      }
+    }
   }
   .row3 {
     .moreBtn {

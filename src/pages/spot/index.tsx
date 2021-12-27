@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH4B } from '@components/Shared/Text';
-import { theme, homePadding } from '@styles/theme';
+import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
@@ -20,25 +20,28 @@ const text = {
   normalNewSpotTitle: '신규 스팟',
   normalFcoSpotTitle: '배송비 제로! 역세권 프코스팟',
   eventTitle: '이벤트 진행중인 스팟',
-  trialTitle: '정식 오픈을 기다리는 트라이얼스팟',
-  trialSubTitle: '트라이얼 스팟 함께 주문하고 300포인트 받아요',
+  trialTitle: '내가 자주가는 곳을 무표 픽업 스팟으로!',
+  trialSubTitle: '내 주변 가게가 보인다면? 👀함께 참여해요!',
 };
 
 const FCO_SPOT_BANNER = [
   {
     id: 1,
-    text: '우리회사로 샐러드 당일 무료배송 받기',
+    text: '나의 회사∙학교를 프코스팟으로 만들어보세요!',
     type: 'private',
+    icon: 'blackCirclePencil',
   },
   {
     id: 2,
-    text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
+    text: '내가 자주가는 장소를 프코스팟으로\n만들어보세요!',
     type: 'public',
+    icon: 'blackCirclePencil',
   },
   {
     id: 3,
     text: '내 단골카페에서 샐러드 픽업하기',
     type: 'normal',
+    icon: 'blackCirclePencil',
   },
 ];
 
@@ -87,58 +90,69 @@ const SpotPage = () => {
   /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
     <Container>
-      <TextH2B padding="24px 0 0 0">{text.mainTitle}</TextH2B>
+      <TextH2B padding='24px 0 0 0'>{text.mainTitle}</TextH2B>
       {isLogin(true) && (
         <HandleBoxWrapper>
           <TextH4B>{text.gotoWrite}</TextH4B>
-          <ShareIconWrapper>
-            <SVGIcon name="download" />
-          </ShareIconWrapper>
+          <IconWrapper>
+            <SVGIcon name='blackCirclePencil' />
+          </IconWrapper>
         </HandleBoxWrapper>
       )}
       {isLogin(true) && (
         <HandleBoxWrapper onClick={goToShare}>
           <TextH4B>{text.gotoShare}</TextH4B>
-          <ShareIconWrapper>
-            <SVGIcon name="share" />
-          </ShareIconWrapper>
+          <IconWrapper>
+            <SVGIcon name='blackCircleShare' />
+          </IconWrapper>
         </HandleBoxWrapper>
       )}
-      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" />
+      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type='normal' />
       <SpotList
         items={SPOT_ITEMS}
         title={text.normalNewSpotTitle}
-        type="normal"
+        type='normal'
       />
       <SpotList
         items={SPOT_ITEMS}
         title={text.normalFcoSpotTitle}
-        type="normal"
+        type='normal'
       />
       <SlideWrapper {...settings}>
         {FCO_SPOT_BANNER.map((item) => {
           return (
-            <MidBannerWrapper
+            <SpotRegister
               key={item.id}
               onMouseMove={() => setMouseMoved(true)}
               onMouseDown={() => setMouseMoved(false)}
               onClick={() => goToSpotReq(item.type)}
             >
-              <TextH4B color={theme.black}>{item.text}</TextH4B>
-            </MidBannerWrapper>
+              <FlexBetween>
+                <TextH4B color={theme.black}>{item.text}</TextH4B>
+                <IconWrapper>
+                  <SVGIcon name={item.icon} />
+                </IconWrapper>
+              </FlexBetween>
+            </SpotRegister>
           );
         })}
       </SlideWrapper>
-      <SpotList items={SPOT_ITEMS} title={text.eventTitle} type="event" />
+      <SpotList items={SPOT_ITEMS} title={text.eventTitle} type="event" btnText='주문하기' />
       <SpotList
         items={SPOT_ITEMS}
         title={text.trialTitle}
         subTitle={text.trialSubTitle}
-        type="trial"
+        type='trial'
+        btnText='참여하기'
       />
-      {/* <Banner>
-          <TextH4B color={theme.black}>카페 사장님들! 프코스팟으로 고객 유치하세요!</TextH4B>
-      </Banner> */}
+        <SpotRegister>
+          <FlexBetween>
+            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
+              <IconWrapper>
+                <SVGIcon name='blackCirclePencil' />
+              </IconWrapper>
+          </FlexBetween>
+        </SpotRegister>
       <BottomStory>프코스팟 스토리</BottomStory>
     </Container>
   );
@@ -161,7 +175,15 @@ const HandleBoxWrapper = styled.div`
   align-items: center;
 `;
 
-const ShareIconWrapper = styled.div``;
+const IconWrapper = styled.div`
+  width: 32px;
+  height: 32px;
+  background: ${theme.black};
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const SlideWrapper = styled(Slider)`
   width: 100%;
@@ -171,7 +193,10 @@ const SlideWrapper = styled(Slider)`
   }
 `;
 
-const MidBannerWrapper = styled.div`
+const SpotRegister = styled.div`
+  width: 100%;
+  padding: 16px 0 0 0;
+
   height: 81px;
   background: ${theme.greyScale3};
   border-radius: 8px;
