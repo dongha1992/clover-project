@@ -15,30 +15,43 @@ import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
-import Checkbox from '@components/Shared/Checkbox';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
+import { registerCard } from '@api/card';
+import dynamic from 'next/dynamic';
+import { TValueType } from '@model/index';
 
-const CARD_TYPE = [
+const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
+  ssr: false,
+});
+
+interface ICardType {
+  id: number;
+  text: string;
+  value: TValueType;
+}
+
+const CARD_TYPE: ICardType[] = [
   {
     id: 1,
     text: '개인카드',
-    value: 'personal',
+    value: 'PERSONAL',
   },
   {
     id: 2,
     text: '법인카드',
-    value: 'company',
+    value: 'CORPORATION',
   },
 ];
 
 /*TODO: 카드 번호 ref로 관리해도 되낭 */
-/*TODO: 카드번호 4개 누르면 다음 넘어가기 */
 
 function CardRegisterPage() {
-  const [selectedCardType, setSelectedCardType] = useState(1);
+  const [selectedCardType, setSelectedCardType] = useState<number>(1);
+  const [isTermCheck, setIsTermCheck] = useState(false);
+  const [isMainCard, setIsMainCard] = useState(false);
   const [card, setCard] = useState<Obj>({
     number1: '',
     number2: '',
@@ -50,6 +63,10 @@ function CardRegisterPage() {
   const secondNumberRef = useRef<HTMLInputElement>(null);
   const thirdNumberRef = useRef<HTMLInputElement>(null);
   const fourthNumberRef = useRef<HTMLInputElement>(null);
+  const expireRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const corportaionRef = useRef<HTMLInputElement>(null);
+  const nicknameRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
 
@@ -90,24 +107,79 @@ function CardRegisterPage() {
     }
   };
 
-  const selectCheckboxHandler = () => {};
+  const selectMainCardHandler = () => {
+    setIsMainCard(!isMainCard);
+  };
+
+  const selectTermHandler = () => {
+    setIsTermCheck(!isTermCheck);
+  };
 
   const goToCardRegisterTerm = () => {
     router.push('/mypage/card/register/term');
   };
 
-  const registerCardHandler = () => {
-    const disabledMsg =
-      '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+  const registerCardHandler = async () => {
+    if (
+      firstNumberRef.current &&
+      secondNumberRef.current &&
+      thirdNumberRef.current &&
+      fourthNumberRef.current &&
+      expireRef.current &&
+      nicknameRef.current &&
+      passwordRef.current
+    ) {
+      const first = firstNumberRef.current.value;
+      const seconde = secondNumberRef.current.value;
+      const third = thirdNumberRef.current.value;
+      const fourth = fourthNumberRef.current.value;
 
-    const successMsg = '카드를 등록했습니다.';
-    dispatch(
-      setAlert({
-        alertMessage: disabledMsg,
-        onSubmit: () => {},
-        submitBtnText: '확인',
-      })
-    );
+      const type = CARD_TYPE.find(
+        (item: ICardType) => item.id === selectedCardType
+      )?.value;
+
+      const corporationNo =
+        corportaionRef.current && corportaionRef.current.value;
+
+      const name = nicknameRef.current.value;
+
+      const password = passwordRef.current.value;
+
+      const expireMMYY = expireRef.current?.value;
+
+      const expiredMM = expireMMYY.slice(0, 2);
+      const expiredYY = expireMMYY.slice(
+        expireMMYY.length - 2,
+        expireMMYY.length
+      );
+
+      const disabledMsg =
+        '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+
+      const successMsg = '카드를 등록했습니다.';
+
+      const cardData = {
+        birthDate: '1992-05-22',
+        corporationNo: corporationNo ? corporationNo : null,
+        expiredMM,
+        expiredYY,
+        main: isMainCard,
+        name,
+        number: first + seconde + third + fourth,
+        password,
+        type,
+      };
+
+      const { data } = await registerCard(cardData);
+
+      dispatch(
+        setAlert({
+          alertMessage: disabledMsg,
+          onSubmit: () => {},
+          submitBtnText: '확인',
+        })
+      );
+    }
   };
 
   return (
@@ -117,12 +189,12 @@ function CardRegisterPage() {
       </FlexCenter>
       <BorderLine height={1} margin="32px 0" />
       <SelectCardTypeWrapper>
-        {CARD_TYPE.map((type, index) => {
+        {CARD_TYPE.map((type: ICardType, index: number) => {
           const isSelected = type.id === selectedCardType;
           return (
             <FlexStart key={index}>
               <RadioButton
-                isSelected
+                isSelected={isSelected}
                 onChange={() => selectCardTypeHandler(type.id)}
               />
               {isSelected ? (
@@ -187,7 +259,7 @@ function CardRegisterPage() {
       <ExpirationAndPasswordWrapper>
         <Expiration>
           <TextH5B padding="0 0 9px 0">유효기간</TextH5B>
-          <TextInput />
+          <TextInput ref={expireRef} placeholder="MMYY" />
         </Expiration>
         <Password>
           <FlexRow padding="0 0 9px 0">
@@ -196,25 +268,25 @@ function CardRegisterPage() {
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput />
+          <TextInput ref={passwordRef} placeholder="비밀번호 앞 두 자리" />
         </Password>
       </ExpirationAndPasswordWrapper>
       <CompanyRegistrationNumberWrapper>
         <TextH5B padding="0 0 9px 0">사업자 등록번호</TextH5B>
-        <TextInput />
+        <TextInput ref={corportaionRef} placeholder="0000" />
       </CompanyRegistrationNumberWrapper>
       <OtherNameOfCardWrapper>
         <TextH5B padding="0 0 9px 0">카드별명</TextH5B>
-        <TextInput />
+        <TextInput ref={nicknameRef} placeholder="카드별명" />
       </OtherNameOfCardWrapper>
       <FlexRow>
-        <Checkbox isSelected onChange={selectCheckboxHandler} />
-        <TextB2R padding="0 0 0 8px">대표카드로 설정합니다.</TextB2R>
+        <Checkbox isSelected={isMainCard} onChange={selectMainCardHandler} />
+        <TextB2R padding="4px 0 0 8px">대표카드로 설정합니다.</TextB2R>
       </FlexRow>
       <BorderLine height={1} margin="24px 0" />
       <FlexRow>
-        <Checkbox isSelected onChange={selectCheckboxHandler} />
-        <FlexRow padding="0 4px 0 8px">
+        <Checkbox isSelected={isTermCheck} onChange={selectTermHandler} />
+        <FlexRow padding="4px 4px 0 8px">
           <TextB2R>이용 약관에 동의합니다.</TextB2R>
           <TextH6B
             color={theme.greyScale65}
@@ -227,7 +299,7 @@ function CardRegisterPage() {
         </FlexRow>
       </FlexRow>
       <RegisterBtn onClick={registerCardHandler}>
-        <Button>등록하기</Button>
+        <Button height="100%">등록하기</Button>
       </RegisterBtn>
     </Container>
   );
