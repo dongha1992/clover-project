@@ -108,6 +108,13 @@ function CardRegisterPage() {
   };
 
   const selectMainCardHandler = () => {
+    dispatch(
+      setAlert({
+        alertMessage: '첫번째 카드 등록 시 대표 카드 설정은 필수입니다. ',
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
     setIsMainCard(!isMainCard);
   };
 
