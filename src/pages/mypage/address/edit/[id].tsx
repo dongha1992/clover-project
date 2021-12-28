@@ -30,6 +30,7 @@ import { Select, AcessMethodOption } from '@components/Shared/Dropdown';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
 import PickupSheet from '@components/BottomSheet/PickupSheet';
+import { ButtonGroup } from '@components/Shared/Button/ButtonGroup';
 
 const isParcel = true;
 
@@ -181,25 +182,12 @@ function AddressEditPage({ id }: any) {
           <TextH5B padding="2px 0 0 8px">기본 프코 스팟으로 설정</TextH5B>
         </FlexRow>
       </Wrapper>
-      <BtnWrapper>
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={removeAddress}
-        >
-          삭제하기
-        </Button>
-        <Col />
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={editAddress}
-        >
-          수정하기
-        </Button>
-      </BtnWrapper>
+      <ButtonGroup
+        rightButtonHandler={editAddress}
+        leftButtonHandler={removeAddress}
+        leftText="삭제하기"
+        rightText="수정하기"
+      />
     </Container>
   );
 }
@@ -224,20 +212,6 @@ const MustCheckAboutDelivery = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
   border-radius: 8px;
-`;
-
-const BtnWrapper = styled.div`
-  ${fixedBottom}
-  display: flex;
-`;
-
-const Col = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 25%;
-  background-color: ${theme.white};
-  width: 1px;
-  height: 50%;
 `;
 
 export async function getServerSideProps(context: any) {

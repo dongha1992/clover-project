@@ -40,6 +40,7 @@ function Header() {
         '/payment': '결제',
         '/mypage/card': '결제관리',
         '/mypage/card/register': '카드등록',
+        '/mypage/card/edit': '카드 편집',
         '/mypage/card/register/term': '이용약관',
         '/mypage/order-detail': '주문 상세',
         '/mypage/order-delivery-history': '주문/배송 내역',

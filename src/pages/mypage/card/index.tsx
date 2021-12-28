@@ -8,6 +8,7 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
+import { route } from 'next/dist/server/router';
 
 function CardManagementPage() {
   const [cards, setCards] = useState([]);
@@ -23,7 +24,9 @@ function CardManagementPage() {
     console.log(data);
   };
 
-  const cardHandler = () => {};
+  const cardEditHandler = () => {
+    router.push('/mypage/card/edit');
+  };
 
   const goToCardRegister = (): void => {
     router.push('/mypage/card/register');
@@ -52,7 +55,7 @@ function CardManagementPage() {
           {CARDS &&
             CARDS.map((card, index) => (
               <div key={index}>
-                <CardItem onClick={cardHandler} />
+                <CardItem onClick={cardEditHandler} />
                 {CARDS.length !== index - 1 && (
                   <BorderLine height={1} margin="0 0 24px 0" />
                 )}
