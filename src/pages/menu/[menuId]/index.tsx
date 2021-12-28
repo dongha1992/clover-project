@@ -159,7 +159,9 @@ function MenuDetailPage({ menuId }: any) {
         />
         <DailySaleNumber>
           <Tag backgroundColor={theme.brandColor} borderRadius={24}>
-            <TextH6B color={theme.white}>{'일일 70개 한정'}</TextH6B>
+            <TextH6B padding="2px 0 0 0" color={theme.white}>
+              {'일일 70개 한정'}
+            </TextH6B>
           </Tag>
         </DailySaleNumber>
       </ImgWrapper>
