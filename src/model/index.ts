@@ -277,3 +277,17 @@ export interface IGetMainDestinationsResponse {
   type: string;
   value: number[];
 }
+
+export type TValueType = 'PERSONAL' | 'CORPORATION';
+
+export interface IRegisterCard {
+  birthDate: string;
+  corporationNo?: string | null;
+  expiredMM: string;
+  expiredYY: string;
+  main: boolean;
+  name: string;
+  number: string;
+  password: string;
+  type?: TValueType;
+}

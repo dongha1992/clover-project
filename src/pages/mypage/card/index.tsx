@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { FlexCenter, homePadding, theme } from '@styles/theme';
@@ -7,9 +7,21 @@ import { TextB2R, TextH4B } from '@components/Shared/Text';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
+import { getCardLists } from '@api/card';
 
 function CardManagementPage() {
+  const [cards, setCards] = useState([]);
   const CARDS = [1, 2] as any[];
+
+  useEffect(() => {
+    getCards();
+  }, []);
+
+  const getCards = async () => {
+    const { data } = await getCardLists();
+
+    console.log(data);
+  };
 
   const cardHandler = () => {};
 
@@ -72,4 +84,5 @@ const EmptyWrapper = styled.div`
   align-items: center;
   height: 80vh;
 `;
+
 export default CardManagementPage;
