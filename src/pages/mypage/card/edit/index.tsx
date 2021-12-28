@@ -8,6 +8,8 @@ import { TextH5B } from '@components/Shared/Text';
 import { editCard } from '@api/card';
 import { ButtonGroup } from '@components/Shared/Button/ButtonGroup';
 import dynamic from 'next/dynamic';
+import { setAlert } from '@store/alert';
+import { useDispatch } from 'react-redux';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -16,11 +18,29 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
 function CardEditPage() {
   const [isMainCard, setIsMainCard] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   const changeCardNameHandler = () => {};
 
-  const removeCard = async () => {};
+  const removeCard = async () => {
+    dispatch(
+      setAlert({
+        alertMessage: '카드를 삭제하시겠어요?',
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => {},
+      })
+    );
+  };
 
-  const editCard = async () => {};
+  const editCard = async () => {
+    dispatch(
+      setAlert({
+        alertMessage: '내용을 수정했습니다.',
+        submitBtnText: '확인',
+      })
+    );
+  };
 
   return (
     <Container>
