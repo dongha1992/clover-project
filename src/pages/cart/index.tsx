@@ -31,7 +31,6 @@ import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import Tag from '@components/Shared/Tag';
 import CountButton from '@components/Shared/Button/CountButton';
-import router from 'next/router';
 import Calendar from '@components/Calendar';
 import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { useRouter } from 'next/router';
@@ -61,7 +60,7 @@ const LUNCH_OR_DINNER = [
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-function CartPaeg() {
+function CartPage() {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>(
@@ -82,6 +81,8 @@ function CartPaeg() {
   const hasDeliveryPlace = true;
 
   const disabledDates = [30, 31, 1, 2, 3];
+  const otherDeliveryDate = 4;
+  const SPOT = true;
 
   useEffect(() => {
     getLists();
@@ -309,12 +310,17 @@ function CartPaeg() {
           <FlexCol padding="0 24px">
             <FlexBetween>
               <FlexRow margin="0 0 16px 0">
-                <TextH3B padding="2px 4px 0 0">픽업날짜</TextH3B>
+                <TextH3B padding="2px 4px 0 0">
+                  {SPOT ? '픽업날짜' : '배송일'}
+                </TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
               <TextH6B>오늘 12:00 전 도착</TextH6B>
             </FlexBetween>
-            <Calendar disabledDates={disabledDates} />
+            <Calendar
+              disabledDates={disabledDates}
+              otherDeliveryDate={otherDeliveryDate}
+            />
             {LUNCH_OR_DINNER.map((item, index) => {
               return (
                 <FlexRow key={index} padding="16px 0 0 0">
@@ -560,4 +566,4 @@ const OrderBtn = styled.div`
   ${fixedBottom}
 `;
 
-export default CartPaeg;
+export default CartPage;

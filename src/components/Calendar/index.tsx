@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Days from './Days';
-import { theme } from '@styles/theme';
-import { TextH5B } from '@components/Shared/Text';
+import { theme, FlexCol, FlexRow } from '@styles/theme';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
+import SVGIcon from '@utils/SVGIcon';
 
 let WEEKS: any = {
   1: '월',
@@ -15,9 +16,10 @@ let WEEKS: any = {
 
 interface ICalendar {
   disabledDates: number[];
+  otherDeliveryDate?: number;
 }
 
-function Calendar({ disabledDates }: ICalendar) {
+function Calendar({ disabledDates, otherDeliveryDate }: ICalendar) {
   const [dateList, setDateList] = useState<number[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [selectedDay, setSelectedDay] = useState<number>(0);
@@ -116,6 +118,7 @@ function Calendar({ disabledDates }: ICalendar) {
                 selectedDay={selectedDay === index}
                 index={index}
                 disabledDates={disabledDates}
+                otherDeliveryDate={otherDeliveryDate}
               />
             );
           })}
@@ -125,9 +128,19 @@ function Calendar({ disabledDates }: ICalendar) {
   };
 
   return (
-    <CalendarContainer>
-      <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
-    </CalendarContainer>
+    <FlexCol>
+      <CalendarContainer>
+        <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
+      </CalendarContainer>
+      {otherDeliveryDate && (
+        <FlexRow padding="16px 0 0 0">
+          <SVGIcon name="brandColorDot" />
+          <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
+            13일에 배송예정인 주문이 있습니다. 함께 받아보세요!
+          </TextB3R>
+        </FlexRow>
+      )}
+    </FlexCol>
   );
 }
 
