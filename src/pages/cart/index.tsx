@@ -81,7 +81,7 @@ function CartPaeg() {
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = [30, 1, 2, 3, 4];
+  const disabledDates = [];
 
   useEffect(() => {
     getLists();

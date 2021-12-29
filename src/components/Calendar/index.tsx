@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import Days from './Days';
 import { theme } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
+import e from 'express';
 
 let WEEKS: any = {
-  0: '일',
   1: '월',
   2: '화',
   3: '수',
@@ -34,6 +34,7 @@ function Calendar({ disabledDates }: ICalendar) {
     const year = new Date().getFullYear();
     const month = new Date().getMonth();
     const date = new Date().getDate();
+
     return { year, month, date };
   };
 
@@ -43,7 +44,14 @@ function Calendar({ disabledDates }: ICalendar) {
 
     for (let i = 0; i < 14; i++) {
       const _date = new Date(year, month, date + i).getDate();
-      list.push(_date);
+      const _day = new Date(year, month, date + i).getDay();
+
+      // 일요일 제외 하고 push
+      if (_day !== 0) {
+        list.push(_date);
+      } else {
+        continue;
+      }
     }
     setDateList(list);
   };
@@ -63,7 +71,9 @@ function Calendar({ disabledDates }: ICalendar) {
       const weeks: string[] = [];
       for (let i = 0; i < 7; i++) {
         const _week = new Date(year, month, date + i).getDay();
-        weeks.push(WEEKS[_week]);
+        if (WEEKS[_week]) {
+          weeks.push(WEEKS[_week]);
+        }
       }
       return weeks;
     };
@@ -129,7 +139,7 @@ const Header = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: calc(100% / 7);
+    width: calc(100% / 6);
     margin-bottom: 10px;
   }
 `;
@@ -141,8 +151,4 @@ const Body = styled.div`
   width: 100%;
 `;
 
-const BtnContainer = styled.div`
-  position: absolute;
-  right: 0%;
-`;
 export default React.memo(Calendar);
