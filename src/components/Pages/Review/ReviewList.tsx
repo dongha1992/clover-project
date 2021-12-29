@@ -6,7 +6,11 @@ function ReviewList({ reviews, onClick }: any) {
   return (
     <ScrollHorizonList>
       {reviews.map((review: any, index: number) => (
-        <ReviewItem review={review} key={index} onClick={onClick} />
+        <ReviewItem
+          review={review}
+          key={index}
+          onClick={() => onClick(review)}
+        />
       ))}
     </ScrollHorizonList>
   );
