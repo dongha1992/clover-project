@@ -7,17 +7,17 @@ import { destinationForm } from '@store/destination';
 import { availabilityDestination } from '@api/destination';
 
 function CheckDeliveryPlace() {
-  // const { tempDestination } = useSelector(destinationForm);
-
   useEffect(() => {
     checkAvailablePlace();
   }, []);
 
   const checkAvailablePlace = async () => {
     const userLocation = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+    const { siNm, sggNm, emdNm, lnbrMnnm, lnbrSlno } = userLocation;
+    console.log(siNm, sggNm, emdNm, lnbrMnnm, lnbrSlno);
     const params = {
       jibunAddress: userLocation.jibunAddr,
-      roadAddress: userLocation.roadAddr,
+      roadAddress: userLocation.roadAddrPart1,
       zipCode: userLocation.zipNo,
       delivery: null,
     };

@@ -5,11 +5,9 @@ import Tag from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 
-/* TODO: 리뷰 사진 클릭 시 이미지 뷰어 */
-
 function ReviewItem({ review, onClick }: any) {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <Wrapper>
         <ImgWrapper>
           <ReviewImg src={review.url} />

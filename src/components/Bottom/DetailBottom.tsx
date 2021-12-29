@@ -121,6 +121,7 @@ const Wrapper = styled.div`
   padding: 16px 24px;
   display: flex;
   width: 100%;
+  align-items: center;
 `;
 
 const LikeWrapper = styled.div`

@@ -29,7 +29,6 @@ import { setBottomSheet } from '@store/bottomSheet';
 import CouponSheet from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
-
 const DetailBottomFAQ = dynamic(
   () => import('../../../components/Pages/Detail/DetailBottomFAQ')
 );
@@ -66,6 +65,7 @@ function MenuDetailPage({ menuId }: any) {
   const tabRef = useRef<HTMLDivElement>(null);
 
   const HEADER_HEIGHT = 56;
+  let timer: any = null;
 
   const dispatch = useDispatch();
 
@@ -78,6 +78,7 @@ function MenuDetailPage({ menuId }: any) {
     return () => {
       window.removeEventListener('scroll', onScrollHandler);
       dispatch(SET_MENU_ITEM({}));
+      clearTimeout(timer);
     };
   }, [tabRef?.current?.offsetTop]);
 
@@ -85,7 +86,7 @@ function MenuDetailPage({ menuId }: any) {
     const offset = tabRef?.current?.offsetTop;
     const scrollTop = e?.srcElement.scrollingElement.scrollTop;
     if (offset) {
-      if (scrollTop + HEADER_HEIGHT > offset + 8) {
+      if (scrollTop + HEADER_HEIGHT > offset) {
         setIsStikcy(true);
       } else {
         setIsStikcy(false);
@@ -120,7 +121,24 @@ function MenuDetailPage({ menuId }: any) {
     [selectedTab]
   );
 
-  const clickImgViwerHandler = () => {};
+  const goToReviewDetail = (review: any) => {
+    router.push(`/menu/${menuId}/review/${review.id}`);
+  };
+
+  const goToReviewSection = () => {
+    setSelectedTab(() => '/menu/detail/review');
+    timer = setTimeout(() => {
+      if (tabRef.current) {
+        const offsetTop = tabRef?.current?.offsetTop;
+
+        window.scrollTo({
+          behavior: 'smooth',
+          left: 0,
+          top: offsetTop,
+        });
+      }
+    }, 100);
+  };
 
   const renderBottomContent = () => {
     if (!menuItem.reviews) return;
@@ -249,6 +267,7 @@ function MenuDetailPage({ menuId }: any) {
                 textDecoration="underline"
                 color={theme.greyScale65}
                 padding="0 24px 0 0"
+                onClick={goToReviewSection}
               >
                 더보기
               </TextH6B>
@@ -256,7 +275,7 @@ function MenuDetailPage({ menuId }: any) {
             {menuItem.reviews && (
               <ReviewList
                 reviews={menuItem.reviews}
-                onClick={clickImgViwerHandler}
+                onClick={goToReviewDetail}
               />
             )}
           </ReviewWrapper>
@@ -284,7 +303,8 @@ function MenuDetailPage({ menuId }: any) {
           ))}
         </DetailInfoContainer>
       </Top>
-      <BorderLine height={8} ref={tabRef} />
+      <AdWrapper></AdWrapper>
+      <div ref={tabRef} />
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
@@ -369,6 +389,12 @@ const ReviewContainer = styled.div`
   background-color: ${theme.greyScale3};
 `;
 
+const AdWrapper = styled.div`
+  width: 100%;
+  height: 96px;
+  background-color: grey;
+`;
+
 const ReviewWrapper = styled.div`
   padding: 24px 0 24px 24px;
 `;
@@ -388,7 +414,9 @@ const DetailInfoWrapper = styled.div`
 `;
 
 const Bottom = styled.div``;
+
 const BottomContent = styled.div``;
+
 const DailySaleNumber = styled.div`
   position: absolute;
   right: 10px;

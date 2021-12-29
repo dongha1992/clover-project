@@ -13,9 +13,10 @@ function DestinationSearchResult({ resultAddress, onClick, totalCount }: any) {
           resultAddress.map((address: any, index: number) => {
             return (
               <AddressItem
-                roadAddr={address.roadAddr}
+                roadAddr={address.roadAddrPart1}
                 bdNm={address.bdNm}
                 jibunAddr={address.jibunAddr}
+                zipNo={address.zipNo}
                 onClick={() => onClick(address)}
                 key={index}
               />

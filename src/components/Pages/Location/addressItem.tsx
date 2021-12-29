@@ -1,21 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH5B, TextB3R } from '@components/Shared/Text';
-import { FlexRow } from '@styles/theme';
+import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
+import { FlexColStart, FlexRow, FlexRowStart, FlexStart } from '@styles/theme';
 import Tag from '@components/Shared/Tag';
 
-function AddressItem({ roadAddr, bdNm, jibunAddr, onClick }: any) {
+function AddressItem({ roadAddr, bdNm, jibunAddr, zipNo, onClick }: any) {
   return (
     <Container onClick={onClick}>
-      <TextH5B>{bdNm}</TextH5B>
-      <FlexRow padding="4px 0 6px">
-        <Tag padding="3px">도로명</Tag>
-        <TextB3R margin="0 0 0 4px">{roadAddr}</TextB3R>
+      <FlexRow width="100%">
+        <TextH6B padding="0 4px 0 0">
+          {roadAddr}
+          &nbsp;
+          {bdNm}
+        </TextH6B>
       </FlexRow>
-      <FlexRow>
-        <Tag padding="3px">지번</Tag>
-        <TextB3R margin="0 0 0 4px">{jibunAddr}</TextB3R>
-      </FlexRow>
+      <FlexRowStart padding="4px 0 6px">
+        <Tag padding="2px" width="8%" center>
+          지번
+        </Tag>
+        <TextB3R margin="2px 0 0 4px">
+          {`(${zipNo}) `}
+          {jibunAddr}
+        </TextB3R>
+      </FlexRowStart>
     </Container>
   );
 }

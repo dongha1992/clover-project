@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
 import Map from '@components/Map';
 import Button from '@components/Shared/Button';
-import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
+import { fixedBottom, FlexCol, FlexRow, FlexRowStart } from '@styles/theme';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { destinationForm } from '@store/destination';
@@ -100,15 +100,13 @@ function DestinationDetailPage() {
       <Map />
       <DestinationInfoWrarpper>
         <FlexCol margin="0 0 24px 0">
-          <TextH5B>{userLocation.bdNm}</TextH5B>
-          <FlexRow padding="4px 0 6px">
-            <Tag padding="3px">도로명</Tag>
-            <TextB3R margin="0 0 0 4px">{userLocation.roadAddr}</TextB3R>
-          </FlexRow>
-          <FlexRow>
-            <Tag padding="3px">지번</Tag>
+          <TextH5B>{userLocation.roadAddrPart1}</TextH5B>
+          <FlexRowStart padding="4px 0 0 0">
+            <Tag padding="2px" width="8%" center>
+              지번
+            </Tag>
             <TextB3R margin="0 0 0 4px">{userLocation.jibunAddr}</TextB3R>
-          </FlexRow>
+          </FlexRowStart>
         </FlexCol>
         <TextInput
           placeholder="상세주소 입력 (필수)"
