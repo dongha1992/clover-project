@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH5B, TextH7B } from '@components/Shared/Text';
+import SVGIcon from '@utils/SVGIcon';
 
 type TProps = {
   day: number;
@@ -9,11 +10,20 @@ type TProps = {
   selectedDay: boolean;
   index: number;
   disabledDates: number[];
+  otherDeliveryDate?: number;
 };
 
-function Days({ day, handler, selectedDay, index, disabledDates }: TProps) {
+function Days({
+  day,
+  handler,
+  selectedDay,
+  index,
+  disabledDates,
+  otherDeliveryDate,
+}: TProps) {
   const isSecondWeeeks = index > 5;
   const isToday = !index;
+  const hasOtherDeliveryDate = otherDeliveryDate === day;
 
   const dayColorRender = () => {
     switch (true) {
@@ -29,20 +39,32 @@ function Days({ day, handler, selectedDay, index, disabledDates }: TProps) {
     }
   };
 
-  return (
-    <Container onClick={() => handler(index)} isSecondWeeeks={isSecondWeeeks}>
-      <Wrapper selectedDay={selectedDay}>
-        <TextH5B color={`${theme[dayColorRender()]}`}>{day}</TextH5B>
-      </Wrapper>
-      <TextWrapper>
-        {isToday ? (
+  const extraTextRender = () => {
+    switch (true) {
+      case isToday: {
+        return (
           <TextH7B color={theme.greyScale45} padding="4px 0 0 0">
             오늘
           </TextH7B>
-        ) : (
-          ''
-        )}
-      </TextWrapper>
+        );
+      }
+      case hasOtherDeliveryDate: {
+        return <SVGIcon name="brandColorDot" />;
+      }
+      default:
+        '';
+    }
+  };
+
+  return (
+    <Container onClick={() => handler(index)} isSecondWeeeks={isSecondWeeeks}>
+      <Wrapper
+        selectedDay={selectedDay}
+        hasOtherDeliveryDate={hasOtherDeliveryDate}
+      >
+        <TextH5B color={`${theme[dayColorRender()]}`}>{day}</TextH5B>
+      </Wrapper>
+      <TextWrapper>{extraTextRender()}</TextWrapper>
     </Container>
   );
 }
@@ -57,12 +79,17 @@ const Container = styled.div<{ isSecondWeeeks?: boolean }>`
   margin-bottom: ${({ isSecondWeeeks }) => (isSecondWeeeks ? 0 : 12)}px;
 `;
 
-const Wrapper = styled.div<{ selectedDay?: boolean }>`
+const Wrapper = styled.div<{
+  selectedDay?: boolean;
+  hasOtherDeliveryDate?: boolean;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
+  border: ${({ hasOtherDeliveryDate }) =>
+    hasOtherDeliveryDate ? `1px dashed #35ad73` : ''};
   border-radius: 50%;
   background-color: ${({ selectedDay }) =>
     selectedDay ? theme.brandColor : ''};
@@ -76,4 +103,4 @@ const TextWrapper = styled.div`
   height: 16px;
 `;
 
-export default Days;
+export default React.memo(Days);
