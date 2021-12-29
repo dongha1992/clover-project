@@ -56,6 +56,7 @@ const Wrapper: React.FC = ({ children }) => {
   const { isModalOn, imagesForViewer } = useSelector(commonSelector);
 
   const isClickReviewImg = imagesForViewer.length > 0;
+
   return (
     <>
       <Container>
