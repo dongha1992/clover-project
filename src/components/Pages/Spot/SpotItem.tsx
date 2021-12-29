@@ -33,8 +33,10 @@ function SpotItem({ item, onClick, mapList }: IProps): ReactElement {
         <MeterAndTime>
           <TextH6B>{item.meter}m</TextH6B>
           <Col />
-          <TextH6B>{item.type}</TextH6B>
-          <TextH6B>{item.availableTime}</TextH6B>
+          <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+            {item.type}
+          </TextH6B>
+          <TextH6B color={theme.greyScale65}>{item.availableTime}</TextH6B>
         </MeterAndTime>
         <div>
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>

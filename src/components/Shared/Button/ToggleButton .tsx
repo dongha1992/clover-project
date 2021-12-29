@@ -10,7 +10,7 @@ const ToggleButton = ({ onChange, status }: IToggleProsp) => {
   return (
     <Container>
       <input type="checkbox" onChange={onChange} checked={status} />
-      <Slider />
+      <Slider className="slider" />
       <Off />
       <On />
     </Container>
@@ -19,7 +19,7 @@ const ToggleButton = ({ onChange, status }: IToggleProsp) => {
 
 const Container = styled.label`
   position: relative;
-  display: flex;
+  display: inline-block;
   width: 44px;
   height: 28px;
   input {
@@ -33,7 +33,7 @@ const Container = styled.label`
     }
 
     &:checked + .slider::before {
-      transform: translateX(26px);
+      transform: translateX(13px);
     }
 
     &:checked + .slider {
@@ -41,6 +41,7 @@ const Container = styled.label`
     }
   }
 `;
+
 const Slider = styled.span`
   position: absolute;
   top: 0;

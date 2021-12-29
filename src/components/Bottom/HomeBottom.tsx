@@ -14,7 +14,7 @@ const BOTTOM_MENU = [
   {
     id: 1,
     text: '간편주문',
-    link: '/home',
+    link: '/quickorder',
     svg: 'fastOrder',
     activeSvg: 'fastOrderActive',
   },

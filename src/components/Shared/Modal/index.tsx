@@ -13,7 +13,7 @@ type TProps = {
   closeOnclickDimmer?: boolean;
 };
 
-/* TODO: modal open store 에서 관리해서 밖에 클릭시 modal 닫기하기 */
+/* TAYLER: bottom sheet 위에 alert 띄우는 것 때문에 Dimmer z-index 변경했는데 혹시 문제 되면 말씀해주세요. */
 
 export default function ModalLayout({
   children,
@@ -58,7 +58,7 @@ const Dimmer = styled.div`
   bottom: 0px;
   max-width: ${breakpoints.mobile}px;
   height: 100%;
-  z-index: 10;
+  z-index: 1000;
   background-color: rgba(0, 0, 0, 0.3);
 
   ${({ theme }) => theme.desktop`

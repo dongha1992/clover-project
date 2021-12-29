@@ -1,6 +1,6 @@
 /* TODO: 확장성 고려 못하고 변수명 지음 */
 
-export const MUTILPLE_CHECKBOX = [
+export const MUTILPLE_CHECKBOX_MENU = [
   { id: 1, text: '전체', value: 'all' },
   { id: 2, text: '비건', value: 'vegan' },
   { id: 3, text: '해산물', value: 'fish' },
@@ -8,7 +8,7 @@ export const MUTILPLE_CHECKBOX = [
   { id: 5, text: '유제품', value: 'milk' },
 ];
 
-export const RADIO_CHECKBOX = [
+export const RADIO_CHECKBOX_MENU = [
   { id: 1, text: '구매수 순', value: 'buy' },
   { id: 2, text: '신제품 순', value: 'new' },
   { id: 3, text: '가격 낮은 순', value: 'lowPrice' },

@@ -31,14 +31,16 @@ import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
 
 const DetailBottomFAQ = dynamic(
-  () => import('../../components/Pages/Detail/DetailBottomFAQ')
+  () => import('../../../components/Pages/Detail/DetailBottomFAQ')
 );
 
 const DetailBottomReview = dynamic(
-  () => import('../../components/Pages/Detail/DetailBottomReview')
+  () => import('../../../components/Pages/Detail/DetailBottomReview')
 );
 
 /* TODO: 영양 정보 리팩토링 */
+/* TODO: 영양 정보 샐러드만 보여줌 */
+/* TODO: 베스트후기 없으면 안 보여줌  */
 
 export interface IMenuItem {
   description: string;
@@ -55,7 +57,9 @@ export interface IMenuItem {
   reviews: any[];
 }
 
-function MenuDetailPage({ id }: any) {
+const hasAvailableCoupon = true;
+
+function MenuDetailPage({ menuId }: any) {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -92,7 +96,7 @@ function MenuDetailPage({ id }: any) {
   const getMenuDetail = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     const selectedMenuItem: IMenuItem = data.find(
-      (item: any) => item.id === Number(id)
+      (item: any) => item.id === Number(menuId)
     );
     setMenuItem(() => selectedMenuItem);
     /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
@@ -124,7 +128,13 @@ function MenuDetailPage({ id }: any) {
 
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} />;
+        return (
+          <DetailBottomReview
+            reviews={reviews}
+            isSticky={isSticky}
+            menuId={menuId}
+          />
+        );
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -159,7 +169,12 @@ function MenuDetailPage({ id }: any) {
           <MenuNameWrapper>
             <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
             {menuItem.tags.map((tag: string, index: number) => {
-              return <Tag key={index}>{tag}</Tag>;
+              if (index > 1) return;
+              return (
+                <Tag key={index} margin="0 4px 0 0">
+                  {tag}
+                </Tag>
+              );
             })}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
@@ -182,10 +197,17 @@ function MenuDetailPage({ id }: any) {
                 </TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
-            <CouponWrapper onClick={couponDownloadHandler}>
-              <TextH6B padding="0 4px 0 0">쿠폰 받기</TextH6B>
-              <SVGIcon name="download" />
-            </CouponWrapper>
+            {hasAvailableCoupon ? (
+              <CouponWrapper onClick={couponDownloadHandler}>
+                <TextH6B padding="4px 4px 0 0">쿠폰 받기</TextH6B>
+                <SVGIcon name="download" />
+              </CouponWrapper>
+            ) : (
+              <CouponWrapper>
+                <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
+                <SVGIcon name="checkBlack18" />
+              </CouponWrapper>
+            )}
           </PriceAndCouponWrapper>
           <BorderLine height={1} margin="16px 0" />
           <NutritionInfo>
@@ -264,7 +286,7 @@ function MenuDetailPage({ id }: any) {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: menuItem.review }}
+          countObj={{ 후기: menuItem.reviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
@@ -372,9 +394,9 @@ const DailySaleNumber = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { id } = context.query;
+  const { menuId } = context.query;
   return {
-    props: { id },
+    props: { menuId },
   };
 }
 
