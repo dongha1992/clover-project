@@ -81,7 +81,7 @@ function CartPaeg() {
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = [];
+  const disabledDates = [30, 31, 1, 2, 3];
 
   useEffect(() => {
     getLists();
@@ -309,13 +309,12 @@ function CartPaeg() {
           <FlexCol padding="0 24px">
             <FlexBetween>
               <FlexRow margin="0 0 16px 0">
-                <TextH3B padding="0 4px 0 0">픽업날짜</TextH3B>
+                <TextH3B padding="2px 4px 0 0">픽업날짜</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
               <TextH6B>오늘 12:00 전 도착</TextH6B>
             </FlexBetween>
             <Calendar disabledDates={disabledDates} />
-
             {LUNCH_OR_DINNER.map((item, index) => {
               return (
                 <FlexRow key={index} padding="16px 0 0 0">

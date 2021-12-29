@@ -12,11 +12,11 @@ type TProps = {
 };
 
 function Days({ day, handler, selectedDay, index, disabledDates }: TProps) {
+  const isSecondWeeeks = index > 5;
   const isToday = !index;
 
   const dayColorRender = () => {
     switch (true) {
-      case !index:
       case disabledDates.includes(day): {
         return 'greyScale25';
       }
@@ -30,7 +30,7 @@ function Days({ day, handler, selectedDay, index, disabledDates }: TProps) {
   };
 
   return (
-    <Container onClick={() => handler(index)}>
+    <Container onClick={() => handler(index)} isSecondWeeeks={isSecondWeeeks}>
       <Wrapper selectedDay={selectedDay}>
         <TextH5B color={`${theme[dayColorRender()]}`}>{day}</TextH5B>
       </Wrapper>
@@ -47,22 +47,22 @@ function Days({ day, handler, selectedDay, index, disabledDates }: TProps) {
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ isSecondWeeeks?: boolean }>`
   width: calc(100% / 6);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: ${({ isSecondWeeeks }) => (isSecondWeeeks ? 0 : 12)}px;
 `;
 
 const Wrapper = styled.div<{ selectedDay?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background-color: ${({ selectedDay }) =>
     selectedDay ? theme.brandColor : ''};
