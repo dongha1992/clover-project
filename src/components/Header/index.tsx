@@ -57,6 +57,7 @@ function Header() {
         '/mypage/address': '주소 관리',
         '/mypage/address/edit/[id]': '편집',
         '/mypage/coupon': '포인트',
+        '/mypage/setting': '앱설정',
         '/mypage/dib/subscription': '찜 관리',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',
