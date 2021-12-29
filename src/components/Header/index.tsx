@@ -52,6 +52,7 @@ function Header() {
         '/mypage/review': '후기 관리',
         '/mypage/review/write/[menuId]': '후기 작성',
         '/mypage/rank': '회원등급',
+        '/mypage/customer-service': '고객센터',
         '/mypage/point': '포인트',
         '/mypage/address': '주소 관리',
         '/mypage/address/edit/[id]': '편집',
