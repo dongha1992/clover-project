@@ -75,8 +75,9 @@ Api.interceptors.response.use(
             });
           });
         }
+      } else {
+        return onError(error as AxiosError);
       }
-      console.log(response, 'response');
     } catch (error) {
       return onError(error as AxiosError);
     }

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
-import { textH3, homePadding, theme } from '@styles/theme';
+import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextB3R } from '@components/Shared/Text';
 import axios from 'axios';
 import Item from '@components/Item';
 import { useDispatch } from 'react-redux';
 import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
+import HorizontalItem from '@components/Item/HorizontalItem';
 
 function Home() {
   const [itemList, setItemList] = useState([]);
@@ -30,11 +31,11 @@ function Home() {
       <SectionWrapper>
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
-        <ItemListCol>
+        <FlexWrapWrapper>
           {itemList.map((item, index) => {
             return <Item item={item} key={index} />;
           })}
-        </ItemListCol>
+        </FlexWrapWrapper>
       </SectionWrapper>
       <LineBanner />
       <FlexSpace>
@@ -45,7 +46,7 @@ function Home() {
       <ItemListRowWrapper>
         <ItemListRow>
           {itemList.map((item, index) => {
-            return <Item item={item} key={index} />;
+            return <HorizontalItem item={item} key={index} />;
           })}
         </ItemListRow>
       </ItemListRowWrapper>

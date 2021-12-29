@@ -8,6 +8,7 @@ import axios from 'axios';
 import { ISpotItem } from '@components/Pages/Spot/SpotItem';
 import router from 'next/router';
 import DeliveryItem from '@components/Pages/Mypage/Address/DeliveryItem';
+import { getMainDestinations } from '@api/destination';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -21,6 +22,22 @@ function AddressManagementPage() {
   useEffect(() => {
     getPickupItem();
   }, []);
+
+  useEffect(() => {
+    getDestinationList();
+  }, [selectedTab]);
+
+  const getDestinationList = async () => {
+    const params = {
+      delivery: null,
+    };
+    try {
+      const data = await getMainDestinations(params);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);

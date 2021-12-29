@@ -4,7 +4,9 @@ import { homePadding } from '@styles/theme';
 import useFetch from '@hooks/useFetch';
 import router from 'next/router';
 
-function ReviewPage() {
+/* 사진 전체 후기 */
+
+function ReviewPage({ menuId }: any) {
   const [page, setPage] = useState<number>(0);
   const { loading, error, list } = useFetch(page);
   const ref = useRef<HTMLDivElement>(null);
@@ -34,7 +36,7 @@ function ReviewPage() {
   }, [handleObserver]);
 
   const goToReviewDetail = useCallback(({ id }) => {
-    router.push(`/review/${id}`);
+    router.push(`/menu/${menuId}/review/${id}`);
   }, []);
 
   if (!loading) {
@@ -73,5 +75,12 @@ const ReviewImage = styled.img`
   width: calc(100% - 24px / 3);
   margin-bottom: 8px;
 `;
+
+export async function getServerSideProps(context: any) {
+  const { menuId } = context.query;
+  return {
+    props: { menuId },
+  };
+}
 
 export default React.memo(ReviewPage);

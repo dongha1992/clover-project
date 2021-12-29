@@ -14,6 +14,7 @@ import dropdown from './dropdown';
 import toast from './toast';
 import user from './user';
 import common from './common';
+import destination from './destination';
 import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
@@ -29,6 +30,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     toast,
     user,
     common,
+    destination,
   })(state, action);
 };
 

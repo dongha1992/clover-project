@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { RadioButton } from '@components/Shared/Button/RadioButton';
 import Tag from '@components/Shared/Tag';
-import { FlexBetween, homePadding, theme } from '@styles/theme';
+import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import Button from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
@@ -25,7 +25,8 @@ interface IDeliveryMethod {
   feeInfo: string;
 }
 
-/*TODO: map 리팩토링 */
+/* TODO: map 리팩토링 */
+/* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
 
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -67,11 +68,11 @@ const DELIVERY_METHOD: any = {
 };
 
 const pickupPlace = {
-  name: '헤이그라운드 서울숲점',
-  spaceType: '프라이빗',
-  address: '서울 성동구 왕십리로 115 10층',
-  type: '픽업',
-  availableTime: '12:00-12:30 / 15:30-18:00',
+  // name: '헤이그라운드 서울숲점',
+  // spaceType: '프라이빗',
+  // address: '서울 성동구 왕십리로 115 10층',
+  // type: '픽업',
+  // availableTime: '12:00-12:30 / 15:30-18:00',
 };
 
 function DeliverInfoPage() {
@@ -84,7 +85,7 @@ function DeliverInfoPage() {
     if (selectedMethod === 1) {
       router.push('/spot/search');
     } else {
-      router.push('/location');
+      router.push('/destination/search');
     }
   };
 
@@ -99,6 +100,21 @@ function DeliverInfoPage() {
     router.push('/cart');
     dispatch(SET_AFTER_SETTING_DELIVERY());
   };
+
+  const renderPlaceInfo = () => {
+    switch (selectedMethod) {
+      case 1: {
+        return <PickupPlaceBox />;
+      }
+
+      default: {
+        return <DeliveryPlaceBox />;
+      }
+    }
+  };
+
+  const isSpotPickupPlace = selectedMethod === 1;
+  const hasDeliverPlace = Object.keys(pickupPlace).length > 0;
 
   return (
     <Container>
@@ -131,8 +147,14 @@ function DeliverInfoPage() {
                             {item.tag}
                           </Tag>
                         )}
-                        {isSelected && <Tooltip message={'asdasdasd'} />}
                       </RowLeft>
+                      {isSelected && (
+                        <Tooltip
+                          message={'새벽배송이 가능해요'}
+                          top="25px"
+                          width="160px"
+                        />
+                      )}
                       {index === 2 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
@@ -201,49 +223,24 @@ function DeliverInfoPage() {
         </DeliveryMethodWrapper>
         <BorderLine height={8} margin="32px 0" />
         <FlexBetween>
-          <TextH3B padding="0 0 14px 0">픽업지</TextH3B>
-          {Object.keys(pickupPlace).length && (
-            <TextH6B textDecoration="underline" color={theme.greyScale65}>
+          <TextH3B padding="0 0 14px 0">
+            {isSpotPickupPlace ? '픽업장소' : '배송지'}
+          </TextH3B>
+          {hasDeliverPlace && (
+            <TextH6B
+              textDecoration="underline"
+              color={theme.greyScale65}
+              onClick={goToFindAddress}
+            >
               변경하기
             </TextH6B>
           )}
         </FlexBetween>
-        {!Object.keys(pickupPlace).length ? (
-          <>
-            <PickPlaceInfo>
-              <PlaceName>
-                <TextH5B padding="0 4px 0 0">{pickupPlace.name}</TextH5B>
-                <Tag
-                  backgroundColor={theme.brandColor5}
-                  color={theme.brandColor}
-                >
-                  {pickupPlace.spaceType}
-                </Tag>
-              </PlaceName>
-              <TextB3R padding="4px 0" color={theme.greyScale65}>
-                {pickupPlace.address}
-              </TextB3R>
-              <PlaceInfo>
-                <TextH6B padding="0 4px 0 0" color={theme.greyScale65}>
-                  {pickupPlace.type}
-                </TextH6B>
-                <TextB3R color={theme.greyScale65}>
-                  {pickupPlace.availableTime}
-                </TextB3R>
-              </PlaceInfo>
-            </PickPlaceInfo>
-            <CheckTerm>
-              <Checkbox isSelected onChange={checkTermHandler} />
-              <span className="h5B">
-                <span className="brandColor">임직원 전용</span>
-                스팟으로, 외부인은 이용이 불가합니다.
-              </span>
-            </CheckTerm>
-          </>
-        ) : (
+        {hasDeliverPlace ? renderPlaceInfo() : ''}
+        {!hasDeliverPlace && (
           <BtnWrapper onClick={goToFindAddress}>
             <Button backgroundColor={theme.white} color={theme.black} border>
-              {selectedMethod === 1 ? '픽업지 검색하기' : '배송지 검색하기'}
+              {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
             </Button>
           </BtnWrapper>
         )}
@@ -257,6 +254,7 @@ function DeliverInfoPage() {
 
 const Container = styled.div`
   width: 100%;
+  margin-bottom: 60px;
 `;
 const Wrapper = styled.div`
   width: 100%;
@@ -282,6 +280,7 @@ const RowLeft = styled.div`
   display: flex;
 `;
 const Content = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -306,6 +305,14 @@ const PickPlaceInfo = styled.div`
   padding: 16px;
 `;
 
+const DelvieryPlaceInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 16px;
+`;
+
 const PlaceName = styled.div`
   display: flex;
   align-items: center;
@@ -320,7 +327,7 @@ const CheckTerm = styled.div`
   display: flex;
   align-items: center;
   margin-top: 16px;
-  padding-bottom: 56px;
+
   .h5B {
     padding-top: 2px;
     font-size: 12px;
@@ -342,5 +349,53 @@ const SettingBtnWrapper = styled.div`
   left: 0;
   width: 100%;
 `;
+
+export const PickupPlaceBox = React.memo(
+  ({ place, checkTermHandler, isSelected }: any) => {
+    return (
+      <FlexCol padding="0 0 32px 0">
+        <PickPlaceInfo>
+          <PlaceName>
+            <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+              {place.spaceType}
+            </Tag>
+          </PlaceName>
+          <TextB3R padding="4px 0" color={theme.greyScale65}>
+            {place.address}
+          </TextB3R>
+          <PlaceInfo>
+            <TextH6B padding="0 4px 0 0" color={theme.greyScale65}>
+              {place.type}
+            </TextH6B>
+            <TextB3R color={theme.greyScale65}>{place.availableTime}</TextB3R>
+          </PlaceInfo>
+        </PickPlaceInfo>
+        <CheckTerm>
+          <Checkbox isSelected={isSelected} onChange={checkTermHandler} />
+          <span className="h5B">
+            <span className="brandColor">임직원 전용</span>
+            스팟으로, 외부인은 이용이 불가합니다.
+          </span>
+        </CheckTerm>
+      </FlexCol>
+    );
+  }
+);
+
+export const DeliveryPlaceBox = React.memo((place: any) => {
+  return (
+    <FlexCol padding="0 0 32px 0">
+      <DelvieryPlaceInfo>
+        <PlaceName>
+          <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
+        </PlaceName>
+        <TextB3R padding="4px 0" color={theme.greyScale65}>
+          {place.address}
+        </TextB3R>
+      </DelvieryPlaceInfo>
+    </FlexCol>
+  );
+});
 
 export default DeliverInfoPage;

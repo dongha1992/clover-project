@@ -4,7 +4,6 @@ import Home from '@components/Home';
 import Footer from '@components/Footer';
 import wrapper from '@store/index';
 // import { setRefreshToken } from '@components/Auth';
-import { useSelector } from 'react-redux';
 
 function HomePage() {
   return (
@@ -23,8 +22,6 @@ const Container = styled.div`
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store: any) => async (context: any) => {
-    // await setRefreshToken(context, store);
-
     return {
       props: {},
     };

@@ -83,6 +83,7 @@ const GlobalStyle = createGlobalStyle`
     * {
         box-sizing: border-box;
         font-family: 'NotoSansKR', sans-serif !important;
+        ::-webkit-scrollbar { display: none; }
     }
 
     a {

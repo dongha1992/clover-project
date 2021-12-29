@@ -28,6 +28,7 @@ import { getImageSize } from '@utils/getImageSize';
 import Button from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
+import Tooltip from '@components/Shared/Tooltip';
 interface IWriteMenuReviewObj {
   dateId: number;
   detailId: number;
@@ -37,7 +38,7 @@ interface IWriteMenuReviewObj {
   rating: number;
 }
 
-function WriteReviewPage({ id }: any) {
+function WriteReviewPage({ menuId }: any) {
   const [isShow, setIsShow] = useState(false);
   const [item, setItem] = useState<any>({});
   const [rating, setRating] = useState<number>(5);
@@ -68,7 +69,9 @@ function WriteReviewPage({ id }: any) {
 
   const getItemForReview = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
-    const selectedItem: any = data.find((item: any) => item.id === Number(id));
+    const selectedItem: any = data.find(
+      (item: any) => item.id === Number(menuId)
+    );
     setItem(selectedItem);
   };
 
@@ -244,6 +247,12 @@ function WriteReviewPage({ id }: any) {
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
+        <Tooltip
+          message={'사진과 함께 등록 시 300원 적립!'}
+          top="-45px"
+          width="200px"
+          left="20px"
+        />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
@@ -343,6 +352,7 @@ const RateWrapper = styled.div`
 `;
 
 const UploadPhotoWrapper = styled.div`
+  position: relative;
   ${homePadding}
 `;
 
@@ -412,9 +422,9 @@ const GreyBg = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { id } = context.query;
+  const { menuId } = context.query;
   return {
-    props: { id },
+    props: { menuId },
   };
 }
 

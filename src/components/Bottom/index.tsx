@@ -19,15 +19,16 @@ function Bottom() {
   const renderComponent = useCallback(
     (currentPath: string) => {
       switch (true) {
-        case ['/home', '/spot', '/mypage', '/subscription'].includes(
-          currentPath
-        ): {
+        case [
+          '/quickorder',
+          '/home',
+          '/spot',
+          '/mypage',
+          '/subscription',
+        ].includes(currentPath): {
           return <HomeBottom />;
         }
-        case ['/menu/[id]'].includes(currentPath): {
-          return <DetailBottom />;
-        }
-        case ['/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
           return <DetailBottom />;
         }
         default: {
@@ -47,5 +48,6 @@ function Bottom() {
 
 const Container = styled.div<{ isShow: React.ReactNode }>`
   margin-top: ${({ isShow }) => (isShow ? 62 : 0)}px;
+  display: ${({ isShow }) => (isShow ? '' : 'none')};
 `;
 export default React.memo(Bottom);

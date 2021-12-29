@@ -141,3 +141,139 @@ export interface IChangePassword {
   newPassword: string;
   oldPassword?: string;
 }
+
+export interface IJusoRequest {
+  query: string;
+  page: number;
+}
+
+export interface IJusoResponse {
+  results: {
+    common: ICommon;
+    juso: Array<IJuso>;
+  };
+}
+
+export interface IAddress {
+  readonly zipCode: string | null;
+  readonly roadAddress: string | null;
+  readonly buildName: string | null;
+  readonly jibunAddress: string | null;
+}
+
+export interface IJuso {
+  readonly roadAddr: string | null;
+  readonly roadAddrPart1: string | null;
+  readonly roadAddrPart2: string | null;
+  readonly jibunAddr: string | null;
+  readonly engAddr: string | null;
+  readonly zipNo: string | null;
+  readonly admCd: string | null;
+  readonly rnMgtSn: string | null;
+  readonly bdMgtSn: string | null;
+  readonly detBdNmList: string | null;
+  readonly bdNm: string | null;
+  readonly bdKdcd: string | null;
+  readonly siNm: string | null;
+  readonly sggNm: string | null;
+  readonly emdNm: string | null;
+  readonly liNm: string | null;
+  readonly rn: string | null;
+  readonly udrtYn: string | null;
+  readonly buldMnnm: string | null;
+  readonly buldSlno: string | null;
+  readonly mtYn: string | null;
+  readonly lnbrMnnm: string | null;
+  readonly lnbrSlno: string | null;
+  readonly emdNo: string | null;
+}
+
+export interface ICommon {
+  totalCount: string;
+  currentPage: string;
+  countPerPage: string;
+  errorCode: string;
+  errorMessage: string;
+}
+
+export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
+
+export interface IRegisterDestination {
+  address: string | null;
+  addressDetail: string;
+  delivery: string;
+  deliveryMessage?: string;
+  dong?: string;
+  main: boolean;
+  name: string;
+  receiverName?: string;
+  receiverTel?: string;
+  zipCode: string | null;
+}
+
+export interface IAvilabiltyAddress {
+  jibunAddress: string | null;
+  roadAddress: string | null;
+  zipCode: string | null;
+  delivery?: string | null;
+}
+
+export interface IAvilabiltyAddressResponse {
+  code: number;
+  message: string;
+  data: {
+    morning: boolean;
+    parcel: boolean;
+    quick: boolean;
+  };
+}
+
+export interface IGetDestinationsResponse {
+  code: number;
+  message: string;
+  pagination: {
+    page: number;
+    size: number;
+    total: number;
+    totalPage: number;
+  };
+  pointHistories: {
+    content: string;
+    createdAt: string;
+    expiredDate: string;
+    id: number;
+    type: string;
+    value: number[];
+  };
+}
+
+export interface IGetDestinations {
+  page: number;
+  size: number;
+}
+
+export interface IEditDestination {
+  address: string | null;
+  addressDetail: string;
+  delivery: string;
+  deliveryMessage?: string;
+  dong?: string;
+  main: boolean;
+  name: string;
+  id: number;
+  receiverName?: string;
+  receiverTel?: string;
+  zipCode: string | null;
+}
+
+export interface IGetMainDestinations {
+  delivery: string | null;
+}
+export interface IGetMainDestinationsResponse {
+  content: string;
+  createdAt: string;
+  expiredDate: string;
+  id: number;
+  type: string;
+  value: number[];
+}

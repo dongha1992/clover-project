@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Router, useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
+import QuickOrderHeader from './QuickOrderHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -27,11 +28,12 @@ function Header() {
       const headerTitleMap: Obj = {
         '/search': '검색',
         '/location': '내 위치 설정하기',
-        '/location/address-detail': '내 위치 설정하기',
+        '/location/address-detail': '배송위치',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
-        '/review': '사진 후기',
-        '/review/[id]': '후기 상세',
+        '/menu/[menuId]/review/photo': '사진 후기',
+        '/menu/[menuId]/review/total': '전체 후기',
+        '/menu/[menuId]/review/[id]': '후기 상세',
         '/cart': '장바구니',
         '/cart/delivery-info': '배송정보',
         '/spot/search': '프코스팟 검색',
@@ -48,12 +50,18 @@ function Header() {
         '/mypage/dib/general': '찜 관리',
         '/mypage/friend': '친구 초대',
         '/mypage/review': '후기 관리',
-        '/mypage/review/write': '후기 작성',
+        '/mypage/review/write/[menuId]': '후기 작성',
         '/mypage/rank': '회원등급',
+        '/mypage/customer-service': '고객센터',
         '/mypage/point': '포인트',
         '/mypage/address': '주소 관리',
         '/mypage/address/edit/[id]': '편집',
         '/mypage/coupon': '포인트',
+        '/mypage/term': '약관 및 정책',
+        '/mypage/term/use': '이용약관',
+        '/mypage/term/privacy': '개인정보 처리방침',
+        '/mypage/term/location': '위치정보 서비스 이용 약관',
+        '/mypage/setting': '앱설정',
         '/mypage/dib/subscription': '찜 관리',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',
@@ -66,40 +74,17 @@ function Header() {
         '/spot/spot-req': '신청하기',
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
-        '/spot/search/location': '프코스팟 검색'
+        '/destination/search': '배송지 검색',
+        '/destination/destination-detail': '배송지 검색',
+        '/spot/search/location': '프코스팟 검색',
       };
 
       const title = headerTitleMap[currentPath];
       switch (true) {
-        case [
-          '/location',
-          '/location/address-detail',
-          '/search',
-          '/review',
-          '/review/[id]',
-          '/cart',
-          '/cart/delivery-info',
-          '/payment',
-          '/mypage/card',
-          '/mypage/card/register',
-          '/mypage/card/register/term',
-          '/payment/finish',
-          '/mypage/order-detail',
-          '/signup',
-          '/login',
-          '/signup/auth',
-          '/signup/email-password',
-          '/signup/optional',
-          '/spot/spot-req',
-          '/spot/register',
-          '/spot/register/submit',
-        ].includes(currentPath): {
-          return <DefaultHeader title={title} />;
-        }
         case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
-        case ['/menu/[id]', '/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
 
@@ -127,7 +112,11 @@ function Header() {
           return <SpotHeader />;
         }
 
-        case['/spot/search', '/spot/search/location'].includes(currentPath): {
+        case ['/quickorder'].includes(currentPath): {
+          return <QuickOrderHeader />;
+        }
+
+        case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
 
