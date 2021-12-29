@@ -1663,6 +1663,59 @@ const svgMap: TSvg = {
       <rect x="2" y="18.3008" width="16" height="2" rx="1" fill="#242424" />
     </svg>
   ),
+  redRestaurant: () => (
+    <svg 
+      width="36" 
+      height="39" 
+      viewBox="0 0 36 39" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path 
+        fillRule="evenodd" 
+        clipRule="evenodd" 
+        d="M18 39C18 39 36 33.5 36 19.008C36 18.8349 35.9978 18.6623 35.9935 18.4903C35.9978 18.3274 36 18.1639 36 18C36 8.05887 27.9411 0 18 0C8.05887 0 0 8.05887 0 18C0 18.1639 0.0021918 18.3274 0.00654769 18.4903C0.0021918 18.6623 0 18.8349 0 19.008C0 33.5 18 39 18 39Z" 
+        fill="white"
+      />
+      <circle 
+        cx="18" 
+        cy="18" 
+        r="16" 
+        fill="#D32F2F"
+      />
+      <path 
+        d="M16.0923 15.7703V10.5H17.623V16.536C17.623 17.3694 16.9376 18.0676 16.0923 18.0676V24.7342C16.0923 25.1396 15.7496 25.5 15.3155 25.5H13.7847C13.3735 25.5 13.0308 25.1396 13.0308 24.7342V18.0676C12.1854 18.0676 11.5 17.3694 11.5 16.536V10.5H13.0308V15.7703H13.7847V10.5H15.3155V15.7703H16.0923ZM19.9306 18.0676V12.7523C19.9306 11.5135 20.9587 10.5 22.2153 10.5C23.4719 10.5 24.5 11.5135 24.5 12.7523V24.7342C24.5 25.1396 24.1801 25.5 23.7689 25.5H22.2153C21.804 25.5 21.4385 25.1396 21.4385 24.7342V18.0676H19.9306Z" 
+        fill="white"
+      />
+    </svg>
+  ),
+  greenMarker: () => (
+    <svg width="48" height="52" viewBox="0 0 48 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_dd_4832_84363)">
+        <path d="M40 20.6224C40 33.2955 24 40 24 40C24 40 8 33.2955 8 20.6224C8 11.4421 15.1634 4 24 4C32.8366 4 40 11.4421 40 20.6224Z" fill="#35AD73"/>
+      </g>
+      <circle cx="24" cy="20" r="5" fill="white"/>
+      <defs>
+        <filter id="filter0_dd_4832_84363" x="0" y="0" width="48" height="52" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="4"/>
+          <feGaussianBlur stdDeviation="4"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4832_84363"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="1"/>
+          <feGaussianBlur stdDeviation="0.5"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+          <feBlend mode="normal" in2="effect1_dropShadow_4832_84363" result="effect2_dropShadow_4832_84363"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_4832_84363" result="shape"/>
+        </filter>
+      </defs>
+    </svg>
+
+  )
 };
 
 /* TODO: ref */
