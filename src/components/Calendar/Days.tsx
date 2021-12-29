@@ -48,7 +48,7 @@ function Days({ day, handler, selectedDay, index, disabledDates }: TProps) {
 }
 
 const Container = styled.div`
-  width: calc(100% / 7);
+  width: calc(100% / 6);
   display: flex;
   justify-content: center;
   align-items: center;
