@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { IJusoRequest, IJusoResponse } from '@model/index';
+import { handleHTTPError } from './errorHandle';
 
 export const JusoApi = axios.create({
   baseURL: 'https://www.juso.go.kr',
@@ -16,7 +17,7 @@ JusoApi.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    return onError(error as AxiosError);
+    return handleHTTPError(error as AxiosError);
   }
 );
 
@@ -26,17 +27,6 @@ JusoApi.interceptors.request.use((req) => {
   };
   return req;
 });
-
-const onError = (error: AxiosError): Promise<never> => {
-  const { status } = (error.response as AxiosResponse) || 500;
-  if (status < 500) {
-    console.log(status, error);
-  }
-  if (status >= 500) {
-    console.log(status, error);
-  }
-  return Promise.reject(error);
-};
 
 export const searchAddressJuso = (
   params: IJusoRequest
