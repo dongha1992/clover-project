@@ -277,3 +277,10 @@ export interface IGetMainDestinationsResponse {
   type: string;
   value: number[];
 }
+
+export interface IKakaoAddress {
+  query: string | null;
+  analyze_type?: string;
+  page?: number;
+  size?: number;
+}
