@@ -1,9 +1,12 @@
 import { TextB3R, TextH3B, TextH4B, TextH6B } from '@components/Shared/Text';
 import { CARD } from '@constants/quick';
-import { useInterval } from '@hooks/useInterval';
+import { cartForm } from '@store/cart';
 import { ScrollHorizonList, theme } from '@styles/theme';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import router from 'next/router';
+import { SET_ORDER_TYPE } from '@store/order';
 
 interface card {
   title: string;
@@ -29,6 +32,8 @@ const OrderCardList: React.FC<Props> = ({
   setTimer,
   timer,
 }) => {
+  const dispatch = useDispatch();
+  const { cartLists } = useSelector(cartForm);
   const [cardList, setCardList] = useState<card[]>();
   let timerRef = useRef<number>(1799);
   let timeCount = useRef<any>();
@@ -113,13 +118,28 @@ const OrderCardList: React.FC<Props> = ({
     setTimer(formatTime(mm, ss));
   }, [format, getTimer]);
 
+  const cardClick = (item: card) => {
+    const { title } = item;
+
+    dispatch(SET_ORDER_TYPE({ orderType: title.split(' ')[0] }));
+
+    cartLists.length === 0
+      ? router.push(`/quickorder/category`)
+      : router.push('/cart');
+  };
+
   return (
     <CardList>
       <ScrollHorizonList>
         <ScrollHorizonListGroup>
           {cardList &&
             cardList.map((item, index) => (
-              <Card key={index}>
+              <Card
+                key={index}
+                onClick={() => {
+                  cardClick(item);
+                }}
+              >
                 <TextH4B>{item.title}</TextH4B>
                 {item.timer ? (
                   <TextH6B color={theme.brandColor}>
@@ -138,6 +158,7 @@ const OrderCardList: React.FC<Props> = ({
 };
 
 const CardList = styled.article`
+  cursor: pointer;
   padding-left: 24px;
   padding-bottom: 50px;
 `;
