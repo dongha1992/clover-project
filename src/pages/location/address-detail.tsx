@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
-/*TODO: 지도 연동 + 마커 표시 */
 
 function AddressDetailPage() {
   const [latitudeLongitude, setLatitudeLongitude] = useState({
@@ -31,8 +30,8 @@ function AddressDetailPage() {
     try {
       const { data } = await getLonLatFromAddress(params);
       if (data.documents.length > 0) {
-        const latitude = data.documents[0].x;
-        const longitude = data.documents[0].y;
+        const longitude = data.documents[0].x;
+        const latitude = data.documents[0].y;
         setLatitudeLongitude({
           latitude,
           longitude,
@@ -51,7 +50,12 @@ function AddressDetailPage() {
   return (
     <Container>
       <CheckDeliveryPlace />
-      <Map latitudeLongitude={latitudeLongitude} />
+      <MapWrapper>
+        <Map
+          centerLat={latitudeLongitude.latitude}
+          centerLng={latitudeLongitude.longitude}
+        />
+      </MapWrapper>
       <ButtonWrapper>
         <Button
           width="100%"
@@ -69,11 +73,14 @@ function AddressDetailPage() {
 
 const Container = styled.div`
   position: relative;
-  padding-bottom: 20px;
 `;
 
 const ButtonWrapper = styled.div`
   ${fixedBottom}
+`;
+
+const MapWrapper = styled.div`
+  height: 75.5vh;
 `;
 
 export default React.memo(AddressDetailPage);

@@ -28,6 +28,8 @@ const MapAPI = ({
     initMap();
   }, []);
 
+  console.log(centerLat, centerLng, 'centerLat, centerLng');
+
   const initMap = () => {
     // const HOME_PATH = window.HOME_PATH || '.';
     const markers = new Array();
