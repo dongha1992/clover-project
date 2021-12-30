@@ -143,6 +143,7 @@ function MypagePage() {
             />
           </ImageWrapper>
           <MypageMenu title="고객센터" link="/mypage/customer-service" />
+          <MypageMenu title="앱설정" link="/mypage/setting" />
           <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
         </ManageWrapper>
       </Wrapper>
