@@ -106,7 +106,7 @@ function Header() {
           return <SpotHeader />;
         }
 
-        case ['/quickorder'].includes(currentPath): {
+        case ['/quickorder', '/quickorder/category'].includes(currentPath): {
           return <QuickOrderHeader />;
         }
 
