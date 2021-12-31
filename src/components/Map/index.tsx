@@ -98,17 +98,7 @@ const MapAPI = ({
     height: '100%',
   };
 
-  return (
-    <>
-      <Head>
-        <script
-          type="text/javascript"
-          src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
-        ></script>
-      </Head>
-      <div id="map" style={mapStyle}></div>
-    </>
-  );
+  return <div id="map" style={mapStyle}></div>;
 };
 
 export default MapAPI;
