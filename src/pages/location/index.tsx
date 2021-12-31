@@ -12,13 +12,10 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-/* TODO: 검색 결과 리스트 */
 
 function LocationPage() {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
-  const [isFocus, setIsFocus] = useState(false);
-  const [isBlur, setIsBlur] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
 
   const addressRef = useRef<HTMLInputElement>(null);
@@ -78,14 +75,6 @@ function LocationPage() {
     }
   };
 
-  const focusInputHandler = () => {
-    setIsFocus(true);
-  };
-
-  const blurInputHandler = () => {
-    setIsBlur(true);
-  };
-
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
     router.push('/location/address-detail');
@@ -102,8 +91,6 @@ function LocationPage() {
           eventHandler={addressInputHandler}
           keyPressHandler={getSearchAddressResult}
           ref={addressRef}
-          onFocus={focusInputHandler}
-          onBlur={blurInputHandler}
         />
         <CurrentLocBtn onClick={clickSetCurrentLoc}>
           <SVGIcon name="locationBlack" />
