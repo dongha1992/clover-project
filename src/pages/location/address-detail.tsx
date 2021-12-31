@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom, theme } from '@styles/theme';
 import Button from '@components/Shared/Button';
-import Map from '@components/Map';
+import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
@@ -14,7 +14,41 @@ function AddressDetailPage() {
     latitude: '',
     longitude: '',
   });
-  const { tempLocation } = useSelector(destinationForm);
+  const [userLocation, setUserLocation] = useState({
+    roadAddr: '',
+    roadAddrPart1: '',
+    roadAddrPart2: '',
+    jibunAddr: '',
+    engAddr: '',
+    zipNo: '',
+    admCd: '',
+    rnMgtSn: '',
+    bdMgtSn: '',
+    detBdNmList: '',
+    bdNm: '',
+    bdKdcd: '',
+    siNm: '',
+    sggNm: '',
+    emdNm: '',
+    liNm: '',
+    rn: '',
+    udrtYn: '',
+    buldMnnm: '',
+    buldSlno: '',
+    mtYn: '',
+    lnbrMnnm: '',
+    lnbrSlno: '',
+    emdNo: '',
+  });
+
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      setUserLocation(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   useEffect(() => {
     getLonLanForMap();
@@ -22,7 +56,7 @@ function AddressDetailPage() {
 
   const getLonLanForMap = async () => {
     const params = {
-      query: tempLocation.roadAddrPart1,
+      query: userLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -42,8 +76,8 @@ function AddressDetailPage() {
     } catch (error) {}
   };
 
-  const setUserLocation = () => {
-    localStorage.setItem('loc', JSON.stringify(tempLocation));
+  const setUserLocationInLocal = () => {
+    localStorage.setItem('loc', JSON.stringify(userLocation));
     router.push('/home');
   };
 
@@ -51,7 +85,7 @@ function AddressDetailPage() {
     <Container>
       <CheckDeliveryPlace />
       <MapWrapper>
-        <Map
+        <MapAPI
           centerLat={latitudeLongitude.latitude}
           centerLng={latitudeLongitude.longitude}
         />
@@ -60,9 +94,8 @@ function AddressDetailPage() {
         <Button
           width="100%"
           height="100%"
-          margin="0 0 0 0"
           borderRadius="0"
-          onClick={setUserLocation}
+          onClick={setUserLocationInLocal}
         >
           설정하기
         </Button>

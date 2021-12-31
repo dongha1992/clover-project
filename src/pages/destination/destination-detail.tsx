@@ -11,6 +11,8 @@ import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
 
 function DestinationDetailPage() {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
@@ -44,8 +46,6 @@ function DestinationDetailPage() {
     latitude: '',
     longitude: '',
   });
-
-  // const { tempDestination } = useSelector(destinationForm);
 
   const destinationNameRef = useRef<HTMLInputElement>(null);
   const destinationDetailRef = useRef<HTMLInputElement>(null);

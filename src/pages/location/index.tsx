@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
+import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
@@ -17,15 +18,14 @@ function LocationPage() {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState(false);
-
+  const [userLocation, setUserLocation] = useState('');
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const clickSetCurrentLoc = (): void => {
-    const locationInfoMsg = `서울 성동구 성수동1가 
-    헤이그라운드 서울숲점(으)로 
+  const setCurrentLoc = (location: string) => {
+    const locationInfoMsg = `${location}(으)로
     설정되었습니다.`;
     dispatch(
       setAlert({
@@ -35,6 +35,19 @@ function LocationPage() {
         closeBtnText: '취소',
       })
     );
+  };
+
+  const getGeoLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { data } = await getAddressFromLonLat({
+          y: position.coords.latitude?.toString(),
+          x: position.coords.longitude?.toString(),
+        });
+        setUserLocation(data.documents[0].address_name);
+        setCurrentLoc(data.documents[0].address_name);
+      });
+    }
   };
 
   const addressInputHandler = () => {
@@ -77,6 +90,7 @@ function LocationPage() {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
+    localStorage.setItem('loc', JSON.stringify(address));
     router.push('/location/address-detail');
   };
 
@@ -92,9 +106,9 @@ function LocationPage() {
           keyPressHandler={getSearchAddressResult}
           ref={addressRef}
         />
-        <CurrentLocBtn onClick={clickSetCurrentLoc}>
+        <CurrentLocBtn>
           <SVGIcon name="locationBlack" />
-          <TextH6B pointer padding="0 0 0 4px">
+          <TextH6B pointer padding="0 0 0 4px" onClick={getGeoLocation}>
             현 위치로 설정하기
           </TextH6B>
         </CurrentLocBtn>
