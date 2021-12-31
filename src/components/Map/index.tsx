@@ -34,7 +34,10 @@ const MapAPI = ({
     const infoWindows = new Array();
 
     const map = new naver.maps.Map('map', {
-      center: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
+      center: new naver.maps.LatLng(
+        Number(centerLat ? centerLat : '37.413294'),
+        Number(centerLng ? centerLng : '127.269311')
+      ), // 최초 찍히는 마커
       zoom: zoom ? zoom : 17,
       zoomControl: true,
       zoomControlOptions: {
