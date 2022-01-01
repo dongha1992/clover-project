@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import router from 'next/router';
 import { SET_ORDER_TYPE } from '@store/order';
-
+import { sprintf } from 'sprintf-js';
 interface card {
   title: string;
   dec: string;
@@ -37,6 +37,7 @@ const OrderCardList: React.FC<Props> = ({
   const [cardList, setCardList] = useState<card[]>();
   let timerRef = useRef<number>(1799);
   let timeCount = useRef<any>();
+  let result = new Date().getDate();
 
   useEffect(() => {
     return () => clearInterval(timeCount.current);
@@ -48,7 +49,13 @@ const OrderCardList: React.FC<Props> = ({
     switch (pushStatus) {
       case 'part1':
         clearInterval(timeCount.current);
-        setCardList([CARD.lunch1, CARD.dinner1, CARD.dawn1, CARD.delivery1]);
+        if (weeks === 6 || weeks === 0) {
+          // 토,일 새벽/택배(화요일 도착)
+          tuesdayArrival();
+        } else {
+          // 월~금 스팟점심(당일 도착)
+          setCardList([CARD.lunch1, CARD.dinner1, CARD.dawn1, CARD.delivery1]);
+        }
 
         if (time >= 9.0 && time < 9.3) {
           setCardList([CARD.lunch3, CARD.dinner1, CARD.dawn1, CARD.delivery1]);
@@ -60,7 +67,14 @@ const OrderCardList: React.FC<Props> = ({
         break;
       case 'part2':
         clearInterval(timeCount.current);
-        setCardList([CARD.dinner1, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
+
+        if (weeks === 6 || weeks === 0) {
+          // 토,일 새벽/택배(화요일 도착)
+          tuesdayArrival();
+        } else {
+          // 월~금 스팟저녁(당일 도착)
+          setCardList([CARD.dinner1, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
+        }
 
         if (time > 10.3 && time < 11.0) {
           setCardList([CARD.dinner3, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
@@ -72,14 +86,38 @@ const OrderCardList: React.FC<Props> = ({
         break;
       case 'part3':
         clearInterval(timeCount.current);
-        if (weeks === 0 || weeks === 6) {
-          setCardList([CARD.dawn2, CARD.delivery2, CARD.lunch2, CARD.dinner2]);
+        if (weeks === 6 || weeks === 0) {
+          // 토,일 새벽/택배(화요일 도착)
+          tuesdayArrival();
         } else {
-          setCardList([CARD.dawn1, CARD.delivery1, CARD.lunch2, CARD.dinner2]);
+          // 월~금 새벽/택배(차일 도착)
+          setCardList([
+            CARD.dawn1,
+            CARD.delivery1,
+            {
+              title: CARD.lunch2.title,
+              dec: sprintf(CARD.lunch2.dec, result + 1),
+            },
+            {
+              title: CARD.dinner2.title,
+              dec: sprintf(CARD.dinner2.dec, result + 1),
+            },
+          ]);
         }
 
         if (time >= 16.3 && time < 17.0) {
-          setCardList([CARD.dawn3, CARD.delivery3, CARD.lunch2, CARD.dinner2]);
+          setCardList([
+            CARD.dawn3,
+            CARD.delivery3,
+            {
+              title: CARD.lunch2.title,
+              dec: sprintf(CARD.lunch2.dec, result + 1),
+            },
+            {
+              title: CARD.dinner2.title,
+              dec: sprintf(CARD.dinner2.dec, result + 1),
+            },
+          ]);
           timerRef.current = getTimer();
           timeCount.current = setInterval(() => {
             timerHandler();
@@ -89,15 +127,28 @@ const OrderCardList: React.FC<Props> = ({
       case 'part4':
         clearInterval(timeCount.current);
         if (weeks === 5 || weeks === 6) {
-          setCardList([CARD.dawn2, CARD.delivery2, CARD.lunch2, CARD.dinner2]);
+          // 금,토 새벽/택배(화요일 도착)
+          tuesdayArrival();
         } else {
-          setCardList([CARD.lunch1, CARD.dinner1, CARD.dawn2, CARD.delivery2]);
+          // 월~목,일 스팟점심(차일 도착)
+          setCardList([
+            CARD.lunch1,
+            CARD.dinner1,
+            {
+              title: CARD.dawn2.title,
+              dec: sprintf(CARD.dawn2.dec, result + 1),
+            },
+            {
+              title: CARD.delivery2.title,
+              dec: sprintf(CARD.delivery2.dec, result + 1),
+            },
+          ]);
         }
         break;
       default:
         break;
     }
-  }, [getTimer, pushStatus, time, weeks]);
+  }, [pushStatus, time, weeks]);
 
   useEffect(() => {
     if (timer === '00:00') {
@@ -126,6 +177,73 @@ const OrderCardList: React.FC<Props> = ({
     cartLists.length === 0
       ? router.push(`/quickorder/category`)
       : router.push('/cart');
+  };
+
+  const tuesdayArrival = () => {
+    switch (weeks) {
+      case 5:
+        setCardList([
+          {
+            title: CARD.dawn2.title,
+            dec: sprintf(CARD.dawn2.dec, result + 4),
+          },
+          {
+            title: CARD.delivery2.title,
+            dec: sprintf(CARD.delivery2.dec, result + 4),
+          },
+          {
+            title: CARD.lunch2.title,
+            dec: sprintf(CARD.lunch2.dec, result + 3),
+          },
+          {
+            title: CARD.dinner2.title,
+            dec: sprintf(CARD.dinner2.dec, result + 3),
+          },
+        ]);
+        break;
+      case 6:
+        setCardList([
+          {
+            title: CARD.dawn2.title,
+            dec: sprintf(CARD.dawn2.dec, result + 3),
+          },
+          {
+            title: CARD.delivery2.title,
+            dec: sprintf(CARD.delivery2.dec, result + 3),
+          },
+          {
+            title: CARD.lunch2.title,
+            dec: sprintf(CARD.lunch2.dec, result + 2),
+          },
+          {
+            title: CARD.dinner2.title,
+            dec: sprintf(CARD.dinner2.dec, result + 2),
+          },
+        ]);
+        break;
+      case 0:
+        setCardList([
+          {
+            title: CARD.dawn2.title,
+            dec: sprintf(CARD.dawn2.dec, result + 2),
+          },
+          {
+            title: CARD.delivery2.title,
+            dec: sprintf(CARD.delivery2.dec, result + 2),
+          },
+          {
+            title: CARD.lunch2.title,
+            dec: sprintf(CARD.lunch2.dec, result + 1),
+          },
+          {
+            title: CARD.dinner2.title,
+            dec: sprintf(CARD.dinner2.dec, result + 1),
+          },
+        ]);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
