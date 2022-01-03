@@ -8,11 +8,13 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
+import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-/* TODO: 검색 결과 리스트 */
+
+/* TODO: geolocation 에러케이스 추가 */
 
 function LocationPage() {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -20,15 +22,14 @@ function LocationPage() {
   const [isFocus, setIsFocus] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-
+  const [userLocation, setUserLocation] = useState('');
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const clickSetCurrentLoc = (): void => {
-    const locationInfoMsg = `서울 성동구 성수동1가 
-    헤이그라운드 서울숲점(으)로 
+  const setCurrentLoc = (location: string) => {
+    const locationInfoMsg = `${location}(으)로
     설정되었습니다.`;
     dispatch(
       setAlert({
@@ -38,6 +39,19 @@ function LocationPage() {
         closeBtnText: '취소',
       })
     );
+  };
+
+  const getGeoLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { data } = await getAddressFromLonLat({
+          y: position.coords.latitude?.toString(),
+          x: position.coords.longitude?.toString(),
+        });
+        setUserLocation(data.documents[0].address_name);
+        setCurrentLoc(data.documents[0].address_name);
+      });
+    }
   };
 
   const addressInputHandler = () => {
@@ -104,28 +118,18 @@ function LocationPage() {
   return (
     <HomeContainer>
       <Wrapper>
-        <TextInputWrapper>
-          <TextInput
-            name="input"
-            placeholder="도로명, 건물명 또는 지번으로 검색"
-            inputType="text"
-            svg="searchIcon"
-            eventHandler={addressInputHandler}
-            keyPressHandler={getSearchAddressResult}
-            ref={addressRef}
-            onFocus={focusInputHandler}
-            onBlur={blurInputHandler}
-          />
-          {isTyping && (
-            <div className="removeSvg" onClick={() => clearInputHandler()}>
-              <SVGIcon name="removeItem" />
-            </div>
-          )}
-        </TextInputWrapper>
-
-        <CurrentLocBtn onClick={clickSetCurrentLoc}>
+        <TextInput
+          name="input"
+          placeholder="도로명, 건물명 또는 지번으로 검색"
+          inputType="text"
+          svg="searchIcon"
+          eventHandler={addressInputHandler}
+          keyPressHandler={getSearchAddressResult}
+          ref={addressRef}
+        />
+        <CurrentLocBtn>
           <SVGIcon name="locationBlack" />
-          <TextH6B pointer padding="0 0 0 4px">
+          <TextH6B pointer padding="0 0 0 4px" onClick={getGeoLocation}>
             현 위치로 설정하기
           </TextH6B>
         </CurrentLocBtn>

@@ -82,9 +82,9 @@ function destinationSearchPage() {
             ref={addressRef}
           />
         </TextWrapper>
-        <CurrentLocBtn onClick={clickSetCurrentLoc}>
+        <CurrentLocBtn>
           <SVGIcon name="locationBlack" />
-          <TextH6B pointer padding="0 0 0 4px">
+          <TextH6B pointer padding="0 0 0 4px" onClick={clickSetCurrentLoc}>
             현 위치로 설정하기
           </TextH6B>
         </CurrentLocBtn>

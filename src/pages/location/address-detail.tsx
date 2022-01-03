@@ -1,33 +1,101 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom, theme } from '@styles/theme';
 import Button from '@components/Shared/Button';
-import Map from '@components/Map';
+import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
 import router from 'next/router';
-/*TODO: 지도 연동 + 마커 표시 */
+import { getLonLatFromAddress } from '@api/location';
 
 function AddressDetailPage() {
-  const { tempLocation } = useSelector(destinationForm);
+  const [latitudeLongitude, setLatitudeLongitude] = useState({
+    latitude: '',
+    longitude: '',
+  });
+  const [userLocation, setUserLocation] = useState({
+    roadAddr: '',
+    roadAddrPart1: '',
+    roadAddrPart2: '',
+    jibunAddr: '',
+    engAddr: '',
+    zipNo: '',
+    admCd: '',
+    rnMgtSn: '',
+    bdMgtSn: '',
+    detBdNmList: '',
+    bdNm: '',
+    bdKdcd: '',
+    siNm: '',
+    sggNm: '',
+    emdNm: '',
+    liNm: '',
+    rn: '',
+    udrtYn: '',
+    buldMnnm: '',
+    buldSlno: '',
+    mtYn: '',
+    lnbrMnnm: '',
+    lnbrSlno: '',
+    emdNo: '',
+  });
 
-  const setUserLocation = () => {
-    localStorage.setItem('loc', JSON.stringify(tempLocation));
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      setUserLocation(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getLonLanForMap();
+  }, []);
+
+  const getLonLanForMap = async () => {
+    const params = {
+      query: userLocation.roadAddrPart1,
+      analyze_type: 'similar',
+      page: 1,
+      size: 20,
+    };
+    try {
+      const { data } = await getLonLatFromAddress(params);
+      if (data.documents.length > 0) {
+        const longitude = data.documents[0].x;
+        const latitude = data.documents[0].y;
+        setLatitudeLongitude({
+          latitude,
+          longitude,
+        });
+      } else {
+        // 검색 결과가 없는 경우?
+      }
+    } catch (error) {}
+  };
+
+  const setUserLocationInLocal = () => {
+    localStorage.setItem('loc', JSON.stringify(userLocation));
     router.push('/home');
   };
 
   return (
     <Container>
       <CheckDeliveryPlace />
-      <Map />
+      <MapWrapper>
+        <MapAPI
+          centerLat={latitudeLongitude.latitude}
+          centerLng={latitudeLongitude.longitude}
+        />
+      </MapWrapper>
       <ButtonWrapper>
         <Button
           width="100%"
           height="100%"
-          margin="0 0 0 0"
           borderRadius="0"
-          onClick={setUserLocation}
+          onClick={setUserLocationInLocal}
         >
           설정하기
         </Button>
@@ -38,11 +106,14 @@ function AddressDetailPage() {
 
 const Container = styled.div`
   position: relative;
-  padding-bottom: 20px;
 `;
 
 const ButtonWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default AddressDetailPage;
+const MapWrapper = styled.div`
+  height: 75.5vh;
+`;
+
+export default React.memo(AddressDetailPage);
