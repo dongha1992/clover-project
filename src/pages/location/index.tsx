@@ -14,7 +14,7 @@ import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 /* TODO: 검색 결과 리스트 */
 
-function LocationPage() {
+const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isFocus, setIsFocus] = useState(false);
@@ -135,7 +135,7 @@ function LocationPage() {
       </Wrapper>
     </HomeContainer>
   );
-}
+};
 
 const Wrapper = styled.div`
   padding: 8px 0px 24px;
