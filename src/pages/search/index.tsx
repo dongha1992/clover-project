@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
 import SVGIcon from '@utils/SVGIcon';
 
-function SearchPage() {
+const SearchPage = () => {
   const [itemList, setItemList] = useState<any[]>([]);
   const [searchResult, setSearchResult] = useState<any>([]);
   const [keyword, setKeyword] = useState<string>('');
@@ -175,7 +175,7 @@ function SearchPage() {
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 
