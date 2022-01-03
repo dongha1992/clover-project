@@ -13,7 +13,7 @@ import { theme } from '@styles/theme';
 /* TODO: height 조절해야함 */
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
-function BottomSheet() {
+const BottomSheet = () => {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
   const { content, buttonTitle }: any = useSelector(bottomSheetForm);
@@ -99,7 +99,7 @@ function BottomSheet() {
       </Container>
     </Background>
   );
-}
+};
 
 const Background = styled.div`
   display: flex;

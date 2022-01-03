@@ -13,14 +13,14 @@ type TProps = {
   otherDeliveryDate?: number;
 };
 
-function Days({
+const Days = ({
   day,
   handler,
   selectedDay,
   index,
   disabledDates,
   otherDeliveryDate,
-}: TProps) {
+}: TProps) => {
   const isSecondWeeeks = index > 5;
   const isToday = !index;
   const hasOtherDeliveryDate = otherDeliveryDate === day;
@@ -67,7 +67,7 @@ function Days({
       <TextWrapper>{extraTextRender()}</TextWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isSecondWeeeks?: boolean }>`
   width: calc(100% / 6);

@@ -7,7 +7,7 @@ import { SITE_INFO_TITLE } from '@constants/footer';
 import { breakpoints } from '@utils/getMediaQuery';
 import { theme } from '@styles/theme';
 
-function Footer() {
+const Footer = () => {
   const [isShow, setIsShow] = useState(false);
 
   return (
@@ -53,7 +53,7 @@ function Footer() {
       <LinkIconWrapper>링크들</LinkIconWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.footer`
   width: 100%;

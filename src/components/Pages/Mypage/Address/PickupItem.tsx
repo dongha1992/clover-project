@@ -20,7 +20,7 @@ interface IProps {
   goToEdit: (id: number) => void;
 }
 
-function PickupItem({ item, goToCart, goToEdit }: IProps) {
+const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
   const mapper: Obj = {
     프라이빗: {
       backgroundColor: theme.brandColor5,
@@ -70,7 +70,7 @@ function PickupItem({ item, goToCart, goToEdit }: IProps) {
       </Button>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

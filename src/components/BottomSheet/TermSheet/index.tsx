@@ -9,7 +9,7 @@ const DATE = [
   { id: 2, name: '2021-11-11' },
 ];
 
-function TermSheet({ title }: any) {
+const TermSheet = ({ title }: any) => {
   const [selectedDate, setSelectedDate] = useState<number>(1);
 
   const changeRadioHandler = (id: number) => {
@@ -40,7 +40,7 @@ function TermSheet({ title }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

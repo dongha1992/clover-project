@@ -20,7 +20,7 @@ type TProps = {
 
 /* TODO: Header props으로 svg만 추가 */
 
-function MenuDetailHeader({ title }: TProps) {
+const MenuDetailHeader = ({ title }: TProps) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
   const { isMobile } = useSelector(commonSelector);
@@ -89,7 +89,7 @@ function MenuDetailHeader({ title }: TProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

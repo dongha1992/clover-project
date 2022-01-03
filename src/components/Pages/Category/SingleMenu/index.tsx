@@ -6,7 +6,7 @@ import Item from '@components/Item';
 import CategoryFilter from '@components/Pages/Category/CategoryFilter';
 import { BASE_URL } from '@constants/mock';
 
-function SingleMenu({ category }: any) {
+const SingleMenu = ({ category }: any) => {
   const [itemList, setItemList] = useState([]);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ function SingleMenu({ category }: any) {
       </FlexWrapWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { cartForm, SET_TEMP_SELECTED_MENUS } from '@store/cart';
 import CartSheetItem from './CartSheetItem';
 
-function CartSheetGroup() {
+const CartSheetGroup = () => {
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
 
   const dispatch = useDispatch();
@@ -85,7 +85,7 @@ function CartSheetGroup() {
       </OrderInfoContainer>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

@@ -5,7 +5,11 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 
-function ReviewOnlyImage({ reviews, goToReviewImages, goToReviewDetail }: any) {
+const ReviewOnlyImage = ({
+  reviews,
+  goToReviewImages,
+  goToReviewDetail,
+}: any) => {
   return (
     <Container>
       <Wrapper>
@@ -47,7 +51,7 @@ function ReviewOnlyImage({ reviews, goToReviewImages, goToReviewDetail }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

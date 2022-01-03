@@ -9,7 +9,7 @@ const PICK_UP_PLACE = [
   { id: 2, name: '1506호 사무실 문 옆' },
 ];
 
-function PickupSheet() {
+const PickupSheet = () => {
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
 
   const changeRadioHandler = (id: number) => {
@@ -36,7 +36,7 @@ function PickupSheet() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

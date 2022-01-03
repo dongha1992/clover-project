@@ -4,7 +4,7 @@ import { TextH5B, TextB3R } from '@components/Shared/Text';
 import { FlexRow } from '@styles/theme';
 import Tag from '@components/Shared/Tag';
 
-function AddressItem({ roadAddr, bdNm, jibunAddr, onClick }: any) {
+const AddressItem = ({ roadAddr, bdNm, jibunAddr, onClick }: any) => {
   return (
     <Container onClick={onClick}>
       <TextH5B>{bdNm}</TextH5B>
@@ -18,7 +18,7 @@ function AddressItem({ roadAddr, bdNm, jibunAddr, onClick }: any) {
       </FlexRow>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

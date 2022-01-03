@@ -11,7 +11,7 @@ interface IProps {
   menu: any;
 }
 
-function MypageReviewItem({ menu }: IProps) {
+const MypageReviewItem = ({ menu }: IProps) => {
   return (
     <Container>
       <Wrapper>
@@ -52,7 +52,7 @@ function MypageReviewItem({ menu }: IProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

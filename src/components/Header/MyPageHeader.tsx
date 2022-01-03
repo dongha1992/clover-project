@@ -5,7 +5,7 @@ import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 
-function MyPageHeader() {
+const MyPageHeader = () => {
   const goToCart = () => {
     router.push('/cart');
   };
@@ -23,7 +23,7 @@ function MyPageHeader() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

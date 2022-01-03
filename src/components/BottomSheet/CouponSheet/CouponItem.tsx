@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
 
-function CouponItem({ coupon, onClick }: any) {
+const CouponItem = ({ coupon, onClick }: any) => {
   const isRateDiscount = coupon.type === 'rate';
   return (
     <Container isDownload={coupon.isDownload}>
@@ -36,7 +36,7 @@ function CouponItem({ coupon, onClick }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isDownload: boolean }>`
   border: 1px solid #dedede;

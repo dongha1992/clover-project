@@ -18,7 +18,7 @@ const SHARE_ICONS = [
   { value: 'urlIcon', name: '링크 복사' },
 ];
 
-function ShareSheet() {
+const ShareSheet = () => {
   const { menuItem } = useSelector(menuSelector);
 
   const shareHandler = (
@@ -104,7 +104,7 @@ function ShareSheet() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

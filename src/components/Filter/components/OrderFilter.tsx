@@ -10,7 +10,7 @@ type TProps = {
   selectedRadioId: number;
 };
 
-function OrderFilter({ data, changeHandler, selectedRadioId }: TProps) {
+const OrderFilter = ({ data, changeHandler, selectedRadioId }: TProps) => {
   return (
     <Container>
       <BtnContainer>
@@ -35,7 +35,7 @@ function OrderFilter({ data, changeHandler, selectedRadioId }: TProps) {
       </BtnContainer>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const BtnContainer = styled.div`

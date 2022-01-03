@@ -8,7 +8,7 @@ type TProps = {
   title?: string;
 };
 
-function SpotSearchHeader({ title }: TProps) {
+const SpotSearchHeader = ({ title }: TProps) => {
   const router = useRouter();
 
   const goBack = (): void => {
@@ -16,7 +16,7 @@ function SpotSearchHeader({ title }: TProps) {
   };
 
   const goToMap = () => {
-    router.push('/spot/search/location')
+    router.push('/spot/search/location');
   };
 
   return (
@@ -26,24 +26,23 @@ function SpotSearchHeader({ title }: TProps) {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        {
-          router.pathname === '/spot/search' ?
+        {router.pathname === '/spot/search' ? (
           <BtnWrapper>
             <div className="map" onClick={goToMap}>
               <SVGIcon name="map" />
             </div>
           </BtnWrapper>
-        :
+        ) : (
           <BtnWrapper>
             <div className="threeLines" onClick={goToMap}>
               <SVGIcon name="threeLines" />
             </div>
           </BtnWrapper>
-        }
+        )}
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

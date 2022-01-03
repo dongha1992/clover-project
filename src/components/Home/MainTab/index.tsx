@@ -10,7 +10,7 @@ const TABS = [
   { title: '기획전2', link: '/' },
 ];
 
-function MainTab() {
+const MainTab = () => {
   return (
     <Container>
       {TABS.map((tab, index) => {
@@ -22,7 +22,7 @@ function MainTab() {
       })}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

@@ -4,7 +4,10 @@ import { TextH5B, TextH6B } from '@components/Shared/Text';
 import { homePadding, theme } from '@styles/theme';
 import RecentSearchItem from './RecentSearchItem';
 
-function recentSearch({ removeRecentSearchItemHandler, recentKeywords }: any) {
+const recentSearch = ({
+  removeRecentSearchItemHandler,
+  recentKeywords,
+}: any) => {
   return (
     <Container>
       <Header>
@@ -25,7 +28,7 @@ function recentSearch({ removeRecentSearchItemHandler, recentKeywords }: any) {
       </ListContainer>
     </Container>
   );
-}
+};
 const Container = styled.div`
   display: flex;
   flex-direction: column;

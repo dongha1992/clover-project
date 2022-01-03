@@ -9,7 +9,7 @@ import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
-function DetailBottom() {
+const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
   const { showToast, hideToast } = useToast();
@@ -93,7 +93,7 @@ function DetailBottom() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

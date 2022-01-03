@@ -44,7 +44,7 @@ const BOTTOM_MENU = [
 
 /* TODO: selected tab hook으로 빼고 싶다.. */
 
-function Bottom() {
+const Bottom = () => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<string>('/category');
 
@@ -75,7 +75,7 @@ function Bottom() {
       </MenuWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

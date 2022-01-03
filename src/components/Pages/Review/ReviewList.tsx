@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollHorizonList } from '@styles/theme';
 import ReviewItem from '@components/Pages/Review/ReviewItem';
 
-function ReviewList({ reviews, onClick }: any) {
+const ReviewList = ({ reviews, onClick }: any) => {
   return (
     <ScrollHorizonList>
       {reviews.map((review: any, index: number) => (
@@ -10,6 +10,6 @@ function ReviewList({ reviews, onClick }: any) {
       ))}
     </ScrollHorizonList>
   );
-}
+};
 
 export default React.memo(ReviewList);

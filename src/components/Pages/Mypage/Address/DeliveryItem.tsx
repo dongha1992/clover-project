@@ -18,7 +18,7 @@ interface IProps {
   goToEdit: (id: number) => void;
 }
 
-function DeliveryItem({ item, goToCart, goToEdit }: IProps) {
+const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
   return (
     <Container>
       <FlexCol>
@@ -62,7 +62,7 @@ function DeliveryItem({ item, goToCart, goToEdit }: IProps) {
       </Button>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

@@ -9,7 +9,7 @@ import router from 'next/router';
 import { IJuso } from '@model/index';
 import Tooltip from '@components/Shared/Tooltip';
 
-function HomeHeader() {
+const HomeHeader = () => {
   const [userlocation, setUserLocation] = useState<IJuso>({
     roadAddr: '',
     roadAddrPart1: '',
@@ -78,7 +78,7 @@ function HomeHeader() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

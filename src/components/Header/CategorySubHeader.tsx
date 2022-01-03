@@ -18,7 +18,7 @@ type TProps = {
   title?: string;
 };
 
-function CategorySubHeader({ title }: TProps) {
+const CategorySubHeader = ({ title }: TProps) => {
   const [selectedTab, setSelectedTab] = useState<string>('/category');
 
   const dispatch = useDispatch();
@@ -66,7 +66,7 @@ function CategorySubHeader({ title }: TProps) {
       />
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

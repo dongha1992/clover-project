@@ -12,7 +12,7 @@ import SpotSearchFilter from '@components/Pages/Spot/SpotSearchFilter';
 import { theme } from '@styles/theme';
 import Button from '@components/Shared/Button';
 
-function SearchResult({ searchResult, goToOrder, isSpot }: any) {
+const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -76,7 +76,7 @@ function SearchResult({ searchResult, goToOrder, isSpot }: any) {
       </ItemListWrapper>
     </>
   );
-}
+};
 
 const FilterRow = styled.div`
   display: flex;

@@ -16,7 +16,7 @@ type TProps = {
 
 const isNew = true;
 
-function HorizontalItem({ item }: TProps) {
+const HorizontalItem = ({ item }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -73,7 +73,7 @@ function HorizontalItem({ item }: TProps) {
       </FlexCol>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   max-width: 220px;

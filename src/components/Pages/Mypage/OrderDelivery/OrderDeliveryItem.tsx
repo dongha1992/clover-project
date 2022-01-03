@@ -10,7 +10,7 @@ interface IProps {
   menu: any;
 }
 
-function OrderDeliveryItem({ menu }: IProps) {
+const OrderDeliveryItem = ({ menu }: IProps) => {
   const addToCart = () => {};
   return (
     <Container>
@@ -58,7 +58,7 @@ function OrderDeliveryItem({ menu }: IProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 
