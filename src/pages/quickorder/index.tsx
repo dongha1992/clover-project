@@ -13,7 +13,7 @@ import HorizontalItem from '@components/Item/HorizontalItem';
 import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
 
-const QuickOrderPage: React.FC = () => {
+const QuickOrderPage = () => {
   const { cartLists } = useSelector(cartForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
