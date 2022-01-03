@@ -42,17 +42,8 @@ const AddressDetailPage = () => {
   });
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  useEffect(() => {
     getLonLanForMap();
-  }, []);
+  }, [userLocation]);
 
   const getLonLanForMap = async () => {
     const params = {
@@ -80,6 +71,15 @@ const AddressDetailPage = () => {
     localStorage.setItem('loc', JSON.stringify(userLocation));
     router.push('/home');
   };
+
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      setUserLocation(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   return (
     <Container>
@@ -116,4 +116,4 @@ const MapWrapper = styled.div`
   height: 75.5vh;
 `;
 
-export default React.memo(AddressDetailPage);
+export default AddressDetailPage;
