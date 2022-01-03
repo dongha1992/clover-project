@@ -6,7 +6,7 @@ import Head from 'next/head';
 import SVGIcon from '@utils/SVGIcon';
 
 
-interface Iprops {
+interface IProps {
   zoom ?: number;
   centerLat ?: string;
   centerLng ?: string;
@@ -19,10 +19,10 @@ interface Iprops {
   ]
 }
 
-const MapAPI = ({zoom, centerLat, centerLng, areaArr}:Iprops):ReactElement => {
+const MapAPI = ({zoom, centerLat, centerLng, areaArr}:IProps):ReactElement => {
   useEffect(()=>{
-    initMap();
-  }, []);
+      initMap();
+  }, [centerLat, centerLng]);
 
   const initMap = () => {
     // const HOME_PATH = window.HOME_PATH || '.';
@@ -39,7 +39,7 @@ const MapAPI = ({zoom, centerLat, centerLng, areaArr}:Iprops):ReactElement => {
       },
     });
     let marker = new naver.maps.Marker({
-    position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)),
+    position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
     map: map
     });
 
@@ -79,24 +79,20 @@ const MapAPI = ({zoom, centerLat, centerLng, areaArr}:Iprops):ReactElement => {
       // console.log(markers[i], handleClickMarker(i));
       naver.maps.Event.addListener(markers[i], 'click', handleClickMarker(i)); // 클릭한 마커 핸들러
     }  
-
   };
+
+  
 
 
 //지도 사이즈 관련 스타일
   const mapStyle = {
     width: "100%",
     height: "100%",
+    zIndex: 0,
   };
   
   return( 
     <>
-      <Head>
-        <script 
-          type="text/javascript" 
-          src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
-        ></script>
-      </Head>
       <div id="map" style={mapStyle}></div>
     </>
     )
