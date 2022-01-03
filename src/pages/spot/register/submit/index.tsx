@@ -55,10 +55,24 @@ function SubmitPage() {
             <TextH5B margin="0 0 8px 0">장소명</TextH5B>
             <TextB2R>헤이그라운드</TextB2R>
           </Content>
+          {
+            type === 'private' &&
+            <Content>
+              <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
+              <TextB2R>공용 냉장고</TextB2R>
+            </Content>
+          }
           <Content>
             <TextH5B margin="0 0 8px 0">장소 종류</TextH5B>
             <TextB2R>공유오피스</TextB2R>
           </Content>
+          {
+            type === 'private' &&
+            <Content>
+              <TextH5B margin="0 0 8px 0">점심 시간</TextH5B>
+              <TextB2R>12:00</TextB2R>
+            </Content>
+          }
         </ContentWrapper>
         {type !== 'public' && (
           <>

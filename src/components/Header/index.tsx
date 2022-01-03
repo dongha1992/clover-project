@@ -12,6 +12,7 @@ const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
+const SpotRegisterHeader = dynamic(()=> import('./SpotRegisterHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 /*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
@@ -119,7 +120,9 @@ function Header() {
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
-
+        case ['/spot/register', ].includes(currentPath): {
+          return <SpotRegisterHeader title={title} />;
+        }
         default: {
           return <DefaultHeader title={title} />;
         }

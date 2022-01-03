@@ -4,6 +4,7 @@ import { AppState } from '.';
 
 type TAlert = {
   alertMessage: string;
+  alertSubMessage?: string;
   submitBtnText?: string;
   closeBtnText?: string;
   onSubmit?: () => void;
