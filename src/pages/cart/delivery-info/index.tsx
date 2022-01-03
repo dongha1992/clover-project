@@ -75,7 +75,7 @@ const pickupPlace = {
   // availableTime: '12:00-12:30 / 15:30-18:00',
 };
 
-function DeliverInfoPage() {
+const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<number>(1);
   const dispatch = useDispatch();
 
@@ -250,7 +250,7 @@ function DeliverInfoPage() {
       </SettingBtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

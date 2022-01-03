@@ -13,7 +13,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { destinationRegister } from '@api/destination';
 
-function DestinationDetailPage() {
+const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
   const [userLocation, setUserLocation] = useState({
     roadAddr: '',
@@ -136,7 +136,7 @@ function DestinationDetailPage() {
       </ButtonWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

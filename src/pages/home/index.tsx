@@ -5,14 +5,14 @@ import Footer from '@components/Footer';
 import wrapper from '@store/index';
 // import { setRefreshToken } from '@components/Auth';
 
-function HomePage() {
+const HomePage = () => {
   return (
     <Container>
       <Home />
       <Footer />
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;
