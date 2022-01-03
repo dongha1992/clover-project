@@ -4,6 +4,7 @@ import { TextH2B, TextB2R, TextH5B } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import { useRouter } from 'next/router';
 import Button from '@components/Shared/Button';
+import SVGIcon from '@utils/SVGIcon';
 
 function FinishPage() {
   const router = useRouter();
@@ -40,15 +41,20 @@ function FinishPage() {
       <TextH2B margin="0 0 20px 0">{mainText().textTitle}</TextH2B>
       <TextB2R color={theme.greyScale65}>{mainText().textDesc}</TextB2R>
       <ConTent />
-      <OpenTipWrapper>
-        <TextH5B margin="0 0 16px 0">프코스팟 오픈 TIP!</TextH5B>
-        <BtnWrapper>
-          <FlexBetween>
-            <TextB2R>{'프코스팟 오픈 진행사항을\n알림 받아보세요!'}</TextB2R>
-            <Circle />
-          </FlexBetween>
-        </BtnWrapper>
-      </OpenTipWrapper>
+      {
+        type !== 'public' &&
+        <OpenTipWrapper>
+          <TextH5B margin="0 0 16px 0">프코스팟 오픈 TIP!</TextH5B>
+          <BtnWrapper>
+            <FlexBetween>
+              <TextH5B>프코스팟 이용방법 및 혜택 알아보기</TextH5B>
+              <IconWrapper>
+              <SVGIcon name='blackCircleShare' />
+              </IconWrapper>
+            </FlexBetween>
+          </BtnWrapper>
+        </OpenTipWrapper>
+      }
       {
         type === 'normal' &&
         <>
@@ -84,21 +90,25 @@ const BtnWrapper = styled.div`
   border-radius: 8px;
 `;
 
+const IconWrapper = styled.div`
+  width: 32px;
+  height: 32px;
+  background: ${theme.black};
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 8px 0px #00000033;
+`;
+
 const Row = styled.div`
   width: 100%;
   border-top: 1px solid ${theme.greyScale6};
   margin: 32px 0 24px 0;
-`
-
-const Circle = styled.div`
-  width: 44px;
-  height: 44px;
-  background: ${theme.black};
-  border-radius: 50%;
 `;
 
 const ChannelIokWrapper = styled.section`
 
-`
+`;
 
 export default FinishPage;

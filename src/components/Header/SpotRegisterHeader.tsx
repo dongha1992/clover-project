@@ -7,11 +7,11 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 
-type TProps = {
+interface IProps {
   title?: string;
 };
 
-function SpotRegisterHeader({ title }: TProps) {
+const SpotRegisterHeader = ({ title }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
