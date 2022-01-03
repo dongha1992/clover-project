@@ -1774,10 +1774,10 @@ const svgMap: TSvg = {
 
 /* TODO: ref */
 
-function SVGIcon({ name }: TProps) {
+const SVGIcon = ({ name }: TProps) => {
   const MappedSVG = svgMap[name];
 
   return <MappedSVG />;
-}
+};
 
 export default SVGIcon;
