@@ -37,7 +37,7 @@ export const GENDER = [
   },
 ];
 
-function SignupOptionalPage() {
+const SignupOptionalPage = () => {
   const [checkGender, setChcekGender] = useState<number>(1);
   const nicknameRef = useRef<HTMLInputElement>(null);
   const birthDateRef = useRef<HTMLInputElement>(null);
@@ -164,7 +164,7 @@ function SignupOptionalPage() {
       </NextBtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}
