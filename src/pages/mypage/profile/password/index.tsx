@@ -16,7 +16,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function ChangePasswordPage() {
+const ChangePasswordPage = () => {
   const [oldPasswordLengthValidation, setOldPasswordLengthValidation] =
     useState<IVaildation>({ message: '', isValid: false });
 
@@ -246,7 +246,7 @@ function ChangePasswordPage() {
       </BtnWrpper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

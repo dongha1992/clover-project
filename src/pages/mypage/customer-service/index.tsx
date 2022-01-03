@@ -6,7 +6,7 @@ import Button from '@components/Shared/Button';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { FlexCol, theme, fixedBottom } from '@styles/theme';
 
-function customServicePage() {
+const customServicePage = () => {
   return (
     <Container>
       <PaddingWrapper>
@@ -30,7 +30,7 @@ function customServicePage() {
       </FlexCol>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

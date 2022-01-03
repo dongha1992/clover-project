@@ -46,7 +46,7 @@ const deliveryStatusMapper: Obj = {
   complete: { text: { value: '배송완료', color: 'brandColor' }, button: {} },
 };
 
-function OrderDetailPage() {
+const OrderDetailPage = () => {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
@@ -283,7 +283,7 @@ function OrderDetailPage() {
       </TotalPriceWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

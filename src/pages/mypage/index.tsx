@@ -32,7 +32,7 @@ interface IMypageMenu {
   hideBorder?: boolean;
 }
 
-function MypagePage() {
+const MypagePage = () => {
   return (
     <Container>
       <Wrapper>
@@ -149,7 +149,7 @@ function MypagePage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 export const MypageMenu = React.memo(
   ({ title, count, link, hideBorder }: IMypageMenu) => {

@@ -101,7 +101,7 @@ const MOCK_USE_POINT_HISTORY = [
   },
 ];
 
-function PointPage() {
+const PointPage = () => {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
   const elementRef = useRef<HTMLDivElement>(null);
@@ -199,7 +199,7 @@ function PointPage() {
       </ScrollView>
     </Container>
   );
-}
+};
 
 const PointItem = React.forwardRef(
   (

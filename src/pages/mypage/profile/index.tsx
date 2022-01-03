@@ -28,7 +28,7 @@ import { setAlert } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
 
-function ProfilePage() {
+const ProfilePage = () => {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
@@ -291,7 +291,7 @@ function ProfilePage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

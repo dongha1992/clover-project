@@ -9,7 +9,7 @@ import Button from '@components/Shared/Button';
 import { userConfirmPassword } from '@api/user';
 import router from 'next/router';
 
-function PasswordConfirmPage() {
+const PasswordConfirmPage = () => {
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
@@ -78,7 +78,7 @@ function PasswordConfirmPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

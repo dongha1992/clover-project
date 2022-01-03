@@ -7,7 +7,7 @@ import { TextH5B } from '@components/Shared/Text';
 import { COUPON_LIST } from '@constants/menu';
 import MypageCouponItem from '@components/BottomSheet/CouponSheet/MypageCouponItem';
 
-function CouponManagementPage() {
+const CouponManagementPage = () => {
   return (
     <Container>
       <Wrapper>
@@ -26,7 +26,7 @@ function CouponManagementPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

@@ -17,7 +17,7 @@ const TAB_LIST = [
   { id: 2, text: '작성 완료', value: 'completed', link: '/use' },
 ];
 
-function ReviewPage() {
+const ReviewPage = () => {
   const [selectedTab, setSelectedTab] = useState('/mypage/review');
   const [isShow, setIsShow] = useState(false);
   const [itemList, setItemList] = useState([]);
@@ -75,7 +75,7 @@ function ReviewPage() {
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

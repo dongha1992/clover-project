@@ -8,7 +8,7 @@ import router from 'next/router';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 
-function DormantAccountPage() {
+const DormantAccountPage = () => {
   const dispatch = useDispatch();
 
   const getUserUnlock = async () => {
@@ -52,7 +52,7 @@ function DormantAccountPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

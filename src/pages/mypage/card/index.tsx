@@ -8,7 +8,7 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
 
-function CardManagementPage() {
+const CardManagementPage = () => {
   const CARDS = [1, 2] as any[];
 
   const cardHandler = () => {};
@@ -58,7 +58,7 @@ function CardManagementPage() {
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}
