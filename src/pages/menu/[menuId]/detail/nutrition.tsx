@@ -1,7 +1,7 @@
 import React from 'react';
 
-function NutritionInfoPage() {
+const NutritionInfoPage = () => {
   return <div></div>;
-}
+};
 
 export default NutritionInfoPage;
