@@ -12,7 +12,7 @@ const Button = dynamic(() => import('@components/Shared/Button'), {
   ssr: false,
 });
 
-function FindEmailPage() {
+const FindEmailPage = () => {
   const [phoneValid, setPhoneValid] = useState({
     message: '',
     isValid: false,
@@ -99,7 +99,7 @@ function FindEmailPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   padding: 84px 24px;
