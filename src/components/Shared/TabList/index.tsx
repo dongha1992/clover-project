@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import Tab from '@components/Shared/TabList/Tab';
 import { theme } from '@styles/theme';
 
-function TabList(
+const TabList = (
   { onClick, selectedTab, tabList, countObj }: any,
   ref: React.ForwardedRef<HTMLDivElement>
-) {
+) => {
   return (
     <Container ref={ref}>
       <TabWrapper>
@@ -22,7 +22,7 @@ function TabList(
       </TabWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
