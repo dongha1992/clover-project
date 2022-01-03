@@ -23,7 +23,7 @@ interface IProps {
   timer: string;
 }
 
-const OrderCardList: React.FC<IProps> = ({
+const OrderCardList = ({
   time,
   weeks,
   pushStatus,
@@ -31,7 +31,7 @@ const OrderCardList: React.FC<IProps> = ({
   getTimer,
   setTimer,
   timer,
-}) => {
+}: IProps) => {
   const dispatch = useDispatch();
   const { cartLists } = useSelector(cartForm);
   const [cardList, setCardList] = useState<ICard[]>();
@@ -77,7 +77,7 @@ const OrderCardList: React.FC<IProps> = ({
           setCardList([CARD.dinner1, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
         }
 
-        if (time > 10.3 && time < 11.0) {
+        if (time >= 10.3 && time < 11.0) {
           setCardList([CARD.dinner3, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
           timerRef.current = getTimer();
           timeCount.current = setInterval(() => {
