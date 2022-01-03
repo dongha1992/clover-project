@@ -8,12 +8,12 @@ import styled from 'styled-components';
 import router from 'next/router';
 import { SET_ORDER_TYPE } from '@store/order';
 import { sprintf } from 'sprintf-js';
-interface card {
+interface ICard {
   title: string;
   dec: string;
   timer?: boolean;
 }
-interface Props {
+interface IProps {
   time: number;
   weeks: number;
   pushStatus: string;
@@ -23,7 +23,7 @@ interface Props {
   timer: string;
 }
 
-const OrderCardList: React.FC<Props> = ({
+const OrderCardList: React.FC<IProps> = ({
   time,
   weeks,
   pushStatus,
@@ -34,10 +34,11 @@ const OrderCardList: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
   const { cartLists } = useSelector(cartForm);
-  const [cardList, setCardList] = useState<card[]>();
+  const [cardList, setCardList] = useState<ICard[]>();
   let timerRef = useRef<number>(1799);
   let timeCount = useRef<any>();
-  let result = new Date().getDate();
+  let today = new Date().getDate();
+  const noList = [4, 5, 6];
 
   useEffect(() => {
     return () => clearInterval(timeCount.current);
@@ -96,11 +97,11 @@ const OrderCardList: React.FC<Props> = ({
             CARD.delivery1,
             {
               title: CARD.lunch2.title,
-              dec: sprintf(CARD.lunch2.dec, result + 1),
+              dec: sprintf(CARD.lunch2.dec, calculateArrival(today + 1)),
             },
             {
               title: CARD.dinner2.title,
-              dec: sprintf(CARD.dinner2.dec, result + 1),
+              dec: sprintf(CARD.dinner2.dec, calculateArrival(today + 1)),
             },
           ]);
         }
@@ -111,11 +112,11 @@ const OrderCardList: React.FC<Props> = ({
             CARD.delivery3,
             {
               title: CARD.lunch2.title,
-              dec: sprintf(CARD.lunch2.dec, result + 1),
+              dec: sprintf(CARD.lunch2.dec, calculateArrival(today + 1)),
             },
             {
               title: CARD.dinner2.title,
-              dec: sprintf(CARD.dinner2.dec, result + 1),
+              dec: sprintf(CARD.dinner2.dec, calculateArrival(today + 1)),
             },
           ]);
           timerRef.current = getTimer();
@@ -136,11 +137,11 @@ const OrderCardList: React.FC<Props> = ({
             CARD.dinner1,
             {
               title: CARD.dawn2.title,
-              dec: sprintf(CARD.dawn2.dec, result + 1),
+              dec: sprintf(CARD.dawn2.dec, calculateArrival(today + 1)),
             },
             {
               title: CARD.delivery2.title,
-              dec: sprintf(CARD.delivery2.dec, result + 1),
+              dec: sprintf(CARD.delivery2.dec, calculateArrival(today + 1)),
             },
           ]);
         }
@@ -169,7 +170,7 @@ const OrderCardList: React.FC<Props> = ({
     setTimer(formatTime(mm, ss));
   }, [format, getTimer]);
 
-  const cardClick = (item: card) => {
+  const cardClick = (item: ICard) => {
     const { title } = item;
 
     dispatch(SET_ORDER_TYPE({ orderType: title.split(' ')[0] }));
@@ -185,19 +186,19 @@ const OrderCardList: React.FC<Props> = ({
         setCardList([
           {
             title: CARD.dawn2.title,
-            dec: sprintf(CARD.dawn2.dec, result + 4),
+            dec: sprintf(CARD.dawn2.dec, calculateArrival(today + 4)),
           },
           {
             title: CARD.delivery2.title,
-            dec: sprintf(CARD.delivery2.dec, result + 4),
+            dec: sprintf(CARD.delivery2.dec, calculateArrival(today + 4)),
           },
           {
             title: CARD.lunch2.title,
-            dec: sprintf(CARD.lunch2.dec, result + 3),
+            dec: sprintf(CARD.lunch2.dec, calculateArrival(today + 3)),
           },
           {
             title: CARD.dinner2.title,
-            dec: sprintf(CARD.dinner2.dec, result + 3),
+            dec: sprintf(CARD.dinner2.dec, calculateArrival(today + 3)),
           },
         ]);
         break;
@@ -205,19 +206,19 @@ const OrderCardList: React.FC<Props> = ({
         setCardList([
           {
             title: CARD.dawn2.title,
-            dec: sprintf(CARD.dawn2.dec, result + 3),
+            dec: sprintf(CARD.dawn2.dec, calculateArrival(today + 3)),
           },
           {
             title: CARD.delivery2.title,
-            dec: sprintf(CARD.delivery2.dec, result + 3),
+            dec: sprintf(CARD.delivery2.dec, calculateArrival(today + 3)),
           },
           {
             title: CARD.lunch2.title,
-            dec: sprintf(CARD.lunch2.dec, result + 2),
+            dec: sprintf(CARD.lunch2.dec, calculateArrival(today + 2)),
           },
           {
             title: CARD.dinner2.title,
-            dec: sprintf(CARD.dinner2.dec, result + 2),
+            dec: sprintf(CARD.dinner2.dec, calculateArrival(today + 2)),
           },
         ]);
         break;
@@ -225,24 +226,45 @@ const OrderCardList: React.FC<Props> = ({
         setCardList([
           {
             title: CARD.dawn2.title,
-            dec: sprintf(CARD.dawn2.dec, result + 2),
+            dec: sprintf(CARD.dawn2.dec, calculateArrival(today + 2)),
           },
           {
             title: CARD.delivery2.title,
-            dec: sprintf(CARD.delivery2.dec, result + 2),
+            dec: sprintf(CARD.delivery2.dec, calculateArrival(today + 2)),
           },
           {
             title: CARD.lunch2.title,
-            dec: sprintf(CARD.lunch2.dec, result + 1),
+            dec: sprintf(CARD.lunch2.dec, calculateArrival(today + 1)),
           },
           {
             title: CARD.dinner2.title,
-            dec: sprintf(CARD.dinner2.dec, result + 1),
+            dec: sprintf(CARD.dinner2.dec, calculateArrival(today + 1)),
           },
         ]);
         break;
       default:
         break;
+    }
+  };
+
+  const calculateArrival = (day: number) => {
+    // 배송불가 날짜 제외 로직
+    let rDay = day;
+    for (let i = 0; i < noList.length; i++) {
+      if (i === 0) {
+        if (day !== noList[i]) {
+          return day;
+        }
+      } else {
+        if (rDay !== noList[i]) {
+          return rDay;
+        } else {
+          if (i === noList.length - 1) {
+            return noList[noList.length - 1] + 1;
+          }
+        }
+      }
+      rDay += 1;
     }
   };
 
