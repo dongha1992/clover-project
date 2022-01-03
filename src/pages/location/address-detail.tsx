@@ -10,7 +10,7 @@ import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 /*TODO: 지도 연동 + 마커 표시 */
 
-function AddressDetailPage() {
+const AddressDetailPage = () => {
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
@@ -65,7 +65,7 @@ function AddressDetailPage() {
       </ButtonWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;
