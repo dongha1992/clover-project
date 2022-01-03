@@ -284,3 +284,7 @@ export interface IKakaoAddress {
   page?: number;
   size?: number;
 }
+export interface IKakaoLatLon {
+  x: string;
+  y: string;
+}
