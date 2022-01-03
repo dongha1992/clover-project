@@ -50,7 +50,6 @@ const HomeHeader = () => {
     router.push('/cart');
   };
 
-  const hasLocation = Object.keys(userlocation).length > 0;
   return (
     <Container>
       <Wrapper>
@@ -58,9 +57,13 @@ const HomeHeader = () => {
           <SVGIcon name="location" />
           <AddressWrapper>
             <Link href="/location">
-              {hasLocation ? <a>{userlocation?.emdNm}</a> : <a>내 위치 찾기</a>}
+              {userlocation?.emdNm ? (
+                <a>{userlocation?.emdNm}</a>
+              ) : (
+                <a>내 위치 찾기</a>
+              )}
             </Link>
-            {hasLocation && (
+            {userlocation?.emdNm && (
               <Tooltip message="무료 스팟배송이 가능해요!" width="170px" />
             )}
           </AddressWrapper>

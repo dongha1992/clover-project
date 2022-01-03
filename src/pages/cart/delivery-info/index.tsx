@@ -101,7 +101,7 @@ const DeliverInfoPage = () => {
     dispatch(SET_AFTER_SETTING_DELIVERY());
   };
 
-  const renderPlaceInfo = () => {
+  const placeInfoRender = () => {
     switch (selectedMethod) {
       case 1: {
         return <PickupPlaceBox />;
@@ -236,7 +236,7 @@ const DeliverInfoPage = () => {
             </TextH6B>
           )}
         </FlexBetween>
-        {hasDeliverPlace ? renderPlaceInfo() : ''}
+        {hasDeliverPlace ? placeInfoRender() : ''}
         {!hasDeliverPlace && (
           <BtnWrapper onClick={goToFindAddress}>
             <Button backgroundColor={theme.white} color={theme.black} border>
