@@ -24,7 +24,7 @@ const DetailBottomStoreInfo = ({ items }: any): ReactElement => {
         </FlexWrapper>
       </Wrapper>
       <MapWrapper>
-        <Map zoom={20} centerLat='37.547907' centerLng='127.044112' />
+        <Map centerLat='37.54669189732' centerLng='126.833485621837' />
       </MapWrapper>
     </Container>
   );
