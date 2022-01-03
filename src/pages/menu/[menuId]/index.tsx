@@ -59,7 +59,7 @@ export interface IMenuItem {
 
 const hasAvailableCoupon = true;
 
-function MenuDetailPage({ menuId }: any) {
+const MenuDetailPage = ({ menuId }: any) => {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -295,7 +295,7 @@ function MenuDetailPage({ menuId }: any) {
       </Bottom>
     </Container>
   );
-}
+};
 
 const Container = styled.section``;
 

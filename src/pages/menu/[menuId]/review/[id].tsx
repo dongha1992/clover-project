@@ -7,9 +7,7 @@ import { homePadding } from '@styles/theme';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
 
-/* 리뷰 하나 디테일 페이지 */
-
-function ReviewDetailPage({ id }: any) {
+const ReviewDetailPage = ({ id }: any) => {
   const [selectedReviewDetail, setSelectedReviewDetail] = useState<any>({});
 
   const dispatch = useDispatch();
@@ -43,7 +41,7 @@ function ReviewDetailPage({ id }: any) {
       />
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

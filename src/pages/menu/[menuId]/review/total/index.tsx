@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 
-function TotalReviewPage({ reviews, menuId }: any) {
+const TotalReviewPage = ({ reviews, menuId }: any) => {
   reviews = [...reviews, ...reviews, ...reviews];
 
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ function TotalReviewPage({ reviews, menuId }: any) {
       </ReviewWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 
