@@ -54,7 +54,6 @@ function DestinationDetailPage() {
     } catch (error) {
       console.error(error);
     }
-    console.log(userLocation);
   }, []);
 
   const getDestination = async () => {
