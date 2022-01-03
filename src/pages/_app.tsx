@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   /* 스크린 사이즈 체크 전역 처리 */
   /*TODO: 이거 말고 다른 걸로..? */
   const isWithContentsSection = useMediaQuery('(min-width:1024px)');
@@ -43,7 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </ThemeProvider>
     </>
   );
-}
+};
 
 MyApp.getInitialProps = wrapper.getInitialPageProps(
   (store) =>
