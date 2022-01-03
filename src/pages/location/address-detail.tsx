@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom, theme } from '@styles/theme';
 import Button from '@components/Shared/Button';
@@ -7,10 +7,41 @@ import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
 import router from 'next/router';
+import { getLonLatFromAddress } from '@api/location';
 /*TODO: 지도 연동 + 마커 표시 */
 
 function AddressDetailPage() {
+  const [latitudeLongitude, setLatitudeLongitude] = useState({
+    latitude: '',
+    longitude: '',
+  });
   const { tempLocation } = useSelector(destinationForm);
+
+  useEffect(() => {
+    getLonLanForMap();
+  }, []);
+
+  const getLonLanForMap = async () => {
+    const params = {
+      query: tempLocation.roadAddrPart1,
+      analyze_type: 'similar',
+      page: 1,
+      size: 20,
+    };
+    try {
+      const { data } = await getLonLatFromAddress(params);
+      if (data.documents.length > 0) {
+        const latitude = data.documents[0].x;
+        const longitude = data.documents[0].y;
+        setLatitudeLongitude({
+          latitude,
+          longitude,
+        });
+      } else {
+        // 검색 결과가 없는 경우?
+      }
+    } catch (error) {}
+  };
 
   const setUserLocation = () => {
     localStorage.setItem('loc', JSON.stringify(tempLocation));
@@ -20,7 +51,7 @@ function AddressDetailPage() {
   return (
     <Container>
       <CheckDeliveryPlace />
-      <Map />
+      <Map latitudeLongitude={latitudeLongitude} />
       <ButtonWrapper>
         <Button
           width="100%"
@@ -45,4 +76,4 @@ const ButtonWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default AddressDetailPage;
+export default React.memo(AddressDetailPage);
