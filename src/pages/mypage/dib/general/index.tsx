@@ -1,7 +1,7 @@
 import React from 'react';
 
-function GeneralDibPage() {
+const GeneralDibPage = () => {
   return <div>s</div>;
-}
+};
 
 export default GeneralDibPage;

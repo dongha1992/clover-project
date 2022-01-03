@@ -26,7 +26,7 @@ const textStyle = {
   color: theme.greyScale65,
 };
 
-function InviteFriendPaage() {
+const InviteFriendPaage = () => {
   const { showToast } = useToast();
 
   const getCodeCopy = (e: any) => {
@@ -109,7 +109,7 @@ function InviteFriendPaage() {
       </Info>
     </Container>
   );
-}
+};
 
 export const InvitedFriend = ({ id, title, count }: any) => {
   const mapper: Obj = {

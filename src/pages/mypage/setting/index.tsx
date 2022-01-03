@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { TextH4B, TextB1R } from '@components/Shared/Text';
 import ToggleButton from '@components/Shared/Button/ToggleButton ';
 
-function SettingPage() {
+const SettingPage = () => {
   const [isNotiOn, setIsNotiOn] = useState(false);
   const [isEmailNotiOn, setIsEmailNotiOn] = useState(false);
   const [isSMSNotiOn, setIsSMSNotiOn] = useState(false);
@@ -40,7 +40,7 @@ function SettingPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

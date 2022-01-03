@@ -38,7 +38,7 @@ interface IWriteMenuReviewObj {
   rating: number;
 }
 
-function WriteReviewPage({ menuId }: any) {
+const WriteReviewPage = ({ menuId }: any) => {
   const [isShow, setIsShow] = useState(false);
   const [item, setItem] = useState<any>({});
   const [rating, setRating] = useState<number>(5);
@@ -330,7 +330,7 @@ function WriteReviewPage({ menuId }: any) {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

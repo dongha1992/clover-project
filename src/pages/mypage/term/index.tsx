@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { MypageMenu } from '../index';
 
-function TermPage() {
+const TermPage = () => {
   return (
     <Container>
       <Wrapper>
@@ -16,7 +16,7 @@ function TermPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

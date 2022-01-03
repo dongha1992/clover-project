@@ -1,7 +1,7 @@
 import React from 'react';
 
-function SubscriptionDibPage() {
+const SubscriptionDibPage = () => {
   return <div>s</div>;
-}
+};
 
 export default SubscriptionDibPage;

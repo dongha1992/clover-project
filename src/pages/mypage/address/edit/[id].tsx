@@ -33,7 +33,7 @@ import PickupSheet from '@components/BottomSheet/PickupSheet';
 
 const isParcel = true;
 
-function AddressEditPage({ id }: any) {
+const AddressEditPage = ({ id }: any) => {
   const [selectedAddress, setSelectedAddress] = useState({});
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
@@ -202,7 +202,7 @@ function AddressEditPage({ id }: any) {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

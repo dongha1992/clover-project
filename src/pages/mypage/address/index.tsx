@@ -15,7 +15,7 @@ const TAB_LIST = [
   { id: 2, text: '배송', value: 'delivery', link: '/delivery' },
 ];
 
-function AddressManagementPage() {
+const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
   const [pickupList, setpickupList] = useState([]);
 
@@ -84,7 +84,7 @@ function AddressManagementPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const FixedTab = styled.div`
