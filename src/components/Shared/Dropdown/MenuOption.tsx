@@ -16,7 +16,7 @@ type TProps = {
   selectMenuHandler: any;
 };
 
-function MenuOption({ option, selectMenuHandler }: TProps) {
+const MenuOption = ({ option, selectMenuHandler }: TProps) => {
   return (
     <OptionList onClick={() => selectMenuHandler(option)}>
       <FlexBetween>
@@ -35,7 +35,7 @@ function MenuOption({ option, selectMenuHandler }: TProps) {
       </FlexRow>
     </OptionList>
   );
-}
+};
 
 export default React.memo(MenuOption);
 

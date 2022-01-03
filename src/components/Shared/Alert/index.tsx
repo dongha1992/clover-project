@@ -21,7 +21,7 @@ type TProps = {
   children?: JSX.Element;
 };
 
-function Alert({
+const Alert = ({
   alertMessage,
   submitBtnText = '확인',
   closeBtnText,
@@ -33,7 +33,7 @@ function Alert({
   width = '242px',
   height = '160px',
   children,
-}: TProps): JSX.Element {
+}: TProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const cancelHandler = (): void => {
@@ -79,7 +79,7 @@ function Alert({
       </AlertBox>
     </ModalLayout>
   );
-}
+};
 
 const AlertBox = styled.div`
   display: flex;

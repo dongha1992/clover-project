@@ -7,13 +7,13 @@ type TProps = {
   selectOptionHandler: any;
 };
 
-function AcessMethodOption({ option, selectOptionHandler }: TProps) {
+const AcessMethodOption = ({ option, selectOptionHandler }: TProps) => {
   return (
     <OptionList onClick={() => selectOptionHandler(option)}>
       <TextB3R>{option.text}</TextB3R>
     </OptionList>
   );
-}
+};
 
 export default React.memo(AcessMethodOption);
 

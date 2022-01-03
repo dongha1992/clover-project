@@ -15,14 +15,14 @@ type TProps = {
 
 /* TAYLER: bottom sheet 위에 alert 띄우는 것 때문에 Dimmer z-index 변경했는데 혹시 문제 되면 말씀해주세요. */
 
-export default function ModalLayout({
+const ModalLayout = ({
   children,
   closeModal,
   style,
   width,
   height,
   padding,
-}: TProps): JSX.Element {
+}: TProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const handleClickDimmer = ({
@@ -45,7 +45,7 @@ export default function ModalLayout({
       </ModalBox>
     </Dimmer>
   );
-}
+};
 
 const Dimmer = styled.div`
   display: flex;
@@ -100,3 +100,5 @@ const ModalBox = styled.div<{
     cursor: pointer;
   }
 `;
+
+export default ModalLayout;

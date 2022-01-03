@@ -7,13 +7,13 @@ type TProps = {
   onChange: React.MouseEventHandler<HTMLElement>;
 };
 
-function Checkbox({ isSelected, onChange }: TProps) {
+const Checkbox = ({ isSelected, onChange }: TProps) => {
   return (
     <CheckboxContainer onClick={onChange}>
       <SVGIcon name={isSelected ? 'checkedRectBox' : 'uncheckedRectBox'} />
     </CheckboxContainer>
   );
-}
+};
 
 export default React.memo(Checkbox);
 
