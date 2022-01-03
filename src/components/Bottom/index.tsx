@@ -8,7 +8,7 @@ const HomeBottom = dynamic(() => import('./HomeBottom'));
 const DetailBottom = dynamic(() => import('./DetailBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
-function Bottom() {
+const Bottom = () => {
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState<string>(router.pathname);
 
@@ -44,7 +44,7 @@ function Bottom() {
       {renderComponent(currentPath)}
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isShow: React.ReactNode }>`
   margin-top: ${({ isShow }) => (isShow ? 62 : 0)}px;

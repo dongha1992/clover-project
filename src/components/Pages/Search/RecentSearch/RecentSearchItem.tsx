@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { TextB2R } from '@components/Shared/Text';
 
-function RecentSearchItem({ keyword, onClick }: any) {
+const RecentSearchItem = ({ keyword, onClick }: any) => {
   return (
     <Container>
       <TextB2R>{keyword}</TextB2R>
@@ -12,7 +12,7 @@ function RecentSearchItem({ keyword, onClick }: any) {
       </RemoveBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

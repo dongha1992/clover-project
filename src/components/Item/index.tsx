@@ -18,7 +18,7 @@ type TProps = {
 
 const isNew = true;
 
-function Item({ item, isCart, isQuick = false }: TProps) {
+const Item = ({ item, isCart, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -87,7 +87,7 @@ function Item({ item, isCart, isQuick = false }: TProps) {
       </FlexCol>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   max-width: 220px;

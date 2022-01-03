@@ -10,7 +10,7 @@ import router from 'next/router';
 
 const isLogin = false;
 
-function CouponSheet() {
+const CouponSheet = () => {
   const dispatach = useDispatch();
 
   const downloadAllCoupon = () => {
@@ -69,7 +69,7 @@ function CouponSheet() {
       </Wrapper>
     </Container>
   );
-}
+};
 const Container = styled.div`
   display: flex;
   flex-direction: column;

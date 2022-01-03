@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { availabilityDestination } from '@api/destination';
 
-function CheckDeliveryPlace() {
+const CheckDeliveryPlace = () => {
   // const { tempDestination } = useSelector(destinationForm);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ function CheckDeliveryPlace() {
       </PlaceInfo>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

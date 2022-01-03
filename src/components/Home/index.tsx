@@ -11,7 +11,7 @@ import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
 import HorizontalItem from '@components/Item/HorizontalItem';
 
-function Home() {
+const Home = () => {
   const [itemList, setItemList] = useState([]);
   const dispatch = useDispatch();
 
@@ -52,7 +52,7 @@ function Home() {
       </ItemListRowWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

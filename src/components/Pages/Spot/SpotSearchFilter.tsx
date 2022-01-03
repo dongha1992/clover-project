@@ -9,7 +9,7 @@ import ToggleButton from '@components/Shared/Button/ToggleButton ';
 
 /* TODO : 다른 필터에서 전체 선택 시 해제되는 거 spot은 없음 이거 로직 변경, toggle시 전체 선택 해제로 */
 
-function SpotSearchFilter() {
+const SpotSearchFilter = () => {
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<number[]>([1]);
   const [selectedRadioId, setSelectedRadioId] = useState(1);
 
@@ -94,7 +94,7 @@ function SpotSearchFilter() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

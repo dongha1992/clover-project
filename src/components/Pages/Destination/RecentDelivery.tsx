@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FlexCol } from '@styles/theme';
 
-function RecentDelivery({ recentDeliveryList }: any) {
+const RecentDelivery = ({ recentDeliveryList }: any) => {
   return (
     <Container>
       <TextH5B>최근 배송 이력</TextH5B>
@@ -17,7 +17,7 @@ function RecentDelivery({ recentDeliveryList }: any) {
       </FlexCol>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

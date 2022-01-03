@@ -19,7 +19,7 @@ interface ICalendar {
   otherDeliveryDate?: number;
 }
 
-function Calendar({ disabledDates, otherDeliveryDate }: ICalendar) {
+const Calendar = ({ disabledDates, otherDeliveryDate }: ICalendar) => {
   const [dateList, setDateList] = useState<number[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [selectedDay, setSelectedDay] = useState<number>(0);
@@ -142,7 +142,7 @@ function Calendar({ disabledDates, otherDeliveryDate }: ICalendar) {
       )}
     </FlexCol>
   );
-}
+};
 
 const CalendarContainer = styled.div`
   position: relative;

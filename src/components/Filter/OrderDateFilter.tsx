@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ORDER_DATE_RADIO_CHECKBOX } from '@constants/filter';
 import { theme } from '@styles/theme';
 
-function OrderDateFilter() {
+const OrderDateFilter = () => {
   const [selectedRadioId, setSelectedRadioId] = useState(1);
 
   const radioButtonHandler = (id: number) => {
@@ -29,7 +29,7 @@ function OrderDateFilter() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

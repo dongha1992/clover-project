@@ -1,7 +1,7 @@
 import React from 'react';
 
-function index() {
+const ShareIcon = () => {
   return <div></div>;
-}
+};
 
-export default index;
+export default ShareIcon;

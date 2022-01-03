@@ -9,7 +9,7 @@ interface IProps {
   isDeliveryComplete?: boolean;
 }
 
-function PaymentItem({ menu, isDeliveryComplete }: IProps) {
+const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
   const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
 
@@ -54,7 +54,7 @@ function PaymentItem({ menu, isDeliveryComplete }: IProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isSoldout?: boolean }>`
   position: relative;
