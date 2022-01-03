@@ -3,16 +3,18 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { TextB2R, TextH2B, TextH3B } from '@components/Shared/Text';
 import { ScrollHorizonList, theme } from '@styles/theme';
-import Item from '@components/Item';
-
 import { BASE_URL } from '@constants/mock';
 import ReOrderList from '@components/Pages/QuickOrder/ReOrderList';
 import OrderCardList from '@components/Pages/QuickOrder/OrderCardList';
 import { MENT } from '@constants/quick';
 import TimerTooltip from '@components/Shared/Tooltip/TimerTooltip';
 import Button from '@components/Shared/Button';
+import HorizontalItem from '@components/Item/HorizontalItem';
+import { useSelector } from 'react-redux';
+import { cartForm } from '@store/cart';
 
-const QuickOrderPage: React.FC = () => {
+const QuickOrderPage = () => {
+  const { cartLists } = useSelector(cartForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
@@ -74,15 +76,9 @@ const QuickOrderPage: React.FC = () => {
 
   const getTimer = () => {
     if (new Date().getMinutes() >= 30) {
-      return (
-        Number(format(60 - new Date().getMinutes())) * 60 -
-        new Date().getSeconds()
-      );
+      return (60 - new Date().getMinutes()) * 60 - new Date().getSeconds();
     } else {
-      return (
-        Number(format(30 - new Date().getMinutes())) * 60 -
-        new Date().getSeconds()
-      );
+      return (30 - new Date().getMinutes()) * 60 - new Date().getSeconds();
     }
   };
 
@@ -137,7 +133,7 @@ const QuickOrderPage: React.FC = () => {
         <ScrollHorizonList>
           <ScrollHorizonListGroup className="pushSHLG">
             {itemList.map((item, index) => (
-              <Item item={item} key={index} isCart={true} isQuick={true} />
+              <HorizontalItem item={item} key={index} isQuick />
             ))}
           </ScrollHorizonListGroup>
         </ScrollHorizonList>
@@ -174,6 +170,7 @@ const QuickOrderPage: React.FC = () => {
 };
 const Container = styled.main`
   width: 100%;
+  overflow: hidden;
 `;
 
 const GreetingArticle = styled.article`
