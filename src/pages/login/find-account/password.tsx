@@ -10,7 +10,7 @@ import Validation from '@components/Pages/User/Validation';
 import { userHelpPassword } from '@api/user';
 import router from 'next/router';
 
-function FindPasswordPage() {
+const FindPasswordPage = () => {
   const [phoneValid, setPhoneValid] = useState({
     message: '',
     isValid: false,
@@ -93,7 +93,7 @@ function FindPasswordPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   padding: 84px 24px;
