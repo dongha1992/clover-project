@@ -8,6 +8,7 @@ import SpotItem from '@components/Pages/Spot/SpotItem';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import Slider from 'react-slick';
+import Map from '@components/Map';
 
 
 const SPOT_RECOMMEND_LIST = [
@@ -41,7 +42,32 @@ const SPOT_RECOMMEND_LIST = [
      spaceType: "트라이얼",
      url:"https://image.ajunews.com/content/image/2020/08/29/20200829141039628211.jpg"
   }
-]
+];
+
+const area = [
+  {
+    location: '프레시코드', lat: '37.547907', lng: '127.044112'
+  },
+  {
+    location: '강남', lat: '37.4959854', lng: '127.0664091'
+  },
+  {
+    location: '강동', lat: '37.5492077', lng: '127.1464824'
+  },
+  {
+    location: '동대문', lat: '37.5838012', lng: '127.0507003'
+  },
+  {
+    location: '광진', lat: '37.5574120', lng: '127.0796211'
+  },
+  {
+    location: '송파', lat: '37.5177941', lng: '123.1127078'
+  },
+  {
+    location: '용산', lat: '37.5311008', lng: '123.9810742'
+  },
+];
+
 
 const SpotLocationPage = ():ReactElement => {
   const router = useRouter();
@@ -73,17 +99,16 @@ const SpotLocationPage = ():ReactElement => {
           <TextH6B margin='0 0 0 2px' padding='3px 0 0 0'>현 위치로 설정하기</TextH6B>
         </FlexEnd>
       </Wrapper>
-      <GoogleMapWrapper>
-        MAP
-        <FooterSpotListWrapper>
+      <MapWrapper>
+        <Map zoom={17} centerLat={area[2].lat} centerLng={area[2].lng} areaArr={area} />
+        <SpotListWrapper>
           <SpotListSlider {...setting}>
             {SPOT_RECOMMEND_LIST.map((item: any, index) => (
               <SpotItem item={item} key={index} onClick={goToSpot} mapList />
             ))}
           </SpotListSlider>
-
-        </FooterSpotListWrapper>
-      </GoogleMapWrapper>
+        </SpotListWrapper>
+      </MapWrapper>
     </Container>
   )
 };
@@ -96,8 +121,9 @@ const Wrapper = styled.div`
   padding: 8px 24px;
 `;
 
-const GoogleMapWrapper = styled.section`
+const MapWrapper = styled.section`
   width: 100%;
+  height: 80vh;
   background: ${theme.greyScale15};
 `
 const SpotListSlider = styled(Slider)`
@@ -106,7 +132,7 @@ const SpotListSlider = styled(Slider)`
   .slick-slide>div {padding: 0 5px;}
 `
 
-const FooterSpotListWrapper = styled.section`
+const SpotListWrapper = styled.section`
   display: flex;
   position: fixed;
   bottom: 0;
@@ -114,7 +140,7 @@ const FooterSpotListWrapper = styled.section`
   max-width: ${breakpoints.mobile}px;
   position: fixed;
   bottom: 0px;
-  z-index: 10;
+  z-index: 50;
 `;
 
 export default SpotLocationPage;

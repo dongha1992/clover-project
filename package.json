@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",
+    "@types/navermaps": "^3.0.10",
     "axios": "^0.24.0",
     "babel-plugin-styled-components": "^1.13.3",
     "dayjs": "^1.10.7",
