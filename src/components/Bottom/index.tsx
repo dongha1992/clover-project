@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 const HomeBottom = dynamic(() => import('./HomeBottom'));
 const DetailBottom = dynamic(() => import('./DetailBottom'));
+const SpotDetailBottom = dynamic(() => import('./SpotDetailBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 function Bottom() {
@@ -28,8 +29,11 @@ function Bottom() {
         ].includes(currentPath): {
           return <HomeBottom />;
         }
-        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]'].includes(currentPath): {
           return <DetailBottom />;
+        }
+        case ['/spot/detail/[id]'].includes(currentPath): {
+          return <SpotDetailBottom />;
         }
         default: {
           return;
