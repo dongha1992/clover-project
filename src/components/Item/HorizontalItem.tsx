@@ -12,11 +12,12 @@ import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
+  isQuick: boolean;
 };
 
 const isNew = true;
 
-function HorizontalItem({ item }: TProps) {
+function HorizontalItem({ item, isQuick = false }: TProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -60,16 +61,18 @@ function HorizontalItem({ item }: TProps) {
           </TextH5B>
           <TextH5B>{item.price}원</TextH5B>
         </PriceWrapper>
-        <TagWrapper>
-          {item.tags.map((tag: string, index: number) => {
-            if (index > 1) return;
-            return (
-              <Tag key={index} margin="0px 8px 8px 0px">
-                {tag}
-              </Tag>
-            );
-          })}
-        </TagWrapper>
+        {!isQuick && (
+          <TagWrapper>
+            {item.tags.map((tag: string, index: number) => {
+              if (index > 1) return;
+              return (
+                <Tag key={index} margin="0px 8px 8px 0px">
+                  {tag}
+                </Tag>
+              );
+            })}
+          </TagWrapper>
+        )}
       </FlexCol>
     </Container>
   );

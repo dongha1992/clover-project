@@ -133,7 +133,7 @@ const QuickOrderPage: React.FC = () => {
         <ScrollHorizonList>
           <ScrollHorizonListGroup className="pushSHLG">
             {itemList.map((item, index) => (
-              <HorizontalItem item={item} key={index} />
+              <HorizontalItem item={item} key={index} isQuick />
             ))}
           </ScrollHorizonListGroup>
         </ScrollHorizonList>
