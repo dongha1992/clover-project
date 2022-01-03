@@ -1,17 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
-import Map from '@components/Map';
+import MapAPI from '@components/Map';
 import Button from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow, FlexRowStart } from '@styles/theme';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import { destinationForm } from '@store/destination';
-import { useSelector } from 'react-redux';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { destinationRegister } from '@api/destination';
+import { getLonLatFromAddress } from '@api/location';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
 
 function DestinationDetailPage() {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
@@ -41,8 +42,10 @@ function DestinationDetailPage() {
     lnbrSlno: '',
     emdNo: '',
   });
-
-  // const { tempDestination } = useSelector(destinationForm);
+  const [latitudeLongitude, setLatitudeLongitude] = useState({
+    latitude: '',
+    longitude: '',
+  });
 
   const destinationNameRef = useRef<HTMLInputElement>(null);
   const destinationDetailRef = useRef<HTMLInputElement>(null);
@@ -54,8 +57,33 @@ function DestinationDetailPage() {
     } catch (error) {
       console.error(error);
     }
-    console.log(userLocation);
   }, []);
+
+  useEffect(() => {
+    getLonLanForMap();
+  });
+
+  const getLonLanForMap = async () => {
+    const params = {
+      query: userLocation.roadAddrPart1,
+      analyze_type: 'similar',
+      page: 1,
+      size: 20,
+    };
+    try {
+      const { data } = await getLonLatFromAddress(params);
+      if (data.documents.length > 0) {
+        const longitude = data.documents[0].x;
+        const latitude = data.documents[0].y;
+        setLatitudeLongitude({
+          latitude,
+          longitude,
+        });
+      } else {
+        // 검색 결과가 없는 경우?
+      }
+    } catch (error) {}
+  };
 
   const getDestination = async () => {
     if (destinationDetailRef.current && destinationNameRef.current) {
@@ -97,7 +125,12 @@ function DestinationDetailPage() {
   return (
     <Container>
       <CheckDeliveryPlace />
-      <Map />
+      <MapWrapper>
+        <MapAPI
+          centerLat={latitudeLongitude.latitude}
+          centerLng={latitudeLongitude.longitude}
+        />
+      </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol margin="0 0 24px 0">
           <TextH5B>{userLocation.roadAddrPart1}</TextH5B>
@@ -148,6 +181,10 @@ const ButtonWrapper = styled.div`
 
 const DestinationInfoWrarpper = styled.div`
   padding: 24px;
+`;
+
+const MapWrapper = styled.div`
+  height: 50vh;
 `;
 
 export default DestinationDetailPage;

@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextH4B, TextB1R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
+import Map from '@components/Map';
 
 const DetailBottomStoreInfo = ({ items }: any): ReactElement => {
   return (
@@ -22,7 +23,9 @@ const DetailBottomStoreInfo = ({ items }: any): ReactElement => {
           <TextB1R>{items?.storeInfo?.off}</TextB1R>
         </FlexWrapper>
       </Wrapper>
-      <Map>맵</Map>
+      <MapWrapper>
+        <Map centerLat='37.54669189732' centerLng='126.833485621837' />
+      </MapWrapper>
     </Container>
   );
 }
@@ -38,12 +41,8 @@ const FlexWrapper = styled.div`
   margin-bottom: 16px;
 `;
 
-const Map = styled.div`
+const MapWrapper = styled.div`
   width: 100%;
   height: 270px;
-  background: ${theme.greyScale6};
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 export default DetailBottomStoreInfo;

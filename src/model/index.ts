@@ -278,16 +278,13 @@ export interface IGetMainDestinationsResponse {
   value: number[];
 }
 
-export type TValueType = 'PERSONAL' | 'CORPORATION';
-
-export interface IRegisterCard {
-  birthDate: string;
-  corporationNo?: string | null;
-  expiredMM: string;
-  expiredYY: string;
-  main: boolean;
-  name: string;
-  number: string;
-  password: string;
-  type?: TValueType;
+export interface IKakaoAddress {
+  query: string | null;
+  analyze_type?: string;
+  page?: number;
+  size?: number;
+}
+export interface IKakaoLatLon {
+  x: string;
+  y: string;
 }

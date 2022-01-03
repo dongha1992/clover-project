@@ -13,6 +13,7 @@ import cart from './cart';
 import dropdown from './dropdown';
 import toast from './toast';
 import user from './user';
+import order from './order';
 import common from './common';
 import destination from './destination';
 import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
@@ -31,6 +32,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     user,
     common,
     destination,
+    order,
   })(state, action);
 };
 
