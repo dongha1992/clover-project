@@ -25,7 +25,7 @@ import { BASE_URL } from '@constants/mock';
 import Button from '@components/Shared/Button';
 import router from 'next/router';
 
-function PaymentFinishPage() {
+const PaymentFinishPage = () => {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
@@ -130,7 +130,7 @@ function PaymentFinishPage() {
       </OrderDetailBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 
