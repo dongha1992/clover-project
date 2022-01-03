@@ -15,7 +15,7 @@ import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 
-function SignupFinishPage() {
+const SignupFinishPage = () => {
   return (
     <Container>
       <Header>
@@ -68,7 +68,7 @@ function SignupFinishPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

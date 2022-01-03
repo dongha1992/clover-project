@@ -25,7 +25,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function EmailAndPasswordPage() {
+const EmailAndPasswordPage = () => {
   const [emailValidation, setEmailValidataion] = useState<IVaildation>({
     message: '',
     isValid: false,
@@ -244,7 +244,7 @@ function EmailAndPasswordPage() {
       </NextBtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}
