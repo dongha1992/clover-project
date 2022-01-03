@@ -183,6 +183,7 @@ const IconWrapper = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0px 4px 8px 0px #00000033;
 `;
 
 const SlideWrapper = styled(Slider)`
