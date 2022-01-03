@@ -11,6 +11,7 @@ const SpotHeader = () => {
   const goToCart = () => {
     router.push('/cart');
   };
+
   return (
     <Container>
       <Wrapper>

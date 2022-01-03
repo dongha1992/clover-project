@@ -64,6 +64,7 @@ const Wrapper: React.FC = ({ children }) => {
           {alert && (
             <Alert
               alertMessage={alert.alertMessage}
+              alertSubMessage={alert.alertSubMessage}
               submitBtnText={alert.submitBtnText}
               closeBtnText={alert.closeBtnText}
               onSubmit={alert.onSubmit}

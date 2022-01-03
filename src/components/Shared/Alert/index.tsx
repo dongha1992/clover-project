@@ -4,11 +4,13 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import ModalLayout from '../Modal';
 import { TextB2R } from '@components/Shared/Text';
+import { theme } from '@styles/theme';
 
 /* TODO: alert msg 텍스트 다시 조정 */
 
 type TProps = {
   alertMessage: string;
+  alertSubMessage?: string;
   submitBtnText?: string;
   closeBtnText?: string;
   onSubmit?: () => void;
@@ -23,6 +25,7 @@ type TProps = {
 
 const Alert = ({
   alertMessage,
+  alertSubMessage,
   submitBtnText = '확인',
   closeBtnText,
   onSubmit,
@@ -59,6 +62,9 @@ const Alert = ({
         <AlertText>
           <TextB2R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}
+          </TextB2R>
+          <TextB2R center wordWrap="break-word" wordBreak="keep-all" color={theme.greyScale65} margin='5px 0 0 0'>
+            {alertSubMessage}
           </TextB2R>
         </AlertText>
         <AlertBtnBox>
