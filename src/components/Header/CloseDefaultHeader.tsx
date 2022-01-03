@@ -7,43 +7,26 @@ import { breakpoints } from '@utils/getMediaQuery';
 
 interface IProps {
   title?: string;
-}
+};
 
-const SpotSearchHeader = ({ title }: IProps) => {
+const CloseDefaultHeader = ({ title }: IProps) => {
   const router = useRouter();
 
-  const goBack = (): void => {
-    router.back();
-  };
-
-  const goToMap = () => {
-    router.push('/spot/search/location');
+  const goHome = (): void => {
+    router.push('/home');
   };
 
   return (
     <Container>
       <Wrapper>
-        <div className="arrow" onClick={goBack}>
-          <SVGIcon name="arrowLeft" />
-        </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        {router.pathname === '/spot/search' ? (
-          <BtnWrapper>
-            <div className="map" onClick={goToMap}>
-              <SVGIcon name="map" />
-            </div>
-          </BtnWrapper>
-        ) : (
-          <BtnWrapper>
-            <div className="threeLines" onClick={goToMap}>
-              <SVGIcon name="threeLines" />
-            </div>
-          </BtnWrapper>
-        )}
+        <div className="close" onClick={goHome}>
+          <SVGIcon name="crossCloseBlack" />
+        </div>
       </Wrapper>
     </Container>
   );
-};
+}
 
 const Container = styled.div`
   position: relative;
@@ -53,11 +36,9 @@ const Container = styled.div`
   top: 0;
   right: 0;
   z-index: 10;
-  height: auto;
+  height: 56px;
   left: calc(50%);
   background-color: white;
-  z-index: 100000;
-  height: 56px;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -73,18 +54,16 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 16px 24px;
-  .arrow {
+  justify-content: center;
+  padding: 16px 24px;
+  .close {
     cursor: pointer;
     > svg {
+      position: absolute;
+      right: 24px;
+      bottom: 16px;
     }
   }
 `;
 
-const BtnWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-export default React.memo(SpotSearchHeader);
+export default CloseDefaultHeader;

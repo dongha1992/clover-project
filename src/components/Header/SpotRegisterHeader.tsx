@@ -1,23 +1,37 @@
 import React, { useEffect } from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
-import { TextH4B } from '@components/Shared/Text';
+import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
+import { useDispatch } from 'react-redux';
+import { setAlert } from '@store/alert';
 
 interface IProps {
   title?: string;
-}
+};
 
-const SpotSearchHeader = ({ title }: IProps) => {
+const SpotRegisterHeader = ({ title }: IProps) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
 
   const goBack = (): void => {
     router.back();
   };
 
-  const goToMap = () => {
-    router.push('/spot/search/location');
+  const clickTemporarySave = (): void => {
+    const TitleMsg = `필수 정보를 모두 입력해야\n신청이 완료됩니다.`;
+    const SubMsg = `[마이페이지>스팟 관리]에서\n업데이트할 수 있어요.`;
+    dispatch(
+      setAlert({
+        alertMessage: TitleMsg,
+        alertSubMessage: SubMsg,
+        onSubmit: () => {},
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
   };
 
   return (
@@ -27,23 +41,11 @@ const SpotSearchHeader = ({ title }: IProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        {router.pathname === '/spot/search' ? (
-          <BtnWrapper>
-            <div className="map" onClick={goToMap}>
-              <SVGIcon name="map" />
-            </div>
-          </BtnWrapper>
-        ) : (
-          <BtnWrapper>
-            <div className="threeLines" onClick={goToMap}>
-              <SVGIcon name="threeLines" />
-            </div>
-          </BtnWrapper>
-        )}
+        <TextH5B onClick={clickTemporarySave} pointer>임시저장</TextH5B>
       </Wrapper>
     </Container>
   );
-};
+}
 
 const Container = styled.div`
   position: relative;
@@ -82,9 +84,5 @@ const Wrapper = styled.div`
   }
 `;
 
-const BtnWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
 
-export default React.memo(SpotSearchHeader);
+export default React.memo(SpotRegisterHeader);
