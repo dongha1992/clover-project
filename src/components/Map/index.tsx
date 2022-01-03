@@ -5,12 +5,11 @@ import { breakpoints } from '@utils/getMediaQuery';
 import Head from 'next/head';
 import SVGIcon from '@utils/SVGIcon';
 
-
 interface IProps {
-  zoom ?: number;
-  centerLat ?: string;
-  centerLng ?: string;
-  areaArr ?: [
+  zoom?: number;
+  centerLat?: string;
+  centerLng?: string;
+  areaArr?: [
     {
       location: string;
       lat: string;
@@ -19,9 +18,14 @@ interface IProps {
   ];
 }
 
-const MapAPI = ({zoom, centerLat, centerLng, areaArr}:IProps):ReactElement => {
-  useEffect(()=>{
-      initMap();
+const MapAPI = ({
+  zoom,
+  centerLat,
+  centerLng,
+  areaArr,
+}: IProps): ReactElement => {
+  useEffect(() => {
+    initMap();
   }, [centerLat, centerLng]);
 
   const initMap = () => {
@@ -30,7 +34,10 @@ const MapAPI = ({zoom, centerLat, centerLng, areaArr}:IProps):ReactElement => {
     const infoWindows = new Array();
 
     const map = new naver.maps.Map('map', {
-      center: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
+      center: new naver.maps.LatLng(
+        Number(centerLat ? centerLat : '37.413294'),
+        Number(centerLng ? centerLng : '127.269311')
+      ), // 최초 찍히는 마커
       zoom: zoom ? zoom : 17,
       zoomControl: true,
       zoomControlOptions: {
@@ -39,8 +46,8 @@ const MapAPI = ({zoom, centerLat, centerLng, areaArr}:IProps):ReactElement => {
       },
     });
     let marker = new naver.maps.Marker({
-    position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
-    map: map
+      position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
+      map: map,
     });
 
     if (areaArr) {
@@ -82,16 +89,13 @@ const MapAPI = ({zoom, centerLat, centerLng, areaArr}:IProps):ReactElement => {
     for (let i = 0, ii = markers.length; i < ii; i++) {
       // console.log(markers[i], handleClickMarker(i));
       naver.maps.Event.addListener(markers[i], 'click', handleClickMarker(i)); // 클릭한 마커 핸들러
-    }  
+    }
   };
 
-  
-
-
-//지도 사이즈 관련 스타일
+  //지도 사이즈 관련 스타일
   const mapStyle = {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     zIndex: 0,
   };
 

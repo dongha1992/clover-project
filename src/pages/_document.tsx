@@ -39,8 +39,8 @@ class MyDocument extends Document<IProps> {
             type="text/javascript"
             src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
           ></script>
-          <script 
-            type="text/javascript" 
+          <script
+            type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
           ></script>
         </Head>
