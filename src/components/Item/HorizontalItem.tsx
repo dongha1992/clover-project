@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
-  isQuick: boolean;
+  isQuick?: boolean;
 };
 
 const isNew = true;

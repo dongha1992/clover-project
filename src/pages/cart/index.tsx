@@ -21,7 +21,7 @@ import {
   FlexRow,
   fixedBottom,
 } from '@styles/theme';
-import CartSheetItem from '@components/BottomSheet/CartSheet/CartSheetItem';
+import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
 import { InfoMessage } from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { Obj } from '@model/index';
 import styled from 'styled-components';
 
 const HomeBottom = dynamic(() => import('./HomeBottom'));

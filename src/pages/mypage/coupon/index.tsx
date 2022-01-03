@@ -5,7 +5,7 @@ import TextInput from '@components/Shared/TextInput';
 import Button from '@components/Shared/Button';
 import { TextH5B } from '@components/Shared/Text';
 import { COUPON_LIST } from '@constants/menu';
-import MypageCouponItem from '@components/BottomSheet/CouponSheet/MypageCouponItem';
+import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
 
 const CouponManagementPage = () => {
   return (
