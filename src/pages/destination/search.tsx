@@ -25,7 +25,7 @@ const recentDeliveryList = [
   },
 ];
 
-function destinationSearchPage() {
+const DestinationSearchPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
 
@@ -100,7 +100,7 @@ function destinationSearchPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 
@@ -118,4 +118,4 @@ const CurrentLocBtn = styled.div`
   padding-top: 16px;
 `;
 
-export default destinationSearchPage;
+export default DestinationSearchPage;

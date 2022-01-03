@@ -60,7 +60,7 @@ const LUNCH_OR_DINNER = [
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-function CartPage() {
+const CartPage = () => {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>(
@@ -417,7 +417,7 @@ function CartPage() {
       </OrderBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

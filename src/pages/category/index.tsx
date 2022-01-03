@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import SingleMenu from '@components/Pages/Category/SingleMenu';
 
-function CategoryPage() {
+const CategoryPage = () => {
   return (
     <Container>
       <SingleMenu category="/" />
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

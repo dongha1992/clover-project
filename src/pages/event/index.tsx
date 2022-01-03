@@ -1,7 +1,7 @@
 import React from 'react';
 
-function EventPage() {
+const EventPage = () => {
   return <div>이벤트</div>;
-}
+};
 
 export default EventPage;
