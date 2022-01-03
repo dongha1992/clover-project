@@ -4,6 +4,7 @@ import { TextB3R, TextH4B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { useState } from 'react';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
+import router from 'next/router';
 
 const ReOrderList: React.FC = ({ children }) => {
   const [active, setActive] = useState(1);
@@ -19,9 +20,13 @@ const ReOrderList: React.FC = ({ children }) => {
     },
   };
 
+  // TODO : 주문시 배송방법,배송방법 상세,스팟명,픽업정보,주문상품 리스트 넘기기
+  const goToPayment = () => {
+    router.push('/payment');
+  };
+
   return (
     <Container>
-      {children}
       <Pagination>
         <TextH6B color="#fff">
           {active} / {3}
@@ -31,6 +36,7 @@ const ReOrderList: React.FC = ({ children }) => {
         {[1, 2, 3].map((_, index) => {
           return (
             <Slide key={index} data-id={index + 1}>
+              {index === 0 ? children : null}
               <article className="row1">
                 <TextH6B color="#fff">스팟배송 - 점심</TextH6B>
                 <span></span>
@@ -45,7 +51,9 @@ const ReOrderList: React.FC = ({ children }) => {
                     서울시 성동구 왕십리로 115, 708호
                   </TextB3R>
                 </div>
-                <OrderButton type="button">주문하기</OrderButton>
+                <OrderButton type="button" onClick={goToPayment}>
+                  주문하기
+                </OrderButton>
               </article>
               <article className="row3">
                 <TextB3R color="#fff" margin="0 0 4px 0">
@@ -85,6 +93,9 @@ const Container = styled.article`
 
 const ReOrderSlider = styled(Slider)`
   width: 100%;
+  .slick-list {
+    overflow: visible;
+  }
 `;
 
 const Slide = styled.div`
@@ -142,6 +153,7 @@ const OrderButton = styled.button`
   height: auto;
   width: 75px;
   height: 38px;
+  cursor: pointer;
 `;
 
 const Pagination = styled.div`
