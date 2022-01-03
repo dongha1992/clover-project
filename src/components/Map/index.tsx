@@ -5,7 +5,7 @@ import { breakpoints } from '@utils/getMediaQuery';
 import Head from 'next/head';
 import SVGIcon from '@utils/SVGIcon';
 
-interface Iprops {
+interface IProps {
   zoom?: number;
   centerLat?: string;
   centerLng?: string;
@@ -23,7 +23,7 @@ const MapAPI = ({
   centerLat,
   centerLng,
   areaArr,
-}: Iprops): ReactElement => {
+}: IProps): ReactElement => {
   useEffect(() => {
     initMap();
   }, [centerLat, centerLng]);
@@ -46,7 +46,7 @@ const MapAPI = ({
       },
     });
     let marker = new naver.maps.Marker({
-      position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)),
+      position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
       map: map,
     });
 
@@ -96,9 +96,14 @@ const MapAPI = ({
   const mapStyle = {
     width: '100%',
     height: '100%',
+    zIndex: 0,
   };
 
-  return <div id="map" style={mapStyle}></div>;
+  return (
+    <>
+      <div id="map" style={mapStyle}></div>
+    </>
+  );
 };
 
 export default MapAPI;
