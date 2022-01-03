@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { handleHTTPError } from './errorHandle';
-import { IKakaoAddress } from '@model/index';
+import { IKakaoAddress, IKakaoLatLon } from '@model/index';
 
 export const KakaoApi = axios.create({
   baseURL: 'https://dapi.kakao.com',
@@ -42,4 +42,8 @@ export const getPOIKeyword = (
   return KakaoApi.get('/v2/local/search/keyword.json', {
     params,
   });
+};
+
+export const getAddressFromLonLat = (params: IKakaoLatLon) => {
+  return KakaoApi.get('/v2/local/geo/coord2regioncode', { params });
 };
