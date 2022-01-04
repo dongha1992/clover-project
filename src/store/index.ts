@@ -18,6 +18,10 @@ import common from './common';
 import destination from './destination';
 import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
 
+// persist
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
     return { ...state, ...action.payload };
@@ -36,7 +40,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   })(state, action);
 };
 
-export const store = configureStore({
+const store = configureStore({
   reducer: rootReducer,
   middleware: [
     ...getDefaultMiddleware({
@@ -56,13 +60,38 @@ export const store = configureStore({
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-const makeStore = (context: any) =>
-  configureStore({
-    reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(),
-    devTools: isDev,
-  });
+const makeStore = (context: any) => {
+  const isServer = typeof window === 'undefined';
+
+  if (isServer) {
+    // server
+    return configureStore({
+      reducer: rootReducer,
+      middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ serializableCheck: false }).concat(),
+      devTools: isDev,
+    });
+  } else {
+    // client
+    const persistConfig = {
+      key: 'nextjs',
+      storage,
+      blacklist: ["toast"],
+    };
+
+    const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+    const store = configureStore({
+      reducer: persistedReducer,
+      middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ serializableCheck: false }).concat(),
+      devTools: isDev,
+    });
+
+    return store
+  }
+}
+
 
 export const wrapper = createWrapper(makeStore, {
   debug: isDev,
