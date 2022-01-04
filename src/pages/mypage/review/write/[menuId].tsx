@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import ReviewInfo from '@components/Pages/Mypage/Review/ReviewInfo';
+import { ReviewInfo } from '@components/Pages/Mypage/Review';
 import {
   homePadding,
   FlexCol,

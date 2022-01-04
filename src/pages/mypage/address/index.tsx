@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { SPOT_URL } from '@constants/mock';
 import TabList from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
-import PickupItem from '@components/Pages/Mypage/Address/PickupItem';
+import { PickupItem } from '@components/Pages/Mypage/Address';
 import axios from 'axios';
 import { ISpotItem } from '@components/Pages/Spot/SpotItem';
 import router from 'next/router';
-import DeliveryItem from '@components/Pages/Mypage/Address/DeliveryItem';
+import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getMainDestinations } from '@api/destination';
 
 const TAB_LIST = [

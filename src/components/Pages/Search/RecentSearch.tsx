@@ -4,7 +4,7 @@ import { TextH5B, TextH6B } from '@components/Shared/Text';
 import { homePadding, theme } from '@styles/theme';
 import RecentSearchItem from './RecentSearchItem';
 
-const recentSearch = ({
+const RecentSearch = ({
   removeRecentSearchItemHandler,
   recentKeywords,
 }: any) => {
@@ -47,4 +47,4 @@ const ListContainer = styled.div`
   flex-direction: column;
 `;
 
-export default React.memo(recentSearch);
+export default React.memo(RecentSearch);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
+import { ReviewDetailItem } from '@components/Pages/Review';
 import { homePadding } from '@styles/theme';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';

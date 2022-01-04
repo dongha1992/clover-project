@@ -9,7 +9,7 @@ import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { SPOT_ITEMS } from '@constants/mock';
 import Slider from 'react-slick';
 import { useRouter } from 'next/router';
-import SpotList from '@components/Pages/Spot/SpotList';
+import { SpotList } from '@components/Pages/Spot';
 
 const text = {
   mainTitle: `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,

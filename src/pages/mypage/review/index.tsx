@@ -4,11 +4,10 @@ import { homePadding, theme } from '@styles/theme';
 import TabList from '@components/Shared/TabList';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { TextH6B, TextB3R, TextB2R } from '@components/Shared/Text';
+import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
-import MypageReviewItem from '@components/Pages/Mypage/Review/MypageReviewItem';
+import { MypageReviewItem, ReviewInfo } from '@components/Pages/Mypage/Review';
 import { breakpoints } from '@utils/getMediaQuery';
-import ReviewInfo from '@components/Pages/Mypage/Review/ReviewInfo';
 
 /* 아이템 수 표기헤야해서 HEADER에 TabList 안붙이고 따로 뺌   */
 

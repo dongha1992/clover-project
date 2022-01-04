@@ -4,7 +4,7 @@ import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import SVGIcon from '@utils/SVGIcon';
-import SpotItem from '@components/Pages/Spot/SpotItem';
+import { SpotItem } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import Slider from 'react-slick';
