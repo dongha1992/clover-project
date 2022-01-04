@@ -21,7 +21,6 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { registerCard } from '@api/card';
 import dynamic from 'next/dynamic';
-import { TValueType } from '@model/index';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -30,7 +29,7 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
 interface ICardType {
   id: number;
   text: string;
-  value: TValueType;
+  value: string;
 }
 
 const CARD_TYPE: ICardType[] = [
@@ -178,7 +177,7 @@ function CardRegisterPage() {
       };
 
       const { data } = await registerCard(cardData);
-
+      console.log(data);
       dispatch(
         setAlert({
           alertMessage: disabledMsg,
