@@ -13,7 +13,7 @@ import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import TabList from '@components/Shared/TabList';
+import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
 
 const TAB_LIST = [

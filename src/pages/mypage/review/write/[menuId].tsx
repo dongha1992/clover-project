@@ -28,7 +28,7 @@ import { getImageSize } from '@utils/getImageSize';
 import { Button } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
-import Tooltip from '@components/Shared/Tooltip';
+import { Tooltip } from '@components/Shared/Tooltip';
 interface IWriteMenuReviewObj {
   dateId: number;
   detailId: number;
