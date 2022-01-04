@@ -7,10 +7,12 @@ import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 
-function SpotHeader() {
+const SpotHeader = () => {
+
   const goToCart = () => {
     router.push('/cart');
   };
+  
   return (
     <Container>
       <Wrapper>
