@@ -2,17 +2,17 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import Item from '@components/Item';
+import { Item } from '@components/Item';
 import SpotItem from '@components/Pages/Spot/SpotItem';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { setBottomSheet } from '@store/bottomSheet';
-import MenuFilter from '@components/Filter/MenuFilter';
-import SpotSearchFilter from '@components/Pages/Spot/SpotSearchFilter';
+import { MenuFilter } from '@components/Filter';
+import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
-function SearchResult({ searchResult, goToOrder, isSpot }: any) {
+const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -76,7 +76,7 @@ function SearchResult({ searchResult, goToOrder, isSpot }: any) {
       </ItemListWrapper>
     </>
   );
-}
+};
 
 const FilterRow = styled.div`
   display: flex;

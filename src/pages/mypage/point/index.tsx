@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import {
   theme,
   FlexRow,
@@ -7,14 +7,13 @@ import {
   FlexBetweenStart,
   FlexCol,
   FlexBetween,
-  FlexCenter,
 } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import TabList from '@components/Shared/TabList';
+import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
 
 const TAB_LIST = [
@@ -101,7 +100,7 @@ const MOCK_USE_POINT_HISTORY = [
   },
 ];
 
-function PointPage() {
+const PointPage = () => {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
   const elementRef = useRef<HTMLDivElement>(null);
@@ -199,7 +198,7 @@ function PointPage() {
       </ScrollView>
     </Container>
   );
-}
+};
 
 const PointItem = React.forwardRef(
   (

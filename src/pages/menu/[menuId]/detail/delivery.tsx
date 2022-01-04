@@ -1,7 +1,7 @@
 import React from 'react';
 
-function DeliveryInfoPage() {
+const DeliveryInfoPage = () => {
   return <div></div>;
-}
+};
 
 export default DeliveryInfoPage;

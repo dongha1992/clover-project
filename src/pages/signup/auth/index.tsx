@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import { homePadding, fixedBottom, theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';
@@ -16,7 +16,7 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
 
-function SignupAuthPage() {
+const SignupAuthPage = () => {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [delay, setDelay] = useState<number | null>(null);
@@ -226,7 +226,7 @@ function SignupAuthPage() {
       </NextBtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

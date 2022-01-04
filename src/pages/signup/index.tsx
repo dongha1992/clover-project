@@ -16,7 +16,7 @@ import {
   homePadding,
   fixedBottom,
 } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
@@ -33,7 +33,7 @@ const moreTextStyle = {
 
 const termIdList = [1, 2, 3, 4];
 
-function SignupPage() {
+const SignupPage = () => {
   const [checkTermList, setCheckTermList] = useState<number[]>([]);
   const [isAllChecked, setIsAllChecked] = useState<boolean>(false);
   const [isAllMarketinngChecked, setIsAllMarketinngChecked] = useState(false);
@@ -164,7 +164,7 @@ function SignupPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

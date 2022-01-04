@@ -10,10 +10,10 @@ type TProps = {
   ref?: React.ForwardedRef<HTMLDivElement>;
 };
 
-function BorderLine(
+const BorderLine = (
   { height, margin, padding, backgroundColor }: TProps,
   ref: React.ForwardedRef<HTMLDivElement>
-) {
+) => {
   return (
     <Container
       height={height}
@@ -23,7 +23,7 @@ function BorderLine(
       backgroundColor={backgroundColor}
     />
   );
-}
+};
 
 const Container = styled.div<{
   height?: number;

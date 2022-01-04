@@ -1,7 +1,7 @@
 import React from 'react';
 
-function RecommendationPage() {
+const RecommendationPage = () => {
   return <div>프코추천</div>;
-}
+};
 
 export default RecommendationPage;

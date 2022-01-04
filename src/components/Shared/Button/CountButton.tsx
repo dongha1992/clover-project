@@ -4,7 +4,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { theme, verticalCenter } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 
-function CountButton({ quantity }: any) {
+const CountButton = ({ quantity }: any) => {
   const clickMinusButton = () => {};
   const clickPlusButton = () => {};
   return (
@@ -22,7 +22,7 @@ function CountButton({ quantity }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

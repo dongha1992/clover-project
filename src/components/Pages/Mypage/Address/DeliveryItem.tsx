@@ -9,7 +9,7 @@ import {
 } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { ISpotItem } from '@components/Pages/Spot/SpotItem';
 
 interface IProps {
@@ -18,7 +18,7 @@ interface IProps {
   goToEdit: (id: number) => void;
 }
 
-function DeliveryItem({ item, goToCart, goToEdit }: IProps) {
+const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
   return (
     <Container>
       <FlexCol>
@@ -62,7 +62,7 @@ function DeliveryItem({ item, goToCart, goToEdit }: IProps) {
       </Button>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

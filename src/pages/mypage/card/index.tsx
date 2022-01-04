@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import { FlexCenter, homePadding, theme } from '@styles/theme';
+import { homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B } from '@components/Shared/Text';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
 import { route } from 'next/dist/server/router';
 
-function CardManagementPage() {
-  const [cards, setCards] = useState([]);
+const CardManagementPage = () => {
   const CARDS = [1, 2] as any[];
 
   useEffect(() => {
@@ -73,7 +72,7 @@ function CardManagementPage() {
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

@@ -1,7 +1,7 @@
 import React from 'react';
 
-function ProductInfoPage() {
+const ProductInfoPage = () => {
   return <div></div>;
-}
+};
 
 export default ProductInfoPage;

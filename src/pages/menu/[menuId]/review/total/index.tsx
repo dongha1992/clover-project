@@ -1,18 +1,18 @@
 import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { homePadding, theme } from '@styles/theme';
-import ReviewOnlyImage from '@components/Pages/Review/ReviewOnlyImage';
+import { ReviewOnlyImage } from '@components/Pages/Review';
 import BorderLine from '@components/Shared/BorderLine';
-import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
+import { ReviewDetailItem } from '@components/Pages/Review';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 
-function TotalReviewPage({ reviews, menuId }: any) {
+const TotalReviewPage = ({ reviews, menuId }: any) => {
   reviews = [...reviews, ...reviews, ...reviews];
 
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ function TotalReviewPage({ reviews, menuId }: any) {
       </ReviewWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

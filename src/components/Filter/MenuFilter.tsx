@@ -15,7 +15,7 @@ OrderFilter: 단일 선택 필터
 
 /* TODO : 전체선택 시  */
 
-function MenuFilter() {
+const MenuFilter = () => {
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<number[]>([1]);
   const [selectedRadioId, setSelectedRadioId] = useState(1);
   const [isCheckedAll, setIsCheckedAll] = useState(false);
@@ -76,7 +76,7 @@ function MenuFilter() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

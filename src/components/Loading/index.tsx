@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { flexCenter } from '@styles/theme';
 
-function Loading(): JSX.Element {
+const Loading = (): JSX.Element => {
   return (
     <LoadingContainer>
       <LoadingText />
@@ -9,7 +9,7 @@ function Loading(): JSX.Element {
       <LoadingImg />
     </LoadingContainer>
   );
-}
+};
 
 export default Loading;
 

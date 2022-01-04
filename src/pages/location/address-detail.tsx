@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { fixedBottom, theme } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { fixedBottom } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
-import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
+import { CheckDeliveryPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 
-function AddressDetailPage() {
+const AddressDetailPage = () => {
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
@@ -42,17 +42,8 @@ function AddressDetailPage() {
   });
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  useEffect(() => {
     getLonLanForMap();
-  }, []);
+  }, [userLocation]);
 
   const getLonLanForMap = async () => {
     const params = {
@@ -81,6 +72,15 @@ function AddressDetailPage() {
     router.push('/home');
   };
 
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      setUserLocation(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   return (
     <Container>
       <CheckDeliveryPlace />
@@ -102,7 +102,7 @@ function AddressDetailPage() {
       </ButtonWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;
@@ -116,4 +116,4 @@ const MapWrapper = styled.div`
   height: 75.5vh;
 `;
 
-export default React.memo(AddressDetailPage);
+export default AddressDetailPage;

@@ -15,7 +15,7 @@ type TProps = {
 
 /* TODO: 드랍다운 absolute 말고 height 차지해야함 */
 
-function Select({ children, defaultValue, placeholder, type }: TProps) {
+const Select = ({ children, defaultValue, placeholder, type }: TProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
 
@@ -48,7 +48,7 @@ function Select({ children, defaultValue, placeholder, type }: TProps) {
       </OptionContainer>
     </SelectContainer>
   );
-}
+};
 
 const SelectContainer = styled.div`
   display: flex;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { fixedBottom, theme } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
 interface IProps {
   leftButtonHandler: () => void;
@@ -10,7 +10,7 @@ interface IProps {
   rightText: string;
 }
 
-export const ButtonGroup = React.memo(
+const ButtonGroup = React.memo(
   ({ leftButtonHandler, rightButtonHandler, leftText, rightText }: IProps) => {
     return (
       <BtnWrapper>
@@ -49,3 +49,5 @@ const Col = styled.div`
   width: 1px;
   height: 50%;
 `;
+
+export default ButtonGroup;

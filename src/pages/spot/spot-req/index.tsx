@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextB3R, TextH3B , TextH5B } from '@components/Shared/Text';
+import { TextH2B, TextB3R, TextH3B, TextH5B } from '@components/Shared/Text';
 import { theme, fixedBottom } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 
-function SpotReqPage() {
+const SpotReqPage = () => {
   const router = useRouter();
   const text = {
     publicText: '0000번째 프코스팟의\n파트너가 되어보세요.',
@@ -14,8 +14,7 @@ function SpotReqPage() {
     normalDesc: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
     fcospotText: '단골카페를 프코스팟으로',
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
-    privateDesc:
-      '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
+    privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
     privateBtnText: '프라이빗 스팟 신청하기',
     askText: '프코스팟 신청이 어려우신가요?',
     askBtnText: '문의하기',
@@ -76,7 +75,7 @@ function SpotReqPage() {
       </FixedButton>
     </Container>
   );
-}
+};
 
 const Container = styled.main`
   padding: 24px;

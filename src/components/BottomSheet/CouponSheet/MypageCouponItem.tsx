@@ -11,7 +11,7 @@ import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import Tag from '@components/Shared/Tag';
 
-function MypageCouponItem({ coupon }: any) {
+const MypageCouponItem = ({ coupon }: any) => {
   const [isShow, setIsShow] = useState(false);
 
   const isRateDiscount = coupon.type === 'rate';
@@ -75,7 +75,7 @@ function MypageCouponItem({ coupon }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isDownload: boolean }>`
   border: 1px solid #dedede;
