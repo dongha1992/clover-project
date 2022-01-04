@@ -65,7 +65,7 @@ const DestinationSearchPage = () => {
 
   const goToDestinationDetail = (address: any) => {
     dispatch(SET_DESTINATION_TEMP(address));
-    localStorage.setItem('loc', JSON.stringify(address));
+    sessionStorage.setItem('loc', JSON.stringify(address));
     router.push('/destination/destination-detail');
   };
 

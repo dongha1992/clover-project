@@ -53,7 +53,7 @@ const DestinationDetailPage = () => {
 
   useEffect(() => {
     try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
       setUserLocation(data);
     } catch (error) {
       console.error(error);

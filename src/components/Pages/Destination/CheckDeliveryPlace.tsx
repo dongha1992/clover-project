@@ -22,7 +22,11 @@ const CheckDeliveryPlace = () => {
     try {
       const { data } = await availabilityDestination(params);
       const { morning, parcel, quick } = data.data;
-      console.log(morning, parcel, quick);
+      sessionStorage.setItem(
+        'availabilityDestination',
+        JSON.stringify({ morning, parcel, quick })
+      );
+      console.log(sessionStorage.getItem('availabilityDestination'));
     } catch (error) {
       console.error(error);
     }
