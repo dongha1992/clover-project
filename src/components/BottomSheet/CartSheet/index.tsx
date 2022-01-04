@@ -1,4 +1,4 @@
 import CartSheetItem from './CartSheetItem';
-import CartSheetGroup from './CartSheetGroup';
+import CartSheet from './CartSheet';
 
-export { CartSheetGroup, CartSheetItem };
+export { CartSheet, CartSheetItem };

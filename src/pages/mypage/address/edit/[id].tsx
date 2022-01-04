@@ -29,7 +29,7 @@ import { ACCESS_METHOD } from '@pages/payment/index';
 import { Select, AcessMethodOption } from '@components/Shared/Dropdown';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
-import PickupSheet from '@components/BottomSheet/PickupSheet';
+import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 
 const isParcel = true;
 

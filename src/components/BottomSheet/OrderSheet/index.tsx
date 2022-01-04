@@ -1,3 +1,3 @@
-import OrderSheetGroup from './OrderSheetGroup';
+import OrderSheet from './OrderSheet';
 
-export { OrderSheetGroup };
+export { OrderSheet };

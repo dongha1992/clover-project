@@ -10,7 +10,7 @@ import router from 'next/router';
 
 const isLogin = false;
 
-const CouponSheetGroup = () => {
+const CouponSheet = () => {
   const dispatach = useDispatch();
 
   const downloadAllCoupon = () => {
@@ -92,4 +92,4 @@ const CouponListWrapper = styled.div`
   overflow-y: scroll;
 `;
 
-export default CouponSheetGroup;
+export default CouponSheet;

@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { cartForm, SET_TEMP_SELECTED_MENUS } from '@store/cart';
 import CartSheetItem from './CartSheetItem';
 
-const CartSheetGroup = () => {
+const CartSheet = () => {
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
 
   const dispatch = useDispatch();
@@ -125,4 +125,4 @@ const DeliveryInforContainer = styled.div`
   display: flex;
 `;
 
-export default React.memo(CartSheetGroup);
+export default React.memo(CartSheet);

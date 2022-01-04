@@ -14,7 +14,7 @@ const list = [
   { id: 4, value: '택배배송' },
 ];
 
-const OrderSheetGroup: React.FC = () => {
+const OrderSheet: React.FC = () => {
   const dispatch = useDispatch();
   const { orderType } = useSelector(orderForm);
   const router = useRouter();
@@ -80,4 +80,4 @@ const ButtonContainer = styled.div`
   height: 56px;
 `;
 
-export default OrderSheetGroup;
+export default OrderSheet;

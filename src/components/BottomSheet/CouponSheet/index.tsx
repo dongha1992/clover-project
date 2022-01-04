@@ -1,5 +1,5 @@
 import CouponItem from './CouponItem';
-import CouponSheetGroup from './CouponSheetGroup';
+import CouponSheet from './CouponSheet';
 import MypageCouponItem from './MypageCouponItem';
 
-export { CouponItem, CouponSheetGroup, MypageCouponItem };
+export { CouponItem, CouponSheet, MypageCouponItem };
