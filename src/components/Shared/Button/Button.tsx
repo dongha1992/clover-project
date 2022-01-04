@@ -36,7 +36,6 @@ const defaultProps = {
 };
 
 const Button = (props: IButtonProps) => {
-  console.log(props);
   return <Container {...props}>{props.children}</Container>;
 };
 
