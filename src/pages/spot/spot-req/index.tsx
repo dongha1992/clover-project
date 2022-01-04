@@ -18,8 +18,8 @@ function SpotReqPage() {
       '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
     privateBtnText: '프라이빗 스팟 신청하기',
     askText: '프코스팟 신청이 어려우신가요?',
-    askBtnText: '채팅문의',
-    registerBtn: '신청하기',
+    askBtnText: '문의하기',
+    registerBtn: '프코스팟 신청하기',
   };
   const { type } = router.query;
   const mainText = () => {
@@ -72,7 +72,7 @@ function SpotReqPage() {
         </BtnWrapper>
       </BottomWrapper>
       <FixedButton onClick={goToRegister}>
-        <Button borderRadius="0">프코스팟 신청하기</Button>
+        <Button borderRadius="0">{text.registerBtn}</Button>
       </FixedButton>
     </Container>
   );

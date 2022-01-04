@@ -12,6 +12,10 @@ import {
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { setAlert } from '@store/alert';
+import { useToast } from '@hooks/useToast';
+
 
 interface IProps {
   items: any; // API 통신 이후 타입 지정 예정
@@ -23,6 +27,9 @@ interface IProps {
 
 const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactElement => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { showToast, hideToast } = useToast();
+
 
   const goToDetail = (id: number): void => {
     router.push(`/spot/detail/${id}`);
@@ -32,6 +39,27 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
     e.stopPropagation();
     router.push('/cart');
   };
+
+  const clickSpotOpen = (e: any): void => {
+    e.stopPropagation();
+    const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+    dispatch(
+      setAlert({
+        alertMessage: TitleMsg,
+        onSubmit: () => {
+          const message = '참여해주셔서 감사해요:)'
+          showToast({ message });
+          /* TODO: warning 왜? */
+      
+          return () => hideToast();
+      
+        },
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
+  };
+
 
   return (
     <>
@@ -140,7 +168,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                         color={theme.greyScale65}
                       >{`${item.distance}m`}</TextH6B>
                     </TextWrapper>
-                    <Button>{btnText}</Button>
+                    <Button onClick={clickSpotOpen}>{btnText}</Button>
                   </LocationInfoWrapper>
                 </Container>
               );
@@ -163,6 +191,7 @@ export const ItemListRow = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
+  cursor: pointer;
   > div {
     padding-right: 10px;
     width: 194px;
