@@ -138,6 +138,7 @@ const LocationPage = () => {
             <>
               <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
               {resultAddress.map((address, index) => {
+                console.log(address);
                 return (
                   <AddressItem
                     key={index}
