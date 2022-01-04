@@ -5,7 +5,7 @@ import Button from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
-import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
+import { CheckDeliveryPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 

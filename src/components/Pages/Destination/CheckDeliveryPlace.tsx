@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB3R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { useSelector } from 'react-redux';
-import { destinationForm } from '@store/destination';
 import { availabilityDestination } from '@api/destination';
 
 const CheckDeliveryPlace = () => {
