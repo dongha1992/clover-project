@@ -68,13 +68,13 @@ const AddressDetailPage = () => {
   };
 
   const setUserLocationInLocal = () => {
-    localStorage.setItem('loc', JSON.stringify(userLocation));
+    sessionStorage.setItem('loc', JSON.stringify(userLocation));
     router.push('/home');
   };
 
   useEffect(() => {
     try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
+      const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
       setUserLocation(data);
     } catch (error) {
       console.error(error);
