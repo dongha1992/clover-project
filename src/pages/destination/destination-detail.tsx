@@ -4,13 +4,14 @@ import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow, FlexRowStart } from '@styles/theme';
-import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
+import { TextH5B, TextB3R, TextB2R, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
+import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 
@@ -131,14 +132,13 @@ const DestinationDetailPage = () => {
         />
       </MapWrapper>
       <DestinationInfoWrarpper>
-        <FlexCol margin="0 0 24px 0">
-          <TextH5B>{userLocation.roadAddrPart1}</TextH5B>
-          <FlexRowStart padding="4px 0 0 0">
-            <Tag padding="2px" width="8%" center>
-              지번
-            </Tag>
-            <TextB3R margin="0 0 0 4px">{userLocation.jibunAddr}</TextB3R>
-          </FlexRowStart>
+        <FlexCol>
+          <AddressItem
+            roadAddr={userLocation.roadAddrPart1}
+            bdNm={userLocation.bdNm}
+            jibunAddr={userLocation.jibunAddr}
+            zipNo={userLocation.zipNo}
+          />
         </FlexCol>
         <TextInput
           placeholder="상세주소 입력 (필수)"
