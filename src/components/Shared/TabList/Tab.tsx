@@ -11,7 +11,7 @@ interface ITabProps {
 
 /* Tab에 Count 붙는 경우 countObj={ tabItem.title : count } props 받아서 맵핑으로 렌더*/
 
-function Tab({ tabItem, onClick, selectedTab, countObj }: ITabProps) {
+const Tab = ({ tabItem, onClick, selectedTab, countObj }: ITabProps) => {
   const style = {
     padding: '12px 8px',
     whiteSpace: 'nowrap',
@@ -33,7 +33,7 @@ function Tab({ tabItem, onClick, selectedTab, countObj }: ITabProps) {
       </Border>
     </Wrapper>
   );
-}
+};
 const Wrapper = styled.div<{ selectedTab: boolean }>`
   width: 100%;
   text-align: center;

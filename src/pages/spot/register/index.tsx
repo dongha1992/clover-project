@@ -11,19 +11,19 @@ import {
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import Checkbox from '@components/Shared/Checkbox';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import OptionsSheet from '@components/Pages/Spot/OptionsSheet';
+import { OptionsSheet } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
 
-function RegisterPage() {
+const RegisterPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
 
   const goToSubmit = (): void => {
-    if(type === 'normal'){
+    if (type === 'normal') {
       router.push({
         pathname: '/spot/register/spot-onboarding',
         query: { type },
@@ -32,7 +32,7 @@ function RegisterPage() {
       router.push({
         pathname: '/spot/register/submit',
         query: { type },
-      });  
+      });
     }
   };
 
@@ -74,58 +74,59 @@ function RegisterPage() {
           />
         </Wrapper>
         {type === 'private' && (
-            <Wrapper>
-              <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
-              <Button
-                justifyContent='space-between'
-                backgroundColor={theme.white}
-                padding='12px 16px'
-                color = {theme.greyScale45}
-                fontWeight={400}
-                borderGrey15
-                pointer
-                onClick={() => selectOptions('pickUp')}
-              >
+          <Wrapper>
+            <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
+            <Button
+              justifyContent="space-between"
+              backgroundColor={theme.white}
+              padding="12px 16px"
+              color={theme.greyScale45}
+              fontWeight={400}
+              borderGrey15
+              pointer
+              onClick={() => selectOptions('pickUp')}
+            >
               픽업 장소 선택
-              <SVGIcon name='triangleDown' />
-              </Button>
-            </Wrapper>
+              <SVGIcon name="triangleDown" />
+            </Button>
+          </Wrapper>
         )}
         <Wrapper>
           <TextH4B margin="0 0 16px 0">장소 종류</TextH4B>
           <Button
-             justifyContent='space-between'
-             padding='12px 16px'
-             backgroundColor={theme.white}
-             color = {theme.greyScale45}
-             fontWeight={400}
-             borderGrey15
-             pointer
-             onClick={() => selectOptions('place')}>
+            justifyContent="space-between"
+            padding="12px 16px"
+            backgroundColor={theme.white}
+            color={theme.greyScale45}
+            fontWeight={400}
+            borderGrey15
+            pointer
+            onClick={() => selectOptions('place')}
+          >
             공간 형태 선택
-            <SVGIcon name='triangleDown' />
+            <SVGIcon name="triangleDown" />
           </Button>
         </Wrapper>
         {type === 'private' && (
-            <Wrapper>
-              <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
-              <Button
-                justifyContent='space-between'
-                backgroundColor={theme.white}
-                padding='12px 16px'
-                color = {theme.greyScale45}
-                fontWeight={400}
-                borderGrey15
-                pointer
-                onClick={() => selectOptions('time')}
-              >
+          <Wrapper>
+            <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
+            <Button
+              justifyContent="space-between"
+              backgroundColor={theme.white}
+              padding="12px 16px"
+              color={theme.greyScale45}
+              fontWeight={400}
+              borderGrey15
+              pointer
+              onClick={() => selectOptions('time')}
+            >
               시간대 선택
-              <SVGIcon name='triangleDown' />
-              </Button>
-            </Wrapper>
-          )}
+              <SVGIcon name="triangleDown" />
+            </Button>
+          </Wrapper>
+        )}
       </FormWrapper>
-      {type === 'private' &&
+      {type === 'private' && (
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={checkBox} isSelected />
@@ -140,13 +141,13 @@ function RegisterPage() {
             출입 제한 건물)
           </TextB3R>
         </BottomWrapper>
-        }
+      )}
       <FixedButton onClick={goToSubmit}>
         <Button borderRadius="0">다음</Button>
       </FixedButton>
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import SVGIcon from '@utils/SVGIcon';
 import { SITE_INFO_TITLE } from '@constants/footer';
 import { breakpoints } from '@utils/getMediaQuery';
 import { theme } from '@styles/theme';
 
-function Footer() {
+const Footer = () => {
   const [isShow, setIsShow] = useState(false);
 
   return (
@@ -53,7 +53,7 @@ function Footer() {
       <LinkIconWrapper>링크들</LinkIconWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.footer`
   width: 100%;

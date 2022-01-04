@@ -20,7 +20,7 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import BorderLine from '@components/Shared/BorderLine';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 
@@ -46,7 +46,7 @@ const deliveryStatusMapper: Obj = {
   complete: { text: { value: '배송완료', color: 'brandColor' }, button: {} },
 };
 
-function OrderDetailPage() {
+const OrderDetailPage = () => {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
@@ -283,7 +283,7 @@ function OrderDetailPage() {
       </TotalPriceWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

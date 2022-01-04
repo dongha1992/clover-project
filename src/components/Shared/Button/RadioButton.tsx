@@ -12,7 +12,7 @@ const defaultProps = {
   name: 'color',
 };
 
-export const RadioButton = ({ isSelected, onChange }: IRadioProps) => {
+const RadioButton = ({ isSelected, onChange }: IRadioProps) => {
   return (
     <RadioContainer onClick={onChange}>
       <RadioLabel>
@@ -42,3 +42,5 @@ const RadioLabel = styled.label`
 const InputRadio = styled.input<IRadioProps>`
   display: none;
 `;
+
+export default RadioButton;

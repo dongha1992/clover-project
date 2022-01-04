@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import TermSheet from '@components/BottomSheet/TermSheet';
 import { homePadding, theme } from '@styles/theme';
 
-function LocationTermPage() {
+const LocationTermPage = () => {
   const DATE = '2021-22-22';
 
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ function LocationTermPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

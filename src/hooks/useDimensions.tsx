@@ -8,7 +8,7 @@ interface IDimension {
 /* TODO : 쓰로트링 필요 */
 /* TODO : innerHeight 값 다름 */
 
-function useDiemension(): IDimension {
+const useDiemension = (): IDimension => {
   const hasWindow = typeof window !== 'undefined';
 
   function getDiemensions() {
@@ -30,6 +30,6 @@ function useDiemension(): IDimension {
   }, [hasWindow]);
 
   return windowDimensions as IDimension;
-}
+};
 
 export default useDiemension;

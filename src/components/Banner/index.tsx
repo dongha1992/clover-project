@@ -13,7 +13,7 @@ const BANNERS = [
   './images/img1.png',
 ];
 
-function Banner() {
+const Banner = () => {
   const [currentImg, setCurrentImg] = useState(0);
 
   const totalLength = BANNERS.length;
@@ -29,7 +29,7 @@ function Banner() {
       </Count>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

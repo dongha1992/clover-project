@@ -1,4 +1,4 @@
-export default function getUrlLink(e: any) {
+const getUrlLink = (e: any) => {
   e.preventDefault();
   const url = window.location.href;
 
@@ -10,4 +10,6 @@ export default function getUrlLink(e: any) {
   clipboard.writeText(url).then(() => {
     alert('링크가 복사되었습니다.');
   });
-}
+};
+
+export default getUrlLink;

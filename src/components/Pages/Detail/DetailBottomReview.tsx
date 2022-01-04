@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { homePadding, theme } from '@styles/theme';
 import ReviewOnlyImage from '@components/Pages/Review/ReviewOnlyImage';
 import BorderLine from '@components/Shared/BorderLine';
@@ -10,7 +10,7 @@ import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 
-function DetailBottomReview({ reviews, isSticky, menuId }: any) {
+const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   reviews = [...reviews, ...reviews, ...reviews];
   const dispatch = useDispatch();
 
@@ -84,7 +84,7 @@ function DetailBottomReview({ reviews, isSticky, menuId }: any) {
       </ReviewWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isSticky: boolean }>`
   margin-top: ${({ isSticky }) => (isSticky ? 82 : 32)}px;

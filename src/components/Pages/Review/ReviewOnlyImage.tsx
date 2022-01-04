@@ -6,7 +6,11 @@ import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import StarRatingComponent from 'react-star-rating-component';
 
-function ReviewOnlyImage({ reviews, goToReviewImages, goToReviewDetail }: any) {
+const ReviewOnlyImage = ({
+  reviews,
+  goToReviewImages,
+  goToReviewDetail,
+}: any) => {
   return (
     <Container>
       <Wrapper>
@@ -63,7 +67,7 @@ function ReviewOnlyImage({ reviews, goToReviewImages, goToReviewDetail }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

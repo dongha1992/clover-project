@@ -22,19 +22,18 @@ import Checkbox from '@components/Shared/Checkbox';
 import { SPOT_URL } from '@constants/mock';
 import axios from 'axios';
 import BorderLine from '@components/Shared/BorderLine';
-import Button from '@components/Shared/Button';
+import { ButtonGroup } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { ACCESS_METHOD } from '@pages/payment/index';
 import { Select, AcessMethodOption } from '@components/Shared/Dropdown';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
-import PickupSheet from '@components/BottomSheet/PickupSheet';
-import { ButtonGroup } from '@components/Shared/Button/ButtonGroup';
+import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 
 const isParcel = true;
 
-function AddressEditPage({ id }: any) {
+const AddressEditPage = ({ id }: any) => {
   const [selectedAddress, setSelectedAddress] = useState({});
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
@@ -190,7 +189,7 @@ function AddressEditPage({ id }: any) {
       />
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

@@ -5,7 +5,7 @@ import Tag from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 
-function ReviewItem({ review, onClick }: any) {
+const ReviewItem = ({ review, onClick }: any) => {
   return (
     <Container onClick={onClick}>
       <Wrapper>
@@ -33,7 +33,7 @@ function ReviewItem({ review, onClick }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

@@ -12,9 +12,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
 import { FlexRow } from '@styles/theme';
 
-function CouponItem({ coupon, onClick }: any) {
-  const [isShow, setIsShow] = useState(false);
-
+const CouponItem = ({ coupon, onClick }: any) => {
   const isRateDiscount = coupon.type === 'rate';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 
@@ -75,7 +73,7 @@ function CouponItem({ coupon, onClick }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isDownload: boolean }>`
   border: 1px solid #dedede;

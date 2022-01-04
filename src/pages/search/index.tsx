@@ -4,17 +4,15 @@ import TextInput from '@components/Shared/TextInput';
 import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
-import Item from '@components/Item';
+import { Item } from '@components/Item';
 import axios from 'axios';
-import debounce from 'lodash-es/debounce';
-import SearchResult from '@components/Pages/Search/SearchResult';
+import { SearchResult, RecentSearch } from '@components/Pages/Search';
 import { homePadding, FlexWrapWrapper } from '@styles/theme';
-import RecentSearch from '@components/Pages/Search/RecentSearch';
 import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
 import SVGIcon from '@utils/SVGIcon';
 
-function SearchPage() {
+const SearchPage = () => {
   const [itemList, setItemList] = useState<any[]>([]);
   const [searchResult, setSearchResult] = useState<any>([]);
   const [keyword, setKeyword] = useState<string>('');
@@ -175,7 +173,7 @@ function SearchPage() {
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 

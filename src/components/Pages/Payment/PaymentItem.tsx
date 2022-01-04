@@ -2,14 +2,14 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
 interface IProps {
   menu: any;
   isDeliveryComplete?: boolean;
 }
 
-function PaymentItem({ menu, isDeliveryComplete }: IProps) {
+const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
   const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
 
@@ -54,7 +54,7 @@ function PaymentItem({ menu, isDeliveryComplete }: IProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ isSoldout?: boolean }>`
   position: relative;

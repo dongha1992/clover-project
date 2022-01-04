@@ -21,7 +21,7 @@ import { Obj } from '@model/index';
 import BorderLine from '@components/Shared/BorderLine';
 import ProgressBar from '@components/ProgressBar';
 
-function RankPage() {
+const RankPage = () => {
   return (
     <Container>
       <Wrapper>
@@ -132,7 +132,7 @@ function RankPage() {
       </PleaseCheck>
     </Container>
   );
-}
+};
 
 export const UserRankInfo = ({ id, title, count }: any) => {
   const isDiscountInfo = id === 2;

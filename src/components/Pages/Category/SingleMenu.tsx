@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FlexWrapWrapper } from '@styles/theme';
 import axios from 'axios';
-import Item from '@components/Item';
-import CategoryFilter from '@components/Pages/Category/CategoryFilter';
+import { Item } from '@components/Item';
+import { CategoryFilter } from '@components/Pages/Category';
 import { BASE_URL } from '@constants/mock';
 
-function SingleMenu({ category }: any) {
+const SingleMenu = ({ category }: any) => {
   const [itemList, setItemList] = useState([]);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ function SingleMenu({ category }: any) {
       </FlexWrapWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

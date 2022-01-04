@@ -11,7 +11,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 
-function CardItem({ onClick }: any) {
+const CardItem = ({ onClick }: any) => {
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>
@@ -35,7 +35,7 @@ function CardItem({ onClick }: any) {
       </FlexBetweenStart>
     </RegisteredCardWrapper>
   );
-}
+};
 
 const RegisteredCardWrapper = styled.div`
   padding-bottom: 24px;

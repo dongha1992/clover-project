@@ -2,13 +2,13 @@ import { fixedBottom, FlexCol, homePadding, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextB2R } from '@components/Shared/Text';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { userUnlock } from '@api/user';
 import router from 'next/router';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 
-function DormantAccountPage() {
+const DormantAccountPage = () => {
   const dispatch = useDispatch();
 
   const getUserUnlock = async () => {
@@ -52,7 +52,7 @@ function DormantAccountPage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

@@ -10,7 +10,7 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 
-const TabList = dynamic(() => import('../Shared/TabList'));
+const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 
 type TProps = {
   title?: string;
@@ -18,7 +18,7 @@ type TProps = {
 
 /* TODO: 뒤로가기 시 replace로 교체 */
 
-function TabHeader({ title }: TProps) {
+const TabHeader = ({ title }: TProps) => {
   const [selectedTab, setSelectedTab] = useState<string>(
     '/login/find-account/email'
   );
@@ -72,7 +72,7 @@ function TabHeader({ title }: TProps) {
       />
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

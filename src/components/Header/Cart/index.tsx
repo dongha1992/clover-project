@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
 import { theme } from '@styles/theme';
 
-function CartIcon({ onClick }: any) {
+const CartIcon = ({ onClick }: any) => {
   const { cartLists } = useSelector(cartForm);
 
   return (
@@ -18,7 +18,7 @@ function CartIcon({ onClick }: any) {
       </CountWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;
