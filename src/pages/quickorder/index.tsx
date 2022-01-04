@@ -7,7 +7,7 @@ import { BASE_URL } from '@constants/mock';
 import ReOrderList from '@components/Pages/QuickOrder/ReOrderList';
 import OrderCardList from '@components/Pages/QuickOrder/OrderCardList';
 import { MENT } from '@constants/quick';
-import TimerTooltip from '@components/Shared/Tooltip/TimerTooltip';
+import { TimerTooltip } from '@components/Shared/Tooltip';
 import { Button } from '@components/Shared/Button';
 import { HorizontalItem } from '@components/Item';
 import { useSelector } from 'react-redux';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
-import TabList from '@components/Shared/TabList';
+import { TabList } from '@components/Shared/TabList';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { TextB2R } from '@components/Shared/Text';

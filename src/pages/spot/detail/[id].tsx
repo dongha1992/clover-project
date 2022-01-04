@@ -14,7 +14,7 @@ import {
   TextH6B,
 } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart } from '@styles/theme';
-import StickyTab from '@components/Shared/TabList/StickyTab';
+import { StickyTab } from '@components/Shared/TabList';
 import BorderLine from '@components/Shared/BorderLine';
 import { useDispatch } from 'react-redux';
 import { SPOT_DETAIL_INFO } from '@constants/spot';
@@ -263,7 +263,7 @@ const NoticeSlider = styled(Slider)`
 
 const NoticeCard = styled.div`
   background: ${theme.white};
-  border: 1px solid: ${theme.greyScale6};
+  border: 1px solid ${theme.greyScale6};
   padding: 16px;
   border-radius: 8px;
 `;

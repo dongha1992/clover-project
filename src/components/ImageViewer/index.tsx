@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ModalFullScreen from '../Shared/Modal/ModalFullScreen';
+import { ModalFullScreen } from '@components/Shared/Modal';
 import Carousel from '@components/Shared/Carousel';
 import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';

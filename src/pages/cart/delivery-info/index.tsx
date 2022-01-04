@@ -11,7 +11,7 @@ import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 
-const Tooltip = dynamic(() => import('@components/Shared/Tooltip'), {
+const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
 });
 

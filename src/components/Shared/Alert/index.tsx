@@ -1,8 +1,8 @@
-import React, { Children, ReactChild } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
-import ModalLayout from '../Modal';
+import { ModalLayout } from '@components/Shared/Modal';
 import { TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 
@@ -63,7 +63,13 @@ const Alert = ({
           <TextB2R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}
           </TextB2R>
-          <TextB2R center wordWrap="break-word" wordBreak="keep-all" color={theme.greyScale65} margin='5px 0 0 0'>
+          <TextB2R
+            center
+            wordWrap="break-word"
+            wordBreak="keep-all"
+            color={theme.greyScale65}
+            margin="5px 0 0 0"
+          >
             {alertSubMessage}
           </TextB2R>
         </AlertText>

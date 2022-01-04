@@ -10,7 +10,7 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 
-const TabList = dynamic(() => import('../Shared/TabList'));
+const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 
 type TProps = {
   title?: string;

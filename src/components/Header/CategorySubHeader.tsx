@@ -12,7 +12,7 @@ import { setBottomSheet } from '@store/bottomSheet';
 import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
 
-const TabList = dynamic(() => import('../Shared/TabList'));
+const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 
 type TProps = {
   title?: string;

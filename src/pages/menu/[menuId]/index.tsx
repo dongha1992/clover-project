@@ -22,7 +22,7 @@ import { ReviewList } from '@components/Pages/Review';
 import { BASE_URL } from '@constants/mock';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
-import StickyTab from '@components/Shared/TabList/StickyTab';
+import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
