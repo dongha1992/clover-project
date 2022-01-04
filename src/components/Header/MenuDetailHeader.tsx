@@ -9,9 +9,9 @@ import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
 import { menuSelector } from '@store/menu';
 import { commonSelector } from '@store/common';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
-import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
+import { CartSheet } from '@components/BottomSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
-import ShareSheet from '@components/BottomSheet/ShareSheet';
+import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 
 type TProps = {
   title?: string;
@@ -20,7 +20,7 @@ type TProps = {
 
 /* TODO: Header props으로 svg만 추가 */
 
-function MenuDetailHeader({ title }: TProps) {
+const MenuDetailHeader = ({ title }: TProps) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
   const { isMobile } = useSelector(commonSelector);
@@ -67,7 +67,7 @@ function MenuDetailHeader({ title }: TProps) {
     dispatch(SET_CART_SHEET_OBJ(menuItem));
     dispatch(
       setBottomSheet({
-        content: <CartSheetGroup />,
+        content: <CartSheet />,
         buttonTitle: '장바구니에 담기',
       })
     );
@@ -89,7 +89,7 @@ function MenuDetailHeader({ title }: TProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

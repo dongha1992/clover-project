@@ -6,7 +6,7 @@ export interface IUseFetch {
   page?: number;
 }
 
-function useFetch(page: number) {
+const useFetch = (page: number) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(false);
   const [list, setList] = useState<any>([]);
@@ -29,6 +29,6 @@ function useFetch(page: number) {
   }, [sendQuery, page]);
 
   return { loading, error, list };
-}
+};
 
 export default useFetch;

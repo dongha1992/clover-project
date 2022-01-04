@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SPOT_URL } from '@constants/mock';
-import TabList from '@components/Shared/TabList';
+import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
-import PickupItem from '@components/Pages/Mypage/Address/PickupItem';
+import { PickupItem } from '@components/Pages/Mypage/Address';
 import axios from 'axios';
 import { ISpotItem } from '@components/Pages/Spot/SpotItem';
 import router from 'next/router';
-import DeliveryItem from '@components/Pages/Mypage/Address/DeliveryItem';
+import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getMainDestinations } from '@api/destination';
 
 const TAB_LIST = [
@@ -15,7 +15,7 @@ const TAB_LIST = [
   { id: 2, text: '배송', value: 'delivery', link: '/delivery' },
 ];
 
-function AddressManagementPage() {
+const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
   const [pickupList, setpickupList] = useState([]);
 
@@ -33,7 +33,6 @@ function AddressManagementPage() {
     };
     try {
       const data = await getMainDestinations(params);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -84,7 +83,7 @@ function AddressManagementPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const FixedTab = styled.div`

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
+import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
@@ -14,7 +14,7 @@ import { getLonLatFromAddress } from '@api/location';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 
-function DestinationDetailPage() {
+const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
   const [userLocation, setUserLocation] = useState({
     roadAddr: '',
@@ -113,7 +113,6 @@ function DestinationDetailPage() {
         zipCode: userLocation.zipNo,
       };
       const { data } = await destinationRegister(reqBody);
-      console.log(data);
       router.push('cart/delivery-info');
     }
   };
@@ -170,7 +169,7 @@ function DestinationDetailPage() {
       </ButtonWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

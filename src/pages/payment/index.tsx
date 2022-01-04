@@ -83,7 +83,7 @@ const PAYMENT_METHOD = [
 const hasRegisteredCart = true;
 const point = 5000;
 
-function PaymentPage() {
+const PaymentPage = () => {
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
     showCustomerInfoSection: false,
@@ -409,7 +409,7 @@ function PaymentPage() {
       </PaymentBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const OrderItemsWrapper = styled.div`

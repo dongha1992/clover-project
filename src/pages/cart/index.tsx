@@ -21,21 +21,19 @@ import {
   FlexRow,
   fixedBottom,
 } from '@styles/theme';
-import CartSheetItem from '@components/BottomSheet/CartSheet/CartSheetItem';
+import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
 import { InfoMessage } from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
-import Button from '@components/Shared/Button';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import Tag from '@components/Shared/Tag';
-import CountButton from '@components/Shared/Button/CountButton';
-import Calendar from '@components/Calendar';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Calendar } from '@components/Calendar';
+import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
-import HorizontalItem from '@components/Item/HorizontalItem';
+import { HorizontalItem } from '@components/Item';
 import { setAlert } from '@store/alert';
 
 const DISPOSABLE_LIST = [
@@ -60,7 +58,7 @@ const LUNCH_OR_DINNER = [
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-function CartPage() {
+const CartPage = () => {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>(
@@ -417,7 +415,7 @@ function CartPage() {
       </OrderBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

@@ -5,7 +5,7 @@ import SVGIcon from '@utils/SVGIcon';
 import BorderLine from '@components/Shared/BorderLine';
 import styled from 'styled-components';
 
-function ReviewInfo({ isShow, setIsShow }: any) {
+const ReviewInfo = ({ isShow, setIsShow }: any) => {
   return (
     <ReviewInfoWrapper>
       <FlexBetween>
@@ -39,7 +39,7 @@ function ReviewInfo({ isShow, setIsShow }: any) {
       )}
     </ReviewInfoWrapper>
   );
-}
+};
 
 const ReviewInfoWrapper = styled.div`
   background-color: ${theme.greyScale3};

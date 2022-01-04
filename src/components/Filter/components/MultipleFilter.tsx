@@ -10,7 +10,11 @@ type TProps = {
   selectedCheckboxIds: number[];
 };
 
-function MultipleFilter({ data, changeHandler, selectedCheckboxIds }: TProps) {
+const MultipleFilter = ({
+  data,
+  changeHandler,
+  selectedCheckboxIds,
+}: TProps) => {
   return (
     <Container>
       <BtnContainer>
@@ -35,7 +39,7 @@ function MultipleFilter({ data, changeHandler, selectedCheckboxIds }: TProps) {
       </BtnContainer>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

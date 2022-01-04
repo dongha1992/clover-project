@@ -2,18 +2,17 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useBottomSheet } from '@hooks/useBottomSheet';
 import Content from '@components/BottomSheet/Content';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { SET_CART_LISTS, cartForm } from '@store/cart';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from '@hooks/useToast';
-import router from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import { theme } from '@styles/theme';
 /* TODO: height 조절해야함 */
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
-function BottomSheet() {
+const BottomSheet = () => {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
   const { content, buttonTitle }: any = useSelector(bottomSheetForm);
@@ -99,7 +98,7 @@ function BottomSheet() {
       </Container>
     </Background>
   );
-}
+};
 
 const Background = styled.div`
   display: flex;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ModalFullScreen from '../Shared/Modal/ModalFullScreen';
+import { ModalFullScreen } from '@components/Shared/Modal';
 import Carousel from '@components/Shared/Carousel';
 import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
@@ -8,7 +8,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { INIT_IMAGE_VIEWER } from '@store/common';
 
-function ImageViewer({ images }: any) {
+const ImageViewer = ({ images }: any) => {
   const [currentImg, setCurrentImg] = useState(0);
   const disptach = useDispatch();
 
@@ -37,7 +37,7 @@ function ImageViewer({ images }: any) {
       </Container>
     </ModalFullScreen>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

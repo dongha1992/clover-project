@@ -8,11 +8,10 @@ import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 
 const SpotHeader = () => {
-
   const goToCart = () => {
     router.push('/cart');
   };
-  
+
   return (
     <Container>
       <Wrapper>
@@ -37,7 +36,7 @@ const SpotHeader = () => {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

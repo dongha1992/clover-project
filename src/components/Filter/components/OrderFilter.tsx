@@ -2,7 +2,7 @@ import React from 'react';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme, FlexRow } from '@styles/theme';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { RadioButton } from '@components/Shared/Button';
 
 type TProps = {
   data: any;
@@ -10,7 +10,7 @@ type TProps = {
   selectedRadioId: number;
 };
 
-function OrderFilter({ data, changeHandler, selectedRadioId }: TProps) {
+const OrderFilter = ({ data, changeHandler, selectedRadioId }: TProps) => {
   return (
     <Container>
       <BtnContainer>
@@ -35,7 +35,7 @@ function OrderFilter({ data, changeHandler, selectedRadioId }: TProps) {
       </BtnContainer>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const BtnContainer = styled.div`

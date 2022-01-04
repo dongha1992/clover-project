@@ -6,7 +6,11 @@ import { theme, showMoreText, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 
-function ReviewDetailItem({ review, isDetailPage, clickImgViewHandler }: any) {
+const ReviewDetailItem = ({
+  review,
+  isDetailPage,
+  clickImgViewHandler,
+}: any) => {
   return (
     <>
       <Container>
@@ -75,7 +79,7 @@ function ReviewDetailItem({ review, isDetailPage, clickImgViewHandler }: any) {
       <BorderLine margin="0 0 24px 0" height={1} />
     </>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

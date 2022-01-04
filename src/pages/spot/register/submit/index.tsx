@@ -9,9 +9,9 @@ import {
 } from '@components/Shared/Text';
 import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
 import { useRouter } from 'next/router';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
-function SubmitPage() {
+const SubmitPage = () => {
   const router = useRouter();
   const { type } = router.query;
 
@@ -39,12 +39,17 @@ function SubmitPage() {
   return (
     <Container>
       <Wrapper>
-        <TextH2B margin='0 0 45px 0'>{'신청 완료 전\n내용을 확인해요'}</TextH2B>
+        <TextH2B margin="0 0 45px 0">{'신청 완료 전\n내용을 확인해요'}</TextH2B>
         <ContentWrapper>
-          <FlexBetween margin='0 0 24px 0'>
-            <TextB1B >장소 정보</TextB1B>
-            <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToChangeInfo} pointer>
-                  변경하기
+          <FlexBetween margin="0 0 24px 0">
+            <TextB1B>장소 정보</TextB1B>
+            <TextH6B
+              color={theme.greyScale65}
+              textDecoration="underline"
+              onClick={goToChangeInfo}
+              pointer
+            >
+              변경하기
             </TextH6B>
           </FlexBetween>
           <Content>
@@ -55,35 +60,40 @@ function SubmitPage() {
             <TextH5B margin="0 0 8px 0">장소명</TextH5B>
             <TextB2R>헤이그라운드</TextB2R>
           </Content>
-          {
-            type === 'private' &&
+          {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
               <TextB2R>공용 냉장고</TextB2R>
             </Content>
-          }
+          )}
           <Content>
             <TextH5B margin="0 0 8px 0">장소 종류</TextH5B>
             <TextB2R>공유오피스</TextB2R>
           </Content>
-          {
-            type === 'private' &&
+          {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">점심 시간</TextH5B>
               <TextB2R>12:00</TextB2R>
             </Content>
-          }
+          )}
         </ContentWrapper>
         {type !== 'public' && (
           <>
             <Row />
             <ContentWrapper>
-                <FlexBetween margin='0 0 24px 0'>
-                  <TextB1B>{type === 'private' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
-                  <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToChangeUserInfo} pointer>
-                    변경하기
-                  </TextH6B>
-                </FlexBetween>
+              <FlexBetween margin="0 0 24px 0">
+                <TextB1B>
+                  {type === 'private' ? '신청자 정보' : '장소 관리자 정보'}
+                </TextB1B>
+                <TextH6B
+                  color={theme.greyScale65}
+                  textDecoration="underline"
+                  onClick={goToChangeUserInfo}
+                  pointer
+                >
+                  변경하기
+                </TextH6B>
+              </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
                 <TextB2R>프플린</TextB2R>
@@ -111,7 +121,7 @@ function SubmitPage() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 

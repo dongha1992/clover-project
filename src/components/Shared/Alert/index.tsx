@@ -1,8 +1,8 @@
-import React, { Children, ReactChild } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
-import ModalLayout from '../Modal';
+import { ModalLayout } from '@components/Shared/Modal';
 import { TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 
@@ -23,7 +23,7 @@ type TProps = {
   children?: JSX.Element;
 };
 
-function Alert({
+const Alert = ({
   alertMessage,
   alertSubMessage,
   submitBtnText = '확인',
@@ -36,7 +36,7 @@ function Alert({
   width = '242px',
   height = '160px',
   children,
-}: TProps): JSX.Element {
+}: TProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const cancelHandler = (): void => {
@@ -63,7 +63,13 @@ function Alert({
           <TextB2R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}
           </TextB2R>
-          <TextB2R center wordWrap="break-word" wordBreak="keep-all" color={theme.greyScale65} margin='5px 0 0 0'>
+          <TextB2R
+            center
+            wordWrap="break-word"
+            wordBreak="keep-all"
+            color={theme.greyScale65}
+            margin="5px 0 0 0"
+          >
             {alertSubMessage}
           </TextB2R>
         </AlertText>
@@ -85,7 +91,7 @@ function Alert({
       </AlertBox>
     </ModalLayout>
   );
-}
+};
 
 const AlertBox = styled.div`
   display: flex;

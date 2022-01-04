@@ -6,12 +6,12 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { orderForm } from '@store/order';
-import OrderSheet from '@components/BottomSheet/OrderSheet';
+import { OrderSheet } from '@components/BottomSheet/OrderSheet';
 import { TextH4B } from '@components/Shared/Text';
-import TabList from '@components/Shared/TabList';
+import { TabList } from '@components/Shared/TabList';
 import { useCallback, useState } from 'react';
 import { QUICK_CATEGORY } from '@constants/search';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
 const QuickOrderHeader: React.FC = () => {
   const { orderType } = useSelector(orderForm);

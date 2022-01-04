@@ -16,12 +16,12 @@ type TProps = {
   closeOnclickDimmer?: boolean;
 };
 
-export default function ModalLayout({
+const ModalFullScreen = ({
   children,
   style,
   height,
   padding,
-}: TProps): JSX.Element {
+}: TProps): JSX.Element => {
   const dispatch = useDispatch();
 
   const handleClickDimmer = ({
@@ -45,7 +45,7 @@ export default function ModalLayout({
       </ModalBox>
     </Dimmer>
   );
-}
+};
 
 const Dimmer = styled.div`
   display: flex;
@@ -83,3 +83,5 @@ const ModalBox = styled.div<{
   z-index: 11;
   box-sizing: border-box;
 `;
+
+export default ModalFullScreen;
