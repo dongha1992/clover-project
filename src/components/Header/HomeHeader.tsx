@@ -8,6 +8,8 @@ import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 import { IJuso } from '@model/index';
 import { Tooltip } from '@components/Shared/Tooltip';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { Obj } from '@model/index';
 
 const HomeHeader = () => {
   const [userlocation, setUserLocation] = useState<IJuso>({
@@ -36,11 +38,27 @@ const HomeHeader = () => {
     lnbrSlno: '',
     emdNo: '',
   });
+  const [deliveryStatus, setDeliveryStatus] = useState('');
+
+  const mapper: Obj = {
+    morning: { text: '새벽배송이 가능해요!', width: '150px' },
+    parcel: { text: '택배배송만 가능해요!', width: '150px' },
+    spot: { text: '무료 스팟배송이 가능해요!', width: '170px' },
+    noDelivery: { text: '배송이 불가한 지역이에요', width: '170px' },
+  };
 
   useEffect(() => {
     try {
       const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
+      const availabilityDestination =
+        JSON.parse(sessionStorage.getItem('availabilityDestination') ?? '{}') ??
+        {};
       setUserLocation(data);
+      setDeliveryStatus(
+        checkDestinationHelper({
+          ...availabilityDestination,
+        })
+      );
     } catch (error) {
       console.error(error);
     }
@@ -64,7 +82,10 @@ const HomeHeader = () => {
               )}
             </Link>
             {userlocation?.emdNm && (
-              <Tooltip message="무료 스팟배송이 가능해요!" width="170px" />
+              <Tooltip
+                message={mapper[deliveryStatus].text}
+                width={mapper[deliveryStatus].width}
+              />
             )}
           </AddressWrapper>
         </Left>

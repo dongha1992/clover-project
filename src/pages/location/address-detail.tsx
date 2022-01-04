@@ -41,11 +41,7 @@ const AddressDetailPage = () => {
     emdNo: '',
   });
 
-  useEffect(() => {
-    getLonLanForMap();
-  }, [userLocation]);
-
-  const getLonLanForMap = async () => {
+  const getLonLanForMap = async (userLocation: any) => {
     const params = {
       query: userLocation.roadAddrPart1,
       analyze_type: 'similar',
@@ -76,6 +72,7 @@ const AddressDetailPage = () => {
     try {
       const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
       setUserLocation(data);
+      getLonLanForMap(data);
     } catch (error) {
       console.error(error);
     }
