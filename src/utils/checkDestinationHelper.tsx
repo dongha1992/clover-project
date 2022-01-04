@@ -5,11 +5,14 @@ interface IProps {
   quick: boolean;
   parcel: boolean;
 }
+
+type TReturnType = 'morning' | 'quick' | 'parcel' | 'noDelivery';
+
 export const checkDestinationHelper = ({
   morning,
   quick,
   parcel,
-}: IProps): string => {
+}: IProps): TReturnType => {
   switch (true) {
     case morning && quick && parcel:
     case morning && parcel: {
