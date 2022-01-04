@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollHorizonList } from '@styles/theme';
-import ReviewItem from '@components/Pages/Review/ReviewItem';
+import { ReviewItem } from '@components/Pages/Review';
 
 const ReviewList = ({ reviews, onClick }: any) => {
   return (

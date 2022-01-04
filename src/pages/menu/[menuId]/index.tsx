@@ -18,7 +18,7 @@ import Loading from '@components/Loading';
 import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import BorderLine from '@components/Shared/BorderLine';
-import ReviewList from '@components/Pages/Review/ReviewList';
+import { ReviewList } from '@components/Pages/Review';
 import { BASE_URL } from '@constants/mock';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';

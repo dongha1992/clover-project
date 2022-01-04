@@ -14,7 +14,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import Button from '@components/Shared/Button';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import OptionsSheet from '@components/Pages/Spot/OptionsSheet';
+import { OptionsSheet } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
 
 const RegisterPage = () => {

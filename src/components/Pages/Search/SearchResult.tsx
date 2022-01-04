@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { setBottomSheet } from '@store/bottomSheet';
 import { MenuFilter } from '@components/Filter';
-import SpotSearchFilter from '@components/Pages/Spot/SpotSearchFilter';
+import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
 import Button from '@components/Shared/Button';
 
