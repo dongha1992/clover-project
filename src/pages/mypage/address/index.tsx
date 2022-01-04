@@ -33,7 +33,6 @@ const AddressManagementPage = () => {
     };
     try {
       const data = await getMainDestinations(params);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

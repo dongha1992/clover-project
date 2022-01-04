@@ -113,7 +113,6 @@ const DestinationDetailPage = () => {
         zipCode: userLocation.zipNo,
       };
       const { data } = await destinationRegister(reqBody);
-      console.log(data);
       router.push('cart/delivery-info');
     }
   };
