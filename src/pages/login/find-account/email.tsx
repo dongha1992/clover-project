@@ -8,9 +8,12 @@ import { PHONE_REGX, NAME_REGX } from '@pages/signup/auth';
 import dynamic from 'next/dynamic';
 import { userHelpEmail } from '@api/user';
 
-const Button = dynamic(() => import('@components/Shared/Button'), {
-  ssr: false,
-});
+const Button = dynamic(
+  () => import('../../../components/Shared/Button/Button'),
+  {
+    ssr: false,
+  }
+);
 
 const FindEmailPage = () => {
   const [phoneValid, setPhoneValid] = useState({

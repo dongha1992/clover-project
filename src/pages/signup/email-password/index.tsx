@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH2B, TextH5B } from '@components/Shared/Text';
 import { homePadding, fixedBottom, FlexCol } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import dynamic from 'next/dynamic';

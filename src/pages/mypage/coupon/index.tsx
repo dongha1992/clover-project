@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FlexCol, FlexRow, homePadding } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { TextH5B } from '@components/Shared/Text';
 import { COUPON_LIST } from '@constants/menu';
 import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';

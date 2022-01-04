@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextB3R, TextH3B, TextH5B } from '@components/Shared/Text';
 import { theme, fixedBottom } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 
 const SpotReqPage = () => {

@@ -22,7 +22,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import { SPOT_URL } from '@constants/mock';
 import axios from 'axios';
 import BorderLine from '@components/Shared/BorderLine';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { ACCESS_METHOD } from '@pages/payment/index';

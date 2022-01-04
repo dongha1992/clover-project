@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH2B, TextB2R, TextH5B } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import { useRouter } from 'next/router';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import SVGIcon from '@utils/SVGIcon';
 
 const FinishPage = () => {

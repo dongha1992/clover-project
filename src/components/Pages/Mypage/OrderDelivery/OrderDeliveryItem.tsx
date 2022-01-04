@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 interface IProps {
   menu: any;

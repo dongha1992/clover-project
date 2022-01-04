@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { RadioButton } from '@components/Shared/Button';
 
 const PICK_UP_PLACE = [
   { id: 1, name: '1506호 사무실 문 앞' },

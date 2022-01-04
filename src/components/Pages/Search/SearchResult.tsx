@@ -10,7 +10,7 @@ import { setBottomSheet } from '@store/bottomSheet';
 import { MenuFilter } from '@components/Filter';
 import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
 const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
   const dispatch = useDispatch();

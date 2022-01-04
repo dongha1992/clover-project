@@ -11,12 +11,11 @@ import {
   fixedBottom,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
 import Checkbox from '@components/Shared/Checkbox';
-import Button from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';

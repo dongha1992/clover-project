@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { homePadding, theme } from '@styles/theme';
 import { ReviewOnlyImage } from '@components/Pages/Review';
 import BorderLine from '@components/Shared/BorderLine';

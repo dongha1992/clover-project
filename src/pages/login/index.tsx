@@ -10,7 +10,7 @@ import {
 } from '@styles/theme';
 import { TextB2R } from '@components/Shared/Text';
 import Checkbox from '@components/Shared/Checkbox';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
