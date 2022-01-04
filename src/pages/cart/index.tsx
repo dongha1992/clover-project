@@ -31,11 +31,11 @@ import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import Tag from '@components/Shared/Tag';
 import CountButton from '@components/Shared/Button/CountButton';
-import Calendar from '@components/Calendar';
+import { Calendar } from '@components/Calendar';
 import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
-import HorizontalItem from '@components/Item/HorizontalItem';
+import { HorizontalItem } from '@components/Item';
 import { setAlert } from '@store/alert';
 
 const DISPOSABLE_LIST = [

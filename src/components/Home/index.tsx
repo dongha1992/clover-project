@@ -5,11 +5,10 @@ import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextB3R } from '@components/Shared/Text';
 import axios from 'axios';
-import Item from '@components/Item';
+import { Item, HorizontalItem } from '@components/Item';
 import { useDispatch } from 'react-redux';
 import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
-import HorizontalItem from '@components/Item/HorizontalItem';
 
 const Home = () => {
   const [itemList, setItemList] = useState([]);

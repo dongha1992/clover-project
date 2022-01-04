@@ -20,7 +20,7 @@ import { TextH3B, TextB3R, TextH6B } from '@components/Shared/Text';
 import SpotList from '@components/Pages/Spot/SpotList';
 import { SPOT_ITEMS } from '@constants/mock';
 import SpotRecommendList from '@components/Pages/Spot/SpotRecommendList';
-import Item from '@components/Item';
+import { Item } from '@components/Item';
 import SVGIcon from '@utils/SVGIcon';
 
 const SPOT_RECOMMEND_LIST = [

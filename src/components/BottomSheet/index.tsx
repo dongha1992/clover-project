@@ -7,7 +7,6 @@ import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { SET_CART_LISTS, cartForm } from '@store/cart';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToast } from '@hooks/useToast';
-import router from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import { theme } from '@styles/theme';
 /* TODO: height 조절해야함 */
