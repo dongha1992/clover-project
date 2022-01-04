@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import CheckDeliveryPlace from '@components/Pages/Destination/CheckDeliveryPlace';
+import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import Button from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';

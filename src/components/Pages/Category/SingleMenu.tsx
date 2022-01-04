@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FlexWrapWrapper } from '@styles/theme';
 import axios from 'axios';
-import Item from '@components/Item';
-import CategoryFilter from '@components/Pages/Category/CategoryFilter';
+import { Item } from '@components/Item';
+import { CategoryFilter } from '@components/Pages/Category';
 import { BASE_URL } from '@constants/mock';
 
 const SingleMenu = ({ category }: any) => {

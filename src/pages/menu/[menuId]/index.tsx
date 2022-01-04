@@ -28,14 +28,14 @@ import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
-import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
+import { DetailBottomInfo } from '@components/Pages/Detail';
 
 const DetailBottomFAQ = dynamic(
-  () => import('../../../components/Pages/Detail/DetailBottomFAQ')
+  () => import('@components/Pages/Detail/DetailBottomFAQ')
 );
 
 const DetailBottomReview = dynamic(
-  () => import('../../../components/Pages/Detail/DetailBottomReview')
+  () => import('@components/Pages/Detail/DetailBottomReview')
 );
 
 /* TODO: 영양 정보 리팩토링 */

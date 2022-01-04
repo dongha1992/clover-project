@@ -4,11 +4,11 @@ import TextInput from '@components/Shared/TextInput';
 import { TextH6B } from '@components/Shared/Text';
 import { useDispatch } from 'react-redux';
 import SVGIcon from '@utils/SVGIcon';
-import RecentDelivery from '@components/Pages/Destination/RecentDelivery';
+import { RecentDelivery } from '@components/Pages/Destination';
 import { ADDRESS_KEYWORD_REGX, SPECIAL_REGX } from '@constants/regex';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
-import DestinationSearchResult from '@components/Pages/Destination/DestinationSearchResult';
+import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
 import { SET_DESTINATION_TEMP } from '@store/destination';
 
