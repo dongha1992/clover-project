@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   homePadding,
   fixedBottom,
@@ -6,9 +7,7 @@ import {
   FlexCol,
   FlexRow,
 } from '@styles/theme';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import Button from '@components/Shared/Button';
 import {
   TextH4B,
   TextH5B,
@@ -19,7 +18,7 @@ import {
 import TextInput from '@components/Shared/TextInput';
 import BorderLine from '@components/Shared/BorderLine';
 import { GENDER } from '@pages/signup/optional';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Button, RadioButton } from '@components/Shared/Button';
 import router from 'next/router';
 import SVGIcon from '@utils/SVGIcon';
 import { useInterval } from '@hooks/useInterval';

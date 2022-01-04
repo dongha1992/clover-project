@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
 
 export interface ISpotItem {

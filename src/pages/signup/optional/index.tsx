@@ -9,11 +9,8 @@ import {
   theme,
 } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
-import debounce from 'lodash-es/debounce';
 import router from 'next/router';
-// import { Select, Option } from '@components/Dropdown/index';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Button, RadioButton } from '@components/Shared/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { ISignupUser } from '@model/index';

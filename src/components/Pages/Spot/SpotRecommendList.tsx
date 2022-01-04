@@ -3,44 +3,44 @@ import styled from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 
 export interface ISpotItem {
-    id: number;
-    name: string;
-    address: string;
-    meter: string;
-    type: string;
-    availableTime: string;
-    spaceType: string;
-    url: string;
-  }
-  
-const SpotRecommendList = ({item}: any):ReactElement => {
-    return (
-        <Container>
-          <FlexColStart>
-            <TextH5B>{item.name}</TextH5B>
-            <TextB3R padding="2px 0 0 0">{item.address}</TextB3R>
-            <MeterAndTime>
-              <TextH6B>{item.meter}m</TextH6B>
-              <Col />
-              <TextH6B>{item.type}</TextH6B>
-              <TextH6B>{item.availableTime}</TextH6B>
-            </MeterAndTime>
-            <div>
-              <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                {item.spaceType}
-              </Tag>
-            </div>
-          </FlexColStart>
-          <FlexCol>
-            <ImageWrapper>
-              <SpotImg src={item.url} />
-            </ImageWrapper>
-          </FlexCol>
-        </Container>
-      );
+  id: number;
+  name: string;
+  address: string;
+  meter: string;
+  type: string;
+  availableTime: string;
+  spaceType: string;
+  url: string;
+}
+
+const SpotRecommendList = ({ item }: any): ReactElement => {
+  return (
+    <Container>
+      <FlexColStart>
+        <TextH5B>{item.name}</TextH5B>
+        <TextB3R padding="2px 0 0 0">{item.address}</TextB3R>
+        <MeterAndTime>
+          <TextH6B>{item.meter}m</TextH6B>
+          <Col />
+          <TextH6B>{item.type}</TextH6B>
+          <TextH6B>{item.availableTime}</TextH6B>
+        </MeterAndTime>
+        <div>
+          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            {item.spaceType}
+          </Tag>
+        </div>
+      </FlexColStart>
+      <FlexCol>
+        <ImageWrapper>
+          <SpotImg src={item.url} />
+        </ImageWrapper>
+      </FlexCol>
+    </Container>
+  );
 };
 
 const Container = styled.div`

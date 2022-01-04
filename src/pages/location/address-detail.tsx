@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { fixedBottom, theme } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { fixedBottom } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';

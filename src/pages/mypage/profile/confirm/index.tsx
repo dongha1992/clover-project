@@ -5,7 +5,7 @@ import { homePadding, FlexCol, theme, fixedBottom } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import Validation from '@components/Pages/User/Validation';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { userConfirmPassword } from '@api/user';
 import router from 'next/router';
 

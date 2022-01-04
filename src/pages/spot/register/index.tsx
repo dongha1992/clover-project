@@ -11,7 +11,7 @@ import {
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import Checkbox from '@components/Shared/Checkbox';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';

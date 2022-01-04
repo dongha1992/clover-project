@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import { homePadding, fixedBottom, theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';

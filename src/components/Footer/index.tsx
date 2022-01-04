@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import SVGIcon from '@utils/SVGIcon';
 import { SITE_INFO_TITLE } from '@constants/footer';
 import { breakpoints } from '@utils/getMediaQuery';

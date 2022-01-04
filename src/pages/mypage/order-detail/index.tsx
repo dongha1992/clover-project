@@ -20,7 +20,7 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import BorderLine from '@components/Shared/BorderLine';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 

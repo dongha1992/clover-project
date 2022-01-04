@@ -16,7 +16,7 @@ import {
   homePadding,
   fixedBottom,
 } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';

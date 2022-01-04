@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FlexBetween, FlexCol, homePadding } from '@styles/theme';
 import styled from 'styled-components';
 import { TextH4B, TextB1R } from '@components/Shared/Text';
-import ToggleButton from '@components/Shared/Button/ToggleButton ';
+import { ToggleButton } from '@components/Shared/Button';
 
 const SettingPage = () => {
   const [isNotiOn, setIsNotiOn] = useState(false);

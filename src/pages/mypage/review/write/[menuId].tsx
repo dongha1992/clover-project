@@ -25,7 +25,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
 import { getImageSize } from '@utils/getImageSize';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import Tooltip from '@components/Shared/Tooltip';

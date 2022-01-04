@@ -15,7 +15,7 @@ import {
   FlexRow,
   FlexBetween,
 } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';

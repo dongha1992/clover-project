@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useBottomSheet } from '@hooks/useBottomSheet';
 import Content from '@components/BottomSheet/Content';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
 import { SET_CART_LISTS, cartForm } from '@store/cart';
 import { useDispatch, useSelector } from 'react-redux';

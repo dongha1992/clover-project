@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { breakpoints } from '@utils/getMediaQuery';
 import { TextH5B, TextH1B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import Tag from '@components/Shared/Tag';

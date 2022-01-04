@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { homePadding } from '@styles/theme';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { RadioButton } from '@components/Shared/Button';
 
 const DATE = [
   { id: 1, name: '2021-12-09' },

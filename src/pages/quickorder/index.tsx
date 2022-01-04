@@ -8,7 +8,7 @@ import ReOrderList from '@components/Pages/QuickOrder/ReOrderList';
 import OrderCardList from '@components/Pages/QuickOrder/OrderCardList';
 import { MENT } from '@constants/quick';
 import TimerTooltip from '@components/Shared/Tooltip/TimerTooltip';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { HorizontalItem } from '@components/Item';
 import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';

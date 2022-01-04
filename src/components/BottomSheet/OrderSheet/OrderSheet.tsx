@@ -1,11 +1,10 @@
-import { RadioButton } from '@components/Shared/Button/RadioButton';
 import { TextH5B } from '@components/Shared/Text';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { orderForm, SET_ORDER_TYPE } from '@store/order';
 import { useDispatch, useSelector } from 'react-redux';
-import Button from '@components/Shared/Button';
+import { Button, RadioButton } from '@components/Shared/Button';
 import { initBottomSheet } from '@store/bottomSheet';
 const list = [
   { id: 1, value: '스팟점심' },
