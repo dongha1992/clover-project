@@ -20,26 +20,85 @@ const CheckDeliveryPlace = () => {
       delivery: null,
     };
     try {
-      const data = await availabilityDestination(params);
+      const { data } = await availabilityDestination(params);
+      const { morning, parcel, quick } = data.data;
+      console.log(morning, parcel, quick);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const UserPlaceInfoRender = (status?: string) => {
+    switch (status) {
+      case '1': {
+        return (
+          <>
+            <span className="brandColor">
+              새벽배송
+              <span className="h2B"> 지역입니다.</span>
+            </span>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              오후 5시까지 주문 시 다음날 새벽에 도착!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              서울 전체, 경기/인천 일부 지역 이용 가능해요
+            </TextB3R>
+          </>
+        );
+      }
+      case '2': {
+        return (
+          <>
+            <span className="brandColor">
+              새벽배송
+              <span className="h2B"> 지역입니다.</span>
+            </span>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              오후 5시까지 주문 시 다음날 새벽에 도착!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              서울 전체, 경기/인천 일부 지역 이용 가능해요
+            </TextB3R>
+          </>
+        );
+      }
+      case '3': {
+        return (
+          <>
+            <span className="brandColor">
+              새벽배송
+              <span className="h2B"> 지역입니다.</span>
+            </span>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              오후 5시까지 주문 시 다음날 새벽에 도착!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              서울 전체, 경기/인천 일부 지역 이용 가능해요
+            </TextB3R>
+          </>
+        );
+      }
+      default:
+        return (
+          <>
+            <span className="brandColor">
+              새벽배송
+              <span className="h2B"> 지역입니다.</span>
+            </span>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              오후 5시까지 주문 시 다음날 새벽에 도착!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              서울 전체, 경기/인천 일부 지역 이용 가능해요
+            </TextB3R>
+          </>
+        );
+    }
+  };
+
   return (
     <Container>
-      <PlaceInfo>
-        <span className="brandColor">
-          새벽배송
-          <span className="h2B"> 지역입니다.</span>
-        </span>
-        <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-          오후 5시까지 주문 시 다음날 새벽에 도착!
-        </TextB3R>
-        <TextB3R color={theme.greyScale65}>
-          서울 전체, 경기/인천 일부 지역 이용 가능해요
-        </TextB3R>
-      </PlaceInfo>
+      <PlaceInfo>{UserPlaceInfoRender()}</PlaceInfo>
     </Container>
   );
 };
