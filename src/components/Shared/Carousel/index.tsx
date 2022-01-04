@@ -8,7 +8,7 @@ interface IProps {
   images: any;
 }
 
-function Carousel({ images, setCountIndex }: IProps) {
+const Carousel = ({ images, setCountIndex }: IProps) => {
   const settings = {
     arrows: false,
     dots: false,
@@ -38,7 +38,7 @@ function Carousel({ images, setCountIndex }: IProps) {
       </Slider>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   max-width: ${breakpoints.mobile}px;

@@ -1,18 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Button, RadioButton } from '@components/Shared/Button';
 import Tag from '@components/Shared/Tag';
 import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import Button from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 
-const Tooltip = dynamic(() => import('@components/Shared/Tooltip'), {
+const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
 });
 
@@ -75,7 +74,7 @@ const pickupPlace = {
   // availableTime: '12:00-12:30 / 15:30-18:00',
 };
 
-function DeliverInfoPage() {
+const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<number>(1);
   const dispatch = useDispatch();
 
@@ -250,7 +249,7 @@ function DeliverInfoPage() {
       </SettingBtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import SingleMenu from '@components/Pages/Category/SingleMenu';
+import { SingleMenu } from '@components/Pages/Category';
 
 const QuickOrderCategoryPage = () => {
   return (

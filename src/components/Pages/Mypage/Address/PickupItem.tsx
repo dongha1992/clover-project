@@ -5,12 +5,11 @@ import {
   FlexBetween,
   FlexCol,
   FlexRow,
-  FlexColStart,
   homePadding,
 } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { ISpotItem } from '@components/Pages/Spot/SpotItem';
 import { Obj } from '@model/index';
 
@@ -20,7 +19,7 @@ interface IProps {
   goToEdit: (id: number) => void;
 }
 
-function PickupItem({ item, goToCart, goToEdit }: IProps) {
+const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
   const mapper: Obj = {
     프라이빗: {
       backgroundColor: theme.brandColor5,
@@ -70,7 +69,7 @@ function PickupItem({ item, goToCart, goToEdit }: IProps) {
       </Button>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

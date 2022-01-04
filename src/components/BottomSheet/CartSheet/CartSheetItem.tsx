@@ -16,13 +16,13 @@ interface IProps {
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
 
-function CartSheetItem({
+const CartSheetItem = ({
   menu,
   isShareSheet,
   isCart,
   isSoldout,
   padding,
-}: IProps) {
+}: IProps) => {
   const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
   return (
@@ -69,7 +69,7 @@ function CartSheetItem({
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{
   isSoldout?: boolean;

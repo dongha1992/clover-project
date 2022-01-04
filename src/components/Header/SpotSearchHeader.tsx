@@ -5,9 +5,9 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 
-interface IProps  {
+interface IProps {
   title?: string;
-};
+}
 
 const SpotSearchHeader = ({ title }: IProps) => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const SpotSearchHeader = ({ title }: IProps) => {
   };
 
   const goToMap = () => {
-    router.push('/spot/search/location')
+    router.push('/spot/search/location');
   };
 
   return (
@@ -27,24 +27,23 @@ const SpotSearchHeader = ({ title }: IProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        {
-          router.pathname === '/spot/search' ?
+        {router.pathname === '/spot/search' ? (
           <BtnWrapper>
             <div className="map" onClick={goToMap}>
               <SVGIcon name="map" />
             </div>
           </BtnWrapper>
-        :
+        ) : (
           <BtnWrapper>
             <div className="threeLines" onClick={goToMap}>
               <SVGIcon name="threeLines" />
             </div>
           </BtnWrapper>
-        }
+        )}
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

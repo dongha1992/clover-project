@@ -1,4 +1,4 @@
-export default function goToShare({ e, url, title, description }: any) {
+const goToShare = ({ e, url, title, description }: any) => {
   if (navigator.share) {
     navigator
       .share({
@@ -13,4 +13,6 @@ export default function goToShare({ e, url, title, description }: any) {
   } else {
     return 'null';
   }
-}
+};
+
+export default goToShare;

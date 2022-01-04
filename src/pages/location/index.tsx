@@ -16,7 +16,7 @@ import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 
 /* TODO: geolocation 에러케이스 추가 */
 
-function LocationPage() {
+const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState(false);
@@ -138,7 +138,7 @@ function LocationPage() {
       </Wrapper>
     </HomeContainer>
   );
-}
+};
 
 const Wrapper = styled.div`
   padding: 8px 0px 24px;

@@ -11,12 +11,11 @@ import {
   fixedBottom,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
 import Checkbox from '@components/Shared/Checkbox';
-import Button from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
@@ -35,9 +34,8 @@ const CARD_TYPE = [
 ];
 
 /*TODO: 카드 번호 ref로 관리해도 되낭 */
-/*TODO: 카드번호 4개 누르면 다음 넘어가기 */
 
-function CardRegisterPage() {
+const CardRegisterPage = () => {
   const [selectedCardType, setSelectedCardType] = useState(1);
   const [card, setCard] = useState<Obj>({
     number1: '',
@@ -231,7 +229,7 @@ function CardRegisterPage() {
       </RegisterBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

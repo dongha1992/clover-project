@@ -22,10 +22,10 @@ import SVGIcon from '@utils/SVGIcon';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 
-function PaymentFinishPage() {
+const PaymentFinishPage = () => {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
@@ -130,7 +130,7 @@ function PaymentFinishPage() {
       </OrderDetailBtn>
     </Container>
   );
-}
+};
 
 const Container = styled.main``;
 

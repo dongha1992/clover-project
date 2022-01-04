@@ -9,7 +9,7 @@ type TProps = {
   title?: string;
 };
 
-function DefaultHeader({ title }: TProps) {
+const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
 
   const goBack = (): void => {
@@ -26,7 +26,7 @@ function DefaultHeader({ title }: TProps) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;

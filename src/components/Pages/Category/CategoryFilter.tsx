@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 
 const MenuFilter = dynamic(() => import('@components/Filter/MenuFilter'));
 
-function CategoryFilter({ title }: any) {
+const CategoryFilter = ({ title }: any) => {
   const dispatch = useDispatch();
 
   const clickFilterHandler = () => {
@@ -29,7 +29,7 @@ function CategoryFilter({ title }: any) {
       <TextH3B padding="0 0 17px 0">{title ? title : '전체'}</TextH3B>
     </PageTitleWrapper>
   );
-}
+};
 
 const CategroyTabWrapper = styled.div`
   margin: 18px 0px 6px 0px;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import ReviewInfo from '@components/Pages/Mypage/Review/ReviewInfo';
+import { ReviewInfo } from '@components/Pages/Mypage/Review';
 import {
   homePadding,
   FlexCol,
@@ -25,10 +25,10 @@ import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
 import { getImageSize } from '@utils/getImageSize';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
-import Tooltip from '@components/Shared/Tooltip';
+import { Tooltip } from '@components/Shared/Tooltip';
 interface IWriteMenuReviewObj {
   dateId: number;
   detailId: number;
@@ -38,7 +38,7 @@ interface IWriteMenuReviewObj {
   rating: number;
 }
 
-function WriteReviewPage({ menuId }: any) {
+const WriteReviewPage = ({ menuId }: any) => {
   const [isShow, setIsShow] = useState(false);
   const [item, setItem] = useState<any>({});
   const [rating, setRating] = useState<number>(5);
@@ -330,7 +330,7 @@ function WriteReviewPage({ menuId }: any) {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 const Wrapper = styled.div`

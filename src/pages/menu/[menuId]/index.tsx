@@ -18,24 +18,24 @@ import Loading from '@components/Loading';
 import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import BorderLine from '@components/Shared/BorderLine';
-import ReviewList from '@components/Pages/Review/ReviewList';
+import { ReviewList } from '@components/Pages/Review';
 import { BASE_URL } from '@constants/mock';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
-import StickyTab from '@components/Shared/TabList/StickyTab';
+import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
-import CouponSheet from '@components/BottomSheet/CouponSheet';
+import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
-import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
+import { DetailBottomInfo } from '@components/Pages/Detail';
 
 const DetailBottomFAQ = dynamic(
-  () => import('../../../components/Pages/Detail/DetailBottomFAQ')
+  () => import('@components/Pages/Detail/DetailBottomFAQ')
 );
 
 const DetailBottomReview = dynamic(
-  () => import('../../../components/Pages/Detail/DetailBottomReview')
+  () => import('@components/Pages/Detail/DetailBottomReview')
 );
 
 /* TODO: 영양 정보 리팩토링 */
@@ -59,7 +59,7 @@ export interface IMenuItem {
 
 const hasAvailableCoupon = true;
 
-function MenuDetailPage({ menuId }: any) {
+const MenuDetailPage = ({ menuId }: any) => {
   const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -295,7 +295,7 @@ function MenuDetailPage({ menuId }: any) {
       </Bottom>
     </Container>
   );
-}
+};
 
 const Container = styled.section``;
 

@@ -6,7 +6,7 @@ import router from 'next/router';
 
 /* 사진 전체 후기 */
 
-function ReviewPage({ menuId }: any) {
+const ReviewPage = ({ menuId }: any) => {
   const [page, setPage] = useState<number>(0);
   const { loading, error, list } = useFetch(page);
   const ref = useRef<HTMLDivElement>(null);
@@ -60,7 +60,7 @@ function ReviewPage({ menuId }: any) {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

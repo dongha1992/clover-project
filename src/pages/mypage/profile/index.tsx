@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   homePadding,
   fixedBottom,
@@ -6,9 +7,7 @@ import {
   FlexCol,
   FlexRow,
 } from '@styles/theme';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import Button from '@components/Shared/Button';
 import {
   TextH4B,
   TextH5B,
@@ -19,7 +18,7 @@ import {
 import TextInput from '@components/Shared/TextInput';
 import BorderLine from '@components/Shared/BorderLine';
 import { GENDER } from '@pages/signup/optional';
-import { RadioButton } from '@components/Shared/Button/RadioButton';
+import { Button, RadioButton } from '@components/Shared/Button';
 import router from 'next/router';
 import SVGIcon from '@utils/SVGIcon';
 import { useInterval } from '@hooks/useInterval';
@@ -28,7 +27,7 @@ import { setAlert } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
 
-function ProfilePage() {
+const ProfilePage = () => {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
@@ -291,7 +290,7 @@ function ProfilePage() {
       </BtnWrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div``;
 

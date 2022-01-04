@@ -5,11 +5,11 @@ import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
-import ShareSheet from '@components/BottomSheet/ShareSheet';
+import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { SPOT_ITEMS } from '@constants/mock';
 import Slider from 'react-slick';
 import { useRouter } from 'next/router';
-import SpotList from '@components/Pages/Spot/SpotList';
+import { SpotList } from '@components/Pages/Spot';
 
 const text = {
   mainTitle: `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
@@ -90,12 +90,12 @@ const SpotPage = () => {
   /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
     <Container>
-      <TextH2B padding='24px 0 0 0'>{text.mainTitle}</TextH2B>
+      <TextH2B padding="24px 0 0 0">{text.mainTitle}</TextH2B>
       {isLogin(true) && (
         <HandleBoxWrapper>
           <TextH4B>{text.gotoWrite}</TextH4B>
           <IconWrapper>
-            <SVGIcon name='blackCirclePencil' />
+            <SVGIcon name="blackCirclePencil" />
           </IconWrapper>
         </HandleBoxWrapper>
       )}
@@ -103,20 +103,20 @@ const SpotPage = () => {
         <HandleBoxWrapper onClick={goToShare}>
           <TextH4B>{text.gotoShare}</TextH4B>
           <IconWrapper>
-            <SVGIcon name='blackCircleShare' />
+            <SVGIcon name="blackCircleShare" />
           </IconWrapper>
         </HandleBoxWrapper>
       )}
-      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type='normal' />
+      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" />
       <SpotList
         items={SPOT_ITEMS}
         title={text.normalNewSpotTitle}
-        type='normal'
+        type="normal"
       />
       <SpotList
         items={SPOT_ITEMS}
         title={text.normalFcoSpotTitle}
-        type='normal'
+        type="normal"
       />
       <SlideWrapper {...settings}>
         {FCO_SPOT_BANNER.map((item) => {
@@ -137,22 +137,27 @@ const SpotPage = () => {
           );
         })}
       </SlideWrapper>
-      <SpotList items={SPOT_ITEMS} title={text.eventTitle} type="event" btnText='주문하기' />
+      <SpotList
+        items={SPOT_ITEMS}
+        title={text.eventTitle}
+        type="event"
+        btnText="주문하기"
+      />
       <SpotList
         items={SPOT_ITEMS}
         title={text.trialTitle}
         subTitle={text.trialSubTitle}
-        type='trial'
-        btnText='참여하기'
+        type="trial"
+        btnText="참여하기"
       />
-        <SpotRegister>
-          <FlexBetween>
-            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
-              <IconWrapper>
-                <SVGIcon name='blackCirclePencil' />
-              </IconWrapper>
-          </FlexBetween>
-        </SpotRegister>
+      <SpotRegister>
+        <FlexBetween>
+          <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
+          <IconWrapper>
+            <SVGIcon name="blackCirclePencil" />
+          </IconWrapper>
+        </FlexBetween>
+      </SpotRegister>
       <BottomStory>프코스팟 스토리</BottomStory>
     </Container>
   );

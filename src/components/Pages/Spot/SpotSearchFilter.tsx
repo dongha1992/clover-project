@@ -5,11 +5,11 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { MUTILPLE_CHECKBOX_SPOT, RADIO_CHECKBOX_SPOT } from '@constants/filter';
 import { theme, FlexCol, FlexBetween } from '@styles/theme';
-import ToggleButton from '@components/Shared/Button/ToggleButton ';
+import { ToggleButton } from '@components/Shared/Button';
 
 /* TODO : 다른 필터에서 전체 선택 시 해제되는 거 spot은 없음 이거 로직 변경, toggle시 전체 선택 해제로 */
 
-function SpotSearchFilter() {
+const SpotSearchFilter = () => {
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<number[]>([1]);
   const [selectedRadioId, setSelectedRadioId] = useState(1);
 
@@ -94,7 +94,7 @@ function SpotSearchFilter() {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   width: 100%;

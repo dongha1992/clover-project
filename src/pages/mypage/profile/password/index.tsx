@@ -3,7 +3,7 @@ import { homePadding, FlexCol, fixedBottom } from '@styles/theme';
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import Validation from '@components/Pages/User/Validation';
@@ -16,7 +16,7 @@ interface IVaildation {
   isValid: boolean;
 }
 
-function ChangePasswordPage() {
+const ChangePasswordPage = () => {
   const [oldPasswordLengthValidation, setOldPasswordLengthValidation] =
     useState<IVaildation>({ message: '', isValid: false });
 
@@ -246,7 +246,7 @@ function ChangePasswordPage() {
       </BtnWrpper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}

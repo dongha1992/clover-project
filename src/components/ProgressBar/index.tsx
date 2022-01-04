@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 
-function ProgressBar({}) {
+const ProgressBar = ({}) => {
   return (
     <Outter>
       <Inner />
     </Outter>
   );
-}
+};
 
 const Outter = styled.div`
   height: 10px;

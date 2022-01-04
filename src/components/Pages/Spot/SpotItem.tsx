@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
 
 export interface ISpotItem {
@@ -21,10 +21,10 @@ export interface ISpotItem {
 interface IProps {
   item: ISpotItem;
   onClick: () => void;
-  mapList ?: boolean;
+  mapList?: boolean;
 }
 
-function SpotItem({ item, onClick, mapList }: IProps): ReactElement {
+const SpotItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   return (
     <Container mapList>
       <FlexColStart>
@@ -60,7 +60,7 @@ function SpotItem({ item, onClick, mapList }: IProps): ReactElement {
       </FlexCol>
     </Container>
   );
-}
+};
 
 const Container = styled.div<{ mapList: boolean }>`
   display: flex;
@@ -68,8 +68,8 @@ const Container = styled.div<{ mapList: boolean }>`
   width: 100%;
   height: 114px;
   margin-bottom: 24px;
-  ${({mapList})=> {
-    if(mapList){
+  ${({ mapList }) => {
+    if (mapList) {
       return css`
         background: ${theme.white};
         max-width: ${breakpoints.desktop}px;
@@ -77,7 +77,7 @@ const Container = styled.div<{ mapList: boolean }>`
         height: 146px;
         padding: 16px;
         border-radius: 8px;
-      `
+      `;
     }
   }}
 `;
@@ -90,14 +90,14 @@ const MeterAndTime = styled.div`
   margin: 8px 0 16px 0;
 `;
 
-const ImageWrapper = styled.div<{ mapList: boolean}>`
+const ImageWrapper = styled.div<{ mapList: boolean }>`
   width: 80px;
   padding-left: 15px;
-  ${({mapList})=> {
-    if(mapList){
+  ${({ mapList }) => {
+    if (mapList) {
       return css`
-      margin-bottom: 10px;
-      `
+        margin-bottom: 10px;
+      `;
     }
   }}
 `;

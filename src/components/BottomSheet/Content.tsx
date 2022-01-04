@@ -5,9 +5,9 @@ type TProps = {
   content: JSX.Element;
 };
 
-function Content({ content }: TProps) {
+const Content = ({ content }: TProps) => {
   return <ContentContainer>{content}</ContentContainer>;
-}
+};
 
 const ContentContainer = styled.div`
   width: 100%;

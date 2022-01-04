@@ -15,9 +15,8 @@ const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 const SpotRegisterHeader = dynamic(()=> import('./SpotRegisterHeader'));
 const CloseDefaultHeader = dynamic(()=> import('./CloseDefaultHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
-/*TODO: 사진 후기 수 타이틀 옆에 나와야 함*/
 
-function Header() {
+const Header = () => {
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState<string>(router.pathname);
 
@@ -138,5 +137,5 @@ function Header() {
   );
 
   return <>{renderComponent(currentPath)}</>;
-}
+};
 export default React.memo(Header);
