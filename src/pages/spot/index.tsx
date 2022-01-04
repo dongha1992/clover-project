@@ -5,7 +5,7 @@ import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
-import ShareSheet from '@components/BottomSheet/ShareSheet';
+import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { SPOT_ITEMS } from '@constants/mock';
 import Slider from 'react-slick';
 import { useRouter } from 'next/router';

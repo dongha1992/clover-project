@@ -7,18 +7,17 @@ import Tag from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
-import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
+import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 
 type TProps = {
   item: any;
-  isCart?: boolean;
   isQuick?: boolean;
 };
 
 const isNew = true;
 
-const Item = ({ item, isCart, isQuick = false }: TProps) => {
+const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -28,7 +27,7 @@ const Item = ({ item, isCart, isQuick = false }: TProps) => {
     dispatch(SET_CART_SHEET_OBJ(item));
     dispatch(
       setBottomSheet({
-        content: <CartSheetGroup />,
+        content: <CartSheet />,
         buttonTitle: '장바구니에 담기',
       })
     );

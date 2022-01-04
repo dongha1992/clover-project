@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { orderForm } from '@store/order';
-import { OrderSheetGroup } from '@components/BottomSheet/OrderSheet';
+import { OrderSheet } from '@components/BottomSheet/OrderSheet';
 import { TextH4B } from '@components/Shared/Text';
 import TabList from '@components/Shared/TabList';
 import { useCallback, useState } from 'react';
@@ -33,7 +33,7 @@ const QuickOrderHeader: React.FC = () => {
   const onClick = () => {
     dispatch(
       setBottomSheet({
-        content: <OrderSheetGroup />,
+        content: <OrderSheet />,
       })
     );
   };

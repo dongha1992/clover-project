@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
-import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
+import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
 
 const TabList = dynamic(() => import('../Shared/TabList'));
@@ -44,7 +44,7 @@ const CategorySubHeader = ({ title }: TProps) => {
   const goToCart = () => {
     dispatch(
       setBottomSheet({
-        content: <CartSheetGroup />,
+        content: <CartSheet />,
         buttonTitle: '장바구니에 담기',
       })
     );

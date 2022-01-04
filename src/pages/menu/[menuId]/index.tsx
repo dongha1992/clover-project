@@ -26,7 +26,7 @@ import StickyTab from '@components/Shared/TabList/StickyTab';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
 import { setBottomSheet } from '@store/bottomSheet';
-import { CouponSheetGroup } from '@components/BottomSheet/CouponSheet';
+import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import DetailBottomInfo from '@components/Pages/Detail/DetailBottomInfo';
 
@@ -107,7 +107,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   const couponDownloadHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <CouponSheetGroup />,
+        content: <CouponSheet />,
         buttonTitle: '확인',
       })
     );

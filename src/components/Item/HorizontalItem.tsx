@@ -7,7 +7,7 @@ import Tag from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
-import CartSheetGroup from '@components/BottomSheet/CartSheet/CartSheetGroup';
+import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 
 type TProps = {
@@ -27,7 +27,7 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
     dispatch(SET_CART_SHEET_OBJ(item));
     dispatch(
       setBottomSheet({
-        content: <CartSheetGroup />,
+        content: <CartSheet />,
         buttonTitle: '장바구니에 담기',
       })
     );
