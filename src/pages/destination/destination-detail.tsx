@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import { Button } from '@components/Shared/Button';
-import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
+import { fixedBottom, FlexCol, FlexRow, FlexRowStart } from '@styles/theme';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import TextInput from '@components/Shared/TextInput';
