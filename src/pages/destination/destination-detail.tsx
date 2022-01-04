@@ -4,7 +4,7 @@ import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
-import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
+import { TextH5B, TextB3R, TextB2R, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
@@ -132,14 +132,16 @@ const DestinationDetailPage = () => {
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol margin="0 0 24px 0">
-          <TextH5B>{userLocation.bdNm}</TextH5B>
-          <FlexRow padding="4px 0 6px">
-            <Tag padding="3px">도로명</Tag>
-            <TextB3R margin="0 0 0 4px">{userLocation.roadAddr}</TextB3R>
+          <FlexRow>
+            <TextH6B>{userLocation.roadAddrPart1}</TextH6B>
+            <TextH6B>{userLocation.bdNm}</TextH6B>
           </FlexRow>
           <FlexRow>
             <Tag padding="3px">지번</Tag>
-            <TextB3R margin="0 0 0 4px">{userLocation.jibunAddr}</TextB3R>
+            <TextB3R margin="0 0 0 4px">
+              {userLocation.zipNo}
+              {userLocation.jibunAddr}
+            </TextB3R>
           </FlexRow>
         </FlexCol>
         <TextInput
