@@ -21,7 +21,6 @@ import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
 // persist
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import storageSession from 'redux-persist/lib/storage/session';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
