@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
-import { IJuso } from '@model/index';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { Obj } from '@model/index';
