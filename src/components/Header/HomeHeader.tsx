@@ -10,8 +10,12 @@ import { IJuso } from '@model/index';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { Obj } from '@model/index';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
 
 const HomeHeader = () => {
+  const { userLocation, availableDestination } = useSelector(destinationForm);
+
   const [userlocation, setUserLocation] = useState<IJuso>({
     roadAddr: '',
     roadAddrPart1: '',
@@ -49,16 +53,18 @@ const HomeHeader = () => {
 
   useEffect(() => {
     try {
-      const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
-      const availabilityDestination =
-        JSON.parse(sessionStorage.getItem('availabilityDestination') ?? '{}') ??
-        {};
-      setUserLocation(data);
+      // const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
+      // const availabilityDestination =
+      //   JSON.parse(sessionStorage.getItem('availabilityDestination') ?? '{}') ??
+      //   {};
+      // setUserLocation(data);
+
       setDeliveryStatus(
         checkDestinationHelper({
-          ...availabilityDestination,
+          ...availableDestination,
         })
       );
+      console.log(userLocation, ' console.log(userLocation);');
     } catch (error) {
       console.error(error);
     }
@@ -75,13 +81,13 @@ const HomeHeader = () => {
           <SVGIcon name="location" />
           <AddressWrapper>
             <Link href="/location">
-              {userlocation?.emdNm ? (
-                <a>{userlocation?.emdNm}</a>
+              {userLocation?.emdNm ? (
+                <a>{userLocation?.emdNm}</a>
               ) : (
                 <a>내 위치 찾기</a>
               )}
             </Link>
-            {userlocation?.emdNm && (
+            {userLocation?.emdNm && (
               <Tooltip
                 message={mapper[deliveryStatus].text}
                 width={mapper[deliveryStatus].width}
