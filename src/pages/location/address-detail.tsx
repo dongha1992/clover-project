@@ -10,7 +10,7 @@ import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 
 const AddressDetailPage = () => {
-  const { tempLocation, availableDestination } = useSelector(destinationForm);
+  const { userLocation, availableDestination } = useSelector(destinationForm);
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
@@ -19,7 +19,7 @@ const AddressDetailPage = () => {
 
   const getLonLanForMap = async () => {
     const params = {
-      query: tempLocation.roadAddrPart1,
+      query: userLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -40,11 +40,7 @@ const AddressDetailPage = () => {
   };
 
   const setUserLocationHandler = () => {
-    // sessionStorage.setItem(
-    //   'loc',
-    //   JSON.stringify({ ...tempLocation, ...availableDestination })
-    // );
-    router.push('/category');
+    router.push('/home');
   };
 
   useEffect(() => {

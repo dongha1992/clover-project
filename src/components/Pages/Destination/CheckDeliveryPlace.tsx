@@ -14,7 +14,7 @@ const CheckDeliveryPlace = () => {
   const [deliveryStatus, setDeliveryStatus] = useState('');
 
   const { isLoading } = useSelector(commonSelector);
-  const { tempLocation } = useSelector(destinationForm);
+  const { userLocation } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
 
@@ -26,9 +26,9 @@ const CheckDeliveryPlace = () => {
     dispatch(SET_IS_LOADING(true));
 
     const params = {
-      jibunAddress: tempLocation.jibunAddr,
-      roadAddress: tempLocation.roadAddr,
-      zipCode: tempLocation.zipNo,
+      jibunAddress: userLocation.jibunAddr,
+      roadAddress: userLocation.roadAddr,
+      zipCode: userLocation.zipNo,
       delivery: null,
     };
     try {
