@@ -11,7 +11,7 @@ import { searchAddressJuso } from '@api/search';
 import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
-import { SET_LOCATION_TEMP } from '@store/destination';
+import { SET_LOCATION } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 
 /* TODO: geolocation 에러케이스 추가 */
@@ -91,7 +91,7 @@ const LocationPage = () => {
   };
 
   const goToMapScreen = (address: any): void => {
-    dispatch(SET_LOCATION_TEMP(address));
+    dispatch(SET_LOCATION(address));
     router.push('/location/address-detail');
   };
 

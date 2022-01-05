@@ -16,32 +16,6 @@ import { destinationForm } from '@store/destination';
 const HomeHeader = () => {
   const { userLocation, availableDestination } = useSelector(destinationForm);
 
-  const [userlocation, setUserLocation] = useState<IJuso>({
-    roadAddr: '',
-    roadAddrPart1: '',
-    roadAddrPart2: '',
-    jibunAddr: '',
-    engAddr: '',
-    zipNo: '',
-    admCd: '',
-    rnMgtSn: '',
-    bdMgtSn: '',
-    detBdNmList: '',
-    bdNm: '',
-    bdKdcd: '',
-    siNm: '',
-    sggNm: '',
-    emdNm: '',
-    liNm: '',
-    rn: '',
-    udrtYn: '',
-    buldMnnm: '',
-    buldSlno: '',
-    mtYn: '',
-    lnbrMnnm: '',
-    lnbrSlno: '',
-    emdNo: '',
-  });
   const [deliveryStatus, setDeliveryStatus] = useState('');
 
   const mapper: Obj = {
@@ -52,22 +26,7 @@ const HomeHeader = () => {
   };
 
   useEffect(() => {
-    try {
-      // const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
-      // const availabilityDestination =
-      //   JSON.parse(sessionStorage.getItem('availabilityDestination') ?? '{}') ??
-      //   {};
-      // setUserLocation(data);
-
-      setDeliveryStatus(
-        checkDestinationHelper({
-          ...availableDestination,
-        })
-      );
-      console.log(userLocation, ' console.log(userLocation);');
-    } catch (error) {
-      console.error(error);
-    }
+    setDeliveryStatus(checkDestinationHelper(availableDestination));
   }, []);
 
   const goToCart = () => {
@@ -89,8 +48,8 @@ const HomeHeader = () => {
             </Link>
             {userLocation?.emdNm && (
               <Tooltip
-                message={mapper[deliveryStatus].text}
-                width={mapper[deliveryStatus].width}
+                message={mapper[deliveryStatus]?.text}
+                width={mapper[deliveryStatus]?.width}
               />
             )}
           </AddressWrapper>

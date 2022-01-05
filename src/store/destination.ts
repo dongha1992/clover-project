@@ -5,7 +5,7 @@ import { stat } from 'fs';
 
 interface TProps {
   userDestination: IJuso;
-  tempLocation: IJuso;
+  userLocation: IJuso;
   availableDestination: IAvailableDestination;
 }
 
@@ -42,7 +42,7 @@ const INITIAL_STATE: TProps = {
     lnbrSlno: null,
     emdNo: null,
   },
-  tempLocation: {
+  userLocation: {
     roadAddr: null,
     roadAddrPart1: null,
     roadAddrPart2: null,
@@ -82,8 +82,8 @@ export const destination = createSlice({
     SET_DESTINATION: (state, action: PayloadAction<IJuso>) => {
       state.userDestination = action.payload;
     },
-    SET_LOCATION_TEMP: (state, action: PayloadAction<IJuso>) => {
-      state.tempLocation = action.payload;
+    SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
+      state.userLocation = action.payload;
     },
     SET_AVAILABLE_DESTINAION: (
       state,
@@ -94,7 +94,7 @@ export const destination = createSlice({
   },
 });
 
-export const { SET_DESTINATION, SET_LOCATION_TEMP, SET_AVAILABLE_DESTINAION } =
+export const { SET_DESTINATION, SET_LOCATION, SET_AVAILABLE_DESTINAION } =
   destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;
