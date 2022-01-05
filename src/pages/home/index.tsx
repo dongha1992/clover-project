@@ -20,12 +20,4 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store: any) => async (context: any) => {
-    return {
-      props: {},
-    };
-  }
-);
-
 export default HomePage;
