@@ -8,9 +8,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { CheckDeliveryPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
+import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
 
 const AddressDetailPage = () => {
-  const { userLocation, availableDestination } = useSelector(destinationForm);
+  const { tempLocation, availableDestination } = useSelector(destinationForm);
+
+  const dispatch = useDispatch();
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
@@ -19,7 +22,7 @@ const AddressDetailPage = () => {
 
   const getLonLanForMap = async () => {
     const params = {
-      query: userLocation.roadAddrPart1,
+      query: tempLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -40,6 +43,8 @@ const AddressDetailPage = () => {
   };
 
   const setUserLocationHandler = () => {
+    dispatch(SET_LOCATION(tempLocation));
+    dispatch(INIT_LOCATION_TEMP());
     router.push('/home');
   };
 
