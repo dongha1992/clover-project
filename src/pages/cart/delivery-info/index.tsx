@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -8,8 +8,10 @@ import BorderLine from '@components/Shared/BorderLine';
 import Checkbox from '@components/Shared/Checkbox';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
+import { destinationForm } from '@store/destination';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -76,7 +78,12 @@ const pickupPlace = {
 
 const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<number>(1);
+  const { availableDestination } = useSelector(destinationForm);
+
   const dispatch = useDispatch();
+
+  const deliveryType = checkDestinationHelper(availableDestination);
+  console.log(deliveryType, 'd');
 
   const checkTermHandler = () => {};
 
