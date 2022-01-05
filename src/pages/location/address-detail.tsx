@@ -4,46 +4,22 @@ import { fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { CheckDeliveryPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 
 const AddressDetailPage = () => {
+  const { tempLocation, availableDestination } = useSelector(destinationForm);
+
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
   });
-  const [userLocation, setUserLocation] = useState({
-    roadAddr: '',
-    roadAddrPart1: '',
-    roadAddrPart2: '',
-    jibunAddr: '',
-    engAddr: '',
-    zipNo: '',
-    admCd: '',
-    rnMgtSn: '',
-    bdMgtSn: '',
-    detBdNmList: '',
-    bdNm: '',
-    bdKdcd: '',
-    siNm: '',
-    sggNm: '',
-    emdNm: '',
-    liNm: '',
-    rn: '',
-    udrtYn: '',
-    buldMnnm: '',
-    buldSlno: '',
-    mtYn: '',
-    lnbrMnnm: '',
-    lnbrSlno: '',
-    emdNo: '',
-  });
 
-  const getLonLanForMap = async (userLocation: any) => {
+  const getLonLanForMap = async () => {
     const params = {
-      query: userLocation.roadAddrPart1,
+      query: tempLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -63,19 +39,16 @@ const AddressDetailPage = () => {
     } catch (error) {}
   };
 
-  const setUserLocationInLocal = () => {
-    sessionStorage.setItem('loc', JSON.stringify(userLocation));
-    router.push('/home');
+  const setUserLocationHandler = () => {
+    // sessionStorage.setItem(
+    //   'loc',
+    //   JSON.stringify({ ...tempLocation, ...availableDestination })
+    // );
+    router.push('/category');
   };
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-      getLonLanForMap(data);
-    } catch (error) {
-      console.error(error);
-    }
+    getLonLanForMap();
   }, []);
 
   return (
@@ -92,7 +65,7 @@ const AddressDetailPage = () => {
           width="100%"
           height="100%"
           borderRadius="0"
-          onClick={setUserLocationInLocal}
+          onClick={setUserLocationHandler}
         >
           설정하기
         </Button>

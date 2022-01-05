@@ -19,8 +19,9 @@ import destination from './destination';
 import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
 
 // persist
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import storageSession from 'redux-persist/lib/storage/session';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
@@ -76,7 +77,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      blacklist: ["toast"],
+      blacklist: ['toast', 'dropdown', 'common', 'bottomSheet', 'alert'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -88,10 +89,9 @@ const makeStore = (context: any) => {
       devTools: isDev,
     });
 
-    return store
+    return store;
   }
-}
-
+};
 
 export const wrapper = createWrapper(makeStore, {
   debug: isDev,

@@ -6,6 +6,7 @@ import { availabilityDestination } from '@api/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { useSelector, useDispatch } from 'react-redux';
 import { commonSelector, SET_IS_LOADING } from '@store/common';
+import { destinationForm, SET_AVAILABLE_DESTINAION } from '@store/destination';
 
 /* TODO: spot 추가 되어야 함 */
 
@@ -13,6 +14,8 @@ const CheckDeliveryPlace = () => {
   const [deliveryStatus, setDeliveryStatus] = useState('');
 
   const { isLoading } = useSelector(commonSelector);
+  const { tempLocation } = useSelector(destinationForm);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,12 +24,11 @@ const CheckDeliveryPlace = () => {
 
   const checkAvailablePlace = async () => {
     dispatch(SET_IS_LOADING(true));
-    const userLocation =
-      JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
+
     const params = {
-      jibunAddress: userLocation.jibunAddr,
-      roadAddress: userLocation.roadAddr,
-      zipCode: userLocation.zipNo,
+      jibunAddress: tempLocation.jibunAddr,
+      roadAddress: tempLocation.roadAddr,
+      zipCode: tempLocation.zipNo,
       delivery: null,
     };
     try {
@@ -38,10 +40,8 @@ const CheckDeliveryPlace = () => {
           parcel,
           quick,
         };
-        sessionStorage.setItem(
-          'availabilityDestination',
-          JSON.stringify({ ...deliveryStatusObj })
-        );
+
+        dispatch(SET_AVAILABLE_DESTINAION({ ...deliveryStatusObj }));
 
         setDeliveryStatus(
           checkDestinationHelper({
