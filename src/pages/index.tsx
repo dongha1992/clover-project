@@ -327,15 +327,6 @@ const TagWrapper = styled.div<{ left?: number }>`
   }
 `;
 
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store: any) => async (context: any) => {
-    // await setRefreshToken(context, store);
-    return {
-      props: {},
-    };
-  }
-);
-
 // OnBoarding.getInitialProps = wrapper.getInitialPageProps(
 //   (store) =>
 //     async ({ context, ctx }: any) => {
