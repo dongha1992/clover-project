@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import { Button } from '@components/Shared/Button';
-import { fixedBottom, FlexCol, FlexRow, FlexRowStart } from '@styles/theme';
-import { TextH5B, TextB3R, TextB2R, TextH6B } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
+import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
@@ -14,35 +13,11 @@ import { getLonLatFromAddress } from '@api/location';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 
 const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
-  const [userLocation, setUserLocation] = useState({
-    roadAddr: '',
-    roadAddrPart1: '',
-    roadAddrPart2: '',
-    jibunAddr: '',
-    engAddr: '',
-    zipNo: '',
-    admCd: '',
-    rnMgtSn: '',
-    bdMgtSn: '',
-    detBdNmList: '',
-    bdNm: '',
-    bdKdcd: '',
-    siNm: '',
-    sggNm: '',
-    emdNm: '',
-    liNm: '',
-    rn: '',
-    udrtYn: '',
-    buldMnnm: '',
-    buldSlno: '',
-    mtYn: '',
-    lnbrMnnm: '',
-    lnbrSlno: '',
-    emdNo: '',
-  });
+
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
@@ -51,18 +26,11 @@ const DestinationDetailPage = () => {
   const destinationNameRef = useRef<HTMLInputElement>(null);
   const destinationDetailRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    try {
-      const data = JSON.parse(sessionStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const { userLocation, availableDestination } = useSelector(destinationForm);
 
   useEffect(() => {
     getLonLanForMap();
-  });
+  }, []);
 
   const getLonLanForMap = async () => {
     const params = {
@@ -87,33 +55,38 @@ const DestinationDetailPage = () => {
   };
 
   const getDestination = async () => {
+    const deliveryType = checkDestinationHelper(availableDestination);
+    const canNotDelivery = deliveryType === 'noDelivery';
+
     if (destinationDetailRef.current && destinationNameRef.current) {
-      const addressDetail = destinationDetailRef.current.value;
-      const name = destinationNameRef.current.value;
+      const addressDetail = destinationDetailRef.current.value.toString();
+      const name = destinationNameRef.current.value.toString();
 
       const reqBody = {
-        // address: userLocation.roadAddrPart1,
-        // addressDetail,
-        // delivery: 'MORNING',
-        // deliveryMessage: '',
-        // dong: userLocation.emdNm,
-        // main: false,
-        // name,
-        // receiverName: '',
-        // receiverTel: '',
-        // zipCode: userLocation.zipNo,
-        address: '서울 송파구 거마로2길 34',
         addressDetail,
-        delivery: 'SPOT',
-        deliveryMessage: '1',
-        dong: userLocation.emdNm,
-        main: false,
         name,
-        receiverName: '집',
-        receiverTel: '01012341234',
+        address: userLocation.roadAddrPart1,
+        delivery: canNotDelivery ? '' : deliveryType.toUpperCase(),
+        deliveryMessage: '테스트',
+        dong: userLocation.emdNm,
+        main: isDefaultDestination,
+        receiverName: '테스트1',
+        receiverTel: '010-1234-1234',
         zipCode: userLocation.zipNo,
+        // address: '서울 송파구 거마로2길 34',
+        // addressDetail,
+        // delivery: 'QUICK',
+        // deliveryMessage: 'AAA',
+        // dong: userLocation.emdNm,
+        // main: true,
+        // name,
+        // receiverName: '집',
+        // receiverTel: '01012341234',
+        // zipCode: userLocation.zipNo,
       };
+      console.log(reqBody, 'reqBody');
       const { data } = await destinationRegister(reqBody);
+      console.log(data);
       router.push('cart/delivery-info');
     }
   };

@@ -201,9 +201,9 @@ export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 export interface IRegisterDestination {
   address: string | null;
   addressDetail: string;
-  delivery: string;
+  delivery?: string;
   deliveryMessage?: string;
-  dong?: string;
+  dong?: string | null;
   main: boolean;
   name: string;
   receiverName?: string;
