@@ -11,8 +11,12 @@ import router from 'next/router';
 import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
 import AddressItem from '@components/Pages/Location/AddressItem';
-import { useSelector } from 'react-redux';
-import { destinationForm } from '@store/destination';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  destinationForm,
+  INIT_LOCATION_TEMP,
+  SET_DESTINATION,
+} from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 
 const DestinationDetailPage = () => {
@@ -26,7 +30,8 @@ const DestinationDetailPage = () => {
   const destinationNameRef = useRef<HTMLInputElement>(null);
   const destinationDetailRef = useRef<HTMLInputElement>(null);
 
-  const { userLocation, availableDestination } = useSelector(destinationForm);
+  const dispatch = useDispatch();
+  const { tempLocation, availableDestination } = useSelector(destinationForm);
 
   useEffect(() => {
     getLonLanForMap();
@@ -34,7 +39,7 @@ const DestinationDetailPage = () => {
 
   const getLonLanForMap = async () => {
     const params = {
-      query: userLocation.roadAddrPart1,
+      query: tempLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -65,33 +70,26 @@ const DestinationDetailPage = () => {
       const reqBody = {
         addressDetail,
         name,
-        address: userLocation.roadAddrPart1,
+        address: tempLocation.roadAddrPart1,
         delivery: canNotDelivery ? '' : deliveryType.toUpperCase(),
         deliveryMessage: '테스트',
-        dong: userLocation.emdNm,
+        dong: tempLocation.emdNm,
         main: isDefaultDestination,
         receiverName: '테스트1',
-        receiverTel: '010-1234-1234',
-        zipCode: userLocation.zipNo,
-        // address: '서울 송파구 거마로2길 34',
-        // addressDetail,
-        // delivery: 'QUICK',
-        // deliveryMessage: 'AAA',
-        // dong: userLocation.emdNm,
-        // main: true,
-        // name,
-        // receiverName: '집',
-        // receiverTel: '01012341234',
-        // zipCode: userLocation.zipNo,
+        receiverTel: '01012341234',
+        zipCode: tempLocation.zipNo,
       };
-      console.log(reqBody, 'reqBody');
+
       const { data } = await destinationRegister(reqBody);
-      console.log(data);
-      router.push('cart/delivery-info');
+
+      dispatch(SET_DESTINATION(tempLocation));
+      dispatch(INIT_LOCATION_TEMP());
+
+      router.push('/cart/delivery-info');
     }
   };
 
-  if (!Object.keys(userLocation).length) {
+  if (!Object.keys(tempLocation).length) {
     return;
   }
 
@@ -107,10 +105,10 @@ const DestinationDetailPage = () => {
       <DestinationInfoWrarpper>
         <FlexCol>
           <AddressItem
-            roadAddr={userLocation.roadAddrPart1}
-            bdNm={userLocation.bdNm}
-            jibunAddr={userLocation.jibunAddr}
-            zipNo={userLocation.zipNo}
+            roadAddr={tempLocation.roadAddrPart1}
+            bdNm={tempLocation.bdNm}
+            jibunAddr={tempLocation.jibunAddr}
+            zipNo={tempLocation.zipNo}
           />
         </FlexCol>
         <TextInput

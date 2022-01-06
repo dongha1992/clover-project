@@ -78,12 +78,22 @@ const pickupPlace = {
 
 const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<number>(1);
-  const { availableDestination } = useSelector(destinationForm);
+  const { userLocation, availableDestination } = useSelector(destinationForm);
+
+  const hasUserLocation =
+    Object.values(userLocation).filter((val) => val).length > 0;
+  const deliveryType =
+    hasUserLocation && checkDestinationHelper(availableDestination);
 
   const dispatch = useDispatch();
 
-  const deliveryType = checkDestinationHelper(availableDestination);
-  console.log(deliveryType, 'd');
+  // 1스팟, 2새벽, 3택배, 4퀵
+  const mapper = {
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+  };
 
   const checkTermHandler = () => {};
 
