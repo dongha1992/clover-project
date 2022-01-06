@@ -80,6 +80,7 @@ const Header = () => {
         '/destination/search': '배송지 검색',
         '/destination/destination-detail': '배송지 검색',
         '/spot/search/location': '프코스팟 검색',
+        '/spot/status': '스팟 관리',
       };
 
       const title = headerTitleMap[currentPath];
@@ -122,7 +123,7 @@ const Header = () => {
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
-        case ['/spot/register', '/spot/register/spot-onboarding' ].includes(currentPath): {
+        case ['/spot/register', '/spot/register/spot-onboarding'].includes(currentPath): {
           return <SpotRegisterHeader title={title} />;
         }
         case ['/spot/register/submit/finish'].includes(currentPath): {
