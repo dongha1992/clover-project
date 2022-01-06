@@ -77,7 +77,7 @@ const pickupPlace = {
 };
 
 const DeliverInfoPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState<number>(1);
+  const [selectedMethod, setSelectedMethod] = useState<string>('spot');
   const { userLocation, availableDestination } = useSelector(destinationForm);
 
   const hasUserLocation =
@@ -85,11 +85,16 @@ const DeliverInfoPage = () => {
   const deliveryType =
     hasUserLocation && checkDestinationHelper(availableDestination);
 
+  console.log(deliveryType);
   const dispatch = useDispatch();
 
   // 1스팟, 2새벽, 3택배, 4퀵
   const mapper = {
-    1: {},
+    1: {
+      morning: {},
+      quick: {},
+      parcel: {},
+    },
     2: {},
     3: {},
     4: {},
@@ -98,7 +103,7 @@ const DeliverInfoPage = () => {
   const checkTermHandler = () => {};
 
   const goToFindAddress = () => {
-    if (selectedMethod === 1) {
+    if (selectedMethod === 'spot') {
       router.push('/spot/search');
     } else {
       router.push('/destination/search');
@@ -106,8 +111,8 @@ const DeliverInfoPage = () => {
   };
 
   const changeMethodHandler = useCallback(
-    (id: number) => {
-      setSelectedMethod(id);
+    (value: string) => {
+      setSelectedMethod(value);
     },
     [selectedMethod]
   );
@@ -119,7 +124,7 @@ const DeliverInfoPage = () => {
 
   const placeInfoRender = () => {
     switch (selectedMethod) {
-      case 1: {
+      case 'spot': {
         return <PickupPlaceBox />;
       }
 
@@ -129,8 +134,14 @@ const DeliverInfoPage = () => {
     }
   };
 
-  const isSpotPickupPlace = selectedMethod === 1;
+  const tooltipRender = () => {
+    console.log(selectedMethod);
+  };
+
+  const isSpotPickupPlace = selectedMethod === 'spot';
   const hasDeliverPlace = Object.keys(pickupPlace).length > 0;
+
+  //  <Tooltip message={'새벽배송이 가능해요'} top="25px" width="160px" />;
 
   return (
     <Container>
@@ -141,14 +152,14 @@ const DeliverInfoPage = () => {
             픽업
           </TextH5B>
           {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
-            const isSelected = selectedMethod === item.id;
+            const isSelected = selectedMethod === item.value;
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
                   <RadioWrapper>
                     <RadioButton
                       isSelected={isSelected}
-                      onChange={() => changeMethodHandler(item.id)}
+                      onChange={() => changeMethodHandler(item.value)}
                     />
                   </RadioWrapper>
                   <Content>
@@ -164,14 +175,8 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {isSelected && (
-                        <Tooltip
-                          message={'새벽배송이 가능해요'}
-                          top="25px"
-                          width="160px"
-                        />
-                      )}
-                      {index === 2 && (
+                      {isSelected && tooltipRender()}
+                      {index === 0 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
                         </TextH6B>
@@ -195,13 +200,14 @@ const DeliverInfoPage = () => {
             배송
           </TextH5B>
           {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
+            const isSelected = selectedMethod === item.value;
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
                   <RadioWrapper>
                     <RadioButton
-                      isSelected={selectedMethod === item.id}
-                      onChange={() => changeMethodHandler(item.id)}
+                      isSelected={isSelected}
+                      onChange={() => changeMethodHandler(item.value)}
                     />
                   </RadioWrapper>
                   <Content>
@@ -217,7 +223,8 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {index === 2 && (
+                      {isSelected && tooltipRender()}
+                      {index === 1 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
                         </TextH6B>
