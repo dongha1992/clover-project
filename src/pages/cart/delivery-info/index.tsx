@@ -82,23 +82,11 @@ const DeliverInfoPage = () => {
 
   const hasUserLocation =
     Object.values(userLocation).filter((val) => val).length > 0;
-  const deliveryType =
-    hasUserLocation && checkDestinationHelper(availableDestination);
+  // let deliveryType =
+  //   hasUserLocation && checkDestinationHelper(availableDestination);
+  let deliveryType = 'noDelivery';
 
-  console.log(deliveryType);
   const dispatch = useDispatch();
-
-  // 1스팟, 2새벽, 3택배, 4퀵
-  const mapper = {
-    1: {
-      morning: {},
-      quick: {},
-      parcel: {},
-    },
-    2: {},
-    3: {},
-    4: {},
-  };
 
   const checkTermHandler = () => {};
 
@@ -135,13 +123,81 @@ const DeliverInfoPage = () => {
   };
 
   const tooltipRender = () => {
-    console.log(selectedMethod);
+    const userSelectParcel = deliveryType === 'parcel';
+    const userSelectNoQuick = deliveryType === 'noQuick';
+    const userSelectNothing = deliveryType === 'noDelivery';
+
+    if (userSelectNothing) {
+      return;
+    }
+
+    switch (selectedMethod) {
+      case 'morning': {
+        if (userSelectParcel) {
+          setSelectedMethod('parcel');
+          return (
+            <Tooltip
+              message="택배배송만 가능한 지역입니다."
+              top="25px"
+              width="190px"
+            />
+          );
+        } else {
+          return (
+            <Tooltip message="새벽배송 지역입니다." top="25px" width="150px" />
+          );
+        }
+      }
+      case 'parcel': {
+        if (userSelectParcel) {
+          return (
+            <Tooltip
+              message="택배배송만 가능한 지역입니다."
+              top="25px"
+              width="190px"
+            />
+          );
+        } else {
+          return (
+            <Tooltip
+              message="새벽/택배배송이 가능한 지역입니다."
+              top="25px"
+              width="210px"
+            />
+          );
+        }
+      }
+      case 'quick': {
+        if (userSelectParcel) {
+          setSelectedMethod('parcel');
+          return (
+            <Tooltip
+              message="택배배송만 가능한 지역입니다."
+              top="25px"
+              width="190px"
+            />
+          );
+        } else if (userSelectNoQuick) {
+          setSelectedMethod('morning');
+          return (
+            <Tooltip message="새벽배송 지역입니다." top="25px" width="160px" />
+          );
+        } else {
+          return (
+            <Tooltip
+              message="퀵/새벽배송이 가능한 지역입니다."
+              top="25px"
+              width="200px"
+            />
+          );
+        }
+      }
+    }
   };
 
+  //temp
   const isSpotPickupPlace = selectedMethod === 'spot';
   const hasDeliverPlace = Object.keys(pickupPlace).length > 0;
-
-  //  <Tooltip message={'새벽배송이 가능해요'} top="25px" width="160px" />;
 
   return (
     <Container>
@@ -175,7 +231,6 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {isSelected && tooltipRender()}
                       {index === 0 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전

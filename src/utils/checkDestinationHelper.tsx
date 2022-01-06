@@ -6,21 +6,22 @@ interface IProps {
   parcel: boolean;
 }
 
-type TReturnType = 'morning' | 'quick' | 'parcel' | 'noDelivery';
+type TReturnType = 'morning' | 'quick' | 'parcel' | 'noDelivery' | 'noQuick';
 
 export const checkDestinationHelper = ({
   morning,
   quick,
   parcel,
 }: IProps): TReturnType => {
-  if (!morning && !quick && !parcel) {
-    return;
-  }
+  /*TODO: morning, quick, pacel 값이 아예 없을때 방어로직. 경우 어떤 경우 있나 고민 */
 
   switch (true) {
-    case morning && quick && parcel:
-    case morning && parcel: {
+    case morning && quick && parcel: {
       return 'morning';
+    }
+
+    case morning && parcel && !quick: {
+      return 'noQuick';
     }
 
     case quick: {

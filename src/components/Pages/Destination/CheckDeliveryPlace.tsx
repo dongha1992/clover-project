@@ -112,6 +112,7 @@ const CheckDeliveryPlace = () => {
           </>
         );
       }
+      case 'noQuick':
       case 'morning': {
         return (
           <>
