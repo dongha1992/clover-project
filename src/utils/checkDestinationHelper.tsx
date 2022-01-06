@@ -13,6 +13,9 @@ export const checkDestinationHelper = ({
   quick,
   parcel,
 }: IProps): TReturnType => {
+  if (!morning && !quick && !parcel) {
+    return;
+  }
   switch (true) {
     case morning && quick && parcel:
     case morning && parcel: {
