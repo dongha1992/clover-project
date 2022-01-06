@@ -165,7 +165,7 @@ const CardRegisterPage = () => {
 
       const cardData = {
         birthDate: '1992-05-22',
-        corporationNo: corporationNo ? corporationNo : null,
+        corporationNo: corporationNo ? corporationNo : '',
         expiredMM,
         expiredYY,
         main: isMainCard,
