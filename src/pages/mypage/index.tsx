@@ -121,7 +121,7 @@ const MypagePage = () => {
         </OrderAndDeliveryWrapper>
         <ManageWrapper>
           <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
-          <MypageMenu title="스팟 관리" link="/mypage/spot" />
+          <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
           <MypageMenu title="후기 관리" link="/mypage/review" />
           <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
           <MypageMenu title="친구 초대" link="/mypage/friend" count={1} />
@@ -159,7 +159,7 @@ export const MypageMenu = React.memo(
       '친구 초대': '명',
     };
     return (
-      <FlexCol padding="0 24px">
+      <FlexCol padding="0 24px" onClick={() => router.push(link)}>
         <FlexBetween>
           <TextH4B>{title}</TextH4B>
           <FlexRow>
@@ -169,7 +169,7 @@ export const MypageMenu = React.memo(
                 {mapper[title]}
               </TextB2R>
             )}
-            <div onClick={() => router.push(link)}>
+            <div>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>

@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
-import { TextB2R, TextH5B, TextH4B, TextB1R } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
+import { TextH4B, TextB1R } from '@components/Shared/Text';
 import Map from '@components/Map';
 
 const DetailBottomStoreInfo = ({ items }: any): ReactElement => {
