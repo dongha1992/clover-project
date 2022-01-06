@@ -228,22 +228,31 @@ export interface IAvilabiltyAddressResponse {
   };
 }
 
+export interface IDestinationsResponse {
+  id: number;
+  delivery: string;
+  name: string;
+  receiverTel: string;
+  location: {
+    zipCode: string;
+    address: string;
+    addressDetail: string;
+    dong: string;
+  };
+  main: boolean;
+  createdAt: string;
+}
 export interface IGetDestinationsResponse {
   code: number;
   message: string;
-  pagination: {
-    page: number;
-    size: number;
-    total: number;
-    totalPage: number;
-  };
-  pointHistories: {
-    content: string;
-    createdAt: string;
-    expiredDate: string;
-    id: number;
-    type: string;
-    value: number[];
+  data: {
+    destinations: IDestinationsResponse[];
+    pagination: {
+      page: number;
+      size: number;
+      total: number;
+      totalPage: number;
+    };
   };
 }
 
@@ -267,15 +276,15 @@ export interface IEditDestination {
 }
 
 export interface IGetMainDestinations {
-  delivery: string | null;
+  // delivery: string | null;
+  page?: number;
+  size?: number;
 }
+
 export interface IGetMainDestinationsResponse {
-  content: string;
-  createdAt: string;
-  expiredDate: string;
-  id: number;
-  type: string;
-  value: number[];
+  code: number;
+  message: string;
+  data: IDestinationsResponse;
 }
 
 export interface IKakaoAddress {

@@ -28,6 +28,7 @@ interface IDeliveryMethod {
 
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
+/* TODO: 타이머 기능 */
 
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -82,9 +83,8 @@ const DeliverInfoPage = () => {
 
   const hasUserLocation =
     Object.values(userLocation).filter((val) => val).length > 0;
-  // let deliveryType =
-  //   hasUserLocation && checkDestinationHelper(availableDestination);
-  let deliveryType = 'noDelivery';
+  let deliveryType =
+    hasUserLocation && checkDestinationHelper(availableDestination);
 
   const dispatch = useDispatch();
 
