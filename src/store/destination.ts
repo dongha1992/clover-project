@@ -3,7 +3,6 @@ import { AppState } from '.';
 import { IJuso } from '@model/index';
 
 interface TProps {
-  tempDestination: IJuso;
   userDestination: IJuso;
   tempLocation: IJuso;
   userLocation: IJuso;
@@ -43,9 +42,6 @@ const locationState = {
 };
 
 const INITIAL_STATE: TProps = {
-  tempDestination: {
-    ...locationState,
-  },
   userDestination: {
     ...locationState,
   },
@@ -69,9 +65,6 @@ export const destination = createSlice({
     SET_DESTINATION: (state, action: PayloadAction<IJuso>) => {
       state.userDestination = action.payload;
     },
-    SET_DESTINATION_TEMP: (state, action: PayloadAction<IJuso>) => {
-      state.tempDestination = action.payload;
-    },
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
     },
@@ -92,7 +85,6 @@ export const destination = createSlice({
 
 export const {
   SET_DESTINATION,
-  SET_DESTINATION_TEMP,
   SET_LOCATION,
   SET_LOCATION_TEMP,
   SET_AVAILABLE_DESTINAION,
