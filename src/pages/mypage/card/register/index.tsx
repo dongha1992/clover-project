@@ -165,7 +165,7 @@ const CardRegisterPage = () => {
 
       const cardData = {
         birthDate: '1992-05-22',
-        corporationNo: corporationNo ? corporationNo : '',
+        corporationNo: corporationNo ? corporationNo : null,
         expiredMM,
         expiredYY,
         main: isMainCard,
@@ -175,15 +175,27 @@ const CardRegisterPage = () => {
         type,
       };
 
-      const { data } = await registerCard(cardData);
-      console.log(data);
-      dispatch(
-        setAlert({
-          alertMessage: disabledMsg,
-          onSubmit: () => {},
-          submitBtnText: '확인',
-        })
-      );
+      try {
+        const { data } = await registerCard(cardData);
+        console.log(data);
+
+        dispatch(
+          setAlert({
+            alertMessage: successMsg,
+            onSubmit: () => {},
+            submitBtnText: '확인',
+          })
+        );
+      } catch (error) {
+        console.error(error);
+        dispatch(
+          setAlert({
+            alertMessage: disabledMsg,
+            onSubmit: () => {},
+            submitBtnText: '확인',
+          })
+        );
+      }
     }
   };
 
@@ -238,7 +250,7 @@ const CardRegisterPage = () => {
             />
             <div className="secondDash" />
             <input
-              type="number"
+              type="password"
               placeholder="0000"
               id="number3"
               name="number3"
@@ -249,7 +261,7 @@ const CardRegisterPage = () => {
             />
             <div className="thirdDash" />
             <input
-              type="number"
+              type="password"
               placeholder="0000"
               id="number4"
               name="number4"

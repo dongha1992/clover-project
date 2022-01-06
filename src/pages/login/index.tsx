@@ -188,4 +188,6 @@ const Col = styled.div`
   margin: 0 8px;
 `;
 
+const SignupBtnWrapper = styled.div``;
+
 export default LoginPage;
