@@ -16,6 +16,7 @@ export const checkDestinationHelper = ({
   if (!morning && !quick && !parcel) {
     return;
   }
+
   switch (true) {
     case morning && quick && parcel:
     case morning && parcel: {
