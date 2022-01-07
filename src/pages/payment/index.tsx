@@ -22,7 +22,7 @@ import {
   TextH5B,
 } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import Button from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
