@@ -15,7 +15,8 @@ import { destinationForm } from '@store/destination';
 const HomeHeader = () => {
   const { userLocation, availableDestination } = useSelector(destinationForm);
 
-  const [deliveryStatus, setDeliveryStatus] = useState('');
+  const [formatAvailableDestination, setFormatAvailableDestination] =
+    useState('');
 
   const mapper: Obj = {
     morning: { text: '새벽배송이 가능해요!', width: '150px' },
@@ -25,7 +26,7 @@ const HomeHeader = () => {
   };
 
   useEffect(() => {
-    setDeliveryStatus(checkDestinationHelper(availableDestination));
+    setFormatAvailableDestination(checkDestinationHelper(availableDestination));
   }, []);
 
   const goToCart = () => {
@@ -47,8 +48,8 @@ const HomeHeader = () => {
             </Link>
             {userLocation?.emdNm && (
               <Tooltip
-                message={mapper[deliveryStatus]?.text}
-                width={mapper[deliveryStatus]?.width}
+                message={mapper[formatAvailableDestination]?.text}
+                width={mapper[formatAvailableDestination]?.width}
               />
             )}
           </AddressWrapper>

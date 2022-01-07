@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { IRegisterDestination } from '@model/index';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -69,24 +70,29 @@ const DELIVERY_METHOD: any = {
   ],
 };
 
-const pickupPlace = {
-  // name: '헤이그라운드 서울숲점',
-  // spaceType: '프라이빗',
-  // address: '서울 성동구 왕십리로 115 10층',
-  // type: '픽업',
-  // availableTime: '12:00-12:30 / 15:30-18:00',
-};
+const recentDestination = false;
 
 const DeliverInfoPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState<string>('spot');
-  const { userLocation, availableDestination } = useSelector(destinationForm);
+  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const {
+    userLocation,
+    availableDestination,
+    destinationStatus,
+    userDestination,
+  } = useSelector(destinationForm);
 
   const hasUserLocation =
     Object.values(userLocation).filter((val) => val).length > 0;
-  let deliveryType =
+  let destinationType =
     hasUserLocation && checkDestinationHelper(availableDestination);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!hasUserLocation && destinationStatus) {
+      setSelectedMethod(destinationStatus);
+    }
+  }, []);
 
   const checkTermHandler = () => {};
 
@@ -117,15 +123,15 @@ const DeliverInfoPage = () => {
       }
 
       default: {
-        return <DeliveryPlaceBox />;
+        return <DeliveryPlaceBox place={userDestination} />;
       }
     }
   };
 
   const tooltipRender = () => {
-    const userSelectParcel = deliveryType === 'parcel';
-    const userSelectNoQuick = deliveryType === 'noQuick';
-    const userSelectNothing = deliveryType === 'noDelivery';
+    const userSelectParcel = destinationType === 'parcel';
+    const userSelectNoQuick = destinationType === 'noQuick';
+    const userSelectNothing = destinationType === 'noDelivery';
 
     if (userSelectNothing) {
       return;
@@ -192,12 +198,15 @@ const DeliverInfoPage = () => {
           );
         }
       }
+      default: {
+        return '';
+      }
     }
   };
 
-  //temp
   const isSpotPickupPlace = selectedMethod === 'spot';
-  const hasDeliverPlace = Object.keys(pickupPlace).length > 0;
+  const hasUserSelectDestination =
+    Object.values(userDestination).filter((item) => item).length > 0;
 
   return (
     <Container>
@@ -304,24 +313,26 @@ const DeliverInfoPage = () => {
           <TextH3B padding="0 0 14px 0">
             {isSpotPickupPlace ? '픽업장소' : '배송지'}
           </TextH3B>
-          {hasDeliverPlace && (
-            <TextH6B
-              textDecoration="underline"
-              color={theme.greyScale65}
-              onClick={goToFindAddress}
-            >
-              변경하기
-            </TextH6B>
-          )}
+          {recentDestination ||
+            (hasUserSelectDestination && (
+              <TextH6B
+                textDecoration="underline"
+                color={theme.greyScale65}
+                onClick={goToFindAddress}
+              >
+                변경하기
+              </TextH6B>
+            ))}
         </FlexBetween>
-        {hasDeliverPlace ? placeInfoRender() : ''}
-        {!hasDeliverPlace && (
-          <BtnWrapper onClick={goToFindAddress}>
-            <Button backgroundColor={theme.white} color={theme.black} border>
-              {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
-            </Button>
-          </BtnWrapper>
-        )}
+        {recentDestination || hasUserSelectDestination ? placeInfoRender() : ''}
+        {!recentDestination ||
+          (!hasUserSelectDestination && (
+            <BtnWrapper onClick={goToFindAddress}>
+              <Button backgroundColor={theme.white} color={theme.black} border>
+                {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
+              </Button>
+            </BtnWrapper>
+          ))}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
         <Button borderRadius="0">설정하기</Button>
@@ -461,7 +472,7 @@ export const PickupPlaceBox = React.memo(
   }
 );
 
-export const DeliveryPlaceBox = React.memo((place: any) => {
+export const DeliveryPlaceBox = React.memo(({ place }: any): ReactElement => {
   return (
     <FlexCol padding="0 0 32px 0">
       <DelvieryPlaceInfo>

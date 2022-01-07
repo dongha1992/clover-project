@@ -72,6 +72,9 @@ const AddressEditPage = ({ id }: IProps) => {
 
   const dispatch = useDispatch();
 
+  const isParcel = selectedAddress?.delivery === 'PARCEL';
+  const isSpot = selectedAddress?.delivery === 'SPOT';
+
   useEffect(() => {
     getAddressItem();
   }, []);
@@ -103,7 +106,9 @@ const AddressEditPage = ({ id }: IProps) => {
   const removeAddressHandler = () => {
     dispatch(
       setAlert({
-        alertMessage: '프코스팟을 삭제하시겠어요?',
+        alertMessage: isSpot
+          ? '프코스팟을 삭제하시겠어요?'
+          : '배송지를 삭제하시겠어요?',
         onSubmit: () => removeAddress(),
         submitBtnText: '확인',
         closeBtnText: '취소',
@@ -123,6 +128,8 @@ const AddressEditPage = ({ id }: IProps) => {
   console.log(selectedAddress, 'selec');
 
   // receiverName 스웨거 수정안됨
+  // 출입방법 컬럼은?
+
   const editAddress = async () => {
     const reqBody = {
       // id,
@@ -169,9 +176,6 @@ const AddressEditPage = ({ id }: IProps) => {
   const changePickUpPlace = () => {
     dispatch(setBottomSheet({ content: <PickupSheet />, buttonTitle: '확인' }));
   };
-
-  const isParcel = selectedAddress?.delivery === 'PARCEL';
-  const isSpot = selectedAddress?.delivery === 'SPOT';
 
   return (
     <Container>

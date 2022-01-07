@@ -16,8 +16,11 @@ import {
   destinationForm,
   INIT_LOCATION_TEMP,
   SET_DESTINATION,
+  SET_DESTINATION_STATUS,
 } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+
+/* TODO: receiverName, receiverTel  */
 
 const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
@@ -60,8 +63,8 @@ const DestinationDetailPage = () => {
   };
 
   const getDestination = async () => {
-    const deliveryType = checkDestinationHelper(availableDestination);
-    const canNotDelivery = deliveryType === 'noDelivery';
+    const status = checkDestinationHelper(availableDestination);
+    const canNotDelivery = status === 'noDelivery';
 
     if (destinationDetailRef.current && destinationNameRef.current) {
       const addressDetail = destinationDetailRef.current.value.toString();
@@ -71,7 +74,7 @@ const DestinationDetailPage = () => {
         addressDetail,
         name,
         address: tempLocation.roadAddrPart1,
-        delivery: canNotDelivery ? '' : deliveryType.toUpperCase(),
+        delivery: canNotDelivery ? '' : status.toUpperCase(),
         deliveryMessage: '테스트',
         dong: tempLocation.emdNm,
         main: isDefaultDestination,
@@ -79,13 +82,18 @@ const DestinationDetailPage = () => {
         receiverTel: '01012341234',
         zipCode: tempLocation.zipNo,
       };
+      try {
+        const { data } = await destinationRegister(reqBody);
+        if (data.code === 200) {
+          dispatch(SET_DESTINATION(reqBody));
+          dispatch(SET_DESTINATION_STATUS(status));
+          dispatch(INIT_LOCATION_TEMP());
+        }
 
-      const { data } = await destinationRegister(reqBody);
-
-      dispatch(SET_DESTINATION(tempLocation));
-      dispatch(INIT_LOCATION_TEMP());
-
-      router.push('/cart/delivery-info');
+        router.push('/cart/delivery-info');
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
