@@ -6,12 +6,13 @@ import { availabilityDestination } from '@api/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { useSelector, useDispatch } from 'react-redux';
 import { commonSelector, SET_IS_LOADING } from '@store/common';
-import { destinationForm, SET_AVAILABLE_DESTINAION } from '@store/destination';
+import { destinationForm, SET_AVAILABLE_DESTINATION } from '@store/destination';
 
 /* TODO: spot 추가 되어야 함 */
 
 const CheckDeliveryPlace = () => {
-  const [deliveryStatus, setDeliveryStatus] = useState('');
+  const [formatAvailableDestination, setFormatAvailableDestination] =
+    useState('');
 
   const { isLoading } = useSelector(commonSelector);
   const { tempLocation } = useSelector(destinationForm);
@@ -35,19 +36,19 @@ const CheckDeliveryPlace = () => {
       const { data } = await availabilityDestination(params);
       if (data.code === 200) {
         const { morning, parcel, quick } = data.data;
-        const deliveryStatusObj = {
+        const availableDestinationObj = {
           morning,
           parcel,
           quick,
         };
 
-        dispatch(SET_AVAILABLE_DESTINAION({ ...deliveryStatusObj }));
+        const status = checkDestinationHelper({
+          ...availableDestinationObj,
+        });
 
-        setDeliveryStatus(
-          checkDestinationHelper({
-            ...deliveryStatusObj,
-          })
-        );
+        dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
+
+        setFormatAvailableDestination(status);
 
         dispatch(SET_IS_LOADING(false));
       }
@@ -142,7 +143,7 @@ const CheckDeliveryPlace = () => {
 
   return (
     <Container>
-      <PlaceInfo>{userPlaceInfoRender(deliveryStatus)}</PlaceInfo>
+      <PlaceInfo>{userPlaceInfoRender(formatAvailableDestination)}</PlaceInfo>
     </Container>
   );
 };

@@ -1,17 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso } from '@model/index';
+import { IJuso, IRegisterDestination } from '@model/index';
 
-interface TProps {
-  userDestination: IJuso;
-  tempLocation: IJuso;
-  userLocation: IJuso;
-  availableDestination: IAvailableDestination;
-}
 interface IAvailableDestination {
   morning: boolean;
   quick: boolean;
   parcel: boolean;
+}
+
+interface TProps {
+  userDestination: IRegisterDestination;
+  tempLocation: IJuso;
+  userLocation: IJuso;
+  availableDestination: IAvailableDestination;
+  destinationStatus: string;
 }
 
 const locationState = {
@@ -41,9 +43,22 @@ const locationState = {
   emdNo: null,
 };
 
+const destinationState = {
+  addressDetail: '',
+  name: '',
+  address: '',
+  delivery: '',
+  deliveryMessage: '',
+  dong: '',
+  main: false,
+  receiverName: '',
+  receiverTel: '',
+  zipCode: '',
+};
+
 const INITIAL_STATE: TProps = {
   userDestination: {
-    ...locationState,
+    ...destinationState,
   },
   tempLocation: {
     ...locationState,
@@ -56,13 +71,14 @@ const INITIAL_STATE: TProps = {
     quick: false,
     parcel: false,
   },
+  destinationStatus: '',
 };
 
 export const destination = createSlice({
   name: 'destination',
   initialState: INITIAL_STATE,
   reducers: {
-    SET_DESTINATION: (state, action: PayloadAction<IJuso>) => {
+    SET_DESTINATION: (state, action: PayloadAction<IRegisterDestination>) => {
       state.userDestination = action.payload;
     },
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
@@ -74,11 +90,14 @@ export const destination = createSlice({
     INIT_LOCATION_TEMP: (state, action: PayloadAction) => {
       state.tempLocation = locationState;
     },
-    SET_AVAILABLE_DESTINAION: (
+    SET_AVAILABLE_DESTINATION: (
       state,
       action: PayloadAction<IAvailableDestination>
     ) => {
       state.availableDestination = action.payload;
+    },
+    SET_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
+      state.destinationStatus = action.payload;
     },
   },
 });
@@ -87,8 +106,9 @@ export const {
   SET_DESTINATION,
   SET_LOCATION,
   SET_LOCATION_TEMP,
-  SET_AVAILABLE_DESTINAION,
+  SET_AVAILABLE_DESTINATION,
   INIT_LOCATION_TEMP,
+  SET_DESTINATION_STATUS,
 } = destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;
