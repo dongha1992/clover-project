@@ -4,12 +4,12 @@ import { TextB3R, TextH6B } from '@components/Shared/Text';
 
 type TProps = {
   option: any;
-  selectOptionHandler: any;
+  selectOptionHandler: (text: string) => void;
 };
 
 const AcessMethodOption = ({ option, selectOptionHandler }: TProps) => {
   return (
-    <OptionList onClick={() => selectOptionHandler(option)}>
+    <OptionList onClick={() => selectOptionHandler(option.text)}>
       <TextB3R>{option.text}</TextB3R>
     </OptionList>
   );

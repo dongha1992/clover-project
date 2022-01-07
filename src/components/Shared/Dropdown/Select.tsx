@@ -8,14 +8,12 @@ import { TextB2R } from '@components/Shared/Text';
 
 type TProps = {
   children: ReactNode | ReactNode[];
-  defaultValue?: string;
+  value?: string;
   placeholder?: string;
   type?: string;
 };
 
-/* TODO: 드랍다운 absolute 말고 height 차지해야함 */
-
-const Select = ({ children, defaultValue, placeholder, type }: TProps) => {
+const Select = ({ children, value, placeholder, type }: TProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
 
@@ -36,9 +34,9 @@ const Select = ({ children, defaultValue, placeholder, type }: TProps) => {
       <TextB2R
         className="SelectedText"
         onClick={showDropdownHandler}
-        color={theme.greyScale45}
+        color={value ? theme.black : theme.greyScale45}
       >
-        {selectPlaceholder}
+        {value ? value : selectPlaceholder}
       </TextB2R>
       <OptionContainer
         isShowDropdown={isShowDropdown}
@@ -61,7 +59,7 @@ const SelectContainer = styled.div`
 
   .SelectedText {
     position: relative;
-    padding: 10px 20px;
+    padding: 12px 20px 10px;
     cursor: pointer;
     :after {
       content: '';
@@ -91,7 +89,7 @@ const OptionContainer = styled.ul<{
   ${({ isShowDropdown }) => {
     if (isShowDropdown) {
       return css`
-        height: 100px;
+        height: auto;
         opacity: 1;
         visibility: visible;
         overflow: scroll;

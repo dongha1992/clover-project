@@ -11,7 +11,7 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { IDestinationsResponse } from '@model/index';
-import user from '@store/user';
+import { Obj } from '@model/index';
 
 interface IProps {
   item: IDestinationsResponse;
@@ -20,6 +20,11 @@ interface IProps {
 }
 
 const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
+  const mapper: Obj = {
+    MORNING: '새벽배송',
+    PARCEL: '택배배송',
+    QUICK: '퀵배송',
+  };
   return (
     <Container>
       <FlexCol>
@@ -28,10 +33,12 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
             <TextH5B padding="0 8px 0 0">{item.name}</TextH5B>
             <Tag
               margin="0 4px 0 0"
+              padding="4px 8px 4px 6px"
               backgroundColor={theme.brandColor5}
               color={theme.brandColor}
+              center
             >
-               새벽배송
+               {mapper[item.delivery]}
             </Tag>
             {item.main && <Tag>기본 베송지</Tag>}
           </FlexRow>
