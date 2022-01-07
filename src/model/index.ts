@@ -288,3 +288,35 @@ export interface IKakaoLatLon {
   x: string;
   y: string;
 }
+
+export interface IParamsNewSpots {
+  latitude: number;
+  longitude: number;
+}
+
+export interface INewSpotsResponse {
+  code: number;
+  message: string;
+  data: {
+    spots: [
+      {
+        id: number,
+        name: string,
+        images: [
+          {
+            url: string,
+            width: number,
+            height: number,
+            size: number,
+            main: boolean,
+          }
+        ],
+        liked: boolean,
+        likeCount: number,
+        userCount: number,
+        distance: number,
+        distanceUnut: string,
+      }
+    ]
+  }
+}
