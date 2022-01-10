@@ -50,9 +50,18 @@ export const WishListWrapper = styled.section`
   justify-content: space-between;
   flex-wrap: wrap;
   cursor: pointer;
-  > div {
-    width: 194px;
-  }
+
+  ${({ theme }) => theme.desktop`
+    > div {
+      width: 193px;
+    }
+  `};
+
+  ${({ theme }) => theme.mobile`
+    > div {
+      width: 150px;
+    }
+  `};
 `;
 
 const WishList = styled.div`
