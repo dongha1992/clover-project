@@ -114,7 +114,6 @@ const LoginPage = () => {
             router.push('/mypage/profile/password');
             return;
           }
-
           dispatch(SET_USER_AUTH(userTokenObj));
           dispatch(SET_LOGIN_SUCCESS(true));
         }
@@ -182,14 +181,5 @@ const Col = styled.div`
   background-color: ${theme.greyScale6};
   margin: 0 8px;
 `;
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store: any) => async (context: any) => {
-    // await setRefreshToken(context, store);
-    return {
-      props: {},
-    };
-  }
-);
 
 export default LoginPage;
