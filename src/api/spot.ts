@@ -1,12 +1,18 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
 import {
-    IParamsNewSpots,
-    INewSpotsResponse,
+  IParamsSpots,
+  ISpotsResponse,
   } from '@model/index';
   
   export const getNewSpots = (
-    params: IParamsNewSpots
-  ): Promise<AxiosResponse<INewSpotsResponse>> => {
+    params: IParamsSpots
+  ): Promise<AxiosResponse<ISpotsResponse>> => {
     return Api.get('/spot/v1/spots/new', { params });
+  };
+
+  export const getStationSpots = (
+    params: IParamsSpots
+  ): Promise<AxiosResponse<ISpotsResponse>> => {
+    return Api.get('/spot/v1/spots/station', { params });
   };

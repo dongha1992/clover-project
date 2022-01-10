@@ -10,6 +10,8 @@ import { SPOT_ITEMS } from '@constants/mock';
 import Slider from 'react-slick';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
+import { getNewSpots, getStationSpots } from '@api/spot';
+import { ISpotsResponse, IParamsSpots } from '@model/index';
 
 const text = {
   mainTitle: `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
@@ -45,10 +47,68 @@ const FCO_SPOT_BANNER = [
   },
 ];
 
+interface INewSpots {
+  id: number,
+  name: string,
+  images: [
+    {
+      url: string,
+      width: number,
+      height: number,
+      size: number,
+      main: boolean,
+    }
+  ],
+  liked: boolean,
+  likeCount: number,
+  userCount: number,
+  distance: number,
+  distanceUnut: string,
+};
+
 const SpotPage = () => {
   const [mouseMoved, setMouseMoved] = useState(false);
+  const [newSpot, setNewSpot] = useState<INewSpots>();
+  const [stationSpot, setStationSpot] = useState();
   const dispatch = useDispatch();
   const router = useRouter();
+
+  useEffect(()=> {
+    getNewSpot();
+    getStationSpot();
+  },[])
+
+  const getNewSpot = async() => {
+    const params: IParamsSpots = {
+      latitude: null,
+      longitude: null,
+      page: 1,
+      size: 6,
+    }
+    try{
+      const {data} = await getNewSpots(params);
+      const items = data.data.spots;
+      setNewSpot(items);
+    }catch (err){
+      console.error(err);
+    }
+  };
+
+  const getStationSpot = async() => {
+    const params: IParamsSpots = {
+      latitude: null,
+      longitude: null,
+      page: 1,
+      size: 6,
+    }
+    try{
+      const {data} = await getStationSpots(params);
+      const items = data.data.spots;
+      setStationSpot(items);
+    }catch(err){
+      console.error(err);
+    }
+  }
 
   const goToShare = (): void => {
     dispatch(initBottomSheet());
@@ -68,11 +128,7 @@ const SpotPage = () => {
       });
     }
   };
-
-  const goToSpotStatus = () => {
-    router.push('/spot/status');
-  };
-
+  
   const settings = {
     arrows: false,
     dots: true,
@@ -110,14 +166,14 @@ const SpotPage = () => {
           <TextH5B onClick={goToShare} pointer>공유하기</TextH5B>
         </FlexStart>
       </SpotStatusWrapper> */}
-      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" />
+      {/* <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" /> */}
       <SpotList
-        items={SPOT_ITEMS}
+        items={newSpot}
         title={text.normalNewSpotTitle}
         type="normal"
       />
       <SpotList
-        items={SPOT_ITEMS}
+        items={stationSpot}
         title={text.normalFcoSpotTitle}
         type="normal"
       />

@@ -289,12 +289,14 @@ export interface IKakaoLatLon {
   y: string;
 }
 
-export interface IParamsNewSpots {
-  latitude: number;
-  longitude: number;
+export interface IParamsSpots {
+  latitude: number | null;
+  longitude: number | null;
+  page: number;
+  size: number;
 }
 
-export interface INewSpotsResponse {
+export interface ISpotsResponse {
   code: number;
   message: string;
   data: {
