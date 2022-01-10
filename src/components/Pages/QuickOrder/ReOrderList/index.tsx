@@ -1,14 +1,36 @@
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import { TextB3R, TextH4B, TextH6B, TextH7B } from '@components/Shared/Text';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 
-const ReOrderList: React.FC = ({ children }) => {
+interface IProps {
+  pushStatus: string;
+  children: any;
+  weeks: number;
+  time: number;
+  arrivalDate: any;
+}
+
+const ReOrderList = ({
+  children,
+  pushStatus,
+  weeks,
+  time,
+  arrivalDate,
+}: IProps) => {
   const [active, setActive] = useState(1);
   const [moreBtn, setMoreBtn] = useState(false);
+
+  // 임시
+  const [cartList, setCartList] = useState([
+    { orderType: 'lunch', orderTime: '스팟배송 - 점심', msg: '' },
+    { orderType: 'dinner', orderTime: '스팟배송 - 저녁', msg: '' },
+    { orderType: 'delivery', orderTime: '택배배송', msg: '' },
+  ]);
+
   const setting = {
     arrows: false,
     dots: false,
@@ -25,22 +47,36 @@ const ReOrderList: React.FC = ({ children }) => {
     router.push('/payment');
   };
 
+  useEffect(() => {
+    // if (pushStatus === cartList[0].orderType) {
+    // }
+
+    setCartList((prev) =>
+      prev.map((item, index) => {
+        item.msg = arrivalDate[item.orderType].msg;
+        return item;
+      })
+    );
+  }, [arrivalDate]);
+
+  useEffect(() => {}, []);
+
   return (
     <Container>
       <Pagination>
         <TextH6B color="#fff">
-          {active} / {3}
+          {active} / {cartList.length}
         </TextH6B>
       </Pagination>
       <ReOrderSlider {...setting}>
-        {[1, 2, 3].map((_, index) => {
+        {cartList.map((item, index) => {
           return (
             <Slide key={index} data-id={index + 1}>
               {index === 0 ? children : null}
               <article className="row1">
-                <TextH6B color="#fff">스팟배송 - 점심</TextH6B>
+                <TextH6B color="#fff">{item.orderTime}</TextH6B>
                 <span></span>
-                <TextH6B color="#fff">픽업 12:00-12:30</TextH6B>
+                <TextH6B color="#fff">{item.msg}</TextH6B>
               </article>
               <article className="row2">
                 <div className="address">
