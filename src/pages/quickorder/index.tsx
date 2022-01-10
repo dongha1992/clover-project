@@ -11,10 +11,13 @@ import { TimerTooltip } from '@components/Shared/Tooltip';
 import { Button } from '@components/Shared/Button';
 import { HorizontalItem } from '@components/Item';
 import { useSelector } from 'react-redux';
-import { cartForm } from '@store/cart';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+import { orderForm } from '@store/order';
+dayjs.locale('ko');
 
 const QuickOrderPage = () => {
-  const { cartLists } = useSelector(cartForm);
+  const { timerTooltip } = useSelector(orderForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
@@ -22,15 +25,23 @@ const QuickOrderPage = () => {
   /* 임시 */
   const [user] = useState(true);
   const [list] = useState([1]);
+  const noList: string | any[] = ['2022-01-1', '2022-01-2', '2022-01-10'];
 
   const [itemList, setItemList] = useState([]);
+
   const [night, setNight] = useState<Boolean>();
   const [time, setTime] = useState<number>(Number(`${hours}.${minutes}`));
   const [pushStatus, setPushStatus] = useState('');
   const [ment, setMent] = useState('');
   const [tooltipMsg, setTooltipMsg] = useState('');
-  const [tooltipShow, setTooltipShow] = useState(false);
+  const [tooltipShow, setTooltipShow] = useState(true);
   const [timer, setTimer] = useState<string>('');
+  const [arrivalDate, setArrivalDate] = useState({
+    lunch: { type: 'lunch', msg: '' },
+    dinner: { type: 'dinner', msg: '' },
+    dawn: { type: 'dawn', msg: '' },
+    delivery: { type: 'delivery', msg: '' },
+  });
 
   /* 목업 데이터 로직 */
   useEffect(() => {
@@ -55,11 +66,11 @@ const QuickOrderPage = () => {
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type1);
     } else if (time >= 9.3 && time < 11.0) {
       // 9시30분 ~ 11시
-      setPushStatus('part2');
+      setPushStatus('part4');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type2);
     } else if (time >= 11.0 && time < 17.0) {
       // 11시 ~ 17시
-      setPushStatus('part3');
+      setPushStatus('part4');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type3);
     } else {
       // 17시 ~ 24시
@@ -67,6 +78,107 @@ const QuickOrderPage = () => {
       weeks === 5 || weeks === 6 ? setMent(MENT.type5) : setMent(MENT.type3);
     }
   }, [hours, minutes, time, ment]);
+
+  useEffect(() => {
+    switch (true) {
+      case [1, 2, 3, 4].includes(weeks):
+        // 월 ~ 목
+
+        setArrivalDate({
+          lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
+          dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
+          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
+          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
+        });
+        break;
+
+      case [5].includes(weeks):
+        // 금
+        setArrivalDate({
+          lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
+          dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
+          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
+          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
+        });
+        break;
+      case [6].includes(weeks):
+        // 토
+        setArrivalDate({
+          lunch: {
+            ...arrivalDate['lunch'],
+            msg: `다음주 (${
+              dayjs(
+                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 픽업 12:00-12:30`,
+          },
+          dinner: {
+            ...arrivalDate['dinner'],
+            msg: `다음주 (${
+              dayjs(
+                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 픽업 17:00-17:30`,
+          },
+          dawn: {
+            ...arrivalDate['dawn'],
+            msg: `다음주 (${
+              dayjs(
+                calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 배송`,
+          },
+          delivery: {
+            ...arrivalDate['delivery'],
+            msg: `다음주 (${
+              dayjs(
+                calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 배송`,
+          },
+        });
+        break;
+
+      case [0].includes(weeks):
+        // 일
+        setArrivalDate({
+          lunch: {
+            ...arrivalDate['lunch'],
+            msg: `이번주 (${
+              dayjs(
+                calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 픽업 12:00-17:30`,
+          },
+          dinner: {
+            ...arrivalDate['dinner'],
+            msg: `이번주 (${
+              dayjs(
+                calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 픽업 17:00-17:30`,
+          },
+          dawn: {
+            ...arrivalDate['dawn'],
+            msg: `이번주 (${
+              dayjs(
+                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 픽업 17:00-17:30`,
+          },
+          delivery: {
+            ...arrivalDate['delivery'],
+            msg: `이번주 (${
+              dayjs(
+                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
+              ).format('dddd')[0]
+            }) 배송`,
+          },
+        });
+
+        break;
+    }
+  }, []);
 
   useEffect(() => {
     msgHandler();
@@ -84,6 +196,38 @@ const QuickOrderPage = () => {
 
   const msgHandler = () => {
     setTooltipMsg(`${pushStatus} 마감 ${timer} 전`);
+  };
+
+  const calculateArrival = (day: string) => {
+    // 배송불가 날짜 제외 로직
+
+    let rDay = day;
+    let start = false;
+
+    if (noList.length === 0) {
+      // 배송불가 날짜가 없는 경우
+      return dayjs(day).format('YYYY-MM-DD');
+    } else {
+      for (let i = 0; i < noList.length; i++) {
+        if (noList[i] === rDay) {
+          start = true;
+          rDay = dayjs(rDay).add(1, 'day').format('YYYY-MM-DD');
+          if (i === noList.length - 1) {
+            // 배송불가 날짜 제외한 도착날짜 (배송불가 날짜 Array 전체 제외)
+            return dayjs(rDay).format('YYYY-MM-DD');
+          }
+        } else {
+          if (start) {
+            // 배송불가 날짜 제외한 도착날짜
+            return dayjs(rDay).format('YYYY-MM-DD');
+          }
+          if (i === noList.length - 1 && rDay === day) {
+            // 도착날짜에 배송불가 날짜가 없을 경우
+            return dayjs(day).format('YYYY-MM-DD');
+          }
+        }
+      }
+    }
   };
 
   return (
@@ -113,6 +257,7 @@ const QuickOrderPage = () => {
         getTimer={getTimer}
         timer={timer}
         setTimer={setTimer}
+        calculateArrival={calculateArrival}
       />
 
       <PushArticle>
@@ -155,8 +300,13 @@ const QuickOrderPage = () => {
       <Banner>신규서비스 소개</Banner>
 
       {!user || list.length !== 0 ? (
-        <ReOrderList>
-          {tooltipShow && (
+        <ReOrderList
+          pushStatus={pushStatus}
+          weeks={weeks}
+          time={time}
+          arrivalDate={arrivalDate}
+        >
+          {timerTooltip && (
             <TimerTooltip
               bgColor={theme.brandColor}
               color={'#fff'}
