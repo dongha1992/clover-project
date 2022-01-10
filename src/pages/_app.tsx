@@ -12,6 +12,11 @@ import { SET_IS_MOBILE } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { isMobile } from 'react-device-detect';
 
+// persist
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { useStore } from 'react-redux';
+
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -27,6 +32,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isWithContentsSection = useMediaQuery('(min-width:1024px)');
   const isMobile = useMediaQuery('(max-width:512px)');
 
+  const store = useStore();
+  const persistor = persistStore(store);
+
   return (
     <>
       <Head>
@@ -37,9 +45,11 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
       >
         <GlobalStyle />
-        <Wrapper>
-          <Component {...pageProps} />
-        </Wrapper>
+        <PersistGate persistor={persistor}>
+          <Wrapper>
+            <Component {...pageProps} />
+          </Wrapper>
+        </PersistGate>
       </ThemeProvider>
     </>
   );

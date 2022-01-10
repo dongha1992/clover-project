@@ -21,7 +21,6 @@ const CheckDeliveryPlace = () => {
     };
     try {
       const data = await availabilityDestination(params);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

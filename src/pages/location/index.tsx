@@ -122,7 +122,8 @@ const LocationPage = () => {
                 return (
                   <AddressItem
                     key={index}
-                    roadAddr={address.roadAddr}
+                    roadAddr={address.roadAddrPart1}
+                    zipNo={address.zipNo}
                     bdNm={address.bdNm}
                     jibunAddr={address.jibunAddr}
                     onClick={() => goToMapScreen(address)}
