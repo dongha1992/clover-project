@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
-import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
+import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
@@ -82,8 +82,6 @@ const Container = styled.div<{ mapList: boolean }>`
   }}
 `;
 
-const Left = styled.div``;
-const Right = styled.div``;
 
 const MeterAndTime = styled.div`
   display: flex;

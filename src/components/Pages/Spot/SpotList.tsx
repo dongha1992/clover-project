@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import {
   TextH2B,
-  TextH7B,
   TextB3R,
   TextH6B,
   TextB2R,
@@ -16,6 +15,8 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 
+// spot list type은 세가지가 있다.
+// 1. normal 2. event 3. trial
 
 interface IProps {
   items: any; // API 통신 이후 타입 지정 예정
@@ -50,9 +51,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
           const message = '참여해주셔서 감사해요:)'
           showToast({ message });
           /* TODO: warning 왜? */
-      
           return () => hideToast();
-      
         },
         submitBtnText: '확인',
         closeBtnText: '취소',
