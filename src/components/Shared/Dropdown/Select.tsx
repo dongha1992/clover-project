@@ -89,7 +89,7 @@ const OptionContainer = styled.ul<{
   ${({ isShowDropdown }) => {
     if (isShowDropdown) {
       return css`
-        height: auto;
+        height: 250px;
         opacity: 1;
         visibility: visible;
         overflow: scroll;

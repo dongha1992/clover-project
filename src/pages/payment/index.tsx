@@ -37,18 +37,41 @@ export const ACCESS_METHOD = [
   {
     id: 1,
     text: '자유출입 가능',
+    value: 'free',
   },
   {
     id: 2,
-    text: '자유출입 가능2',
+    text: '공동현관 비밀번호',
+    value: 'commonPassword',
   },
   {
     id: 3,
-    text: '자유출입 가능3',
+    text: '경비실 호출',
+    value: 'officeCall',
   },
   {
     id: 4,
-    text: '자유출입 가능123123',
+    text: '세대 호출',
+    value: 'intercom',
+  },
+  {
+    id: 5,
+    text: '경비실 배송',
+    value: 'officeDelivery',
+  },
+  {
+    id: 6,
+    text: '무인택배함 배송 (외부) ',
+    value: 'officeDelivery',
+  },
+  {
+    id: 8,
+    text: '무인택배함 배송 (공동현관 내부)',
+    value: 'unmannedInternal',
+  },
+  {
+    id: 9,
+    text: '기타',
   },
 ];
 
