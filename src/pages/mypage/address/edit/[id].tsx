@@ -35,6 +35,7 @@ import {
 } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
+import router from 'next/router';
 
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
@@ -44,6 +45,17 @@ const mapper: Obj = {
   SPOT: '스팟배송',
   PARCEL: '택배배송',
   QUICK: '퀵배송',
+};
+
+const accessMethodMap: Obj = {
+  free: '요청사항을 입력해주세요',
+  commonPassword: '예) #1234#',
+  officeCall: '경비실 호출 방법 입력',
+  intercom: '새벽에도 호출 가능한 경우 선택해주세요',
+  officeDelivery: '경비실 부재 시 공동현관 등에 대응 배송',
+  unmannedExternal: '무인택배함 비밀번호 입력',
+  unmannedInternal: ' 공동현관 비밀번호 / 무인택배함 비밀번호 입력',
+  etc: '직접 입력',
 };
 
 interface IProps {
@@ -57,10 +69,16 @@ interface IAddress {
   dong: string;
 }
 
+export interface IAccessMethod {
+  id: number;
+  text: string;
+  value: string;
+}
 const AddressEditPage = ({ id }: IProps) => {
   const [selectedAddress, setSelectedAddress] =
     useState<IDestinationsResponse>();
-  const [selectedAccessMethod, setSelectedAccessMethod] = useState<string>('');
+  const [selectedAccessMethod, setSelectedAccessMethod] =
+    useState<IAccessMethod>();
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState({
@@ -74,6 +92,7 @@ const AddressEditPage = ({ id }: IProps) => {
 
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
+  const isMorning = selectedAddress?.delivery === 'MORNING';
 
   useEffect(() => {
     getAddressItem();
@@ -125,11 +144,6 @@ const AddressEditPage = ({ id }: IProps) => {
     );
   };
 
-  console.log(selectedAddress, 'selec');
-
-  // receiverName 스웨거 수정안됨
-  // 출입방법 컬럼은?
-
   const editAddress = async () => {
     const reqBody = {
       id,
@@ -139,31 +153,31 @@ const AddressEditPage = ({ id }: IProps) => {
       deliveryMessage: deliveryEditObj.deliveryMessage,
       dong: selectedAddress?.location.dong,
       main: isDefaultSpot,
-      name: deliveryEditObj.deliveryName,
-      receiverName: deliveryEditObj.receiverName,
+      name: deliveryEditObj.deliveryName
+        ? deliveryEditObj.deliveryName
+        : selectedAddress?.name,
+      receiverName: deliveryEditObj.receiverName
+        ? deliveryEditObj.receiverName
+        : selectedAddress?.receiverName,
       receiverTel: deliveryEditObj.receiverTel
         ? deliveryEditObj.receiverTel
         : selectedAddress?.receiverTel,
       zipCode: selectedAddress?.location.zipCode,
-      // id: 13,
-      // address: '충청남도 서산시 갈산4길 32',
-      // addressDetail: '테스트',
-      // delivery: 'PARCEL',
-      // deliveryMessage: '수정테스트',
-      // dong: '갈산동',
-      // main: false,
-      // name: '테스트로컬',
-      // receiverName: '테스트로컬',
-      // receiverTel: '01012345678',
-      // zipCode: '31963',
     };
+
     const { data } = await editDestination(id, reqBody);
-    console.log(data, 'data');
+    console.log(data, 'after edit');
   };
 
   const removeAddress = async () => {
-    const { data } = await deleteDestinations(id);
-    /* TODO: 수정 후 액션 */
+    try {
+      const { data } = await deleteDestinations(id);
+      if (data.code === 200) {
+        router.push('/mypage/address');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,8 +185,8 @@ const AddressEditPage = ({ id }: IProps) => {
     setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
   };
 
-  const selectOptionHandler = (text: string) => {
-    setSelectedAccessMethod(text);
+  const selectOptionHandler = (option: IAccessMethod) => {
+    setSelectedAccessMethod(option);
   };
 
   const changePickUpPlace = () => {
@@ -231,22 +245,25 @@ const AddressEditPage = ({ id }: IProps) => {
             <FlexBetweenStart>
               <TextH5B>베송지</TextH5B>
               <FlexColEnd>
-                <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
+                <TextB2R>{selectedAddress?.location.addressDetail}</TextB2R>
                 <TextB3R color={theme.greyScale65}>
-                  서울 성동구 왕십리로 115 10층
+                  {selectedAddress?.location.address}
                 </TextB3R>
               </FlexColEnd>
             </FlexBetweenStart>
           </FlexCol>
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
-        {isParcel && (
+        {isMorning && (
           <VisitorAccessMethodWrapper>
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
-              <Select placeholder="배송출입 방법" value={selectedAccessMethod}>
+              <Select
+                placeholder="출입방법 선택"
+                value={selectedAccessMethod?.text}
+              >
                 {ACCESS_METHOD.map((option: any, index: number) => (
                   <AcessMethodOption
                     key={index}
@@ -257,7 +274,11 @@ const AddressEditPage = ({ id }: IProps) => {
               </Select>
               <TextInput
                 name="deliveryMessage"
-                placeholder="내용을 입력해주세요"
+                placeholder={
+                  accessMethodMap[selectedAccessMethod?.value!]
+                    ? accessMethodMap[selectedAccessMethod?.value!]
+                    : '요청사항 입력'
+                }
                 margin="8px 0 0 0"
                 value={deliveryEditObj.deliveryMessage}
                 eventHandler={changeInputHandler}
@@ -277,6 +298,22 @@ const AddressEditPage = ({ id }: IProps) => {
                 </TextB3R>
               </FlexCol>
             </MustCheckAboutDelivery>
+          </VisitorAccessMethodWrapper>
+        )}
+        {isParcel && (
+          <VisitorAccessMethodWrapper>
+            <FlexBetween>
+              <TextH4B>배송 메모</TextH4B>
+            </FlexBetween>
+            <FlexCol padding="24px 0 16px 0">
+              <TextInput
+                name="deliveryMessage"
+                placeholder="요청사항 입력"
+                margin="8px 0 0 0"
+                value={deliveryEditObj.deliveryMessage}
+                eventHandler={changeInputHandler}
+              />
+            </FlexCol>
           </VisitorAccessMethodWrapper>
         )}
         <BorderLine height={8} margin="0 0 24px 0" />

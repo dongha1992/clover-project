@@ -31,6 +31,7 @@ interface IDeliveryMethod {
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
 /* TODO: 타이머 기능 */
 /* TODO: 최근 배송지 나오면 userDestination와 싱크 */
+/* TODO: 스팟 배송일 경우,  */
 
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -82,9 +83,15 @@ const DeliverInfoPage = () => {
     userDestination,
   } = useSelector(destinationForm);
 
+  const isSpotPickupPlace = selectedMethod === 'spot';
+
   const hasUserLocation =
     Object.values(userLocation).filter((val) => val).length > 0;
+
   let destinationType = checkDestinationHelper(availableDestination);
+
+  const hasUserSelectDestination =
+    Object.values(userDestination).filter((item) => item).length > 0;
 
   const dispatch = useDispatch();
 
@@ -129,7 +136,7 @@ const DeliverInfoPage = () => {
   const placeInfoRender = () => {
     switch (selectedMethod) {
       case 'spot': {
-        return <PickupPlaceBox />;
+        return <PickupPlaceBox place={userDestination} />;
       }
 
       default: {
@@ -213,10 +220,6 @@ const DeliverInfoPage = () => {
       }
     }
   };
-
-  const isSpotPickupPlace = selectedMethod === 'spot';
-  const hasUserSelectDestination =
-    Object.values(userDestination).filter((item) => item).length > 0;
 
   return (
     <Container>

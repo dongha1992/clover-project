@@ -19,6 +19,7 @@ import {
   SET_DESTINATION_STATUS,
 } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { setAlert } from '@store/alert';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -92,7 +93,9 @@ const DestinationDetailPage = () => {
 
         router.push('/cart/delivery-info');
       } catch (error) {
+        dispatch(setAlert({ alertMessage: '배송 불가 지역입니다.' }));
         console.error(error);
+        return;
       }
     }
   };
