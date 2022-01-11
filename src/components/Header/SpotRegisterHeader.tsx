@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import { TextH4B, TextH5B } from '@components/Shared/Text';

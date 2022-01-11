@@ -69,11 +69,8 @@ const SpotPage = () => {
     }
   };
 
-  const isLogin = (isLogin: boolean) => {
-    if (isLogin) {
-      return true;
-    }
-    return false;
+  const goToSpotStatus = () => {
+    router.push('/spot/status');
   };
 
   const settings = {
@@ -91,22 +88,28 @@ const SpotPage = () => {
   return (
     <Container>
       <TextH2B padding="24px 0 0 0">{text.mainTitle}</TextH2B>
-      {isLogin(true) && (
-        <HandleBoxWrapper>
-          <TextH4B>{text.gotoWrite}</TextH4B>
-          <IconWrapper>
-            <SVGIcon name="blackCirclePencil" />
-          </IconWrapper>
-        </HandleBoxWrapper>
-      )}
-      {isLogin(true) && (
-        <HandleBoxWrapper onClick={goToShare}>
-          <TextH4B>{text.gotoShare}</TextH4B>
-          <IconWrapper>
-            <SVGIcon name="blackCircleShare" />
-          </IconWrapper>
-        </HandleBoxWrapper>
-      )}
+      {/* 작성중인 스팟 신청서가 있는 경우 노출 */}
+      <HandleBoxWrapper>
+        <TextH4B>{text.gotoWrite}</TextH4B>
+        <IconWrapper>
+          <SVGIcon name="blackCirclePencil" />
+        </IconWrapper>
+      </HandleBoxWrapper>
+      {/* 프라이빗-트라이얼 기준 내가 신청한 스팟이나 참여한 스팟이 있는경우 노출*/}
+      <HandleBoxWrapper onClick={goToShare}>
+        <TextH4B>{text.gotoShare}</TextH4B>
+        <IconWrapper>
+          <SVGIcon name="blackCircleShare" />
+        </IconWrapper>
+      </HandleBoxWrapper>
+      {/* 스팟 신청 현황
+      <SpotStatusWrapper>
+        <TextH4B>{text.trialSpotOpenWait}</TextH4B>
+        <FlexStart margin='25px 0 0 0'>
+          <TextB2R margin='0 11px 0 0' onClick={goToSpotStatus} pointer>신청 현황 보기</TextB2R>
+          <TextH5B onClick={goToShare} pointer>공유하기</TextH5B>
+        </FlexStart>
+      </SpotStatusWrapper> */}
       <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" />
       <SpotList
         items={SPOT_ITEMS}
@@ -168,7 +171,7 @@ const Container = styled.main`
   ${homePadding};
 `;
 
-const HandleBoxWrapper = styled.div`
+const HandleBoxWrapper = styled.section`
   width: 100%;
   height: 68px;
   background: ${theme.greyScale3};
@@ -178,6 +181,7 @@ const HandleBoxWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div`
