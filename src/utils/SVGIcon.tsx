@@ -1650,6 +1650,22 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  blackMapIcon: () => (
+    <svg
+      width="12"
+      height="14"
+      viewBox="0 0 12 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.51425 13.6449C7.88097 12.6465 11.5 9.62299 11.5 5.6C11.5 2.50721 9.03757 0 6 0C2.96243 0 0.5 2.50721 0.5 5.6C0.5 9.62299 4.11903 12.6465 5.48575 13.6449C5.79476 13.8707 6.20524 13.8707 6.51425 13.6449ZM6.00006 7C7.10463 7 8.00006 6.10457 8.00006 5C8.00006 3.89543 7.10463 3 6.00006 3C4.89549 3 4.00006 3.89543 4.00006 5C4.00006 6.10457 4.89549 7 6.00006 7Z"
+        fill="#242424"
+      />
+    </svg>
+  ),
   threeLines: () => (
     <svg
       width="24"
@@ -1771,30 +1787,29 @@ const svgMap: TSvg = {
     </svg>
   ),
   crossCloseBlack: () => (
-    <svg 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect 
-        width="2.0757" 
-        height="22.8327" 
-        rx="1.03785" 
-        transform="matrix(-0.707107 0.707107 -0.72406 -0.689737 21 19.1406)" 
+      <rect
+        width="2.0757"
+        height="22.8327"
+        rx="1.03785"
+        transform="matrix(-0.707107 0.707107 -0.72406 -0.689737 21 19.1406)"
         fill="#242424"
       />
-      <rect 
-        width="2.0757" 
-        height="22.8327" 
-        rx="1.03785" 
-        transform="matrix(0.707107 0.707107 -0.689737 0.72406 19.1404 3)" 
+      <rect
+        width="2.0757"
+        height="22.8327"
+        rx="1.03785"
+        transform="matrix(0.707107 0.707107 -0.689737 0.72406 19.1404 3)"
         fill="#242424"
       />
     </svg>
-
-  )
+  ),
 };
 
 /* TODO: ref */
