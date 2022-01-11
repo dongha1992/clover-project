@@ -10,9 +10,9 @@ import dynamic from 'next/dynamic';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
+import { SET_USER_DESTINATION_STATUS } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
-import { IRegisterDestination } from '@model/index';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -30,6 +30,7 @@ interface IDeliveryMethod {
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
 /* TODO: 타이머 기능 */
+/* TODO: 최근 배송지 나오면 userDestination와 싱크 */
 
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -83,14 +84,18 @@ const DeliverInfoPage = () => {
 
   const hasUserLocation =
     Object.values(userLocation).filter((val) => val).length > 0;
-  let destinationType =
-    hasUserLocation && checkDestinationHelper(availableDestination);
+  let destinationType = checkDestinationHelper(availableDestination);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!hasUserLocation && destinationStatus) {
-      setSelectedMethod(destinationStatus);
+    // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
+    // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
+    if (
+      (!hasUserLocation && destinationStatus) ||
+      (hasUserLocation && destinationType)
+    ) {
+      setSelectedMethod(destinationStatus || destinationType);
     }
   }, []);
 
@@ -112,8 +117,13 @@ const DeliverInfoPage = () => {
   );
 
   const finishDeliverySetting = () => {
-    router.push('/cart');
+    if (!hasUserSelectDestination) {
+      return;
+    }
+
+    dispatch(SET_USER_DESTINATION_STATUS(selectedMethod));
     dispatch(SET_AFTER_SETTING_DELIVERY());
+    router.push('/cart');
   };
 
   const placeInfoRender = () => {
@@ -325,17 +335,18 @@ const DeliverInfoPage = () => {
             ))}
         </FlexBetween>
         {recentDestination || hasUserSelectDestination ? placeInfoRender() : ''}
-        {!recentDestination ||
-          (!hasUserSelectDestination && (
-            <BtnWrapper onClick={goToFindAddress}>
-              <Button backgroundColor={theme.white} color={theme.black} border>
-                {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
-              </Button>
-            </BtnWrapper>
-          ))}
+        {!hasUserSelectDestination && (
+          <BtnWrapper onClick={goToFindAddress}>
+            <Button backgroundColor={theme.white} color={theme.black} border>
+              {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
+            </Button>
+          </BtnWrapper>
+        )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0">설정하기</Button>
+        <Button borderRadius="0" disabled={!hasUserSelectDestination}>
+          설정하기
+        </Button>
       </SettingBtnWrapper>
     </Container>
   );
