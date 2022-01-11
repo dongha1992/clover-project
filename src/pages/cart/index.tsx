@@ -35,6 +35,8 @@ import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
 import { HorizontalItem } from '@components/Item';
 import { setAlert } from '@store/alert';
+import { destinationForm } from '@store/destination';
+import { Obj } from '@model/index';
 
 const DISPOSABLE_LIST = [
   { id: 1, value: 'fork', text: '포크/물티슈', price: 100 },
@@ -55,6 +57,13 @@ const LUNCH_OR_DINNER = [
     discription: '(오전 11:00까지 주문시 17:00 전 도착)',
   },
 ];
+
+const mapper: Obj = {
+  morning: '새벽배송',
+  parcel: '택배배송',
+  quick: '퀵배송',
+  noDelivery: '배송불가',
+};
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
@@ -74,6 +83,8 @@ const CartPage = () => {
   const router = useRouter();
 
   const { isFromDeliveryPage } = useSelector(cartForm);
+  const { userDestinationStatus, userDestination } =
+    useSelector(destinationForm);
 
   const isSoldout = true;
   const hasDeliveryPlace = true;
@@ -179,16 +190,25 @@ const CartPage = () => {
     router.push('/payment');
   };
 
+  const hasDestination =
+    Object.values(userDestination).filter((item) => item).length > 0;
+
   return (
     <Container>
       <DeliveryMethodAndPickupLocation>
         <Left>
-          <TextH4B>배송방법과</TextH4B>
-          <TextH4B>배송장소를 설정해주세요</TextH4B>
+          <TextH4B>
+            {userDestinationStatus
+              ? mapper[userDestinationStatus]
+              : '배송방법과'}
+          </TextH4B>
+          <TextH4B>
+            {hasDestination ? userDestination.dong : '배송장소를 설정해주세요'}
+          </TextH4B>
         </Left>
         <Right onClick={goToDeliveryInfo}>
           <TextH6B color={theme.greyScale65} textDecoration="underline">
-            설정하기
+            {userDestinationStatus && hasDestination ? '변경하기' : '설정하기'}
           </TextH6B>
         </Right>
       </DeliveryMethodAndPickupLocation>
@@ -422,9 +442,9 @@ const Container = styled.div`
   margin-bottom: 50px;
 `;
 const DeliveryMethodAndPickupLocation = styled.div`
-  ${homePadding}
   display: flex;
   justify-content: space-between;
+  padding: 24px 24px 0 24px;
 `;
 
 const Left = styled.div`
