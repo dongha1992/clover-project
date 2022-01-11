@@ -1,14 +1,11 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextB1R, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
-import dynamic from 'next/dynamic';
 import { useDispatch } from 'react-redux';
 import {SET_IMAGE_VIEWER} from '@store/common';
-
-const ImageViewer = dynamic(() => import('@components/ImageViewer'));
 
 const DetailBottomStory = ({ items }: any): ReactElement => {
   const dispatch = useDispatch();
