@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom } from '@styles/theme';
-import { Button } from '@components/Shared/Button';
+import { Button, ButtonGroup } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import { CheckDeliveryPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 
 const AddressDetailPage = () => {
   const { tempLocation, availableDestination } = useSelector(destinationForm);
@@ -19,6 +20,10 @@ const AddressDetailPage = () => {
     latitude: '',
     longitude: '',
   });
+
+  // 배송 가능 여부
+  const destinationStatus = checkDestinationHelper(availableDestination);
+  const canNotDelivery = destinationStatus === 'noDelivery';
 
   const getLonLanForMap = async () => {
     const params = {
@@ -48,6 +53,14 @@ const AddressDetailPage = () => {
     router.push('/home');
   };
 
+  const goToSearch = () => {
+    router.push('/location');
+  };
+
+  const goToHome = () => {
+    router.push('/home');
+  };
+
   useEffect(() => {
     getLonLanForMap();
   }, []);
@@ -61,16 +74,24 @@ const AddressDetailPage = () => {
           centerLng={latitudeLongitude.longitude}
         />
       </MapWrapper>
-      <ButtonWrapper>
-        <Button
-          width="100%"
-          height="100%"
-          borderRadius="0"
-          onClick={setUserLocationHandler}
-        >
-          설정하기
-        </Button>
-      </ButtonWrapper>
+      {canNotDelivery ? (
+        <ButtonGroup
+          leftButtonHandler={goToSearch}
+          rightButtonHandler={goToHome}
+          leftText="다른 주소 검색하기"
+          rightText="닫기"
+        />
+      ) : (
+        <ButtonWrapper>
+          <Button
+            height="100%"
+            borderRadius="0"
+            onClick={setUserLocationHandler}
+          >
+            설정하기
+          </Button>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };
