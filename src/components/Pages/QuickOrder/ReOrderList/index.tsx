@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
+import { useDispatch } from 'react-redux';
+import { initBottomSheet, setBottomSheet } from '@store/bottomSheet';
+import { OrderDetailSheet } from '@components/BottomSheet/OrderSheet';
 
 interface IProps {
   pushStatus: string;
@@ -21,8 +24,8 @@ const ReOrderList = ({
   time,
   arrivalDate,
 }: IProps) => {
+  const dispatch = useDispatch();
   const [active, setActive] = useState(1);
-  const [moreBtn, setMoreBtn] = useState(false);
 
   // 임시
   const [cartList, setCartList] = useState([
@@ -41,11 +44,9 @@ const ReOrderList = ({
       setActive(next + 1);
     },
   };
-
-  // TODO : 주문시 배송방법,배송방법 상세,스팟명,픽업정보,주문상품 리스트 넘기기
-  const goToPayment = () => {
-    router.push('/payment');
-  };
+  useEffect(() => {
+    dispatch(initBottomSheet());
+  }, []);
 
   useEffect(() => {
     // if (pushStatus === cartList[0].orderType) {
@@ -59,7 +60,10 @@ const ReOrderList = ({
     );
   }, [arrivalDate]);
 
-  useEffect(() => {}, []);
+  // TODO : 주문시 배송방법,배송방법 상세,스팟명,픽업정보,주문상품 리스트 넘기기
+  const goToPayment = () => {
+    router.push('/payment');
+  };
 
   return (
     <Container>
@@ -95,21 +99,25 @@ const ReOrderList = ({
                 <TextB3R color="#fff" margin="0 0 4px 0">
                   터키 브레스트 쳐트니 바게트샌드 외 3개
                 </TextB3R>
-                {moreBtn ? (
+                {/* {moreBtn ? (
                   <TextB3R color={theme.greyScale25} margin="0 0 4px 0">
                     터키 브레스트 쳐트니 바게트샌드 / 크랜베리 오렌지 치킨
                     바게트샌드 / 크랜베리 오렌지 치킨 바게트샌드 / 크랜베리
                     오렌지 치킨 바게트샌드 / 크랜베리 오렌지 치킨 바게트샌드
                   </TextB3R>
-                ) : null}
+                ) : null} */}
                 <TextB3R
                   className="moreBtn"
                   color={theme.greyScale25}
                   onClick={() => {
-                    setMoreBtn((prev) => !prev);
+                    dispatch(
+                      setBottomSheet({
+                        content: <OrderDetailSheet item={item} />,
+                      })
+                    );
                   }}
                 >
-                  {!moreBtn ? '더보기' : '접기'}
+                  더보기
                 </TextB3R>
               </article>
             </Slide>
