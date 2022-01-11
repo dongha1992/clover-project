@@ -15,12 +15,12 @@ import { SPOT_URL } from '@constants/mock';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
-import { theme, fixedBottom, FlexBetween, FlexEnd } from '@styles/theme';
+import { theme, FlexBetween, FlexEnd } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList } from '@components/Pages/Spot';
-import { SPOT_ITEMS } from '@constants/mock';
-import { Item } from '@components/Item';
 import SVGIcon from '@utils/SVGIcon';
+import { getSpotSearchRecommend, getSpotEvent } from '@api/spot';
+import { ISpotNearbyResponse } from '@model/index';
 
 const SPOT_RECOMMEND_LIST = [
   {
@@ -55,34 +55,97 @@ const SPOT_RECOMMEND_LIST = [
   },
 ];
 
+interface ISpotsList {
+  id: number,
+  name: string,
+  images: [
+    {
+      url: string,
+      width: number,
+      height: number,
+      size: number,
+      main: boolean,
+    }
+  ],
+  liked: boolean,
+  likeCount: number,
+  userCount: number,
+  distance: number,
+  distanceUnit: string,  
+};
+
+interface ISpotRecommend {
+    id: number;
+    type: string;
+    name: string;
+    location: {
+      zipCode: string;
+      address: string;
+      addressDetail: string;
+      dong: string;
+    };
+    lunchDelivery: boolean;
+    lunchDeliveryStartTime: string;
+    lunchDeliveryEndTime: string;
+    dinnerDelivery: string;
+    dinnerDeliveryStartTime: string;
+    dinnerDeliveryEndTime: string;
+    imgages: [{
+      url: string;
+      width: number;
+      height: number;
+      size: number;
+      main: boolean;
+    }]
+    distance: number;
+    distanceUnit: string;
+};
+
+
 const SpotSearchPage = (): ReactElement => {
-  const [spotList, setSpotList] = useState<any[]>([]);
+  const dispatch = useDispatch();
+  const [spot, setSpot] = useState();
+  const [spotRecommend, setSpotRecommend] = useState<ISpotRecommend[]>([]);
+  const [spotEvent, setSpotEvent] = useState<ISpotsList[]>([]);
   const [searchResult, setSearchResult] = useState<any>([]);
-  const [recentPickedSpotList, setRecentPickedSpotList] = useState<string[]>(
-    []
-  );
+  const [recentPickedSpotList, setRecentPickedSpotList] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
-  const dispatch = useDispatch();
-  console.log(!searchResult.length);
-  useEffect(() => {
-    getSpotList();
-    // inputRef.current?.focus()
-    // focus();
-  }, []);
 
-  // const focus = (): void => {
-  //   if(inputRef.current.focus()){
-  //      setInputFocus(true);
-  //   }else {
-  //     setInputFocus(false);
-  //   }
-  // };
+  const getSearchRecommendList = async() => {
+    const params = {
+      latitude: null,
+      longitude: null,
+      size: 6,
+    }
+    try{
+      const {data} = await getSpotSearchRecommend(params);
+      const items = data.data.spots;
+      setSpotRecommend(items);
+    }catch(err){
+      console.error(err)
+    }
+  };
+
+  const getSpotEventList = async() => {
+    const params = {
+      latitude: null,
+      longitude: null,
+      size: 6,
+    }
+    try{
+      const {data} = await getSpotEvent(params);
+      const items = data.data.spots;
+      setSpotEvent(items);
+    }catch(err){
+      console.error(err)
+    }
+  };
+
   const getSpotList = async () => {
     const { data } = await axios.get(`${SPOT_URL}`);
-    setSpotList(data);
+    setSpot(data);
     const temp = data.slice();
     temp.pop();
     setRecentPickedSpotList(temp);
@@ -108,7 +171,7 @@ const SpotSearchPage = (): ReactElement => {
 
       setIsSearched(true);
 
-      const filtered = spotList.filter((c) => {
+      const filtered = spot.filter((c) => {
         return c.name.replace(/ /g, '').indexOf(value) > -1;
       });
 
@@ -131,6 +194,12 @@ const SpotSearchPage = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    getSpotList();
+    getSearchRecommendList();
+    getSpotEventList();
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -139,30 +208,42 @@ const SpotSearchPage = (): ReactElement => {
           svg="searchIcon"
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
-          ref={inputRef}
+          onFocus={()=>{setInputFocus(true)}}
         />
       </Wrapper>
-      {/* <SpotRecommendWrapper>
+      {
+        !inputFocus ?
+      <>
+      <SpotRecommendWrapper>
         <FlexEnd padding='0 0 24px 0'>
           <SVGIcon name='locationBlack' />
           <TextH6B margin='0 0 0 2px' padding='3px 0 0 0'>현 위치로 설정하기</TextH6B>
         </FlexEnd>
         <FlexBetween margin='0 0 24px 0'>
           <TextH3B>추천 스팟</TextH3B>
-          <TextB3R>500m이내 프코스팟</TextB3R>
+          <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
         </FlexBetween>
         {
-          SPOT_RECOMMEND_LIST.map((item: any, index)=> (
+         spotRecommend?.map((item: ISpotRecommend, index: number)=> {
+          return (
             <SpotRecommendList item={item} key={index} />
-          ))
+            )
+          })
         }
       </SpotRecommendWrapper>
       <BottomContentWrapper>
         <Row />
-        <SpotList items={SPOT_ITEMS} title='이벤트 진행중인 스팟' type="event" />
-      </BottomContentWrapper> */}
-
-      {!searchResult.length ? (
+        <SpotList 
+          items={spotEvent} 
+          title='이벤트 진행중인 스팟' 
+          btnText="주문하기"
+          type="event"
+        />
+      </BottomContentWrapper>
+      </>
+      :
+      <>
+       {!searchResult.length ? (
         <DefaultSearchContainer>
           <RecentPickWrapper>
             <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
@@ -180,6 +261,8 @@ const SpotSearchPage = (): ReactElement => {
           />
         </SearchResultContainer>
       )}
+      </>
+    }
     </Container>
   );
 };
