@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
-import { Button } from '@components/Shared/Button';
+import { Button, ButtonGroup } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
 import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
@@ -37,6 +37,10 @@ const DestinationDetailPage = () => {
   const dispatch = useDispatch();
   const { tempLocation, availableDestination } = useSelector(destinationForm);
 
+  // 배송 가능 여부
+  const destinationStatus = checkDestinationHelper(availableDestination);
+  const canNotDelivery = destinationStatus === 'noDelivery';
+
   useEffect(() => {
     getLonLanForMap();
   }, []);
@@ -64,9 +68,6 @@ const DestinationDetailPage = () => {
   };
 
   const getDestination = async () => {
-    const status = checkDestinationHelper(availableDestination);
-    const canNotDelivery = status === 'noDelivery';
-
     if (destinationDetailRef.current && destinationNameRef.current) {
       const addressDetail = destinationDetailRef.current.value.toString();
       const name = destinationNameRef.current.value.toString();
@@ -75,7 +76,7 @@ const DestinationDetailPage = () => {
         addressDetail,
         name,
         address: tempLocation.roadAddrPart1,
-        delivery: canNotDelivery ? '' : status.toUpperCase(),
+        delivery: canNotDelivery ? '' : destinationStatus.toUpperCase(),
         deliveryMessage: '테스트',
         dong: tempLocation.emdNm,
         main: isDefaultDestination,
@@ -87,7 +88,7 @@ const DestinationDetailPage = () => {
         const { data } = await destinationRegister(reqBody);
         if (data.code === 200) {
           dispatch(SET_DESTINATION(reqBody));
-          dispatch(SET_DESTINATION_STATUS(status));
+          dispatch(SET_DESTINATION_STATUS(destinationStatus));
           dispatch(INIT_LOCATION_TEMP());
         }
 
@@ -100,6 +101,13 @@ const DestinationDetailPage = () => {
     }
   };
 
+  const goToSearch = () => {
+    router.push('/destination/search');
+  };
+
+  const goToHome = () => {
+    router.push('/home');
+  };
   if (!Object.keys(tempLocation).length) {
     return;
   }
@@ -142,11 +150,20 @@ const DestinationDetailPage = () => {
           )}
         </FlexRow>
       </DestinationInfoWrarpper>
-      <ButtonWrapper>
-        <Button height="100%" borderRadius="0" onClick={getDestination}>
-          설정하기
-        </Button>
-      </ButtonWrapper>
+      {canNotDelivery ? (
+        <ButtonGroup
+          leftButtonHandler={goToSearch}
+          rightButtonHandler={goToHome}
+          leftText="다른 주소 검색하기"
+          rightText="닫기"
+        />
+      ) : (
+        <ButtonWrapper>
+          <Button height="100%" borderRadius="0" onClick={getDestination}>
+            설정하기
+          </Button>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };

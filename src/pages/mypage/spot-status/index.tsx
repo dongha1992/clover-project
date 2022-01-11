@@ -3,14 +3,10 @@ import styled from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
 import { TextB2R } from '@components/Shared/Text';
-import {SPOT_STATUS} from '@constants/spot';
-import {
-  SpotStatusList,
-  SpotWishList,
-} from '@components/Pages/Mypage/Spot';
+import { SPOT_STATUS } from '@constants/spot';
+import { SpotStatusList, SpotWishList } from '@components/Pages/Mypage/Spot';
 import { homePadding, theme } from '@styles/theme';
 import router from 'next/router';
-
 
 const STATUS_LIST = [
   {
@@ -92,23 +88,22 @@ const SpotStatusPage = () => {
     return selectedTab === '/spot/status/list' ? (
       <SpotStatusList items={STATUS_LIST} onClick={goToSpotStatusDetail} />
     ) : (
-      <SpotWishList/>
+      <SpotWishList />
     );
   };
 
-
   return (
-      <Container>
-        <FixedTab>
-          <TabList
+    <Container>
+      <FixedTab>
+        <TabList
           tabList={SPOT_STATUS}
           onClick={selectTabHandler}
           selectedTab={selectedTab}
-          />
-        </FixedTab>
-        <ContentWrapper>{renderBottomContent()}</ContentWrapper>
-      </Container>
-  )
+        />
+      </FixedTab>
+      <ContentWrapper>{renderBottomContent()}</ContentWrapper>
+    </Container>
+  );
 };
 
 const Container = styled.div``;
@@ -137,6 +132,5 @@ const FixedTab = styled.div`
 const ContentWrapper = styled.div`
   ${homePadding};
 `;
-
 
 export default SpotStatusPage;

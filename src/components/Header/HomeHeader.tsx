@@ -22,7 +22,6 @@ const HomeHeader = () => {
     morning: { text: '새벽배송이 가능해요!', width: '150px' },
     parcel: { text: '택배배송만 가능해요!', width: '150px' },
     spot: { text: '무료 스팟배송이 가능해요!', width: '170px' },
-    noDelivery: { text: '배송이 불가한 지역이에요', width: '170px' },
   };
 
   useEffect(() => {
