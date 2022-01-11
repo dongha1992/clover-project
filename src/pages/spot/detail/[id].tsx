@@ -22,43 +22,42 @@ import {
   DetailBottomStory,
   DetailBottomStoreInfo,
 } from '@components/Pages/Spot';
+import { getSpotDetail } from '@api/spot';
+import { IMAGE_S3_URL } from '@constants/mock/index';
 
 export interface IStoreNoti {
-  desc: string;
-  date: string;
   id: number;
-}
+};
 
 const SpotDetailPage = ({ id }: IStoreNoti) => {
+  const tabRef = useRef<HTMLDivElement>(null);
   const [spotItem, getSpotItem] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  const tabRef = useRef<HTMLDivElement>(null);
 
-  const getData = () => {
-    const spotData: any = SPOT_ITEMS.find((item) => item.id === Number(id));
-    getSpotItem(spotData);
+  const getData = async() => {
+    try{
+      const data = await getSpotDetail(id);
+      const items = data.data.data;
+      getSpotItem(items);
+    }catch(err){
+      console.error(err);
+    };
   };
 
   const HEADER_HEIGHT = 56;
-  const sliceLen = spotItem.detail?.noticeDetail.length;
+  const sliceLen = spotItem?.notices?.length;
 
   const selectTabHandler = useCallback(
     ({ link }: any) => {
       setSelectedTab(link);
     },
-    [selectedTab]
+    []
+    // [selectedTab]
   );
 
-  useEffect(() => {
-    window.addEventListener('scroll', onScrollHandler);
-    return () => {
-      window.removeEventListener('scroll', onScrollHandler);
-      //   dispatch(SET_MENU_ITEM({}));
-    };
-  }, [tabRef?.current?.offsetTop]);
 
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
@@ -73,12 +72,12 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
   };
 
   const renderBottomContent = () => {
-    const storyitems: any = spotItem?.detail;
-    return selectedTab === '/spot/detail/story' ? (
-      <DetailBottomStory items={storyitems} />
-    ) : (
-      <DetailBottomStoreInfo items={storyitems} />
-    );
+    // const storyitems: any = spotItem?.detail;
+    // return selectedTab === '/spot/detail/story' ? (
+    //   <DetailBottomStory items={storyitems} />
+    // ) : (
+    //   <DetailBottomStoreInfo items={storyitems} />
+    // );
   };
 
   const settingsTop = {
@@ -107,6 +106,14 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
   };
 
   useEffect(() => {
+    window.addEventListener('scroll', onScrollHandler);
+    return () => {
+      window.removeEventListener('scroll', onScrollHandler);
+      //   dispatch(SET_MENU_ITEM({}));
+    };
+  }, [tabRef?.current?.offsetTop]);
+
+  useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -115,25 +122,30 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
     <Container>
       <SliderWrapper>
         <TopBannerSlider {...settingsTop}>
-          {spotItem.detail?.imgUrl?.map((img: string, index: number) => {
-            return <StoreImgWrapper src={img} alt="스팟 이미지" key={index} />;
+          {spotItem.images?.map((item: any, index: number) => {
+            return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={index} />;
           })}
         </TopBannerSlider>
-        <SlideCount>{`${currentIndex + 1}/2`}</SlideCount>
+        <SlideCount>{
+        spotItem?.images?.length > 1 ? 
+        `${currentIndex + 1}/2` 
+        : 
+        `${currentIndex + 1}/1`
+        }</SlideCount>
       </SliderWrapper>
       <StoreWrapper>
-        <TagWrapper>
-          {spotItem.detail?.tag?.map((tags: string, index: number) => {
+        {/* <TagWrapper>
+          {spotItem.notices?.map((tags: string, index: number) => {
             return (
               <Tag key={index} margin="0 4px 0 0">
                 {tags}
               </Tag>
             );
           })}
-        </TagWrapper>
-        <TextH2B margin="8px 0 4px 0">{spotItem.location}</TextH2B>
+        </TagWrapper> */}
+        <TextH2B margin="8px 0 4px 0">{spotItem.name}</TextH2B>
         <TextB3R display="inline" margin="0 8px 0 0">
-          {spotItem.detail?.address}
+          {spotItem.location?.address}
         </TextB3R>
         <TextH6B
           display="inline"
@@ -144,9 +156,9 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
           지도보기
         </TextH6B>
       </StoreWrapper>
-      {spotItem.detail?.notice && (
+      {spotItem?.notices?.length > 0 && (
         <NoticeSlider {...settingNotice}>
-          {spotItem.detail.noticeDetail?.map(
+          {spotItem.notices?.map(
             ({ desc, date, id }: IStoreNoti) => {
               return (
                 <NoticeCard key={id}>
@@ -163,21 +175,21 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
       )}
       <PickupWrapper>
         <TextH5B color={theme.greyScale65} margin="0 0 16px 0">
-          {spotItem.detail?.pickUpInfo.pickUpText}
+          픽업정보
         </TextH5B>
         <PickupInfo>
           <FlexStart margin="0 0 16px 0">
             <TextH5B margin="0 20px 0 0">도착예정</TextH5B>
-            <TextB2R>{spotItem.detail?.pickUpInfo.arrivalText}</TextB2R>
+            <TextB2R></TextB2R>
           </FlexStart>
           <FlexStart margin="0 0 16px 0">
             <TextH5B margin="0 20px 0 0">픽업가능</TextH5B>
-            <TextB2R>{spotItem.detail?.pickUpInfo.pickUpTime}</TextB2R>
+            <TextB2R>{`${spotItem.pickupStartTime}~${spotItem.pickupEndTime}`}</TextB2R>
           </FlexStart>
           <FlexStart margin="0 0 16px 0">
             <TextH5B margin="0 20px 0 0">픽업장소</TextH5B>
             <TextB2R margin="0 8px 0 0">
-              {spotItem.detail?.pickUpInfo.pickUpSpot}
+              {/* {spotItem?.pickups[0]?.name} */}
             </TextB2R>
             <TextH6B
               color={theme.greyScale65}
@@ -189,14 +201,14 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
           </FlexStart>
           <FlexStart margin="0 0 16px 0">
             <TextH5B margin="0 20px 0 0">기타정보</TextH5B>
-            <TextB2R>{spotItem.detail?.pickUpInfo.pickUpEtc}</TextB2R>
+            <TextB2R>{spotItem?.description}</TextB2R>
           </FlexStart>
         </PickupInfo>
       </PickupWrapper>
       <SpotEventBannerWrapper>
         <TextH4B>해당 스팟 이벤트 영역</TextH4B>
       </SpotEventBannerWrapper>
-      <BorderLine height={8} ref={tabRef} />
+      {/* <BorderLine height={8} ref={tabRef} /> */}
       <BottomTabWrapper>
         <StickyTab
           tabList={SPOT_DETAIL_INFO}
@@ -205,7 +217,7 @@ const SpotDetailPage = ({ id }: IStoreNoti) => {
           onClick={selectTabHandler}
         />
       </BottomTabWrapper>
-      <BottomContent>{renderBottomContent()}</BottomContent>
+      {/* <BottomContent>{renderBottomContent()}</BottomContent> */}
     </Container>
   );
 };
@@ -219,7 +231,6 @@ const SliderWrapper = styled.section`
 const TopBannerSlider = styled(Slider)`
   max-width: ${breakpoints.mobile}px;
   min-width: ${breakpoints.sm}px;
-  position: absolute;
 `;
 
 const SlideCount = styled.div`
@@ -229,7 +240,7 @@ const SlideCount = styled.div`
   background: #24242480;
   color: ${theme.white};
   text-align: center;
-  padding: 4px 0;
+  padding: 5px 0;
   display: inline-block;
   position: absolute;
   bottom: 16px;
@@ -283,7 +294,9 @@ const SpotEventBannerWrapper = styled.section`
   align-items: center;
 `;
 
-const BottomTabWrapper = styled.div``;
+const BottomTabWrapper = styled.section`
+  width: 100%;
+`;
 
 const BottomContent = styled.section``;
 
