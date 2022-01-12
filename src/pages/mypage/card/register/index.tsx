@@ -9,6 +9,7 @@ import {
   FlexStart,
   FlexRow,
   fixedBottom,
+  customInput,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -54,6 +55,7 @@ const CardRegisterPage = () => {
     number3: '',
     number4: '',
   });
+  const [password, setPassword] = useState<string>('');
   const [isTermCheck, setIsTermCheck] = useState(false);
   const [isMainCard, setIsMainCard] = useState(false);
 
@@ -62,7 +64,6 @@ const CardRegisterPage = () => {
   const thirdNumberRef = useRef<HTMLInputElement>(null);
   const fourthNumberRef = useRef<HTMLInputElement>(null);
   const expireRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
   const corportaionRef = useRef<HTMLInputElement>(null);
   const nicknameRef = useRef<HTMLInputElement>(null);
 
@@ -87,6 +88,18 @@ const CardRegisterPage = () => {
       ...card,
       [name]: value,
     });
+  };
+
+  const changePasswordHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    let { value } = e.target as HTMLInputElement;
+
+    if (value.length > 2) {
+      value = value.slice(0, 2);
+    }
+
+    setPassword(value);
   };
 
   const focusNextInputHandler = (name: string) => {
@@ -125,20 +138,8 @@ const CardRegisterPage = () => {
   };
 
   const registerCardHandler = async () => {
-    if (
-      firstNumberRef.current &&
-      secondNumberRef.current &&
-      thirdNumberRef.current &&
-      fourthNumberRef.current &&
-      expireRef.current &&
-      nicknameRef.current &&
-      passwordRef.current
-    ) {
-      const first = firstNumberRef.current.value;
-      const seconde = secondNumberRef.current.value;
-      const third = thirdNumberRef.current.value;
-      const fourth = fourthNumberRef.current.value;
-
+    if (expireRef.current && nicknameRef.current) {
+      const { number1, number2, number3, number4 } = card;
       const type = CARD_TYPE.find(
         (item: ICardType) => item.id === selectedCardType
       )?.value;
@@ -147,9 +148,6 @@ const CardRegisterPage = () => {
         corportaionRef.current && corportaionRef.current.value;
 
       const name = nicknameRef.current.value;
-
-      const password = passwordRef.current.value;
-
       const expireMMYY = expireRef.current?.value;
 
       const expiredMM = expireMMYY.slice(0, 2);
@@ -170,7 +168,7 @@ const CardRegisterPage = () => {
         expiredYY,
         main: isMainCard,
         name,
-        number: first + seconde + third + fourth,
+        number: number1 + number2 + number3 + number4,
         password,
         type,
       };
@@ -182,7 +180,6 @@ const CardRegisterPage = () => {
         dispatch(
           setAlert({
             alertMessage: successMsg,
-            onSubmit: () => {},
             submitBtnText: '확인',
           })
         );
@@ -191,7 +188,6 @@ const CardRegisterPage = () => {
         dispatch(
           setAlert({
             alertMessage: disabledMsg,
-            onSubmit: () => {},
             submitBtnText: '확인',
           })
         );
@@ -285,7 +281,15 @@ const CardRegisterPage = () => {
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput ref={passwordRef} placeholder="비밀번호 앞 두 자리" />
+          <CustomInputWrapper>
+            <input
+              type="number"
+              name="passwordInput"
+              placeholder="비밀번호 앞 두 자리"
+              onChange={changePasswordHandler}
+              value={password}
+            />
+          </CustomInputWrapper>
         </Password>
       </ExpirationAndPasswordWrapper>
       <CompanyRegistrationNumberWrapper>
@@ -353,13 +357,7 @@ const CardInputGroup = styled.div`
   width: 100%;
   > input {
     width: calc(100% / 4);
-    border: none;
-    padding: 12px 20px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    outline: none;
-    border-radius: 8px;
+    ${customInput}
     ::placeholder {
       ${textBody2}
       position: absolute;
@@ -381,6 +379,22 @@ const CardInputGroup = styled.div`
   }
   .thirdDash {
     left: 72%;
+  }
+`;
+
+const CustomInputWrapper = styled.div`
+  border: 1px solid ${theme.greyScale15};
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+
+  > input {
+    ${customInput}
+    ::placeholder {
+      ${textBody2}
+      position: absolute;
+      color: ${({ theme }) => theme.greyScale45};
+    }
   }
 `;
 
