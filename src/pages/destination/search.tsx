@@ -10,7 +10,7 @@ import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
-import { SET_DESTINATION_TEMP, SET_LOCATION_TEMP } from '@store/destination';
+import { SET_LOCATION_TEMP } from '@store/destination';
 
 const recentDeliveryList = [
   {
@@ -65,7 +65,6 @@ const DestinationSearchPage = () => {
 
   const goToDestinationDetail = (address: any) => {
     dispatch(SET_LOCATION_TEMP(address));
-    localStorage.setItem('loc', JSON.stringify(address));
     router.push('/destination/destination-detail');
   };
 

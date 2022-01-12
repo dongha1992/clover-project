@@ -76,7 +76,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      blacklist: ['toast'],
+      blacklist: ['toast', 'dropdown', 'common', 'bottomSheet', 'alert'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -93,7 +93,7 @@ const makeStore = (context: any) => {
 };
 
 export const wrapper = createWrapper(makeStore, {
-  debug: isDev,
+  debug: false,
 });
 
 export type AppState = ReturnType<typeof store.getState>;
