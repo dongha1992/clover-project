@@ -201,9 +201,9 @@ export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 export interface IRegisterDestination {
   address: string | null;
   addressDetail: string;
-  delivery: string;
+  delivery?: string;
   deliveryMessage?: string;
-  dong?: string;
+  dong?: string | null;
   main: boolean;
   name: string;
   receiverName?: string;
@@ -215,7 +215,7 @@ export interface IAvilabiltyAddress {
   jibunAddress: string | null;
   roadAddress: string | null;
   zipCode: string | null;
-  delivery?: string | null;
+  delivery?: TDeliveryType | null;
 }
 
 export interface IAvilabiltyAddressResponse {
@@ -228,22 +228,32 @@ export interface IAvilabiltyAddressResponse {
   };
 }
 
+export interface IDestinationsResponse {
+  id: number;
+  delivery: TDeliveryType;
+  name: string;
+  receiverTel: string;
+  receiverName: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    zipCode: string;
+    dong: string;
+  };
+  main: boolean;
+  createdAt: string;
+}
 export interface IGetDestinationsResponse {
   code: number;
   message: string;
-  pagination: {
-    page: number;
-    size: number;
-    total: number;
-    totalPage: number;
-  };
-  pointHistories: {
-    content: string;
-    createdAt: string;
-    expiredDate: string;
-    id: number;
-    type: string;
-    value: number[];
+  data: {
+    destinations: IDestinationsResponse[];
+    pagination: {
+      page: number;
+      size: number;
+      total: number;
+      totalPage: number;
+    };
   };
 }
 
@@ -253,29 +263,27 @@ export interface IGetDestinations {
 }
 
 export interface IEditDestination {
-  address: string | null;
-  addressDetail: string;
-  delivery: string;
+  address: string | undefined;
+  addressDetail: string | undefined;
+  delivery: TDeliveryType | undefined;
   deliveryMessage?: string;
-  dong?: string;
+  dong: string | undefined;
   main: boolean;
-  name: string;
+  name?: string;
   id: number;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | null;
+  zipCode: string | undefined;
 }
 
 export interface IGetMainDestinations {
-  delivery: string | null;
+  delivery: TDeliveryType | null;
 }
+
 export interface IGetMainDestinationsResponse {
-  content: string;
-  createdAt: string;
-  expiredDate: string;
-  id: number;
-  type: string;
-  value: number[];
+  code: number;
+  message: string;
+  data: IDestinationsResponse;
 }
 
 export interface IKakaoAddress {

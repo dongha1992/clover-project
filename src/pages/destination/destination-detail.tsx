@@ -2,47 +2,30 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { CheckDeliveryPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
-import { Button } from '@components/Shared/Button';
-import { fixedBottom, FlexCol, FlexRow, FlexRowStart } from '@styles/theme';
-import { TextH5B, TextB3R, TextB2R, TextH6B } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { Button, ButtonGroup } from '@components/Shared/Button';
+import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
+import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
 import AddressItem from '@components/Pages/Location/AddressItem';
-import { useSelector } from 'react-redux';
-import { destinationForm } from '@store/destination';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  destinationForm,
+  INIT_LOCATION_TEMP,
+  SET_DESTINATION,
+  SET_DESTINATION_STATUS,
+} from '@store/destination';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { setAlert } from '@store/alert';
+
+/* TODO: receiverName, receiverTel  */
 
 const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
-  const [userLocation, setUserLocation] = useState({
-    roadAddr: '',
-    roadAddrPart1: '',
-    roadAddrPart2: '',
-    jibunAddr: '',
-    engAddr: '',
-    zipNo: '',
-    admCd: '',
-    rnMgtSn: '',
-    bdMgtSn: '',
-    detBdNmList: '',
-    bdNm: '',
-    bdKdcd: '',
-    siNm: '',
-    sggNm: '',
-    emdNm: '',
-    liNm: '',
-    rn: '',
-    udrtYn: '',
-    buldMnnm: '',
-    buldSlno: '',
-    mtYn: '',
-    lnbrMnnm: '',
-    lnbrSlno: '',
-    emdNo: '',
-  });
+
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
@@ -51,22 +34,20 @@ const DestinationDetailPage = () => {
   const destinationNameRef = useRef<HTMLInputElement>(null);
   const destinationDetailRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const dispatch = useDispatch();
+  const { tempLocation, availableDestination } = useSelector(destinationForm);
+
+  // 배송 가능 여부
+  const destinationStatus = checkDestinationHelper(availableDestination);
+  const canNotDelivery = destinationStatus === 'noDelivery';
 
   useEffect(() => {
     getLonLanForMap();
-  });
+  }, []);
 
   const getLonLanForMap = async () => {
     const params = {
-      query: userLocation.roadAddrPart1,
+      query: tempLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -88,37 +69,46 @@ const DestinationDetailPage = () => {
 
   const getDestination = async () => {
     if (destinationDetailRef.current && destinationNameRef.current) {
-      const addressDetail = destinationDetailRef.current.value;
-      const name = destinationNameRef.current.value;
+      const addressDetail = destinationDetailRef.current.value.toString();
+      const name = destinationNameRef.current.value.toString();
 
       const reqBody = {
-        // address: userLocation.roadAddrPart1,
-        // addressDetail,
-        // delivery: 'MORNING',
-        // deliveryMessage: '',
-        // dong: userLocation.emdNm,
-        // main: false,
-        // name,
-        // receiverName: '',
-        // receiverTel: '',
-        // zipCode: userLocation.zipNo,
-        address: '서울 송파구 거마로2길 34',
         addressDetail,
-        delivery: 'SPOT',
-        deliveryMessage: '1',
-        dong: userLocation.emdNm,
-        main: false,
         name,
-        receiverName: '집',
+        address: tempLocation.roadAddrPart1,
+        delivery: canNotDelivery ? '' : destinationStatus.toUpperCase(),
+        deliveryMessage: '테스트',
+        dong: tempLocation.emdNm,
+        main: isDefaultDestination,
+        receiverName: '테스트1',
         receiverTel: '01012341234',
-        zipCode: userLocation.zipNo,
+        zipCode: tempLocation.zipNo,
       };
-      const { data } = await destinationRegister(reqBody);
-      router.push('cart/delivery-info');
+      try {
+        const { data } = await destinationRegister(reqBody);
+        if (data.code === 200) {
+          dispatch(SET_DESTINATION(reqBody));
+          dispatch(SET_DESTINATION_STATUS(destinationStatus));
+          dispatch(INIT_LOCATION_TEMP());
+        }
+
+        router.push('/cart/delivery-info');
+      } catch (error) {
+        dispatch(setAlert({ alertMessage: '배송 불가 지역입니다.' }));
+        console.error(error);
+        return;
+      }
     }
   };
 
-  if (!Object.keys(userLocation).length) {
+  const goToSearch = () => {
+    router.push('/destination/search');
+  };
+
+  const goToHome = () => {
+    router.push('/home');
+  };
+  if (!Object.keys(tempLocation).length) {
     return;
   }
 
@@ -134,10 +124,10 @@ const DestinationDetailPage = () => {
       <DestinationInfoWrarpper>
         <FlexCol>
           <AddressItem
-            roadAddr={userLocation.roadAddrPart1}
-            bdNm={userLocation.bdNm}
-            jibunAddr={userLocation.jibunAddr}
-            zipNo={userLocation.zipNo}
+            roadAddr={tempLocation.roadAddrPart1}
+            bdNm={tempLocation.bdNm}
+            jibunAddr={tempLocation.jibunAddr}
+            zipNo={tempLocation.zipNo}
           />
         </FlexCol>
         <TextInput
@@ -160,11 +150,20 @@ const DestinationDetailPage = () => {
           )}
         </FlexRow>
       </DestinationInfoWrarpper>
-      <ButtonWrapper>
-        <Button height="100%" borderRadius="0" onClick={getDestination}>
-          설정하기
-        </Button>
-      </ButtonWrapper>
+      {canNotDelivery ? (
+        <ButtonGroup
+          leftButtonHandler={goToSearch}
+          rightButtonHandler={goToHome}
+          leftText="다른 주소 검색하기"
+          rightText="닫기"
+        />
+      ) : (
+        <ButtonWrapper>
+          <Button height="100%" borderRadius="0" onClick={getDestination}>
+            설정하기
+          </Button>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };
