@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { FlexCenter, FlexCol, homePadding, FlexRow } from '@styles/theme';
@@ -6,7 +6,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';
 import { TextH5B } from '@components/Shared/Text';
 import { editCard } from '@api/card';
-import { ButtonGroup } from '@components/Shared/Button/ButtonGroup';
+import { ButtonGroup } from '@components/Shared/Button';
 import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
@@ -15,14 +15,28 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
 });
 
-function CardEditPage() {
+interface IProps {
+  id: number;
+  name: string;
+}
+
+const CardEditPage = ({ id, name }: IProps) => {
   const [isMainCard, setIsMainCard] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
+  console.log(id, name);
+
+  const putEditCard = async () => {
+    try {
+      const { data } = await editCard({ id, name });
+      console.log(data);
+    } catch (error) {}
+  };
+
   const changeCardNameHandler = () => {};
 
-  const removeCard = async () => {
+  const removeCardHandler = async () => {
     dispatch(
       setAlert({
         alertMessage: '카드를 삭제하시겠어요?',
@@ -33,11 +47,12 @@ function CardEditPage() {
     );
   };
 
-  const editCard = async () => {
+  const editCardHandler = async () => {
     dispatch(
       setAlert({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
+        onSubmit: () => putEditCard(),
       })
     );
   };
@@ -60,17 +75,24 @@ function CardEditPage() {
         <TextH5B padding="4px 0 0 8px">대표 카드로 설정</TextH5B>
       </FlexRow>
       <ButtonGroup
-        leftButtonHandler={removeCard}
-        rightButtonHandler={editCard}
+        leftButtonHandler={removeCardHandler}
+        rightButtonHandler={editCardHandler}
         leftText="삭제하기"
         rightText="수정하기"
       />
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   ${homePadding}
 `;
+
+export async function getServerSideProps(context: any) {
+  const { id, name } = context.query;
+  return {
+    props: { id, name },
+  };
+}
 
 export default CardEditPage;

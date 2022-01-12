@@ -8,23 +8,29 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
-import { route } from 'next/dist/server/router';
+import { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 const CardManagementPage = () => {
-  const CARDS = [1, 2] as any[];
+  const [cards, setCards] = useState([]);
 
   useEffect(() => {
     getCards();
   }, []);
 
   const getCards = async () => {
-    const { data } = await getCardLists();
-
-    console.log(data);
+    try {
+      const { data } = await getCardLists();
+      if (data.code === 200) {
+        setCards(data.data);
+      }
+    } catch (error) {}
   };
 
-  const cardEditHandler = () => {
-    router.push('/mypage/card/edit');
+  const cardEditHandler = (card: ICard) => {
+    router.push(
+      `/mypage/card/edit/${card.id}?name=${card.name}`,
+      `/mypage/card/edit/${card.id}`
+    );
   };
 
   const goToCardRegister = (): void => {
@@ -33,10 +39,10 @@ const CardManagementPage = () => {
 
   return (
     <Container>
-      {!CARDS.length ? (
+      {!cards.length ? (
         <EmptyWrapper>
           <SVGIcon name="emptyCard" />
-          <TextB2R color={theme.greyScale65} padding="0 0 32px 0">
+          <TextB2R color={theme.greyScale65} padding="16px 0 32px 0">
             아직 등록된 카드가 없어요 😭
           </TextB2R>
           <Button
@@ -51,15 +57,14 @@ const CardManagementPage = () => {
       ) : (
         <Wrapper>
           <TextH4B padding="24px 0">카드 관리</TextH4B>
-          {CARDS &&
-            CARDS.map((card, index) => (
-              <div key={index}>
-                <CardItem onClick={cardEditHandler} />
-                {CARDS.length !== index - 1 && (
-                  <BorderLine height={1} margin="0 0 24px 0" />
-                )}
-              </div>
-            ))}
+          {cards.map((card, index) => (
+            <div key={index}>
+              <CardItem onClick={cardEditHandler} card={card} />
+              {cards.length !== index - 1 && (
+                <BorderLine height={1} margin="0 0 24px 0" />
+              )}
+            </div>
+          ))}
           <Button
             backgroundColor={theme.white}
             color={theme.black}
