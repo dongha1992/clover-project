@@ -147,7 +147,7 @@ export const FlexStart = styled.div<{ padding?: string; margin?: string }>`
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexEnd = styled.div<{ padding?: string; margin?:string }>`
+export const FlexEnd = styled.div<{ padding?: string; margin?: string }>`
   width: 100%;
   display: flex;
   align-items: center;
@@ -269,4 +269,14 @@ export const textBody4 = css`
   letter-spacing: -0.4;
   font-weight: normal;
   line-height: 16px;
+`;
+
+export const customInput = css`
+  border: none;
+  padding: 12px 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border-radius: 8px;
 `;
