@@ -111,7 +111,6 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    localStorage.setItem('loc', JSON.stringify(address));
     router.push('/location/address-detail');
   };
 

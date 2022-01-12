@@ -6,44 +6,26 @@ import Link from 'next/link';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
-import { IJuso } from '@model/index';
 import { Tooltip } from '@components/Shared/Tooltip';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { Obj } from '@model/index';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
 
 const HomeHeader = () => {
-  const [userlocation, setUserLocation] = useState<IJuso>({
-    roadAddr: '',
-    roadAddrPart1: '',
-    roadAddrPart2: '',
-    jibunAddr: '',
-    engAddr: '',
-    zipNo: '',
-    admCd: '',
-    rnMgtSn: '',
-    bdMgtSn: '',
-    detBdNmList: '',
-    bdNm: '',
-    bdKdcd: '',
-    siNm: '',
-    sggNm: '',
-    emdNm: '',
-    liNm: '',
-    rn: '',
-    udrtYn: '',
-    buldMnnm: '',
-    buldSlno: '',
-    mtYn: '',
-    lnbrMnnm: '',
-    lnbrSlno: '',
-    emdNo: '',
-  });
+  const { userLocation, availableDestination } = useSelector(destinationForm);
+
+  const [formatAvailableDestination, setFormatAvailableDestination] =
+    useState('');
+
+  const mapper: Obj = {
+    morning: { text: '새벽배송이 가능해요!', width: '150px' },
+    parcel: { text: '택배배송만 가능해요!', width: '150px' },
+    spot: { text: '무료 스팟배송이 가능해요!', width: '170px' },
+  };
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-    } catch (error) {
-      console.error(error);
-    }
+    setFormatAvailableDestination(checkDestinationHelper(availableDestination));
   }, []);
 
   const goToCart = () => {
@@ -57,14 +39,17 @@ const HomeHeader = () => {
           <SVGIcon name="location" />
           <AddressWrapper>
             <Link href="/location">
-              {userlocation?.emdNm ? (
-                <a>{userlocation?.emdNm}</a>
+              {userLocation?.emdNm ? (
+                <a>{userLocation?.emdNm}</a>
               ) : (
                 <a>내 위치 찾기</a>
               )}
             </Link>
-            {userlocation?.emdNm && (
-              <Tooltip message="무료 스팟배송이 가능해요!" width="170px" />
+            {userLocation?.emdNm && (
+              <Tooltip
+                message={mapper[formatAvailableDestination]?.text}
+                width={mapper[formatAvailableDestination]?.width}
+              />
             )}
           </AddressWrapper>
         </Left>
