@@ -5,7 +5,7 @@ import { FlexCenter, FlexCol, homePadding, FlexRow } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';
 import { TextH5B } from '@components/Shared/Text';
-import { editCard } from '@api/card';
+import { editCard, deleteCard } from '@api/card';
 import { ButtonGroup } from '@components/Shared/Button';
 import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
@@ -26,7 +26,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
   const [cardName, setCardName] = useState<string>('');
   const dispatch = useDispatch();
 
-  const putEditCard = async () => {
+  const editCardInfo = async () => {
     const name = cardName ? cardName : orginCardName;
 
     try {
@@ -37,6 +37,15 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const deleteCardInfo = async () => {
+    try {
+      const { data } = await deleteCard(id);
+      if (data.code === 200) {
+        router.push('/mypage/card');
+      }
+    } catch (error) {}
   };
 
   const changeCardNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +59,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
         alertMessage: '카드를 삭제하시겠어요?',
         submitBtnText: '확인',
         closeBtnText: '취소',
-        onSubmit: () => {},
+        onSubmit: () => deleteCardInfo(),
       })
     );
   };
@@ -60,7 +69,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
       setAlert({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
-        onSubmit: () => putEditCard(),
+        onSubmit: () => editCardInfo(),
       })
     );
   };
