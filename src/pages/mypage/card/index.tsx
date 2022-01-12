@@ -27,10 +27,7 @@ const CardManagementPage = () => {
   };
 
   const cardEditHandler = (card: ICard) => {
-    router.push(
-      `/mypage/card/edit/${card.id}?name=${card.name}`,
-      `/mypage/card/edit/${card.id}`
-    );
+    router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
   };
 
   const goToCardRegister = (): void => {

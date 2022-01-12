@@ -24,7 +24,7 @@ export const editCard = (
   id: number,
   name: string
 ): Promise<AxiosResponse<any>> => {
-  return Api.patch(`card/v1/cards/${id}`, { params: name });
+  return Api.patch(`card/v1/cards/${id}`, { name });
 };
 
 export const deleteCard = (id: number): Promise<AxiosResponse<any>> => {
