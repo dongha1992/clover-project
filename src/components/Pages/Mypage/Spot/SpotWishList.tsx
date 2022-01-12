@@ -5,38 +5,34 @@ import { theme } from '@styles/theme';
 import { TextB3R, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 
-
 const SpotWishList = () => {
-  return(
+  return (
     <Container>
       <WishListWrapper>
-          {SPOT_ITEMS.map((item: any, index: number) => {
-            return (
-                <WishList
-                onClick={()=>{}}
-                key={index}
-                >
-                <StorImgWrapper>
-                    <ImgWrapper src={item.img} alt="매장이미지" />
-                </StorImgWrapper>
-                <LocationInfoWrapper >
-                    <TextB3R margin="8px 0 0 0" color={theme.black}>
-                    {item.location}
-                    </TextB3R>
-                    <TextH6B
-                    color={theme.greyScale65}
-                    >{`${item.distance}m`}</TextH6B>
-                    <LikeWrapper>
-                    <SVGIcon name="likeRed" />
-                    {item.like}
-                    </LikeWrapper>
-                </LocationInfoWrapper>
-                </WishList>
-            );
-          })}
+        {SPOT_ITEMS.map((item: any, index: number) => {
+          return (
+            <WishList onClick={() => {}} key={index}>
+              <StorImgWrapper>
+                <ImgWrapper src={item.img} alt="매장이미지" />
+              </StorImgWrapper>
+              <LocationInfoWrapper>
+                <TextB3R margin="8px 0 0 0" color={theme.black}>
+                  {item.location}
+                </TextB3R>
+                <TextH6B
+                  color={theme.greyScale65}
+                >{`${item.distance}m`}</TextH6B>
+                <LikeWrapper>
+                  <SVGIcon name="likeRed" />
+                  {item.like}
+                </LikeWrapper>
+              </LocationInfoWrapper>
+            </WishList>
+          );
+        })}
       </WishListWrapper>
     </Container>
-  )
+  );
 };
 
 const Container = styled.div`

@@ -10,15 +10,21 @@ import {
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import { ISpotItem } from '@components/Pages/Spot/SpotItem';
+import { IDestinationsResponse } from '@model/index';
+import { Obj } from '@model/index';
 
 interface IProps {
-  item: ISpotItem;
+  item: IDestinationsResponse;
   goToCart: () => void;
   goToEdit: (id: number) => void;
 }
 
 const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
+  const mapper: Obj = {
+    MORNING: '새벽배송',
+    PARCEL: '택배배송',
+    QUICK: '퀵배송',
+  };
   return (
     <Container>
       <FlexCol>
@@ -27,12 +33,14 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
             <TextH5B padding="0 8px 0 0">{item.name}</TextH5B>
             <Tag
               margin="0 4px 0 0"
+              padding="4px 8px 4px 6px"
               backgroundColor={theme.brandColor5}
               color={theme.brandColor}
+              center
             >
-               새벽배송
+               {mapper[item.delivery]}
             </Tag>
-            <Tag>기본 베송지</Tag>
+            {item.main && <Tag>기본 베송지</Tag>}
           </FlexRow>
           <TextH6B
             color={theme.greyScale65}
@@ -42,13 +50,17 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
             편집
           </TextH6B>
         </FlexBetween>
-        <TextB3R padding="4px 0 0 0">{item.address}</TextB3R>
-        <FlexRow padding="5px 0 9px 0">
+        <FlexRow padding="4px 0 0 0">
+          <TextB3R padding="0 4px 0 0">{item.location.address}</TextB3R>
+          <TextB3R>{item.location.addressDetail}</TextB3R>
+        </FlexRow>
+
+        <FlexRow padding="5px 0 0 0">
           <TextB3R color={theme.greyScale65} padding="">
-            유저 이름
+            {item.name}
           </TextB3R>
           <Col />
-          <TextB3R color={theme.greyScale65}>번호</TextB3R>
+          <TextB3R color={theme.greyScale65}>{item.receiverTel}</TextB3R>
         </FlexRow>
       </FlexCol>
       <Button

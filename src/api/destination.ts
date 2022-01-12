@@ -20,7 +20,7 @@ export const availabilityDestination = (
 
 export const getDestinations = (
   params: IGetDestinations
-): Promise<AxiosResponse<IResponse>> => {
+): Promise<AxiosResponse<IGetDestinationsResponse>> => {
   return Api.get('destination/v1/destinations', { params });
 };
 
