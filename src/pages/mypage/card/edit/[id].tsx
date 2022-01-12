@@ -10,6 +10,7 @@ import { ButtonGroup } from '@components/Shared/Button';
 import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
+import router from 'next/router';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -17,24 +18,31 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
 
 interface IProps {
   id: number;
-  name: string;
+  orginCardName: string;
 }
 
-const CardEditPage = ({ id, name }: IProps) => {
+const CardEditPage = ({ id, orginCardName }: IProps) => {
   const [isMainCard, setIsMainCard] = useState<boolean>(false);
-
+  const [cardName, setCardName] = useState<string>('');
   const dispatch = useDispatch();
 
-  console.log(id, name);
-
   const putEditCard = async () => {
+    const name = cardName ? cardName : orginCardName;
+
     try {
-      const { data } = await editCard({ id, name });
-      console.log(data);
-    } catch (error) {}
+      const { data } = await editCard(id, name);
+      if (data.code === 200) {
+        router.push('/mypage/card');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const changeCardNameHandler = () => {};
+  const changeCardNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setCardName(value);
+  };
 
   const removeCardHandler = async () => {
     dispatch(
@@ -65,7 +73,7 @@ const CardEditPage = ({ id, name }: IProps) => {
       <BorderLine height={1} margin="32px 0" />
       <FlexCol margin="0 0 24px 0">
         <TextH5B padding="0 0 9px 0">카드 별명</TextH5B>
-        <TextInput value={'별명'} eventHandler={changeCardNameHandler} />
+        <TextInput value={orginCardName} eventHandler={changeCardNameHandler} />
       </FlexCol>
       <FlexRow>
         <Checkbox
@@ -91,7 +99,7 @@ const Container = styled.div`
 export async function getServerSideProps(context: any) {
   const { id, name } = context.query;
   return {
-    props: { id, name },
+    props: { id, orginCardName: name },
   };
 }
 
