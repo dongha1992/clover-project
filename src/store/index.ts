@@ -21,39 +21,25 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-const combineReducer = combineReducers({
-  alert,
-  cart,
-  menu,
-  bottomSheet,
-  dropdown,
-  toast,
-  user,
-  common,
-  destination,
-  order,
-});
-
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
-    const nextState = {
-      ...state, // use previous state
-      ...action.payload, // apply delta from hydration
+    return {
+      ...state,
+      ...action.payload,
     };
-    if (state.alert) nextState.alert = state.alert;
-    if (state.cart) nextState.cart = state.cart;
-    if (state.menu) nextState.menu = state.menu;
-    if (state.bottomSheet) nextState.bottomSheet = state.bottomSheet;
-    if (state.dropdown) nextState.dropdown = state.dropdown;
-    if (state.toast) nextState.toast = state.toast;
-    if (state.user) nextState.user = state.user;
-    if (state.common) nextState.common = state.common;
-    if (state.destination) nextState.destination = state.destination;
-    if (state.order) nextState.order = state.order;
-
-    return nextState;
   }
-  return combineReducer(state, action);
+  return combineReducers({
+    alert,
+    cart,
+    menu,
+    bottomSheet,
+    dropdown,
+    toast,
+    user,
+    common,
+    destination,
+    order,
+  })(state, action);
 };
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -73,7 +59,7 @@ const store = configureStore({
       serializableCheck: false,
     }),
   ],
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: isDev,
 });
 
 const makeStore = (context: any) => {
@@ -104,7 +90,7 @@ const makeStore = (context: any) => {
 };
 
 export const wrapper = createWrapper(makeStore, {
-  debug: false,
+  debug: isDev,
 });
 
 export type AppState = ReturnType<typeof store.getState>;
