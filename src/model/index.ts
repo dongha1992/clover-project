@@ -203,6 +203,7 @@ export interface IRegisterDestination {
   addressDetail: string;
   delivery?: string;
   deliveryMessage?: string;
+  deliveryMessageType?: string;
   dong?: string | null;
   main: boolean;
   name: string;
@@ -231,6 +232,8 @@ export interface IAvilabiltyAddressResponse {
 export interface IDestinationsResponse {
   id: number;
   delivery: TDeliveryType;
+  deliveryMessage: string;
+  deliveryMessageType: string;
   name: string;
   receiverTel: string;
   receiverName: string;
