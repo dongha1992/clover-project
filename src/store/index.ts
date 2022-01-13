@@ -24,7 +24,13 @@ import storage from 'redux-persist/lib/storage';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
-    return { ...state, ...action.payload };
+    return {
+      ...state,
+      server: {
+        ...state.server,
+        ...action.payload.server,
+      },
+    };
   }
   return combineReducers({
     alert,
@@ -98,5 +104,3 @@ export const wrapper = createWrapper(makeStore, {
 
 export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export default wrapper;
