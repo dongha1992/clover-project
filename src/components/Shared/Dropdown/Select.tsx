@@ -59,7 +59,7 @@ const SelectContainer = styled.div`
 
   .SelectedText {
     position: relative;
-    padding: 12px 20px 10px;
+    padding: 12px 16px;
     cursor: pointer;
     :after {
       content: '';
