@@ -33,8 +33,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isWithContentsSection = useMediaQuery('(min-width:1024px)');
   const isMobile = useMediaQuery('(max-width:512px)');
 
-  const store = useStore();
-  const persistor = persistStore(store);
+  const store: any = useStore();
 
   return (
     <>
@@ -46,7 +45,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
       >
         <GlobalStyle />
-        <PersistGate persistor={persistor}>
+        <PersistGate persistor={store.__persistor}>
           <Wrapper>
             <Component {...pageProps} />
           </Wrapper>
@@ -57,24 +56,23 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 };
 
 MyApp.getInitialProps = wrapper.getInitialPageProps(
-  (store) =>
-    async ({ ctx }: any) => {
-      {
-        let mobile;
+  (store) => async ({ ctx }: any) => {
+    {
+      let mobile;
 
-        if (ctx.req) {
-          const md = new MobileDetect(ctx.req.headers['user-agent']);
-          mobile = !!md.mobile();
-        } else {
-          mobile = isMobile;
-        }
-
-        store.dispatch(SET_IS_MOBILE(mobile));
-        return {
-          props: {},
-        };
+      if (ctx.req) {
+        const md = new MobileDetect(ctx.req.headers['user-agent']);
+        mobile = !!md.mobile();
+      } else {
+        mobile = isMobile;
       }
+
+      store.dispatch(SET_IS_MOBILE(mobile));
+      return {
+        props: {},
+      };
     }
+  }
 );
 
 export default wrapper.withRedux(MyApp);
