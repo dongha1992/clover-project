@@ -19,7 +19,6 @@ import {
   SET_DESTINATION_STATUS,
 } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
-import { setAlert } from '@store/alert';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -68,36 +67,28 @@ const DestinationDetailPage = () => {
   };
 
   const getDestination = async () => {
+    if (canNotDelivery) {
+      return;
+    }
+
     if (destinationDetailRef.current && destinationNameRef.current) {
       const addressDetail = destinationDetailRef.current.value.toString();
       const name = destinationNameRef.current.value.toString();
 
-      const reqBody = {
+      const userDestinationInfo = {
         addressDetail,
         name,
         address: tempLocation.roadAddrPart1,
-        delivery: canNotDelivery ? '' : destinationStatus.toUpperCase(),
-        deliveryMessage: '테스트',
         dong: tempLocation.emdNm,
         main: isDefaultDestination,
-        receiverName: '테스트1',
-        receiverTel: '01012341234',
         zipCode: tempLocation.zipNo,
       };
-      try {
-        const { data } = await destinationRegister(reqBody);
-        if (data.code === 200) {
-          dispatch(SET_DESTINATION(reqBody));
-          dispatch(SET_DESTINATION_STATUS(destinationStatus));
-          dispatch(INIT_LOCATION_TEMP());
-        }
 
-        router.push('/cart/delivery-info');
-      } catch (error) {
-        dispatch(setAlert({ alertMessage: '배송 불가 지역입니다.' }));
-        console.error(error);
-        return;
-      }
+      dispatch(SET_DESTINATION(userDestinationInfo));
+      dispatch(SET_DESTINATION_STATUS(destinationStatus));
+      dispatch(INIT_LOCATION_TEMP());
+
+      router.push('/cart/delivery-info');
     }
   };
 

@@ -10,9 +10,13 @@ import dynamic from 'next/dynamic';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
-import { SET_USER_DESTINATION_STATUS } from '@store/destination';
+import {
+  SET_USER_DESTINATION_STATUS,
+  SET_DESTINATION,
+} from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { destinationRegister } from '@api/destination';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -123,14 +127,42 @@ const DeliverInfoPage = () => {
     [selectedMethod]
   );
 
-  const finishDeliverySetting = () => {
+  const finishDeliverySetting = async () => {
     if (!hasUserSelectDestination) {
       return;
     }
 
-    dispatch(SET_USER_DESTINATION_STATUS(selectedMethod));
-    dispatch(SET_AFTER_SETTING_DELIVERY());
-    router.push('/cart');
+    const reqBody = {
+      addressDetail: userDestination.addressDetail,
+      name: userDestination.name,
+      address: userDestination.address,
+      delivery: selectedMethod.toUpperCase(),
+      deliveryMessage: userDestination.deliveryMessage
+        ? userDestination.deliveryMessage
+        : '',
+      dong: userDestination.dong,
+      main: userDestination.main,
+      receiverName: userDestination.receiverName
+        ? userDestination.receiverName
+        : '테스트',
+      receiverTel: userDestination.receiverTel
+        ? userDestination.receiverTel
+        : '01012341234',
+      zipCode: userDestination.zipCode,
+    };
+
+    try {
+      const { data } = await destinationRegister(reqBody);
+      if (data.code === 200) {
+        dispatch(SET_DESTINATION(reqBody));
+        dispatch(SET_USER_DESTINATION_STATUS(selectedMethod));
+        dispatch(SET_AFTER_SETTING_DELIVERY());
+        router.push('/cart');
+      }
+    } catch (error) {
+      console.error(error);
+      return;
+    }
   };
 
   const placeInfoRender = () => {
