@@ -67,6 +67,16 @@ const rootReducer = (state: any, action: AnyAction) => {
   }
 };
 
+const isDev = process.env.NODE_ENV !== 'production';
+
+const makeConfigureStore = (reducer: any) =>
+  configureStore({
+    reducer: reducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }).concat(),
+    devTools: isDev,
+  });
+
 const store = configureStore({
   reducer: rootReducer,
   middleware: [
@@ -85,35 +95,28 @@ const store = configureStore({
 //   debug: process.env.NODE_ENV !== 'production',
 // });
 
-const isDev = process.env.NODE_ENV !== 'production';
-
 const makeStore = (context: any) => {
   const isServer = typeof window === 'undefined';
 
   if (isServer) {
     // server
-    return configureStore({
-      reducer: rootReducer,
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(),
-      devTools: isDev,
-    });
+    return makeConfigureStore(rootReducer);
   } else {
+    const { persistStore, persistReducer } = require('redux-persist');
+    const storage = require('redux-persist/lib/storage').default;
+
     // client
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: ['menu', 'order', 'user', 'cart', 'destination'],
+      whitelist: ['order'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-    const store = configureStore({
-      reducer: persistedReducer,
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(),
-      devTools: isDev,
-    });
+    const store: any = makeConfigureStore(persistedReducer);
+
+    store.__persistor = persistStore(store);
 
     return store;
   }
