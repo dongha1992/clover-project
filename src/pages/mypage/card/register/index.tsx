@@ -45,8 +45,6 @@ const CARD_TYPE: ICardType[] = [
   },
 ];
 
-/*TODO: 카드 번호 ref로 관리해도 되낭 */
-
 const CardRegisterPage = () => {
   const [selectedCardType, setSelectedCardType] = useState(1);
   const [card, setCard] = useState<Obj>({
@@ -175,14 +173,16 @@ const CardRegisterPage = () => {
 
       try {
         const { data } = await registerCard(cardData);
-        console.log(data);
 
-        dispatch(
-          setAlert({
-            alertMessage: successMsg,
-            submitBtnText: '확인',
-          })
-        );
+        if (data.code === 200) {
+          dispatch(
+            setAlert({
+              alertMessage: successMsg,
+              submitBtnText: '확인',
+              onSubmit: () => router.push('/mypage/card'),
+            })
+          );
+        }
       } catch (error) {
         console.error(error);
         dispatch(

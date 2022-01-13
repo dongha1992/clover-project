@@ -273,7 +273,7 @@ export const textBody4 = css`
 
 export const customInput = css`
   border: none;
-  padding: 12px 20px;
+  padding: 12px 16px 12px 12px;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;

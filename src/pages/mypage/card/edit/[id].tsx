@@ -5,7 +5,7 @@ import { FlexCenter, FlexCol, homePadding, FlexRow } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';
 import { TextH5B } from '@components/Shared/Text';
-import { editCard, deleteCard } from '@api/card';
+import { editCard, deleteCard, setMainCard } from '@api/card';
 import { ButtonGroup } from '@components/Shared/Button';
 import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
@@ -30,10 +30,20 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     const name = cardName ? cardName : orginCardName;
 
     try {
-      const { data } = await editCard(id, name);
-      if (data.code === 200) {
-        router.push('/mypage/card');
-      }
+      Promise.all([editCard(id, name), setMainCard(id)]).then((responses) => {
+        let isSuccess = false;
+
+        for (let res of responses) {
+          const { data } = res;
+          if (data.code === 200) {
+            isSuccess = true;
+          }
+        }
+
+        if (isSuccess) {
+          router.push('/mypage/card');
+        }
+      });
     } catch (error) {
       console.error(error);
     }
