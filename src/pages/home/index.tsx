@@ -4,15 +4,9 @@ import Home from '@components/Home';
 import Footer from '@components/Footer';
 import { wrapper } from '@store/index';
 import { connect } from 'react-redux';
+import { SET_ORDER_TYPE } from '@store/order';
 
 // import { setRefreshToken } from '@components/Auth';
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) =>
-    (context): any => {
-      console.log(store.getState().destination, 'store');
-    }
-);
 
 const HomePage = () => {
   return (
@@ -28,5 +22,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    (context): any => {
+      store.dispatch(SET_ORDER_TYPE({ orderType: 'TEST' }));
+      console.log(store.getState());
+    }
+);
 
 export default HomePage;
