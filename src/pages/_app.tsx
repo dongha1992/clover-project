@@ -7,7 +7,7 @@ import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { Provider } from 'react-redux';
-import wrapper from '@store/index';
+import { wrapper } from '@store/index';
 import { SET_IS_MOBILE } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { isMobile } from 'react-device-detect';
@@ -20,6 +20,7 @@ import { useStore } from 'react-redux';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+/*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
   interface Window {
     Kakao: any;
