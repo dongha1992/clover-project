@@ -55,6 +55,7 @@ const destinationState = {
   receiverName: '',
   receiverTel: '',
   zipCode: '',
+  deliveryMessageType: '',
 };
 
 const INITIAL_STATE: TProps = {
