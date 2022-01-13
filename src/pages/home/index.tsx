@@ -4,13 +4,14 @@ import Home from '@components/Home';
 import Footer from '@components/Footer';
 import { wrapper } from '@store/index';
 import { connect } from 'react-redux';
+import { SET_ORDER_TYPE } from '@store/order';
 
 // import { setRefreshToken } from '@components/Auth';
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     (context): any => {
-      console.log(store.getState().destination, 'store');
+      store.dispatch(SET_ORDER_TYPE({ orderType: 'TEST' }));
     }
 );
 
