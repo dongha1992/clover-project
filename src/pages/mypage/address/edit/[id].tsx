@@ -36,6 +36,7 @@ import {
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
+import { getValues } from '@utils/getValues';
 
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
@@ -48,14 +49,15 @@ const mapper: Obj = {
 };
 
 const accessMethodMap: Obj = {
-  free: '요청사항을 입력해주세요',
-  commonPassword: '예) #1234#',
-  officeCall: '경비실 호출 방법 입력',
-  intercom: '새벽에도 호출 가능한 경우 선택해주세요',
-  officeDelivery: '경비실 부재 시 공동현관 등에 대응 배송',
-  unmannedExternal: '무인택배함 비밀번호 입력',
-  unmannedInternal: ' 공동현관 비밀번호 / 무인택배함 비밀번호 입력',
-  etc: '직접 입력',
+  FREE: '요청사항을 입력해주세요',
+  COMMON_ENTRANCE_PASSWORD: '예) #1234#',
+  CALL_SECURITY_OFFICE: '경비실 호출 방법 입력',
+  CALL_HOUSE: '새벽에도 호출 가능한 경우 선택해주세요',
+  DELIVERY_SECURITY_OFFICE: '경비실 부재 시 공동현관 등에 대응 배송',
+  DELIVERY_EXTERNAL_UNMANNED_COURIER_BOX: '무인택배함 비밀번호 입력',
+  DELIVERY_INTERNAL_UNMANNED_COURIER_BOX:
+    ' 공동현관 비밀번호 / 무인택배함 비밀번호 입력',
+  ETC: '직접 입력',
 };
 
 interface IProps {
@@ -107,9 +109,27 @@ const AddressEditPage = ({ id }: IProps) => {
       const { data } = await getDestinations(params);
       if (data.code === 200) {
         const { destinations } = data.data;
-        setSelectedAddress(
-          destinations.find((item: IDestinationsResponse) => item.id === id)
+        const foundItem = destinations.find(
+          (item: IDestinationsResponse) => item.id === id
         );
+        setSelectedAddress(foundItem);
+
+        const isMorning = foundItem?.delivery === 'MORNING';
+
+        if (isMorning) {
+          const userSelectMethod = getValues(foundItem, 'deliveryMessageType');
+          const selectedMethod = ACCESS_METHOD.find(
+            (item) => item.value === userSelectMethod
+          );
+          setSelectedAccessMethod(selectedMethod);
+        }
+
+        setDeliveryEditObj({
+          deliveryName: foundItem?.name!,
+          receiverTel: foundItem?.receiverTel!,
+          receiverName: foundItem?.receiverName!,
+          deliveryMessage: foundItem?.deliveryMessage!,
+        });
       }
     } catch (error) {
       console.error(error);
@@ -135,6 +155,10 @@ const AddressEditPage = ({ id }: IProps) => {
     );
   };
   const editAddressHandler = () => {
+    if (!cheekBeforeEdit()) {
+      return;
+    }
+
     dispatch(
       setAlert({
         alertMessage: '내용을 수정했습니다.',
@@ -144,6 +168,38 @@ const AddressEditPage = ({ id }: IProps) => {
     );
   };
 
+  const cheekBeforeEdit = (): boolean => {
+    const noMsg = !deliveryEditObj.deliveryMessage.length;
+    const noAccessMethod = !selectedAccessMethod?.value!;
+
+    switch (true) {
+      case isMorning: {
+        if (noMsg) {
+          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          return false;
+        } else if (noAccessMethod) {
+          dispatch(setAlert({ alertMessage: '츨입방법을 입력해주세요' }));
+          return false;
+        } else {
+          return true;
+        }
+      }
+
+      case isParcel: {
+        if (noMsg) {
+          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          return false;
+        } else {
+          return true;
+        }
+      }
+
+      default: {
+        return true;
+      }
+    }
+  };
+
   const editAddress = async () => {
     const reqBody = {
       id,
@@ -151,22 +207,16 @@ const AddressEditPage = ({ id }: IProps) => {
       addressDetail: selectedAddress?.location.addressDetail,
       delivery: selectedAddress?.delivery,
       deliveryMessage: deliveryEditObj.deliveryMessage,
+      deliveryMessageTypeType: selectedAccessMethod?.value!,
       dong: selectedAddress?.location.dong,
       main: isDefaultSpot,
-      name: deliveryEditObj.deliveryName
-        ? deliveryEditObj.deliveryName
-        : selectedAddress?.name,
-      receiverName: deliveryEditObj.receiverName
-        ? deliveryEditObj.receiverName
-        : selectedAddress?.receiverName,
-      receiverTel: deliveryEditObj.receiverTel
-        ? deliveryEditObj.receiverTel
-        : selectedAddress?.receiverTel,
+      name: deliveryEditObj.deliveryName,
+      receiverName: deliveryEditObj.receiverName,
+      receiverTel: deliveryEditObj.receiverTel,
       zipCode: selectedAddress?.location.zipCode,
     };
 
     const { data } = await editDestination(id, reqBody);
-    console.log(data, 'after edit');
   };
 
   const removeAddress = async () => {
@@ -209,7 +259,7 @@ const AddressEditPage = ({ id }: IProps) => {
             <TextInput
               placeholder="이름"
               name="receiverName"
-              value={selectedAddress?.receiverName}
+              value={deliveryEditObj?.receiverName}
               eventHandler={changeInputHandler}
             />
           </FlexCol>
@@ -218,7 +268,7 @@ const AddressEditPage = ({ id }: IProps) => {
             <TextInput
               placeholder="휴대폰 번호"
               name="receiverTel"
-              value={selectedAddress?.receiverTel}
+              value={deliveryEditObj?.receiverTel}
               eventHandler={changeInputHandler}
             />
           </FlexCol>
@@ -280,7 +330,7 @@ const AddressEditPage = ({ id }: IProps) => {
                     : '요청사항 입력'
                 }
                 margin="8px 0 0 0"
-                value={deliveryEditObj.deliveryMessage}
+                value={deliveryEditObj?.deliveryMessage}
                 eventHandler={changeInputHandler}
               />
             </FlexCol>
@@ -310,19 +360,19 @@ const AddressEditPage = ({ id }: IProps) => {
                 name="deliveryMessage"
                 placeholder="요청사항 입력"
                 margin="8px 0 0 0"
-                value={deliveryEditObj.deliveryMessage}
+                value={deliveryEditObj?.deliveryMessage}
                 eventHandler={changeInputHandler}
               />
             </FlexCol>
           </VisitorAccessMethodWrapper>
         )}
         <BorderLine height={8} margin="0 0 24px 0" />
-        {isParcel && (
+        {!isSpot && (
           <FlexCol padding="0 24px 24px 24px">
             <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
             <TextInput
               name="deliveryName"
-              value={selectedAddress?.name}
+              value={deliveryEditObj?.deliveryName}
               eventHandler={changeInputHandler}
             />
           </FlexCol>
