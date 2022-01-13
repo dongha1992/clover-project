@@ -327,17 +327,4 @@ const TagWrapper = styled.div<{ left?: number }>`
   }
 `;
 
-// OnBoarding.getInitialProps = wrapper.getInitialPageProps(
-//   (store) =>
-//     async ({ context, ctx }: any) => {
-//       {
-//         console.log(ctx, '@@@@@@@@@@@@@');
-//         await setRefreshToken(context, store);
-//         return {
-//           props: { a: ctx },
-//         };
-//       }
-//     }
-// );
-
-export default React.memo(OnBoarding);
+export default OnBoarding;
