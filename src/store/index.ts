@@ -1,7 +1,6 @@
 import {
   configureStore,
   getDefaultMiddleware,
-  EnhancedStore,
   combineReducers,
   AnyAction,
   CombinedState,
@@ -16,42 +15,56 @@ import user from './user';
 import order from './order';
 import common from './common';
 import destination from './destination';
-import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
+import { createWrapper, HYDRATE } from 'next-redux-wrapper';
+
+// persist
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
+const combineReducer = combineReducers({
+  alert,
+  cart,
+  menu,
+  bottomSheet,
+  dropdown,
+  toast,
+  user,
+  common,
+  destination,
+  order,
+});
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
-  console.log(action);
-
   if (action.type === HYDRATE) {
-    return {
-      ...state,
-      server: {
-        ...state.server,
-        ...action.payload.server,
-      },
+    const nextState = {
+      ...state, // use previous state
+      ...action.payload, // apply delta from hydration
     };
+    if (state.alert) nextState.alert = state.alert;
+    if (state.cart) nextState.cart = state.cart;
+    if (state.menu) nextState.menu = state.menu;
+    if (state.bottomSheet) nextState.bottomSheet = state.bottomSheet;
+    if (state.dropdown) nextState.dropdown = state.dropdown;
+    if (state.toast) nextState.toast = state.toast;
+    if (state.user) nextState.user = state.user;
+    if (state.common) nextState.common = state.common;
+    if (state.destination) nextState.destination = state.destination;
+    if (state.order) nextState.order = state.order;
+
+    return nextState;
   }
-  return combineReducers({
-    alert,
-    cart,
-    menu,
-    bottomSheet,
-    dropdown,
-    toast,
-    user,
-    common,
-    destination,
-    order,
-  })(state, action);
+  return combineReducer(state, action);
 };
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-const makeConfigureStore = (reducer: any) => configureStore({
-  reducer: reducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }).concat(),
-  devTools: isDev,
-});
+const makeConfigureStore = (reducer: any) =>
+  configureStore({
+    reducer: reducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }).concat(),
+    devTools: isDev,
+  });
 
 const store = configureStore({
   reducer: rootReducer,
@@ -63,21 +76,12 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-/* TODO: MakeStore generic 모르겠음.. */
-// const setupStore = (context: Context): EnhancedStore => store;
-// const makeStore: MakeStore<any> = (context: any) => setupStore(context);
-
-// export const wrapper = createWrapper<any>(makeStore, {
-//   debug: process.env.NODE_ENV !== 'production',
-// });
-
 const makeStore = (context: any) => {
   const isServer = typeof window === 'undefined';
 
   if (isServer) {
     // server
-    return makeConfigureStore(rootReducer)
-
+    return makeConfigureStore(rootReducer);
   } else {
     const { persistStore, persistReducer } = require('redux-persist');
     const storage = require('redux-persist/lib/storage').default;
@@ -86,12 +90,12 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: ['order'],
+      whitelist: ['order', 'destination', 'cart', 'user', 'menu'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-    const store: any = makeConfigureStore(persistedReducer)
+    const store: any = makeConfigureStore(persistedReducer);
 
     store.__persistor = persistStore(store);
 

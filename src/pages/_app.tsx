@@ -56,23 +56,23 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 };
 
 MyApp.getInitialProps = wrapper.getInitialPageProps(
-  (store) => async ({ ctx }: any) => {
-    {
-      let mobile;
+  (store) =>
+    async ({ ctx }: any) => {
+      {
+        let mobile;
 
-      if (ctx.req) {
-        const md = new MobileDetect(ctx.req.headers['user-agent']);
-        mobile = !!md.mobile();
-      } else {
-        mobile = isMobile;
+        if (ctx.req) {
+          const md = new MobileDetect(ctx.req.headers['user-agent']);
+          mobile = !!md.mobile();
+        } else {
+          mobile = isMobile;
+        }
+        store.dispatch(SET_IS_MOBILE(mobile));
+        return {
+          props: {},
+        };
       }
-
-      store.dispatch(SET_IS_MOBILE(mobile));
-      return {
-        props: {},
-      };
     }
-  }
 );
 
 export default wrapper.withRedux(MyApp);
