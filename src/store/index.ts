@@ -22,28 +22,49 @@ import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
+// const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
+//   if (action.type === HYDRATE) {
+//     return {
+//       ...state,
+//       ...action.payload,
+//     };
+//   }
+//   return combineReducers({
+//     alert,
+//     cart,
+//     menu,
+//     bottomSheet,
+//     dropdown,
+//     toast,
+//     user,
+//     common,
+//     destination,
+//     order,
+//   })(state, action);
+// };
+
+const combineReducer = combineReducers({
+  alert,
+  cart,
+  menu,
+  bottomSheet,
+  dropdown,
+  toast,
+  user,
+  common,
+  destination,
+  order,
+});
+
+const rootReducer = (state: any, action: AnyAction) => {
   if (action.type === HYDRATE) {
     return {
       ...state,
-      server: {
-        ...state.server,
-        ...action.payload.server,
-      },
+      ...action.payload,
     };
+  } else {
+    return combineReducer(state, action);
   }
-  return combineReducers({
-    alert,
-    cart,
-    menu,
-    bottomSheet,
-    dropdown,
-    toast,
-    user,
-    common,
-    destination,
-    order,
-  })(state, action);
 };
 
 const store = configureStore({
@@ -82,7 +103,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      blacklist: ['toast', 'dropdown', 'common', 'bottomSheet', 'alert'],
+      whitelist: ['menu', 'order', 'user', 'cart', 'destination'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
