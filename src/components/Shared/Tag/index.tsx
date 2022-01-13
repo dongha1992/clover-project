@@ -43,9 +43,7 @@ const Tag = ({
 };
 
 const Container = styled(TextH7B)<ITagProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: inline-block;
   width: ${(props) => props.width && props.width};
   padding: ${(props) => (props.padding ? props.padding : '4px 8px')};
   margin: ${(props) => props.margin && props.margin};

@@ -8,13 +8,6 @@ import { SET_ORDER_TYPE } from '@store/order';
 
 // import { setRefreshToken } from '@components/Auth';
 
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) =>
-    (context): any => {
-      store.dispatch(SET_ORDER_TYPE({ orderType: 'TEST' }));
-    }
-);
-
 const HomePage = () => {
   return (
     <Container>
@@ -29,5 +22,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    (context): any => {
+      store.dispatch(SET_ORDER_TYPE({ orderType: 'TEST' }));
+      console.log(store.getState());
+    }
+);
 
 export default HomePage;
