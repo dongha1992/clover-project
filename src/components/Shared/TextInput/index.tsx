@@ -87,7 +87,7 @@ const TextInput = React.forwardRef(
       (e: React.ChangeEvent<HTMLInputElement>): void => {
         eventHandler && eventHandler(e);
       },
-      500
+      300
     );
 
     const debounceSetStateValue = useRef(
@@ -164,7 +164,7 @@ const Container = styled.div<{
       height: ${({ height }) => height};
       size: ${({ size }) => size};
       padding: ${({ padding }) => padding};
-      padding-left: ${({ svg }) => (svg ? 48 : 12)}px;
+      padding-left: ${({ svg }) => (svg ? 48 : 16)}px;
       ${({ size, search }) => search && `size: calc(${size} + 1rem)`};
       border: 1px solid ${theme.greyScale15};
       border-radius: 8px;
@@ -185,7 +185,6 @@ const Container = styled.div<{
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
-      padding-left: 8px;
     }
   }
 `;
