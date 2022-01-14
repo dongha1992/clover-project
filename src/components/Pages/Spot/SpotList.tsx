@@ -15,12 +15,14 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { ISpots } from '@model/index';
+import { INewSpots } from '@pages/spot';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
 interface IProps {
-  items: any; // API 통신 이후 타입 지정 예정
+  items: INewSpots[];
   title?: string;
   subTitle?: string;
   type: string;
@@ -31,7 +33,6 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
   const router = useRouter();
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
-
 
   const goToDetail = (id: number): void => {
     router.push(`/spot/detail/${id}`);
@@ -60,124 +61,135 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
     );
   };
 
-
-  return (
-    <>
-      {type === 'normal' && (
-        <ItemListRowWrapper>
-          <TextH2B padding="0 0 24px 0">{title}</TextH2B>
-          <ItemListRow>
-            {items?.map((item: any, index: number) => {
-              return (
-                <Container
-                  type="normal"
-                  onClick={() => goToDetail(item.id)}
-                  key={index}
-                >
-                  <StorImgWrapper>
-                    <Tag>
-                      <SVGIcon name="fcoSpot" />
-                      {`${item.userCount}명 이용중`}
-                    </Tag>
-                    <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
-                  </StorImgWrapper>
-                  <LocationInfoWrapper type="normal">
-                    <TextB3R margin="8px 0 0 0" color={theme.black}>
-                      {item.name}
-                    </TextB3R>
-                    <TextH6B
-                      color={theme.greyScale65}
-                    >{`${Math.round(item.distance)}m`}</TextH6B>
-                    <LikeWrapper type="normal">
-                      <SVGIcon name={item.liked ? 'likeRed18' : 'likeBorderGray'} />
-                      <TextB2R padding='4px 0 0 1px'>{item.likeCount}</TextB2R>
-                    </LikeWrapper>
-                  </LocationInfoWrapper>
-                </Container>
-              );
-            })}
-          </ItemListRow>
-        </ItemListRowWrapper>
-      )}
-      {type === 'event' && (
-        <ItemListRowWrapper>
-          <TextH2B padding="0 0 24px 0">{title}</TextH2B>
-          <ItemListRow>
-            {items?.map((item: any, index: number) => {
-              return (
-                <Container
-                  type="event"
-                  onClick={() => goToDetail(item.id)}
-                  key={index}
-                >
-                  <StorImgWrapper>
-                    <LikeWrapper type="event">
-                      <SVGIcon name="likeBlack" />
-                    </LikeWrapper>
-                    <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
-                  </StorImgWrapper>
-                  <LocationInfoWrapper type="event">
-                    <div>
-                      {/* <TextH4B>{item.desc}</TextH4B> */}
-                      <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
+  const SpotsListTypeRender = () => {
+    switch(type) {
+      case 'normal':
+        return (
+          <ItemListRowWrapper>
+            <TextH2B padding="0 0 24px 0">{title}</TextH2B>
+            <ItemListRow>
+              {items?.map((item: any, index: number) => {
+                return (
+                  <Container
+                    type="normal"
+                    onClick={() => goToDetail(item.id)}
+                    key={index}
+                  >
+                    <StorImgWrapper>
+                      <Tag>
+                        <SVGIcon name="fcoSpot" />
+                        {`${item.userCount}명 이용중`}
+                      </Tag>
+                      <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
+                    </StorImgWrapper>
+                    <LocationInfoWrapper type="normal">
+                      <TextB3R margin="8px 0 0 0" color={theme.black}>
                         {item.name}
-                      </TextH6B>
-                    </div>
-                    <ButtonWrapper>
+                      </TextB3R>
                       <TextH6B
                         color={theme.greyScale65}
                       >{`${Math.round(item.distance)}m`}</TextH6B>
-                      <Button onClick={goToCart}>{btnText}</Button>
-                    </ButtonWrapper>
-                  </LocationInfoWrapper>
-                </Container>
-              );
-            })}
-          </ItemListRow>
-        </ItemListRowWrapper>
-      )}
-      {type === 'trial' && (
-        <ItemListRowWrapper>
-          <TextH2B>{title}</TextH2B>
-          <TextB2R color={theme.greyScale65} padding="8px 0 23px 0">
-            {subTitle}
-          </TextB2R>
-          <ItemListRow>
-            {items.map((item: any, index: number) => {
-              return (
-                <Container
-                  type="trial"
-                  onClick={() => goToDetail(item.id)}
-                  key={index}
-                >
-                  <StorImgWrapper>
-                    <Tag>
-                      <SVGIcon name="fcoSpot" />
-                      {`${item.users}/100명 참여중`}
-                    </Tag>
-                    {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
-                    <ImgBox />
-                  </StorImgWrapper>
-                  <LocationInfoWrapper type="trial">
-                    <TextWrapper>
-                      <TextH5B margin="8px 0 0 0" color={theme.black}>
-                        {item.location}
-                      </TextH5B>
-                      <TextH6B
-                        color={theme.greyScale65}
-                      >{`${item.distance}m`}</TextH6B>
-                    </TextWrapper>
-                    <Button onClick={clickSpotOpen}>{btnText}</Button>
-                  </LocationInfoWrapper>
-                </Container>
-              );
-            })}
-          </ItemListRow>
-        </ItemListRowWrapper>
-      )}
-    </>
-  );
-};
+                      <LikeWrapper type="normal">
+                        <SVGIcon name={item.liked ? 'likeRed18' : 'likeBorderGray'} />
+                        <TextB2R padding='4px 0 0 1px'>{item.likeCount}</TextB2R>
+                      </LikeWrapper>
+                    </LocationInfoWrapper>
+                  </Container>
+                );
+              })}
+            </ItemListRow>
+          </ItemListRowWrapper>
+        )
+      case 'event': 
+        return (
+          <ItemListRowWrapper>
+            <TextH2B padding="0 0 24px 0">{title}</TextH2B>
+            <ItemListRow>
+              {items?.map((item: any, index: number) => {
+                return (
+                  <Container
+                    type="event"
+                    onClick={() => goToDetail(item.id)}
+                    key={index}
+                  >
+                    <StorImgWrapper>
+                      <LikeWrapper type="event">
+                        <SVGIcon name="likeBlack" />
+                      </LikeWrapper>
+                      <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
+                    </StorImgWrapper>
+                    <LocationInfoWrapper type="event">
+                      <div>
+                        <TextH4B>{item.eventTitle}</TextH4B>
+                        <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
+                          {item.name}
+                        </TextH6B>
+                      </div>
+                      <ButtonWrapper>
+                        <TextH6B
+                          color={theme.greyScale65}
+                        >{`${Math.round(item.distance)}m`}</TextH6B>
+                        <Button onClick={goToCart}>{btnText}</Button>
+                      </ButtonWrapper>
+                    </LocationInfoWrapper>
+                  </Container>
+                );
+              })}
+            </ItemListRow>
+          </ItemListRowWrapper>
+        )
+      case 'trial':
+        return(
+          <ItemListRowWrapper>
+            <TextH2B>{title}</TextH2B>
+            <TextB2R color={theme.greyScale65} padding="8px 0 23px 0">
+              {subTitle}
+            </TextB2R>
+            <ItemListRow>
+              {items?.map((item: any, index: number) => {
+                return (
+                  <Container
+                    type="trial"
+                    onClick={() => goToDetail(item.id)}
+                    key={index}
+                  >
+                    <StorImgWrapper>
+                      <Tag>
+                        <SVGIcon name="fcoSpot" />
+                        {`${item.users}/100명 참여중`}
+                      </Tag>
+                      {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
+                      <ImgBox />
+                    </StorImgWrapper>
+                    <LocationInfoWrapper type="trial">
+                      <TextWrapper>
+                        <TextH5B margin="8px 0 0 0" color={theme.black}>
+                          {item.location}
+                        </TextH5B>
+                        <TextH6B
+                          color={theme.greyScale65}
+                        >{`${item.distance}m`}</TextH6B>
+                      </TextWrapper>
+                      <Button onClick={clickSpotOpen}>{btnText}</Button>
+                    </LocationInfoWrapper>
+                  </Container>
+                );
+              })}
+            </ItemListRow>
+          </ItemListRowWrapper>
+        )
+      default:
+        return null;
+    };
+  };
+
+  return (
+      <>
+        {SpotsListTypeRender()}
+      </>
+    )
+  };
+
 const ItemListRowWrapper = styled.section`
   width: auto;
   overflow-x: scroll;
@@ -213,10 +225,10 @@ const Container = styled.section<{ type: string }>`
         width: 120px;
       `;
     } else if (type === 'trial') {
-      return `
-                display: inline-block;
-                width: 298px;
-            `;
+      return css`
+        display: inline-block;
+        width: 298px;
+      `;
     }
   }}
 `;
@@ -252,7 +264,6 @@ const Img = styled.img`
   width: 120px;
   heigth: 120px;
   border-radius: 10px;
-  border: 1px solid black;
 `;
 
 const LocationInfoWrapper = styled.div<{ type: string }>`
@@ -297,7 +308,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: end;
-  margin-top: 10px;
+  margin-top: 35px;
   margin-right: 7px;
 `;
 

@@ -292,17 +292,21 @@ export interface IKakaoLatLon {
 export interface IParamsSpots {
   latitude: number | null;
   longitude: number | null;
-  size: number;
+  size?: number;
+  keyword?: string;
 }
 
 export interface ISpotsResponse {
   code: number;
   message: string;
   data: {
+    title: string;
     spots: [
       {
         id: number,
         name: string,
+        type: string;
+        eventTitle: string;
         images: [
           {
             url: string,
@@ -312,14 +316,122 @@ export interface ISpotsResponse {
             main: boolean,
           }
         ],
+        location: {
+          zipCode: string;
+          address: string;
+          addressDetail: string;
+          dong: string;
+        };
+        coordinate: {
+          lat: number;
+          lon: number;
+        };
+        score: number;
+        createdAt: string;
+        description: string;
         liked: boolean,
         likeCount: number,
         userCount: number,
-        distance: number,
-        distanceUnit: string,
+        distance: number;
+        distanceUnit: string;
+        lunchDelivery: boolean;
+        lunchDeliveryStartTime: string;
+        lunchDeliveryEndTime: string;
+        dinnerDelivery: string;
+        dinnerDeliveryStartTime: string;
+        dinnerDeliveryEndTime: string;
+        placeType: string;
+        isTrial: boolean;
+        canEat: boolean;
+        canParking: boolean;
+        discountRate: number;
+        notices: [{
+          content: string;
+          createdAt: string;
+          id: number;
+          spotId: number;
+        }];
+        pickupEndTime: string;
+        pickupStartTime: string;
+        pickups:[{
+          createdAt: string;
+          id: number;
+          images: [];
+          name: string;
+          spotId: number;
+        }];
+        placeHoliday: string;
+        placeOpenTime: string;
+        stories: [];
       }
     ]
   }
+}
+
+export interface ISpots {
+  title: string;
+  spots: [
+    {
+      id: number,
+      name: string,
+      type?: string;
+      eventTitle?: string;
+      images?: [{
+          url?: string,
+          width?: number,
+          height?: number,
+          size?: number,
+          main?: boolean,
+      }],
+      location?: {
+        zipCode?: string;
+        address?: string;
+        addressDetail?: string;
+        dong?: string;
+      };
+      coordinate?: {
+        lat?: number;
+        lon?: number;
+      };
+      score?: number;
+      createdAt?: string;
+      description?: string;
+      liked?: boolean,
+      likeCount?: number,
+      userCount?: number,
+      distance?: number;
+      distanceUnit?: string;
+      lunchDelivery?: boolean;
+      lunchDeliveryStartTime?: string;
+      lunchDeliveryEndTime?: string;
+      dinnerDelivery?: string;
+      dinnerDeliveryStartTime?: string;
+      dinnerDeliveryEndTime?: string;
+      placeType?: string;
+      isTrial?: boolean;
+      canEat?: boolean;
+      canParking?: boolean;
+      discountRate?: number;
+      notices?: [{
+        content?: string;
+        createdAt?: string;
+        id?: number;
+        spotId?: number;
+      }];
+    pickupEndTime?: string;
+      pickupStartTime?: string;
+      pickups?:[{
+        createdAt?: string;
+        id?: number;
+        images?: [];
+        name?: string;
+        spotId?: number;
+      }];
+      placeHoliday?: string;
+      placeOpenTime?: string;
+      stories?: [];    
+    }
+  ]
 }
 
 export interface ISpotDetailResponse {
@@ -351,7 +463,12 @@ export interface ISpotDetailResponse {
     lunchDelivery: boolean;
     lunchDeliveryStartTime: string;
     name: string;
-    notices: [];
+    notices: [{
+      id: number;
+      spotId: number;
+      content: string;
+      createdAt: string;
+    }];
     pickupEndTime: string;
     pickupStartTime: string;
     pickups:[{
@@ -364,38 +481,19 @@ export interface ISpotDetailResponse {
     placeHoliday: string;
     placeOpenTime: string;
     placeType: string;
-    stories: [];
-    type: string;  
-  }
-}
-
-export interface ISpotNearbyResponse {
-  data: {
-    spots: [{
+    stories: [{
       id: number;
+      spotId: number;
       type: string;
-      name: string;
-      location: {
-        zipCode: string;
-        address: string;
-        addressDetail: string;
-        dong: string;
-      };
-      lunchDelivery: boolean;
-      lunchDeliveryStartTime: string;
-      lunchDeliveryEndTime: string;
-      dinnerDelivery: string;
-      dinnerDeliveryStartTime: string;
-      dinnerDeliveryEndTime: string;
-      imgages: [{
+      title: string;
+      content: string;
+      createdAt: string;
+      images: [{
         url: string;
-        width: number;
-        height: number;
-        size: number;
-        main: boolean;
-      }]
-      distance: number;
-      distanceUnit: string;
-    }]
+      }];
+      liked: boolean;
+      likeCount: number;    
+    }];
+    type: string;  
   }
 }

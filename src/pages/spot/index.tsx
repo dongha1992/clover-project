@@ -15,7 +15,7 @@ import {
   getStationSpots, 
   getSpotEvent 
 } from '@api/spot';
-import { ISpotsResponse, IParamsSpots } from '@model/index';
+import { IParamsSpots, ISpots, ISpotsResponse } from '@model/index';
 
 const text = {
   mainTitle: `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
@@ -51,32 +51,41 @@ const FCO_SPOT_BANNER = [
   },
 ];
 
-interface ISpotsList {
-      id: number,
-      name: string,
+export interface INewSpots {
+  title: string;
+  spots: [
+    {
+      id: number;
+      name: string;
       images: [
         {
-          url: string,
-          width: number,
-          height: number,
-          size: number,
-          main: boolean,
+          url: string;
+          width: number;
+          height: number;
+          size: number;
+          main: boolean;
         }
-      ],
-      liked: boolean,
-      likeCount: number,
-      userCount: number,
-      distance: number,
-      distanceUnit: string,  
-};
+      ]
+      liked: boolean;
+      likeCount: number;
+      userCount: number;
+      distance: number;
+      distanceUnit: string;
+      eventTitle?: string;
+      discountRate?: number;
+    }
+  ]
+}
+
+// TODO : 로그인 유저별 분기처리, 단골 api 
 
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [mouseMoved, setMouseMoved] = useState(false);
-  const [newSpot, setNewSpot] = useState<ISpotsList[]>([]);
-  const [stationSpot, setStationSpot] = useState<ISpotsList[]>([]);
-  const [eventSpot, setEventSpot] = useState<ISpotsList[]>([]);
+  const [newSpot, setNewSpot] = useState<ISpots[]>([]);
+  const [stationSpot, setStationSpot] = useState<ISpots[]>([]);
+  const [eventSpot, setEventSpot] = useState<ISpots[]>([]);
 
   const getNewSpot = async() => {
     const params: IParamsSpots = {
@@ -86,8 +95,9 @@ const SpotPage = () => {
     };
     try{
       const {data} = await getNewSpots(params);
-      const items = data.data.spots;
-      setNewSpot(items);
+      if(data !== undefined) {
+        setNewSpot(data.data.spots);
+      }
     }catch (err){
       console.error(err);
     }
@@ -101,8 +111,7 @@ const SpotPage = () => {
     };
     try{
       const {data} = await getStationSpots(params);
-      const items = data.data.spots;
-      setStationSpot(items);
+      setStationSpot(data.data.spots);
     }catch(err){
       console.error(err);
     };
@@ -116,8 +125,7 @@ const SpotPage = () => {
     };
     try{
       const {data} = await getSpotEvent(params);
-      const items = data.data.spots;
-      setEventSpot(items);
+      setEventSpot(data.data.spots);
     }catch(err){
       console.error(err);
     };
@@ -158,7 +166,6 @@ const SpotPage = () => {
     getStationSpot();
     getEventSpot();
   },[])
-
   /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
     <Container>
@@ -186,14 +193,16 @@ const SpotPage = () => {
         </FlexStart>
       </SpotStatusWrapper> */}
       {/* <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" /> */}
+      {/* 신규 스팟 */}
       <SpotList
         items={newSpot}
-        title={text.normalNewSpotTitle}
+        title={newSpot.title}
         type="normal"
       />
+      {/* 역세권 스팟 */}
       <SpotList
         items={stationSpot}
-        title={text.normalFcoSpotTitle}
+        title={stationSpot?.title}
         type="normal"
       />
       <SlideWrapper {...settings}>
@@ -217,7 +226,7 @@ const SpotPage = () => {
       </SlideWrapper>
       <SpotList
         items={eventSpot}
-        title={text.eventTitle}
+        title={eventSpot?.title}
         type="event"
         btnText="주문하기"
       />
