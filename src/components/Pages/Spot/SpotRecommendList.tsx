@@ -1,9 +1,8 @@
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
-import { theme, FlexBetween, FlexCol, FlexColStart } from '@styles/theme';
+import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
-import { Button } from '@components/Shared/Button';
 
 export interface ISpotItem {
   id: number;
@@ -51,8 +50,6 @@ const Container = styled.div`
   margin-bottom: 24px;
 `;
 
-const Left = styled.div``;
-const Right = styled.div``;
 
 const MeterAndTime = styled.div`
   display: flex;

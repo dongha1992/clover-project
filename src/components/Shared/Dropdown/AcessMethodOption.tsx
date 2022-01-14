@@ -1,10 +1,10 @@
 import React, { useState, ReactNode } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH6B } from '@components/Shared/Text';
-
+import { IAccessMethod } from '@pages/mypage/address/edit/[id]';
 type TProps = {
   option: any;
-  selectOptionHandler: any;
+  selectOptionHandler: (option: IAccessMethod) => void;
 };
 
 const AcessMethodOption = ({ option, selectOptionHandler }: TProps) => {
@@ -24,7 +24,7 @@ const OptionList = styled.li`
   border-bottom: 1px solid #e4e4e4;
   background-color: white;
   cursor: pointer;
-  z-index: 10000;
+  z-index: 10;
 
   :hover {
     background-color: #d9d9d9;
