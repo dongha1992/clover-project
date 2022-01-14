@@ -5,7 +5,7 @@ import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
 import axios from 'axios';
-import { ISpotItem } from '@components/Pages/Spot/SpotItem';
+import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getMainDestinations } from '@api/destination';
