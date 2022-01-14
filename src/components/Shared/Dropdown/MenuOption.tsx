@@ -10,8 +10,6 @@ import {
 } from '@styles/theme';
 
 type TProps = {
-  // children: ReactNode | ReactNode[];
-  // value: string;
   option: any;
   selectMenuHandler: any;
 };

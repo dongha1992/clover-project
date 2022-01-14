@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import { theme, homePadding } from '@styles/theme';
+import { homePadding } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
