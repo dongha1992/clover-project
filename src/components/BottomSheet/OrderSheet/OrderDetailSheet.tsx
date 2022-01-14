@@ -1,13 +1,16 @@
 import { Button } from '@components/Shared/Button';
 import { TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
+import { initBottomSheet } from '@store/bottomSheet';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
   item: any;
 }
 
 const OrderDetailSheet = ({ item }: IProps) => {
+  const dispatch = useDispatch();
   return (
     <Container>
       <Title>
@@ -37,7 +40,11 @@ const OrderDetailSheet = ({ item }: IProps) => {
           ㅁㄴㅇㄹㅁㄴㅇㄹㅇㅁㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹㅇㄴㅁㄹㅇㅁㄹㅁㄴㄹ
         </TextB3R>
       </ProductInfo>
-      <ButtonContainer onClick={() => {}}>
+      <ButtonContainer
+        onClick={() => {
+          dispatch(initBottomSheet());
+        }}
+      >
         <Button height="100%" width="100%" borderRadius="0">
           확인
         </Button>
