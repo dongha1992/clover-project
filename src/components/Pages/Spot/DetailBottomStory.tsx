@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB1R, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
@@ -8,23 +8,54 @@ import { useDispatch } from 'react-redux';
 import {SET_IMAGE_VIEWER} from '@store/common';
 import { IMAGE_S3_URL } from '@constants/mock/index';
 import {ISpotsDetail} from '@pages/spot/detail/[id]';
+import { getSpotsDetailStory } from '@api/spot';
 
 interface IProps {
-    items: ISpotsDetail;
-}
+    id: number;
+};
 
-const DetailBottomStory = ( {items}: IProps): ReactElement => {
+interface ISpotStories {
+    id: number;
+    spotId: number;
+    type: string;
+    title: string;
+    content: string;
+    createdAt: string;
+    liked: boolean;
+    likeCount: number;
+};
+
+const DetailBottomStory = ( {id}:IProps ): ReactElement => {
   const dispatch = useDispatch();
-  const itemsLeng = items&&items.stories?.length > 0;
+  const [stories, setStories] = useState<ISpotStories[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const itemsLeng = 0;
+  // items&&items.stories?.length > 0;
   const openImgViewer =  (img: any) => {
     dispatch(SET_IMAGE_VIEWER(img));
   };
+
+  useEffect(()=> {
+    const getData = async() => {
+      try{
+        const {data} = await getSpotsDetailStory(id, page);
+        setStories(data?.data.spotStories);
+        console.log('data', data.data.spotStories)
+      }catch(err){
+        if(err)
+        console.error(err);
+      };
+    }
+      getData();
+  }, []);
+    
+    
 
   return (
     <>
       {itemsLeng ? (
         <StoryContainer>
-          {items?.stories?.map((item, index: number) => {
+          {stories?.map((item, index: number) => {
             return (
               <TopWrapper key={index}>
                 <FlexBetween>
@@ -37,11 +68,11 @@ const DetailBottomStory = ( {items}: IProps): ReactElement => {
                   </Tag>
                 </FlexBetween>
                 <TextB2R margin="0 0 8px 0">{item.createdAt}</TextB2R>
-                {item.images.length > 0 && (
+                {/* {item.images.length > 0 && (
                   item.images.map((url, idx)=> {
                     <ImgWrapper key={idx} src={`${IMAGE_S3_URL}${url}`} onClick={()=>openImgViewer(url)}  alt="스토리 이미지" />
                   })
-                )}
+                )} */}
                 <TextB1R margin="10px 0">{item.content}</TextB1R>
                 <LikeWrapper>
                   <SVGIcon name={item.liked ? 'likeRed18' : 'likeBorderGray'} />

@@ -16,13 +16,13 @@ import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { ISpots } from '@model/index';
-import { INewSpots } from '@pages/spot';
+import { INormalSpots } from '@pages/spot';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
 interface IProps {
-  items: INewSpots[];
+  items: INormalSpots[];
   title?: string;
   subTitle?: string;
   type: string;

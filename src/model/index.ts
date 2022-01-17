@@ -292,6 +292,7 @@ export interface IKakaoLatLon {
 export interface IParamsSpots {
   latitude: number | null;
   longitude: number | null;
+  page?: number;
   size?: number;
   keyword?: string;
 }
@@ -497,3 +498,41 @@ export interface ISpotDetailResponse {
     type: string;  
   }
 }
+
+export interface ISpotDetailStoriesResponse {
+  code: number;
+  messages: string;
+  data: {
+    spotStories: [{
+      id: number;
+      spotId: number;
+      type: string;
+      title: string;
+      content: string;
+      createdAt: string;
+      liked: boolean;
+      likeCount: number;
+    }];
+    pagination: {
+      total: number;
+      totalPage: number;
+      page: number;
+      size: number;
+    }
+  }
+}
+
+// export interface ISpotsInfo {
+//   data: {
+//     anyRecruitingSpotRegistration: {
+//       coordinate: {
+//         lat: number;
+//         lon: number;
+//       };
+//       createdAt: string;
+//       distance: number;
+//       distanceUnit: string;
+//       id: number;
+//     }
+//   }
+// }
