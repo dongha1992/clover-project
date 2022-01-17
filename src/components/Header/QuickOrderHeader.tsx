@@ -4,12 +4,12 @@ import CartIcon from '@components/Header/Cart';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { initBottomSheet, setBottomSheet } from '@store/bottomSheet';
 import { orderForm } from '@store/order';
 import { OrderSheet } from '@components/BottomSheet/OrderSheet';
 import { TextH4B } from '@components/Shared/Text';
 import { TabList } from '@components/Shared/TabList';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { QUICK_CATEGORY } from '@constants/search';
 import { Button } from '@components/Shared/Button';
 
@@ -21,6 +21,10 @@ const QuickOrderHeader: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>(
     '/quickorder/category'
   );
+
+  useEffect(() => {
+    dispatch(initBottomSheet());
+  }, []);
 
   const goBack = (): void => {
     router.back();

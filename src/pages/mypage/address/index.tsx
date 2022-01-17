@@ -8,7 +8,8 @@ import axios from 'axios';
 import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
-import { getMainDestinations } from '@api/destination';
+import { getDestinations } from '@api/destination';
+import { IDestinationsResponse } from '@model/index';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -18,21 +19,26 @@ const TAB_LIST = [
 const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
   const [pickupList, setpickupList] = useState([]);
-
+  const [deliveryList, setDeliveryList] = useState<IDestinationsResponse[]>([]);
   useEffect(() => {
-    getPickupItem();
-  }, []);
-
-  useEffect(() => {
-    getDestinationList();
+    if (selectedTab === '/pickup') {
+      getPickupItem();
+    } else {
+      getDeliveryList();
+    }
   }, [selectedTab]);
 
-  const getDestinationList = async () => {
+  const getDeliveryList = async () => {
     const params = {
-      delivery: null,
+      page: 1,
+      size: 10,
     };
     try {
-      const data = await getMainDestinations(params);
+      const { data } = await getDestinations(params);
+      if (data.code === 200) {
+        const { destinations } = data.data;
+        setDeliveryList(destinations);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -53,6 +59,10 @@ const AddressManagementPage = () => {
     router.push(`/mypage/address/edit/${id}`);
   };
 
+  if (deliveryList.length < 0 || pickupList.length < 0) {
+    return <div>로딩</div>;
+  }
+
   return (
     <Container>
       <FixedTab>
@@ -72,7 +82,7 @@ const AddressManagementPage = () => {
                 goToEdit={goToEdit}
               />
             ))
-          : pickupList.map((item: ISpotItem, index: number) => (
+          : deliveryList.map((item: IDestinationsResponse, index: number) => (
               <DeliveryItem
                 key={index}
                 item={item}
