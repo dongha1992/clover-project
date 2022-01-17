@@ -523,6 +523,12 @@ export interface ISpotDetailStoriesResponse {
       createdAt: string;
       liked: boolean;
       likeCount: number;
+      images: [{
+        url: string;
+        width: string;
+        height: string;
+        size: string;
+      }];  
     }];
     pagination: {
       total: number;
