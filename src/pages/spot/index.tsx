@@ -13,9 +13,36 @@ import { SpotList } from '@components/Pages/Spot';
 import { 
   getNewSpots, 
   getStationSpots, 
-  getSpotEvent 
+  getSpotEvent ,
+  getSpotPopular
 } from '@api/spot';
-import { IParamsSpots, ISpots, ISpotsResponse } from '@model/index';
+import { IParamsSpots } from '@model/index';
+
+export interface INormalSpots {
+  title: string;
+  spots: [
+    {
+      id: number;
+      name: string;
+      images: [
+        {
+          url: string;
+          width: number;
+          height: number;
+          size: number;
+          main: boolean;
+        }
+      ]
+      liked: boolean;
+      likeCount: number;
+      userCount: number;
+      distance: number;
+      distanceUnit: string;
+      eventTitle?: string;
+      discountRate?: number;
+    }
+  ]
+};
 
 const text = {
   mainTitle: `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
@@ -51,85 +78,79 @@ const FCO_SPOT_BANNER = [
   },
 ];
 
-export interface INewSpots {
-  title: string;
-  spots: [
-    {
-      id: number;
-      name: string;
-      images: [
-        {
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          main: boolean;
-        }
-      ]
-      liked: boolean;
-      likeCount: number;
-      userCount: number;
-      distance: number;
-      distanceUnit: string;
-      eventTitle?: string;
-      discountRate?: number;
-    }
-  ]
-}
-
-// TODO : 로그인 유저별 분기처리, 단골 api 
+// TODO : 로그인 유저별 분기처리, 단골 api , 타입에러 
 
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [mouseMoved, setMouseMoved] = useState(false);
-  const [newSpot, setNewSpot] = useState<ISpots[]>([]);
-  const [stationSpot, setStationSpot] = useState<ISpots[]>([]);
-  const [eventSpot, setEventSpot] = useState<ISpots[]>([]);
+  const [popularSpot, setPopularSpot] = useState<INormalSpots>();
+  const [newSpot, setNewSpot] = useState<INormalSpots>();
+  const [stationSpot, setStationSpot] = useState<INormalSpots>();
+  const [eventSpot, setEventSpot] = useState<INormalSpots>();
 
-  const getNewSpot = async() => {
-    const params: IParamsSpots = {
-      latitude: null,
-      longitude: null,
-      size: 6,
+  useEffect(()=> {
+    const getNewSpot = async() => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      try{
+        const {data} = await getNewSpots(params);
+        setNewSpot(data.data);
+      }catch (err){
+        console.error(err);
+      };
     };
-    try{
-      const {data} = await getNewSpots(params);
-      if(data !== undefined) {
-        setNewSpot(data.data.spots);
-      }
-    }catch (err){
-      console.error(err);
+
+    const getPopularSpot = async() => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      try{
+        const {data} = await getSpotPopular(params);
+        setPopularSpot(data.data);
+      }catch(err){
+        console.error(err);
+      };
     }
-  };
 
-  const getStationSpot = async() => {
-    const params: IParamsSpots = {
-      latitude: null,
-      longitude: null,
-      size: 6,
+    const getStationSpot = async() => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      try{
+        const {data} = await getStationSpots(params);
+        setStationSpot(data.data);
+      }catch(err){
+        console.error(err);
+      };
     };
-    try{
-      const {data} = await getStationSpots(params);
-      setStationSpot(data.data.spots);
-    }catch(err){
-      console.error(err);
-    };
-  };
 
-  const getEventSpot = async() => {
-    const params: IParamsSpots = {
-      latitude: null,
-      longitude: null,
-      size: 6,
+    const getEventSpot = async() => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      try{
+        const {data} = await getSpotEvent(params);
+        setEventSpot(data.data);
+      }catch(err){
+        console.error(err);
+      };
     };
-    try{
-      const {data} = await getSpotEvent(params);
-      setEventSpot(data.data.spots);
-    }catch(err){
-      console.error(err);
-    };
-  };
+
+    getNewSpot();
+    getStationSpot();
+    getEventSpot();
+    getPopularSpot();
+  },[])
 
   const goToShare = (): void => {
     dispatch(initBottomSheet());
@@ -161,11 +182,6 @@ const SpotPage = () => {
     centerPadding: '20px',
   };
 
-  useEffect(()=> {
-    getNewSpot();
-    getStationSpot();
-    getEventSpot();
-  },[])
   /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
     <Container>
@@ -192,16 +208,21 @@ const SpotPage = () => {
           <TextH5B onClick={goToShare} pointer>공유하기</TextH5B>
         </FlexStart>
       </SpotStatusWrapper> */}
-      {/* <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" /> */}
+      {/* 근처 인기있는 스팟 */}
+      <SpotList 
+        items={popularSpot?.spots} 
+        title={popularSpot?.title} 
+        type="normal" 
+      />
       {/* 신규 스팟 */}
       <SpotList
-        items={newSpot}
-        title={newSpot.title}
+        items={newSpot?.spots}
+        title={newSpot?.title}
         type="normal"
       />
       {/* 역세권 스팟 */}
       <SpotList
-        items={stationSpot}
+        items={stationSpot?.spots}
         title={stationSpot?.title}
         type="normal"
       />
@@ -225,7 +246,7 @@ const SpotPage = () => {
         })}
       </SlideWrapper>
       <SpotList
-        items={eventSpot}
+        items={eventSpot?.spots}
         title={eventSpot?.title}
         type="event"
         btnText="주문하기"
