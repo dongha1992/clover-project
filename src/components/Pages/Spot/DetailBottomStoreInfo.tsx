@@ -2,13 +2,15 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextH4B, TextB1R } from '@components/Shared/Text';
 import Map from '@components/Map';
-import {ISpotsDetail} from '@pages/spot/detail/[id]';
 
 interface IProps {
-  items: ISpotsDetail;
+  lat?: number;
+  lon?: number;
+  placeOpenTime?: string;
+  placeHoliday?: string;
 }
 
-const DetailBottomStoreInfo= ({items}: IProps): ReactElement => {
+const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday}: IProps): ReactElement => {
   return (
     <Container>
       <Wrapper>
@@ -20,21 +22,21 @@ const DetailBottomStoreInfo= ({items}: IProps): ReactElement => {
         </FlexWrapper>
         <FlexWrapper>
           <TextH4B margin="0 20px 0 0">영업시간</TextH4B>
-          <TextB1R>{items?.placeOpenTime}</TextB1R>
+          <TextB1R>{placeOpenTime}</TextB1R>
         </FlexWrapper>
         <FlexWrapper>
           <TextH4B margin="0 33px 0 0">휴무일</TextH4B>
-          <TextB1R>{items?.placeHoliday}</TextB1R>
+          <TextB1R>{placeHoliday}</TextB1R>
         </FlexWrapper>
       </Wrapper>
       <MapWrapper>
-        <Map centerLat='37.54669189732' centerLng='126.833485621837' />
+        <Map centerLat={lat ? lat.toString() : '37.54669189732'} centerLng={lon ? lon.toString() : '126.833485621837'} />
       </MapWrapper>
     </Container>
   );
 }
 
-const Container = styled.div``;
+const Container = styled.section``;
 
 const Wrapper = styled.div`
   padding: 24px;
@@ -49,4 +51,5 @@ const MapWrapper = styled.div`
   width: 100%;
   height: 270px;
 `;
+
 export default DetailBottomStoreInfo;
