@@ -447,6 +447,8 @@ export interface ISpots {
 }
 
 export interface ISpotDetailResponse {
+  code: number;
+  messages: string;
   data: {
     coordinate: {
       lat: number;
@@ -538,6 +540,7 @@ export interface ISpotDetailStoriesResponse {
     }
   }
 }
+
 
 // export interface ISpotsInfo {
 //   data: {
