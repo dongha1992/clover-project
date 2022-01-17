@@ -1,53 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom } from '@styles/theme';
-import { Button } from '@components/Shared/Button';
+import { Button, ButtonGroup } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { CheckDeliveryPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
+import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 
 const AddressDetailPage = () => {
+  const { tempLocation, availableDestination } = useSelector(destinationForm);
+
+  const dispatch = useDispatch();
+
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
   });
-  const [userLocation, setUserLocation] = useState({
-    roadAddr: '',
-    roadAddrPart1: '',
-    roadAddrPart2: '',
-    jibunAddr: '',
-    engAddr: '',
-    zipNo: '',
-    admCd: '',
-    rnMgtSn: '',
-    bdMgtSn: '',
-    detBdNmList: '',
-    bdNm: '',
-    bdKdcd: '',
-    siNm: '',
-    sggNm: '',
-    emdNm: '',
-    liNm: '',
-    rn: '',
-    udrtYn: '',
-    buldMnnm: '',
-    buldSlno: '',
-    mtYn: '',
-    lnbrMnnm: '',
-    lnbrSlno: '',
-    emdNo: '',
-  });
 
-  useEffect(() => {
-    getLonLanForMap();
-  }, [userLocation]);
+  // 배송 가능 여부
+  const destinationStatus = checkDestinationHelper(availableDestination);
+  const canNotDelivery = destinationStatus === 'noDelivery';
 
   const getLonLanForMap = async () => {
     const params = {
-      query: userLocation.roadAddrPart1,
+      query: tempLocation.roadAddrPart1,
       analyze_type: 'similar',
       page: 1,
       size: 20,
@@ -67,18 +47,22 @@ const AddressDetailPage = () => {
     } catch (error) {}
   };
 
-  const setUserLocationInLocal = () => {
-    localStorage.setItem('loc', JSON.stringify(userLocation));
+  const setUserLocationHandler = () => {
+    dispatch(SET_LOCATION(tempLocation));
+    dispatch(INIT_LOCATION_TEMP());
+    router.push('/home');
+  };
+
+  const goToSearch = () => {
+    router.push('/location');
+  };
+
+  const goToHome = () => {
     router.push('/home');
   };
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem('loc') ?? '{}') ?? {};
-      setUserLocation(data);
-    } catch (error) {
-      console.error(error);
-    }
+    getLonLanForMap();
   }, []);
 
   return (
@@ -90,16 +74,24 @@ const AddressDetailPage = () => {
           centerLng={latitudeLongitude.longitude}
         />
       </MapWrapper>
-      <ButtonWrapper>
-        <Button
-          width="100%"
-          height="100%"
-          borderRadius="0"
-          onClick={setUserLocationInLocal}
-        >
-          설정하기
-        </Button>
-      </ButtonWrapper>
+      {canNotDelivery ? (
+        <ButtonGroup
+          leftButtonHandler={goToSearch}
+          rightButtonHandler={goToHome}
+          leftText="다른 주소 검색하기"
+          rightText="닫기"
+        />
+      ) : (
+        <ButtonWrapper>
+          <Button
+            height="100%"
+            borderRadius="0"
+            onClick={setUserLocationHandler}
+          >
+            설정하기
+          </Button>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };

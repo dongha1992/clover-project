@@ -1,7 +1,6 @@
 import {
   configureStore,
   getDefaultMiddleware,
-  EnhancedStore,
   combineReducers,
   AnyAction,
   CombinedState,
@@ -16,7 +15,7 @@ import user from './user';
 import order from './order';
 import common from './common';
 import destination from './destination';
-import { createWrapper, MakeStore, HYDRATE, Context } from 'next-redux-wrapper';
+import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
 // persist
 import { persistStore, persistReducer } from 'redux-persist';
@@ -24,7 +23,10 @@ import storage from 'redux-persist/lib/storage';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
-    return { ...state, ...action.payload };
+    return {
+      ...state,
+      ...action.payload,
+    };
   }
   return combineReducers({
     alert,
@@ -40,6 +42,16 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   })(state, action);
 };
 
+const isDev = process.env.NODE_ENV !== 'production';
+
+const makeConfigureStore = (reducer: any) =>
+  configureStore({
+    reducer: reducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }).concat(),
+    devTools: isDev,
+  });
+
 const store = configureStore({
   reducer: rootReducer,
   middleware: [
@@ -47,46 +59,31 @@ const store = configureStore({
       serializableCheck: false,
     }),
   ],
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: isDev,
 });
-
-/* TODO: MakeStore generic 모르겠음.. */
-// const setupStore = (context: Context): EnhancedStore => store;
-// const makeStore: MakeStore<any> = (context: any) => setupStore(context);
-
-// export const wrapper = createWrapper<any>(makeStore, {
-//   debug: process.env.NODE_ENV !== 'production',
-// });
-
-const isDev = process.env.NODE_ENV !== 'production';
 
 const makeStore = (context: any) => {
   const isServer = typeof window === 'undefined';
 
   if (isServer) {
     // server
-    return configureStore({
-      reducer: rootReducer,
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(),
-      devTools: isDev,
-    });
+    return makeConfigureStore(rootReducer);
   } else {
+    const { persistStore, persistReducer } = require('redux-persist');
+    const storage = require('redux-persist/lib/storage').default;
+
     // client
     const persistConfig = {
       key: 'nextjs',
       storage,
-      blacklist: ['toast'],
+      whitelist: ['order', 'destination', 'cart', 'user', 'menu'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-    const store = configureStore({
-      reducer: persistedReducer,
-      middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(),
-      devTools: isDev,
-    });
+    const store: any = makeConfigureStore(persistedReducer);
+
+    store.__persistor = persistStore(store);
 
     return store;
   }
@@ -98,5 +95,3 @@ export const wrapper = createWrapper(makeStore, {
 
 export type AppState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export default wrapper;

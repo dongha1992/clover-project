@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -8,8 +8,15 @@ import BorderLine from '@components/Shared/BorderLine';
 import Checkbox from '@components/Shared/Checkbox';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
+import {
+  SET_USER_DESTINATION_STATUS,
+  SET_DESTINATION,
+} from '@store/destination';
+import { destinationForm } from '@store/destination';
+import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { destinationRegister } from '@api/destination';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -26,6 +33,9 @@ interface IDeliveryMethod {
 
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
+/* TODO: 타이머 기능 */
+/* TODO: 최근 배송지 나오면 userDestination와 싱크 */
+/* TODO: 스팟 배송일 경우,  */
 
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -66,22 +76,44 @@ const DELIVERY_METHOD: any = {
   ],
 };
 
-const pickupPlace = {
-  // name: '헤이그라운드 서울숲점',
-  // spaceType: '프라이빗',
-  // address: '서울 성동구 왕십리로 115 10층',
-  // type: '픽업',
-  // availableTime: '12:00-12:30 / 15:30-18:00',
-};
+const recentDestination = false;
 
 const DeliverInfoPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState<number>(1);
+  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const {
+    userLocation,
+    availableDestination,
+    destinationStatus,
+    userDestination,
+  } = useSelector(destinationForm);
+
+  const isSpotPickupPlace = selectedMethod === 'spot';
+
+  const hasUserLocation =
+    Object.values(userLocation).filter((val) => val).length > 0;
+
+  let destinationType = checkDestinationHelper(availableDestination);
+
+  const hasUserSelectDestination =
+    Object.values(userDestination).filter((item) => item).length > 0;
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
+    // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
+    if (
+      (!hasUserLocation && destinationStatus) ||
+      (hasUserLocation && destinationType)
+    ) {
+      setSelectedMethod(destinationStatus || destinationType);
+    }
+  }, []);
 
   const checkTermHandler = () => {};
 
   const goToFindAddress = () => {
-    if (selectedMethod === 1) {
+    if (selectedMethod === 'spot') {
       router.push('/spot/search');
     } else {
       router.push('/destination/search');
@@ -89,31 +121,137 @@ const DeliverInfoPage = () => {
   };
 
   const changeMethodHandler = useCallback(
-    (id: number) => {
-      setSelectedMethod(id);
+    (value: string) => {
+      setSelectedMethod(value);
     },
     [selectedMethod]
   );
 
-  const finishDeliverySetting = () => {
-    router.push('/cart');
-    dispatch(SET_AFTER_SETTING_DELIVERY());
+  const finishDeliverySetting = async () => {
+    if (!hasUserSelectDestination) {
+      return;
+    }
+
+    const reqBody = {
+      addressDetail: userDestination.addressDetail,
+      name: userDestination.name,
+      address: userDestination.address,
+      delivery: selectedMethod.toUpperCase(),
+      deliveryMessage: userDestination.deliveryMessage
+        ? userDestination.deliveryMessage
+        : '',
+      dong: userDestination.dong,
+      main: userDestination.main,
+      receiverName: userDestination.receiverName
+        ? userDestination.receiverName
+        : '테스트',
+      receiverTel: userDestination.receiverTel
+        ? userDestination.receiverTel
+        : '01012341234',
+      zipCode: userDestination.zipCode,
+    };
+
+    try {
+      const { data } = await destinationRegister(reqBody);
+      if (data.code === 200) {
+        dispatch(SET_DESTINATION(reqBody));
+        dispatch(SET_USER_DESTINATION_STATUS(selectedMethod));
+        dispatch(SET_AFTER_SETTING_DELIVERY());
+        router.push('/cart');
+      }
+    } catch (error) {
+      console.error(error);
+      return;
+    }
   };
 
   const placeInfoRender = () => {
     switch (selectedMethod) {
-      case 1: {
-        return <PickupPlaceBox />;
+      case 'spot': {
+        return <PickupPlaceBox place={userDestination} />;
       }
 
       default: {
-        return <DeliveryPlaceBox />;
+        return <DeliveryPlaceBox place={userDestination} />;
       }
     }
   };
 
-  const isSpotPickupPlace = selectedMethod === 1;
-  const hasDeliverPlace = Object.keys(pickupPlace).length > 0;
+  const tooltipRender = () => {
+    const userSelectParcel = destinationType === 'parcel';
+    const userSelectNoQuick = destinationType === 'noQuick';
+    const userSelectNothing = destinationType === 'noDelivery';
+
+    if (userSelectNothing) {
+      return;
+    }
+
+    switch (selectedMethod) {
+      case 'morning': {
+        if (userSelectParcel) {
+          setSelectedMethod('parcel');
+          return (
+            <Tooltip
+              message="택배배송만 가능한 지역입니다."
+              top="25px"
+              width="190px"
+            />
+          );
+        } else {
+          return (
+            <Tooltip message="새벽배송 지역입니다." top="25px" width="150px" />
+          );
+        }
+      }
+      case 'parcel': {
+        if (userSelectParcel) {
+          return (
+            <Tooltip
+              message="택배배송만 가능한 지역입니다."
+              top="25px"
+              width="190px"
+            />
+          );
+        } else {
+          return (
+            <Tooltip
+              message="새벽/택배배송이 가능한 지역입니다."
+              top="25px"
+              width="210px"
+            />
+          );
+        }
+      }
+      case 'quick': {
+        if (userSelectParcel) {
+          setSelectedMethod('parcel');
+          return (
+            <Tooltip
+              message="택배배송만 가능한 지역입니다."
+              top="25px"
+              width="190px"
+            />
+          );
+        } else if (userSelectNoQuick) {
+          setSelectedMethod('morning');
+          return (
+            <Tooltip message="새벽배송 지역입니다." top="25px" width="160px" />
+          );
+        } else {
+          return (
+            <Tooltip
+              message="퀵/새벽배송이 가능한 지역입니다."
+              top="25px"
+              width="200px"
+            />
+          );
+        }
+      }
+      default: {
+        return '';
+      }
+    }
+  };
 
   return (
     <Container>
@@ -124,14 +262,14 @@ const DeliverInfoPage = () => {
             픽업
           </TextH5B>
           {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
-            const isSelected = selectedMethod === item.id;
+            const isSelected = selectedMethod === item.value;
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
                   <RadioWrapper>
                     <RadioButton
                       isSelected={isSelected}
-                      onChange={() => changeMethodHandler(item.id)}
+                      onChange={() => changeMethodHandler(item.value)}
                     />
                   </RadioWrapper>
                   <Content>
@@ -147,14 +285,7 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {isSelected && (
-                        <Tooltip
-                          message={'새벽배송이 가능해요'}
-                          top="25px"
-                          width="160px"
-                        />
-                      )}
-                      {index === 2 && (
+                      {index === 0 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
                         </TextH6B>
@@ -178,13 +309,14 @@ const DeliverInfoPage = () => {
             배송
           </TextH5B>
           {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
+            const isSelected = selectedMethod === item.value;
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
                   <RadioWrapper>
                     <RadioButton
-                      isSelected={selectedMethod === item.id}
-                      onChange={() => changeMethodHandler(item.id)}
+                      isSelected={isSelected}
+                      onChange={() => changeMethodHandler(item.value)}
                     />
                   </RadioWrapper>
                   <Content>
@@ -200,7 +332,8 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {index === 2 && (
+                      {isSelected && tooltipRender()}
+                      {index === 1 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
                         </TextH6B>
@@ -225,18 +358,19 @@ const DeliverInfoPage = () => {
           <TextH3B padding="0 0 14px 0">
             {isSpotPickupPlace ? '픽업장소' : '배송지'}
           </TextH3B>
-          {hasDeliverPlace && (
-            <TextH6B
-              textDecoration="underline"
-              color={theme.greyScale65}
-              onClick={goToFindAddress}
-            >
-              변경하기
-            </TextH6B>
-          )}
+          {recentDestination ||
+            (hasUserSelectDestination && (
+              <TextH6B
+                textDecoration="underline"
+                color={theme.greyScale65}
+                onClick={goToFindAddress}
+              >
+                변경하기
+              </TextH6B>
+            ))}
         </FlexBetween>
-        {hasDeliverPlace ? placeInfoRender() : ''}
-        {!hasDeliverPlace && (
+        {recentDestination || hasUserSelectDestination ? placeInfoRender() : ''}
+        {!hasUserSelectDestination && (
           <BtnWrapper onClick={goToFindAddress}>
             <Button backgroundColor={theme.white} color={theme.black} border>
               {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
@@ -245,7 +379,9 @@ const DeliverInfoPage = () => {
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0">설정하기</Button>
+        <Button borderRadius="0" disabled={!hasUserSelectDestination}>
+          설정하기
+        </Button>
       </SettingBtnWrapper>
     </Container>
   );
@@ -382,7 +518,7 @@ export const PickupPlaceBox = React.memo(
   }
 );
 
-export const DeliveryPlaceBox = React.memo((place: any) => {
+export const DeliveryPlaceBox = React.memo(({ place }: any): ReactElement => {
   return (
     <FlexCol padding="0 0 32px 0">
       <DelvieryPlaceInfo>
