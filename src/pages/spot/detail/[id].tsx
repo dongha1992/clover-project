@@ -10,6 +10,7 @@ import {
   TextB2R,
   TextH4B,
   TextH6B,
+  TextB1R,
 } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart } from '@styles/theme';
 import { StickyTab } from '@components/Shared/TabList';
@@ -19,7 +20,7 @@ import {
   DetailBottomStory,
   DetailBottomStoreInfo,
 } from '@components/Pages/Spot';
-import { getSpotDetail } from '@api/spot';
+import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
 import { IMAGE_S3_URL } from '@constants/mock/index';
 import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
 
@@ -83,7 +84,24 @@ export interface ISpotsDetail {
     likeCount: number;    
   }];
   type: string;  
-}
+};
+
+export interface ISpotStories {
+  id: number;
+  spotId: number;
+  type: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  liked: boolean;
+  likeCount: number;
+  images: [{
+    url: string;
+    width: string;
+    height: string;
+    size: string;
+  }];
+};
 
 // TODO : 데이터 아직 안들어오는게 많아서 처리 못한게 많음.
 
@@ -93,6 +111,10 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [stories, setStories] = useState<ISpotStories[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [isLastPage, setIsLastPage] = useState<boolean>(false);
+
   const HEADER_HEIGHT = 56;
   const sliceLen = spotItem&&spotItem.notices?.length > 1;
   const pickupsLen = spotItem&&spotItem.pickups?.length > 0;
@@ -104,9 +126,9 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
     []
   );
 
-  const onScrollHandler = (e: any) => {
+  const onScrollHandler = () => {
     const offset = tabRef?.current?.offsetTop;
-    const scrollTop = e?.srcElement.scrollingElement.scrollTop;
+    const scrollTop = document.documentElement.scrollTop;
     if (offset) {
       if (scrollTop + HEADER_HEIGHT > offset + 8) {
         setIsStikcy(true);
@@ -114,14 +136,6 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
         setIsStikcy(false);
       }
     }
-  };
-
-  const renderBottomContent = () => {
-    return selectedTab === '/spot/detail/story' ? (
-      <DetailBottomStory id={id} />
-    ) : (
-      <DetailBottomStoreInfo items={spotItem} />
-    );
   };
 
   const placeType = () => {
@@ -177,14 +191,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
     centerPadding: sliceLen ? '30px' : '25px',
   };
 
-  useEffect(() => {
-    window.addEventListener('scroll', onScrollHandler);
-    return () => {
-      window.removeEventListener('scroll', onScrollHandler);
-      //   dispatch(SET_MENU_ITEM({}));
-    };
-  }, [tabRef?.current?.offsetTop]);
-
+  // 스팟 상세 데이터 fetch
   useEffect(() => {
     const getData = async() => {
       try{
@@ -196,7 +203,53 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
     };
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []);  
+
+  // 스팟 상세 스토리 데이터 fetch
+  useEffect(()=> {
+    const getData = async() => {
+      try{
+          const {data} = await getSpotsDetailStory(id, page);
+          const list = data?.data.spotStories;
+          const lastPage = data.data.pagination;
+          setStories((prevList)=>[...prevList, ...list]);
+          setIsLastPage(page === lastPage.totalPage);
+      }catch(err){
+        if(err)
+        console.error(err);
+      };
+    }
+    getData();
+  }, [page]);
+
+  // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
+        // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
+        setPage(page + 1);
+      };
+     };  
+    // scroll event listener 등록
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      // scroll event listener 해제
+      window.removeEventListener("scroll", handleScroll);
+    };
+  },[stories.length > 0]);
+
+  // 스팟 상세 하단 스토리, 매장정보 스티키
+  useEffect(() => {
+    window.addEventListener('scroll', onScrollHandler);
+    return () => {
+      window.removeEventListener('scroll', onScrollHandler);
+      //   dispatch(SET_MENU_ITEM({}));
+    };
+  }, [tabRef?.current?.offsetTop]);
 
   return (
     <Container>
@@ -276,10 +329,13 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
               이미지로 보기
             </TextH6B>
           </FlexStart>
-          <FlexStart margin="0 0 16px 0">
-            <TextH5B margin="0 20px 0 0">기타정보</TextH5B>
-            <TextB2R>{spotItem?.description}</TextB2R>
-          </FlexStart>
+          {
+            spotItem?.description &&
+            <FlexStart margin="0 0 16px 0">
+              <TextH5B margin="0 20px 0 0">기타정보</TextH5B>
+              <TextB2R>{spotItem?.description}</TextB2R>
+            </FlexStart>
+          }
         </PickupInfo>
       </PickupWrapper>
       <SpotEventBannerWrapper>
@@ -294,7 +350,31 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
           onClick={selectTabHandler}
         />
       </BottomTabWrapper>
-      <BottomContent>{renderBottomContent()}</BottomContent>
+      <BottomContent>
+        {
+          selectedTab === '/spot/detail/story' ?
+            stories.length > 0 ? (
+              stories?.map((list, idx)=>{
+                return (
+                  <DetailBottomStory list={list} key={idx} />
+                )
+              })
+            ) : (
+              <NonContentWrapper>
+                <TextB1R color={theme.greyScale65}>아직 스토리가 없어요.😭</TextB1R>
+              </NonContentWrapper>
+              )
+            :
+            (
+              <DetailBottomStoreInfo 
+                lat={spotItem?.coordinate.lat} 
+                lon={spotItem?.coordinate.lon}
+                placeOpenTime={spotItem?.placeOpenTime}
+                placeHoliday={spotItem?.placeHoliday}
+              />
+            )
+        }
+      </BottomContent>
     </Container>
   );
 };
@@ -376,6 +456,15 @@ const BottomTabWrapper = styled.section`
 `;
 
 const BottomContent = styled.section``;
+
+const NonContentWrapper = styled.div`
+  padding: 24px;
+  width: 100%;
+  height: 483px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export async function getServerSideProps(context: any) {
   const { id } = context.query;

@@ -56,6 +56,27 @@ import {
       return Api.get(`/spot/v1/spots/${id}/stories`, { params: { id, page } });
   };
 
+  export const getSpotsStoryLike= (
+    spotId: number,
+    storyId: number,
+    ): Promise<AxiosResponse<ISpotDetailResponse>> => {
+      return Api.get(`/spot/v1/spots/${spotId}/stories/${storyId}/like`, { params: { spotId, storyId } });
+  };
+
+  export const postSpotsStoryLike= (
+    spotId: number,
+    storyId: number,
+    ): Promise<AxiosResponse<ISpotDetailResponse>> => {
+      return Api.post(`/spot/v1/spots/${spotId}/stories/${storyId}/like`, { params: { spotId, storyId } });
+  };
+
+  export const deleteSpotsStoryLike= (
+    spotId: number,
+    storyId: number,
+    ): Promise<AxiosResponse<ISpotDetailResponse>> => {
+      return Api.delete(`/spot/v1/spots/${spotId}/stories/${storyId}/like`, { params: { spotId, storyId } });
+  };
+
 
 
 
