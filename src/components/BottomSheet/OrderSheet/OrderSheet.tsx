@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { orderForm, SET_ORDER_TYPE } from '@store/order';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, RadioButton } from '@components/Shared/Button';
-import { initBottomSheet } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { bottomSheetButton } from '@styles/theme';
 
 const list = [
@@ -23,7 +23,7 @@ const OrderSheet: React.FC = () => {
 
   const oderTypeChange = () => {
     dispatch(SET_ORDER_TYPE({ orderType: isSelected }));
-    dispatch(initBottomSheet());
+    dispatch(INIT_BOTTOM_SHEET());
   };
   return (
     <Container>
