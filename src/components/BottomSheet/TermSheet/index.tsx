@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { homePadding } from '@styles/theme';
+import { homePadding, bottomSheetButton } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { RadioButton } from '@components/Shared/Button';
 import { IVersion } from '@model/index';
-
+import { useDispatch } from 'react-redux';
+import { SET_VERSION_OF_TERM } from '@store/common';
 interface IProps {
   title: string;
   versions: IVersion[];
@@ -14,11 +16,15 @@ interface IProps {
 const TermSheet = ({ title, versions, currentVersion }: IProps) => {
   const [selectedVersion, setSelectedVersion] =
     useState<number>(currentVersion);
-  console.log(versions, 'versions');
+
+  const dispatch = useDispatch();
 
   const changeRadioHandler = (id: number) => {
     setSelectedVersion(id);
+    // dispatch(SET_VERSION_OF_TERM(id));
   };
+
+  const submitHandler = () => {};
 
   versions = versions.slice().reverse();
 
@@ -46,6 +52,11 @@ const TermSheet = ({ title, versions, currentVersion }: IProps) => {
           );
         })}
       </Wrapper>
+      <ButtonContainer onClick={() => submitHandler()}>
+        <Button height="100%" width="100%" borderRadius="0">
+          선택하기
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -54,9 +65,14 @@ const Container = styled.div``;
 const Wrapper = styled.div`
   ${homePadding}
 `;
+
 const PickWrapper = styled.div`
   display: flex;
   margin-bottom: 16px;
 `;
 
-export default TermSheet;
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
+`;
+
+export default React.memo(TermSheet);

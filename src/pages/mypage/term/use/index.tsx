@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import TermSheet from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
 import { terms } from '@api/term';
 import { ITerm, IVersion } from '@model/index';
 import MarkdownRenderer from '@components/Shared/Markdown';
+import { commonSelector } from '@store/common';
 
 export interface IFormatVersion {
   [key: string]: {
@@ -23,6 +24,8 @@ const TermOfUsePage = () => {
   const [currentVersion, setCurrentVersion] = useState<number>();
 
   const dispatch = useDispatch();
+  const { versionOfTerm } = useSelector(commonSelector);
+  console.log(versionOfTerm, 'versionOfTerm');
 
   const getTerms = async () => {
     const params = {
@@ -31,13 +34,12 @@ const TermOfUsePage = () => {
     try {
       const { data } = await terms(params);
       setTermOfUse(data.data);
-      setCurrentVersion(data.data?.terms.version!);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const clickInputHandler = () => {
+  const changeVersionHandler = () => {
     dispatch(
       setBottomSheet({
         content: (
@@ -70,7 +72,7 @@ const TermOfUsePage = () => {
           <CustmInput>
             <TextB2R>{formatDate}</TextB2R>
           </CustmInput>
-          <div className="svgWrapper" onClick={clickInputHandler}>
+          <div className="svgWrapper" onClick={changeVersionHandler}>
             <SVGIcon name="triangleDown" />
           </div>
         </InputWrapper>
