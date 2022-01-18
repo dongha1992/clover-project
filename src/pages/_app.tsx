@@ -46,15 +46,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       let mobile = !!md.mobile();
       dispatch(SET_IS_MOBILE(mobile));
     }
+
+    authCheck();
   }, []);
 
   const authCheck = async () => {
     const userInfo = await userProfile().then((res) => {
-      return res.data.data;
+      return res?.data;
     });
 
-    dispatch(SET_USER(userInfo));
-    dispatch(SET_LOGIN_SUCCESS(true));
+    if (userInfo?.code === 200) {
+      dispatch(SET_USER(userInfo?.data));
+      dispatch(SET_LOGIN_SUCCESS(true));
+    }
   };
 
   return (
