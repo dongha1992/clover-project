@@ -35,8 +35,11 @@ interface IDeliveryMethod {
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
 /* TODO: 타이머 기능 */
 /* TODO: 최근 배송지 나오면 userDestination와 싱크 */
-/* TODO: 스팟 배송일 경우,  */
+/* TODO: 스팟 배송일 경우 추가 */
 
+/* TODO: 내 위치 검색 / 배송지 검색 -> 두 경우 available 체킹 리팩토링 */
+
+/* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
 const DELIVERY_METHOD: any = {
   pickup: [
     {
