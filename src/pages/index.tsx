@@ -19,6 +19,7 @@ import { wrapper } from '@store/index';
 import { userProfile, userHelpEmail, userLogin } from '@api/user';
 import { setCookie, removeCookie } from '@utils/cookie';
 import { IUserToken } from '@model/index';
+import { SET_LOGIN_TYPE } from '@store/common';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -56,6 +57,9 @@ const OnBoarding: NextPage = () => {
           data
         );
 
+        // TODO : 여기가 카카오 로그인 성공부분인가요??
+        dispatch(SET_LOGIN_TYPE('KAKAO'));
+
         if (window.Kakao) {
           window.Kakao.cleanup();
         }
@@ -88,7 +92,7 @@ const OnBoarding: NextPage = () => {
   };
 
   const emailLoginHandler = (): void => {
-    localStorage.setItem('loginType', JSON.stringify('EMAIL'));
+    // localStorage.setItem('loginType', JSON.stringify('EMAIL'));
     router.push('/login');
   };
 
