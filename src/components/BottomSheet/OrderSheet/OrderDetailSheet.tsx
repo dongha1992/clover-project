@@ -1,7 +1,7 @@
 import { Button } from '@components/Shared/Button';
 import { TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { initBottomSheet } from '@store/bottomSheet';
-import { theme } from '@styles/theme';
+import { theme, bottomSheetButton } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -103,13 +103,7 @@ const OrderButton = styled.button`
 `;
 
 const ButtonContainer = styled.div`
-  z-index: 100;
-  position: absolute;
-  display: flex;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  height: 56px;
+  ${bottomSheetButton}
 `;
 
 export default OrderDetailSheet;

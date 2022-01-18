@@ -10,6 +10,8 @@ import {
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import Tag from '@components/Shared/Tag';
+import { Button } from '@components/Shared/Button';
+import { bottomSheetButton } from '@styles/theme';
 
 const MypageCouponItem = ({ coupon }: any) => {
   const [isShow, setIsShow] = useState(false);
@@ -17,6 +19,7 @@ const MypageCouponItem = ({ coupon }: any) => {
   const isRateDiscount = coupon.type === 'rate';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 
+  const submitHandler = () => {};
   return (
     <Container isDownload={coupon.isDownload}>
       <Wrapper>
@@ -73,6 +76,11 @@ const MypageCouponItem = ({ coupon }: any) => {
           </TextB3R>
         </Content>
       </Wrapper>
+      <ButtonContainer onClick={submitHandler}>
+        <Button height="100%" width="100%" borderRadius="0">
+          확인
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -107,6 +115,10 @@ const Dot = styled.div`
   height: 4px;
   border-radius: 50%;
   margin: 0px 8px;
+`;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
 `;
 
 export default MypageCouponItem;

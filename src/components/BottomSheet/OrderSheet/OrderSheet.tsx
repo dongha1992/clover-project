@@ -6,6 +6,8 @@ import { orderForm, SET_ORDER_TYPE } from '@store/order';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { initBottomSheet } from '@store/bottomSheet';
+import { bottomSheetButton } from '@styles/theme';
+
 const list = [
   { id: 1, value: '스팟점심' },
   { id: 2, value: '스팟저녁' },
@@ -70,13 +72,7 @@ const Item = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-  z-index: 100;
-  position: absolute;
-  display: flex;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  height: 56px;
+  ${bottomSheetButton}
 `;
 
 export default OrderSheet;

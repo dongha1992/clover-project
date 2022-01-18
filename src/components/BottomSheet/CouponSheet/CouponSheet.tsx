@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
+import { theme, bottomSheetButton } from '@styles/theme';
 import { COUPON_LIST } from '@constants/menu';
 import CouponItem from './CouponItem';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import router from 'next/router';
+import { Button } from '@components/Shared/Button';
 
 const isLogin = false;
 
@@ -39,6 +40,9 @@ const CouponSheet = () => {
       );
     }
   };
+
+  const submitHandler = () => {};
+
   return (
     <Container>
       <TextH5B center padding="16px 0 24px 0">
@@ -67,6 +71,11 @@ const CouponSheet = () => {
           ))}
         </CouponListWrapper>
       </Wrapper>
+      <ButtonContainer onClick={submitHandler}>
+        <Button height="100%" width="100%" borderRadius="0">
+          확인
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -90,6 +99,10 @@ const InfoWrapper = styled.div`
 
 const CouponListWrapper = styled.div`
   overflow-y: scroll;
+`;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
 `;
 
 export default CouponSheet;

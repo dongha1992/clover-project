@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { Select, MenuOption } from '@components/Shared/Dropdown';
-import { theme } from '@styles/theme';
+import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
 import { cartForm, SET_TEMP_SELECTED_MENUS } from '@store/cart';
 import CartSheetItem from './CartSheetItem';
+import { Button } from '@components/Shared/Button';
 
 const CartSheet = () => {
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
@@ -19,11 +20,14 @@ const CartSheet = () => {
     dispatch(SET_TEMP_SELECTED_MENUS(menu));
   };
 
+  const submitHandler = () => {};
+
   // TODO: cartSheetObj 가끔 못 찾음 원인 파악
 
   if (!Object.keys(cartSheetObj).length) {
     return <div>로딩</div>;
   }
+
   return (
     <Container>
       <TextH5B padding="24px 0 16px 0" center>
@@ -83,6 +87,11 @@ const CartSheet = () => {
           </TextB2R>
         </DeliveryInforContainer>
       </OrderInfoContainer>
+      <ButtonContainer onClick={submitHandler}>
+        <Button height="100%" width="100%" borderRadius="0">
+          확인
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -123,6 +132,10 @@ const TotalSumContainer = styled.div`
 
 const DeliveryInforContainer = styled.div`
   display: flex;
+`;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
 `;
 
 export default React.memo(CartSheet);

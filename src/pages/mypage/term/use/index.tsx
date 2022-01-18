@@ -49,7 +49,6 @@ const TermOfUsePage = () => {
             currentVersion={currentVersion || 2}
           />
         ),
-        buttonTitle: '선택하기',
       })
     );
   };
