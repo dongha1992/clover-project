@@ -1,31 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/Shared/TextInput';
+import { TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import TermSheet from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
 import { terms } from '@api/term';
-import { ITerm } from '@model/index';
+import { ITerm, IVersion } from '@model/index';
 import MarkdownRenderer from '@components/Shared/Markdown';
+
+export interface IFormatVersion {
+  [key: string]: {
+    endedAt: string;
+    startedAt: string;
+    version: number;
+  };
+}
 
 const TermOfUsePage = () => {
   const [termOfUser, setTermOfUse] = useState<ITerm>();
+  const [currentVersion, setCurrentVersion] = useState<number>();
+
   const dispatch = useDispatch();
 
   const getTerms = async () => {
     const params = {
       type: 'USE',
     };
-    const { data } = await terms(params);
-    setTermOfUse(data.data);
+    try {
+      const { data } = await terms(params);
+      setTermOfUse(data.data);
+      setCurrentVersion(data.data?.terms.version!);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const clickInputHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <TermSheet title="이용약관" />,
+        content: (
+          <TermSheet
+            title="이용약관"
+            versions={termOfUser?.versions!}
+            currentVersion={currentVersion || 2}
+          />
+        ),
         buttonTitle: '선택하기',
       })
     );
@@ -35,13 +56,20 @@ const TermOfUsePage = () => {
     getTerms();
   }, []);
 
-  const formatDate = termOfUser?.terms.createdAt.split(' ')[0];
+  const currentVersionOfDate = termOfUser?.terms.startedAt.split(' ')[0];
+  const formatDate = `${currentVersionOfDate} (현재)`;
+
+  if (!termOfUser) {
+    return <div>로딩중</div>;
+  }
 
   return (
     <Container>
       <Wrapper>
         <InputWrapper>
-          <TextInput value={formatDate} />
+          <CustmInput>
+            <TextB2R>{formatDate}</TextB2R>
+          </CustmInput>
           <div className="svgWrapper" onClick={clickInputHandler}>
             <SVGIcon name="triangleDown" />
           </div>
@@ -70,6 +98,12 @@ const InputWrapper = styled.div`
 
 const MarkDownWrapper = styled.div`
   padding-top: 24px;
+`;
+
+const CustmInput = styled.div`
+  padding: 12px 16px;
+  border: 1px solid ${theme.greyScale15};
+  border-radius: 8px;
 `;
 
 export default TermOfUsePage;

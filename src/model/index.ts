@@ -316,7 +316,7 @@ export interface ITerm {
   versions: IVersion[];
 }
 
-interface IVersion {
+export interface IVersion {
   endedAt: string;
   startedAt: string;
   version: number;
