@@ -11,7 +11,7 @@ import {
 import { TextB2R } from '@components/Shared/Text';
 import Checkbox from '@components/Shared/Checkbox';
 import { Button } from '@components/Shared/Button';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -23,46 +23,47 @@ import {
 } from '@store/user';
 import { userLogin, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
+import { SET_LOGIN_TYPE } from '@store/common';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
-  const [loginType, setLoginType] = useState('');
+  // const [loginType, setLoginType] = useState('');
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [returnPath, setReturnPath] = useState<string | string[]>('/home');
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   const { isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
+  const onRouter = useRouter();
 
   useEffect(() => {
-    initLocalStorage();
-    return () => {};
+    const rPath = onRouter.query.returnPath || '/home';
+    setReturnPath(rPath);
   }, []);
 
   useEffect(() => {
     if (isLoginSuccess) {
-      const isDormantAccount = true;
+      const isDormantAccount = false;
       if (isDormantAccount) {
         router.push('/mypage/profile/dormant');
       } else {
-        router.push('/home');
+        router.push(`${returnPath}`);
       }
     }
-    return () => {
-      dispatch(SET_LOGIN_SUCCESS(false));
-    };
+    return () => {};
   }, [isLoginSuccess]);
 
-  const initLocalStorage = () => {
-    try {
-      const data = localStorage.getItem('loginType');
-      return data ? setLoginType(JSON.parse(data)) : '';
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  };
+  // const initLocalStorage = () => {
+  //   try {
+  //     const data = localStorage.getItem('loginType');
+  //     return data ? setLoginType(JSON.parse(data)) : '';
+  //   } catch (error) {
+  //     console.error(error);
+  //     return [];
+  //   }
+  // };
 
   const passwordInputHandler = () => {
     if (emailRef.current && passwordRef.current) {
@@ -104,7 +105,7 @@ const LoginPage = () => {
         const { data } = await userLogin({
           email,
           password,
-          loginType,
+          loginType: 'EMAIL',
         });
 
         if (data.code === 200) {
@@ -116,10 +117,12 @@ const LoginPage = () => {
           }
           dispatch(SET_USER_AUTH(userTokenObj));
           dispatch(SET_LOGIN_SUCCESS(true));
+          dispatch(SET_LOGIN_TYPE('EMAIL'));
+
           const userInfo = await userProfile().then((res) => {
-            return res.data.data;
+            return res?.data;
           });
-          dispatch(SET_USER(userInfo));
+          dispatch(SET_USER(userInfo.data));
         }
       } catch (error) {
         console.error(error);
