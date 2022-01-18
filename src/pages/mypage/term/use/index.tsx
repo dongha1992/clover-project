@@ -8,8 +8,7 @@ import TermSheet from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
 import { terms } from '@api/term';
 import { ITerm } from '@model/index';
-import ReactMarkDown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import MarkdownRenderer from '@components/Shared/Markdown';
 
 const TermOfUsePage = () => {
   const [termOfUser, setTermOfUse] = useState<ITerm>();
@@ -37,19 +36,7 @@ const TermOfUsePage = () => {
   }, []);
 
   const formatDate = termOfUser?.terms.createdAt.split(' ')[0];
-  const markdown = `A paragraph with *emphasis* and **strong importance**.
 
-> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
-
-* Lists
-* [ ] todo
-* [x] done
-
-A table:
-
-| a | b |
-| - | - |
-`;
   return (
     <Container>
       <Wrapper>
@@ -59,7 +46,9 @@ A table:
             <SVGIcon name="triangleDown" />
           </div>
         </InputWrapper>
-        <ReactMarkDown>{markdown}</ReactMarkDown>
+        <MarkDownWrapper>
+          <MarkdownRenderer content={termOfUser?.terms.content!} />
+        </MarkDownWrapper>
       </Wrapper>
     </Container>
   );
@@ -77,6 +66,10 @@ const InputWrapper = styled.div`
     bottom: 40%;
     right: 5%;
   }
+`;
+
+const MarkDownWrapper = styled.div`
+  padding-top: 24px;
 `;
 
 export default TermOfUsePage;
