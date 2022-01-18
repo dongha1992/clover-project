@@ -5,12 +5,14 @@ export type TModalOption = {
   imagesForViewer: any;
   isMobile: boolean;
   isLoading: boolean;
+  versionOfTerm: number;
 };
 
 const INITIAL_STATE: TModalOption = {
   imagesForViewer: [],
   isMobile: false,
   isLoading: false,
+  versionOfTerm: 2,
 };
 
 export const commonSlice = createSlice({
@@ -29,6 +31,9 @@ export const commonSlice = createSlice({
     SET_IS_LOADING: (state, { payload }: PayloadAction<boolean>) => {
       state.isLoading = payload;
     },
+    SET_VERSION_OF_TERM: (state, { payload }: PayloadAction<number>) => {
+      state.versionOfTerm = payload;
+    },
   },
 });
 
@@ -37,6 +42,7 @@ export const {
   INIT_IMAGE_VIEWER,
   SET_IS_MOBILE,
   SET_IS_LOADING,
+  SET_VERSION_OF_TERM,
 } = commonSlice.actions;
 export const commonSelector = (state: AppState) => state.common;
 export default commonSlice.reducer;

@@ -15,9 +15,10 @@ import { theme } from '@styles/theme';
 const BottomSheet = () => {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
-  const { content, buttonTitle }: any = useSelector(bottomSheetForm);
+  const { content, buttonTitle, submitHandler }: any =
+    useSelector(bottomSheetForm);
   const { tempSelectedMenus } = useSelector(cartForm);
-  const { showToast, hideToast } = useToast();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
@@ -78,7 +79,7 @@ const BottomSheet = () => {
       }
       default: {
         return (
-          <ButtonContainer onClick={() => clickButtonHandler()}>
+          <ButtonContainer onClick={() => submitHandler()}>
             <Button height="100%" width="100%" borderRadius="0">
               {buttonTitle}
             </Button>
@@ -94,7 +95,7 @@ const BottomSheet = () => {
         <BottomSheetContent ref={contentRef}>
           <Content content={content} />
         </BottomSheetContent>
-        {buttonTitle ? renderButton() : null}
+        {/* {buttonTitle ? renderButton() : null} */}
       </Container>
     </Background>
   );
