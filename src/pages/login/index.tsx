@@ -19,9 +19,9 @@ import {
   SET_USER_AUTH,
   SET_LOGIN_SUCCESS,
   SET_TEMP_PASSWORD,
+  SET_USER,
 } from '@store/user';
-import wrapper from '@store/index';
-import { userLogin } from '@api/user';
+import { userLogin, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 
 const LoginPage = () => {
@@ -116,6 +116,10 @@ const LoginPage = () => {
           }
           dispatch(SET_USER_AUTH(userTokenObj));
           dispatch(SET_LOGIN_SUCCESS(true));
+          const userInfo = await userProfile().then((res) => {
+            return res.data.data;
+          });
+          dispatch(SET_USER(userInfo));
         }
       } catch (error) {
         console.error(error);
