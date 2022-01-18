@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { cartForm, SET_CART_LISTS } from '@store/cart';
 import CartSheetItem from './CartSheetItem';
 import { Button } from '@components/Shared/Button';
-import { initBottomSheet } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useToast } from '@hooks/useToast';
 
 const CartSheet = () => {
@@ -23,7 +23,7 @@ const CartSheet = () => {
   };
 
   const submitHandler = () => {
-    dispatch(initBottomSheet());
+    dispatch(INIT_BOTTOM_SHEET());
     dispatch(SET_CART_LISTS(selectedMenus));
     setTimeout(() => {
       showToast({ message: '장바구니에 담겼습니다.' });

@@ -7,6 +7,7 @@ import { RadioButton } from '@components/Shared/Button';
 import { IVersion } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_VERSION_OF_TERM } from '@store/common';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 interface IProps {
   title: string;
   versions: IVersion[];
@@ -21,10 +22,12 @@ const TermSheet = ({ title, versions, currentVersion }: IProps) => {
 
   const changeRadioHandler = (id: number) => {
     setSelectedVersion(id);
-    // dispatch(SET_VERSION_OF_TERM(id));
   };
 
-  const submitHandler = () => {};
+  const submitHandler = () => {
+    dispatch(SET_VERSION_OF_TERM(selectedVersion));
+    dispatch(INIT_BOTTOM_SHEET());
+  };
 
   versions = versions.slice().reverse();
 

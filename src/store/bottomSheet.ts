@@ -18,13 +18,13 @@ export const style = createSlice({
     setBottomSheet: (state, action: PayloadAction<TProps> | null) => {
       return action?.payload;
     },
-    initBottomSheet: (state, action: PayloadAction) => {
+    INIT_BOTTOM_SHEET: (state, action: PayloadAction) => {
       state.content = null;
     },
   },
 });
 
-export const { setBottomSheet, initBottomSheet } = style.actions;
+export const { setBottomSheet, INIT_BOTTOM_SHEET } = style.actions;
 export const bottomSheetForm = (state: AppState): TProps | null =>
   state.bottomSheet;
 export default style.reducer;

@@ -76,11 +76,6 @@ const MypageCouponItem = ({ coupon }: any) => {
           </TextB3R>
         </Content>
       </Wrapper>
-      <ButtonContainer onClick={submitHandler}>
-        <Button height="100%" width="100%" borderRadius="0">
-          확인
-        </Button>
-      </ButtonContainer>
     </Container>
   );
 };
@@ -115,10 +110,6 @@ const Dot = styled.div`
   height: 4px;
   border-radius: 50%;
   margin: 0px 8px;
-`;
-
-const ButtonContainer = styled.div`
-  ${bottomSheetButton}
 `;
 
 export default MypageCouponItem;

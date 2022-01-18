@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useBottomSheet } from '@hooks/useBottomSheet';
 import Content from '@components/BottomSheet/Content';
-import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { breakpoints } from '@utils/getMediaQuery';
 
@@ -27,7 +27,7 @@ const BottomSheet = () => {
     if (target !== currentTarget) {
       return;
     }
-    dispatch(initBottomSheet());
+    dispatch(INIT_BOTTOM_SHEET());
   };
 
   return (
