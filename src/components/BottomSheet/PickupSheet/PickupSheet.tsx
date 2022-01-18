@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { homePadding, theme } from '@styles/theme';
+import { homePadding, theme, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
-import { RadioButton } from '@components/Shared/Button';
+import { RadioButton, Button } from '@components/Shared/Button';
 
 const PICK_UP_PLACE = [
   { id: 1, name: '1506호 사무실 문 앞' },
@@ -15,6 +15,8 @@ const PickupSheet = () => {
   const changeRadioHandler = (id: number) => {
     setSelectedPickupPlace(id);
   };
+
+  const submitHandler = () => {};
 
   return (
     <Container>
@@ -34,6 +36,11 @@ const PickupSheet = () => {
           );
         })}
       </Wrapper>
+      <ButtonContainer onClick={() => submitHandler()}>
+        <Button height="100%" width="100%" borderRadius="0">
+          선택하기
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -46,4 +53,9 @@ const PickWrapper = styled.div`
   display: flex;
   margin-bottom: 16px;
 `;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
+`;
+
 export default React.memo(PickupSheet);

@@ -3,13 +3,11 @@ import { AppState } from '.';
 
 type TProps = {
   content: JSX.Element | null;
-  buttonTitle?: string | null;
   submitHandler?: () => void | null;
 };
 
 const initialState: TProps = {
   content: null,
-  buttonTitle: '',
   submitHandler: () => {},
 };
 
@@ -22,7 +20,6 @@ export const style = createSlice({
     },
     initBottomSheet: (state, action: PayloadAction) => {
       state.content = null;
-      state.buttonTitle = '';
     },
   },
 });
