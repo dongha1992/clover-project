@@ -20,6 +20,8 @@ import { useStore } from 'react-redux';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { SET_LOGIN_SUCCESS, SET_USER } from '@store/user';
+import { userProfile } from '@api/user';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
@@ -45,6 +47,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       dispatch(SET_IS_MOBILE(mobile));
     }
   }, []);
+
+  const authCheck = async () => {
+    const userInfo = await userProfile().then((res) => {
+      return res.data.data;
+    });
+
+    dispatch(SET_USER(userInfo));
+    dispatch(SET_LOGIN_SUCCESS(true));
+  };
 
   return (
     <>

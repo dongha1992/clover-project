@@ -3,6 +3,7 @@ import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { getCookie } from '@utils/cookie';
 import { userRefreshToken } from './user';
+import router from 'next/router';
 
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];
@@ -21,6 +22,10 @@ const onTokenRefreshed = (accessToken: string) => {
 const addRefreshSubscriber = (callback: any) => {
   refreshSubscribers.push(callback);
 };
+
+const onUnauthorized = () => {
+  router.push(`/login?returnPath=${encodeURIComponent(location.pathname)}`)
+}
 
 export const Api = axios.create({
   baseURL: CLOVER_URL,
@@ -51,22 +56,26 @@ Api.interceptors.response.use(
           console.log('## I response TokenRefreshing');
           isTokenRefreshing = true;
           const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
-          console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
+          if (refreshTokenObj) {
+            console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
 
-          const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
-          console.log(refreshTokenObj.refreshToken);
-          const userTokenObj: any = data.data;
+            const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
+            console.log(refreshTokenObj.refreshToken);
+            const userTokenObj: any = data.data;
 
-          const accessTokenObj = {
-            accessToken: userTokenObj.accessToken,
-            expiresIn: userTokenObj.expiresIn,
-          };
+            const accessTokenObj = {
+              accessToken: userTokenObj.accessToken,
+              expiresIn: userTokenObj.expiresIn,
+            };
 
-          sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+            sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
 
-          isTokenRefreshing = false;
-          onTokenRefreshed(userTokenObj.accessToken);
-          return Api(pendingRequest);
+            isTokenRefreshing = false;
+            onTokenRefreshed(userTokenObj.accessToken);
+            return Api(pendingRequest);
+          } else {
+            onUnauthorized()
+          }
         } else {
           return new Promise((resolve) => {
             addRefreshSubscriber((accessToken: string) => {
