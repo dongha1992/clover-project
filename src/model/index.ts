@@ -300,7 +300,7 @@ export interface IKakaoLatLon {
   y: string;
 }
 
-export interface IGetBanners {
+export interface IBanners {
   content: string;
   createdAt: string;
   endedAt: string;
@@ -328,5 +328,18 @@ export interface IGetBanners {
 export interface IGetBannersResponse {
   code: number;
   message: string;
-  data: IGetBanners[];
+  data: IBanners[];
+}
+
+type BannerType =
+  | 'CAROUSEL'
+  | 'CATEGORY'
+  | 'EVENT'
+  | 'EXHIBITION'
+  | 'IMAGE'
+  | 'MENU'
+  | 'ORDER';
+
+export interface IBanner {
+  type: string;
 }
