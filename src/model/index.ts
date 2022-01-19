@@ -342,4 +342,30 @@ type BannerType =
 
 export interface IBanner {
   type: string;
+export interface ITermRequest {
+  type: string;
+}
+
+export interface ITerm {
+  terms: {
+    content: string;
+    createdAt: string;
+    endedAt: string;
+    startedAt: string;
+    type: string;
+    version: number;
+  };
+  versions: IVersion[];
+}
+
+export interface IVersion {
+  endedAt: string;
+  startedAt: string;
+  version: number;
+}
+
+export interface ITermResponse {
+  code: number;
+  message: string;
+  data: ITerm;
 }
