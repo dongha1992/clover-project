@@ -39,8 +39,7 @@ const LoginPage = () => {
   const onRouter = useRouter();
 
   useEffect(() => {
-    const rPath = onRouter.query.returnPath || '/home';
-    setReturnPath(rPath);
+    setReturnPath(onRouter.query.returnPath || '/home');
   }, []);
 
   useEffect(() => {

@@ -50,14 +50,20 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     authCheck();
   }, []);
 
-  const authCheck = async () => {
-    const userInfo = await userProfile().then((res) => {
-      return res?.data;
-    });
+  // TODO : 로그인 상태에서 http://localhost:3000/ url 입력했을 때 /home화면으로 리다이렉트
 
-    if (userInfo?.code === 200) {
-      dispatch(SET_USER(userInfo?.data));
-      dispatch(SET_LOGIN_SUCCESS(true));
+  const authCheck = async () => {
+    const { loginType } = store.getState().common;
+
+    if (loginType !== 'NONMEMBER') {
+      const userInfo = await userProfile().then((res) => {
+        return res?.data;
+      });
+
+      if (userInfo?.code === 200) {
+        dispatch(SET_USER(userInfo?.data));
+        dispatch(SET_LOGIN_SUCCESS(true));
+      }
     }
   };
 
