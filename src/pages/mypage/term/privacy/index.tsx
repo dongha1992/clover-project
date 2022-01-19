@@ -4,7 +4,7 @@ import TextInput from '@components/Shared/TextInput';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
-import TermSheet from '@components/BottomSheet/TermSheet';
+import { TermSheet } from '@components/BottomSheet/TermSheet';
 import { homePadding, theme } from '@styles/theme';
 
 const PrivacyPage = () => {
@@ -16,7 +16,6 @@ const PrivacyPage = () => {
     dispatch(
       setBottomSheet({
         content: <TermSheet title="개인정보 처리 방침" />,
-        buttonTitle: '선택하기',
       })
     );
   };

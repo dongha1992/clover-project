@@ -4,7 +4,7 @@ import { TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
-import TermSheet from '@components/BottomSheet/TermSheet';
+import { TermSheet } from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
 import { terms } from '@api/term';
 import { ITerm, IVersion } from '@model/index';
