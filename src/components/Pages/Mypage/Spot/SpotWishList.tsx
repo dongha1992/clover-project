@@ -1,9 +1,72 @@
 import React from 'react';
 import styled from 'styled-components';
-import { SPOT_ITEMS } from '@constants/mock';
 import { theme } from '@styles/theme';
 import { TextB3R, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
+
+export const SPOT_ITEMS = [
+  {
+    id: 0,
+    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    users: 10,
+    distance: 125,
+    location: '헤이그라운드 서울숲점',
+    desc: '샐러드 받고 300포인트도 받자',
+    like: 10,
+    detail: {},
+  },
+  {
+    id: 1,
+    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    users: 12,
+    distance: 125,
+    location: '헤이그라운드 서울숲점',
+    desc: '샐러드 받고 300포인트도 받자',
+    like: 10,
+    detail: {},
+  },
+  {
+    id: 2,
+    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    users: 31,
+    distance: 125,
+    location: '헤이그라운드 서울숲점',
+    desc: '샐러드 받고 300포인트도 받자',
+    like: 10,
+    detail: {},
+  },
+  {
+    id: 3,
+    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    users: 31,
+    distance: 125,
+    location: '헤이그라운드 서울숲점',
+    desc: '샐러드 받고 300포인트도 받자',
+    like: 10,
+    detail: {},
+  },
+  {
+    id: 4,
+    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    users: 23,
+    distance: 125,
+    location: '헤이그라운드 서울숲점',
+    desc: '샐러드 받고 300포인트도 받자',
+    like: 10,
+    detail: {},
+  },
+  {
+    id: 5,
+    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    users: 21,
+    distance: 125,
+    location: '헤이그라운드 서울숲점',
+    desc: '샐러드 받고 300포인트도 받자',
+    like: 10,
+    detail: {},
+  },
+];
+
 
 const SpotWishList = () => {
   return (
