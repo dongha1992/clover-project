@@ -132,6 +132,10 @@ const PaymentPage = () => {
     const { value, name } = e.target;
   };
 
+  const couponHandler = () => {
+    router.push({ pathname: '/mypage/coupon', query: { isPayment: true } });
+  };
+
   const goToFinishPayment = () => {
     router.push('/payment/finish');
   };
@@ -148,7 +152,7 @@ const PaymentPage = () => {
     <Container>
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
-          <TextH4B>주문상품</TextH4B>
+          <TextH4B>주문상품 ({itemList.length})</TextH4B>
           <FlexRow onClick={() => showSectionHandler('orderItem')}>
             <TextB2R padding="0 13px 0 0">상품 이름...</TextB2R>
             <SVGIcon
@@ -308,10 +312,10 @@ const PaymentPage = () => {
         <FlexBetween>
           <TextH4B>할인 쿠폰</TextH4B>
           <FlexRow>
-            <TextB2R padding="0 10px 0 0">-3000원</TextB2R>
-            <TextH6B color={theme.greyScale65} textDecoration="underline">
-              선택
-            </TextH6B>
+            <TextB2R padding="0 10px 0 0">4장 보유</TextB2R>
+            <div onClick={couponHandler}>
+              <SVGIcon name="arrowRight" />
+            </div>
           </FlexRow>
         </FlexBetween>
       </CouponWrapper>
