@@ -4,7 +4,7 @@ import CartIcon from '@components/Header/Cart';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { initBottomSheet, setBottomSheet } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET, setBottomSheet } from '@store/bottomSheet';
 import { orderForm } from '@store/order';
 import { OrderSheet } from '@components/BottomSheet/OrderSheet';
 import { TextH4B } from '@components/Shared/Text';
@@ -23,7 +23,7 @@ const QuickOrderHeader: React.FC = () => {
   );
 
   useEffect(() => {
-    dispatch(initBottomSheet());
+    dispatch(INIT_BOTTOM_SHEET());
   }, []);
 
   const goBack = (): void => {

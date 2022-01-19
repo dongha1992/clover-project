@@ -21,14 +21,12 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
       dispatch(
         setBottomSheet({
           content: <MenuFilter />,
-          buttonTitle: '적용하기',
         })
       );
     } else {
       dispatch(
         setBottomSheet({
           content: <SpotSearchFilter />,
-          buttonTitle: '스팟필터',
         })
       );
     }

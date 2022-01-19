@@ -13,7 +13,8 @@ import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 
 const HomeHeader = () => {
-  const { userLocation, availableDestination } = useSelector(destinationForm);
+  const { userLocation, availableDestination, locationStatus } =
+    useSelector(destinationForm);
 
   const [formatAvailableDestination, setFormatAvailableDestination] =
     useState('');
@@ -26,7 +27,7 @@ const HomeHeader = () => {
   };
 
   useEffect(() => {
-    setFormatAvailableDestination(checkDestinationHelper(availableDestination));
+    setFormatAvailableDestination(locationStatus);
   }, []);
 
   const goToCart = () => {
