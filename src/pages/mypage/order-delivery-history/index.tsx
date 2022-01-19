@@ -27,7 +27,6 @@ const OrderDeliveryHistoryPage = () => {
     dispatch(
       setBottomSheet({
         content: <OrderDateFilter />,
-        buttonTitle: '적용하기',
       })
     );
   };

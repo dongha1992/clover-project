@@ -1,8 +1,8 @@
 import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
-import { homePadding } from '@styles/theme';
+import { homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
-import { RadioButton } from '@components/Shared/Button';
+import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 
 const TIME = [
@@ -90,6 +90,11 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
           })}
         </SelectWrapper>
       </Wrapper>
+      <ButtonContainer onClick={() => {}}>
+        <Button height="100%" width="100%" borderRadius="0">
+          확인
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -108,6 +113,10 @@ const SelectWrapper = styled.section`
 const Selected = styled.div`
   display: flex;
   margin-bottom: 16px;
+`;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
 `;
 
 export default OptionsSheet;

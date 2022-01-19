@@ -10,6 +10,8 @@ import {
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import Tag from '@components/Shared/Tag';
+import { Button } from '@components/Shared/Button';
+import { bottomSheetButton } from '@styles/theme';
 
 const MypageCouponItem = ({ coupon }: any) => {
   const [isShow, setIsShow] = useState(false);
@@ -17,6 +19,7 @@ const MypageCouponItem = ({ coupon }: any) => {
   const isRateDiscount = coupon.type === 'rate';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 
+  const submitHandler = () => {};
   return (
     <Container isDownload={coupon.isDownload}>
       <Wrapper>

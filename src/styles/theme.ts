@@ -203,6 +203,16 @@ export const fixedBottom = css`
   `};
 `;
 
+export const bottomSheetButton = css`
+  z-index: 100;
+  position: absolute;
+  display: flex;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  height: 56px;
+`;
+
 export const textH1 = css`
   font-size: 24px;
   letter-spacing: -0.4;

@@ -3,7 +3,8 @@ import { OrderFilter } from '@components/Filter/components';
 import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { ORDER_DATE_RADIO_CHECKBOX } from '@constants/filter';
-import { theme } from '@styles/theme';
+import { theme, bottomSheetButton } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 
 const OrderDateFilter = () => {
   const [selectedRadioId, setSelectedRadioId] = useState(1);
@@ -27,6 +28,11 @@ const OrderDateFilter = () => {
           selectedRadioId={selectedRadioId}
         />
       </Wrapper>
+      <ButtonContainer onClick={() => {}}>
+        <Button height="100%" width="100%" borderRadius="0">
+          적용하기
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -37,6 +43,9 @@ const Container = styled.div`
 `;
 const Wrapper = styled.div`
   padding-left: 24px;
+`;
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
 `;
 
 export default React.memo(OrderDateFilter);

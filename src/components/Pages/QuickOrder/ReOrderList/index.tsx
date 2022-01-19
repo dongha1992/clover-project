@@ -6,7 +6,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { initBottomSheet, setBottomSheet } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET, setBottomSheet } from '@store/bottomSheet';
 import { OrderDetailSheet } from '@components/BottomSheet/OrderSheet';
 
 interface IProps {
@@ -45,7 +45,7 @@ const ReOrderList = ({
     },
   };
   useEffect(() => {
-    dispatch(initBottomSheet());
+    dispatch(INIT_BOTTOM_SHEET());
   }, []);
 
   useEffect(() => {
