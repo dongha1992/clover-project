@@ -24,7 +24,7 @@ const addRefreshSubscriber = (callback: any) => {
 };
 
 const onUnauthorized = () => {
-  router.push(`/login?returnPath=${encodeURIComponent(location.pathname)}`)
+  router.push(`/?returnPath=${encodeURIComponent(location.pathname)}`)
 }
 
 export const Api = axios.create({
@@ -52,37 +52,43 @@ Api.interceptors.response.use(
       if (response.status === 401) {
         console.log('status 401');
 
-        if (!isTokenRefreshing) {
-          console.log('## I response TokenRefreshing');
-          isTokenRefreshing = true;
-          const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
-          if (refreshTokenObj) {
-            console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
+        if (response.data.code !== 2003) {
 
-            const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
-            console.log(refreshTokenObj.refreshToken);
-            const userTokenObj: any = data.data;
+          if (!isTokenRefreshing) {
+            console.log('## I response TokenRefreshing');
+            isTokenRefreshing = true;
+            const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
+            if (refreshTokenObj) {
+              console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
 
-            const accessTokenObj = {
-              accessToken: userTokenObj.accessToken,
-              expiresIn: userTokenObj.expiresIn,
-            };
+              const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
+              console.log(refreshTokenObj.refreshToken);
+              const userTokenObj: any = data.data;
 
-            sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+              const accessTokenObj = {
+                accessToken: userTokenObj.accessToken,
+                expiresIn: userTokenObj.expiresIn,
+              };
 
-            isTokenRefreshing = false;
-            onTokenRefreshed(userTokenObj.accessToken);
-            return Api(pendingRequest);
+              sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+
+              isTokenRefreshing = false;
+              onTokenRefreshed(userTokenObj.accessToken);
+              return Api(pendingRequest);
+            } else {
+
+              onUnauthorized()
+
+            }
           } else {
-            onUnauthorized()
-          }
-        } else {
-          return new Promise((resolve) => {
-            addRefreshSubscriber((accessToken: string) => {
-              pendingRequest.headers.Authorization = `Bearer ${accessToken}`;
-              return resolve(Api(pendingRequest));
+            return new Promise((resolve) => {
+              addRefreshSubscriber((accessToken: string) => {
+                pendingRequest.headers.Authorization = `Bearer ${accessToken}`;
+                return resolve(Api(pendingRequest));
+              });
             });
-          });
+          }
+
         }
       } else {
         return onError(error as AxiosError);
