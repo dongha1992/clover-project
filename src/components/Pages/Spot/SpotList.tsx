@@ -68,7 +68,8 @@ const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): Reac
     spotLikeData();
   }, [list]);
 
-  const hanlderLike = async () => {
+  const hanlderLike = async (e:any) => {
+    e.stopPropagation();
     // const test = spots?.find((i) => i.id === id);
     if(!spotLike){
       try {
@@ -146,7 +147,7 @@ const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): Reac
                       <TextH6B
                         color={theme.greyScale65}
                       >{`${Math.round(list.distance)}m`}</TextH6B>
-                      <LikeWrapper type="normal" onClick={()=> hanlderLike()}>
+                      <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
                         <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
                         <TextB2R padding='4px 0 0 1px'>{spotLikeCount}</TextB2R>
                       </LikeWrapper>
@@ -158,34 +159,29 @@ const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): Reac
       case 'event': 
         return (
           <ItemListRowWrapper>
-            <TextH2B padding="0 0 24px 0">{title}</TextH2B>
             <ItemListRow>
-              {spots?.map((item, index) => {
-                return (
-                  <Container type="event" key={index}>
-                    <StorImgWrapper onClick={() => goToDetail(item.id)}>
-                      <LikeWrapper type="event">
-                        <SVGIcon name="likeBlack" />
+                  <Container type="event">
+                    <StorImgWrapper onClick={() => goToDetail(list.id)}>
+                      <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
+                        <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
                       </LikeWrapper>
-                      <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
+                      <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
                     </StorImgWrapper>
                     <LocationInfoWrapper type="event">
                       <div>
-                        <TextH4B>{item.eventTitle}</TextH4B>
+                        <TextH4B>{list.eventTitle}</TextH4B>
                         <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
-                          {item.name}
+                          {list.name}
                         </TextH6B>
                       </div>
                       <ButtonWrapper>
                         <TextH6B
                           color={theme.greyScale65}
-                        >{`${Math.round(item.distance)}m`}</TextH6B>
-                        <Button onClick={goToCart}>{btnText}</Button>
+                        >{`${Math.round(list.distance)}m`}</TextH6B>
+                        <Button onClick={goToCart}>주문하기</Button>
                       </ButtonWrapper>
                     </LocationInfoWrapper>
                   </Container>
-                );
-              })}
             </ItemListRow>
           </ItemListRowWrapper>
         )
