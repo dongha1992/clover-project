@@ -264,13 +264,11 @@ const SpotPage = () => {
       {/* 근처 인기있는 스팟 */}
       <TextH2B padding="49px 0 0 24px">{popularSpot?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-
             {popularSpot?.spots.map((list, idx)=>{
               return (
                 <SpotList 
                 key={idx} 
                 list={list} 
-                title={popularSpot?.title} 
                 type="normal" 
               />
             )})}
@@ -283,7 +281,6 @@ const SpotPage = () => {
               <SpotList 
               key={idx}
               list={list} 
-              title={popularSpot?.title} 
               type="normal" 
             />
           )})}
@@ -296,7 +293,6 @@ const SpotPage = () => {
               <SpotList 
               key={idx}
               list={list} 
-              title={popularSpot?.title} 
               type="normal" 
             />
           )})}
@@ -309,37 +305,21 @@ const SpotPage = () => {
           </IconWrapper>
         </FlexBetween>
       </SpotRegistrationWrapper>
-      {/* <SlideWrapper {...settings}>
-        {FCO_SPOT_BANNER.map((item) => {
+      {/* 이벤트 중인 스팟 */}
+      <TextH2B padding="49px 0 0 24px">{eventSpot?.title}</TextH2B>
+      <SpotListWrapper>
+      {
+        eventSpot?.spots.map((list, idx)=> {
           return (
-            <BoxHandlerWrapper
-              key={item.id}
-              onMouseMove={() => setMouseMoved(true)}
-              onMouseDown={() => setMouseMoved(false)}
-              onClick={() => goToSpotReq(item.type)}
-            >
-              <FlexBetween height='92px' padding='22px'>
-                <TextH4B color={theme.black}>{item.text}</TextH4B>
-                <IconWrapper>
-                  <SVGIcon name={item.icon} />
-                </IconWrapper>
-              </FlexBetween>
-            </BoxHandlerWrapper>
-          );
-        })}
-      </SlideWrapper> */}
-      {/* {
-        eventSpot.map(()=> {
-          return ( */}
             <SpotList
-            spots={eventSpot?.spots}
-            title={eventSpot?.title}
+            key={idx}
+            list={list}
             type="event"
-            btnText="주문하기"
           />    
-          {/* )
+          )
         })
-      } */}
+      } 
+      </SpotListWrapper>
       <SpotList
         spots={spotRegistraions?.data.spotRegistrations}
         title={spotRegistraions?.data.title}
@@ -371,21 +351,6 @@ const Container = styled.main`
   ${homePadding};
 `;
 
-const HandleBoxWrapper = styled.section`
-  width: 100%;
-  height: 68px;
-  background: ${theme.greyScale3};
-  margin-top: 24px;
-  border-radius: 8px;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-`;
-
-const SpotListWrapper = styled.section``;
-
 const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
@@ -409,8 +374,16 @@ const SpotsSlideWrapper = styled(Slider)`
   width: 100%;
   padding: 16px 0 0 0;
   .slick-slide{
-    width: 150px !important;
+    width: 135px !important;
   }
+`;
+
+const SpotListWrapper = styled.section`
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+
 `;
 
 const BoxHandlerWrapper = styled.div`
