@@ -240,7 +240,7 @@ const AddressEditPage = ({ id }: IProps) => {
   };
 
   const changePickUpPlace = () => {
-    dispatch(setBottomSheet({ content: <PickupSheet />, buttonTitle: '확인' }));
+    dispatch(setBottomSheet({ content: <PickupSheet /> }));
   };
 
   return (

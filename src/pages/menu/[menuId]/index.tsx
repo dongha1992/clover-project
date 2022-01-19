@@ -108,7 +108,6 @@ const MenuDetailPage = ({ menuId }: any) => {
     dispatch(
       setBottomSheet({
         content: <CouponSheet />,
-        buttonTitle: '확인',
       })
     );
   };
