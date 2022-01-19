@@ -10,10 +10,13 @@ import {
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import Tag from '@components/Shared/Tag';
-import { Button } from '@components/Shared/Button';
-import { bottomSheetButton } from '@styles/theme';
+import { ICoupon } from '@pages/mypage/coupon';
 
-const MypageCouponItem = ({ coupon }: any) => {
+interface IProps {
+  coupon: ICoupon;
+  selectCouponHandler: (coupon: ICoupon) => void;
+}
+const MypageCouponItem = ({ coupon, selectCouponHandler }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const isRateDiscount = coupon.type === 'rate';
