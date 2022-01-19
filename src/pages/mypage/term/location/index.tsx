@@ -4,7 +4,7 @@ import TextInput from '@components/Shared/TextInput';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
-import TermSheet from '@components/BottomSheet/TermSheet';
+import { TermSheet } from '@components/BottomSheet/TermSheet';
 import { homePadding, theme } from '@styles/theme';
 
 const LocationTermPage = () => {
@@ -16,7 +16,6 @@ const LocationTermPage = () => {
     dispatch(
       setBottomSheet({
         content: <TermSheet title="위치정보 서비스 이용약관" />,
-        buttonTitle: '선택하기',
       })
     );
   };

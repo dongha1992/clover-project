@@ -97,7 +97,7 @@ const CartSheet = () => {
       </OrderInfoContainer>
       <ButtonContainer onClick={submitHandler}>
         <Button height="100%" width="100%" borderRadius="0">
-          확인
+          장바구니에 담기
         </Button>
       </ButtonContainer>
     </Container>
