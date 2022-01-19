@@ -5,7 +5,7 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBottomSheet, initBottomSheet } from '@store/bottomSheet';
+import { setBottomSheet, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { menuSelector } from '@store/menu';
 import { commonSelector } from '@store/common';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
@@ -29,7 +29,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
 
   useEffect(() => {
     return () => {
-      dispatch(initBottomSheet());
+      dispatch(INIT_BOTTOM_SHEET());
     };
   }, []);
 
@@ -53,11 +53,10 @@ const MenuDetailHeader = ({ title }: TProps) => {
         return 'null';
       }
     } else {
-      dispatch(initBottomSheet());
+      dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         setBottomSheet({
           content: <ShareSheet />,
-          buttonTitle: '',
         })
       );
     }
@@ -68,7 +67,6 @@ const MenuDetailHeader = ({ title }: TProps) => {
     dispatch(
       setBottomSheet({
         content: <CartSheet />,
-        buttonTitle: '장바구니에 담기',
       })
     );
   };

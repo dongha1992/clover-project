@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { MultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
-import { TextB3R, TextH5B } from '@components/Shared/Text';
+import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { MUTILPLE_CHECKBOX_MENU, RADIO_CHECKBOX_MENU } from '@constants/filter';
-import { theme, FlexCol, FlexBetween } from '@styles/theme';
-
+import { theme, bottomSheetButton } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 /* 
 
 DefaultFilter : 다중 선택 필터
@@ -49,6 +49,7 @@ const MenuFilter = () => {
   };
 
   const changeToggleHandler = () => {};
+  const submitHandler = () => {};
 
   return (
     <Container>
@@ -74,6 +75,11 @@ const MenuFilter = () => {
           selectedRadioId={selectedRadioId}
         />
       </Wrapper>
+      <ButtonContainer onClick={() => submitHandler()}>
+        <Button height="100%" width="100%" borderRadius="0">
+          적용하기
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -84,6 +90,10 @@ const Container = styled.div`
 `;
 const Wrapper = styled.div`
   padding-left: 24px;
+`;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
 `;
 
 export default React.memo(MenuFilter);
