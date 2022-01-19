@@ -17,10 +17,6 @@ import common from './common';
 import destination from './destination';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
-// persist
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
   if (action.type === HYDRATE) {
     return {
@@ -76,7 +72,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: ['order', 'destination', 'cart', 'user', 'menu'],
+      whitelist: ['order', 'destination', 'cart', 'menu', 'common'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -20,6 +20,8 @@ import { useStore } from 'react-redux';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { SET_LOGIN_SUCCESS, SET_USER } from '@store/user';
+import { userProfile } from '@api/user';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
@@ -44,7 +46,26 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       let mobile = !!md.mobile();
       dispatch(SET_IS_MOBILE(mobile));
     }
+
+    authCheck();
   }, []);
+
+  // TODO : 로그인 상태에서 http://localhost:3000/ url 입력했을 때 /home화면으로 리다이렉트
+
+  const authCheck = async () => {
+    const { loginType } = store.getState().common;
+
+    if (loginType !== 'NONMEMBER') {
+      const userInfo = await userProfile().then((res) => {
+        return res?.data;
+      });
+
+      if (userInfo?.code === 200) {
+        dispatch(SET_USER(userInfo?.data));
+        dispatch(SET_LOGIN_SUCCESS(true));
+      }
+    }
+  };
 
   return (
     <>
