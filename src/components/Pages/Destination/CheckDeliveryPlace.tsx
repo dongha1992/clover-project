@@ -24,7 +24,6 @@ const CheckDeliveryPlace = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isLocation } = router.query;
-  console.log(isLocation);
 
   useEffect(() => {
     checkAvailablePlace();

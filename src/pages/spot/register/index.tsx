@@ -42,7 +42,6 @@ const RegisterPage = () => {
     dispatch(
       setBottomSheet({
         content: <OptionsSheet tab={tab} />,
-        buttonTitle: '선택하기',
       })
     );
   }, []);
