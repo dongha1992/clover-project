@@ -5,6 +5,7 @@ interface IState {
   imagesForViewer: string[];
   isMobile: boolean;
   isLoading: boolean;
+  loginType: string;
   versionOfTerm: number;
   userAccessMethod: IAccessMethod;
 }
@@ -13,6 +14,7 @@ const INITIAL_STATE: IState = {
   imagesForViewer: [],
   isMobile: false,
   isLoading: false,
+  loginType: 'NONMEMBER',
   versionOfTerm: 2,
   userAccessMethod: {
     id: 1,
@@ -37,6 +39,9 @@ export const commonSlice = createSlice({
     SET_IS_LOADING: (state, { payload }: PayloadAction<boolean>) => {
       state.isLoading = payload;
     },
+    SET_LOGIN_TYPE: (state, { payload }: PayloadAction<string>) => {
+      state.loginType = payload;
+    },
     SET_VERSION_OF_TERM: (state, { payload }: PayloadAction<number>) => {
       state.versionOfTerm = payload;
     },
@@ -51,6 +56,7 @@ export const {
   INIT_IMAGE_VIEWER,
   SET_IS_MOBILE,
   SET_IS_LOADING,
+  SET_LOGIN_TYPE,
   SET_VERSION_OF_TERM,
   SET_ACCESS_METHOD,
 } = commonSlice.actions;
