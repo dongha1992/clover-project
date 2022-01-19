@@ -4,8 +4,8 @@ import BorderLine from '@components/Shared/BorderLine';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { MUTILPLE_CHECKBOX_SPOT, RADIO_CHECKBOX_SPOT } from '@constants/filter';
-import { theme, FlexCol, FlexBetween } from '@styles/theme';
-import { ToggleButton } from '@components/Shared/Button';
+import { theme, FlexCol, FlexBetween, bottomSheetButton } from '@styles/theme';
+import { ToggleButton, Button } from '@components/Shared/Button';
 
 /* TODO : 다른 필터에서 전체 선택 시 해제되는 거 spot은 없음 이거 로직 변경, toggle시 전체 선택 해제로 */
 
@@ -42,7 +42,8 @@ const SpotSearchFilter = () => {
   };
 
   const changeToggleHandler = () => {};
-
+  const initSpotFilterHandler = () => {};
+  const clickButtonHandler = () => {};
   return (
     <Container>
       <TextH5B padding="24px 0 16px 0" center>
@@ -92,6 +93,25 @@ const SpotSearchFilter = () => {
           selectedCheckboxIds={selectedCheckboxIds}
         />
       </Wrapper>
+      <ButtonContainer>
+        <Button
+          height="100%"
+          width="100%"
+          borderRadius="0"
+          onClick={initSpotFilterHandler}
+        >
+          전체 초기화
+        </Button>
+        <Col />
+        <Button
+          height="100%"
+          width="100%"
+          borderRadius="0"
+          onClick={clickButtonHandler}
+        >
+          적용하기
+        </Button>
+      </ButtonContainer>
     </Container>
   );
 };
@@ -103,6 +123,19 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   padding-left: 24px;
+`;
+
+const ButtonContainer = styled.div`
+  ${bottomSheetButton}
+`;
+
+const Col = styled.div`
+  position: absolute;
+  left: 50%;
+  bottom: 25%;
+  background-color: ${theme.white};
+  width: 1px;
+  height: 50%;
 `;
 
 export default React.memo(SpotSearchFilter);

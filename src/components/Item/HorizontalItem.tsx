@@ -28,7 +28,6 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
     dispatch(
       setBottomSheet({
         content: <CartSheet />,
-        buttonTitle: '장바구니에 담기',
       })
     );
   };
