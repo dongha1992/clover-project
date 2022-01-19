@@ -13,6 +13,7 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
+import { query } from 'express';
 
 /* TODO: geolocation 에러케이스 추가 */
 
@@ -111,7 +112,10 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    router.push('/location/address-detail');
+    router.push({
+      pathname: '/location/address-detail',
+      query: { isLocation: true },
+    });
   };
 
   return (

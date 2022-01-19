@@ -6,8 +6,12 @@ import { availabilityDestination } from '@api/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { useSelector, useDispatch } from 'react-redux';
 import { commonSelector, SET_IS_LOADING } from '@store/common';
-import { destinationForm, SET_AVAILABLE_DESTINATION } from '@store/destination';
-
+import {
+  destinationForm,
+  SET_AVAILABLE_DESTINATION,
+  SET_LOCATION_STATUS,
+} from '@store/destination';
+import { useRouter } from 'next/router';
 /* TODO: spot 추가 되어야 함 */
 
 const CheckDeliveryPlace = () => {
@@ -18,6 +22,8 @@ const CheckDeliveryPlace = () => {
   const { tempLocation } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
+  const router = useRouter();
+  const { isLocation } = router.query;
 
   useEffect(() => {
     checkAvailablePlace();
@@ -46,10 +52,13 @@ const CheckDeliveryPlace = () => {
           ...availableDestinationObj,
         });
 
-        dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
+        if (isLocation) {
+          dispatch(SET_LOCATION_STATUS(status));
+        } else {
+          dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
+        }
 
         setFormatAvailableDestination(status);
-
         dispatch(SET_IS_LOADING(false));
       }
     } catch (error) {

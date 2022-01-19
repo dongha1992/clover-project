@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import bg from '@public/images/onBoarding.png';
 import Image from 'next/image';
@@ -8,17 +8,16 @@ import { TextH5B, TextH1B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import SVGIcon from '@utils/SVGIcon';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import Tag from '@components/Shared/Tag';
 import { Obj } from '@model/index';
 import axios from 'axios';
-import { SET_USER_LOGIN_AUTH, userForm, SET_USER_AUTH } from '@store/user';
+import { SET_LOGIN_SUCCESS, userForm } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
-import { wrapper } from '@store/index';
-import { userProfile, userHelpEmail, userLogin } from '@api/user';
-import { setCookie, removeCookie } from '@utils/cookie';
-import { IUserToken } from '@model/index';
+import { userLogin } from '@api/user';
+import { setCookie } from '@utils/cookie';
+import { SET_LOGIN_TYPE } from '@store/common';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -42,6 +41,12 @@ const OnBoarding: NextPage = () => {
 
   const { user } = useSelector(userForm);
   const dispatch = useDispatch();
+  const [returnPath, setReturnPath] = useState<string | string[]>('');
+  const onRouter = useRouter();
+
+  useEffect(() => {
+    setReturnPath(onRouter.query.returnPath || '/home');
+  }, []);
 
   const kakaoLoginHandler = async (): Promise<void> => {
     window.Kakao.Auth.login({
@@ -59,6 +64,9 @@ const OnBoarding: NextPage = () => {
         if (window.Kakao) {
           window.Kakao.cleanup();
         }
+        // TODO : 여기가 카카오 로그인 성공부분인가요??
+        dispatch(SET_LOGIN_TYPE('KAKAO'));
+        dispatch(SET_LOGIN_SUCCESS(true));
       },
       fail: async (res: any) => {
         alert(`${res.error}-${res.error_error_description}`);
@@ -88,20 +96,18 @@ const OnBoarding: NextPage = () => {
   };
 
   const emailLoginHandler = (): void => {
-    localStorage.setItem('loginType', JSON.stringify('EMAIL'));
-    router.push('/login');
+    if (returnPath === onRouter.query.returnPath) {
+      router.push(
+        `/login?returnPath=${encodeURIComponent(String(returnPath))}`
+      );
+    } else {
+      router.push('/login');
+    }
   };
 
   const goToHomeWithoutLogin = () => {
-    // router.push('/home');
-
-    profileTest();
-    profileTest();
-    profileTest();
-  };
-
-  const profileTest = async () => {
-    await userProfile();
+    router.push('/home');
+    dispatch(SET_LOGIN_TYPE('NONMEMBER'));
   };
 
   const loginTest = async () => {
@@ -187,6 +193,7 @@ const OnBoarding: NextPage = () => {
             textDecoration="underline"
             padding="24px 0 0 0"
             onClick={goToHomeWithoutLogin}
+            pointer
           >
             먼저 둘러볼게요.
           </TextH6B>
