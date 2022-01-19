@@ -23,13 +23,13 @@ const TermOfUsePage = () => {
   const [termOfUser, setTermOfUse] = useState<ITerm>();
   const [currentVersion, setCurrentVersion] = useState<number>();
 
-  const dispatch = useDispatch();
   const { versionOfTerm } = useSelector(commonSelector);
-  console.log(versionOfTerm, 'versionOfTerm');
+  const dispatch = useDispatch();
 
   const getTerms = async () => {
     const params = {
       type: 'USE',
+      version: versionOfTerm || null,
     };
     try {
       const { data } = await terms(params);
@@ -55,10 +55,19 @@ const TermOfUsePage = () => {
 
   useEffect(() => {
     getTerms();
-  }, []);
+    setCurrentVersion(versionOfTerm);
+  }, [versionOfTerm]);
+
+  const lastestVersion =
+    termOfUser?.versions[termOfUser?.versions.length - 1].version;
+
+  const isLastest = currentVersion === lastestVersion;
 
   const currentVersionOfDate = termOfUser?.terms.startedAt.split(' ')[0];
-  const formatDate = `${currentVersionOfDate} (현재)`;
+
+  const formatDate = isLastest
+    ? `${currentVersionOfDate} (현재)`
+    : `${currentVersionOfDate}`;
 
   if (!termOfUser) {
     return <div>로딩중</div>;
@@ -90,6 +99,7 @@ const Wrapper = styled.div`
 `;
 const InputWrapper = styled.div`
   position: relative;
+  cursor: pointer;
   .svgWrapper {
     position: absolute;
     bottom: 40%;

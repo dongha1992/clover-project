@@ -38,16 +38,23 @@ const TermSheet = ({ title, versions, currentVersion }: IProps) => {
           {title}
         </TextH5B>
         {versions.map((version: IVersion, index: number) => {
-          const formatDate = version.startedAt.split(' ')[0];
+          let formatDate = version.startedAt.split(' ')[0];
           const isSelected = selectedVersion === version.version;
+          const isFirst = index === 0;
+
+          if (isFirst) {
+            formatDate = `${formatDate} (현재)`;
+          }
+
           return (
             <PickWrapper key={index}>
               <RadioButton
                 onChange={() => changeRadioHandler(version.version)}
                 isSelected={isSelected}
               />
+
               {isSelected ? (
-                <TextH5B padding="0 0 0 8px">{formatDate} (현재)</TextH5B>
+                <TextH5B padding="0 0 0 8px">{formatDate}</TextH5B>
               ) : (
                 <TextB2R padding="0 0 0 8px">{formatDate}</TextB2R>
               )}
