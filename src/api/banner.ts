@@ -1,14 +1,14 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
-import { IGetBanners, IGetBannersResponse } from '@model/index';
+import { IBanner, IGetBannersResponse } from '@model/index';
 
-export const banners = (
-  type: string
+export const getBannersApi = (
+  params: IBanner
 ): Promise<AxiosResponse<IGetBannersResponse>> => {
-  return Api.get('banner/v1/banners', { params: type });
+  return Api.get('banner/v1/banners', { params });
 };
 
-export const banner = (
+export const getBannerApi = (
   id: number
 ): Promise<AxiosResponse<IGetBannersResponse>> => {
   return Api.get(`banner/v1/banners/${id}`, { params: id });
