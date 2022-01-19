@@ -12,7 +12,7 @@ const INITIAL_STATE: TModalOption = {
   imagesForViewer: [],
   isMobile: false,
   isLoading: false,
-  loginType: ''
+  loginType: 'NONMEMBER'
 };
 
 export const commonSlice = createSlice({
