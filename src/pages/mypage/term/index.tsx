@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { MypageMenu } from '../index';
 
+/* TODO: 약관 페이지 3개 중복코드 및 date format 부분 리팩토링 */
+
 const TermPage = () => {
   return (
     <Container>

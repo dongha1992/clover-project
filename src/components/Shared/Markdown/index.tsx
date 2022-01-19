@@ -51,11 +51,16 @@ const Container = styled.div`
     ${textBody3}
   }
   > ol {
+    ${textBody3}
     > li {
+      ${textBody3}
       p {
         ${textBody3}
       }
     }
+  }
+  > ul {
+    ${textBody3}
   }
 `;
 

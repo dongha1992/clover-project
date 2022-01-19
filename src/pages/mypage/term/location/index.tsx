@@ -1,33 +1,92 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import TextInput from '@components/Shared/TextInput';
+import { TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TermSheet } from '@components/BottomSheet/TermSheet';
-import { homePadding, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
+import { terms } from '@api/term';
+import { ITerm } from '@model/index';
+import MarkdownRenderer from '@components/Shared/Markdown';
+import { commonSelector } from '@store/common';
+
+export interface IFormatVersion {
+  [key: string]: {
+    endedAt: string;
+    startedAt: string;
+    version: number;
+  };
+}
 
 const LocationTermPage = () => {
-  const DATE = '2021-22-22';
+  const [termOfUser, setTermOfUse] = useState<ITerm>();
+  const [currentVersion, setCurrentVersion] = useState<number>();
 
+  const { versionOfTerm } = useSelector(commonSelector);
   const dispatch = useDispatch();
 
-  const clickInputHandler = () => {
+  const getTerms = async () => {
+    const params = {
+      type: 'LOCATION_SERVICE',
+      version: versionOfTerm || null,
+    };
+    try {
+      const { data } = await terms(params);
+      setTermOfUse(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const changeVersionHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <TermSheet title="위치정보 서비스 이용약관" />,
+        content: (
+          <TermSheet
+            title="위치정보 서비스 이용약관"
+            versions={termOfUser?.versions!}
+            currentVersion={currentVersion || 2}
+          />
+        ),
       })
     );
   };
+
+  useEffect(() => {
+    getTerms();
+    setCurrentVersion(versionOfTerm);
+  }, [versionOfTerm]);
+
+  const lastestVersion =
+    termOfUser?.versions[termOfUser?.versions.length - 1].version;
+
+  const isLastest = currentVersion === lastestVersion;
+
+  const currentVersionOfDate = termOfUser?.terms.startedAt.split(' ')[0];
+
+  const formatDate = isLastest
+    ? `${currentVersionOfDate} (현재)`
+    : `${currentVersionOfDate}`;
+
+  if (!termOfUser) {
+    return <div>로딩중</div>;
+  }
+
   return (
     <Container>
       <Wrapper>
         <InputWrapper>
-          <TextInput value={DATE} />
-          <div className="svgWrapper" onClick={clickInputHandler}>
+          <CustmInput>
+            <TextB2R>{formatDate}</TextB2R>
+          </CustmInput>
+          <div className="svgWrapper" onClick={changeVersionHandler}>
             <SVGIcon name="triangleDown" />
           </div>
         </InputWrapper>
+        <MarkDownWrapper>
+          <MarkdownRenderer content={termOfUser?.terms.content!} />
+        </MarkDownWrapper>
       </Wrapper>
     </Container>
   );
@@ -40,11 +99,22 @@ const Wrapper = styled.div`
 `;
 const InputWrapper = styled.div`
   position: relative;
+  cursor: pointer;
   .svgWrapper {
     position: absolute;
     bottom: 40%;
     right: 5%;
   }
+`;
+
+const MarkDownWrapper = styled.div`
+  padding-top: 24px;
+`;
+
+const CustmInput = styled.div`
+  padding: 12px 16px;
+  border: 1px solid ${theme.greyScale15};
+  border-radius: 8px;
 `;
 
 export default LocationTermPage;
