@@ -33,8 +33,10 @@ export interface ISpotsDetail {
   description: string;
   dinnerDelivery: boolean;
   dinnerDeliveryStartTime: string;
+  dinnerDeliveryEndTime: string;
   lunchDelivery: boolean;
   lunchDeliveryStartTime: string;
+  lunchDeliveryEndTime: string;
   id: number;
   images: [{
     url: string;
@@ -69,6 +71,7 @@ export interface ISpotsDetail {
   }];
   placeHoliday: string;
   placeOpenTime: string;
+  placeTel: string;
   placeType: string;
   stories: [{
     id: number;
@@ -302,10 +305,12 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
             <TextH5B margin="0 20px 0 0">도착예정</TextH5B>
             <div>
             <TextB2R>
-              {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`}
+              {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
+              {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
             </TextB2R>
             <TextB2R>
-              {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`}
+              {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
+              {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
             </TextB2R>
             </div>
           </FlexStart>
@@ -371,6 +376,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
                 lon={spotItem?.coordinate.lon}
                 placeOpenTime={spotItem?.placeOpenTime}
                 placeHoliday={spotItem?.placeHoliday}
+                placeTel={spotItem?.placeTel}
               />
             )
         }

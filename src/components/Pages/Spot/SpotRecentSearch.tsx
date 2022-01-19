@@ -19,7 +19,7 @@ export interface ISpotItem {
   method: string;
 }
 
-interface ISpotsItems {
+export interface ISpotsItems {
   lunchDeliveryStartTime: string;
   lunchDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
@@ -27,6 +27,7 @@ interface ISpotsItems {
   name: string;
   location: {
     address: string;
+    addressDetail: string;
   };
   distance: number;
   isTrial: boolean;
@@ -56,7 +57,7 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
   };
 
   const pickUpTime = 
-  `${item.lunchDeliveryStartTime.slice(0,5)}-${item.lunchDeliveryEndTime.slice(0,5)} / ${item.dinnerDeliveryStartTime.slice(0,5)}-${item.dinnerDeliveryEndTime.slice(0,5)}`;
+  `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
 
   return (

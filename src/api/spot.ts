@@ -5,6 +5,8 @@ import {
   ISpotsResponse,
   ISpotDetailResponse,
   ISpotDetailStoriesResponse,
+  ISpotsInfo,
+  ISpotRegistrationsResponse,
   } from '@model/index';
   
   export const getNewSpots = (
@@ -56,33 +58,58 @@ import {
       return Api.get(`/spot/v1/spots/${id}/stories`, { params: { id, page } });
   };
 
-  export const getSpotsStoryLike= (
+  export const getSpotsStoryLike = (
     spotId: number,
     storyId: number,
     ): Promise<AxiosResponse<ISpotDetailResponse>> => {
       return Api.get(`/spot/v1/spots/${spotId}/stories/${storyId}/like`, { params: { spotId, storyId } });
   };
 
-  export const postSpotsStoryLike= (
+  export const postSpotsStoryLike = (
     spotId: number,
     storyId: number,
     ): Promise<AxiosResponse<ISpotDetailResponse>> => {
       return Api.post(`/spot/v1/spots/${spotId}/stories/${storyId}/like`, { params: { spotId, storyId } });
   };
 
-  export const deleteSpotsStoryLike= (
+  export const deleteSpotsStoryLike = (
     spotId: number,
     storyId: number,
     ): Promise<AxiosResponse<ISpotDetailResponse>> => {
       return Api.delete(`/spot/v1/spots/${spotId}/stories/${storyId}/like`, { params: { spotId, storyId } });
   };
 
+  export const getSpotLike = (
+    id: number,
+    ): Promise<AxiosResponse<ISpotDetailResponse>> => {
+      return Api.get(`/spot/v1/spots/${id}/like`, { params: id });
+  };
 
+  export const postSpotLike = (
+    id: number,
+    ): Promise<AxiosResponse<ISpotsResponse>> => {
+      return Api.post(`/spot/v1/spots/${id}/like`, { params: id });
+  };  
+  
+  export const deleteSpotLike = (
+    id: number,
+    ): Promise<AxiosResponse<ISpotsResponse>> => {
+      return Api.delete(`/spot/v1/spots/${id}/like`, { params: id });
+  };
 
+  export const getInfo = (
+    ): Promise<AxiosResponse<ISpotsInfo>> => {
+      return Api.get('/spot/v1/info');
+  };
 
-  // export const getInfo = (
-  //   params: IParamsSpots
-  //   ): Promise<AxiosResponse<ISpotsResponse>> => {
-  //     return Api.get('/spot/v1/info', { params });
-  // };
+  export const getSpotRegistrations = (
+    params: IParamsSpots,
+    ): Promise<AxiosResponse<ISpotRegistrationsResponse>> => {
+      return Api.get('/spot/v1/registrations/recruiting', { params });
+  };
 
+  export const postSpotRegistrations = (
+    id: number,
+    ): Promise<AxiosResponse<ISpotsResponse>> => {
+      return Api.post(`/spot/v1/registrations/${id}/recruiting`, { params: id });
+  };

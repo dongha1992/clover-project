@@ -49,6 +49,7 @@ export const FlexBetween = styled.div<{
   padding?: string;
   margin?: string;
   width?: string;
+  height?: string;
 }>`
   display: flex;
   width: 100%;
@@ -57,6 +58,7 @@ export const FlexBetween = styled.div<{
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
+  height: ${({height}) => height && height};
 `;
 
 export const FlexBetweenStart = styled.div<{
