@@ -29,10 +29,11 @@ import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
-import { Select, AcessMethodOption } from '@components/Shared/Dropdown/index';
 import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
-import { ACCESS_METHOD } from '@constants/payment/index';
+import { setBottomSheet } from '@store/bottomSheet';
+import { useDispatch, useSelector } from 'react-redux';
+import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 
 const PAYMENT_METHOD = [
   {
@@ -62,6 +63,12 @@ const PAYMENT_METHOD = [
   },
 ];
 
+export interface IAccessMethod {
+  id: number;
+  text: string;
+  value: string;
+}
+
 const hasRegisteredCart = true;
 const point = 5000;
 
@@ -72,6 +79,10 @@ const PaymentPage = () => {
   });
   const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
+  const [selectedAccessMethod, setSelectedAccessMethod] =
+    useState<IAccessMethod>();
+
+  const dispatch = useDispatch();
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -100,7 +111,13 @@ const PaymentPage = () => {
 
   const checkSamePerson = () => {};
 
-  const selectOptionHandler = () => {};
+  const selectOptionHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: <AccessMethodSheet />,
+      })
+    );
+  };
 
   const selectPaymentMethodHanlder = (method: any) => {
     const { id } = method;
@@ -256,7 +273,9 @@ const PaymentPage = () => {
               />
             ))}
           </Select> */}
-          <AccessMethodWrapper>ss</AccessMethodWrapper>
+          <AccessMethodWrapper onClick={selectOptionHandler}>
+            <TextB2R color={theme.greyScale45}>출입방법 선택</TextB2R>
+          </AccessMethodWrapper>
           <TextInput placeholder="내용을 입력해주세요" margin="8px 0 0 0" />
         </FlexCol>
         <MustCheckAboutDelivery>
@@ -435,6 +454,7 @@ const MustCheckAboutDelivery = styled.div`
 const AccessMethodWrapper = styled.div`
   border: 1px solid ${theme.greyScale15};
   padding: 12px 16px;
+  border-radius: 8px;
 `;
 
 const VisitorAccessMethodWrapper = styled.div`
