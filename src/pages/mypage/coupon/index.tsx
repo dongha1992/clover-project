@@ -7,18 +7,19 @@ import { TextH5B } from '@components/Shared/Text';
 import { COUPON_LIST } from '@constants/menu';
 import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
 import { useRouter } from 'next/router';
-import coupon, { SET_USER_SELECT_COUPON } from '@store/coupon';
+import { SET_USER_SELECT_COUPON } from '@store/coupon';
 import { useDispatch } from 'react-redux';
 
 export interface ICoupon {
   id: number;
   discount: number;
   name: string;
-  condition: string;
+  condition?: string;
   expireDate: string[];
   type: string;
   isDownload: boolean;
   canUseMenu: string[];
+  deliveryMethod?: string;
 }
 
 const CouponManagementPage = () => {
@@ -29,12 +30,17 @@ const CouponManagementPage = () => {
   const dispatch = useDispatch();
 
   const goToPayment = () => {
-    dispatch(SET_USER_SELECT_COUPON());
+    dispatch(SET_USER_SELECT_COUPON(selectedCoupon!));
+    router.back();
   };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
     setSelectedCoupon(coupon);
   };
+
+  /*TODO: undefined로 잡아도 되는지 */
+
+  const isDisabled = selectedCoupon !== undefined;
 
   return (
     <Container>
@@ -51,13 +57,21 @@ const CouponManagementPage = () => {
             <MypageCouponItem
               coupon={coupon}
               key={index}
-              onClick={selectCouponHandler}
+              selectCouponHandler={selectCouponHandler}
+              isSelected={selectedCoupon?.id === coupon.id}
             />
           ))}
         </FlexCol>
         {isPayment && (
           <ButtonWrapper onClick={goToPayment}>
-            <Button height="100%">적용하기</Button>
+            <Button
+              height="100%"
+              width="100%"
+              borderRadius="0"
+              disabled={!isDisabled}
+            >
+              적용하기
+            </Button>
           </ButtonWrapper>
         )}
       </Wrapper>
