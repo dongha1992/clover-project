@@ -54,5 +54,5 @@ export const {
   SET_VERSION_OF_TERM,
   SET_ACCESS_METHOD,
 } = commonSlice.actions;
-export const commonSelector = (state: AppState) => state.common;
+export const commonSelector = (state: AppState): IState => state.common;
 export default commonSlice.reducer;
