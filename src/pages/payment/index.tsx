@@ -11,7 +11,6 @@ import {
   FlexColEnd,
   FlexBetweenStart,
   GridWrapper,
-  FlexRowStart,
   fixedBottom,
 } from '@styles/theme';
 import {
@@ -34,6 +33,10 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
+import { commonSelector } from '@store/common';
+import { ACCESS_METHOD_MAP } from '@constants/payment';
+
+/* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 
 const PAYMENT_METHOD = [
   {
@@ -83,6 +86,7 @@ const PaymentPage = () => {
     useState<IAccessMethod>();
 
   const dispatch = useDispatch();
+  const { userAccessMethod } = useSelector(commonSelector);
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -111,10 +115,10 @@ const PaymentPage = () => {
 
   const checkSamePerson = () => {};
 
-  const selectOptionHandler = () => {
+  const selectAccessMethodHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <AccessMethodSheet />,
+        content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
       })
     );
   };
@@ -122,6 +126,10 @@ const PaymentPage = () => {
   const selectPaymentMethodHanlder = (method: any) => {
     const { id } = method;
     setSelectedPaymentMethod(id);
+  };
+
+  const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
   };
 
   const goToFinishPayment = () => {
@@ -264,19 +272,21 @@ const PaymentPage = () => {
           </FlexRow>
         </FlexBetween>
         <FlexCol padding="24px 0 16px 0">
-          {/* <Select placeholder="배송출입 방법">
-            {ACCESS_METHOD.map((option: any, index: number) => (
-              <AcessMethodOption
-                key={index}
-                option={option}
-                selectOptionHandler={selectOptionHandler}
-              />
-            ))}
-          </Select> */}
-          <AccessMethodWrapper onClick={selectOptionHandler}>
-            <TextB2R color={theme.greyScale45}>출입방법 선택</TextB2R>
+          <AccessMethodWrapper onClick={selectAccessMethodHandler}>
+            <TextB2R color={theme.greyScale45}>
+              {userAccessMethod.text || '출입방법 선택'}
+            </TextB2R>
+            <SVGIcon name="triangleDown" />
           </AccessMethodWrapper>
-          <TextInput placeholder="내용을 입력해주세요" margin="8px 0 0 0" />
+          <TextInput
+            margin="8px 0 0 0"
+            placeholder={
+              ACCESS_METHOD_MAP[userAccessMethod?.value!]
+                ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
+                : '요청사항 입력'
+            }
+            eventHandler={changeInputHandler}
+          />
         </FlexCol>
         <MustCheckAboutDelivery>
           <FlexCol>
@@ -455,6 +465,9 @@ const AccessMethodWrapper = styled.div`
   border: 1px solid ${theme.greyScale15};
   padding: 12px 16px;
   border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const VisitorAccessMethodWrapper = styled.div`

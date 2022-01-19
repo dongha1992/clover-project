@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
@@ -9,13 +9,18 @@ import { ACCESS_METHOD } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { SET_ACCESS_METHOD } from '@store/common';
 
-const AccessMethodSheet = () => {
+interface IProps {
+  userAccessMethod: IAccessMethod;
+}
+
+const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
   const [selectedAccessMethod, setSelectedAccessMethod] =
     useState<IAccessMethod>({
       id: 1,
       text: '',
       value: '',
     });
+
   const dispatch = useDispatch();
 
   const changeRadioHandler = (place: IAccessMethod) => {
@@ -26,6 +31,10 @@ const AccessMethodSheet = () => {
     dispatch(SET_ACCESS_METHOD(selectedAccessMethod));
     dispatch(INIT_BOTTOM_SHEET());
   };
+
+  useEffect(() => {
+    setSelectedAccessMethod(userAccessMethod);
+  }, [userAccessMethod]);
 
   return (
     <Container>
