@@ -26,10 +26,12 @@ import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 import router from 'next/router';
 import { setAlert } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Tag from '@components/Shared/Tag';
 import { setBottomSheet } from '@store/bottomSheet';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
+import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
+import { orderForm } from '@store/order';
 // temp
 
 // const status = 'cancel';
@@ -64,8 +66,9 @@ const OrderDetailPage = () => {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
-  const { showToast } = useToast();
 
+  const { showToast } = useToast();
+  const { deliveryDate } = useSelector(orderForm);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -216,7 +219,13 @@ const OrderDetailPage = () => {
   };
   const cancelOrder = async () => {};
 
-  const changeDevlieryDateHandler = () => {};
+  const changeDevlieryDateHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: <CalendarSheet title="배송날짜 변경" disabledDates={[]} />,
+      })
+    );
+  };
 
   const disabledButton = status === 'cancel';
   const inProgressDelivery = status === 'progress';
