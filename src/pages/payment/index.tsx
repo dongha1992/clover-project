@@ -42,6 +42,7 @@ import { destinationForm } from '@store/destination';
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
 /* TODO: 카드 api로 메인 카드 조회 */
+/* TODO: 배송 방법은 from 서버 or store */
 
 const PAYMENT_METHOD = [
   {
@@ -433,26 +434,26 @@ const PaymentPage = () => {
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>배송비</TextB2R>
+          <TextB2R>상품 할인</TextB2R>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>할인쿠폰 사용</TextB2R>
+          <TextB2R>스팟 이벤트 할인</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>포인트 사용</TextB2R>
+          <TextB2R>쿠폰 사용</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>배송비</TextH5B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비 할인</TextB2R>
@@ -461,12 +462,12 @@ const PaymentPage = () => {
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>포인트 사용</TextH5B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
