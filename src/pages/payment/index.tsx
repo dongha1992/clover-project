@@ -89,9 +89,15 @@ import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
+import { destinationForm } from '@store/destination';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
+<<<<<<< HEAD
 >>>>>>> e7c4511 (DEV-934 access method bottom sheet 수정 완료)
+=======
+/* TODO: 배송 출입 부분 함수로 */
+/* TODO: 결제 금액 부분 함수로 */
+>>>>>>> e23f493 (DEV-934 결제 페이지 수정)
 
 const PAYMENT_METHOD = [
   {
@@ -147,6 +153,7 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
+  const { userDestinationStatus } = useSelector(destinationForm);
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -207,6 +214,9 @@ const PaymentPage = () => {
   const goToRegisteredCard = () => {
     router.push('/mypage/card/register');
   };
+
+  const isParcel = userDestinationStatus === 'parcel';
+  const isMorning = userDestinationStatus === 'morning';
 
   return (
     <Container>
@@ -327,45 +337,66 @@ const PaymentPage = () => {
         </MustCheckAboutDelivery>
       </DevlieryInfoWrapper>
       <BorderLine height={8} />
+
       <VisitorAccessMethodWrapper>
-        <FlexBetween>
-          <TextH4B>출입 방법</TextH4B>
-          <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
-            <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
-          </FlexRow>
-        </FlexBetween>
-        <FlexCol padding="24px 0 16px 0">
-          <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-            <TextB2R color={theme.greyScale45}>
-              {userAccessMethod.text || '출입방법 선택'}
-            </TextB2R>
-            <SVGIcon name="triangleDown" />
-          </AccessMethodWrapper>
-          <TextInput
-            margin="8px 0 0 0"
-            placeholder={
-              ACCESS_METHOD_MAP[userAccessMethod?.value!]
-                ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
-                : '요청사항 입력'
-            }
-            eventHandler={changeInputHandler}
-          />
-        </FlexCol>
-        <MustCheckAboutDelivery>
-          <FlexCol>
-            <FlexRow padding="0 0 8px 0">
-              <SVGIcon name="exclamationMark" />
-              <TextH6B padding="2px 0 0 2px" color={theme.brandColor}>
-                반드시 확인해주세요!
-              </TextH6B>
-            </FlexRow>
-            <TextB3R color={theme.brandColor}>
-              공동현관 및 무인택배함 비밀번호는 조합 방식 및 순서(#,호출버튼)와
-              함께 자세히 기재해주세요.
-            </TextB3R>
-          </FlexCol>
-        </MustCheckAboutDelivery>
+        {isMorning && (
+          <>
+            <FlexBetween>
+              <TextH4B>출입 방법</TextH4B>
+              <FlexRow>
+                <Checkbox onChange={checkSamePerson} isSelected />
+                <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
+              </FlexRow>
+            </FlexBetween>
+            <FlexCol padding="24px 0 16px 0">
+              <AccessMethodWrapper onClick={selectAccessMethodHandler}>
+                <TextB2R color={theme.greyScale45}>
+                  {userAccessMethod.text || '출입방법 선택'}
+                </TextB2R>
+                <SVGIcon name="triangleDown" />
+              </AccessMethodWrapper>
+              <TextInput
+                margin="8px 0 0 0"
+                placeholder={
+                  ACCESS_METHOD_MAP[userAccessMethod?.value!]
+                    ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
+                    : '요청사항 입력'
+                }
+                eventHandler={changeInputHandler}
+              />
+            </FlexCol>
+            <MustCheckAboutDelivery>
+              <FlexCol>
+                <FlexRow padding="0 0 8px 0">
+                  <SVGIcon name="exclamationMark" />
+                  <TextH6B padding="2px 0 0 2px" color={theme.brandColor}>
+                    반드시 확인해주세요!
+                  </TextH6B>
+                </FlexRow>
+                <TextB3R color={theme.brandColor}>
+                  공동현관 및 무인택배함 비밀번호는 조합 방식 및
+                  순서(#,호출버튼)와 함께 자세히 기재해주세요.
+                </TextB3R>
+              </FlexCol>
+            </MustCheckAboutDelivery>
+          </>
+        )}
+        {isParcel && (
+          <>
+            <FlexBetween>
+              <TextH4B>배송 메모</TextH4B>
+              <FlexRow>
+                <Checkbox onChange={checkSamePerson} isSelected />
+                <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
+              </FlexRow>
+            </FlexBetween>
+            <TextInput
+              margin="24px 0 0 0"
+              placeholder="요청사항 입력"
+              eventHandler={changeInputHandler}
+            />
+          </>
+        )}
       </VisitorAccessMethodWrapper>
       <BorderLine height={8} />
       <CouponWrapper>
@@ -445,18 +476,19 @@ const PaymentPage = () => {
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <FlexBetween>
-          <TextB2R>상품 금액</TextB2R>
+          <TextH5B>총 상품 금액</TextH5B>
           <TextB2R>222원</TextB2R>
         </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>상품할인금액</TextB2R>
+          <TextH5B>총 할인 금액</TextH5B>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비</TextB2R>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="16px 0 0 0">
+        <FlexBetween padding="8px 0 0 0">
           <TextB2R>할인쿠폰 사용</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
@@ -466,7 +498,26 @@ const PaymentPage = () => {
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
-          <TextH4B>총 결제금액</TextH4B>
+          <TextH5B>환경부담금 (일회용품)</TextH5B>
+          <TextH4B>12312원</TextH4B>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>배송비</TextH5B>
+          <TextH4B>12312원</TextH4B>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>배송비 할인</TextB2R>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>포인트 사용</TextH5B>
+          <TextH4B>12312원</TextH4B>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+        <FlexBetween>
+          <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>12312원</TextH4B>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
@@ -488,7 +539,7 @@ const PaymentPage = () => {
         </FlexRow>
       </PaymentTermWrapper>
       <PaymentBtn onClick={goToFinishPayment}>
-        <Button borderRadius="0">1232원 주문하기</Button>
+        <Button borderRadius="0">1232원 결제하기</Button>
       </PaymentBtn>
     </Container>
   );

@@ -90,13 +90,16 @@ const ContentWrapper = styled.div`
 const PriceWrapper = styled.div`
   display: flex;
   margin-bottom: 8px;
+  margin-top: 4px;
 `;
 
 const Col = styled.div`
   display: flex;
   width: 1px;
-  height: 16px;
+  height: 18px;
   background-color: ${theme.greyScale6};
+  justify-content: center;
+  align-items: center;
   margin: 0px 8px;
 `;
 export default React.memo(PaymentItem);
