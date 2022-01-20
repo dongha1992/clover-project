@@ -81,8 +81,8 @@ const OrderDetailPage = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
   };
 
-  const deliveryInfoSheetHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { innerText } = e.target;
+  const deliveryInfoSheetHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { innerText } = e.target as HTMLDivElement;
     dispatch(
       setBottomSheet({
         content: (
@@ -130,7 +130,7 @@ const OrderDetailPage = () => {
     }
   };
 
-  const deliveryInfo = () => {
+  const deliveryInfoRenderer = () => {
     return (
       <>
         <FlexBetween>
@@ -302,7 +302,7 @@ const OrderDetailPage = () => {
         </ButtonWrapper>
       </OrderInfoWrapper>
       <BorderLine height={8} />
-      <DevlieryInfoWrapper>{deliveryInfo()}</DevlieryInfoWrapper>
+      <DevlieryInfoWrapper>{deliveryInfoRenderer()}</DevlieryInfoWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
