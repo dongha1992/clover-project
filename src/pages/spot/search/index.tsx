@@ -180,7 +180,6 @@ const SpotSearchPage = (): ReactElement => {
     dispatch(
       setBottomSheet({
         content: <PickupSheet />,
-        buttonTitle: '주문하기',
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

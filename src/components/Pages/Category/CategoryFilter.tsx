@@ -16,7 +16,6 @@ const CategoryFilter = ({ title }: any) => {
     dispatch(
       setBottomSheet({
         content: <MenuFilter />,
-        buttonTitle: '적용하기',
       })
     );
   };

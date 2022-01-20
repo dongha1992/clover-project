@@ -9,24 +9,57 @@ import { Item, HorizontalItem } from '@components/Item';
 import { useDispatch } from 'react-redux';
 import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
+import { getBannersApi } from '@api/banner';
+import { IBanners } from '@model/index';
+
+/* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
   const [itemList, setItemList] = useState([]);
+  const [bannerList, setBannerList] = useState<IBanners[]>([]);
+  const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getBanners();
-  }, []);
-
-  const getBanners = async () => {
+  const getItemLists = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
     dispatch(SET_MENU(data));
   };
 
+  const getCarouselBanners = async () => {
+    const params = {
+      type: 'CAROUSEL',
+    };
+    try {
+      const { data } = await getBannersApi(params);
+      if (data.code === 200) {
+        setBannerList(data.data);
+      }
+    } catch (error) {}
+  };
+
+  const getEventBanners = async () => {
+    const params = {
+      type: 'EVENT',
+    };
+    try {
+      const { data } = await getBannersApi(params);
+      if (data.code === 200) {
+        setEventBannerList(data.data);
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getCarouselBanners();
+    getEventBanners();
+    getItemLists();
+  }, []);
+
   return (
     <Container>
-      <Banner />
+      <Banner bannerList={bannerList} />
       <SectionWrapper>
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
@@ -41,7 +74,7 @@ const Home = () => {
         <SectionTitle>이벤트 / 기획전 타이틀</SectionTitle>
         <TextB3R color={theme.greyScale65}>더보기</TextB3R>
       </FlexSpace>
-      <Banner />
+      <Banner bannerList={eventbannerList} />
       <ItemListRowWrapper>
         <ItemListRow>
           {itemList.map((item, index) => {
