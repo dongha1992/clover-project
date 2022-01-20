@@ -15,6 +15,7 @@ interface TProps {
   availableDestination: IAvailableDestination;
   destinationStatus: string;
   userDestinationStatus: string;
+  locationStatus: string;
 }
 
 const locationState = {
@@ -73,6 +74,7 @@ const INITIAL_STATE: TProps = {
     quick: false,
     parcel: false,
   },
+  locationStatus: '',
   destinationStatus: '',
   userDestinationStatus: '',
 };
@@ -86,6 +88,9 @@ export const destination = createSlice({
     },
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
+    },
+    SET_LOCATION_STATUS: (state, action: PayloadAction<string>) => {
+      state.locationStatus = action.payload;
     },
     SET_LOCATION_TEMP: (state, action: PayloadAction<IJuso>) => {
       state.tempLocation = action.payload;
@@ -112,6 +117,7 @@ export const {
   SET_DESTINATION,
   SET_LOCATION,
   SET_LOCATION_TEMP,
+  SET_LOCATION_STATUS,
   SET_AVAILABLE_DESTINATION,
   INIT_LOCATION_TEMP,
   SET_DESTINATION_STATUS,

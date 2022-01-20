@@ -2,22 +2,17 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useBottomSheet } from '@hooks/useBottomSheet';
 import Content from '@components/BottomSheet/Content';
-import { Button } from '@components/Shared/Button';
-import { initBottomSheet, bottomSheetForm } from '@store/bottomSheet';
-import { SET_CART_LISTS, cartForm } from '@store/cart';
+import { INIT_BOTTOM_SHEET, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
-import { useToast } from '@hooks/useToast';
 import { breakpoints } from '@utils/getMediaQuery';
-import { theme } from '@styles/theme';
+
 /* TODO: height 조절해야함 */
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
 const BottomSheet = () => {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
-  const { content, buttonTitle }: any = useSelector(bottomSheetForm);
-  const { tempSelectedMenus } = useSelector(cartForm);
-  const { showToast, hideToast } = useToast();
+  const { content }: any = useSelector(bottomSheetForm);
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
@@ -32,60 +27,7 @@ const BottomSheet = () => {
     if (target !== currentTarget) {
       return;
     }
-    dispatch(initBottomSheet());
-  };
-
-  const clickButtonHandler = () => {
-    const isCart = buttonTitle.includes('장바구니');
-    dispatch(initBottomSheet());
-
-    /* TODO : redux 안에서 처리 하도록 로직 변경해야 함 */
-
-    if (isCart) {
-      dispatch(SET_CART_LISTS(tempSelectedMenus));
-      setTimeout(() => {
-        showToast({ message: '장바구니에 담겼습니다.' });
-      }, 500);
-    }
-  };
-
-  const initSpotFilterHandler = () => {};
-
-  const renderButton = () => {
-    switch (buttonTitle) {
-      case '스팟필터': {
-        return (
-          <ButtonContainer>
-            <Button
-              height="100%"
-              width="100%"
-              borderRadius="0"
-              onClick={initSpotFilterHandler}
-            >
-              전체 초기화
-            </Button>
-            <Col />
-            <Button
-              height="100%"
-              width="100%"
-              borderRadius="0"
-              onClick={clickButtonHandler}
-            >
-              적용하기
-            </Button>
-          </ButtonContainer>
-        );
-      }
-      default: {
-        return (
-          <ButtonContainer onClick={() => clickButtonHandler()}>
-            <Button height="100%" width="100%" borderRadius="0">
-              {buttonTitle}
-            </Button>
-          </ButtonContainer>
-        );
-      }
-    }
+    dispatch(INIT_BOTTOM_SHEET());
   };
 
   return (
@@ -94,7 +36,6 @@ const BottomSheet = () => {
         <BottomSheetContent ref={contentRef}>
           <Content content={content} />
         </BottomSheetContent>
-        {buttonTitle ? renderButton() : null}
       </Container>
     </Background>
   );
@@ -160,25 +101,6 @@ const BottomSheetContent = styled.div`
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
   margin-bottom: 60px;
-`;
-
-const ButtonContainer = styled.div`
-  z-index: 100;
-  position: absolute;
-  display: flex;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  height: 56px;
-`;
-
-const Col = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 25%;
-  background-color: ${theme.white};
-  width: 1px;
-  height: 50%;
 `;
 
 export default React.memo(BottomSheet);

@@ -149,7 +149,7 @@ export const FlexStart = styled.div<{ padding?: string; margin?: string; alignIt
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexEnd = styled.div<{ padding?: string; margin?:string }>`
+export const FlexEnd = styled.div<{ padding?: string; margin?: string }>`
   width: 100%;
   display: flex;
   align-items: center;
@@ -203,6 +203,16 @@ export const fixedBottom = css`
     margin: 0 auto;
     left: 0
   `};
+`;
+
+export const bottomSheetButton = css`
+  z-index: 100;
+  position: absolute;
+  display: flex;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  height: 56px;
 `;
 
 export const textH1 = css`

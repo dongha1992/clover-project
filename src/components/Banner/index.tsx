@@ -3,23 +3,33 @@ import Carousel from '@components/Shared/Carousel';
 import styled from 'styled-components';
 import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
+import { IBanners } from '@model/index';
 
 /*TODO : 왼쪽오른쪽 버튼 */
 
-const BANNERS = [
-  './images/img1.png',
-  './images/img1.png',
-  './images/img1.png',
-  './images/img1.png',
-];
+// const BANNERS = [
+//   './images/img1.png',
+//   './images/img1.png',
+//   './images/img1.png',
+//   './images/img1.png',
+// ];
 
-const Banner = () => {
+interface IProps {
+  bannerList: IBanners[];
+}
+
+const Banner = ({ bannerList }: IProps) => {
   const [currentImg, setCurrentImg] = useState(0);
 
-  const totalLength = BANNERS.length;
+  const totalLength = bannerList.length;
+
+  if (bannerList.length < 0) {
+    return <div>로딩중</div>;
+  }
+
   return (
     <Container>
-      <Carousel images={BANNERS} setCountIndex={setCurrentImg} />
+      <Carousel banners={bannerList} setCountIndex={setCurrentImg} />
       <Count>
         <TextH6B color={theme.white}>{currentImg + 1}</TextH6B>
         <TextH6B color={theme.white} padding="0 4px">
@@ -49,4 +59,4 @@ const Count = styled.div`
   border-radius: 24px;
 `;
 
-export default Banner;
+export default React.memo(Banner);
