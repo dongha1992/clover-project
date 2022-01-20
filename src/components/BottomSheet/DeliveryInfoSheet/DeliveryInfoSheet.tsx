@@ -25,6 +25,7 @@ const DeliveryInfoSheet = ({ title, copiedValue }: IProps) => {
   const clickTextHandler = (id: number) => {
     if (id === 1) {
     } else {
+      dispatch(INIT_BOTTOM_SHEET());
       const clipboard = navigator.clipboard;
       clipboard.writeText(copiedValue).then(() => {
         showToast({
