@@ -2,13 +2,13 @@ import React, { Dispatch, SetStateAction } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
-
+import { IBanners } from '@model/index';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
-  images: any;
+  banners: IBanners[];
 }
 
-const Carousel = ({ images, setCountIndex }: IProps) => {
+const Carousel = ({ banners, setCountIndex }: IProps) => {
   const settings = {
     arrows: false,
     dots: false,
@@ -25,13 +25,13 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
   return (
     <Container>
       <Slider {...settings}>
-        {images.map((image: any, index: number) => {
+        {banners.map((banner: any, index: number) => {
           return (
             <ImageWrapper
-              src={image}
+              src={banner.imageUrl}
               alt="image"
               key={index}
-              isLast={index === images.length + 1}
+              isLast={index === banners.length + 1}
             />
           );
         })}
