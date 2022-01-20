@@ -648,12 +648,17 @@ export interface ISpotDetailStoriesResponse {
   }
 }
 
-export interface ISpotsInfo {
-  code: number;
-  messages: string;
+export interface ISpotsInfoResponse {
   data: {
     spotCount: number;
-    unsubmitSpotRegistrations: [];
+    unsubmitSpotRegistrations: [
+      {
+        id: number,
+        placeName: string,
+        recruitingCount: number,
+        orderUserCount: number,
+      },
+    ];
     recruitingSpotRegistrations: [
       {
         id: number;
@@ -662,7 +667,14 @@ export interface ISpotsInfo {
         orderUserCount: number;
       },
     ];
-    confirmSpotRegistrations: [];
+    confirmSpotRegistrations: [
+      {
+        id: number,
+        placeName: string,
+        recruitingCount: number,
+        orderUserCount: number,
+      },
+    ];
     trialSpotRegistrations: [];
   }
 }

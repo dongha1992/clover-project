@@ -30,13 +30,10 @@ import {
 interface IProps {
   spots?: INormalSpots[];
   list: INormalSpots;
-  title?: string;
-  subTitle?: string;
   type: string;
-  btnText ?:string;
 }
 
-const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): ReactElement => {
+const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
@@ -127,34 +124,30 @@ const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): Reac
     switch(type) {
       case 'normal':
         return (
-          // <ItemListRowWrapper>
-          //   <ItemListRow>
-                  <Container type="normal">
-                    <StorImgWrapper 
-                      onMouseMove={() => setMouseMoved(true)}
-                      onMouseDown={() => setMouseMoved(false)}
-                      onClick={() => goToDetail(list.id)}>
-                      <Tag>
-                        <SVGIcon name="whitePeople" />
-                        <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list.userCount}명 이용중`}</TextH7B>
-                      </Tag>
-                      <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-                    </StorImgWrapper>
-                    <LocationInfoWrapper type="normal">
-                      <TextB3R margin="8px 0 0 0" color={theme.black}>
-                        {list.name}
-                      </TextB3R>
-                      <TextH6B
-                        color={theme.greyScale65}
-                      >{`${Math.round(list.distance)}m`}</TextH6B>
-                      <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
-                        <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
-                        <TextB2R padding='4px 0 0 1px'>{spotLikeCount}</TextB2R>
-                      </LikeWrapper>
-                    </LocationInfoWrapper>
-                  </Container>
-          //   </ItemListRow>
-          // </ItemListRowWrapper>
+          <Container type="normal">
+            <StorImgWrapper 
+              onMouseMove={() => setMouseMoved(true)}
+              onMouseDown={() => setMouseMoved(false)}
+              onClick={() => goToDetail(list.id)}>
+              <Tag>
+                <SVGIcon name="whitePeople" />
+                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list.userCount}명 이용중`}</TextH7B>
+              </Tag>
+              <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+            </StorImgWrapper>
+            <LocationInfoWrapper type="normal">
+              <TextB3R margin="8px 0 0 0" color={theme.black}>
+                {list.name}
+              </TextB3R>
+              <TextH6B
+                color={theme.greyScale65}
+              >{`${Math.round(list.distance)}m`}</TextH6B>
+              <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
+                <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
+                <TextB2R padding='4px 0 0 1px'>{spotLikeCount}</TextB2R>
+              </LikeWrapper>
+            </LocationInfoWrapper>
+          </Container>
         )
       case 'event': 
         return (
@@ -187,42 +180,27 @@ const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): Reac
         )
       case 'trial':
         return(
-          <ItemListRowWrapper>
-            <TextH2B>{title}</TextH2B>
-            <TextB2R color={theme.greyScale65} padding="8px 0 23px 0">
-              {subTitle}
-            </TextB2R>
-            <ItemListRow>
-              {spots?.map((item, index) => {
-                return (
-                  <Container
-                    type="trial"
-                    key={index}
-                  >
-                    <StorImgWrapper>
-                      <Tag>
-                        <SVGIcon name="whitePeople" />
-                        <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${item.recruitingCount} / 100명 참여중`}</TextH7B>
-                      </Tag>
-                      {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
-                      <ImgBox key={index} src={`${IMAGE_S3_URL}${item.image.url}`} alt="매장이미지" />
-                    </StorImgWrapper>
-                    <LocationInfoWrapper type="trial">
-                      <TextWrapper>
-                        <TextH5B margin="8px 0 0 0" color={theme.black}>
-                          {item.placeName}
-                        </TextH5B>
-                        <TextH6B
-                          color={theme.greyScale65}
-                        >{`${Math.round(item.distance)}m`}</TextH6B>
-                      </TextWrapper>
-                      <Button onClick={() => clickSpotOpen(item.id)}>{item.recruited ? '참여완료' : '참여하기'}</Button>
-                    </LocationInfoWrapper>
-                  </Container>
-                );
-              })}
-            </ItemListRow>
-          </ItemListRowWrapper>
+          <Container type="trial">
+            <StorImgWrapper>
+              <Tag>
+                <SVGIcon name="whitePeople" />
+                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list.recruitingCount} / 100명 참여중`}</TextH7B>
+              </Tag>
+              {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
+              <ImgBox src={`${IMAGE_S3_URL}${list?.image?.url}`} alt="매장이미지" />
+            </StorImgWrapper>
+            <LocationInfoWrapper type="trial">
+              <TextWrapper>
+                <TextH5B margin="8px 0 0 0" color={theme.black}>
+                  {list.placeName}
+                </TextH5B>
+                <TextH6B
+                  color={theme.greyScale65}
+                >{`${Math.round(list.distance)}m`}</TextH6B>
+              </TextWrapper>
+              <Button onClick={() => clickSpotOpen(list.id)}>{list.recruited ? '참여완료' : '참여하기'}</Button>
+            </LocationInfoWrapper>
+          </Container>
         )
       default:
         return null;
@@ -298,7 +276,6 @@ const Img = styled.img`
   width: 120px;
   heigth: 120px;
   border-radius: 10px;
-  border: 1px solid black;
 `;
 
 const LocationInfoWrapper = styled.div<{ type: string }>`
