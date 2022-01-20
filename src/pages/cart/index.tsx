@@ -76,6 +76,7 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
+  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<number>(0);
 
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -338,6 +339,8 @@ const CartPage = () => {
             <Calendar
               disabledDates={disabledDates}
               otherDeliveryDate={otherDeliveryDate}
+              selectedDeliveryDay={selectedDeliveryDay}
+              setSelectedDeliveryDay={setSelectedDeliveryDay}
             />
             {LUNCH_OR_DINNER.map((item, index) => {
               return (
