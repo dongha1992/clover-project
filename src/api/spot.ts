@@ -5,7 +5,7 @@ import {
   ISpotsResponse,
   ISpotDetailResponse,
   ISpotDetailStoriesResponse,
-  ISpotsInfo,
+  ISpotsInfoResponse,
   ISpotRegistrationsResponse,
   } from '@model/index';
   
@@ -98,7 +98,7 @@ import {
   };
 
   export const getInfo = (
-    ): Promise<AxiosResponse<ISpotsInfo>> => {
+    ): Promise<AxiosResponse<ISpotsInfoResponse>> => {
       return Api.get('/spot/v1/info');
   };
 
