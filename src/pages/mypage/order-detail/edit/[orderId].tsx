@@ -75,41 +75,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
   const isSpot = false;
   const isMorning = true;
 
-  const getAddressItem = async () => {
-    const params = {
-      page: 1,
-      size: 10,
-    };
-    try {
-      const { data } = await getDestinations(params);
-      if (data.code === 200) {
-        const { destinations } = data.data;
-        const foundItem = destinations.find(
-          (item: IDestinationsResponse) => item.id === id
-        );
-        setSelectedAddress(foundItem);
-
-        const isMorning = foundItem?.delivery === 'MORNING';
-
-        if (isMorning) {
-          const userSelectMethod = getValues(foundItem, 'deliveryMessageType');
-          const selectedMethod = ACCESS_METHOD.find(
-            (item) => item.value === userSelectMethod
-          );
-          setSelectedAccessMethod(selectedMethod);
-        }
-
-        setDeliveryEditObj({
-          deliveryName: foundItem?.name!,
-          receiverTel: foundItem?.receiverTel!,
-          receiverName: foundItem?.receiverName!,
-          deliveryMessage: foundItem?.deliveryMessage!,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const getDeliveryInfo = async () => {};
 
   const checkSamePerson = () => {};
 
@@ -121,7 +87,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     dispatch(
       setAlert({
         alertMessage: '내용을 수정했습니다.',
-        onSubmit: () => editAddress(),
+        onSubmit: () => editDeliveryInfo(),
         submitBtnText: '확인',
       })
     );
@@ -159,23 +125,8 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     }
   };
 
-  const editAddress = async () => {
-    const reqBody = {
-      id,
-      address: selectedAddress?.location.address,
-      addressDetail: selectedAddress?.location.addressDetail,
-      delivery: selectedAddress?.delivery,
-      deliveryMessage: deliveryEditObj.deliveryMessage,
-      deliveryMessageTypeType: selectedAccessMethod?.value!,
-      dong: selectedAddress?.location.dong,
-      main: isDefaultSpot,
-      name: deliveryEditObj.deliveryName,
-      receiverName: deliveryEditObj.receiverName,
-      receiverTel: deliveryEditObj.receiverTel,
-      zipCode: selectedAddress?.location.zipCode,
-    };
-
-    const { data } = await editDestination(id, reqBody);
+  const editDeliveryInfo = async () => {
+    const reqBody = {};
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,7 +143,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
   };
 
   useEffect(() => {
-    getAddressItem();
+    getDeliveryInfo();
   }, []);
 
   useEffect(() => {
