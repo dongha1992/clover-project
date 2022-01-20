@@ -21,7 +21,7 @@ const DormantAccountPage = () => {
             alertMessage:
               '휴면 상태가  해제되었습니다. 프레시코드의 모든 서비스를 정상 이용 가능합니다.',
             submitBtnText: '확인',
-            onSubmit: () => router.push('/home'),
+            onSubmit: () => router.push('/'),
           })
         );
       }

@@ -311,6 +311,48 @@ export interface IRegisterCard {
   password: string;
   type?: string;
 }
+export interface IBanners {
+  content: string;
+  createdAt: string;
+  endedAt: string;
+  href: string;
+  id: number;
+  imageHeight: number;
+  imageUrl: string;
+  imageWidth: number;
+  login: boolean;
+  option: {
+    bgColor: string;
+    fontColor: string;
+    mobileImageHeight: number;
+    mobileImageUrl: string;
+    mobileImageWidth: string;
+    paths: string[];
+  };
+  priority: number;
+  startedAt: string;
+  status: string;
+  title: string;
+  type: string;
+}
+
+export interface IGetBannersResponse {
+  code: number;
+  message: string;
+  data: IBanners[];
+}
+
+type BannerType =
+  | 'CAROUSEL'
+  | 'CATEGORY'
+  | 'EVENT'
+  | 'EXHIBITION'
+  | 'IMAGE'
+  | 'MENU'
+  | 'ORDER';
+
+export interface IBanner {
+  type: string;
 export interface ITermRequest {
   type: string;
 }
