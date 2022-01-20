@@ -30,7 +30,7 @@ const LoginPage = () => {
   // const [loginType, setLoginType] = useState('');
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [returnPath, setReturnPath] = useState<string | string[]>('/home');
+  const [returnPath, setReturnPath] = useState<string | string[]>('/');
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -39,7 +39,7 @@ const LoginPage = () => {
   const onRouter = useRouter();
 
   useEffect(() => {
-    setReturnPath(onRouter.query.returnPath || '/home');
+    setReturnPath(onRouter.query.returnPath || '/');
   }, []);
 
   useEffect(() => {
