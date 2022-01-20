@@ -119,18 +119,12 @@ const PaymentFinishPage = () => {
           </FlexBetweenStart>
         </FlexCol>
       </DevlieryInfoWrapper>
-
       <ButtonGroup
         rightButtonHandler={goToShopping}
         leftButtonHandler={goToOrderDetail}
         rightText="쇼핑 계속하기"
         leftText="  주문 상세보기"
       />
-      {/* <OrderDetailBtn>
-        <Button borderRadius="0" onClick={goToOrderDetail}></Button>
-        <Col />
-        <Button borderRadius="0">쇼핑 계속하기</Button>
-      </OrderDetailBtn> */}
     </Container>
   );
 };

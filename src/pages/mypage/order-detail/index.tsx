@@ -23,11 +23,20 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
+import router from 'next/router';
+
+// temp
 
 // const status = 'cancel';
 // const status = 'progress' as const;
 // const status = 'ready';
+
 const status = 'complete';
+
+const isParcel = true;
+const isMorning = false;
+const isQuick = false;
+const isSpot = false;
 
 interface IStatus {
   [index: string]: {
@@ -79,49 +88,135 @@ const OrderDetailPage = () => {
   const getInvoiceNumberHandler = () => {};
 
   const deliveryDescription = (status: string) => {
-    switch (status) {
-      case 'complete':
-      case 'progress': {
-        return (
-          <FlexBetween width="100%">
-            <FlexRow>
-              <SVGIcon name="delivery" />
-              <TextB2R color={theme.greyScale65} padding="4px 0 0 4px">
-                운송장번호
-              </TextB2R>
-              <TextH5B
-                color={theme.brandColor}
-                padding="4px 0 0 4px"
+    if (isParcel) {
+      return (
+        <>
+          <SVGIcon name="delivery" />
+          <TextB3R color={theme.greyScale65} padding="4px 0 0 4px">
+            배송중 단계부터 배송상태 확인이 가능합니다.
+          </TextB3R>
+        </>
+      );
+    } else {
+      switch (status) {
+        case 'complete':
+        case 'progress': {
+          return (
+            <FlexBetween width="100%">
+              <FlexRow>
+                <SVGIcon name="delivery" />
+                <TextB2R color={theme.greyScale65} padding="4px 0 0 4px">
+                  운송장번호
+                </TextB2R>
+                <TextH5B
+                  color={theme.brandColor}
+                  padding="4px 0 0 4px"
+                  textDecoration="underline"
+                  onClick={copyTextHandler}
+                >
+                  복사복사
+                </TextH5B>
+              </FlexRow>
+              <TextH6B
+                color={theme.greyScale65}
+                padding="4px 0 0 0"
                 textDecoration="underline"
-                onClick={copyTextHandler}
+                onClick={getInvoiceNumberHandler}
               >
-                복사복사
-              </TextH5B>
-            </FlexRow>
-            <TextH6B
-              color={theme.greyScale65}
-              padding="4px 0 0 0"
-              textDecoration="underline"
-              onClick={getInvoiceNumberHandler}
-            >
-              배송조회하기
-            </TextH6B>
-          </FlexBetween>
-        );
+                배송조회하기
+              </TextH6B>
+            </FlexBetween>
+          );
+        }
+        // case 'ready': {
+        //   return (
+        //     <>
+        //       <SVGIcon name="delivery" />
+        //       <TextB3R color={theme.greyScale65} padding="4px 0 0 4px">
+        //         배송중 단계부터 배송상태 확인이 가능합니다.
+        //       </TextB3R>
+        //     </>
+        //   );
+        // }
+        default:
+          return;
       }
-      case 'ready': {
-        return (
-          <>
-            <SVGIcon name="delivery" />
-            <TextB3R color={theme.greyScale65} padding="4px 0 0 4px">
-              배송중 단계부터 배송상태 확인이 가능합니다.
-            </TextB3R>
-          </>
-        );
-      }
-      default:
-        return;
     }
+  };
+
+  const deliveryInfo = () => {
+    return (
+      <>
+        <FlexBetween>
+          <TextH4B>배송정보</TextH4B>
+        </FlexBetween>
+        <FlexCol padding="24px 0 0 0">
+          <FlexBetween>
+            <TextH5B>받는 사람</TextH5B>
+            <TextB2R>김프코</TextB2R>
+          </FlexBetween>
+          <FlexBetween margin="16px 0 0 0">
+            <TextH5B>휴대폰 번호</TextH5B>
+            <TextB2R>010-1232-2132</TextB2R>
+          </FlexBetween>
+          <FlexBetween margin="16px 0 0 0">
+            <TextH5B>배송방법</TextH5B>
+            <TextB2R>스팟배송 - 점심</TextB2R>
+          </FlexBetween>
+          <FlexBetweenStart margin="16px 0 24px 0">
+            <TextH5B>배송 예정실시</TextH5B>
+            <FlexColEnd>
+              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
+              <TextB3R color={theme.greyScale65}>
+                예정보다 빠르게 배송될 수 있습니다.
+              </TextB3R>
+              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+            </FlexColEnd>
+          </FlexBetweenStart>
+          <FlexBetweenStart>
+            <TextH5B>{isSpot ? '픽업장소' : '배송지'}</TextH5B>
+            {isSpot ? (
+              <FlexColEnd>
+                <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
+                <TextB3R color={theme.greyScale65}>
+                  서울 성동구 왕십리로 115 10층
+                </TextB3R>
+              </FlexColEnd>
+            ) : (
+              <FlexColEnd>
+                <TextB2R>서울 성동구 왕십리로 115</TextB2R>
+                <TextB2R>10층</TextB2R>
+              </FlexColEnd>
+            )}
+          </FlexBetweenStart>
+          {isParcel && (
+            <FlexBetweenStart margin="16px 0 24px 0">
+              <TextH5B>출입방법</TextH5B>
+              <FlexColEnd>
+                <TextB2R>공동현관 비밀번호</TextB2R>
+                <TextB2R>#1099</TextB2R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          )}
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            disabled={disabledButton}
+            onClick={changeDeliveryInfoHandler}
+          >
+            배송 정보 변경하기
+          </Button>
+        </FlexCol>
+      </>
+    );
+  };
+
+  const changeDeliveryInfoHandler = () => {
+    router.push({
+      pathname: '/mypage/order-detail/edit/[orderId]',
+      query: { orderId: 1 },
+    });
   };
 
   const disabledButton = status === 'cancel';
@@ -206,78 +301,48 @@ const OrderDetailPage = () => {
         </ButtonWrapper>
       </OrderInfoWrapper>
       <BorderLine height={8} />
-      <DevlieryInfoWrapper>
-        <FlexBetween>
-          <TextH4B>배송정보</TextH4B>
-        </FlexBetween>
-        <FlexCol padding="24px 0">
-          <FlexBetween>
-            <TextH5B>받는 사람</TextH5B>
-            <TextB2R>김프코</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0 0 0">
-            <TextH5B>휴대폰 번호</TextH5B>
-            <TextB2R>010-1232-2132</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0 0 0">
-            <TextH5B>배송방법</TextH5B>
-            <TextB2R>스팟배송 - 점심</TextB2R>
-          </FlexBetween>
-          <FlexBetweenStart margin="16px 0 0 0">
-            <TextH5B>픽업장소</TextH5B>
-            <FlexColEnd>
-              <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                서울 성동구 왕십리로 115 10층
-              </TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart margin="16px 0 24px 0">
-            <TextH5B>배송 예정실시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                예정보다 빠르게 배송될 수 있습니다.
-              </TextB3R>
-              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            disabled={disabledButton}
-          >
-            배송 정보 변경하기
-          </Button>
-        </FlexCol>
-      </DevlieryInfoWrapper>
-      <BorderLine height={8} margin="50px 0 0 0" />
+      <DevlieryInfoWrapper>{deliveryInfo()}</DevlieryInfoWrapper>
+      <BorderLine height={8} margin="0px 0 0 0" />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
         <FlexBetween>
-          <TextB2R>상품 금액</TextB2R>
+          <TextH5B>총 상품 금액</TextH5B>
           <TextB2R>222원</TextB2R>
         </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>상품할인금액</TextB2R>
+          <TextH5B>총 할인 금액</TextH5B>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>배송비</TextB2R>
+          <TextB2R>상품 할인</TextB2R>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="16px 0 0 0">
-          <TextB2R>할인쿠폰 사용</TextB2R>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>스팟 이벤트 할인</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>포인트 사용</TextB2R>
+          <TextB2R>쿠폰 사용</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
-          <TextH4B>총 결제금액</TextH4B>
+          <TextH5B>환경부담금 (일회용품)</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>배송비</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>배송비 할인</TextB2R>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+        <FlexBetween>
+          <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>12312원</TextH4B>
         </FlexBetween>
       </TotalPriceWrapper>
