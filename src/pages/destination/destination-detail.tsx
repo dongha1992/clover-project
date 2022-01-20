@@ -97,7 +97,7 @@ const DestinationDetailPage = () => {
   };
 
   const goToHome = () => {
-    router.push('/home');
+    router.push('/');
   };
   if (!Object.keys(tempLocation).length) {
     return;

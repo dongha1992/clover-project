@@ -109,7 +109,7 @@ const Header = () => {
           return <TabHeader title={title} />;
         }
 
-        case ['/home'].includes(currentPath): {
+        case ['/'].includes(currentPath): {
           return <HomeHeader />;
         }
 

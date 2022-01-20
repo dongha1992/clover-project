@@ -7,13 +7,13 @@ import { breakpoints } from '@utils/getMediaQuery';
 
 interface IProps {
   title?: string;
-};
+}
 
 const CloseDefaultHeader = ({ title }: IProps) => {
   const router = useRouter();
 
   const goHome = (): void => {
-    router.push('/home');
+    router.push('/');
   };
 
   return (
@@ -26,7 +26,7 @@ const CloseDefaultHeader = ({ title }: IProps) => {
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;
