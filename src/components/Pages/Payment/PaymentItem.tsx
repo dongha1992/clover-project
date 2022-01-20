@@ -40,10 +40,10 @@ const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
                   backgroundColor={theme.white}
                   color={theme.black}
                   border
-                  height="32px"
-                  padding="7px 16px"
+                  height="38px"
+                  padding="10px 16px"
                 >
-                  후기 쓰기
+                  후기 작성
                 </Button>
               </div>
             ) : (
@@ -83,14 +83,14 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 60px;
+  height: 70px;
   margin-left: 8px;
 `;
 
 const PriceWrapper = styled.div`
   display: flex;
-  margin-bottom: 8px;
-  margin-top: 4px;
+  align-self: flex-start;
+  margin-top: 2px;
 `;
 
 const Col = styled.div`
