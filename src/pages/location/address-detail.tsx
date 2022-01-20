@@ -50,7 +50,7 @@ const AddressDetailPage = () => {
   const setUserLocationHandler = () => {
     dispatch(SET_LOCATION(tempLocation));
     dispatch(INIT_LOCATION_TEMP());
-    router.push('/home');
+    router.push('/');
   };
 
   const goToSearch = () => {
@@ -58,7 +58,7 @@ const AddressDetailPage = () => {
   };
 
   const goToHome = () => {
-    router.push('/home');
+    router.push('/');
   };
 
   useEffect(() => {
