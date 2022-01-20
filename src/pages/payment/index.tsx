@@ -41,6 +41,7 @@ import { destinationForm } from '@store/destination';
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
+/* TODO: 카드 api로 메인 카드 조회 */
 
 const PAYMENT_METHOD = [
   {
@@ -50,21 +51,26 @@ const PAYMENT_METHOD = [
   },
   {
     id: 2,
+    text: '신용카드',
+    value: 'creditCard',
+  },
+  {
+    id: 3,
     text: '계좌이체',
     value: 'account',
   },
   {
-    id: 3,
+    id: 4,
     text: '카카오페이',
     value: 'kakaopay',
   },
   {
-    id: 4,
+    id: 5,
     text: '페이코',
     value: 'fcopay',
   },
   {
-    id: 5,
+    id: 6,
     text: '토스',
     value: 'fcopay',
   },
@@ -76,7 +82,7 @@ export interface IAccessMethod {
   value: string;
 }
 
-const hasRegisteredCart = true;
+const hasRegisteredCard = true;
 const point = 5000;
 
 const PaymentPage = () => {
@@ -156,6 +162,7 @@ const PaymentPage = () => {
 
   const isParcel = userDestinationStatus === 'parcel';
   const isMorning = userDestinationStatus === 'morning';
+  const isFcoPay = selectedPaymentMethod === 1;
 
   return (
     <Container>
@@ -400,15 +407,19 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCart && <CardItem onClick={goToCardManagemnet} />}
-        <Button
-          border
-          backgroundColor={theme.white}
-          color={theme.black}
-          onClick={goToRegisteredCard}
-        >
-          카드 등록하기
-        </Button>
+        {isFcoPay && (
+          <>
+            {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} />}
+            <Button
+              border
+              backgroundColor={theme.white}
+              color={theme.black}
+              onClick={goToRegisteredCard}
+            >
+              카드 등록하기
+            </Button>
+          </>
+        )}
       </PaymentMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
@@ -476,7 +487,9 @@ const PaymentPage = () => {
         </FlexRow>
       </PaymentTermWrapper>
       <PaymentBtn onClick={goToFinishPayment}>
-        <Button borderRadius="0">1232원 결제하기</Button>
+        <Button borderRadius="0" height="100%">
+          1232원 결제하기
+        </Button>
       </PaymentBtn>
     </Container>
   );

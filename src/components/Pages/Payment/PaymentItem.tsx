@@ -96,10 +96,10 @@ const PriceWrapper = styled.div`
 const Col = styled.div`
   display: flex;
   width: 1px;
-  height: 18px;
+  height: 16px;
   background-color: ${theme.greyScale6};
   justify-content: center;
   align-items: center;
-  margin: 0px 8px;
+  margin: 2px 8px;
 `;
 export default React.memo(PaymentItem);
