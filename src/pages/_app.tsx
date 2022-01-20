@@ -50,8 +50,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     authCheck();
   }, []);
 
-  // TODO : 로그인 상태에서 http://localhost:3000/ url 입력했을 때 /home화면으로 리다이렉트
-
   const authCheck = async () => {
     const { loginType } = store.getState().common;
 

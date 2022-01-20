@@ -18,7 +18,7 @@ const BOTTOM_MENU = [
     svg: 'fastOrder',
     activeSvg: 'fastOrderActive',
   },
-  { id: 2, text: '홈', link: '/home', svg: 'home', activeSvg: 'homeActive' },
+  { id: 2, text: '홈', link: '/', svg: 'home', activeSvg: 'homeActive' },
   {
     id: 3,
     text: '구독',
