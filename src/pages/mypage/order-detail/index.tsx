@@ -7,6 +7,7 @@ import {
   FlexCol,
   FlexBetweenStart,
   FlexColEnd,
+  FlexEnd,
 } from '@styles/theme';
 import {
   TextH4B,
@@ -24,7 +25,11 @@ import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 import router from 'next/router';
-
+import { setAlert } from '@store/alert';
+import { useDispatch } from 'react-redux';
+import Tag from '@components/Shared/Tag';
+import { setBottomSheet } from '@store/bottomSheet';
+import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 // temp
 
 // const status = 'cancel';
@@ -61,6 +66,8 @@ const OrderDetailPage = () => {
     useState<boolean>(false);
   const { showToast } = useToast();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getCartList();
   }, []);
@@ -74,73 +81,52 @@ const OrderDetailPage = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
   };
 
-  const copyTextHandler = (e: any) => {
-    const clipboard = navigator.clipboard;
+  const deliveryInfoSheetHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { innerText } = e.target;
-
-    clipboard.writeText(innerText).then(() => {
-      showToast({
-        message: '복사되었습니다.',
-      });
-    });
+    dispatch(
+      setBottomSheet({
+        content: (
+          <DeliveryInfoSheet title="운송장번호" copiedValue={innerText} />
+        ),
+      })
+    );
   };
 
-  const getInvoiceNumberHandler = () => {};
-
   const deliveryDescription = (status: string) => {
-    if (isParcel) {
-      return (
-        <>
-          <SVGIcon name="delivery" />
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 4px">
-            배송중 단계부터 배송상태 확인이 가능합니다.
-          </TextB3R>
-        </>
-      );
-    } else {
-      switch (status) {
-        case 'complete':
-        case 'progress': {
-          return (
-            <FlexBetween width="100%">
-              <FlexRow>
-                <SVGIcon name="delivery" />
-                <TextB2R color={theme.greyScale65} padding="4px 0 0 4px">
-                  운송장번호
-                </TextB2R>
-                <TextH5B
-                  color={theme.brandColor}
-                  padding="4px 0 0 4px"
-                  textDecoration="underline"
-                  onClick={copyTextHandler}
-                >
-                  복사복사
-                </TextH5B>
-              </FlexRow>
-              <TextH6B
-                color={theme.greyScale65}
-                padding="4px 0 0 0"
+    switch (status) {
+      case 'complete':
+      case 'progress': {
+        return (
+          <FlexBetween width="100%">
+            <FlexRow>
+              <SVGIcon name="delivery" />
+              <TextB2R color={theme.greyScale65} padding="4px 0 0 4px">
+                운송장번호
+              </TextB2R>
+              <TextH5B
+                color={theme.brandColor}
+                padding="4px 0 0 4px"
                 textDecoration="underline"
-                onClick={getInvoiceNumberHandler}
+                onClick={deliveryInfoSheetHandler}
               >
-                배송조회하기
-              </TextH6B>
-            </FlexBetween>
-          );
-        }
-        // case 'ready': {
-        //   return (
-        //     <>
-        //       <SVGIcon name="delivery" />
-        //       <TextB3R color={theme.greyScale65} padding="4px 0 0 4px">
-        //         배송중 단계부터 배송상태 확인이 가능합니다.
-        //       </TextB3R>
-        //     </>
-        //   );
-        // }
-        default:
-          return;
+                복사복사
+              </TextH5B>
+            </FlexRow>
+          </FlexBetween>
+        );
       }
+      case 'ready': {
+        return (
+          <>
+            <SVGIcon name="delivery" />
+            <TextB3R color={theme.greyScale65} padding="4px 0 0 4px">
+              배송중 단계부터 배송상태 확인이 가능합니다.
+            </TextB3R>
+          </>
+        );
+      }
+      default:
+        return;
     }
   };
 
@@ -219,6 +205,19 @@ const OrderDetailPage = () => {
     });
   };
 
+  const cancelOrderHandler = () => {
+    dispatch(
+      setAlert({
+        alertMessage: '주문을 취소하시겠어요?',
+        onSubmit: () => cancelOrder(),
+        closeBtnText: '취소',
+      })
+    );
+  };
+  const cancelOrder = async () => {};
+
+  const changeDevlieryDateHandler = () => {};
+
   const disabledButton = status === 'cancel';
   const inProgressDelivery = status === 'progress';
 
@@ -287,6 +286,7 @@ const OrderDetailPage = () => {
             border
             margin="0 16px 0 0"
             disabled={disabledButton}
+            onClick={cancelOrderHandler}
           >
             주문 취소하기
           </Button>
@@ -295,6 +295,7 @@ const OrderDetailPage = () => {
             color={theme.black}
             border
             disabled={disabledButton}
+            onClick={changeDevlieryDateHandler}
           >
             배송일 수정하기
           </Button>
@@ -302,7 +303,7 @@ const OrderDetailPage = () => {
       </OrderInfoWrapper>
       <BorderLine height={8} />
       <DevlieryInfoWrapper>{deliveryInfo()}</DevlieryInfoWrapper>
-      <BorderLine height={8} margin="0px 0 0 0" />
+      <BorderLine height={8} />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
         <FlexBetween>
@@ -345,7 +346,57 @@ const OrderDetailPage = () => {
           <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>12312원</TextH4B>
         </FlexBetween>
+        <FlexEnd padding="11px 0 0 0">
+          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            프코 회원
+          </Tag>
+          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+          <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+        </FlexEnd>
       </TotalPriceWrapper>
+      <BorderLine height={8} />
+      <RefundInfoWrapper>
+        <TextH4B padding="0 0 24px 0">환불정보</TextH4B>
+        <FlexBetween>
+          <TextH5B>총 상품 금액</TextH5B>
+          <TextB2R>222원</TextB2R>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextH5B>총 할인 금액</TextH5B>
+          <TextB2R>22원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="8px 0" />
+        <FlexBetween padding="8px 0 0 0">
+          <TextH5B>환경부담금 (일회용품)</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>배송비</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>총 결제 금액</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>환불 포인트</TextB2R>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+        <FlexBetween>
+          <TextH4B>최종 환불금액</TextH4B>
+          <TextH4B>12312원</TextH4B>
+        </FlexBetween>
+        <FlexEnd padding="11px 0 0 0">
+          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            프코 회원
+          </Tag>
+          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+          <TextH6B>n 포인트 (n%) 취소 예정</TextH6B>
+        </FlexEnd>
+      </RefundInfoWrapper>
     </Container>
   );
 };
@@ -387,6 +438,10 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 const TotalPriceWrapper = styled.div`
+  padding: 24px;
+`;
+
+const RefundInfoWrapper = styled.div`
   padding: 24px;
 `;
 
