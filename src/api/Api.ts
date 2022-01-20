@@ -24,7 +24,7 @@ const addRefreshSubscriber = (callback: any) => {
 };
 
 const onUnauthorized = () => {
-  router.push(`/?returnPath=${encodeURIComponent(location.pathname)}`)
+  router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`)
 }
 
 export const Api = axios.create({
