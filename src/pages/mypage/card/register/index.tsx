@@ -9,31 +9,41 @@ import {
   FlexStart,
   FlexRow,
   fixedBottom,
+  customInput,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
-import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
+import { registerCard } from '@api/card';
+import dynamic from 'next/dynamic';
 
-const CARD_TYPE = [
+const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
+  ssr: false,
+});
+
+interface ICardType {
+  id: number;
+  text: string;
+  value: string;
+}
+
+const CARD_TYPE: ICardType[] = [
   {
     id: 1,
     text: '개인카드',
-    value: 'personal',
+    value: 'PERSONAL',
   },
   {
     id: 2,
     text: '법인카드',
-    value: 'company',
+    value: 'CORPORATION',
   },
 ];
-
-/*TODO: 카드 번호 ref로 관리해도 되낭 */
 
 const CardRegisterPage = () => {
   const [selectedCardType, setSelectedCardType] = useState(1);
@@ -43,11 +53,17 @@ const CardRegisterPage = () => {
     number3: '',
     number4: '',
   });
+  const [password, setPassword] = useState<string>('');
+  const [isTermCheck, setIsTermCheck] = useState(false);
+  const [isMainCard, setIsMainCard] = useState(false);
 
   const firstNumberRef = useRef<HTMLInputElement>(null);
   const secondNumberRef = useRef<HTMLInputElement>(null);
   const thirdNumberRef = useRef<HTMLInputElement>(null);
   const fourthNumberRef = useRef<HTMLInputElement>(null);
+  const expireRef = useRef<HTMLInputElement>(null);
+  const corportaionRef = useRef<HTMLInputElement>(null);
+  const nicknameRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
 
@@ -72,6 +88,18 @@ const CardRegisterPage = () => {
     });
   };
 
+  const changePasswordHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    let { value } = e.target as HTMLInputElement;
+
+    if (value.length > 2) {
+      value = value.slice(0, 2);
+    }
+
+    setPassword(value);
+  };
+
   const focusNextInputHandler = (name: string) => {
     switch (name) {
       case 'number1': {
@@ -88,24 +116,83 @@ const CardRegisterPage = () => {
     }
   };
 
-  const selectCheckboxHandler = () => {};
+  const selectMainCardHandler = () => {
+    dispatch(
+      setAlert({
+        alertMessage: '첫번째 카드 등록 시 대표 카드 설정은 필수입니다. ',
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
+    setIsMainCard(!isMainCard);
+  };
+
+  const selectTermHandler = () => {
+    setIsTermCheck(!isTermCheck);
+  };
 
   const goToCardRegisterTerm = () => {
     router.push('/mypage/card/register/term');
   };
 
-  const registerCardHandler = () => {
-    const disabledMsg =
-      '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+  const registerCardHandler = async () => {
+    if (expireRef.current && nicknameRef.current) {
+      const { number1, number2, number3, number4 } = card;
+      const type = CARD_TYPE.find(
+        (item: ICardType) => item.id === selectedCardType
+      )?.value;
 
-    const successMsg = '카드를 등록했습니다.';
-    dispatch(
-      setAlert({
-        alertMessage: disabledMsg,
-        onSubmit: () => {},
-        submitBtnText: '확인',
-      })
-    );
+      const corporationNo =
+        corportaionRef.current && corportaionRef.current.value;
+
+      const name = nicknameRef.current.value;
+      const expireMMYY = expireRef.current?.value;
+
+      const expiredMM = expireMMYY.slice(0, 2);
+      const expiredYY = expireMMYY.slice(
+        expireMMYY.length - 2,
+        expireMMYY.length
+      );
+
+      const disabledMsg =
+        '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+
+      const successMsg = '카드를 등록했습니다.';
+
+      const cardData = {
+        birthDate: '1992-05-22',
+        corporationNo: corporationNo ? corporationNo : null,
+        expiredMM,
+        expiredYY,
+        main: isMainCard,
+        name,
+        number: number1 + number2 + number3 + number4,
+        password,
+        type,
+      };
+
+      try {
+        const { data } = await registerCard(cardData);
+
+        if (data.code === 200) {
+          dispatch(
+            setAlert({
+              alertMessage: successMsg,
+              submitBtnText: '확인',
+              onSubmit: () => router.push('/mypage/card'),
+            })
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        dispatch(
+          setAlert({
+            alertMessage: disabledMsg,
+            submitBtnText: '확인',
+          })
+        );
+      }
+    }
   };
 
   return (
@@ -115,12 +202,12 @@ const CardRegisterPage = () => {
       </FlexCenter>
       <BorderLine height={1} margin="32px 0" />
       <SelectCardTypeWrapper>
-        {CARD_TYPE.map((type, index) => {
+        {CARD_TYPE.map((type: ICardType, index: number) => {
           const isSelected = type.id === selectedCardType;
           return (
             <FlexStart key={index}>
               <RadioButton
-                isSelected
+                isSelected={isSelected}
                 onChange={() => selectCardTypeHandler(type.id)}
               />
               {isSelected ? (
@@ -159,7 +246,7 @@ const CardRegisterPage = () => {
             />
             <div className="secondDash" />
             <input
-              type="number"
+              type="password"
               placeholder="0000"
               id="number3"
               name="number3"
@@ -170,7 +257,7 @@ const CardRegisterPage = () => {
             />
             <div className="thirdDash" />
             <input
-              type="number"
+              type="password"
               placeholder="0000"
               id="number4"
               name="number4"
@@ -185,7 +272,7 @@ const CardRegisterPage = () => {
       <ExpirationAndPasswordWrapper>
         <Expiration>
           <TextH5B padding="0 0 9px 0">유효기간</TextH5B>
-          <TextInput />
+          <TextInput ref={expireRef} placeholder="MMYY" />
         </Expiration>
         <Password>
           <FlexRow padding="0 0 9px 0">
@@ -194,25 +281,33 @@ const CardRegisterPage = () => {
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput />
+          <CustomInputWrapper>
+            <input
+              type="number"
+              name="passwordInput"
+              placeholder="비밀번호 앞 두 자리"
+              onChange={changePasswordHandler}
+              value={password}
+            />
+          </CustomInputWrapper>
         </Password>
       </ExpirationAndPasswordWrapper>
       <CompanyRegistrationNumberWrapper>
         <TextH5B padding="0 0 9px 0">사업자 등록번호</TextH5B>
-        <TextInput />
+        <TextInput ref={corportaionRef} placeholder="0000" />
       </CompanyRegistrationNumberWrapper>
       <OtherNameOfCardWrapper>
         <TextH5B padding="0 0 9px 0">카드별명</TextH5B>
-        <TextInput />
+        <TextInput ref={nicknameRef} placeholder="카드별명" />
       </OtherNameOfCardWrapper>
       <FlexRow>
-        <Checkbox isSelected onChange={selectCheckboxHandler} />
-        <TextB2R padding="0 0 0 8px">대표카드로 설정합니다.</TextB2R>
+        <Checkbox isSelected={isMainCard} onChange={selectMainCardHandler} />
+        <TextB2R padding="4px 0 0 8px">대표카드로 설정합니다.</TextB2R>
       </FlexRow>
       <BorderLine height={1} margin="24px 0" />
       <FlexRow>
-        <Checkbox isSelected onChange={selectCheckboxHandler} />
-        <FlexRow padding="0 4px 0 8px">
+        <Checkbox isSelected={isTermCheck} onChange={selectTermHandler} />
+        <FlexRow padding="4px 4px 0 8px">
           <TextB2R>이용 약관에 동의합니다.</TextB2R>
           <TextH6B
             color={theme.greyScale65}
@@ -225,7 +320,7 @@ const CardRegisterPage = () => {
         </FlexRow>
       </FlexRow>
       <RegisterBtn onClick={registerCardHandler}>
-        <Button>등록하기</Button>
+        <Button height="100%">등록하기</Button>
       </RegisterBtn>
     </Container>
   );
@@ -262,13 +357,7 @@ const CardInputGroup = styled.div`
   width: 100%;
   > input {
     width: calc(100% / 4);
-    border: none;
-    padding: 12px 20px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    outline: none;
-    border-radius: 8px;
+    ${customInput}
     ::placeholder {
       ${textBody2}
       position: absolute;
@@ -290,6 +379,22 @@ const CardInputGroup = styled.div`
   }
   .thirdDash {
     left: 72%;
+  }
+`;
+
+const CustomInputWrapper = styled.div`
+  border: 1px solid ${theme.greyScale15};
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+
+  > input {
+    ${customInput}
+    ::placeholder {
+      ${textBody2}
+      position: absolute;
+      color: ${({ theme }) => theme.greyScale45};
+    }
   }
 `;
 

@@ -7,7 +7,7 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 
 const ReviewItem = ({ review, onClick }: any) => {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <Wrapper>
         <ImgWrapper>
           <ReviewImg src={review.url} />
