@@ -31,7 +31,7 @@ import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import { Select, AcessMethodOption } from '@components/Shared/Dropdown/index';
 import router from 'next/router';
-import CardItem from '@components/Pages/Mypage/Card/CardItem';
+import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 export const ACCESS_METHOD = [
   {
@@ -104,6 +104,8 @@ const PAYMENT_METHOD = [
   },
 ];
 
+/* TODO CardItem에 card 정보? */
+
 const hasRegisteredCart = true;
 const point = 5000;
 
@@ -153,7 +155,7 @@ const PaymentPage = () => {
     router.push('/payment/finish');
   };
 
-  const goToCardManagemnet = () => {
+  const goToCardManagemnet = (card: ICard) => {
     router.push('/mypage/card');
   };
 
@@ -373,7 +375,9 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCart && <CardItem onClick={goToCardManagemnet} />}
+        {hasRegisteredCart && (
+          <CardItem onClick={goToCardManagemnet} card={card} />
+        )}
         <Button
           border
           backgroundColor={theme.white}
