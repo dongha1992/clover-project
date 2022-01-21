@@ -7,21 +7,22 @@ import SVGIcon from '@utils/SVGIcon';
 import Tag from '@components/Shared/Tag';
 interface IProps {
   menu: any;
-  isShareSheet?: boolean;
   isCart?: boolean;
-  isPayment?: boolean;
   isSoldout?: boolean;
   padding?: string;
+  clickMinusButton?: () => void;
+  clickPlusButton?: () => void;
 }
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
 
 const CartSheetItem = ({
   menu,
-  isShareSheet,
   isCart,
   isSoldout,
   padding,
+  clickMinusButton,
+  clickPlusButton,
 }: IProps) => {
   const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
@@ -43,27 +44,29 @@ const CartSheetItem = ({
               </TextH5B>
               <TextH5B>{menu.price}원</TextH5B>
             </PriceWrapper>
-            {!isShareSheet && !isCart && (
+            {!isCart && (
               <RemoveBtnContainer onClick={removeCartItemHandler}>
                 <SVGIcon name="defaultCancel" />
               </RemoveBtnContainer>
             )}
-            {!isShareSheet && (
-              <CountButtonContainer>
-                {isSoldout ? (
-                  <Tag
-                    backgroundColor={theme.black}
-                    padding="6px 10px"
-                    borderRadius={32}
-                    onClick={clickRestockNoti}
-                  >
-                    <TextH6B color={theme.white}>재입고 알림</TextH6B>
-                  </Tag>
-                ) : (
-                  <CountButton quantity={menu.quantity} />
-                )}
-              </CountButtonContainer>
-            )}
+            <CountButtonContainer>
+              {isSoldout ? (
+                <Tag
+                  backgroundColor={theme.black}
+                  padding="6px 10px"
+                  borderRadius={32}
+                  onClick={clickRestockNoti}
+                >
+                  <TextH6B color={theme.white}>재입고 알림</TextH6B>
+                </Tag>
+              ) : (
+                <CountButton
+                  quantity={menu.quantity}
+                  clickPlusButton={clickPlusButton}
+                  clickMinusButton={clickMinusButton}
+                />
+              )}
+            </CountButtonContainer>
           </FlexBetween>
         </ContentWrapper>
       </Wrapper>

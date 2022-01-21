@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH5B } from '@components/Shared/Text';
-import CartSheetItem from '@components/BottomSheet/CartSheet/CartSheetItem';
+import ShareSheetItem from './SheetSheetItem';
 import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { homePadding } from '@styles/theme';
@@ -92,7 +92,7 @@ const ShareSheet = () => {
         <TextH5B center padding="24px 0 16px 0">
           공유하기
         </TextH5B>
-        <CartSheetItem menu={menuItem} isShareSheet padding="16px" />
+        <ShareSheetItem menu={menuItem} />
         <LinkWrapper>
           {SHARE_ICONS.map((item, index) => (
             <LinkGroup key={index} onClick={(e) => shareHandler(e, item.value)}>
