@@ -4,13 +4,13 @@ import { AppState } from '.';
 interface TProps {
   orderType: string;
   timerTooltip: Boolean;
-  deliveryDate: number;
+  deliveryDate: string;
 }
 
 const initialState: TProps = {
   orderType: '',
   timerTooltip: false,
-  deliveryDate: 0,
+  deliveryDate: '',
 };
 
 export const order = createSlice({
@@ -23,7 +23,7 @@ export const order = createSlice({
     SET_TIMER_STATUS: (state, action: PayloadAction<any>) => {
       state.timerTooltip = action.payload.timerTooltip;
     },
-    SET_DELIVERY_DATE: (state, action: PayloadAction<number>) => {
+    SET_DELIVERY_DATE: (state, action: PayloadAction<string>) => {
       state.deliveryDate = action.payload;
     },
   },
