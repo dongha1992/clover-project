@@ -14,11 +14,22 @@ let WEEKS: any = {
   6: '토',
 };
 
+const ONE_WEEK = 7;
+const TWO_WEKKS = 14;
+const LIMIT_DAYS = 5;
+
+export interface IDateObj {
+  year: number;
+  month: number;
+  date: number;
+  day: number;
+}
+
 interface ICalendar {
-  disabledDates: number[];
+  disabledDates: string[];
   otherDeliveryDate?: number;
-  selectedDeliveryDay: number;
-  setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<number>>;
+  selectedDeliveryDay: string;
+  setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<IDateObj>>;
 }
 
 const Calendar = ({
@@ -27,7 +38,7 @@ const Calendar = ({
   selectedDeliveryDay,
   setSelectedDeliveryDay,
 }: ICalendar) => {
-  const [dateList, setDateList] = useState<number[] | []>([]);
+  const [dateList, setDateList] = useState<IDateObj[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
 
   useEffect(() => {
@@ -44,20 +55,33 @@ const Calendar = ({
 
   const initCalendar = () => {
     const { year, month, date } = getCalendarDate();
+
     const list = [];
     const firstWeek = [];
 
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < TWO_WEKKS; i++) {
+      const isFirstWeek = i < ONE_WEEK;
+
+      const _month = new Date(year, month, date + i).getMonth() + 1;
       const _date = new Date(year, month, date + i).getDate();
       const _day = new Date(year, month, date + i).getDay();
+      const value = `${year}-${_month < 10 ? `0${_month}` : _month}-${
+        _date < 10 ? `0${_date}` : _date
+      }`;
 
-      const isFirstWeek = i < 7;
+      const dateObj = {
+        year,
+        month: _month,
+        date: _date,
+        day: _day,
+        value,
+      };
 
       // 일요일 제외 하고 push
       if (_day !== 0) {
-        list.push(_date);
+        list.push(dateObj);
         if (isFirstWeek) {
-          firstWeek.push(_date);
+          firstWeek.push(dateObj);
         }
       } else {
         continue;
@@ -67,17 +91,20 @@ const Calendar = ({
     setDateList(list);
   };
 
-  const clickDayHandler = (index: number) => {
-    setSelectedDeliveryDay(index);
+  const clickDayHandler = (dateObj: IDateObj) => {
+    setSelectedDeliveryDay(dateObj?.value);
   };
 
-  const checkShowMoreWeek = (firstWeek: number[], disabledDates: number[]) => {
+  const checkShowMoreWeek = (
+    firstWeek: IDateObj[],
+    disabledDates: string[]
+  ) => {
     const filtered = firstWeek.filter(
-      (week: any) => !disabledDates.includes(week)
+      (week: any) => !disabledDates.includes(week.value)
     );
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filtered.length > 2) {
+    if (filtered.length < 2) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
@@ -89,7 +116,7 @@ const Calendar = ({
 
     const renderWeeks = () => {
       const weeks: string[] = [];
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < ONE_WEEK; i++) {
         const _week = new Date(year, month, date + i).getDay();
         if (WEEKS[_week]) {
           weeks.push(WEEKS[_week]);
@@ -110,17 +137,18 @@ const Calendar = ({
           })}
         </Header>
         <Body>
-          {dateList.map((day, index) => {
+          {dateList.map((dateObj, index) => {
             if (!isShowMoreWeek) {
-              if (index > 5) {
+              if (index > LIMIT_DAYS) {
                 return;
               }
             }
+            console.log(dateObj);
             return (
               <Days
-                handler={clickDayHandler}
-                day={day}
-                key={day}
+                handler={() => clickDayHandler(dateObj)}
+                day={dateObj.date}
+                key={index}
                 selectedDay={selectedDeliveryDay === index}
                 index={index}
                 disabledDates={disabledDates}

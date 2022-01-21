@@ -7,14 +7,15 @@ import { useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { Calendar } from '@components/Calendar';
 import { SET_DELIVERY_DATE } from '@store/order';
+import { IDateObj } from '@components/Calendar/Calendar';
 interface IProps {
   title: string;
-  disabledDates: number[];
+  disabledDates: string[];
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
 const CalendarSheet = ({ title, disabledDates }: IProps) => {
-  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<number>(0);
+  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const dispatch = useDispatch();
 
