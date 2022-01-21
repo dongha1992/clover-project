@@ -300,6 +300,17 @@ export interface IKakaoLatLon {
   y: string;
 }
 
+export interface IRegisterCard {
+  birthDate: string;
+  corporationNo?: string | null;
+  expiredMM: string;
+  expiredYY: string;
+  main?: boolean;
+  name?: string;
+  number: string;
+  password: string;
+  type?: string;
+}
 export interface IBanners {
   content: string;
   createdAt: string;

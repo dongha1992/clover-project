@@ -29,7 +29,6 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
-import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
@@ -37,6 +36,7 @@ import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { destinationForm } from '@store/destination';
+import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -83,7 +83,9 @@ export interface IAccessMethod {
   value: string;
 }
 
-const hasRegisteredCard = true;
+/* TODO CardItem에 card 정보? */
+
+const hasRegisteredCart = true;
 const point = 5000;
 
 const PaymentPage = () => {
@@ -153,7 +155,7 @@ const PaymentPage = () => {
     router.push('/payment/finish');
   };
 
-  const goToCardManagemnet = () => {
+  const goToCardManagemnet = (card: ICard) => {
     router.push('/mypage/card');
   };
 
@@ -408,19 +410,17 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {isFcoPay && (
-          <>
-            {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} />}
-            <Button
-              border
-              backgroundColor={theme.white}
-              color={theme.black}
-              onClick={goToRegisteredCard}
-            >
-              카드 등록하기
-            </Button>
-          </>
+        {hasRegisteredCart && (
+          <CardItem onClick={goToCardManagemnet} card={card} />
         )}
+        <Button
+          border
+          backgroundColor={theme.white}
+          color={theme.black}
+          onClick={goToRegisteredCard}
+        >
+          카드 등록하기
+        </Button>
       </PaymentMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>

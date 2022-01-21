@@ -280,3 +280,13 @@ export const textBody4 = css`
   font-weight: normal;
   line-height: 16px;
 `;
+
+export const customInput = css`
+  border: none;
+  padding: 12px 16px 12px 12px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border-radius: 8px;
+`;
