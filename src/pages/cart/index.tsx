@@ -97,7 +97,7 @@ const CartPage = () => {
     '2022-01-27',
     '2022-01-28',
   ];
-  const otherDeliveryDate = 4;
+  const otherDeliveryDate = ['2022-01-25'];
   const SPOT = true;
 
   useEffect(() => {
