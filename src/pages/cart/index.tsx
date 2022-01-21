@@ -209,9 +209,7 @@ const CartPage = () => {
           </TextH4B>
         </Left>
         <Right onClick={goToDeliveryInfo}>
-          <TextH6B color={theme.greyScale65} textDecoration="underline">
-            {userDestinationStatus && hasDestination ? '변경하기' : '설정하기'}
-          </TextH6B>
+          <SVGIcon name="arrowRight" />
         </Right>
       </DeliveryMethodAndPickupLocation>
       <BorderLine height={8} margin="24px 0" />
@@ -454,7 +452,9 @@ const Left = styled.div`
   flex-direction: column;
 `;
 
-const Right = styled.div``;
+const Right = styled.div`
+  align-self: center;
+`;
 
 const CartListWrapper = styled.div``;
 

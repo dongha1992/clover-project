@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { theme, verticalCenter } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 
-const CountButton = ({ quantity }: any) => {
-  const clickMinusButton = () => {};
-  const clickPlusButton = () => {};
+interface IProps {
+  quantity: number;
+  clickPlusButton: () => void;
+  clickMinusButton: () => void;
+}
+
+const CountButton = ({
+  quantity,
+  clickPlusButton,
+  clickMinusButton,
+}: IProps) => {
   return (
     <Container>
       <Wrapper>
