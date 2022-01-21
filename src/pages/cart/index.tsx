@@ -122,11 +122,12 @@ const CartPage = () => {
 
   const handleSelectCartItem = (id: any) => {
     /* TODO: 왜 안됑? */
-    const findItem = checkedMenuList.find((_id: any) => _id === id);
+    const findItem = checkedMenuList.find((_id: number) => _id === id);
     let tempCheckedMenuList = checkedMenuList.slice();
 
     if (findItem) {
-      tempCheckedMenuList.filter((_id: any) => _id !== id);
+      tempCheckedMenuList = tempCheckedMenuList.filter((_id) => _id !== id);
+      setIsAllchecked(!isAllChecked);
     } else {
       tempCheckedMenuList.push(id);
     }
@@ -146,12 +147,13 @@ const CartPage = () => {
   };
 
   const handleSelectDisposable = (id: any) => {
-    /* TODO: 왜 안됑? */
     const findItem = checkedDisposableList.find((_id) => _id === id);
-    const tempCheckedDisposableList = checkedDisposableList.slice();
+    let tempCheckedDisposableList = checkedDisposableList.slice();
 
     if (findItem) {
-      tempCheckedDisposableList.filter((_id) => _id !== id);
+      tempCheckedDisposableList = tempCheckedDisposableList.filter(
+        (_id) => _id !== id
+      );
     } else {
       tempCheckedDisposableList.push(id);
     }
