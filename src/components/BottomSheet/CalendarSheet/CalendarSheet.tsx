@@ -12,10 +12,11 @@ import { IDateObj } from '@components/Calendar/Calendar';
 interface IProps {
   title: string;
   disabledDates: string[];
+  otherDeliveryDate: string[];
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates }: IProps) => {
+const CalendarSheet = ({ title, disabledDates, otherDeliveryDate }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const CalendarSheet = ({ title, disabledDates }: IProps) => {
           disabledDates={disabledDates}
           selectedDeliveryDay={selectedDeliveryDay}
           setSelectedDeliveryDay={setSelectedDeliveryDay}
+          otherDeliveryDate={otherDeliveryDate}
         />
       </Wrapper>
       <ButtonContainer onClick={() => submitHandler()}>
