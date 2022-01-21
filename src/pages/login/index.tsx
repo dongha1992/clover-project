@@ -157,10 +157,6 @@ const LoginPage = () => {
         <Button disabled={!isValid}>로그인하기</Button>
       </BtnWrapper>
       <FlexCenter>
-        <TextB2R color={theme.greyScale75} onClick={goToSignup}>
-          회원가입
-        </TextB2R>
-        <Col />
         <TextB2R color={theme.greyScale75} onClick={goToFindEmail}>
           아이디(이메일) 찾기
         </TextB2R>
@@ -169,6 +165,16 @@ const LoginPage = () => {
           비밀번호 찾기
         </TextB2R>
       </FlexCenter>
+      <SignupBtnWrapper>
+        <Button
+          onClick={goToSignup}
+          backgroundColor={theme.white}
+          border
+          color={theme.black}
+        >
+          회원가입하고 신규 혜택 받기
+        </Button>
+      </SignupBtnWrapper>
     </Container>
   );
 };
@@ -187,5 +193,7 @@ const Col = styled.div`
   background-color: ${theme.greyScale6};
   margin: 0 8px;
 `;
+
+const SignupBtnWrapper = styled.div``;
 
 export default LoginPage;

@@ -20,7 +20,7 @@ import {
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import BorderLine from '@components/Shared/BorderLine';
-import { Button } from '@components/Shared/Button';
+import { ButtonGroup } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { ACCESS_METHOD } from '@pages/payment/index';
@@ -384,25 +384,12 @@ const AddressEditPage = ({ id }: IProps) => {
           </TextH5B>
         </FlexRow>
       </Wrapper>
-      <BtnWrapper>
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={removeAddressHandler}
-        >
-          삭제하기
-        </Button>
-        <Col />
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={editAddressHandler}
-        >
-          수정하기
-        </Button>
-      </BtnWrapper>
+      <ButtonGroup
+        rightButtonHandler={editAddress}
+        leftButtonHandler={removeAddress}
+        leftText="삭제하기"
+        rightText="수정하기"
+      />
     </Container>
   );
 };
@@ -428,20 +415,6 @@ const MustCheckAboutDelivery = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
   border-radius: 8px;
-`;
-
-const BtnWrapper = styled.div`
-  ${fixedBottom}
-  display: flex;
-`;
-
-const Col = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 25%;
-  background-color: ${theme.white};
-  width: 1px;
-  height: 50%;
 `;
 
 export async function getServerSideProps(context: any) {

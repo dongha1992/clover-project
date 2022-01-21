@@ -51,9 +51,9 @@ const MypageCouponItem = ({ coupon }: any) => {
             </TextB3R>
           )}
           {isShow &&
-            coupon.canUseMenu.map((menu: any) => {
+            coupon.canUseMenu.map((menu: any, index: number) => {
               return (
-                <FlexRow>
+                <FlexRow key={index}>
                   <Dot />
                   <TextB4R color={theme.greyScale65}>{menu}</TextB4R>
                 </FlexRow>
