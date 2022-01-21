@@ -76,7 +76,7 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
-  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<number>(0);
+  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const calendarRef = useRef<HTMLDivElement>(null);
 
