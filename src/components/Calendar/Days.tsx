@@ -6,7 +6,8 @@ import SVGIcon from '@utils/SVGIcon';
 
 type TProps = {
   day: number;
-  handler: (date: number) => void;
+  value: string;
+  handler: (date: string) => void;
   selectedDay: boolean;
   index: number;
   disabledDates: string[];
@@ -15,6 +16,7 @@ type TProps = {
 
 const Days = ({
   day,
+  value,
   handler,
   selectedDay,
   index,
@@ -57,7 +59,7 @@ const Days = ({
   };
 
   return (
-    <Container onClick={() => handler} isSecondWeeeks={isSecondWeeeks}>
+    <Container onClick={() => handler(value)} isSecondWeeeks={isSecondWeeeks}>
       <Wrapper
         selectedDay={selectedDay}
         hasOtherDeliveryDate={hasOtherDeliveryDate}
