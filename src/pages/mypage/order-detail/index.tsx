@@ -53,6 +53,8 @@ const disabledDates = [
   '2022-01-28',
 ];
 
+const otherDeliveryDate = ['2022-01-27'];
+
 interface IStatus {
   [index: string]: {
     text: string;
@@ -231,7 +233,11 @@ const OrderDetailPage = () => {
     dispatch(
       setBottomSheet({
         content: (
-          <CalendarSheet title="배송날짜 변경" disabledDates={disabledDates} />
+          <CalendarSheet
+            title="배송날짜 변경"
+            disabledDates={disabledDates}
+            otherDeliveryDate={otherDeliveryDate}
+          />
         ),
       })
     );

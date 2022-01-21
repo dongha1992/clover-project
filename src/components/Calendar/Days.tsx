@@ -11,7 +11,7 @@ type TProps = {
   selectedDay: boolean;
   index: number;
   disabledDates: string[];
-  otherDeliveryDate?: number;
+  otherDeliveryDate?: string[] | [];
 };
 
 const Days = ({
@@ -25,11 +25,13 @@ const Days = ({
 }: TProps) => {
   const isSecondWeeeks = index > 5;
   const isToday = !index;
-  const hasOtherDeliveryDate = otherDeliveryDate === day;
+  const hasOtherDeliveryDate =
+    otherDeliveryDate && otherDeliveryDate[0] === value;
+  const disabledDate = disabledDates.includes(value);
 
   const dayColorRender = () => {
     switch (true) {
-      case disabledDates.includes(day): {
+      case disabledDate: {
         return 'greyScale25';
       }
       case selectedDay: {
@@ -59,7 +61,16 @@ const Days = ({
   };
 
   return (
-    <Container onClick={() => handler(value)} isSecondWeeeks={isSecondWeeeks}>
+    <Container
+      onClick={() => {
+        if (disabledDate) {
+          return;
+        } else {
+          handler(value);
+        }
+      }}
+      isSecondWeeeks={isSecondWeeeks}
+    >
       <Wrapper
         selectedDay={selectedDay}
         hasOtherDeliveryDate={hasOtherDeliveryDate}

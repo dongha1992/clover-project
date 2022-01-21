@@ -19,6 +19,8 @@ const ONE_WEEK = 7;
 const TWO_WEKKS = 14;
 const LIMIT_DAYS = 5;
 
+/* TODO: 디폴트 선택 날짜 어떻게? */
+
 export interface IDateObj {
   year: number;
   month: number;
@@ -29,7 +31,7 @@ export interface IDateObj {
 
 interface ICalendar {
   disabledDates: string[];
-  otherDeliveryDate?: number;
+  otherDeliveryDate?: string[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -110,7 +112,7 @@ const Calendar = ({
     );
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filtered.length < 2) {
+    if (filtered.length > 2) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
@@ -150,6 +152,7 @@ const Calendar = ({
         <Body>
           {dateList.map((dateObj, index) => {
             const selectedDay = selectedDeliveryDay === dateObj.value;
+
             if (!isShowMoreWeek) {
               if (index > LIMIT_DAYS) {
                 return;
