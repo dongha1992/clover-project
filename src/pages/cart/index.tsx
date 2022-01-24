@@ -21,7 +21,7 @@ import {
   FlexRow,
   fixedBottom,
 } from '@styles/theme';
-import { CartSheetItem } from '@components/BottomSheet/CartSheet';
+import { CartItem } from '@components/Pages/Cart';
 import Checkbox from '@components/Shared/Checkbox';
 import { InfoMessage } from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
@@ -121,13 +121,14 @@ const CartPage = () => {
   };
 
   const handleSelectCartItem = (id: any) => {
-    /* TODO: 왜 안됑? */
     const findItem = checkedMenuList.find((_id: number) => _id === id);
     let tempCheckedMenuList = checkedMenuList.slice();
 
     if (findItem) {
       tempCheckedMenuList = tempCheckedMenuList.filter((_id) => _id !== id);
-      setIsAllchecked(!isAllChecked);
+      if (isAllChecked) {
+        setIsAllchecked(!isAllChecked);
+      }
     } else {
       tempCheckedMenuList.push(id);
     }
@@ -242,9 +243,8 @@ const CartPage = () => {
                     onChange={() => handleSelectCartItem(item.id)}
                     isSelected={checkedMenuList.includes(item.id)}
                   />
-                  <CartSheetItem
+                  <CartItem
                     menu={item}
-                    isCart
                     isSoldout={item.id === 1 && isSoldout}
                   />
                 </div>

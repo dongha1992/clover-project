@@ -13,9 +13,7 @@ interface IProps {
   clickPlusButton?: () => void;
 }
 
-/* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
-
-const CartSheetItem = ({
+const CartItem = ({
   menu,
   isSoldout,
   padding,
@@ -42,9 +40,7 @@ const CartSheetItem = ({
               </TextH5B>
               <TextH5B>{menu.price}원</TextH5B>
             </PriceWrapper>
-            <RemoveBtnContainer onClick={removeCartItemHandler}>
-              <SVGIcon name="defaultCancel" />
-            </RemoveBtnContainer>
+
             <CountButtonContainer>
               {isSoldout ? (
                 <Tag
@@ -120,4 +116,4 @@ const ItemImage = styled.img`
   border-radius: 8px;
 `;
 
-export default React.memo(CartSheetItem);
+export default React.memo(CartItem);
