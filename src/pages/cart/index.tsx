@@ -76,7 +76,10 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
-
+  const [disposableList, setDisposableList] = useState([
+    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
+    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
+  ]);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -177,6 +180,16 @@ const CartPage = () => {
     );
   };
 
+  const clickDisableItemCount = (id: number, quantity: number) => {
+    const findItem = disposableList.map((item) => {
+      if (item.id === id) {
+        item.quantity = quantity;
+      }
+      return item;
+    });
+    setDisposableList(findItem);
+  };
+
   const removeItem = () => {
     console.log('fire');
   };
@@ -265,7 +278,7 @@ const CartPage = () => {
             </TextH5B>
           </WrapperTitle>
           <CheckBoxWrapper>
-            {DISPOSABLE_LIST.map((item, index) => (
+            {disposableList.map((item, index) => (
               <DisposableItem key={index}>
                 <div className="disposableLeft">
                   <Checkbox
@@ -278,7 +291,12 @@ const CartPage = () => {
                   </div>
                 </div>
                 <Right>
-                  <CountButton />
+                  <CountButton
+                    id={item.id}
+                    quantity={item.quantity}
+                    clickPlusButton={clickDisableItemCount}
+                    clickMinusButton={clickDisableItemCount}
+                  />
                 </Right>
               </DisposableItem>
             ))}
