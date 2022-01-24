@@ -50,6 +50,7 @@ const FCO_SPOT_BANNER = [
 
 const SpotPage = () => {
   const dispatch = useDispatch();
+  const { isSpotLiked } = useSelector(spotSelector);
   const router = useRouter();
   const [mouseMoved, setMouseMoved] = useState(false);
   const [info, setInfo] = useState<ISpotsInfo>();
@@ -63,8 +64,6 @@ const SpotPage = () => {
   const registrationsLen = info&&info?.recruitingSpotRegistrations?.length > 0;
   const unsubmitSpotRegistrationsLen = info&&info?.unsubmitSpotRegistrations?.length > 0;
   const trialRegistrationsLen = info&&info?.trialSpotRegistrations?.length > 0;
-
-  const { isSpotLiked } = useSelector(spotSelector);
 
   useEffect(()=> {
     //신규 스팟
@@ -132,7 +131,6 @@ const SpotPage = () => {
     getPopularSpot();
     getEventSpot();
   }, [isSpotLiked]);
-  console.log(stationSpot);
 
   useEffect(()=> {
     const getInfoData = async() => {

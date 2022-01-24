@@ -9,32 +9,21 @@ import router from 'next/router';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { TimerTooltip } from '@components/Shared/Tooltip';
+import {   
+  postSpotLike,
+  deleteSpotLike,
+  getSpotLike,
+ } from '@api/spot';
+ import { SET_SPOT_LIKED } from '@store/spot';
+import { useDispatch } from 'react-redux';
+
 
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 const SpotDetailBottom = () => {
-  const [tempIsLike, setTempIsLike] = useState<boolean>(false);
-  const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
-  const { showToast, hideToast } = useToast();
+  const dispatch = useDispatch();
   const { spotDetail } = useSelector(spotSelector);
-
-  const goToDib = useCallback(() => {
-    setTempIsLike((prev) => !prev);
-  }, [tempIsLike]);
-
-  useEffect(() => {
-    setIsFirstToastRender(false);
-  }, []);
-
-  useEffect(() => {
-    /* TODO : 렌더 시 처음에 alert 뜨는 거 */
-    if (isFirstToastRender) return;
-    /* TODO: 빠르게 눌렀을 때 toast 메시지 엉킴 */
-    const message =
-      tempIsLike === true ? '스팟을 찜 했어요!' : '스팟을 찜 해제 했어요!';
-    showToast({ message });
-
-    return () => hideToast();
-  }, [goToDib]);
+  const { showToast, hideToast } = useToast();
+  const [spotLike, setSpotLike] = useState(spotDetail.liked);
 
 
   const goToCart = (e: any): void => {
@@ -42,11 +31,51 @@ const SpotDetailBottom = () => {
     router.push('/cart');
   };
 
+  useEffect(()=> {
+    const spotLikeData = async() => {
+      try{
+        const { data } = await getSpotLike(spotDetail.id);
+        setSpotLike(data.data.liked)
+      }catch(err){
+        console.error(err);
+      };
+    };
+  
+    spotLikeData();
+  }, [spotLike]);
+
+  const hanlderLike = async () => {
+    if(!spotLike){
+      try {
+        const { data } = await postSpotLike(spotDetail.id);
+        if(data.code === 200 ){
+          showToast({ message: '스팟을 찜 했어요!' });
+          dispatch(SET_SPOT_LIKED({isSpotLiked: true}));
+          setSpotLike(true);
+        }
+      }catch(err){
+        console.error(err);
+      };
+    }else if(spotLike){
+      try{
+        const { data } = await deleteSpotLike(spotDetail.id);
+        if(data.code === 200){
+          showToast({ message: '스팟을 찜 해제 했어요!' });
+          dispatch(SET_SPOT_LIKED({isSpotLiked: false}));
+          setSpotLike(false);
+        }
+      }catch(err){
+        console.error(err);
+      };
+    };
+    return () => hideToast();
+  };
+
   return (
     <Container>
       <Wrapper>
         <LikeWrapper>
-          <LikeBtn onClick={goToDib}>
+          <LikeBtn onClick={hanlderLike}>
             <SVGIcon name={spotDetail.liked ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
