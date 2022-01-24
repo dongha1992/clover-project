@@ -17,6 +17,8 @@ import {
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
+import { CheckTimerByDelivery } from '@components/CheckTimer';
+import useTimer from '@hooks/useTimer';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -264,6 +266,7 @@ const DeliverInfoPage = () => {
           <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
             픽업
           </TextH5B>
+          <CheckTimerByDelivery />
           {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
             const isSelected = selectedMethod === item.value;
             return (
