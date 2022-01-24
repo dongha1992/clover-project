@@ -140,6 +140,7 @@ const OptionalOption = styled.div`
 
 const OrderInfoContainer = styled.div`
   padding: 0 24px;
+  margin-bottom: 16px;
   width: 100%;
 `;
 
