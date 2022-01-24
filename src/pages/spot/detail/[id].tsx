@@ -23,92 +23,11 @@ import {
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
 import { IMAGE_S3_URL } from '@constants/mock/index';
 import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
-
-export interface ISpotsDetail {
-  coordinate: {
-    lat: number;
-    lon: number;
-  };
-  createdAt: string;
-  description: string;
-  dinnerDelivery: boolean;
-  dinnerDeliveryStartTime: string;
-  dinnerDeliveryEndTime: string;
-  lunchDelivery: boolean;
-  lunchDeliveryStartTime: string;
-  lunchDeliveryEndTime: string;
-  id: number;
-  images: [{
-    url: string;
-    height: number;
-    width: number;
-    main: boolean;
-    size: number;
-  }];
-  likeCount: number;
-  liked: boolean;
-  location: {
-    address: string;
-    addressDetail: string;
-    done: string;
-    zipCode: string;
-  };
-  name: string;
-  notices: [{
-    id: number;
-    spotId: number;
-    content: string;
-    createdAt: string;
-  }];
-  pickupEndTime: string;
-  pickupStartTime: string;
-  pickups:[{
-    createdAt: string;
-    id: number;
-    images: [];
-    name: string;
-    spotId: number;
-  }];
-  placeHoliday: string;
-  placeOpenTime: string;
-  placeTel: string;
-  placeType: string;
-  stories: [{
-    id: number;
-    spotId: number;
-    type: string;
-    title: string;
-    content: string;
-    createdAt: string;
-    images: [{
-      url: string;
-    }];
-    liked: boolean;
-    likeCount: number;    
-  }];
-  type: string;  
-};
-
-export interface ISpotStories {
-  id: number;
-  spotId: number;
-  type: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  liked: boolean;
-  likeCount: number;
-  images: [{
-    url: string;
-    width: string;
-    height: string;
-    size: string;
-  }];
-};
-
-// TODO : 데이터 아직 안들어오는게 많아서 처리 못한게 많음.
+import { SPOT_ITEM } from '@store/spot';
+import { ISpotsDetail, ISpotStories } from '@model/index';
 
 const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
+  const dispatch = useDispatch();
   const tabRef = useRef<HTMLDivElement>(null);
   const [spotItem, getSpotItem] = useState<ISpotsDetail>();
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
@@ -121,7 +40,8 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
   const HEADER_HEIGHT = 56;
   const sliceLen = spotItem&&spotItem.notices?.length > 1;
   const pickupsLen = spotItem&&spotItem.pickups?.length > 0;
-  
+  const imgTotalLen = spotItem&&spotItem.images?.length;
+
   const selectTabHandler = useCallback(
     ({ link }: string) => {
       setSelectedTab(link);
@@ -194,12 +114,15 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
     centerPadding: sliceLen ? '30px' : '25px',
   };
 
-  // 스팟 상세 데이터 fetch
+  // 스팟 상세 데이터 
   useEffect(() => {
     const getData = async() => {
       try{
         const {data} = await getSpotDetail(id);
-        getSpotItem(data.data);
+        if(data.code === 200){
+          getSpotItem(data.data);
+          dispatch(SPOT_ITEM(data.data));
+        }
       }catch(err){
         console.error(err);
       };
@@ -208,7 +131,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);  
 
-  // 스팟 상세 스토리 데이터 fetch
+  // 스팟 상세 스토리 데이터 
   useEffect(()=> {
     const getData = async() => {
       try{
@@ -262,11 +185,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
             return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
           })}
         </TopBannerSlider>
-        <SlideCount>{spotItem&&spotItem.images?.length > 1 ? 
-        `${currentIndex + 1}/2` 
-        : 
-        `${currentIndex + 1}/1`
-        }</SlideCount>
+        <SlideCount><TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B></SlideCount>
       </SliderWrapper>
       <StoreWrapper>
         <TagWrapper>
@@ -397,22 +316,15 @@ const TopBannerSlider = styled(Slider)`
 `;
 
 const SlideCount = styled.div`
-  width: 40px;
-  height: 26px;
+  width: 45px;
   border-radius: 24px;
   background: #24242480;
-  color: ${theme.white};
   text-align: center;
   padding: 5px 0;
   display: inline-block;
   position: absolute;
   bottom: 16px;
   right: 16px;
-  z-index: 50;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 18px;
-  letter-spacing: 0.9px;
 `;
 
 const StoreImgWrapper = styled.img`
