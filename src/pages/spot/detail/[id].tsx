@@ -25,9 +25,12 @@ import { IMAGE_S3_URL } from '@constants/mock/index';
 import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
 import { SPOT_ITEM } from '@store/spot';
 import { ISpotsDetail, ISpotStories } from '@model/index';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
 
 const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
   const dispatch = useDispatch();
+  const { isSpotLiked } = useSelector(spotSelector);
   const tabRef = useRef<HTMLDivElement>(null);
   const [spotItem, getSpotItem] = useState<ISpotsDetail>();
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
@@ -116,7 +119,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
 
   // 스팟 상세 데이터 
   useEffect(() => {
-    const getData = async() => {
+    const getDetail = async() => {
       try{
         const {data} = await getSpotDetail(id);
         if(data.code === 200){
@@ -127,13 +130,13 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
         console.error(err);
       };
     };
-    getData();
+    getDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);  
+  }, [isSpotLiked]);  
 
   // 스팟 상세 스토리 데이터 
   useEffect(()=> {
-    const getData = async() => {
+    const getDetailStory = async() => {
       try{
           const {data} = await getSpotsDetailStory(id, page);
           const list = data?.data.spotStories;
@@ -145,7 +148,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
         console.error(err);
       };
     }
-    getData();
+    getDetailStory();
   }, [page]);
 
   // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
