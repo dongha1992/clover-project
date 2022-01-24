@@ -23,7 +23,7 @@ import {
 } from '@styles/theme';
 import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
-import { InfoMessage } from '@components/Shared/Message';
+import InfoMessage from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
@@ -180,7 +180,7 @@ const CartPage = () => {
     );
   };
 
-  const clickDisableItemCount = (id: number, quantity: number) => {
+  const clickDisposableItemCount = (id: number, quantity: number) => {
     const findItem = disposableList.map((item) => {
       if (item.id === id) {
         item.quantity = quantity;
@@ -263,7 +263,7 @@ const CartPage = () => {
                   />
                 </div>
                 <div className="itemInfo">
-                  <InfoMessage message={'품절 임박! 상품이 2개 남았어요'} />
+                  <InfoMessage status="soldSoon" count={2} />
                 </div>
                 <BorderLine height={1} margin="16px 0" />
               </ItemWrapper>
@@ -294,8 +294,8 @@ const CartPage = () => {
                   <CountButton
                     id={item.id}
                     quantity={item.quantity}
-                    clickPlusButton={clickDisableItemCount}
-                    clickMinusButton={clickDisableItemCount}
+                    clickPlusButton={clickDisposableItemCount}
+                    clickMinusButton={clickDisposableItemCount}
                   />
                 </Right>
               </DisposableItem>
