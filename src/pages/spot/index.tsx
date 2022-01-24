@@ -66,70 +66,24 @@ const SpotPage = () => {
   const trialRegistrationsLen = info&&info?.trialSpotRegistrations?.length > 0;
 
   useEffect(()=> {
-    //신규 스팟
-    const getNewSpot = async() => {
-      const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
-        size: 6,
-      };
-      try{
-        const {data} = await getNewSpots(params);
-        setNewSpot(data.data);
-      }catch (err){
-        console.error(err);
-      };
+    const params: IParamsSpots = {
+      latitude: null,
+      longitude: null,
+      size: 6,
     };
+    // 순서대로: 신규스팟, 점심함께주문해요, 역세권스팟, 이벤트 스팟
+    axios
+      .all([getNewSpots(params), getSpotPopular(params), getStationSpots(params), getSpotEvent(params)])
+      .then(
+        axios.spread((...response) => {
+          setNewSpot(response[0].data.data);
+          setPopularSpot(response[1].data.data);
+          setStationSpot(response[2].data.data);
+          setEventSpot(response[3].data.data);
+        })
+      )
+      .catch((err)=> console.error(err));
 
-    //근처 인기있는 스팟(점심 함께~)
-    const getPopularSpot = async() => {
-      const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
-        size: 6,
-      };
-      try{
-        const {data} = await getSpotPopular(params);
-        setPopularSpot(data.data);
-      }catch(err){
-        console.error(err);
-      };
-    }
-
-    //역세권 스팟
-    const getStationSpot = async() => {
-      const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
-        size: 6,
-      };
-      try{
-        const {data} = await getStationSpots(params);
-        setStationSpot(data.data);
-      }catch(err){
-        console.error(err);
-      };
-    };
-
-    //이벤트 스팟
-    const getEventSpot = async() => {
-      const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
-        size: 6,
-      };
-      try{
-        const {data} = await getSpotEvent(params);
-        setEventSpot(data.data);
-      }catch(err){
-        console.error(err);
-      };
-    };
-    
-    getNewSpot();
-    getStationSpot();
-    getPopularSpot();
-    getEventSpot();
   }, [isSpotLiked]);
 
   useEffect(()=> {
@@ -144,7 +98,7 @@ const SpotPage = () => {
     };
     getInfoData();
 
-    //단골 스팟
+    // 단골 스팟
     const getRegistration = async() => {
       const params: IParamsSpots = {
         latitude: null,
