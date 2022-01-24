@@ -4,6 +4,7 @@ import Days from './Days';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
+import getCustomDate from '@utils/getCustomDate';
 
 let WEEKS: any = {
   1: '월',
@@ -28,22 +29,15 @@ const Calendar = ({ disabledDates, otherDeliveryDate }: ICalendar) => {
     initCalendar();
   }, []);
 
-  const getCalendarDate = () => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth();
-    const date = new Date().getDate();
-
-    return { year, month, date };
-  };
-
   const initCalendar = () => {
-    const { year, month, date } = getCalendarDate();
+    const { years, months, dates } = getCustomDate(new Date());
+
     const list = [];
     const firstWeek = [];
 
     for (let i = 0; i < 14; i++) {
-      const _date = new Date(year, month, date + i).getDate();
-      const _day = new Date(year, month, date + i).getDay();
+      const _date = new Date(years, months, dates + i).getDate();
+      const _day = new Date(years, months, dates + i).getDay();
 
       const isFirstWeek = i < 7;
 
@@ -79,12 +73,12 @@ const Calendar = ({ disabledDates, otherDeliveryDate }: ICalendar) => {
   };
 
   const RenderCalendar = ({ isShowMoreWeek }: any): JSX.Element => {
-    const { year, month, date } = getCalendarDate();
+    const { years, months, dates } = getCustomDate(new Date());
 
     const renderWeeks = () => {
       const weeks: string[] = [];
       for (let i = 0; i < 7; i++) {
-        const _week = new Date(year, month, date + i).getDay();
+        const _week = new Date(years, months, dates + i).getDay();
         if (WEEKS[_week]) {
           weeks.push(WEEKS[_week]);
         }
