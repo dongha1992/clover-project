@@ -5,12 +5,14 @@ import { theme, verticalCenter } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 
 interface IProps {
+  id: number;
   quantity: number;
-  clickPlusButton: () => void;
-  clickMinusButton: () => void;
+  clickPlusButton: (id: number, quantity: number) => void;
+  clickMinusButton: (id: number, quantity: number) => void;
 }
 
 const CountButton = ({
+  id,
   quantity,
   clickPlusButton,
   clickMinusButton,
@@ -18,13 +20,17 @@ const CountButton = ({
   return (
     <Container>
       <Wrapper>
-        <Minus onClick={clickMinusButton}>
+        <Minus
+          onClick={() =>
+            clickMinusButton(id, quantity < 2 ? 1 : (quantity = quantity - 1))
+          }
+        >
           <SVGIcon name="minus" />
         </Minus>
         <Count>
-          <TextH6B margin="4px 0 0 0">{quantity ? quantity : 1}</TextH6B>
+          <TextH6B margin="4px 0 0 0">{quantity}</TextH6B>
         </Count>
-        <Plus onClick={clickPlusButton}>
+        <Plus onClick={() => clickPlusButton(id, (quantity = quantity + 1))}>
           <SVGIcon name="plus" />
         </Plus>
       </Wrapper>
@@ -62,4 +68,4 @@ const Count = styled.div`
   ${verticalCenter}
 `;
 
-export default CountButton;
+export default React.memo(CountButton);

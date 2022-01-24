@@ -5,27 +5,29 @@ import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
 import SVGIcon from '@utils/SVGIcon';
 import Tag from '@components/Shared/Tag';
+
 interface IProps {
   menu: any;
+  isCart?: boolean;
   isSoldout?: boolean;
   padding?: string;
-  clickMinusButton?: () => void;
-  clickPlusButton?: () => void;
 }
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
 
-const CartSheetItem = ({
-  menu,
-  isSoldout,
-  padding,
-  clickMinusButton,
-  clickPlusButton,
-}: IProps) => {
+const CartSheetItem = ({ menu, isSoldout, padding, isCart }: IProps) => {
   const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
+
+  const clickPlusButton = (id: number, quantity: number) => {
+    // 비동기 작업
+  };
+  const clickMinusButton = (id: number, quantity: number) => {
+    // 비동기 작업
+  };
+
   return (
-    <Container isSoldout={isSoldout} padding={padding}>
+    <Container isSoldout={isSoldout} padding={padding} isCart={isCart}>
       <Wrapper>
         <ImageWrapper>
           <ItemImage src={menu.url} alt="상품이미지" />
@@ -42,9 +44,11 @@ const CartSheetItem = ({
               </TextH5B>
               <TextH5B>{menu.price}원</TextH5B>
             </PriceWrapper>
-            <RemoveBtnContainer onClick={removeCartItemHandler}>
-              <SVGIcon name="defaultCancel" />
-            </RemoveBtnContainer>
+            {!isCart && (
+              <RemoveBtnContainer onClick={removeCartItemHandler}>
+                <SVGIcon name="defaultCancel" />
+              </RemoveBtnContainer>
+            )}
             <CountButtonContainer>
               {isSoldout ? (
                 <Tag
@@ -57,6 +61,7 @@ const CartSheetItem = ({
                 </Tag>
               ) : (
                 <CountButton
+                  id={menu.id}
                   quantity={menu.quantity}
                   clickPlusButton={clickPlusButton}
                   clickMinusButton={clickMinusButton}
@@ -79,7 +84,7 @@ const Container = styled.div<{
   width: 100%;
   height: 100%;
   background-color: ${({ isCart }) =>
-    !isCart ? theme.greyScale3 : theme.white};
+    isCart ? theme.white : theme.greyScale3};
   border-radius: 8px;
   margin-bottom: 8px;
   color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
