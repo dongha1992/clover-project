@@ -5,18 +5,25 @@ import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
 import SVGIcon from '@utils/SVGIcon';
 import Tag from '@components/Shared/Tag';
+import { useDispatch } from 'react-redux';
 
 interface IProps {
   menu: any;
   isCart?: boolean;
   isSoldout?: boolean;
   padding?: string;
+  removeCartItemHandler?: (id: number) => void;
 }
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
 
-const CartSheetItem = ({ menu, isSoldout, padding, isCart }: IProps) => {
-  const removeCartItemHandler = () => {};
+const CartSheetItem = ({
+  menu,
+  isSoldout,
+  padding,
+  isCart,
+  removeCartItemHandler,
+}: IProps) => {
   const clickRestockNoti = () => {};
 
   const clickPlusButton = (id: number, quantity: number) => {
@@ -45,7 +52,11 @@ const CartSheetItem = ({ menu, isSoldout, padding, isCart }: IProps) => {
               <TextH5B>{menu.price}원</TextH5B>
             </PriceWrapper>
             {!isCart && (
-              <RemoveBtnContainer onClick={removeCartItemHandler}>
+              <RemoveBtnContainer
+                onClick={() =>
+                  removeCartItemHandler && removeCartItemHandler(menu.id)
+                }
+              >
                 <SVGIcon name="defaultCancel" />
               </RemoveBtnContainer>
             )}

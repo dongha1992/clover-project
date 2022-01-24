@@ -1,13 +1,7 @@
-import React, { useState, ReactNode } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH6B, TextH7B } from '@components/Shared/Text';
-import {
-  FlexBetween,
-  FlexCol,
-  FlexRow,
-  FlexRowStart,
-  theme,
-} from '@styles/theme';
+import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
 
 type TProps = {
   option: any;
