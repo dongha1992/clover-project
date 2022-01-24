@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 
 type TProps = {
@@ -14,8 +14,6 @@ const initialState: TProps = {
   tempSelectedMenus: [],
   isFromDeliveryPage: false,
 };
-
-/* TODO: 로컬 스토리지에 담아야 함 */
 
 export const cart = createSlice({
   name: 'cart',

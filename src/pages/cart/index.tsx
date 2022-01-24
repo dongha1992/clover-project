@@ -21,7 +21,7 @@ import {
   FlexRow,
   fixedBottom,
 } from '@styles/theme';
-import { CartItem } from '@components/Pages/Cart';
+import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
 import { InfoMessage } from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
@@ -243,7 +243,8 @@ const CartPage = () => {
                     onChange={() => handleSelectCartItem(item.id)}
                     isSelected={checkedMenuList.includes(item.id)}
                   />
-                  <CartItem
+                  <CartSheetItem
+                    isCart
                     menu={item}
                     isSoldout={item.id === 1 && isSoldout}
                   />
