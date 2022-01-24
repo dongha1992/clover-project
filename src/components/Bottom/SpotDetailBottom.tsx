@@ -17,14 +17,12 @@ import {
  import { SET_SPOT_LIKED } from '@store/spot';
 import { useDispatch } from 'react-redux';
 
-
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
   const { spotDetail } = useSelector(spotSelector);
   const { showToast, hideToast } = useToast();
   const [spotLike, setSpotLike] = useState(spotDetail.liked);
-
 
   const goToCart = (e: any): void => {
     e.stopPropagation();
@@ -42,7 +40,7 @@ const SpotDetailBottom = () => {
     };
   
     spotLikeData();
-  }, [spotLike]);
+  }, [spotDetail.id, spotLike]);
 
   const hanlderLike = async () => {
     if(!spotLike){
