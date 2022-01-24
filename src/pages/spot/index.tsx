@@ -71,17 +71,6 @@ const SpotPage = () => {
   const { isSpotLiked } = useSelector(spotSelector);
 
   useEffect(()=> {
-    const getInfoData = async() => {
-      try{
-        const { data }  = await getInfo();
-          setSpotCount(data.data.spotCount);
-          setInfo(data.data);
-      }catch(err){
-        console.error(err);
-      };
-    };
-    getInfoData();
-
     //신규 스팟
     const getNewSpot = async() => {
       const params: IParamsSpots = {
@@ -141,6 +130,25 @@ const SpotPage = () => {
         console.error(err);
       };
     };
+    
+    getNewSpot();
+    getStationSpot();
+    getPopularSpot();
+    getEventSpot();
+  }, [isSpotLiked]);
+  console.log(stationSpot);
+
+  useEffect(()=> {
+    const getInfoData = async() => {
+      try{
+        const { data }  = await getInfo();
+          setSpotCount(data.data.spotCount);
+          setInfo(data.data);
+      }catch(err){
+        console.error(err);
+      };
+    };
+    getInfoData();
 
     //단골 스팟
     const getRegistration = async() => {
@@ -158,11 +166,7 @@ const SpotPage = () => {
     };
 
     getRegistration();
-    getNewSpot();
-    getStationSpot();
-    getEventSpot();
-    getPopularSpot();
-  },[isSpotLiked]);
+  },[]);
 
 <<<<<<< HEAD
   const goToShare = (): void => {
