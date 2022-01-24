@@ -149,7 +149,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
       };
     }
     getDetailStory();
-  }, [page]);
+  }, [id, page]);
 
   // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
   useEffect(() => {
@@ -169,6 +169,7 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
       // scroll event listener 해제
       window.removeEventListener("scroll", handleScroll);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[stories.length > 0]);
 
   // 스팟 상세 하단 스토리, 매장정보 스티키
