@@ -39,10 +39,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const { showToast, hideToast } = useToast();
   const [mouseMoved, setMouseMoved] = useState(false);
   const [spotLike, setSpotLike] = useState(list?.liked);
-  const [spotLikeCount, setSpotLikeCount] = useState(list?.likeCount);
   const [spotRegisteration, setSpotRegisteration] = useState(list.recruited);
   // const [registrations, setRegistrations] = useState<boolean>();
-
   const goToDetail = (id: number): void => {
     if (!mouseMoved) {
       router.push(`/spot/detail/${id}`);
@@ -73,8 +71,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       try {
         const { data } = await postSpotLike(list.id);
         if(data.code === 200 ){
-          setSpotLike(true);
-          setSpotLikeCount(spotLikeCount+1);
+          // setSpotLike(true);
           dispatch(SET_SPOT_LIKED({isSpotLiked: true}));
         }
       }catch(err){
@@ -84,8 +81,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       try{
         const { data } = await deleteSpotLike(list.id);
         if(data.code === 200){
-          setSpotLike(false);
-          setSpotLikeCount(spotLikeCount-1);
+          // setSpotLike(false);
           dispatch(SET_SPOT_LIKED({isSpotLiked: false}));
         }
       }catch(err){
@@ -147,8 +143,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 color={theme.greyScale65}
               >{`${Math.round(list.distance)}m`}</TextH6B>
               <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
-                <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
-                <TextB2R padding='4px 0 0 1px'>{spotLikeCount}</TextB2R>
+                <SVGIcon name={list?.liked ? 'likeRed18' : 'likeBorderGray'} />
+                <TextB2R padding='4px 0 0 1px'>{list?.likeCount}</TextB2R>
               </LikeWrapper>
             </LocationInfoWrapper>
           </Container>
@@ -161,7 +157,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <Container type="event">
                 <StorImgWrapper onClick={() => goToDetail(list.id)}>
                   <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
-                    <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
+                    <SVGIcon name={list?.liked ? 'likeRed18' : 'likeBorderGray'} />
                   </LikeWrapper>
                   <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
                 </StorImgWrapper>
