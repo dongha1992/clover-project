@@ -39,8 +39,8 @@ const QuickOrderPage = () => {
   const [arrivalDate, setArrivalDate] = useState({
     lunch: { type: 'lunch', msg: '' },
     dinner: { type: 'dinner', msg: '' },
-    dawn: { type: 'dawn', msg: '' },
-    delivery: { type: 'delivery', msg: '' },
+    morning: { type: 'morning', msg: '' },
+    parcel: { type: 'parcel', msg: '' },
   });
 
   /* 목업 데이터 로직 */
@@ -52,7 +52,8 @@ const QuickOrderPage = () => {
   /* 목업 데이터 로직 END */
 
   useEffect(() => {
-    setTime(Number(`${hours}.${format(minutes)}`));
+    // setTime(Number(`${hours}.${format(minutes)}`));
+    setTime(Number(`09.01`));
 
     if (hours >= 6 && hours < 18) {
       setNight(false);
@@ -66,11 +67,11 @@ const QuickOrderPage = () => {
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type1);
     } else if (time >= 9.3 && time < 11.0) {
       // 9시30분 ~ 11시
-      setPushStatus('part4');
+      setPushStatus('part2');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type2);
     } else if (time >= 11.0 && time < 17.0) {
       // 11시 ~ 17시
-      setPushStatus('part4');
+      setPushStatus('part3');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type3);
     } else {
       // 17시 ~ 24시
@@ -87,8 +88,8 @@ const QuickOrderPage = () => {
         setArrivalDate({
           lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
           dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
-          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
-          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
+          morning: { ...arrivalDate['morning'], msg: '다음날 배송' },
+          parcel: { ...arrivalDate['parcel'], msg: '다음날 배송' },
         });
         break;
 
@@ -97,8 +98,8 @@ const QuickOrderPage = () => {
         setArrivalDate({
           lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
           dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
-          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
-          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
+          morning: { ...arrivalDate['morning'], msg: '다음날 배송' },
+          parcel: { ...arrivalDate['parcel'], msg: '다음날 배송' },
         });
         break;
       case [6].includes(weeks):
@@ -120,16 +121,16 @@ const QuickOrderPage = () => {
               ).format('dddd')[0]
             }) 픽업 17:00-17:30`,
           },
-          dawn: {
-            ...arrivalDate['dawn'],
+          morning: {
+            ...arrivalDate['morning'],
             msg: `다음주 (${
               dayjs(
                 calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
               ).format('dddd')[0]
             }) 배송`,
           },
-          delivery: {
-            ...arrivalDate['delivery'],
+          parcel: {
+            ...arrivalDate['parcel'],
             msg: `다음주 (${
               dayjs(
                 calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
@@ -158,16 +159,16 @@ const QuickOrderPage = () => {
               ).format('dddd')[0]
             }) 픽업 17:00-17:30`,
           },
-          dawn: {
-            ...arrivalDate['dawn'],
+          morning: {
+            ...arrivalDate['morning'],
             msg: `이번주 (${
               dayjs(
                 calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
               ).format('dddd')[0]
             }) 픽업 17:00-17:30`,
           },
-          delivery: {
-            ...arrivalDate['delivery'],
+          parcel: {
+            ...arrivalDate['parcel'],
             msg: `이번주 (${
               dayjs(
                 calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
