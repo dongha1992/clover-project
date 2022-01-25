@@ -10,18 +10,29 @@ import {
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import Tag from '@components/Shared/Tag';
-import { Button } from '@components/Shared/Button';
-import { bottomSheetButton } from '@styles/theme';
+import { ICoupon } from '@pages/mypage/coupon';
 
-const MypageCouponItem = ({ coupon }: any) => {
+interface IProps {
+  coupon: ICoupon;
+  selectCouponHandler: (coupon: ICoupon) => void;
+  isSelected: boolean;
+}
+const MypageCouponItem = ({
+  coupon,
+  selectCouponHandler,
+  isSelected,
+}: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const isRateDiscount = coupon.type === 'rate';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 
-  const submitHandler = () => {};
   return (
-    <Container isDownload={coupon.isDownload}>
+    <Container
+      isDownload={coupon.isDownload}
+      isSelected={isSelected}
+      onClick={() => selectCouponHandler(coupon)}
+    >
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">
@@ -80,8 +91,9 @@ const MypageCouponItem = ({ coupon }: any) => {
   );
 };
 
-const Container = styled.div<{ isDownload: boolean }>`
-  border: 1px solid #dedede;
+const Container = styled.div<{ isDownload: boolean; isSelected?: boolean }>`
+  border: 1px solid
+    ${({ isSelected }) => (isSelected ? theme.brandColor : theme.brandColor5)};
   box-sizing: border-box;
   border-radius: 8px;
   margin-bottom: 8px;

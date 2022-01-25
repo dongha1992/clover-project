@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextH4B } from '@components/Shared/Text';
+import { TextH2B, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { setBottomSheet } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
-import { SPOT_ITEMS } from '@constants/mock';
 import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
+import { 
+  getNewSpots, 
+  getStationSpots, 
+  getSpotEvent ,
+  getSpotPopular,
+  getInfo,
+  getSpotRegistrations,
+} from '@api/spot';
+import { IParamsSpots, ISpotRegistrationsResponse, ISpots, ISpotsInfo } from '@model/index';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
 
-const text = {
-  mainTitle: `1,983개의 프코스팟의 \n${`회원`}님을 기다려요!`,
-  gotoWrite: '작성중인 프코스팟 신청서 작성을 완료해\n주세요!',
-  gotoShare:
-    '[헤이그라운드 서울숲점] 정식 오픈까지\n2명! 공유해서 빠르게 오픈해요',
-  normalTitle: '오늘 정심 함께 주문해요!',
-  normalNewSpotTitle: '신규 스팟',
-  normalFcoSpotTitle: '배송비 제로! 역세권 프코스팟',
-  eventTitle: '이벤트 진행중인 스팟',
-  trialTitle: '내가 자주가는 곳을 무표 픽업 스팟으로!',
-  trialSubTitle: '내 주변 가게가 보인다면? 👀함께 참여해요!',
-};
 
 const FCO_SPOT_BANNER = [
   {
     id: 1,
-    text: '나의 회사∙학교를 프코스팟으로 만들어보세요!',
+    text: '나의 회사∙학교를 프코스팟으로\n만들어보세요!',
     type: 'private',
     icon: 'blackCirclePencil',
   },
@@ -39,24 +40,91 @@ const FCO_SPOT_BANNER = [
   },
   {
     id: 3,
-    text: '내 단골카페에서 샐러드 픽업하기',
+    text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
     type: 'normal',
     icon: 'blackCirclePencil',
   },
 ];
 
-const SpotPage = () => {
-  const [mouseMoved, setMouseMoved] = useState(false);
-  const dispatch = useDispatch();
-  const router = useRouter();
+// TODO : 로그인 유저별 분기처리, 단골 api , 타입에러 
 
-  const goToShare = (): void => {
-    dispatch(INIT_BOTTOM_SHEET());
-    dispatch(
-      setBottomSheet({
-        content: <ShareSheet />,
-      })
-    );
+const SpotPage = () => {
+  const dispatch = useDispatch();
+  const { isSpotLiked } = useSelector(spotSelector);
+  const router = useRouter();
+  const [mouseMoved, setMouseMoved] = useState(false);
+  const [info, setInfo] = useState<ISpotsInfo>();
+  const [popularSpot, setPopularSpot] = useState<ISpots>();
+  const [newSpot, setNewSpot] = useState<ISpots>();
+  const [stationSpot, setStationSpot] = useState<ISpots>();
+  const [eventSpot, setEventSpot] = useState<ISpots>();
+  const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
+  const [spotCount, setSpotCount] = useState<number>(0);
+
+  const registrationsLen = info&&info?.recruitingSpotRegistrations?.length > 0;
+  const unsubmitSpotRegistrationsLen = info&&info?.unsubmitSpotRegistrations?.length > 0;
+  const trialRegistrationsLen = info&&info?.trialSpotRegistrations?.length > 0;
+
+  useEffect(()=> {
+    const params: IParamsSpots = {
+      latitude: null,
+      longitude: null,
+      size: 6,
+    };
+    // 순서대로: 신규스팟, 점심함께주문해요, 역세권스팟, 이벤트 스팟
+    axios
+      .all([getNewSpots(params), getSpotPopular(params), getStationSpots(params), getSpotEvent(params)])
+      .then(
+        axios.spread((...response) => {
+          setNewSpot(response[0].data.data);
+          setPopularSpot(response[1].data.data);
+          setStationSpot(response[2].data.data);
+          setEventSpot(response[3].data.data);
+        })
+      )
+      .catch((err)=> console.error(err));
+
+  }, [isSpotLiked]);
+
+  useEffect(()=> {
+    const getInfoData = async() => {
+      try{
+        const { data }  = await getInfo();
+          setSpotCount(data.data.spotCount);
+          setInfo(data.data);
+      }catch(err){
+        console.error(err);
+      };
+    };
+    getInfoData();
+
+    // 단골 스팟
+    const getRegistration = async() => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      try{
+        const { data } = await getSpotRegistrations(params);
+        setSpotRegistrations(data);
+      }catch(err){
+        console.error(err);
+      };
+    };
+
+    getRegistration();
+  },[]);
+
+  const goToShare = (e: any): void => {
+    if (!mouseMoved) {
+      dispatch(initBottomSheet());
+      dispatch(
+        setBottomSheet({
+          content: <ShareSheet />,
+        })
+      );
+    };
   };
 
   const goToSpotReq = (type: string) => {
@@ -69,12 +137,14 @@ const SpotPage = () => {
   };
 
   const goToSpotStatus = () => {
-    router.push('/spot/status');
+    if (!mouseMoved) {
+      router.push('/mypage/spot-status');
+    }
   };
 
+  
   const settings = {
     arrows: false,
-    dots: true,
     sliderToShow: 1,
     slidersToScroll: 1,
     speed: 500,
@@ -83,104 +153,203 @@ const SpotPage = () => {
     centerPadding: '20px',
   };
 
-  /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
+  const spotSettings = {
+    arrows: false,
+    sliderToShow: 3,
+    slidersToScroll: 1,
+    speed: 500,
+    centerMode: true,
+    infinite: false,
+    centerPadding: '0px',
+  };
+
+  const mainTitle = () => {
+    return (
+      <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n회원님을 기다려요!`}</TextH2B>
+    )
+  };
+  
   return (
     <Container>
-      <TextH2B padding="24px 0 0 0">{text.mainTitle}</TextH2B>
-      {/* 작성중인 스팟 신청서가 있는 경우 노출 */}
-      <HandleBoxWrapper>
-        <TextH4B>{text.gotoWrite}</TextH4B>
-        <IconWrapper>
-          <SVGIcon name="blackCirclePencil" />
-        </IconWrapper>
-      </HandleBoxWrapper>
-      {/* 프라이빗-트라이얼 기준 내가 신청한 스팟이나 참여한 스팟이 있는경우 노출*/}
-      <HandleBoxWrapper onClick={goToShare}>
-        <TextH4B>{text.gotoShare}</TextH4B>
-        <IconWrapper>
-          <SVGIcon name="blackCircleShare" />
-        </IconWrapper>
-      </HandleBoxWrapper>
-      {/* 스팟 신청 현황
-      <SpotStatusWrapper>
-        <TextH4B>{text.trialSpotOpenWait}</TextH4B>
-        <FlexStart margin='25px 0 0 0'>
-          <TextB2R margin='0 11px 0 0' onClick={goToSpotStatus} pointer>신청 현황 보기</TextB2R>
-          <TextH5B onClick={goToShare} pointer>공유하기</TextH5B>
-        </FlexStart>
-      </SpotStatusWrapper> */}
-      <SpotList items={SPOT_ITEMS} title={text.normalTitle} type="normal" />
-      <SpotList
-        items={SPOT_ITEMS}
-        title={text.normalNewSpotTitle}
-        type="normal"
-      />
-      <SpotList
-        items={SPOT_ITEMS}
-        title={text.normalFcoSpotTitle}
-        type="normal"
-      />
+      {mainTitle()}
       <SlideWrapper {...settings}>
-        {FCO_SPOT_BANNER.map((item) => {
-          return (
-            <SpotRegister
-              key={item.id}
+        {/* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
+          registrationsLen &&
+          <BoxHandlerWrapper
+            onMouseMove={() => setMouseMoved(true)}
+            onMouseDown={() => setMouseMoved(false)}
+            onClick={goToShare}
+          >
+            <FlexBetween height='92px' padding='22px'>
+              <TextH4B>
+                {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
+                <span>{`${5-info?.recruitingSpotRegistrations[0].recruitingCount}`}</span>
+                명만 더 주문 하면 정식오픈 돼요!
+              </TextH4B>
+              <IconWrapper>
+                <SVGIcon name="blackCircleShare" />
+              </IconWrapper>
+            </FlexBetween>
+          </BoxHandlerWrapper>
+        }
+        {/* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
+        registrationsLen &&
+          <BoxHandlerWrapper
+            onMouseMove={() => setMouseMoved(true)}
+            onMouseDown={() => setMouseMoved(false)}
+            onClick={goToShare}
+          >
+            <FlexBetween height='92px' padding='22px'>
+              <TextH4B>
+                {`[${info?.recruitingSpotRegistrations[0].placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
+              </TextH4B>
+              <IconWrapper>
+                <SVGIcon name="blackCircleShare" />
+              </IconWrapper>
+            </FlexBetween>
+          </BoxHandlerWrapper>
+        }
+        {/* 작성중인 스팟 신청서가 있는 경우 노출 */
+         unsubmitSpotRegistrationsLen &&
+            <BoxHandlerWrapper
               onMouseMove={() => setMouseMoved(true)}
               onMouseDown={() => setMouseMoved(false)}
-              onClick={() => goToSpotReq(item.type)}
+              onClick={goToSpotStatus}
             >
-              <FlexBetween>
-                <TextH4B color={theme.black}>{item.text}</TextH4B>
+              <FlexBetween height='92px' padding='22px'>
+                <TextH4B>{'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}</TextH4B>
                 <IconWrapper>
-                  <SVGIcon name={item.icon} />
+                  <SVGIcon name="blackCirclePencil" />
                 </IconWrapper>
               </FlexBetween>
-            </SpotRegister>
-          );
-        })}
+            </BoxHandlerWrapper>
+        }
+        {/* 내가 참여한 스팟 알림 카드*/
+        trialRegistrationsLen &&  
+          <BoxHandlerWrapper
+            onMouseMove={() => setMouseMoved(true)}
+            onMouseDown={() => setMouseMoved(false)}
+            onClick={goToSpotStatus}
+          >
+            <FlexBetween height='92px' padding='22px'>
+              <TextH4B>{'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}</TextH4B>
+              <IconWrapper>
+                <SVGIcon name="blackCircleShare" />
+              </IconWrapper>
+            </FlexBetween>
+          </BoxHandlerWrapper>
+        }
       </SlideWrapper>
-      <SpotList
-        items={SPOT_ITEMS}
-        title={text.eventTitle}
-        type="event"
-        btnText="주문하기"
-      />
-      <SpotList
-        items={SPOT_ITEMS}
-        title={text.trialTitle}
-        subTitle={text.trialSubTitle}
-        type="trial"
-        btnText="참여하기"
-      />
-      <SpotRegister>
-        <FlexBetween>
-          <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
-          <IconWrapper>
-            <SVGIcon name="blackCirclePencil" />
-          </IconWrapper>
-        </FlexBetween>
-      </SpotRegister>
+      {/* 근처 인기있는 스팟 */}
+      <TextH2B padding="49px 24px 0 24px">{popularSpot?.title}</TextH2B>
+      <SpotsSlideWrapper {...spotSettings}>
+            {popularSpot?.spots.map((list, idx)=>{
+              return (
+                <SpotList 
+                key={idx} 
+                list={list} 
+                type="normal" 
+              />
+            )})}
+      </SpotsSlideWrapper> 
+      {/* 신규 스팟 */}
+      <TextH2B padding="49px 24px 0 24px">{newSpot?.title}</TextH2B>
+      <SpotsSlideWrapper {...spotSettings}>
+          {newSpot?.spots.map((list, idx)=>{
+            return (
+              <SpotList 
+              key={idx}
+              list={list} 
+              type="normal" 
+            />
+          )})}
+      </SpotsSlideWrapper> 
+      {/* 역세권 스팟 */}
+      <TextH2B padding="49px 24px 0 24px">{stationSpot?.title}</TextH2B>
+      <SpotsSlideWrapper {...spotSettings}>
+          {stationSpot?.spots.map((list, idx)=>{
+            return (
+              <SpotList 
+              key={idx}
+              list={list} 
+              type="normal" 
+            />
+          )})}
+      </SpotsSlideWrapper> 
+      {/* 프라이빗 스팟 신청 CTA */}
+      <Wrapper>
+        <SpotRegistration  onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
+          <FlexBetween height='92px' padding='22px'>
+            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[0].text}</TextH4B>
+            <IconWrapper>
+              <SVGIcon name="blackCirclePencil" />
+            </IconWrapper>
+          </FlexBetween>
+        </SpotRegistration>
+      </Wrapper>
+      {/* 이벤트 중인 스팟 */}
+      <TextH2B padding='0 24px 0 24px'>{eventSpot?.title}</TextH2B>
+      <SpotListWrapper>
+      {
+        eventSpot?.spots.map((list, idx)=> {
+          return (
+            <SpotList
+            key={idx}
+            list={list}
+            type="event"
+          />    
+          )
+        })
+      } 
+      </SpotListWrapper>
+      {/* 단골가게 스팟 */}
+      <TextH2B padding='10px 24px 0 24px'>{spotRegistraions?.data.title}</TextH2B>
+      <TextB2R color={theme.greyScale65} padding="8px 24px 23px 24px">
+        {spotRegistraions?.data.subTitle}
+      </TextB2R>
+      <SpotListWrapper>
+      {
+        spotRegistraions?.data.spotRegistrations.map((list, idx)=> {
+          return (
+            <SpotList
+            key={idx}
+            list={list}
+            type="trial"
+          />
+    
+          )
+        })
+      }
+      </SpotListWrapper>
+      {/* 퍼블릭 스팟 신청 CTA */}
+      <Wrapper>
+        <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
+          <FlexBetween height='92px' padding='22px'>
+            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
+            <IconWrapper>
+              <SVGIcon name="blackCirclePencil" />
+            </IconWrapper>
+          </FlexBetween>
+        </SpotRegistration>
+      </Wrapper>
       <BottomStory>프코스팟 스토리</BottomStory>
+      {/* 우리가게 스팟 신청 CTA */}
+      <Wrapper>
+        <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
+          <FlexBetween height='92px' padding='22px'>
+            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[2].text}</TextH4B>
+            <IconWrapper>
+              <SVGIcon name="blackCirclePencil" />
+            </IconWrapper>
+          </FlexBetween>
+        </SpotRegistration>
+      </Wrapper>
     </Container>
   );
 };
 
 const Container = styled.main`
-  width: 100%;
-  ${homePadding};
-`;
-
-const HandleBoxWrapper = styled.section`
-  width: 100%;
-  height: 68px;
-  background: ${theme.greyScale3};
-  margin-top: 24px;
-  border-radius: 8px;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
+  // ${homePadding};
 `;
 
 const IconWrapper = styled.div`
@@ -196,21 +365,49 @@ const IconWrapper = styled.div`
 
 const SlideWrapper = styled(Slider)`
   width: 100%;
-  padding: 16px 0 0 0;
+  padding: 16px 24px 0 24px;
   .slick-slide > div {
     padding: 0 5px;
   }
 `;
 
-const SpotRegister = styled.div`
+const SpotsSlideWrapper = styled(Slider)`
   width: 100%;
-  padding: 16px 0 0 0;
+  padding: 16px 24px 0 24px;
+  .slick-slide{
+    width: 135px !important;
+  }
+`;
 
-  height: 81px;
+const SpotListWrapper = styled.section`
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 0 24px;
+`;
+
+const BoxHandlerWrapper = styled.div`
+  width: 100%;
   background: ${theme.greyScale3};
   border-radius: 8px;
-  padding: 16px;
+  cursor: pointer;
+  span {
+    color: ${theme.brandColor};
+  }
 `;
+
+const Wrapper = styled.div`
+  padding: 0 24px;
+`;
+const SpotRegistration = styled.div`
+  width: 100%;
+  background: ${theme.greyScale3};
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 48px 0;
+`;
+
 
 const BottomStory = styled.div`
   display: flex;
@@ -219,8 +416,8 @@ const BottomStory = styled.div`
   width: 100%;
   height: 514px;
   background: ${theme.greyScale6};
-  margin-top: 32px;
   font-weight: 700;
+  margin-bottom: 49px;
 `;
 
 export default SpotPage;

@@ -44,7 +44,6 @@ const Container = styled.div<{ isSticky: boolean }>`
   height: 48px;
   justify-content: space-between;
   width: 100%;
-  ${homePadding}
   background-color: ${theme.white};
   z-index: 100000;
 `;

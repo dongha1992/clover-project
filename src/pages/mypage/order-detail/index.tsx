@@ -7,6 +7,7 @@ import {
   FlexCol,
   FlexBetweenStart,
   FlexColEnd,
+  FlexEnd,
 } from '@styles/theme';
 import {
   TextH4B,
@@ -23,11 +24,36 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
+import router from 'next/router';
+import { setAlert } from '@store/alert';
+import { useDispatch, useSelector } from 'react-redux';
+import Tag from '@components/Shared/Tag';
+import { setBottomSheet } from '@store/bottomSheet';
+import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
+import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
+import { orderForm } from '@store/order';
+// temp
 
 // const status = 'cancel';
 // const status = 'progress' as const;
 // const status = 'ready';
+
 const status = 'complete';
+
+const isParcel = true;
+const isMorning = false;
+const isQuick = false;
+const isSpot = false;
+
+const disabledDates = [
+  '2022-01-24',
+  '2022-01-25',
+  '2022-01-26',
+  '2022-01-27',
+  '2022-01-28',
+];
+
+const otherDeliveryDate = ['2022-01-27'];
 
 interface IStatus {
   [index: string]: {
@@ -50,7 +76,10 @@ const OrderDetailPage = () => {
   const [itemList, setItemList] = useState([]);
   const [isShowOrderItemSection, setIsShowOrderItemSection] =
     useState<boolean>(false);
+
   const { showToast } = useToast();
+  const { deliveryDate } = useSelector(orderForm);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getCartList();
@@ -65,18 +94,16 @@ const OrderDetailPage = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
   };
 
-  const copyTextHandler = (e: any) => {
-    const clipboard = navigator.clipboard;
-    const { innerText } = e.target;
-
-    clipboard.writeText(innerText).then(() => {
-      showToast({
-        message: '복사되었습니다.',
-      });
-    });
+  const deliveryInfoSheetHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { innerText } = e.target as HTMLDivElement;
+    dispatch(
+      setBottomSheet({
+        content: (
+          <DeliveryInfoSheet title="운송장번호" copiedValue={innerText} />
+        ),
+      })
+    );
   };
-
-  const getInvoiceNumberHandler = () => {};
 
   const deliveryDescription = (status: string) => {
     switch (status) {
@@ -93,19 +120,11 @@ const OrderDetailPage = () => {
                 color={theme.brandColor}
                 padding="4px 0 0 4px"
                 textDecoration="underline"
-                onClick={copyTextHandler}
+                onClick={deliveryInfoSheetHandler}
               >
                 복사복사
               </TextH5B>
             </FlexRow>
-            <TextH6B
-              color={theme.greyScale65}
-              padding="4px 0 0 0"
-              textDecoration="underline"
-              onClick={getInvoiceNumberHandler}
-            >
-              배송조회하기
-            </TextH6B>
           </FlexBetween>
         );
       }
@@ -122,6 +141,106 @@ const OrderDetailPage = () => {
       default:
         return;
     }
+  };
+
+  const deliveryInfoRenderer = () => {
+    return (
+      <>
+        <FlexBetween>
+          <TextH4B>배송정보</TextH4B>
+        </FlexBetween>
+        <FlexCol padding="24px 0 0 0">
+          <FlexBetween>
+            <TextH5B>받는 사람</TextH5B>
+            <TextB2R>김프코</TextB2R>
+          </FlexBetween>
+          <FlexBetween margin="16px 0 0 0">
+            <TextH5B>휴대폰 번호</TextH5B>
+            <TextB2R>010-1232-2132</TextB2R>
+          </FlexBetween>
+          <FlexBetween margin="16px 0 0 0">
+            <TextH5B>배송방법</TextH5B>
+            <TextB2R>스팟배송 - 점심</TextB2R>
+          </FlexBetween>
+          <FlexBetweenStart margin="16px 0 24px 0">
+            <TextH5B>배송 예정실시</TextH5B>
+            <FlexColEnd>
+              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
+              <TextB3R color={theme.greyScale65}>
+                예정보다 빠르게 배송될 수 있습니다.
+              </TextB3R>
+              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+            </FlexColEnd>
+          </FlexBetweenStart>
+          <FlexBetweenStart>
+            <TextH5B>{isSpot ? '픽업장소' : '배송지'}</TextH5B>
+            {isSpot ? (
+              <FlexColEnd>
+                <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
+                <TextB3R color={theme.greyScale65}>
+                  서울 성동구 왕십리로 115 10층
+                </TextB3R>
+              </FlexColEnd>
+            ) : (
+              <FlexColEnd>
+                <TextB2R>서울 성동구 왕십리로 115</TextB2R>
+                <TextB2R>10층</TextB2R>
+              </FlexColEnd>
+            )}
+          </FlexBetweenStart>
+          {isParcel && (
+            <FlexBetweenStart margin="16px 0 24px 0">
+              <TextH5B>출입방법</TextH5B>
+              <FlexColEnd>
+                <TextB2R>공동현관 비밀번호</TextB2R>
+                <TextB2R>#1099</TextB2R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          )}
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            disabled={disabledButton}
+            onClick={changeDeliveryInfoHandler}
+          >
+            배송 정보 변경하기
+          </Button>
+        </FlexCol>
+      </>
+    );
+  };
+
+  const changeDeliveryInfoHandler = () => {
+    router.push({
+      pathname: '/mypage/order-detail/edit/[orderId]',
+      query: { orderId: 1 },
+    });
+  };
+
+  const cancelOrderHandler = () => {
+    dispatch(
+      setAlert({
+        alertMessage: '주문을 취소하시겠어요?',
+        onSubmit: () => cancelOrder(),
+        closeBtnText: '취소',
+      })
+    );
+  };
+  const cancelOrder = async () => {};
+
+  const changeDevlieryDateHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: (
+          <CalendarSheet
+            title="배송날짜 변경"
+            disabledDates={disabledDates}
+            otherDeliveryDate={otherDeliveryDate}
+          />
+        ),
+      })
+    );
   };
 
   const disabledButton = status === 'cancel';
@@ -192,6 +311,7 @@ const OrderDetailPage = () => {
             border
             margin="0 16px 0 0"
             disabled={disabledButton}
+            onClick={cancelOrderHandler}
           >
             주문 취소하기
           </Button>
@@ -200,87 +320,108 @@ const OrderDetailPage = () => {
             color={theme.black}
             border
             disabled={disabledButton}
+            onClick={changeDevlieryDateHandler}
           >
             배송일 수정하기
           </Button>
         </ButtonWrapper>
       </OrderInfoWrapper>
       <BorderLine height={8} />
-      <DevlieryInfoWrapper>
-        <FlexBetween>
-          <TextH4B>배송정보</TextH4B>
-        </FlexBetween>
-        <FlexCol padding="24px 0">
-          <FlexBetween>
-            <TextH5B>받는 사람</TextH5B>
-            <TextB2R>김프코</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0 0 0">
-            <TextH5B>휴대폰 번호</TextH5B>
-            <TextB2R>010-1232-2132</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0 0 0">
-            <TextH5B>배송방법</TextH5B>
-            <TextB2R>스팟배송 - 점심</TextB2R>
-          </FlexBetween>
-          <FlexBetweenStart margin="16px 0 0 0">
-            <TextH5B>픽업장소</TextH5B>
-            <FlexColEnd>
-              <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                서울 성동구 왕십리로 115 10층
-              </TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart margin="16px 0 24px 0">
-            <TextH5B>배송 예정실시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                예정보다 빠르게 배송될 수 있습니다.
-              </TextB3R>
-              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            disabled={disabledButton}
-          >
-            배송 정보 변경하기
-          </Button>
-        </FlexCol>
-      </DevlieryInfoWrapper>
-      <BorderLine height={8} margin="50px 0 0 0" />
+      <DevlieryInfoWrapper>{deliveryInfoRenderer()}</DevlieryInfoWrapper>
+      <BorderLine height={8} />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
         <FlexBetween>
-          <TextB2R>상품 금액</TextB2R>
+          <TextH5B>총 상품 금액</TextH5B>
           <TextB2R>222원</TextB2R>
         </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>상품할인금액</TextB2R>
+          <TextH5B>총 할인 금액</TextH5B>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>배송비</TextB2R>
+          <TextB2R>상품 할인</TextB2R>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="16px 0 0 0">
-          <TextB2R>할인쿠폰 사용</TextB2R>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>스팟 이벤트 할인</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>포인트 사용</TextB2R>
+          <TextB2R>쿠폰 사용</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
-          <TextH4B>총 결제금액</TextH4B>
+          <TextH5B>환경부담금 (일회용품)</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>배송비</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>배송비 할인</TextB2R>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+        <FlexBetween>
+          <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>12312원</TextH4B>
         </FlexBetween>
+        <FlexEnd padding="11px 0 0 0">
+          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            프코 회원
+          </Tag>
+          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+          <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+        </FlexEnd>
       </TotalPriceWrapper>
+      <BorderLine height={8} />
+      <RefundInfoWrapper>
+        <TextH4B padding="0 0 24px 0">환불정보</TextH4B>
+        <FlexBetween>
+          <TextH5B>총 상품 금액</TextH5B>
+          <TextB2R>222원</TextB2R>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextH5B>총 할인 금액</TextH5B>
+          <TextB2R>22원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="8px 0" />
+        <FlexBetween padding="8px 0 0 0">
+          <TextH5B>환경부담금 (일회용품)</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>배송비</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween>
+          <TextH5B>총 결제 금액</TextH5B>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>환불 포인트</TextB2R>
+          <TextB2R>12312원</TextB2R>
+        </FlexBetween>
+        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+        <FlexBetween>
+          <TextH4B>최종 환불금액</TextH4B>
+          <TextH4B>12312원</TextH4B>
+        </FlexBetween>
+        <FlexEnd padding="11px 0 0 0">
+          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            프코 회원
+          </Tag>
+          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+          <TextH6B>n 포인트 (n%) 취소 예정</TextH6B>
+        </FlexEnd>
+      </RefundInfoWrapper>
     </Container>
   );
 };
@@ -322,6 +463,10 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 const TotalPriceWrapper = styled.div`
+  padding: 24px;
+`;
+
+const RefundInfoWrapper = styled.div`
   padding: 24px;
 `;
 
