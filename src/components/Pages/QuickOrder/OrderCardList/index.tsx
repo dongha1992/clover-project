@@ -46,13 +46,13 @@ const OrderCardList = ({
   useEffect(() => {
     return () => {
       clearInterval(timeCount.current);
-      dispatch(SET_TIMER_STATUS({ timerTooltip: false }));
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
     };
   }, []);
 
   useEffect(() => {
     clearInterval(timeCount.current);
-    dispatch(SET_TIMER_STATUS({ timerTooltip: false }));
+    dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
 
     switch (pushStatus) {
       case 'part1':
@@ -234,7 +234,7 @@ const OrderCardList = ({
   useEffect(() => {
     if (timer === '00:00') {
       clearInterval(timeCount.current);
-      dispatch(SET_TIMER_STATUS({ timerTooltip: false }));
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
     }
   }, [timer]);
 
@@ -250,8 +250,8 @@ const OrderCardList = ({
 
     setTimer(formatTime(mm, ss));
 
-    // timerTooltip show
-    dispatch(SET_TIMER_STATUS({ timerTooltip: true }));
+    // isTimerTooltip show
+    dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
   }, [format, getTimer]);
 
   const cardClick = (item: ICard) => {

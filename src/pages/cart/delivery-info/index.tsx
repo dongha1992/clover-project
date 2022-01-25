@@ -18,8 +18,9 @@ import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
-import useTimer from '@hooks/useTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { getFormatTime } from '@utils/getFormatTime';
+import { orderForm, SET_TIMER_STATUS } from '@store/order';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -36,12 +37,9 @@ interface IDeliveryMethod {
 
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
-/* TODO: 타이머 기능 */
 /* TODO: 최근 배송지 나오면 userDestination와 싱크 */
 /* TODO: 스팟 배송일 경우 추가 */
-
 /* TODO: 내 위치 검색 / 배송지 검색 -> 두 경우 available 체킹 리팩토링 */
-
 /* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -94,6 +92,7 @@ const DeliverInfoPage = () => {
     userDestination,
   } = useSelector(destinationForm);
 
+  const { isTimerTooltip } = useSelector(orderForm);
   const isSpotPickupPlace = selectedMethod === 'spot';
 
   const hasUserLocation =
@@ -261,9 +260,15 @@ const DeliverInfoPage = () => {
   }, []);
 
   useEffect(() => {
-    const currentTime = Number('09.21');
-    const result = checkTimerLimitHelper(currentTime);
-    setLimitDelvieryType(result);
+    const currentTime = Number('09.29');
+    const deliveryType = checkTimerLimitHelper(currentTime);
+
+    if (deliveryType) {
+      setLimitDelvieryType(deliveryType);
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    }
   }, []);
 
   return (
@@ -298,7 +303,7 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {limitDelvieryType && <CheckTimerByDelivery />}
+                      {isTimerTooltip && <CheckTimerByDelivery />}
                     </FlexBetween>
                     <Body>
                       <TextB3R color={theme.greyScale45}>
@@ -342,10 +347,8 @@ const DeliverInfoPage = () => {
                         )}
                       </RowLeft>
                       {isSelected && tooltipRender()}
-                      {index === 1 && (
-                        <TextH6B color={theme.brandColor}>
-                          점심배송 마감 29:30 전
-                        </TextH6B>
+                      {isTimerTooltip && item.name === limitDelvieryType && (
+                        <CheckTimerByDelivery />
                       )}
                     </FlexBetween>
                     <Body>
