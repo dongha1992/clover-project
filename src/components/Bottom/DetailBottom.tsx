@@ -7,13 +7,18 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
+import { TimerTooltip } from '@components/Shared/Tooltip';
+
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
+
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
   const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
+
+  //temp
   const numOfLike = 10;
   const tempStatus = 'isSoldout';
   const tempNotiOff = false;
@@ -91,6 +96,12 @@ const DetailBottom = () => {
           </TextH5B>
         </BtnWrapper>
       </Wrapper>
+      <TimerTooltip
+        message={'새벽배송 마감 30:00 전 (내일 새벽 7시 전 도착)'}
+        bgColor={theme.brandColor}
+        color={theme.white}
+        minWidth="78px"
+      />
     </Container>
   );
 };

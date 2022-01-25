@@ -22,6 +22,7 @@ const AddressDetailPage = () => {
   });
 
   // 배송 가능 여부
+
   const destinationStatus = checkDestinationHelper(availableDestination);
   const canNotDelivery = destinationStatus === 'noDelivery';
 
