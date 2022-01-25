@@ -25,7 +25,7 @@ const Carousel = ({ banners, setCountIndex }: IProps) => {
   return (
     <Container>
       <Slider {...settings}>
-        {banners.map((banner: any, index: number) => {
+        {banners?.map((banner: any, index: number) => {
           return (
             <ImageWrapper
               src={banner.imageUrl}

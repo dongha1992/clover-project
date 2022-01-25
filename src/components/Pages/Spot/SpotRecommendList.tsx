@@ -3,46 +3,70 @@ import styled from 'styled-components';
 import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
+import { IMAGE_S3_URL } from '@constants/mock/index';
+import { ISpotsItems } from '@components/Pages/Spot/SpotRecentSearch';
 
-export interface ISpotItem {
-  id: number;
-  name: string;
-  address: string;
-  meter: string;
-  type: string;
-  availableTime: string;
-  spaceType: string;
-  url: string;
+interface IParams {
+  item: ISpotsItems;
 }
 
-const SpotRecommendList = ({ item }: any): ReactElement => {
-  return (
-    <Container>
-      <FlexColStart>
-        <TextH5B>{item.name}</TextH5B>
-        <TextB3R padding="2px 0 0 0">{item.address}</TextB3R>
-        <MeterAndTime>
-          <TextH6B>{item.meter}m</TextH6B>
-          <Col />
-          <TextH6B>{item.type}</TextH6B>
-          <TextH6B>{item.availableTime}</TextH6B>
-        </MeterAndTime>
-        <div>
-          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-            {item.spaceType}
-          </Tag>
-        </div>
-      </FlexColStart>
-      <FlexCol>
-        <ImageWrapper>
-          <SpotImg src={item.url} />
-        </ImageWrapper>
-      </FlexCol>
+const SpotRecommendList = ({ item }: IParams): ReactElement => {
+
+  const typeTag = (): string | null => {
+    const type = item?.type;
+    switch (type) {
+      case 'PRIVATE': 
+        return '프라이빗';
+      case 'PUBLIC':
+        return '퍼블릭'
+      default:
+        return null;
+    }
+  };
+  
+  const pickUpTime = 
+    `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
+  
+    return (
+      <Container>
+        <FlexColStart>
+          <TextH5B>{item.name}</TextH5B>
+          <TextB3R padding="2px 0 0 0">
+            {`${item.location.address} ${item.location.addressDetail}`}
+          </TextB3R>
+          <MeterAndTime>
+            <TextH6B color={theme.greyScale65}>{`${Math.round(item.distance)}m`}</TextH6B>
+            <Col />
+            <TextH6B color={theme.greyScale65}>픽업&nbsp;</TextH6B>
+            <TextH6B color={theme.greyScale65}>
+              {pickUpTime}
+            </TextH6B>
+          </MeterAndTime>
+          {
+            !item.isTrial ?
+            <div>
+              <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+                {typeTag()}
+              </Tag>
+            </div>
+          :
+            <div>
+              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                트라이얼
+              </Tag>
+            </div>
+          }
+        </FlexColStart>
+        <FlexCol>
+          <ImageWrapper>
+            <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+          </ImageWrapper>
+        </FlexCol>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled.section`
   display: flex;
   justify-content: space-between;
   width: 100%;

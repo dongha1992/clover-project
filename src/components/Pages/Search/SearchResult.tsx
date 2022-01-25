@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { Item } from '@components/Item';
-import SpotItem from '@components/Pages/Spot/SpotItem';
+import SpotRecentSearch from '@components/Pages/Spot/SpotRecentSearch';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { setBottomSheet } from '@store/bottomSheet';
@@ -46,7 +46,7 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
             return !isSpot ? (
               <Item item={item} key={index} />
             ) : (
-              <SpotItem item={item} key={index} onClick={goToOrder} />
+              <SpotRecentSearch item={item} key={index} onClick={goToOrder} />
             );
           })
         ) : router.pathname === '/spot/search' ? (
@@ -87,6 +87,7 @@ const FilterRow = styled.div`
 const FilterWrapper = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const ItemListWrapper = styled.div<{ isSpot?: boolean }>`
@@ -94,6 +95,7 @@ const ItemListWrapper = styled.div<{ isSpot?: boolean }>`
     if (isSpot) {
       return css`
         display: flex;
+        flex-direction: column;
         width: 100%;
       `;
     } else {
