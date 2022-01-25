@@ -21,10 +21,7 @@ const SHARE_ICONS = [
 const ShareSheet = () => {
   const { menuItem } = useSelector(menuSelector);
 
-  const shareHandler = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    value: string
-  ) => {
+  const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
     let url = window.location.href;
     const shareMapper: { [index: string]: () => void } = {
       kakao: () => {

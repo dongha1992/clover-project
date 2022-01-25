@@ -6,8 +6,6 @@ import {
   FlexCol,
   FlexRow,
   homePadding,
-  FlexBetweenStart,
-  FlexColEnd,
   fixedBottom,
 } from '@styles/theme';
 import {
@@ -20,13 +18,12 @@ import {
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import BorderLine from '@components/Shared/BorderLine';
-import { ButtonGroup } from '@components/Shared/Button';
+import { Button } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
-import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import {
   getDestinations,
   editDestination,
@@ -40,8 +37,7 @@ import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-/*TODO: 주문자와 동일 기능 */
-/*TODO: reqBody Type  */
+import { PickupPlaceBox, DeliveryPlaceBox } from '@pages/cart/delivery-info';
 
 const mapper: Obj = {
   MORNING: '새벽배송',
@@ -54,14 +50,7 @@ interface IProps {
   id: number;
 }
 
-interface IAddress {
-  address: string;
-  addressDetail: string;
-  zipCode: string;
-  dong: string;
-}
-
-const AddressEditPage = ({ id }: IProps) => {
+const OrderDetailAddressEditPage = ({ id }: IProps) => {
   const [selectedAddress, setSelectedAddress] =
     useState<IDestinationsResponse>();
   const [selectedAccessMethod, setSelectedAccessMethod] =
@@ -78,66 +67,19 @@ const AddressEditPage = ({ id }: IProps) => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
 
-  const isParcel = selectedAddress?.delivery === 'PARCEL';
-  const isSpot = selectedAddress?.delivery === 'SPOT';
-  const isMorning = selectedAddress?.delivery === 'MORNING';
+  // const isParcel = selectedAddress?.delivery === 'PARCEL';
+  // const isSpot = selectedAddress?.delivery === 'SPOT';
+  // const isMorning = selectedAddress?.delivery === 'MORNING';
 
-  const getAddressItem = async () => {
-    const params = {
-      page: 1,
-      size: 10,
-    };
-    try {
-      const { data } = await getDestinations(params);
-      if (data.code === 200) {
-        const { destinations } = data.data;
-        const foundItem = destinations.find(
-          (item: IDestinationsResponse) => item.id === id
-        );
-        setSelectedAddress(foundItem);
+  const isParcel = false;
+  const isSpot = false;
+  const isMorning = true;
 
-        const isMorning = foundItem?.delivery === 'MORNING';
-
-        if (isMorning) {
-          const userSelectMethod = getValues(foundItem, 'deliveryMessageType');
-          const selectedMethod = ACCESS_METHOD.find(
-            (item) => item.value === userSelectMethod
-          );
-          setSelectedAccessMethod(selectedMethod);
-        }
-
-        setDeliveryEditObj({
-          deliveryName: foundItem?.name!,
-          receiverTel: foundItem?.receiverTel!,
-          receiverName: foundItem?.receiverName!,
-          deliveryMessage: foundItem?.deliveryMessage!,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const getDeliveryInfo = async () => {};
 
   const checkSamePerson = () => {};
 
-  const checkDefaultSpot = () => {
-    setIsDefaultSpot(!isDefaultSpot);
-  };
-
-  const removeAddressHandler = () => {
-    dispatch(
-      setAlert({
-        alertMessage: isSpot
-          ? '프코스팟을 삭제하시겠어요?'
-          : '배송지를 삭제하시겠어요?',
-        onSubmit: () => removeAddress(),
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
-  };
-
-  const editAddressHandler = () => {
+  const editDeliveryInfoHandler = () => {
     if (!cheekBeforeEdit()) {
       return;
     }
@@ -145,7 +87,7 @@ const AddressEditPage = ({ id }: IProps) => {
     dispatch(
       setAlert({
         alertMessage: '내용을 수정했습니다.',
-        onSubmit: () => editAddress(),
+        onSubmit: () => editDeliveryInfo(),
         submitBtnText: '확인',
       })
     );
@@ -183,34 +125,8 @@ const AddressEditPage = ({ id }: IProps) => {
     }
   };
 
-  const editAddress = async () => {
-    const reqBody = {
-      id,
-      address: selectedAddress?.location.address,
-      addressDetail: selectedAddress?.location.addressDetail,
-      delivery: selectedAddress?.delivery,
-      deliveryMessage: deliveryEditObj.deliveryMessage,
-      deliveryMessageTypeType: selectedAccessMethod?.value!,
-      dong: selectedAddress?.location.dong,
-      main: isDefaultSpot,
-      name: deliveryEditObj.deliveryName,
-      receiverName: deliveryEditObj.receiverName,
-      receiverTel: deliveryEditObj.receiverTel,
-      zipCode: selectedAddress?.location.zipCode,
-    };
-
-    const { data } = await editDestination(id, reqBody);
-  };
-
-  const removeAddress = async () => {
-    try {
-      const { data } = await deleteDestinations(id);
-      if (data.code === 200) {
-        router.push('/mypage/address');
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const editDeliveryInfo = async () => {
+    const reqBody = {};
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,17 +142,27 @@ const AddressEditPage = ({ id }: IProps) => {
     );
   };
 
-  const changePickUpPlace = () => {
-    dispatch(setBottomSheet({ content: <PickupSheet /> }));
-  };
-
   useEffect(() => {
-    getAddressItem();
+    getDeliveryInfo();
   }, []);
 
   useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
+
+  const placeInfoRender = () => {
+    const deliveryType = 'parcel';
+
+    switch (deliveryType) {
+      case 'spot': {
+        return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
+      }
+
+      default: {
+        return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
+      }
+    }
+  };
 
   return (
     <Container>
@@ -271,32 +197,9 @@ const AddressEditPage = ({ id }: IProps) => {
         <BorderLine height={8} margin="24px 0" />
         <DevlieryInfoWrapper>
           <FlexBetween padding="0 0 24px 0">
-            <TextH4B>배송정보</TextH4B>
-            {isSpot && (
-              <TextH6B
-                color={theme.greyScale65}
-                textDecoration="underline"
-                onClick={changePickUpPlace}
-              >
-                픽업 장소 변경
-              </TextH6B>
-            )}
+            <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
           </FlexBetween>
-          <FlexCol>
-            <FlexBetween padding="0 0 16px 0">
-              <TextH5B>배송방법</TextH5B>
-              <TextB2R>{mapper[selectedAddress?.delivery!]}</TextB2R>
-            </FlexBetween>
-            <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{selectedAddress?.location.addressDetail}</TextB2R>
-                <TextB3R color={theme.greyScale65}>
-                  {selectedAddress?.location.address}
-                </TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          </FlexCol>
+          <FlexCol>{placeInfoRender()}</FlexCol>
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (
@@ -355,30 +258,17 @@ const AddressEditPage = ({ id }: IProps) => {
             </FlexCol>
           </VisitorAccessMethodWrapper>
         )}
-        <BorderLine height={8} margin="0 0 24px 0" />
-        {!isSpot && (
-          <FlexCol padding="0 24px 24px 24px">
-            <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
-            <TextInput
-              name="deliveryName"
-              value={deliveryEditObj?.deliveryName}
-              eventHandler={changeInputHandler}
-            />
-          </FlexCol>
-        )}
-        <FlexRow padding="0 24px">
-          <Checkbox onChange={checkDefaultSpot} isSelected={isDefaultSpot} />
-          <TextH5B padding="2px 0 0 8px">
-            {isSpot ? '기본 프코 스팟으로 설정' : '기본 배송지로 설정'}
-          </TextH5B>
-        </FlexRow>
       </Wrapper>
-      <ButtonGroup
-        rightButtonHandler={editAddress}
-        leftButtonHandler={removeAddress}
-        leftText="삭제하기"
-        rightText="수정하기"
-      />
+      <BtnWrapper>
+        <Button
+          height="100%"
+          width="100%"
+          borderRadius="0"
+          onClick={editDeliveryInfoHandler}
+        >
+          변경하기
+        </Button>
+      </BtnWrapper>
     </Container>
   );
 };
@@ -386,7 +276,6 @@ const AddressEditPage = ({ id }: IProps) => {
 const Container = styled.div``;
 
 const Wrapper = styled.div`
-  margin-bottom: 70px;
   padding-top: 24px;
 `;
 
@@ -416,11 +305,16 @@ const MustCheckAboutDelivery = styled.div`
   border-radius: 8px;
 `;
 
+const BtnWrapper = styled.div`
+  ${fixedBottom}
+  display: flex;
+`;
+
 export async function getServerSideProps(context: any) {
-  const { id } = context.query;
+  const { orderId } = context.query;
 
   return {
-    props: { id: Number(id) },
+    props: { orderId: Number(orderId) },
   };
 }
-export default AddressEditPage;
+export default OrderDetailAddressEditPage;

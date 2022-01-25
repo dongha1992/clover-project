@@ -4,6 +4,7 @@ import { TextH2B, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
+import StarRatingComponent from 'react-star-rating-component';
 
 const ReviewOnlyImage = ({
   reviews,
@@ -19,7 +20,22 @@ const ReviewOnlyImage = ({
             <TextH5B>{`(${reviews.length})`}</TextH5B>
           </Count>
           <Star>
-            <SVGIcon name="mockStar" />
+            <StarRatingComponent
+              name="rate"
+              editing={false}
+              starCount={5}
+              value={4.0}
+              renderStarIcon={(index, value) => {
+                return (
+                  <SVGIcon
+                    name={index <= value ? 'singleStar' : 'singleStarEmpty'}
+                  />
+                );
+              }}
+              renderStarIconHalf={(index, value) => {
+                return <SVGIcon name="singleStarHalf" />;
+              }}
+            />
           </Star>
         </Header>
         <ReviewSwipe>
@@ -107,7 +123,7 @@ const LastImg = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(36, 36, 36, 0.5);
-  z-index: 1000;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
