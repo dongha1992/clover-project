@@ -106,7 +106,7 @@ const SubmitPage = () => {
                 <TextH5B margin="0 0 8px 0">휴대폰 번호</TextH5B>
                 <TextB2R>01012341234</TextB2R>
               </Content>
-              {type === 'normal' && (
+              {type === 'owner' && (
                 <Content>
                   <TextH5B margin="0 0 8px 0">직급/호칭</TextH5B>
                   <TextB2R>사장님</TextB2R>

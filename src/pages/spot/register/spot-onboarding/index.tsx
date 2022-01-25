@@ -47,7 +47,7 @@ const SpotOnboardingPage = (): ReactElement => {
           <TextH4B margin="0 0 16px 0">연락처</TextH4B>
           <TextInput placeholder="휴대폰 번호 (-제외)" />
         </InputWrapper>
-        {type === 'normal' && (
+        {type === 'owner' && (
           <>
             <InputWrapper>
               <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>

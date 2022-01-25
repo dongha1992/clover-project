@@ -17,8 +17,8 @@ const FinishPage = () => {
     publicTitle: '내가 자주가는 장소로\n프코스팟 신청이 완료되었어요',
     publickDesc:
       '내가 자주 가는 장소로 참여하기가 100회가 되면\n오픈될 확률이 높아져요.',
-    normalTitle: '내 가게 프코스팟 신청이 완료되었어요.',
-    normalDesc:
+    ownerTitle: '내 가게 프코스팟 신청이 완료되었어요.',
+    ownerDesc:
       '신청 내용 환인 후 프코매니터가\n전화 및 방문해주실거예요. 조금만 기다려주세요!',
   };
 
@@ -30,8 +30,8 @@ const FinishPage = () => {
       case 'public': {
         return { textTitle: text.publicTitle, textDesc: text.publickDesc };
       }
-      case 'normal': {
-        return { textTitle: text.normalTitle, textDesc: text.normalDesc };
+      case 'owner': {
+        return { textTitle: text.ownerTitle, textDesc: text.ownerDesc };
       }
       default: {
         return { textTitle: text.privateTitle, textDesc: text.privateDesc };
@@ -57,7 +57,7 @@ const FinishPage = () => {
           </BtnWrapper>
         </OpenTipWrapper>
       )}
-      {type === 'normal' && (
+      {type === 'owner' && (
         <>
           <Row />
           <ChannelIokWrapper>

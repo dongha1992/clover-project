@@ -10,8 +10,8 @@ const SpotReqPage = () => {
   const text = {
     publicText: '0000번째 프코스팟의\n파트너가 되어보세요.',
     publicDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
-    normalText: '현재 xxxx명이\n프코스팟을 이용해요',
-    normalDesc: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
+    ownerText: '현재 xxxx명이\n프코스팟을 이용해요',
+    ownerDesc: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
     fcospotText: '단골카페를 프코스팟으로',
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
     privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
@@ -29,8 +29,8 @@ const SpotReqPage = () => {
       case 'public': {
         return { textTitle: text.publicText, textDesc: text.publicDesc };
       }
-      case 'normal': {
-        return { textTitle: text.normalText, textDesc: text.normalDesc };
+      case 'owner': {
+        return { textTitle: text.ownerText, textDesc: text.ownerDesc };
       }
       default: {
         return { textTitle: text.publicText, textDesc: text.publicDesc };

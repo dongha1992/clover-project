@@ -2,15 +2,27 @@ import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { textH5 } from '@styles/theme';
-import Link from 'next/link';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
+import { destinationForm } from '@store/destination';
+import { useSelector } from 'react-redux';
+import Link from 'next/link';
 
 const SpotHeader = () => {
+
+  const { userLocation, availableDestination, locationStatus } =
+  useSelector(destinationForm);
+
   const goToCart = () => {
     router.push('/cart');
   };
+  const goToLocation = (): void => {
+    router.push({
+      pathname: '/location',
+      query: { isSpot: true },
+    });
+  }
 
   return (
     <Container>
@@ -18,9 +30,13 @@ const SpotHeader = () => {
         <Left>
           <SVGIcon name="location" />
           <AddressWrapper>
-            <Link href="/location">
-              <a>내 위치 설정하기</a>
-            </Link>
+            <div onClick={goToLocation}>
+            {userLocation?.emdNm ? (
+                <a>{userLocation?.emdNm}</a>
+              ) : (
+                <a>내 위치 설정하기</a>
+              )}
+            </div>
           </AddressWrapper>
         </Left>
         <Right>
@@ -59,8 +75,6 @@ const Container = styled.div`
     margin: 0 auto;
     left: 0px;
   `};
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1))
-    drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 `;
 
 const Wrapper = styled.div`

@@ -41,7 +41,7 @@ const FCO_SPOT_BANNER = [
   {
     id: 3,
     text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
-    type: 'normal',
+    type: 'owner',
     icon: 'blackCirclePencil',
   },
 ];
@@ -128,12 +128,10 @@ const SpotPage = () => {
   };
 
   const goToSpotReq = (type: string) => {
-    if (!mouseMoved) {
-      router.push({
-        pathname: '/spot/spot-req',
-        query: { type },
-      });
-    }
+    router.push({
+      pathname: '/spot/spot-req',
+      query: { type },
+    });
   };
 
   const goToSpotStatus = () => {
@@ -163,15 +161,13 @@ const SpotPage = () => {
     centerPadding: '0px',
   };
 
-  const mainTitle = () => {
-    return (
-      <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n회원님을 기다려요!`}</TextH2B>
-    )
-  };
+
   
   return (
     <Container>
-      {mainTitle()}
+      <HeaderTitle>
+        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}<span>플린</span>님을 기다려요!</TextH2B>
+      </HeaderTitle>
       <SlideWrapper {...settings}>
         {/* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
           registrationsLen &&
@@ -350,6 +346,12 @@ const SpotPage = () => {
 
 const Container = styled.main`
   // ${homePadding};
+`;
+
+const HeaderTitle = styled.div`
+  span{
+    color: ${theme.brandColor};
+  }
 `;
 
 const IconWrapper = styled.div`
