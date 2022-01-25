@@ -20,7 +20,9 @@ import { query } from 'express';
 const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
+  const [isFocus, setIsFocus] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState('');
   const addressRef = useRef<HTMLInputElement>(null);
 
@@ -55,10 +57,12 @@ const LocationPage = () => {
 
   const addressInputHandler = () => {
     const keyword = addressRef.current?.value.length;
+    setIsTyping(true);
     if (addressRef.current) {
       if (!keyword) {
         setResultAddress([]);
         setIsSearched(false);
+        clearInputHandler();
       }
     }
   };
@@ -89,6 +93,21 @@ const LocationPage = () => {
         }
       }
     }
+  };
+
+  const focusInputHandler = () => {
+    setIsFocus(true);
+  };
+
+  const blurInputHandler = () => {
+    setIsFocus(false);
+  };
+
+  const clearInputHandler = () => {
+    if (addressRef.current) {
+      addressRef.current.value = '';
+    }
+    setIsTyping(false);
   };
 
   const goToMapScreen = (address: any): void => {
@@ -126,9 +145,9 @@ const LocationPage = () => {
                   <AddressItem
                     key={index}
                     roadAddr={address.roadAddrPart1}
-                    zipNo={address.zipNo}
                     bdNm={address.bdNm}
                     jibunAddr={address.jibunAddr}
+                    zipNo={address.zipNo}
                     onClick={() => goToMapScreen(address)}
                   />
                 );
@@ -146,6 +165,15 @@ const LocationPage = () => {
 
 const Wrapper = styled.div`
   padding: 8px 0px 24px;
+`;
+
+const TextInputWrapper = styled.div`
+  position: relative;
+  .removeSvg {
+    position: absolute;
+    right: 5%;
+    top: 32%;
+  }
 `;
 
 const CurrentLocBtn = styled.div`

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
 import QuickOrderHeader from './QuickOrderHeader';
@@ -12,8 +12,8 @@ const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
-const SpotRegisterHeader = dynamic(()=> import('./SpotRegisterHeader'));
-const CloseDefaultHeader = dynamic(()=> import('./CloseDefaultHeader'));
+const SpotRegisterHeader = dynamic(() => import('./SpotRegisterHeader'));
+const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Header = () => {
@@ -41,6 +41,7 @@ const Header = () => {
         '/payment': '결제',
         '/mypage/card': '결제관리',
         '/mypage/card/register': '카드등록',
+        '/mypage/card/edit': '카드 편집',
         '/mypage/card/register/term': '이용약관',
         '/mypage/order-detail': '주문 상세',
         '/mypage/order-delivery-history': '주문/배송 내역',
@@ -64,6 +65,7 @@ const Header = () => {
         '/mypage/term/location': '위치정보 서비스 이용 약관',
         '/mypage/setting': '앱설정',
         '/mypage/dib/subscription': '찜 관리',
+        '/mypage/order-detail/edit/[orderId]': '배송정보 변경',
         '/payment/finish': '결제완료',
         '/signup': '회원가입',
         '/signup/auth': '회원가입',
@@ -84,6 +86,7 @@ const Header = () => {
       };
 
       const title = headerTitleMap[currentPath];
+
       switch (true) {
         case ['/category', '/category/salad'].includes(currentPath):
           return <CategorySubHeader title={title} />;
@@ -123,7 +126,9 @@ const Header = () => {
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
-        case ['/spot/register', '/spot/register/spot-onboarding'].includes(currentPath): {
+        case ['/spot/register', '/spot/register/spot-onboarding'].includes(
+          currentPath
+        ): {
           return <SpotRegisterHeader title={title} />;
         }
         case ['/spot/register/submit/finish'].includes(currentPath): {

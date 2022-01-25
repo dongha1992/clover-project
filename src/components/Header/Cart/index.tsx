@@ -43,6 +43,7 @@ const Count = styled.div`
   line-height: 11.58px;
   letter-spacing: -0.4px;
   font-size: 8px;
+  padding-top: 2px;
   color: ${theme.white};
 `;
 
