@@ -13,7 +13,6 @@ import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 
 const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
-  console.log(searchResult);
   const dispatch = useDispatch();
   const router = useRouter();
 
