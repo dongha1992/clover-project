@@ -64,7 +64,7 @@ const ToastContainer = styled.div<{ duration: number }>`
   background: rgba(36, 36, 36, 0.9);
   border-radius: 8px;
   /* margin: 0 auto; */
-  z-index: 10;
+  z-index: 100;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
