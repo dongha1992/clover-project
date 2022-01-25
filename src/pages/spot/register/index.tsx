@@ -23,7 +23,7 @@ const RegisterPage = () => {
   const { type } = router.query;
 
   const goToSubmit = (): void => {
-    if (type === 'normal') {
+    if (type === 'owner') {
       router.push({
         pathname: '/spot/register/spot-onboarding',
         query: { type },

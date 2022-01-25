@@ -28,6 +28,7 @@ const LocationPage = () => {
 
   const router = useRouter();
   const dispatch = useDispatch();
+  const { isSpot } = router.query;
 
   const setCurrentLoc = (location: string) => {
     const locationInfoMsg = `${location}(으)로
@@ -112,10 +113,17 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    router.push({
-      pathname: '/location/address-detail',
-      query: { isLocation: true },
-    });
+    if(isSpot){
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isSpot: true },
+      });
+    }else {
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isLocation: true },
+      });  
+    }
   };
 
   return (
