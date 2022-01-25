@@ -55,6 +55,10 @@ const DetailBottom = () => {
     }
   }, []);
 
+  const msgHandler = () => {
+    setTooltipMsg(`${pushStatus} 마감 ${timer} 전`);
+  };
+
   const goToRestockSetting = () => {};
 
   const clickButtonHandler = () => {
@@ -96,12 +100,14 @@ const DetailBottom = () => {
           </TextH5B>
         </BtnWrapper>
       </Wrapper>
-      <TimerTooltip
-        message={'새벽배송 마감 30:00 전 (내일 새벽 7시 전 도착)'}
-        bgColor={theme.brandColor}
-        color={theme.white}
-        minWidth="78px"
-      />
+      <TimerTooltipWrapper>
+        <TimerTooltip
+          message={'새벽배송 마감 30:00 전 (내일 새벽 7시 전 도착)'}
+          bgColor={theme.brandColor}
+          color={theme.white}
+          minWidth="78px"
+        />
+      </TimerTooltipWrapper>
     </Container>
   );
 };
@@ -129,6 +135,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  position: relative;
   padding: 16px 24px;
   display: flex;
   width: 100%;
@@ -155,5 +162,15 @@ const BtnWrapper = styled.div`
 `;
 
 const LikeBtn = styled.div``;
+const TimerTooltipWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  top: -10%;
+  left: 30%;
+
+  ${({ theme }) => theme.mobile`
+    left: 25%;
+  `};
+`;
 
 export default DetailBottom;
