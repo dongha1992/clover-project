@@ -5,6 +5,7 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 export interface ISpotItem {
   id: number;
@@ -18,35 +19,80 @@ export interface ISpotItem {
   method: string;
 }
 
+export interface ISpotsItems {
+  lunchDeliveryStartTime: string;
+  lunchDeliveryEndTime: string;
+  dinnerDeliveryStartTime: string;
+  dinnerDeliveryEndTime: string;
+  name: string;
+  location: {
+    address: string;
+    addressDetail: string;
+  };
+  distance: number;
+  isTrial: boolean;
+  images: [{
+    url: string;
+  }];
+  type: string;
+}
+
 interface IProps {
-  item: ISpotItem;
+  item: ISpotsItems;
   onClick: () => void;
   mapList?: boolean;
 }
 
-const SpotItem = ({ item, onClick, mapList }: IProps): ReactElement => {
+const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
+  const typeTag = (): string => {
+    const type = item.type;
+    switch(type){
+      case 'PRIVATE': 
+        return '프라이빗';
+      case 'PUBLIC':
+        return '퍼블릭';
+      default: 
+        return '';
+    };
+  };
+
+  const pickUpTime = 
+  `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
+
+
   return (
     <Container mapList>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
-        <TextB3R padding="2px 0 0 0">{item.address}</TextB3R>
+        <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
         <MeterAndTime>
-          <TextH6B>{item.meter}m</TextH6B>
+          <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
           <Col />
           <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-            {item.type}
+            픽업
           </TextH6B>
-          <TextH6B color={theme.greyScale65}>{item.availableTime}</TextH6B>
+          <TextH6B color={theme.greyScale65}>
+            {pickUpTime}
+          </TextH6B>
         </MeterAndTime>
-        <div>
-          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-            {item.spaceType}
-          </Tag>
-        </div>
+        {
+          !item.isTrial ?
+          <div>
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+              {typeTag()}
+            </Tag>
+          </div>
+        :
+          <div>
+            <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+              트라이얼
+            </Tag>
+          </div>
+        }
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          <SpotImg src={item.url} />
+          <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`}/>
         </ImageWrapper>
         <Button
           backgroundColor={theme.white}
@@ -62,7 +108,7 @@ const SpotItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   );
 };
 
-const Container = styled.div<{ mapList: boolean }>`
+const Container = styled.section<{ mapList: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -110,4 +156,4 @@ const Col = styled.div`
   background-color: ${theme.greyScale6};
   margin: 0 4px;
 `;
-export default React.memo(SpotItem);
+export default React.memo(SpotRecentSearch);

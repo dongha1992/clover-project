@@ -6,15 +6,17 @@ import SVGIcon from '@utils/SVGIcon';
 
 type TProps = {
   day: number;
-  handler: (date: number) => void;
+  value: string;
+  handler: (date: string) => void;
   selectedDay: boolean;
   index: number;
-  disabledDates: number[];
-  otherDeliveryDate?: number;
+  disabledDates: string[];
+  otherDeliveryDate?: string[] | [];
 };
 
 const Days = ({
   day,
+  value,
   handler,
   selectedDay,
   index,
@@ -23,11 +25,13 @@ const Days = ({
 }: TProps) => {
   const isSecondWeeeks = index > 5;
   const isToday = !index;
-  const hasOtherDeliveryDate = otherDeliveryDate === day;
+  const hasOtherDeliveryDate =
+    otherDeliveryDate && otherDeliveryDate[0] === value;
+  const disabledDate = disabledDates.includes(value);
 
   const dayColorRender = () => {
     switch (true) {
-      case disabledDates.includes(day): {
+      case disabledDate: {
         return 'greyScale25';
       }
       case selectedDay: {
@@ -57,7 +61,16 @@ const Days = ({
   };
 
   return (
-    <Container onClick={() => handler(index)} isSecondWeeeks={isSecondWeeeks}>
+    <Container
+      onClick={() => {
+        if (disabledDate) {
+          return;
+        } else {
+          handler(value);
+        }
+      }}
+      isSecondWeeeks={isSecondWeeeks}
+    >
       <Wrapper
         selectedDay={selectedDay}
         hasOtherDeliveryDate={hasOtherDeliveryDate}

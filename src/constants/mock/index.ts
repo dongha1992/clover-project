@@ -214,3 +214,4 @@ export const SPOT_ITEMS = [
     detail: {},
   },
 ];
+export const IMAGE_S3_URL = 'https://s3.ap-northeast-2.amazonaws.com/freshcode';

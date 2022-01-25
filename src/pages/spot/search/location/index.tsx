@@ -4,46 +4,83 @@ import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import SVGIcon from '@utils/SVGIcon';
-import { SpotItem } from '@components/Pages/Spot';
+import { SpotRecentSearch } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import Slider from 'react-slick';
 import Map from '@components/Map';
 
-const SPOT_RECOMMEND_LIST = [
+const RECENT_SPOT = [
   {
     id: 1,
-    name: '헤이그라운드 서울숲점',
-    address: '서울 성동구 왕십리로 115 10층',
-    meter: 121,
-    type: '픽업',
-    availableTime: '12:00-12:30 / 15:30-18:00',
-    spaceType: ['프라이빗', '5% 할인중'],
-    url: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    name: "유니트아이엔씨",
+    location: {
+      address: "서울 성동구 왕십리로 115 10층",
+      addressDetail: '',
+    },
+    distance: 121,
+    type: "PRIVATE",
+    lunchDeliveryStartTime: "11:00:00",
+    lunchDeliveryEndTime: "11:30:00",
+    dinnerDeliveryStartTime: "14:00:00",
+    dinnerDeliveryEndTime: "18:00:00",
+    // availableTime: "12:00-12:30 / 15:30-18:00",
+    // spaceType: "프라이빗",
+    images: [{
+      url: "/dev/spot/origin/1_20190213142552",
+    }],
+    method: "pickup"
   },
   {
     id: 2,
-    name: '헤이그라운드 성수점',
-    address: '서울 성동구 왕십리로 115 10층',
-    meter: 11,
-    type: '픽업',
-    availableTime: '12:00-12:30 / 15:30-18:00',
-    spaceType: '퍼블릭',
-    url: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
+    name: "test",
+    location: {
+      address: "서울 성동구 왕십리로 115 11층",
+      addressDetail: '',
+    },
+    distance: 11,
+    type: "PRIVATE",
+    lunchDeliveryStartTime: "11:00:00",
+    lunchDeliveryEndTime: "11:30:00",
+    dinnerDeliveryStartTime: "14:00:00",
+    dinnerDeliveryEndTime: "18:00:00",
+    // availableTime: "12:00-12:30 / 15:30-18:00",
+    // spaceType: "퍼블릭",
+    images: [{
+      url: "/dev/spot/origin/1_20190213142552",
+    }],
+    method: "pickup"
   },
   {
     id: 3,
-    name: '헤이그라운드 성수시작점',
-    address: '서울 성동구 왕십리로 115 10층 ㅁㄴㅇㅁㄴ',
-    meter: 11,
-    type: '픽업',
-    availableTime: '12:00-12:30 / 15:30-18:00',
-    spaceType: '트라이얼',
-    url: 'https://image.ajunews.com/content/image/2020/08/29/20200829141039628211.jpg',
+    name: "test11",
+    location: {
+      address: "서울 성동구 왕십리로 115 22층",
+      addressDetail: '',
+    },
+    distance: 11,
+    type: "PUBLIC",
+    lunchDeliveryStartTime: "11:00:00",
+    lunchDeliveryEndTime: "11:30:00",
+    dinnerDeliveryStartTime: "14:00:00",
+    dinnerDeliveryEndTime: "18:00:00",
+    // availableTime: "12:00-12:30 / 15:30-18:00",
+    // spaceType: "퍼블릭",
+    images: [{
+      url: "/dev/spot/origin/1_20190213142552",
+    }],
+    method: "pickup"
   },
 ];
 
-const area = [
+export interface IArea{
+  location: string;
+  lat: string;
+  lng: string;
+}
+
+
+const area: IArea[] = [
   {
     location: '프레시코드',
     lat: '37.547907',
@@ -122,8 +159,8 @@ const SpotLocationPage = (): ReactElement => {
         />
         <SpotListWrapper>
           <SpotListSlider {...setting}>
-            {SPOT_RECOMMEND_LIST.map((item: any, index) => (
-              <SpotItem item={item} key={index} onClick={goToSpot} mapList />
+            {RECENT_SPOT.map((item: any, index) => (
+              <SpotRecentSearch item={item} key={index} onClick={goToSpot} mapList />
             ))}
           </SpotListSlider>
         </SpotListWrapper>

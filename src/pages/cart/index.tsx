@@ -80,6 +80,8 @@ const CartPage = () => {
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
   ]);
+  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
+
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -92,8 +94,14 @@ const CartPage = () => {
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = [30, 31, 1, 2, 3];
-  const otherDeliveryDate = 4;
+  const disabledDates = [
+    '2022-01-24',
+    '2022-01-25',
+    '2022-01-26',
+    '2022-01-27',
+    '2022-01-28',
+  ];
+  const otherDeliveryDate = ['2022-01-25'];
   const SPOT = true;
 
   useEffect(() => {
@@ -357,6 +365,8 @@ const CartPage = () => {
             <Calendar
               disabledDates={disabledDates}
               otherDeliveryDate={otherDeliveryDate}
+              selectedDeliveryDay={selectedDeliveryDay}
+              setSelectedDeliveryDay={setSelectedDeliveryDay}
             />
             {LUNCH_OR_DINNER.map((item, index) => {
               return (
