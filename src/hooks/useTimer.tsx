@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useInterval } from '@hooks/useInterval';
 
 const AUTH_LIMIT = 300;
@@ -6,6 +6,7 @@ const AUTH_LIMIT = 300;
 const useTimer = (limitTime?: number) => {
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
+  const [delay, setDelay] = useState<number | null>(1000);
   const timerRef = useRef(limitTime || AUTH_LIMIT);
 
   const timerHandler = useCallback((): void => {
@@ -20,7 +21,14 @@ const useTimer = (limitTime?: number) => {
 
   const formatTime = (t: number) => (t < 10 ? '0' + t : t + '');
 
-  useInterval(timerHandler, 1000);
+  useInterval(timerHandler, delay);
+
+  useEffect(() => {
+    if (timerRef.current < 0) {
+      setDelay(null);
+    }
+  }, [second]);
+
   return { minute: formatTime(minute), second: formatTime(second) };
 };
 
