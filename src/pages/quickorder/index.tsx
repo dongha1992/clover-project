@@ -17,7 +17,7 @@ import { orderForm } from '@store/order';
 dayjs.locale('ko');
 
 const QuickOrderPage = () => {
-  const { timerTooltip } = useSelector(orderForm);
+  const { isTimerTooltip } = useSelector(orderForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
@@ -307,7 +307,7 @@ const QuickOrderPage = () => {
           time={time}
           arrivalDate={arrivalDate}
         >
-          {timerTooltip && (
+          {isTimerTooltip && (
             <TimerTooltip
               bgColor={theme.brandColor}
               color={'#fff'}

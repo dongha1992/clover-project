@@ -8,21 +8,31 @@ import { getFormatTime } from '@utils/getFormatTime';
 
 const CheckTimerByDelivery = () => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
-  const { hours, minutes } = getCustomDate(new Date());
+  const { hours, minutes, seconds } = getCustomDate(new Date());
+
+  // const currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
+  const currentTime = Number('09.29');
 
   const getCurrentTargetDelivery = () => {
-    // const currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
-    const currentTime = Number('09.21');
     const result = checkTimerLimitHelper(currentTime);
-
     setTargetDelivery(result);
   };
 
-  const { minute, second } = useTimer(5);
+  const getRestTimeTilLimit = (): number => {
+    if (minutes >= 30) {
+      return (60 - minutes) * 60 - seconds;
+    } else {
+      return (30 - minutes) * 60 - seconds;
+    }
+  };
+
+  const { minute, second } = useTimer(getRestTimeTilLimit());
 
   useEffect(() => {
     getCurrentTargetDelivery();
+    getRestTimeTilLimit();
   }, []);
+
   return (
     <TextH6B
       color={theme.brandColor}
