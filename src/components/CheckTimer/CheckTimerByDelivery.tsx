@@ -15,7 +15,7 @@ const CheckTimerByDelivery = () => {
     setTargetDelivery(result);
   };
 
-  const { minute, second } = useTimer(1799);
+  const { minute, second } = useTimer(5);
 
   useEffect(() => {
     getCurrentTargetDelivery();
