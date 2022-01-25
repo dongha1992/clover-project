@@ -23,14 +23,14 @@ const useTimer = (limitTime?: number) => {
     setSecond(_second);
   }, [second, minute]);
 
-  useInterval(timerHandler, delay);
-
   useEffect(() => {
     if (timerRef.current < 0) {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
       setDelay(null);
     }
-  }, [second]);
+  }, [minute, second]);
+
+  useInterval(timerHandler, delay);
 
   return {
     minute: getFormatTime(minute || _minute),
