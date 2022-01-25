@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useInterval } from '@hooks/useInterval';
+import { getFormatTime } from '@utils/getFormatTime';
 
 const AUTH_LIMIT = 300;
 
@@ -19,8 +20,6 @@ const useTimer = (limitTime?: number) => {
     setSecond(_second);
   }, [second, minute]);
 
-  const formatTime = (t: number) => (t < 10 ? '0' + t : t + '');
-
   useInterval(timerHandler, delay);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const useTimer = (limitTime?: number) => {
     }
   }, [second]);
 
-  return { minute: formatTime(minute), second: formatTime(second) };
+  return { minute: getFormatTime(minute), second: getFormatTime(second) };
 };
 
 export default useTimer;

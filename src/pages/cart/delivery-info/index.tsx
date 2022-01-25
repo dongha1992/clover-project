@@ -19,6 +19,7 @@ import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import useTimer from '@hooks/useTimer';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -85,6 +86,7 @@ const recentDestination = false;
 
 const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [limitDelvieryType, setLimitDelvieryType] = useState<string>('');
   const {
     userLocation,
     availableDestination,
@@ -103,17 +105,6 @@ const DeliverInfoPage = () => {
     Object.values(userDestination).filter((item) => item).length > 0;
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
-    // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
-    if (
-      (!hasUserLocation && destinationStatus) ||
-      (hasUserLocation && destinationType)
-    ) {
-      setSelectedMethod(destinationStatus || destinationType);
-    }
-  }, []);
 
   const checkTermHandler = () => {};
 
@@ -258,6 +249,23 @@ const DeliverInfoPage = () => {
     }
   };
 
+  useEffect(() => {
+    // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
+    // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
+    if (
+      (!hasUserLocation && destinationStatus) ||
+      (hasUserLocation && destinationType)
+    ) {
+      setSelectedMethod(destinationStatus || destinationType);
+    }
+  }, []);
+
+  useEffect(() => {
+    const currentTime = Number('09.21');
+    const result = checkTimerLimitHelper(currentTime);
+    setLimitDelvieryType(result);
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -266,7 +274,6 @@ const DeliverInfoPage = () => {
           <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
             픽업
           </TextH5B>
-          <CheckTimerByDelivery />
           {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
             const isSelected = selectedMethod === item.value;
             return (
@@ -291,11 +298,7 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {index === 0 && (
-                        <TextH6B color={theme.brandColor}>
-                          점심배송 마감 29:30 전
-                        </TextH6B>
-                      )}
+                      {limitDelvieryType && <CheckTimerByDelivery />}
                     </FlexBetween>
                     <Body>
                       <TextB3R color={theme.greyScale45}>
