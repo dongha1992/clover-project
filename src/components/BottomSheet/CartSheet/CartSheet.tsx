@@ -12,7 +12,7 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useToast } from '@hooks/useToast';
 import { useInterval } from '@hooks/useInterval';
 import { Rolling } from '@components/Rolling';
-
+import { CheckTimerByDelivery } from '@components/CheckTimer';
 /* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
 */
@@ -132,7 +132,8 @@ const CartSheet = () => {
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
-          <Rolling list={ROLLING_DATA} />
+          {/* <Rolling list={ROLLING_DATA} /> */}
+          <CheckTimerByDelivery />
         </DeliveryInforContainer>
       </OrderInfoContainer>
       <ButtonContainer onClick={submitHandler}>
