@@ -7,8 +7,8 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
-import { TimerTooltip } from '@components/Shared/Tooltip';
-
+import { CheckTimerByDelivery } from '@components/CheckTimer';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 
@@ -55,10 +55,6 @@ const DetailBottom = () => {
     }
   }, []);
 
-  const msgHandler = () => {
-    setTooltipMsg(`${pushStatus} 마감 ${timer} 전`);
-  };
-
   const goToRestockSetting = () => {};
 
   const clickButtonHandler = () => {
@@ -82,6 +78,18 @@ const DetailBottom = () => {
     }
   };
 
+  useEffect(() => {
+    const currentTime = Number('09.29');
+    const deliveryType = checkTimerLimitHelper(currentTime);
+
+    // if (deliveryType) {
+    //   setLimitDelvieryType(deliveryType);
+    //   dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    // } else {
+    //   dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    // }
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -101,12 +109,7 @@ const DetailBottom = () => {
         </BtnWrapper>
       </Wrapper>
       <TimerTooltipWrapper>
-        <TimerTooltip
-          message={'새벽배송 마감 30:00 전 (내일 새벽 7시 전 도착)'}
-          bgColor={theme.brandColor}
-          color={theme.white}
-          minWidth="78px"
-        />
+        <CheckTimerByDelivery isTooltip />
       </TimerTooltipWrapper>
     </Container>
   );

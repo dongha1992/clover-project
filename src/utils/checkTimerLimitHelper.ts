@@ -6,10 +6,10 @@ const checkTimerLimitHelper = (currentTime: number): string => {
 
   switch (true) {
     case spotLunch: {
-      return '점심배송';
+      return '스팟점심';
     }
     case spotDinner: {
-      return '저녁배송';
+      return '스팟저녁';
     }
     case morning: {
       return '새벽배송';
