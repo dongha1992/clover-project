@@ -11,6 +11,7 @@ import { Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useToast } from '@hooks/useToast';
 import { useInterval } from '@hooks/useInterval';
+import { Rolling } from '@components/Rolling';
 
 /* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
@@ -68,18 +69,6 @@ const CartSheet = () => {
       showToast({ message: '장바구니에 담겼습니다.' });
     }, 500);
   };
-
-  const test = () => {
-    const rollingDataLen = ROLLING_DATA.length;
-    if (currentRollingIndex >= rollingDataLen - 1) {
-      setCurrentRollingIndex(0);
-    } else {
-      setCurrentRollingIndex((prev) => prev + 1);
-    }
-  };
-
-  useInterval(test, 3000);
-  /* TODO: cartSheetObj 가끔 못 찾음 원인 파악 */
 
   if (!Object.keys(cartSheetObj).length) {
     return <div>로딩</div>;
@@ -143,29 +132,7 @@ const CartSheet = () => {
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
-          <RollingWrapper>
-            <RollingBox>
-              {ROLLING_DATA.map((item, index) => {
-                const isTarget = currentRollingIndex === index;
-                const previousIndex =
-                  currentRollingIndex - 1 >= 0
-                    ? currentRollingIndex - 1
-                    : ROLLING_DATA.length - 1;
-                const isRolled = previousIndex === index;
-
-                return (
-                  <TextWrapper
-                    key={index}
-                    isTarget={isTarget}
-                    isRolled={isRolled}
-                  >
-                    <TextH5B padding="0 4px 0 0">{item.type}</TextH5B>
-                    <TextB2R>{item.description}</TextB2R>
-                  </TextWrapper>
-                );
-              })}
-            </RollingBox>
-          </RollingWrapper>
+          <Rolling list={ROLLING_DATA} />
         </DeliveryInforContainer>
       </OrderInfoContainer>
       <ButtonContainer onClick={submitHandler}>
@@ -205,45 +172,6 @@ const SelectedCartItemContainer = styled.div`
   width: 100%;
   overflow-y: scroll;
   max-height: 220px;
-`;
-
-const RollingWrapper = styled.div`
-  height: 25px;
-  width: 100%;
-`;
-
-const RollingBox = styled.ul`
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-`;
-
-const TextWrapper = styled.li<{ isTarget?: boolean; isRolled?: boolean }>`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  position: absolute;
-  transition: 0.5s;
-  transition: top 0.75s;
-  top: 100%;
-  z-index: 1;
-  background-color: #ffffff;
-
-  ${({ isTarget, isRolled }) => {
-    if (isTarget) {
-      return css`
-        top: 0;
-        z-index: 100;
-      `;
-    } else if (isRolled) {
-      return css`
-        top: -100%;
-        z-index: 10;
-      `;
-    }
-  }}
 `;
 
 const TotalSumContainer = styled.div`
