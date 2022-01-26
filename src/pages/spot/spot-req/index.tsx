@@ -4,9 +4,12 @@ import { TextH2B, TextB3R, TextH3B, TextH5B } from '@components/Shared/Text';
 import { theme, fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { INIT_SPOT_LOCATION } from '@store/destination';
 
 const SpotReqPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const text = {
     publicText: '0000번째 프코스팟의\n파트너가 되어보세요.',
     publicDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
@@ -39,6 +42,7 @@ const SpotReqPage = () => {
   };
 
   const goToRegister = () => {
+    dispatch(INIT_SPOT_LOCATION());
     router.push({
       pathname: '/spot/register',
       query: { type },
