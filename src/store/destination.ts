@@ -8,6 +8,12 @@ interface IAvailableDestination {
   parcel: boolean;
 }
 
+interface ISpotAddress {
+  addressDetail: string | undefined;
+  address: string | null;
+  bdNm: string | null; 
+}
+
 interface TProps {
   userDestination: IRegisterDestination;
   tempLocation: IJuso;
@@ -16,6 +22,7 @@ interface TProps {
   destinationStatus: string;
   userDestinationStatus: string;
   locationStatus: string;
+  spotLocation: ISpotAddress;
 }
 
 const locationState = {
@@ -43,6 +50,7 @@ const locationState = {
   lnbrMnnm: null,
   lnbrSlno: null,
   emdNo: null,
+  detailJuso: null,
 };
 
 const destinationState = {
@@ -58,6 +66,12 @@ const destinationState = {
   zipCode: '',
   deliveryMessageType: '',
 };
+
+const spotAddressState = {
+  addressDetail: '',
+  address: '',
+  bdNm: '',
+}
 
 const INITIAL_STATE: TProps = {
   userDestination: {
@@ -77,6 +91,9 @@ const INITIAL_STATE: TProps = {
   locationStatus: '',
   destinationStatus: '',
   userDestinationStatus: '',
+  spotLocation: {
+    ...spotAddressState,
+  },
 };
 
 export const destination = createSlice({
@@ -110,6 +127,12 @@ export const destination = createSlice({
     SET_USER_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
       state.userDestinationStatus = action.payload;
     },
+    SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
+      state.spotLocation = action.payload;
+    },
+    INIT_SPOT_LOCATION: (state, action: PayloadAction) => {
+      state.spotLocation = spotAddressState;
+    },
   },
 });
 
@@ -122,6 +145,8 @@ export const {
   INIT_LOCATION_TEMP,
   SET_DESTINATION_STATUS,
   SET_USER_DESTINATION_STATUS,
+  SET_SPOT_LOCATION,
+  INIT_SPOT_LOCATION,
 } = destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;

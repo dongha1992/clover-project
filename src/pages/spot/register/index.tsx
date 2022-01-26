@@ -3,21 +3,23 @@ import styled from 'styled-components';
 import { theme, FlexRow, fixedBottom } from '@styles/theme';
 import {
   TextH1B,
-  TextH3B,
   TextH4B,
   TextB3R,
   TextH5B,
+  TextB2R,
 } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import Checkbox from '@components/Shared/Checkbox';
 import { Button } from '@components/Shared/Button';
-import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
+import { useSelector, useDispatch } from 'react-redux';
+import { destinationForm } from '@store/destination';
 
 const RegisterPage = () => {
+  const { spotLocation } = useSelector(destinationForm);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
@@ -46,6 +48,12 @@ const RegisterPage = () => {
     );
   }, []);
 
+  const goToLocation = () => {
+    router.push({
+      pathname: '/spot/location',
+      query: { type },
+    });
+  }
   return (
     <Container>
       <TextH1B margin="24px 24px 56px 24px">
@@ -54,15 +62,20 @@ const RegisterPage = () => {
         어디신가요?
       </TextH1B>
       <FormWrapper>
-        <Wrapper>
+        <Wrapper >
           <TextH4B margin="0 0 16px 0">주소</TextH4B>
-          <Button backgroundColor={theme.white} color={theme.black} border>
-            장소 찾기
-          </Button>
-          {/* <Address>
-                <TextH3B>서울 동작구 동작대로 18길 11</TextH3B>
-                <TextB3R>8층 809호</TextB3R>
-            </Address> */}
+          <LocationWrapper onClick={goToLocation} >
+            {
+              !spotLocation.address?.length ?
+                <TextH4B center color={theme.black}>장소 찾기</TextH4B>
+              :
+                <>
+                  <TextH4B>{`${spotLocation.address} ${spotLocation.bdNm}`}</TextH4B>
+                  <TextB2R>{spotLocation.addressDetail}</TextB2R>
+                </>
+            }
+            
+          </LocationWrapper>
         </Wrapper>
         <Wrapper>
           <TextH4B margin="0 0 16px 0">장소명</TextH4B>
@@ -158,11 +171,12 @@ const Wrapper = styled.div`
   margin-bottom: 32px;
 `;
 
-const Address = styled.div`
+const LocationWrapper = styled.div`
   width: 100%;
   padding: 16px;
   border-radius: 8px;
   border: 1px solid ${theme.black};
+  cursor: pointer;
 `;
 const BottomWrapper = styled.section`
   padding: 32px 0 0 0;
@@ -170,17 +184,6 @@ const BottomWrapper = styled.section`
   border-top: 10px solid ${theme.greyScale6};
 `;
 
-const BottomSheetBtn = styled.button`
-  width: 100%;
-  height: 48px;
-  padding: 12px 16px;
-  border: 1px solid ${theme.greyScale15};
-  color: ${theme.greyScale45};
-  border-radius: 8px;
-  background: ${theme.white};
-  text-align: left;
-  cursor: pointer;
-`;
 
 const Row = styled.div`
   width: 100%;
