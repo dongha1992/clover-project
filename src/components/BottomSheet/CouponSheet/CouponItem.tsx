@@ -13,6 +13,8 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { FlexRow } from '@styles/theme';
 
 const CouponItem = ({ coupon, onClick }: any) => {
+  const [isShow, setIsShow] = useState(false);
+
   const isRateDiscount = coupon.type === 'rate';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 

@@ -27,6 +27,19 @@ const CartSheet = () => {
     setSelectedMenus([...selectedMenus, menu]);
   };
 
+  const getCalculateTotalPrice = () => {
+    return selectedMenus.reduce((acc: number, cur: any) => {
+      return acc + cur.price;
+    }, 0);
+  };
+
+  const removeCartItemHandler = (id: number): void => {
+    const newSelectedMenus = selectedMenus.filter(
+      (item: any) => item.id !== id
+    );
+    setSelectedMenus(newSelectedMenus);
+  };
+
   const submitHandler = () => {
     dispatch(INIT_BOTTOM_SHEET());
     dispatch(SET_CART_LISTS(selectedMenus));
@@ -82,15 +95,20 @@ const CartSheet = () => {
         {selectedMenus.length > 0 ? (
           <SelectedCartItemContainer>
             {selectedMenus.map((menu: any, index: number) => (
-              <CartSheetItem menu={menu} key={index} padding="16px" />
+              <CartSheetItem
+                menu={menu}
+                key={index}
+                padding="16px"
+                removeCartItemHandler={removeCartItemHandler}
+              />
             ))}
           </SelectedCartItemContainer>
         ) : null}
       </Wrapper>
       <OrderInfoContainer>
         <TotalSumContainer>
-          <TextH5B>총 개</TextH5B>
-          <TextH5B>0원</TextH5B>
+          <TextH5B>총 {selectedMenus.length}개</TextH5B>
+          <TextH5B>{getCalculateTotalPrice()}원</TextH5B>
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
@@ -128,8 +146,8 @@ const OptionalOption = styled.div`
 
 const OrderInfoContainer = styled.div`
   padding: 0 24px;
-  width: 100%;
   margin-bottom: 16px;
+  width: 100%;
 `;
 
 const SelectedCartItemContainer = styled.div`
