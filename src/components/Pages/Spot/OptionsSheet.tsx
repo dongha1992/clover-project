@@ -1,90 +1,103 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-
-const TIME = [
-  { id: 1, name: '11:00' },
-  { id: 2, name: '11:30' },
-  { id: 3, name: '12:00' },
-  { id: 4, name: '12:30' },
-  { id: 5, name: '13:00' },
-  { id: 6, name: '기타' },
-];
-
-const PRIVATE_PLACE = [
-  { id: 1, name: '회사' },
-  { id: 2, name: '학교' },
-  { id: 3, name: '공유오피스' },
-  { id: 4, name: '기타' },
-];
-
-const PICKUP = [
-  { id: 1, name: '공용 냉장고' },
-  { id: 2, name: '문서 수발실' },
-  { id: 3, name: '택배 보관함' },
-  { id: 4, name: '안내 데스크' },
-  { id: 5, name: '공용 테이블' },
-  { id: 6, name: '사무실 문 앞' },
-  { id: 7, name: '기타' },
-];
-
-const PUBLIC_PLACE = [
-  { id: 1, name: '편의점' },
-  { id: 2, name: '일반상점' },
-  { id: 3, name: '피트니스' },
-  { id: 4, name: '서점' },
-  { id: 5, name: '약국' },
-  { id: 6, name: '카페' },
-  { id: 7, name: '기타' },
-];
+import { getSpotRegisterationsOption } from '@api/spot';
+import { ISpotRegisterationsOpstions, IParamsSpotRegisterationsOptios } from '@model/index';
 
 interface IProps {
-  tab?: string;
+  tab: string;
 }
 
 const OptionsSheet = ({ tab }: IProps): ReactElement => {
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
-  const changeRadioHandler = (id: number) => {
-    setSelectedPickupPlace(id);
-  };
+  const [options, setOptions] = useState<ISpotRegisterationsOpstions>();
+
   const router = useRouter();
   const { type } = router.query;
 
+  const changeRadioHandler = (id: number) => {
+    setSelectedPickupPlace(id);
+  };
+
+  const onChangeTest = (e) => {
+    console.log(e.target.value);
+  };
   const selectTab = () => {
     if (tab === 'pickUp') {
-      return PICKUP;
+      return options?.pickupLocationTypeOptions;
     } else if (tab === 'time') {
-      return TIME;
+      return options?.lunchTimeOptions;
     } else if (tab === 'place' && type === 'private') {
-      return PRIVATE_PLACE;
+      return options?.placeTypeOptions;
     } else if (tab === 'place') {
-      return PUBLIC_PLACE;
+      return options?.placeTypeOptions;
     }
   };
+
+  const titleType = (): string | null => {
+    switch(tab){
+      case 'place':
+        return '장소 종류';
+      case 'time':
+        return '점심시간';
+      case 'pickUp':
+        return '픽업 장소';
+      default:
+        return null;
+    };
+  };
+  useEffect(()=> {
+    const typeUpperCase = () => {
+      switch(type){
+        case 'private':
+          return 'PRIVATE';
+        case 'owner':
+          return 'OWNER';
+        case 'public':
+          return 'PUBLIC';
+        default:
+          return null;
+      };
+    };
+    
+    const getRegisterationsOption = async() => {
+      const params: IParamsSpotRegisterationsOptios = {
+        type: typeUpperCase(),
+      };
+      try{
+        const { data } = await getSpotRegisterationsOption(params);
+        if(data.code === 200){
+          setOptions(data.data);
+        };
+      }catch(err){
+        console.error(err);
+      };
+    };
+    getRegisterationsOption();
+  }, []);
+
+
+  console.log('options', options);
   // const seletedTime = PICK_UP_PLACE.find((item)=> item.id === Number(selectedPickupPlace))?.name;
 
   return (
     <Container>
       <Wrapper>
         <TextH5B padding="24px 0 16px 0" center>
-          {tab === 'place'
-            ? '장소 종류'
-            : tab === 'time'
-            ? '점심 시간'
-            : '픽업장소'}
+          {titleType()}
         </TextH5B>
         <SelectWrapper>
-          {selectTab()?.map((item) => {
+          {selectTab()?.map((items, idx) => {
             return (
-              <Selected key={item.id}>
+              <Selected key={idx}>
                 <RadioButton
-                  onChange={() => changeRadioHandler(item.id)}
-                  isSelected={selectedPickupPlace === item.id}
+                  onChange={(e) => onChangeTest(e)}
+                  // isSelected={selectedPickupPlace === items.value}
                 />
-                <TextH5B padding="0 0 0 8px">{item.name}</TextH5B>
+                <TextH5B padding="0 0 0 8px">{items.name}</TextH5B>
               </Selected>
             );
           })}

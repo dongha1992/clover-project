@@ -7,6 +7,8 @@ import {
   ISpotDetailStoriesResponse,
   ISpotsInfoResponse,
   ISpotRegistrationsResponse,
+  IParamsSpotRegisterationsOptios,
+  ISpotRegisterationsOptiosResponse,
   } from '@model/index';
   
   export const getNewSpots = (
@@ -112,4 +114,10 @@ import {
     id: number,
     ): Promise<AxiosResponse<ISpotsResponse>> => {
       return Api.post(`/spot/v1/registrations/${id}/recruiting`, { params: id });
+  };
+
+  export const getSpotRegisterationsOption = (
+    params: IParamsSpotRegisterationsOptios,
+    ): Promise<AxiosResponse<ISpotRegisterationsOptiosResponse>> => {
+      return Api.get(`/spot/v1/registrations/options`, { params });
   };

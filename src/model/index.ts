@@ -659,3 +659,36 @@ export interface ITermResponse {
   message: string;
   data: ITerm;
 }
+
+export type TSpotRegisterationsOptiosType = 'PRIVATE' | 'PUBLIC' | 'OWNER' | null;
+
+export interface IParamsSpotRegisterationsOptios {
+  type: TSpotRegisterationsOptiosType;
+}
+
+export interface ISpotRegisterationsOpstions {
+  lunchTimeOptions : [
+    {
+      name: string;
+      value: string;
+    },
+  ];
+  placeTypeOptions: [
+    {
+      name: string;
+      value: string;
+    },
+  ];
+  pickupLocationTypeOptions: [
+    {
+      name: string;
+      value: string;
+    }
+  ];
+}
+
+export interface ISpotRegisterationsOptiosResponse {
+  code: number;
+  message: string;
+  data: ISpotRegisterationsOpstions;
+}
