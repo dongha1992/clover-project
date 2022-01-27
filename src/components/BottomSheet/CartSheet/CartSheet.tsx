@@ -180,7 +180,7 @@ const OrderInfoContainer = styled.div`
   padding: 0 24px;
   margin-bottom: 16px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 
 const SelectedCartItemContainer = styled.div`

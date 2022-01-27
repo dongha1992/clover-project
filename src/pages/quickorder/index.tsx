@@ -188,7 +188,6 @@ const QuickOrderPage = () => {
   const format = (t: number) => (t < 10 ? '0' + t : t + '');
 
   const getTimer = () => {
-    console.log('D');
     if (new Date().getMinutes() >= 30) {
       return (60 - new Date().getMinutes()) * 60 - new Date().getSeconds();
     } else {

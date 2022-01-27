@@ -47,7 +47,6 @@ const useTimer = () => {
   useEffect(() => {
     timerRef.current = getRestTimeTilLimit();
   }, [timer]);
-  console.log('!');
 
   return {
     timer,
