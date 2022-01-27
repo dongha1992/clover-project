@@ -7,11 +7,14 @@ import { theme } from '@styles/theme';
 import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { wrapper } from '@store/index';
 import { SET_IS_MOBILE } from '@store/common';
 import MobileDetect from 'mobile-detect';
+import { Stage } from '@enum/index';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 // persist
 import { persistStore } from 'redux-persist';
@@ -50,6 +53,16 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     authCheck();
   }, []);
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: process.env.STAGE === Stage.Development ? false : 3,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+      },
+    },
+  });
+
   const authCheck = async () => {
     const { loginType } = store.getState().common;
 
@@ -70,17 +83,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       <Head>
         <title>프레시코드</title>
       </Head>
-
-      <ThemeProvider
-        theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
-      >
-        <GlobalStyle />
-        <PersistGate persistor={store.__persistor}>
-          <Wrapper>
-            <Component {...pageProps} />
-          </Wrapper>
-        </PersistGate>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
+        >
+          <GlobalStyle />
+          <PersistGate persistor={store.__persistor}>
+            <Wrapper>
+              <ReactQueryDevtools initialIsOpen={false} />
+              <Component {...pageProps} />
+            </Wrapper>
+          </PersistGate>
+        </ThemeProvider>
+      </QueryClientProvider>
     </>
   );
 };

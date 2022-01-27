@@ -23,6 +23,7 @@ import { IParamsSpots, ISpotRegistrationsResponse, ISpots, ISpotsInfo } from '@m
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
+import { useQuery } from 'react-query';
 
 
 const FCO_SPOT_BANNER = [
@@ -65,26 +66,66 @@ const SpotPage = () => {
   const unsubmitSpotRegistrationsLen = info&&info?.unsubmitSpotRegistrations?.length > 0;
   const trialRegistrationsLen = info&&info?.trialSpotRegistrations?.length > 0;
 
-  useEffect(()=> {
-    const params: IParamsSpots = {
-      latitude: null,
-      longitude: null,
-      size: 6,
-    };
-    // 순서대로: 신규스팟, 점심함께주문해요, 역세권스팟, 이벤트 스팟
-    axios
-      .all([getNewSpots(params), getSpotPopular(params), getStationSpots(params), getSpotEvent(params)])
-      .then(
-        axios.spread((...response) => {
-          setNewSpot(response[0].data.data);
-          setPopularSpot(response[1].data.data);
-          setStationSpot(response[2].data.data);
-          setEventSpot(response[3].data.data);
-        })
-      )
-      .catch((err)=> console.error(err));
+  // react-query
+  const { data: stationSpotList } = useQuery(
+    ['spotList', 'station'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getStationSpots(params);
+      console.log('station spotList');
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
 
-  }, [isSpotLiked]);
+  const { data: newSpotList } = useQuery(
+    ['spotList', 'new'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getNewSpots(params);
+      console.log('new spotList');
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { data: eventSpotList } = useQuery(
+    ['spotList', 'event'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getSpotEvent(params);
+      console.log('event spotList');
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { data: popularSpotList } = useQuery(
+    ['spotList', 'popular'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getSpotPopular(params);
+      console.log('popular spotList');
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
 
   useEffect(()=> {
     const getInfoData = async() => {
@@ -161,8 +202,6 @@ const SpotPage = () => {
     centerPadding: '0px',
   };
 
-
-  
   return (
     <Container>
       <HeaderTitle>
@@ -237,9 +276,9 @@ const SpotPage = () => {
         }
       </SlideWrapper>
       {/* 근처 인기있는 스팟 */}
-      <TextH2B padding="49px 24px 0 24px">{popularSpot?.title}</TextH2B>
+      <TextH2B padding="49px 24px 0 24px">{popularSpotList?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-            {popularSpot?.spots.map((list, idx)=>{
+            {popularSpotList?.spots.map((list, idx)=>{
               return (
                 <SpotList 
                 key={idx} 
@@ -249,9 +288,9 @@ const SpotPage = () => {
             )})}
       </SpotsSlideWrapper> 
       {/* 신규 스팟 */}
-      <TextH2B padding="49px 24px 0 24px">{newSpot?.title}</TextH2B>
+      <TextH2B padding="49px 24px 0 24px">{newSpotList?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-          {newSpot?.spots.map((list, idx)=>{
+          {newSpotList?.spots.map((list, idx)=>{
             return (
               <SpotList 
               key={idx}
@@ -261,9 +300,9 @@ const SpotPage = () => {
           )})}
       </SpotsSlideWrapper> 
       {/* 역세권 스팟 */}
-      <TextH2B padding="49px 24px 0 24px">{stationSpot?.title}</TextH2B>
+      <TextH2B padding="49px 24px 0 24px">{stationSpotList?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-          {stationSpot?.spots.map((list, idx)=>{
+          {stationSpotList?.spots.map((list, idx)=>{
             return (
               <SpotList 
               key={idx}
@@ -284,10 +323,10 @@ const SpotPage = () => {
         </SpotRegistration>
       </Wrapper>
       {/* 이벤트 중인 스팟 */}
-      <TextH2B padding='0 24px 0 24px'>{eventSpot?.title}</TextH2B>
+      <TextH2B padding='0 24px 0 24px'>{eventSpotList?.title}</TextH2B>
       <SpotListWrapper>
       {
-        eventSpot?.spots.map((list, idx)=> {
+        eventSpotList?.spots.map((list, idx)=> {
           return (
             <SpotList
             key={idx}

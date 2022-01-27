@@ -17,4 +17,7 @@ module.exports = withBundleAnalyzer({
   images: {
     domains: ['data.0app0.com', 'www.newsworks.co.kr'],
   },
+  env: {
+    STAGE: process.env.STAGE,
+  },
 });
