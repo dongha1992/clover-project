@@ -5,28 +5,36 @@ import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
 import SVGIcon from '@utils/SVGIcon';
 import Tag from '@components/Shared/Tag';
+import { useDispatch } from 'react-redux';
+
 interface IProps {
   menu: any;
-  isShareSheet?: boolean;
   isCart?: boolean;
-  isPayment?: boolean;
   isSoldout?: boolean;
   padding?: string;
+  removeCartItemHandler?: (id: number) => void;
 }
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
 
 const CartSheetItem = ({
   menu,
-  isShareSheet,
-  isCart,
   isSoldout,
   padding,
+  isCart,
+  removeCartItemHandler,
 }: IProps) => {
-  const removeCartItemHandler = () => {};
   const clickRestockNoti = () => {};
+
+  const clickPlusButton = (id: number, quantity: number) => {
+    // 비동기 작업
+  };
+  const clickMinusButton = (id: number, quantity: number) => {
+    // 비동기 작업
+  };
+
   return (
-    <Container isSoldout={isSoldout} isCart={isCart} padding={padding}>
+    <Container isSoldout={isSoldout} padding={padding} isCart={isCart}>
       <Wrapper>
         <ImageWrapper>
           <ItemImage src={menu.url} alt="상품이미지" />
@@ -43,27 +51,34 @@ const CartSheetItem = ({
               </TextH5B>
               <TextH5B>{menu.price}원</TextH5B>
             </PriceWrapper>
-            {!isShareSheet && !isCart && (
-              <RemoveBtnContainer onClick={removeCartItemHandler}>
+            {!isCart && (
+              <RemoveBtnContainer
+                onClick={() =>
+                  removeCartItemHandler && removeCartItemHandler(menu.id)
+                }
+              >
                 <SVGIcon name="defaultCancel" />
               </RemoveBtnContainer>
             )}
-            {!isShareSheet && (
-              <CountButtonContainer>
-                {isSoldout ? (
-                  <Tag
-                    backgroundColor={theme.black}
-                    padding="6px 10px"
-                    borderRadius={32}
-                    onClick={clickRestockNoti}
-                  >
-                    <TextH6B color={theme.white}>재입고 알림</TextH6B>
-                  </Tag>
-                ) : (
-                  <CountButton quantity={menu.quantity} />
-                )}
-              </CountButtonContainer>
-            )}
+            <CountButtonContainer>
+              {isSoldout ? (
+                <Tag
+                  backgroundColor={theme.black}
+                  padding="6px 10px"
+                  borderRadius={32}
+                  onClick={clickRestockNoti}
+                >
+                  <TextH6B color={theme.white}>재입고 알림</TextH6B>
+                </Tag>
+              ) : (
+                <CountButton
+                  id={menu.id}
+                  quantity={menu.quantity}
+                  clickPlusButton={clickPlusButton}
+                  clickMinusButton={clickMinusButton}
+                />
+              )}
+            </CountButtonContainer>
           </FlexBetween>
         </ContentWrapper>
       </Wrapper>
@@ -80,7 +95,7 @@ const Container = styled.div<{
   width: 100%;
   height: 100%;
   background-color: ${({ isCart }) =>
-    !isCart ? theme.greyScale3 : theme.white};
+    isCart ? theme.white : theme.greyScale3};
   border-radius: 8px;
   margin-bottom: 8px;
   color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
