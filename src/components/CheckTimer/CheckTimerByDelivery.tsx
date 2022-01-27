@@ -13,6 +13,8 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
   const [isSetTimer, setIsSetTimer] = useState('');
 
+  const { timer } = useTimer();
+
   const msgMapper: Obj = {
     스팟저녁: '오늘 17시 전 도착',
     스팟점심: '오늘 12시 전 도착',
@@ -27,8 +29,11 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
     const result = checkTimerLimitHelper(currentTime);
     setTargetDelivery(result);
   };
-
-  const { timer } = useTimer();
+  const msgHandler = () => {
+    setIsSetTimer(
+      `${targetDelivery} 마감 ${timer} 전 (${msgMapper[targetDelivery]})`
+    );
+  };
 
   useEffect(() => {
     getCurrentTargetDelivery();
@@ -39,12 +44,6 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
       msgHandler();
     }
   }, [timer]);
-
-  const msgHandler = () => {
-    setIsSetTimer(
-      `${targetDelivery} 마감 ${timer} 전 (${msgMapper[targetDelivery]})`
-    );
-  };
 
   if (isTooltip) {
     return (

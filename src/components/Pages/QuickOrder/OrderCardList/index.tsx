@@ -241,7 +241,7 @@ const OrderCardList = ({
   const timerHandler = useCallback((): void => {
     const mm = Math.floor(timerRef.current / 60);
     const ss = Math.floor(timerRef.current % 60);
-    console.log(mm, ss, timerRef);
+
     const formatTime = (mm: number, ss: number) => {
       return `${format(mm)}:${format(ss)}`;
     };
