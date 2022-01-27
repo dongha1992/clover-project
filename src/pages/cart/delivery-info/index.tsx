@@ -103,6 +103,9 @@ const DeliverInfoPage = () => {
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
 
+  const currentTime = Number('09.29');
+  const deliveryType = checkTimerLimitHelper(currentTime);
+
   const dispatch = useDispatch();
 
   const checkTermHandler = () => {};
@@ -260,9 +263,6 @@ const DeliverInfoPage = () => {
   }, []);
 
   useEffect(() => {
-    const currentTime = Number('09.29');
-    const deliveryType = checkTimerLimitHelper(currentTime);
-
     if (deliveryType) {
       setLimitDelvieryType(deliveryType);
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));

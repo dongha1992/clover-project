@@ -26,8 +26,8 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
   const currentTime = Number('09.29');
 
   const getCurrentTargetDelivery = () => {
-    const result = checkTimerLimitHelper(currentTime);
-    setTargetDelivery(result);
+    const deliveryType = checkTimerLimitHelper(currentTime);
+    setTargetDelivery(deliveryType);
   };
   const msgHandler = () => {
     setIsSetTimer(

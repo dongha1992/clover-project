@@ -49,6 +49,9 @@ const CartSheet = () => {
   const { cartSheetObj } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
 
+  const currentTime = Number('09.29');
+  const deliveryType = checkTimerLimitHelper(currentTime);
+
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);
   };
@@ -75,9 +78,6 @@ const CartSheet = () => {
   };
 
   useEffect(() => {
-    const currentTime = Number('09.29');
-    const deliveryType = checkTimerLimitHelper(currentTime);
-
     if (deliveryType) {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
