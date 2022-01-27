@@ -241,7 +241,7 @@ const OrderCardList = ({
   const timerHandler = useCallback((): void => {
     const mm = Math.floor(timerRef.current / 60);
     const ss = Math.floor(timerRef.current % 60);
-
+    console.log(mm, ss, timerRef);
     const formatTime = (mm: number, ss: number) => {
       return `${format(mm)}:${format(ss)}`;
     };
@@ -249,7 +249,6 @@ const OrderCardList = ({
     timerRef.current = getTimer();
 
     setTimer(formatTime(mm, ss));
-
     // isTimerTooltip show
     dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
   }, [format, getTimer]);

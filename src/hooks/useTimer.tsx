@@ -3,38 +3,53 @@ import { useInterval } from '@hooks/useInterval';
 import { getFormatTime } from '@utils/getFormatTime';
 import { useDispatch } from 'react-redux';
 import { SET_TIMER_STATUS } from '@store/order';
+import getCustomDate from '@utils/getCustomDate';
+import { getFormatTimeStr } from '@utils/getFormatTime';
 
-const AUTH_LIMIT = 300;
+const AUTH_TIME_LIMIT = 299;
+const DELIVERY_TIME_LIMIT = 1799;
 
-const useTimer = (limitTime?: number) => {
-  const dispatch = useDispatch();
-  const [minute, setMinute] = useState<number>(0);
-  const [second, setSecond] = useState<number>(0);
+const useTimer = () => {
+  const { minutes, seconds } = getCustomDate(new Date());
+
   const [delay, setDelay] = useState<number | null>(1000);
-  const timerRef = useRef(limitTime || AUTH_LIMIT);
+  const [timer, setTimer] = useState<string>('');
 
-  const _minute = Math.floor(timerRef.current / 60);
-  const _second = Math.floor(timerRef.current % 60);
+  const timerRef = useRef<number>(DELIVERY_TIME_LIMIT);
+  const dispatch = useDispatch();
+
+  const getRestTimeTilLimit = (): number => {
+    if (minutes >= 30) {
+      return (60 - minutes) * 60 - seconds;
+    } else {
+      return (30 - minutes) * 60 - seconds;
+    }
+  };
 
   const timerHandler = useCallback((): void => {
-    timerRef.current -= 1;
+    const mm = Math.floor(timerRef.current / 60);
+    const ss = Math.floor(timerRef.current % 60);
 
-    setMinute(_minute);
-    setSecond(_second);
-  }, [second, minute]);
+    timerRef.current = getRestTimeTilLimit();
+
+    setTimer(getFormatTimeStr(mm, ss));
+  }, [timer, getRestTimeTilLimit]);
 
   useEffect(() => {
-    if (timerRef.current < 0) {
+    if (timer === '00:00') {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
       setDelay(null);
     }
-  }, [minute, second]);
+  }, [timer]);
+
+  useEffect(() => {
+    timerRef.current = getRestTimeTilLimit();
+  }, [minutes, seconds]);
 
   useInterval(timerHandler, delay);
 
   return {
-    minute: getFormatTime(minute || _minute),
-    second: getFormatTime(second || _second),
+    timer,
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { Select, MenuOption } from '@components/Shared/Dropdown';
@@ -6,6 +6,7 @@ import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
 import { cartForm, SET_CART_LISTS } from '@store/cart';
+import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import CartSheetItem from './CartSheetItem';
 import { Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -13,6 +14,8 @@ import { useToast } from '@hooks/useToast';
 import { useInterval } from '@hooks/useInterval';
 import { Rolling } from '@components/Rolling';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+
 /* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
 */
@@ -44,6 +47,7 @@ const CartSheet = () => {
 
   const dispatch = useDispatch();
   const { cartSheetObj } = useSelector(cartForm);
+  const { isTimerTooltip } = useSelector(orderForm);
 
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);
@@ -69,6 +73,17 @@ const CartSheet = () => {
       showToast({ message: '장바구니에 담겼습니다.' });
     }, 500);
   };
+
+  useEffect(() => {
+    const currentTime = Number('09.29');
+    const deliveryType = checkTimerLimitHelper(currentTime);
+
+    if (deliveryType) {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    }
+  }, []);
 
   if (!Object.keys(cartSheetObj).length) {
     return <div>로딩</div>;
@@ -133,7 +148,7 @@ const CartSheet = () => {
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
           {/* <Rolling list={ROLLING_DATA} /> */}
-          <CheckTimerByDelivery />
+          {isTimerTooltip && <CheckTimerByDelivery />}
         </DeliveryInforContainer>
       </OrderInfoContainer>
       <ButtonContainer onClick={submitHandler}>
