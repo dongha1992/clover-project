@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { theme, FlexRow, fixedBottom } from '@styles/theme';
 import {
@@ -23,7 +23,6 @@ const RegisterPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
-
   const goToSubmit = (): void => {
     if (type === 'owner') {
       router.push({
@@ -53,7 +52,8 @@ const RegisterPage = () => {
       pathname: '/spot/location',
       query: { type },
     });
-  }
+  };
+
   return (
     <Container>
       <TextH1B margin="24px 24px 56px 24px">
@@ -74,7 +74,6 @@ const RegisterPage = () => {
                   <TextB2R>{spotLocation.addressDetail}</TextB2R>
                 </>
             }
-            
           </LocationWrapper>
         </Wrapper>
         <Wrapper>
@@ -101,6 +100,7 @@ const RegisterPage = () => {
               픽업 장소 선택
               <SVGIcon name="triangleDown" />
             </Button>
+            <TextInput margin='8px 0 0 0' placeholder='기타 픽업 장소 입력' />
           </Wrapper>
         )}
         <Wrapper>
@@ -118,6 +118,7 @@ const RegisterPage = () => {
             공간 형태 선택
             <SVGIcon name="triangleDown" />
           </Button>
+          <TextInput margin='8px 0 0 0' placeholder='기타 장소 종류 입력' />
         </Wrapper>
         {type === 'private' && (
           <Wrapper>
@@ -173,7 +174,7 @@ const Wrapper = styled.div`
 
 const LocationWrapper = styled.div`
   width: 100%;
-  padding: 16px;
+  padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid ${theme.black};
   cursor: pointer;
