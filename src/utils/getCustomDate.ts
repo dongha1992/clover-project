@@ -35,8 +35,6 @@ const getCustomDate = (inputDate: Date): IResult => {
   const seconds = originalDate.getSeconds();
   const dates = originalDate.getDate();
 
-  console.log(seconds);
-
   const days = DAYS[originalDate.getDay()];
 
   if (strMonths.length === 1) {
