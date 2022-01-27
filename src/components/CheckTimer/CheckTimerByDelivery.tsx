@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import getCustomDate from '@utils/getCustomDate';
 import useTimer from '@hooks/useTimer';
 import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
@@ -12,7 +11,7 @@ interface IProps {
 }
 const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
-  const { hours, minutes, seconds } = getCustomDate(new Date());
+  const [isSetTimer, setIsSetTimer] = useState('');
 
   const msgMapper: Obj = {
     스팟저녁: '오늘 17시 전 도착',
@@ -29,36 +28,35 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
     setTargetDelivery(result);
   };
 
-  const getRestTimeTilLimit = (): number => {
-    if (minutes >= 30) {
-      return (60 - minutes) * 60 - seconds;
-    } else {
-      return (30 - minutes) * 60 - seconds;
-    }
-  };
-
-  const { minute, second } = useTimer(getRestTimeTilLimit());
+  const { timer } = useTimer();
 
   useEffect(() => {
     getCurrentTargetDelivery();
-    getRestTimeTilLimit();
   }, []);
+
+  useEffect(() => {
+    if (timer) {
+      msgHandler();
+    }
+  }, [timer]);
+
+  const msgHandler = () => {
+    setIsSetTimer(
+      `${targetDelivery} 마감 ${timer} 전 (${msgMapper[targetDelivery]})`
+    );
+  };
 
   if (isTooltip) {
     return (
       <TimerTooltip
-        message={`${targetDelivery} 마감 ${minute}:${second} 전 (${msgMapper[targetDelivery]})`}
+        message={isSetTimer}
         bgColor={theme.brandColor}
         color={theme.white}
         minWidth="78px"
       />
     );
   } else {
-    return (
-      <TextH6B
-        color={theme.brandColor}
-      >{`${targetDelivery}마감 ${minute}:${second} 전`}</TextH6B>
-    );
+    return <TextH6B color={theme.brandColor}>{isSetTimer}</TextH6B>;
   }
 };
 
