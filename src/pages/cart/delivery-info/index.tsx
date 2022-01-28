@@ -79,7 +79,7 @@ const DELIVERY_METHOD: any = {
   ],
 };
 
-const recentDestination = false;
+const recentDestination = '';
 
 const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<string>('');
@@ -88,6 +88,7 @@ const DeliverInfoPage = () => {
     availableDestination,
     destinationStatus,
     userDestination,
+    locationStatus,
   } = useSelector(destinationForm);
 
   const isSpotPickupPlace = selectedMethod === 'spot';
@@ -95,7 +96,7 @@ const DeliverInfoPage = () => {
   const hasUserLocation =
     Object.values(userLocation).filter((val) => val).length > 0;
 
-  let destinationType = checkDestinationHelper(availableDestination);
+  // let destinationType = checkDestinationHelper(availableDestination);
 
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
@@ -105,11 +106,23 @@ const DeliverInfoPage = () => {
   useEffect(() => {
     // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
     // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
-    if (
-      (!hasUserLocation && destinationStatus) ||
-      (hasUserLocation && destinationType)
-    ) {
-      setSelectedMethod(destinationStatus || destinationType);
+    console.log(
+      destinationStatus,
+      'destinationStatus',
+      locationStatus,
+      'locationStatus'
+    );
+    // 최근 배송 이력이 있는지
+    if (recentDestination) {
+      setSelectedMethod(recentDestination);
+    } else {
+      // 최근 배송 이력 없으면 아무것도 선택 안 한 상태
+      // if (
+      //   (!hasUserLocation && destinationStatus) ||
+      //   (hasUserLocation && destinationType)
+      // ) {
+      //   setSelectedMethod(destinationStatus || destinationType);
+      // }
     }
   }, []);
 
@@ -181,77 +194,80 @@ const DeliverInfoPage = () => {
   };
 
   const tooltipRender = () => {
-    const userSelectParcel = destinationType === 'parcel';
-    const userSelectNoQuick = destinationType === 'noQuick';
-    const userSelectNothing = destinationType === 'noDelivery';
+    console.log(destinationStatus, 'destinationStatus');
 
-    if (userSelectNothing) {
-      return;
-    }
+    //  <Tooltip message="택배배송만 가능한 지역입니다." top="25px" width="190px" />;
 
-    switch (selectedMethod) {
-      case 'morning': {
-        if (userSelectParcel) {
-          setSelectedMethod('parcel');
-          return (
-            <Tooltip
-              message="택배배송만 가능한 지역입니다."
-              top="25px"
-              width="190px"
-            />
-          );
-        } else {
-          return (
-            <Tooltip message="새벽배송 지역입니다." top="25px" width="150px" />
-          );
+    // <Tooltip message="새벽배송 지역입니다." top="25px" width="150px" />;
+
+    //  <Tooltip
+    //    message="새벽/택배배송이 가능한 지역입니다."
+    //    top="25px"
+    //    width="210px"
+    //  />;
+
+    // <Tooltip
+    //   message="퀵/새벽배송이 가능한 지역입니다."
+    //   top="25px"
+    //   width="200px"
+    // />;
+
+    if (recentDestination) {
+      if (destinationStatus) {
+        switch (destinationStatus) {
+          case 'morning': {
+          }
+          default: {
+            return '';
+          }
         }
+      } else {
       }
-      case 'parcel': {
-        if (userSelectParcel) {
-          return (
-            <Tooltip
-              message="택배배송만 가능한 지역입니다."
-              top="25px"
-              width="190px"
-            />
-          );
-        } else {
-          return (
-            <Tooltip
-              message="새벽/택배배송이 가능한 지역입니다."
-              top="25px"
-              width="210px"
-            />
-          );
+      // 최근 이력이 없을 경우, 첫 주문
+    } else {
+      // 배송지 주소 검색 후 배송 가능한 배송지 타입
+      if (destinationStatus) {
+        switch (destinationStatus) {
+          // morning && parcel && !quick
+          case 'morning': {
+          }
+          case 'parcel': {
+          }
+          // morning && quick && parcel
+          case 'spot': {
+          }
+          default: {
+            return '';
+          }
         }
-      }
-      case 'quick': {
-        if (userSelectParcel) {
-          setSelectedMethod('parcel');
-          return (
-            <Tooltip
-              message="택배배송만 가능한 지역입니다."
-              top="25px"
-              width="190px"
-            />
-          );
-        } else if (userSelectNoQuick) {
-          setSelectedMethod('morning');
-          return (
-            <Tooltip message="새벽배송 지역입니다." top="25px" width="160px" />
-          );
-        } else {
-          return (
-            <Tooltip
-              message="퀵/새벽배송이 가능한 지역입니다."
-              top="25px"
-              width="200px"
-            />
-          );
+      } else {
+        // 배송지 주소가 없으면 홈에서 획득한 위치정보
+        switch (locationStatus) {
+          // morning && parcel && !quick
+          case 'morning':
+          // morning && quick && parcel
+          case 'spot': {
+            return (
+              <Tooltip
+                message="새벽배송 지역입니다."
+                top="25px"
+                width="150px"
+              />
+            );
+          }
+          case 'parcel': {
+            return (
+              <Tooltip
+                message="택배배송만 가능한 지역입니다."
+                top="25px"
+                width="190px"
+              />
+            );
+          }
+          default: {
+            return '';
+          }
         }
-      }
-      default: {
-        return '';
       }
     }
   };
@@ -335,7 +351,7 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {isSelected && tooltipRender()}
+                      {tooltipRender()}
                       {index === 1 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전

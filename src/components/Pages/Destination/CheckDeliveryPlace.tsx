@@ -54,6 +54,7 @@ const CheckDeliveryPlace = () => {
 
         if (isLocation) {
           dispatch(SET_LOCATION_STATUS(status));
+          dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         } else {
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         }
@@ -68,7 +69,7 @@ const CheckDeliveryPlace = () => {
 
   const userPlaceInfoRender = (status?: string) => {
     switch (status) {
-      case 'quick': {
+      case 'spot': {
         return (
           <>
             <FlexRow>
@@ -122,7 +123,6 @@ const CheckDeliveryPlace = () => {
           </>
         );
       }
-      case 'noQuick':
       case 'morning': {
         return (
           <>
