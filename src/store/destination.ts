@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IJuso, IRegisterDestination } from '@model/index';
-
+import { TLocationType } from '@utils/checkDestinationHelper';
 interface IAvailableDestination {
   morning: boolean;
   quick: boolean;
@@ -15,7 +15,7 @@ interface TProps {
   availableDestination: IAvailableDestination;
   destinationStatus: string;
   userDestinationStatus: string;
-  locationStatus: string;
+  locationStatus: TLocationType;
 }
 
 const locationState = {
@@ -89,7 +89,8 @@ export const destination = createSlice({
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
     },
-    SET_LOCATION_STATUS: (state, action: PayloadAction<string>) => {
+    // 유저 위치 정보 획득
+    SET_LOCATION_STATUS: (state, action: PayloadAction<TLocationType>) => {
       state.locationStatus = action.payload;
     },
     SET_LOCATION_TEMP: (state, action: PayloadAction<IJuso>) => {
