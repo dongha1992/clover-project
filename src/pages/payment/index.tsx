@@ -101,7 +101,6 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { userDestinationStatus } = useSelector(destinationForm);
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -163,8 +162,6 @@ const PaymentPage = () => {
     router.push('/mypage/card/register');
   };
 
-  const isParcel = userDestinationStatus === 'parcel';
-  const isMorning = userDestinationStatus === 'morning';
   const isFcoPay = selectedPaymentMethod === 1;
 
   return (

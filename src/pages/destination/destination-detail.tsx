@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { CheckDeliveryPlace } from '@components/Pages/Destination';
+import { CheckDestinationPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
@@ -105,7 +105,7 @@ const DestinationDetailPage = () => {
 
   return (
     <Container>
-      <CheckDeliveryPlace />
+      <CheckDestinationPlace />
       <MapWrapper>
         <MapAPI
           centerLat={latitudeLongitude.latitude}

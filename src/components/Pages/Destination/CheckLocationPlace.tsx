@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'next/router';
 /* TODO: spot 추가 되어야 함 */
 
-const CheckDeliveryPlace = () => {
+const CheckLocationPlace = () => {
   const [formatAvailableDestination, setFormatAvailableDestination] =
     useState('');
 
@@ -165,4 +165,4 @@ const PlaceInfo = styled.div`
   flex-direction: column;
 `;
 
-export default React.memo(CheckDeliveryPlace);
+export default React.memo(CheckLocationPlace);

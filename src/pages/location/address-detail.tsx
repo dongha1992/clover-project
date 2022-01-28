@@ -5,7 +5,7 @@ import { Button, ButtonGroup } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
-import { CheckDeliveryPlace } from '@components/Pages/Destination/';
+import { CheckLocationPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
@@ -67,7 +67,7 @@ const AddressDetailPage = () => {
 
   return (
     <Container>
-      <CheckDeliveryPlace />
+      <CheckLocationPlace />
       <MapWrapper>
         <MapAPI
           centerLat={latitudeLongitude.latitude}
