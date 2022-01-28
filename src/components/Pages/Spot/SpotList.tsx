@@ -1,7 +1,6 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styled, { css } from 'styled-components';
 import {
-  TextH2B,
   TextB3R,
   TextH6B,
   TextB2R,
@@ -19,11 +18,11 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { INormalSpots } from '@model/index';
 import {   
   getSpotLike,
-  postSpotLike,
-  deleteSpotLike,
   postSpotRegistrations,
  } from '@api/spot';
- import { SET_SPOT_LIKED } from '@store/spot';
+import { useQuery, useQueryClient } from 'react-query';
+import { useDeleteLike, useOnLike } from 'src/query';
+// import { debounce } from 'lodash';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -38,7 +37,6 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
   const [mouseMoved, setMouseMoved] = useState(false);
-  const [spotLike, setSpotLike] = useState(list?.liked);
   const [spotRegisteration, setSpotRegisteration] = useState(list.recruited);
   // const [registrations, setRegistrations] = useState<boolean>();
   const goToDetail = (id: number): void => {
@@ -52,42 +50,26 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
     router.push('/cart');
   };
 
-  useEffect(()=> {
-    const spotLikeData = async() => {
-      try{
-        const { data } = await getSpotLike(list.id);
-        setSpotLike(data.data.liked)
-      }catch(err){
-        console.error(err);
-      };
-    };
-  
-    spotLikeData();
-  }, [list, spotLike]);
+  const { data: spotLiked, refetch } = useQuery(['spotLike', list?.id], async () => {
+    if (list?.id) {
+      const response = await getSpotLike(list?.id);
+      return response.data.data.liked;
+    }
+  });
+
+  // react-query
+  const onLike = useOnLike();
+  const deleteLike = useDeleteLike();
 
   const hanlderLike = async (e: any) => {
+    console.log('click');
     e.stopPropagation();
-    if(!spotLike){
-      try {
-        const { data } = await postSpotLike(list.id);
-        if(data.code === 200 ){
-          // setSpotLike(true);
-          dispatch(SET_SPOT_LIKED({isSpotLiked: true}));
-        }
-      }catch(err){
-        console.error(err);
-      };
-    }else if(spotLike){
-      try{
-        const { data } = await deleteSpotLike(list.id);
-        if(data.code === 200){
-          // setSpotLike(false);
-          dispatch(SET_SPOT_LIKED({isSpotLiked: false}));
-        }
-      }catch(err){
-        console.error(err);
-      };
-    };
+
+    if (spotLiked) {
+      deleteLike(list.id);
+    } else {
+      onLike(list.id);
+    }
   };
 
   const clickSpotOpen = async(id: number) => {
@@ -143,7 +125,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 color={theme.greyScale65}
               >{`${Math.round(list.distance)}m`}</TextH6B>
               <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
-                <SVGIcon name={list?.liked ? 'likeRed18' : 'likeBorderGray'} />
+                <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB2R padding='4px 0 0 1px'>{list?.likeCount}</TextB2R>
               </LikeWrapper>
             </LocationInfoWrapper>
@@ -157,7 +139,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <Container type="event">
                 <StorImgWrapper onClick={() => goToDetail(list.id)}>
                   <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
-                    <SVGIcon name={list?.liked ? 'likeRed18' : 'likeBorderGray'} />
+                    <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                   </LikeWrapper>
                   <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
                 </StorImgWrapper>

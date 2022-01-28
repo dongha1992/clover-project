@@ -19,10 +19,7 @@ import {
   getInfo,
   getSpotRegistrations,
 } from '@api/spot';
-import { IParamsSpots, ISpotRegistrationsResponse, ISpots, ISpotsInfo } from '@model/index';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { spotSelector } from '@store/spot';
+import { IParamsSpots, ISpotRegistrationsResponse, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
 
 
@@ -51,14 +48,9 @@ const FCO_SPOT_BANNER = [
 
 const SpotPage = () => {
   const dispatch = useDispatch();
-  const { isSpotLiked } = useSelector(spotSelector);
   const router = useRouter();
   const [mouseMoved, setMouseMoved] = useState(false);
   const [info, setInfo] = useState<ISpotsInfo>();
-  const [popularSpot, setPopularSpot] = useState<ISpots>();
-  const [newSpot, setNewSpot] = useState<ISpots>();
-  const [stationSpot, setStationSpot] = useState<ISpots>();
-  const [eventSpot, setEventSpot] = useState<ISpots>();
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
@@ -76,7 +68,6 @@ const SpotPage = () => {
         size: 6,
       };
       const response = await getStationSpots(params);
-      console.log('station spotList');
       return response.data.data;
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
@@ -91,7 +82,6 @@ const SpotPage = () => {
         size: 6,
       };
       const response = await getNewSpots(params);
-      console.log('new spotList');
       return response.data.data;
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
@@ -106,7 +96,6 @@ const SpotPage = () => {
         size: 6,
       };
       const response = await getSpotEvent(params);
-      console.log('event spotList');
       return response.data.data;
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
@@ -121,7 +110,6 @@ const SpotPage = () => {
         size: 6,
       };
       const response = await getSpotPopular(params);
-      console.log('popular spotList');
       return response.data.data;
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
@@ -351,7 +339,6 @@ const SpotPage = () => {
             list={list}
             type="trial"
           />
-    
           )
         })
       }
