@@ -31,10 +31,6 @@ const CheckDestinationPlacce = () => {
   const router = useRouter();
   const { isLocation } = router.query;
 
-  useEffect(() => {
-    checkAvailablePlace();
-  }, []);
-
   const checkAvailablePlace = async () => {
     dispatch(SET_IS_LOADING(true));
 
@@ -162,6 +158,10 @@ const CheckDestinationPlacce = () => {
       }
     }
   };
+
+  useEffect(() => {
+    checkAvailablePlace();
+  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
