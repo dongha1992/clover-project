@@ -40,10 +40,8 @@ interface IDeliveryMethod {
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
 /* TODO: 타이머 기능 */
-/* TODO: 최근 배송지 나오면 userDestination와 싱크 */
+/* TODO: 최근 배송지 나오면 userDestinationStatus와 싱크 */
 /* TODO: 스팟 배송일 경우 추가 */
-
-/* TODO: 내 위치 검색 / 배송지 검색 -> 두 경우 available 체킹 리팩토링 */
 
 /* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
 const DELIVERY_METHOD: any = {
@@ -85,51 +83,23 @@ const DELIVERY_METHOD: any = {
   ],
 };
 
-const recentDestination = '';
+const recentDestination = 'morning';
 
 const DeliverInfoPage = () => {
-  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [targetDeliveryType, setTargetDeliveryType] = useState<string>('');
   const {
-    userLocation,
-    availableDestination,
     destinationStatus,
     userDestination,
     locationStatus,
     userDestinationStatus,
   } = useSelector(destinationForm);
 
-  const isSpotPickupPlace = selectedMethod === 'spot';
-
-  const hasUserLocation =
-    Object.values(userLocation).filter((val) => val).length > 0;
-
-  // let destinationType = checkDestinationHelper(availableDestination);
+  const isSpotPickupPlace = userDestinationStatus === 'spot';
 
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    console.log(
-      destinationStatus,
-      'destinationStatus',
-      locationStatus,
-      'locationStatus'
-    );
-    // 최근 배송 이력이 있는지
-    if (recentDestination) {
-      dispatch(SET_USER_DESTINATION_STATUS(recentDestination));
-    } else {
-      // 최근 배송 이력 없으면 아무것도 선택 안 한 상태
-      // if (
-      //   (!hasUserLocation && destinationStatus) ||
-      //   (hasUserLocation && destinationType)
-      // ) {
-      //   setSelectedMethod(destinationStatus || destinationType);
-      // }
-    }
-  }, []);
 
   const checkTermHandler = () => {};
 
@@ -195,60 +165,101 @@ const DeliverInfoPage = () => {
   };
 
   const tooltipRender = () => {
-    // quick === spot
-
-    const destinationCanMorning =
-      destinationStatus === 'morning' || destinationStatus === 'spot';
-    const destinationCanParcel = destinationStatus === 'parcel';
-
-    //  <Tooltip message="택배배송만 가능한 지역입니다." top="25px" width="190px" />;
-
-    // <Tooltip message="새벽배송 지역입니다." top="25px" width="150px" />;
-
-    //  <Tooltip
-    //    message="새벽/택배배송이 가능한 지역입니다."
-    //    top="25px"
-    //    width="210px"
-    //  />;
-
-    // <Tooltip
-    //   message="퀵/새벽배송이 가능한 지역입니다."
-    //   top="25px"
-    //   width="200px"
-    // />;
-
-    if (recentDestination) {
-      switch (userDestinationStatus) {
-        case 'morning': {
-        }
-        default: {
-          return '';
-        }
+    switch (targetDeliveryType) {
+      case 'morning': {
+        return (
+          <Tooltip message="새벽배송이 가능해요!" top="25px" width="150px" />
+        );
       }
-
-      // 최근 이력이 없을 경우, 첫 주문
-    } else {
-      if (!userDestinationStatus) {
-        console.log(userDestinationStatus);
-      }
-      // 배송지 주소 검색 후 배송 가능한 배송지 타입
-      switch (userDestinationStatus) {
-        // morning && parcel && !quick
-        case 'morning': {
-        }
-        // morning && quick && parcel
-        case 'quick': {
-        }
-        case 'parcel': {
-        }
-
-        case '': {
-        }
+      case 'parcel': {
+        return (
+          <Tooltip message="택배배송만 가능해요!" top="25px" width="150px" />
+        );
       }
     }
   };
 
-  const isFirstOrder = !recentDestination && locationStatus;
+  const checkAvailableDeliveryType = () => {
+    // quick === spot
+
+    const noQuick = destinationStatus === 'morning';
+    const canEverything = destinationStatus === 'spot';
+    const canParcel = destinationStatus === 'parcel';
+
+    const locationCanEverything = locationStatus === 'spot';
+    const locationNoQuick = locationStatus === 'morning';
+    const locationCanParcel = locationStatus === 'parcel';
+
+    if (!userDestinationStatus) {
+      console.log(userDestinationStatus, 'userDestinationStatus 없음');
+    }
+
+    // 획득 위치 정보 있고 이전 주문 기록 없음
+    if (locationStatus && !userDestinationStatus) {
+      switch (true) {
+        case locationNoQuick:
+        case locationCanEverything:
+          {
+            setTargetDeliveryType('morning');
+          }
+          break;
+        case locationCanParcel:
+          {
+            setTargetDeliveryType('parcel');
+          }
+          break;
+        default:
+          return;
+      }
+    }
+
+    // 배송지 주소 검색 후 배송 가능한 배송지 타입
+    switch (userDestinationStatus) {
+      // morning && parcel && !quick
+      case 'morning':
+        {
+          if (canParcel) {
+            setTargetDeliveryType('parcel');
+            dispatch(SET_USER_DESTINATION_STATUS('parcel'));
+          }
+        }
+        break;
+      case 'parcel':
+        {
+          if (canEverything || noQuick) {
+            setTargetDeliveryType('morning');
+          } else {
+            dispatch(SET_USER_DESTINATION_STATUS('parcel'));
+          }
+        }
+        break;
+      // morning && quick && parcel
+      case 'quick':
+        {
+          if (canEverything) {
+            setTargetDeliveryType('morning');
+          } else if (noQuick) {
+            setTargetDeliveryType('morning');
+            dispatch(SET_USER_DESTINATION_STATUS('morning'));
+          } else if (canParcel) {
+            setTargetDeliveryType('parcel');
+            dispatch(SET_USER_DESTINATION_STATUS('parcel'));
+          }
+        }
+        break;
+    }
+  };
+
+  useEffect(() => {
+    checkAvailableDeliveryType();
+  }, [userDestinationStatus]);
+
+  useEffect(() => {
+    // 최근 배송 이력이 있는지
+    if (recentDestination && !userDestinationStatus) {
+      dispatch(SET_USER_DESTINATION_STATUS(recentDestination));
+    }
+  }, []);
 
   return (
     <Container>
@@ -329,7 +340,7 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {isFirstOrder === item.value && tooltipRender()}
+                      {targetDeliveryType === item.value && tooltipRender()}
                       {index === 1 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전
@@ -365,20 +376,19 @@ const DeliverInfoPage = () => {
                 변경하기
               </TextH6B>
             </FlexBetween>
-            {recentDestination || hasUserSelectDestination
-              ? placeInfoRender()
-              : ''}
-            {!hasUserSelectDestination && (
-              <BtnWrapper onClick={goToFindAddress}>
-                <Button
-                  backgroundColor={theme.white}
-                  color={theme.black}
-                  border
-                >
-                  {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
-                </Button>
-              </BtnWrapper>
-            )}
+            {hasUserSelectDestination ? placeInfoRender() : ''}
+            {!userDestinationStatus ||
+              (!hasUserSelectDestination && (
+                <BtnWrapper onClick={goToFindAddress}>
+                  <Button
+                    backgroundColor={theme.white}
+                    color={theme.black}
+                    border
+                  >
+                    {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
+                  </Button>
+                </BtnWrapper>
+              ))}
           </>
         )}
       </Wrapper>

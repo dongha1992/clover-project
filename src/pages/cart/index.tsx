@@ -38,11 +38,6 @@ import { setAlert } from '@store/alert';
 import { destinationForm } from '@store/destination';
 import { Obj } from '@model/index';
 
-const DISPOSABLE_LIST = [
-  { id: 1, value: 'fork', text: '포크/물티슈', price: 100 },
-  { id: 2, value: 'stick', text: '젓가락/물티슈', price: 100 },
-];
-
 const LUNCH_OR_DINNER = [
   {
     id: 1,
