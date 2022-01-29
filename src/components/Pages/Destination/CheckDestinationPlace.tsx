@@ -12,14 +12,20 @@ import {
   SET_LOCATION_STATUS,
 } from '@store/destination';
 import { useRouter } from 'next/router';
+import {
+  MorningInfo,
+  ParcelInfo,
+  CanNotDeliveryInfo,
+  SpotInfo,
+} from '@components/Pages/Destination';
 /* TODO: spot 추가 되어야 함 */
 
-const CheckDestinationPlace = () => {
+const CheckDestinationPlacce = () => {
   const [formatAvailableDestination, setFormatAvailableDestination] =
     useState('');
 
   const { isLoading } = useSelector(commonSelector);
-  const { tempLocation } = useSelector(destinationForm);
+  const { tempLocation, userDestinationStatus } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -68,81 +74,92 @@ const CheckDestinationPlace = () => {
   };
 
   const userPlaceInfoRender = (status?: string) => {
-    switch (status) {
-      case 'spot': {
-        return (
-          <>
-            <FlexRow>
-              <TextH2B>주변에</TextH2B>
-              <TextH2B color={theme.brandColor} padding="0 0 0 4px">
-                프코스팟
-              </TextH2B>
-              <TextH2B>이 있습니다.</TextH2B>
-            </FlexRow>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              점심·저녁 원하는 시간에 픽업 가능!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
-              서울 내 등록된 프코스팟에서 배송비 무료로 이용 가능해요
-            </TextB3R>
-          </>
-        );
+    const noQuick = status === 'morning';
+    const canEverything = status === 'spot';
+    const canParcel = status === 'parcel';
+    const canNotDelivery = status === 'noDelivery';
+
+    if (isLocation) {
+      // 홈 위치 검색
+      switch (status) {
+        case 'spot': {
+          return <SpotInfo />;
+        }
+        case 'parcel': {
+          return <ParcelInfo />;
+        }
+        case 'noDelivery': {
+          return <CanNotDeliveryInfo />;
+        }
+        case 'morning': {
+          return <MorningInfo />;
+        }
+        default:
+          return;
       }
-      case 'parcel': {
-        return (
-          <>
-            <FlexRow>
-              <TextH2B color={theme.brandColor}>택배배송</TextH2B>
-              <TextH2B padding="0 4px 0 0">만</TextH2B>
-              <TextH2B>가능한 지역입니다.</TextH2B>
-            </FlexRow>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              오후 5시까지 주문 시 당일 발송!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
-              전국 어디서나 이용할 수 있어요. (제주, 도서 산간지역 제외)
-            </TextB3R>
-          </>
-        );
+    } else {
+      if (canNotDelivery) {
+        return <CanNotDeliveryInfo />;
       }
-      case 'noDelivery': {
-        return (
-          <>
-            <FlexRow>
-              <TextH2B color={theme.brandColor} padding="0 4px 0 0">
-                배송불가
-              </TextH2B>
-              <TextH2B>지역입니다.</TextH2B>
-            </FlexRow>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              신선식품의 특성상 일부지역의 배송이 불가해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
-              (섬/공단지역/학교/학교 기숙사/병원/군부대/시장/백화점 등)
-            </TextB3R>
-          </>
-        );
+      // 배송정보 배송지 검색
+      switch (userDestinationStatus || location) {
+        // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
+        case 'morning': {
+          if (canEverything || noQuick) {
+            return <MorningInfo />;
+          } else if (canParcel) {
+            <ParcelInfo />;
+          }
+        }
+        case 'quick': {
+          if (canEverything) {
+            return (
+              <>
+                <FlexRow>
+                  <TextH2B color={theme.brandColor} padding="0 4px 0 0">
+                    퀵/새벽배송
+                  </TextH2B>
+                  <TextH2B>지역입니다.</TextH2B>
+                </FlexRow>
+                <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+                  오후 5시까지 주문 시 다음날 새벽에 도착!
+                </TextB3R>
+                <TextB3R color={theme.greyScale65}>
+                  서울 전체, 경기/인천 일부 지역 이용 가능해요
+                </TextB3R>
+              </>
+            );
+          } else if (noQuick) {
+            return <MorningInfo />;
+          } else if (canParcel) {
+            return <ParcelInfo />;
+          }
+        }
+        case 'parcel': {
+          if (canEverything || noQuick) {
+            return (
+              <>
+                <FlexRow>
+                  <TextH2B color={theme.brandColor} padding="0 4px 0 0">
+                    새벽/택배배송이 가능한
+                  </TextH2B>
+                  <TextH2B>지역입니다.</TextH2B>
+                </FlexRow>
+                <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+                  오후 5시까지 주문 시 다음날 새벽에 도착!
+                </TextB3R>
+                <TextB3R color={theme.greyScale65}>
+                  서울 전체, 경기/인천 일부 지역 이용 가능해요
+                </TextB3R>
+              </>
+            );
+          } else if (canParcel) {
+            return <ParcelInfo />;
+          }
+        }
+        default:
+          return;
       }
-      case 'morning': {
-        return (
-          <>
-            <FlexRow>
-              <TextH2B color={theme.brandColor} padding="0 4px 0 0">
-                새벽배송
-              </TextH2B>
-              <TextH2B>지역입니다.</TextH2B>
-            </FlexRow>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              오후 5시까지 주문 시 다음날 새벽에 도착!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
-              서울 전체, 경기/인천 일부 지역 이용 가능해요
-            </TextB3R>
-          </>
-        );
-      }
-      default:
-        return;
     }
   };
 
@@ -165,4 +182,4 @@ const PlaceInfo = styled.div`
   flex-direction: column;
 `;
 
-export default React.memo(CheckDestinationPlace);
+export default React.memo(CheckDestinationPlacce);
