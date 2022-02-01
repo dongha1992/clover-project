@@ -25,6 +25,9 @@ import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
 import Image from 'next/image';
 import { Obj } from '@model/index';
+import { userForm } from '@store/user';
+import { useSelector } from 'react-redux';
+import { onUnauthorized } from '@api/Api';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -33,34 +36,65 @@ interface IMypageMenu {
 }
 
 const MypagePage = () => {
+  const { user, isLoginSuccess } = useSelector(userForm);
+
   return (
     <Container>
       <Wrapper>
-        <UserInfoWrapper>
-          <FlexRow>
-            <TextH2B padding="0 6px 0 0">루이스님</TextH2B>
-            <div onClick={() => router.push('/mypage/profile/confirm')}>
-              <SVGIcon name="arrowRight" />
-            </div>
-          </FlexRow>
-          <FlexBetween padding="8px 0 0 0">
+        {isLoginSuccess ? (
+          // 회원
+          <UserInfoWrapper>
             <FlexRow>
-              <Tag color={theme.brandColor} margin="0 8px 0 0">
-                프코회원
-              </Tag>
-              <TextB3R color={theme.brandColor} padding="2px 0 0 0">
-                다음 등급까지 12,000원 남았어요
-              </TextB3R>
+              <TextH2B padding="0 6px 0 0">{user.name}님은</TextH2B>
+              <IconBox onClick={() => router.push('/mypage/profile/confirm')}>
+                <SVGIcon name="arrowRight" />
+              </IconBox>
             </FlexRow>
-            <TextH6B
-              color={theme.greyScale65}
-              textDecoration="underline"
-              onClick={() => router.push('/mypage/rank')}
-            >
-              등급 안내
-            </TextH6B>
-          </FlexBetween>
-        </UserInfoWrapper>
+            <FlexBetween padding="8px 0 0 0">
+              <FlexRow>
+                <Tag color={theme.brandColor} margin="0 8px 0 0">
+                  프코회원
+                </Tag>
+                <TextB3R color={theme.brandColor} padding="2px 0 0 0">
+                  다음 등급까지 12,000원 남았어요
+                </TextB3R>
+              </FlexRow>
+              <TextH6B
+                color={theme.greyScale65}
+                textDecoration="underline"
+                onClick={() => router.push('/mypage/rank')}
+                pointer
+              >
+                등급 안내
+              </TextH6B>
+            </FlexBetween>
+          </UserInfoWrapper>
+        ) : (
+          // 비회원
+          <UserInfoWrapper>
+            <FlexRow>
+              <TextH2B padding="0 6px 0 0">로그인을 해주세요</TextH2B>
+              <IconBox onClick={() => onUnauthorized()}>
+                <SVGIcon name="arrowRight" />
+              </IconBox>
+            </FlexRow>
+            <FlexBetween padding="8px 0 0 0">
+              <FlexRow>
+                <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
+                  회원가입하고 신규회원 특별 혜택 받아보세요!
+                </TextB3R>
+              </FlexRow>
+              <TextH6B
+                color={theme.greyScale65}
+                textDecoration="underline"
+                onClick={() => router.push('/mypage/rank')}
+                pointer
+              >
+                혜택 보기
+              </TextH6B>
+            </FlexBetween>
+          </UserInfoWrapper>
+        )}
         <BorderLine height={1} margin="35px 0 16px 0" />
         <FlexBetweenStart padding="0 24px">
           <FlexCol width="50%">
@@ -179,6 +213,7 @@ export const MypageMenu = React.memo(
     );
   }
 );
+MypageMenu.displayName = 'MypageMenu';
 
 const Container = styled.div``;
 
@@ -210,6 +245,11 @@ const ArrowWrapper = styled.div`
 const ManageWrapper = styled.div``;
 const ImageWrapper = styled.div`
   padding: 24px 0;
+`;
+
+const IconBox = styled.div`
+  display: flex;
+  cursor: pointer;
 `;
 
 export default MypagePage;
