@@ -15,6 +15,7 @@ export const checkDestinationHelper = ({
 
   /* spot은 quick 케이스와 동일 */
   switch (true) {
+    case morning && quick && !parcel:
     case morning && quick && parcel: {
       return 'spot';
     }

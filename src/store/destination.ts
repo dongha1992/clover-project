@@ -83,8 +83,12 @@ export const destination = createSlice({
   name: 'destination',
   initialState: INITIAL_STATE,
   reducers: {
+    // 배송지 검색 후
     SET_DESTINATION: (state, action: PayloadAction<IRegisterDestination>) => {
       state.userDestination = action.payload;
+    },
+    INIT_DESTINATION: (state, action: PayloadAction) => {
+      state.userDestination = destinationState;
     },
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
@@ -105,17 +109,23 @@ export const destination = createSlice({
     ) => {
       state.availableDestination = action.payload;
     },
+    // 배송지 체크 api
     SET_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
       state.destinationStatus = action.payload;
     },
+    // 유저가 선택한 배송방법
     SET_USER_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
       state.userDestinationStatus = action.payload;
+    },
+    INIT_USER_DESTINATION_STATUS: (state, action: PayloadAction) => {
+      state.userDestinationStatus = '';
     },
   },
 });
 
 export const {
   SET_DESTINATION,
+  INIT_DESTINATION,
   SET_LOCATION,
   SET_LOCATION_TEMP,
   SET_LOCATION_STATUS,
@@ -123,6 +133,7 @@ export const {
   INIT_LOCATION_TEMP,
   SET_DESTINATION_STATUS,
   SET_USER_DESTINATION_STATUS,
+  INIT_USER_DESTINATION_STATUS,
 } = destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;

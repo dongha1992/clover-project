@@ -19,6 +19,8 @@ import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 import {
   SET_USER_DESTINATION_STATUS,
   SET_DESTINATION,
+  INIT_DESTINATION,
+  INIT_USER_DESTINATION_STATUS,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
@@ -87,6 +89,9 @@ const recentDestination = '';
 
 const DeliverInfoPage = () => {
   const [targetDeliveryType, setTargetDeliveryType] = useState<string>('');
+  const [userSelectDeliveryType, setUserSelectDeliveryType] =
+    useState<string>('');
+
   const {
     destinationStatus,
     userDestination,
@@ -94,7 +99,7 @@ const DeliverInfoPage = () => {
     userDestinationStatus,
   } = useSelector(destinationForm);
 
-  const isSpotPickupPlace = userDestinationStatus === 'spot';
+  const isSpotPickupPlace = userSelectDeliveryType === 'spot';
 
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
@@ -104,15 +109,18 @@ const DeliverInfoPage = () => {
   const checkTermHandler = () => {};
 
   const goToFindAddress = () => {
-    if (userDestinationStatus === 'spot') {
+    if (userSelectDeliveryType === 'spot') {
       router.push('/spot/search');
     } else {
+      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
       router.push('/destination/search');
     }
   };
 
   const changeMethodHandler = (value: string) => {
-    dispatch(SET_USER_DESTINATION_STATUS(value));
+    setUserSelectDeliveryType(value);
+    // 배송 방법 변경시 현재 배송지 정보 초기화
+    dispatch(INIT_DESTINATION());
   };
 
   const finishDeliverySetting = async () => {
@@ -144,6 +152,7 @@ const DeliverInfoPage = () => {
       if (data.code === 200) {
         dispatch(SET_DESTINATION(reqBody));
         dispatch(SET_AFTER_SETTING_DELIVERY());
+        dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
         router.push('/cart');
       }
     } catch (error) {
@@ -179,15 +188,15 @@ const DeliverInfoPage = () => {
     }
   };
 
-  const checkAvailableDeliveryType = () => {
+  const checkTooltipMsgByDeliveryType = () => {
     // quick === spot
 
     const noQuick = destinationStatus === 'morning';
     const canEverything = destinationStatus === 'spot';
     const canParcel = destinationStatus === 'parcel';
 
-    const locationCanEverything = locationStatus === 'spot';
     const locationNoQuick = locationStatus === 'morning';
+    const locationCanEverything = locationStatus === 'spot';
     const locationCanParcel = locationStatus === 'parcel';
 
     if (!userDestinationStatus) {
@@ -197,11 +206,18 @@ const DeliverInfoPage = () => {
     // 획득 위치 정보 있고 이전 주문 기록 없음
     if (locationStatus && !userDestinationStatus) {
       switch (true) {
-        case locationNoQuick:
         case locationCanEverything:
+          {
+            setUserSelectDeliveryType('spot');
+            setTargetDeliveryType('morning');
+          }
+
+          break;
+        case locationNoQuick:
           {
             setTargetDeliveryType('morning');
           }
+
           break;
         case locationCanParcel:
           {
@@ -220,7 +236,6 @@ const DeliverInfoPage = () => {
         {
           if (canParcel) {
             setTargetDeliveryType('parcel');
-            dispatch(SET_USER_DESTINATION_STATUS('parcel'));
           }
         }
         break;
@@ -228,8 +243,6 @@ const DeliverInfoPage = () => {
         {
           if (canEverything || noQuick) {
             setTargetDeliveryType('morning');
-          } else {
-            dispatch(SET_USER_DESTINATION_STATUS('parcel'));
           }
         }
         break;
@@ -240,25 +253,51 @@ const DeliverInfoPage = () => {
             setTargetDeliveryType('morning');
           } else if (noQuick) {
             setTargetDeliveryType('morning');
-            dispatch(SET_USER_DESTINATION_STATUS('morning'));
           } else if (canParcel) {
             setTargetDeliveryType('parcel');
-            dispatch(SET_USER_DESTINATION_STATUS('parcel'));
           }
         }
         break;
     }
   };
 
+  const userSelectDeliveryTypeHelper = () => {
+    // 최근 배송 이력이 있는지
+    if (recentDestination && !userDestinationStatus) {
+      setUserSelectDeliveryType(recentDestination);
+    }
+    console.log(userDestinationStatus, 'userDestinationStatus');
+    console.log(destinationStatus, 'destinationStatus');
+
+    // 배송지 검색 후 배송방법 변하는 예외 케이스
+    if (userDestinationStatus) {
+      if (
+        userDestinationStatus === 'morning' &&
+        destinationStatus === 'parcel'
+      ) {
+        setUserSelectDeliveryType('parcel');
+      } else if (
+        userDestinationStatus === 'quick' &&
+        destinationStatus === 'morning'
+      ) {
+        setUserSelectDeliveryType('morning');
+      } else if (
+        userDestinationStatus === 'quick' &&
+        destinationStatus === 'parcel'
+      ) {
+        setUserSelectDeliveryType('parcel');
+      } else {
+        setUserSelectDeliveryType(userDestinationStatus);
+      }
+    }
+  };
+
   useEffect(() => {
-    checkAvailableDeliveryType();
+    checkTooltipMsgByDeliveryType();
   }, [userDestinationStatus]);
 
   useEffect(() => {
-    // 최근 배송 이력이 있는지
-    if (recentDestination && !userDestinationStatus) {
-      dispatch(SET_USER_DESTINATION_STATUS(recentDestination));
-    }
+    userSelectDeliveryTypeHelper();
   }, []);
 
   return (
@@ -270,7 +309,7 @@ const DeliverInfoPage = () => {
             픽업
           </TextH5B>
           {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
-            const isSelected = userDestinationStatus === item.value;
+            const isSelected = userSelectDeliveryType === item.value;
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
@@ -317,7 +356,8 @@ const DeliverInfoPage = () => {
             배송
           </TextH5B>
           {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
-            const isSelected = userDestinationStatus === item.value;
+            const isSelected = userSelectDeliveryType === item.value;
+
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
@@ -361,34 +401,35 @@ const DeliverInfoPage = () => {
             );
           })}
         </DeliveryMethodWrapper>
-        {userDestinationStatus && (
+        {userSelectDeliveryType && (
           <>
             <BorderLine height={8} margin="32px 0" />
             <FlexBetween>
               <TextH3B padding="0 0 14px 0">
                 {isSpotPickupPlace ? '픽업장소' : '배송지'}
               </TextH3B>
-              <TextH6B
-                textDecoration="underline"
-                color={theme.greyScale65}
-                onClick={goToFindAddress}
-              >
-                변경하기
-              </TextH6B>
+              {hasUserSelectDestination && (
+                <TextH6B
+                  textDecoration="underline"
+                  color={theme.greyScale65}
+                  onClick={goToFindAddress}
+                >
+                  변경하기
+                </TextH6B>
+              )}
             </FlexBetween>
             {hasUserSelectDestination ? placeInfoRender() : ''}
-            {!userDestinationStatus ||
-              (!hasUserSelectDestination && (
-                <BtnWrapper onClick={goToFindAddress}>
-                  <Button
-                    backgroundColor={theme.white}
-                    color={theme.black}
-                    border
-                  >
-                    {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
-                  </Button>
-                </BtnWrapper>
-              ))}
+            {(!userSelectDeliveryType || !hasUserSelectDestination) && (
+              <BtnWrapper onClick={goToFindAddress}>
+                <Button
+                  backgroundColor={theme.white}
+                  color={theme.black}
+                  border
+                >
+                  {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
+                </Button>
+              </BtnWrapper>
+            )}
           </>
         )}
       </Wrapper>
