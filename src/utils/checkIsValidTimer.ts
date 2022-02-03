@@ -7,11 +7,11 @@ import getCustomDate from './getCustomDate';
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=3055%3A40726 */
 
 const checkIsValidTimer = (deliveryType: TResult): string => {
-  const { locationStatus } = useSelector(destinationForm);
+  let { locationStatus } = useSelector(destinationForm);
   const { days } = getCustomDate(new Date());
 
   // 요일 체크
-  const isWeekends = ['토', '일'].includes(days);
+  let isWeekends = ['토', '일'].includes(days);
   const isMondayToThursday = ['월', '화', '수', '목'].includes(days);
   const isFriday = days === '금';
 
@@ -19,7 +19,20 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   const isMorning = deliveryType === '새벽배송';
   const isSpot = ['스팟점심', '스팟저녁'].includes(deliveryType);
 
-  if (isWeekends) {
+  /* 주말 테스트 */
+  // isWeekends = true;
+
+  /* 서울 테스트(quick)*/
+  // locationStatus = '';
+  // locationStatus = 'quick';
+
+  /* 경기 테스트(morning) */
+  locationStatus = 'morning';
+
+  /* 지방 테스트(parcel) */
+  // locationStatus = 'parcel';
+
+  if (isWeekends || !deliveryType) {
     return '';
   }
 
@@ -40,6 +53,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
       if (isSpot || isParcel) {
         return '새벽배송';
       } else {
+        console.log(deliveryType);
         return deliveryType;
       }
     }
