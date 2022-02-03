@@ -54,7 +54,7 @@ const CheckDestinationPlacce = () => {
         const status = checkDestinationHelper({
           ...availableDestinationObj,
         });
-
+        console.log(status);
         if (isLocation) {
           dispatch(SET_LOCATION_STATUS(status));
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
