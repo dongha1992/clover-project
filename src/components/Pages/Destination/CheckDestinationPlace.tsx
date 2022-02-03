@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B } from '@components/Shared/Text';
 import { theme, FlexRow } from '@styles/theme';
@@ -19,13 +19,14 @@ import {
   SpotInfo,
 } from '@components/Pages/Destination';
 /* TODO: spot 추가 되어야 함 */
+/* TODO: 배송방법 선택 query로 페이지 넘길까? */
 
 const CheckDestinationPlacce = () => {
   const [formatAvailableDestination, setFormatAvailableDestination] =
     useState('');
 
   const { isLoading } = useSelector(commonSelector);
-  const { tempLocation, userDestinationStatus } = useSelector(destinationForm);
+  let { tempLocation, userDestinationStatus } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
   const router = useRouter();
