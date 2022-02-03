@@ -15,7 +15,7 @@ import { useInterval } from '@hooks/useInterval';
 import { Rolling } from '@components/Rolling';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-
+import checkIsValidTimer from '@utils/checkIsValidTimer';
 /* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
 */
@@ -50,7 +50,7 @@ const CartSheet = () => {
   const { isTimerTooltip } = useSelector(orderForm);
 
   const currentTime = Number('09.29');
-  const deliveryType = checkTimerLimitHelper(currentTime);
+  const deliveryType = checkIsValidTimer(checkTimerLimitHelper(currentTime));
 
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);
