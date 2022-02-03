@@ -6,12 +6,13 @@ import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';
 import { setAlert } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { SET_TIMER_STATUS } from '@store/order';
-
+import { orderForm } from '@store/order';
+import { destinationForm } from '@store/destination';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 
@@ -22,9 +23,13 @@ const DetailBottom = () => {
   const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
 
+  const { isTimerTooltip } = useSelector(orderForm);
+  const { locationStatus } = useSelector(destinationForm);
+
   const currentTime = Number('09.29');
-  const deliveryType = checkIsValidTimer(checkTimerLimitHelper(currentTime));
+  const deliveryType = checkTimerLimitHelper({ currentTime });
   console.log(deliveryType);
+
   //temp
   const numOfLike = 10;
   const tempStatus = 'isSoldout';
@@ -112,9 +117,11 @@ const DetailBottom = () => {
           </TextH5B>
         </BtnWrapper>
       </Wrapper>
-      <TimerTooltipWrapper>
-        <CheckTimerByDelivery isTooltip />
-      </TimerTooltipWrapper>
+      {isTimerTooltip && (
+        <TimerTooltipWrapper>
+          <CheckTimerByDelivery isTooltip locationStatus={locationStatus} />
+        </TimerTooltipWrapper>
+      )}
     </Container>
   );
 };

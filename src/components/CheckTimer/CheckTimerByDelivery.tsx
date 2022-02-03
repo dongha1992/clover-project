@@ -7,8 +7,10 @@ import useTimer from '@hooks/useTimer';
 import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { getFormatTime } from '@utils/getFormatTime';
+
 interface IProps {
   isTooltip?: boolean;
+  locationStatus: string;
 }
 
 const msgMapper: Obj = {
@@ -18,17 +20,15 @@ const msgMapper: Obj = {
   새벽배송: '내일 새벽 7시 전 도착',
 };
 
-/* checkTimerLimitHelper 계속 호출해서 컴포넌트 밖으로 뺌 */
-
-// const currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
-const currentTime = Number('09.29');
-const deliveryType = checkTimerLimitHelper(currentTime);
-
-const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
+const CheckTimerByDelivery = ({ isTooltip, locationStatus }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
   const [isSetTimer, setIsSetTimer] = useState('');
 
   const { timer } = useTimer();
+
+  // const currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
+  const currentTime = Number('09.29');
+  const deliveryType = checkTimerLimitHelper({ currentTime, locationStatus });
 
   const msgHandler = () => {
     setIsSetTimer(
