@@ -19,6 +19,7 @@ export const checkDestinationHelper = ({
       return 'spot';
     }
 
+    case morning && !parcel && !quick:
     case morning && parcel && !quick: {
       return 'morning';
     }

@@ -83,7 +83,7 @@ const DELIVERY_METHOD: any = {
   ],
 };
 
-const recentDestination = 'morning';
+const recentDestination = '';
 
 const DeliverInfoPage = () => {
   const [targetDeliveryType, setTargetDeliveryType] = useState<string>('');
