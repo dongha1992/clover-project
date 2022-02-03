@@ -9,15 +9,22 @@ import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import checkIsValidTimer from '@utils/checkIsValidTimer';
+import { SET_TIMER_STATUS } from '@store/order';
+
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
+  const [limitDelvieryType, setLimitDelvieryType] = useState('');
   const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
 
+  const currentTime = Number('09.29');
+  const deliveryType = checkIsValidTimer(checkTimerLimitHelper(currentTime));
+  console.log(deliveryType);
   //temp
   const numOfLike = 10;
   const tempStatus = 'isSoldout';
@@ -79,15 +86,12 @@ const DetailBottom = () => {
   };
 
   useEffect(() => {
-    const currentTime = Number('09.29');
-    const deliveryType = checkTimerLimitHelper(currentTime);
-
-    // if (deliveryType) {
-    //   setLimitDelvieryType(deliveryType);
-    //   dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
-    // } else {
-    //   dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
-    // }
+    if (deliveryType) {
+      setLimitDelvieryType(deliveryType);
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    }
   }, []);
 
   return (

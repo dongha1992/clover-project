@@ -103,6 +103,7 @@ const DeliverInfoPage = () => {
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
 
+  // 배송 마감 타이머 체크
   const currentTime = Number('09.29');
   const deliveryType = checkTimerLimitHelper(currentTime);
 
