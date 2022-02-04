@@ -1,13 +1,33 @@
-export type TResult = '스팟점심' | '스팟저녁' | '새벽배송' | '택배배송' | '';
+import getCustomDate from './getCustomDate';
+import { getFormatTime } from '@utils/getFormatTime';
+
+export type TResult =
+  | '스팟점심'
+  | '스팟저녁'
+  | '새벽배송'
+  | '택배배송'
+  | '스팟저녁롤링'
+  | '새벽택배롤링'
+  | '스팟당일롤링'
+  | '스팟차일롤링'
+  | '';
 
 interface IProps {
-  currentTime: number;
+  currentTime?: number;
 }
 
-/* 현재 시간 관련하여 배송 마감 타이머 체크 */
-const checkTimerLimitHelper = ({ currentTime }: IProps): TResult => {
+/* 현재 시간 관련하여 배송 마감 타이머 / 배송 정보 롤링 체크 */
+/* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244 */
+
+const checkTimerLimitHelper = (): TResult => {
+  const { days, hours, minutes } = getCustomDate(new Date());
+
+  const currentTime = Number(
+    `${getFormatTime(hours)}.${getFormatTime(minutes)}`
+  );
+
   /* 스팟 런치 테스트 */
-  currentTime = 9.1;
+  // currentTime = 11.6;
 
   /* 스팟 저녁 테스트 */
   // currentTime = 10.4;
@@ -18,27 +38,60 @@ const checkTimerLimitHelper = ({ currentTime }: IProps): TResult => {
   /* 택배 테스트 */
   // currentTime = 16.4;
 
+  const spotLunchDinnerToday = currentTime >= 0.0 && currentTime < 9.0;
   const spotLunch = currentTime >= 9.0 && currentTime < 9.3;
+  const spotDinnerRolling = currentTime >= 9.3 && currentTime < 10.3;
   const spotDinner = currentTime >= 10.3 && currentTime < 11.0;
+  const morningAndParcelRolling = currentTime >= 11.0 && currentTime < 16.3;
   const morning = currentTime >= 16.3 && currentTime < 17.0;
   const parcel = currentTime >= 16.3 && currentTime < 17.0;
+  const spotLunchDinnerTomorrow = currentTime >= 17.0 && currentTime < 24.0;
 
-  switch (true) {
-    case spotLunch: {
-      return '스팟점심';
-    }
-    case spotDinner: {
-      return '스팟저녁';
-    }
-    case morning: {
-      return '새벽배송';
-    }
-    case parcel: {
-      return '택배배송';
-    }
+  const isFriday = days === '금';
+  const isSunday = days === '일';
+  const isWeekends = ['토', '일'].includes(days);
 
-    default: {
-      return '';
+  // 주말의 경우 타이머 없고 '새벽택배롤링'만 나옴. 단, 일요일 17시 이후부터 24시까지 '스팟차일롤링'
+  if (isWeekends) {
+    if (isSunday && spotLunchDinnerTomorrow) {
+      return '스팟차일롤링';
+    } else {
+      return '새벽택배롤링';
+    }
+  } else {
+    // 평일의 경우
+    switch (true) {
+      case spotLunch: {
+        return '스팟점심';
+      }
+      case spotDinner: {
+        return '스팟저녁';
+      }
+      case morning: {
+        return '새벽배송';
+      }
+      case parcel: {
+        return '택배배송';
+      }
+      case spotLunchDinnerToday: {
+        return '스팟당일롤링';
+      }
+      case spotLunchDinnerTomorrow: {
+        // 금요일 17시 이후만 '새벽택배롤링'
+        if (isFriday) {
+          return '새벽택배롤링';
+        }
+        return '스팟차일롤링';
+      }
+      case spotDinnerRolling: {
+        return '스팟저녁롤링';
+      }
+      case morningAndParcelRolling: {
+        return '새벽택배롤링';
+      }
+      default: {
+        return '';
+      }
     }
   }
 };

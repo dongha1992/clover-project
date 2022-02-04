@@ -9,7 +9,6 @@ import { setAlert } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
 import { destinationForm } from '@store/destination';
@@ -19,16 +18,13 @@ import { destinationForm } from '@store/destination';
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
-  const [limitDelvieryType, setLimitDelvieryType] = useState('');
   const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
 
   const { isTimerTooltip } = useSelector(orderForm);
-  const { locationStatus } = useSelector(destinationForm);
 
-  const currentTime = Number('09.29');
-  const deliveryType = checkTimerLimitHelper({ currentTime });
-  console.log(deliveryType);
+  // const currentTime = Number('09.29');
+  const deliveryType = checkTimerLimitHelper();
 
   //temp
   const numOfLike = 10;
@@ -92,7 +88,6 @@ const DetailBottom = () => {
 
   useEffect(() => {
     if (deliveryType) {
-      setLimitDelvieryType(deliveryType);
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));

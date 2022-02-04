@@ -15,32 +15,30 @@ import { useInterval } from '@hooks/useInterval';
 import { Rolling } from '@components/Rolling';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import checkIsValidTimer from '@utils/checkIsValidTimer';
 /* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
 */
 
-const ROLLING_DATA = [
-  {
-    type: '새벽배송',
-    description: '17시까지 주문 시 다음날 새벽 7시 전 도착',
-  },
-  {
-    type: '택배배송',
-    description: '17시까지 주문 시 당일 발송',
-  },
-  {
-    type: '스팟점심',
-    description: '9시30분까지 주문 시 12시 전 도착',
-  },
-  {
-    type: '스팟저녁',
-    description: '11시까지 주문 시 17시 전 도착',
-  },
-];
-
 const CartSheet = () => {
   const [currentRollingIndex, setCurrentRollingIndex] = useState(0);
+  const [rollingData, setRollingData] = useState([
+    {
+      id: 1,
+      type: '스팟점심',
+      description: '9시30분까지 주문 시 12시 전 도착',
+    },
+    { id: 2, type: '스팟저녁', description: '11시까지 주문 시 17시 전 도착' },
+    {
+      id: 3,
+      type: '새벽배송',
+      description: '17시까지 주문 시 다음날 새벽 7시 전 도착',
+    },
+    {
+      id: 4,
+      type: '택배배송',
+      description: '17시까지 주문 시 당일 발송',
+    },
+  ]);
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
 
   const { showToast } = useToast();
@@ -49,10 +47,39 @@ const CartSheet = () => {
   const { cartSheetObj } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
 
-  const currentTime = Number('09.29');
-  const deliveryType = checkIsValidTimer(
-    checkTimerLimitHelper({ currentTime })
-  );
+  // const currentTime = Number('09.29');
+  const deliveryType = checkTimerLimitHelper();
+
+  const checkIsValidRollingMsg = () => {
+    const canSpotLunchAndDinnerToday = deliveryType === '스팟당일롤링';
+    const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟차일롤링';
+    const canMorningAndParcel = deliveryType === '새벽택배롤링';
+    const canSpotDinnerToday = deliveryType === '스팟저녁롤링';
+
+    let newRollingData: any = [];
+
+    switch (true) {
+      case canSpotLunchAndDinnerTomorrow:
+      case canSpotLunchAndDinnerToday:
+        {
+          newRollingData = rollingData.filter((item) => item.id < 3);
+        }
+        break;
+
+      case canMorningAndParcel:
+        {
+          newRollingData = rollingData.filter((item) => item.id > 2);
+        }
+        break;
+      case canSpotDinnerToday:
+        {
+          newRollingData = rollingData.filter((item) => item.id === 2);
+        }
+        break;
+    }
+
+    setRollingData(newRollingData);
+  };
 
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);
@@ -80,7 +107,18 @@ const CartSheet = () => {
   };
 
   useEffect(() => {
-    if (deliveryType) {
+    const isRolling = [
+      '스팟저녁롤링',
+      '새벽택배롤링',
+      '스팟당일롤링',
+      '스팟차일롤링',
+    ].includes(deliveryType);
+
+    if (isRolling) {
+      checkIsValidRollingMsg();
+    }
+
+    if (!isRolling && deliveryType) {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
@@ -149,8 +187,11 @@ const CartSheet = () => {
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
-          {/* <Rolling list={ROLLING_DATA} /> */}
-          {isTimerTooltip && <CheckTimerByDelivery />}
+          {isTimerTooltip ? (
+            <CheckTimerByDelivery />
+          ) : (
+            <Rolling list={rollingData} />
+          )}
         </DeliveryInforContainer>
       </OrderInfoContainer>
       <ButtonContainer onClick={submitHandler}>

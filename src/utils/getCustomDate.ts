@@ -44,6 +44,8 @@ const getCustomDate = (inputDate: Date): IResult => {
     strDates = `0${strDates}`;
   }
 
+  // 롤링 메시지 및 배송 타이머 관련 요일 체크
+
   return {
     years,
     months,

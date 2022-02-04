@@ -6,7 +6,8 @@ import checkIsValidTimer from '@utils/checkIsValidTimer';
 import useTimer from '@hooks/useTimer';
 import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-
+import { getFormatTime } from '@utils/getFormatTime';
+import getCustomDate from '@utils/getCustomDate';
 interface IProps {
   isTooltip?: boolean;
 }
@@ -21,13 +22,16 @@ const msgMapper: Obj = {
 const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
   const [isSetTimer, setIsSetTimer] = useState('');
-  const { timer } = useTimer();
 
-  // const currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
-  const currentTime = Number('09.29');
-  const deliveryType = checkIsValidTimer(
-    checkTimerLimitHelper({ currentTime })
-  );
+  const { timer } = useTimer();
+  // const { hours, minutes } = getCustomDate(new Date());
+
+  // const currentTime = Number(
+  //   `${getFormatTime(hours)}.${getFormatTime(minutes)}`
+  // );
+  // const currentTime = Number('09.29');
+
+  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const msgHandler = () => {
     setIsSetTimer(
