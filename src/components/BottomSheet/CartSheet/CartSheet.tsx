@@ -50,7 +50,9 @@ const CartSheet = () => {
   const { isTimerTooltip } = useSelector(orderForm);
 
   const currentTime = Number('09.29');
-  const deliveryType = checkIsValidTimer(checkTimerLimitHelper(currentTime));
+  const deliveryType = checkIsValidTimer(
+    checkTimerLimitHelper({ currentTime })
+  );
 
   const selectMenuHandler = (menu: any) => {
     setSelectedMenus([...selectedMenus, menu]);

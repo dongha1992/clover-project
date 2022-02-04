@@ -105,7 +105,7 @@ const DeliverInfoPage = () => {
 
   // 배송 마감 타이머 체크
   const currentTime = Number('09.29');
-  const deliveryType = checkTimerLimitHelper(currentTime);
+  const deliveryType = checkTimerLimitHelper({ currentTime });
 
   const dispatch = useDispatch();
 

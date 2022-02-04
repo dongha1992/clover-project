@@ -5,12 +5,14 @@ interface TProps {
   orderType: string;
   isTimerTooltip: boolean;
   deliveryDate: string;
+  isInitDelay: boolean;
 }
 
 const initialState: TProps = {
   orderType: '',
   isTimerTooltip: false,
   deliveryDate: '',
+  isInitDelay: false,
 };
 
 export const order = createSlice({
@@ -26,9 +28,16 @@ export const order = createSlice({
     SET_DELIVERY_DATE: (state, action: PayloadAction<string>) => {
       state.deliveryDate = action.payload;
     },
+    INIT_TIMER: (state, action: PayloadAction<any>) => {
+      state.isInitDelay = action.payload.isInitDelay;
+    },
   },
 });
-export const { SET_ORDER_TYPE, SET_TIMER_STATUS, SET_DELIVERY_DATE } =
-  order.actions;
+export const {
+  SET_ORDER_TYPE,
+  SET_TIMER_STATUS,
+  SET_DELIVERY_DATE,
+  INIT_TIMER,
+} = order.actions;
 export const orderForm = (state: AppState): TProps => state.order;
 export default order.reducer;
