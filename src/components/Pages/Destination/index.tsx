@@ -5,6 +5,8 @@ import MorningInfo from './MorningInfo';
 import ParcelInfo from './ParcelInfo';
 import CanNotDeliveryInfo from './CanNotDeliveryInfo';
 import SpotInfo from './SpotInfo';
+import MorningAndPacelInfo from './MorningAndParcelInfo';
+import QuickAndMorningInfo from './QuickAndMoringInfo';
 
 export {
   DestinationSearchResult,
@@ -14,4 +16,6 @@ export {
   ParcelInfo,
   MorningInfo,
   SpotInfo,
+  QuickAndMorningInfo,
+  MorningAndPacelInfo,
 };

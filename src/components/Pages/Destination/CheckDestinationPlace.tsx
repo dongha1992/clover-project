@@ -17,7 +17,10 @@ import {
   ParcelInfo,
   CanNotDeliveryInfo,
   SpotInfo,
+  QuickAndMorningInfo,
+  MorningAndPacelInfo,
 } from '@components/Pages/Destination';
+
 /* TODO: spot 추가 되어야 함 */
 /* TODO: 배송방법 선택 query로 페이지 넘길까? */
 
@@ -110,22 +113,7 @@ const CheckDestinationPlacce = () => {
         }
         case 'quick': {
           if (canEverything) {
-            return (
-              <>
-                <FlexRow>
-                  <TextH2B color={theme.brandColor} padding="0 4px 0 0">
-                    퀵/새벽배송
-                  </TextH2B>
-                  <TextH2B>지역입니다.</TextH2B>
-                </FlexRow>
-                <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-                  오후 5시까지 주문 시 다음날 새벽에 도착!
-                </TextB3R>
-                <TextB3R color={theme.greyScale65}>
-                  서울 전체, 경기/인천 일부 지역 이용 가능해요
-                </TextB3R>
-              </>
-            );
+            return <QuickAndMorningInfo />;
           } else if (noQuick) {
             return <MorningInfo />;
           } else if (canParcel) {
@@ -134,22 +122,7 @@ const CheckDestinationPlacce = () => {
         }
         case 'parcel': {
           if (canEverything || noQuick) {
-            return (
-              <>
-                <FlexRow>
-                  <TextH2B color={theme.brandColor} padding="0 4px 0 0">
-                    새벽/택배배송이 가능한
-                  </TextH2B>
-                  <TextH2B>지역입니다.</TextH2B>
-                </FlexRow>
-                <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-                  오후 5시까지 주문 시 다음날 새벽에 도착!
-                </TextB3R>
-                <TextB3R color={theme.greyScale65}>
-                  서울 전체, 경기/인천 일부 지역 이용 가능해요
-                </TextB3R>
-              </>
-            );
+            return <MorningAndPacelInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;
           }
