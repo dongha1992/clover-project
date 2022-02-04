@@ -119,7 +119,7 @@ const DetailBottom = () => {
       </Wrapper>
       {isTimerTooltip && (
         <TimerTooltipWrapper>
-          <CheckTimerByDelivery isTooltip locationStatus={locationStatus} />
+          <CheckTimerByDelivery isTooltip />
         </TimerTooltipWrapper>
       )}
     </Container>

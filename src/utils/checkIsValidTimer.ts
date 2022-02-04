@@ -2,12 +2,16 @@ import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
 import { TResult } from './checkTimerLimitHelper';
 import getCustomDate from './getCustomDate';
+import { useDispatch } from 'react-redux';
+import { INIT_TIMER } from '@store/order';
 
 /* 현재 위치와 요일 관련하여 배송 마감 타이머 체크 */
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=3055%3A40726 */
 
 const checkIsValidTimer = (deliveryType: TResult): string => {
   let { locationStatus } = useSelector(destinationForm);
+  const dispatch = useDispatch();
+
   const { days } = getCustomDate(new Date());
 
   // 요일 체크
@@ -33,7 +37,9 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   // locationStatus = 'parcel';
 
   if (isWeekends || !deliveryType) {
-    return '';
+    dispatch(INIT_TIMER({ isInitDelay: true }));
+  } else {
+    dispatch(INIT_TIMER({ isInitDelay: false }));
   }
 
   switch (locationStatus) {
@@ -53,7 +59,6 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
       if (isSpot || isParcel) {
         return '새벽배송';
       } else {
-        console.log(deliveryType);
         return deliveryType;
       }
     }

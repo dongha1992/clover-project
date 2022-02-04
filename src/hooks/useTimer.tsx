@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useInterval } from '@hooks/useInterval';
-import { useDispatch } from 'react-redux';
-import { SET_TIMER_STATUS } from '@store/order';
+import { useDispatch, useSelector } from 'react-redux';
+import { SET_TIMER_STATUS, orderForm } from '@store/order';
 import getCustomDate from '@utils/getCustomDate';
-import { getFormatTimeStr, getFormatTime } from '@utils/getFormatTime';
+import { getFormatTimeStr } from '@utils/getFormatTime';
 
 const AUTH_TIME_LIMIT = 299;
 const DELIVERY_TIME_LIMIT = 1799;
@@ -14,6 +14,8 @@ const useTimer = () => {
 
   const timerRef = useRef<number>(DELIVERY_TIME_LIMIT);
   const dispatch = useDispatch();
+
+  const { isInitDelay } = useSelector(orderForm);
 
   const getRestTimeTilLimit = (): number => {
     const { minutes, seconds } = getCustomDate(new Date());
@@ -43,6 +45,13 @@ const useTimer = () => {
       setDelay(null);
     }
   }, [timer]);
+
+  useEffect(() => {
+    if (isInitDelay) {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+      setDelay(null);
+    }
+  }, [isInitDelay]);
 
   useEffect(() => {
     timerRef.current = getRestTimeTilLimit();
