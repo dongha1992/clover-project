@@ -6,7 +6,7 @@ import { useInterval } from '@hooks/useInterval';
 const Rolling = ({ list }: any) => {
   const [currentRollingIndex, setCurrentRollingIndex] = useState(0);
 
-  const test = () => {
+  const rollingMoveHandler = () => {
     const rollingDataLen = list.length;
     if (currentRollingIndex >= rollingDataLen - 1) {
       setCurrentRollingIndex(0);
@@ -15,7 +15,7 @@ const Rolling = ({ list }: any) => {
     }
   };
 
-  useInterval(test, 3000);
+  useInterval(rollingMoveHandler, 3000);
 
   return (
     <RollingWrapper>
