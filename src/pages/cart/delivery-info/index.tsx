@@ -21,6 +21,7 @@ import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { getFormatTime } from '@utils/getFormatTime';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
+import checkIsValidTimer from '@utils/checkIsValidTimer';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -103,9 +104,8 @@ const DeliverInfoPage = () => {
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
 
-  // 배송 마감 타이머 체크
-  // const currentTime = Number('09.29');
-  const deliveryType = checkTimerLimitHelper();
+  // 배송 마감 타이머 체크 + 위치 체크
+  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const dispatch = useDispatch();
 
@@ -265,7 +265,11 @@ const DeliverInfoPage = () => {
 
   useEffect(() => {
     if (deliveryType) {
-      setLimitDelvieryType(deliveryType);
+      if (['스팟점심', '스팟저녁'].includes(deliveryType)) {
+        setLimitDelvieryType('스팟배송');
+      } else {
+        setLimitDelvieryType(deliveryType);
+      }
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
@@ -304,7 +308,9 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {isTimerTooltip && <CheckTimerByDelivery />}
+                      {isTimerTooltip && item.name === limitDelvieryType && (
+                        <CheckTimerByDelivery />
+                      )}
                     </FlexBetween>
                     <Body>
                       <TextB3R color={theme.greyScale45}>

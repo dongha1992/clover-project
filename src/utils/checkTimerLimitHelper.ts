@@ -22,12 +22,10 @@ interface IProps {
 const checkTimerLimitHelper = (): TResult => {
   const { days, hours, minutes } = getCustomDate(new Date());
 
-  const currentTime = Number(
-    `${getFormatTime(hours)}.${getFormatTime(minutes)}`
-  );
-
+  // let currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
+  let currentTime;
   /* 스팟 런치 테스트 */
-  // currentTime = 11.6;
+  currentTime = 18.0;
 
   /* 스팟 저녁 테스트 */
   // currentTime = 10.4;
@@ -48,8 +46,8 @@ const checkTimerLimitHelper = (): TResult => {
   const spotLunchDinnerTomorrow = currentTime >= 17.0 && currentTime < 24.0;
 
   const isFriday = days === '금';
-  const isSunday = days === '일';
-  const isWeekends = ['토', '일'].includes(days);
+  let isSunday = days === '일';
+  let isWeekends = ['토', '일'].includes(days);
 
   // 주말의 경우 타이머 없고 '새벽택배롤링'만 나옴. 단, 일요일 17시 이후부터 24시까지 '스팟차일롤링'
   if (isWeekends) {
@@ -78,7 +76,7 @@ const checkTimerLimitHelper = (): TResult => {
       }
       case spotLunchDinnerTomorrow: {
         // 금요일 17시 이후만 '새벽택배롤링'
-        if (isFriday) {
+        if (!isFriday) {
           return '새벽택배롤링';
         }
         return '스팟차일롤링';

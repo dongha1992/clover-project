@@ -20,7 +20,6 @@ import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 */
 
 const CartSheet = () => {
-  const [currentRollingIndex, setCurrentRollingIndex] = useState(0);
   const [rollingData, setRollingData] = useState([
     {
       id: 1,
@@ -55,6 +54,8 @@ const CartSheet = () => {
     const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟차일롤링';
     const canMorningAndParcel = deliveryType === '새벽택배롤링';
     const canSpotDinnerToday = deliveryType === '스팟저녁롤링';
+
+    console.log(deliveryType);
 
     let newRollingData: any = [];
 
