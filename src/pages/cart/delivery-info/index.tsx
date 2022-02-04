@@ -266,28 +266,42 @@ const DeliverInfoPage = () => {
     if (recentDestination && !userDestinationStatus) {
       setUserSelectDeliveryType(recentDestination);
     }
-    console.log(userDestinationStatus, 'userDestinationStatus');
-    console.log(destinationStatus, 'destinationStatus');
 
     // 배송지 검색 후 배송방법 변하는 예외 케이스
     if (userDestinationStatus) {
-      if (
-        userDestinationStatus === 'morning' &&
-        destinationStatus === 'parcel'
-      ) {
-        setUserSelectDeliveryType('parcel');
-      } else if (
-        userDestinationStatus === 'quick' &&
-        destinationStatus === 'morning'
-      ) {
-        setUserSelectDeliveryType('morning');
-      } else if (
-        userDestinationStatus === 'quick' &&
-        destinationStatus === 'parcel'
-      ) {
-        setUserSelectDeliveryType('parcel');
-      } else {
-        setUserSelectDeliveryType(userDestinationStatus);
+      const userMorningButParcel =
+        userDestinationStatus === 'morning' && destinationStatus === 'parcel';
+
+      const userQuickButMorning =
+        userDestinationStatus === 'quick' && destinationStatus === 'morning';
+
+      const userQuickButParcel =
+        userDestinationStatus === 'quick' && destinationStatus === 'parcel';
+
+      switch (true) {
+        case userMorningButParcel:
+          {
+            setUserSelectDeliveryType('parcel');
+          }
+          break;
+
+        case userQuickButMorning:
+          {
+            setUserSelectDeliveryType('morning');
+          }
+          break;
+
+        case userQuickButParcel:
+          {
+            setUserSelectDeliveryType('parcel');
+          }
+          break;
+
+        default:
+          {
+            setUserSelectDeliveryType(userDestinationStatus);
+          }
+          break;
       }
     }
   };
