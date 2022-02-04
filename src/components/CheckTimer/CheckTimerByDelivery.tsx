@@ -21,21 +21,17 @@ const msgMapper: Obj = {
 
 const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
-  const [isSetTimer, setIsSetTimer] = useState('');
+  const [timerMsg, setTimerMsg] = useState('');
 
   const { timer } = useTimer();
-  // const { hours, minutes } = getCustomDate(new Date());
-
-  // const currentTime = Number(
-  //   `${getFormatTime(hours)}.${getFormatTime(minutes)}`
-  // );
-  // const currentTime = Number('09.29');
 
   const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const msgHandler = () => {
-    setIsSetTimer(
-      `${targetDelivery} 마감 ${timer} 전 (${msgMapper[targetDelivery]})`
+    setTimerMsg(
+      `${targetDelivery} 마감 ${timer} 전 ${
+        isTooltip ? `(${msgMapper[targetDelivery]})` : ''
+      }`
     );
   };
 
@@ -49,21 +45,21 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
     }
   }, [timer]);
 
-  if (!isSetTimer) {
+  if (!timerMsg) {
     return null;
   }
 
   if (isTooltip) {
     return (
       <TimerTooltip
-        message={isSetTimer}
+        message={timerMsg}
         bgColor={theme.brandColor}
         color={theme.white}
         minWidth="78px"
       />
     );
   } else {
-    return <TextH6B color={theme.brandColor}>{isSetTimer}</TextH6B>;
+    return <TextH6B color={theme.brandColor}>{timerMsg}</TextH6B>;
   }
 };
 

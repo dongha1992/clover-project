@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { TResult } from './checkTimerLimitHelper';
 import getCustomDate from './getCustomDate';
 import { useDispatch } from 'react-redux';
-import { INIT_TIMER, SET_TIMER_STATUS } from '@store/order';
+import { INIT_TIMER } from '@store/order';
 
 /* 현재 위치와 요일 관련하여 배송 마감 타이머 체크 */
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=3055%3A40726 */
@@ -16,8 +16,6 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
 
   // 요일 체크
   let isWeekends = ['토', '일'].includes(days);
-  const isMondayToThursday = ['월', '화', '수', '목'].includes(days);
-  const isFriday = days === '금';
 
   const isParcel = deliveryType === '택배배송';
   const isMorning = deliveryType === '새벽배송';
@@ -28,10 +26,10 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
 
   /* 서울 테스트(quick)*/
   // locationStatus = '';
-  // locationStatus = 'quick';
+  locationStatus = 'quick';
 
   /* 경기 테스트(morning) */
-  locationStatus = 'morning';
+  // locationStatus = 'morning';
 
   /* 지방 테스트(parcel) */
   // locationStatus = 'parcel';
