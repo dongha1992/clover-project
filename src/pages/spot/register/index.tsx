@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { theme, FlexRow, fixedBottom } from '@styles/theme';
 import {
@@ -16,14 +16,22 @@ import { setBottomSheet } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector, useDispatch } from 'react-redux';
-import { destinationForm } from '@store/destination';
+import { spotSelector, SET_SPOT_REGISTRATIONS_INFO} from '@store/spot';
 
 const RegisterPage = () => {
-  const { spotLocation } = useSelector(destinationForm);
+  const { spotLocation, spotsRegistrationInfo, spotsRegistrationOptions } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
+  const placeRef = useRef<HTMLInputElement>(null);
+  const pickUpEtcRef = useRef<HTMLInputElement>(null);
+  const placeEtcRef = useRef<HTMLInputElement>(null);
+  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
+
   const goToSubmit = (): void => {
+    if(!noticeChecked){
+      return;
+    };
     if (type === 'owner') {
       router.push({
         pathname: '/spot/register/spot-onboarding',
@@ -36,8 +44,6 @@ const RegisterPage = () => {
       });
     }
   };
-
-  const checkBox = () => {};
 
   const selectOptions = useCallback((tab) => {
     dispatch(
@@ -52,6 +58,43 @@ const RegisterPage = () => {
       pathname: '/spot/location',
       query: { type },
     });
+  };
+
+  const placeInputHandler = () => {
+    if(placeRef.current){
+      const selectedOptions = {
+        placeName: placeRef.current?.value,
+        pickupLocationEtc: spotsRegistrationInfo.pickupLocationEtc,
+        placeTypeEtc: spotsRegistrationInfo.placeTypeEtc,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
+    };
+  };
+
+  const pickUpEtcInputHandler = () => {
+    if(pickUpEtcRef.current){
+      const selectedOptions = {
+        placeName:spotsRegistrationInfo.placeName,
+        pickupLocationEtc: pickUpEtcRef.current?.value,
+        placeTypeEtc: spotsRegistrationInfo.placeTypeEtc,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
+    };
+  };
+
+  const placeEtcInputHandler = () => {
+    if(placeEtcRef.current){
+      const selectedOptions = {
+        placeName: spotsRegistrationInfo.placeName,
+        pickupLocationEtc: spotsRegistrationInfo.pickupLocationEtc,
+        placeTypeEtc: placeEtcRef.current?.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
+    };
+  };
+
+  const noticeHandler = () => {
+      setNoticeChecked(!noticeChecked);
   };
 
   return (
@@ -79,6 +122,9 @@ const RegisterPage = () => {
         <Wrapper>
           <TextH4B margin="0 0 16px 0">장소명</TextH4B>
           <TextInput
+            ref={placeRef}
+            eventHandler={placeInputHandler}
+            value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
             placeholder={
               type === 'private' ? '회사 및 학교 상호입력' : '상호명'
             }
@@ -97,10 +143,24 @@ const RegisterPage = () => {
               pointer
               onClick={() => selectOptions('pickUp')}
             >
-              픽업 장소 선택
+              {
+                spotsRegistrationOptions.pickupLocationTypeOptions?.name?.length ?
+                <TextB2R color={theme.black}>{spotsRegistrationOptions.pickupLocationTypeOptions?.name} </TextB2R>
+                :
+                '픽업 장소 선택'
+              }
               <SVGIcon name="triangleDown" />
             </Button>
-            <TextInput margin='8px 0 0 0' placeholder='기타 픽업 장소 입력' />
+            {
+              spotsRegistrationOptions.pickupLocationTypeOptions?.value === 'ETC' &&
+              <TextInput 
+                margin='8px 0 0 0' 
+                placeholder='기타 픽업 장소 입력' 
+                ref={pickUpEtcRef} 
+                eventHandler={pickUpEtcInputHandler}
+                value={spotsRegistrationInfo.pickupLocationEtc?.length ? spotsRegistrationInfo.pickupLocationEtc : null}
+              />
+            }
           </Wrapper>
         )}
         <Wrapper>
@@ -115,10 +175,24 @@ const RegisterPage = () => {
             pointer
             onClick={() => selectOptions('place')}
           >
-            공간 형태 선택
+            {
+              spotsRegistrationOptions.placeTypeOptions?.name?.length ?
+              <TextB2R color={theme.black}>{spotsRegistrationOptions.placeTypeOptions?.name} </TextB2R>
+              :
+              '공간 형태 선택'
+            }
             <SVGIcon name="triangleDown" />
           </Button>
-          <TextInput margin='8px 0 0 0' placeholder='기타 장소 종류 입력' />
+          {
+            spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' &&
+            <TextInput 
+              margin='8px 0 0 0' 
+              placeholder='기타 장소 종류 입력' 
+              ref={placeEtcRef} 
+              eventHandler={placeEtcInputHandler} 
+              value={spotsRegistrationInfo.placeTypeEtc?.length ? spotsRegistrationInfo.placeTypeEtc : null}
+            />
+          }
         </Wrapper>
         {type === 'private' && (
           <Wrapper>
@@ -133,7 +207,12 @@ const RegisterPage = () => {
               pointer
               onClick={() => selectOptions('time')}
             >
-              시간대 선택
+              {
+                spotsRegistrationOptions.lunchTimeOptions?.name?.length ?
+                <TextB2R color={theme.black}>{spotsRegistrationOptions.lunchTimeOptions?.name} </TextB2R>
+                :
+                '시간대 선택'
+              }
               <SVGIcon name="triangleDown" />
             </Button>
           </Wrapper>
@@ -142,8 +221,8 @@ const RegisterPage = () => {
       {type === 'private' && (
         <BottomWrapper>
           <FlexRow>
-            <Checkbox onChange={checkBox} isSelected />
-            <TextH5B margin="0 0 0 8px">
+            <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
+            <TextH5B margin="0 0 0 8px" padding='3px 0 0 0'>
               픽업 장소 선정 유의사항을 확인했습니다.
             </TextH5B>
           </FlexRow>
@@ -156,7 +235,12 @@ const RegisterPage = () => {
         </BottomWrapper>
       )}
       <FixedButton onClick={goToSubmit}>
-        <Button borderRadius="0">다음</Button>
+        <Button 
+          borderRadius="0" 
+          height="100%"
+          padding='10px 0 0 0' 
+          backgroundColor={!noticeChecked ? theme.greyScale6  : theme.balck}
+          >다음</Button>
       </FixedButton>
     </Container>
   );

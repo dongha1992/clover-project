@@ -9,6 +9,7 @@ import {
   ISpotRegistrationsResponse,
   IParamsSpotRegisterationsOptios,
   ISpotRegisterationsOptiosResponse,
+  IEditRegistration,
   } from '@model/index';
   
   export const getNewSpots = (
@@ -120,4 +121,11 @@ import {
     params: IParamsSpotRegisterationsOptios,
     ): Promise<AxiosResponse<ISpotRegisterationsOptiosResponse>> => {
       return Api.get(`/spot/v1/registrations/options`, { params });
+  };
+
+  //스팟 신청 임시저장
+  export const putSpotsRegistrations = (
+    data: IEditRegistration,
+    ): Promise<AxiosResponse<ISpotRegisterationsOptiosResponse>> => {
+      return Api.put(`/spot/v1/registrations`, data );
   };
