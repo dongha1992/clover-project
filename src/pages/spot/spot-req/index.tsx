@@ -5,7 +5,11 @@ import { theme, fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { INIT_SPOT_LOCATION } from '@store/destination';
+import { 
+  INIT_SPOT_LOCATION, 
+  INIT_SPOT_REGISTRATIONS_OPTIONS, 
+  INIT_SPOT_REGISTRATIONS_INFO 
+} from '@store/spot';
 
 const SpotReqPage = () => {
   const router = useRouter();
@@ -43,6 +47,8 @@ const SpotReqPage = () => {
 
   const goToRegister = () => {
     dispatch(INIT_SPOT_LOCATION());
+    dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
+    dispatch(INIT_SPOT_REGISTRATIONS_INFO());
     router.push({
       pathname: '/spot/register',
       query: { type },
@@ -75,7 +81,7 @@ const SpotReqPage = () => {
         </BtnWrapper>
       </BottomWrapper>
       <FixedButton onClick={goToRegister}>
-        <Button borderRadius="0">{text.registerBtn}</Button>
+        <Button borderRadius="0" padding='10px 0 0 0'>{text.registerBtn}</Button>
       </FixedButton>
     </Container>
   );

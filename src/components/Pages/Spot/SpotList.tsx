@@ -37,7 +37,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
   const [mouseMoved, setMouseMoved] = useState(false);
-  const [spotRegisteration, setSpotRegisteration] = useState(list.recruited);
+  const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
   // const [registrations, setRegistrations] = useState<boolean>();
   const goToDetail = (id: number): void => {
     if (!mouseMoved) {
@@ -113,17 +113,17 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               onClick={() => goToDetail(list.id)}>
               <Tag>
                 <SVGIcon name="whitePeople" />
-                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list.userCount}명 이용중`}</TextH7B>
+                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+              <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
-                {list.name}
+                {list?.name}
               </TextB3R>
               <TextH6B
                 color={theme.greyScale65}
-              >{`${Math.round(list.distance)}m`}</TextH6B>
+              >{`${Math.round(list?.distance)}m`}</TextH6B>
               <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
                 <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB2R padding='4px 0 0 1px'>{list?.likeCount}</TextB2R>
@@ -141,19 +141,19 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                   <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
                     <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                   </LikeWrapper>
-                  <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
                 </StorImgWrapper>
                 <LocationInfoWrapper type="event">
                   <div>
-                    <TextH4B>{list.eventTitle}</TextH4B>
+                    <TextH4B>{list?.eventTitle}</TextH4B>
                     <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
-                      {list.name}
+                      {list?.name}
                     </TextH6B>
                   </div>
                   <ButtonWrapper>
                     <TextH6B
                       color={theme.greyScale65}
-                    >{`${Math.round(list.distance)}m`}</TextH6B>
+                    >{`${Math.round(list?.distance)}m`}</TextH6B>
                     <Button onClick={goToCart}>주문하기</Button>
                   </ButtonWrapper>
                 </LocationInfoWrapper>
@@ -168,7 +168,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
             <StorImgWrapper>
               <Tag>
                 <SVGIcon name="whitePeople" />
-                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list.recruitingCount} / 100명 참여중`}</TextH7B>
+                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list?.recruitingCount} / 100명 참여중`}</TextH7B>
               </Tag>
               {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
               <ImgBox src={`${IMAGE_S3_URL}${list?.image?.url}`} alt="매장이미지" />
@@ -176,13 +176,13 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
             <LocationInfoWrapper type="trial">
               <TextWrapper>
                 <TextH5B margin="8px 0 0 0" color={theme.black}>
-                  {list.placeName}
+                  {list?.placeName}
                 </TextH5B>
                 <TextH6B
                   color={theme.greyScale65}
-                >{`${Math.round(list.distance)}m`}</TextH6B>
+                >{`${Math.round(list?.distance)}m`}</TextH6B>
               </TextWrapper>
-              <Button onClick={() => clickSpotOpen(list.id)}>{spotRegisteration ? '참여완료' : '참여하기'}</Button>
+              <Button onClick={() => clickSpotOpen(list?.id)}>{spotRegisteration ? '참여완료' : '참여하기'}</Button>
             </LocationInfoWrapper>
           </Container>
         )

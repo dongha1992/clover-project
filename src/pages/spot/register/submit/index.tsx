@@ -10,9 +10,16 @@ import {
 import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
 import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
 
 const SubmitPage = () => {
   const router = useRouter();
+  const {
+    spotLocation, 
+    spotsRegistrationOptions, 
+    spotsRegistrationInfo
+  } = useSelector(spotSelector);
   const { type } = router.query;
 
   const goToFinish = (): void => {
@@ -47,6 +54,7 @@ const SubmitPage = () => {
               color={theme.greyScale65}
               textDecoration="underline"
               onClick={goToChangeInfo}
+              padding='0 0 3px 0'
               pointer
             >
               변경하기
@@ -54,26 +62,37 @@ const SubmitPage = () => {
           </FlexBetween>
           <Content>
             <TextH5B margin="0 0 8px 0">주소</TextH5B>
-            <TextB2R>경기도 성남시 분당구 대왕판교로 477 1122</TextB2R>
+            <TextB2R>{`${spotLocation.address} ${spotLocation.bdNm} ${spotLocation.addressDetail}`}</TextB2R>
           </Content>
           <Content>
             <TextH5B margin="0 0 8px 0">장소명</TextH5B>
-            <TextB2R>헤이그라운드</TextB2R>
+            <TextB2R>{spotsRegistrationInfo.placeName}</TextB2R>
           </Content>
           {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
-              <TextB2R>공용 냉장고</TextB2R>
+              <TextB2R>{spotsRegistrationOptions.pickupLocationTypeOptions.name?.length && 
+                spotsRegistrationOptions.pickupLocationTypeOptions.value !== 'ETC' ?
+                  spotsRegistrationOptions.pickupLocationTypeOptions.name
+                :
+                  `기타 / ${spotsRegistrationInfo.pickupLocationEtc}`
+              }</TextB2R>
             </Content>
           )}
           <Content>
             <TextH5B margin="0 0 8px 0">장소 종류</TextH5B>
-            <TextB2R>공유오피스</TextB2R>
+            <TextB2R>{spotsRegistrationOptions.placeTypeOptions.name?.length &&
+              spotsRegistrationOptions.placeTypeOptions.value !== 'ETC' ?
+                spotsRegistrationOptions.placeTypeOptions.name
+              :
+                `기타 / ${spotsRegistrationInfo.placeTypeEtc}`
+              }</TextB2R>
           </Content>
           {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">점심 시간</TextH5B>
-              <TextB2R>12:00</TextB2R>
+              <TextB2R>{spotsRegistrationOptions.lunchTimeOptions.name?.length && 
+                spotsRegistrationOptions.lunchTimeOptions.name}</TextB2R>
             </Content>
           )}
         </ContentWrapper>
@@ -89,6 +108,7 @@ const SubmitPage = () => {
                   color={theme.greyScale65}
                   textDecoration="underline"
                   onClick={goToChangeUserInfo}
+                  padding='0 0 3px 0'
                   pointer
                 >
                   변경하기
@@ -116,7 +136,7 @@ const SubmitPage = () => {
           </>
         )}
         <FixedButton onClick={goToFinish}>
-          <Button borderRadius="0">신청서 제출하기</Button>
+          <Button borderRadius="0" padding='10px 0 0 0'>신청서 제출하기</Button>
         </FixedButton>
       </Wrapper>
     </Container>
