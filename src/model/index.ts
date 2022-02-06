@@ -660,10 +660,10 @@ export interface ITermResponse {
   data: ITerm;
 }
 
-export type TSpotRegisterationsOptiosType = 'PRIVATE' | 'PUBLIC' | 'OWNER' | null;
+export type TSpotRegisterationsOptiosType = 'PRIVATE' | 'PUBLIC' | 'OWNER';
 
 export interface IParamsSpotRegisterationsOptios {
-  type: TSpotRegisterationsOptiosType;
+  type: TSpotRegisterationsOptiosType | null;
 }
 
 export interface ISpotRegisterationsOpstions {
@@ -691,4 +691,49 @@ export interface ISpotRegisterationsOptiosResponse {
   code: number;
   message: string;
   data: ISpotRegisterationsOpstions;
+}
+
+export type TSpotPickupType = 
+  |'COMMUNAL_FRIDGE' 
+  | 'COMMUNAL_TABLE'
+  | 'DELIVERY_LOCATION'
+  | 'DOCUMENT_ROOM' 
+  | 'ETC'
+  | 'FRONT_DESK' 
+  | 'OFFICE_DOOR';
+
+export type TPlaceType =
+  | 'BOOKSTORE'
+  | 'CAFE'
+  | 'CONVENIENCE_STORE'
+  | 'DRUGSTORE'
+  | 'ETC'
+  | 'FITNESS_CENTER'
+  | 'OFFICE'
+  | 'SCHOOL'
+  | 'SHARED_OFFICE'
+  | 'STORE';
+
+export interface IEditRegistration {
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
+  id?: number;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  lunchTime?: string;
+  pickupType?: TSpotPickupType;
+  placeName: string;
+  placeType?: TPlaceType;
+  placeTypeDetail?: string;
+  type?: TSpotRegisterationsOptiosType;
+  userEmail: string;
+  userName: string;
+  userPosition?: string;
+  userTel: string;
 }

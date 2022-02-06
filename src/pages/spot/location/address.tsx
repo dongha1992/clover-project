@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import { fixedBottom, theme, FlexRow, textH7 } from '@styles/theme';
+import { fixedBottom, theme, FlexRow } from '@styles/theme';
 import { TextH2B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
-import { destinationForm, SET_SPOT_LOCATION } from '@store/destination';
+import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import TextInput from '@components/Shared/TextInput';
 import Tag from '@components/Shared/Tag';
+import { SET_SPOT_LOCATION } from '@store/spot';
 
 const AddressDetailPage = () => {
   const { tempLocation } = useSelector(destinationForm);
@@ -20,13 +21,6 @@ const AddressDetailPage = () => {
     longitude: '',
   });
   const [keywordLen, setKeywordLen] = useState<number>(0);
-  const [userSpotRegisterInfo, setUserSpotRegisterInfo] = useState({
-    address: '',
-    placeName: '',
-    pickUpPlace: '',
-    placeType: '',
-    lunchTime: '',
-  });
 
   const { type } = router.query;
 
@@ -52,13 +46,16 @@ const AddressDetailPage = () => {
     } catch (error) {}
   };
 
-
   const setSpotLocationHandler = () => {
     const addressDetail = inputRef.current?.value;
     const spotAddress = {
       addressDetail,
       address: tempLocation.roadAddrPart1,
       bdNm: tempLocation.bdNm,
+      dong: tempLocation.rn,
+      zipCode: tempLocation.zipNo,
+      lat: latitudeLongitude.latitude,
+      lon: latitudeLongitude.longitude,
     };
   
     if(!keywordLen){

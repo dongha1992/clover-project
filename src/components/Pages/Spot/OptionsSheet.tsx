@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
@@ -6,25 +6,24 @@ import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { getSpotRegisterationsOption } from '@api/spot';
 import { ISpotRegisterationsOpstions, IParamsSpotRegisterationsOptios } from '@model/index';
+import { SET_SPOT_REGISTRATIONS_OPTIONS, spotSelector } from '@store/spot';
+import { useSelector, useDispatch } from 'react-redux';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
   tab: string;
 }
 
 const OptionsSheet = ({ tab }: IProps): ReactElement => {
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<string>('');
+  const [selectedPlaceType, setSelectedPlaceType] = useState<string>('');
+  const [selectedLunchTime, setSelectedLunchTime] = useState<string>('');
   const [options, setOptions] = useState<ISpotRegisterationsOpstions>();
-
   const router = useRouter();
+  const dispatch = useDispatch();
   const { type } = router.query;
+  const { spotsRegistrationOptions } = useSelector(spotSelector);
 
-  const changeRadioHandler = (id: number) => {
-    setSelectedPickupPlace(id);
-  };
-
-  const onChangeTest = (e) => {
-    console.log(e.target.value);
-  };
   const selectTab = () => {
     if (tab === 'pickUp') {
       return options?.pickupLocationTypeOptions;
@@ -36,6 +35,10 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
       return options?.placeTypeOptions;
     }
   };
+
+  const pickupTypeObj = selectTab()?.find((i: any) => i.value === selectedPickupPlace);
+  const placeTypeObj = selectTab()?.find((i: any) => i.value === selectedPlaceType);
+  const lunchTimeTypeObj = selectTab()?.find((i: any) => i.value === selectedLunchTime);
 
   const titleType = (): string | null => {
     switch(tab){
@@ -79,9 +82,45 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
     getRegisterationsOption();
   }, []);
 
+  const registrationsOptionsHandler = useCallback((value: string) => {
+      if(tab === 'pickUp'){
+        setSelectedPickupPlace(value);
+      }else if(tab === 'time'){
+        setSelectedLunchTime(value);
+      }else if(tab === 'place'){
+        setSelectedPlaceType(value);
+      };
+    },[]);
 
-  console.log('options', options);
-  // const seletedTime = PICK_UP_PLACE.find((item)=> item.id === Number(selectedPickupPlace))?.name;
+  const submitHandler = () => {
+    dispatch(INIT_BOTTOM_SHEET());
+    // 픽업장소
+    if(tab === 'pickUp'){
+      const selectedOptions = {
+        pickupLocationTypeOptions: pickupTypeObj,
+        placeTypeOptions: spotsRegistrationOptions.placeTypeOptions,
+        lunchTimeOptions: spotsRegistrationOptions.lunchTimeOptions,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
+    }
+    // 점심시간
+    else if(tab === 'time'){
+      const selectedOptions = {
+        pickupLocationTypeOptions: spotsRegistrationOptions.pickupLocationTypeOptions,
+        placeTypeOptions: spotsRegistrationOptions.placeTypeOptions,
+        lunchTimeOptions: lunchTimeTypeObj,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
+    // 장소 종류
+    }else if(tab === 'place'){
+      const selectedOptions = {
+        pickupLocationTypeOptions: spotsRegistrationOptions.pickupLocationTypeOptions,
+        placeTypeOptions: placeTypeObj,
+        lunchTimeOptions: spotsRegistrationOptions.lunchTimeOptions,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
+    };
+  }
 
   return (
     <Container>
@@ -94,7 +133,7 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
             return (
               <Selected key={idx}>
                 <RadioButton
-                  onChange={(e) => onChangeTest(e)}
+                  onChange={() => registrationsOptionsHandler(items.value)}
                   // isSelected={selectedPickupPlace === items.value}
                 />
                 <TextH5B padding="0 0 0 8px">{items.name}</TextH5B>
@@ -103,9 +142,9 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
           })}
         </SelectWrapper>
       </Wrapper>
-      <ButtonContainer onClick={() => {}}>
+      <ButtonContainer onClick={submitHandler}>
         <Button height="100%" width="100%" borderRadius="0">
-          확인
+          선택하기
         </Button>
       </ButtonContainer>
     </Container>
