@@ -7,7 +7,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 
 /*TODO: 확장성 고려해서 리팩토링 */
-
+/*TODO: minWitdh 수정해야함 */
 interface ITooltip {
   message: string;
   top?: string;

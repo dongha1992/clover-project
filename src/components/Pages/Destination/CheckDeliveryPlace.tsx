@@ -54,6 +54,7 @@ const CheckDeliveryPlace = () => {
 
         if (isLocation) {
           dispatch(SET_LOCATION_STATUS(status));
+          dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         } else {
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         }
