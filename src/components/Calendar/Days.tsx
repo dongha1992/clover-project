@@ -9,7 +9,7 @@ type TProps = {
   handler: (date: number) => void;
   selectedDay: boolean;
   index: number;
-  disabledDates: number[];
+  disabledDates: string[];
   otherDeliveryDate?: number;
 };
 
@@ -57,7 +57,7 @@ const Days = ({
   };
 
   return (
-    <Container onClick={() => handler(index)} isSecondWeeeks={isSecondWeeeks}>
+    <Container onClick={() => handler} isSecondWeeeks={isSecondWeeeks}>
       <Wrapper
         selectedDay={selectedDay}
         hasOtherDeliveryDate={hasOtherDeliveryDate}
