@@ -26,19 +26,19 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
 
   const selectTab = () => {
     if (tab === 'pickUp') {
-      return options?.pickupLocationTypeOptions;
+      return {options: options?.pickupLocationTypeOptions, value: selectedPickupPlace};
     } else if (tab === 'time') {
-      return options?.lunchTimeOptions;
+      return {options: options?.lunchTimeOptions, value: selectedLunchTime};
     } else if (tab === 'place' && type === 'private') {
-      return options?.placeTypeOptions;
+      return {options: options?.placeTypeOptions, value: selectedPlaceType};
     } else if (tab === 'place') {
-      return options?.placeTypeOptions;
+      return {options: options?.placeTypeOptions, value: selectedPlaceType};
     }
   };
 
-  const pickupTypeObj = selectTab()?.find((i: any) => i.value === selectedPickupPlace);
-  const placeTypeObj = selectTab()?.find((i: any) => i.value === selectedPlaceType);
-  const lunchTimeTypeObj = selectTab()?.find((i: any) => i.value === selectedLunchTime);
+  const pickupTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedPickupPlace);
+  const placeTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedPlaceType);
+  const lunchTimeTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedLunchTime);
 
   const titleType = (): string | null => {
     switch(tab){
@@ -52,23 +52,10 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
         return null;
     };
   };
-  useEffect(()=> {
-    const typeUpperCase = () => {
-      switch(type){
-        case 'private':
-          return 'PRIVATE';
-        case 'owner':
-          return 'OWNER';
-        case 'public':
-          return 'PUBLIC';
-        default:
-          return null;
-      };
-    };
-    
+  useEffect(()=> {    
     const getRegisterationsOption = async() => {
       const params: IParamsSpotRegisterationsOptios = {
-        type: typeUpperCase(),
+        type: type?.toString().toUpperCase(),
       };
       try{
         const { data } = await getSpotRegisterationsOption(params);
@@ -92,7 +79,7 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
       };
     },[]);
 
-  const submitHandler = () => {
+  const selectedHandler = () => {
     dispatch(INIT_BOTTOM_SHEET());
     // 픽업장소
     if(tab === 'pickUp'){
@@ -129,12 +116,12 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
           {titleType()}
         </TextH5B>
         <SelectWrapper>
-          {selectTab()?.map((items, idx) => {
+          {selectTab()?.options?.map((items, idx) => {
             return (
               <Selected key={idx}>
                 <RadioButton
                   onChange={() => registrationsOptionsHandler(items.value)}
-                  // isSelected={selectedPickupPlace === items.value}
+                  isSelected={items.value === selectTab()?.value}
                 />
                 <TextH5B padding="0 0 0 8px">{items.name}</TextH5B>
               </Selected>
@@ -142,7 +129,7 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
           })}
         </SelectWrapper>
       </Wrapper>
-      <ButtonContainer onClick={submitHandler}>
+      <ButtonContainer onClick={selectedHandler}>
         <Button height="100%" width="100%" borderRadius="0">
           선택하기
         </Button>
