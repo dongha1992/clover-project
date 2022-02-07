@@ -4,8 +4,13 @@ import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { IMAGE_S3_URL } from '@constants/mock/index';
+import { ISpotsItems } from '@components/Pages/Spot/SpotRecentSearch';
 
-const SpotRecommendList = ({ item }: any): ReactElement => {
+interface IParams {
+  item: ISpotsItems;
+}
+
+const SpotRecommendList = ({ item }: IParams): ReactElement => {
 
   const typeTag = (): string | null => {
     const type = item?.type;
@@ -15,12 +20,12 @@ const SpotRecommendList = ({ item }: any): ReactElement => {
       case 'PUBLIC':
         return '퍼블릭'
       default:
-        return ''
+        return null;
     }
   };
   
   const pickUpTime = 
-    `${item.lunchDeliveryStartTime.slice(0,5)}-${item.lunchDeliveryEndTime.slice(0,5)} / ${item.dinnerDeliveryStartTime.slice(0,5)}-${item.dinnerDeliveryEndTime.slice(0,5)}`;
+    `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
   
     return (
       <Container>

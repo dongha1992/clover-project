@@ -485,61 +485,61 @@ export interface ISpots {
       id: number,
       name: string,
       type?: string;
-      eventTitle?: string;
-      images?: [{
-          url?: string,
-          width?: number,
-          height?: number,
-          size?: number,
-          main?: boolean,
+      eventTitle: string;
+      images: [{
+          url: string,
+          width: number,
+          height: number,
+          size: number,
+          main: boolean,
       }],
-      location?: {
-        zipCode?: string;
-        address?: string;
-        addressDetail?: string;
-        dong?: string;
+      location: {
+        zipCode: string;
+        address: string;
+        addressDetail: string;
+        dong: string;
       };
-      coordinate?: {
-        lat?: number;
-        lon?: number;
+      coordinate: {
+        lat: number;
+        lon: number;
       };
-      score?: number;
-      createdAt?: string;
-      description?: string;
-      liked?: boolean,
-      likeCount?: number,
-      userCount?: number,
-      distance?: number;
-      distanceUnit?: string;
-      lunchDelivery?: boolean;
-      lunchDeliveryStartTime?: string;
-      lunchDeliveryEndTime?: string;
-      dinnerDelivery?: string;
-      dinnerDeliveryStartTime?: string;
-      dinnerDeliveryEndTime?: string;
-      placeType?: string;
-      isTrial?: boolean;
-      canEat?: boolean;
-      canParking?: boolean;
-      discountRate?: number;
-      notices?: [{
-        content?: string;
-        createdAt?: string;
-        id?: number;
-        spotId?: number;
+      score: number;
+      createdAt: string;
+      description: string;
+      liked: boolean,
+      likeCount: number,
+      userCount: number,
+      distance: number;
+      distanceUnit: string;
+      lunchDelivery: boolean;
+      lunchDeliveryStartTime: string;
+      lunchDeliveryEndTime: string;
+      dinnerDelivery: string;
+      dinnerDeliveryStartTime: string;
+      dinnerDeliveryEndTime: string;
+      placeType: string;
+      isTrial: boolean;
+      canEat: boolean;
+      canParking: boolean;
+      discountRate: number;
+      notices: [{
+        content: string;
+        createdAt: string;
+        id: number;
+        spotId: number;
       }];
-    pickupEndTime?: string;
-      pickupStartTime?: string;
-      pickups?:[{
-        createdAt?: string;
-        id?: number;
-        images?: [];
-        name?: string;
-        spotId?: number;
+      pickupEndTime: string;
+      pickupStartTime: string;
+      pickups:[{
+        createdAt: string;
+        id: number;
+        images: [];
+        name: string;
+        spotId: number;
       }];
-      placeHoliday?: string;
-      placeOpenTime?: string;
-      stories?: [];    
+      placeHoliday: string;
+      placeOpenTime: string;
+      stories: [];
     }
   ]
 }
@@ -556,6 +556,10 @@ export interface ISpotDetailResponse {
     description: string;
     dinnerDelivery: boolean;
     dinnerDeliveryStartTime: string;
+    dinnerDeliveryEndTime: string;
+    lunchDelivery: boolean;
+    lunchDeliveryStartTime: string;
+    lunchDeliveryEndTime: string;
     id: number;
     images: [{
       url: string;
@@ -572,8 +576,6 @@ export interface ISpotDetailResponse {
       done: string;
       zipCode: string;
     };
-    lunchDelivery: boolean;
-    lunchDeliveryStartTime: string;
     name: string;
     notices: [{
       id: number;
@@ -592,6 +594,7 @@ export interface ISpotDetailResponse {
     }];
     placeHoliday: string;
     placeOpenTime: string;
+    placeTel: string;
     placeType: string;
     stories: [{
       id: number;
@@ -645,7 +648,26 @@ export interface ISpotDetailStoriesResponse {
   }
 }
 
+export interface ISpotsInfo {
+  code: number;
+  messages: string;
+  data: {
+    spotCount: number;
+    unsubmitSpotRegistrations: [];
+    recruitingSpotRegistrations: [
+      {
+        id: number;
+        placeName: string;
+        recruitingCount: number;
+        orderUserCount: number;
+      },
+    ];
+    confirmSpotRegistrations: [];
+    trialSpotRegistrations: [];
+  }
+}
 
+<<<<<<< HEAD
 // export interface ISpotsInfo {
 //   data: {
 //     anyRecruitingSpotRegistration: {
@@ -661,3 +683,30 @@ export interface ISpotDetailStoriesResponse {
 //   }
 // }
 >>>>>>> 5a0a750 (DEV-887 스팟 api)
+=======
+export interface ISpotRegistrationsResponse {
+  data: {
+    title: string;
+    subTitle: string;
+    spotRegistrations: [
+      {
+        id: number;
+        placeName: string;
+        image: {
+          id: number;
+          name: string;
+          url: string;
+          width: number;
+          height: number;
+          size: number;
+          createdAt: string;
+        },
+        recruited: boolean;
+        recruitingCount: number;
+        distance: number;
+        distanceUnit: string;
+      }
+    ]
+  }
+}
+>>>>>>> 820d8e9 (DEV-887 스팟 메인 api 작업, 기타 수정사항들 반영)

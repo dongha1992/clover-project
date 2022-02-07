@@ -38,9 +38,10 @@ const DetailBottomStory = ({list}: IProps ): ReactElement => {
   };
   useEffect(()=> {
     getStoryLikeData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list]);
 
-  const handlerLike = async (id: number, storyId: number) => {
+  const handlerLike = async () => {
     if(!storyLike){
       try{
         const { data } = await postSpotsStoryLike(list.spotId, list.id);
@@ -64,7 +65,20 @@ const DetailBottomStory = ({list}: IProps ): ReactElement => {
         console.error(err);
       };
     };
+  };
 
+  const TagType = () => {
+    const type = list?.type;
+    switch (type){
+      case 'NOTICE':
+        return '공지'
+      case 'EVENT':
+        return '이벤트'
+      case 'GENERAL':
+        return '일반'
+      default:
+        return null;
+    }
   }
 
   return (
@@ -76,10 +90,10 @@ const DetailBottomStory = ({list}: IProps ): ReactElement => {
             color={theme.brandColor}
             backgroundColor={theme.brandColor5}
           >
-            {list?.type}
+            {TagType()}
           </Tag>
         </FlexBetween>
-        <TextB2R margin="0 0 8px 0">{list?.createdAt}</TextB2R>
+        <TextB2R margin="0 0 8px 0">{list?.createdAt.split(' ')[0]}</TextB2R>
         {list?.images?.length > 0 && (
           list?.images?.map((i, idx)=> {
             return (
@@ -88,7 +102,7 @@ const DetailBottomStory = ({list}: IProps ): ReactElement => {
           })
         )}
         <TextB1R margin="10px 0">{list?.content}</TextB1R>
-        <LikeWrapper onClick={()=>handlerLike(list.spotId, list.id)}>
+        <LikeWrapper onClick={()=>handlerLike()}>
           <SVGIcon name={storyLike ? 'greenGood' : 'grayGood'} />
           <TextB2R>&nbsp;{likeCount}</TextB2R>
         </LikeWrapper>
