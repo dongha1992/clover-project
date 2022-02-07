@@ -180,7 +180,10 @@ const OrderInfoContainer = styled.div`
   padding: 0 24px;
   margin-bottom: 16px;
   width: 100%;
+<<<<<<< HEAD
   margin-bottom: 8px;
+=======
+>>>>>>> 03d8647 (DEV-952 중복 css 제거)
 `;
 
 const SelectedCartItemContainer = styled.div`
