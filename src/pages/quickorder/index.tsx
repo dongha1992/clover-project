@@ -14,18 +14,20 @@ import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { orderForm } from '@store/order';
+import { userForm } from '@store/user';
 dayjs.locale('ko');
 
 const QuickOrderPage = () => {
   const { timerTooltip } = useSelector(orderForm);
+  const { isLoginSuccess, user } = useSelector(userForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
 
   /* 임시 */
-  const [user] = useState(true);
+  // const [user] = useState(false);
   const [list] = useState([1]);
-  const noList: string | any[] = ['2022-01-1', '2022-01-2', '2022-01-10'];
+  const noList: string | any[] = ['2022-01-23', '2022-01-24', '2022-01-25'];
 
   const [itemList, setItemList] = useState([]);
 
@@ -34,7 +36,8 @@ const QuickOrderPage = () => {
   const [pushStatus, setPushStatus] = useState('');
   const [ment, setMent] = useState('');
   const [tooltipMsg, setTooltipMsg] = useState('');
-  const [tooltipShow, setTooltipShow] = useState(true);
+  const [tooltipTime, setTooltipTime] = useState('');
+
   const [timer, setTimer] = useState<string>('');
   const [arrivalDate, setArrivalDate] = useState({
     lunch: { type: 'lunch', msg: '' },
@@ -63,14 +66,20 @@ const QuickOrderPage = () => {
     if (time >= 0 && time < 9.3) {
       // 24시 ~ 9시30분
       setPushStatus('part1');
+
+      setTooltipTime('스팟점심');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type1);
     } else if (time >= 9.3 && time < 11.0) {
       // 9시30분 ~ 11시
-      setPushStatus('part4');
+      setPushStatus('part2');
+
+      setTooltipTime('스팟저녁');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type2);
     } else if (time >= 11.0 && time < 17.0) {
       // 11시 ~ 17시
-      setPushStatus('part4');
+      setPushStatus('part3');
+
+      setTooltipTime('새벽/택배');
       weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type3);
     } else {
       // 17시 ~ 24시
@@ -195,7 +204,7 @@ const QuickOrderPage = () => {
   };
 
   const msgHandler = () => {
-    setTooltipMsg(`${pushStatus} 마감 ${timer} 전`);
+    setTooltipMsg(`${tooltipTime} 마감 ${timer} 전`);
   };
 
   const calculateArrival = (day: string) => {
@@ -231,12 +240,12 @@ const QuickOrderPage = () => {
   };
 
   return (
-    <Container>
+    <Container data-cy="quickorder">
       <GreetingArticle>
         <TextBox>
-          {user ? (
+          {isLoginSuccess ? (
             <TextH2B>
-              <span>루이스</span>님{`\n`}
+              <span>{user.name}</span>님{`\n`}
               {list.length !== 0 ? ment : '내일 아침도 미리미리!'}
             </TextH2B>
           ) : (
@@ -261,7 +270,7 @@ const QuickOrderPage = () => {
       />
 
       <PushArticle>
-        {!user || list.length === 0 ? (
+        {!isLoginSuccess || list.length === 0 ? (
           <TextH3B padding="0 0 8px 0">신규 고객을 위한 아침</TextH3B>
         ) : (
           <TextH3B padding="0 0 18px 0">
@@ -269,11 +278,11 @@ const QuickOrderPage = () => {
           </TextH3B>
         )}
 
-        {!user || list.length === 0 ? (
+        {(!isLoginSuccess || list.length === 0) && (
           <TextB2R color={theme.greyScale65} padding="0 0 18px 0">
             <span>새벽배송</span> 17시까지 주문 시 다음날 새벽 7시 전 도착
           </TextB2R>
-        ) : null}
+        )}
 
         <ScrollHorizonList>
           <ScrollHorizonListGroup className="pushSHLG">
@@ -283,7 +292,7 @@ const QuickOrderPage = () => {
           </ScrollHorizonListGroup>
         </ScrollHorizonList>
 
-        {!user || list.length === 0 ? (
+        {(!isLoginSuccess || list.length === 0) && (
           <div className="btnWraper">
             <Button
               margin="24px 0 0"
@@ -294,12 +303,12 @@ const QuickOrderPage = () => {
               전체 상품 첫 주문하기
             </Button>
           </div>
-        ) : null}
+        )}
       </PushArticle>
 
       <Banner>신규서비스 소개</Banner>
 
-      {!user || list.length !== 0 ? (
+      {(!isLoginSuccess || list.length !== 0) && (
         <ReOrderList
           pushStatus={pushStatus}
           weeks={weeks}
@@ -314,7 +323,7 @@ const QuickOrderPage = () => {
             />
           )}
         </ReOrderList>
-      ) : null}
+      )}
     </Container>
   );
 };

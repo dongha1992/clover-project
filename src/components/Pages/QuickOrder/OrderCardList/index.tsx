@@ -63,16 +63,27 @@ const OrderCardList = ({
           tuesdayArrival();
         } else {
           // 월~금 스팟점심(당일 도착)
-          setCardList([CARD.lunch1, CARD.dinner1, CARD.dawn1, CARD.delivery1]);
+          if (time >= 9.0 && time < 9.3) {
+            setCardList([
+              CARD.lunch3,
+              CARD.dinner1,
+              CARD.dawn1,
+              CARD.delivery1,
+            ]);
+            timerRef.current = getTimer();
+            timeCount.current = setInterval(() => {
+              timerHandler();
+            }, 100);
+          } else {
+            setCardList([
+              CARD.lunch1,
+              CARD.dinner1,
+              CARD.dawn1,
+              CARD.delivery1,
+            ]);
+          }
         }
 
-        if (time >= 9.0 && time < 9.3) {
-          setCardList([CARD.lunch3, CARD.dinner1, CARD.dawn1, CARD.delivery1]);
-          timerRef.current = getTimer();
-          timeCount.current = setInterval(() => {
-            timerHandler();
-          }, 100);
-        }
         break;
       case 'part2':
         clearInterval(timeCount.current);
@@ -82,16 +93,27 @@ const OrderCardList = ({
           tuesdayArrival();
         } else {
           // 월~금 스팟저녁(당일 도착)
-          setCardList([CARD.dinner1, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
+          if (time >= 10.3 && time < 11.0) {
+            setCardList([
+              CARD.dinner3,
+              CARD.dawn1,
+              CARD.delivery1,
+              CARD.lunch1,
+            ]);
+            timerRef.current = getTimer();
+            timeCount.current = setInterval(() => {
+              timerHandler();
+            }, 100);
+          } else {
+            setCardList([
+              CARD.dinner1,
+              CARD.dawn1,
+              CARD.delivery1,
+              CARD.lunch1,
+            ]);
+          }
         }
 
-        if (time >= 10.3 && time < 11.0) {
-          setCardList([CARD.dinner3, CARD.dawn1, CARD.delivery1, CARD.lunch1]);
-          timerRef.current = getTimer();
-          timeCount.current = setInterval(() => {
-            timerHandler();
-          }, 100);
-        }
         break;
       case 'part3':
         clearInterval(timeCount.current);
@@ -101,66 +123,67 @@ const OrderCardList = ({
           tuesdayArrival();
         } else {
           // 월~금 새벽/택배(차일 도착)
-          setCardList([
-            CARD.dawn1,
-            CARD.delivery1,
-            {
-              title: CARD.lunch2.title,
-              dec: sprintf(
-                CARD.lunch2.dec,
-                dayjs(
-                  String(
-                    calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
-                  )
-                ).format('DD')
-              ),
-            },
-            {
-              title: CARD.dinner2.title,
-              dec: sprintf(
-                CARD.dinner2.dec,
-                dayjs(
-                  String(
-                    calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
-                  )
-                ).format('DD')
-              ),
-            },
-          ]);
+          if (time >= 16.3 && time < 17.0) {
+            setCardList([
+              CARD.dawn3,
+              CARD.delivery3,
+              {
+                title: CARD.lunch2.title,
+                dec: sprintf(
+                  CARD.lunch2.dec,
+                  dayjs(
+                    String(
+                      calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
+                    )
+                  ).format('DD')
+                ),
+              },
+              {
+                title: CARD.dinner2.title,
+                dec: sprintf(
+                  CARD.dinner2.dec,
+                  dayjs(
+                    String(
+                      calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
+                    )
+                  ).format('DD')
+                ),
+              },
+            ]);
+            timerRef.current = getTimer();
+            timeCount.current = setInterval(() => {
+              timerHandler();
+            }, 100);
+          } else {
+            setCardList([
+              CARD.dawn1,
+              CARD.delivery1,
+              {
+                title: CARD.lunch2.title,
+                dec: sprintf(
+                  CARD.lunch2.dec,
+                  dayjs(
+                    String(
+                      calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
+                    )
+                  ).format('DD')
+                ),
+              },
+              {
+                title: CARD.dinner2.title,
+                dec: sprintf(
+                  CARD.dinner2.dec,
+                  dayjs(
+                    String(
+                      calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
+                    )
+                  ).format('DD')
+                ),
+              },
+            ]);
+          }
         }
 
-        if (time >= 16.3 && time < 17.0) {
-          setCardList([
-            CARD.dawn3,
-            CARD.delivery3,
-            {
-              title: CARD.lunch2.title,
-              dec: sprintf(
-                CARD.lunch2.dec,
-                dayjs(
-                  String(
-                    calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
-                  )
-                ).format('DD')
-              ),
-            },
-            {
-              title: CARD.dinner2.title,
-              dec: sprintf(
-                CARD.dinner2.dec,
-                dayjs(
-                  String(
-                    calculateArrival(now.add(1, 'day').format('YYYY-MM-DD'))
-                  )
-                ).format('DD')
-              ),
-            },
-          ]);
-          timerRef.current = getTimer();
-          timeCount.current = setInterval(() => {
-            timerHandler();
-          }, 100);
-        }
         break;
       case 'part4':
         clearInterval(timeCount.current);
