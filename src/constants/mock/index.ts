@@ -14,6 +14,8 @@ export const SPOT_URL =
 
 export const CLOVER_URL = 'https://clover-service-api-dev.freshcode.me';
 
+export const IMAGE_S3_URL = 'https://s3.ap-northeast-2.amazonaws.com/freshcode';
+
 export const SPOT_ITEMS = [
   {
     id: 0,
