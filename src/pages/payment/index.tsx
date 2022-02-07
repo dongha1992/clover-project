@@ -31,6 +31,7 @@ import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import { Select, AcessMethodOption } from '@components/Shared/Dropdown/index';
 import router from 'next/router';
+<<<<<<< HEAD
 import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 export const ACCESS_METHOD = [
@@ -75,6 +76,10 @@ export const ACCESS_METHOD = [
     value: 'ETC',
   },
 ];
+=======
+import CardItem from '@components/Pages/Mypage/Card/CardItem';
+import { ACCESS_METHOD } from '@constants/payment/index';
+>>>>>>> b2bf8e1 (DEV-934 access method sheet 추가)
 
 const PAYMENT_METHOD = [
   {
