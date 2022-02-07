@@ -28,6 +28,7 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
   const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const msgHandler = () => {
+    /* TODO: state 관리 필요? */
     setTimerMsg(
       `${targetDelivery} 마감 ${timer} 전 ${
         isTooltip ? `(${msgMapper[targetDelivery]})` : ''
