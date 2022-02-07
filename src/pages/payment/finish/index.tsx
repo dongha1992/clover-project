@@ -22,7 +22,7 @@ import SVGIcon from '@utils/SVGIcon';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { Button } from '@components/Shared/Button';
+import { Button, ButtonGroup } from '@components/Shared/Button';
 import router from 'next/router';
 
 const PaymentFinishPage = () => {
@@ -46,6 +46,8 @@ const PaymentFinishPage = () => {
   const goToOrderDetail = () => {
     router.push('/mypage/order-detail');
   };
+
+  const goToShopping = () => {};
 
   if (!itemList.length) {
     return <div>로딩중</div>;
@@ -96,10 +98,6 @@ const PaymentFinishPage = () => {
           <TextH4B>배송정보</TextH4B>
         </FlexBetween>
         <FlexCol padding="24px 0">
-          <FlexBetween>
-            <TextH5B>배송방법</TextH5B>
-            <TextB2R>스팟배송</TextB2R>
-          </FlexBetween>
           <FlexBetweenStart margin="16px 0">
             <TextH5B>배송 예정실시</TextH5B>
             <FlexColEnd>
@@ -121,13 +119,18 @@ const PaymentFinishPage = () => {
           </FlexBetweenStart>
         </FlexCol>
       </DevlieryInfoWrapper>
-      <OrderDetailBtn>
-        <Button borderRadius="0" onClick={goToOrderDetail}>
-          주문 상세보기
-        </Button>
+
+      <ButtonGroup
+        rightButtonHandler={goToShopping}
+        leftButtonHandler={goToOrderDetail}
+        rightText="쇼핑 계속하기"
+        leftText="  주문 상세보기"
+      />
+      {/* <OrderDetailBtn>
+        <Button borderRadius="0" onClick={goToOrderDetail}></Button>
         <Col />
         <Button borderRadius="0">쇼핑 계속하기</Button>
-      </OrderDetailBtn>
+      </OrderDetailBtn> */}
     </Container>
   );
 };
