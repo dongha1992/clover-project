@@ -112,10 +112,12 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    router.push({
-      pathname: '/location/address-detail',
-      query: { isLocation: true },
-    });
+    setTimeout(() => {
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isLocation: true },
+      });
+    }, 500);
   };
 
   return (
