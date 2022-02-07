@@ -300,6 +300,7 @@ export interface IKakaoLatLon {
   y: string;
 }
 
+<<<<<<< HEAD
 export interface IRegisterCard {
   birthDate: string;
   corporationNo?: string | null;
@@ -380,3 +381,36 @@ export interface ITermResponse {
   message: string;
   data: ITerm;
 }
+=======
+export interface IParamsNewSpots {
+  latitude: number;
+  longitude: number;
+}
+
+export interface INewSpotsResponse {
+  code: number;
+  message: string;
+  data: {
+    spots: [
+      {
+        id: number,
+        name: string,
+        images: [
+          {
+            url: string,
+            width: number,
+            height: number,
+            size: number,
+            main: boolean,
+          }
+        ],
+        liked: boolean,
+        likeCount: number,
+        userCount: number,
+        distance: number,
+        distanceUnut: string,
+      }
+    ]
+  }
+}
+>>>>>>> d50e5d0 (DEV-887 / 스팟 메인 api 연동)
