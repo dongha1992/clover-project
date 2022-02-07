@@ -4,6 +4,7 @@ import {
   IParamsSpots,
   ISpotsResponse,
   ISpotDetailResponse,
+  ISpotDetailStoriesResponse,
   } from '@model/index';
   
   export const getNewSpots = (
@@ -21,7 +22,7 @@ import {
   export const getSpotDetail = (
     id: number
   ): Promise<AxiosResponse<ISpotDetailResponse>> => {
-    return Api.get(`/spot/v1/spots/${id}`, {params: id});
+    return Api.get(`/spot/v1/spots/${id}`, { params: id });
   };
 
   export const getSpotEvent = (
@@ -41,3 +42,26 @@ import {
     ): Promise<AxiosResponse<ISpotsResponse>> => {
       return Api.get('/spot/v1/spots/search', { params });
   };
+
+  export const getSpotPopular = (
+    params: IParamsSpots
+    ): Promise<AxiosResponse<ISpotsResponse>> => {
+      return Api.get('/spot/v1/spots/popular', { params });
+  };
+
+  export const getSpotsDetailStory = (
+    id: number,
+    page: number,
+    ): Promise<AxiosResponse<ISpotDetailStoriesResponse>> => {
+      return Api.get(`/spot/v1/spots/${id}/stories`, { params: { id, page } });
+  };
+
+
+
+
+  // export const getInfo = (
+  //   params: IParamsSpots
+  //   ): Promise<AxiosResponse<ISpotsResponse>> => {
+  //     return Api.get('/spot/v1/info', { params });
+  // };
+

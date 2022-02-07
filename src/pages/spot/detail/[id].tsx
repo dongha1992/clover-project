@@ -118,25 +118,39 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
 
   const renderBottomContent = () => {
     return selectedTab === '/spot/detail/story' ? (
-      <DetailBottomStory items={spotItem} />
+      <DetailBottomStory id={id} />
     ) : (
       <DetailBottomStoreInfo items={spotItem} />
     );
   };
 
-  const tagType = () => {
+  const placeType = () => {
     const tag = spotItem&&spotItem.placeType;
     switch(tag){
       case 'CAFE':
         return '카페'
-      case 'CONVENIENCE':
+      case 'CONVENIENCE_STORE':
         return '편의점'
       case 'ETC':
-        return 'ETC'
+        return '기타'
+      case 'BOOKSTORE':
+        return '서점'
+      case 'DRUGSTORE':
+        return '약국'
+      case 'FITNESS_CENTER':
+        return '휘트니스센터'
+      case 'OFFICE':
+        return '오피스'
+      case 'SHARED_OFFICE':
+        return '공유오피스'
+      case 'STORE':
+        return '스토어'
+      case 'SCHOOL':
+        return '학교'
       default:
         return null;
     }
-  }
+  };
 
   const settingsTop = {
     arrows: false,
@@ -201,21 +215,13 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
       <StoreWrapper>
         <TagWrapper>
           <Tag>
-            {tagType()}
+            {placeType()}
           </Tag>
         </TagWrapper>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>
         <TextB3R display="inline" margin="0 8px 0 0">
-          {spotItem?.location?.address}
+          {`${spotItem?.location?.address} ${spotItem?.location?.addressDetail}`}
         </TextB3R>
-        {/* <TextH6B
-          display="inline"
-          color={theme.greyScale65}
-          textDecoration="underline"
-          pointer
-        >
-          지도보기
-        </TextH6B> */}
       </StoreWrapper>
       {spotItem && spotItem.notices?.length > 0 && (
         <NoticeSlider {...settingNotice}>

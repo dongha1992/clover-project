@@ -391,9 +391,13 @@ export interface IParamsSpots {
   latitude: number | null;
   longitude: number | null;
 <<<<<<< HEAD
+<<<<<<< HEAD
   size: number;
 >>>>>>> ef87a21 (DEV-887 new, station 스팟 api 연동)
 =======
+=======
+  page?: number;
+>>>>>>> 5a0a750 (DEV-887 스팟 api)
   size?: number;
   keyword?: string;
 >>>>>>> c8c7362 (DEV-887-spot / search api 작업, 스팟 메인, 상세 api 디테일 작업)
@@ -604,6 +608,47 @@ export interface ISpotDetailResponse {
   }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2bf07d4 (DEV-887 스팟 메인 event, 상세페이지, 스팟 검색 추천라스트 api연동)
 =======
 >>>>>>> c8c7362 (DEV-887-spot / search api 작업, 스팟 메인, 상세 api 디테일 작업)
+=======
+
+export interface ISpotDetailStoriesResponse {
+  code: number;
+  messages: string;
+  data: {
+    spotStories: [{
+      id: number;
+      spotId: number;
+      type: string;
+      title: string;
+      content: string;
+      createdAt: string;
+      liked: boolean;
+      likeCount: number;
+    }];
+    pagination: {
+      total: number;
+      totalPage: number;
+      page: number;
+      size: number;
+    }
+  }
+}
+
+// export interface ISpotsInfo {
+//   data: {
+//     anyRecruitingSpotRegistration: {
+//       coordinate: {
+//         lat: number;
+//         lon: number;
+//       };
+//       createdAt: string;
+//       distance: number;
+//       distanceUnit: string;
+//       id: number;
+//     }
+//   }
+// }
+>>>>>>> 5a0a750 (DEV-887 스팟 api)
