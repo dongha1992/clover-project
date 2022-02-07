@@ -101,7 +101,11 @@ import { destinationForm } from '@store/destination';
 >>>>>>> e23f493 (DEV-934 결제 페이지 수정)
 =======
 /* TODO: 카드 api로 메인 카드 조회 */
+<<<<<<< HEAD
 >>>>>>> 536609f (DEV-934 결제 완료)
+=======
+/* TODO: 배송 방법은 from 서버 or store */
+>>>>>>> 8322b7e (DEV-934 배송정보 변경 페이지 in progress)
 
 const PAYMENT_METHOD = [
   {
@@ -511,26 +515,26 @@ const PaymentPage = () => {
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>배송비</TextB2R>
+          <TextB2R>상품 할인</TextB2R>
           <TextB2R>22원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>할인쿠폰 사용</TextB2R>
+          <TextB2R>스팟 이벤트 할인</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
-          <TextB2R>포인트 사용</TextB2R>
+          <TextB2R>쿠폰 사용</TextB2R>
           <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>배송비</TextH5B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비 할인</TextB2R>
@@ -539,12 +543,12 @@ const PaymentPage = () => {
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>포인트 사용</TextH5B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>12312원</TextH4B>
+          <TextB2R>12312원</TextB2R>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
