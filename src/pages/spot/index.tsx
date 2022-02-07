@@ -10,7 +10,11 @@ import { SPOT_ITEMS } from '@constants/mock';
 import Slider from 'react-slick';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
-import { getNewSpots, getStationSpots } from '@api/spot';
+import { 
+  getNewSpots, 
+  getStationSpots, 
+  getSpotEvent 
+} from '@api/spot';
 import { ISpotsResponse, IParamsSpots } from '@model/index';
 
 const text = {
@@ -47,44 +51,39 @@ const FCO_SPOT_BANNER = [
   },
 ];
 
-interface INewSpots {
-  id: number,
-  name: string,
-  images: [
-    {
-      url: string,
-      width: number,
-      height: number,
-      size: number,
-      main: boolean,
-    }
-  ],
-  liked: boolean,
-  likeCount: number,
-  userCount: number,
-  distance: number,
-  distanceUnut: string,
+interface ISpotsList {
+      id: number,
+      name: string,
+      images: [
+        {
+          url: string,
+          width: number,
+          height: number,
+          size: number,
+          main: boolean,
+        }
+      ],
+      liked: boolean,
+      likeCount: number,
+      userCount: number,
+      distance: number,
+      distanceUnit: string,  
 };
 
 const SpotPage = () => {
-  const [mouseMoved, setMouseMoved] = useState(false);
-  const [newSpot, setNewSpot] = useState<INewSpots>();
-  const [stationSpot, setStationSpot] = useState();
   const dispatch = useDispatch();
   const router = useRouter();
-
-  useEffect(()=> {
-    getNewSpot();
-    getStationSpot();
-  },[])
+  const [mouseMoved, setMouseMoved] = useState(false);
+  const [newSpot, setNewSpot] = useState<ISpotsList[]>([]);
+  const [stationSpot, setStationSpot] = useState<ISpotsList[]>([]);
+  const [eventSpot, setEventSpot] = useState<ISpotsList[]>([]);
 
   const getNewSpot = async() => {
     const params: IParamsSpots = {
       latitude: null,
       longitude: null,
-      page: 1,
       size: 6,
-    }
+    };
     try{
       const {data} = await getNewSpots(params);
       const items = data.data.spots;
@@ -98,17 +97,31 @@ const SpotPage = () => {
     const params: IParamsSpots = {
       latitude: null,
       longitude: null,
-      page: 1,
       size: 6,
-    }
+    };
     try{
       const {data} = await getStationSpots(params);
       const items = data.data.spots;
       setStationSpot(items);
     }catch(err){
       console.error(err);
-    }
-  }
+    };
+  };
+
+  const getEventSpot = async() => {
+    const params: IParamsSpots = {
+      latitude: null,
+      longitude: null,
+      size: 6,
+    };
+    try{
+      const {data} = await getSpotEvent(params);
+      const items = data.data.spots;
+      setEventSpot(items);
+    }catch(err){
+      console.error(err);
+    };
+  };
 
   const goToShare = (): void => {
     dispatch(INIT_BOTTOM_SHEET());
@@ -138,6 +151,12 @@ const SpotPage = () => {
     infinite: false,
     centerPadding: '20px',
   };
+
+  useEffect(()=> {
+    getNewSpot();
+    getStationSpot();
+    getEventSpot();
+  },[])
 
   /* TODO 로그인 유무, 스팟이력 유무에 따른 UI 분기처리 */
   return (
@@ -196,7 +215,7 @@ const SpotPage = () => {
         })}
       </SlideWrapper>
       <SpotList
-        items={SPOT_ITEMS}
+        items={eventSpot}
         title={text.eventTitle}
         type="event"
         btnText="주문하기"

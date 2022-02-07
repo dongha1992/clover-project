@@ -89,8 +89,8 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                       color={theme.greyScale65}
                     >{`${Math.round(item.distance)}m`}</TextH6B>
                     <LikeWrapper type="normal">
-                      <SVGIcon name="likeRed" />
-                      {item.likeCount}
+                      <SVGIcon name={item.liked ? 'likeRed18' : 'likeBorderGray'} />
+                      <TextB2R padding='4px 0 0 1px'>{item.likeCount}</TextB2R>
                     </LikeWrapper>
                   </LocationInfoWrapper>
                 </Container>
@@ -103,7 +103,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
         <ItemListRowWrapper>
           <TextH2B padding="0 0 24px 0">{title}</TextH2B>
           <ItemListRow>
-            {items.map((item: any, index: number) => {
+            {items?.map((item: any, index: number) => {
               return (
                 <Container
                   type="event"
@@ -114,17 +114,19 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                     <LikeWrapper type="event">
                       <SVGIcon name="likeBlack" />
                     </LikeWrapper>
-                    <Img src={item.img} alt="매장이미지" />
+                    <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
                   </StorImgWrapper>
                   <LocationInfoWrapper type="event">
-                    <TextH4B>{item.desc}</TextH4B>
-                    <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
-                      {item.location}
-                    </TextH6B>
+                    <div>
+                      {/* <TextH4B>{item.desc}</TextH4B> */}
+                      <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
+                        {item.name}
+                      </TextH6B>
+                    </div>
                     <ButtonWrapper>
                       <TextH6B
                         color={theme.greyScale65}
-                      >{`${item.distance}m`}</TextH6B>
+                      >{`${Math.round(item.distance)}m`}</TextH6B>
                       <Button onClick={goToCart}>{btnText}</Button>
                     </ButtonWrapper>
                   </LocationInfoWrapper>
@@ -153,9 +155,6 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                       <SVGIcon name="fcoSpot" />
                       {`${item.users}/100명 참여중`}
                     </Tag>
-                    <LikeWrapper type="trial">
-                      <SVGIcon name="likeRed" />
-                    </LikeWrapper>
                     {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
                     <ImgBox />
                   </StorImgWrapper>
@@ -260,6 +259,7 @@ const LocationInfoWrapper = styled.div<{ type: string }>`
   ${({ type }) => {
     if (type === 'event') {
       return css`
+        width: 100%;
         display: flex;
         flex-direction: column;
         padding-left: 16px;
@@ -283,12 +283,12 @@ const LocationInfoWrapper = styled.div<{ type: string }>`
 const LikeWrapper = styled.div<{ type: string }>`
   display: flex;
   align-items: center;
-  margin-top: 8px;
   ${({ type }) => {
-    if (type === 'event' || type === 'trial') {
+    if (type === 'event') {
       return css`
         position: absolute;
         right: 8px;
+        top: 8px;
       `;
     }
   }}
