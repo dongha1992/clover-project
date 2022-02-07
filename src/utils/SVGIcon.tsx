@@ -592,7 +592,6 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
-
   couponDownloadAvailable: () => (
     <svg
       width="64"
@@ -1841,6 +1840,41 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  likeBorderGray: () => (
+    <svg 
+      width="18" 
+      height="18" 
+      viewBox="0 0 18 18" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path 
+        d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z" 
+        stroke="#C8C8C8" 
+        strokeWidth="1.6" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  likeRed18: () => (
+    <svg 
+      width="18"
+      height="18" 
+      viewBox="0 0 18 18" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path 
+        d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z" 
+        fill="#F42D2D" 
+        stroke="#F42D2D" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+
 };
 
 /* TODO: ref */

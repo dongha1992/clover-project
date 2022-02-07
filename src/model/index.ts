@@ -390,7 +390,6 @@ export interface IParamsNewSpots {
 export interface IParamsSpots {
   latitude: number | null;
   longitude: number | null;
-  page: number;
   size: number;
 >>>>>>> ef87a21 (DEV-887 new, station 스팟 api 연동)
 }
@@ -416,9 +415,90 @@ export interface ISpotsResponse {
         likeCount: number,
         userCount: number,
         distance: number,
-        distanceUnut: string,
+        distanceUnit: string,
       }
     ]
   }
 }
+<<<<<<< HEAD
 >>>>>>> d50e5d0 (DEV-887 / 스팟 메인 api 연동)
+=======
+
+export interface ISpotDetailResponse {
+  data: {
+    coordinate: {
+      lat: number;
+      lon: number;
+    };
+    createdAt: string;
+    description: string;
+    dinnerDelivery: boolean;
+    dinnerDeliveryStartTime: string;
+    id: number;
+    images: [{
+      url: string;
+      height: number;
+      width: number;
+      main: boolean;
+      size: number;
+    }];
+    likeCount: number;
+    liked: boolean;
+    location: {
+      address: string;
+      addressDetail: string;
+      done: string;
+      zipCode: string;
+    };
+    lunchDelivery: boolean;
+    lunchDeliveryStartTime: string;
+    name: string;
+    notices: [];
+    pickupEndTime: string;
+    pickupStartTime: string;
+    pickups:[{
+      createdAt: string;
+      id: number;
+      images: [];
+      name: string;
+      spotId: number;
+    }];
+    placeHoliday: string;
+    placeOpenTime: string;
+    placeType: string;
+    stories: [];
+    type: string;  
+  }
+}
+
+export interface ISpotNearbyResponse {
+  data: {
+    spots: [{
+      id: number;
+      type: string;
+      name: string;
+      location: {
+        zipCode: string;
+        address: string;
+        addressDetail: string;
+        dong: string;
+      };
+      lunchDelivery: boolean;
+      lunchDeliveryStartTime: string;
+      lunchDeliveryEndTime: string;
+      dinnerDelivery: string;
+      dinnerDeliveryStartTime: string;
+      dinnerDeliveryEndTime: string;
+      imgages: [{
+        url: string;
+        width: number;
+        height: number;
+        size: number;
+        main: boolean;
+      }]
+      distance: number;
+      distanceUnit: string;
+    }]
+  }
+}
+>>>>>>> 2bf07d4 (DEV-887 스팟 메인 event, 상세페이지, 스팟 검색 추천라스트 api연동)
