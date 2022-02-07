@@ -5,20 +5,17 @@ import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';
-import { setAlert } from '@store/alert';
-import { useDispatch } from 'react-redux';
 import router from 'next/router';
-/*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
+import { TimerTooltip } from '@components/Shared/Tooltip';
+
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 const SpotDetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
   const { showToast, hideToast } = useToast();
-  const dispatch = useDispatch();
-  const numOfLike = 10;
-  const tempStatus = 'isSoldout';
-  const tempNotiOff = false;
-  const isAlreadyStockNoti = true;
+  const { spotDetail } = useSelector(spotSelector);
 
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
@@ -35,7 +32,6 @@ const SpotDetailBottom = () => {
     const message =
       tempIsLike === true ? '스팟을 찜 했어요!' : '스팟을 찜 해제 했어요!';
     showToast({ message });
-    /* TODO: warning 왜? */
 
     return () => hideToast();
   }, [goToDib]);
@@ -51,10 +47,10 @@ const SpotDetailBottom = () => {
       <Wrapper>
         <LikeWrapper>
           <LikeBtn onClick={goToDib}>
-            <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
+            <SVGIcon name={spotDetail.liked ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {tempIsLike ? numOfLike + 1 : numOfLike}
+            {spotDetail.likeCount}
           </TextH5B>
         </LikeWrapper>
         <Col />
@@ -64,11 +60,18 @@ const SpotDetailBottom = () => {
           </TextH5B>
         </BtnWrapper>
       </Wrapper>
+      {
+        spotDetail.discountRate !== 0 && (
+          <TootipWrapper>
+            <TimerTooltip message={`${spotDetail.discountRate}% 할인 중`} bgColor={theme.brandColor} color={theme.white} minWidth='78px' />
+          </TootipWrapper>
+        )
+      }
     </Container>
   );
 }
 
-const Container = styled.div`
+const Container = styled.section`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -94,6 +97,12 @@ const Wrapper = styled.div`
   padding: 16px 24px;
   display: flex;
   width: 100%;
+`;
+
+const TootipWrapper = styled.article`
+  position: absolute;
+  top: -18%;
+  right: 51%;
 `;
 
 const LikeWrapper = styled.div`
