@@ -4,7 +4,11 @@ import { TextH2B, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
+<<<<<<< HEAD
 import { setBottomSheet, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+=======
+import { setBottomSheet } from '@store/bottomSheet';
+>>>>>>> 92c965e (DEV-887 스팟 좋아요 오류 수정, 타입 정리, 기타 수정사항 반영)
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -19,70 +23,11 @@ import {
   getInfo,
   getSpotRegistrations,
 } from '@api/spot';
-import { IParamsSpots, ISpotRegistrationsResponse, ISpots, ISpotsInfoResponse } from '@model/index';
+import { IParamsSpots, ISpotRegistrationsResponse, ISpots, ISpotsInfo } from '@model/index';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
 
-export interface INormalSpots {
-  title: string;
-  id: number;
-  name: string;
-  images: [
-    {
-      url: string;
-      width: number;
-      height: number;
-      size: number;
-      main: boolean;
-      createdAt: string;
-    }
-  ]
-  image: {
-      url: string;
-      width: number;
-      height: number;
-      size: number;
-      main: boolean;
-      createdAt: string;
-  }
-  liked: boolean;
-  likeCount: number;
-  userCount: number;
-  distance: number;
-  distanceUnit: string;
-  eventTitle?: string;
-  discountRate?: number;
-  recruitingCount: number;
-  recruited: boolean;
-  placeName: string;
-};
-
-interface ISpotsInfo {
-  spotCount: number;
-  unsubmitSpotRegistrations: [
-    {
-      id: number,
-      placeName: string,
-      recruitingCount: number,
-      orderUserCount: number,
-    },
-  ];
-  recruitingSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    },
-  ];
-  confirmSpotRegistrations: [
-    {
-      id: number,
-      placeName: string,
-      recruitingCount: number,
-      orderUserCount: number,
-    },
-  ];
-  trialSpotRegistrations: [];
-};
 
 const FCO_SPOT_BANNER = [
   {
@@ -119,13 +64,18 @@ const SpotPage = () => {
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
+  const registrationsLen = info&&info?.recruitingSpotRegistrations?.length > 0;
+  const unsubmitSpotRegistrationsLen = info&&info?.unsubmitSpotRegistrations?.length > 0;
+  const trialRegistrationsLen = info&&info?.trialSpotRegistrations?.length > 0;
+
+  const { isSpotLiked } = useSelector(spotSelector);
+
   useEffect(()=> {
     const getInfoData = async() => {
       try{
         const { data }  = await getInfo();
           setSpotCount(data.data.spotCount);
           setInfo(data.data);
-        console.log(data.data);
       }catch(err){
         console.error(err);
       };
@@ -212,7 +162,7 @@ const SpotPage = () => {
     getStationSpot();
     getEventSpot();
     getPopularSpot();
-  },[])
+  },[isSpotLiked]);
 
 <<<<<<< HEAD
   const goToShare = (): void => {
@@ -229,7 +179,6 @@ const SpotPage = () => {
       dispatch(
         setBottomSheet({
           content: <ShareSheet />,
-          buttonTitle: '',
         })
       );
     };
@@ -283,7 +232,7 @@ const SpotPage = () => {
       {mainTitle()}
       <SlideWrapper {...settings}>
         {/* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
-        info&&info.recruitingSpotRegistrations.length > 0 &&
+          registrationsLen &&
           <BoxHandlerWrapper
             onMouseMove={() => setMouseMoved(true)}
             onMouseDown={() => setMouseMoved(false)}
@@ -291,11 +240,9 @@ const SpotPage = () => {
           >
             <FlexBetween height='92px' padding='22px'>
               <TextH4B>
-                {`[${info?.recruitingSpotRegistrations[0].placeName}]`}
-                <TextH4B display='flex'>
-                  <TextH4B color={theme.brandColor}>{`${5-info?.recruitingSpotRegistrations[0].recruitingCount}`}</TextH4B>
-                  명만 더 주문 하면 정식오픈 돼요!
-                </TextH4B>
+                {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
+                <span>{`${5-info?.recruitingSpotRegistrations[0].recruitingCount}`}</span>
+                명만 더 주문 하면 정식오픈 돼요!
               </TextH4B>
               <IconWrapper>
                 <SVGIcon name="blackCircleShare" />
@@ -304,7 +251,7 @@ const SpotPage = () => {
           </BoxHandlerWrapper>
         }
         {/* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-        info&&info.recruitingSpotRegistrations.length > 0 &&
+        registrationsLen &&
           <BoxHandlerWrapper
             onMouseMove={() => setMouseMoved(true)}
             onMouseDown={() => setMouseMoved(false)}
@@ -321,7 +268,7 @@ const SpotPage = () => {
           </BoxHandlerWrapper>
         }
         {/* 작성중인 스팟 신청서가 있는 경우 노출 */
-          info&&info?.unsubmitSpotRegistrations.length > 0 &&
+         unsubmitSpotRegistrationsLen &&
             <BoxHandlerWrapper
               onMouseMove={() => setMouseMoved(true)}
               onMouseDown={() => setMouseMoved(false)}
@@ -336,7 +283,7 @@ const SpotPage = () => {
             </BoxHandlerWrapper>
         }
         {/* 내가 참여한 스팟 알림 카드*/
-        info&&info?.trialSpotRegistrations.length > 0 &&  
+        trialRegistrationsLen &&  
           <BoxHandlerWrapper
             onMouseMove={() => setMouseMoved(true)}
             onMouseDown={() => setMouseMoved(false)}
@@ -503,6 +450,9 @@ const BoxHandlerWrapper = styled.div`
   background: ${theme.greyScale3};
   border-radius: 8px;
   cursor: pointer;
+  span {
+    color: ${theme.brandColor};
+  }
 `;
 
 const Wrapper = styled.div`

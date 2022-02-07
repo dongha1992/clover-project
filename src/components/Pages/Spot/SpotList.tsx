@@ -16,31 +16,32 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { INormalSpots } from '@pages/spot';
+import { INormalSpots } from '@model/index';
 import {   
   getSpotLike,
   postSpotLike,
   deleteSpotLike,
   postSpotRegistrations,
  } from '@api/spot';
+ import { SET_SPOT_LIKED } from '@store/spot';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
 interface IProps {
-  spots?: INormalSpots[];
   list: INormalSpots;
   type: string;
 }
 
-const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
+const SpotList = ({ list, type }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
   const [mouseMoved, setMouseMoved] = useState(false);
-  const [spotLike, setSpotLike] = useState(false);
+  const [spotLike, setSpotLike] = useState(list?.liked);
   const [spotLikeCount, setSpotLikeCount] = useState(list?.likeCount);
-  const [registrations, setRegistrations] = useState<boolean>();
+  const [spotRegisteration, setSpotRegisteration] = useState(list.recruited);
+  // const [registrations, setRegistrations] = useState<boolean>();
 
   const goToDetail = (id: number): void => {
     if (!mouseMoved) {
@@ -62,22 +63,22 @@ const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
         console.error(err);
       };
     };
+  
     spotLikeData();
-  }, [list]);
+  }, [list, spotLike]);
 
-  const hanlderLike = async (e:any) => {
+  const hanlderLike = async (e: any) => {
     e.stopPropagation();
-    // const test = spots?.find((i) => i.id === id);
     if(!spotLike){
       try {
         const { data } = await postSpotLike(list.id);
         if(data.code === 200 ){
           setSpotLike(true);
           setSpotLikeCount(spotLikeCount+1);
+          dispatch(SET_SPOT_LIKED({isSpotLiked: true}));
         }
       }catch(err){
         console.error(err);
-        console.log(list.id)
       };
     }else if(spotLike){
       try{
@@ -85,6 +86,7 @@ const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
         if(data.code === 200){
           setSpotLike(false);
           setSpotLikeCount(spotLikeCount-1);
+          dispatch(SET_SPOT_LIKED({isSpotLiked: false}));
         }
       }catch(err){
         console.error(err);
@@ -93,35 +95,37 @@ const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
   };
 
   const clickSpotOpen = async(id: number) => {
-    try{
-      const {data} = await postSpotRegistrations(id);
-      if(data.code === 200){
-        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-        dispatch(
-          setAlert({
-            alertMessage: TitleMsg,
-            onSubmit: () => {
-              const message = '참여해주셔서 감사해요:)'
-              showToast({ message });
-              /* TODO: warning 왜? */
-              return () => hideToast();
-            },
-            submitBtnText: '확인',
-            closeBtnText: '취소',
-          })
-        );
-        console.log('참여 완료!!! post')
-      }
-    }catch(err){
-      console.error(err);
+    if(list.recruited){ 
+      return;
     };
+      try{
+        const {data} = await postSpotRegistrations(id);
+        if(data.code === 200){
+          setSpotRegisteration(true);
+          const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+          dispatch(
+            setAlert({
+              alertMessage: TitleMsg,
+              onSubmit: () => {
+                const message = '참여해주셔서 감사해요:)'
+                showToast({ message });
+                /* TODO: warning 왜? */
+                return () => hideToast();
+              },
+              submitBtnText: '확인',
+              closeBtnText: '취소',
+            })
+          );
+          console.log('참여 완료!!! post')
+        }
+      }catch(err){
+        console.error(err);
+      };  
   };
-  // const handlerLike = async(id) => {
-    
-  // }
 
   const SpotsListTypeRender = () => {
     switch(type) {
+      // 오늘 점심, 신규, 역세권 스팟
       case 'normal':
         return (
           <Container type="normal">
@@ -149,35 +153,37 @@ const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
             </LocationInfoWrapper>
           </Container>
         )
+      //이벤트 스팟
       case 'event': 
         return (
           <ItemListRowWrapper>
             <ItemListRow>
-                  <Container type="event">
-                    <StorImgWrapper onClick={() => goToDetail(list.id)}>
-                      <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
-                        <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
-                      </LikeWrapper>
-                      <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-                    </StorImgWrapper>
-                    <LocationInfoWrapper type="event">
-                      <div>
-                        <TextH4B>{list.eventTitle}</TextH4B>
-                        <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
-                          {list.name}
-                        </TextH6B>
-                      </div>
-                      <ButtonWrapper>
-                        <TextH6B
-                          color={theme.greyScale65}
-                        >{`${Math.round(list.distance)}m`}</TextH6B>
-                        <Button onClick={goToCart}>주문하기</Button>
-                      </ButtonWrapper>
-                    </LocationInfoWrapper>
-                  </Container>
+              <Container type="event">
+                <StorImgWrapper onClick={() => goToDetail(list.id)}>
+                  <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
+                    <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
+                  </LikeWrapper>
+                  <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                </StorImgWrapper>
+                <LocationInfoWrapper type="event">
+                  <div>
+                    <TextH4B>{list.eventTitle}</TextH4B>
+                    <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
+                      {list.name}
+                    </TextH6B>
+                  </div>
+                  <ButtonWrapper>
+                    <TextH6B
+                      color={theme.greyScale65}
+                    >{`${Math.round(list.distance)}m`}</TextH6B>
+                    <Button onClick={goToCart}>주문하기</Button>
+                  </ButtonWrapper>
+                </LocationInfoWrapper>
+              </Container>
             </ItemListRow>
           </ItemListRowWrapper>
         )
+      // 단골 가게 스팟
       case 'trial':
         return(
           <Container type="trial">
@@ -198,7 +204,7 @@ const SpotList = ({ list, spots,  type }: IProps): ReactElement => {
                   color={theme.greyScale65}
                 >{`${Math.round(list.distance)}m`}</TextH6B>
               </TextWrapper>
-              <Button onClick={() => clickSpotOpen(list.id)}>{list.recruited ? '참여완료' : '참여하기'}</Button>
+              <Button onClick={() => clickSpotOpen(list.id)}>{spotRegisteration ? '참여완료' : '참여하기'}</Button>
             </LocationInfoWrapper>
           </Container>
         )
