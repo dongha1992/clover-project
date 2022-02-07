@@ -138,10 +138,10 @@ export const FlexWrapWrapper = styled.div`
   width: 100%;
 `;
 
-export const FlexStart = styled.div<{ padding?: string; margin?: string }>`
+export const FlexStart = styled.div<{ padding?: string; margin?: string; alignItems?: string; }>`
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: ${(props) => props.alignItems ? props.alignItems : 'center'};
   justify-content: flex-start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};

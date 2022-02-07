@@ -6,50 +6,59 @@ import Tag from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import {SET_IMAGE_VIEWER} from '@store/common';
+import { IMAGE_S3_URL } from '@constants/mock/index';
+import {ISpotsDetail} from '@pages/spot/detail/[id]';
 
-const DetailBottomStory = ({ items }: any): ReactElement => {
+interface IProps {
+    items: ISpotsDetail;
+}
+
+const DetailBottomStory = ( {items}: IProps): ReactElement => {
   const dispatch = useDispatch();
-  const itemsLeng: number = items?.story?.length;
-
+  const itemsLeng = items&&items.stories?.length > 0;
   const openImgViewer =  (img: any) => {
     dispatch(SET_IMAGE_VIEWER(img));
   };
 
   return (
     <>
-      {itemsLeng === 0 ? (
-        <Container>
-          <TextB1R color={theme.greyScale65}>아직 스토리가 없어요.😭</TextB1R>
-        </Container>
-      ) : (
+      {itemsLeng ? (
         <StoryContainer>
-          {items?.story?.map((item: any, index: number) => {
+          {items?.stories?.map((item, index: number) => {
             return (
               <TopWrapper key={index}>
                 <FlexBetween>
-                  <TextH4B>{item.spotName}</TextH4B>
+                  <TextH4B>{item.title}</TextH4B>
                   <Tag
                     color={theme.brandColor}
                     backgroundColor={theme.brandColor5}
                   >
-                    {item.noti}
+                    {item.type}
                   </Tag>
                 </FlexBetween>
-                <TextB2R margin="0 0 8px 0">{item.date}</TextB2R>
-                {item.imgUrl && (
-                  <ImgWrapper src={item.imgUrl} onClick={()=>openImgViewer(item.imgUrl)}  alt="스토리 이미지" />
+                <TextB2R margin="0 0 8px 0">{item.createdAt}</TextB2R>
+                {item.images.length > 0 && (
+                  item.images.map((url, idx)=> {
+                    <ImgWrapper key={idx} src={`${IMAGE_S3_URL}${url}`} onClick={()=>openImgViewer(url)}  alt="스토리 이미지" />
+                  })
                 )}
-                <TextB1R margin="10px 0">{item.desc}</TextB1R>
+                <TextB1R margin="10px 0">{item.content}</TextB1R>
                 <LikeWrapper>
-                  <SVGIcon name="like" />
-                  <TextB2R>{item.like}</TextB2R>
+                  <SVGIcon name={item.liked ? 'likeRed18' : 'likeBorderGray'} />
+                  <TextB2R>{item.likeCount}</TextB2R>
                 </LikeWrapper>
                 <UnderLine />
               </TopWrapper>
             );
           })}
         </StoryContainer>
-      )}
+      )
+      :(
+        <Container>
+          <TextB1R color={theme.greyScale65}>아직 스토리가 없어요.😭</TextB1R>
+        </Container>
+      )
+      }
     </>
   );
 }

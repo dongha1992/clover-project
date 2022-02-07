@@ -10,8 +10,12 @@ import {
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
+<<<<<<< HEAD
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
+=======
+import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
+>>>>>>> c8c7362 (DEV-887-spot / search api 작업, 스팟 메인, 상세 api 디테일 작업)
 
 interface IProps {
   item: IDestinationsResponse;

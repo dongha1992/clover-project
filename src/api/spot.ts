@@ -4,7 +4,6 @@ import {
   IParamsSpots,
   ISpotsResponse,
   ISpotDetailResponse,
-  ISpotNearbyResponse,
   } from '@model/index';
   
   export const getNewSpots = (
@@ -33,8 +32,12 @@ import {
 
   export const getSpotSearchRecommend = (
     params: IParamsSpots
-    ): Promise<AxiosResponse<ISpotNearbyResponse>> => {
+    ): Promise<AxiosResponse<ISpotsResponse>> => {
       return Api.get('/spot/v1/spots/nearby', { params });
   };
 
-  
+  export const getSpotSearch = (
+    params: IParamsSpots
+    ): Promise<AxiosResponse<ISpotsResponse>> => {
+      return Api.get('/spot/v1/spots/search', { params });
+  };
