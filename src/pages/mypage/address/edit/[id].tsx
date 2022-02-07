@@ -24,7 +24,6 @@ import { ButtonGroup } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
-import { Select, AcessMethodOption } from '@components/Shared/Dropdown';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
@@ -37,7 +36,8 @@ import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
 import { getValues } from '@utils/getValues';
-
+import { ACCESS_METHOD_MAP } from '@constants/payment';
+import { IAccessMethod } from '@pages/payment';
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
 
@@ -46,18 +46,6 @@ const mapper: Obj = {
   SPOT: '스팟배송',
   PARCEL: '택배배송',
   QUICK: '퀵배송',
-};
-
-const accessMethodMap: Obj = {
-  FREE: '요청사항을 입력해주세요',
-  COMMON_ENTRANCE_PASSWORD: '예) #1234#',
-  CALL_SECURITY_OFFICE: '경비실 호출 방법 입력',
-  CALL_HOUSE: '새벽에도 호출 가능한 경우 선택해주세요',
-  DELIVERY_SECURITY_OFFICE: '경비실 부재 시 공동현관 등에 대응 배송',
-  DELIVERY_EXTERNAL_UNMANNED_COURIER_BOX: '무인택배함 비밀번호 입력',
-  DELIVERY_INTERNAL_UNMANNED_COURIER_BOX:
-    ' 공동현관 비밀번호 / 무인택배함 비밀번호 입력',
-  ETC: '직접 입력',
 };
 
 interface IProps {
@@ -71,11 +59,6 @@ interface IAddress {
   dong: string;
 }
 
-export interface IAccessMethod {
-  id: number;
-  text: string;
-  value: string;
-}
 const AddressEditPage = ({ id }: IProps) => {
   const [selectedAddress, setSelectedAddress] =
     useState<IDestinationsResponse>();
@@ -326,8 +309,8 @@ const AddressEditPage = ({ id }: IProps) => {
               <TextInput
                 name="deliveryMessage"
                 placeholder={
-                  accessMethodMap[selectedAccessMethod?.value!]
-                    ? accessMethodMap[selectedAccessMethod?.value!]
+                  ACCESS_METHOD_MAP[selectedAccessMethod?.value!]
+                    ? ACCESS_METHOD_MAP[selectedAccessMethod?.value!]
                     : '요청사항 입력'
                 }
                 margin="8px 0 0 0"
@@ -412,6 +395,7 @@ const DevlieryInfoWrapper = styled.div`
 const AccessMethodWrapper = styled.div`
   border: 1px solid ${theme.greyScale15};
   padding: 12px 16px;
+  border-radius: 8px;
 `;
 
 const VisitorAccessMethodWrapper = styled.div`
