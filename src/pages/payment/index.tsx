@@ -87,6 +87,7 @@ import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 >>>>>>> 016b31f (DEV-934 access method store 추가)
 =======
 import { commonSelector } from '@store/common';
+import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
@@ -145,6 +146,7 @@ const PaymentPage = () => {
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
+  const { selectedCoupon } = useSelector(couponForm);
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -370,7 +372,12 @@ const PaymentPage = () => {
         <FlexBetween>
           <TextH4B>할인 쿠폰</TextH4B>
           <FlexRow>
-            <TextB2R padding="0 10px 0 0">4장 보유</TextB2R>
+            {selectedCoupon ? (
+              <TextB2R padding="0 10px 0 0">{selectedCoupon.discount}</TextB2R>
+            ) : (
+              <TextB2R padding="0 10px 0 0">4장 보유</TextB2R>
+            )}
+
             <div onClick={couponHandler}>
               <SVGIcon name="arrowRight" />
             </div>
