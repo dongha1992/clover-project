@@ -29,7 +29,6 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
-import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
@@ -37,14 +36,12 @@ import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { destinationForm } from '@store/destination';
+import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
-
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
-
 /* TODO: 카드 api로 메인 카드 조회 */
-
 /* TODO: 배송 방법은 from 서버 or store */
 
 const PAYMENT_METHOD = [
@@ -80,6 +77,12 @@ const PAYMENT_METHOD = [
   },
 ];
 
+export interface IAccessMethod {
+  id: number;
+  text: string;
+  value: string;
+}
+
 /* TODO CardItem에 card 정보? */
 
 const hasRegisteredCard = true;
@@ -92,6 +95,8 @@ const PaymentPage = () => {
   });
   const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
+  const [selectedAccessMethod, setSelectedAccessMethod] =
+    useState<IAccessMethod>();
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);

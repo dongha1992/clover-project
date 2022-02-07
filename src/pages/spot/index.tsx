@@ -4,7 +4,7 @@ import { TextH2B, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { setBottomSheet } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -130,7 +130,7 @@ const SpotPage = () => {
 
   const goToShare = (e: any): void => {
     if (!mouseMoved) {
-      dispatch(INIT_BOTTOM_SHEET());
+      dispatch(initBottomSheet());
       dispatch(
         setBottomSheet({
           content: <ShareSheet />,

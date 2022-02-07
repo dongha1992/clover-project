@@ -38,6 +38,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     destination,
     order,
     spot,
+    coupon,
   })(state, action);
 };
 
@@ -75,7 +76,15 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'spot'],
+      whitelist: [
+        'order',
+        'destination',
+        'cart',
+        'menu',
+        'common',
+        'coupon',
+        'spot',
+      ],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
