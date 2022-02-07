@@ -390,18 +390,26 @@ export interface IParamsNewSpots {
 export interface IParamsSpots {
   latitude: number | null;
   longitude: number | null;
+<<<<<<< HEAD
   size: number;
 >>>>>>> ef87a21 (DEV-887 new, station 스팟 api 연동)
+=======
+  size?: number;
+  keyword?: string;
+>>>>>>> c8c7362 (DEV-887-spot / search api 작업, 스팟 메인, 상세 api 디테일 작업)
 }
 
 export interface ISpotsResponse {
   code: number;
   message: string;
   data: {
+    title: string;
     spots: [
       {
         id: number,
         name: string,
+        type: string;
+        eventTitle: string;
         images: [
           {
             url: string,
@@ -411,11 +419,53 @@ export interface ISpotsResponse {
             main: boolean,
           }
         ],
+        location: {
+          zipCode: string;
+          address: string;
+          addressDetail: string;
+          dong: string;
+        };
+        coordinate: {
+          lat: number;
+          lon: number;
+        };
+        score: number;
+        createdAt: string;
+        description: string;
         liked: boolean,
         likeCount: number,
         userCount: number,
-        distance: number,
-        distanceUnit: string,
+        distance: number;
+        distanceUnit: string;
+        lunchDelivery: boolean;
+        lunchDeliveryStartTime: string;
+        lunchDeliveryEndTime: string;
+        dinnerDelivery: string;
+        dinnerDeliveryStartTime: string;
+        dinnerDeliveryEndTime: string;
+        placeType: string;
+        isTrial: boolean;
+        canEat: boolean;
+        canParking: boolean;
+        discountRate: number;
+        notices: [{
+          content: string;
+          createdAt: string;
+          id: number;
+          spotId: number;
+        }];
+        pickupEndTime: string;
+        pickupStartTime: string;
+        pickups:[{
+          createdAt: string;
+          id: number;
+          images: [];
+          name: string;
+          spotId: number;
+        }];
+        placeHoliday: string;
+        placeOpenTime: string;
+        stories: [];
       }
     ]
   }
@@ -423,6 +473,72 @@ export interface ISpotsResponse {
 <<<<<<< HEAD
 >>>>>>> d50e5d0 (DEV-887 / 스팟 메인 api 연동)
 =======
+
+export interface ISpots {
+  title: string;
+  spots: [
+    {
+      id: number,
+      name: string,
+      type?: string;
+      eventTitle?: string;
+      images?: [{
+          url?: string,
+          width?: number,
+          height?: number,
+          size?: number,
+          main?: boolean,
+      }],
+      location?: {
+        zipCode?: string;
+        address?: string;
+        addressDetail?: string;
+        dong?: string;
+      };
+      coordinate?: {
+        lat?: number;
+        lon?: number;
+      };
+      score?: number;
+      createdAt?: string;
+      description?: string;
+      liked?: boolean,
+      likeCount?: number,
+      userCount?: number,
+      distance?: number;
+      distanceUnit?: string;
+      lunchDelivery?: boolean;
+      lunchDeliveryStartTime?: string;
+      lunchDeliveryEndTime?: string;
+      dinnerDelivery?: string;
+      dinnerDeliveryStartTime?: string;
+      dinnerDeliveryEndTime?: string;
+      placeType?: string;
+      isTrial?: boolean;
+      canEat?: boolean;
+      canParking?: boolean;
+      discountRate?: number;
+      notices?: [{
+        content?: string;
+        createdAt?: string;
+        id?: number;
+        spotId?: number;
+      }];
+    pickupEndTime?: string;
+      pickupStartTime?: string;
+      pickups?:[{
+        createdAt?: string;
+        id?: number;
+        images?: [];
+        name?: string;
+        spotId?: number;
+      }];
+      placeHoliday?: string;
+      placeOpenTime?: string;
+      stories?: [];    
+    }
+  ]
+}
 
 export interface ISpotDetailResponse {
   data: {
@@ -453,7 +569,12 @@ export interface ISpotDetailResponse {
     lunchDelivery: boolean;
     lunchDeliveryStartTime: string;
     name: string;
-    notices: [];
+    notices: [{
+      id: number;
+      spotId: number;
+      content: string;
+      createdAt: string;
+    }];
     pickupEndTime: string;
     pickupStartTime: string;
     pickups:[{
@@ -466,39 +587,23 @@ export interface ISpotDetailResponse {
     placeHoliday: string;
     placeOpenTime: string;
     placeType: string;
-    stories: [];
+    stories: [{
+      id: number;
+      spotId: number;
+      type: string;
+      title: string;
+      content: string;
+      createdAt: string;
+      images: [{
+        url: string;
+      }];
+      liked: boolean;
+      likeCount: number;    
+    }];
     type: string;  
   }
 }
-
-export interface ISpotNearbyResponse {
-  data: {
-    spots: [{
-      id: number;
-      type: string;
-      name: string;
-      location: {
-        zipCode: string;
-        address: string;
-        addressDetail: string;
-        dong: string;
-      };
-      lunchDelivery: boolean;
-      lunchDeliveryStartTime: string;
-      lunchDeliveryEndTime: string;
-      dinnerDelivery: string;
-      dinnerDeliveryStartTime: string;
-      dinnerDeliveryEndTime: string;
-      imgages: [{
-        url: string;
-        width: number;
-        height: number;
-        size: number;
-        main: boolean;
-      }]
-      distance: number;
-      distanceUnit: string;
-    }]
-  }
-}
+<<<<<<< HEAD
 >>>>>>> 2bf07d4 (DEV-887 스팟 메인 event, 상세페이지, 스팟 검색 추천라스트 api연동)
+=======
+>>>>>>> c8c7362 (DEV-887-spot / search api 작업, 스팟 메인, 상세 api 디테일 작업)

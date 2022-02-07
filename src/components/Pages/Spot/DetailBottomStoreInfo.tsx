@@ -2,24 +2,29 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextH4B, TextB1R } from '@components/Shared/Text';
 import Map from '@components/Map';
+import {ISpotsDetail} from '@pages/spot/detail/[id]';
 
-const DetailBottomStoreInfo = ({ items }: any): ReactElement => {
+interface IProps {
+  items: ISpotsDetail;
+}
+
+const DetailBottomStoreInfo= ({items}: IProps): ReactElement => {
   return (
     <Container>
       <Wrapper>
         <FlexWrapper>
           <TextH4B margin="0 33px 0 0">연락처</TextH4B>
           <TextH4B textDecoration="underline">
-            {items?.storeInfo?.number}
+            -
           </TextH4B>
         </FlexWrapper>
         <FlexWrapper>
           <TextH4B margin="0 20px 0 0">영업시간</TextH4B>
-          <TextB1R>{items?.storeInfo?.time}</TextB1R>
+          <TextB1R>{items?.placeOpenTime}</TextB1R>
         </FlexWrapper>
         <FlexWrapper>
-          <TextH4B margin="0 33px 0 0">연락처</TextH4B>
-          <TextB1R>{items?.storeInfo?.off}</TextB1R>
+          <TextH4B margin="0 33px 0 0">휴무일</TextH4B>
+          <TextB1R>{items?.placeHoliday}</TextB1R>
         </FlexWrapper>
       </Wrapper>
       <MapWrapper>

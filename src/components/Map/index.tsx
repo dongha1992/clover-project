@@ -4,18 +4,13 @@ import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 import Head from 'next/head';
 import SVGIcon from '@utils/SVGIcon';
+import { IArea } from '@pages/spot/search/location'
 
 interface IProps {
   zoom?: number;
   centerLat?: string;
   centerLng?: string;
-  areaArr?: [
-    {
-      location: string;
-      lat: string;
-      lng: string;
-    }
-  ];
+  areaArr?: IArea[];
 }
 
 const MapAPI = ({

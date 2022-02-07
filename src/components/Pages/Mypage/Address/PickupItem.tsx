@@ -10,7 +10,7 @@ import {
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import Tag from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import { ISpotItem } from '@components/Pages/Spot/SpotItem';
+import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
 import { Obj } from '@model/index';
 
 interface IProps {
