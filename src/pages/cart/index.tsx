@@ -76,10 +76,15 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
+<<<<<<< HEAD
   const [disposableList, setDisposableList] = useState([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
   ]);
+=======
+  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<number>(0);
+
+>>>>>>> 7847391 (DEV-934 calendar sheet 추가)
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -357,6 +362,8 @@ const CartPage = () => {
             <Calendar
               disabledDates={disabledDates}
               otherDeliveryDate={otherDeliveryDate}
+              selectedDeliveryDay={selectedDeliveryDay}
+              setSelectedDeliveryDay={setSelectedDeliveryDay}
             />
             {LUNCH_OR_DINNER.map((item, index) => {
               return (

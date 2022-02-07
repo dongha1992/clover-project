@@ -18,12 +18,18 @@ let WEEKS: any = {
 interface ICalendar {
   disabledDates: number[];
   otherDeliveryDate?: number;
+  selectedDeliveryDay: number;
+  setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Calendar = ({ disabledDates, otherDeliveryDate }: ICalendar) => {
+const Calendar = ({
+  disabledDates,
+  otherDeliveryDate,
+  selectedDeliveryDay,
+  setSelectedDeliveryDay,
+}: ICalendar) => {
   const [dateList, setDateList] = useState<number[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
-  const [selectedDay, setSelectedDay] = useState<number>(0);
 
   useEffect(() => {
     initCalendar();
@@ -56,7 +62,7 @@ const Calendar = ({ disabledDates, otherDeliveryDate }: ICalendar) => {
   };
 
   const clickDayHandler = (index: number) => {
-    setSelectedDay(index);
+    setSelectedDeliveryDay(index);
   };
 
   const checkShowMoreWeek = (firstWeek: number[], disabledDates: number[]) => {
@@ -109,7 +115,7 @@ const Calendar = ({ disabledDates, otherDeliveryDate }: ICalendar) => {
                 handler={clickDayHandler}
                 day={day}
                 key={day}
-                selectedDay={selectedDay === index}
+                selectedDay={selectedDeliveryDay === index}
                 index={index}
                 disabledDates={disabledDates}
                 otherDeliveryDate={otherDeliveryDate}
