@@ -37,11 +37,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     common,
     destination,
     order,
-<<<<<<< HEAD
     spot,
-=======
-    coupon,
->>>>>>> 2e7a38b (DEV-934 쿠폰 완료)
   })(state, action);
 };
 
@@ -79,11 +75,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-<<<<<<< HEAD
       whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'spot'],
-=======
-      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'coupon'],
->>>>>>> 2e7a38b (DEV-934 쿠폰 완료)
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
