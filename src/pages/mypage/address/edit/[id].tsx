@@ -310,7 +310,7 @@ const AddressEditPage = ({ id }: IProps) => {
               <TextH4B>출입 방법</TextH4B>
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
-              <Select
+              {/* <Select
                 placeholder="출입방법 선택"
                 value={selectedAccessMethod?.text}
               >
@@ -321,7 +321,8 @@ const AddressEditPage = ({ id }: IProps) => {
                     selectOptionHandler={selectOptionHandler}
                   />
                 ))}
-              </Select>
+              </Select> */}
+              <AccessMethodWrapper></AccessMethodWrapper>
               <TextInput
                 name="deliveryMessage"
                 placeholder={
@@ -407,6 +408,12 @@ const ReceiverInfoWrapper = styled.div`
 const DevlieryInfoWrapper = styled.div`
   ${homePadding}
 `;
+
+const AccessMethodWrapper = styled.div`
+  border: 1px solid ${theme.greyScale15};
+  padding: 12px 16px;
+`;
+
 const VisitorAccessMethodWrapper = styled.div`
   padding: 24px;
 `;
