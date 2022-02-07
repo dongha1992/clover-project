@@ -23,7 +23,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import { ButtonGroup } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
-import { ACCESS_METHOD } from '@pages/payment/index';
+import { ACCESS_METHOD } from '@constants/payment/index';
 import { Select, AcessMethodOption } from '@components/Shared/Dropdown';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';

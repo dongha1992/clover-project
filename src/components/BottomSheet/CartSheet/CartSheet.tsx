@@ -11,8 +11,13 @@ import { Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useToast } from '@hooks/useToast';
 
+/* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
+        https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
+*/
+
 const CartSheet = () => {
   const [selectedMenus, setSelectedMenus] = useState<any>([]);
+
   const { showToast } = useToast();
 
   const dispatch = useDispatch();
@@ -43,7 +48,7 @@ const CartSheet = () => {
     }, 500);
   };
 
-  // TODO: cartSheetObj 가끔 못 찾음 원인 파악
+  /* TODO: cartSheetObj 가끔 못 찾음 원인 파악 */
 
   if (!Object.keys(cartSheetObj).length) {
     return <div>로딩</div>;
@@ -107,6 +112,7 @@ const CartSheet = () => {
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
+          <TextH5B padding="0 4px 0 0">스팟저녁</TextH5B>
           <TextB2R display="flex">
             13:40 내 주문하면 내일
             <TextH5B padding="0px 4px">새벽 7시 전</TextH5B>도착
@@ -142,6 +148,7 @@ const OrderInfoContainer = styled.div`
   padding: 0 24px;
   margin-bottom: 16px;
   width: 100%;
+  margin-bottom: 16px;
 `;
 
 const SelectedCartItemContainer = styled.div`
@@ -159,6 +166,7 @@ const TotalSumContainer = styled.div`
 
 const DeliveryInforContainer = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const ButtonContainer = styled.div`
