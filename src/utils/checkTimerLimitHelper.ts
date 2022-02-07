@@ -25,7 +25,7 @@ const checkTimerLimitHelper = (): TResult => {
   // let currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
   let currentTime;
   /* 스팟 런치 테스트 */
-  currentTime = 18.0;
+  currentTime = 9.0;
 
   /* 스팟 저녁 테스트 */
   // currentTime = 10.4;
