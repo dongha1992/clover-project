@@ -81,7 +81,6 @@ const CartPage = () => {
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
   ]);
-
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const calendarRef = useRef<HTMLDivElement>(null);

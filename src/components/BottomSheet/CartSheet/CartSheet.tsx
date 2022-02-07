@@ -19,6 +19,10 @@ import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
 */
 
+/* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
+        https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
+*/
+
 const CartSheet = () => {
   const [rollingData, setRollingData] = useState([
     {
