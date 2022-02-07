@@ -29,83 +29,23 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
-<<<<<<< HEAD
 import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
-
-export const ACCESS_METHOD = [
-  {
-    id: 1,
-    text: '자유출입 가능',
-    value: 'FREE',
-  },
-  {
-    id: 2,
-    text: '공동현관 비밀번호',
-    value: 'COMMON_ENTRANCE_PASSWORD',
-  },
-  {
-    id: 3,
-    text: '경비실 호출',
-    value: 'CALL_SECURITY_OFFICE',
-  },
-  {
-    id: 4,
-    text: '세대 호출',
-    value: 'CALL_HOUSE',
-  },
-  {
-    id: 5,
-    text: '경비실 배송',
-    value: 'DELIVERY_SECURITY_OFFICE',
-  },
-  {
-    id: 6,
-    text: '무인택배함 배송 (외부) ',
-    value: 'DELIVERY_EXTERNAL_UNMANNED_COURIER_BOX',
-  },
-  {
-    id: 8,
-    text: '무인택배함 배송 (공동현관 내부)',
-    value: 'DELIVERY_INTERNAL_UNMANNED_COURIER_BOX',
-  },
-  {
-    id: 9,
-    text: '기타',
-    value: 'ETC',
-  },
-];
-=======
-import CardItem from '@components/Pages/Mypage/Card/CardItem';
-<<<<<<< HEAD
-import { ACCESS_METHOD } from '@constants/payment/index';
->>>>>>> b2bf8e1 (DEV-934 access method sheet 추가)
-=======
 import { setBottomSheet } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-<<<<<<< HEAD
->>>>>>> 016b31f (DEV-934 access method store 추가)
-=======
 import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { destinationForm } from '@store/destination';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
-<<<<<<< HEAD
->>>>>>> e7c4511 (DEV-934 access method bottom sheet 수정 완료)
-=======
+
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
-<<<<<<< HEAD
->>>>>>> e23f493 (DEV-934 결제 페이지 수정)
-=======
+
 /* TODO: 카드 api로 메인 카드 조회 */
-<<<<<<< HEAD
->>>>>>> 536609f (DEV-934 결제 완료)
-=======
+
 /* TODO: 배송 방법은 from 서버 or store */
->>>>>>> 8322b7e (DEV-934 배송정보 변경 페이지 in progress)
 
 const PAYMENT_METHOD = [
   {
@@ -140,15 +80,7 @@ const PAYMENT_METHOD = [
   },
 ];
 
-<<<<<<< HEAD
 /* TODO CardItem에 card 정보? */
-=======
-export interface IAccessMethod {
-  id: number;
-  text: string;
-  value: string;
-}
->>>>>>> 016b31f (DEV-934 access method store 추가)
 
 const hasRegisteredCard = true;
 const point = 5000;
@@ -160,8 +92,6 @@ const PaymentPage = () => {
   });
   const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
-  const [selectedAccessMethod, setSelectedAccessMethod] =
-    useState<IAccessMethod>();
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
@@ -475,8 +405,7 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-<<<<<<< HEAD
-        {hasRegisteredCart && (
+        {hasRegisteredCard && (
           <CardItem onClick={goToCardManagemnet} card={card} />
         )}
         <Button
@@ -487,21 +416,6 @@ const PaymentPage = () => {
         >
           카드 등록하기
         </Button>
-=======
-        {isFcoPay && (
-          <>
-            {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} />}
-            <Button
-              border
-              backgroundColor={theme.white}
-              color={theme.black}
-              onClick={goToRegisteredCard}
-            >
-              카드 등록하기
-            </Button>
-          </>
-        )}
->>>>>>> 536609f (DEV-934 결제 완료)
       </PaymentMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>

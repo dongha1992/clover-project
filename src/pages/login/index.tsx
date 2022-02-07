@@ -21,11 +21,7 @@ import {
   SET_TEMP_PASSWORD,
   SET_USER,
 } from '@store/user';
-<<<<<<< HEAD
 import { userLogin, userProfile } from '@api/user';
-=======
-import { userLogin } from '@api/user';
->>>>>>> 1265f57 (DEV-934 access method sheet in progress)
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import { SET_LOGIN_TYPE } from '@store/common';
 

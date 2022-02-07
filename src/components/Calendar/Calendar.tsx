@@ -22,7 +22,7 @@ const LIMIT_DAYS = 5;
 /* TODO: 디폴트 선택 날짜 어떻게? */
 
 export interface IDateObj {
-  year: number;
+  years: number;
   month: number;
   date: number;
   day: number;
@@ -50,40 +50,28 @@ const Calendar = ({
   }, []);
 
   const initCalendar = () => {
-<<<<<<< HEAD
     const { years, months, dates } = getCustomDate(new Date());
-=======
-    const { year, month, date } = getCalendarDate();
->>>>>>> 4671441 (DEV-934 calendar 수정 in progress)
 
     const list = [];
     const firstWeek = [];
 
-<<<<<<< HEAD
-    for (let i = 0; i < 14; i++) {
-      const _date = new Date(years, months, dates + i).getDate();
-      const _day = new Date(years, months, dates + i).getDay();
-
-      const isFirstWeek = i < 7;
-=======
     for (let i = 0; i < TWO_WEKKS; i++) {
       const isFirstWeek = i < ONE_WEEK;
 
-      const _month = new Date(year, month, date + i).getMonth() + 1;
-      const _date = new Date(year, month, date + i).getDate();
-      const _day = new Date(year, month, date + i).getDay();
-      const value = `${year}-${_month < 10 ? `0${_month}` : _month}-${
+      const _month = new Date(years, months, dates + i).getMonth() + 1;
+      const _date = new Date(years, months, dates + i).getDate();
+      const _day = new Date(years, months, dates + i).getDay();
+      const value = `${years}-${_month < 10 ? `0${_month}` : _month}-${
         _date < 10 ? `0${_date}` : _date
       }`;
 
       const dateObj = {
-        year,
+        years,
         month: _month,
         date: _date,
         day: _day,
         value,
       };
->>>>>>> 4671441 (DEV-934 calendar 수정 in progress)
 
       // 일요일 제외 하고 push
       if (_day !== 0) {
@@ -124,13 +112,8 @@ const Calendar = ({
 
     const renderWeeks = () => {
       const weeks: string[] = [];
-<<<<<<< HEAD
-      for (let i = 0; i < 7; i++) {
-        const _week = new Date(years, months, dates + i).getDay();
-=======
       for (let i = 0; i < ONE_WEEK; i++) {
-        const _week = new Date(year, month, date + i).getDay();
->>>>>>> 4671441 (DEV-934 calendar 수정 in progress)
+        const _week = new Date(years, months, dates + i).getDay();
         if (WEEKS[_week]) {
           weeks.push(WEEKS[_week]);
         }
