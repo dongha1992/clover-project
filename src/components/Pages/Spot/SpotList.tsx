@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -66,7 +67,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
         <ItemListRowWrapper>
           <TextH2B padding="0 0 24px 0">{title}</TextH2B>
           <ItemListRow>
-            {items.map((item: any, index: number) => {
+            {items?.map((item: any, index: number) => {
               return (
                 <Container
                   type="normal"
@@ -74,22 +75,22 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                   key={index}
                 >
                   <StorImgWrapper>
-                    <Text>
+                    <Tag>
                       <SVGIcon name="fcoSpot" />
-                      {`${item.users}명 이용중`}
-                    </Text>
-                    <ImgWrapper src={item.img} alt="매장이미지" />
+                      {`${item.userCount}명 이용중`}
+                    </Tag>
+                    <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
                   </StorImgWrapper>
                   <LocationInfoWrapper type="normal">
                     <TextB3R margin="8px 0 0 0" color={theme.black}>
-                      {item.location}
+                      {item.name}
                     </TextB3R>
                     <TextH6B
                       color={theme.greyScale65}
-                    >{`${item.distance}m`}</TextH6B>
+                    >{`${Math.round(item.distance)}m`}</TextH6B>
                     <LikeWrapper type="normal">
                       <SVGIcon name="likeRed" />
-                      {item.like}
+                      {item.likeCount}
                     </LikeWrapper>
                   </LocationInfoWrapper>
                 </Container>
@@ -113,7 +114,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                     <LikeWrapper type="event">
                       <SVGIcon name="likeBlack" />
                     </LikeWrapper>
-                    <ImgWrapper src={item.img} alt="매장이미지" />
+                    <Img src={item.img} alt="매장이미지" />
                   </StorImgWrapper>
                   <LocationInfoWrapper type="event">
                     <TextH4B>{item.desc}</TextH4B>
@@ -148,10 +149,10 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
                   key={index}
                 >
                   <StorImgWrapper>
-                    <Text>
+                    <Tag>
                       <SVGIcon name="fcoSpot" />
                       {`${item.users}/100명 참여중`}
-                    </Text>
+                    </Tag>
                     <LikeWrapper type="trial">
                       <SVGIcon name="likeRed" />
                     </LikeWrapper>
@@ -232,7 +233,7 @@ const ImgBox = styled.div`
   border-radius: 8px;
 `;
 
-const Text = styled.span`
+const Tag = styled.span`
   display: flex;
   align-items: center;
   position: absolute;
@@ -248,10 +249,11 @@ const Text = styled.span`
   padding: 4px 8px;
 `;
 
-const ImgWrapper = styled.img`
+const Img = styled.img`
   width: 120px;
   heigth: 120px;
   border-radius: 10px;
+  border: 1px solid black;
 `;
 
 const LocationInfoWrapper = styled.div<{ type: string }>`

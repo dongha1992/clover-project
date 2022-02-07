@@ -301,6 +301,7 @@ export interface IKakaoLatLon {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export interface IRegisterCard {
   birthDate: string;
   corporationNo?: string | null;
@@ -385,9 +386,16 @@ export interface ITermResponse {
 export interface IParamsNewSpots {
   latitude: number;
   longitude: number;
+=======
+export interface IParamsSpots {
+  latitude: number | null;
+  longitude: number | null;
+  page: number;
+  size: number;
+>>>>>>> ef87a21 (DEV-887 new, station 스팟 api 연동)
 }
 
-export interface INewSpotsResponse {
+export interface ISpotsResponse {
   code: number;
   message: string;
   data: {
