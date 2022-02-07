@@ -663,7 +663,7 @@ export interface ITermResponse {
 export type TSpotRegisterationsOptiosType = 'PRIVATE' | 'PUBLIC' | 'OWNER';
 
 export interface IParamsSpotRegisterationsOptios {
-  type: TSpotRegisterationsOptiosType | null;
+  type: TSpotRegisterationsOptiosType | string | undefined;
 }
 
 export interface ISpotRegisterationsOpstions {
@@ -721,19 +721,19 @@ export interface IEditRegistration {
   };
   id?: number;
   location: {
-    address: string;
-    addressDetail: string;
-    dong: string;
-    zipCode: string;
+    address?: string | null;
+    addressDetail?: string | null;
+    dong?: string | null;
+    zipCode?: string | null;
   };
   lunchTime?: string;
   pickupType?: TSpotPickupType;
-  placeName: string;
+  placeName?: string | null;
   placeType?: TPlaceType;
   placeTypeDetail?: string;
-  type?: TSpotRegisterationsOptiosType;
+  type?: TSpotRegisterationsOptiosType | string;
   userEmail: string;
   userName: string;
   userPosition?: string;
   userTel: string;
-}
+};

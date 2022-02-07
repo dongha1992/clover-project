@@ -18,7 +18,7 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { INormalSpots } from '@model/index';
 import {   
   getSpotLike,
-  postSpotRegistrations,
+  postSpotRegistrationsRecruiting,
  } from '@api/spot';
 import { useQuery, useQueryClient } from 'react-query';
 import { useDeleteLike, useOnLike } from 'src/query';
@@ -77,7 +77,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       return;
     };
       try{
-        const {data} = await postSpotRegistrations(id);
+        const {data} = await postSpotRegistrationsRecruiting(id);
         if(data.code === 200){
           setSpotRegisteration(true);
           const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;

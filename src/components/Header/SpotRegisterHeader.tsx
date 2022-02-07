@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import { TextH4B, TextH5B } from '@components/Shared/Text';
@@ -8,8 +8,9 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { useSelector} from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { putSpotsRegistrations } from '@api/spot';
-import { IEditRegistration } from '@model/index';
+import { putSpotsRegistrationsTemporary } from '@api/spot';
+import { IEditRegistration, ISpotsResponse } from '@model/index';
+
 
 interface IProps {
   title?: string;
@@ -21,6 +22,7 @@ const SpotRegisterHeader = ({ title }: IProps) => {
   const dispatch = useDispatch();
   const { type } = router.query;
   const adressLen = spotLocation.address?.length;
+  const [temporary, setTemporary] = useState<boolean>(false);
 
   const goBack = (): void => {
     router.back();
@@ -42,10 +44,16 @@ const SpotRegisterHeader = ({ title }: IProps) => {
       userEmail: 'flynn@freshcode.me',
       userTel: '01012341234',
       placeName: spotsRegistrationInfo.placeName,
-      type: type?.toUpperCase(),
+      type: type?.toString().toUpperCase(),
+      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+      lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
+      placeType: spotsRegistrationOptions.placeTypeOptions.value,
     };
     try{
-      const { data } = await putSpotsRegistrations(params);
+      const { data } = await putSpotsRegistrationsTemporary(params);
+      if(data.code === 200){
+        setTemporary(!temporary);
+      };
     }catch(err){
       console.error(err);
     };  
@@ -54,11 +62,13 @@ const SpotRegisterHeader = ({ title }: IProps) => {
   const clickTemporarySave = (): void => {
     const TitleMsg = !adressLen ? `주소/장소명(상호명)을 입력해야\n임시저장 기능을 사용할 수 있어요!` : `필수 정보를 모두 입력해야\n신청이 완료됩니다.` ;
     const SubMsg = !adressLen ? '' :`[마이페이지>스팟 관리]에서\n업데이트할 수 있어요.`;
+    // 주소와 장소명을 입력해야만 임시저장이 가능함
     if(adressLen && spotsRegistrationInfo.placeName?.length){
       dispatch(
         setAlert({
           alertMessage: TitleMsg,
           alertSubMessage: SubMsg,
+          onSubmit: () => {putRegistrationsFetch()},
           submitBtnText: '확인',
           closeBtnText: '취소',
         })
@@ -68,7 +78,6 @@ const SpotRegisterHeader = ({ title }: IProps) => {
         setAlert({
           alertMessage: TitleMsg,
           alertSubMessage: SubMsg,
-          // onSubmit: () => {putRegistrationsFetch()},
           submitBtnText: '확인',
           closeBtnText: '취소',
         })
