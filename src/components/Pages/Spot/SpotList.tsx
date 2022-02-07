@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import {
   TextH2B,
@@ -7,6 +7,7 @@ import {
   TextB2R,
   TextH4B,
   TextH5B,
+  TextH7B,
 } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
@@ -15,27 +16,39 @@ import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { ISpots } from '@model/index';
 import { INormalSpots } from '@pages/spot';
+import {   
+  getSpotLike,
+  postSpotLike,
+  deleteSpotLike,
+  postSpotRegistrations,
+ } from '@api/spot';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
 interface IProps {
-  items: INormalSpots[];
+  spots?: INormalSpots[];
+  list: INormalSpots;
   title?: string;
   subTitle?: string;
   type: string;
   btnText ?:string;
 }
 
-const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactElement => {
+const SpotList = ({ list, spots, title, subTitle, type, btnText }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
+  const [mouseMoved, setMouseMoved] = useState(false);
+  const [spotLike, setSpotLike] = useState(false);
+  const [spotLikeCount, setSpotLikeCount] = useState(list?.likeCount);
+  const [registrations, setRegistrations] = useState<boolean>();
 
   const goToDetail = (id: number): void => {
-    router.push(`/spot/detail/${id}`);
+    if (!mouseMoved) {
+      router.push(`/spot/detail/${id}`);
+    }
   };
 
   const goToCart = (e: any): void => {
@@ -43,76 +56,114 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
     router.push('/cart');
   };
 
-  const clickSpotOpen = (e: any): void => {
-    e.stopPropagation();
-    const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    dispatch(
-      setAlert({
-        alertMessage: TitleMsg,
-        onSubmit: () => {
-          const message = '참여해주셔서 감사해요:)'
-          showToast({ message });
-          /* TODO: warning 왜? */
-          return () => hideToast();
-        },
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
+  useEffect(()=> {
+    const spotLikeData = async() => {
+      try{
+        const { data } = await getSpotLike(list.id);
+        setSpotLike(data.data.liked)
+      }catch(err){
+        console.error(err);
+      };
+    };
+    spotLikeData();
+  }, [list]);
+
+  const hanlderLike = async () => {
+    // const test = spots?.find((i) => i.id === id);
+    if(!spotLike){
+      try {
+        const { data } = await postSpotLike(list.id);
+        if(data.code === 200 ){
+          setSpotLike(true);
+          setSpotLikeCount(spotLikeCount+1);
+        }
+      }catch(err){
+        console.error(err);
+        console.log(list.id)
+      };
+    }else if(spotLike){
+      try{
+        const { data } = await deleteSpotLike(list.id);
+        if(data.code === 200){
+          setSpotLike(false);
+          setSpotLikeCount(spotLikeCount-1);
+        }
+      }catch(err){
+        console.error(err);
+      };
+    };
   };
+
+  const clickSpotOpen = async(id: number) => {
+    try{
+      const {data} = await postSpotRegistrations(id);
+      if(data.code === 200){
+        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+        dispatch(
+          setAlert({
+            alertMessage: TitleMsg,
+            onSubmit: () => {
+              const message = '참여해주셔서 감사해요:)'
+              showToast({ message });
+              /* TODO: warning 왜? */
+              return () => hideToast();
+            },
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+          })
+        );
+        console.log('참여 완료!!! post')
+      }
+    }catch(err){
+      console.error(err);
+    };
+  };
+  // const handlerLike = async(id) => {
+    
+  // }
 
   const SpotsListTypeRender = () => {
     switch(type) {
       case 'normal':
         return (
-          <ItemListRowWrapper>
-            <TextH2B padding="0 0 24px 0">{title}</TextH2B>
-            <ItemListRow>
-              {items?.map((item: any, index: number) => {
-                return (
-                  <Container
-                    type="normal"
-                    onClick={() => goToDetail(item.id)}
-                    key={index}
-                  >
-                    <StorImgWrapper>
+          // <ItemListRowWrapper>
+          //   <ItemListRow>
+                  <Container type="normal">
+                    <StorImgWrapper 
+                      onMouseMove={() => setMouseMoved(true)}
+                      onMouseDown={() => setMouseMoved(false)}
+                      onClick={() => goToDetail(list.id)}>
                       <Tag>
-                        <SVGIcon name="fcoSpot" />
-                        {`${item.userCount}명 이용중`}
+                        <SVGIcon name="whitePeople" />
+                        <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list.userCount}명 이용중`}</TextH7B>
                       </Tag>
-                      <Img key={index} src={`${IMAGE_S3_URL}${item.images[0].url}`} alt="매장이미지" />
+                      <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
                     </StorImgWrapper>
                     <LocationInfoWrapper type="normal">
                       <TextB3R margin="8px 0 0 0" color={theme.black}>
-                        {item.name}
+                        {list.name}
                       </TextB3R>
                       <TextH6B
                         color={theme.greyScale65}
-                      >{`${Math.round(item.distance)}m`}</TextH6B>
-                      <LikeWrapper type="normal">
-                        <SVGIcon name={item.liked ? 'likeRed18' : 'likeBorderGray'} />
-                        <TextB2R padding='4px 0 0 1px'>{item.likeCount}</TextB2R>
+                      >{`${Math.round(list.distance)}m`}</TextH6B>
+                      <LikeWrapper type="normal" onClick={()=> hanlderLike()}>
+                        <SVGIcon name={spotLike ? 'likeRed18' : 'likeBorderGray'} />
+                        <TextB2R padding='4px 0 0 1px'>{spotLikeCount}</TextB2R>
                       </LikeWrapper>
                     </LocationInfoWrapper>
                   </Container>
-                );
-              })}
-            </ItemListRow>
-          </ItemListRowWrapper>
+          //   </ItemListRow>
+          // </ItemListRowWrapper>
         )
       case 'event': 
         return (
           <ItemListRowWrapper>
             <TextH2B padding="0 0 24px 0">{title}</TextH2B>
             <ItemListRow>
-              {items?.map((item: any, index: number) => {
+              {spots?.map((item, index) => {
                 return (
-                  <Container
-                    type="event"
-                    onClick={() => goToDetail(item.id)}
-                    key={index}
-                  >
-                    <StorImgWrapper>
+                  <Container type="event" key={index}>
+                    <StorImgWrapper onClick={() => goToDetail(item.id)}>
                       <LikeWrapper type="event">
                         <SVGIcon name="likeBlack" />
                       </LikeWrapper>
@@ -146,31 +197,30 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
               {subTitle}
             </TextB2R>
             <ItemListRow>
-              {items?.map((item: any, index: number) => {
+              {spots?.map((item, index) => {
                 return (
                   <Container
                     type="trial"
-                    onClick={() => goToDetail(item.id)}
                     key={index}
                   >
                     <StorImgWrapper>
                       <Tag>
-                        <SVGIcon name="fcoSpot" />
-                        {`${item.users}/100명 참여중`}
+                        <SVGIcon name="whitePeople" />
+                        <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${item.recruitingCount} / 100명 참여중`}</TextH7B>
                       </Tag>
                       {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
-                      <ImgBox />
+                      <ImgBox key={index} src={`${IMAGE_S3_URL}${item.image.url}`} alt="매장이미지" />
                     </StorImgWrapper>
                     <LocationInfoWrapper type="trial">
                       <TextWrapper>
                         <TextH5B margin="8px 0 0 0" color={theme.black}>
-                          {item.location}
+                          {item.placeName}
                         </TextH5B>
                         <TextH6B
                           color={theme.greyScale65}
-                        >{`${item.distance}m`}</TextH6B>
+                        >{`${Math.round(item.distance)}m`}</TextH6B>
                       </TextWrapper>
-                      <Button onClick={clickSpotOpen}>{btnText}</Button>
+                      <Button onClick={() => clickSpotOpen(item.id)}>{item.recruited ? '참여완료' : '참여하기'}</Button>
                     </LocationInfoWrapper>
                   </Container>
                 );
@@ -190,11 +240,7 @@ const SpotList = ({ items, title, subTitle, type, btnText }: IProps): ReactEleme
     )
   };
 
-const ItemListRowWrapper = styled.section`
-  width: auto;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
+const ItemListRowWrapper = styled.div`
   margin-bottom: 48px;
   margin-top: 48px;
 `;
@@ -202,7 +248,6 @@ export const ItemListRow = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-  cursor: pointer;
   > div {
     padding-right: 10px;
     width: 194px;
@@ -221,7 +266,6 @@ const Container = styled.section<{ type: string }>`
       `;
     } else if (type === 'normal') {
       return css`
-        display: inline-block;
         width: 120px;
       `;
     } else if (type === 'trial') {
@@ -237,10 +281,9 @@ const StorImgWrapper = styled.div`
   position: relative;
 `;
 
-const ImgBox = styled.div`
-  width: 298px;
+const ImgBox = styled.img`
+  width: 100%;
   height: 174px;
-  background: ${theme.greyScale25};
   border-radius: 8px;
 `;
 
@@ -250,11 +293,6 @@ const Tag = styled.span`
   position: absolute;
   top: 10px;
   left: 10px;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 16px;
-  letter-spacing: -0.4px;
   background: rgba(36, 36, 36, 0.9);
   border-radius: 4px;
   padding: 4px 8px;
@@ -264,6 +302,7 @@ const Img = styled.img`
   width: 120px;
   heigth: 120px;
   border-radius: 10px;
+  border: 1px solid black;
 `;
 
 const LocationInfoWrapper = styled.div<{ type: string }>`
@@ -294,6 +333,7 @@ const LocationInfoWrapper = styled.div<{ type: string }>`
 const LikeWrapper = styled.div<{ type: string }>`
   display: flex;
   align-items: center;
+  cursor: pointer;
   ${({ type }) => {
     if (type === 'event') {
       return css`
@@ -320,6 +360,7 @@ const Button = styled.button`
   background: ${theme.white};
   font-weight: bold;
   color: ${theme.black};
+  cursor: pointer;
 `;
 
 const TextWrapper = styled.div``;
