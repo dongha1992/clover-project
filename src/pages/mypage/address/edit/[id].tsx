@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   theme,
@@ -22,7 +22,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import BorderLine from '@components/Shared/BorderLine';
 import { ButtonGroup } from '@components/Shared/Button';
 import { setAlert } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
 import { setBottomSheet } from '@store/bottomSheet';
@@ -38,6 +38,8 @@ import router from 'next/router';
 import { getValues } from '@utils/getValues';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
+import { commonSelector } from '@store/common';
+import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
 
@@ -74,14 +76,11 @@ const AddressEditPage = ({ id }: IProps) => {
   });
 
   const dispatch = useDispatch();
+  const { userAccessMethod } = useSelector(commonSelector);
 
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
   const isMorning = selectedAddress?.delivery === 'MORNING';
-
-  useEffect(() => {
-    getAddressItem();
-  }, []);
 
   const getAddressItem = async () => {
     const params = {
@@ -137,6 +136,7 @@ const AddressEditPage = ({ id }: IProps) => {
       })
     );
   };
+
   const editAddressHandler = () => {
     if (!cheekBeforeEdit()) {
       return;
@@ -218,13 +218,25 @@ const AddressEditPage = ({ id }: IProps) => {
     setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
   };
 
-  const selectOptionHandler = (option: IAccessMethod) => {
-    setSelectedAccessMethod(option);
+  const selectAccessMethodHandler = () => {
+    dispatch(
+      setBottomSheet({
+        content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
+      })
+    );
   };
 
   const changePickUpPlace = () => {
     dispatch(setBottomSheet({ content: <PickupSheet /> }));
   };
+
+  useEffect(() => {
+    getAddressItem();
+  }, []);
+
+  useEffect(() => {
+    setSelectedAccessMethod(userAccessMethod);
+  }, [userAccessMethod]);
 
   return (
     <Container>
@@ -293,19 +305,12 @@ const AddressEditPage = ({ id }: IProps) => {
               <TextH4B>출입 방법</TextH4B>
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
-              {/* <Select
-                placeholder="출입방법 선택"
-                value={selectedAccessMethod?.text}
-              >
-                {ACCESS_METHOD.map((option: any, index: number) => (
-                  <AcessMethodOption
-                    key={index}
-                    option={option}
-                    selectOptionHandler={selectOptionHandler}
-                  />
-                ))}
-              </Select> */}
-              <AccessMethodWrapper></AccessMethodWrapper>
+              <AccessMethodWrapper onClick={selectAccessMethodHandler}>
+                <TextB2R color={theme.greyScale45}>
+                  {selectedAccessMethod?.text || '출입방법 선택'}
+                </TextB2R>
+                <SVGIcon name="triangleDown" />
+              </AccessMethodWrapper>
               <TextInput
                 name="deliveryMessage"
                 placeholder={
@@ -396,6 +401,9 @@ const AccessMethodWrapper = styled.div`
   border: 1px solid ${theme.greyScale15};
   padding: 12px 16px;
   border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const VisitorAccessMethodWrapper = styled.div`
