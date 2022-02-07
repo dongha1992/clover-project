@@ -16,6 +16,7 @@ export const CLOVER_URL = 'https://clover-service-api-dev.freshcode.me';
 
 export const IMAGE_S3_URL = 'https://s3.ap-northeast-2.amazonaws.com/freshcode';
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 export const SPOT_ITEMS = [
   {
@@ -219,3 +220,5 @@ export const SPOT_ITEMS = [
 ];
 =======
 >>>>>>> 820d8e9 (DEV-887 스팟 메인 api 작업, 기타 수정사항들 반영)
+=======
+>>>>>>> 7d54873 (DEV-952 mock spot item 제거)
