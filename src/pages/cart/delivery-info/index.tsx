@@ -403,6 +403,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   ${homePadding}
+  padding-bottom: 32px;
 `;
 const DeliveryMethodWrapper = styled.div`
   width: 100%;
@@ -497,7 +498,7 @@ const SettingBtnWrapper = styled.div`
 export const PickupPlaceBox = React.memo(
   ({ place, checkTermHandler, isSelected }: any) => {
     return (
-      <FlexCol padding="0 0 32px 0">
+      <FlexCol padding="0 0 0 0">
         <PickPlaceInfo>
           <PlaceName>
             <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
@@ -529,7 +530,7 @@ export const PickupPlaceBox = React.memo(
 
 export const DeliveryPlaceBox = React.memo(({ place }: any): ReactElement => {
   return (
-    <FlexCol padding="0 0 32px 0">
+    <FlexCol padding="0 0 0 0">
       <DelvieryPlaceInfo>
         <PlaceName>
           <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
