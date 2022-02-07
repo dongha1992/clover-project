@@ -24,8 +24,10 @@ const addRefreshSubscriber = (callback: any) => {
 };
 
 const onUnauthorized = () => {
-  router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`)
-}
+  router.push(
+    `/onboarding?returnPath=${encodeURIComponent(location.pathname)}`
+  );
+};
 
 export const Api = axios.create({
   baseURL: CLOVER_URL,
@@ -53,7 +55,6 @@ Api.interceptors.response.use(
         console.log('status 401');
 
         if (response.data.code !== 2003) {
-
           if (!isTokenRefreshing) {
             console.log('## I response TokenRefreshing');
             isTokenRefreshing = true;
@@ -61,7 +62,9 @@ Api.interceptors.response.use(
             if (refreshTokenObj) {
               console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
 
-              const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
+              const { data } = await userRefreshToken(
+                refreshTokenObj.refreshToken
+              );
               console.log(refreshTokenObj.refreshToken);
               const userTokenObj: any = data.data;
 
@@ -70,15 +73,16 @@ Api.interceptors.response.use(
                 expiresIn: userTokenObj.expiresIn,
               };
 
-              sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+              sessionStorage.setItem(
+                'accessToken',
+                JSON.stringify(accessTokenObj)
+              );
 
               isTokenRefreshing = false;
               onTokenRefreshed(userTokenObj.accessToken);
               return Api(pendingRequest);
             } else {
-
-              onUnauthorized()
-
+              onUnauthorized();
             }
           } else {
             return new Promise((resolve) => {
@@ -88,7 +92,6 @@ Api.interceptors.response.use(
               });
             });
           }
-
         }
       } else {
         return onError(error as AxiosError);
@@ -114,8 +117,8 @@ Api.interceptors.request.use((req) => {
   return request;
 });
 
-export const onError = async (error: AxiosError): Promise<never> => {
+export const onError = (error: AxiosError): Promise<never> => {
   const { status } = (error.response as AxiosResponse) || 500;
-
+  console.log(error, 'error onError');
   return Promise.reject(error);
 };

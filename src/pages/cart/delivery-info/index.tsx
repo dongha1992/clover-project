@@ -20,11 +20,11 @@ import {
   SET_USER_DESTINATION_STATUS,
   SET_DESTINATION,
   INIT_DESTINATION,
-  INIT_USER_DESTINATION_STATUS,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
+import { getDestinations } from '@api/destination';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -42,7 +42,7 @@ interface IDeliveryMethod {
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
 /* TODO: 타이머 기능 */
-/* TODO: 최근 배송지 나오면 userDestinationStatus와 싱크 */
+
 /* TODO: 스팟 배송일 경우 추가 */
 
 /* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
@@ -106,7 +106,22 @@ const DeliverInfoPage = () => {
 
   const dispatch = useDispatch();
 
-  const checkTermHandler = () => {};
+  const getDeliveryList = async () => {
+    const params = {
+      page: 1,
+      size: 10,
+    };
+    try {
+      const { data } = await getDestinations(params);
+      if (data.code === 200) {
+        const { destinations } = data.data;
+        const filteredMain = destinations.filter((item) => item.main);
+        console.log(filteredMain);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
@@ -185,6 +200,15 @@ const DeliverInfoPage = () => {
           <Tooltip message="택배배송만 가능해요!" top="25px" width="150px" />
         );
       }
+      case 'spot': {
+        return (
+          <Tooltip
+            message="무료 스팟배송이 가능해요!"
+            top="25px"
+            width="170px"
+          />
+        );
+      }
     }
   };
 
@@ -208,8 +232,7 @@ const DeliverInfoPage = () => {
       switch (true) {
         case locationCanEverything:
           {
-            setUserSelectDeliveryType('spot');
-            setTargetDeliveryType('morning');
+            setTargetDeliveryType('spot');
           }
 
           break;
@@ -306,12 +329,16 @@ const DeliverInfoPage = () => {
     }
   };
 
+  const checkTermHandler = () => {};
+
   useEffect(() => {
     checkTooltipMsgByDeliveryType();
   }, [userDestinationStatus]);
 
   useEffect(() => {
+    console.log(userSelectDeliveryType, '');
     userSelectDeliveryTypeHelper();
+    getDeliveryList();
   }, []);
 
   return (
@@ -346,6 +373,7 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
+                      {targetDeliveryType === item.value && tooltipRender()}
                       {index === 0 && (
                         <TextH6B color={theme.brandColor}>
                           점심배송 마감 29:30 전

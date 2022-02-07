@@ -374,8 +374,8 @@ const AddressEditPage = ({ id }: IProps) => {
         </FlexRow>
       </Wrapper>
       <ButtonGroup
-        rightButtonHandler={editAddress}
-        leftButtonHandler={removeAddress}
+        rightButtonHandler={editAddressHandler}
+        leftButtonHandler={removeAddressHandler}
         leftText="삭제하기"
         rightText="수정하기"
       />
