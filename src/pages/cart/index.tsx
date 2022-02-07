@@ -77,12 +77,16 @@ const CartPage = () => {
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [disposableList, setDisposableList] = useState([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
   ]);
 =======
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<number>(0);
+=======
+  const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
+>>>>>>> 299f3dd (DEV-934 calendar in progress)
 
 >>>>>>> 7847391 (DEV-934 calendar sheet 추가)
   const calendarRef = useRef<HTMLDivElement>(null);
