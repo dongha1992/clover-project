@@ -97,7 +97,13 @@ const CartPage = () => {
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = [30, 31, 1, 2, 3];
+  const disabledDates = [
+    '2022-01-24',
+    '2022-01-25',
+    '2022-01-26',
+    '2022-01-27',
+    '2022-01-28',
+  ];
   const otherDeliveryDate = 4;
   const SPOT = true;
 

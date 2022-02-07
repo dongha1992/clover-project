@@ -45,6 +45,14 @@ const isMorning = false;
 const isQuick = false;
 const isSpot = false;
 
+const disabledDates = [
+  '2022-01-24',
+  '2022-01-25',
+  '2022-01-26',
+  '2022-01-27',
+  '2022-01-28',
+];
+
 interface IStatus {
   [index: string]: {
     text: string;
@@ -222,7 +230,9 @@ const OrderDetailPage = () => {
   const changeDevlieryDateHandler = () => {
     dispatch(
       setBottomSheet({
-        content: <CalendarSheet title="배송날짜 변경" disabledDates={[]} />,
+        content: (
+          <CalendarSheet title="배송날짜 변경" disabledDates={disabledDates} />
+        ),
       })
     );
   };
