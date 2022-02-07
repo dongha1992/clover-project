@@ -17,7 +17,7 @@ import {
   getSpotEvent ,
   getSpotPopular,
   getInfo,
-  getSpotRegistrations,
+  getSpotRegistrationsRecruiting,
 } from '@api/spot';
 import { IParamsSpots, ISpotRegistrationsResponse, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
@@ -135,7 +135,7 @@ const SpotPage = () => {
         size: 6,
       };
       try{
-        const { data } = await getSpotRegistrations(params);
+        const { data } = await getSpotRegistrationsRecruiting(params);
         setSpotRegistrations(data);
       }catch(err){
         console.error(err);
