@@ -24,13 +24,14 @@ export interface IDateObj {
   month: number;
   date: number;
   day: number;
+  value: string;
 }
 
 interface ICalendar {
   disabledDates: string[];
   otherDeliveryDate?: number;
   selectedDeliveryDay: string;
-  setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<IDateObj>>;
+  setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Calendar = ({
@@ -96,8 +97,8 @@ const Calendar = ({
     setDateList(list);
   };
 
-  const clickDayHandler = (dateObj: IDateObj) => {
-    setSelectedDeliveryDay(dateObj?.value);
+  const clickDayHandler = (value: string) => {
+    setSelectedDeliveryDay(value);
   };
 
   const checkShowMoreWeek = (
@@ -148,18 +149,19 @@ const Calendar = ({
         </Header>
         <Body>
           {dateList.map((dateObj, index) => {
+            const selectedDay = selectedDeliveryDay === dateObj.value;
             if (!isShowMoreWeek) {
               if (index > LIMIT_DAYS) {
                 return;
               }
             }
-            console.log(dateObj);
             return (
               <Days
-                handler={() => clickDayHandler(dateObj)}
+                handler={clickDayHandler}
+                value={dateObj.value}
                 day={dateObj.date}
                 key={index}
-                selectedDay={selectedDeliveryDay === index}
+                selectedDay={selectedDay}
                 index={index}
                 disabledDates={disabledDates}
                 otherDeliveryDate={otherDeliveryDate}
