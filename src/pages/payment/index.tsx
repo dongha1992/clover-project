@@ -296,7 +296,7 @@ const PaymentPage = () => {
           </FlexRow>
         </FlexBetween>
         <FlexCol padding="24px 0 16px 0">
-          <Select placeholder="배송출입 방법">
+          {/* <Select placeholder="배송출입 방법">
             {ACCESS_METHOD.map((option: any, index: number) => (
               <AcessMethodOption
                 key={index}
@@ -304,7 +304,8 @@ const PaymentPage = () => {
                 selectOptionHandler={selectOptionHandler}
               />
             ))}
-          </Select>
+          </Select> */}
+          <AccessMethodWrapper>ss</AccessMethodWrapper>
           <TextInput placeholder="내용을 입력해주세요" margin="8px 0 0 0" />
         </FlexCol>
         <MustCheckAboutDelivery>
@@ -480,6 +481,11 @@ const MustCheckAboutDelivery = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
   border-radius: 8px;
+`;
+
+const AccessMethodWrapper = styled.div`
+  border: 1px solid ${theme.greyScale15};
+  padding: 12px 16px;
 `;
 
 const VisitorAccessMethodWrapper = styled.div`
