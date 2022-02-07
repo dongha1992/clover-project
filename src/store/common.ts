@@ -1,27 +1,33 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-
-export type TModalOption = {
-  imagesForViewer: any;
+import { IAccessMethod } from '@pages/payment';
+interface IState {
+  imagesForViewer: string[];
   isMobile: boolean;
   isLoading: boolean;
   loginType: string;
   versionOfTerm: number;
-};
+  userAccessMethod: IAccessMethod;
+}
 
-const INITIAL_STATE: TModalOption = {
+const INITIAL_STATE: IState = {
   imagesForViewer: [],
   isMobile: false,
   isLoading: false,
   loginType: 'NONMEMBER',
   versionOfTerm: 2,
+  userAccessMethod: {
+    id: 1,
+    text: '',
+    value: '',
+  },
 };
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: INITIAL_STATE,
   reducers: {
-    SET_IMAGE_VIEWER: (state, { payload }: PayloadAction<TModalOption>) => {
+    SET_IMAGE_VIEWER: (state, { payload }: PayloadAction<string[]>) => {
       state.imagesForViewer = payload;
     },
     INIT_IMAGE_VIEWER: (state, action: PayloadAction) => {
@@ -39,6 +45,9 @@ export const commonSlice = createSlice({
     SET_VERSION_OF_TERM: (state, { payload }: PayloadAction<number>) => {
       state.versionOfTerm = payload;
     },
+    SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod>) => {
+      state.userAccessMethod = payload;
+    },
   },
 });
 
@@ -49,6 +58,7 @@ export const {
   SET_IS_LOADING,
   SET_LOGIN_TYPE,
   SET_VERSION_OF_TERM,
+  SET_ACCESS_METHOD,
 } = commonSlice.actions;
 export const commonSelector = (state: AppState) => state.common;
 export default commonSlice.reducer;

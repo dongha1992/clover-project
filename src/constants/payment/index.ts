@@ -1,3 +1,5 @@
+import { Obj } from '@model/index';
+
 export const ACCESS_METHOD = [
   {
     id: 1,
@@ -40,3 +42,15 @@ export const ACCESS_METHOD = [
     value: 'ETC',
   },
 ];
+
+export const ACCESS_METHOD_MAP: Obj = {
+  FREE: '요청사항을 입력해주세요',
+  COMMON_ENTRANCE_PASSWORD: '예) #1234#',
+  CALL_SECURITY_OFFICE: '경비실 호출 방법 입력',
+  CALL_HOUSE: '새벽에도 호출 가능한 경우 선택해주세요',
+  DELIVERY_SECURITY_OFFICE: '경비실 부재 시 공동현관 등에 대응 배송',
+  DELIVERY_EXTERNAL_UNMANNED_COURIER_BOX: '무인택배함 비밀번호 입력',
+  DELIVERY_INTERNAL_UNMANNED_COURIER_BOX:
+    ' 공동현관 비밀번호 / 무인택배함 비밀번호 입력',
+  ETC: '직접 입력',
+};
