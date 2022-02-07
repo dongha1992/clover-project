@@ -410,9 +410,7 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCard && (
-          <CardItem onClick={goToCardManagemnet} card={card} />
-        )}
+        {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} />}
         <Button
           border
           backgroundColor={theme.white}
