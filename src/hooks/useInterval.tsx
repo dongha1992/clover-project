@@ -9,8 +9,8 @@ export const useInterval = (callback: () => void, delay: number | null) => {
 
   useEffect(() => {
     if (delay !== null) {
-      let id = setInterval(() => tick.current(), delay);
-      return () => clearInterval(id);
+      let timerId = setInterval(() => tick.current(), delay);
+      return () => clearInterval(timerId);
     }
   }, [delay]);
 };

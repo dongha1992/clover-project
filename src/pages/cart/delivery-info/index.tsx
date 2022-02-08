@@ -25,6 +25,11 @@ import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
 import { getDestinations } from '@api/destination';
+import { CheckTimerByDelivery } from '@components/CheckTimer';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { getFormatTime } from '@utils/getFormatTime';
+import { orderForm, SET_TIMER_STATUS } from '@store/order';
+import checkIsValidTimer from '@utils/checkIsValidTimer';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -45,6 +50,9 @@ interface IDeliveryMethod {
 
 /* TODO: 스팟 배송일 경우 추가 */
 
+/* TODO: 최근 배송지 나오면 userDestination와 싱크 */
+/* TODO: 스팟 배송일 경우 추가 */
+/* TODO: 내 위치 검색 / 배송지 검색 -> 두 경우 available 체킹 리팩토링 */
 /* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -92,6 +100,8 @@ const DeliverInfoPage = () => {
   const [userSelectDeliveryType, setUserSelectDeliveryType] =
     useState<string>('');
 
+  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [limitDelvieryType, setLimitDelvieryType] = useState<string>('');
   const {
     destinationStatus,
     userDestination,
@@ -99,12 +109,16 @@ const DeliverInfoPage = () => {
     userDestinationStatus,
   } = useSelector(destinationForm);
 
+  const dispatch = useDispatch();
+
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
+  const { isTimerTooltip } = useSelector(orderForm);
 
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
 
-  const dispatch = useDispatch();
+  // 배송 마감 타이머 체크 + 위치 체크
+  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const getDeliveryList = async () => {
     const params = {
