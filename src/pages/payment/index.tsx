@@ -101,6 +101,7 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
+  const { userDestinationStatus } = useSelector(destinationForm);
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
