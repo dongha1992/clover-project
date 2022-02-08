@@ -25,7 +25,7 @@ const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
 
   const { timer } = useTimer();
 
-  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
+  let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const msgHandler = () => {
     /* TODO: state 관리 필요? */

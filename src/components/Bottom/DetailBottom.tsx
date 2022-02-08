@@ -86,7 +86,15 @@ const DetailBottom = () => {
   };
 
   useEffect(() => {
-    if (deliveryType) {
+    const isNotTimer = [
+      '스팟저녁',
+      '새벽택배',
+      '새벽택배N일',
+      '스팟점심',
+      '스팟점심N일',
+    ].includes(deliveryType);
+
+    if (!isNotTimer) {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
