@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
-import { TextH5B, TextB2R } from '@components/Shared/Text';
+import styled from 'styled-components';
+import { TextH5B } from '@components/Shared/Text';
 import { Select, MenuOption } from '@components/Shared/Dropdown';
 import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
