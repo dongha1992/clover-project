@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
-import { TextH5B, TextB2R } from '@components/Shared/Text';
+import styled from 'styled-components';
+import { TextH5B } from '@components/Shared/Text';
 import { Select, MenuOption } from '@components/Shared/Dropdown';
 import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
@@ -11,17 +11,29 @@ import CartSheetItem from './CartSheetItem';
 import { Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useToast } from '@hooks/useToast';
-import { useInterval } from '@hooks/useInterval';
 import { Rolling } from '@components/Rolling';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import calculateArrival from '@utils/calculateArrival';
+import getCustomDate from '@utils/getCustomDate';
+import { filter, map, flow } from 'lodash/fp';
+import dayjs from 'dayjs';
+
+import 'dayjs/locale/ko';
+
+dayjs.locale('ko');
 /* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
         https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
 */
 
-/* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
-        https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
-*/
+interface IRolling {
+  id: number;
+  type: string;
+  description: string;
+}
+
+// temp
+let disabledDates = ['2022-02-12'];
 
 const CartSheet = () => {
   const [rollingData, setRollingData] = useState([
@@ -50,28 +62,112 @@ const CartSheet = () => {
   const { cartSheetObj } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
 
-  // const currentTime = Number('09.29');
   const deliveryType = checkTimerLimitHelper();
 
+  const canSpotLunchAndDinnerToday = deliveryType === '스팟당일롤링';
+  const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟N일롤링';
+  const canMorningAndParcelTomorrow = deliveryType === '새벽택배롤링';
+  const canMorningAndParcelNday = deliveryType === '새벽택배N일롤링';
+  const canSpotDinnerToday = deliveryType === '스팟저녁롤링';
+
+  const checkArrivaldate = (): string => {
+    const { days } = getCustomDate(new Date());
+    let isFriday = days === '금';
+    let isSaturday = days === '토';
+    let isSunday = days === '일';
+    let isWeekdays = !['금', '토', '일'].includes(days);
+
+    isFriday = true;
+
+    switch (true) {
+      case isFriday: {
+        if (canMorningAndParcelNday) {
+          return dayjs().add(4, 'day').format('YYYY-MM-DD');
+        }
+      }
+
+      case isSaturday: {
+        if (canMorningAndParcelNday) {
+          return dayjs().add(3, 'day').format('YYYY-MM-DD');
+        }
+      }
+
+      case isSunday: {
+        if (canMorningAndParcelNday) {
+          return dayjs().add(2, 'day').format('YYYY-MM-DD');
+        } else if (canSpotLunchAndDinnerTomorrow) {
+          return dayjs().add(1, 'day').format('YYYY-MM-DD');
+        }
+      }
+      case isWeekdays: {
+        if (canSpotLunchAndDinnerTomorrow) {
+          return dayjs().add(1, 'day').format('YYYY-MM-DD');
+        }
+      }
+
+      default: {
+        return dayjs().add(1, 'day').format('YYYY-MM-DD');
+      }
+    }
+  };
+
   const checkIsValidRollingMsg = () => {
-    const canSpotLunchAndDinnerToday = deliveryType === '스팟당일롤링';
-    const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟차일롤링';
-    const canMorningAndParcel = deliveryType === '새벽택배롤링';
-    const canSpotDinnerToday = deliveryType === '스팟저녁롤링';
+    let arrivalDate = '';
 
-    console.log(deliveryType);
+    // N일에 걸리는 경우, N일을 따로 구해줘야 함
+    // 관련 피그마 : https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244
 
-    let newRollingData: any = [];
+    if (canMorningAndParcelNday || canSpotLunchAndDinnerTomorrow) {
+      arrivalDate = calculateArrival(checkArrivaldate(), disabledDates).split(
+        '-'
+      )[2];
+    }
+
+    let newRollingData: IRolling[] = [];
 
     switch (true) {
       case canSpotLunchAndDinnerTomorrow:
+        {
+          newRollingData = flow(
+            filter((item: IRolling) => item.id < 3),
+            map((data: IRolling) => {
+              const isSpotLunch = data.type === '스팟점심';
+              return {
+                ...data,
+                description: isSpotLunch
+                  ? `9시30분까지 주문 시 ${arrivalDate}일 12시 전 도착`
+                  : `11시까지 주문 시 ${arrivalDate}일 17시 전 도착`,
+              };
+            })
+          )(rollingData);
+        }
+        break;
+
       case canSpotLunchAndDinnerToday:
         {
           newRollingData = rollingData.filter((item) => item.id < 3);
         }
         break;
 
-      case canMorningAndParcel:
+      case canMorningAndParcelNday:
+        {
+          newRollingData = flow(
+            filter((item: IRolling) => item.id > 2),
+            map((data: IRolling) => {
+              const isParcel = data.type === '택배배송';
+              return {
+                ...data,
+                description: `17시까지 주문 시 ${
+                  isParcel
+                    ? `${arrivalDate}일 당일 발송`
+                    : `${arrivalDate}일 새벽 7시 전 도착`
+                }`,
+              };
+            })
+          )(rollingData);
+        }
+        break;
+      case canMorningAndParcelTomorrow:
         {
           newRollingData = rollingData.filter((item) => item.id > 2);
         }
@@ -115,8 +211,9 @@ const CartSheet = () => {
     const isRolling = [
       '스팟저녁롤링',
       '새벽택배롤링',
+      '새벽택배N일롤링',
       '스팟당일롤링',
-      '스팟차일롤링',
+      '스팟N일롤링',
     ].includes(deliveryType);
 
     if (isRolling) {
@@ -193,7 +290,7 @@ const CartSheet = () => {
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
           {isTimerTooltip ? (
-            <CheckTimerByDelivery />
+            <CheckTimerByDelivery isCartSheet />
           ) : (
             <Rolling list={rollingData} />
           )}

@@ -1,5 +1,4 @@
 import getCustomDate from './getCustomDate';
-import { getFormatTime } from '@utils/getFormatTime';
 
 export type TResult =
   | '스팟점심'
@@ -8,8 +7,9 @@ export type TResult =
   | '택배배송'
   | '스팟저녁롤링'
   | '새벽택배롤링'
+  | '새벽택배N일롤링'
   | '스팟당일롤링'
-  | '스팟차일롤링'
+  | '스팟N일롤링'
   | '';
 
 interface IProps {
@@ -20,12 +20,12 @@ interface IProps {
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244 */
 
 const checkTimerLimitHelper = (): TResult => {
-  const { days, hours, minutes } = getCustomDate(new Date());
+  const { days } = getCustomDate(new Date());
 
   // let currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
   let currentTime;
   /* 스팟 런치 테스트 */
-  currentTime = 9.0;
+  currentTime = 19.0;
 
   /* 스팟 저녁 테스트 */
   // currentTime = 10.4;
@@ -45,16 +45,17 @@ const checkTimerLimitHelper = (): TResult => {
   const parcel = currentTime >= 16.3 && currentTime < 17.0;
   const spotLunchDinnerTomorrow = currentTime >= 17.0 && currentTime < 24.0;
 
-  const isFriday = days === '금';
+  let isFriday = days === '금';
   let isSunday = days === '일';
   let isWeekends = ['토', '일'].includes(days);
 
+  isFriday = true;
   // 주말의 경우 타이머 없고 '새벽택배롤링'만 나옴. 단, 일요일 17시 이후부터 24시까지 '스팟차일롤링'
   if (isWeekends) {
     if (isSunday && spotLunchDinnerTomorrow) {
-      return '스팟차일롤링';
+      return '스팟N일롤링';
     } else {
-      return '새벽택배롤링';
+      return '새벽택배N일롤링';
     }
   } else {
     // 평일의 경우
@@ -76,10 +77,10 @@ const checkTimerLimitHelper = (): TResult => {
       }
       case spotLunchDinnerTomorrow: {
         // 금요일 17시 이후만 '새벽택배롤링'
-        if (!isFriday) {
-          return '새벽택배롤링';
+        if (isFriday) {
+          return '새벽택배N일롤링';
         }
-        return '스팟차일롤링';
+        return '스팟N일롤링';
       }
       case spotDinnerRolling: {
         return '스팟저녁롤링';
