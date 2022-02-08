@@ -6,14 +6,27 @@ import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useToast } from '@hooks/useToast';
 import { setAlert } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { CheckTimerByDelivery } from '@components/CheckTimer';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { SET_TIMER_STATUS } from '@store/order';
+import { orderForm } from '@store/order';
+import { destinationForm } from '@store/destination';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
+
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
   const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
+
+  const { isTimerTooltip } = useSelector(orderForm);
+
+  // const currentTime = Number('09.29');
+  const deliveryType = checkTimerLimitHelper();
+
+  //temp
   const numOfLike = 10;
   const tempStatus = 'isSoldout';
   const tempNotiOff = false;
@@ -73,6 +86,14 @@ const DetailBottom = () => {
     }
   };
 
+  useEffect(() => {
+    if (deliveryType) {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    }
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -91,6 +112,11 @@ const DetailBottom = () => {
           </TextH5B>
         </BtnWrapper>
       </Wrapper>
+      {isTimerTooltip && (
+        <TimerTooltipWrapper>
+          <CheckTimerByDelivery isTooltip />
+        </TimerTooltipWrapper>
+      )}
     </Container>
   );
 };
@@ -118,6 +144,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  position: relative;
   padding: 16px 24px;
   display: flex;
   width: 100%;
@@ -144,5 +171,15 @@ const BtnWrapper = styled.div`
 `;
 
 const LikeBtn = styled.div``;
+const TimerTooltipWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  top: -10%;
+  left: 30%;
+
+  ${({ theme }) => theme.mobile`
+    left: 25%;
+  `};
+`;
 
 export default DetailBottom;

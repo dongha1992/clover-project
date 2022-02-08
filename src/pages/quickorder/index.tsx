@@ -18,8 +18,8 @@ import { userForm } from '@store/user';
 dayjs.locale('ko');
 
 const QuickOrderPage = () => {
-  const { timerTooltip } = useSelector(orderForm);
   const { isLoginSuccess, user } = useSelector(userForm);
+  const { isTimerTooltip } = useSelector(orderForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
@@ -42,8 +42,8 @@ const QuickOrderPage = () => {
   const [arrivalDate, setArrivalDate] = useState({
     lunch: { type: 'lunch', msg: '' },
     dinner: { type: 'dinner', msg: '' },
-    dawn: { type: 'dawn', msg: '' },
-    delivery: { type: 'delivery', msg: '' },
+    morning: { type: 'morning', msg: '' },
+    parcel: { type: 'parcel', msg: '' },
   });
 
   /* 목업 데이터 로직 */
@@ -55,7 +55,8 @@ const QuickOrderPage = () => {
   /* 목업 데이터 로직 END */
 
   useEffect(() => {
-    setTime(Number(`${hours}.${format(minutes)}`));
+    // setTime(Number(`${hours}.${format(minutes)}`));
+    setTime(Number(`09.01`));
 
     if (hours >= 6 && hours < 18) {
       setNight(false);
@@ -96,8 +97,8 @@ const QuickOrderPage = () => {
         setArrivalDate({
           lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
           dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
-          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
-          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
+          morning: { ...arrivalDate['morning'], msg: '다음날 배송' },
+          parcel: { ...arrivalDate['parcel'], msg: '다음날 배송' },
         });
         break;
 
@@ -106,8 +107,8 @@ const QuickOrderPage = () => {
         setArrivalDate({
           lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
           dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
-          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
-          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
+          morning: { ...arrivalDate['morning'], msg: '다음날 배송' },
+          parcel: { ...arrivalDate['parcel'], msg: '다음날 배송' },
         });
         break;
       case [6].includes(weeks):
@@ -116,33 +117,25 @@ const QuickOrderPage = () => {
           lunch: {
             ...arrivalDate['lunch'],
             msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 픽업 12:00-12:30`,
           },
           dinner: {
             ...arrivalDate['dinner'],
             msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 픽업 17:00-17:30`,
           },
-          dawn: {
-            ...arrivalDate['dawn'],
+          morning: {
+            ...arrivalDate['morning'],
             msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 배송`,
           },
-          delivery: {
-            ...arrivalDate['delivery'],
+          parcel: {
+            ...arrivalDate['parcel'],
             msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 배송`,
           },
         });
@@ -154,33 +147,25 @@ const QuickOrderPage = () => {
           lunch: {
             ...arrivalDate['lunch'],
             msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 픽업 12:00-17:30`,
           },
           dinner: {
             ...arrivalDate['dinner'],
             msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 픽업 17:00-17:30`,
           },
-          dawn: {
-            ...arrivalDate['dawn'],
+          morning: {
+            ...arrivalDate['morning'],
             msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 픽업 17:00-17:30`,
           },
-          delivery: {
-            ...arrivalDate['delivery'],
+          parcel: {
+            ...arrivalDate['parcel'],
             msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
             }) 배송`,
           },
         });
@@ -273,9 +258,7 @@ const QuickOrderPage = () => {
         {!isLoginSuccess || list.length === 0 ? (
           <TextH3B padding="0 0 8px 0">신규 고객을 위한 아침</TextH3B>
         ) : (
-          <TextH3B padding="0 0 18px 0">
-            이전에 구매한 상품으로 또 먹을래요!
-          </TextH3B>
+          <TextH3B padding="0 0 18px 0">이전에 구매한 상품으로 또 먹을래요!</TextH3B>
         )}
 
         {(!isLoginSuccess || list.length === 0) && (
@@ -294,12 +277,7 @@ const QuickOrderPage = () => {
 
         {(!isLoginSuccess || list.length === 0) && (
           <div className="btnWraper">
-            <Button
-              margin="24px 0 0"
-              border
-              backgroundColor="#fff"
-              color={theme.black}
-            >
+            <Button margin="24px 0 0" border backgroundColor="#fff" color={theme.black}>
               전체 상품 첫 주문하기
             </Button>
           </div>
@@ -309,19 +287,8 @@ const QuickOrderPage = () => {
       <Banner>신규서비스 소개</Banner>
 
       {(!isLoginSuccess || list.length !== 0) && (
-        <ReOrderList
-          pushStatus={pushStatus}
-          weeks={weeks}
-          time={time}
-          arrivalDate={arrivalDate}
-        >
-          {timerTooltip && (
-            <TimerTooltip
-              bgColor={theme.brandColor}
-              color={'#fff'}
-              message={tooltipMsg}
-            />
-          )}
+        <ReOrderList pushStatus={pushStatus} weeks={weeks} time={time} arrivalDate={arrivalDate}>
+          {isTimerTooltip && <TimerTooltip bgColor={theme.brandColor} color={'#fff'} message={tooltipMsg} />}
         </ReOrderList>
       )}
     </Container>
