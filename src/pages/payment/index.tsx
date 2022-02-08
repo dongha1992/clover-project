@@ -162,6 +162,8 @@ const PaymentPage = () => {
     router.push('/mypage/card/register');
   };
 
+  const isParcel = userDestinationStatus === 'parcel';
+  const isMorning = userDestinationStatus === 'morning';
   const isFcoPay = selectedPaymentMethod === 1;
 
   return (
