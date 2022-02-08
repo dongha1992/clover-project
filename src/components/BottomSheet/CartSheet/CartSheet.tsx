@@ -64,14 +64,15 @@ const CartSheet = () => {
 
   const deliveryType = checkTimerLimitHelper();
 
-  const canSpotLunchAndDinnerToday = deliveryType === '스팟당일롤링';
-  const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟N일롤링';
-  const canMorningAndParcelTomorrow = deliveryType === '새벽택배롤링';
-  const canMorningAndParcelNday = deliveryType === '새벽택배N일롤링';
-  const canSpotDinnerToday = deliveryType === '스팟저녁롤링';
+  const canSpotLunchAndDinnerToday = deliveryType === '스팟점심';
+  const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟점심N일';
+  const canMorningAndParcelTomorrow = deliveryType === '새벽택배';
+  const canMorningAndParcelNday = deliveryType === '새벽택배N일';
+  const canSpotDinnerToday = deliveryType === '스팟저녁';
 
   const checkArrivaldate = (): string => {
     const { days } = getCustomDate(new Date());
+
     let isFriday = days === '금';
     let isSaturday = days === '토';
     let isSunday = days === '일';
@@ -99,6 +100,7 @@ const CartSheet = () => {
           return dayjs().add(1, 'day').format('YYYY-MM-DD');
         }
       }
+
       case isWeekdays: {
         if (canSpotLunchAndDinnerTomorrow) {
           return dayjs().add(1, 'day').format('YYYY-MM-DD');
@@ -142,13 +144,11 @@ const CartSheet = () => {
           )(rollingData);
         }
         break;
-
       case canSpotLunchAndDinnerToday:
         {
           newRollingData = rollingData.filter((item) => item.id < 3);
         }
         break;
-
       case canMorningAndParcelNday:
         {
           newRollingData = flow(
@@ -209,11 +209,11 @@ const CartSheet = () => {
 
   useEffect(() => {
     const isRolling = [
-      '스팟저녁롤링',
-      '새벽택배롤링',
-      '새벽택배N일롤링',
-      '스팟당일롤링',
-      '스팟N일롤링',
+      '스팟저녁',
+      '새벽택배',
+      '새벽택배N일',
+      '스팟점심',
+      '스팟점심N일',
     ].includes(deliveryType);
 
     if (isRolling) {
