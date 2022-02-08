@@ -23,7 +23,6 @@ const DetailBottom = () => {
 
   const { isTimerTooltip } = useSelector(orderForm);
 
-  // const currentTime = Number('09.29');
   const deliveryType = checkTimerLimitHelper();
 
   //temp

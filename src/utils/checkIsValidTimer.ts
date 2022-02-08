@@ -17,6 +17,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   // 요일 체크
   let isWeekends = ['토', '일'].includes(days);
 
+  // 타이머 관련 변수
   const isParcel = deliveryType === '택배배송';
   const isMorning = deliveryType === '새벽배송';
   const isSpot = ['스팟점심', '스팟저녁'].includes(deliveryType);
@@ -37,8 +38,9 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   const isRolling = [
     '스팟저녁롤링',
     '새벽택배롤링',
+    '새벽택배N일롤링',
     '스팟당일롤링',
-    '스팟차일롤링',
+    '스팟N일롤링',
   ].includes(deliveryType);
 
   if (isWeekends || isRolling) {
