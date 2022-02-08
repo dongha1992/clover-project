@@ -4,6 +4,7 @@ import Days from './Days';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
+import getCustomDate from '@utils/getCustomDate';
 
 let WEEKS: any = {
   1: '월',
@@ -21,7 +22,7 @@ const LIMIT_DAYS = 5;
 /* TODO: 디폴트 선택 날짜 어떻게? */
 
 export interface IDateObj {
-  year: number;
+  years: number;
   month: number;
   date: number;
   day: number;
@@ -48,16 +49,8 @@ const Calendar = ({
     initCalendar();
   }, []);
 
-  const getCalendarDate = () => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth();
-    const date = new Date().getDate();
-
-    return { year, month, date };
-  };
-
   const initCalendar = () => {
-    const { year, month, date } = getCalendarDate();
+    const { years, months, dates } = getCustomDate(new Date());
 
     const list = [];
     const firstWeek = [];
@@ -65,15 +58,15 @@ const Calendar = ({
     for (let i = 0; i < TWO_WEKKS; i++) {
       const isFirstWeek = i < ONE_WEEK;
 
-      const _month = new Date(year, month, date + i).getMonth() + 1;
-      const _date = new Date(year, month, date + i).getDate();
-      const _day = new Date(year, month, date + i).getDay();
-      const value = `${year}-${_month < 10 ? `0${_month}` : _month}-${
+      const _month = new Date(years, months, dates + i).getMonth() + 1;
+      const _date = new Date(years, months, dates + i).getDate();
+      const _day = new Date(years, months, dates + i).getDay();
+      const value = `${years}-${_month < 10 ? `0${_month}` : _month}-${
         _date < 10 ? `0${_date}` : _date
       }`;
 
       const dateObj = {
-        year,
+        years,
         month: _month,
         date: _date,
         day: _day,
@@ -115,12 +108,12 @@ const Calendar = ({
   };
 
   const RenderCalendar = ({ isShowMoreWeek }: any): JSX.Element => {
-    const { year, month, date } = getCalendarDate();
+    const { years, months, dates } = getCustomDate(new Date());
 
     const renderWeeks = () => {
       const weeks: string[] = [];
       for (let i = 0; i < ONE_WEEK; i++) {
-        const _week = new Date(year, month, date + i).getDay();
+        const _week = new Date(years, months, dates + i).getDay();
         if (WEEKS[_week]) {
           weeks.push(WEEKS[_week]);
         }
