@@ -46,7 +46,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   if (isWeekends || isRolling || !deliveryType) {
     dispatch(INIT_TIMER({ isInitDelay: true }));
   } else {
-    deliveryType = deliveryType.replace('타이머', '').trim();
+    // deliveryType = deliveryType.replace('타이머', '').trim();
     dispatch(INIT_TIMER({ isInitDelay: false }));
   }
 

@@ -273,7 +273,7 @@ const DeliverInfoPage = () => {
     ].includes(deliveryType);
 
     if (!isNotTimer) {
-      if (['스팟점심', '스팟저녁'].includes(deliveryType)) {
+      if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
         setLimitDelvieryType('스팟배송');
       } else {
         setLimitDelvieryType(deliveryType);
