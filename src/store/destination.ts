@@ -2,13 +2,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IJuso, IRegisterDestination } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
+
+/* Q state 초기값 설정해야 하는지 or null로 나둘지*/
 interface IAvailableDestination {
   morning: boolean;
   quick: boolean;
   parcel: boolean;
 }
 
-interface ITempDestination {
+export interface ITempDestination {
   name: string;
   location: {
     addressDetail: string;
@@ -25,7 +27,7 @@ interface ITempDestination {
 interface TProps {
   userDestination: IRegisterDestination;
   tempLocation: IJuso;
-  userTempDestination: ITempDestination;
+  userTempDestination: ITempDestination | null;
   userLocation: IJuso;
   availableDestination: IAvailableDestination;
   destinationStatus: string;
@@ -74,27 +76,25 @@ const destinationState = {
   deliveryMessageType: '',
 };
 
-const tempDestinationState = {
-  name: '',
-  location: {
-    addressDetail: '',
-    address: '',
-    dong: '',
-    zipCode: '',
-  },
-  main: false,
-  deliveryMessage: '',
-  receiverName: '',
-  receiverTel: '',
-};
+// const tempDestinationState = {
+// name: '',
+// location: {
+//   addressDetail: '',
+//   address: '',
+//   dong: '',
+//   zipCode: '',
+// },
+// main: false,
+// deliveryMessage: '',
+// receiverName: '',
+// receiverTel: '',
+// };
 
 const INITIAL_STATE: TProps = {
   userDestination: {
     ...destinationState,
   },
-  userTempDestination: {
-    ...tempDestinationState,
-  },
+  userTempDestination: null,
   tempLocation: {
     ...locationState,
   },
@@ -123,8 +123,15 @@ export const destination = createSlice({
       state.userDestination = destinationState;
     },
 
-    SET_TEMP_DESTINATION: (state, action: PayloadAction<ITempDestination>) => {
+    SET_TEMP_DESTINATION: (
+      state,
+      action: PayloadAction<ITempDestination | null>
+    ) => {
       state.userTempDestination = action.payload;
+    },
+
+    INIT_TEMP_DESTINATION: (state, action: PayloadAction) => {
+      state.userTempDestination = null;
     },
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
@@ -150,6 +157,10 @@ export const destination = createSlice({
     SET_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
       state.destinationStatus = action.payload;
     },
+
+    INIT_DESTINATION_STATUS: (state, action: PayloadAction) => {
+      state.destinationStatus = '';
+    },
     // 유저가 선택한 배송방법
     SET_USER_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
       state.userDestinationStatus = action.payload;
@@ -164,12 +175,14 @@ export const {
   SET_DESTINATION,
   INIT_DESTINATION,
   SET_TEMP_DESTINATION,
+  INIT_TEMP_DESTINATION,
   SET_LOCATION,
   SET_LOCATION_TEMP,
   SET_LOCATION_STATUS,
   SET_AVAILABLE_DESTINATION,
   INIT_LOCATION_TEMP,
   SET_DESTINATION_STATUS,
+  INIT_DESTINATION_STATUS,
   SET_USER_DESTINATION_STATUS,
   INIT_USER_DESTINATION_STATUS,
 } = destination.actions;
