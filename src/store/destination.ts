@@ -8,9 +8,24 @@ interface IAvailableDestination {
   parcel: boolean;
 }
 
+interface ITempDestination {
+  name: string;
+  location: {
+    addressDetail: string;
+    address: string | null;
+    dong: string | null;
+    zipCode: string | null;
+  };
+  main: boolean;
+  deliveryMessage?: string;
+  receiverName?: string;
+  receiverTel?: string;
+}
+
 interface TProps {
   userDestination: IRegisterDestination;
   tempLocation: IJuso;
+  userTempDestination: ITempDestination;
   userLocation: IJuso;
   availableDestination: IAvailableDestination;
   destinationStatus: string;
@@ -59,9 +74,26 @@ const destinationState = {
   deliveryMessageType: '',
 };
 
+const tempDestinationState = {
+  name: '',
+  location: {
+    addressDetail: '',
+    address: '',
+    dong: '',
+    zipCode: '',
+  },
+  main: false,
+  deliveryMessage: '',
+  receiverName: '',
+  receiverTel: '',
+};
+
 const INITIAL_STATE: TProps = {
   userDestination: {
     ...destinationState,
+  },
+  userTempDestination: {
+    ...tempDestinationState,
   },
   tempLocation: {
     ...locationState,
@@ -90,6 +122,10 @@ export const destination = createSlice({
     INIT_DESTINATION: (state, action: PayloadAction) => {
       state.userDestination = destinationState;
     },
+
+    SET_TEMP_DESTINATION: (state, action: PayloadAction<ITempDestination>) => {
+      state.userTempDestination = action.payload;
+    },
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
     },
@@ -97,6 +133,7 @@ export const destination = createSlice({
     SET_LOCATION_STATUS: (state, action: PayloadAction<TLocationType>) => {
       state.locationStatus = action.payload;
     },
+    // 위치 검색 후 획득 위치 (위치 설정 전)
     SET_LOCATION_TEMP: (state, action: PayloadAction<IJuso>) => {
       state.tempLocation = action.payload;
     },
@@ -126,6 +163,7 @@ export const destination = createSlice({
 export const {
   SET_DESTINATION,
   INIT_DESTINATION,
+  SET_TEMP_DESTINATION,
   SET_LOCATION,
   SET_LOCATION_TEMP,
   SET_LOCATION_STATUS,

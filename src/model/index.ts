@@ -280,7 +280,7 @@ export interface IEditDestination {
 }
 
 export interface IGetMainDestinations {
-  delivery: TDeliveryType | null;
+  delivery: TDeliveryType | string;
 }
 
 export interface IGetMainDestinationsResponse {
