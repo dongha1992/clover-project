@@ -12,29 +12,33 @@ export const checkDestinationHelper = ({
   parcel,
 }: IProps): TLocationType => {
   /*TODO: morning, quick, pacel 값이 아예 없을때 방어로직. 경우 어떤 경우 있나 고민 */
+  try {
+    switch (true) {
+      case morning && quick && !parcel:
+      case morning && quick && parcel: {
+        return 'spot';
+      }
 
-  /* spot은 quick 케이스와 동일 */
-  switch (true) {
-    case morning && quick && !parcel:
-    case morning && quick && parcel: {
-      return 'spot';
-    }
+      case morning && !parcel && !quick:
+      case morning && parcel && !quick: {
+        return 'morning';
+      }
 
-    case morning && !parcel && !quick:
-    case morning && parcel && !quick: {
-      return 'morning';
-    }
+      case quick: {
+        return 'spot';
+      }
 
-    case quick: {
-      return 'spot';
-    }
+      case parcel: {
+        return 'parcel';
+      }
 
-    case parcel: {
-      return 'parcel';
+      default: {
+        return 'noDelivery';
+      }
     }
-
-    default: {
-      return 'noDelivery';
-    }
+  } catch (error) {
+    console.error(error);
+    return 'noDelivery';
   }
+  /* spot은 quick 케이스와 동일 */
 };
