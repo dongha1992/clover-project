@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextH4B, TextB2R } from '@components/Shared/Text';
+import { TextH2B, TextH4B, TextB2R, TextH6B } from '@components/Shared/Text';
 import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
@@ -147,7 +147,7 @@ const SpotPage = () => {
 
   const goToShare = (e: any): void => {
     if (!mouseMoved) {
-      dispatch(initBottomSheet());
+      // dispatch(initBottomSheet());
       dispatch(
         setBottomSheet({
           content: <ShareSheet />,
@@ -169,6 +169,9 @@ const SpotPage = () => {
     }
   };
 
+  const goToRegiList = () => {
+    router.push('/spot/regi-list');
+  };
   
   const settings = {
     arrows: false,
@@ -195,6 +198,11 @@ const SpotPage = () => {
       <HeaderTitle>
         <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}<span>플린</span>님을 기다려요!</TextH2B>
       </HeaderTitle>
+      <RegistrationsCTAWrapper>
+        <RegistrationCTA onClick={goToRegiList}>
+          <TextH6B color={theme.white}>프코스팟 신청할래요</TextH6B>
+        </RegistrationCTA>
+      </RegistrationsCTAWrapper>
       <SlideWrapper {...settings}>
         {/* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
           registrationsLen &&
@@ -378,6 +386,18 @@ const HeaderTitle = styled.div`
   span{
     color: ${theme.brandColor};
   }
+`;
+
+const RegistrationsCTAWrapper = styled.article`
+  padding: 18px 24px 8px 24px;
+`;
+
+const RegistrationCTA = styled.div`
+  display: inline-block;
+  background: ${theme.brandColor};
+  padding: 4px 8px;
+  border-radius: 24px;
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div`
