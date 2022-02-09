@@ -1,17 +1,10 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  ReactElement,
-  useRef,
-} from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
 import Tag from '@components/Shared/Tag';
-import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
+import { FlexBetween, homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import Checkbox from '@components/Shared/Checkbox';
 import dynamic from 'next/dynamic';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -521,106 +514,11 @@ const Body = styled.div`
 
 const BtnWrapper = styled.div``;
 
-const PickPlaceInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid black;
-  border-radius: 8px;
-  padding: 16px;
-`;
-
-const DelvieryPlaceInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid black;
-  border-radius: 8px;
-  padding: 16px;
-`;
-
-const PlaceName = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const PlaceInfo = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const CheckTerm = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-
-  .h5B {
-    padding-top: 2px;
-    font-size: 12px;
-    letter-spacing: -0.4px;
-    line-height: 18px;
-    color: ${theme.greyScale65};
-    .brandColor {
-      color: ${theme.brandColor};
-      font-weight: bold;
-      padding-right: 4px;
-      padding-left: 4px;
-    }
-  }
-`;
-
 const SettingBtnWrapper = styled.div`
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
 `;
-
-export const PickupPlaceBox = React.memo(
-  ({ place, checkTermHandler, isSelected }: any) => {
-    return (
-      <FlexCol padding="0 0 0 0">
-        <PickPlaceInfo>
-          <PlaceName>
-            <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
-            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-              {place.spaceType}
-            </Tag>
-          </PlaceName>
-          <TextB3R padding="4px 0" color={theme.greyScale65}>
-            {place.address}
-          </TextB3R>
-          <PlaceInfo>
-            <TextH6B padding="0 4px 0 0" color={theme.greyScale65}>
-              {place.type}
-            </TextH6B>
-            <TextB3R color={theme.greyScale65}>{place.availableTime}</TextB3R>
-          </PlaceInfo>
-        </PickPlaceInfo>
-        <CheckTerm>
-          <Checkbox isSelected={isSelected} onChange={checkTermHandler} />
-          <span className="h5B">
-            <span className="brandColor">임직원 전용</span>
-            스팟으로, 외부인은 이용이 불가합니다.
-          </span>
-        </CheckTerm>
-      </FlexCol>
-    );
-  }
-);
-
-export const DeliveryPlaceBox = React.memo(({ place }: any): ReactElement => {
-  console.log(place, 'place');
-  return (
-    <FlexCol padding="0 0 0 0">
-      <DelvieryPlaceInfo>
-        <PlaceName>
-          <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
-        </PlaceName>
-        <TextB3R padding="4px 0" color={theme.greyScale65}>
-          {place.address}
-        </TextB3R>
-      </DelvieryPlaceInfo>
-    </FlexCol>
-  );
-});
 
 export default DeliverInfoPage;
