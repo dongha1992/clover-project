@@ -115,24 +115,9 @@ const DeliverInfoPage = () => {
     Object.values(userDestination).filter((item) => item).length > 0;
 
   // 배송 마감 타이머 체크 + 위치 체크
-  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
+  let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
-  const getDeliveryList = async () => {
-    const params = {
-      page: 1,
-      size: 10,
-    };
-    try {
-      const { data } = await getDestinations(params);
-      if (data.code === 200) {
-        const { destinations } = data.data;
-        const filteredMain = destinations.filter((item) => item.main);
-        console.log(filteredMain);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const checkTermHandler = () => {};
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
@@ -340,7 +325,40 @@ const DeliverInfoPage = () => {
     }
   };
 
-  const checkTermHandler = () => {};
+  const getDeliveryList = async () => {
+    const params = {
+      page: 1,
+      size: 10,
+    };
+    try {
+      const { data } = await getDestinations(params);
+      if (data.code === 200) {
+        const { destinations } = data.data;
+        const filteredMain = destinations.filter((item) => item.main);
+        console.log(filteredMain);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const isNotTimer = [
+      '스팟저녁',
+      '새벽택배',
+      '새벽택배N일',
+      '스팟점심',
+      '스팟점심N일',
+    ].includes(deliveryType);
+
+    if (!isNotTimer) {
+      if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
+        setUserSelectDeliveryType('스팟배송');
+      } else {
+        setUserSelectDeliveryType(deliveryType);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     checkTooltipMsgByDeliveryType();
