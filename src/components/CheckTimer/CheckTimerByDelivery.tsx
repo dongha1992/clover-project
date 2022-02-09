@@ -4,12 +4,12 @@ import { Obj } from '@model/index';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import checkIsValidTimer from '@utils/checkIsValidTimer';
 import useTimer from '@hooks/useTimer';
-import { TextH6B } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
-import { getFormatTime } from '@utils/getFormatTime';
-import getCustomDate from '@utils/getCustomDate';
+import { TextH6B, TextB2R, TextH5B } from '@components/Shared/Text';
+import { theme, FlexRow } from '@styles/theme';
+
 interface IProps {
   isTooltip?: boolean;
+  isCartSheet?: boolean;
 }
 
 const msgMapper: Obj = {
@@ -19,13 +19,16 @@ const msgMapper: Obj = {
   새벽배송: '내일 새벽 7시 전 도착',
 };
 
-const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
+const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
   const [timerMsg, setTimerMsg] = useState('');
 
   const { timer } = useTimer();
 
-  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
+  let deliveryType = checkIsValidTimer(checkTimerLimitHelper()).replace(
+    '타이머',
+    ''
+  );
 
   const msgHandler = () => {
     /* TODO: state 관리 필요? */
@@ -58,6 +61,13 @@ const CheckTimerByDelivery = ({ isTooltip }: IProps) => {
         color={theme.white}
         minWidth="78px"
       />
+    );
+  } else if (isCartSheet) {
+    return (
+      <FlexRow>
+        <TextH5B padding="0 4px 0 0">{deliveryType}</TextH5B>
+        <TextB2R>{`마감 ${timer} 전 (${msgMapper[targetDelivery]})`}</TextB2R>
+      </FlexRow>
     );
   } else {
     return <TextH6B color={theme.brandColor}>{timerMsg}</TextH6B>;
