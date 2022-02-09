@@ -65,12 +65,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     authCheck();
   }, []);
 
-  useEffect(() => {
-    if (queryClient.current) {
-      queryClient.current = new QueryClient();
-    }
-  }, []);
-
   const authCheck = async () => {
     const { loginType } = store.getState().common;
 

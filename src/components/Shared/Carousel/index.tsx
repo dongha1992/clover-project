@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 import { IBanners } from '@model/index';
+import { IMAGE_S3_URL } from '@constants/mock';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
   banners: IBanners[];
@@ -28,7 +29,7 @@ const Carousel = ({ banners, setCountIndex }: IProps) => {
         {banners?.map((banner: any, index: number) => {
           return (
             <ImageWrapper
-              src={banner.imageUrl}
+              src={IMAGE_S3_URL + banner.imageUrl}
               alt="image"
               key={index}
               isLast={index === banners.length + 1}
