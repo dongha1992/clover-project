@@ -4,7 +4,6 @@ import {
   TextH2B,
   TextB1B,
   TextH5B,
-  TextH6B,
   TextB2R,
 } from '@components/Shared/Text';
 import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
@@ -12,36 +11,33 @@ import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
+import { postSpotsRegistrationsSubmit } from '@api/spot';
 
 const SubmitPage = () => {
   const router = useRouter();
   const {
     spotLocation, 
     spotsRegistrationOptions, 
-    spotsRegistrationInfo
+    spotsRegistrationInfo,
+    spotsRegistrationId,
+    spotsUserInfo,
   } = useSelector(spotSelector);
   const { type } = router.query;
 
-  const goToFinish = (): void => {
-    router.push({
-      pathname: '/spot/register/submit/finish',
-      query: { type },
-    });
-  };
-
-  const goToChangeInfo = (): void => {
-    router.replace({
-      pathname: '/spot/register',
-      query: { type },
-    });
-  };
-
-  const goToChangeUserInfo = (): void => {
-    router.replace({
-      pathname: '/spot/register/spot-onboarding',
-      query: { type },
-    });
-  };
+  const registrationsSubmitHandeler = async() => {
+    try {
+      const { data } = await postSpotsRegistrationsSubmit(Number(spotsRegistrationId));
+      if(data.code === 200){
+        alert('submit!!')
+        router.push({
+          pathname: '/spot/register/submit/finish',
+          query: { type },
+        });    
+      };
+    }catch(err){
+      console.error(err);
+    }
+  }
 
   return (
     <Container>
@@ -50,15 +46,6 @@ const SubmitPage = () => {
         <ContentWrapper>
           <FlexBetween margin="0 0 24px 0">
             <TextB1B>장소 정보</TextB1B>
-            <TextH6B
-              color={theme.greyScale65}
-              textDecoration="underline"
-              onClick={goToChangeInfo}
-              padding='0 0 3px 0'
-              pointer
-            >
-              변경하기
-            </TextH6B>
           </FlexBetween>
           <Content>
             <TextH5B margin="0 0 8px 0">주소</TextH5B>
@@ -104,15 +91,6 @@ const SubmitPage = () => {
                 <TextB1B>
                   {type === 'private' ? '신청자 정보' : '장소 관리자 정보'}
                 </TextB1B>
-                <TextH6B
-                  color={theme.greyScale65}
-                  textDecoration="underline"
-                  onClick={goToChangeUserInfo}
-                  padding='0 0 3px 0'
-                  pointer
-                >
-                  변경하기
-                </TextH6B>
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
@@ -129,13 +107,13 @@ const SubmitPage = () => {
               {type === 'owner' && (
                 <Content>
                   <TextH5B margin="0 0 8px 0">직급/호칭</TextH5B>
-                  <TextB2R>사장님</TextB2R>
+                  <TextB2R>{spotsUserInfo.managerInfo}</TextB2R>
                 </Content>
               )}
             </ContentWrapper>
           </>
         )}
-        <FixedButton onClick={goToFinish}>
+        <FixedButton onClick={registrationsSubmitHandeler}>
           <Button borderRadius="0" padding='10px 0 0 0'>신청서 제출하기</Button>
         </FixedButton>
       </Wrapper>

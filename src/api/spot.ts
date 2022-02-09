@@ -10,6 +10,9 @@ import {
   IParamsSpotRegisterationsOptios,
   ISpotRegisterationsOptiosResponse,
   IEditRegistration,
+  IEditRegistrationResponse,
+  IGetDestinations,
+  IGetSpotsRegistrationsStatusResponse,
   } from '@model/index';
   
   export const getNewSpots = (
@@ -133,10 +136,10 @@ import {
       return Api.get(`/spot/v1/registrations/options`, { params });
   };
 
-  //스팟 신청 임시저장
+  //스팟 신청 임시저장, 수정
   export const putSpotsRegistrationsTemporary = (
     data: IEditRegistration,
-    ): Promise<AxiosResponse<ISpotRegisterationsOptiosResponse>> => {
+    ): Promise<AxiosResponse<IEditRegistrationResponse>> => {
       return Api.put(`/spot/v1/registrations`, data );
   };
 
@@ -144,12 +147,12 @@ import {
   export const postSpotsRegistrationsSubmit = (
     id: number,
     ): Promise<AxiosResponse<ISpotsResponse>> => {
-      return Api.post(`/spot/v1/registrations/${id}/submit`, { params : id} );
+      return Api.post(`/spot/v1/registrations/${id}/submit`, {id} );
   };
 
    // 스팟 등록 신청 조회
   export const getSpotsRegistrationStatus = (
-    id: number,
-    ): Promise<AxiosResponse<ISpotsResponse>> => {
-      return Api.get(`/spot/v1/registrations/${id}`, { params : id} );
+    params: IGetDestinations
+    ): Promise<AxiosResponse<IGetSpotsRegistrationsStatusResponse>> => {
+      return Api.get(`/spot/v1/registrations`, { params });
   };

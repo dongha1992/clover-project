@@ -9,75 +9,70 @@ import { setAlert } from '@store/alert';
 import { useSelector} from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { putSpotsRegistrationsTemporary } from '@api/spot';
-import { IEditRegistration, ISpotsResponse } from '@model/index';
-
+import { IEditRegistration } from '@model/index';
 
 interface IProps {
   title?: string;
 };
+
+// 이번 스텝에선 빠지는 페이지 '임시저장'
+// 런칭 이후에 추가될수도 있기 때문에 남겨 놓습니다. 
 
 const SpotRegisterHeader = ({ title }: IProps) => {
   const { spotLocation, spotsRegistrationInfo, spotsRegistrationOptions } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
-  const adressLen = spotLocation.address?.length;
+  const checkAddressInfo = spotLocation.address?.length && spotsRegistrationInfo.placeName?.length;
   const [temporary, setTemporary] = useState<boolean>(false);
 
   const goBack = (): void => {
     router.back();
   };
 
-  const putRegistrationsFetch = async() => {
-    const params: IEditRegistration = {
-      coordinate: {
-        lat: Number(spotLocation.lat),
-        lon: Number(spotLocation.lon),
-      },
-      location: {
-        address: spotLocation.address,
-        addressDetail: spotLocation.addressDetail,
-        dong: spotLocation.dong,
-        zipCode: spotLocation.zipCode,
-      },
-      userName: '플린',
-      userEmail: 'flynn@freshcode.me',
-      userTel: '01012341234',
-      placeName: spotsRegistrationInfo.placeName,
-      type: type?.toString().toUpperCase(),
-      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
-      lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
-      placeType: spotsRegistrationOptions.placeTypeOptions.value,
-    };
-    try{
-      const { data } = await putSpotsRegistrationsTemporary(params);
-      if(data.code === 200){
-        setTemporary(!temporary);
-      };
-    }catch(err){
-      console.error(err);
-    };  
-  };
+  // const putRegistrationsFetch = async() => {
+  //   const params: IEditRegistration = {
+  //     id: null,
+  //     coordinate: {
+  //       lat: Number(spotLocation.lat),
+  //       lon: Number(spotLocation.lon),
+  //     },
+  //     location: {
+  //       address: spotLocation.address,
+  //       addressDetail: spotLocation.addressDetail,
+  //       dong: spotLocation.dong,
+  //       zipCode: spotLocation.zipCode,
+  //     },
+  //     type: type?.toString().toUpperCase(),
+  //     userName: '프코2',
+  //     userEmail: 'fco2@freshcode.me',
+  //     userTel: '0101222222',
+  //     placeName: spotsRegistrationInfo.placeName,
+  //     pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+  //     lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
+  //     placeType: spotsRegistrationOptions.placeTypeOptions.value,
+  //     placeTypeDetail: spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
+  //   };
+  //   try{
+  //     const { data } = await putSpotsRegistrationsTemporary(params);
+  //     if(data.code === 200){
+  //       setTemporary(!temporary);
+  //     };
+  //   }catch(err){
+  //     console.error(err);
+  //   };  
+  // };
 
   const clickTemporarySave = (): void => {
-    const TitleMsg = !adressLen ? `주소/장소명(상호명)을 입력해야\n임시저장 기능을 사용할 수 있어요!` : `필수 정보를 모두 입력해야\n신청이 완료됩니다.` ;
-    const SubMsg = !adressLen ? '' :`[마이페이지>스팟 관리]에서\n업데이트할 수 있어요.`;
+    const TitleMsg = !checkAddressInfo ? `주소/장소명(상호명)을 입력해야\n임시저장 기능을 사용할 수 있어요!` : `필수 정보를 모두 입력해야\n신청이 완료됩니다.` ;
+    const SubMsg = !checkAddressInfo ? '' :`[마이페이지>스팟 관리]에서 업데이트할 수 있어요.`;
     // 주소와 장소명을 입력해야만 임시저장이 가능함
-    if(adressLen && spotsRegistrationInfo.placeName?.length){
+    if(checkAddressInfo){
       dispatch(
         setAlert({
           alertMessage: TitleMsg,
           alertSubMessage: SubMsg,
-          onSubmit: () => {putRegistrationsFetch()},
-          submitBtnText: '확인',
-          closeBtnText: '취소',
-        })
-      );  
-    }else {
-      dispatch(
-        setAlert({
-          alertMessage: TitleMsg,
-          alertSubMessage: SubMsg,
+          // onSubmit: () => {checkAddressInfo ? putRegistrationsFetch() : null},
           submitBtnText: '확인',
           closeBtnText: '취소',
         })

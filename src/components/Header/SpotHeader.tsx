@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 const SpotHeader = () => {
 
-  const { userLocation, availableDestination, locationStatus } =
+  const { userLocation } =
   useSelector(destinationForm);
 
   const goToCart = () => {
@@ -93,6 +93,7 @@ const AddressWrapper = styled.div`
 const Left = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Right = styled.div`

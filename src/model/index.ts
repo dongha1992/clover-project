@@ -719,7 +719,7 @@ export interface IEditRegistration {
     lat: number;
     lon: number;
   };
-  id?: number;
+  id?: number | null;
   location: {
     address?: string | null;
     addressDetail?: string | null;
@@ -730,10 +730,39 @@ export interface IEditRegistration {
   pickupType?: TSpotPickupType;
   placeName?: string | null;
   placeType?: TPlaceType;
-  placeTypeDetail?: string;
+  placeTypeDetail?: string | null;
   type?: TSpotRegisterationsOptiosType | string;
   userEmail: string;
   userName: string;
-  userPosition?: string;
+  userPosition?: string | null;
   userTel: string;
+  createdAt?: string;
+  step?: string;
+  rejected?: boolean;
+  recruited?: boolean;
+  recruitingCount?: number;
+};
+
+export interface IEditRegistrationResponse {
+  code: number;
+  message: string;
+  data: IEditRegistration;
+};
+
+export interface IGetSpotsRegistrationsStatus{
+  pagination: {
+    page: number;
+    size: number;
+    total: number;
+    totalPage: number;
+  };
+  spotRegistrations: [
+    IEditRegistration,
+  ];
+};
+
+export interface IGetSpotsRegistrationsStatusResponse {
+  code: number;
+  message: string;
+  data: IGetSpotsRegistrationsStatus;
 };

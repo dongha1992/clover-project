@@ -31,8 +31,14 @@ interface ISpotsRegistrationInfo {
   placeName?: string | null;
   pickupLocationEtc?: string | null;
   placeTypeEtc?: string | null;
-  noticeChecked?: boolean;
-}
+};
+
+interface ISpotsRegistrationUserInfo {
+  userName: string;
+  userEmail: string;
+  userTel: string;
+  managerInfo?: string | null;
+};
 
 
 interface IProps {
@@ -41,6 +47,8 @@ interface IProps {
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
   spotsRegistrationInfo: ISpotsRegistrationInfo;
+  spotsRegistrationId: number | null;
+  spotsUserInfo: ISpotsRegistrationUserInfo;
 };
 
 const spotAddressState = {
@@ -63,7 +71,13 @@ const spotsRegistrationInfoState = {
   placeName: '',
   pickupLocationEtc: '',
   placeTypeEtc: '',
-  noticeChecked: false,
+};
+
+const spotsRegistrationsUserInfoState = {
+  userName: '',
+  userEmail: '',
+  userTel: '',
+  managerInfo: '',
 }
 
 const initialState: IProps = {
@@ -77,7 +91,11 @@ const initialState: IProps = {
   },
   spotsRegistrationInfo: {
     ...spotsRegistrationInfoState,
-  }
+  },
+  spotsUserInfo: {
+    ...spotsRegistrationsUserInfoState,
+  },
+  spotsRegistrationId: null,
 };
 
 export const spot = createSlice({
@@ -87,7 +105,7 @@ export const spot = createSlice({
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail>) => {
       state.spotDetail = action.payload;
     },
-    SET_SPOT_LIKED: (state, action : PayloadAction<any>) => {
+    SET_SPOT_LIKED: (state, action : PayloadAction<boolean>) => {
       state.isSpotLiked = action.payload;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
@@ -108,6 +126,12 @@ export const spot = createSlice({
     INIT_SPOT_REGISTRATIONS_INFO: (state, action: PayloadAction) => {
       state.spotsRegistrationInfo = spotsRegistrationInfoState;
     },
+    SET_SPOT_REGISTRATIONS_ID: (state, action: PayloadAction<number | null>) => {
+      state.spotsRegistrationId = action.payload;
+    },
+    SET_SPOT_REGISTRATIONS_USER_INFO: (state, action: PayloadAction<ISpotsRegistrationUserInfo>) => {
+      state.spotsUserInfo = action.payload;
+    },
   },
 });
 
@@ -120,6 +144,8 @@ export const {
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
   INIT_SPOT_REGISTRATIONS_INFO,
+  SET_SPOT_REGISTRATIONS_ID,
+  SET_SPOT_REGISTRATIONS_USER_INFO,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

@@ -16,42 +16,110 @@ import { setBottomSheet } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector, useDispatch } from 'react-redux';
-import { spotSelector, SET_SPOT_REGISTRATIONS_INFO} from '@store/spot';
+import { 
+  spotSelector, 
+  SET_SPOT_REGISTRATIONS_INFO, 
+  SET_SPOT_REGISTRATIONS_USER_INFO, 
+  SET_SPOT_REGISTRATIONS_ID
+} from '@store/spot';
+import { userForm } from '@store/user';
+import { putSpotsRegistrationsTemporary } from '@api/spot';
+import { IEditRegistration } from '@model/index';
 
 const RegisterPage = () => {
-  const { spotLocation, spotsRegistrationInfo, spotsRegistrationOptions } = useSelector(spotSelector);
+  const { 
+    spotLocation, 
+    spotsRegistrationInfo, 
+    spotsRegistrationOptions, 
+    spotsUserInfo,
+    spotsRegistrationId,
+  } = useSelector(spotSelector);
+  const { user } = useSelector(userForm);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
   const placeRef = useRef<HTMLInputElement>(null);
   const pickUpEtcRef = useRef<HTMLInputElement>(null);
   const placeEtcRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const telRef = useRef<HTMLInputElement>(null);
+  const managerRef = useRef<HTMLInputElement>(null);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
+  const [managerChecked, setManagerChecked] = useState<boolean>(false);
 
-  const goToSubmit = (): void => {
-    if(!noticeChecked){
-      return;
+  const checkedPickupType = !!spotsRegistrationOptions.pickupLocationTypeOptions?.value?.length;
+  const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
+  const checkedPlaceType = !!spotsRegistrationOptions.placeTypeOptions?.value?.length;
+  const checkedAddressInfo = !!spotLocation.address?.length&&!!placeRef.current?.value?.length;
+  const checkedUserInfo = !!spotsUserInfo?.userName?.length&&!!spotsUserInfo.userEmail?.length&&!!spotsUserInfo.userTel?.length;
+
+  const activeButton = () => {
+    switch(type){
+      case 'private':
+        return checkedAddressInfo&&checkedPickupType&&checkedLunchType&&checkedPlaceType&&checkedUserInfo&&noticeChecked;
+      case 'public':
+        return checkedAddressInfo&&checkedPlaceType;
+      case 'owner':
+        return checkedAddressInfo&&checkedPlaceType&&checkedUserInfo&&managerChecked ;
+      default: 
+        return false;
     };
-    if (type === 'owner') {
-      router.push({
-        pathname: '/spot/register/spot-onboarding',
-        query: { type },
-      });
-    } else {
-      router.push({
-        pathname: '/spot/register/submit',
-        query: { type },
-      });
-    }
   };
 
-  const selectOptions = useCallback((tab) => {
+  const goToSubmit = async() => {
+    if(!activeButton()){
+      if(type === 'private'){
+        return;
+      }
+      return;
+    };
+    const params: IEditRegistration = {
+      id: spotsRegistrationId && spotsRegistrationId,
+      coordinate: {
+        lat: Number(spotLocation.lat),
+        lon: Number(spotLocation.lon),
+      },
+      location: {
+        address: spotLocation.address,
+        addressDetail: spotLocation.addressDetail,
+        dong: spotLocation.dong,
+        zipCode: spotLocation.zipCode,
+      },
+      type: type?.toString().toUpperCase(),
+      userName: spotsUserInfo.userName,
+      userEmail: spotsUserInfo.userEmail,
+      userTel: spotsUserInfo.userTel,
+      placeName: spotsRegistrationInfo.placeName,
+      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+      lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
+      placeType: spotsRegistrationOptions.placeTypeOptions.value,
+      placeTypeDetail: spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
+      userPosition: type === 'owner' ?spotsUserInfo.managerInfo : null,
+    };
+
+    try{
+      const { data } = await putSpotsRegistrationsTemporary(params);
+      if(data.code === 200){
+        dispatch(SET_SPOT_REGISTRATIONS_ID(Number(data?.data.id)));
+        router.push({
+          pathname: '/spot/register/submit',
+          query: { type },
+        });    
+        alert('등록 완료!')
+      };
+    }catch(err){
+      console.error(err);
+    };  
+  };
+
+  const selectOptions = (tab: string) => {
     dispatch(
       setBottomSheet({
         content: <OptionsSheet tab={tab} />,
       })
     );
-  }, []);
+  };
 
   const goToLocation = () => {
     router.push({
@@ -92,9 +160,69 @@ const RegisterPage = () => {
       dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
     };
   };
+  const managerInfoInputHandler = () => {
+    if(managerRef.current){
+      const inputUserInfo = {
+        userName: spotsUserInfo.userName,
+        userEmail: spotsUserInfo.userEmail,
+        userTel: spotsUserInfo.userTel,
+        managerInfo: managerRef.current?.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+    };
+  };
+
+  const userNameInputHandler = () => {
+    if(nameRef.current){
+      const inputUserInfo = {
+        userName: nameRef.current.value,
+        userEmail: spotsUserInfo.userEmail,
+        userTel: spotsUserInfo.userTel,
+        managerInfo: spotsUserInfo.managerInfo,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+    }
+  };
+  const userEmailInputHandler = () => {
+    if(emailRef.current){
+      const inputUserInfo = {
+        userName: spotsUserInfo.userName,
+        userEmail: emailRef.current.value,
+        userTel: spotsUserInfo.userTel,
+        managerInfo: spotsUserInfo.managerInfo,
+
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+    }
+  };
+  const userTelInputHandler = () => {
+    if(telRef.current){
+      const inputUserInfo = {
+        userName: spotsUserInfo.userName,
+        userEmail: spotsUserInfo.userEmail,
+        userTel: telRef.current.value,
+        managerInfo: spotsUserInfo.managerInfo,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+    }
+  };
+
+  //TODO 유저 정보 가져와야함
+  useEffect(()=> {
+    const defaultUserInfo = {
+      userName: '프프코',
+      userEmail: 'fco@freshcode.me',
+      userTel: '01012341234',
+    };
+    dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(defaultUserInfo));
+  }, []);
 
   const noticeHandler = () => {
       setNoticeChecked(!noticeChecked);
+  };
+
+  const managerCheckedHandler = () => {
+    setManagerChecked(!managerChecked);
   };
 
   return (
@@ -217,6 +345,62 @@ const RegisterPage = () => {
             </Button>
           </Wrapper>
         )}
+        {
+          (type === 'private' || type === 'owner') && (
+            <>
+            <Wrapper>
+            <TextH4B margin="0 0 16px 0">이름</TextH4B>
+            <TextInput
+              ref={nameRef}
+              eventHandler={userNameInputHandler}
+              // value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
+              placeholder='이름 입력'
+              value='프프코'
+            />
+          </Wrapper>
+          <Wrapper>
+            <TextH4B margin="0 0 16px 0">이메일</TextH4B>
+            <TextInput
+              ref={emailRef}
+              eventHandler={userEmailInputHandler}
+              // value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
+              placeholder='이메일 입력'
+              value='fco@freshcode.me'
+            />
+          </Wrapper>
+          <Wrapper>
+            <TextH4B margin="0 0 16px 0">휴대폰 번호</TextH4B>
+            <TextInput
+              ref={telRef}
+              eventHandler={userTelInputHandler}
+              // value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
+              placeholder='휴대폰 번호 (-제외)'
+              value='01012341234'
+            />
+          </Wrapper>
+          </>
+          )
+        }
+        {
+          type === 'owner' &&
+          <>
+            <Wrapper>
+              <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
+              <TextInput
+                ref={managerRef}
+                eventHandler={managerInfoInputHandler}
+                value={spotsUserInfo.managerInfo?.length ? spotsUserInfo.managerInfo : null}
+                placeholder='직급 또는 호칭 입력'
+              />
+            </Wrapper>
+            <FlexRow>
+              <Checkbox onChange={managerCheckedHandler} isSelected={managerChecked} />
+              <TextB2R margin="0 0 0 8px" padding='3px 0 0 0'>
+                신청자가 장소관리자임을 확인했습니다.
+              </TextB2R>
+            </FlexRow>
+          </>
+        }
       </FormWrapper>
       {type === 'private' && (
         <BottomWrapper>
@@ -239,7 +423,7 @@ const RegisterPage = () => {
           borderRadius="0" 
           height="100%"
           padding='10px 0 0 0' 
-          backgroundColor={!noticeChecked ? theme.greyScale6  : theme.balck}
+          backgroundColor={activeButton() ? theme.balck : theme.greyScale6}
           >다음</Button>
       </FixedButton>
     </Container>
