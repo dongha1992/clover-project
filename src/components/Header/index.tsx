@@ -77,7 +77,6 @@ const Header = () => {
         '/spot/spot-req': '신청하기',
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
-        '/spot/register/spot-onboarding': '신청하기',
         '/spot/register/submit/finish': '신청하기',
         '/destination/search': '배송지 검색',
         '/destination/destination-detail': '배송지 검색',
@@ -128,14 +127,11 @@ const Header = () => {
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
-        case ['/spot/register', '/spot/register/spot-onboarding'].includes(
-          currentPath
-        ): {
-          return <SpotRegisterHeader title={title} />;
-        }
+
         case ['/spot/register/submit/finish'].includes(currentPath): {
           return <CloseDefaultHeader title={title} />;
         }
+        
         default: {
           return <DefaultHeader title={title} />;
         }

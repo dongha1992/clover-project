@@ -5,7 +5,7 @@ import { TextH5B } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { getSpotRegisterationsOption } from '@api/spot';
-import { ISpotRegisterationsOpstions, IParamsSpotRegisterationsOptios } from '@model/index';
+import { ISpotRegisterationsOpstions, IParamsSpotRegisterationsOptios,  } from '@model/index';
 import { SET_SPOT_REGISTRATIONS_OPTIONS, spotSelector } from '@store/spot';
 import { useSelector, useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -15,14 +15,14 @@ interface IProps {
 }
 
 const OptionsSheet = ({ tab }: IProps): ReactElement => {
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<string>('');
-  const [selectedPlaceType, setSelectedPlaceType] = useState<string>('');
-  const [selectedLunchTime, setSelectedLunchTime] = useState<string>('');
+  const { spotsRegistrationOptions } = useSelector(spotSelector);
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<string>(spotsRegistrationOptions.pickupLocationTypeOptions?.value);
+  const [selectedPlaceType, setSelectedPlaceType] = useState<string>(spotsRegistrationOptions.placeTypeOptions?.value);
+  const [selectedLunchTime, setSelectedLunchTime] = useState<string>(spotsRegistrationOptions.lunchTimeOptions?.value);
   const [options, setOptions] = useState<ISpotRegisterationsOpstions>();
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
-  const { spotsRegistrationOptions } = useSelector(spotSelector);
 
   const selectTab = () => {
     if (tab === 'pickUp') {

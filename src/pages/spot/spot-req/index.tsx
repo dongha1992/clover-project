@@ -1,14 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextB3R, TextH3B, TextH5B } from '@components/Shared/Text';
-import { theme, fixedBottom } from '@styles/theme';
+import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { 
   INIT_SPOT_LOCATION, 
   INIT_SPOT_REGISTRATIONS_OPTIONS, 
-  INIT_SPOT_REGISTRATIONS_INFO 
+  INIT_SPOT_REGISTRATIONS_INFO,
 } from '@store/spot';
 
 const SpotReqPage = () => {
@@ -88,9 +88,11 @@ const SpotReqPage = () => {
 };
 
 const Container = styled.main`
-  padding: 24px;
+  padding: 24px 0;
 `;
-const TopWrapper = styled.section``;
+const TopWrapper = styled.section`
+  ${homePadding};
+`;
 
 const GuideWrapper = styled.section`
   width: 100%;
@@ -103,6 +105,7 @@ const Guide = styled.div``;
 
 const BottomWrapper = styled.section`
   margin: 0 auto;
+  ${homePadding};
 `;
 
 const BtnWrapper = styled.div``;
