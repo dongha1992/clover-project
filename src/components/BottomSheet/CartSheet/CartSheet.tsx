@@ -215,7 +215,7 @@ const CartSheet = () => {
       '스팟점심',
       '스팟점심N일',
     ].includes(deliveryType);
-
+    console.log(deliveryType);
     if (isRolling) {
       checkIsValidRollingMsg();
     }

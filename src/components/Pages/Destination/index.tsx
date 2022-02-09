@@ -7,6 +7,7 @@ import CanNotDeliveryInfo from './CanNotDeliveryInfo';
 import SpotInfo from './SpotInfo';
 import MorningAndPacelInfo from './MorningAndParcelInfo';
 import QuickAndMorningInfo from './QuickAndMoringInfo';
+import SpotAndMorningInfo from './SpotAndMorningInfo';
 
 export {
   DestinationSearchResult,
@@ -18,4 +19,5 @@ export {
   SpotInfo,
   QuickAndMorningInfo,
   MorningAndPacelInfo,
+  SpotAndMorningInfo,
 };

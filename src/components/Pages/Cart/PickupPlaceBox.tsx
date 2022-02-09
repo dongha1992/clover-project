@@ -16,7 +16,7 @@ const PickupPlaceBox = ({ place, checkTermHandler, isSelected }: any) => {
           </Tag>
         </PlaceName>
         <TextB3R padding="4px 0" color={theme.greyScale65}>
-          {place.address}
+          {place.location.address}
         </TextB3R>
         <PlaceInfo>
           <TextH6B padding="0 4px 0 0" color={theme.greyScale65}>

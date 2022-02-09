@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { TextB3R, TextH2B } from '@components/Shared/Text';
-import { theme, FlexRow } from '@styles/theme';
 import { availabilityDestination } from '@api/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -19,6 +17,7 @@ import {
   SpotInfo,
   QuickAndMorningInfo,
   MorningAndPacelInfo,
+  SpotAndMorningInfo,
 } from '@components/Pages/Destination';
 
 /* TODO: spot 추가 되어야 함 */
@@ -105,10 +104,12 @@ const CheckDestinationPlacce = () => {
       switch (userDestinationStatus || location) {
         // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
         case 'morning': {
-          if (canEverything || noQuick) {
+          if (canEverything) {
+            return <SpotAndMorningInfo />;
+          } else if (noQuick) {
             return <MorningInfo />;
           } else if (canParcel) {
-            <ParcelInfo />;
+            return <ParcelInfo />;
           }
         }
         case 'quick': {
