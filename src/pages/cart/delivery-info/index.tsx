@@ -22,86 +22,41 @@ import {
   INIT_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
-import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
-import { getDestinations } from '@api/destination';
+import { getDestinations, getMainDestinations } from '@api/destination';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import { getFormatTime } from '@utils/getFormatTime';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import checkIsValidTimer from '@utils/checkIsValidTimer';
+import { DELIVERY_METHOD } from '@constants/delivery-info';
+import { IDestinationsResponse } from '@model/index';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
 });
 
-interface IDeliveryMethod {
-  id: number;
-  value: string;
-  name: string;
-  tag: string;
-  description: string;
-  feeInfo: string;
-}
-
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
-/* TODO: 타이머 기능 */
 
 /* TODO: 스팟 배송일 경우 추가 */
 
 /* TODO: 최근 배송지 나오면 userDestination와 싱크 */
 /* TODO: 내 위치 검색 / 배송지 검색 -> 두 경우 available 체킹 리팩토링 */
 /* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
-const DELIVERY_METHOD: any = {
-  pickup: [
-    {
-      id: 1,
-      value: 'spot',
-      name: '스팟배송',
-      tag: '무료배송',
-      description: '- 수도권 내 오픈된 프코스팟으로 픽업 가능',
-      feeInfo: '- 언제나 배송비 무료ㅣ점심 · 저녁픽업',
-    },
-  ],
-  delivery: [
-    {
-      id: 2,
-      value: 'morning',
-      name: '새벽배송',
-      tag: '',
-      description: '- 서울 전체, 경기/인천 일부 지역 이용 가능',
-      feeInfo: '- 배송비 3,500원 (3만 5천 원 이상 배송비 무료)',
-    },
-    {
-      id: 3,
-      value: 'parcel',
-      name: '택배배송',
-      tag: '',
-      description: '- 서울 전체, 경기/인천 일부 지역 이용 가능',
-      feeInfo: '- 배송비 3,500원 (3만 5천 원 이상 배송비 무료)',
-    },
-    {
-      id: 4,
-      value: 'quick',
-      name: '퀵배송',
-      tag: '',
-      description: '- 서울 전체, 경기/인천 일부 지역 이용 가능',
-      feeInfo: '- 배송비 3,500원 (3만 5천 원 이상 배송비 무료)',
-    },
-  ],
-};
 
-const recentDestination = '';
+const recentOrder = '';
 
 const DeliverInfoPage = () => {
   const [targetDeliveryType, setTargetDeliveryType] = useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] =
     useState<string>('');
+  const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
+  const [tempDestination, setTempDestination] =
+    useState<IDestinationsResponse>();
 
   const {
     destinationStatus,
-    userDestination,
+    userTempDestination,
     locationStatus,
     userDestinationStatus,
   } = useSelector(destinationForm);
@@ -111,8 +66,8 @@ const DeliverInfoPage = () => {
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
   const { isTimerTooltip } = useSelector(orderForm);
 
-  const hasUserSelectDestination =
-    Object.values(userDestination).filter((item) => item).length > 0;
+  // const hasUserSelectDestination =
+  //   Object.values(userDestination).filter((item) => item).length > 0;
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
@@ -135,27 +90,27 @@ const DeliverInfoPage = () => {
   };
 
   const finishDeliverySetting = async () => {
-    if (!hasUserSelectDestination) {
+    if (!tempDestination) {
       return;
     }
 
     const reqBody = {
-      addressDetail: userDestination.addressDetail,
-      name: userDestination.name,
-      address: userDestination.address,
+      addressDetail: userTempDestination.location.addressDetail,
+      name: userTempDestination.name,
+      address: userTempDestination.location.address,
       delivery: userDestinationStatus.toUpperCase(),
-      deliveryMessage: userDestination.deliveryMessage
-        ? userDestination.deliveryMessage
+      deliveryMessage: userTempDestination.deliveryMessage
+        ? userTempDestination.deliveryMessage
         : '',
-      dong: userDestination.dong,
-      main: userDestination.main,
-      receiverName: userDestination.receiverName
-        ? userDestination.receiverName
+      dong: userTempDestination.location.dong,
+      main: userTempDestination.main,
+      receiverName: userTempDestination.receiverName
+        ? userTempDestination.receiverName
         : '테스트',
-      receiverTel: userDestination.receiverTel
-        ? userDestination.receiverTel
+      receiverTel: userTempDestination.receiverTel
+        ? userTempDestination.receiverTel
         : '01012341234',
-      zipCode: userDestination.zipCode,
+      zipCode: userTempDestination.location.zipCode,
     };
 
     try {
@@ -175,11 +130,11 @@ const DeliverInfoPage = () => {
   const placeInfoRender = () => {
     switch (userDestinationStatus) {
       case 'spot': {
-        return <PickupPlaceBox place={userDestination} />;
+        return <PickupPlaceBox place={tempDestination} />;
       }
 
       default: {
-        return <DeliveryPlaceBox place={userDestination} />;
+        return <DeliveryPlaceBox place={tempDestination} />;
       }
     }
   };
@@ -282,8 +237,8 @@ const DeliverInfoPage = () => {
 
   const userSelectDeliveryTypeHelper = () => {
     // 최근 배송 이력이 있는지
-    if (recentDestination && !userDestinationStatus) {
-      setUserSelectDeliveryType(recentDestination);
+    if (recentOrder && !userDestinationStatus) {
+      setUserSelectDeliveryType(recentOrder);
     }
 
     // 배송지 검색 후 배송방법 변하는 예외 케이스
@@ -325,24 +280,28 @@ const DeliverInfoPage = () => {
     }
   };
 
-  const getDeliveryList = async () => {
+  const getMainDestinationByDeliveryType = async () => {
+    if (!userSelectDeliveryType) {
+      return;
+    }
+
     const params = {
-      page: 1,
-      size: 10,
+      delivery: userSelectDeliveryType.toUpperCase(),
     };
+
     try {
-      const { data } = await getDestinations(params);
+      const { data } = await getMainDestinations(params);
       if (data.code === 200) {
-        const { destinations } = data.data;
-        const filteredMain = destinations.filter((item) => item.main);
-        console.log(filteredMain);
+        setTempDestination(data.data);
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  useEffect(() => {
+  const checkTimerShow = () => {
+    // 배송 방법 선택과 관련 없이 현재 시간이 배송 마감 30분 전 이면 show
+
     const isNotTimer = [
       '스팟저녁',
       '새벽택배',
@@ -353,21 +312,30 @@ const DeliverInfoPage = () => {
 
     if (!isNotTimer) {
       if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
-        setUserSelectDeliveryType('스팟배송');
+        setTimerDeliveryType('스팟배송');
       } else {
-        setUserSelectDeliveryType(deliveryType);
+        setTimerDeliveryType(deliveryType);
       }
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
     }
-  }, []);
+  };
 
   useEffect(() => {
     checkTooltipMsgByDeliveryType();
   }, [userDestinationStatus]);
 
   useEffect(() => {
+    getMainDestinationByDeliveryType();
+  }, [userSelectDeliveryType]);
+
+  useEffect(() => {
     userSelectDeliveryTypeHelper();
-    getDeliveryList();
+    checkTimerShow();
   }, []);
+
+  console.log(userTempDestination, 'userTempDestination');
 
   return (
     <Container>
@@ -402,10 +370,8 @@ const DeliverInfoPage = () => {
                         )}
                       </RowLeft>
                       {targetDeliveryType === item.value && tooltipRender()}
-                      {index === 0 && (
-                        <TextH6B color={theme.brandColor}>
-                          점심배송 마감 29:30 전
-                        </TextH6B>
+                      {isTimerTooltip && item.name === timerDevlieryType && (
+                        <CheckTimerByDelivery />
                       )}
                     </FlexBetween>
                     <Body>
@@ -427,7 +393,6 @@ const DeliverInfoPage = () => {
           </TextH5B>
           {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
             const isSelected = userSelectDeliveryType === item.value;
-
             return (
               <MethodGroup key={index}>
                 <RowWrapper>
@@ -451,10 +416,8 @@ const DeliverInfoPage = () => {
                         )}
                       </RowLeft>
                       {targetDeliveryType === item.value && tooltipRender()}
-                      {index === 1 && (
-                        <TextH6B color={theme.brandColor}>
-                          점심배송 마감 29:30 전
-                        </TextH6B>
+                      {isTimerTooltip && item.name === timerDevlieryType && (
+                        <CheckTimerByDelivery />
                       )}
                     </FlexBetween>
                     <Body>
@@ -478,7 +441,7 @@ const DeliverInfoPage = () => {
               <TextH3B padding="0 0 14px 0">
                 {isSpotPickupPlace ? '픽업장소' : '배송지'}
               </TextH3B>
-              {hasUserSelectDestination && (
+              {tempDestination && (
                 <TextH6B
                   textDecoration="underline"
                   color={theme.greyScale65}
@@ -488,8 +451,8 @@ const DeliverInfoPage = () => {
                 </TextH6B>
               )}
             </FlexBetween>
-            {hasUserSelectDestination ? placeInfoRender() : ''}
-            {(!userSelectDeliveryType || !hasUserSelectDestination) && (
+            {tempDestination ? placeInfoRender() : ''}
+            {(!userSelectDeliveryType || !tempDestination) && (
               <BtnWrapper onClick={goToFindAddress}>
                 <Button
                   backgroundColor={theme.white}
@@ -504,7 +467,7 @@ const DeliverInfoPage = () => {
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0" disabled={!hasUserSelectDestination}>
+        <Button borderRadius="0" disabled={!tempDestination}>
           설정하기
         </Button>
       </SettingBtnWrapper>
@@ -645,6 +608,7 @@ export const PickupPlaceBox = React.memo(
 );
 
 export const DeliveryPlaceBox = React.memo(({ place }: any): ReactElement => {
+  console.log(place, 'place');
   return (
     <FlexCol padding="0 0 0 0">
       <DelvieryPlaceInfo>

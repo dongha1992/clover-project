@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   destinationForm,
   INIT_LOCATION_TEMP,
-  SET_DESTINATION,
+  SET_TEMP_DESTINATION,
   SET_DESTINATION_STATUS,
 } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
@@ -76,15 +76,17 @@ const DestinationDetailPage = () => {
       const name = destinationNameRef.current.value.toString();
 
       const userDestinationInfo = {
-        addressDetail,
         name,
-        address: tempLocation.roadAddrPart1,
-        dong: tempLocation.emdNm,
+        location: {
+          addressDetail,
+          address: tempLocation.roadAddrPart1,
+          dong: tempLocation.emdNm,
+          zipCode: tempLocation.zipNo,
+        },
         main: isDefaultDestination,
-        zipCode: tempLocation.zipNo,
       };
 
-      dispatch(SET_DESTINATION(userDestinationInfo));
+      dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
       dispatch(SET_DESTINATION_STATUS(destinationStatus));
       dispatch(INIT_LOCATION_TEMP());
 
