@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextB3R, TextH3B, TextH5B } from '@components/Shared/Text';
+import { TextH1B, TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
 import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
@@ -15,10 +15,10 @@ const SpotReqPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const text = {
-    publicText: '0000번째 프코스팟의\n파트너가 되어보세요.',
-    publicDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
-    ownerText: '현재 xxxx명이\n프코스팟을 이용해요',
-    ownerDesc: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
+    publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
+    publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
+    ownerText: '0000번째 프코스팟의\n파트너가 되어보세요.',
+    ownerDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
     fcospotText: '단골카페를 프코스팟으로',
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
     privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
@@ -57,10 +57,10 @@ const SpotReqPage = () => {
   return (
     <Container>
       <TopWrapper>
-        <TextH2B>{mainText()?.textTitle}</TextH2B>
-        <TextB3R margin="33px 0 48px 0" color={theme.greyScale65}>
+        <TextH1B>{mainText()?.textTitle}</TextH1B>
+        <TextB2R margin="33px 0 48px 0" color={theme.greyScale65}>
           {mainText()?.textDesc}
-        </TextB3R>
+        </TextB2R>
       </TopWrapper>
       <GuideWrapper>
         <Guide></Guide>
@@ -68,7 +68,7 @@ const SpotReqPage = () => {
       <BottomWrapper>
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
-          <TextH5B margin="0 0 24px 0">{text.askText}</TextH5B>
+          <TextH2B margin="0 0 24px 0">{text.askText}</TextH2B>
           <Button
             pointer
             backgroundColor={theme.white}
