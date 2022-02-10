@@ -1,14 +1,15 @@
-import React, { ReactElement, useState, useEffect, useCallback } from 'react';
+import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { getSpotRegisterationsOption } from '@api/spot';
-import { ISpotRegisterationsOpstions, IParamsSpotRegisterationsOptios,  } from '@model/index';
+import { IParamsSpotRegisterationsOptios,  } from '@model/index';
 import { SET_SPOT_REGISTRATIONS_OPTIONS, spotSelector } from '@store/spot';
 import { useSelector, useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useQuery } from 'react-query';
 
 interface IProps {
   tab: string;
@@ -16,23 +17,34 @@ interface IProps {
 
 const OptionsSheet = ({ tab }: IProps): ReactElement => {
   const { spotsRegistrationOptions } = useSelector(spotSelector);
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<string>(spotsRegistrationOptions.pickupLocationTypeOptions?.value);
-  const [selectedPlaceType, setSelectedPlaceType] = useState<string>(spotsRegistrationOptions.placeTypeOptions?.value);
-  const [selectedLunchTime, setSelectedLunchTime] = useState<string>(spotsRegistrationOptions.lunchTimeOptions?.value);
-  const [options, setOptions] = useState<ISpotRegisterationsOpstions>();
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<string>(spotsRegistrationOptions.pickupLocationTypeOptions?.value);
+  const [selectedPlaceType, setSelectedPlaceType] = useState<string>(spotsRegistrationOptions.placeTypeOptions?.value);
+  const [selectedLunchTime, setSelectedLunchTime] = useState<string>(spotsRegistrationOptions.lunchTimeOptions?.value);
 
+  const  { data : registrationsOptions } = useQuery(
+    ['options'],
+    async () => {
+      const params: IParamsSpotRegisterationsOptios = {
+        type: type?.toString().toUpperCase(),
+      };
+      const res = await getSpotRegisterationsOption(params);
+      return res.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+ 
   const selectTab = () => {
     if (tab === 'pickUp') {
-      return {options: options?.pickupLocationTypeOptions, value: selectedPickupPlace};
+      return {options: registrationsOptions?.pickupLocationTypeOptions, value: selectedPickupPlace};
     } else if (tab === 'time') {
-      return {options: options?.lunchTimeOptions, value: selectedLunchTime};
+      return {options: registrationsOptions?.lunchTimeOptions, value: selectedLunchTime};
     } else if (tab === 'place' && type === 'private') {
-      return {options: options?.placeTypeOptions, value: selectedPlaceType};
+      return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     } else if (tab === 'place') {
-      return {options: options?.placeTypeOptions, value: selectedPlaceType};
+      return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     }
   };
 
@@ -52,32 +64,16 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
         return null;
     };
   };
-  useEffect(()=> {    
-    const getRegisterationsOption = async() => {
-      const params: IParamsSpotRegisterationsOptios = {
-        type: type?.toString().toUpperCase(),
-      };
-      try{
-        const { data } = await getSpotRegisterationsOption(params);
-        if(data.code === 200){
-          setOptions(data.data);
-        };
-      }catch(err){
-        console.error(err);
-      };
-    };
-    getRegisterationsOption();
-  }, []);
 
-  const registrationsOptionsHandler = useCallback((value: string) => {
-      if(tab === 'pickUp'){
-        setSelectedPickupPlace(value);
-      }else if(tab === 'time'){
-        setSelectedLunchTime(value);
-      }else if(tab === 'place'){
-        setSelectedPlaceType(value);
-      };
-    },[]);
+  const registrationsOptionsHandler = (value: string) => {
+    if(tab === 'pickUp'){
+      setSelectedPickupPlace(value);
+    }else if(tab === 'time'){
+      setSelectedLunchTime(value);
+    }else if(tab === 'place'){
+      setSelectedPlaceType(value);
+    };
+  };
 
   const selectedHandler = () => {
     dispatch(INIT_BOTTOM_SHEET());

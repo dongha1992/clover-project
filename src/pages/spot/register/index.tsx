@@ -75,7 +75,7 @@ const RegisterPage = () => {
       return;
     };
     const params: IEditRegistration = {
-      id: spotsRegistrationId && spotsRegistrationId,
+      id: spotsRegistrationId ? spotsRegistrationId : null,
       coordinate: {
         lat: Number(spotLocation.lat),
         lon: Number(spotLocation.lon),
@@ -101,12 +101,12 @@ const RegisterPage = () => {
     try{
       const { data } = await putSpotsRegistrationsTemporary(params);
       if(data.code === 200){
+        console.log('success! next stage!');
         dispatch(SET_SPOT_REGISTRATIONS_ID(Number(data?.data.id)));
         router.push({
           pathname: '/spot/register/submit',
           query: { type },
-        });    
-        alert('등록 완료!')
+        });   
       };
     }catch(err){
       console.error(err);
@@ -128,6 +128,7 @@ const RegisterPage = () => {
     });
   };
 
+  // 장소명
   const placeInputHandler = () => {
     if(placeRef.current){
       const selectedOptions = {
@@ -139,6 +140,7 @@ const RegisterPage = () => {
     };
   };
 
+  // 픽업장소 기타 선택시 입력값
   const pickUpEtcInputHandler = () => {
     if(pickUpEtcRef.current){
       const selectedOptions = {
@@ -150,6 +152,7 @@ const RegisterPage = () => {
     };
   };
 
+  // 장소 종류 기타 선택시 입력값
   const placeEtcInputHandler = () => {
     if(placeEtcRef.current){
       const selectedOptions = {
@@ -160,6 +163,8 @@ const RegisterPage = () => {
       dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
     };
   };
+
+  // type owner - 직급 호칭 입력값
   const managerInfoInputHandler = () => {
     if(managerRef.current){
       const inputUserInfo = {
@@ -172,6 +177,7 @@ const RegisterPage = () => {
     };
   };
 
+  // 유저 이름
   const userNameInputHandler = () => {
     if(nameRef.current){
       const inputUserInfo = {
@@ -183,6 +189,8 @@ const RegisterPage = () => {
       dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
     }
   };
+
+  //유저 이메일
   const userEmailInputHandler = () => {
     if(emailRef.current){
       const inputUserInfo = {
@@ -195,6 +203,8 @@ const RegisterPage = () => {
       dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
     }
   };
+
+  // 휴대전화
   const userTelInputHandler = () => {
     if(telRef.current){
       const inputUserInfo = {
