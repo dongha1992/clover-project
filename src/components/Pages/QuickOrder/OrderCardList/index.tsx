@@ -5,13 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import router from 'next/router';
 import { SET_ORDER_TYPE } from '@store/order';
-interface ICard {
+interface IQuickCard {
   title: string;
   dec: string;
   timer?: boolean;
 }
 interface IProps {
-  cardList: ICard[] | undefined;
+  cardList: IQuickCard[] | undefined;
   timer: string;
 }
 
@@ -19,7 +19,7 @@ const OrderCardList = ({ cardList, timer }: IProps) => {
   const dispatch = useDispatch();
   const { cartLists } = useSelector(cartForm);
 
-  const cardClick = (item: ICard) => {
+  const cardClick = (item: IQuickCard) => {
     const { title } = item;
     dispatch(SET_ORDER_TYPE({ orderType: title.split(' ')[0] }));
 
@@ -31,7 +31,7 @@ const OrderCardList = ({ cardList, timer }: IProps) => {
       <ScrollHorizonList>
         <ScrollHorizonListGroup>
           {cardList &&
-            cardList.map((item: ICard, index: number) => (
+            cardList.map((item: IQuickCard, index: number) => (
               <Card
                 key={index}
                 onClick={() => {
