@@ -1,37 +1,63 @@
 import styled from 'styled-components';
 import Slider from 'react-slick';
-import { TextB3R, TextH4B, TextH6B, TextH7B } from '@components/Shared/Text';
+import { TextB3R, TextH4B, TextH6B } from '@components/Shared/Text';
 import { useEffect, useState } from 'react';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
-import { useDispatch } from 'react-redux';
-import { INIT_BOTTOM_SHEET, setBottomSheet } from '@store/bottomSheet';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBottomSheet } from '@store/bottomSheet';
 import { OrderDetailSheet } from '@components/BottomSheet/OrderSheet';
+import { TimerTooltip } from '@components/Shared/Tooltip';
+import { orderForm } from '@store/order';
+import getCustomDate from '@utils/getCustomDate';
+import dayjs from 'dayjs';
+import calculateArrival from '@utils/calculateArrival';
 
 interface IProps {
-  pushStatus: string;
-  children: any;
-  weeks: number;
-  time: number;
-  arrivalDate: any;
+  tooltipTime: any;
+  timer: any;
 }
 
-const ReOrderList = ({
-  children,
-  pushStatus,
-  weeks,
-  time,
-  arrivalDate,
-}: IProps) => {
+interface IArrivalDate {
+  lunch: {
+    type: string;
+    msg: string;
+  };
+  dinner: {
+    type: string;
+    msg: string;
+  };
+  morning: {
+    type: string;
+    msg: string;
+  };
+  parcel: {
+    type: string;
+    msg: string;
+  };
+  [prop: string]: any;
+}
+
+const ReOrderList = ({ tooltipTime, timer }: IProps) => {
   const dispatch = useDispatch();
   const [active, setActive] = useState(1);
+  const { isTimerTooltip } = useSelector(orderForm);
+  const { days } = getCustomDate(new Date());
 
+  const [arrivalDate, setArrivalDate] = useState<IArrivalDate>({
+    lunch: { type: 'lunch', msg: '' },
+    dinner: { type: 'dinner', msg: '' },
+    morning: { type: 'morning', msg: '' },
+    parcel: { type: 'parcel', msg: '' },
+  });
+
+  // TODO : 주문이력 받는 api response어떻게 날라오는지 따라 cartList 수정
   // 임시
   const [cartList, setCartList] = useState([
     { orderType: 'lunch', orderTime: '스팟배송 - 점심', msg: '' },
     { orderType: 'dinner', orderTime: '스팟배송 - 저녁', msg: '' },
-    { orderType: 'delivery', orderTime: '택배배송', msg: '' },
+    { orderType: 'parcel', orderTime: '택배배송', msg: '' },
   ]);
 
   const setting = {
@@ -44,14 +70,88 @@ const ReOrderList = ({
       setActive(next + 1);
     },
   };
+
   useEffect(() => {
-    dispatch(INIT_BOTTOM_SHEET());
+    switch (true) {
+      case ['월', '화', '수', '목'].includes(days):
+        setArrivalDate({
+          lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
+          dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
+          morning: { ...arrivalDate['morning'], msg: '다음날 배송' },
+          parcel: { ...arrivalDate['parcel'], msg: '다음날 배송' },
+        });
+        break;
+
+      case ['금'].includes(days):
+        setArrivalDate({
+          lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
+          dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
+          morning: { ...arrivalDate['morning'], msg: '다음날 배송' },
+          parcel: { ...arrivalDate['parcel'], msg: '다음날 배송' },
+        });
+        break;
+      case ['토'].includes(days):
+        setArrivalDate({
+          lunch: {
+            ...arrivalDate['lunch'],
+            msg: `다음주 (${
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 픽업 12:00-12:30`,
+          },
+          dinner: {
+            ...arrivalDate['dinner'],
+            msg: `다음주 (${
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 픽업 17:00-17:30`,
+          },
+          morning: {
+            ...arrivalDate['morning'],
+            msg: `다음주 (${
+              dayjs(calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 배송`,
+          },
+          parcel: {
+            ...arrivalDate['parcel'],
+            msg: `다음주 (${
+              dayjs(calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 배송`,
+          },
+        });
+        break;
+
+      case ['일'].includes(days):
+        setArrivalDate({
+          lunch: {
+            ...arrivalDate['lunch'],
+            msg: `이번주 (${
+              dayjs(calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 픽업 12:00-17:30`,
+          },
+          dinner: {
+            ...arrivalDate['dinner'],
+            msg: `이번주 (${
+              dayjs(calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 픽업 17:00-17:30`,
+          },
+          morning: {
+            ...arrivalDate['morning'],
+            msg: `이번주 (${
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 픽업 17:00-17:30`,
+          },
+          parcel: {
+            ...arrivalDate['parcel'],
+            msg: `이번주 (${
+              dayjs(calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))).format('dddd')[0]
+            }) 배송`,
+          },
+        });
+
+        break;
+    }
   }, []);
 
   useEffect(() => {
-    // if (pushStatus === cartList[0].orderType) {
-    // }
-
     setCartList((prev) =>
       prev.map((item, index) => {
         item.msg = arrivalDate[item.orderType].msg;
@@ -76,7 +176,17 @@ const ReOrderList = ({
         {cartList.map((item, index) => {
           return (
             <Slide key={index} data-id={index + 1}>
-              {index === 0 ? children : null}
+              {index === 0
+                ? // TODO : 현재는 isTimerToolip으로 타이머 시간대가되면 툴팁컴포넌트를 보여주는데
+                  // 정확한 cartList가 나오면 슬라이드 첫번째 배송상태에따라 표시될지 결정하는 로직이 추가되어야함
+                  isTimerTooltip && (
+                    <TimerTooltip
+                      bgColor={theme.brandColor}
+                      color={'#fff'}
+                      message={`${tooltipTime} 마감 ${timer} 전`}
+                    />
+                  )
+                : null}
               <article className="row1">
                 <TextH6B color="#fff">{item.orderTime}</TextH6B>
                 <span></span>
@@ -87,9 +197,7 @@ const ReOrderList = ({
                   <TextH4B color="#fff">
                     <SVGIcon name={'whiteMapIcon'} /> 헤이그라운드 서울숲점
                   </TextH4B>
-                  <TextB3R color={theme.greyScale25}>
-                    서울시 성동구 왕십리로 115, 708호
-                  </TextB3R>
+                  <TextB3R color={theme.greyScale25}>서울시 성동구 왕십리로 115, 708호</TextB3R>
                 </div>
                 <OrderButton type="button" onClick={goToPayment}>
                   주문하기
@@ -99,13 +207,6 @@ const ReOrderList = ({
                 <TextB3R color="#fff" margin="0 0 4px 0">
                   터키 브레스트 쳐트니 바게트샌드 외 3개
                 </TextB3R>
-                {/* {moreBtn ? (
-                  <TextB3R color={theme.greyScale25} margin="0 0 4px 0">
-                    터키 브레스트 쳐트니 바게트샌드 / 크랜베리 오렌지 치킨
-                    바게트샌드 / 크랜베리 오렌지 치킨 바게트샌드 / 크랜베리
-                    오렌지 치킨 바게트샌드 / 크랜베리 오렌지 치킨 바게트샌드
-                  </TextB3R>
-                ) : null} */}
                 <TextB3R
                   className="moreBtn"
                   color={theme.greyScale25}

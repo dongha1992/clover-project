@@ -6,42 +6,28 @@ import { ScrollHorizonList, theme } from '@styles/theme';
 import { BASE_URL } from '@constants/mock';
 import ReOrderList from '@components/Pages/QuickOrder/ReOrderList';
 import OrderCardList from '@components/Pages/QuickOrder/OrderCardList';
-import { MENT } from '@constants/quick';
-import { TimerTooltip } from '@components/Shared/Tooltip';
 import { Button } from '@components/Shared/Button';
 import { HorizontalItem } from '@components/Item';
 import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { orderForm } from '@store/order';
+import { userForm } from '@store/user';
+import useQuickOrderList from '@hooks/useQuickOrder';
 dayjs.locale('ko');
 
 const QuickOrderPage = () => {
-  const { timerTooltip } = useSelector(orderForm);
+  const { isLoginSuccess, user } = useSelector(userForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
 
   /* 임시 */
-  const [user] = useState(true);
-  const [list] = useState([1]);
-  const noList: string | any[] = ['2022-01-1', '2022-01-2', '2022-01-10'];
+  const [list] = useState([]);
+  // const noList: string | any[] = ['2022-01-23', '2022-01-24', '2022-01-25'];
 
   const [itemList, setItemList] = useState([]);
-
   const [night, setNight] = useState<Boolean>();
-  const [time, setTime] = useState<number>(Number(`${hours}.${minutes}`));
-  const [pushStatus, setPushStatus] = useState('');
-  const [ment, setMent] = useState('');
-  const [tooltipMsg, setTooltipMsg] = useState('');
-  const [tooltipShow, setTooltipShow] = useState(true);
-  const [timer, setTimer] = useState<string>('');
-  const [arrivalDate, setArrivalDate] = useState({
-    lunch: { type: 'lunch', msg: '' },
-    dinner: { type: 'dinner', msg: '' },
-    dawn: { type: 'dawn', msg: '' },
-    delivery: { type: 'delivery', msg: '' },
-  });
+  const { cardList, timer, ment, tooltipTime } = useQuickOrderList();
 
   /* 목업 데이터 로직 */
   useEffect(() => {
@@ -52,191 +38,20 @@ const QuickOrderPage = () => {
   /* 목업 데이터 로직 END */
 
   useEffect(() => {
-    setTime(Number(`${hours}.${format(minutes)}`));
-
     if (hours >= 6 && hours < 18) {
       setNight(false);
     } else {
       setNight(true);
     }
-
-    if (time >= 0 && time < 9.3) {
-      // 24시 ~ 9시30분
-      setPushStatus('part1');
-      weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type1);
-    } else if (time >= 9.3 && time < 11.0) {
-      // 9시30분 ~ 11시
-      setPushStatus('part4');
-      weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type2);
-    } else if (time >= 11.0 && time < 17.0) {
-      // 11시 ~ 17시
-      setPushStatus('part4');
-      weeks === 6 || weeks === 0 ? setMent(MENT.type5) : setMent(MENT.type3);
-    } else {
-      // 17시 ~ 24시
-      setPushStatus('part4');
-      weeks === 5 || weeks === 6 ? setMent(MENT.type5) : setMent(MENT.type3);
-    }
-  }, [hours, minutes, time, ment]);
-
-  useEffect(() => {
-    switch (true) {
-      case [1, 2, 3, 4].includes(weeks):
-        // 월 ~ 목
-
-        setArrivalDate({
-          lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
-          dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
-          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
-          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
-        });
-        break;
-
-      case [5].includes(weeks):
-        // 금
-        setArrivalDate({
-          lunch: { ...arrivalDate['lunch'], msg: '픽업 12:00-12:30' },
-          dinner: { ...arrivalDate['dinner'], msg: '픽업 17:00-17:30' },
-          dawn: { ...arrivalDate['dawn'], msg: '다음날 배송' },
-          delivery: { ...arrivalDate['delivery'], msg: '다음날 배송' },
-        });
-        break;
-      case [6].includes(weeks):
-        // 토
-        setArrivalDate({
-          lunch: {
-            ...arrivalDate['lunch'],
-            msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 픽업 12:00-12:30`,
-          },
-          dinner: {
-            ...arrivalDate['dinner'],
-            msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 픽업 17:00-17:30`,
-          },
-          dawn: {
-            ...arrivalDate['dawn'],
-            msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 배송`,
-          },
-          delivery: {
-            ...arrivalDate['delivery'],
-            msg: `다음주 (${
-              dayjs(
-                calculateArrival(dayjs().add(3, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 배송`,
-          },
-        });
-        break;
-
-      case [0].includes(weeks):
-        // 일
-        setArrivalDate({
-          lunch: {
-            ...arrivalDate['lunch'],
-            msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 픽업 12:00-17:30`,
-          },
-          dinner: {
-            ...arrivalDate['dinner'],
-            msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(1, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 픽업 17:00-17:30`,
-          },
-          dawn: {
-            ...arrivalDate['dawn'],
-            msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 픽업 17:00-17:30`,
-          },
-          delivery: {
-            ...arrivalDate['delivery'],
-            msg: `이번주 (${
-              dayjs(
-                calculateArrival(dayjs().add(2, 'day').format('YYYY-MM-DD'))
-              ).format('dddd')[0]
-            }) 배송`,
-          },
-        });
-
-        break;
-    }
-  }, []);
-
-  useEffect(() => {
-    msgHandler();
-  }, [timer]);
-
-  const format = (t: number) => (t < 10 ? '0' + t : t + '');
-
-  const getTimer = () => {
-    if (new Date().getMinutes() >= 30) {
-      return (60 - new Date().getMinutes()) * 60 - new Date().getSeconds();
-    } else {
-      return (30 - new Date().getMinutes()) * 60 - new Date().getSeconds();
-    }
-  };
-
-  const msgHandler = () => {
-    setTooltipMsg(`${pushStatus} 마감 ${timer} 전`);
-  };
-
-  const calculateArrival = (day: string) => {
-    // 배송불가 날짜 제외 로직
-
-    let rDay = day;
-    let start = false;
-
-    if (noList.length === 0) {
-      // 배송불가 날짜가 없는 경우
-      return dayjs(day).format('YYYY-MM-DD');
-    } else {
-      for (let i = 0; i < noList.length; i++) {
-        if (noList[i] === rDay) {
-          start = true;
-          rDay = dayjs(rDay).add(1, 'day').format('YYYY-MM-DD');
-          if (i === noList.length - 1) {
-            // 배송불가 날짜 제외한 도착날짜 (배송불가 날짜 Array 전체 제외)
-            return dayjs(rDay).format('YYYY-MM-DD');
-          }
-        } else {
-          if (start) {
-            // 배송불가 날짜 제외한 도착날짜
-            return dayjs(rDay).format('YYYY-MM-DD');
-          }
-          if (i === noList.length - 1 && rDay === day) {
-            // 도착날짜에 배송불가 날짜가 없을 경우
-            return dayjs(day).format('YYYY-MM-DD');
-          }
-        }
-      }
-    }
-  };
+  }, [hours]);
 
   return (
-    <Container>
+    <Container data-cy="quickorder">
       <GreetingArticle>
         <TextBox>
-          {user ? (
+          {isLoginSuccess ? (
             <TextH2B>
-              <span>루이스</span>님{`\n`}
+              <span>{user.name}</span>님{`\n`}
               {list.length !== 0 ? ment : '내일 아침도 미리미리!'}
             </TextH2B>
           ) : (
@@ -249,72 +64,30 @@ const QuickOrderPage = () => {
         <IconBox>{night ? '달' : '태양'}</IconBox>
       </GreetingArticle>
 
-      <OrderCardList
-        time={time}
-        weeks={weeks}
-        pushStatus={pushStatus}
-        format={format}
-        getTimer={getTimer}
-        timer={timer}
-        setTimer={setTimer}
-        calculateArrival={calculateArrival}
-      />
+      <OrderCardList cardList={cardList} timer={timer} />
 
-      <PushArticle>
-        {!user || list.length === 0 ? (
-          <TextH3B padding="0 0 8px 0">신규 고객을 위한 아침</TextH3B>
-        ) : (
-          <TextH3B padding="0 0 18px 0">
-            이전에 구매한 상품으로 또 먹을래요!
-          </TextH3B>
-        )}
-
-        {!user || list.length === 0 ? (
-          <TextB2R color={theme.greyScale65} padding="0 0 18px 0">
-            <span>새벽배송</span> 17시까지 주문 시 다음날 새벽 7시 전 도착
-          </TextB2R>
-        ) : null}
-
-        <ScrollHorizonList>
-          <ScrollHorizonListGroup className="pushSHLG">
-            {itemList.map((item, index) => (
-              <HorizontalItem item={item} key={index} isQuick />
-            ))}
-          </ScrollHorizonListGroup>
-        </ScrollHorizonList>
-
-        {!user || list.length === 0 ? (
-          <div className="btnWraper">
-            <Button
-              margin="24px 0 0"
-              border
-              backgroundColor="#fff"
-              color={theme.black}
-            >
-              전체 상품 첫 주문하기
-            </Button>
-          </div>
-        ) : null}
-      </PushArticle>
-
-      <Banner>신규서비스 소개</Banner>
-
-      {!user || list.length !== 0 ? (
-        <ReOrderList
-          pushStatus={pushStatus}
-          weeks={weeks}
-          time={time}
-          arrivalDate={arrivalDate}
-        >
-          {timerTooltip && (
-            <TimerTooltip
-              bgColor={theme.brandColor}
-              color={'#fff'}
-              message={tooltipMsg}
-            />
-          )}
-        </ReOrderList>
-      ) : null}
+      {isLoginSuccess || list.length !== 0 ? (
+        <>
+          <PushArticle>
+            <TextH3B padding="0 0 18px 0">이전에 구매한 상품으로 또 먹을래요!</TextH3B>
+            <ScrollHorizonList>
+              <ScrollHorizonListGroup className="pushSHLG">
+                {itemList.map((item, index) => (
+                  <HorizontalItem item={item} key={index} isQuick />
+                ))}
+              </ScrollHorizonListGroup>
+            </ScrollHorizonList>
+          </PushArticle>
+          <Banner style={{ marginBottom: '34px' }}>신규서비스 소개</Banner>
+          <ReOrderList tooltipTime={tooltipTime} timer={timer} />
+        </>
+      ) : (
+        <>
+          <Banner>신규혜택 이동</Banner>
+          <Banner>구독 상품 알아보기</Banner>
+          <Banner style={{ marginBottom: '34px' }}>배송안내 컨텐츠 페이지로 이동</Banner>
+        </>
+      )}
     </Container>
   );
 };
@@ -365,7 +138,7 @@ const Banner = styled.div`
   align-items: center;
   width: 100%;
   height: 96px;
-  margin-bottom: 34px;
+  margin-bottom: 8px;
   background-color: ${({ theme }) => theme.greyScale3};
 `;
 export default QuickOrderPage;
