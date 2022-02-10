@@ -58,7 +58,7 @@ const OrderCardList = ({ cardList, timer }: IProps) => {
 const CardList = styled.article`
   cursor: pointer;
   padding-left: 24px;
-  padding-bottom: 50px;
+  padding-bottom: 48px;
 `;
 const Card = styled.article`
   display: flex;
