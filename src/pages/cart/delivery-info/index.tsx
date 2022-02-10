@@ -18,7 +18,7 @@ import {
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { destinationRegister } from '@api/destination';
-import { getMainDestinations } from '@api/destination';
+import { getMainDestinations, availabilityDestination } from '@api/destination';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
@@ -41,7 +41,8 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 const recentOrder = '';
 
 const DeliverInfoPage = () => {
-  const [targetDeliveryType, setTargetDeliveryType] = useState<string>('');
+  const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] =
+    useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] =
     useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
@@ -74,9 +75,10 @@ const DeliverInfoPage = () => {
     }
   };
 
-  const changeMethodHandler = (value: string) => {
-    // 배송 방법 변경시 현재 배송지 정보 초기화
-    // 검색한 배송지가 있으면 초기화
+  const changeDeliveryTypeHandler = (value: string) => {
+    // 배송 방법 변경시 검색한 배송지가 있으면 초기화 배송지 정보 초기화
+    // 툴팁이 존재하는 배송방법 선택 시 툴팁 초기화
+    console.log(value, deliveryTypeWithTooltip);
     if (tempDestination && destinationStatus) {
       dispatch(
         setAlert({
@@ -85,7 +87,7 @@ const DeliverInfoPage = () => {
           onSubmit: () => {
             setUserSelectDeliveryType(value);
             setTempDestination(null);
-            setTargetDeliveryType('');
+            setDeliveryTypeWithTooltip('');
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_STATUS());
             dispatch(INIT_USER_DESTINATION_STATUS());
@@ -95,12 +97,12 @@ const DeliverInfoPage = () => {
         })
       );
     } else {
+      if (value === deliveryTypeWithTooltip) {
+        setDeliveryTypeWithTooltip('');
+      }
       setUserSelectDeliveryType(value);
     }
   };
-
-  console.log(userSelectDeliveryType, 'userSelectDeliveryType 100');
-  console.log(userDestinationStatus, 'userDestinationStatus 101');
 
   const finishDeliverySetting = async () => {
     if (!tempDestination) {
@@ -156,7 +158,7 @@ const DeliverInfoPage = () => {
   };
 
   const tooltipRender = () => {
-    switch (targetDeliveryType) {
+    switch (deliveryTypeWithTooltip) {
       case 'morning': {
         return (
           <Tooltip message="새벽배송이 가능해요!" top="25px" width="150px" />
@@ -195,21 +197,21 @@ const DeliverInfoPage = () => {
     }
 
     // 획득 위치 정보만 있음
-    if (locationStatus && !userDestinationStatus) {
+    if (locationStatus && !destinationStatus && !tempDestination) {
       switch (true) {
         case locationCanEverything:
           {
-            setTargetDeliveryType('spot');
+            setDeliveryTypeWithTooltip('spot');
           }
           break;
         case locationNoQuick:
           {
-            setTargetDeliveryType('morning');
+            setDeliveryTypeWithTooltip('morning');
           }
           break;
         case locationCanParcel:
           {
-            setTargetDeliveryType('parcel');
+            setDeliveryTypeWithTooltip('parcel');
           }
           break;
         default:
@@ -223,14 +225,14 @@ const DeliverInfoPage = () => {
       case 'morning':
         {
           if (canParcel) {
-            setTargetDeliveryType('parcel');
+            setDeliveryTypeWithTooltip('parcel');
           }
         }
         break;
       case 'parcel':
         {
           if (canEverything || noQuick) {
-            setTargetDeliveryType('morning');
+            setDeliveryTypeWithTooltip('morning');
           }
         }
         break;
@@ -238,11 +240,11 @@ const DeliverInfoPage = () => {
       case 'quick':
         {
           if (canEverything) {
-            setTargetDeliveryType('morning');
+            setDeliveryTypeWithTooltip('morning');
           } else if (noQuick) {
-            setTargetDeliveryType('morning');
+            setDeliveryTypeWithTooltip('morning');
           } else if (canParcel) {
-            setTargetDeliveryType('parcel');
+            setDeliveryTypeWithTooltip('parcel');
           }
         }
         break;
@@ -374,7 +376,7 @@ const DeliverInfoPage = () => {
                   <RadioWrapper>
                     <RadioButton
                       isSelected={isSelected}
-                      onChange={() => changeMethodHandler(item.value)}
+                      onChange={() => changeDeliveryTypeHandler(item.value)}
                     />
                   </RadioWrapper>
                   <Content>
@@ -390,7 +392,8 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {targetDeliveryType === item.value && tooltipRender()}
+                      {deliveryTypeWithTooltip === item.value &&
+                        tooltipRender()}
                       {isTimerTooltip && item.name === timerDevlieryType && (
                         <CheckTimerByDelivery />
                       )}
@@ -420,7 +423,7 @@ const DeliverInfoPage = () => {
                   <RadioWrapper>
                     <RadioButton
                       isSelected={isSelected}
-                      onChange={() => changeMethodHandler(item.value)}
+                      onChange={() => changeDeliveryTypeHandler(item.value)}
                     />
                   </RadioWrapper>
                   <Content>
@@ -436,7 +439,8 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {targetDeliveryType === item.value && tooltipRender()}
+                      {deliveryTypeWithTooltip === item.value &&
+                        tooltipRender()}
                       {isTimerTooltip && item.name === timerDevlieryType && (
                         <CheckTimerByDelivery />
                       )}
