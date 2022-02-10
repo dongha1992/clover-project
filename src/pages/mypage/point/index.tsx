@@ -1,13 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import {
-  theme,
-  FlexRow,
-  homePadding,
-  FlexBetweenStart,
-  FlexCol,
-  FlexBetween,
-} from '@styles/theme';
+import { theme, FlexRow, homePadding, FlexBetweenStart, FlexCol, FlexBetween } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
@@ -103,13 +96,10 @@ const MOCK_USE_POINT_HISTORY = [
 const PointPage = () => {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
-  const elementRef = useRef<HTMLDivElement>(null);
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
-
-  const customMargin = elementRef.current?.offsetTop;
 
   return (
     <Container>
@@ -129,9 +119,7 @@ const PointPage = () => {
             </TextH5B>
           </FlexCol>
           <FlexCol width="50%">
-            <TextH6B color={theme.greyScale65}>
-              7일 이내 소멸 예정 포인트
-            </TextH6B>
+            <TextH6B color={theme.greyScale65}>7일 이내 소멸 예정 포인트</TextH6B>
             <TextH5B padding="6px 0 0 0">0 개</TextH5B>
           </FlexCol>
         </FlexBetweenStart>
@@ -158,15 +146,9 @@ const PointPage = () => {
           )}
         </PaddingWrapper>
         <BorderLine height={8} margin="24px 0 0 0 " />
-        <TabList
-          tabList={TAB_LIST}
-          onClick={selectTabHandler}
-          selectedTab={selectedTab}
-          ref={elementRef}
-        />
+        <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </Wrapper>
-
-      <ScrollView customMargin={customMargin}>
+      <ScrollView>
         {MOCK_SAVE_POINT_HISTORY.map((item, index) => {
           const YearChange = index === 4;
           if (YearChange) {
@@ -201,10 +183,7 @@ const PointPage = () => {
 };
 
 const PointItem = React.forwardRef(
-  (
-    { title, point, createdAt, expiryDate }: any,
-    ref: React.ForwardedRef<HTMLDivElement>
-  ) => {
+  ({ title, point, createdAt, expiryDate }: any, ref: React.ForwardedRef<HTMLDivElement>) => {
     return (
       <FlexCol padding="0 0 24px 0" ref={ref}>
         <FlexBetween padding="0 0 6px 0">
@@ -219,17 +198,19 @@ const PointItem = React.forwardRef(
     );
   }
 );
+PointItem.displayName = 'PointItem';
 
-const Container = styled.div``;
+const Container = styled.div`
+  height: calc(100vh - 114px);
+`;
 const Wrapper = styled.div`
   ${homePadding}
-  position: fixed;
+  position: relative;
   width: 100%;
-  left: calc(50%);
-  right: 0;
+  /* left: calc(50%);
+  right: 0; */
   background-color: white;
   max-width: ${breakpoints.mobile}px;
-  width: 100%;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -252,11 +233,16 @@ const PaddingWrapper = styled.div`
   flex-direction: column;
 `;
 
-const ScrollView = styled.div<{ customMargin?: number }>`
+const ScrollView = styled.div`
   padding: 24px 25px;
   overflow-y: scroll;
-  height: 100%;
-  padding-top: ${({ customMargin }) => customMargin && customMargin}px;
+  height: calc(100vh - 379px);
 `;
+// const ScrollView = styled.div<{ customMargin?: number }>`
+//   padding: 24px 25px;
+//   overflow-y: scroll;
+//   height: 100%;
+//   padding-top: ${({ customMargin }) => customMargin && customMargin}px;
+// `;
 
 export default PointPage;
