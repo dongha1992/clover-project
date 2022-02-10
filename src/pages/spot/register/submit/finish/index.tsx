@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH1B, TextB2R, TextH5B } from '@components/Shared/Text';
-import { theme, FlexBetween } from '@styles/theme';
+import { theme } from '@styles/theme';
 import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
-import SVGIcon from '@utils/SVGIcon';
 
 const FinishPage = () => {
   const router = useRouter();

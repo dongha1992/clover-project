@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH1B, TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
+import { TextH1B, TextB2R, TextH2B } from '@components/Shared/Text';
 import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
@@ -54,6 +54,7 @@ const SpotReqPage = () => {
       query: { type },
     });
   };
+
   return (
     <Container>
       <TopWrapper>

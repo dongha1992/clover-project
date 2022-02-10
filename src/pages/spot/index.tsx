@@ -379,7 +379,7 @@ const SpotPage = () => {
 };
 
 const Container = styled.main`
-  // ${homePadding};
+  padding-bottom: 1px;
 `;
 
 const HeaderTitle = styled.div`

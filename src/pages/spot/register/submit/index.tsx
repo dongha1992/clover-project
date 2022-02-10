@@ -6,7 +6,12 @@ import {
   TextH5B,
   TextB2R,
 } from '@components/Shared/Text';
-import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
+import { 
+  theme, 
+  homePadding, 
+  fixedBottom, 
+  FlexBetween 
+} from '@styles/theme';
 import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
@@ -28,7 +33,7 @@ const SubmitPage = () => {
     try {
       const { data } = await postSpotsRegistrationsSubmit(Number(spotsRegistrationId));
       if(data.code === 200){
-        alert('submit!!')
+        console.log('submit success!')
         router.push({
           pathname: '/spot/register/submit/finish',
           query: { type },
@@ -77,7 +82,7 @@ const SubmitPage = () => {
           </Content>
           {type === 'private' && (
             <Content>
-              <TextH5B margin="0 0 8px 0">점심 시간</TextH5B>
+              <TextH5B margin="0 0 8px 0">점심시간</TextH5B>
               <TextB2R>{spotsRegistrationOptions.lunchTimeOptions.name?.length && 
                 spotsRegistrationOptions.lunchTimeOptions.name}</TextB2R>
             </Content>
@@ -94,15 +99,15 @@ const SubmitPage = () => {
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
-                <TextB2R>프플린</TextB2R>
+                <TextB2R>{spotsUserInfo.userName}</TextB2R>
               </Content>
               <Content>
                 <TextH5B margin="0 0 8px 0">이메일</TextH5B>
-                <TextB2R>flynn@freshcode.me</TextB2R>
+                <TextB2R>{spotsUserInfo.userEmail}</TextB2R>
               </Content>
               <Content>
                 <TextH5B margin="0 0 8px 0">휴대폰 번호</TextH5B>
-                <TextB2R>01012341234</TextB2R>
+                <TextB2R>{spotsUserInfo.userTel}</TextB2R>
               </Content>
               {type === 'owner' && (
                 <Content>
