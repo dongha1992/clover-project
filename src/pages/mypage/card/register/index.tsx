@@ -26,6 +26,8 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
 });
 
+/*TODO: 유효기간 value 받아서 4개자르기 */
+
 interface ICardType {
   id: number;
   text: string;
@@ -117,6 +119,7 @@ const CardRegisterPage = () => {
   };
 
   const selectMainCardHandler = () => {
+    /*TODO: 카드 api 에서 체크 */
     dispatch(
       setAlert({
         alertMessage: '첫번째 카드 등록 시 대표 카드 설정은 필수입니다. ',

@@ -17,7 +17,7 @@ const Carousel = ({ banners, setCountIndex }: IProps) => {
     sliderToShow: 1,
     slidersToScroll: 1,
     centerMode: true,
-    infinite: false,
+    infinite: true,
     customPaging: () => <div />,
     afterChange: (current: number) => setCountIndex && setCountIndex(current),
     centerPadding: '0px',

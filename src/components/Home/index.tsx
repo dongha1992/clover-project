@@ -22,11 +22,15 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const { error: carouselError } = useQuery('carousel-banners', async () => {
-    const params = { type: 'CAROUSEL' };
-    const { data } = await getBannersApi(params);
-    setBannerList(data.data);
-  });
+  const { error: carouselError } = useQuery(
+    'carousel-banners',
+    async () => {
+      const params = { type: 'CAROUSEL' };
+      const { data } = await getBannersApi(params);
+      setBannerList(data.data);
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
 
   const { error: eventsError } = useQuery('events-banners', async () => {
     const params = { type: 'EVENT' };
@@ -127,4 +131,4 @@ export const ItemListRow = styled.div`
   }
 `;
 
-export default Home;
+export default React.memo(Home);

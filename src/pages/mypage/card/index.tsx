@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { homePadding, theme } from '@styles/theme';
@@ -9,22 +9,39 @@ import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
 import { ICard } from '@components/Pages/Mypage/Card/CardItem';
-
+import { useQuery, useQueryClient } from 'react-query';
+import isNil from 'lodash-es/isNil';
 const CardManagementPage = () => {
-  const [cards, setCards] = useState([]);
+  // const [cards, setCards] = useState([]);
 
-  useEffect(() => {
-    getCards();
-  }, []);
+  // useEffect(() => {
+  //   getCards();
+  // }, []);
 
-  const getCards = async () => {
-    try {
+  // const getCards = async () => {
+  //   try {
+  //     const { data } = await getCardLists();
+  //     if (data.code === 200) {
+  //       setCards(data.data);
+  //     }
+  //   } catch (error) {}
+  // };
+
+  const {
+    data: cards,
+    isLoading,
+    refetch,
+  } = useQuery<ICard[]>(
+    'cardList',
+    async () => {
       const { data } = await getCardLists();
       if (data.code === 200) {
-        setCards(data.data);
+        return data.data;
       }
-    } catch (error) {}
-  };
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+  console.log(cards, 'cards');
 
   const cardEditHandler = (card: ICard) => {
     router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
@@ -33,6 +50,10 @@ const CardManagementPage = () => {
   const goToCardRegister = (): void => {
     router.push('/mypage/card/register');
   };
+
+  if (isLoading || isNil(cards)) {
+    return <div>로딩중</div>;
+  }
 
   return (
     <Container>
