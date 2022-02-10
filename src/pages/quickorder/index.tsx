@@ -22,7 +22,7 @@ const QuickOrderPage = () => {
   const weeks = new Date().getDay();
 
   /* 임시 */
-  const [list] = useState([1]);
+  const [list] = useState([]);
   // const noList: string | any[] = ['2022-01-23', '2022-01-24', '2022-01-25'];
 
   const [itemList, setItemList] = useState([]);
@@ -38,7 +38,6 @@ const QuickOrderPage = () => {
   /* 목업 데이터 로직 END */
 
   useEffect(() => {
-    // setTime(Number(`${hours}.${format(minutes)}`));
     if (hours >= 6 && hours < 18) {
       setNight(false);
     } else {
@@ -67,39 +66,28 @@ const QuickOrderPage = () => {
 
       <OrderCardList cardList={cardList} timer={timer} />
 
-      <PushArticle>
-        {!isLoginSuccess || list.length === 0 ? (
-          <TextH3B padding="0 0 8px 0">신규 고객을 위한 아침</TextH3B>
-        ) : (
-          <TextH3B padding="0 0 18px 0">이전에 구매한 상품으로 또 먹을래요!</TextH3B>
-        )}
-
-        {(!isLoginSuccess || list.length === 0) && (
-          <TextB2R color={theme.greyScale65} padding="0 0 18px 0">
-            <span>새벽배송</span> 17시까지 주문 시 다음날 새벽 7시 전 도착
-          </TextB2R>
-        )}
-
-        <ScrollHorizonList>
-          <ScrollHorizonListGroup className="pushSHLG">
-            {itemList.map((item, index) => (
-              <HorizontalItem item={item} key={index} isQuick />
-            ))}
-          </ScrollHorizonListGroup>
-        </ScrollHorizonList>
-
-        {(!isLoginSuccess || list.length === 0) && (
-          <div className="btnWraper">
-            <Button margin="24px 0 0" border backgroundColor="#fff" color={theme.black}>
-              전체 상품 첫 주문하기
-            </Button>
-          </div>
-        )}
-      </PushArticle>
-
-      <Banner>신규서비스 소개</Banner>
-
-      {(!isLoginSuccess || list.length !== 0) && <ReOrderList tooltipTime={tooltipTime} timer={timer} />}
+      {isLoginSuccess || list.length !== 0 ? (
+        <>
+          <PushArticle>
+            <TextH3B padding="0 0 18px 0">이전에 구매한 상품으로 또 먹을래요!</TextH3B>
+            <ScrollHorizonList>
+              <ScrollHorizonListGroup className="pushSHLG">
+                {itemList.map((item, index) => (
+                  <HorizontalItem item={item} key={index} isQuick />
+                ))}
+              </ScrollHorizonListGroup>
+            </ScrollHorizonList>
+          </PushArticle>
+          <Banner style={{ marginBottom: '34px' }}>신규서비스 소개</Banner>
+          <ReOrderList tooltipTime={tooltipTime} timer={timer} />
+        </>
+      ) : (
+        <>
+          <Banner>신규혜택 이동</Banner>
+          <Banner>구독 상품 알아보기</Banner>
+          <Banner style={{ marginBottom: '34px' }}>배송안내 컨텐츠 페이지로 이동</Banner>
+        </>
+      )}
     </Container>
   );
 };
@@ -150,7 +138,7 @@ const Banner = styled.div`
   align-items: center;
   width: 100%;
   height: 96px;
-  margin-bottom: 34px;
+  margin-bottom: 8px;
   background-color: ${({ theme }) => theme.greyScale3};
 `;
 export default QuickOrderPage;
