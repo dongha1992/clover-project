@@ -4,95 +4,130 @@ import { homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-
-const TIME = [
-  { id: 1, name: '11:00' },
-  { id: 2, name: '11:30' },
-  { id: 3, name: '12:00' },
-  { id: 4, name: '12:30' },
-  { id: 5, name: '13:00' },
-  { id: 6, name: '기타' },
-];
-
-const PRIVATE_PLACE = [
-  { id: 1, name: '회사' },
-  { id: 2, name: '학교' },
-  { id: 3, name: '공유오피스' },
-  { id: 4, name: '기타' },
-];
-
-const PICKUP = [
-  { id: 1, name: '공용 냉장고' },
-  { id: 2, name: '문서 수발실' },
-  { id: 3, name: '택배 보관함' },
-  { id: 4, name: '안내 데스크' },
-  { id: 5, name: '공용 테이블' },
-  { id: 6, name: '사무실 문 앞' },
-  { id: 7, name: '기타' },
-];
-
-const PUBLIC_PLACE = [
-  { id: 1, name: '편의점' },
-  { id: 2, name: '일반상점' },
-  { id: 3, name: '피트니스' },
-  { id: 4, name: '서점' },
-  { id: 5, name: '약국' },
-  { id: 6, name: '카페' },
-  { id: 7, name: '기타' },
-];
+import { getSpotRegisterationsOption } from '@api/spot';
+import { IParamsSpotRegisterationsOptios,  } from '@model/index';
+import { SET_SPOT_REGISTRATIONS_OPTIONS, spotSelector } from '@store/spot';
+import { useSelector, useDispatch } from 'react-redux';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useQuery } from 'react-query';
 
 interface IProps {
-  tab?: string;
+  tab: string;
 }
 
 const OptionsSheet = ({ tab }: IProps): ReactElement => {
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
-  const changeRadioHandler = (id: number) => {
-    setSelectedPickupPlace(id);
-  };
+  const { spotsRegistrationOptions } = useSelector(spotSelector);
   const router = useRouter();
+  const dispatch = useDispatch();
   const { type } = router.query;
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<string>(spotsRegistrationOptions.pickupLocationTypeOptions?.value);
+  const [selectedPlaceType, setSelectedPlaceType] = useState<string>(spotsRegistrationOptions.placeTypeOptions?.value);
+  const [selectedLunchTime, setSelectedLunchTime] = useState<string>(spotsRegistrationOptions.lunchTimeOptions?.value);
 
+  const  { data : registrationsOptions } = useQuery(
+    ['options'],
+    async () => {
+      const params: IParamsSpotRegisterationsOptios = {
+        type: type?.toString().toUpperCase(),
+      };
+      const res = await getSpotRegisterationsOption(params);
+      return res.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+ 
   const selectTab = () => {
     if (tab === 'pickUp') {
-      return PICKUP;
+      return {options: registrationsOptions?.pickupLocationTypeOptions, value: selectedPickupPlace};
     } else if (tab === 'time') {
-      return TIME;
+      return {options: registrationsOptions?.lunchTimeOptions, value: selectedLunchTime};
     } else if (tab === 'place' && type === 'private') {
-      return PRIVATE_PLACE;
+      return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     } else if (tab === 'place') {
-      return PUBLIC_PLACE;
+      return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     }
   };
-  // const seletedTime = PICK_UP_PLACE.find((item)=> item.id === Number(selectedPickupPlace))?.name;
+
+  const pickupTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedPickupPlace);
+  const placeTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedPlaceType);
+  const lunchTimeTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedLunchTime);
+
+  const titleType = (): string | null => {
+    switch(tab){
+      case 'place':
+        return '장소 종류';
+      case 'time':
+        return '점심시간';
+      case 'pickUp':
+        return '픽업 장소';
+      default:
+        return null;
+    };
+  };
+
+  const registrationsOptionsHandler = (value: string) => {
+    if(tab === 'pickUp'){
+      setSelectedPickupPlace(value);
+    }else if(tab === 'time'){
+      setSelectedLunchTime(value);
+    }else if(tab === 'place'){
+      setSelectedPlaceType(value);
+    };
+  };
+
+  const selectedHandler = () => {
+    dispatch(INIT_BOTTOM_SHEET());
+    // 픽업장소
+    if(tab === 'pickUp'){
+      const selectedOptions = {
+        pickupLocationTypeOptions: pickupTypeObj,
+        placeTypeOptions: spotsRegistrationOptions.placeTypeOptions,
+        lunchTimeOptions: spotsRegistrationOptions.lunchTimeOptions,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
+    }
+    // 점심시간
+    else if(tab === 'time'){
+      const selectedOptions = {
+        pickupLocationTypeOptions: spotsRegistrationOptions.pickupLocationTypeOptions,
+        placeTypeOptions: spotsRegistrationOptions.placeTypeOptions,
+        lunchTimeOptions: lunchTimeTypeObj,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
+    // 장소 종류
+    }else if(tab === 'place'){
+      const selectedOptions = {
+        pickupLocationTypeOptions: spotsRegistrationOptions.pickupLocationTypeOptions,
+        placeTypeOptions: placeTypeObj,
+        lunchTimeOptions: spotsRegistrationOptions.lunchTimeOptions,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
+    };
+  }
 
   return (
     <Container>
       <Wrapper>
         <TextH5B padding="24px 0 16px 0" center>
-          {tab === 'place'
-            ? '장소 종류'
-            : tab === 'time'
-            ? '점심 시간'
-            : '픽업장소'}
+          {titleType()}
         </TextH5B>
         <SelectWrapper>
-          {selectTab()?.map((item) => {
+          {selectTab()?.options?.map((items, idx) => {
             return (
-              <Selected key={item.id}>
+              <Selected key={idx}>
                 <RadioButton
-                  onChange={() => changeRadioHandler(item.id)}
-                  isSelected={selectedPickupPlace === item.id}
+                  onChange={() => registrationsOptionsHandler(items.value)}
+                  isSelected={items.value === selectTab()?.value}
                 />
-                <TextH5B padding="0 0 0 8px">{item.name}</TextH5B>
+                <TextH5B padding="0 0 0 8px">{items.name}</TextH5B>
               </Selected>
             );
           })}
         </SelectWrapper>
       </Wrapper>
-      <ButtonContainer onClick={() => {}}>
+      <ButtonContainer onClick={selectedHandler}>
         <Button height="100%" width="100%" borderRadius="0">
-          확인
+          선택하기
         </Button>
       </ButtonContainer>
     </Container>
