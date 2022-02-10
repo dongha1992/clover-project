@@ -23,6 +23,9 @@ import {
 /* TODO: spot 추가 되어야 함 */
 /* TODO: 배송방법 선택 query로 페이지 넘길까? */
 
+// temp
+let reqCtn = 0;
+
 const CheckDestinationPlacce = () => {
   const [formatAvailableDestination, setFormatAvailableDestination] =
     useState('');
@@ -56,7 +59,7 @@ const CheckDestinationPlacce = () => {
         const status = checkDestinationHelper({
           ...availableDestinationObj,
         });
-        console.log(status);
+
         if (isLocation) {
           dispatch(SET_LOCATION_STATUS(status));
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
@@ -69,6 +72,10 @@ const CheckDestinationPlacce = () => {
       }
     } catch (error) {
       console.error(error);
+      if (reqCtn < 3) {
+        checkAvailablePlace();
+      }
+      reqCtn++;
     }
   };
 
