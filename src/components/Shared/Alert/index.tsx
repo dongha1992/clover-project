@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { ModalLayout } from '@components/Shared/Modal';
-import { TextB2R } from '@components/Shared/Text';
+import { TextB2R, TextB1R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 
 /* TODO: alert msg 텍스트 다시 조정 */
@@ -60,9 +60,9 @@ const Alert = ({
       <AlertBox>
         {children && children}
         <AlertText>
-          <TextB2R center wordWrap="break-word" wordBreak="keep-all">
+          <TextB1R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}
-          </TextB2R>
+          </TextB1R>
           <TextB2R
             center
             wordWrap="break-word"
@@ -129,7 +129,7 @@ const AlertBtnBox = styled.div`
     outline: none;
     cursor: pointer;
     background-color: white;
-    font-size: 14px;
+    font-size: 16px;
     letter-spacing: -0.4px;
     font-weight: bold;
     line-height: 24px;

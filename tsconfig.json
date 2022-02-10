@@ -13,7 +13,8 @@
       "@model/*": ["src/model/*"],
       "@constants/*": ["./src/constants/*"],
       "@styles/*": ["./src/styles/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@enum/*": ["./src/enum/*"]
     },
     "allowJs": true,
     "skipLibCheck": true,
