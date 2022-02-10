@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextH4B, TextB2R } from '@components/Shared/Text';
+import { TextH2B, TextH4B, TextB2R, TextH6B } from '@components/Shared/Text';
 import { theme, homePadding, FlexBetween } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
@@ -17,17 +17,10 @@ import {
   getSpotEvent,
   getSpotPopular,
   getInfo,
-  getSpotRegistrations,
+  getSpotRegistrationsRecruiting,
 } from '@api/spot';
-import {
-  IParamsSpots,
-  ISpotRegistrationsResponse,
-  ISpots,
-  ISpotsInfo,
-} from '@model/index';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { spotSelector } from '@store/spot';
+import { IParamsSpots, ISpotRegistrationsResponse, ISpotsInfo } from '@model/index';
+import { useQuery } from 'react-query';
 
 const FCO_SPOT_BANNER = [
   {
@@ -45,7 +38,7 @@ const FCO_SPOT_BANNER = [
   {
     id: 3,
     text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
-    type: 'normal',
+    type: 'owner',
     icon: 'blackCirclePencil',
   },
 ];
@@ -54,16 +47,10 @@ const FCO_SPOT_BANNER = [
 
 const SpotPage = () => {
   const dispatch = useDispatch();
-  const { isSpotLiked } = useSelector(spotSelector);
   const router = useRouter();
   const [mouseMoved, setMouseMoved] = useState(false);
   const [info, setInfo] = useState<ISpotsInfo>();
-  const [popularSpot, setPopularSpot] = useState<ISpots>();
-  const [newSpot, setNewSpot] = useState<ISpots>();
-  const [stationSpot, setStationSpot] = useState<ISpots>();
-  const [eventSpot, setEventSpot] = useState<ISpots>();
-  const [spotRegistraions, setSpotRegistrations] =
-    useState<ISpotRegistrationsResponse>();
+  const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
   const registrationsLen =
@@ -73,30 +60,62 @@ const SpotPage = () => {
   const trialRegistrationsLen =
     info && info?.trialSpotRegistrations?.length > 0;
 
-  useEffect(() => {
-    const params: IParamsSpots = {
-      latitude: null,
-      longitude: null,
-      size: 6,
-    };
-    // 순서대로: 신규스팟, 점심함께주문해요, 역세권스팟, 이벤트 스팟
-    axios
-      .all([
-        getNewSpots(params),
-        getSpotPopular(params),
-        getStationSpots(params),
-        getSpotEvent(params),
-      ])
-      .then(
-        axios.spread((...response) => {
-          setNewSpot(response[0].data.data);
-          setPopularSpot(response[1].data.data);
-          setStationSpot(response[2].data.data);
-          setEventSpot(response[3].data.data);
-        })
-      )
-      .catch((err) => console.error(err));
-  }, [isSpotLiked]);
+  // react-query
+  const { data: stationSpotList } = useQuery(
+    ['spotList', 'station'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getStationSpots(params);
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { data: newSpotList } = useQuery(
+    ['spotList', 'new'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getNewSpots(params);
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { data: eventSpotList } = useQuery(
+    ['spotList', 'event'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getSpotEvent(params);
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { data: popularSpotList } = useQuery(
+    ['spotList', 'popular'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: null,
+        longitude: null,
+        size: 6,
+      };
+      const response = await getSpotPopular(params);
+      return response.data.data;
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
 
   useEffect(() => {
     const getInfoData = async () => {
@@ -117,8 +136,8 @@ const SpotPage = () => {
         longitude: null,
         size: 6,
       };
-      try {
-        const { data } = await getSpotRegistrations(params);
+      try{
+        const { data } = await getSpotRegistrationsRecruiting(params);
         setSpotRegistrations(data);
       } catch (err) {
         console.error(err);
@@ -130,7 +149,7 @@ const SpotPage = () => {
 
   const goToShare = (e: any): void => {
     if (!mouseMoved) {
-      dispatch(initBottomSheet());
+      // dispatch(initBottomSheet());
       dispatch(
         setBottomSheet({
           content: <ShareSheet />,
@@ -140,12 +159,10 @@ const SpotPage = () => {
   };
 
   const goToSpotReq = (type: string) => {
-    if (!mouseMoved) {
-      router.push({
-        pathname: '/spot/spot-req',
-        query: { type },
-      });
-    }
+    router.push({
+      pathname: '/spot/spot-req',
+      query: { type },
+    });
   };
 
   const goToSpotStatus = () => {
@@ -154,6 +171,10 @@ const SpotPage = () => {
     }
   };
 
+  const goToRegiList = () => {
+    router.push('/spot/regi-list');
+  };
+  
   const settings = {
     arrows: false,
     sliderToShow: 1,
@@ -174,15 +195,16 @@ const SpotPage = () => {
     centerPadding: '0px',
   };
 
-  const mainTitle = () => {
-    return (
-      <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n회원님을 기다려요!`}</TextH2B>
-    );
-  };
-
   return (
     <Container>
-      {mainTitle()}
+      <HeaderTitle>
+        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}<span>플린</span>님을 기다려요!</TextH2B>
+      </HeaderTitle>
+      <RegistrationsCTAWrapper>
+        <RegistrationCTA onClick={goToRegiList}>
+          <TextH6B color={theme.white}>프코스팟 신청할래요</TextH6B>
+        </RegistrationCTA>
+      </RegistrationsCTAWrapper>
       <SlideWrapper {...settings}>
         {
           /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
@@ -266,26 +288,41 @@ const SpotPage = () => {
         }
       </SlideWrapper>
       {/* 근처 인기있는 스팟 */}
-      <TextH2B padding="49px 24px 0 24px">{popularSpot?.title}</TextH2B>
+      <TextH2B padding="49px 24px 0 24px">{popularSpotList?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-        {popularSpot?.spots.map((list, idx) => {
-          return <SpotList key={idx} list={list} type="normal" />;
-        })}
-      </SpotsSlideWrapper>
+            {popularSpotList?.spots.map((list, idx)=>{
+              return (
+                <SpotList 
+                key={idx} 
+                list={list} 
+                type="normal" 
+              />
+            )})}
+      </SpotsSlideWrapper> 
       {/* 신규 스팟 */}
-      <TextH2B padding="49px 24px 0 24px">{newSpot?.title}</TextH2B>
+      <TextH2B padding="49px 24px 0 24px">{newSpotList?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-        {newSpot?.spots.map((list, idx) => {
-          return <SpotList key={idx} list={list} type="normal" />;
-        })}
-      </SpotsSlideWrapper>
+          {newSpotList?.spots.map((list, idx)=>{
+            return (
+              <SpotList 
+              key={idx}
+              list={list} 
+              type="normal" 
+            />
+          )})}
+      </SpotsSlideWrapper> 
       {/* 역세권 스팟 */}
-      <TextH2B padding="49px 24px 0 24px">{stationSpot?.title}</TextH2B>
+      <TextH2B padding="49px 24px 0 24px">{stationSpotList?.title}</TextH2B>
       <SpotsSlideWrapper {...spotSettings}>
-        {stationSpot?.spots.map((list, idx) => {
-          return <SpotList key={idx} list={list} type="normal" />;
-        })}
-      </SpotsSlideWrapper>
+          {stationSpotList?.spots.map((list, idx)=>{
+            return (
+              <SpotList 
+              key={idx}
+              list={list} 
+              type="normal" 
+            />
+          )})}
+      </SpotsSlideWrapper> 
       {/* 프라이빗 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
@@ -298,11 +335,19 @@ const SpotPage = () => {
         </SpotRegistration>
       </Wrapper>
       {/* 이벤트 중인 스팟 */}
-      <TextH2B padding="0 24px 0 24px">{eventSpot?.title}</TextH2B>
+      <TextH2B padding='0 24px 0 24px'>{eventSpotList?.title}</TextH2B>
       <SpotListWrapper>
-        {eventSpot?.spots.map((list, idx) => {
-          return <SpotList key={idx} list={list} type="event" />;
-        })}
+      {
+        eventSpotList?.spots.map((list, idx)=> {
+          return (
+            <SpotList
+            key={idx}
+            list={list}
+            type="event"
+          />    
+          )
+        })
+      } 
       </SpotListWrapper>
       {/* 단골가게 스팟 */}
       <TextH2B padding="10px 24px 0 24px">
@@ -312,9 +357,17 @@ const SpotPage = () => {
         {spotRegistraions?.data.subTitle}
       </TextB2R>
       <SpotListWrapper>
-        {spotRegistraions?.data.spotRegistrations.map((list, idx) => {
-          return <SpotList key={idx} list={list} type="trial" />;
-        })}
+      {
+        spotRegistraions?.data.spotRegistrations.map((list, idx)=> {
+          return (
+            <SpotList
+            key={idx}
+            list={list}
+            type="trial"
+          />
+          )
+        })
+      }
       </SpotListWrapper>
       {/* 퍼블릭 스팟 신청 CTA */}
       <Wrapper>
@@ -344,7 +397,25 @@ const SpotPage = () => {
 };
 
 const Container = styled.main`
-  // ${homePadding};
+  padding-bottom: 1px;
+`;
+
+const HeaderTitle = styled.div`
+  span{
+    color: ${theme.brandColor};
+  }
+`;
+
+const RegistrationsCTAWrapper = styled.article`
+  padding: 18px 24px 8px 24px;
+`;
+
+const RegistrationCTA = styled.div`
+  display: inline-block;
+  background: ${theme.brandColor};
+  padding: 4px 8px;
+  border-radius: 24px;
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div`

@@ -39,7 +39,7 @@ export interface ITextFieldProps {
   inputType?: InputType;
   placeholder?: string;
   name?: string;
-  value?: string | number;
+  value?: string | number | null;
   width?: string;
   height?: string;
   size?: string;

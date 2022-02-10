@@ -677,315 +677,109 @@ export interface ITermResponse {
   data: ITerm;
 }
 
-export interface IParamsNewSpots {
-  latitude: number;
-  longitude: number;
-}
-export interface IParamsSpots {
-  latitude: number | null;
-  longitude: number | null;
-  page?: number;
-  size?: number;
-  keyword?: string;
+export type TSpotRegisterationsOptiosType = 'PRIVATE' | 'PUBLIC' | 'OWNER';
+
+export interface IParamsSpotRegisterationsOptios {
+  type: TSpotRegisterationsOptiosType | string | undefined;
 }
 
-export interface ISpotsResponse {
-  code: number;
-  message: string;
-  data: ISpots;
-}
-
-export interface ISpots {
-  title: string;
-  spots: [
+export interface ISpotRegisterationsOpstions {
+  lunchTimeOptions : [
     {
-      id: number;
       name: string;
-      type?: string;
-      eventTitle: string;
-      images: [
-        {
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          main: boolean;
-        }
-      ];
-      location: {
-        zipCode: string;
-        address: string;
-        addressDetail: string;
-        dong: string;
-      };
-      coordinate: {
-        lat: number;
-        lon: number;
-      };
-      score: number;
-      createdAt: string;
-      description: string;
-      liked: boolean;
-      likeCount: number;
-      userCount: number;
-      distance: number;
-      distanceUnit: string;
-      lunchDelivery: boolean;
-      lunchDeliveryStartTime: string;
-      lunchDeliveryEndTime: string;
-      dinnerDelivery: string;
-      dinnerDeliveryStartTime: string;
-      dinnerDeliveryEndTime: string;
-      placeType: string;
-      isTrial: boolean;
-      canEat: boolean;
-      canParking: boolean;
-      discountRate: number;
-      notices: [
-        {
-          content: string;
-          createdAt: string;
-          id: number;
-          spotId: number;
-        }
-      ];
-      pickupEndTime: string;
-      pickupStartTime: string;
-      pickups: [
-        {
-          createdAt: string;
-          id: number;
-          images: [];
-          name: string;
-          spotId: number;
-        }
-      ];
-      placeHoliday: string;
-      placeOpenTime: string;
-      stories: [];
+      value: string;
+    },
+  ];
+  placeTypeOptions: [
+    {
+      name: string;
+      value: string;
+    },
+  ];
+  pickupLocationTypeOptions: [
+    {
+      name: string;
+      value: string;
     }
   ];
 }
 
-export interface ISpotsDetail {
+export interface ISpotRegisterationsOptiosResponse {
+  code: number;
+  message: string;
+  data: ISpotRegisterationsOpstions;
+}
+
+export type TSpotPickupType = 
+  |'COMMUNAL_FRIDGE' 
+  | 'COMMUNAL_TABLE'
+  | 'DELIVERY_LOCATION'
+  | 'DOCUMENT_ROOM' 
+  | 'ETC'
+  | 'FRONT_DESK' 
+  | 'OFFICE_DOOR';
+
+export type TPlaceType =
+  | 'BOOKSTORE'
+  | 'CAFE'
+  | 'CONVENIENCE_STORE'
+  | 'DRUGSTORE'
+  | 'ETC'
+  | 'FITNESS_CENTER'
+  | 'OFFICE'
+  | 'SCHOOL'
+  | 'SHARED_OFFICE'
+  | 'STORE';
+
+export interface IEditRegistration {
   coordinate: {
     lat: number;
     lon: number;
   };
-  createdAt: string;
-  description: string;
-  dinnerDelivery: boolean;
-  dinnerDeliveryStartTime: string;
-  dinnerDeliveryEndTime: string;
-  lunchDelivery: boolean;
-  lunchDeliveryStartTime: string;
-  lunchDeliveryEndTime: string;
-  id: number;
-  images: [
-    {
-      url: string;
-      height: number;
-      width: number;
-      main: boolean;
-      size: number;
-    }
-  ];
-  likeCount: number;
-  liked: boolean;
+  id?: number | null;
   location: {
-    address: string;
-    addressDetail: string;
-    done: string;
-    zipCode: string;
+    address?: string | null;
+    addressDetail?: string | null;
+    dong?: string | null;
+    zipCode?: string | null;
   };
-  name: string;
-  notices: [
-    {
-      id: number;
-      spotId: number;
-      content: string;
-      createdAt: string;
-    }
-  ];
-  pickupEndTime: string;
-  pickupStartTime: string;
-  pickups: [
-    {
-      createdAt: string;
-      id: number;
-      images: [];
-      name: string;
-      spotId: number;
-    }
-  ];
-  placeHoliday: string;
-  placeOpenTime: string;
-  placeTel: string;
-  placeType: string;
-  stories: [
-    {
-      id: number;
-      spotId: number;
-      type: string;
-      title: string;
-      content: string;
-      createdAt: string;
-      images: [
-        {
-          url: string;
-        }
-      ];
-      liked: boolean;
-      likeCount: number;
-    }
-  ];
-  type: string;
-}
+  lunchTime?: string;
+  pickupType?: TSpotPickupType;
+  placeName?: string | null;
+  placeType?: TPlaceType;
+  placeTypeDetail?: string | null;
+  type?: TSpotRegisterationsOptiosType | string;
+  userEmail: string;
+  userName: string;
+  userPosition?: string | null;
+  userTel: string;
+  createdAt?: string;
+  step?: string;
+  rejected?: boolean;
+  recruited?: boolean;
+  recruitingCount?: number;
+};
 
-export interface ISpotDetailResponse {
-  code: number;
-  messages: string;
-  data: ISpotsDetail;
-}
-
-export interface INormalSpots {
-  title: string;
-  id: number;
-  name: string;
-  images: [
-    {
-      url: string;
-      width: number;
-      height: number;
-      size: number;
-      main: boolean;
-      createdAt: string;
-    }
-  ];
-  image: {
-    url: string;
-    width: number;
-    height: number;
-    size: number;
-    main: boolean;
-    createdAt: string;
-  };
-  liked: boolean;
-  likeCount: number;
-  userCount: number;
-  distance: number;
-  distanceUnit: string;
-  eventTitle?: string;
-  discountRate?: number;
-  recruitingCount: number;
-  recruited: boolean;
-  placeName: string;
-}
-
-export interface ISpotStories {
-  id: number;
-  spotId: number;
-  type: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  liked: boolean;
-  likeCount: number;
-  images: [
-    {
-      url: string;
-      width: string;
-      height: string;
-      size: string;
-    }
-  ];
-}
-export interface ISpotDetailStoriesResponse {
-  code: number;
-  messages: string;
-  data: {
-    spotStories: ISpotStories[];
-    pagination: {
-      total: number;
-      totalPage: number;
-      page: number;
-      size: number;
-    };
-  };
-}
-
-export interface ISpotsInfo {
-  spotCount: number;
-  unsubmitSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  recruitingSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  confirmSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  trialSpotRegistrations: [];
-}
-
-export interface ISpotsInfoResponse {
+export interface IEditRegistrationResponse {
   code: number;
   message: string;
-  data: ISpotsInfo;
-}
+  data: IEditRegistration;
+};
 
-// export interface ISpotsInfo {
-//   data: {
-//     anyRecruitingSpotRegistration: {
-//       coordinate: {
-//         lat: number;
-//         lon: number;
-//       };
-//       createdAt: string;
-//       distance: number;
-//       distanceUnit: string;
-//       id: number;
-//     }
-//   }
-// }
-
-export interface ISpotRegistrationsResponse {
-  data: {
-    title: string;
-    subTitle: string;
-    spotRegistrations: [
-      {
-        id: number;
-        placeName: string;
-        image: {
-          id: number;
-          name: string;
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          createdAt: string;
-        };
-        recruited: boolean;
-        recruitingCount: number;
-        distance: number;
-        distanceUnit: string;
-      }
-    ];
+export interface IGetSpotsRegistrationsStatus{
+  pagination: {
+    page: number;
+    size: number;
+    total: number;
+    totalPage: number;
   };
-}
+  spotRegistrations: [
+    IEditRegistration,
+  ];
+};
+
+export interface IGetSpotsRegistrationsStatusResponse {
+  code: number;
+  message: string;
+  data: IGetSpotsRegistrationsStatus;
+};
