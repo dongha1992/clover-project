@@ -17,6 +17,11 @@ import {
 import { destinationForm } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { destinationRegister } from '@api/destination';
+import { CheckTimerByDelivery } from '@components/CheckTimer';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { getFormatTime } from '@utils/getFormatTime';
+import { orderForm, SET_TIMER_STATUS } from '@store/order';
+import checkIsValidTimer from '@utils/checkIsValidTimer';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -33,12 +38,9 @@ interface IDeliveryMethod {
 
 /* TODO: map 리팩토링 */
 /* TODO: 배송지/픽업지 분기 코드 엉망 리팩토링 */
-/* TODO: 타이머 기능 */
 /* TODO: 최근 배송지 나오면 userDestination와 싱크 */
 /* TODO: 스팟 배송일 경우 추가 */
-
 /* TODO: 내 위치 검색 / 배송지 검색 -> 두 경우 available 체킹 리팩토링 */
-
 /* TODO: 가끔씩 첫 렌더에서 500 에러 왜? */
 const DELIVERY_METHOD: any = {
   pickup: [
@@ -83,6 +85,7 @@ const recentDestination = false;
 
 const DeliverInfoPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [limitDelvieryType, setLimitDelvieryType] = useState<string>('');
   const {
     userLocation,
     availableDestination,
@@ -90,6 +93,7 @@ const DeliverInfoPage = () => {
     userDestination,
   } = useSelector(destinationForm);
 
+  const { isTimerTooltip } = useSelector(orderForm);
   const isSpotPickupPlace = selectedMethod === 'spot';
 
   const hasUserLocation =
@@ -100,18 +104,10 @@ const DeliverInfoPage = () => {
   const hasUserSelectDestination =
     Object.values(userDestination).filter((item) => item).length > 0;
 
-  const dispatch = useDispatch();
+  // 배송 마감 타이머 체크 + 위치 체크
+  let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
-  useEffect(() => {
-    // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
-    // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
-    if (
-      (!hasUserLocation && destinationStatus) ||
-      (hasUserLocation && destinationType)
-    ) {
-      setSelectedMethod(destinationStatus || destinationType);
-    }
-  }, []);
+  const dispatch = useDispatch();
 
   const checkTermHandler = () => {};
 
@@ -256,6 +252,38 @@ const DeliverInfoPage = () => {
     }
   };
 
+  useEffect(() => {
+    // 내 위치 검색 안 함 && 배송지 검색으로 배송지 체킹
+    // 내 위치 검색 함 && 내 위치 찾기에서 배송지 체킹
+    if (
+      (!hasUserLocation && destinationStatus) ||
+      (hasUserLocation && destinationType)
+    ) {
+      setSelectedMethod(destinationStatus || destinationType);
+    }
+  }, []);
+
+  useEffect(() => {
+    const isNotTimer = [
+      '스팟저녁',
+      '새벽택배',
+      '새벽택배N일',
+      '스팟점심',
+      '스팟점심N일',
+    ].includes(deliveryType);
+
+    if (!isNotTimer) {
+      if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
+        setLimitDelvieryType('스팟배송');
+      } else {
+        setLimitDelvieryType(deliveryType);
+      }
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    }
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -288,10 +316,8 @@ const DeliverInfoPage = () => {
                           </Tag>
                         )}
                       </RowLeft>
-                      {index === 0 && (
-                        <TextH6B color={theme.brandColor}>
-                          점심배송 마감 29:30 전
-                        </TextH6B>
+                      {isTimerTooltip && item.name === limitDelvieryType && (
+                        <CheckTimerByDelivery />
                       )}
                     </FlexBetween>
                     <Body>
@@ -336,10 +362,8 @@ const DeliverInfoPage = () => {
                         )}
                       </RowLeft>
                       {isSelected && tooltipRender()}
-                      {index === 1 && (
-                        <TextH6B color={theme.brandColor}>
-                          점심배송 마감 29:30 전
-                        </TextH6B>
+                      {isTimerTooltip && item.name === limitDelvieryType && (
+                        <CheckTimerByDelivery />
                       )}
                     </FlexBetween>
                     <Body>

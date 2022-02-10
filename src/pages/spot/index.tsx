@@ -11,17 +11,16 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
-import { 
-  getNewSpots, 
-  getStationSpots, 
-  getSpotEvent ,
+import {
+  getNewSpots,
+  getStationSpots,
+  getSpotEvent,
   getSpotPopular,
   getInfo,
   getSpotRegistrationsRecruiting,
 } from '@api/spot';
 import { IParamsSpots, ISpotRegistrationsResponse, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
-
 
 const FCO_SPOT_BANNER = [
   {
@@ -44,7 +43,7 @@ const FCO_SPOT_BANNER = [
   },
 ];
 
-// TODO : 로그인 유저별 분기처리, 단골 api , 타입에러 
+// TODO : 로그인 유저별 분기처리, 단골 api , 타입에러
 
 const SpotPage = () => {
   const dispatch = useDispatch();
@@ -54,9 +53,12 @@ const SpotPage = () => {
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
-  const registrationsLen = info&&info?.recruitingSpotRegistrations?.length > 0;
-  const unsubmitSpotRegistrationsLen = info&&info?.unsubmitSpotRegistrations?.length > 0;
-  const trialRegistrationsLen = info&&info?.trialSpotRegistrations?.length > 0;
+  const registrationsLen =
+    info && info?.recruitingSpotRegistrations?.length > 0;
+  const unsubmitSpotRegistrationsLen =
+    info && info?.unsubmitSpotRegistrations?.length > 0;
+  const trialRegistrationsLen =
+    info && info?.trialSpotRegistrations?.length > 0;
 
   // react-query
   const { data: stationSpotList } = useQuery(
@@ -115,20 +117,20 @@ const SpotPage = () => {
     { refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
-  useEffect(()=> {
-    const getInfoData = async() => {
-      try{
-        const { data }  = await getInfo();
-          setSpotCount(data.data.spotCount);
-          setInfo(data.data);
-      }catch(err){
+  useEffect(() => {
+    const getInfoData = async () => {
+      try {
+        const { data } = await getInfo();
+        setSpotCount(data.data.spotCount);
+        setInfo(data.data);
+      } catch (err) {
         console.error(err);
-      };
+      }
     };
     getInfoData();
 
     // 단골 스팟
-    const getRegistration = async() => {
+    const getRegistration = async () => {
       const params: IParamsSpots = {
         latitude: null,
         longitude: null,
@@ -137,13 +139,13 @@ const SpotPage = () => {
       try{
         const { data } = await getSpotRegistrationsRecruiting(params);
         setSpotRegistrations(data);
-      }catch(err){
+      } catch (err) {
         console.error(err);
-      };
+      }
     };
 
     getRegistration();
-  },[]);
+  }, []);
 
   const goToShare = (e: any): void => {
     if (!mouseMoved) {
@@ -153,7 +155,7 @@ const SpotPage = () => {
           content: <ShareSheet />,
         })
       );
-    };
+    }
   };
 
   const goToSpotReq = (type: string) => {
@@ -204,71 +206,85 @@ const SpotPage = () => {
         </RegistrationCTA>
       </RegistrationsCTAWrapper>
       <SlideWrapper {...settings}>
-        {/* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
-          registrationsLen &&
-          <BoxHandlerWrapper
-            onMouseMove={() => setMouseMoved(true)}
-            onMouseDown={() => setMouseMoved(false)}
-            onClick={goToShare}
-          >
-            <FlexBetween height='92px' padding='22px'>
-              <TextH4B>
-                {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
-                <span>{`${5-info?.recruitingSpotRegistrations[0].recruitingCount}`}</span>
-                명만 더 주문 하면 정식오픈 돼요!
-              </TextH4B>
-              <IconWrapper>
-                <SVGIcon name="blackCircleShare" />
-              </IconWrapper>
-            </FlexBetween>
-          </BoxHandlerWrapper>
+        {
+          /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
+          registrationsLen && (
+            <BoxHandlerWrapper
+              onMouseMove={() => setMouseMoved(true)}
+              onMouseDown={() => setMouseMoved(false)}
+              onClick={goToShare}
+            >
+              <FlexBetween height="92px" padding="22px">
+                <TextH4B>
+                  {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
+                  <span>{`${
+                    5 - info?.recruitingSpotRegistrations[0].recruitingCount
+                  }`}</span>
+                  명만 더 주문 하면 정식오픈 돼요!
+                </TextH4B>
+                <IconWrapper>
+                  <SVGIcon name="blackCircleShare" />
+                </IconWrapper>
+              </FlexBetween>
+            </BoxHandlerWrapper>
+          )
         }
-        {/* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-        registrationsLen &&
-          <BoxHandlerWrapper
-            onMouseMove={() => setMouseMoved(true)}
-            onMouseDown={() => setMouseMoved(false)}
-            onClick={goToShare}
-          >
-            <FlexBetween height='92px' padding='22px'>
-              <TextH4B>
-                {`[${info?.recruitingSpotRegistrations[0].placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
-              </TextH4B>
-              <IconWrapper>
-                <SVGIcon name="blackCircleShare" />
-              </IconWrapper>
-            </FlexBetween>
-          </BoxHandlerWrapper>
+        {
+          /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
+          registrationsLen && (
+            <BoxHandlerWrapper
+              onMouseMove={() => setMouseMoved(true)}
+              onMouseDown={() => setMouseMoved(false)}
+              onClick={goToShare}
+            >
+              <FlexBetween height="92px" padding="22px">
+                <TextH4B>
+                  {`[${info?.recruitingSpotRegistrations[0].placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
+                </TextH4B>
+                <IconWrapper>
+                  <SVGIcon name="blackCircleShare" />
+                </IconWrapper>
+              </FlexBetween>
+            </BoxHandlerWrapper>
+          )
         }
-        {/* 작성중인 스팟 신청서가 있는 경우 노출 */
-         unsubmitSpotRegistrationsLen &&
+        {
+          /* 작성중인 스팟 신청서가 있는 경우 노출 */
+          unsubmitSpotRegistrationsLen && (
             <BoxHandlerWrapper
               onMouseMove={() => setMouseMoved(true)}
               onMouseDown={() => setMouseMoved(false)}
               onClick={goToSpotStatus}
             >
-              <FlexBetween height='92px' padding='22px'>
-                <TextH4B>{'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}</TextH4B>
+              <FlexBetween height="92px" padding="22px">
+                <TextH4B>
+                  {'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}
+                </TextH4B>
                 <IconWrapper>
                   <SVGIcon name="blackCirclePencil" />
                 </IconWrapper>
               </FlexBetween>
             </BoxHandlerWrapper>
+          )
         }
-        {/* 내가 참여한 스팟 알림 카드*/
-        trialRegistrationsLen &&  
-          <BoxHandlerWrapper
-            onMouseMove={() => setMouseMoved(true)}
-            onMouseDown={() => setMouseMoved(false)}
-            onClick={goToSpotStatus}
-          >
-            <FlexBetween height='92px' padding='22px'>
-              <TextH4B>{'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}</TextH4B>
-              <IconWrapper>
-                <SVGIcon name="blackCircleShare" />
-              </IconWrapper>
-            </FlexBetween>
-          </BoxHandlerWrapper>
+        {
+          /* 내가 참여한 스팟 알림 카드*/
+          trialRegistrationsLen && (
+            <BoxHandlerWrapper
+              onMouseMove={() => setMouseMoved(true)}
+              onMouseDown={() => setMouseMoved(false)}
+              onClick={goToSpotStatus}
+            >
+              <FlexBetween height="92px" padding="22px">
+                <TextH4B>
+                  {'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}
+                </TextH4B>
+                <IconWrapper>
+                  <SVGIcon name="blackCircleShare" />
+                </IconWrapper>
+              </FlexBetween>
+            </BoxHandlerWrapper>
+          )
         }
       </SlideWrapper>
       {/* 근처 인기있는 스팟 */}
@@ -309,8 +325,8 @@ const SpotPage = () => {
       </SpotsSlideWrapper> 
       {/* 프라이빗 스팟 신청 CTA */}
       <Wrapper>
-        <SpotRegistration  onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
-          <FlexBetween height='92px' padding='22px'>
+        <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
+          <FlexBetween height="92px" padding="22px">
             <TextH4B color={theme.black}>{FCO_SPOT_BANNER[0].text}</TextH4B>
             <IconWrapper>
               <SVGIcon name="blackCirclePencil" />
@@ -334,7 +350,9 @@ const SpotPage = () => {
       } 
       </SpotListWrapper>
       {/* 단골가게 스팟 */}
-      <TextH2B padding='10px 24px 0 24px'>{spotRegistraions?.data.title}</TextH2B>
+      <TextH2B padding="10px 24px 0 24px">
+        {spotRegistraions?.data.title}
+      </TextH2B>
       <TextB2R color={theme.greyScale65} padding="8px 24px 23px 24px">
         {spotRegistraions?.data.subTitle}
       </TextB2R>
@@ -354,7 +372,7 @@ const SpotPage = () => {
       {/* 퍼블릭 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
-          <FlexBetween height='92px' padding='22px'>
+          <FlexBetween height="92px" padding="22px">
             <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
             <IconWrapper>
               <SVGIcon name="blackCirclePencil" />
@@ -366,7 +384,7 @@ const SpotPage = () => {
       {/* 우리가게 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
-          <FlexBetween height='92px' padding='22px'>
+          <FlexBetween height="92px" padding="22px">
             <TextH4B color={theme.black}>{FCO_SPOT_BANNER[2].text}</TextH4B>
             <IconWrapper>
               <SVGIcon name="blackCirclePencil" />
@@ -422,7 +440,7 @@ const SlideWrapper = styled(Slider)`
 const SpotsSlideWrapper = styled(Slider)`
   width: 100%;
   padding: 16px 24px 0 24px;
-  .slick-slide{
+  .slick-slide {
     width: 135px !important;
   }
 `;
@@ -455,7 +473,6 @@ const SpotRegistration = styled.div`
   cursor: pointer;
   margin: 48px 0;
 `;
-
 
 const BottomStory = styled.div`
   display: flex;

@@ -31,7 +31,7 @@ const ReOrderList = ({
   const [cartList, setCartList] = useState([
     { orderType: 'lunch', orderTime: '스팟배송 - 점심', msg: '' },
     { orderType: 'dinner', orderTime: '스팟배송 - 저녁', msg: '' },
-    { orderType: 'delivery', orderTime: '택배배송', msg: '' },
+    { orderType: 'parcel', orderTime: '택배배송', msg: '' },
   ]);
 
   const setting = {

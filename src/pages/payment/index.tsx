@@ -85,7 +85,7 @@ export interface IAccessMethod {
 
 /* TODO CardItem에 card 정보? */
 
-const hasRegisteredCart = true;
+const hasRegisteredCard = true;
 const point = 5000;
 
 const PaymentPage = () => {
@@ -410,9 +410,7 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCart && (
-          <CardItem onClick={goToCardManagemnet} card={card} />
-        )}
+        {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} />}
         <Button
           border
           backgroundColor={theme.white}
