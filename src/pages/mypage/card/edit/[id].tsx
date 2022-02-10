@@ -26,50 +26,47 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
   const [isMainCard, setIsMainCard] = useState<boolean>(false);
   const [cardName, setCardName] = useState<string>('');
   const dispatch = useDispatch();
-
-  const editCardInfo = async () => {
-    const name = cardName ? cardName : orginCardName;
-
-    try {
-      Promise.all([editCard(id, name), setMainCard(id)]).then((responses) => {
-        let isSuccess = false;
-
-        for (let res of responses) {
-          const { data } = res;
-          if (data.code === 200) {
-            isSuccess = true;
-          }
-        }
-
-        if (isSuccess) {
-          router.push('/mypage/card');
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // const deleteCardInfo = async () => {
-  //   try {
-  //     const { data } = await deleteCard(id);
-  //     if (data.code === 200) {
-  //       router.push('/mypage/card');
-  //     }
-  //   } catch (error) {}
-  // };
-
   const queryClient = useQueryClient();
+
+  // const editCardInfo = async () => {
+  //   const name = cardName ? cardName : orginCardName;
+
+  //   try {
+  //     Promise.all([editCard(id, name), setMainCard(id)]).then((responses) => {
+  //       let isSuccess = false;
+
+  //       for (let res of responses) {
+  //         const { data } = res;
+  //         if (data.code === 200) {
+  //           isSuccess = true;
+  //         }
+  //       }
+
+  //       if (isSuccess) {
+  //         router.push('/mypage/card');
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const { mutate: mutateDeleteCard } = useMutation(
     (id: number) => deleteCard(id),
     {
       onSuccess: async () => {
-        // await queryClient.refetchQueries(['cardList']);
-        await queryClient.invalidateQueries(['cardList']);
-
+        await queryClient.refetchQueries('cardList');
         router.push('/mypage/card');
-        // window.location.reload();
+      },
+    }
+  );
+
+  const { mutate: mutateEditCard } = useMutation(
+    (id: number) => deleteCard(id),
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('cardList');
+        router.push('/mypage/card');
       },
     }
   );
@@ -95,7 +92,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
       setAlert({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
-        onSubmit: () => editCardInfo(),
+        onSubmit: () => mutateEditCard(),
       })
     );
   };

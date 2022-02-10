@@ -36,6 +36,7 @@ const CardManagementPage = () => {
     async () => {
       const { data } = await getCardLists();
       if (data.code === 200) {
+        console.log('card list fetching @@@@@@');
         return data.data;
       }
     },
