@@ -24,28 +24,28 @@ interface IProps {
 
 const CardEditPage = ({ id, orginCardName }: IProps) => {
   const [isMainCard, setIsMainCard] = useState<boolean>(false);
-  const [cardName, setCardName] = useState<string>('');
+  const [cardName, setCardName] = useState<string>(orginCardName);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  // const editCardInfo = async () => {
-  //   const name = cardName ? cardName : orginCardName;
-
+  // const mutateEditCard = async () => {
   //   try {
-  //     Promise.all([editCard(id, name), setMainCard(id)]).then((responses) => {
-  //       let isSuccess = false;
+  //     Promise.all([editCard(id, cardName), setMainCard(id)]).then(
+  //       (responses) => {
+  //         let isSuccess = false;
 
-  //       for (let res of responses) {
-  //         const { data } = res;
-  //         if (data.code === 200) {
-  //           isSuccess = true;
+  //         for (let res of responses) {
+  //           const { data } = res;
+  //           if (data.code === 200) {
+  //             isSuccess = true;
+  //           }
+  //         }
+
+  //         if (isSuccess) {
+  //           router.push('/mypage/card');
   //         }
   //       }
-
-  //       if (isSuccess) {
-  //         router.push('/mypage/card');
-  //       }
-  //     });
+  //     );
   //   } catch (error) {
   //     console.error(error);
   //   }
@@ -61,15 +61,15 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     }
   );
 
-  const { mutate: mutateEditCard } = useMutation(
-    (id: number) => deleteCard(id),
-    {
-      onSuccess: async () => {
-        await queryClient.refetchQueries('cardList');
-        router.push('/mypage/card');
-      },
-    }
-  );
+  // const { mutate: mutateEditCard } = useMutation(
+  //   (id: number) => editCard(id, name),
+  //   {
+  //     onSuccess: async () => {
+  //       await queryClient.refetchQueries('cardList');
+  //       router.push('/mypage/card');
+  //     },
+  //   }
+  // );
 
   const changeCardNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -92,7 +92,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
       setAlert({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
-        onSubmit: () => mutateEditCard(),
+        onSubmit: () => mutateEditCard(id, cardName),
       })
     );
   };
