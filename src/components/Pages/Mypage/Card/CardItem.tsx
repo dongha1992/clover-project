@@ -20,7 +20,7 @@ export interface ICard {
 }
 interface IProps {
   onClick: (card: ICard) => void;
-  card: ICard;
+  card?: ICard;
 }
 
 const CardItem = ({ onClick, card }: IProps) => {
@@ -31,8 +31,8 @@ const CardItem = ({ onClick, card }: IProps) => {
           <SVGIcon name="card" />
           <FlexCol padding="0 0 0px 8px">
             <FlexRow padding="0 0 8px 0">
-              <TextH5B padding="0 4px 0 0">{card.name}</TextH5B>
-              {card.main ? <Tag>대표카드</Tag> : null}
+              <TextH5B padding="0 4px 0 0">{card?.name || ''}</TextH5B>
+              {card?.main ? <Tag>대표카드</Tag> : null}
             </FlexRow>
           </FlexCol>
         </FlexRowStart>

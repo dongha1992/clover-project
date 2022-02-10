@@ -23,7 +23,7 @@ import {
 } from '@styles/theme';
 import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
-import { InfoMessage } from '@components/Shared/Message';
+import InfoMessage from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
@@ -76,6 +76,11 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
+
+  const [disposableList, setDisposableList] = useState([
+    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
+    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
+  ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -128,12 +133,14 @@ const CartPage = () => {
   };
 
   const handleSelectCartItem = (id: any) => {
-    /* TODO: 왜 안됑? */
-    const findItem = checkedMenuList.find((_id: any) => _id === id);
+    const findItem = checkedMenuList.find((_id: number) => _id === id);
     let tempCheckedMenuList = checkedMenuList.slice();
 
     if (findItem) {
-      tempCheckedMenuList.filter((_id: any) => _id !== id);
+      tempCheckedMenuList = tempCheckedMenuList.filter((_id) => _id !== id);
+      if (isAllChecked) {
+        setIsAllchecked(!isAllChecked);
+      }
     } else {
       tempCheckedMenuList.push(id);
     }
@@ -153,12 +160,13 @@ const CartPage = () => {
   };
 
   const handleSelectDisposable = (id: any) => {
-    /* TODO: 왜 안됑? */
     const findItem = checkedDisposableList.find((_id) => _id === id);
-    const tempCheckedDisposableList = checkedDisposableList.slice();
+    let tempCheckedDisposableList = checkedDisposableList.slice();
 
     if (findItem) {
-      tempCheckedDisposableList.filter((_id) => _id !== id);
+      tempCheckedDisposableList = tempCheckedDisposableList.filter(
+        (_id) => _id !== id
+      );
     } else {
       tempCheckedDisposableList.push(id);
     }
@@ -179,6 +187,16 @@ const CartPage = () => {
         onSubmit: () => removeItem(),
       })
     );
+  };
+
+  const clickDisposableItemCount = (id: number, quantity: number) => {
+    const findItem = disposableList.map((item) => {
+      if (item.id === id) {
+        item.quantity = quantity;
+      }
+      return item;
+    });
+    setDisposableList(findItem);
   };
 
   const removeItem = () => {
@@ -214,9 +232,7 @@ const CartPage = () => {
           </TextH4B>
         </Left>
         <Right onClick={goToDeliveryInfo}>
-          <TextH6B color={theme.greyScale65} textDecoration="underline">
-            {userDestinationStatus && hasDestination ? '변경하기' : '설정하기'}
-          </TextH6B>
+          <SVGIcon name="arrowRight" />
         </Right>
       </DeliveryMethodAndPickupLocation>
       <BorderLine height={8} margin="24px 0" />
@@ -250,13 +266,13 @@ const CartPage = () => {
                     isSelected={checkedMenuList.includes(item.id)}
                   />
                   <CartSheetItem
-                    menu={item}
                     isCart
+                    menu={item}
                     isSoldout={item.id === 1 && isSoldout}
                   />
                 </div>
                 <div className="itemInfo">
-                  <InfoMessage message={'품절 임박! 상품이 2개 남았어요'} />
+                  <InfoMessage status="soldSoon" count={2} />
                 </div>
                 <BorderLine height={1} margin="16px 0" />
               </ItemWrapper>
@@ -271,7 +287,7 @@ const CartPage = () => {
             </TextH5B>
           </WrapperTitle>
           <CheckBoxWrapper>
-            {DISPOSABLE_LIST.map((item, index) => (
+            {disposableList.map((item, index) => (
               <DisposableItem key={index}>
                 <div className="disposableLeft">
                   <Checkbox
@@ -284,7 +300,12 @@ const CartPage = () => {
                   </div>
                 </div>
                 <Right>
-                  <CountButton />
+                  <CountButton
+                    id={item.id}
+                    quantity={item.quantity}
+                    clickPlusButton={clickDisposableItemCount}
+                    clickMinusButton={clickDisposableItemCount}
+                  />
                 </Right>
               </DisposableItem>
             ))}
@@ -461,7 +482,9 @@ const Left = styled.div`
   flex-direction: column;
 `;
 
-const Right = styled.div``;
+const Right = styled.div`
+  align-self: center;
+`;
 
 const CartListWrapper = styled.div``;
 

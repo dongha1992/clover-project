@@ -16,7 +16,7 @@ import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { INormalSpots } from '@model/index';
-import {   
+import {
   getSpotLike,
   postSpotRegistrationsRecruiting,
  } from '@api/spot';
@@ -72,8 +72,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
     }
   };
 
-  const clickSpotOpen = async(id: number) => {
-    if(list.recruited){ 
+  const clickSpotOpen = async (id: number) => {
+    if (list.recruited) {
       return;
     };
       try{
@@ -102,15 +102,16 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   };
 
   const SpotsListTypeRender = () => {
-    switch(type) {
+    switch (type) {
       // 오늘 점심, 신규, 역세권 스팟
       case 'normal':
         return (
           <Container type="normal">
-            <StorImgWrapper 
+            <StorImgWrapper
               onMouseMove={() => setMouseMoved(true)}
               onMouseDown={() => setMouseMoved(false)}
-              onClick={() => goToDetail(list.id)}>
+              onClick={() => goToDetail(list.id)}
+            >
               <Tag>
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
@@ -130,9 +131,9 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               </LikeWrapper>
             </LocationInfoWrapper>
           </Container>
-        )
+        );
       //이벤트 스팟
-      case 'event': 
+      case 'event':
         return (
           <ItemListRowWrapper>
             <ItemListRow>
@@ -160,10 +161,10 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               </Container>
             </ItemListRow>
           </ItemListRowWrapper>
-        )
+        );
       // 단골 가게 스팟
       case 'trial':
-        return(
+        return (
           <Container type="trial">
             <StorImgWrapper>
               <Tag>
@@ -171,7 +172,10 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list?.recruitingCount} / 100명 참여중`}</TextH7B>
               </Tag>
               {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
-              <ImgBox src={`${IMAGE_S3_URL}${list?.image?.url}`} alt="매장이미지" />
+              <ImgBox
+                src={`${IMAGE_S3_URL}${list?.image?.url}`}
+                alt="매장이미지"
+              />
             </StorImgWrapper>
             <LocationInfoWrapper type="trial">
               <TextWrapper>
@@ -185,18 +189,14 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <Button onClick={() => clickSpotOpen(list?.id)}>{spotRegisteration ? '참여완료' : '참여하기'}</Button>
             </LocationInfoWrapper>
           </Container>
-        )
+        );
       default:
         return null;
-    };
+    }
   };
 
-  return (
-      <>
-        {SpotsListTypeRender()}
-      </>
-    )
-  };
+  return <>{SpotsListTypeRender()}</>;
+};
 
 const ItemListRowWrapper = styled.div`
   margin-bottom: 48px;
