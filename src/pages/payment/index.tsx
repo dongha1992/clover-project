@@ -37,7 +37,8 @@ import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { destinationForm } from '@store/destination';
 import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
-
+import { getMainCardLists } from '@api/card';
+import { useQuery } from 'react-query';
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -83,8 +84,6 @@ export interface IAccessMethod {
   value: string;
 }
 
-/* TODO CardItem에 card 정보? */
-
 const hasRegisteredCard = true;
 const point = 5000;
 
@@ -95,13 +94,22 @@ const PaymentPage = () => {
   });
   const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
-  const [selectedAccessMethod, setSelectedAccessMethod] =
-    useState<IAccessMethod>();
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus } = useSelector(destinationForm);
+
+  const { data: mainCard, isLoading } = useQuery(
+    'getMainCard',
+    async () => {
+      const { data } = await getMainCardLists();
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -410,7 +418,9 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} />}
+        {hasRegisteredCard && (
+          <CardItem onClick={goToCardManagemnet} card={mainCard} />
+        )}
         <Button
           border
           backgroundColor={theme.white}

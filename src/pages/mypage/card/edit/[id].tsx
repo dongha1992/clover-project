@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import router from 'next/router';
+import { useQuery, useMutation, useQueryClient, QueryCache } from 'react-query';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -49,14 +50,29 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     }
   };
 
-  const deleteCardInfo = async () => {
-    try {
-      const { data } = await deleteCard(id);
-      if (data.code === 200) {
+  // const deleteCardInfo = async () => {
+  //   try {
+  //     const { data } = await deleteCard(id);
+  //     if (data.code === 200) {
+  //       router.push('/mypage/card');
+  //     }
+  //   } catch (error) {}
+  // };
+
+  const queryClient = useQueryClient();
+
+  const { mutate: mutateDeleteCard } = useMutation(
+    (id: number) => deleteCard(id),
+    {
+      onSuccess: async () => {
+        // await queryClient.refetchQueries(['cardList']);
+        await queryClient.invalidateQueries(['cardList']);
+
         router.push('/mypage/card');
-      }
-    } catch (error) {}
-  };
+        // window.location.reload();
+      },
+    }
+  );
 
   const changeCardNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -69,7 +85,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
         alertMessage: '카드를 삭제하시겠어요?',
         submitBtnText: '확인',
         closeBtnText: '취소',
-        onSubmit: () => deleteCardInfo(),
+        onSubmit: () => mutateDeleteCard(id),
       })
     );
   };
