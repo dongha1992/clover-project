@@ -43,6 +43,7 @@ const locationState = {
   lnbrMnnm: null,
   lnbrSlno: null,
   emdNo: null,
+  detailJuso: null,
 };
 
 const destinationState = {
