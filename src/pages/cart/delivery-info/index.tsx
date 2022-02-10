@@ -105,7 +105,7 @@ const DeliverInfoPage = () => {
     Object.values(userDestination).filter((item) => item).length > 0;
 
   // 배송 마감 타이머 체크 + 위치 체크
-  const deliveryType = checkIsValidTimer(checkTimerLimitHelper());
+  let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const dispatch = useDispatch();
 
@@ -264,8 +264,16 @@ const DeliverInfoPage = () => {
   }, []);
 
   useEffect(() => {
-    if (deliveryType) {
-      if (['스팟점심', '스팟저녁'].includes(deliveryType)) {
+    const isNotTimer = [
+      '스팟저녁',
+      '새벽택배',
+      '새벽택배N일',
+      '스팟점심',
+      '스팟점심N일',
+    ].includes(deliveryType);
+
+    if (!isNotTimer) {
+      if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
         setLimitDelvieryType('스팟배송');
       } else {
         setLimitDelvieryType(deliveryType);

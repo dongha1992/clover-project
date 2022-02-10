@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { HomeContainer } from '@styles/theme';
-import { TextH6B, TextH5B, TextB2R } from '@components/Shared/Text';
+import { HomeContainer, FlexRow, FlexRowStart } from '@styles/theme';
+import { TextH6B, TextH5B, TextB3R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
@@ -13,22 +13,21 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import { query } from 'express';
+import Tag from '@components/Shared/Tag';
 
 /* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const addressRef = useRef<HTMLInputElement>(null);
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
-  const [isFocus, setIsFocus] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState('');
-  const addressRef = useRef<HTMLInputElement>(null);
 
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { isSpot } = router.query;
+  const { type } = router.query;
 
   const setCurrentLoc = (location: string) => {
     const locationInfoMsg = `${location}(으)로
@@ -50,6 +49,7 @@ const LocationPage = () => {
           y: position.coords.latitude?.toString(),
           x: position.coords.longitude?.toString(),
         });
+      console.log('Geo data', data)
         setUserLocation(data.documents[0].address_name);
         setCurrentLoc(data.documents[0].address_name);
       });
@@ -96,13 +96,6 @@ const LocationPage = () => {
     }
   };
 
-  const focusInputHandler = () => {
-    setIsFocus(true);
-  };
-
-  const blurInputHandler = () => {
-    setIsFocus(false);
-  };
 
   const clearInputHandler = () => {
     if (addressRef.current) {
@@ -113,17 +106,10 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    if(isSpot){
-      router.push({
-        pathname: '/location/address-detail',
-        query: { isSpot: true },
-      });
-    }else {
-      router.push({
-        pathname: '/location/address-detail',
-        query: { isLocation: true },
-      });  
-    }
+    router.push({
+      pathname: '/spot/location/address',
+      query: { type },
+    });
   };
 
   return (
@@ -148,6 +134,21 @@ const LocationPage = () => {
           {resultAddress.length > 0 && (
             <>
               <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
+              <CaseWrapper>
+                <FlexRow width="100%">
+                  <TextH6B>
+                    도로명주소 + 건물명
+                  </TextH6B>
+                </FlexRow>
+                <FlexRowStart padding="4px 0 0 0">
+                  <Tag padding="2px" width="8%" center>
+                    지번
+                  </Tag>
+                  <TextB3R margin="2px 0 0 4px">
+                    (우편번호)지번주소
+                  </TextB3R>
+                </FlexRowStart>
+              </CaseWrapper>
               {resultAddress.map((address, index) => {
                 return (
                   <AddressItem
@@ -191,5 +192,11 @@ const CurrentLocBtn = styled.div`
 `;
 
 const ResultList = styled.div``;
+
+const CaseWrapper = styled.div`  
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+`;
 
 export default LocationPage;

@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { wrapper } from '@store/index';
 import { SET_IS_MOBILE } from '@store/common';
 import MobileDetect from 'mobile-detect';
+import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 
 // persist
@@ -92,6 +93,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <GlobalStyle />
           <PersistGate persistor={store.__persistor}>
             <Wrapper>
+              <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
             </Wrapper>
           </PersistGate>
