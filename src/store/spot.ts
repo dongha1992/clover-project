@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail } from '@model/index';
+import { ISpotsDetail, IPostRegistrations } from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
@@ -31,15 +31,11 @@ interface ISpotsRegistrationInfo {
   placeName?: string | null;
   pickupLocationEtc?: string | null;
   placeTypeEtc?: string | null;
-};
-
-interface ISpotsRegistrationUserInfo {
   userName: string;
   userEmail: string;
   userTel: string;
   managerInfo?: string | null;
 };
-
 
 interface IProps {
   spotDetail: ISpotsDetail | any;
@@ -47,8 +43,7 @@ interface IProps {
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
   spotsRegistrationInfo: ISpotsRegistrationInfo;
-  spotsRegistrationId: number | null;
-  spotsUserInfo: ISpotsRegistrationUserInfo;
+  spotRegistrationsPostResult: IPostRegistrations | any;
 };
 
 const spotAddressState = {
@@ -71,14 +66,11 @@ const spotsRegistrationInfoState = {
   placeName: '',
   pickupLocationEtc: '',
   placeTypeEtc: '',
-};
-
-const spotsRegistrationsUserInfoState = {
-  userName: '',
-  userEmail: '',
-  userTel: '',
+  userName: '프프코',
+  userEmail: 'fco@freshcode.me',
+  userTel: '01012341234',
   managerInfo: '',
-}
+};
 
 const initialState: IProps = {
   spotDetail: {},
@@ -92,10 +84,7 @@ const initialState: IProps = {
   spotsRegistrationInfo: {
     ...spotsRegistrationInfoState,
   },
-  spotsUserInfo: {
-    ...spotsRegistrationsUserInfoState,
-  },
-  spotsRegistrationId: null,
+  spotRegistrationsPostResult: {},
 };
 
 export const spot = createSlice({
@@ -126,11 +115,8 @@ export const spot = createSlice({
     INIT_SPOT_REGISTRATIONS_INFO: (state, action: PayloadAction) => {
       state.spotsRegistrationInfo = spotsRegistrationInfoState;
     },
-    SET_SPOT_REGISTRATIONS_ID: (state, action: PayloadAction<number | null>) => {
-      state.spotsRegistrationId = action.payload;
-    },
-    SET_SPOT_REGISTRATIONS_USER_INFO: (state, action: PayloadAction<ISpotsRegistrationUserInfo>) => {
-      state.spotsUserInfo = action.payload;
+    SET_SPOT_REGISTRATIONS_POST_RESULT: (state, action: PayloadAction<IPostRegistrations>) => {
+      state.spotRegistrationsPostResult = action.payload;
     },
   },
 });
@@ -144,8 +130,7 @@ export const {
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
   INIT_SPOT_REGISTRATIONS_INFO,
-  SET_SPOT_REGISTRATIONS_ID,
-  SET_SPOT_REGISTRATIONS_USER_INFO,
+  SET_SPOT_REGISTRATIONS_POST_RESULT,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

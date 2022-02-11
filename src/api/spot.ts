@@ -10,35 +10,40 @@ import {
   IParamsSpotRegisterationsOptios,
   ISpotRegisterationsOptiosResponse,
   IEditRegistration,
-  IEditRegistrationResponse,
+  IPostRegistrationResponse,
   IGetDestinations,
   IGetSpotsRegistrationsStatusResponse,
   } from '@model/index';
   
+  //신규 스팟
   export const getNewSpots = (
     params: IParamsSpots
   ): Promise<AxiosResponse<ISpotsResponse>> => {
     return Api.get('/spot/v1/spots/new', { params });
   };
 
+  // 역세권 스팟 
   export const getStationSpots = (
     params: IParamsSpots
   ): Promise<AxiosResponse<ISpotsResponse>> => {
     return Api.get('/spot/v1/spots/station', { params });
   };
 
+  // 스팟 상세
   export const getSpotDetail = (
     id: number
   ): Promise<AxiosResponse<ISpotDetailResponse>> => {
     return Api.get(`/spot/v1/spots/${id}`, { params: id });
   };
 
+  // 이벤트 중인 스팟
   export const getSpotEvent = (
     params: IParamsSpots
     ): Promise<AxiosResponse<ISpotsResponse>> => {
       return Api.get('/spot/v1/spots/event', { params });
   };
 
+  // 스팟 검색 _ 추천 스팟
   export const getSpotSearchRecommend = (
     params: IParamsSpots
     ): Promise<AxiosResponse<ISpotsResponse>> => {
@@ -51,6 +56,7 @@ import {
       return Api.get('/spot/v1/spots/search', { params });
   };
 
+  // 근처 인기있는 스팟
   export const getSpotPopular = (
     params: IParamsSpots
     ): Promise<AxiosResponse<ISpotsResponse>> => {
@@ -136,21 +142,14 @@ import {
       return Api.get(`/spot/v1/registrations/options`, { params });
   };
 
-  //스팟 신청 임시저장, 수정
-  export const putSpotsRegistrationsTemporary = (
+  //스팟 신청서 제출
+  export const postSpotsRegistrationsInfoSubmit = (
     data: IEditRegistration,
-    ): Promise<AxiosResponse<IEditRegistrationResponse>> => {
-      return Api.put(`/spot/v1/registrations`, data );
+    ): Promise<AxiosResponse<IPostRegistrationResponse>> => {
+      return Api.post(`/spot/v1/registrations`, data );
   };
 
-  // id 값을 가진 신청서 제출
-  export const postSpotsRegistrationsSubmit = (
-    id: number,
-    ): Promise<AxiosResponse<ISpotsResponse>> => {
-      return Api.post(`/spot/v1/registrations/${id}/submit`, {id} );
-  };
-
-   // 스팟 등록 신청 조회
+  // 스팟 등록 신청 조회
   export const getSpotsRegistrationStatus = (
     params: IGetDestinations
     ): Promise<AxiosResponse<IGetSpotsRegistrationsStatusResponse>> => {
