@@ -64,12 +64,7 @@ const CardManagementPage = () => {
           <TextB2R color={theme.greyScale65} padding="16px 0 32px 0">
             아직 등록된 카드가 없어요 😭
           </TextB2R>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            onClick={goToCardRegister}
-          >
+          <Button backgroundColor={theme.white} color={theme.black} border onClick={goToCardRegister}>
             카드 등록하기
           </Button>
         </EmptyWrapper>
@@ -79,17 +74,10 @@ const CardManagementPage = () => {
           {cards.map((card, index) => (
             <div key={index}>
               <CardItem onClick={cardEditHandler} card={card} />
-              {cards.length !== index - 1 && (
-                <BorderLine height={1} margin="0 0 24px 0" />
-              )}
+              {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}
             </div>
           ))}
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            onClick={goToCardRegister}
-          >
+          <Button backgroundColor={theme.white} color={theme.black} border onClick={goToCardRegister}>
             카드 등록하기
           </Button>
         </Wrapper>

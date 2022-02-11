@@ -28,48 +28,31 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  // const mutateEditCard = async () => {
-  //   try {
-  //     Promise.all([editCard(id, cardName), setMainCard(id)]).then(
-  //       (responses) => {
-  //         let isSuccess = false;
+  const { mutate: mutateDeleteCard } = useMutation((id: number) => deleteCard(id), {
+    onSuccess: async () => {
+      await queryClient.refetchQueries('cardList');
+      router.push('/mypage/card');
+    },
+  });
 
-  //         for (let res of responses) {
-  //           const { data } = res;
-  //           if (data.code === 200) {
-  //             isSuccess = true;
-  //           }
-  //         }
-
-  //         if (isSuccess) {
-  //           router.push('/mypage/card');
-  //         }
-  //       }
-  //     );
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  const { mutate: mutateDeleteCard } = useMutation(
-    (id: number) => deleteCard(id),
-    {
-      onSuccess: async () => {
-        await queryClient.refetchQueries('cardList');
-        router.push('/mypage/card');
-      },
+  const { mutateAsync: mutateEditCardAsync } = useMutation(async (params: { id: number; name: string }) => {
+    if (isMainCard) {
+      await setMainCard(id);
     }
-  );
+    return editCard(params);
+  });
 
-  // const { mutate: mutateEditCard } = useMutation(
-  //   (id: number) => editCard(id, name),
-  //   {
-  //     onSuccess: async () => {
-  //       await queryClient.refetchQueries('cardList');
-  //       router.push('/mypage/card');
-  //     },
-  //   }
-  // );
+  const mutateEditCard = async () => {
+    const params = {
+      id,
+      name: cardName,
+    };
+    const { data } = await mutateEditCardAsync(params);
+    if (data.code === 200) {
+      await queryClient.refetchQueries('cardList');
+      router.push('/mypage/card');
+    }
+  };
 
   const changeCardNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -92,7 +75,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
       setAlert({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
-        onSubmit: () => mutateEditCard(id, cardName),
+        onSubmit: () => mutateEditCard(),
       })
     );
   };
@@ -108,10 +91,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
         <TextInput value={orginCardName} eventHandler={changeCardNameHandler} />
       </FlexCol>
       <FlexRow>
-        <Checkbox
-          isSelected={isMainCard}
-          onChange={() => setIsMainCard(!isMainCard)}
-        />
+        <Checkbox isSelected={isMainCard} onChange={() => setIsMainCard(!isMainCard)} />
         <TextH5B padding="4px 0 0 8px">대표 카드로 설정</TextH5B>
       </FlexRow>
       <ButtonGroup
