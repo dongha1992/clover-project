@@ -20,36 +20,61 @@ import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import BorderLine from '@components/Shared/BorderLine';
 import ProgressBar from '@components/ProgressBar';
+import { useSelector } from 'react-redux';
+import { userForm } from '@store/user';
+import { onUnauthorized } from '@api/Api';
 
 const RankPage = () => {
+  const { user, isLoginSuccess } = useSelector(userForm);
+
   return (
     <Container>
-      <Wrapper>
-        <FlexCol padding="24px 0 32px 0">
-          <TextH2B>루이스님은</TextH2B>
-          <FlexRow>
-            <TextH2B color={theme.brandColor}>프코팡</TextH2B>
-            <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
-          </FlexRow>
-        </FlexCol>
-        <FlexCol>
-          <UserRankInfo title="적립금" count={1} id={1} />
-          <UserRankInfo title="할인 쿠폰" count={7} id={2} />
-        </FlexCol>
-        <BorderLine height={1} margin="24px 0" />
-        <FlexCol padding="0 0 48px 0">
-          <FlexRow>
-            <TextB2R padding="0 4px 0 0">다음 등급</TextB2R>
-            <TextH5B>프코팡팡</TextH5B>
-            <TextB2R>까지 남은 금액</TextB2R>
-          </FlexRow>
-          <TextH4B padding="4px 0 16px 0">12333원</TextH4B>
-          <ProgressBar />
-          <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
-            (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
-          </TextB3R>
-        </FlexCol>
-      </Wrapper>
+      {isLoginSuccess ? (
+        <Wrapper>
+          <FlexCol padding="24px 0 32px 0">
+            <TextH2B>{user.name}님은</TextH2B>
+            <FlexRow>
+              <TextH2B color={theme.brandColor}>프코팡</TextH2B>
+              <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
+            </FlexRow>
+          </FlexCol>
+          <FlexCol>
+            <UserRankInfo title="적립금" count={1} id={1} />
+            <UserRankInfo title="할인 쿠폰" count={7} id={2} />
+          </FlexCol>
+          <BorderLine height={1} margin="24px 0" />
+          <FlexCol padding="0 0 48px 0">
+            <FlexRow>
+              <TextB2R padding="0 4px 0 0">다음 등급</TextB2R>
+              <TextH5B>프코팡팡</TextH5B>
+              <TextB2R>까지 남은 금액</TextB2R>
+            </FlexRow>
+            <TextH4B padding="4px 0 16px 0">12333원</TextH4B>
+            <ProgressBar />
+            <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
+              (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
+            </TextB3R>
+          </FlexCol>
+        </Wrapper>
+      ) : (
+        <Wrapper>
+          <FlexCol padding="24px 0 48px 0">
+            <TextH2B>
+              프레시코드 회원이면 누구나! <br />
+              특별한 등급 혜택을 받으세요!
+            </TextH2B>
+            <TextH5B
+              color={theme.greyScale65}
+              textDecoration="underline"
+              onClick={() => onUnauthorized()}
+              margin="16px 0 0 0"
+              pointer
+            >
+              등급 혜택 받으러 가기
+            </TextH5B>
+          </FlexCol>
+        </Wrapper>
+      )}
       <BrandColor5>
         <Wrapper>
           <TextH3B padding="32px 0 29px 0">프레시코드 회원 등급 혜택</TextH3B>

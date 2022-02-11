@@ -23,7 +23,7 @@ const addRefreshSubscriber = (callback: any) => {
   refreshSubscribers.push(callback);
 };
 
-const onUnauthorized = () => {
+export const onUnauthorized = () => {
   router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`)
 }
 
@@ -75,10 +75,6 @@ Api.interceptors.response.use(
               isTokenRefreshing = false;
               onTokenRefreshed(userTokenObj.accessToken);
               return Api(pendingRequest);
-            } else {
-
-              onUnauthorized()
-
             }
           } else {
             return new Promise((resolve) => {
