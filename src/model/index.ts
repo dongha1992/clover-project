@@ -724,12 +724,22 @@ export type TPlaceType =
   | 'SHARED_OFFICE'
   | 'STORE';
 
+type TDistanceUnit =
+  | 'CENTIMETERS'
+  | 'FEET'
+  | 'INCH'
+  | 'KILOMETERS'
+  | 'METERS'
+  | 'MILES'
+  | 'MILLIMETERS'
+  | 'NAUTICALMILES'
+  | 'YARD';
+
 export interface IEditRegistration {
   coordinate: {
     lat: number;
     lon: number;
   };
-  id?: number | null;
   location: {
     address?: string | null;
     addressDetail?: string | null;
@@ -741,22 +751,67 @@ export interface IEditRegistration {
   placeName?: string | null;
   placeType?: TPlaceType;
   placeTypeDetail?: string | null;
+  pickupTypeDetail?: string | null;
   type?: TSpotRegisterationsOptiosType | string;
   userEmail: string;
   userName: string;
   userPosition?: string | null;
   userTel: string;
-  createdAt?: string;
-  step?: string;
-  rejected?: boolean;
-  recruited?: boolean;
-  recruitingCount?: number;
 }
 
-export interface IEditRegistrationResponse {
+export interface IPostRegistrations {
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
+  createdAt?: string;
+  distance?: number;
+  distanceUnit?: TDistanceUnit;
+  id: number;
+  image: {
+    createdAt: string;
+    height: number;
+    id: number;
+    name: string;
+    originalName: string;
+    size: number;
+    url: string;
+    width: number;
+  };
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  lunchTime?: string;
+  pickupType?: TSpotPickupType;
+  placeName?: string | null;
+  placeType?: TPlaceType;
+  placeTypeDetail?: string | null;
+  pickupTypeDetail?: string | null;
+  orderUserCount: number;
+  recruited: boolean;
+  recruitingCount: number;
+  rejected: boolean;
+  rejectedAt: string;
+  rejectionMessage: string;
+  rejectionType: 'ETC' | 'INSUFFICIENCY';
+  spotId: number;
+  step: 'CONFIRM' | 'OPEN' | 'RECRUITING' | 'TRIAL' | 'UNSUBMIT';
+  trialledAt: string;
+  type: TSpotRegisterationsOptiosType;
+  userEmail: string;
+  userId: string;
+  userName: string;
+  userPosition: string;
+  userTel: string;
+}
+
+export interface IPostRegistrationResponse {
   code: number;
   message: string;
-  data: IEditRegistration;
+  data: IPostRegistrations;
 }
 
 export interface IGetSpotsRegistrationsStatus {
