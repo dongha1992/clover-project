@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { theme, FlexRow, fixedBottom } from '@styles/theme';
 import {
@@ -18,21 +18,15 @@ import SVGIcon from '@utils/SVGIcon';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   spotSelector, 
-  SET_SPOT_REGISTRATIONS_INFO, 
-  SET_SPOT_REGISTRATIONS_USER_INFO, 
-  SET_SPOT_REGISTRATIONS_ID
+  SET_SPOT_REGISTRATIONS_INFO,
 } from '@store/spot';
 import { userForm } from '@store/user';
-import { putSpotsRegistrationsTemporary } from '@api/spot';
-import { IEditRegistration } from '@model/index';
 
 const RegisterPage = () => {
   const { 
     spotLocation, 
-    spotsRegistrationInfo, 
     spotsRegistrationOptions, 
-    spotsUserInfo,
-    spotsRegistrationId,
+    spotsRegistrationInfo,
   } = useSelector(spotSelector);
   const { user } = useSelector(userForm);
   const router = useRouter();
@@ -46,13 +40,12 @@ const RegisterPage = () => {
   const telRef = useRef<HTMLInputElement>(null);
   const managerRef = useRef<HTMLInputElement>(null);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
-  const [managerChecked, setManagerChecked] = useState<boolean>(false);
 
   const checkedPickupType = !!spotsRegistrationOptions.pickupLocationTypeOptions?.value?.length;
   const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
   const checkedPlaceType = !!spotsRegistrationOptions.placeTypeOptions?.value?.length;
   const checkedAddressInfo = !!spotLocation.address?.length&&!!placeRef.current?.value?.length;
-  const checkedUserInfo = !!spotsUserInfo?.userName?.length&&!!spotsUserInfo.userEmail?.length&&!!spotsUserInfo.userTel?.length;
+  const checkedUserInfo = !!spotsRegistrationInfo?.userName?.length&&!!spotsRegistrationInfo.userEmail?.length&&!!spotsRegistrationInfo.userTel?.length;
 
   const activeButton = () => {
     switch(type){
@@ -61,7 +54,7 @@ const RegisterPage = () => {
       case 'public':
         return checkedAddressInfo&&checkedPlaceType;
       case 'owner':
-        return checkedAddressInfo&&checkedPlaceType&&checkedUserInfo&&managerChecked ;
+        return checkedAddressInfo&&checkedPlaceType&&checkedUserInfo&&noticeChecked;
       default: 
         return false;
     };
@@ -74,43 +67,11 @@ const RegisterPage = () => {
       }
       return;
     };
-    const params: IEditRegistration = {
-      id: spotsRegistrationId ? spotsRegistrationId : null,
-      coordinate: {
-        lat: Number(spotLocation.lat),
-        lon: Number(spotLocation.lon),
-      },
-      location: {
-        address: spotLocation.address,
-        addressDetail: spotLocation.addressDetail,
-        dong: spotLocation.dong,
-        zipCode: spotLocation.zipCode,
-      },
-      type: type?.toString().toUpperCase(),
-      userName: spotsUserInfo.userName,
-      userEmail: spotsUserInfo.userEmail,
-      userTel: spotsUserInfo.userTel,
-      placeName: spotsRegistrationInfo.placeName,
-      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
-      lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
-      placeType: spotsRegistrationOptions.placeTypeOptions.value,
-      placeTypeDetail: spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
-      userPosition: type === 'owner' ?spotsUserInfo.managerInfo : null,
-    };
+    router.push({
+      pathname: '/spot/register/submit',
+      query: { type },
+    });
 
-    try{
-      const { data } = await putSpotsRegistrationsTemporary(params);
-      if(data.code === 200){
-        console.log('success! next stage!');
-        dispatch(SET_SPOT_REGISTRATIONS_ID(Number(data?.data.id)));
-        router.push({
-          pathname: '/spot/register/submit',
-          query: { type },
-        });   
-      };
-    }catch(err){
-      console.error(err);
-    };  
   };
 
   const selectOptions = (tab: string) => {
@@ -132,9 +93,8 @@ const RegisterPage = () => {
   const placeInputHandler = () => {
     if(placeRef.current){
       const selectedOptions = {
+        ...spotsRegistrationInfo,
         placeName: placeRef.current?.value,
-        pickupLocationEtc: spotsRegistrationInfo.pickupLocationEtc,
-        placeTypeEtc: spotsRegistrationInfo.placeTypeEtc,
       };
       dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
     };
@@ -144,9 +104,8 @@ const RegisterPage = () => {
   const pickUpEtcInputHandler = () => {
     if(pickUpEtcRef.current){
       const selectedOptions = {
-        placeName:spotsRegistrationInfo.placeName,
+        ...spotsRegistrationInfo,
         pickupLocationEtc: pickUpEtcRef.current?.value,
-        placeTypeEtc: spotsRegistrationInfo.placeTypeEtc,
       };
       dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
     };
@@ -156,8 +115,7 @@ const RegisterPage = () => {
   const placeEtcInputHandler = () => {
     if(placeEtcRef.current){
       const selectedOptions = {
-        placeName: spotsRegistrationInfo.placeName,
-        pickupLocationEtc: spotsRegistrationInfo.pickupLocationEtc,
+        ...spotsRegistrationInfo,
         placeTypeEtc: placeEtcRef.current?.value,
       };
       dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
@@ -168,12 +126,10 @@ const RegisterPage = () => {
   const managerInfoInputHandler = () => {
     if(managerRef.current){
       const inputUserInfo = {
-        userName: spotsUserInfo.userName,
-        userEmail: spotsUserInfo.userEmail,
-        userTel: spotsUserInfo.userTel,
+        ...spotsRegistrationInfo,
         managerInfo: managerRef.current?.value,
       };
-      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
     };
   };
 
@@ -181,12 +137,10 @@ const RegisterPage = () => {
   const userNameInputHandler = () => {
     if(nameRef.current){
       const inputUserInfo = {
+        ...spotsRegistrationInfo,
         userName: nameRef.current.value,
-        userEmail: spotsUserInfo.userEmail,
-        userTel: spotsUserInfo.userTel,
-        managerInfo: spotsUserInfo.managerInfo,
       };
-      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
     }
   };
 
@@ -194,13 +148,10 @@ const RegisterPage = () => {
   const userEmailInputHandler = () => {
     if(emailRef.current){
       const inputUserInfo = {
-        userName: spotsUserInfo.userName,
+        ...spotsRegistrationInfo,
         userEmail: emailRef.current.value,
-        userTel: spotsUserInfo.userTel,
-        managerInfo: spotsUserInfo.managerInfo,
-
       };
-      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
     }
   };
 
@@ -208,31 +159,15 @@ const RegisterPage = () => {
   const userTelInputHandler = () => {
     if(telRef.current){
       const inputUserInfo = {
-        userName: spotsUserInfo.userName,
-        userEmail: spotsUserInfo.userEmail,
+        ...spotsRegistrationInfo,
         userTel: telRef.current.value,
-        managerInfo: spotsUserInfo.managerInfo,
       };
-      dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(inputUserInfo));
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
     }
   };
 
-  //TODO 유저 정보 가져와야함
-  useEffect(()=> {
-    const defaultUserInfo = {
-      userName: '프프코',
-      userEmail: 'fco@freshcode.me',
-      userTel: '01012341234',
-    };
-    dispatch(SET_SPOT_REGISTRATIONS_USER_INFO(defaultUserInfo));
-  }, []);
-
   const noticeHandler = () => {
       setNoticeChecked(!noticeChecked);
-  };
-
-  const managerCheckedHandler = () => {
-    setManagerChecked(!managerChecked);
   };
 
   return (
@@ -363,9 +298,8 @@ const RegisterPage = () => {
             <TextInput
               ref={nameRef}
               eventHandler={userNameInputHandler}
-              // value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
+              value={spotsRegistrationInfo.userName?.length ? spotsRegistrationInfo.userName : null}
               placeholder='이름 입력'
-              value='프프코'
             />
           </Wrapper>
           <Wrapper>
@@ -373,9 +307,8 @@ const RegisterPage = () => {
             <TextInput
               ref={emailRef}
               eventHandler={userEmailInputHandler}
-              // value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
+              value={spotsRegistrationInfo.userEmail?.length ? spotsRegistrationInfo.userEmail : null}
               placeholder='이메일 입력'
-              value='fco@freshcode.me'
             />
           </Wrapper>
           <Wrapper>
@@ -383,9 +316,8 @@ const RegisterPage = () => {
             <TextInput
               ref={telRef}
               eventHandler={userTelInputHandler}
-              // value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
+              value={spotsRegistrationInfo.userTel?.length ? spotsRegistrationInfo.userTel : null}
               placeholder='휴대폰 번호 (-제외)'
-              value='01012341234'
             />
           </Wrapper>
           </>
@@ -399,12 +331,15 @@ const RegisterPage = () => {
               <TextInput
                 ref={managerRef}
                 eventHandler={managerInfoInputHandler}
-                value={spotsUserInfo.managerInfo?.length ? spotsUserInfo.managerInfo : null}
+                value={spotsRegistrationInfo.managerInfo?.length ? spotsRegistrationInfo.managerInfo : null}
                 placeholder='직급 또는 호칭 입력'
               />
             </Wrapper>
-            <FlexRow>
-              <Checkbox onChange={managerCheckedHandler} isSelected={managerChecked} />
+            <FlexRow padding='0 0 64px 0'>
+              <Checkbox 
+                onChange={noticeHandler} 
+                isSelected={noticeChecked} 
+              />
               <TextB2R margin="0 0 0 8px" padding='3px 0 0 0'>
                 신청자가 장소관리자임을 확인했습니다.
               </TextB2R>
@@ -415,7 +350,10 @@ const RegisterPage = () => {
       {type === 'private' && (
         <BottomWrapper>
           <FlexRow>
-            <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
+            <Checkbox 
+              onChange={noticeHandler} 
+              isSelected={noticeChecked} 
+            />
             <TextH5B margin="0 0 0 8px" padding='3px 0 0 0'>
               픽업 장소 선정 유의사항을 확인했습니다.
             </TextH5B>

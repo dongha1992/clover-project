@@ -12,7 +12,6 @@ const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
-const SpotRegisterHeader = dynamic(() => import('./SpotRegisterHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
@@ -84,6 +83,7 @@ const Header = () => {
         '/spot/status': '스팟 관리',
         '/spot/location': '장소 찾기',
         '/spot/location/address': '장소 찾기',
+        '/spot/regi-list': '프코스팟 안내',
       };
 
       const title = headerTitleMap[currentPath];
