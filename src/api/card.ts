@@ -6,9 +6,7 @@ export const getCardLists = (): Promise<AxiosResponse<any>> => {
   return Api.get('card/v1/cards');
 };
 
-export const registerCard = (
-  data: IRegisterCard
-): Promise<AxiosResponse<any>> => {
+export const registerCard = (data: IRegisterCard): Promise<AxiosResponse<any>> => {
   return Api.post('card/v1/cards', data);
 };
 
@@ -20,10 +18,7 @@ export const getMainCardLists = (): Promise<AxiosResponse<any>> => {
   return Api.get(`card/v1/cards/main`);
 };
 
-export const editCard = (
-  id: number,
-  name: string
-): Promise<AxiosResponse<any>> => {
+export const editCard = ({ id, name }: { id: number; name: string }): Promise<AxiosResponse<any>> => {
   return Api.patch(`card/v1/cards/${id}`, { name });
 };
 

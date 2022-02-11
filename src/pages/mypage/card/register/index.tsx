@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import {
-  textBody2,
-  theme,
-  homePadding,
-  FlexCenter,
-  FlexStart,
-  FlexRow,
-  fixedBottom,
-  customInput,
-} from '@styles/theme';
+import { textBody2, theme, homePadding, FlexCenter, FlexStart, FlexRow, fixedBottom, customInput } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -90,9 +81,7 @@ const CardRegisterPage = () => {
     });
   };
 
-  const changePasswordHandler = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const changePasswordHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let { value } = e.target as HTMLInputElement;
 
     if (value.length > 2) {
@@ -141,24 +130,17 @@ const CardRegisterPage = () => {
   const registerCardHandler = async () => {
     if (expireRef.current && nicknameRef.current) {
       const { number1, number2, number3, number4 } = card;
-      const type = CARD_TYPE.find(
-        (item: ICardType) => item.id === selectedCardType
-      )?.value;
+      const type = CARD_TYPE.find((item: ICardType) => item.id === selectedCardType)?.value;
 
-      const corporationNo =
-        corportaionRef.current && corportaionRef.current.value;
+      const corporationNo = corportaionRef.current && corportaionRef.current.value;
 
       const name = nicknameRef.current.value;
       const expireMMYY = expireRef.current?.value;
 
       const expiredMM = expireMMYY.slice(0, 2);
-      const expiredYY = expireMMYY.slice(
-        expireMMYY.length - 2,
-        expireMMYY.length
-      );
+      const expiredYY = expireMMYY.slice(expireMMYY.length - 2, expireMMYY.length);
 
-      const disabledMsg =
-        '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+      const disabledMsg = '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
 
       const successMsg = '카드를 등록했습니다.';
 
@@ -209,10 +191,7 @@ const CardRegisterPage = () => {
           const isSelected = type.id === selectedCardType;
           return (
             <FlexStart key={index}>
-              <RadioButton
-                isSelected={isSelected}
-                onChange={() => selectCardTypeHandler(type.id)}
-              />
+              <RadioButton isSelected={isSelected} onChange={() => selectCardTypeHandler(type.id)} />
               {isSelected ? (
                 <TextH5B padding="0 0 0 8px">{type.text}</TextH5B>
               ) : (

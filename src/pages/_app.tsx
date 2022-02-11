@@ -87,9 +87,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <title>프레시코드</title>
       </Head>
       <QueryClientProvider client={queryClient.current}>
-        <ThemeProvider
-          theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}
-        >
+        <ThemeProvider theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
           <PersistGate persistor={store.__persistor}>
             <Wrapper>
