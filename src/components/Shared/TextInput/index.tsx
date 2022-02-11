@@ -39,7 +39,7 @@ export interface ITextFieldProps {
   inputType?: InputType;
   placeholder?: string;
   name?: string;
-  value?: string | number | null;
+  value?: string | ReadonlyArray<string> | number | undefined;
   width?: string;
   height?: string;
   size?: string;
@@ -83,16 +83,11 @@ const TextInput = React.forwardRef(
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
-    const debounceChangeEvent = debounce(
-      (e: React.ChangeEvent<HTMLInputElement>): void => {
-        eventHandler && eventHandler(e);
-      },
-      300
-    );
+    const debounceChangeEvent = debounce((e: React.ChangeEvent<HTMLInputElement>): void => {
+      eventHandler && eventHandler(e);
+    }, 300);
 
-    const debounceSetStateValue = useRef(
-      debounce((value) => setStateAction && setStateAction(value), 500)
-    ).current;
+    const debounceSetStateValue = useRef(debounce((value) => setStateAction && setStateAction(value), 500)).current;
 
     return (
       <Container
@@ -110,12 +105,8 @@ const TextInput = React.forwardRef(
           <input
             style={style}
             type={inputType ? inputType : 'text'}
-            defaultValue={value}
-            onChange={(e) =>
-              eventHandler
-                ? debounceChangeEvent(e)
-                : debounceSetStateValue(e.target.value)
-            }
+            value={value}
+            onChange={(e) => (eventHandler ? debounceChangeEvent(e) : debounceSetStateValue(e.target.value))}
             placeholder={placeholder}
             name={name}
             onKeyPress={keyPressHandler}

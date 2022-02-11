@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import router from 'next/router';
-import { useQuery, useMutation, useQueryClient, QueryCache } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
