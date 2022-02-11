@@ -80,26 +80,23 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
     // 픽업장소
     if(tab === 'pickUp'){
       const selectedOptions = {
+        ...spotsRegistrationOptions,
         pickupLocationTypeOptions: pickupTypeObj,
-        placeTypeOptions: spotsRegistrationOptions.placeTypeOptions,
-        lunchTimeOptions: spotsRegistrationOptions.lunchTimeOptions,
       };
       dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
     }
     // 점심시간
     else if(tab === 'time'){
       const selectedOptions = {
-        pickupLocationTypeOptions: spotsRegistrationOptions.pickupLocationTypeOptions,
-        placeTypeOptions: spotsRegistrationOptions.placeTypeOptions,
+        ...spotsRegistrationOptions,
         lunchTimeOptions: lunchTimeTypeObj,
       };
       dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
     // 장소 종류
     }else if(tab === 'place'){
       const selectedOptions = {
-        pickupLocationTypeOptions: spotsRegistrationOptions.pickupLocationTypeOptions,
+        ...spotsRegistrationOptions,
         placeTypeOptions: placeTypeObj,
-        lunchTimeOptions: spotsRegistrationOptions.lunchTimeOptions,
       };
       dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
     };
