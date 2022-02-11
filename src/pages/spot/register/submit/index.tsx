@@ -16,33 +16,63 @@ import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { postSpotsRegistrationsSubmit } from '@api/spot';
+import { postSpotsRegistrationsInfoSubmit } from '@api/spot';
+import { IEditRegistration } from '@model/index';
+import { useDispatch } from 'react-redux';
+import { SET_SPOT_REGISTRATIONS_POST_RESULT } from '@store/spot';
 
 const SubmitPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const {
     spotLocation, 
     spotsRegistrationOptions, 
     spotsRegistrationInfo,
-    spotsRegistrationId,
-    spotsUserInfo,
   } = useSelector(spotSelector);
   const { type } = router.query;
 
   const registrationsSubmitHandeler = async() => {
-    try {
-      const { data } = await postSpotsRegistrationsSubmit(Number(spotsRegistrationId));
+    const params: IEditRegistration = {
+      coordinate: {
+        lat: Number(spotLocation.lat),
+        lon: Number(spotLocation.lon),
+      },
+      location: {
+        address: spotLocation.address,
+        addressDetail: spotLocation.addressDetail,
+        dong: spotLocation.dong,
+        zipCode: spotLocation.zipCode,
+      },
+      type: type?.toString().toUpperCase(),
+      userName: spotsRegistrationInfo.userName,
+      userEmail: spotsRegistrationInfo.userEmail,
+      userTel: spotsRegistrationInfo.userTel,
+      placeName: spotsRegistrationInfo.placeName,
+      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+      lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
+      placeType: spotsRegistrationOptions.placeTypeOptions.value,
+      placeTypeDetail: spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' 
+        ? 
+          spotsRegistrationInfo.placeTypeEtc 
+        : 
+          null,
+      userPosition: type === 'owner' ?spotsRegistrationInfo.managerInfo : null,
+    };
+
+    try{
+      const { data } = await postSpotsRegistrationsInfoSubmit(params);
       if(data.code === 200){
-        console.log('submit success!')
+        console.log('submit success!!');
+        dispatch(SET_SPOT_REGISTRATIONS_POST_RESULT(data?.data));
         router.push({
           pathname: '/spot/register/submit/finish',
           query: { type },
-        });    
+        });   
       };
     }catch(err){
       console.error(err);
-    }
-  }
+    };  
+  };
 
   return (
     <Container>
@@ -88,9 +118,11 @@ const SubmitPage = () => {
             </Content>
           )}
         </ContentWrapper>
+        </Wrapper>
+        <Row />
+        <Wrapper>
         {type !== 'public' && (
           <>
-            <Row />
             <ContentWrapper>
               <FlexBetween margin="0 0 24px 0">
                 <TextB1B>
@@ -99,20 +131,20 @@ const SubmitPage = () => {
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
-                <TextB2R>{spotsUserInfo.userName}</TextB2R>
+                <TextB2R>{spotsRegistrationInfo.userName}</TextB2R>
               </Content>
               <Content>
                 <TextH5B margin="0 0 8px 0">이메일</TextH5B>
-                <TextB2R>{spotsUserInfo.userEmail}</TextB2R>
+                <TextB2R>{spotsRegistrationInfo.userEmail}</TextB2R>
               </Content>
               <Content>
                 <TextH5B margin="0 0 8px 0">휴대폰 번호</TextH5B>
-                <TextB2R>{spotsUserInfo.userTel}</TextB2R>
+                <TextB2R>{spotsRegistrationInfo.userTel}</TextB2R>
               </Content>
               {type === 'owner' && (
                 <Content>
                   <TextH5B margin="0 0 8px 0">직급/호칭</TextH5B>
-                  <TextB2R>{spotsUserInfo.managerInfo}</TextB2R>
+                  <TextB2R>{spotsRegistrationInfo.managerInfo}</TextB2R>
                 </Content>
               )}
             </ContentWrapper>
@@ -130,7 +162,7 @@ const Container = styled.main``;
 
 const Wrapper = styled.div`
   ${homePadding}
-  padding-bottom: 24px;
+  padding-bottom: 10px;
 `;
 
 const ContentWrapper = styled.section``;
@@ -145,8 +177,9 @@ const FixedButton = styled.section`
 
 const Row = styled.div`
   width: 100%;
-  border-bottom: 1px solid ${theme.greyScale6};
-  margin: 16px 0;
+  height: 8px;
+  background: ${theme.greyScale6};
+  margin-bottom: 32px;
 `;
 
 export default SubmitPage;
