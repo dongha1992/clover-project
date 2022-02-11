@@ -596,7 +596,7 @@ export interface ISpotRegistrationsResponse {
 }
 
 export interface IRegisterCard {
-  birthDate: string;
+  birthDate: string | null;
   corporationNo?: string | null;
   expiredMM: string;
   expiredYY: string;
@@ -637,14 +637,7 @@ export interface IGetBannersResponse {
   data: IBanners[];
 }
 
-type BannerType =
-  | 'CAROUSEL'
-  | 'CATEGORY'
-  | 'EVENT'
-  | 'EXHIBITION'
-  | 'IMAGE'
-  | 'MENU'
-  | 'ORDER';
+type BannerType = 'CAROUSEL' | 'CATEGORY' | 'EVENT' | 'EXHIBITION' | 'IMAGE' | 'MENU' | 'ORDER';
 
 export interface IBanner {
   type: string;
@@ -684,17 +677,17 @@ export interface IParamsSpotRegisterationsOptios {
 }
 
 export interface ISpotRegisterationsOpstions {
-  lunchTimeOptions : [
+  lunchTimeOptions: [
     {
       name: string;
       value: string;
-    },
+    }
   ];
   placeTypeOptions: [
     {
       name: string;
       value: string;
-    },
+    }
   ];
   pickupLocationTypeOptions: [
     {
@@ -710,13 +703,13 @@ export interface ISpotRegisterationsOptiosResponse {
   data: ISpotRegisterationsOpstions;
 }
 
-export type TSpotPickupType = 
-  |'COMMUNAL_FRIDGE' 
+export type TSpotPickupType =
+  | 'COMMUNAL_FRIDGE'
   | 'COMMUNAL_TABLE'
   | 'DELIVERY_LOCATION'
-  | 'DOCUMENT_ROOM' 
+  | 'DOCUMENT_ROOM'
   | 'ETC'
-  | 'FRONT_DESK' 
+  | 'FRONT_DESK'
   | 'OFFICE_DOOR';
 
 export type TPlaceType =
@@ -758,28 +751,26 @@ export interface IEditRegistration {
   rejected?: boolean;
   recruited?: boolean;
   recruitingCount?: number;
-};
+}
 
 export interface IEditRegistrationResponse {
   code: number;
   message: string;
   data: IEditRegistration;
-};
+}
 
-export interface IGetSpotsRegistrationsStatus{
+export interface IGetSpotsRegistrationsStatus {
   pagination: {
     page: number;
     size: number;
     total: number;
     totalPage: number;
   };
-  spotRegistrations: [
-    IEditRegistration,
-  ];
-};
+  spotRegistrations: [IEditRegistration];
+}
 
 export interface IGetSpotsRegistrationsStatusResponse {
   code: number;
   message: string;
   data: IGetSpotsRegistrationsStatus;
-};
+}
