@@ -595,16 +595,22 @@ export interface ISpotRegistrationsResponse {
   };
 }
 
+export interface IRegisterCardResponse {
+  code: number;
+  message: string;
+  data: IRegisterCard;
+}
+
 export interface IRegisterCard {
-  birthDate: string | null;
+  birthDate?: string | null;
   corporationNo?: string | null;
   expiredMM: string;
   expiredYY: string;
-  main?: boolean;
+  main: boolean;
   name?: string;
   number: string;
-  password: string;
-  type?: string;
+  password?: string;
+  type: string;
 }
 export interface IBanners {
   content: string;

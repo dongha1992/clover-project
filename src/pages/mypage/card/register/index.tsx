@@ -18,8 +18,12 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
 });
 
-/*TODO: 유효기간 value 받아서 4개자르기 */
-
+interface ICardNumber {
+  number1: string;
+  number2: string;
+  number3: string;
+  number4: string;
+}
 interface ICardType {
   id: number;
   text: string;
@@ -41,7 +45,7 @@ const CARD_TYPE: ICardType[] = [
 
 const CardRegisterPage = () => {
   const [selectedCardType, setSelectedCardType] = useState(1);
-  const [card, setCard] = useState<Obj>({
+  const [card, setCard] = useState<ICardNumber>({
     number1: '',
     number2: '',
     number3: '',
@@ -63,6 +67,10 @@ const CardRegisterPage = () => {
   const dispatch = useDispatch();
 
   const isCorporationCard = selectedCardType === 2;
+
+  const queryClient = useQueryClient();
+
+  const { mutate: mutateAddCard } = useMutation((data) => registerCard(data), {});
 
   const selectCardTypeHandler = (id: number) => {
     setSelectedCardType(id);
@@ -154,7 +162,7 @@ const CardRegisterPage = () => {
   const registerCardHandler = async () => {
     if (nicknameRef.current) {
       const { number1, number2, number3, number4 } = card;
-      const type = CARD_TYPE.find((item: ICardType) => item.id === selectedCardType)?.value;
+      const type = CARD_TYPE.find((item: ICardType) => item.id === selectedCardType)?.value || '';
       const corporationNo = corportaionRef?.current && corportaionRef?.current.value;
       const name = nicknameRef.current.value;
 
@@ -205,27 +213,29 @@ const CardRegisterPage = () => {
         number: number1 + number2 + number3 + number4,
       };
 
-      try {
-        const { data } = await registerCard(cardData);
+      mutateAddCard(cardData);
 
-        if (data.code === 200) {
-          dispatch(
-            setAlert({
-              alertMessage: successMsg,
-              submitBtnText: '확인',
-              onSubmit: () => router.push('/mypage/card'),
-            })
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        dispatch(
-          setAlert({
-            alertMessage: disabledMsg,
-            submitBtnText: '확인',
-          })
-        );
-      }
+      // try {
+      //   const { data } = await registerCard(cardData);
+
+      //   if (data.code === 200) {
+      //     dispatch(
+      //       setAlert({
+      //         alertMessage: successMsg,
+      //         submitBtnText: '확인',
+      //         onSubmit: () => router.push('/mypage/card'),
+      //       })
+      //     );
+      //   }
+      // } catch (error) {
+      //   console.error(error);
+      //   dispatch(
+      //     setAlert({
+      //       alertMessage: disabledMsg,
+      //       submitBtnText: '확인',
+      //     })
+      //   );
+      // }
     }
   };
 
