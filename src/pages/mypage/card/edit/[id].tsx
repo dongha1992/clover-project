@@ -30,7 +30,8 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
 
   const { mutate: mutateDeleteCard } = useMutation((id: number) => deleteCard(id), {
     onSuccess: async () => {
-      await queryClient.refetchQueries('cardList');
+      await queryClient.refetchQueries('getCardList');
+      await queryClient.refetchQueries('getMainCard');
       router.push('/mypage/card');
     },
   });
@@ -49,7 +50,8 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     };
     const { data } = await mutateEditCardAsync(params);
     if (data.code === 200) {
-      await queryClient.refetchQueries('cardList');
+      await queryClient.refetchQueries('getCardList');
+      await queryClient.refetchQueries('getMainCard');
       router.push('/mypage/card');
     }
   };

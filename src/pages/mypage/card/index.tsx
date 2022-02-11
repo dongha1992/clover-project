@@ -11,38 +11,22 @@ import { getCardLists } from '@api/card';
 import { ICard } from '@components/Pages/Mypage/Card/CardItem';
 import { useQuery, useQueryClient } from 'react-query';
 import isNil from 'lodash-es/isNil';
+
 const CardManagementPage = () => {
-  // const [cards, setCards] = useState([]);
-
-  // useEffect(() => {
-  //   getCards();
-  // }, []);
-
-  // const getCards = async () => {
-  //   try {
-  //     const { data } = await getCardLists();
-  //     if (data.code === 200) {
-  //       setCards(data.data);
-  //     }
-  //   } catch (error) {}
-  // };
-
   const {
     data: cards,
     isLoading,
     refetch,
   } = useQuery<ICard[]>(
-    'cardList',
+    'getCardList',
     async () => {
       const { data } = await getCardLists();
       if (data.code === 200) {
-        console.log('card list fetching @@@@@@');
         return data.data;
       }
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
   );
-  console.log(cards, 'cards');
 
   const cardEditHandler = (card: ICard) => {
     router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);

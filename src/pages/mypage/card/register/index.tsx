@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent, useCallback } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { textBody2, theme, homePadding, FlexCenter, FlexStart, FlexRow, fixedBottom, customInput } from '@styles/theme';
@@ -6,13 +6,14 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
-import { Obj } from '@model/index';
+import { IRegisterCard } from '@model/index';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '@store/alert';
-import { registerCard } from '@api/card';
+import { registerCard, getMainCardLists } from '@api/card';
 import dynamic from 'next/dynamic';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -70,11 +71,53 @@ const CardRegisterPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: mutateAddCard } = useMutation((data) => registerCard(data), {});
+  const disabledMsg = '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
+  const successMsg = '카드를 등록했습니다.';
 
-  const selectCardTypeHandler = (id: number) => {
-    setSelectedCardType(id);
-  };
+  const { data: hasMainCard } = useQuery(
+    'getMainCard',
+    async () => {
+      const { data } = await getMainCardLists();
+      if (!data.data) {
+        setIsMainCard(true);
+        return false;
+      } else {
+        return true;
+      }
+    },
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { mutate: mutateAddCard } = useMutation((data: IRegisterCard) => registerCard(data), {
+    onSuccess: async () => {
+      await queryClient.refetchQueries('getCardList');
+      dispatch(
+        setAlert({
+          alertMessage: successMsg,
+          submitBtnText: '확인',
+          onSubmit: () => router.push('/mypage/card'),
+        })
+      );
+    },
+    onError: () => {
+      dispatch(
+        setAlert({
+          alertMessage: disabledMsg,
+          submitBtnText: '확인',
+        })
+      );
+    },
+  });
+
+  const selectCardTypeHandler = useCallback(
+    (id: number) => {
+      setSelectedCardType(id);
+    },
+    [selectedCardType]
+  );
 
   const cardNumberHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let { name, value, maxLength } = e.target as HTMLInputElement;
@@ -140,14 +183,18 @@ const CardRegisterPage = () => {
   };
 
   const selectMainCardHandler = () => {
-    /*TODO: 카드 api 에서 체크 */
-    dispatch(
-      setAlert({
-        alertMessage: '첫번째 카드 등록 시 대표 카드 설정은 필수입니다. ',
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
+    console.log(hasMainCard, 'hasMainCard');
+    if (!hasMainCard) {
+      dispatch(
+        setAlert({
+          alertMessage: '첫번째 카드 등록 시 대표 카드 설정은 필수입니다. ',
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+        })
+      );
+      return;
+    }
+
     setIsMainCard(!isMainCard);
   };
 
@@ -166,8 +213,6 @@ const CardRegisterPage = () => {
       const corporationNo = corportaionRef?.current && corportaionRef?.current.value;
       const name = nicknameRef.current.value;
 
-      const disabledMsg = '사용할 수 없는 카드입니다.입력 내용을 다시 확인해주세요';
-      const successMsg = '카드를 등록했습니다.';
       /* TODO: 에러 내용 추가 / 벨리데이트 다시  */
       if (isCorporationCard) {
         if (expireDate.length < 4) {
