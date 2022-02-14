@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { ISignupUser } from '@model/index';
 import { signup } from '@api/user';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 
 export const GENDER = [
   {
