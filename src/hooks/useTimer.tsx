@@ -35,9 +35,13 @@ const useTimer = () => {
     setTimer(getFormatTimeStr(mm, ss));
   }, [timer, getRestTimeTilLimit]);
 
-  useInterval(() => {
-    timerHandler();
-  }, delay);
+  useInterval(
+    () => {
+      timerHandler();
+    },
+    delay,
+    true
+  );
 
   useEffect(() => {
     /* TODO: 타이머 끝내는 기준 */

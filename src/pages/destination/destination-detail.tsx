@@ -12,12 +12,7 @@ import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  destinationForm,
-  INIT_LOCATION_TEMP,
-  SET_TEMP_DESTINATION,
-  SET_DESTINATION_STATUS,
-} from '@store/destination';
+import { destinationForm, INIT_LOCATION_TEMP, SET_TEMP_DESTINATION, SET_DESTINATION_STATUS } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 
 /* TODO: receiverName, receiverTel  */
@@ -109,10 +104,7 @@ const DestinationDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <MapAPI
-          centerLat={latitudeLongitude.latitude}
-          centerLng={latitudeLongitude.longitude}
-        />
+        <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>
@@ -123,19 +115,13 @@ const DestinationDetailPage = () => {
             zipNo={tempLocation.zipNo}
           />
         </FlexCol>
-        <TextInput
-          placeholder="상세주소 입력 (필수)"
-          ref={destinationDetailRef}
-        />
+        <TextInput placeholder="상세주소 입력 (필수)" ref={destinationDetailRef} />
         <FlexCol padding="24px 0">
           <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
           <TextInput placeholder="배송지명 입력" ref={destinationNameRef} />
         </FlexCol>
         <FlexRow padding="0">
-          <Checkbox
-            onChange={() => setIsDefaultDestination(!isDefaultDestination)}
-            isSelected={isDefaultDestination}
-          />
+          <Checkbox onChange={() => setIsDefaultDestination(!isDefaultDestination)} isSelected={isDefaultDestination} />
           {isDefaultDestination ? (
             <TextH5B padding="4px 0 0 4px">기본 배송지로 설정</TextH5B>
           ) : (

@@ -88,23 +88,27 @@ const SignupAuthPage = () => {
       return;
     }
 
+    if (oneMinuteDisabled) {
+      return;
+    }
+
     if (phoneNumberRef.current) {
       const tel = phoneNumberRef.current?.value.toString();
+      try {
+        const { data } = await userAuthTel({ tel });
 
-      const { data } = await userAuthTel({ tel });
-
-      if (data.code === 200) {
-        dispatch(
-          setAlert({
-            alertMessage: `인증번호 전송했습니다.`,
-            submitBtnText: '확인',
-          })
-        );
-        setOneMinuteDisabled(true);
-        setDelay(1000);
-      } else {
-        return;
-        /* TODO: 인증번호 요청 실패 시 */
+        if (data.code === 200) {
+          dispatch(
+            setAlert({
+              alertMessage: `인증번호 전송했습니다.`,
+              submitBtnText: '확인',
+            })
+          );
+          setOneMinuteDisabled(true);
+          setDelay(1000);
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
   };
@@ -125,13 +129,17 @@ const SignupAuthPage = () => {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
         const tel = phoneNumberRef.current.value;
-
-        const { data } = await userConfirmTel({ tel, authCode });
-
-        if (data) {
-          setAuthCodeConfirm(true);
-        } else {
+        try {
+          const { data } = await userConfirmTel({ tel, authCode });
+          if (data.code === 200) {
+            setAuthCodeConfirm(true);
+            setDelay(null);
+            dispatch(setAlert({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
+          }
+        } catch (error) {
+          dispatch(setAlert({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
           setAuthCodeConfirm(false);
+          console.error(error);
         }
       }
     }
@@ -152,6 +160,15 @@ const SignupAuthPage = () => {
     router.push('/signup/email-password');
   };
 
+  useEffect(() => {
+    const { name, tel, authCode } = signupUser;
+    if (name && tel && authCode) {
+      setNameValidation(true);
+      setPhoneValidation(true);
+      setAuthCodeConfirm(true);
+    }
+  }, [signupUser]);
+
   const isAllValid = nameValidation && phoneValidation && authCodeConfirm;
 
   return (
@@ -169,7 +186,7 @@ const SignupAuthPage = () => {
             eventHandler={nameInputHandler}
             value={signupUser.name ? signupUser.name : ''}
           />
-          {nameValidation && <SVGIcon name="confirmCheck" />}
+          {(nameValidation || signupUser.name) && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
         <PhoneNumberInputWrapper>
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
@@ -181,23 +198,17 @@ const SignupAuthPage = () => {
               inputType="number"
               value={signupUser.tel ? signupUser.tel : ''}
             />
-            <Button
-              width="30%"
-              margin="0 0 0 8px"
-              height="48px"
-              onClick={getAuthTel}
-              disabled={oneMinuteDisabled}
-            >
+            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
               인증 요청
             </Button>
-            {phoneValidation && <SVGIcon name="confirmCheck" />}
+            {(phoneValidation || signupUser.tel) && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
-              eventHandler={authCodeInputHandler}
               ref={authCodeNumberRef}
               inputType="number"
+              eventHandler={authCodeInputHandler}
             />
             <Button
               width="30%"
@@ -208,7 +219,7 @@ const SignupAuthPage = () => {
             >
               확인
             </Button>
-            {authCodeValidation && <SVGIcon name="confirmCheck" />}
+            {(authCodeConfirm || signupUser.authCode) && <SVGIcon name="confirmCheck" />}
             {delay && (
               <TimerWrapper>
                 <TextB3R color={theme.brandColor}>

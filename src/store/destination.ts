@@ -3,7 +3,6 @@ import { AppState } from '.';
 import { IJuso, IRegisterDestination } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
 
-/* Q state 초기값 설정해야 하는지 or null로 나둘지*/
 interface IAvailableDestination {
   morning: boolean;
   quick: boolean;
@@ -60,6 +59,7 @@ const locationState = {
   lnbrMnnm: null,
   lnbrSlno: null,
   emdNo: null,
+  detailJuso: null,
 };
 
 const destinationState = {
@@ -123,10 +123,7 @@ export const destination = createSlice({
       state.userDestination = destinationState;
     },
 
-    SET_TEMP_DESTINATION: (
-      state,
-      action: PayloadAction<ITempDestination | null>
-    ) => {
+    SET_TEMP_DESTINATION: (state, action: PayloadAction<ITempDestination | null>) => {
       state.userTempDestination = action.payload;
     },
 
@@ -147,10 +144,7 @@ export const destination = createSlice({
     INIT_LOCATION_TEMP: (state, action: PayloadAction) => {
       state.tempLocation = locationState;
     },
-    SET_AVAILABLE_DESTINATION: (
-      state,
-      action: PayloadAction<IAvailableDestination>
-    ) => {
+    SET_AVAILABLE_DESTINATION: (state, action: PayloadAction<IAvailableDestination>) => {
       state.availableDestination = action.payload;
     },
     // 배송지 체크 api

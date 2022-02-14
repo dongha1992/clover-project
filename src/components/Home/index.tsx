@@ -11,8 +11,9 @@ import { SET_MENU } from '@store/menu';
 import { BASE_URL } from '@constants/mock';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
-
+import { useQuery } from 'react-query';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
+/* TODO: static props로  */
 
 const Home = () => {
   const [itemList, setItemList] = useState([]);
@@ -21,39 +22,29 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
+  const { error: carouselError } = useQuery(
+    'carousel-banners',
+    async () => {
+      const params = { type: 'CAROUSEL' };
+      const { data } = await getBannersApi(params);
+      setBannerList(data.data);
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { error: eventsError } = useQuery('events-banners', async () => {
+    const params = { type: 'EVENT' };
+    const { data } = await getBannersApi(params);
+    setEventBannerList(data.data);
+  });
+
   const getItemLists = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
     dispatch(SET_MENU(data));
   };
 
-  const getCarouselBanners = async () => {
-    const params = {
-      type: 'CAROUSEL',
-    };
-    try {
-      const { data } = await getBannersApi(params);
-      if (data.code === 200) {
-        setBannerList(data.data);
-      }
-    } catch (error) {}
-  };
-
-  const getEventBanners = async () => {
-    const params = {
-      type: 'EVENT',
-    };
-    try {
-      const { data } = await getBannersApi(params);
-      if (data.code === 200) {
-        setEventBannerList(data.data);
-      }
-    } catch (error) {}
-  };
-
   useEffect(() => {
-    getCarouselBanners();
-    getEventBanners();
     getItemLists();
   }, []);
 
@@ -140,4 +131,4 @@ export const ItemListRow = styled.div`
   }
 `;
 
-export default Home;
+export default React.memo(Home);

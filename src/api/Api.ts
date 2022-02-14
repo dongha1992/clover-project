@@ -23,10 +23,8 @@ const addRefreshSubscriber = (callback: any) => {
   refreshSubscribers.push(callback);
 };
 
-const onUnauthorized = () => {
-  router.push(
-    `/onboarding?returnPath=${encodeURIComponent(location.pathname)}`
-  );
+export const onUnauthorized = () => {
+  router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`);
 };
 
 export const Api = axios.create({
@@ -62,9 +60,7 @@ Api.interceptors.response.use(
             if (refreshTokenObj) {
               console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
 
-              const { data } = await userRefreshToken(
-                refreshTokenObj.refreshToken
-              );
+              const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
               console.log(refreshTokenObj.refreshToken);
               const userTokenObj: any = data.data;
 
@@ -73,16 +69,11 @@ Api.interceptors.response.use(
                 expiresIn: userTokenObj.expiresIn,
               };
 
-              sessionStorage.setItem(
-                'accessToken',
-                JSON.stringify(accessTokenObj)
-              );
+              sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
 
               isTokenRefreshing = false;
               onTokenRefreshed(userTokenObj.accessToken);
               return Api(pendingRequest);
-            } else {
-              onUnauthorized();
             }
           } else {
             return new Promise((resolve) => {
@@ -105,8 +96,7 @@ Api.interceptors.response.use(
 Api.interceptors.request.use((req) => {
   const request = cloneDeep(req);
 
-  const accessTokenObj =
-    JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
+  const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
 
   request.headers = {
     ...req.headers,
