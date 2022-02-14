@@ -1,13 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
-import {
-  homePadding,
-  fixedBottom,
-  FlexCol,
-  FlexRow,
-  theme,
-} from '@styles/theme';
+import { homePadding, fixedBottom, FlexCol, FlexRow, theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -15,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import { ISignupUser } from '@model/index';
 import { signup } from '@api/user';
+import { useMutation, useQueryClient } from 'react-query';
 
 export const GENDER = [
   {
@@ -30,17 +25,29 @@ export const GENDER = [
   {
     id: 3,
     text: '선택 안 함',
-    value: '',
+    value: null,
   },
 ];
 
 const SignupOptionalPage = () => {
-  const [checkGender, setChcekGender] = useState<number>(1);
+  const [checkGender, setChcekGender] = useState<number>(3);
   const nicknameRef = useRef<HTMLInputElement>(null);
   const birthDateRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
+
+  const { mutateAsync: mutateRegisterUser } = useMutation(
+    async (reqBody: ISignupUser) => {
+      return signup(reqBody);
+    },
+    {
+      onSuccess: (data) => {
+        const userTokenObj = data.data;
+        dispatch(SET_USER_AUTH(userTokenObj));
+      },
+    }
+  );
 
   const birthDateInputHandler = (): void => {
     const birthDate = birthDateRef.current?.value.toString();
@@ -52,17 +59,16 @@ const SignupOptionalPage = () => {
 
   const nicknameInputHandler = () => {};
 
-  const goToOptionalInfo = async () => {
+  const registerUser = async () => {
     const nickname = nicknameRef.current?.value;
     const birthDate = birthDateRef.current?.value;
     const gender = GENDER.find((item) => item.id === checkGender)?.value;
 
-    /* TODO: 떵크로 회원가입 로직 수정 */
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
 
     const optionalForm = {
       birthDate,
-      gender,
+      gender: gender ? gender : null,
       nickname: nickname ? nickname : signupUser.name,
     };
 
@@ -72,20 +78,13 @@ const SignupOptionalPage = () => {
       })
     );
     try {
-      const { data } = await signup({
-        ...signupUser,
-        ...optionalForm,
-      } as ISignupUser);
-
+      const { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
       if (data.code === 200) {
-        const userTokenObj = data.data;
-        dispatch(SET_USER_AUTH(userTokenObj));
+        router.push('/signup/finish');
       }
     } catch (error) {
       console.error(error);
     }
-
-    // router.push('/signup/finish');
   };
 
   return (
@@ -98,28 +97,16 @@ const SignupOptionalPage = () => {
         <FlexCol>
           <FlexRow padding="0 0 9px 0">
             <TextH5B>생년월일</TextH5B>
-            <TextH5B
-              color={theme.greyScale45}
-              textDecoration="underline"
-              padding="0 0 0 4px"
-            >
+            <TextH5B color={theme.greyScale45} textDecoration="underline" padding="0 0 0 4px">
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput
-            placeholder="생년월일 구현해야함"
-            eventHandler={birthDateInputHandler}
-            ref={birthDateRef}
-          />
+          <TextInput placeholder="생년월일 구현해야함" eventHandler={birthDateInputHandler} ref={birthDateRef} />
         </FlexCol>
         <FlexCol margin="24px 0 28px 0">
           <FlexRow>
             <TextH5B>성별</TextH5B>
-            <TextH5B
-              color={theme.greyScale45}
-              textDecoration="underline"
-              padding="0 0 0 4px"
-            >
+            <TextH5B color={theme.greyScale45} textDecoration="underline" padding="0 0 0 4px">
               (선택)
             </TextH5B>
           </FlexRow>
@@ -127,10 +114,7 @@ const SignupOptionalPage = () => {
             {GENDER.map((item, index) => {
               return (
                 <FlexRow padding="0 16px 0 0" key={index}>
-                  <RadioButton
-                    onChange={() => checkGenderHandler(item.id)}
-                    isSelected={checkGender === item.id}
-                  />
+                  <RadioButton onChange={() => checkGenderHandler(item.id)} isSelected={checkGender === item.id} />
                   <TextB2R padding="0 0 0 8px">{item.text}</TextB2R>
                 </FlexRow>
               );
@@ -140,21 +124,14 @@ const SignupOptionalPage = () => {
         <FlexCol>
           <FlexRow padding="0 0 9px 0">
             <TextH5B>닉네임</TextH5B>
-            <TextH5B
-              color={theme.greyScale45}
-              textDecoration="underline"
-              padding="0 0 0 4px"
-            >
+            <TextH5B color={theme.greyScale45} textDecoration="underline" padding="0 0 0 4px">
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput
-            placeholder="닉네임 (미입력시 이름이 자동 입력됩니다)"
-            eventHandler={nicknameInputHandler}
-          />
+          <TextInput placeholder="닉네임 (미입력시 이름이 자동 입력됩니다)" eventHandler={nicknameInputHandler} />
         </FlexCol>
       </Wrapper>
-      <NextBtnWrapper onClick={goToOptionalInfo}>
+      <NextBtnWrapper onClick={registerUser}>
         <Button height="100%" borderRadius="0">
           가입하기
         </Button>

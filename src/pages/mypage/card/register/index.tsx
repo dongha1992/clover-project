@@ -91,26 +91,16 @@ const CardRegisterPage = () => {
     }
   );
 
-  const { mutate: mutateAddCard } = useMutation((data: IRegisterCard) => registerCard(data), {
-    onSuccess: async () => {
-      await queryClient.refetchQueries('getCardList');
-      dispatch(
-        setAlert({
-          alertMessage: successMsg,
-          submitBtnText: '확인',
-          onSubmit: () => router.push('/mypage/card'),
-        })
-      );
+  const { mutateAsync: mutateAddCard } = useMutation(
+    async (reqBody: IRegisterCard) => {
+      return registerCard(reqBody);
     },
-    onError: () => {
-      dispatch(
-        setAlert({
-          alertMessage: disabledMsg,
-          submitBtnText: '확인',
-        })
-      );
-    },
-  });
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCardList');
+      },
+    }
+  );
 
   const selectCardTypeHandler = useCallback(
     (id: number) => {
@@ -258,29 +248,26 @@ const CardRegisterPage = () => {
         number: number1 + number2 + number3 + number4,
       };
 
-      mutateAddCard(cardData);
-
-      // try {
-      //   const { data } = await registerCard(cardData);
-
-      //   if (data.code === 200) {
-      //     dispatch(
-      //       setAlert({
-      //         alertMessage: successMsg,
-      //         submitBtnText: '확인',
-      //         onSubmit: () => router.push('/mypage/card'),
-      //       })
-      //     );
-      //   }
-      // } catch (error) {
-      //   console.error(error);
-      //   dispatch(
-      //     setAlert({
-      //       alertMessage: disabledMsg,
-      //       submitBtnText: '확인',
-      //     })
-      //   );
-      // }
+      try {
+        const { data } = await mutateAddCard(cardData);
+        if (data.code === 200) {
+          dispatch(
+            setAlert({
+              alertMessage: successMsg,
+              submitBtnText: '확인',
+              onSubmit: () => router.push('/mypage/card'),
+            })
+          );
+        }
+      } catch (error) {
+        dispatch(
+          setAlert({
+            alertMessage: disabledMsg,
+            submitBtnText: '확인',
+          })
+        );
+        console.error(error);
+      }
     }
   };
 

@@ -36,23 +36,33 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     },
   });
 
-  const { mutateAsync: mutateEditCardAsync } = useMutation(async (params: { id: number; name: string }) => {
-    if (isMainCard) {
-      await setMainCard(id);
+  const { mutateAsync: mutateEditCardAsync } = useMutation(
+    async (params: { id: number; name: string }) => {
+      if (isMainCard) {
+        await setMainCard(id);
+      }
+      return editCard(params);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCardList');
+        await queryClient.refetchQueries('getMainCard');
+      },
     }
-    return editCard(params);
-  });
+  );
 
   const mutateEditCard = async () => {
     const params = {
       id,
       name: cardName,
     };
-    const { data } = await mutateEditCardAsync(params);
-    if (data.code === 200) {
-      await queryClient.refetchQueries('getCardList');
-      await queryClient.refetchQueries('getMainCard');
-      router.push('/mypage/card');
+    try {
+      const { data } = await mutateEditCardAsync(params);
+      if (data.code === 200) {
+        router.push('/mypage/card');
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 

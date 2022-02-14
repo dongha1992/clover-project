@@ -105,7 +105,7 @@ const TextInput = React.forwardRef(
           <input
             style={style}
             type={inputType ? inputType : 'text'}
-            value={value}
+            defaultValue={value}
             onChange={(e) => (eventHandler ? debounceChangeEvent(e) : debounceSetStateValue(e.target.value))}
             placeholder={placeholder}
             name={name}
