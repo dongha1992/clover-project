@@ -595,16 +595,22 @@ export interface ISpotRegistrationsResponse {
   };
 }
 
+export interface IRegisterCardResponse {
+  code: number;
+  message: string;
+  data: IRegisterCard;
+}
+
 export interface IRegisterCard {
-  birthDate: string;
+  birthDate?: string | null;
   corporationNo?: string | null;
   expiredMM: string;
   expiredYY: string;
-  main?: boolean;
+  main: boolean;
   name?: string;
   number: string;
-  password: string;
-  type?: string;
+  password?: string;
+  type: string;
 }
 export interface IBanners {
   content: string;
@@ -637,14 +643,7 @@ export interface IGetBannersResponse {
   data: IBanners[];
 }
 
-type BannerType =
-  | 'CAROUSEL'
-  | 'CATEGORY'
-  | 'EVENT'
-  | 'EXHIBITION'
-  | 'IMAGE'
-  | 'MENU'
-  | 'ORDER';
+type BannerType = 'CAROUSEL' | 'CATEGORY' | 'EVENT' | 'EXHIBITION' | 'IMAGE' | 'MENU' | 'ORDER';
 
 export interface IBanner {
   type: string;
@@ -684,17 +683,17 @@ export interface IParamsSpotRegisterationsOptios {
 }
 
 export interface ISpotRegisterationsOpstions {
-  lunchTimeOptions : [
+  lunchTimeOptions: [
     {
       name: string;
       value: string;
-    },
+    }
   ];
   placeTypeOptions: [
     {
       name: string;
       value: string;
-    },
+    }
   ];
   pickupLocationTypeOptions: [
     {
@@ -710,13 +709,13 @@ export interface ISpotRegisterationsOptiosResponse {
   data: ISpotRegisterationsOpstions;
 }
 
-export type TSpotPickupType = 
-  |'COMMUNAL_FRIDGE' 
+export type TSpotPickupType =
+  | 'COMMUNAL_FRIDGE'
   | 'COMMUNAL_TABLE'
   | 'DELIVERY_LOCATION'
-  | 'DOCUMENT_ROOM' 
+  | 'DOCUMENT_ROOM'
   | 'ETC'
-  | 'FRONT_DESK' 
+  | 'FRONT_DESK'
   | 'OFFICE_DOOR';
 
 export type TPlaceType =
@@ -731,7 +730,7 @@ export type TPlaceType =
   | 'SHARED_OFFICE'
   | 'STORE';
 
-type TDistanceUnit = 
+type TDistanceUnit =
   | 'CENTIMETERS'
   | 'FEET'
   | 'INCH'
@@ -764,7 +763,7 @@ export interface IEditRegistration {
   userName: string;
   userPosition?: string | null;
   userTel: string;
-};
+}
 
 export interface IPostRegistrations {
   coordinate: {
@@ -819,22 +818,20 @@ export interface IPostRegistrationResponse {
   code: number;
   message: string;
   data: IPostRegistrations;
-};
+}
 
-export interface IGetSpotsRegistrationsStatus{
+export interface IGetSpotsRegistrationsStatus {
   pagination: {
     page: number;
     size: number;
     total: number;
     totalPage: number;
   };
-  spotRegistrations: [
-    IEditRegistration,
-  ];
-};
+  spotRegistrations: [IEditRegistration];
+}
 
 export interface IGetSpotsRegistrationsStatusResponse {
   code: number;
   message: string;
   data: IGetSpotsRegistrationsStatus;
-};
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { homePadding, theme } from '@styles/theme';
@@ -9,22 +9,24 @@ import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
 import { ICard } from '@components/Pages/Mypage/Card/CardItem';
+import { useQuery, useQueryClient } from 'react-query';
+import isNil from 'lodash-es/isNil';
 
 const CardManagementPage = () => {
-  const [cards, setCards] = useState([]);
-
-  useEffect(() => {
-    getCards();
-  }, []);
-
-  const getCards = async () => {
-    try {
+  const {
+    data: cards,
+    isLoading,
+    refetch,
+  } = useQuery<ICard[]>(
+    'getCardList',
+    async () => {
       const { data } = await getCardLists();
       if (data.code === 200) {
-        setCards(data.data);
+        return data.data;
       }
-    } catch (error) {}
-  };
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
 
   const cardEditHandler = (card: ICard) => {
     router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
@@ -34,6 +36,10 @@ const CardManagementPage = () => {
     router.push('/mypage/card/register');
   };
 
+  if (isLoading || isNil(cards)) {
+    return <div>로딩중</div>;
+  }
+
   return (
     <Container>
       {!cards.length ? (
@@ -42,12 +48,7 @@ const CardManagementPage = () => {
           <TextB2R color={theme.greyScale65} padding="16px 0 32px 0">
             아직 등록된 카드가 없어요 😭
           </TextB2R>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            onClick={goToCardRegister}
-          >
+          <Button backgroundColor={theme.white} color={theme.black} border onClick={goToCardRegister}>
             카드 등록하기
           </Button>
         </EmptyWrapper>
@@ -57,17 +58,10 @@ const CardManagementPage = () => {
           {cards.map((card, index) => (
             <div key={index}>
               <CardItem onClick={cardEditHandler} card={card} />
-              {cards.length !== index - 1 && (
-                <BorderLine height={1} margin="0 0 24px 0" />
-              )}
+              {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}
             </div>
           ))}
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            onClick={goToCardRegister}
-          >
+          <Button backgroundColor={theme.white} color={theme.black} border onClick={goToCardRegister}>
             카드 등록하기
           </Button>
         </Wrapper>
