@@ -3,16 +3,7 @@ import router from 'next/router';
 import axios from 'axios';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
-import {
-  TextH2B,
-  TextB2R,
-  TextH6B,
-  TextH3B,
-  TextH7B,
-  TextB3R,
-  TextH4B,
-  TextB4R,
-} from '@components/Shared/Text';
+import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextB4R } from '@components/Shared/Text';
 import Image from 'next/image';
 import Loading from '@components/Loading';
 import Tag from '@components/Shared/Tag';
@@ -30,13 +21,9 @@ import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 
-const DetailBottomFAQ = dynamic(
-  () => import('@components/Pages/Detail/DetailBottomFAQ')
-);
+const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
-const DetailBottomReview = dynamic(
-  () => import('@components/Pages/Detail/DetailBottomReview')
-);
+const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
 /* TODO: 영양 정보 리팩토링 */
 /* TODO: 영양 정보 샐러드만 보여줌 */
@@ -97,9 +84,7 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const getMenuDetail = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
-    const selectedMenuItem: IMenuItem = data.find(
-      (item: any) => item.id === Number(menuId)
-    );
+    const selectedMenuItem: IMenuItem = data.find((item: any) => item.id === Number(menuId));
     setMenuItem(() => selectedMenuItem);
     /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
 
@@ -130,7 +115,6 @@ const MenuDetailPage = ({ menuId }: any) => {
     timer = setTimeout(() => {
       if (tabRef.current) {
         const offsetTop = tabRef?.current?.offsetTop;
-
         window.scrollTo({
           behavior: 'smooth',
           left: 0,
@@ -146,13 +130,7 @@ const MenuDetailPage = ({ menuId }: any) => {
 
     switch (selectedTab) {
       case '/menu/detail/review':
-        return (
-          <DetailBottomReview
-            reviews={reviews}
-            isSticky={isSticky}
-            menuId={menuId}
-          />
-        );
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -203,18 +181,13 @@ const MenuDetailPage = ({ menuId }: any) => {
           <PriceAndCouponWrapper>
             <PriceWrapper>
               <OriginPrice>
-                <TextH6B
-                  color={theme.greyScale25}
-                  textDecoration=" line-through"
-                >
+                <TextH6B color={theme.greyScale25} textDecoration=" line-through">
                   {menuItem.price}원
                 </TextH6B>
               </OriginPrice>
               <DiscountedPrice>
                 <TextH3B color={theme.brandColor}>{menuItem.discount}%</TextH3B>
-                <TextH3B padding={'0 0 0 4px'}>
-                  {menuItem.price - menuItem.price * menuItem.discount * 0.01}원
-                </TextH3B>
+                <TextH3B padding={'0 0 0 4px'}>{menuItem.price - menuItem.price * menuItem.discount * 0.01}원</TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
             {hasAvailableCoupon ? (
@@ -239,8 +212,7 @@ const MenuDetailPage = ({ menuId }: any) => {
               </NutritionInfoBox>
               <MLWrapper>
                 (<TextH7B padding="0 2px 0 0">M</TextH7B>
-                <TextB4R padding="0 2px 0 0">228g</TextB4R>/
-                <TextH7B padding="0 2px 0 2px">L</TextH7B>
+                <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
                 <TextB4R>324g</TextB4R>)
               </MLWrapper>
             </NutritionInfoWrapper>
@@ -252,8 +224,7 @@ const MenuDetailPage = ({ menuId }: any) => {
               </NutritionInfoBox>
               <MLWrapper>
                 (<TextH7B padding="0 2px 0 0">M</TextH7B>
-                <TextB4R padding="0 2px 0 0">228g</TextB4R>/
-                <TextH7B padding="0 2px 0 2px">L</TextH7B>
+                <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
                 <TextB4R>324g</TextB4R>)
               </MLWrapper>
             </ProteinWrapper>
@@ -272,12 +243,7 @@ const MenuDetailPage = ({ menuId }: any) => {
                 더보기
               </TextH6B>
             </ReviewHeader>
-            {menuItem.reviews && (
-              <ReviewList
-                reviews={menuItem.reviews}
-                onClick={goToReviewDetail}
-              />
-            )}
+            {menuItem.reviews && <ReviewList reviews={menuItem.reviews} onClick={goToReviewDetail} />}
           </ReviewWrapper>
         </ReviewContainer>
         <DetailInfoContainer>
@@ -287,18 +253,13 @@ const MenuDetailPage = ({ menuId }: any) => {
                 <TextH4B>{info.text}</TextH4B>
                 <Link href={`${info.link}`} passHref>
                   <a>
-                    <TextH6B
-                      textDecoration="underLine"
-                      color={theme.greyScale65}
-                    >
+                    <TextH6B textDecoration="underLine" color={theme.greyScale65}>
                       자세히
                     </TextH6B>
                   </a>
                 </Link>
               </DetailInfoWrapper>
-              {index !== MENU_DETAIL_INFORMATION.length - 1 ? (
-                <BorderLine height={1} margin="16px 0" />
-              ) : null}
+              {index !== MENU_DETAIL_INFORMATION.length - 1 ? <BorderLine height={1} margin="16px 0" /> : null}
             </div>
           ))}
         </DetailInfoContainer>

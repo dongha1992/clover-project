@@ -4,21 +4,18 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
-import { useToast } from '@hooks/useToast';
 import { setAlert } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
-import { destinationForm } from '@store/destination';
+
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
-/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
+/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
-  const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
-  const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
 
   const { isTimerTooltip } = useSelector(orderForm);
@@ -34,22 +31,6 @@ const DetailBottom = () => {
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
-
-  useEffect(() => {
-    setIsFirstToastRender(false);
-  }, []);
-
-  useEffect(() => {
-    /* TODO : 렌더 시 처음에 alert 뜨는 거 */
-    if (isFirstToastRender) return;
-    /* TODO: 빠르게 눌렀을 때 toast 메시지 엉킴 */
-    const message =
-      tempIsLike === true ? '상품을 찜했어요.' : '찜을 해제했어요.';
-    showToast({ message });
-    /* TODO: warning 왜? */
-
-    return () => hideToast();
-  }, [goToDib]);
 
   const buttonStatusRender = useCallback((status: string) => {
     switch (status) {
@@ -78,21 +59,13 @@ const DetailBottom = () => {
         })
       );
     } else {
-      const message = isAlreadyStockNoti
-        ? '이미 재입고 알림 신청한 상품이에요!'
-        : '재입고 알림 신청을 완료했어요!';
+      const message = isAlreadyStockNoti ? '이미 재입고 알림 신청한 상품이에요!' : '재입고 알림 신청을 완료했어요!';
       showToast({ message });
     }
   };
 
   useEffect(() => {
-    const isNotTimer = [
-      '스팟저녁',
-      '새벽택배',
-      '새벽택배N일',
-      '스팟점심',
-      '스팟점심N일',
-    ].includes(deliveryType);
+    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
 
     if (!isNotTimer) {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
@@ -114,9 +87,7 @@ const DetailBottom = () => {
         </LikeWrapper>
         <Col />
         <BtnWrapper onClick={clickButtonHandler}>
-          <TextH5B color={theme.white}>
-            {buttonStatusRender(tempStatus)}
-          </TextH5B>
+          <TextH5B color={theme.white}>{buttonStatusRender(tempStatus)}</TextH5B>
         </BtnWrapper>
       </Wrapper>
       {isTimerTooltip && (
