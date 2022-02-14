@@ -13,9 +13,6 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import { useQuery, useQueryClient } from 'react-query';
-
-/* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -23,38 +20,13 @@ const LocationPage = () => {
   const [isFocus, setIsFocus] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [userLocation, setUserLocation] = useState('');
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const dispatch = useDispatch();
   const { isSpot } = router.query;
 
-  const setCurrentLoc = (location: string) => {
-    const locationInfoMsg = `${location}(으)로
-    설정되었습니다.`;
-    dispatch(
-      setAlert({
-        alertMessage: locationInfoMsg,
-        onSubmit: () => {},
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
-  };
-
-  const getGeoLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { data } = await getAddressFromLonLat({
-          y: position.coords.latitude?.toString(),
-          x: position.coords.longitude?.toString(),
-        });
-        setUserLocation(data.documents[0].address_name);
-        setCurrentLoc(data.documents[0].address_name);
-      });
-    }
-  };
+  const getGeoLocation = () => {};
 
   const addressInputHandler = () => {
     const keyword = addressRef.current?.value.length;
