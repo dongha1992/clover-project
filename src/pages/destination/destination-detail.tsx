@@ -8,7 +8,6 @@ import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
-import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector, useDispatch } from 'react-redux';
