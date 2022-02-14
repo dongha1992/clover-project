@@ -13,7 +13,7 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import { query } from 'express';
+import { useQuery, useQueryClient } from 'react-query';
 
 /* TODO: geolocation 에러케이스 추가 */
 
@@ -68,9 +68,7 @@ const LocationPage = () => {
     }
   };
 
-  const getSearchAddressResult = async (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (addressRef.current) {
         let query = addressRef.current?.value;
@@ -113,16 +111,16 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    if(isSpot){
+    if (isSpot) {
       router.push({
         pathname: '/location/address-detail',
         query: { isSpot: true },
       });
-    }else {
+    } else {
       router.push({
         pathname: '/location/address-detail',
         query: { isLocation: true },
-      });  
+      });
     }
   };
 
@@ -162,9 +160,7 @@ const LocationPage = () => {
               })}
             </>
           )}
-          {!resultAddress.length && isSearched && (
-            <div>검색 결과가 없습니다.</div>
-          )}
+          {!resultAddress.length && isSearched && <div>검색 결과가 없습니다.</div>}
         </ResultList>
       </Wrapper>
     </HomeContainer>
