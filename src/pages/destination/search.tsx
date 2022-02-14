@@ -33,11 +33,7 @@ const DestinationSearchPage = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {}, []);
-
-  const getSearchAddressResult = async (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (addressRef.current) {
         let query = addressRef.current?.value;
@@ -50,6 +46,7 @@ const DestinationSearchPage = () => {
           query,
           page: 1,
         };
+
         try {
           let { data } = await searchAddressJuso(params);
           setResultAddress(data.results.juso);

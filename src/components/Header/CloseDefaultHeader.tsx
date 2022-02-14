@@ -13,7 +13,7 @@ const CloseDefaultHeader = ({ title }: IProps) => {
   const router = useRouter();
 
   const goHome = (): void => {
-    router.push('/');
+    router.push('/spot');
   };
 
   return (

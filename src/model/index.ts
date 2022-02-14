@@ -595,16 +595,22 @@ export interface ISpotRegistrationsResponse {
   };
 }
 
+export interface IRegisterCardResponse {
+  code: number;
+  message: string;
+  data: IRegisterCard;
+}
+
 export interface IRegisterCard {
-  birthDate: string;
+  birthDate?: string | null;
   corporationNo?: string | null;
   expiredMM: string;
   expiredYY: string;
-  main?: boolean;
+  main: boolean;
   name?: string;
   number: string;
-  password: string;
-  type?: string;
+  password?: string;
+  type: string;
 }
 export interface IBanners {
   content: string;
@@ -637,14 +643,7 @@ export interface IGetBannersResponse {
   data: IBanners[];
 }
 
-type BannerType =
-  | 'CAROUSEL'
-  | 'CATEGORY'
-  | 'EVENT'
-  | 'EXHIBITION'
-  | 'IMAGE'
-  | 'MENU'
-  | 'ORDER';
+type BannerType = 'CAROUSEL' | 'CATEGORY' | 'EVENT' | 'EXHIBITION' | 'IMAGE' | 'MENU' | 'ORDER';
 
 export interface IBanner {
   type: string;
@@ -677,315 +676,162 @@ export interface ITermResponse {
   data: ITerm;
 }
 
-export interface IParamsNewSpots {
-  latitude: number;
-  longitude: number;
-}
-export interface IParamsSpots {
-  latitude: number | null;
-  longitude: number | null;
-  page?: number;
-  size?: number;
-  keyword?: string;
+export type TSpotRegisterationsOptiosType = 'PRIVATE' | 'PUBLIC' | 'OWNER';
+
+export interface IParamsSpotRegisterationsOptios {
+  type: TSpotRegisterationsOptiosType | string | undefined;
 }
 
-export interface ISpotsResponse {
-  code: number;
-  message: string;
-  data: ISpots;
-}
-
-export interface ISpots {
-  title: string;
-  spots: [
+export interface ISpotRegisterationsOpstions {
+  lunchTimeOptions: [
     {
-      id: number;
       name: string;
-      type?: string;
-      eventTitle: string;
-      images: [
-        {
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          main: boolean;
-        }
-      ];
-      location: {
-        zipCode: string;
-        address: string;
-        addressDetail: string;
-        dong: string;
-      };
-      coordinate: {
-        lat: number;
-        lon: number;
-      };
-      score: number;
-      createdAt: string;
-      description: string;
-      liked: boolean;
-      likeCount: number;
-      userCount: number;
-      distance: number;
-      distanceUnit: string;
-      lunchDelivery: boolean;
-      lunchDeliveryStartTime: string;
-      lunchDeliveryEndTime: string;
-      dinnerDelivery: string;
-      dinnerDeliveryStartTime: string;
-      dinnerDeliveryEndTime: string;
-      placeType: string;
-      isTrial: boolean;
-      canEat: boolean;
-      canParking: boolean;
-      discountRate: number;
-      notices: [
-        {
-          content: string;
-          createdAt: string;
-          id: number;
-          spotId: number;
-        }
-      ];
-      pickupEndTime: string;
-      pickupStartTime: string;
-      pickups: [
-        {
-          createdAt: string;
-          id: number;
-          images: [];
-          name: string;
-          spotId: number;
-        }
-      ];
-      placeHoliday: string;
-      placeOpenTime: string;
-      stories: [];
+      value: string;
+    }
+  ];
+  placeTypeOptions: [
+    {
+      name: string;
+      value: string;
+    }
+  ];
+  pickupLocationTypeOptions: [
+    {
+      name: string;
+      value: string;
     }
   ];
 }
 
-export interface ISpotsDetail {
+export interface ISpotRegisterationsOptiosResponse {
+  code: number;
+  message: string;
+  data: ISpotRegisterationsOpstions;
+}
+
+export type TSpotPickupType =
+  | 'COMMUNAL_FRIDGE'
+  | 'COMMUNAL_TABLE'
+  | 'DELIVERY_LOCATION'
+  | 'DOCUMENT_ROOM'
+  | 'ETC'
+  | 'FRONT_DESK'
+  | 'OFFICE_DOOR';
+
+export type TPlaceType =
+  | 'BOOKSTORE'
+  | 'CAFE'
+  | 'CONVENIENCE_STORE'
+  | 'DRUGSTORE'
+  | 'ETC'
+  | 'FITNESS_CENTER'
+  | 'OFFICE'
+  | 'SCHOOL'
+  | 'SHARED_OFFICE'
+  | 'STORE';
+
+type TDistanceUnit =
+  | 'CENTIMETERS'
+  | 'FEET'
+  | 'INCH'
+  | 'KILOMETERS'
+  | 'METERS'
+  | 'MILES'
+  | 'MILLIMETERS'
+  | 'NAUTICALMILES'
+  | 'YARD';
+
+export interface IEditRegistration {
   coordinate: {
     lat: number;
     lon: number;
   };
-  createdAt: string;
-  description: string;
-  dinnerDelivery: boolean;
-  dinnerDeliveryStartTime: string;
-  dinnerDeliveryEndTime: string;
-  lunchDelivery: boolean;
-  lunchDeliveryStartTime: string;
-  lunchDeliveryEndTime: string;
+  location: {
+    address?: string | null;
+    addressDetail?: string | null;
+    dong?: string | null;
+    zipCode?: string | null;
+  };
+  lunchTime?: string;
+  pickupType?: TSpotPickupType;
+  placeName?: string | null;
+  placeType?: TPlaceType;
+  placeTypeDetail?: string | null;
+  pickupTypeDetail?: string | null;
+  type?: TSpotRegisterationsOptiosType | string;
+  userEmail: string;
+  userName: string;
+  userPosition?: string | null;
+  userTel: string;
+}
+
+export interface IPostRegistrations {
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
+  createdAt?: string;
+  distance?: number;
+  distanceUnit?: TDistanceUnit;
   id: number;
-  images: [
-    {
-      url: string;
-      height: number;
-      width: number;
-      main: boolean;
-      size: number;
-    }
-  ];
-  likeCount: number;
-  liked: boolean;
+  image: {
+    createdAt: string;
+    height: number;
+    id: number;
+    name: string;
+    originalName: string;
+    size: number;
+    url: string;
+    width: number;
+  };
   location: {
     address: string;
     addressDetail: string;
-    done: string;
+    dong: string;
     zipCode: string;
   };
-  name: string;
-  notices: [
-    {
-      id: number;
-      spotId: number;
-      content: string;
-      createdAt: string;
-    }
-  ];
-  pickupEndTime: string;
-  pickupStartTime: string;
-  pickups: [
-    {
-      createdAt: string;
-      id: number;
-      images: [];
-      name: string;
-      spotId: number;
-    }
-  ];
-  placeHoliday: string;
-  placeOpenTime: string;
-  placeTel: string;
-  placeType: string;
-  stories: [
-    {
-      id: number;
-      spotId: number;
-      type: string;
-      title: string;
-      content: string;
-      createdAt: string;
-      images: [
-        {
-          url: string;
-        }
-      ];
-      liked: boolean;
-      likeCount: number;
-    }
-  ];
-  type: string;
-}
-
-export interface ISpotDetailResponse {
-  code: number;
-  messages: string;
-  data: ISpotsDetail;
-}
-
-export interface INormalSpots {
-  title: string;
-  id: number;
-  name: string;
-  images: [
-    {
-      url: string;
-      width: number;
-      height: number;
-      size: number;
-      main: boolean;
-      createdAt: string;
-    }
-  ];
-  image: {
-    url: string;
-    width: number;
-    height: number;
-    size: number;
-    main: boolean;
-    createdAt: string;
-  };
-  liked: boolean;
-  likeCount: number;
-  userCount: number;
-  distance: number;
-  distanceUnit: string;
-  eventTitle?: string;
-  discountRate?: number;
-  recruitingCount: number;
+  lunchTime?: string;
+  pickupType?: TSpotPickupType;
+  placeName?: string | null;
+  placeType?: TPlaceType;
+  placeTypeDetail?: string | null;
+  pickupTypeDetail?: string | null;
+  orderUserCount: number;
   recruited: boolean;
-  placeName: string;
-}
-
-export interface ISpotStories {
-  id: number;
+  recruitingCount: number;
+  rejected: boolean;
+  rejectedAt: string;
+  rejectionMessage: string;
+  rejectionType: 'ETC' | 'INSUFFICIENCY';
   spotId: number;
-  type: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  liked: boolean;
-  likeCount: number;
-  images: [
-    {
-      url: string;
-      width: string;
-      height: string;
-      size: string;
-    }
-  ];
-}
-export interface ISpotDetailStoriesResponse {
-  code: number;
-  messages: string;
-  data: {
-    spotStories: ISpotStories[];
-    pagination: {
-      total: number;
-      totalPage: number;
-      page: number;
-      size: number;
-    };
-  };
+  step: 'CONFIRM' | 'OPEN' | 'RECRUITING' | 'TRIAL' | 'UNSUBMIT';
+  trialledAt: string;
+  type: TSpotRegisterationsOptiosType;
+  userEmail: string;
+  userId: string;
+  userName: string;
+  userPosition: string;
+  userTel: string;
 }
 
-export interface ISpotsInfo {
-  spotCount: number;
-  unsubmitSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  recruitingSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  confirmSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  trialSpotRegistrations: [];
-}
-
-export interface ISpotsInfoResponse {
+export interface IPostRegistrationResponse {
   code: number;
   message: string;
-  data: ISpotsInfo;
+  data: IPostRegistrations;
 }
 
-// export interface ISpotsInfo {
-//   data: {
-//     anyRecruitingSpotRegistration: {
-//       coordinate: {
-//         lat: number;
-//         lon: number;
-//       };
-//       createdAt: string;
-//       distance: number;
-//       distanceUnit: string;
-//       id: number;
-//     }
-//   }
-// }
-
-export interface ISpotRegistrationsResponse {
-  data: {
-    title: string;
-    subTitle: string;
-    spotRegistrations: [
-      {
-        id: number;
-        placeName: string;
-        image: {
-          id: number;
-          name: string;
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          createdAt: string;
-        };
-        recruited: boolean;
-        recruitingCount: number;
-        distance: number;
-        distanceUnit: string;
-      }
-    ];
+export interface IGetSpotsRegistrationsStatus {
+  pagination: {
+    page: number;
+    size: number;
+    total: number;
+    totalPage: number;
   };
+  spotRegistrations: [IEditRegistration];
+}
+
+export interface IGetSpotsRegistrationsStatusResponse {
+  code: number;
+  message: string;
+  data: IGetSpotsRegistrationsStatus;
 }

@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
-import {
-  TextB2R,
-  TextB3R,
-  TextH5B,
-  TextH6B,
-  TextH2B,
-} from '@components/Shared/Text';
+import { TextB2R, TextB3R, TextH5B, TextH6B, TextH2B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
-import {
-  FlexRow,
-  FlexCol,
-  theme,
-  homePadding,
-  fixedBottom,
-} from '@styles/theme';
+import { FlexRow, FlexCol, theme, homePadding, fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
@@ -39,6 +27,8 @@ const SignupPage = () => {
   const [isAllMarketinngChecked, setIsAllMarketinngChecked] = useState(false);
 
   const dispatch = useDispatch();
+
+  const isAllAgreed = checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
 
   const allCheckTermHandler = () => {
     if (!isAllChecked) {
@@ -77,7 +67,9 @@ const SignupPage = () => {
   };
 
   const goToAuthTel = () => {
-    /*TODO: 필수항목 */
+    if (!isAllAgreed) {
+      return;
+    }
     const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
 
     dispatch(
@@ -88,9 +80,6 @@ const SignupPage = () => {
     );
     router.push('/signup/auth');
   };
-
-  const isAllAgreed =
-    checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
 
   return (
     <Container>
@@ -106,51 +95,31 @@ const SignupPage = () => {
         </FlexRow>
         <BorderLine height={1} />
         <FlexRow padding="16px 0 0 0">
-          <Checkbox
-            onChange={() => checkTermHandler(1)}
-            isSelected={checkTermList.includes(1)}
-          />
+          <Checkbox onChange={() => checkTermHandler(1)} isSelected={checkTermList.includes(1)} />
           <TextB2R {...textPaddingStyle}>[필수] 이용약관에 동의합니다.</TextB2R>
           <TextH6B {...moreTextStyle}>자세히</TextH6B>
         </FlexRow>
         <FlexRow padding="16px 0">
-          <Checkbox
-            onChange={() => checkTermHandler(2)}
-            isSelected={checkTermList.includes(2)}
-          />
-          <TextB2R {...textPaddingStyle}>
-            [필수] 개인정보처리방침에 동의합니다.
-          </TextB2R>
+          <Checkbox onChange={() => checkTermHandler(2)} isSelected={checkTermList.includes(2)} />
+          <TextB2R {...textPaddingStyle}>[필수] 개인정보처리방침에 동의합니다.</TextB2R>
           <TextH6B {...moreTextStyle}>자세히</TextH6B>
         </FlexRow>
         <FlexCol>
           <FlexRow>
-            <Checkbox
-              onChange={allCheckMarketingTermHandler}
-              isSelected={isAllMarketinngChecked}
-            />
-            <TextB2R {...textPaddingStyle}>
-              [선택] 마케팅 알림 수신에 동의합니다.
-            </TextB2R>
+            <Checkbox onChange={allCheckMarketingTermHandler} isSelected={isAllMarketinngChecked} />
+            <TextB2R {...textPaddingStyle}>[선택] 마케팅 알림 수신에 동의합니다.</TextB2R>
           </FlexRow>
           <PaddingWrapper>
             <TextB3R color={theme.brandColor} padding="8px 0 16px 0">
-              푸시 알림, 이메일, SMS 수신 등 모두 동의시 2,000원 할인 쿠폰 지급!
-              (1인 최대 1회 지급)
+              푸시 알림, 이메일, SMS 수신 등 모두 동의시 2,000원 할인 쿠폰 지급! (1인 최대 1회 지급)
             </TextB3R>
             <FlexRow>
               <FlexRow>
-                <Checkbox
-                  onChange={() => checkTermHandler(3)}
-                  isSelected={checkTermList.includes(3)}
-                />
+                <Checkbox onChange={() => checkTermHandler(3)} isSelected={checkTermList.includes(3)} />
                 <TextB2R {...textPaddingStyle}>이메일</TextB2R>
               </FlexRow>
               <FlexRow padding="0 0 0 16px">
-                <Checkbox
-                  onChange={() => checkTermHandler(4)}
-                  isSelected={checkTermList.includes(4)}
-                />
+                <Checkbox onChange={() => checkTermHandler(4)} isSelected={checkTermList.includes(4)} />
                 <TextB2R {...textPaddingStyle}>SNS</TextB2R>
               </FlexRow>
             </FlexRow>

@@ -15,6 +15,7 @@ const AddressDetailPage = () => {
   const { tempLocation, availableDestination } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
+  const { isSpot } = router.query;
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
@@ -51,7 +52,11 @@ const AddressDetailPage = () => {
   const setUserLocationHandler = () => {
     dispatch(SET_LOCATION(tempLocation));
     dispatch(INIT_LOCATION_TEMP());
-    router.push('/');
+    if(isSpot){
+      router.push('/spot');
+    }else{
+      router.push('/');
+    }
   };
 
   const goToSearch = () => {

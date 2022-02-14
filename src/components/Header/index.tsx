@@ -12,7 +12,6 @@ const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
-const SpotRegisterHeader = dynamic(() => import('./SpotRegisterHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
@@ -77,12 +76,14 @@ const Header = () => {
         '/spot/spot-req': '신청하기',
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
-        '/spot/register/spot-onboarding': '신청하기',
         '/spot/register/submit/finish': '신청하기',
         '/destination/search': '배송지 검색',
         '/destination/destination-detail': '배송지 검색',
         '/spot/search/location': '프코스팟 검색',
         '/spot/status': '스팟 관리',
+        '/spot/location': '장소 찾기',
+        '/spot/location/address': '장소 찾기',
+        '/spot/regi-list': '프코스팟 안내',
       };
 
       const title = headerTitleMap[currentPath];
@@ -126,14 +127,11 @@ const Header = () => {
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {
           return <SpotSearchHeader title={title} />;
         }
-        case ['/spot/register', '/spot/register/spot-onboarding'].includes(
-          currentPath
-        ): {
-          return <SpotRegisterHeader title={title} />;
-        }
+
         case ['/spot/register/submit/finish'].includes(currentPath): {
           return <CloseDefaultHeader title={title} />;
         }
+        
         default: {
           return <DefaultHeader title={title} />;
         }

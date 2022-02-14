@@ -1,50 +1,174 @@
-import React, { useCallback } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { theme, FlexRow, fixedBottom } from '@styles/theme';
 import {
   TextH1B,
-  TextH3B,
   TextH4B,
   TextB3R,
   TextH5B,
+  TextB2R,
 } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import Checkbox from '@components/Shared/Checkbox';
 import { Button } from '@components/Shared/Button';
-import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
+import { useSelector, useDispatch } from 'react-redux';
+import { 
+  spotSelector, 
+  SET_SPOT_REGISTRATIONS_INFO,
+} from '@store/spot';
+import { userForm } from '@store/user';
 
 const RegisterPage = () => {
+  const { 
+    spotLocation, 
+    spotsRegistrationOptions, 
+    spotsRegistrationInfo,
+  } = useSelector(spotSelector);
+  const { user } = useSelector(userForm);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
+  const placeRef = useRef<HTMLInputElement>(null);
+  const pickUpEtcRef = useRef<HTMLInputElement>(null);
+  const placeEtcRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const telRef = useRef<HTMLInputElement>(null);
+  const managerRef = useRef<HTMLInputElement>(null);
+  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const goToSubmit = (): void => {
-    if (type === 'normal') {
-      router.push({
-        pathname: '/spot/register/spot-onboarding',
-        query: { type },
-      });
-    } else {
-      router.push({
-        pathname: '/spot/register/submit',
-        query: { type },
-      });
-    }
+  const checkedPickupType = !!spotsRegistrationOptions.pickupLocationTypeOptions?.value?.length;
+  const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
+  const checkedPlaceType = !!spotsRegistrationOptions.placeTypeOptions?.value?.length;
+  const checkedAddressInfo = !!spotLocation.address?.length&&!!placeRef.current?.value?.length;
+  const checkedUserInfo = !!spotsRegistrationInfo?.userName?.length&&!!spotsRegistrationInfo.userEmail?.length&&!!spotsRegistrationInfo.userTel?.length;
+
+  const activeButton = () => {
+    switch(type){
+      case 'private':
+        return checkedAddressInfo&&checkedPickupType&&checkedLunchType&&checkedPlaceType&&checkedUserInfo&&noticeChecked;
+      case 'public':
+        return checkedAddressInfo&&checkedPlaceType;
+      case 'owner':
+        return checkedAddressInfo&&checkedPlaceType&&checkedUserInfo&&noticeChecked;
+      default: 
+        return false;
+    };
   };
 
-  const checkBox = () => {};
+  const goToSubmit = async() => {
+    if(!activeButton()){
+      if(type === 'private'){
+        return;
+      }
+      return;
+    };
+    router.push({
+      pathname: '/spot/register/submit',
+      query: { type },
+    });
 
-  const selectOptions = useCallback((tab) => {
+  };
+
+  const selectOptions = (tab: string) => {
     dispatch(
       setBottomSheet({
         content: <OptionsSheet tab={tab} />,
       })
     );
-  }, []);
+  };
+
+  const goToLocation = () => {
+    router.push({
+      pathname: '/spot/location',
+      query: { type },
+    });
+  };
+
+  // 장소명
+  const placeInputHandler = () => {
+    if(placeRef.current){
+      const selectedOptions = {
+        ...spotsRegistrationInfo,
+        placeName: placeRef.current?.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
+    };
+  };
+
+  // 픽업장소 기타 선택시 입력값
+  const pickUpEtcInputHandler = () => {
+    if(pickUpEtcRef.current){
+      const selectedOptions = {
+        ...spotsRegistrationInfo,
+        pickupLocationEtc: pickUpEtcRef.current?.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
+    };
+  };
+
+  // 장소 종류 기타 선택시 입력값
+  const placeEtcInputHandler = () => {
+    if(placeEtcRef.current){
+      const selectedOptions = {
+        ...spotsRegistrationInfo,
+        placeTypeEtc: placeEtcRef.current?.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
+    };
+  };
+
+  // type owner - 직급 호칭 입력값
+  const managerInfoInputHandler = () => {
+    if(managerRef.current){
+      const inputUserInfo = {
+        ...spotsRegistrationInfo,
+        managerInfo: managerRef.current?.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
+    };
+  };
+
+  // 유저 이름
+  const userNameInputHandler = () => {
+    if(nameRef.current){
+      const inputUserInfo = {
+        ...spotsRegistrationInfo,
+        userName: nameRef.current.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
+    }
+  };
+
+  //유저 이메일
+  const userEmailInputHandler = () => {
+    if(emailRef.current){
+      const inputUserInfo = {
+        ...spotsRegistrationInfo,
+        userEmail: emailRef.current.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
+    }
+  };
+
+  // 휴대전화
+  const userTelInputHandler = () => {
+    if(telRef.current){
+      const inputUserInfo = {
+        ...spotsRegistrationInfo,
+        userTel: telRef.current.value,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(inputUserInfo));
+    }
+  };
+
+  const noticeHandler = () => {
+      setNoticeChecked(!noticeChecked);
+  };
 
   return (
     <Container>
@@ -54,19 +178,26 @@ const RegisterPage = () => {
         어디신가요?
       </TextH1B>
       <FormWrapper>
-        <Wrapper>
+        <Wrapper >
           <TextH4B margin="0 0 16px 0">주소</TextH4B>
-          <Button backgroundColor={theme.white} color={theme.black} border>
-            장소 찾기
-          </Button>
-          {/* <Address>
-                <TextH3B>서울 동작구 동작대로 18길 11</TextH3B>
-                <TextB3R>8층 809호</TextB3R>
-            </Address> */}
+          <LocationWrapper onClick={goToLocation} >
+            {
+              !spotLocation.address?.length ?
+                <TextH4B center color={theme.black}>장소 찾기</TextH4B>
+              :
+                <>
+                  <TextH4B>{`${spotLocation.address} ${spotLocation.bdNm}`}</TextH4B>
+                  <TextB2R>{spotLocation.addressDetail}</TextB2R>
+                </>
+            }
+          </LocationWrapper>
         </Wrapper>
         <Wrapper>
           <TextH4B margin="0 0 16px 0">장소명</TextH4B>
           <TextInput
+            ref={placeRef}
+            eventHandler={placeInputHandler}
+            value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
             placeholder={
               type === 'private' ? '회사 및 학교 상호입력' : '상호명'
             }
@@ -85,9 +216,24 @@ const RegisterPage = () => {
               pointer
               onClick={() => selectOptions('pickUp')}
             >
-              픽업 장소 선택
+              {
+                spotsRegistrationOptions.pickupLocationTypeOptions?.name?.length ?
+                <TextB2R color={theme.black}>{spotsRegistrationOptions.pickupLocationTypeOptions?.name} </TextB2R>
+                :
+                '픽업 장소 선택'
+              }
               <SVGIcon name="triangleDown" />
             </Button>
+            {
+              spotsRegistrationOptions.pickupLocationTypeOptions?.value === 'ETC' &&
+              <TextInput 
+                margin='8px 0 0 0' 
+                placeholder='기타 픽업 장소 입력' 
+                ref={pickUpEtcRef} 
+                eventHandler={pickUpEtcInputHandler}
+                value={spotsRegistrationInfo.pickupLocationEtc?.length ? spotsRegistrationInfo.pickupLocationEtc : null}
+              />
+            }
           </Wrapper>
         )}
         <Wrapper>
@@ -102,9 +248,24 @@ const RegisterPage = () => {
             pointer
             onClick={() => selectOptions('place')}
           >
-            공간 형태 선택
+            {
+              spotsRegistrationOptions.placeTypeOptions?.name?.length ?
+              <TextB2R color={theme.black}>{spotsRegistrationOptions.placeTypeOptions?.name} </TextB2R>
+              :
+              '공간 형태 선택'
+            }
             <SVGIcon name="triangleDown" />
           </Button>
+          {
+            spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' &&
+            <TextInput 
+              margin='8px 0 0 0' 
+              placeholder='기타 장소 종류 입력' 
+              ref={placeEtcRef} 
+              eventHandler={placeEtcInputHandler} 
+              value={spotsRegistrationInfo.placeTypeEtc?.length ? spotsRegistrationInfo.placeTypeEtc : null}
+            />
+          }
         </Wrapper>
         {type === 'private' && (
           <Wrapper>
@@ -119,17 +280,81 @@ const RegisterPage = () => {
               pointer
               onClick={() => selectOptions('time')}
             >
-              시간대 선택
+              {
+                spotsRegistrationOptions.lunchTimeOptions?.name?.length ?
+                <TextB2R color={theme.black}>{spotsRegistrationOptions.lunchTimeOptions?.name} </TextB2R>
+                :
+                '시간대 선택'
+              }
               <SVGIcon name="triangleDown" />
             </Button>
           </Wrapper>
         )}
+        {
+          (type === 'private' || type === 'owner') && (
+            <>
+            <Wrapper>
+            <TextH4B margin="0 0 16px 0">이름</TextH4B>
+            <TextInput
+              ref={nameRef}
+              eventHandler={userNameInputHandler}
+              value={spotsRegistrationInfo.userName?.length ? spotsRegistrationInfo.userName : null}
+              placeholder='이름 입력'
+            />
+          </Wrapper>
+          <Wrapper>
+            <TextH4B margin="0 0 16px 0">이메일</TextH4B>
+            <TextInput
+              ref={emailRef}
+              eventHandler={userEmailInputHandler}
+              value={spotsRegistrationInfo.userEmail?.length ? spotsRegistrationInfo.userEmail : null}
+              placeholder='이메일 입력'
+            />
+          </Wrapper>
+          <Wrapper>
+            <TextH4B margin="0 0 16px 0">휴대폰 번호</TextH4B>
+            <TextInput
+              ref={telRef}
+              eventHandler={userTelInputHandler}
+              value={spotsRegistrationInfo.userTel?.length ? spotsRegistrationInfo.userTel : null}
+              placeholder='휴대폰 번호 (-제외)'
+            />
+          </Wrapper>
+          </>
+          )
+        }
+        {
+          type === 'owner' &&
+          <>
+            <Wrapper>
+              <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
+              <TextInput
+                ref={managerRef}
+                eventHandler={managerInfoInputHandler}
+                value={spotsRegistrationInfo.managerInfo?.length ? spotsRegistrationInfo.managerInfo : null}
+                placeholder='직급 또는 호칭 입력'
+              />
+            </Wrapper>
+            <FlexRow padding='0 0 64px 0'>
+              <Checkbox 
+                onChange={noticeHandler} 
+                isSelected={noticeChecked} 
+              />
+              <TextB2R margin="0 0 0 8px" padding='3px 0 0 0'>
+                신청자가 장소관리자임을 확인했습니다.
+              </TextB2R>
+            </FlexRow>
+          </>
+        }
       </FormWrapper>
       {type === 'private' && (
         <BottomWrapper>
           <FlexRow>
-            <Checkbox onChange={checkBox} isSelected />
-            <TextH5B margin="0 0 0 8px">
+            <Checkbox 
+              onChange={noticeHandler} 
+              isSelected={noticeChecked} 
+            />
+            <TextH5B margin="0 0 0 8px" padding='3px 0 0 0'>
               픽업 장소 선정 유의사항을 확인했습니다.
             </TextH5B>
           </FlexRow>
@@ -142,7 +367,12 @@ const RegisterPage = () => {
         </BottomWrapper>
       )}
       <FixedButton onClick={goToSubmit}>
-        <Button borderRadius="0">다음</Button>
+        <Button 
+          borderRadius="0" 
+          height="100%"
+          padding='10px 0 0 0' 
+          backgroundColor={activeButton() ? theme.balck : theme.greyScale6}
+          >다음</Button>
       </FixedButton>
     </Container>
   );
@@ -158,11 +388,12 @@ const Wrapper = styled.div`
   margin-bottom: 32px;
 `;
 
-const Address = styled.div`
+const LocationWrapper = styled.div`
   width: 100%;
-  padding: 16px;
+  padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid ${theme.black};
+  cursor: pointer;
 `;
 const BottomWrapper = styled.section`
   padding: 32px 0 0 0;
@@ -170,17 +401,6 @@ const BottomWrapper = styled.section`
   border-top: 10px solid ${theme.greyScale6};
 `;
 
-const BottomSheetBtn = styled.button`
-  width: 100%;
-  height: 48px;
-  padding: 12px 16px;
-  border: 1px solid ${theme.greyScale15};
-  color: ${theme.greyScale45};
-  border-radius: 8px;
-  background: ${theme.white};
-  text-align: left;
-  cursor: pointer;
-`;
 
 const Row = styled.div`
   width: 100%;

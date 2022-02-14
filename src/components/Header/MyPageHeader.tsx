@@ -4,8 +4,11 @@ import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
+import { userForm } from '@store/user';
+import { useSelector } from 'react-redux';
 
 const MyPageHeader = () => {
+  const { isLoginSuccess } = useSelector(userForm);
   const goToCart = () => {
     router.push('/cart');
   };
@@ -13,9 +16,11 @@ const MyPageHeader = () => {
     <Container>
       <Wrapper>
         <Right>
-          <NotiWrapper>
-            <SVGIcon name="notification" />
-          </NotiWrapper>
+          {isLoginSuccess && (
+            <NotiWrapper>
+              <SVGIcon name="notification" />
+            </NotiWrapper>
+          )}
           <CartWrapper>
             <CartIcon onClick={goToCart} />
           </CartWrapper>

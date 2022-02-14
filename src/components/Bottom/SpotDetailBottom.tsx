@@ -21,7 +21,6 @@ import { useDispatch } from 'react-redux';
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
   const { spotDetail } = useSelector(spotSelector);
-  const { showToast, hideToast } = useToast();
   const [spotLike, setSpotLike] = useState(spotDetail.liked);
 
   const goToCart = (e: any): void => {
@@ -47,7 +46,6 @@ const SpotDetailBottom = () => {
       try {
         const { data } = await postSpotLike(spotDetail.id);
         if(data.code === 200 ){
-          showToast({ message: '스팟을 찜 했어요!' });
           dispatch(SET_SPOT_LIKED({isSpotLiked: true}));
           setSpotLike(true);
         }
@@ -58,7 +56,6 @@ const SpotDetailBottom = () => {
       try{
         const { data } = await deleteSpotLike(spotDetail.id);
         if(data.code === 200){
-          showToast({ message: '스팟을 찜 해제 했어요!' });
           dispatch(SET_SPOT_LIKED({isSpotLiked: false}));
           setSpotLike(false);
         }
@@ -66,7 +63,6 @@ const SpotDetailBottom = () => {
         console.error(err);
       };
     };
-    return () => hideToast();
   };
 
   return (

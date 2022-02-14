@@ -4,36 +4,74 @@ import {
   TextH2B,
   TextB1B,
   TextH5B,
-  TextH6B,
   TextB2R,
 } from '@components/Shared/Text';
-import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
+import { 
+  theme, 
+  homePadding, 
+  fixedBottom, 
+  FlexBetween 
+} from '@styles/theme';
 import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
+import { postSpotsRegistrationsInfoSubmit } from '@api/spot';
+import { IEditRegistration } from '@model/index';
+import { useDispatch } from 'react-redux';
+import { SET_SPOT_REGISTRATIONS_POST_RESULT } from '@store/spot';
 
 const SubmitPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const {
+    spotLocation, 
+    spotsRegistrationOptions, 
+    spotsRegistrationInfo,
+  } = useSelector(spotSelector);
   const { type } = router.query;
 
-  const goToFinish = (): void => {
-    router.push({
-      pathname: '/spot/register/submit/finish',
-      query: { type },
-    });
-  };
+  const registrationsSubmitHandeler = async() => {
+    const params: IEditRegistration = {
+      coordinate: {
+        lat: Number(spotLocation.lat),
+        lon: Number(spotLocation.lon),
+      },
+      location: {
+        address: spotLocation.address,
+        addressDetail: spotLocation.addressDetail,
+        dong: spotLocation.dong,
+        zipCode: spotLocation.zipCode,
+      },
+      type: type?.toString().toUpperCase(),
+      userName: spotsRegistrationInfo.userName,
+      userEmail: spotsRegistrationInfo.userEmail,
+      userTel: spotsRegistrationInfo.userTel,
+      placeName: spotsRegistrationInfo.placeName,
+      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+      lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
+      placeType: spotsRegistrationOptions.placeTypeOptions.value,
+      placeTypeDetail: spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' 
+        ? 
+          spotsRegistrationInfo.placeTypeEtc 
+        : 
+          null,
+      userPosition: type === 'owner' ?spotsRegistrationInfo.managerInfo : null,
+    };
 
-  const goToChangeInfo = (): void => {
-    router.replace({
-      pathname: '/spot/register',
-      query: { type },
-    });
-  };
-
-  const goToChangeUserInfo = (): void => {
-    router.replace({
-      pathname: '/spot/register/spot-onboarding',
-      query: { type },
-    });
+    try{
+      const { data } = await postSpotsRegistrationsInfoSubmit(params);
+      if(data.code === 200){
+        console.log('submit success!!');
+        dispatch(SET_SPOT_REGISTRATIONS_POST_RESULT(data?.data));
+        router.push({
+          pathname: '/spot/register/submit/finish',
+          query: { type },
+        });   
+      };
+    }catch(err){
+      console.error(err);
+    };  
   };
 
   return (
@@ -43,80 +81,77 @@ const SubmitPage = () => {
         <ContentWrapper>
           <FlexBetween margin="0 0 24px 0">
             <TextB1B>장소 정보</TextB1B>
-            <TextH6B
-              color={theme.greyScale65}
-              textDecoration="underline"
-              onClick={goToChangeInfo}
-              pointer
-            >
-              변경하기
-            </TextH6B>
           </FlexBetween>
           <Content>
             <TextH5B margin="0 0 8px 0">주소</TextH5B>
-            <TextB2R>경기도 성남시 분당구 대왕판교로 477 1122</TextB2R>
+            <TextB2R>{`${spotLocation.address} ${spotLocation.bdNm} ${spotLocation.addressDetail}`}</TextB2R>
           </Content>
           <Content>
             <TextH5B margin="0 0 8px 0">장소명</TextH5B>
-            <TextB2R>헤이그라운드</TextB2R>
+            <TextB2R>{spotsRegistrationInfo.placeName}</TextB2R>
           </Content>
           {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
-              <TextB2R>공용 냉장고</TextB2R>
+              <TextB2R>{spotsRegistrationOptions.pickupLocationTypeOptions.name?.length && 
+                spotsRegistrationOptions.pickupLocationTypeOptions.value !== 'ETC' ?
+                  spotsRegistrationOptions.pickupLocationTypeOptions.name
+                :
+                  `기타 / ${spotsRegistrationInfo.pickupLocationEtc}`
+              }</TextB2R>
             </Content>
           )}
           <Content>
             <TextH5B margin="0 0 8px 0">장소 종류</TextH5B>
-            <TextB2R>공유오피스</TextB2R>
+            <TextB2R>{spotsRegistrationOptions.placeTypeOptions.name?.length &&
+              spotsRegistrationOptions.placeTypeOptions.value !== 'ETC' ?
+                spotsRegistrationOptions.placeTypeOptions.name
+              :
+                `기타 / ${spotsRegistrationInfo.placeTypeEtc}`
+              }</TextB2R>
           </Content>
           {type === 'private' && (
             <Content>
-              <TextH5B margin="0 0 8px 0">점심 시간</TextH5B>
-              <TextB2R>12:00</TextB2R>
+              <TextH5B margin="0 0 8px 0">점심시간</TextH5B>
+              <TextB2R>{spotsRegistrationOptions.lunchTimeOptions.name?.length && 
+                spotsRegistrationOptions.lunchTimeOptions.name}</TextB2R>
             </Content>
           )}
         </ContentWrapper>
+        </Wrapper>
+        <Row />
+        <Wrapper>
         {type !== 'public' && (
           <>
-            <Row />
             <ContentWrapper>
               <FlexBetween margin="0 0 24px 0">
                 <TextB1B>
                   {type === 'private' ? '신청자 정보' : '장소 관리자 정보'}
                 </TextB1B>
-                <TextH6B
-                  color={theme.greyScale65}
-                  textDecoration="underline"
-                  onClick={goToChangeUserInfo}
-                  pointer
-                >
-                  변경하기
-                </TextH6B>
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
-                <TextB2R>프플린</TextB2R>
+                <TextB2R>{spotsRegistrationInfo.userName}</TextB2R>
               </Content>
               <Content>
                 <TextH5B margin="0 0 8px 0">이메일</TextH5B>
-                <TextB2R>flynn@freshcode.me</TextB2R>
+                <TextB2R>{spotsRegistrationInfo.userEmail}</TextB2R>
               </Content>
               <Content>
                 <TextH5B margin="0 0 8px 0">휴대폰 번호</TextH5B>
-                <TextB2R>01012341234</TextB2R>
+                <TextB2R>{spotsRegistrationInfo.userTel}</TextB2R>
               </Content>
-              {type === 'normal' && (
+              {type === 'owner' && (
                 <Content>
                   <TextH5B margin="0 0 8px 0">직급/호칭</TextH5B>
-                  <TextB2R>사장님</TextB2R>
+                  <TextB2R>{spotsRegistrationInfo.managerInfo}</TextB2R>
                 </Content>
               )}
             </ContentWrapper>
           </>
         )}
-        <FixedButton onClick={goToFinish}>
-          <Button borderRadius="0">신청서 제출하기</Button>
+        <FixedButton onClick={registrationsSubmitHandeler}>
+          <Button borderRadius="0" padding='10px 0 0 0'>신청서 제출하기</Button>
         </FixedButton>
       </Wrapper>
     </Container>
@@ -127,7 +162,7 @@ const Container = styled.main``;
 
 const Wrapper = styled.div`
   ${homePadding}
-  padding-bottom: 24px;
+  padding-bottom: 10px;
 `;
 
 const ContentWrapper = styled.section``;
@@ -142,8 +177,9 @@ const FixedButton = styled.section`
 
 const Row = styled.div`
   width: 100%;
-  border-bottom: 1px solid ${theme.greyScale6};
-  margin: 16px 0;
+  height: 8px;
+  background: ${theme.greyScale6};
+  margin-bottom: 32px;
 `;
 
 export default SubmitPage;
