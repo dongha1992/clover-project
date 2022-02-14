@@ -1,53 +1,49 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import React from 'react';
 import styled from 'styled-components';
+import { TextB3R, TextH2B } from '@components/Shared/Text';
+import { theme, FlexRow } from '@styles/theme';
 import { availabilityDestination } from '@api/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { useSelector, useDispatch } from 'react-redux';
-import { commonSelector, SET_IS_LOADING } from '@store/common';
-import {
-  destinationForm,
-  SET_AVAILABLE_DESTINATION,
-  SET_LOCATION_STATUS,
-} from '@store/destination';
+import { destinationForm, SET_AVAILABLE_DESTINATION, SET_LOCATION_STATUS } from '@store/destination';
 import { useRouter } from 'next/router';
-import {
-  MorningInfo,
-  ParcelInfo,
-  CanNotDeliveryInfo,
-  SpotInfo,
-  QuickAndMorningInfo,
-  MorningAndPacelInfo,
-  SpotAndMorningInfo,
-} from '@components/Pages/Destination';
+import { useQuery, useQueryClient } from 'react-query';
 
 /* TODO: spot 추가 되어야 함 */
-/* TODO: 배송방법 선택 query로 페이지 넘길까? */
 
-// temp
-let reqCtn = 0;
+interface IResponse {
+  status: string;
+  availableDestinationObj: {
+    morning: boolean;
+    parcel: boolean;
+    spot: boolean;
+    quick: boolean;
+  };
+}
 
-const CheckDestinationPlacce = () => {
-  const [formatAvailableDestination, setFormatAvailableDestination] =
-    useState('');
-
-  const { isLoading } = useSelector(commonSelector);
-  let { tempLocation, userDestinationStatus } = useSelector(destinationForm);
-
+const CheckDeliveryPlace = () => {
+  const { tempLocation } = useSelector(destinationForm);
   const dispatch = useDispatch();
   const router = useRouter();
+
   const { isLocation } = router.query;
 
-  const checkAvailablePlace = async () => {
-    dispatch(SET_IS_LOADING(true));
-
-    const params = {
-      jibunAddress: tempLocation.jibunAddr,
-      roadAddress: tempLocation.roadAddr,
-      zipCode: tempLocation.zipNo,
-      delivery: null,
-    };
-    try {
+  const {
+    data: result,
+    isLoading,
+    refetch,
+  } = useQuery(
+    'getAvailabilityDestination',
+    async () => {
+      const params = {
+        jibunAddress: tempLocation.jibunAddr,
+        roadAddress: tempLocation.roadAddr,
+        zipCode: tempLocation.zipNo,
+        delivery: null,
+      };
       const { data } = await availabilityDestination(params);
+
       if (data.code === 200) {
         const { morning, parcel, quick } = data.data;
         const availableDestinationObj = {
@@ -55,95 +51,102 @@ const CheckDestinationPlacce = () => {
           parcel,
           quick,
         };
-
         const status = checkDestinationHelper({
           ...availableDestinationObj,
         });
-
+        return { status, availableDestinationObj };
+      }
+    },
+    {
+      onSuccess: async ({ status, availableDestinationObj }: IResponse) => {
         if (isLocation) {
           dispatch(SET_LOCATION_STATUS(status));
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         } else {
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         }
-
-        setFormatAvailableDestination(status);
-        dispatch(SET_IS_LOADING(false));
-      }
-    } catch (error) {
-      console.error(error);
-      if (reqCtn < 3) {
-        checkAvailablePlace();
-      }
-      reqCtn++;
+      },
+      onError: (error: AxiosError) => {
+        const { message } = error.response?.data;
+        alert(message);
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
     }
-  };
+  );
 
   const userPlaceInfoRender = (status?: string) => {
-    const noQuick = status === 'morning';
-    const canEverything = status === 'spot';
-    const canParcel = status === 'parcel';
-    const canNotDelivery = status === 'noDelivery';
-
-    if (isLocation) {
-      // 홈 위치 검색
-      switch (status) {
-        case 'spot': {
-          return <SpotInfo />;
-        }
-        case 'parcel': {
-          return <ParcelInfo />;
-        }
-        case 'noDelivery': {
-          return <CanNotDeliveryInfo />;
-        }
-        case 'morning': {
-          return <MorningInfo />;
-        }
-        default:
-          return;
+    switch (status) {
+      case 'quick': {
+        return (
+          <>
+            <FlexRow>
+              <TextH2B>주변에</TextH2B>
+              <TextH2B color={theme.brandColor} padding="0 0 0 4px">
+                프코스팟
+              </TextH2B>
+              <TextH2B>이 있습니다.</TextH2B>
+            </FlexRow>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              점심·저녁 원하는 시간에 픽업 가능!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>서울 내 등록된 프코스팟에서 배송비 무료로 이용 가능해요</TextB3R>
+          </>
+        );
       }
-    } else {
-      if (canNotDelivery) {
-        return <CanNotDeliveryInfo />;
+      case 'parcel': {
+        return (
+          <>
+            <FlexRow>
+              <TextH2B color={theme.brandColor}>택배배송</TextH2B>
+              <TextH2B padding="0 4px 0 0">만</TextH2B>
+              <TextH2B>가능한 지역입니다.</TextH2B>
+            </FlexRow>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              오후 5시까지 주문 시 당일 발송!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>전국 어디서나 이용할 수 있어요. (제주, 도서 산간지역 제외)</TextB3R>
+          </>
+        );
       }
-      // 배송정보 배송지 검색
-      switch (userDestinationStatus || location) {
-        // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
-        case 'morning': {
-          if (canEverything) {
-            return <SpotAndMorningInfo />;
-          } else if (noQuick) {
-            return <MorningInfo />;
-          } else if (canParcel) {
-            return <ParcelInfo />;
-          }
-        }
-        case 'quick': {
-          if (canEverything) {
-            return <QuickAndMorningInfo />;
-          } else if (noQuick) {
-            return <MorningInfo />;
-          } else if (canParcel) {
-            return <ParcelInfo />;
-          }
-        }
-        case 'parcel': {
-          if (canEverything || noQuick) {
-            return <MorningAndPacelInfo />;
-          } else if (canParcel) {
-            return <ParcelInfo />;
-          }
-        }
-        default:
-          return;
+      case 'noDelivery': {
+        return (
+          <>
+            <FlexRow>
+              <TextH2B color={theme.brandColor} padding="0 4px 0 0">
+                배송불가
+              </TextH2B>
+              <TextH2B>지역입니다.</TextH2B>
+            </FlexRow>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              신선식품의 특성상 일부지역의 배송이 불가해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>(섬/공단지역/학교/학교 기숙사/병원/군부대/시장/백화점 등)</TextB3R>
+          </>
+        );
       }
+      case 'noQuick':
+      case 'morning': {
+        return (
+          <>
+            <FlexRow>
+              <TextH2B color={theme.brandColor} padding="0 4px 0 0">
+                새벽배송
+              </TextH2B>
+              <TextH2B>지역입니다.</TextH2B>
+            </FlexRow>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              오후 5시까지 주문 시 다음날 새벽에 도착!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>서울 전체, 경기/인천 일부 지역 이용 가능해요</TextB3R>
+          </>
+        );
+      }
+      default:
+        return;
     }
   };
-
-  useEffect(() => {
-    checkAvailablePlace();
-  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -151,7 +154,7 @@ const CheckDestinationPlacce = () => {
 
   return (
     <Container>
-      <PlaceInfo>{userPlaceInfoRender(formatAvailableDestination)}</PlaceInfo>
+      <PlaceInfo>{userPlaceInfoRender(result?.status)}</PlaceInfo>
     </Container>
   );
 };
@@ -164,4 +167,4 @@ const PlaceInfo = styled.div`
   flex-direction: column;
 `;
 
-export default React.memo(CheckDestinationPlacce);
+export default React.memo(CheckDeliveryPlace);
