@@ -7,6 +7,7 @@ interface IAvailableDestination {
   morning: boolean;
   quick: boolean;
   parcel: boolean;
+  spot: boolean;
 }
 
 export interface ITempDestination {
@@ -105,6 +106,7 @@ const INITIAL_STATE: TProps = {
     morning: false,
     quick: false,
     parcel: false,
+    spot: false,
   },
   locationStatus: '',
   destinationStatus: '',
