@@ -67,17 +67,26 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   }, []);
 
   const authCheck = async () => {
-    const { loginType } = store.getState().common;
+    const { loginType, isAutoLogin } = store.getState().common;
 
-    if (loginType !== 'NONMEMBER') {
-      const userInfo = await userProfile().then((res) => {
-        return res?.data;
-      });
-
-      if (userInfo?.code === 200) {
-        dispatch(SET_USER(userInfo?.data));
-        dispatch(SET_LOGIN_SUCCESS(true));
+    try {
+      if (loginType !== 'NONMEMBER' && sessionStorage.accessToken) {
+        const { data } = await userProfile();
+        if (data.code === 200) {
+          dispatch(SET_USER(data.data));
+          dispatch(SET_LOGIN_SUCCESS(true));
+        }
+      } else {
+        if (isAutoLogin) {
+          const { data } = await userProfile();
+          if (data.code === 200) {
+            dispatch(SET_USER(data.data));
+            dispatch(SET_LOGIN_SUCCESS(true));
+          }
+        }
       }
+    } catch (err) {
+      console.log(err);
     }
   };
 
