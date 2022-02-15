@@ -7,18 +7,19 @@ import { DeliveryTag, Tag } from '@components/Shared/Tag';
 
 interface IProps {
   filteredList: IDestinationsResponse[];
+  onClick: (item: IDestinationsResponse) => void;
 }
 
-const RecentDelivery = ({ filteredList }: IProps) => {
+const RecentDelivery = ({ filteredList, onClick }: IProps) => {
   return (
     <Container>
       <TextH5B>최근 배송 이력</TextH5B>
       <FlexCol>
         {filteredList.map((item: IDestinationsResponse, index: number) => (
-          <FlexCol key={index} padding="24px 0 0 0">
+          <FlexCol key={index} padding="24px 0 0 0" onClick={() => onClick(item)} pointer>
             <FlexRow>
               <TextH5B>{item.name}</TextH5B>
-              <DeliveryTag devlieryType={item.delivery} />
+              <DeliveryTag devlieryType={item.delivery} margin="0 4px" />
               {item.main && <Tag>메인 배송지</Tag>}
             </FlexRow>
             <TextB3R padding="4px 0 0 0">{item.location.address}</TextB3R>

@@ -67,6 +67,10 @@ const DestinationSearchPage = () => {
     }
   };
 
+  const selectDestinationByList = (destination: IDestinationsResponse): void => {
+    console.log(destination, 'destination');
+  };
+
   const goToDestinationDetail = (address: any) => {
     dispatch(SET_LOCATION_TEMP(address));
     router.push('/destination/destination-detail');
@@ -96,7 +100,7 @@ const DestinationSearchPage = () => {
           </TextH6B>
         </CurrentLocBtn>
         {beforeSearch ? (
-          <RecentDelivery filteredList={filteredList ?? []} />
+          <RecentDelivery filteredList={filteredList ?? []} onClick={selectDestinationByList} />
         ) : (
           <DestinationSearchResult
             resultAddress={resultAddress}

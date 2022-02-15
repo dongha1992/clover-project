@@ -14,9 +14,7 @@ const QuickAndMorningInfo = () => {
       <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
         평일, 점심·저녁에 퀵하게 받거나 (서울 한정)
       </TextB3R>
-      <TextB3R color={theme.greyScale65}>
-        오후 5시까지 주문 시 다음날 새벽배송도 가능해요!
-      </TextB3R>
+      <TextB3R color={theme.greyScale65}>오후 5시까지 주문 시 다음날 새벽배송도 가능해요!</TextB3R>
     </>
   );
 };
