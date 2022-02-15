@@ -13,10 +13,11 @@ import {
   SpotInfo,
   ParcelInfo,
   MorningInfo,
-  SpotAndMorningInfo,
+  ParcelAndQuickInfo,
   QuickAndMorningInfo,
   MorningAndPacelInfo,
 } from '@components/Pages/Destination';
+import { Obj } from '@model/index';
 interface IResponse {
   status: TLocationType;
   availableDestinationObj: {
@@ -84,8 +85,12 @@ const CheckDestinationPlace = () => {
     }
   );
 
-  const userPlaceInfoRender = (status?: string) => {
-    const noQuick = status === 'morning';
+  const userPlaceInfoRender = ({ status, availableDestinationObj }: IResponse) => {
+    if (!result) {
+      return;
+    }
+
+    const CanMorning = status === 'morning';
     const canEverything = status === 'spot';
     const canParcel = status === 'parcel';
     const canNotDelivery = status === 'noDelivery';
@@ -113,32 +118,40 @@ const CheckDestinationPlace = () => {
       if (canNotDelivery) {
         return <CanNotDeliveryInfo />;
       }
+      const { quick, parcel, morning, spot } = availableDestinationObj;
+      const noQuickButCanParcel = !morning && !quick && parcel;
+      const canQuickAndParcel = !morning && quick && parcel;
+      const noParcelButCanMorning = !parcel && morning;
+      const canParcelAndCanMorning = morning && parcel;
+
       // 배송정보 배송지 검색
       switch (userDestinationStatus) {
         // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
         case 'morning': {
-          if (canEverything) {
-            return <SpotAndMorningInfo />;
-          } else if (noQuick) {
-            return <MorningInfo />;
-          } else if (canParcel) {
-            return <ParcelInfo />;
-          }
-        }
-        case 'quick': {
-          if (canEverything) {
-            return <QuickAndMorningInfo />;
-          } else if (noQuick) {
+          if (canEverything || CanMorning) {
             return <MorningInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;
           }
         }
         case 'parcel': {
-          if (canEverything || noQuick) {
+          if (canEverything || canParcelAndCanMorning) {
             return <MorningAndPacelInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;
+          } else if (noParcelButCanMorning) {
+            return <MorningInfo />;
+          }
+        }
+        case 'quick': {
+          if (canEverything) {
+            return <QuickAndMorningInfo />;
+          } else if (CanMorning) {
+            return <MorningInfo />;
+          } else if (noQuickButCanParcel) {
+            return <ParcelInfo />;
+          } else if (canQuickAndParcel) {
+            return <ParcelAndQuickInfo />;
           }
         }
         default:
@@ -153,7 +166,7 @@ const CheckDestinationPlace = () => {
 
   return (
     <Container>
-      <PlaceInfo>{userPlaceInfoRender(result?.status)}</PlaceInfo>
+      <PlaceInfo>{userPlaceInfoRender(result!)}</PlaceInfo>
     </Container>
   );
 };

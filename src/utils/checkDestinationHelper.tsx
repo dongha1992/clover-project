@@ -5,9 +5,9 @@ interface IProps {
   spot: boolean;
 }
 
-export type TLocationType = 'morning' | 'spot' | 'parcel' | 'quick' | 'noDelivery' | '';
+export type TLocationType = 'morning' | 'spot' | 'parcel' | 'quick' | 'noDelivery' | 'noQuick' | '';
 
-export const checkDestinationHelper = ({ morning, quick, parcel, spot }: IProps): TLocationType => {
+export let checkDestinationHelper = ({ morning, quick, parcel, spot }: IProps): TLocationType => {
   /*TODO: morning, quick, pacel , spot 값이 아예 없을때 방어로직. 경우 어떤 경우 있나 고민 */
   try {
     switch (true) {
@@ -15,10 +15,12 @@ export const checkDestinationHelper = ({ morning, quick, parcel, spot }: IProps)
         return 'spot';
       }
 
+      case !quick && morning:
       case !spot && morning: {
         return 'morning';
       }
 
+      case !morning && quick && parcel:
       case !spot && !morning && parcel: {
         return 'parcel';
       }

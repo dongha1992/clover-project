@@ -99,12 +99,14 @@ export const FlexCol = styled.div<{
   padding?: string;
   margin?: string;
   width?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
+  cursor: ${({ pointer }) => (pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`

@@ -8,9 +8,10 @@ type TDeliveryType = 'SPOT' | 'MORNING' | 'PARCEL' | 'QUICK';
 
 interface ITagProps {
   devlieryType: TDeliveryType;
+  margin?: string;
 }
 
-const DeliveryTag = ({ devlieryType = 'SPOT' }: ITagProps) => {
+const DeliveryTag = ({ devlieryType = 'SPOT', margin }: ITagProps) => {
   const deliveryMap: Obj = {
     PARCEL: '택배배송',
     MORNING: '새벽배송',
@@ -18,75 +19,43 @@ const DeliveryTag = ({ devlieryType = 'SPOT' }: ITagProps) => {
     QUICK: '퀵배송',
   };
 
-  const deliveryRenderer = () => {
-    switch (devlieryType) {
-      case 'SPOT':
-        return (
-          <SpotWrapper>
-            <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
-          </SpotWrapper>
-        );
-      case 'MORNING': {
-        return (
-          <MorningWrapper>
-            <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
-          </MorningWrapper>
-        );
-      }
-      case 'PARCEL':
-        return (
-          <ParcelWrapper>
-            <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
-          </ParcelWrapper>
-        );
-      case 'QUICK':
-        return (
-          <QuickWrapper>
-            <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
-          </QuickWrapper>
-        );
-      default:
-        return (
-          <Container>
-            <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
-          </Container>
-        );
-    }
-  };
-
-  return deliveryRenderer();
+  return (
+    <Container devlieryType={devlieryType} margin={margin}>
+      <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
+    </Container>
+  );
 };
 
-const defaultTag = styled.div`
+const Container = styled.div<{ devlieryType: TDeliveryType; margin?: string }>`
   display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
+  margin: ${({ margin }) => margin && margin};
   text-align: center;
-`;
 
-const Container = styled(defaultTag)`
-  border: 1px solid ${theme.black};
-  color: ${theme.black};
-`;
-
-const MorningWrapper = styled(defaultTag)`
-  border: 1px solid ${theme.morningColor};
-  color: ${theme.morningColor};
-`;
-
-const ParcelWrapper = styled(defaultTag)`
-  border: 1px solid ${theme.parcelColor};
-  color: ${theme.parcelColor};
-`;
-
-const SpotWrapper = styled(defaultTag)`
-  border: 1px solid ${theme.spotColor};
-  color: ${theme.spotColor};
-`;
-
-const QuickWrapper = styled(defaultTag)`
-  border: 1px solid ${theme.quickColor};
-  color: ${theme.quickColor};
+  ${({ devlieryType }) => {
+    if (devlieryType === 'SPOT') {
+      return css`
+        border: 1px solid ${theme.spotColor};
+        color: ${theme.spotColor};
+      `;
+    } else if (devlieryType === 'MORNING') {
+      return css`
+        border: 1px solid ${theme.morningColor};
+        color: ${theme.morningColor};
+      `;
+    } else if (devlieryType === 'PARCEL') {
+      return css`
+        border: 1px solid ${theme.parcelColor};
+        color: ${theme.parcelColor};
+      `;
+    } else {
+      return css`
+        border: 1px solid ${theme.quickColor};
+        color: ${theme.quickColor};
+      `;
+    }
+  }}
 `;
 
 export default DeliveryTag;
