@@ -6,7 +6,6 @@ import { Tag } from '@components/Shared/Tag';
 import { FlexBetween, homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import dynamic from 'next/dynamic';
-import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 import {
@@ -15,16 +14,18 @@ import {
   INIT_TEMP_DESTINATION,
   INIT_DESTINATION_STATUS,
   INIT_USER_DESTINATION_STATUS,
+  INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { destinationRegister } from '@api/destination';
-import { getMainDestinations, availabilityDestination } from '@api/destination';
+import { getMainDestinations } from '@api/destination';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
+import { useRouter } from 'next/router';
 import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
-import { ITempDestination } from '@store/destination';
+import { IDestination } from '@store/destination';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { setAlert } from '@store/alert';
 
@@ -42,12 +43,15 @@ const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
-  const [tempDestination, setTempDestination] = useState<ITempDestination | null>();
+  const [tempDestination, setTempDestination] = useState<IDestination | null>();
 
   const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
     useSelector(destinationForm);
 
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { destinationId } = router.query;
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
   const { isTimerTooltip } = useSelector(orderForm);
@@ -76,7 +80,6 @@ const DeliverInfoPage = () => {
           onSubmit: () => {
             setUserSelectDeliveryType(value);
             setTempDestination(null);
-
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_STATUS());
             dispatch(INIT_USER_DESTINATION_STATUS());
@@ -98,31 +101,60 @@ const DeliverInfoPage = () => {
       return;
     }
 
-    const reqBody = {
-      addressDetail: tempDestination.location.addressDetail,
-      name: tempDestination.name,
-      address: tempDestination.location.address,
-      delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDestinationStatus.toUpperCase(),
-      deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
-      dong: tempDestination.location.dong,
-      main: tempDestination.main,
-      receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
-      receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
-      zipCode: tempDestination.location.zipCode,
-    };
-    try {
-      const { data } = await destinationRegister(reqBody);
-      if (data.code === 200) {
-        dispatch(SET_DESTINATION(reqBody));
-        dispatch(SET_AFTER_SETTING_DELIVERY());
-        dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
-        dispatch(INIT_TEMP_DESTINATION());
-        dispatch(INIT_DESTINATION_STATUS());
-        router.push('/cart');
+    if (destinationId) {
+      dispatch(SET_DESTINATION(tempDestination));
+      dispatch(SET_AFTER_SETTING_DELIVERY());
+      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(INIT_TEMP_DESTINATION());
+      dispatch(INIT_DESTINATION_STATUS());
+      dispatch(INIT_AVAILABLE_DESTINATION());
+      router.push('/cart');
+    } else {
+      const reqBody = {
+        addressDetail: tempDestination.location.addressDetail,
+        name: tempDestination.name,
+        address: tempDestination.location.address,
+        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDestinationStatus.toUpperCase(),
+        deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
+        dong: tempDestination.location.dong,
+        main: tempDestination.main,
+        receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
+        receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
+        zipCode: tempDestination.location.zipCode,
+      };
+      try {
+        const { data } = await destinationRegister(reqBody);
+        if (data.code === 200) {
+          dispatch(
+            SET_DESTINATION({
+              name: reqBody.name,
+              location: {
+                addressDetail: reqBody.addressDetail,
+                address: reqBody.address,
+                dong: reqBody.dong,
+                zipCode: reqBody.zipCode,
+              },
+              main: reqBody.main,
+              deliveryMessage: reqBody.delivery,
+              receiverName: reqBody.receiverName,
+              receiverTel: reqBody.receiverTel,
+              deliveryMessageType: '',
+              delivery: userSelectDeliveryType
+                ? userSelectDeliveryType.toUpperCase()
+                : userDestinationStatus.toUpperCase(),
+            })
+          );
+          dispatch(SET_AFTER_SETTING_DELIVERY());
+          dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+          dispatch(INIT_TEMP_DESTINATION());
+          dispatch(INIT_DESTINATION_STATUS());
+          dispatch(INIT_AVAILABLE_DESTINATION());
+          router.push('/cart');
+        }
+      } catch (error) {
+        console.error(error);
+        return;
       }
-    } catch (error) {
-      console.error(error);
-      return;
     }
   };
 
@@ -166,6 +198,11 @@ const DeliverInfoPage = () => {
 
     if (!userDestinationStatus) {
       console.log(userDestinationStatus, 'userDestinationStatus 없음');
+    }
+
+    if (destinationId) {
+      setDeliveryTypeWithTooltip('');
+      return;
     }
 
     // 획득 위치 정보만 있음
@@ -228,6 +265,8 @@ const DeliverInfoPage = () => {
     if (!userSelectDeliveryType || userTempDestination) {
       return;
     }
+
+    // 최근 이력에서 고른 경우
 
     const params = {
       delivery: userSelectDeliveryType.toUpperCase(),

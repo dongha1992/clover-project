@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IJuso, IRegisterDestination } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
+import { availabilityDestination } from '@api/destination';
 
 interface IAvailableDestination {
   morning: boolean;
@@ -10,7 +11,7 @@ interface IAvailableDestination {
   spot: boolean;
 }
 
-export interface ITempDestination {
+export interface IDestination {
   name: string;
   location: {
     addressDetail: string;
@@ -19,15 +20,18 @@ export interface ITempDestination {
     zipCode: string | null;
   };
   main: boolean;
+  delivery?: string;
   deliveryMessage?: string;
   receiverName?: string;
   receiverTel?: string;
+  deliveryMessageType?: string;
+  id?: number;
 }
 
 interface TProps {
-  userDestination: IRegisterDestination;
+  userDestination: IDestination | null;
   tempLocation: IJuso;
-  userTempDestination: ITempDestination | null;
+  userTempDestination: IDestination | null;
   userLocation: IJuso;
   availableDestination: IAvailableDestination;
   destinationStatus: string;
@@ -63,19 +67,19 @@ const locationState = {
   detailJuso: null,
 };
 
-const destinationState = {
-  addressDetail: '',
-  name: '',
-  address: '',
-  delivery: '',
-  deliveryMessage: '',
-  dong: '',
-  main: false,
-  receiverName: '',
-  receiverTel: '',
-  zipCode: '',
-  deliveryMessageType: '',
-};
+// const destinationState = {
+//   addressDetail: '',
+//   name: '',
+//   address: '',
+//   delivery: '',
+//   deliveryMessage: '',
+//   dong: '',
+//   main: false,
+//   receiverName: '',
+//   receiverTel: '',
+//   zipCode: '',
+//   deliveryMessageType: '',
+// };
 
 // const tempDestinationState = {
 // name: '',
@@ -92,9 +96,7 @@ const destinationState = {
 // };
 
 const INITIAL_STATE: TProps = {
-  userDestination: {
-    ...destinationState,
-  },
+  userDestination: null,
   userTempDestination: null,
   tempLocation: {
     ...locationState,
@@ -118,14 +120,14 @@ export const destination = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     // 배송지 검색 후
-    SET_DESTINATION: (state, action: PayloadAction<IRegisterDestination>) => {
+    SET_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
       state.userDestination = action.payload;
     },
     INIT_DESTINATION: (state, action: PayloadAction) => {
-      state.userDestination = destinationState;
+      state.userDestination = null;
     },
 
-    SET_TEMP_DESTINATION: (state, action: PayloadAction<ITempDestination | null>) => {
+    SET_TEMP_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
       state.userTempDestination = action.payload;
     },
 
@@ -148,6 +150,9 @@ export const destination = createSlice({
     },
     SET_AVAILABLE_DESTINATION: (state, action: PayloadAction<IAvailableDestination>) => {
       state.availableDestination = action.payload;
+    },
+    INIT_AVAILABLE_DESTINATION: (state, action: PayloadAction) => {
+      state.availableDestination = { morning: false, quick: false, parcel: false, spot: false };
     },
     // 배송지 체크 api
     SET_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
@@ -176,6 +181,7 @@ export const {
   SET_LOCATION_TEMP,
   SET_LOCATION_STATUS,
   SET_AVAILABLE_DESTINATION,
+  INIT_AVAILABLE_DESTINATION,
   INIT_LOCATION_TEMP,
   SET_DESTINATION_STATUS,
   INIT_DESTINATION_STATUS,
