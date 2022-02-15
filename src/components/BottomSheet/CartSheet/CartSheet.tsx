@@ -120,9 +120,7 @@ const CartSheet = () => {
     // 관련 피그마 : https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244
 
     if (canMorningAndParcelNday || canSpotLunchAndDinnerTomorrow) {
-      arrivalDate = calculateArrival(checkArrivaldate(), disabledDates).split(
-        '-'
-      )[2];
+      arrivalDate = calculateArrival(checkArrivaldate(), disabledDates).split('-')[2];
     }
 
     let newRollingData: IRolling[] = [];
@@ -158,9 +156,7 @@ const CartSheet = () => {
               return {
                 ...data,
                 description: `17시까지 주문 시 ${
-                  isParcel
-                    ? `${arrivalDate}일 당일 발송`
-                    : `${arrivalDate}일 새벽 7시 전 도착`
+                  isParcel ? `${arrivalDate}일 당일 발송` : `${arrivalDate}일 새벽 7시 전 도착`
                 }`,
               };
             })
@@ -193,9 +189,7 @@ const CartSheet = () => {
   };
 
   const removeCartItemHandler = (id: number): void => {
-    const newSelectedMenus = selectedMenus.filter(
-      (item: any) => item.id !== id
-    );
+    const newSelectedMenus = selectedMenus.filter((item: any) => item.id !== id);
     setSelectedMenus(newSelectedMenus);
   };
 
@@ -208,14 +202,8 @@ const CartSheet = () => {
   };
 
   useEffect(() => {
-    const isRolling = [
-      '스팟저녁',
-      '새벽택배',
-      '새벽택배N일',
-      '스팟점심',
-      '스팟점심N일',
-    ].includes(deliveryType);
-    console.log(deliveryType);
+    const isRolling = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
+
     if (isRolling) {
       checkIsValidRollingMsg();
     }
@@ -243,11 +231,7 @@ const CartSheet = () => {
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
             {cartSheetObj?.main.map((option: any, index: number) => (
-              <MenuOption
-                key={index}
-                option={option}
-                selectMenuHandler={selectMenuHandler}
-              />
+              <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />
             ))}
           </Select>
         </MainOption>
@@ -259,11 +243,7 @@ const CartSheet = () => {
               </TextH5B>
               <Select placeholder="선택옵션" type={'optional'}>
                 {cartSheetObj?.secondary.map((option: any, index: number) => (
-                  <MenuOption
-                    key={index}
-                    option={option}
-                    selectMenuHandler={selectMenuHandler}
-                  />
+                  <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />
                 ))}
               </Select>
             </>
@@ -272,12 +252,7 @@ const CartSheet = () => {
         {selectedMenus.length > 0 ? (
           <SelectedCartItemContainer>
             {selectedMenus.map((menu: any, index: number) => (
-              <CartSheetItem
-                menu={menu}
-                key={index}
-                padding="16px"
-                removeCartItemHandler={removeCartItemHandler}
-              />
+              <CartSheetItem menu={menu} key={index} padding="16px" removeCartItemHandler={removeCartItemHandler} />
             ))}
           </SelectedCartItemContainer>
         ) : null}
@@ -289,11 +264,7 @@ const CartSheet = () => {
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>
-          {isTimerTooltip ? (
-            <CheckTimerByDelivery isCartSheet />
-          ) : (
-            <Rolling list={rollingData} />
-          )}
+          {isTimerTooltip ? <CheckTimerByDelivery isCartSheet /> : <Rolling list={rollingData} />}
         </DeliveryInforContainer>
       </OrderInfoContainer>
       <ButtonContainer onClick={submitHandler}>

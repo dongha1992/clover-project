@@ -17,7 +17,7 @@ import {
   QuickAndMorningInfo,
   MorningAndPacelInfo,
 } from '@components/Pages/Destination';
-import { Obj } from '@model/index';
+import isNil from 'lodash-es/isNil';
 interface IResponse {
   status: TLocationType;
   availableDestinationObj: {
@@ -86,11 +86,11 @@ const CheckDestinationPlace = () => {
   );
 
   const userPlaceInfoRender = ({ status, availableDestinationObj }: IResponse) => {
-    if (!result) {
+    if (isNil(result)) {
       return;
     }
 
-    const CanMorning = status === 'morning';
+    const canMorning = status === 'morning';
     const canEverything = status === 'spot';
     const canParcel = status === 'parcel';
     const canNotDelivery = status === 'noDelivery';
@@ -119,6 +119,8 @@ const CheckDestinationPlace = () => {
         return <CanNotDeliveryInfo />;
       }
       const { quick, parcel, morning, spot } = availableDestinationObj;
+
+      // 예외 케이스
       const noQuickButCanParcel = !morning && !quick && parcel;
       const canQuickAndParcel = !morning && quick && parcel;
       const noParcelButCanMorning = !parcel && morning;
@@ -128,7 +130,7 @@ const CheckDestinationPlace = () => {
       switch (userDestinationStatus) {
         // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
         case 'morning': {
-          if (canEverything || CanMorning) {
+          if (canEverything || canMorning) {
             return <MorningInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;
@@ -146,7 +148,7 @@ const CheckDestinationPlace = () => {
         case 'quick': {
           if (canEverything) {
             return <QuickAndMorningInfo />;
-          } else if (CanMorning) {
+          } else if (canMorning) {
             return <MorningInfo />;
           } else if (noQuickButCanParcel) {
             return <ParcelInfo />;
