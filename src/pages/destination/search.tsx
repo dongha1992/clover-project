@@ -10,7 +10,7 @@ import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
-import { destinationForm, SET_LOCATION_TEMP } from '@store/destination';
+import { destinationForm, SET_LOCATION_TEMP, SET_TEMP_DESTINATION } from '@store/destination';
 import { getDestinations } from '@api/destination';
 import { useQuery } from 'react-query';
 import { IDestinationsResponse } from '@model/index';
@@ -66,7 +66,9 @@ const DestinationSearchPage = () => {
   };
 
   const selectDestinationByList = (destination: IDestinationsResponse): void => {
-    console.log(destination, 'destination');
+    router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
+
+    dispatch(SET_TEMP_DESTINATION(destination));
   };
 
   const goToDestinationDetail = (address: any) => {

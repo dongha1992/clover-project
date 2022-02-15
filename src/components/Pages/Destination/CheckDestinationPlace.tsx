@@ -78,6 +78,7 @@ const CheckDestinationPlace = () => {
       onError: (error: AxiosError) => {
         const { message } = error.response?.data;
         alert(message);
+        return;
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -86,10 +87,6 @@ const CheckDestinationPlace = () => {
   );
 
   const userPlaceInfoRender = ({ status, availableDestinationObj }: IResponse) => {
-    if (isNil(result)) {
-      return;
-    }
-
     const canMorning = status === 'morning';
     const canEverything = status === 'spot';
     const canParcel = status === 'parcel';
@@ -164,6 +161,10 @@ const CheckDestinationPlace = () => {
 
   if (isLoading) {
     return <div>로딩</div>;
+  }
+
+  if (isNil(result)) {
+    return <div>에러 발생</div>;
   }
 
   return (

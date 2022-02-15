@@ -29,6 +29,7 @@ import { HorizontalItem } from '@components/Item';
 import { setAlert } from '@store/alert';
 import { destinationForm } from '@store/destination';
 import { Obj } from '@model/index';
+import isNill from 'lodash-es/isNil';
 
 const LUNCH_OR_DINNER = [
   {
@@ -191,14 +192,12 @@ const CartPage = () => {
     router.push('/payment');
   };
 
-  const hasDestination = Object.values(userDestination).filter((item) => item).length > 0;
-
   return (
     <Container>
       <DeliveryMethodAndPickupLocation>
         <Left>
           <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
-          <TextH4B>{hasDestination ? userDestination.dong : '배송장소를 설정해주세요'}</TextH4B>
+          <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
         </Left>
         <Right onClick={goToDeliveryInfo}>
           <SVGIcon name="arrowRight" />
