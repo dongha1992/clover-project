@@ -2,7 +2,7 @@ import { FlexBetween, FlexCol, FlexRow, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
@@ -37,13 +37,7 @@ const OrderDeliveryItem = ({ menu }: IProps) => {
           </FlexCol>
         </FlexRow>
         <FlexRow>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            margin="0 8px 0 0"
-            onClick={addToCart}
-          >
+          <Button backgroundColor={theme.white} color={theme.black} border margin="0 8px 0 0" onClick={addToCart}>
             장바구니 담기
           </Button>
           <Button

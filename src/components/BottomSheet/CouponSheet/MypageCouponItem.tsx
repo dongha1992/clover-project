@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  TextH3B,
-  TextB3R,
-  TextB2R,
-  TextH7B,
-  TextB4R,
-} from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextB2R, TextH7B, TextB4R } from '@components/Shared/Text';
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { ICoupon } from '@pages/mypage/coupon';
 
 interface IProps {
@@ -17,22 +11,14 @@ interface IProps {
   selectCouponHandler: (coupon: ICoupon) => void;
   isSelected: boolean;
 }
-const MypageCouponItem = ({
-  coupon,
-  selectCouponHandler,
-  isSelected,
-}: IProps) => {
+const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const isRateDiscount = coupon.type === 'rate';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 
   return (
-    <Container
-      isDownload={coupon.isDownload}
-      isSelected={isSelected}
-      onClick={() => selectCouponHandler(coupon)}
-    >
+    <Container isDownload={coupon.isDownload} isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">
@@ -92,8 +78,7 @@ const MypageCouponItem = ({
 };
 
 const Container = styled.div<{ isDownload: boolean; isSelected?: boolean }>`
-  border: 1px solid
-    ${({ isSelected }) => (isSelected ? theme.brandColor : theme.brandColor5)};
+  border: 1px solid ${({ isSelected }) => (isSelected ? theme.brandColor : theme.brandColor5)};
   box-sizing: border-box;
   border-radius: 8px;
   margin-bottom: 8px;

@@ -9,7 +9,7 @@ import { theme, FlexCol } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import SVGIcon from '@utils/SVGIcon';
 import router, { useRouter } from 'next/router';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { Obj } from '@model/index';
 import axios from 'axios';
 import { SET_LOGIN_SUCCESS, userForm } from '@store/user';
@@ -56,10 +56,7 @@ const OnBoarding: NextPage = () => {
           tokenType: res.token_type,
         };
 
-        const result = await axios.post(
-          'https://dev-api.freshcode.me/user/v1/signin-kakao',
-          data
-        );
+        const result = await axios.post('https://dev-api.freshcode.me/user/v1/signin-kakao', data);
 
         if (window.Kakao) {
           window.Kakao.cleanup();
@@ -97,9 +94,7 @@ const OnBoarding: NextPage = () => {
 
   const emailLoginHandler = (): void => {
     if (returnPath === onRouter.query.returnPath) {
-      router.push(
-        `/login?returnPath=${encodeURIComponent(String(returnPath))}`
-      );
+      router.push(`/login?returnPath=${encodeURIComponent(String(returnPath))}`);
     } else {
       router.push('/login');
     }
@@ -178,11 +173,7 @@ const OnBoarding: NextPage = () => {
             <Button {...emailButtonStyle} onClick={emailLoginHandler}>
               이메일로 로그인
             </Button>
-            <Button
-              {...emailButtonStyle}
-              onClick={emailSignUpHandler}
-              margin="0 0 0 8px"
-            >
+            <Button {...emailButtonStyle} onClick={emailSignUpHandler} margin="0 0 0 8px">
               이메일로 회원가입
             </Button>
             {lastLogin === 'email' && renderLastLoginTag()}
@@ -301,8 +292,7 @@ const TagWrapper = styled.div<{ left?: number }>`
   position: absolute;
   top: -20%;
   left: ${({ left }) => left && left + 3}%;
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1))
-    drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 
   ${({ theme, left }) => theme.mobile`
     left: ${`${left}%`}

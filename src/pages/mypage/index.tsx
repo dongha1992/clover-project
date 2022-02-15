@@ -3,7 +3,7 @@ import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween, Fl
 import SVGIcon from '@utils/SVGIcon';
 import React from 'react';
 import styled from 'styled-components';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
 import Image from 'next/image';

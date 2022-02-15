@@ -20,6 +20,9 @@ export const theme: Obj = {
   black: '#242424',
   systemRed: '#D32F2F',
   systemYellow: '#F4D740',
+  morningColor: '#7922BC',
+  parcelColor: '#1E7FF0',
+  quickColor: '#9C9C9C',
 };
 
 export const flexCenter = css`

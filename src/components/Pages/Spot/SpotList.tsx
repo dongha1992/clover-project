@@ -1,13 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  TextB3R,
-  TextH6B,
-  TextB2R,
-  TextH4B,
-  TextH5B,
-  TextH7B,
-} from '@components/Shared/Text';
+import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
@@ -16,10 +9,7 @@ import { setAlert } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { INormalSpots } from '@model/index';
-import {
-  getSpotLike,
-  postSpotRegistrationsRecruiting,
- } from '@api/spot';
+import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { useQuery, useQueryClient } from 'react-query';
 import { useDeleteLike, useOnLike } from 'src/query';
 // import { debounce } from 'lodash';
@@ -75,30 +65,30 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const clickSpotOpen = async (id: number) => {
     if (list.recruited) {
       return;
-    };
-      try{
-        const {data} = await postSpotRegistrationsRecruiting(id);
-        if(data.code === 200){
-          setSpotRegisteration(true);
-          const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-          dispatch(
-            setAlert({
-              alertMessage: TitleMsg,
-              onSubmit: () => {
-                const message = '참여해주셔서 감사해요:)'
-                showToast({ message });
-                /* TODO: warning 왜? */
-                return () => hideToast();
-              },
-              submitBtnText: '확인',
-              closeBtnText: '취소',
-            })
-          );
-          console.log('참여 완료!!! post')
-        }
-      }catch(err){
-        console.error(err);
-      };  
+    }
+    try {
+      const { data } = await postSpotRegistrationsRecruiting(id);
+      if (data.code === 200) {
+        setSpotRegisteration(true);
+        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+        dispatch(
+          setAlert({
+            alertMessage: TitleMsg,
+            onSubmit: () => {
+              const message = '참여해주셔서 감사해요:)';
+              showToast({ message });
+              /* TODO: warning 왜? */
+              return () => hideToast();
+            },
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+          })
+        );
+        console.log('참여 완료!!! post');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const SpotsListTypeRender = () => {
@@ -114,7 +104,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
             >
               <Tag>
                 <SVGIcon name="whitePeople" />
-                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
+                <TextH7B padding="1px 0 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
               <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
             </StorImgWrapper>
@@ -122,12 +112,10 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <TextB3R margin="8px 0 0 0" color={theme.black}>
                 {list?.name}
               </TextB3R>
-              <TextH6B
-                color={theme.greyScale65}
-              >{`${Math.round(list?.distance)}m`}</TextH6B>
-              <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
+              <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+              <LikeWrapper type="normal" onClick={(e) => hanlderLike(e)}>
                 <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
-                <TextB2R padding='4px 0 0 1px'>{list?.likeCount}</TextB2R>
+                <TextB2R padding="4px 0 0 1px">{list?.likeCount}</TextB2R>
               </LikeWrapper>
             </LocationInfoWrapper>
           </Container>
@@ -139,7 +127,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
             <ItemListRow>
               <Container type="event">
                 <StorImgWrapper onClick={() => goToDetail(list.id)}>
-                  <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
+                  <LikeWrapper type="event" onClick={(e) => hanlderLike(e)}>
                     <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                   </LikeWrapper>
                   <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
@@ -152,9 +140,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                     </TextH6B>
                   </div>
                   <ButtonWrapper>
-                    <TextH6B
-                      color={theme.greyScale65}
-                    >{`${Math.round(list?.distance)}m`}</TextH6B>
+                    <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
                     <Button onClick={goToCart}>주문하기</Button>
                   </ButtonWrapper>
                 </LocationInfoWrapper>
@@ -169,22 +155,17 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
             <StorImgWrapper>
               <Tag>
                 <SVGIcon name="whitePeople" />
-                <TextH7B padding='1px 0 0 2px' color={theme.white}>{`${list?.recruitingCount} / 100명 참여중`}</TextH7B>
+                <TextH7B padding="1px 0 0 2px" color={theme.white}>{`${list?.recruitingCount} / 100명 참여중`}</TextH7B>
               </Tag>
               {/* <ImgWrapper src={item.img} alt='매장이미지' /> */}
-              <ImgBox
-                src={`${IMAGE_S3_URL}${list?.image?.url}`}
-                alt="매장이미지"
-              />
+              <ImgBox src={`${IMAGE_S3_URL}${list?.image?.url}`} alt="매장이미지" />
             </StorImgWrapper>
             <LocationInfoWrapper type="trial">
               <TextWrapper>
                 <TextH5B margin="8px 0 0 0" color={theme.black}>
                   {list?.placeName}
                 </TextH5B>
-                <TextH6B
-                  color={theme.greyScale65}
-                >{`${Math.round(list?.distance)}m`}</TextH6B>
+                <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
               </TextWrapper>
               <Button onClick={() => clickSpotOpen(list?.id)}>{spotRegisteration ? '참여완료' : '참여하기'}</Button>
             </LocationInfoWrapper>
