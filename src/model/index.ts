@@ -234,7 +234,7 @@ export interface IDestinationsResponse {
   id: number;
   delivery: TDeliveryType;
   deliveryMessage: string;
-  deliveryMessageType: string;
+  deliveryMessageType?: string;
   name: string;
   receiverTel: string;
   receiverName: string;

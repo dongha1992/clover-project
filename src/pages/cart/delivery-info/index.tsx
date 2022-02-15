@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { FlexBetween, homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import dynamic from 'next/dynamic';
@@ -41,20 +41,13 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 const recentOrder = '';
 
 const DeliverInfoPage = () => {
-  const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] =
-    useState<string>('');
-  const [userSelectDeliveryType, setUserSelectDeliveryType] =
-    useState<string>('');
+  const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
+  const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
-  const [tempDestination, setTempDestination] =
-    useState<ITempDestination | null>();
+  const [tempDestination, setTempDestination] = useState<ITempDestination | null>();
 
-  const {
-    destinationStatus,
-    userTempDestination,
-    locationStatus,
-    userDestinationStatus,
-  } = useSelector(destinationForm);
+  const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus } =
+    useSelector(destinationForm);
 
   const dispatch = useDispatch();
 
@@ -78,12 +71,11 @@ const DeliverInfoPage = () => {
   const changeDeliveryTypeHandler = (value: string) => {
     // 배송 방법 변경시 검색한 배송지가 있으면 초기화 배송지 정보 초기화
     // 툴팁이 존재하는 배송방법 선택 시 툴팁 초기화
-    console.log(value, deliveryTypeWithTooltip);
+
     if (tempDestination && destinationStatus) {
       dispatch(
         setAlert({
-          alertMessage:
-            '설정하신 주소는 저장되지 않습니다. 배송방법을 변경하시겠어요?',
+          alertMessage: '설정하신 주소는 저장되지 않습니다. 배송방법을 변경하시겠어요?',
           onSubmit: () => {
             setUserSelectDeliveryType(value);
             setTempDestination(null);
@@ -113,20 +105,12 @@ const DeliverInfoPage = () => {
       addressDetail: tempDestination.location.addressDetail,
       name: tempDestination.name,
       address: tempDestination.location.address,
-      delivery: userSelectDeliveryType
-        ? userSelectDeliveryType.toUpperCase()
-        : userDestinationStatus.toUpperCase(),
-      deliveryMessage: tempDestination.deliveryMessage
-        ? tempDestination.deliveryMessage
-        : '',
+      delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDestinationStatus.toUpperCase(),
+      deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
       dong: tempDestination.location.dong,
       main: tempDestination.main,
-      receiverName: tempDestination.receiverName
-        ? tempDestination.receiverName
-        : '테스트',
-      receiverTel: tempDestination.receiverTel
-        ? tempDestination.receiverTel
-        : '01012341234',
+      receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
+      receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
       zipCode: tempDestination.location.zipCode,
     };
     try {
@@ -160,23 +144,13 @@ const DeliverInfoPage = () => {
   const tooltipRender = () => {
     switch (deliveryTypeWithTooltip) {
       case 'morning': {
-        return (
-          <Tooltip message="새벽배송이 가능해요!" top="25px" width="150px" />
-        );
+        return <Tooltip message="새벽배송이 가능해요!" top="25px" width="150px" />;
       }
       case 'parcel': {
-        return (
-          <Tooltip message="택배배송만 가능해요!" top="25px" width="150px" />
-        );
+        return <Tooltip message="택배배송만 가능해요!" top="25px" width="150px" />;
       }
       case 'spot': {
-        return (
-          <Tooltip
-            message="무료 스팟배송이 가능해요!"
-            top="25px"
-            width="170px"
-          />
-        );
+        return <Tooltip message="무료 스팟배송이 가능해요!" top="25px" width="170px" />;
       }
     }
   };
@@ -259,14 +233,11 @@ const DeliverInfoPage = () => {
 
     // 배송지 검색 후 배송방법 변하는 예외 케이스
     if (userDestinationStatus) {
-      const userMorningButParcel =
-        userDestinationStatus === 'morning' && destinationStatus === 'parcel';
+      const userMorningButParcel = userDestinationStatus === 'morning' && destinationStatus === 'parcel';
 
-      const userQuickButMorning =
-        userDestinationStatus === 'quick' && destinationStatus === 'morning';
+      const userQuickButMorning = userDestinationStatus === 'quick' && destinationStatus === 'morning';
 
-      const userQuickButParcel =
-        userDestinationStatus === 'quick' && destinationStatus === 'parcel';
+      const userQuickButParcel = userDestinationStatus === 'quick' && destinationStatus === 'parcel';
 
       switch (true) {
         case userMorningButParcel:
@@ -318,13 +289,7 @@ const DeliverInfoPage = () => {
   const checkTimerShow = () => {
     // 배송 방법 선택과 관련 없이 현재 시간이 배송 마감 30분 전 이면 show
 
-    const isNotTimer = [
-      '스팟저녁',
-      '새벽택배',
-      '새벽택배N일',
-      '스팟점심',
-      '스팟점심N일',
-    ].includes(deliveryType);
+    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
 
     if (!isNotTimer) {
       if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
@@ -374,37 +339,24 @@ const DeliverInfoPage = () => {
               <MethodGroup key={index}>
                 <RowWrapper>
                   <RadioWrapper>
-                    <RadioButton
-                      isSelected={isSelected}
-                      onChange={() => changeDeliveryTypeHandler(item.value)}
-                    />
+                    <RadioButton isSelected={isSelected} onChange={() => changeDeliveryTypeHandler(item.value)} />
                   </RadioWrapper>
                   <Content>
                     <FlexBetween margin="0 0 8px 0">
                       <RowLeft>
                         <TextH5B margin="0 4px 0px 8px">{item.name}</TextH5B>
                         {item.tag && (
-                          <Tag
-                            backgroundColor={theme.greyScale6}
-                            color={theme.greyScale45}
-                          >
+                          <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
                             {item.tag}
                           </Tag>
                         )}
                       </RowLeft>
-                      {deliveryTypeWithTooltip === item.value &&
-                        tooltipRender()}
-                      {isTimerTooltip && item.name === timerDevlieryType && (
-                        <CheckTimerByDelivery />
-                      )}
+                      {deliveryTypeWithTooltip === item.value && tooltipRender()}
+                      {isTimerTooltip && item.name === timerDevlieryType && <CheckTimerByDelivery />}
                     </FlexBetween>
                     <Body>
-                      <TextB3R color={theme.greyScale45}>
-                        {item.description}
-                      </TextB3R>
-                      <TextH6B color={theme.greyScale45}>
-                        {item.feeInfo}
-                      </TextH6B>
+                      <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
+                      <TextH6B color={theme.greyScale45}>{item.feeInfo}</TextH6B>
                     </Body>
                   </Content>
                 </RowWrapper>
@@ -421,37 +373,24 @@ const DeliverInfoPage = () => {
               <MethodGroup key={index}>
                 <RowWrapper>
                   <RadioWrapper>
-                    <RadioButton
-                      isSelected={isSelected}
-                      onChange={() => changeDeliveryTypeHandler(item.value)}
-                    />
+                    <RadioButton isSelected={isSelected} onChange={() => changeDeliveryTypeHandler(item.value)} />
                   </RadioWrapper>
                   <Content>
                     <FlexBetween margin="0 0 8px 0">
                       <RowLeft>
                         <TextH5B margin="0 4px 0 8px">{item.name}</TextH5B>
                         {item.tag && (
-                          <Tag
-                            backgroundColor={theme.greyScale6}
-                            color={theme.greyScale45}
-                          >
+                          <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
                             {item.tag}
                           </Tag>
                         )}
                       </RowLeft>
-                      {deliveryTypeWithTooltip === item.value &&
-                        tooltipRender()}
-                      {isTimerTooltip && item.name === timerDevlieryType && (
-                        <CheckTimerByDelivery />
-                      )}
+                      {deliveryTypeWithTooltip === item.value && tooltipRender()}
+                      {isTimerTooltip && item.name === timerDevlieryType && <CheckTimerByDelivery />}
                     </FlexBetween>
                     <Body>
-                      <TextB3R color={theme.greyScale45}>
-                        {item.description}
-                      </TextB3R>
-                      <TextH6B color={theme.greyScale45}>
-                        {item.feeInfo}
-                      </TextH6B>
+                      <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
+                      <TextH6B color={theme.greyScale45}>{item.feeInfo}</TextH6B>
                     </Body>
                   </Content>
                 </RowWrapper>
@@ -463,15 +402,9 @@ const DeliverInfoPage = () => {
           <>
             <BorderLine height={8} margin="32px 0" />
             <FlexBetween>
-              <TextH3B padding="0 0 14px 0">
-                {isSpotPickupPlace ? '픽업장소' : '배송지'}
-              </TextH3B>
+              <TextH3B padding="0 0 14px 0">{isSpotPickupPlace ? '픽업장소' : '배송지'}</TextH3B>
               {tempDestination && (
-                <TextH6B
-                  textDecoration="underline"
-                  color={theme.greyScale65}
-                  onClick={goToFindAddress}
-                >
+                <TextH6B textDecoration="underline" color={theme.greyScale65} onClick={goToFindAddress}>
                   변경하기
                 </TextH6B>
               )}
@@ -479,11 +412,7 @@ const DeliverInfoPage = () => {
             {tempDestination ? placeInfoRender() : ''}
             {(!userSelectDeliveryType || !tempDestination) && (
               <BtnWrapper onClick={goToFindAddress}>
-                <Button
-                  backgroundColor={theme.white}
-                  color={theme.black}
-                  border
-                >
+                <Button backgroundColor={theme.white} color={theme.black} border>
                   {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
                 </Button>
               </BtnWrapper>

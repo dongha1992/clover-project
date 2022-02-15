@@ -13,9 +13,7 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import Tag from '@components/Shared/Tag';
-
-/* TODO: geolocation 에러케이스 추가 */
+import { Tag } from '@components/Shared/Tag';
 
 const LocationPage = () => {
   const router = useRouter();
@@ -49,7 +47,7 @@ const LocationPage = () => {
           y: position.coords.latitude?.toString(),
           x: position.coords.longitude?.toString(),
         });
-      console.log('Geo data', data)
+        console.log('Geo data', data);
         setUserLocation(data.documents[0].address_name);
         setCurrentLoc(data.documents[0].address_name);
       });
@@ -68,9 +66,7 @@ const LocationPage = () => {
     }
   };
 
-  const getSearchAddressResult = async (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (addressRef.current) {
         let query = addressRef.current?.value;
@@ -95,7 +91,6 @@ const LocationPage = () => {
       }
     }
   };
-
 
   const clearInputHandler = () => {
     if (addressRef.current) {
@@ -136,17 +131,13 @@ const LocationPage = () => {
               <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
               <CaseWrapper>
                 <FlexRow width="100%">
-                  <TextH6B>
-                    도로명주소 + 건물명
-                  </TextH6B>
+                  <TextH6B>도로명주소 + 건물명</TextH6B>
                 </FlexRow>
                 <FlexRowStart padding="4px 0 0 0">
                   <Tag padding="2px" width="8%" center>
                     지번
                   </Tag>
-                  <TextB3R margin="2px 0 0 4px">
-                    (우편번호)지번주소
-                  </TextB3R>
+                  <TextB3R margin="2px 0 0 4px">(우편번호)지번주소</TextB3R>
                 </FlexRowStart>
               </CaseWrapper>
               {resultAddress.map((address, index) => {
@@ -163,9 +154,7 @@ const LocationPage = () => {
               })}
             </>
           )}
-          {!resultAddress.length && isSearched && (
-            <div>검색 결과가 없습니다.</div>
-          )}
+          {!resultAddress.length && isSearched && <div>검색 결과가 없습니다.</div>}
         </ResultList>
       </Wrapper>
     </HomeContainer>
@@ -193,7 +182,7 @@ const CurrentLocBtn = styled.div`
 
 const ResultList = styled.div``;
 
-const CaseWrapper = styled.div`  
+const CaseWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;

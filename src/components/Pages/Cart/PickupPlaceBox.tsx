@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 
 const PickupPlaceBox = ({ place, checkTermHandler, isSelected }: any) => {
   return (
