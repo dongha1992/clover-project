@@ -47,7 +47,6 @@ const LocationPage = () => {
           y: position.coords.latitude?.toString(),
           x: position.coords.longitude?.toString(),
         });
-        console.log('Geo data', data);
         setUserLocation(data.documents[0].address_name);
         setCurrentLoc(data.documents[0].address_name);
       });

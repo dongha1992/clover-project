@@ -40,8 +40,6 @@ const DestinationSearchPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  console.log(filteredList, 'filteredList');
-
   const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (addressRef.current) {

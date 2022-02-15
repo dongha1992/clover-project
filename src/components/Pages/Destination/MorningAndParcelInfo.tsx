@@ -7,9 +7,9 @@ const MorningAndPacelInfo = () => {
     <>
       <FlexRow>
         <TextH2B color={theme.brandColor} padding="0 4px 0 0">
-          새벽/택배배송이 가능한
+          새벽/택배배송
         </TextH2B>
-        <TextH2B>지역입니다.</TextH2B>
+        <TextH2B>이 가능한 지역입니다.</TextH2B>
       </FlexRow>
       <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
         오후 5시까지 주문하면 다음날 새벽배송!
