@@ -13,13 +13,15 @@ type TProps = {
   index: number;
   disabledDates: string[];
   otherDeliveryDate?: string[] | [];
+  dayKor?: string;
 };
 
-const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate }: TProps) => {
-  const isSecondWeeeks = index > LIMIT_DAYS;
+const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate, dayKor }: TProps) => {
+  const isSecondWeeks = index > LIMIT_DAYS;
   const isToday = !index;
   const hasOtherDeliveryDate = otherDeliveryDate && otherDeliveryDate[0] === value;
-  const disabledDate = disabledDates.includes(value);
+  const isSunday = dayKor === '일';
+  const disabledDate = disabledDates.includes(value) || isSunday;
 
   const dayColorRender = () => {
     switch (true) {
@@ -61,7 +63,7 @@ const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDel
           handler(value);
         }
       }}
-      isSecondWeeeks={isSecondWeeeks}
+      isSecondWeeks={isSecondWeeks}
     >
       <Wrapper selectedDay={selectedDay} hasOtherDeliveryDate={hasOtherDeliveryDate}>
         <TextH5B color={`${theme[dayColorRender()]}`}>{day}</TextH5B>
@@ -71,14 +73,14 @@ const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDel
   );
 };
 
-const Container = styled.div<{ isSecondWeeeks?: boolean }>`
+const Container = styled.div<{ isSecondWeeks?: boolean }>`
   width: calc(100% / 7);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  margin-bottom: ${({ isSecondWeeeks }) => (isSecondWeeeks ? 0 : 12)}px;
+  margin-bottom: ${({ isSecondWeeks }) => (isSecondWeeks ? 0 : 12)}px;
 `;
 
 const Wrapper = styled.div<{

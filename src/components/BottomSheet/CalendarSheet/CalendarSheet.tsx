@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { Calendar } from '@components/Calendar';
 import { SET_DELIVERY_DATE } from '@store/order';
-import { IDateObj } from '@components/Calendar/Calendar';
 import { SET_ALERT } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 interface IProps {

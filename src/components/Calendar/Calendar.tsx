@@ -18,16 +18,17 @@ let WEEKS: any = {
 
 const ONE_WEEK = 7;
 const TWO_WEKKS = 14;
+const ACTIVE_DAY_OF_WEEK = 2;
 export const LIMIT_DAYS = 6;
 
-/* TODO: 디폴트 선택 날짜 어떻게? */
-
+/* TODO: 쓰이는 캘린더 3개 -> 분리해야하나 */
 export interface IDateObj {
   years: number;
   month: number;
   date: number;
   day: number;
   value: string;
+  dayKor: string;
 }
 
 interface ICalendar {
@@ -35,7 +36,8 @@ interface ICalendar {
   otherDeliveryDate?: string[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
-  isSheet: boolean;
+  isSheet?: boolean;
+  goToTogetherDelivery?: () => void;
 }
 
 const Calendar = ({
@@ -44,13 +46,10 @@ const Calendar = ({
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
+  goToTogetherDelivery,
 }: ICalendar) => {
   const [dateList, setDateList] = useState<IDateObj[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
-
-  useEffect(() => {
-    initCalendar();
-  }, []);
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate(new Date());
@@ -72,6 +71,7 @@ const Calendar = ({
         date: _date,
         day: _day,
         value,
+        dayKor: WEEKS[_day],
       };
 
       list.push(dateObj);
@@ -85,21 +85,30 @@ const Calendar = ({
   };
 
   const clickDayHandler = (value: string) => {
+    /*TODO: otherDeliveryDate 배열 --> 다형성 */
+    const otherDate = otherDeliveryDate! && otherDeliveryDate[0];
+
+    if (value === otherDate && !isSheet) {
+      goToTogetherDelivery && goToTogetherDelivery();
+    }
+
     setSelectedDeliveryDay(value);
   };
 
   const checkShowMoreWeek = (firstWeek: IDateObj[], disabledDates: string[]) => {
     const filtered = firstWeek.filter((week: any) => !disabledDates.includes(week.value));
+    const firstActiveDate = filtered[0].value;
+    setSelectedDeliveryDay(firstActiveDate);
 
-    // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filtered.length > 2) {
+    // 첫 번째 주에 배송 가능 날이 2일 이상인 경우 (일요일 제외 6일 중)
+    if (filtered.length - 1 > ACTIVE_DAY_OF_WEEK) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
     }
   };
 
-  const RenderCalendar = ({ isShowMoreWeek }: any): JSX.Element => {
+  const RenderCalendar = ({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
     const { years, months, dates } = getCustomDate(new Date());
 
     const renderWeeks = () => {
@@ -127,7 +136,6 @@ const Calendar = ({
         <Body>
           {dateList.map((dateObj, index) => {
             const selectedDay = selectedDeliveryDay === dateObj.value;
-
             if (!isShowMoreWeek) {
               if (index > LIMIT_DAYS) {
                 return;
@@ -143,6 +151,7 @@ const Calendar = ({
                 index={index}
                 disabledDates={disabledDates}
                 otherDeliveryDate={otherDeliveryDate}
+                dayKor={dateObj.dayKor}
               />
             );
           })}
@@ -150,6 +159,10 @@ const Calendar = ({
       </Wrapper>
     );
   };
+
+  useEffect(() => {
+    initCalendar();
+  }, []);
 
   return (
     <FlexCol>
@@ -160,7 +173,7 @@ const Calendar = ({
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
           <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
-            13일에 배송예정인 주문이 있습니다. 함께 받아보세요!
+            {otherDeliveryDate}일에 배송예정인 주문이 있습니다. 함께 받아보세요!
           </TextB3R>
         </FlexRow>
       )}
