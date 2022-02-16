@@ -12,7 +12,7 @@ import {
   deleteSpotsStoryLike, 
   getSpotsStoryLike 
 } from '@api/spot';
-import {ISpotStories} from '@pages/spot/detail/[id]';
+import {ISpotStories} from '@model/index';
 
 interface IProps {
   list: ISpotStories;

@@ -81,8 +81,8 @@ const Header = () => {
         '/destination/destination-detail': '배송지 검색',
         '/spot/search/location': '프코스팟 검색',
         '/spot/status': '스팟 관리',
-        '/spot/location': '장소 찾기',
-        '/spot/location/address': '장소 찾기',
+        '/spot/location': '주소 검색',
+        '/spot/location/address': '주소 검색',
         '/spot/regi-list': '프코스팟 안내',
       };
 
