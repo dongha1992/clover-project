@@ -28,7 +28,6 @@ const RegisterPage = () => {
     spotsRegistrationOptions, 
     spotsRegistrationInfo,
   } = useSelector(spotSelector);
-  const { user } = useSelector(userForm);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;

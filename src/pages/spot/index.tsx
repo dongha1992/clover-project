@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextH4B, TextB2R, TextH6B } from '@components/Shared/Text';
+import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexCenter } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
@@ -20,6 +20,8 @@ import { IParamsSpots, ISpotRegistrationsResponse, ISpotsInfo } from '@model/ind
 import { useQuery } from 'react-query';
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
+import { useSelector } from 'react-redux';
+import { userForm } from '@store/user';
 
 const FCO_SPOT_BANNER = [
   {
@@ -47,7 +49,7 @@ const FCO_SPOT_BANNER = [
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [mouseMoved, setMouseMoved] = useState(false);
+  const { user } = useSelector(userForm);
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
@@ -173,13 +175,13 @@ const SpotPage = () => {
   return (
     <Container>
       <HeaderTitle>
-        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}<span>플린</span>님을 기다려요!</TextH2B>
+        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}<span>{user.name}</span>님을 기다려요!</TextH2B>
       </HeaderTitle>
       <RegistrationsCTAWrapper>
         <RegistrationCTA onClick={goToRegiList}>
           <FlexCenter>
           <SVGIcon name='plusWhite' />
-          <TextH6B padding='3px 0 0 0' color={theme.white}>프코스팟 신청할래요</TextH6B>
+          <TextH5B padding='3px 0 0 0' color={theme.white}>프코스팟 신청할래요</TextH5B>
           </FlexCenter>
         </RegistrationCTA>
       </RegistrationsCTAWrapper>
@@ -450,7 +452,7 @@ const RegistrationsCTAWrapper = styled.article`
 const RegistrationCTA = styled.div`
   display: inline-block;
   background: ${theme.brandColor};
-  padding: 4px 12px 4px 8px;
+  padding: 4px 13px 4px 8px;
   border-radius: 24px;
   cursor: pointer;
 `;
