@@ -135,7 +135,7 @@ const DeliverInfoPage = () => {
                 zipCode: reqBody.zipCode,
               },
               main: reqBody.main,
-              deliveryMessage: reqBody.delivery,
+              deliveryMessage: reqBody.deliveryMessage,
               receiverName: reqBody.receiverName,
               receiverTel: reqBody.receiverTel,
               deliveryMessageType: '',

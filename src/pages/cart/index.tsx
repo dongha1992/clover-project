@@ -27,7 +27,7 @@ import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
 import { HorizontalItem } from '@components/Item';
 import { setAlert } from '@store/alert';
-import { destinationForm } from '@store/destination';
+import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj } from '@model/index';
 import isNill from 'lodash-es/isNil';
 
@@ -189,6 +189,8 @@ const CartPage = () => {
   };
 
   const goToPayment = () => {
+    const isLunch = lunchOrDinner === 1;
+    userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: isLunch ? 'LUNCH' : 'DINNER' }));
     router.push('/payment');
   };
 
@@ -322,15 +324,22 @@ const CartPage = () => {
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
             />
-            {LUNCH_OR_DINNER.map((item, index) => {
-              return (
-                <FlexRow key={index} padding="16px 0 0 0">
-                  <RadioButton onChange={() => handleLunchOrDinner(item.id)} isSelected={lunchOrDinner === item.id} />
-                  <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
-                  <TextB2R>{item.discription}</TextB2R>
-                </FlexRow>
-              );
-            })}
+            {!['parcel', 'morning'].includes(userDestinationStatus) && (
+              <>
+                {LUNCH_OR_DINNER.map((item, index) => {
+                  return (
+                    <FlexRow key={index} padding="16px 0 0 0">
+                      <RadioButton
+                        onChange={() => handleLunchOrDinner(item.id)}
+                        isSelected={lunchOrDinner === item.id}
+                      />
+                      <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
+                      <TextB2R>{item.discription}</TextB2R>
+                    </FlexRow>
+                  );
+                })}
+              </>
+            )}
           </FlexCol>
         </>
       )}
