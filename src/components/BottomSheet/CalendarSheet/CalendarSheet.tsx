@@ -8,7 +8,7 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { Calendar } from '@components/Calendar';
 import { SET_DELIVERY_DATE } from '@store/order';
 import { IDateObj } from '@components/Calendar/Calendar';
-
+import { SET_ALERT } from '@store/alert';
 interface IProps {
   title: string;
   disabledDates: string[];
@@ -22,8 +22,17 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryDate }: IProps) => {
   const dispatch = useDispatch();
 
   const submitHandler = () => {
-    dispatch(SET_DELIVERY_DATE(selectedDeliveryDay));
-    dispatch(INIT_BOTTOM_SHEET());
+    dispatch(
+      SET_ALERT({
+        alertMessage: '배송일 변경은 총 1회 가능해요. 변경하시겠어요?',
+        closeBtnText: '취소',
+        submitBtnText: '확인',
+        onSubmit: () => {
+          dispatch(SET_DELIVERY_DATE(selectedDeliveryDay));
+          dispatch(INIT_BOTTOM_SHEET());
+        },
+      })
+    );
   };
 
   return (

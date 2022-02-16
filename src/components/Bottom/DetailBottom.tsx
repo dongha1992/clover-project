@@ -4,7 +4,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
@@ -64,7 +64,7 @@ const DetailBottom = () => {
     if (tempNotiOff) {
       const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: restockMgs,
           onSubmit: () => {
             goToRestockSetting();

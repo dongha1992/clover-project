@@ -26,7 +26,7 @@ import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
 import { HorizontalItem } from '@components/Item';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj } from '@model/index';
 import isNill from 'lodash-es/isNil';
@@ -157,7 +157,7 @@ const CartPage = () => {
 
   const removeItemHandler = () => {
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',

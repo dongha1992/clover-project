@@ -6,7 +6,7 @@ import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
@@ -68,7 +68,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     }
 
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '내용을 수정했습니다.',
         onSubmit: () => editDeliveryInfo(),
         submitBtnText: '확인',
@@ -83,10 +83,10 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     switch (true) {
       case isMorning: {
         if (noMsg) {
-          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else if (noAccessMethod) {
-          dispatch(setAlert({ alertMessage: '츨입방법을 입력해주세요' }));
+          dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
           return false;
         } else {
           return true;
@@ -95,7 +95,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
 
       case isParcel: {
         if (noMsg) {
-          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else {
           return true;
