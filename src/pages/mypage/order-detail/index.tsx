@@ -14,7 +14,7 @@ import router from 'next/router';
 import { setAlert } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import { orderForm } from '@store/order';
@@ -76,7 +76,7 @@ const OrderDetailPage = () => {
   const deliveryInfoSheetHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     const { innerText } = e.target as HTMLDivElement;
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <DeliveryInfoSheet title="운송장번호" copiedValue={innerText} />,
       })
     );
@@ -204,7 +204,7 @@ const OrderDetailPage = () => {
 
   const changeDevlieryDateHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: (
           <CalendarSheet title="배송날짜 변경" disabledDates={disabledDates} otherDeliveryDate={otherDeliveryDate} />
         ),

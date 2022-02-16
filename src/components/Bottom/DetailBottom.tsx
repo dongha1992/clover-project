@@ -10,23 +10,30 @@ import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
-
+import { useToast } from '@hooks/useToast';
+import { SET_CART_SHEET_OBJ } from '@store/cart';
+import { CartSheet } from '@components/BottomSheet/CartSheet';
+import { menuSelector } from '@store/menu';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const { showToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
+  const { menuItem } = useSelector(menuSelector);
 
   const deliveryType = checkTimerLimitHelper();
 
   //temp
   const numOfLike = 10;
-  const tempStatus = 'isSoldout';
+  // const tempStatus = 'isSoldout';
+  const tempStatus = '';
   const tempNotiOff = false;
-  const isAlreadyStockNoti = true;
+  const isAlreadyStockNoti = false;
 
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
@@ -38,7 +45,7 @@ const DetailBottom = () => {
         return '일시품절·재입고 알림받기';
       }
       default: {
-        return `5시까지 주문하면 내일 새벽 7시전 도착`;
+        return `장바구니 담기`;
       }
     }
   }, []);
@@ -46,6 +53,14 @@ const DetailBottom = () => {
   const goToRestockSetting = () => {};
 
   const clickButtonHandler = () => {
+    if (!tempNotiOff) {
+      dispatch(SET_CART_SHEET_OBJ(menuItem));
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <CartSheet />,
+        })
+      );
+    }
     if (tempNotiOff) {
       const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
       dispatch(
@@ -106,7 +121,7 @@ const Container = styled.div`
   bottom: 0px;
   right: 0px;
   z-index: 10;
-  height: 56px;
+  /* height: 56px; */
   left: calc(50%);
   background-color: ${({ theme }) => theme.black};
 
@@ -137,7 +152,7 @@ const LikeWrapper = styled.div`
 
 const Col = styled.div`
   width: 1px;
-  height: 24px;
+  height: 26px;
   margin-left: 16px;
   margin-right: 16px;
   background-color: ${({ theme }) => theme.white};

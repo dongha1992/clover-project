@@ -8,7 +8,7 @@ import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
 
@@ -43,7 +43,7 @@ const CategorySubHeader = ({ title }: TProps) => {
 
   const goToCart = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <CartSheet />,
       })
     );
@@ -58,11 +58,7 @@ const CategorySubHeader = ({ title }: TProps) => {
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
         <CartIcon onClick={goToCart} />
       </Wrapper>
-      <TabList
-        onClick={clickTabHandler}
-        selectedTab={selectedTab}
-        tabList={CATEGORY}
-      />
+      <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={CATEGORY} />
     </Container>
   );
 };
