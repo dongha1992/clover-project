@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { HomeContainer, FlexRow, FlexRowStart } from '@styles/theme';
@@ -14,6 +14,11 @@ import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 import { Tag } from '@components/Shared/Tag';
+import { availabilityDestination } from '@api/destination';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
+
+/* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const router = useRouter();
@@ -22,9 +27,9 @@ const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState(false);
+  const [page, setPage] = useState<number>(1);
   const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState('');
-
   const { type } = router.query;
 
   const setCurrentLoc = (location: string) => {
@@ -65,31 +70,44 @@ const LocationPage = () => {
     }
   };
 
-  const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (addressRef.current) {
-        let query = addressRef.current?.value;
-        if (SPECIAL_REGX.test(query) || ADDRESS_KEYWORD_REGX.includes(query)) {
-          alert('포함할 수 없는 문자입니다.');
-          return;
-        }
+  const getSearchAddressResult = async() => {
+    if(addressRef.current) {
+      let query = addressRef.current?.value;
+      if (SPECIAL_REGX.test(query) || ADDRESS_KEYWORD_REGX.includes(query)) {
+        alert('포함할 수 없는 문자입니다.');
+        return;
+      }
+      const params = {
+        query,
+        page: page,
+      };
+      try{
+        let { data } = await searchAddressJuso(params);
 
-        const params = {
-          query,
-          page: 1,
-        };
-        try {
-          /* data.results.juso 검색결과 없으면 null */
-          let { data } = await searchAddressJuso(params);
-          setResultAddress(data.results.juso ?? []);
-          setTotalCount(data.results.common.totalCount);
-          setIsSearched(true);
-        } catch (error) {
-          console.error(error);
-        }
+        const list = data?.results.juso ?? [];
+        setResultAddress((prevList) => [...prevList, ...list]);
+        setTotalCount(data.results.common.totalCount);
+        setIsSearched(true);
+      }catch(err){
+        console.error(err);
       }
     }
   };
+
+
+  const getSearchAddress = async (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === 'Enter') {
+        getSearchAddressResult();
+    };
+  };
+
+
+  useEffect(()=> {
+    getSearchAddressResult();
+  }, [page])
+
 
   const clearInputHandler = () => {
     if (addressRef.current) {
@@ -98,13 +116,65 @@ const LocationPage = () => {
     setIsTyping(false);
   };
 
-  const goToMapScreen = (address: any): void => {
-    dispatch(SET_LOCATION_TEMP(address));
-    router.push({
-      pathname: '/spot/location/address',
-      query: { type },
-    });
+  const checkAvailableDeliverySpots = async(i: IJuso) => {
+    const params = {
+      jibunAddress: i.jibunAddr,
+      roadAddress: i.roadAddr,
+      zipCode: i.zipNo,
+      delivery: null,
+    };
+    try{
+      const { data } = await availabilityDestination(params);
+      if(data.code === 200){
+        const result = data.data?.spot;
+        if(result === false){
+          dispatch(
+            setAlert({
+              alertMessage: '서울 및 분당구(일부 지역 해당)만\n프코스팟 오픈 신청이 가능해요!',
+              submitBtnText: '확인',
+            })
+          );
+          return;
+        };
+        router.push({
+          pathname: '/spot/location/address',
+          query: { type },
+        });
+      };
+    }catch(err){
+      console.error(err);
+    };
   };
+
+
+  const goToMapScreen = (address: IJuso): void => {
+    dispatch(SET_LOCATION_TEMP(address));
+    checkAvailableDeliverySpots(address);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      // if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
+        console.log('top!');
+        // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
+        setPage((prevPage)=> prevPage + 1);
+
+      };
+     };  
+    // scroll event listener 등록
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      // scroll event listener 해제
+      window.removeEventListener("scroll", handleScroll);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
 
   return (
     <HomeContainer>
@@ -115,7 +185,7 @@ const LocationPage = () => {
           inputType="text"
           svg="searchIcon"
           eventHandler={addressInputHandler}
-          keyPressHandler={getSearchAddressResult}
+          keyPressHandler={getSearchAddress}
           ref={addressRef}
         />
         <CurrentLocBtn>
