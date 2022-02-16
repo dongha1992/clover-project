@@ -179,7 +179,7 @@ const RegisterPage = () => {
           <LocationWrapper onClick={goToLocation}>
             {!spotLocation.address?.length ? (
               <TextH4B center color={theme.black}>
-                장소 찾기
+                주소 검색하기
               </TextH4B>
             ) : (
               <>
