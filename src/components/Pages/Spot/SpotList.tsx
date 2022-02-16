@@ -5,14 +5,11 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { INormalSpots } from '@model/index';
-import {
-  getSpotLike,
-  postSpotRegistrationsRecruiting,
- } from '@api/spot';
+import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { useQuery } from 'react-query';
 import { useDeleteLike, useOnLike } from 'src/query';
 
@@ -72,7 +69,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
         setSpotRegisteration(true);
         const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
         dispatch(
-          setAlert({
+          SET_ALERT({
             alertMessage: TitleMsg,
             onSubmit: () => {
               const message = '참여해주셔서 감사해요:)';
@@ -97,7 +94,6 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       case 'normal':
         return (
           <Container type="normal">
-            
             <StorImgWrapper
               // onMouseMove={() => setMouseMoved(true)}
               // onMouseDown={() => setMouseMoved(false)}
@@ -113,11 +109,9 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <TextB3R margin="8px 0 0 0" color={theme.black}>
                 {list?.name}
               </TextB3R>
-              <TextH6B
-                color={theme.greyScale65}
-              >{`${Math.round(list?.distance)}m`}</TextH6B>
-              
-              <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
+              <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+
+              <LikeWrapper type="normal" onClick={(e) => hanlderLike(e)}>
                 <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB2R padding="4px 0 0 1px">{list?.likeCount}</TextB2R>
               </LikeWrapper>
@@ -129,7 +123,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
         return (
           <Container type="event">
             <StorImgWrapper onClick={() => goToDetail(list.id)}>
-              <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
+              <LikeWrapper type="event" onClick={(e) => hanlderLike(e)}>
                 <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
               </LikeWrapper>
               <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
@@ -142,9 +136,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 </TextH6B>
               </div>
               <ButtonWrapper>
-                <TextH6B
-                  color={theme.greyScale65}
-                >{`${Math.round(list?.distance)}m`}</TextH6B>
+                <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
                 <Button onClick={goToCart}>주문하기</Button>
               </ButtonWrapper>
             </LocationInfoWrapper>

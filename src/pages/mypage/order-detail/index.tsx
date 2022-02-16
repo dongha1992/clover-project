@@ -11,7 +11,7 @@ import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 import router from 'next/router';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -193,7 +193,7 @@ const OrderDetailPage = () => {
 
   const cancelOrderHandler = () => {
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '주문을 취소하시겠어요?',
         onSubmit: () => cancelOrder(),
         closeBtnText: '취소',
@@ -206,7 +206,7 @@ const OrderDetailPage = () => {
     dispatch(
       SET_BOTTOM_SHEET({
         content: (
-          <CalendarSheet title="배송날짜 변경" disabledDates={disabledDates} otherDeliveryDate={otherDeliveryDate} />
+          <CalendarSheet title="배송일 변경" disabledDates={disabledDates} otherDeliveryDate={otherDeliveryDate} />
         ),
       })
     );
@@ -278,7 +278,7 @@ const OrderDetailPage = () => {
             disabled={disabledButton}
             onClick={changeDevlieryDateHandler}
           >
-            배송일 수정하기
+            배송일 변경하기
           </Button>
         </ButtonWrapper>
       </OrderInfoWrapper>
