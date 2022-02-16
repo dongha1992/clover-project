@@ -2,24 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import { breakpoints } from '@utils/getMediaQuery';
-import Tag from '@components/Shared/Tag';
-import {
-  TextH2B,
-  TextB3R,
-  TextH5B,
-  TextB2R,
-  TextH4B,
-  TextH6B,
-  TextB1R,
-} from '@components/Shared/Text';
+import { Tag } from '@components/Shared/Tag';
+import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart } from '@styles/theme';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
 import { SPOT_DETAIL_INFO } from '@constants/spot';
-import {
-  DetailBottomStory,
-  DetailBottomStoreInfo,
-} from '@components/Pages/Spot';
+import { DetailBottomStory, DetailBottomStoreInfo } from '@components/Pages/Spot';
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
 import { IMAGE_S3_URL } from '@constants/mock/index';
 import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
@@ -28,7 +17,7 @@ import { ISpotsDetail, ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 
-const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
+const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
   const dispatch = useDispatch();
   const { isSpotLiked } = useSelector(spotSelector);
   const tabRef = useRef<HTMLDivElement>(null);
@@ -41,16 +30,13 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
 
   const HEADER_HEIGHT = 56;
-  const sliceLen = spotItem&&spotItem.notices?.length > 1;
-  const pickupsLen = spotItem&&spotItem.pickups?.length > 0;
-  const imgTotalLen = spotItem&&spotItem.images?.length;
+  const sliceLen = spotItem && spotItem.notices?.length > 1;
+  const pickupsLen = spotItem && spotItem.pickups?.length > 0;
+  const imgTotalLen = spotItem && spotItem.images?.length;
 
-  const selectTabHandler = useCallback(
-    ({ link }: string) => {
-      setSelectedTab(link);
-    },
-    []
-  );
+  const selectTabHandler = useCallback(({ link }: string) => {
+    setSelectedTab(link);
+  }, []);
 
   const onScrollHandler = () => {
     const offset = tabRef?.current?.offsetTop;
@@ -65,28 +51,28 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
   };
 
   const placeType = () => {
-    const tag = spotItem&&spotItem.placeType;
-    switch(tag){
+    const tag = spotItem && spotItem.placeType;
+    switch (tag) {
       case 'CAFE':
-        return '카페'
+        return '카페';
       case 'CONVENIENCE_STORE':
-        return '편의점'
+        return '편의점';
       case 'ETC':
-        return '기타'
+        return '기타';
       case 'BOOKSTORE':
-        return '서점'
+        return '서점';
       case 'DRUGSTORE':
-        return '약국'
+        return '약국';
       case 'FITNESS_CENTER':
-        return '휘트니스센터'
+        return '휘트니스센터';
       case 'OFFICE':
-        return '오피스'
+        return '오피스';
       case 'SHARED_OFFICE':
-        return '공유오피스'
+        return '공유오피스';
       case 'STORE':
-        return '스토어'
+        return '스토어';
       case 'SCHOOL':
-        return '학교'
+        return '학교';
       default:
         return null;
     }
@@ -117,37 +103,36 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
     centerPadding: sliceLen ? '30px' : '25px',
   };
 
-  // 스팟 상세 데이터 
+  // 스팟 상세 데이터
   useEffect(() => {
-    const getDetail = async() => {
-      try{
-        const {data} = await getSpotDetail(id);
-        if(data.code === 200){
+    const getDetail = async () => {
+      try {
+        const { data } = await getSpotDetail(id);
+        if (data.code === 200) {
           getSpotItem(data.data);
           dispatch(SPOT_ITEM(data.data));
         }
-      }catch(err){
+      } catch (err) {
         console.error(err);
-      };
+      }
     };
     getDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSpotLiked]);  
+  }, [isSpotLiked]);
 
-  // 스팟 상세 스토리 데이터 
-  useEffect(()=> {
-    const getDetailStory = async() => {
-      try{
-          const {data} = await getSpotsDetailStory(id, page);
-          const list = data?.data.spotStories;
-          const lastPage = data.data.pagination;
-          setStories((prevList)=>[...prevList, ...list]);
-          setIsLastPage(page === lastPage.totalPage);
-      }catch(err){
-        if(err)
-        console.error(err);
-      };
-    }
+  // 스팟 상세 스토리 데이터
+  useEffect(() => {
+    const getDetailStory = async () => {
+      try {
+        const { data } = await getSpotsDetailStory(id, page);
+        const list = data?.data.spotStories;
+        const lastPage = data.data.pagination;
+        setStories((prevList) => [...prevList, ...list]);
+        setIsLastPage(page === lastPage.totalPage);
+      } catch (err) {
+        if (err) console.error(err);
+      }
+    };
     getDetailStory();
   }, [id, page]);
 
@@ -161,16 +146,16 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
       if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
         // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
         setPage(page + 1);
-      };
-     };  
+      }
+    };
     // scroll event listener 등록
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
       // scroll event listener 해제
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[stories.length > 0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stories.length > 0]);
 
   // 스팟 상세 하단 스토리, 매장정보 스티키
   useEffect(() => {
@@ -189,13 +174,13 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
             return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
           })}
         </TopBannerSlider>
-        <SlideCount><TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B></SlideCount>
+        <SlideCount>
+          <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
+        </SlideCount>
       </SliderWrapper>
       <StoreWrapper>
         <TagWrapper>
-          <Tag>
-            {placeType()}
-          </Tag>
+          <Tag>{placeType()}</Tag>
         </TagWrapper>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>
         <TextB3R display="inline" margin="0 8px 0 0">
@@ -204,19 +189,17 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
       </StoreWrapper>
       {spotItem && spotItem.notices?.length > 0 && (
         <NoticeSlider {...settingNotice}>
-          {spotItem?.notices?.map(
-            ({createdAt, content}, idx) => {
-              return (
-                <NoticeCard key={idx}>
-                  <FlexBetween margin="0 0 15px 0">
-                    <TextH5B color={theme.brandColor}>공지사항</TextH5B>
-                    <TextB3R color={theme.greyScale65}>{createdAt?.split(' ')[0]}</TextB3R>
-                  </FlexBetween>
-                  {content}
-                </NoticeCard>
-              );
-            }
-          )}
+          {spotItem?.notices?.map(({ createdAt, content }, idx) => {
+            return (
+              <NoticeCard key={idx}>
+                <FlexBetween margin="0 0 15px 0">
+                  <TextH5B color={theme.brandColor}>공지사항</TextH5B>
+                  <TextB3R color={theme.greyScale65}>{createdAt?.split(' ')[0]}</TextB3R>
+                </FlexBetween>
+                {content}
+              </NoticeCard>
+            );
+          })}
         </NoticeSlider>
       )}
       <PickupWrapper>
@@ -224,17 +207,17 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
           픽업정보
         </TextH5B>
         <PickupInfo>
-          <FlexStart margin="0 0 16px 0" alignItems='flex-start'>
+          <FlexStart margin="0 0 16px 0" alignItems="flex-start">
             <TextH5B margin="0 20px 0 0">도착예정</TextH5B>
             <div>
-            <TextB2R>
-              {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
-              {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
-            </TextB2R>
-            <TextB2R>
-              {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
-              {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
-            </TextB2R>
+              <TextB2R>
+                {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
+                {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
+              </TextB2R>
+              <TextB2R>
+                {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
+                {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
+              </TextB2R>
             </div>
           </FlexStart>
           <FlexStart margin="0 0 16px 0">
@@ -243,27 +226,17 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
           </FlexStart>
           <FlexStart margin="0 0 16px 0">
             <TextH5B margin="0 20px 0 0">픽업장소</TextH5B>
-            {
-              pickupsLen &&
-              <TextB2R margin="0 8px 0 0">
-                {spotItem.pickups[0].name}
-              </TextB2R>
-            }
-            <TextH6B
-              color={theme.greyScale65}
-              textDecoration="underline"
-              pointer
-            >
+            {pickupsLen && <TextB2R margin="0 8px 0 0">{spotItem.pickups[0].name}</TextB2R>}
+            <TextH6B color={theme.greyScale65} textDecoration="underline" pointer>
               이미지로 보기
             </TextH6B>
           </FlexStart>
-          {
-            spotItem?.description &&
+          {spotItem?.description && (
             <FlexStart margin="0 0 16px 0">
               <TextH5B margin="0 20px 0 0">기타정보</TextH5B>
               <TextB2R>{spotItem?.description}</TextB2R>
             </FlexStart>
-          }
+          )}
         </PickupInfo>
       </PickupWrapper>
       <SpotEventBannerWrapper>
@@ -279,30 +252,25 @@ const SpotDetailPage = ({id}: ISpotsDetail ): ReactElement => {
         />
       </BottomTabWrapper>
       <BottomContent>
-        {
-          selectedTab === '/spot/detail/story' ?
-            stories.length > 0 ? (
-              stories?.map((list, idx)=>{
-                return (
-                  <DetailBottomStory list={list} key={idx} />
-                )
-              })
-            ) : (
-              <NonContentWrapper>
-                <TextB1R color={theme.greyScale65}>아직 스토리가 없어요.😭</TextB1R>
-              </NonContentWrapper>
-              )
-            :
-            (
-              <DetailBottomStoreInfo 
-                lat={spotItem?.coordinate.lat} 
-                lon={spotItem?.coordinate.lon}
-                placeOpenTime={spotItem?.placeOpenTime}
-                placeHoliday={spotItem?.placeHoliday}
-                placeTel={spotItem?.placeTel}
-              />
-            )
-        }
+        {selectedTab === '/spot/detail/story' ? (
+          stories.length > 0 ? (
+            stories?.map((list, idx) => {
+              return <DetailBottomStory list={list} key={idx} />;
+            })
+          ) : (
+            <NonContentWrapper>
+              <TextB1R color={theme.greyScale65}>아직 스토리가 없어요.😭</TextB1R>
+            </NonContentWrapper>
+          )
+        ) : (
+          <DetailBottomStoreInfo
+            lat={spotItem?.coordinate.lat}
+            lon={spotItem?.coordinate.lon}
+            placeOpenTime={spotItem?.placeOpenTime}
+            placeHoliday={spotItem?.placeHoliday}
+            placeTel={spotItem?.placeTel}
+          />
+        )}
       </BottomContent>
     </Container>
   );

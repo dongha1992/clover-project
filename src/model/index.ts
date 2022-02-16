@@ -226,6 +226,7 @@ export interface IAvilabiltyAddressResponse {
     morning: boolean;
     parcel: boolean;
     quick: boolean;
+    spot: boolean;
   };
 }
 
@@ -233,7 +234,7 @@ export interface IDestinationsResponse {
   id: number;
   delivery: TDeliveryType;
   deliveryMessage: string;
-  deliveryMessageType: string;
+  deliveryMessageType?: string;
   name: string;
   receiverTel: string;
   receiverName: string;
@@ -280,7 +281,7 @@ export interface IEditDestination {
 }
 
 export interface IGetMainDestinations {
-  delivery: TDeliveryType | null;
+  delivery: TDeliveryType | string;
 }
 
 export interface IGetMainDestinationsResponse {

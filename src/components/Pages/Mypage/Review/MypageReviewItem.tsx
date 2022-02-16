@@ -2,7 +2,7 @@ import { FlexBetween, FlexCol, FlexRow, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
@@ -32,9 +32,7 @@ const MypageReviewItem = ({ menu }: IProps) => {
             <TextB2R padding="0 0 4px 0">{menu.name}</TextB2R>
             <FlexBetween>
               <TextH5B>{menu.price}원</TextH5B>
-              <TextB3R color={theme.greyScale65}>
-                11월 2일 (화) 까지 작성
-              </TextB3R>
+              <TextB3R color={theme.greyScale65}>11월 2일 (화) 까지 작성</TextB3R>
             </FlexBetween>
           </FlexCol>
         </FlexRow>

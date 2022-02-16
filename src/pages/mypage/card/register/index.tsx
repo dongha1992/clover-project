@@ -173,7 +173,6 @@ const CardRegisterPage = () => {
   };
 
   const selectMainCardHandler = () => {
-    console.log(hasMainCard, 'hasMainCard');
     if (!hasMainCard) {
       dispatch(
         setAlert({
