@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
 import { FlexRow, FlexRowStart } from '@styles/theme';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 
 function AddressItem({ roadAddr, bdNm, jibunAddr, zipNo, onClick }: any) {
   return (

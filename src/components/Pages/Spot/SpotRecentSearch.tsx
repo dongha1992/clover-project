@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -31,9 +31,11 @@ export interface ISpotsItems {
   };
   distance: number;
   isTrial: boolean;
-  images: [{
-    url: string;
-  }];
+  images: [
+    {
+      url: string;
+    }
+  ];
   type: string;
 }
 
@@ -46,19 +48,17 @@ interface IProps {
 const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
   const typeTag = (): string => {
     const type = item.type;
-    switch(type){
-      case 'PRIVATE': 
+    switch (type) {
+      case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
         return '퍼블릭';
-      default: 
+      default:
         return '';
-    };
+    }
   };
 
-  const pickUpTime = 
-  `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
-
+  const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   return (
     <Container mapList>
@@ -71,36 +71,27 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
           <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
             픽업
           </TextH6B>
-          <TextH6B color={theme.greyScale65}>
-            {pickUpTime}
-          </TextH6B>
+          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
         </MeterAndTime>
-        {
-          !item.isTrial ?
+        {!item.isTrial ? (
           <div>
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
               {typeTag()}
             </Tag>
           </div>
-        :
+        ) : (
           <div>
             <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
               트라이얼
             </Tag>
           </div>
-        }
+        )}
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`}/>
+          <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
         </ImageWrapper>
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          height="38px"
-          border
-          onClick={onClick}
-        >
+        <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={onClick}>
           주문하기
         </Button>
       </FlexCol>
@@ -127,7 +118,6 @@ const Container = styled.section<{ mapList: boolean }>`
     }
   }}
 `;
-
 
 const MeterAndTime = styled.div`
   display: flex;

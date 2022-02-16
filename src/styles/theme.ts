@@ -20,6 +20,9 @@ export const theme: Obj = {
   black: '#242424',
   systemRed: '#D32F2F',
   systemYellow: '#F4D740',
+  morningColor: '#7922BC',
+  parcelColor: '#1E7FF0',
+  quickColor: '#9C9C9C',
 };
 
 export const flexCenter = css`
@@ -96,12 +99,14 @@ export const FlexCol = styled.div<{
   padding?: string;
   margin?: string;
   width?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
+  cursor: ${({ pointer }) => (pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
