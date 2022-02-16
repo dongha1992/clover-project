@@ -37,12 +37,12 @@ const getCustomDate = (inputDate: Date): IResult => {
 
   const days = DAYS[originalDate.getDay()];
 
-  if (strMonths.length === 1) {
-    strMonths = `0${strMonths}`;
-  }
-  if (strDates.length === 1) {
-    strDates = `0${strDates}`;
-  }
+  // if (strMonths.length === 1) {
+  //   strMonths = `0${strMonths}`;
+  // }
+  // if (strDates.length === 1) {
+  //   strDates = `0${strDates}`;
+  // }
 
   return {
     years,
@@ -52,7 +52,7 @@ const getCustomDate = (inputDate: Date): IResult => {
     hours,
     minutes,
     seconds,
-    dayFormatter: `${strMonths}.${strDates} (${days})`,
+    dayFormatter: `${strMonths}월 ${strDates}일 (${days})`,
     dayFormatterHyphen: `${strYears}-${strMonths}-${strDates}`,
   };
 };

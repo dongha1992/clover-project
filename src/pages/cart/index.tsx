@@ -30,6 +30,8 @@ import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj } from '@model/index';
 import isNill from 'lodash-es/isNil';
+import { TogetherSheet } from '@components/BottomSheet/TogetherSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const LUNCH_OR_DINNER = [
   {
@@ -55,6 +57,20 @@ const mapper: Obj = {
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
+//temp
+
+const otherDeliveryInfo = [
+  {
+    id: 1,
+    location: {
+      address: '주소',
+      addressDetail: '상세주소',
+    },
+    delivery: 'QUICK',
+    deliveryTime: 'LUNCH',
+    deliveryDate: '2022-02-18',
+  },
+];
 const CartPage = () => {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
@@ -80,9 +96,8 @@ const CartPage = () => {
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
-  const otherDeliveryDate = ['2022-01-25'];
-  const SPOT = true;
+  const disabledDates = ['2022-02-17', '2022-02-18', '2022-02-19', '2022-02-21'];
+  const otherDeliveryDate = ['2022-02-25'];
 
   useEffect(() => {
     getLists();
@@ -90,7 +105,6 @@ const CartPage = () => {
 
   useEffect(() => {
     /* TODO: 초기값 설정 때문에 조금 버벅임 */
-
     if (calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
 
@@ -194,6 +208,15 @@ const CartPage = () => {
     router.push('/payment');
   };
 
+  const goToTogetherDelivery = (): void => {
+    dispatch(
+      SET_BOTTOM_SHEET({
+        content: <TogetherSheet title="함께배송 안내" otherDeliveryInfo={otherDeliveryInfo} />,
+      })
+    );
+  };
+
+  const isSpot = userDestinationStatus == 'spot';
   return (
     <Container>
       <DeliveryMethodAndPickupLocation>
@@ -313,7 +336,7 @@ const CartPage = () => {
           <FlexCol padding="0 24px">
             <FlexBetween>
               <FlexRow margin="0 0 16px 0">
-                <TextH3B padding="2px 4px 0 0">{SPOT ? '픽업날짜' : '배송일'}</TextH3B>
+                <TextH3B padding="2px 4px 0 0">{isSpot ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
               <TextH6B>오늘 12:00 전 도착</TextH6B>
@@ -323,6 +346,7 @@ const CartPage = () => {
               otherDeliveryDate={otherDeliveryDate}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
+              goToTogetherDelivery={goToTogetherDelivery}
             />
             {!['parcel', 'morning'].includes(userDestinationStatus) && (
               <>
