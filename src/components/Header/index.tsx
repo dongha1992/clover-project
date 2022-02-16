@@ -13,6 +13,7 @@ const MyPageHeader = dynamic(() => import('./MyPageHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
+const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Header = () => {
@@ -112,6 +113,12 @@ const Header = () => {
           return <TabHeader title={title} />;
         }
 
+        case ['/search', '/mypage/dib/general', '/mypage/dib/subscription', '/mypage/order-detail'].includes(
+          currentPath
+        ): {
+          return <DefaultHeaderWithCart title={title} />;
+        }
+
         case ['/'].includes(currentPath): {
           return <HomeHeader />;
         }
@@ -131,7 +138,7 @@ const Header = () => {
         case ['/spot/register/submit/finish'].includes(currentPath): {
           return <CloseDefaultHeader title={title} />;
         }
-        
+
         default: {
           return <DefaultHeader title={title} />;
         }

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
+import CartIcon from '@components/Header/Cart';
 
 type TProps = {
   title?: string;
@@ -14,6 +15,10 @@ const DefaultHeaderWithCart = ({ title }: TProps) => {
 
   const goBack = (): void => {
     router.back();
+  };
+
+  const goToCart = () => {
+    router.push('/cart');
   };
 
   return (
@@ -55,7 +60,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 16px 24px;
   .arrow {
     cursor: pointer;
