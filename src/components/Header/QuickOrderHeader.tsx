@@ -4,7 +4,7 @@ import CartIcon from '@components/Header/Cart';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { INIT_BOTTOM_SHEET, setBottomSheet } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { orderForm } from '@store/order';
 import { OrderSheet } from '@components/BottomSheet/OrderSheet';
 import { TextH4B } from '@components/Shared/Text';
@@ -18,9 +18,7 @@ const QuickOrderHeader: React.FC = () => {
   const router = useRouter();
   const { pathname } = router;
   const dispatch = useDispatch();
-  const [selectedTab, setSelectedTab] = useState<string>(
-    '/quickorder/category'
-  );
+  const [selectedTab, setSelectedTab] = useState<string>('/quickorder/category');
 
   useEffect(() => {
     dispatch(INIT_BOTTOM_SHEET());
@@ -36,7 +34,7 @@ const QuickOrderHeader: React.FC = () => {
 
   const onClick = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <OrderSheet />,
       })
     );
@@ -73,11 +71,7 @@ const QuickOrderHeader: React.FC = () => {
       </Wrapper>
       {pathname !== '/quickorder' && (
         <>
-          <TabList
-            onClick={clickTabHandler}
-            selectedTab={selectedTab}
-            tabList={QUICK_CATEGORY}
-          />
+          <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={QUICK_CATEGORY} />
           <ButtonContainer onClick={goToCart}>
             <Button height="100%" width="100%" borderRadius="0">
               주문하기

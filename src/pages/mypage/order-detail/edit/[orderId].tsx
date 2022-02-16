@@ -10,7 +10,7 @@ import { setAlert } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
@@ -119,7 +119,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
 
   const selectAccessMethodHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
       })
     );

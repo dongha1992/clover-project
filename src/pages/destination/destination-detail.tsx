@@ -176,7 +176,7 @@ const DestinationDetailPage = () => {
             zipNo={tempLocation.zipNo}
           />
         </FlexCol>
-        <TextInput placeholder="상세주소 입력 (필수)" ref={destinationDetailRef} />
+        <TextInput placeholder="상세주소 입력" ref={destinationDetailRef} />
         <FlexCol padding="24px 0">
           <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
           <TextInput placeholder="배송지명 입력" ref={destinationNameRef} />

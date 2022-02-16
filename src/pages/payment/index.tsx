@@ -23,7 +23,7 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
@@ -148,7 +148,7 @@ const PaymentPage = () => {
 
   const selectAccessMethodHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
       })
     );
@@ -315,7 +315,7 @@ const PaymentPage = () => {
                 placeholder={
                   ACCESS_METHOD_MAP[userAccessMethod?.value!]
                     ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
-                    : '요청사항 입력'
+                    : '요청사항 입력 (선택)'
                 }
                 eventHandler={changeInputHandler}
               />
