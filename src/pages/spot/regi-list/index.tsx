@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { 
     INIT_SPOT_LOCATION, 
     INIT_SPOT_REGISTRATIONS_OPTIONS, 
-    INIT_SPOT_REGISTRATIONS_INFO,
   } from '@store/spot';  
 
 const RegistrationsListPage = () => {
@@ -14,21 +13,20 @@ const RegistrationsListPage = () => {
   const dispatch = useDispatch();
 
   const goToPrivateRegistrations = () => {
-    router.push('/spot/register?type=private');
+    router.push('/spot/spot-req?type=private');
   };
 
   const goToPublicRegistrations = () => {
-    router.push('/spot/register?type=public'); 
+    router.push('/spot/spot-req?type=public'); 
   };
 
   const goToOwnerRegistrations = () => {
-    router.push('/spot/register?type=owner'); 
+    router.push('/spot/spot-req?type=owner'); 
   };
 
   useEffect(()=> {
     dispatch(INIT_SPOT_LOCATION());
     dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-    dispatch(INIT_SPOT_REGISTRATIONS_INFO());
   }, []);
 
   return (

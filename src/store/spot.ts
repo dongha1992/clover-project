@@ -44,7 +44,7 @@ interface IProps {
   isSpotLiked: Boolean;
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
-  spotsRegistrationInfo: ISpotsRegistrationInfo;
+  spotsRegistrationInfo: ISpotsRegistrationInfo | any;
   spotRegistrationsPostResult: IPostRegistrations | any;
 };
 
@@ -70,9 +70,9 @@ const spotsRegistrationInfoState = {
   placeName: '',
   pickupLocationEtc: '',
   placeTypeEtc: '',
-  userName: '프프코',
-  userEmail: 'fco@freshcode.me',
-  userTel: '01012341234',
+  userName: '',
+  userEmail: '',
+  userTel: '',
   managerInfo: '',
 };
 
@@ -116,9 +116,6 @@ export const spot = createSlice({
     SET_SPOT_REGISTRATIONS_INFO: (state, action: PayloadAction<ISpotsRegistrationInfo>) => {
       state.spotsRegistrationInfo = action.payload;
     },
-    INIT_SPOT_REGISTRATIONS_INFO: (state, action: PayloadAction) => {
-      state.spotsRegistrationInfo = spotsRegistrationInfoState;
-    },
     SET_SPOT_REGISTRATIONS_POST_RESULT: (state, action: PayloadAction<IPostRegistrations>) => {
       state.spotRegistrationsPostResult = action.payload;
     },
@@ -133,7 +130,6 @@ export const {
   SET_SPOT_REGISTRATIONS_OPTIONS,
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
-  INIT_SPOT_REGISTRATIONS_INFO,
   SET_SPOT_REGISTRATIONS_POST_RESULT,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
