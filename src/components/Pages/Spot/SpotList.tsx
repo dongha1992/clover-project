@@ -20,9 +20,8 @@ import {
   getSpotLike,
   postSpotRegistrationsRecruiting,
  } from '@api/spot';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { useDeleteLike, useOnLike } from 'src/query';
-// import { debounce } from 'lodash';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -62,9 +61,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const deleteLike = useDeleteLike();
 
   const hanlderLike = async (e: any) => {
-    console.log('click');
     e.stopPropagation();
-
     if (spotLiked) {
       deleteLike(list.id);
     } else {
@@ -107,9 +104,10 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       case 'normal':
         return (
           <Container type="normal">
+            
             <StorImgWrapper
-              onMouseMove={() => setMouseMoved(true)}
-              onMouseDown={() => setMouseMoved(false)}
+              // onMouseMove={() => setMouseMoved(true)}
+              // onMouseDown={() => setMouseMoved(false)}
               onClick={() => goToDetail(list.id)}
             >
               <Tag>
@@ -125,6 +123,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <TextH6B
                 color={theme.greyScale65}
               >{`${Math.round(list?.distance)}m`}</TextH6B>
+              
               <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
                 <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB2R padding='4px 0 0 1px'>{list?.likeCount}</TextB2R>
@@ -135,32 +134,28 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       //이벤트 스팟
       case 'event':
         return (
-          <ItemListRowWrapper>
-            <ItemListRow>
-              <Container type="event">
-                <StorImgWrapper onClick={() => goToDetail(list.id)}>
-                  <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
-                    <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
-                  </LikeWrapper>
-                  <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
-                </StorImgWrapper>
-                <LocationInfoWrapper type="event">
-                  <div>
-                    <TextH4B>{list?.eventTitle}</TextH4B>
-                    <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
-                      {list?.name}
-                    </TextH6B>
-                  </div>
-                  <ButtonWrapper>
-                    <TextH6B
-                      color={theme.greyScale65}
-                    >{`${Math.round(list?.distance)}m`}</TextH6B>
-                    <Button onClick={goToCart}>주문하기</Button>
-                  </ButtonWrapper>
-                </LocationInfoWrapper>
-              </Container>
-            </ItemListRow>
-          </ItemListRowWrapper>
+          <Container type="event">
+            <StorImgWrapper onClick={() => goToDetail(list.id)}>
+              <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
+                <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
+              </LikeWrapper>
+              <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
+            </StorImgWrapper>
+            <LocationInfoWrapper type="event">
+              <div>
+                <TextH4B>{list?.eventTitle}</TextH4B>
+                <TextH6B margin="8px 0 0 0" color={theme.greyScale65}>
+                  {list?.name}
+                </TextH6B>
+              </div>
+              <ButtonWrapper>
+                <TextH6B
+                  color={theme.greyScale65}
+                >{`${Math.round(list?.distance)}m`}</TextH6B>
+                <Button onClick={goToCart}>주문하기</Button>
+              </ButtonWrapper>
+            </LocationInfoWrapper>
+          </Container>
         );
       // 단골 가게 스팟
       case 'trial':
@@ -198,20 +193,6 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   return <>{SpotsListTypeRender()}</>;
 };
 
-const ItemListRowWrapper = styled.div`
-  margin-bottom: 48px;
-  margin-top: 48px;
-`;
-export const ItemListRow = styled.div`
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  > div {
-    padding-right: 10px;
-    width: 194px;
-  }
-`;
-
 const Container = styled.section<{ type: string }>`
   margin-right: 16px;
   ${({ type }) => {
@@ -221,6 +202,7 @@ const Container = styled.section<{ type: string }>`
         position: relative;
         bottom: 0;
         width: 299px;
+        margin-bottom: 48px;
       `;
     } else if (type === 'normal') {
       return css`
@@ -237,6 +219,7 @@ const Container = styled.section<{ type: string }>`
 
 const StorImgWrapper = styled.div`
   position: relative;
+  cursor: pointer;
 `;
 
 const ImgBox = styled.img`
