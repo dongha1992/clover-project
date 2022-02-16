@@ -4,6 +4,7 @@ import { TResult } from './checkTimerLimitHelper';
 import getCustomDate from './getCustomDate';
 import { useDispatch } from 'react-redux';
 import { INIT_TIMER } from '@store/order';
+import { TLocationType } from '@utils/checkDestinationHelper';
 
 /* 현재 위치와 요일 관련하여 배송 마감 타이머 체크 */
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=3055%3A40726 */
@@ -25,9 +26,9 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   /* 주말 테스트 */
   // isWeekends = true;
 
-  /* 서울 테스트(quick)*/
+  /* 서울 테스트(quick===spot) */
   // locationStatus = '';
-  locationStatus = 'quick';
+  // locationStatus = 'spot';
 
   /* 경기 테스트(morning) */
   // locationStatus = 'morning';
@@ -50,10 +51,10 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
     dispatch(INIT_TIMER({ isInitDelay: false }));
   }
 
-  switch (locationStatus) {
+  switch (locationStatus as TLocationType) {
     // 서울
     case '':
-    case 'quick': {
+    case 'spot': {
       // 택배면 마감시간 중복으로 새벽타이머만 노출
       if (isParcel) {
         return '새벽배송';

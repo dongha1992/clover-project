@@ -6,7 +6,7 @@ import { homePadding, theme } from '@styles/theme';
 import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextB4R } from '@components/Shared/Text';
 import Image from 'next/image';
 import Loading from '@components/Loading';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewList } from '@components/Pages/Review';

@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import TextInput from '@components/Shared/TextInput';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { SET_SPOT_LOCATION } from '@store/spot';
 
 const AddressDetailPage = () => {
@@ -57,22 +57,22 @@ const AddressDetailPage = () => {
       lat: latitudeLongitude.latitude,
       lon: latitudeLongitude.longitude,
     };
-  
-    if(!keywordLen){
+
+    if (!keywordLen) {
       return;
-    }else{
+    } else {
       dispatch(SET_SPOT_LOCATION(spotAddress));
       router.replace({
         pathname: '/spot/register',
         query: { type },
       });
-    };
+    }
   };
 
   const detailAddressInputHandler = () => {
     if (inputRef.current) {
       setKeywordLen(inputRef.current?.value.length);
-    };
+    }
   };
 
   useEffect(() => {
@@ -82,35 +82,35 @@ const AddressDetailPage = () => {
   return (
     <Container>
       <Wrapper>
-        <TextH2B padding='0 0 16px 0'>프코스팟 신청이 가능해요</TextH2B>
-        <TextB3R color={theme.greyScale65}>{'점심•저녁 원하는 시간에 픽업 가능!\n서울 내 등록된 프코스팟에서 배송비 무료로 이용 가능해요'}</TextB3R>
+        <TextH2B padding="0 0 16px 0">프코스팟 신청이 가능해요</TextH2B>
+        <TextB3R color={theme.greyScale65}>
+          {'점심•저녁 원하는 시간에 픽업 가능!\n서울 내 등록된 프코스팟에서 배송비 무료로 이용 가능해요'}
+        </TextB3R>
       </Wrapper>
       <MapWrapper>
-        <MapAPI
-          centerLat={latitudeLongitude.latitude}
-          centerLng={latitudeLongitude.longitude}
-        />
+        <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
       </MapWrapper>
       <Wrapper>
-        <TextH5B padding='0 0 4px 0'>{tempLocation.roadAddr}</TextH5B>
+        <TextH5B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH5B>
         <FlexRow>
           <Tag padding="2px" width="8%" center>
             지번
           </Tag>
           <TextB3R>&nbsp;{`(${tempLocation.zipNo})${tempLocation.jibunAddr}`}</TextB3R>
         </FlexRow>
-        <TextInput 
-          placeholder='상세주소 입력(필수)' 
-          margin='16px 0 0 0' 
-          ref={inputRef} 
-          eventHandler={detailAddressInputHandler} />
+        <TextInput
+          placeholder="상세주소 입력(필수)"
+          margin="16px 0 0 0"
+          ref={inputRef}
+          eventHandler={detailAddressInputHandler}
+        />
       </Wrapper>
       <ButtonWrapper>
         <Button
           height="100%"
           borderRadius="0"
           onClick={setSpotLocationHandler}
-          backgroundColor={!keywordLen ? theme.greyScale6  : theme.balck}
+          backgroundColor={!keywordLen ? theme.greyScale6 : theme.balck}
         >
           설정하기
         </Button>
