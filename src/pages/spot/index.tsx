@@ -22,6 +22,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
+import { spotSelector } from '@store/spot';
 
 const FCO_SPOT_BANNER = [
   {
@@ -50,6 +51,7 @@ const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { user } = useSelector(userForm);
+  const { spotsPosition } = useSelector(spotSelector);
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
@@ -66,8 +68,8 @@ const SpotPage = () => {
     ['spotList', 'station'],
     async () => {
       const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getStationSpots(params);
@@ -80,8 +82,8 @@ const SpotPage = () => {
     ['spotList', 'new'],
     async () => {
       const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getNewSpots(params);
@@ -94,8 +96,8 @@ const SpotPage = () => {
     ['spotList', 'event'],
     async () => {
       const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getSpotEvent(params);
@@ -108,8 +110,8 @@ const SpotPage = () => {
     ['spotList', 'popular'],
     async () => {
       const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getSpotPopular(params);
@@ -133,8 +135,8 @@ const SpotPage = () => {
     // 단골 스팟
     const getRegistration = async () => {
       const params: IParamsSpots = {
-        latitude: null,
-        longitude: null,
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition? spotsPosition.longitude : null,
         size: 6,
       };
       try{
@@ -146,7 +148,7 @@ const SpotPage = () => {
     };
 
     getRegistration();
-  }, []);
+  }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
     // dispatch(initBottomSheet());

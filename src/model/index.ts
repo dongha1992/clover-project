@@ -302,8 +302,8 @@ export interface IKakaoLatLon {
 }
 
 export interface IParamsSpots {
-  latitude: number | null;
-  longitude: number | null;
+  latitude: string | null;
+  longitude: string | null;
   page?: number;
   size?: number;
   keyword?: string;

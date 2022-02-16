@@ -39,6 +39,11 @@ interface ISpotsRegistrationInfo {
   managerInfo?: string | null;
 };
 
+interface ISpotsPostions {
+  latitude: string | null;
+  longitude: string | null;
+}
+
 interface IProps {
   spotDetail: ISpotsDetail | any;
   isSpotLiked: Boolean;
@@ -46,6 +51,7 @@ interface IProps {
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
   spotsRegistrationInfo: ISpotsRegistrationInfo | any;
   spotRegistrationsPostResult: IPostRegistrations | any;
+  spotsPosition: ISpotsPostions;
 };
 
 const spotAddressState = {
@@ -76,6 +82,11 @@ const spotsRegistrationInfoState = {
   managerInfo: '',
 };
 
+const spotsPostionsState = {
+  latitude: '',
+  longitude: '',
+};
+
 const initialState: IProps = {
   spotDetail: {},
   isSpotLiked: false,
@@ -89,6 +100,9 @@ const initialState: IProps = {
     ...spotsRegistrationInfoState,
   },
   spotRegistrationsPostResult: {},
+  spotsPosition: {
+    ...spotsPostionsState,
+  },
 };
 
 export const spot = createSlice({
@@ -119,6 +133,9 @@ export const spot = createSlice({
     SET_SPOT_REGISTRATIONS_POST_RESULT: (state, action: PayloadAction<IPostRegistrations>) => {
       state.spotRegistrationsPostResult = action.payload;
     },
+    SET_SPOT_POSITIONS: (state, action: PayloadAction<ISpotsPostions>) => {
+      state.spotsPosition = action.payload;
+    },
   },
 });
 
@@ -131,6 +148,7 @@ export const {
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
   SET_SPOT_REGISTRATIONS_POST_RESULT,
+  SET_SPOT_POSITIONS,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;
