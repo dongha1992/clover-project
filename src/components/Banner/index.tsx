@@ -7,13 +7,6 @@ import { IBanners } from '@model/index';
 
 /*TODO : 왼쪽오른쪽 버튼 */
 
-// const BANNERS = [
-//   './images/img1.png',
-//   './images/img1.png',
-//   './images/img1.png',
-//   './images/img1.png',
-// ];
-
 interface IProps {
   bannerList: IBanners[];
 }

@@ -43,8 +43,7 @@ Button.defaultProps = defaultProps as IButtonProps;
 
 export const Container = styled(TextH5B)<IButtonProps>`
   display: flex;
-  justify-content: ${(props) =>
-    props.justifyContent ? props.justifyContent : 'center'};
+  justify-content: ${(props) => (props.justifyContent ? props.justifyContent : 'center')};
   align-items: center;
   width: ${(props) => props.width && props.width};
   height: ${(props) => props.height && props.height};
@@ -52,8 +51,7 @@ export const Container = styled(TextH5B)<IButtonProps>`
   margin: ${(props) => props.margin && props.margin};
   border-radius: ${(props) => (props.borderRadius ? props.borderRadius : 8)}px;
   color: ${(props) => props.color && props.color};
-  background-color: ${(props) =>
-    props.backgroundColor && props.backgroundColor};
+  background-color: ${(props) => props.backgroundColor && props.backgroundColor};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
   font-weight: ${(props) => (props.fontWeight ? props.fontWeight : 700)};
 

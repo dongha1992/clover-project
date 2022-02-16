@@ -1,21 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import {
-  FlexRow,
-  theme,
-  FlexBetween,
-  FlexCol,
-  FlexBetweenStart,
-  FlexColEnd,
-  FlexEnd,
-} from '@styles/theme';
-import {
-  TextH4B,
-  TextB3R,
-  TextB2R,
-  TextH5B,
-  TextH6B,
-} from '@components/Shared/Text';
+import { FlexRow, theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } from '@styles/theme';
+import { TextH4B, TextB3R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
@@ -27,7 +13,7 @@ import { useToast } from '@hooks/useToast';
 import router from 'next/router';
 import { setAlert } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { setBottomSheet } from '@store/bottomSheet';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
@@ -45,13 +31,7 @@ const isMorning = false;
 const isQuick = false;
 const isSpot = false;
 
-const disabledDates = [
-  '2022-01-24',
-  '2022-01-25',
-  '2022-01-26',
-  '2022-01-27',
-  '2022-01-28',
-];
+const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
 
 const otherDeliveryDate = ['2022-01-27'];
 
@@ -74,8 +54,7 @@ const deliveryStatusMapper: Obj = {
 
 const OrderDetailPage = () => {
   const [itemList, setItemList] = useState([]);
-  const [isShowOrderItemSection, setIsShowOrderItemSection] =
-    useState<boolean>(false);
+  const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
 
   const { showToast } = useToast();
   const { deliveryDate } = useSelector(orderForm);
@@ -98,9 +77,7 @@ const OrderDetailPage = () => {
     const { innerText } = e.target as HTMLDivElement;
     dispatch(
       setBottomSheet({
-        content: (
-          <DeliveryInfoSheet title="운송장번호" copiedValue={innerText} />
-        ),
+        content: <DeliveryInfoSheet title="운송장번호" copiedValue={innerText} />,
       })
     );
   };
@@ -166,9 +143,7 @@ const OrderDetailPage = () => {
             <TextH5B>배송 예정실시</TextH5B>
             <FlexColEnd>
               <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                예정보다 빠르게 배송될 수 있습니다.
-              </TextB3R>
+              <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
               <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
@@ -177,9 +152,7 @@ const OrderDetailPage = () => {
             {isSpot ? (
               <FlexColEnd>
                 <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
-                <TextB3R color={theme.greyScale65}>
-                  서울 성동구 왕십리로 115 10층
-                </TextB3R>
+                <TextB3R color={theme.greyScale65}>서울 성동구 왕십리로 115 10층</TextB3R>
               </FlexColEnd>
             ) : (
               <FlexColEnd>
@@ -233,11 +206,7 @@ const OrderDetailPage = () => {
     dispatch(
       setBottomSheet({
         content: (
-          <CalendarSheet
-            title="배송날짜 변경"
-            disabledDates={disabledDates}
-            otherDeliveryDate={otherDeliveryDate}
-          />
+          <CalendarSheet title="배송날짜 변경" disabledDates={disabledDates} otherDeliveryDate={otherDeliveryDate} />
         ),
       })
     );
@@ -262,27 +231,14 @@ const OrderDetailPage = () => {
         <FlexBetween>
           <TextH4B>주문상품</TextH4B>
           <FlexRow onClick={() => showSectionHandler()}>
-            <SVGIcon
-              name={isShowOrderItemSection ? 'triangleUp' : 'triangleDown'}
-            />
+            <SVGIcon name={isShowOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={status}>
           {itemList.map((menu, index) => {
-            return (
-              <PaymentItem
-                menu={menu}
-                key={index}
-                isDeliveryComplete={status === 'complete'}
-              />
-            );
+            return <PaymentItem menu={menu} key={index} isDeliveryComplete={status === 'complete'} />;
           })}
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            margin="8px 0 0 0"
-          >
+          <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
             재주문하기
           </Button>
         </OrderListWrapper>

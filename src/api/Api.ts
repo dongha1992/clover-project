@@ -24,8 +24,8 @@ const addRefreshSubscriber = (callback: any) => {
 };
 
 export const onUnauthorized = () => {
-  router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`)
-}
+  router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`);
+};
 
 export const Api = axios.create({
   baseURL: CLOVER_URL,
@@ -53,7 +53,6 @@ Api.interceptors.response.use(
         console.log('status 401');
 
         if (response.data.code !== 2003) {
-
           if (!isTokenRefreshing) {
             console.log('## I response TokenRefreshing');
             isTokenRefreshing = true;
@@ -84,7 +83,6 @@ Api.interceptors.response.use(
               });
             });
           }
-
         }
       } else {
         return onError(error as AxiosError);
@@ -98,8 +96,7 @@ Api.interceptors.response.use(
 Api.interceptors.request.use((req) => {
   const request = cloneDeep(req);
 
-  const accessTokenObj =
-    JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
+  const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
 
   request.headers = {
     ...req.headers,
@@ -110,8 +107,8 @@ Api.interceptors.request.use((req) => {
   return request;
 });
 
-export const onError = async (error: AxiosError): Promise<never> => {
+export const onError = (error: AxiosError): Promise<never> => {
   const { status } = (error.response as AxiosResponse) || 500;
-
+  console.log(error, 'error onError');
   return Promise.reject(error);
 };

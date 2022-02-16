@@ -1,16 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 
-const ReviewDetailItem = ({
-  review,
-  isDetailPage,
-  clickImgViewHandler,
-}: any) => {
+const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) => {
   return (
     <>
       <Container>
@@ -26,16 +22,11 @@ const ReviewDetailItem = ({
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
                     {review.user}
                   </TextH6B>
-                  <TextB3R color={theme.greyScale65}>
-                    {review.createdAt}
-                  </TextB3R>
+                  <TextB3R color={theme.greyScale65}>{review.createdAt}</TextB3R>
                 </UserInfo>
               </RatingAndUser>
               <TagWrapper>
-                <Tag
-                  backgroundColor={theme.brandColor5}
-                  color={theme.brandColor}
-                >
+                <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
                   {review.order}번 째 구매
                 </Tag>
               </TagWrapper>
@@ -46,29 +37,20 @@ const ReviewDetailItem = ({
                 {review.images.map((img: any, index: number) => {
                   if (index > 1) return;
                   return (
-                    <ReviewImage
-                      src={img}
-                      key={index}
-                      isFirst
-                      onClick={() => clickImgViewHandler(review.images)}
-                    />
+                    <ReviewImage src={img} key={index} isFirst onClick={() => clickImgViewHandler(review.images)} />
                   );
                 })}
               </ImgWrapper>
               {!isDetailPage && review.reply ? (
                 <ReplyContent>
                   <ReplyHeader>
-                    <TextH6B color={theme.greyScale65}>
-                      {review.reply.name}
-                    </TextH6B>
+                    <TextH6B color={theme.greyScale65}>{review.reply.name}</TextH6B>
                     <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
                       {review.reply.createdAt}
                     </TextB3R>
                   </ReplyHeader>
                   <ReplyBody>
-                    <TextB3R color={theme.greyScale65}>
-                      {review.reply.content}
-                    </TextB3R>
+                    <TextB3R color={theme.greyScale65}>{review.reply.content}</TextB3R>
                   </ReplyBody>
                 </ReplyContent>
               ) : null}

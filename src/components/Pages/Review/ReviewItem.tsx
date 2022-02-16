@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 
@@ -18,11 +18,7 @@ const ReviewItem = ({ review, onClick }: any) => {
               <SVGIcon name="singleStar" />
               <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
             </Rating>
-            <Tag
-              backgroundColor={theme.brandColor5}
-              color={theme.brandColor}
-              margin="0 16px 0 0"
-            >
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 16px 0 0">
               {review.order}번 째 구매
             </Tag>
           </ReviewHeader>

@@ -1,14 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  theme,
-  FlexBetween,
-  FlexCol,
-  FlexRow,
-  homePadding,
-} from '@styles/theme';
+import { theme, FlexBetween, FlexCol, FlexRow, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
@@ -42,11 +36,7 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
             </Tag>
             {item.main && <Tag>기본 베송지</Tag>}
           </FlexRow>
-          <TextH6B
-            color={theme.greyScale65}
-            textDecoration="underline"
-            onClick={() => goToEdit(item.id)}
-          >
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => goToEdit(item.id)}>
             편집
           </TextH6B>
         </FlexBetween>
@@ -63,13 +53,7 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
           <TextB3R color={theme.greyScale65}>{item.receiverTel}</TextB3R>
         </FlexRow>
       </FlexCol>
-      <Button
-        onClick={goToCart}
-        backgroundColor={theme.white}
-        border
-        color={theme.black}
-        margin="16px 0 24px 0"
-      >
+      <Button onClick={goToCart} backgroundColor={theme.white} border color={theme.black} margin="16px 0 24px 0">
         주문하기
       </Button>
     </Container>
