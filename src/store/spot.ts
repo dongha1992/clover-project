@@ -10,6 +10,8 @@ interface ISpotAddress {
   zipCode?: string | null,
   lat?: string | null;
   lon?: string | null;
+  jibunAddress?: string | null;
+  roadAddress?: string | null;
 };
 
 interface ISpotRegistrationsOpions {
@@ -54,6 +56,8 @@ const spotAddressState = {
   zipCode: '',
   lat: '',
   lon: '',
+  jibunAddress: '',
+  roadAddress: ''
 };
 
 const spotRegistrationsOptionsState = {

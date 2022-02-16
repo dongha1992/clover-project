@@ -226,6 +226,7 @@ export interface IAvilabiltyAddressResponse {
     morning: boolean;
     parcel: boolean;
     quick: boolean;
+    spot: boolean;
   };
 }
 
