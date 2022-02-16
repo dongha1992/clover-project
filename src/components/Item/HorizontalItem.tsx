@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import { theme, FlexCol, showMoreText } from '@styles/theme';
+import { theme, FlexCol } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { setBottomSheet } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';

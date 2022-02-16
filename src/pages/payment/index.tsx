@@ -13,14 +13,8 @@ import {
   GridWrapper,
   fixedBottom,
 } from '@styles/theme';
-import {
-  TextB2R,
-  TextH4B,
-  TextB3R,
-  TextH6B,
-  TextH5B,
-} from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
+import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
@@ -182,13 +176,7 @@ const PaymentPage = () => {
           <TextH4B>주문상품 ({itemList.length})</TextH4B>
           <FlexRow onClick={() => showSectionHandler('orderItem')}>
             <TextB2R padding="0 13px 0 0">상품 이름...</TextB2R>
-            <SVGIcon
-              name={
-                showSectionObj.showOrderItemSection
-                  ? 'triangleUp'
-                  : 'triangleDown'
-              }
-            />
+            <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
@@ -203,13 +191,7 @@ const PaymentPage = () => {
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper onClick={() => showSectionHandler('customInfo')}>
             <TextB2R padding="0 13px 0 0">주문자 이름...</TextB2R>
-            <SVGIcon
-              name={
-                showSectionObj.showCustomerInfoSection
-                  ? 'triangleUp'
-                  : 'triangleDown'
-              }
-            />
+            <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
         <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
@@ -259,9 +241,7 @@ const PaymentPage = () => {
             <TextH5B>배송 예정실시</TextH5B>
             <FlexColEnd>
               <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                예정보다 빠르게 배송될 수 있습니다.
-              </TextB3R>
+              <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
               <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
@@ -269,9 +249,7 @@ const PaymentPage = () => {
             <TextH5B>베송장소</TextH5B>
             <FlexColEnd>
               <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
-              <TextB3R color={theme.greyScale65}>
-                서울 성동구 왕십리로 115 10층
-              </TextB3R>
+              <TextB3R color={theme.greyScale65}>서울 성동구 왕십리로 115 10층</TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
         </FlexCol>
@@ -283,12 +261,9 @@ const PaymentPage = () => {
                 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
+            <TextB3R color={theme.brandColor}>주문취소는 배송일 전날 오전 7시까지 입니다.</TextB3R>
             <TextB3R color={theme.brandColor}>
-              주문취소는 배송일 전날 오전 7시까지 입니다.
-            </TextB3R>
-            <TextB3R color={theme.brandColor}>
-              단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소
-              불가합니다.
+              단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소 불가합니다.
             </TextB3R>
           </FlexCol>
         </MustCheckAboutDelivery>
@@ -307,9 +282,7 @@ const PaymentPage = () => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>
-                  {userAccessMethod.text || '출입방법 선택'}
-                </TextB2R>
+                <TextB2R color={theme.greyScale45}>{userAccessMethod.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
@@ -331,8 +304,7 @@ const PaymentPage = () => {
                   </TextH6B>
                 </FlexRow>
                 <TextB3R color={theme.brandColor}>
-                  공동현관 및 무인택배함 비밀번호는 조합 방식 및
-                  순서(#,호출버튼)와 함께 자세히 기재해주세요.
+                  공동현관 및 무인택배함 비밀번호는 조합 방식 및 순서(#,호출버튼)와 함께 자세히 기재해주세요.
                 </TextB3R>
               </FlexCol>
             </MustCheckAboutDelivery>
@@ -347,11 +319,7 @@ const PaymentPage = () => {
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
-            <TextInput
-              margin="24px 0 0 0"
-              placeholder="요청사항 입력"
-              eventHandler={changeInputHandler}
-            />
+            <TextInput margin="24px 0 0 0" placeholder="요청사항 입력" eventHandler={changeInputHandler} />
           </>
         )}
       </VisitorAccessMethodWrapper>
@@ -418,15 +386,8 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCard && (
-          <CardItem onClick={goToCardManagemnet} card={mainCard} />
-        )}
-        <Button
-          border
-          backgroundColor={theme.white}
-          color={theme.black}
-          onClick={goToRegisteredCard}
-        >
+        {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} card={mainCard} />}
+        <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
           카드 등록하기
         </Button>
       </PaymentMethodWrapper>

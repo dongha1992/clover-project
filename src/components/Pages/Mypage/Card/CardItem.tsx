@@ -1,15 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  FlexBetweenStart,
-  FlexRowStart,
-  FlexRow,
-  FlexCol,
-  theme,
-} from '@styles/theme';
+import { FlexBetweenStart, FlexRowStart, FlexRow, FlexCol, theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B, TextH6B } from '@components/Shared/Text';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 
 export interface ICard {
   createdAt: string;
@@ -36,11 +30,7 @@ const CardItem = ({ onClick, card }: IProps) => {
             </FlexRow>
           </FlexCol>
         </FlexRowStart>
-        <TextH6B
-          color={theme.greyScale65}
-          textDecoration="underline"
-          onClick={() => onClick(card)}
-        >
+        <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card)}>
           변경하기
         </TextH6B>
       </FlexBetweenStart>

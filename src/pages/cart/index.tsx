@@ -1,15 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
-import {
-  TextB2R,
-  TextH4B,
-  TextH5B,
-  TextH6B,
-  TextH7B,
-  TextB3R,
-  TextH3B,
-} from '@components/Shared/Text';
+import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
 import {
   homePadding,
   theme,
@@ -28,7 +20,7 @@ import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
-import Tag from '@components/Shared/Tag';
+import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
@@ -37,11 +29,7 @@ import { HorizontalItem } from '@components/Item';
 import { setAlert } from '@store/alert';
 import { destinationForm } from '@store/destination';
 import { Obj } from '@model/index';
-
-const DISPOSABLE_LIST = [
-  { id: 1, value: 'fork', text: '포크/물티슈', price: 100 },
-  { id: 2, value: 'stick', text: '젓가락/물티슈', price: 100 },
-];
+import isNill from 'lodash-es/isNil';
 
 const LUNCH_OR_DINNER = [
   {
@@ -70,9 +58,7 @@ const mapper: Obj = {
 const CartPage = () => {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
-  const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>(
-    []
-  );
+  const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
   const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
   const [isShow, setIsShow] = useState(false);
@@ -89,19 +75,12 @@ const CartPage = () => {
   const router = useRouter();
 
   const { isFromDeliveryPage } = useSelector(cartForm);
-  const { userDestinationStatus, userDestination } =
-    useSelector(destinationForm);
+  const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = [
-    '2022-01-24',
-    '2022-01-25',
-    '2022-01-26',
-    '2022-01-27',
-    '2022-01-28',
-  ];
+  const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
   const otherDeliveryDate = ['2022-01-25'];
   const SPOT = true;
 
@@ -164,9 +143,7 @@ const CartPage = () => {
     let tempCheckedDisposableList = checkedDisposableList.slice();
 
     if (findItem) {
-      tempCheckedDisposableList = tempCheckedDisposableList.filter(
-        (_id) => _id !== id
-      );
+      tempCheckedDisposableList = tempCheckedDisposableList.filter((_id) => _id !== id);
     } else {
       tempCheckedDisposableList.push(id);
     }
@@ -215,21 +192,12 @@ const CartPage = () => {
     router.push('/payment');
   };
 
-  const hasDestination =
-    Object.values(userDestination).filter((item) => item).length > 0;
-
   return (
     <Container>
       <DeliveryMethodAndPickupLocation>
         <Left>
-          <TextH4B>
-            {userDestinationStatus
-              ? mapper[userDestinationStatus]
-              : '배송방법과'}
-          </TextH4B>
-          <TextH4B>
-            {hasDestination ? userDestination.dong : '배송장소를 설정해주세요'}
-          </TextH4B>
+          <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
+          <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
         </Left>
         <Right onClick={goToDeliveryInfo}>
           <SVGIcon name="arrowRight" />
@@ -240,18 +208,11 @@ const CartPage = () => {
         <CartListWrapper>
           <ListHeader>
             <div className="itemCheckbox">
-              <Checkbox
-                onChange={handleSelectAllCartItem}
-                isSelected={isAllChecked ? true : false}
-              />
+              <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
               <TextB2R padding="0 0 0 8px">전체선택 (3/5)</TextB2R>
             </div>
             <Right>
-              <TextH6B
-                color={theme.greyScale65}
-                textDecoration="underline"
-                onClick={removeItemHandler}
-              >
+              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeItemHandler}>
                 선택삭제
               </TextH6B>
             </Right>
@@ -265,11 +226,7 @@ const CartPage = () => {
                     onChange={() => handleSelectCartItem(item.id)}
                     isSelected={checkedMenuList.includes(item.id)}
                   />
-                  <CartSheetItem
-                    isCart
-                    menu={item}
-                    isSoldout={item.id === 1 && isSoldout}
-                  />
+                  <CartSheetItem isCart menu={item} isSoldout={item.id === 1 && isSoldout} />
                 </div>
                 <div className="itemInfo">
                   <InfoMessage status="soldSoon" count={2} />
@@ -282,9 +239,7 @@ const CartPage = () => {
         <DisposableSelectWrapper>
           <WrapperTitle>
             <SVGIcon name="fcoIcon" />
-            <TextH5B padding="0 0 0 8px">
-              일회용품은 한 번 더 생각해주세요!
-            </TextH5B>
+            <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
           </WrapperTitle>
           <CheckBoxWrapper>
             {disposableList.map((item, index) => (
@@ -356,9 +311,7 @@ const CartPage = () => {
           <FlexCol padding="0 24px">
             <FlexBetween>
               <FlexRow margin="0 0 16px 0">
-                <TextH3B padding="2px 4px 0 0">
-                  {SPOT ? '픽업날짜' : '배송일'}
-                </TextH3B>
+                <TextH3B padding="2px 4px 0 0">{SPOT ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
               <TextH6B>오늘 12:00 전 도착</TextH6B>
@@ -372,10 +325,7 @@ const CartPage = () => {
             {LUNCH_OR_DINNER.map((item, index) => {
               return (
                 <FlexRow key={index} padding="16px 0 0 0">
-                  <RadioButton
-                    onChange={() => handleLunchOrDinner(item.id)}
-                    isSelected={lunchOrDinner === item.id}
-                  />
+                  <RadioButton onChange={() => handleLunchOrDinner(item.id)} isSelected={lunchOrDinner === item.id} />
                   <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
                   <TextB2R>{item.discription}</TextB2R>
                 </FlexRow>
@@ -401,9 +351,7 @@ const CartPage = () => {
         </MenuListWarpper>
         <MenuListWarpper>
           <MenuListHeader>
-            <TextH3B padding="12px 0 24px 0">
-              이전에 구매한 상품들은 어떠세요?
-            </TextH3B>
+            <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
                 {itemList.map((item, index) => {
@@ -440,11 +388,7 @@ const CartPage = () => {
             <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
             <TextB2R>22원</TextB2R>
           </FlexBetween>
-          <BorderLine
-            height={1}
-            margin="16px 0"
-            backgroundColor={theme.black}
-          />
+          <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
             <TextH4B>12312원</TextH4B>

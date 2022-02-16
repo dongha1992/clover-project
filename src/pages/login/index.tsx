@@ -1,29 +1,17 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import {
-  FlexCenter,
-  FlexCol,
-  FlexRow,
-  homePadding,
-  theme,
-} from '@styles/theme';
+import { FlexCenter, FlexCol, FlexRow, homePadding, theme } from '@styles/theme';
 import { TextB2R } from '@components/Shared/Text';
 import Checkbox from '@components/Shared/Checkbox';
 import { Button } from '@components/Shared/Button';
 import router, { useRouter } from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  userForm,
-  SET_USER_AUTH,
-  SET_LOGIN_SUCCESS,
-  SET_TEMP_PASSWORD,
-  SET_USER,
-} from '@store/user';
+import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER } from '@store/user';
 import { userLogin, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
-import { SET_LOGIN_TYPE } from '@store/common';
+import { SET_IS_AUTOLOGIN, SET_LOGIN_TYPE } from '@store/common';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
@@ -121,15 +109,14 @@ const LoginPage = () => {
           const userInfo = await userProfile().then((res) => {
             return res?.data;
           });
+          dispatch(SET_IS_AUTOLOGIN(checkAutoLogin));
           dispatch(SET_USER(userInfo.data));
         }
       } catch (error) {
         console.error(error);
 
         /* TODO: 서버에서 내려오는 message에 따라 wrapper 만들어야 함 */
-        setErrorMessage(
-          '가입하지 않은 아이디이거나, 로그인 정보를 확인해주세요.'
-        );
+        setErrorMessage('가입하지 않은 아이디이거나, 로그인 정보를 확인해주세요.');
       }
     }
   };
@@ -138,19 +125,11 @@ const LoginPage = () => {
     <Container>
       <FlexCol padding="32px 0 0 0">
         <TextInput margin="0 0 8px 0" placeholder="이메일" ref={emailRef} />
-        <TextInput
-          placeholder="비밀번호"
-          inputType="password"
-          ref={passwordRef}
-          eventHandler={passwordInputHandler}
-        />
+        <TextInput placeholder="비밀번호" inputType="password" ref={passwordRef} eventHandler={passwordInputHandler} />
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </FlexCol>
       <FlexRow padding="16px 0 24px 0">
-        <Checkbox
-          onChange={checkAutoLoginHandler}
-          isSelected={checkAutoLogin}
-        />
+        <Checkbox onChange={checkAutoLoginHandler} isSelected={checkAutoLogin} />
         <TextB2R padding="2px 0 0 8px">자동 로그인</TextB2R>
       </FlexRow>
       <BtnWrapper onClick={finishLogin}>
@@ -166,12 +145,7 @@ const LoginPage = () => {
         </TextB2R>
       </FlexCenter>
       <SignupBtnWrapper>
-        <Button
-          onClick={goToSignup}
-          backgroundColor={theme.white}
-          border
-          color={theme.black}
-        >
+        <Button onClick={goToSignup} backgroundColor={theme.white} border color={theme.black}>
           회원가입하고 신규 혜택 받기
         </Button>
       </SignupBtnWrapper>

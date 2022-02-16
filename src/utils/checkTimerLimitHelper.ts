@@ -24,7 +24,7 @@ const checkTimerLimitHelper = (): TResult => {
   // let currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
   let currentTime;
   /* 스팟 런치 테스트 */
-  currentTime = 10.0;
+  currentTime = 8.0;
 
   /* 스팟 저녁 테스트 */
   // currentTime = 10.4;
@@ -48,7 +48,6 @@ const checkTimerLimitHelper = (): TResult => {
   let isSunday = days === '일';
   let isWeekends = ['토', '일'].includes(days);
 
-  isFriday = true;
   // 주말의 경우 타이머 없고 '새벽택배'만 나옴. 단, 일요일 17시 이후부터 24시까지 '스팟점심N일'
   if (isWeekends) {
     if (isSunday && spotLunchDinnerTomorrow) {
