@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH5B, TextH7B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
+import { LIMIT_DAYS } from './Calendar';
 
 type TProps = {
   day: number;
@@ -14,19 +15,10 @@ type TProps = {
   otherDeliveryDate?: string[] | [];
 };
 
-const Days = ({
-  day,
-  value,
-  handler,
-  selectedDay,
-  index,
-  disabledDates,
-  otherDeliveryDate,
-}: TProps) => {
-  const isSecondWeeeks = index > 5;
+const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate }: TProps) => {
+  const isSecondWeeeks = index > LIMIT_DAYS;
   const isToday = !index;
-  const hasOtherDeliveryDate =
-    otherDeliveryDate && otherDeliveryDate[0] === value;
+  const hasOtherDeliveryDate = otherDeliveryDate && otherDeliveryDate[0] === value;
   const disabledDate = disabledDates.includes(value);
 
   const dayColorRender = () => {
@@ -71,10 +63,7 @@ const Days = ({
       }}
       isSecondWeeeks={isSecondWeeeks}
     >
-      <Wrapper
-        selectedDay={selectedDay}
-        hasOtherDeliveryDate={hasOtherDeliveryDate}
-      >
+      <Wrapper selectedDay={selectedDay} hasOtherDeliveryDate={hasOtherDeliveryDate}>
         <TextH5B color={`${theme[dayColorRender()]}`}>{day}</TextH5B>
       </Wrapper>
       <TextWrapper>{extraTextRender()}</TextWrapper>
@@ -83,7 +72,7 @@ const Days = ({
 };
 
 const Container = styled.div<{ isSecondWeeeks?: boolean }>`
-  width: calc(100% / 6);
+  width: calc(100% / 7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -99,13 +88,11 @@ const Wrapper = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: ${({ hasOtherDeliveryDate }) =>
-    hasOtherDeliveryDate ? `1px dashed #35ad73` : ''};
+  width: 24px;
+  height: 24px;
+  border: ${({ hasOtherDeliveryDate }) => (hasOtherDeliveryDate ? `1px dashed #35ad73` : '')};
   border-radius: 50%;
-  background-color: ${({ selectedDay }) =>
-    selectedDay ? theme.brandColor : ''};
+  background-color: ${({ selectedDay }) => (selectedDay ? theme.brandColor : '')};
   padding: 4px;
   > div {
     padding-top: 4px;
