@@ -44,6 +44,7 @@ const DeliverInfoPage = () => {
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
   const [tempDestination, setTempDestination] = useState<IDestination | null>();
+  const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
 
   const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
     useSelector(destinationForm);
@@ -53,7 +54,6 @@ const DeliverInfoPage = () => {
 
   const { destinationId } = router.query;
 
-  const isSpotPickupPlace = userSelectDeliveryType === 'spot';
   const { isTimerTooltip } = useSelector(orderForm);
 
   // 배송 마감 타이머 체크 + 위치 체크
@@ -73,7 +73,7 @@ const DeliverInfoPage = () => {
   const changeDeliveryTypeHandler = (value: string) => {
     // 배송 방법 변경시 검색한 배송지가 있으면 초기화 배송지 정보 초기화
 
-    if (tempDestination && destinationStatus) {
+    if (tempDestination && !isMainDestination) {
       dispatch(
         setAlert({
           alertMessage: '설정하신 주소는 저장되지 않습니다. 배송방법을 변경하시겠어요?',
@@ -165,7 +165,7 @@ const DeliverInfoPage = () => {
       }
 
       default: {
-        return <DeliveryPlaceBox place={tempDestination} />;
+        return <DeliveryPlaceBox place={tempDestination} type={userDestinationStatus.toUpperCase()} />;
       }
     }
   };
@@ -196,10 +196,7 @@ const DeliverInfoPage = () => {
     const canQuickAndCanParcel = !morning && quick && parcel;
     const canParcelAndCanMorning = morning && parcel;
 
-    if (!userDestinationStatus) {
-      console.log(userDestinationStatus, 'userDestinationStatus 없음');
-    }
-
+    // 최근 이력에서 가져온 경우 툴팁 리셋
     if (destinationId) {
       setDeliveryTypeWithTooltip('');
       return;
@@ -253,6 +250,7 @@ const DeliverInfoPage = () => {
     // 최근 주문 이력이 있는지
     if (recentOrder && !userDestinationStatus) {
       setUserSelectDeliveryType(recentOrder);
+      setIsMaindestination(false);
     }
 
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
@@ -276,6 +274,7 @@ const DeliverInfoPage = () => {
       const { data } = await getMainDestinations(params);
       if (data.code === 200) {
         setTempDestination(data.data);
+        setIsMaindestination(true);
       }
     } catch (error) {
       console.error(error);
@@ -303,6 +302,7 @@ const DeliverInfoPage = () => {
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
     if (userTempDestination) {
       setTempDestination(userTempDestination);
+      setIsMaindestination(false);
     }
   }, [userTempDestination]);
 
@@ -320,6 +320,8 @@ const DeliverInfoPage = () => {
     // 유저가 선택한 배송방법에 따라 툴팁 렌더
     checkTooltipMsgByDeliveryType();
   }, []);
+
+  const isSpotPickupPlace = userSelectDeliveryType === 'spot';
 
   return (
     <Container>

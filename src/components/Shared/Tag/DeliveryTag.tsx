@@ -11,7 +11,7 @@ interface ITagProps {
   margin?: string;
 }
 
-const DeliveryTag = ({ devlieryType = 'SPOT', margin }: ITagProps) => {
+const DeliveryTag = ({ devlieryType, margin }: ITagProps) => {
   const deliveryMap: Obj = {
     PARCEL: '택배배송',
     MORNING: '새벽배송',
