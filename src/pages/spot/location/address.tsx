@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { fixedBottom, theme, FlexRow } from '@styles/theme';
-import { TextH2B, TextB3R, TextH5B } from '@components/Shared/Text';
+import { TextH1B, TextB2R, TextB3R, TextH4B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
@@ -56,6 +56,8 @@ const AddressDetailPage = () => {
       zipCode: tempLocation.zipNo,
       lat: latitudeLongitude.latitude,
       lon: latitudeLongitude.longitude,
+      jibunAddress: tempLocation.jibunAddr,
+      roadAddress: tempLocation.roadAddr,
     };
 
     if (!keywordLen) {
@@ -82,21 +84,19 @@ const AddressDetailPage = () => {
   return (
     <Container>
       <Wrapper>
-        <TextH2B padding="0 0 16px 0">프코스팟 신청이 가능해요</TextH2B>
-        <TextB3R color={theme.greyScale65}>
-          {'점심•저녁 원하는 시간에 픽업 가능!\n서울 내 등록된 프코스팟에서 배송비 무료로 이용 가능해요'}
-        </TextB3R>
+        <TextH1B padding='0 0 16px 0'>프코스팟 신청이 가능해요</TextH1B>
+        <TextB2R color={theme.greyScale65}>{'서울 및 분당구 지역만 프코스팟 신청이 가능해요!\n(분당구 일부 지역은 담당자 확인 후, 오픈 진행됩니다.)'}</TextB2R>
       </Wrapper>
       <MapWrapper>
         <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
       </MapWrapper>
       <Wrapper>
-        <TextH5B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH5B>
+        <TextH4B padding='0 0 4px 0'>{tempLocation.roadAddr}</TextH4B>
         <FlexRow>
           <Tag padding="2px" width="8%" center>
             지번
           </Tag>
-          <TextB3R>&nbsp;{`(${tempLocation.zipNo})${tempLocation.jibunAddr}`}</TextB3R>
+          <TextB2R>&nbsp;{`(${tempLocation.zipNo})${tempLocation.jibunAddr}`}</TextB2R>
         </FlexRow>
         <TextInput
           placeholder="상세주소 입력(필수)"

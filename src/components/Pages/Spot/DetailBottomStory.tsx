@@ -7,8 +7,12 @@ import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import { IMAGE_S3_URL } from '@constants/mock/index';
-import { postSpotsStoryLike, deleteSpotsStoryLike, getSpotsStoryLike } from '@api/spot';
-import { ISpotStories } from '@pages/spot/detail/[id]';
+import { 
+  postSpotsStoryLike, 
+  deleteSpotsStoryLike, 
+  getSpotsStoryLike 
+} from '@api/spot';
+import {ISpotStories} from '@model/index';
 
 interface IProps {
   list: ISpotStories;
