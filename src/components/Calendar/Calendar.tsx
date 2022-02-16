@@ -7,6 +7,7 @@ import SVGIcon from '@utils/SVGIcon';
 import getCustomDate from '@utils/getCustomDate';
 
 let WEEKS: any = {
+  0: '일',
   1: '월',
   2: '화',
   3: '수',
@@ -17,7 +18,7 @@ let WEEKS: any = {
 
 const ONE_WEEK = 7;
 const TWO_WEKKS = 14;
-const LIMIT_DAYS = 5;
+export const LIMIT_DAYS = 6;
 
 /* TODO: 디폴트 선택 날짜 어떻게? */
 
@@ -34,6 +35,7 @@ interface ICalendar {
   otherDeliveryDate?: string[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
+  isSheet: boolean;
 }
 
 const Calendar = ({
@@ -41,6 +43,7 @@ const Calendar = ({
   otherDeliveryDate,
   selectedDeliveryDay,
   setSelectedDeliveryDay,
+  isSheet,
 }: ICalendar) => {
   const [dateList, setDateList] = useState<IDateObj[] | []>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
@@ -61,9 +64,7 @@ const Calendar = ({
       const _month = new Date(years, months, dates + i).getMonth() + 1;
       const _date = new Date(years, months, dates + i).getDate();
       const _day = new Date(years, months, dates + i).getDay();
-      const value = `${years}-${_month < 10 ? `0${_month}` : _month}-${
-        _date < 10 ? `0${_date}` : _date
-      }`;
+      const value = `${years}-${_month < 10 ? `0${_month}` : _month}-${_date < 10 ? `0${_date}` : _date}`;
 
       const dateObj = {
         years,
@@ -73,14 +74,10 @@ const Calendar = ({
         value,
       };
 
-      // 일요일 제외 하고 push
-      if (_day !== 0) {
-        list.push(dateObj);
-        if (isFirstWeek) {
-          firstWeek.push(dateObj);
-        }
-      } else {
-        continue;
+      list.push(dateObj);
+
+      if (isFirstWeek) {
+        firstWeek.push(dateObj);
       }
     }
     checkShowMoreWeek(firstWeek, disabledDates);
@@ -91,13 +88,8 @@ const Calendar = ({
     setSelectedDeliveryDay(value);
   };
 
-  const checkShowMoreWeek = (
-    firstWeek: IDateObj[],
-    disabledDates: string[]
-  ) => {
-    const filtered = firstWeek.filter(
-      (week: any) => !disabledDates.includes(week.value)
-    );
+  const checkShowMoreWeek = (firstWeek: IDateObj[], disabledDates: string[]) => {
+    const filtered = firstWeek.filter((week: any) => !disabledDates.includes(week.value));
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
     if (filtered.length > 2) {
@@ -161,7 +153,7 @@ const Calendar = ({
 
   return (
     <FlexCol>
-      <CalendarContainer>
+      <CalendarContainer isSheet={isSheet}>
         <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
       </CalendarContainer>
       {otherDeliveryDate && (
@@ -176,14 +168,14 @@ const Calendar = ({
   );
 };
 
-const CalendarContainer = styled.div`
+const CalendarContainer = styled.div<{ isSheet?: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   max-width: 512px;
-  border-radius: 10px;
+  border-radius: ${({ isSheet }) => (isSheet ? 0 : 10)}px;
   background-color: ${theme.greyScale3};
 `;
 
@@ -200,7 +192,7 @@ const Header = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: calc(100% / 6);
+    width: calc(100% / 7);
     margin-bottom: 10px;
   }
 `;

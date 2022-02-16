@@ -205,9 +205,7 @@ const OrderDetailPage = () => {
   const changeDevlieryDateHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: (
-          <CalendarSheet title="배송일 변경" disabledDates={disabledDates} otherDeliveryDate={otherDeliveryDate} />
-        ),
+        content: <CalendarSheet title="배송일 변경" disabledDates={disabledDates} isSheet />,
       })
     );
   };
