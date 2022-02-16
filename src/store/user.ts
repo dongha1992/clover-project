@@ -11,7 +11,7 @@ interface IUser {
     birthDate?: string;
     email?: string;
     marketingEmailReceived?: boolean;
-    gender?: string;
+    gender?: string | null;
     name?: string;
     nickname?: string;
     password?: string;
@@ -24,7 +24,7 @@ interface IUser {
     birthDate: string;
     email: string;
     marketingEmailReceived: boolean;
-    gender: string;
+    gender: string | null;
     name: string;
     nickname: string;
     password: string;
@@ -50,7 +50,7 @@ const initialState: IUser = {
     birthDate: '',
     email: '',
     marketingEmailReceived: false,
-    gender: '',
+    gender: null,
     name: '',
     nickname: '',
     password: '',
@@ -63,7 +63,7 @@ const initialState: IUser = {
     birthDate: '',
     email: '',
     marketingEmailReceived: false,
-    gender: '',
+    gender: null,
     name: '',
     nickname: '',
     password: '',
@@ -81,27 +81,11 @@ const initialState: IUser = {
   },
 };
 
-export const SET_USER_LOGIN_AUTH = createAsyncThunk(
-  'user/SET_USER_LOGIN_AUTH',
-  async (payload: any, thunkAPI) => {
-    const { data } = await userLogin({
-      ...payload,
-    });
-    if (data.code === 200) {
-      const userTokenObj = data.data;
-      return { ...userTokenObj };
-    }
-  }
-);
-
 export const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    SET_SIGNUP_USER: (
-      state,
-      { payload }: PayloadAction<IUser['signupUser']>
-    ) => {
+    SET_SIGNUP_USER: (state, { payload }: PayloadAction<IUser['signupUser']>) => {
       state.signupUser = { ...state.signupUser, ...payload };
     },
 
@@ -140,22 +124,9 @@ export const user = createSlice({
       state.user = payload;
     },
   },
-  extraReducers: {
-    [SET_USER_LOGIN_AUTH.fulfilled.type]: (
-      state,
-      action: PayloadAction<any>
-    ) => {},
-    [SET_USER_LOGIN_AUTH.pending.type]: () => {},
-    [SET_USER_LOGIN_AUTH.rejected.type]: () => {},
-  },
+  extraReducers: {},
 });
 
-export const {
-  SET_SIGNUP_USER,
-  SET_USER_AUTH,
-  SET_USER,
-  SET_LOGIN_SUCCESS,
-  SET_TEMP_PASSWORD,
-} = user.actions;
+export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD } = user.actions;
 export const userForm = (state: AppState): IUser => state.user;
 export default user.reducer;

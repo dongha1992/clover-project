@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { CheckDeliveryPlace } from '@components/Pages/Destination';
+import { CheckDestinationPlace } from '@components/Pages/Destination';
 import MapAPI from '@components/Map';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
@@ -8,23 +8,29 @@ import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
-import { destinationRegister } from '@api/destination';
 import { getLonLatFromAddress } from '@api/location';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   destinationForm,
   INIT_LOCATION_TEMP,
-  SET_DESTINATION,
+  SET_TEMP_DESTINATION,
   SET_DESTINATION_STATUS,
+  SET_USER_DESTINATION_STATUS,
 } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
-
+import { Obj } from '@model/index';
 /* TODO: receiverName, receiverTel  */
+
+const deliveryMap: Obj = {
+  parcel: '택배배송',
+  morning: '새벽배송',
+};
 
 const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
-
+  const [destinationStatusByRule, setDestinationStatusByRule] = useState<string>('');
+  const [isMaybeChangeType, setIsMaybeChangeType] = useState<boolean>(false);
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
@@ -34,15 +40,11 @@ const DestinationDetailPage = () => {
   const destinationDetailRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
-  const { tempLocation, availableDestination } = useSelector(destinationForm);
-
   // 배송 가능 여부
+  const { tempLocation, availableDestination, userDestinationStatus } = useSelector(destinationForm);
   const destinationStatus = checkDestinationHelper(availableDestination);
-  const canNotDelivery = destinationStatus === 'noDelivery';
 
-  useEffect(() => {
-    getLonLanForMap();
-  }, []);
+  const canNotDelivery = destinationStatus === 'noDelivery';
 
   const getLonLanForMap = async () => {
     const params = {
@@ -76,16 +78,19 @@ const DestinationDetailPage = () => {
       const name = destinationNameRef.current.value.toString();
 
       const userDestinationInfo = {
-        addressDetail,
         name,
-        address: tempLocation.roadAddrPart1,
-        dong: tempLocation.emdNm,
+        location: {
+          addressDetail,
+          address: tempLocation.roadAddrPart1,
+          dong: tempLocation.emdNm,
+          zipCode: tempLocation.zipNo,
+        },
         main: isDefaultDestination,
-        zipCode: tempLocation.zipNo,
       };
 
-      dispatch(SET_DESTINATION(userDestinationInfo));
+      dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
       dispatch(SET_DESTINATION_STATUS(destinationStatus));
+      dispatch(SET_USER_DESTINATION_STATUS(destinationStatusByRule));
       dispatch(INIT_LOCATION_TEMP());
 
       router.push('/cart/delivery-info');
@@ -99,18 +104,68 @@ const DestinationDetailPage = () => {
   const goToHome = () => {
     router.push('/');
   };
+
+  useEffect(() => {
+    getLonLanForMap();
+  }, []);
+
+  useEffect(() => {
+    /* TODO: 리팩토링 필요 */
+    const { morning, parcel, quick } = availableDestination;
+
+    const userMorningButParcel = userDestinationStatus === 'morning' && !morning && parcel;
+    const userQuickButMorning = userDestinationStatus === 'quick' && !quick && morning;
+    const userQuickButParcel = userDestinationStatus === 'quick' && !quick && parcel;
+    const onlyMorning = userDestinationStatus === 'parcel' && !parcel && morning;
+
+    if (userMorningButParcel || userQuickButMorning || userQuickButParcel || onlyMorning) {
+      setIsMaybeChangeType(true);
+      switch (true) {
+        case userMorningButParcel:
+          {
+            setDestinationStatusByRule('parcel');
+          }
+          break;
+
+        case userQuickButMorning:
+          {
+            setDestinationStatusByRule('morning');
+          }
+          break;
+
+        case userQuickButParcel:
+          {
+            setDestinationStatusByRule('parcel');
+          }
+          break;
+
+        case onlyMorning:
+          {
+            setDestinationStatusByRule('morning');
+          }
+          break;
+
+        default:
+          {
+            setDestinationStatusByRule(userDestinationStatus);
+          }
+          break;
+      }
+    } else {
+      setIsMaybeChangeType(false);
+      setDestinationStatusByRule(userDestinationStatus);
+    }
+  }, [availableDestination]);
+
   if (!Object.keys(tempLocation).length) {
     return;
   }
 
   return (
     <Container>
-      <CheckDeliveryPlace />
+      <CheckDestinationPlace />
       <MapWrapper>
-        <MapAPI
-          centerLat={latitudeLongitude.latitude}
-          centerLng={latitudeLongitude.longitude}
-        />
+        <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>
@@ -121,19 +176,13 @@ const DestinationDetailPage = () => {
             zipNo={tempLocation.zipNo}
           />
         </FlexCol>
-        <TextInput
-          placeholder="상세주소 입력 (필수)"
-          ref={destinationDetailRef}
-        />
+        <TextInput placeholder="상세주소 입력 (필수)" ref={destinationDetailRef} />
         <FlexCol padding="24px 0">
           <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
           <TextInput placeholder="배송지명 입력" ref={destinationNameRef} />
         </FlexCol>
         <FlexRow padding="0">
-          <Checkbox
-            onChange={() => setIsDefaultDestination(!isDefaultDestination)}
-            isSelected={isDefaultDestination}
-          />
+          <Checkbox onChange={() => setIsDefaultDestination(!isDefaultDestination)} isSelected={isDefaultDestination} />
           {isDefaultDestination ? (
             <TextH5B padding="4px 0 0 4px">기본 배송지로 설정</TextH5B>
           ) : (
@@ -141,17 +190,18 @@ const DestinationDetailPage = () => {
           )}
         </FlexRow>
       </DestinationInfoWrarpper>
-      {canNotDelivery ? (
+      {canNotDelivery && (
         <ButtonGroup
           leftButtonHandler={goToSearch}
           rightButtonHandler={goToHome}
           leftText="다른 주소 검색하기"
           rightText="닫기"
         />
-      ) : (
+      )}
+      {!canNotDelivery && (
         <ButtonWrapper>
           <Button height="100%" borderRadius="0" onClick={getDestination}>
-            설정하기
+            {isMaybeChangeType ? `${deliveryMap[destinationStatusByRule]}으로 변경하기` : '설정하기'}
           </Button>
         </ButtonWrapper>
       )}

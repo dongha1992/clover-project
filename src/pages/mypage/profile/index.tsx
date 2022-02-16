@@ -1,20 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  homePadding,
-  fixedBottom,
-  FlexBetween,
-  theme,
-  FlexCol,
-  FlexRow,
-} from '@styles/theme';
+import { homePadding, fixedBottom, FlexBetween, theme, FlexCol, FlexRow } from '@styles/theme';
 import styled from 'styled-components';
-import {
-  TextH4B,
-  TextH5B,
-  TextH6B,
-  TextB2R,
-  TextB3R,
-} from '@components/Shared/Text';
+import { TextH4B, TextH5B, TextH6B, TextB2R, TextB3R } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import BorderLine from '@components/Shared/BorderLine';
 import { GENDER } from '@pages/signup/optional';
@@ -22,12 +9,16 @@ import { Button, RadioButton } from '@components/Shared/Button';
 import router from 'next/router';
 import SVGIcon from '@utils/SVGIcon';
 import { useInterval } from '@hooks/useInterval';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setAlert } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
+import { removeCookie } from '@utils/cookie';
+import { SET_LOGIN_SUCCESS } from '@store/user';
+import { commonSelector } from '@store/common';
 
 const ProfilePage = () => {
+  const { loginType } = useSelector(commonSelector);
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
@@ -65,7 +56,14 @@ const ProfilePage = () => {
 
   useInterval(timerHandler, delay);
 
-  const logoutHandler = () => {};
+  const logoutHandler = () => {
+    if (loginType === 'EMAIL') {
+      dispatch(SET_LOGIN_SUCCESS(false));
+      delete sessionStorage.accessToken;
+      removeCookie({ name: 'refreshTokenObj' });
+      router.push('/mypage');
+    }
+  };
 
   const otherAuthTelHandler = () => {
     setIsAuthTel(true);
@@ -159,11 +157,7 @@ const ProfilePage = () => {
         <LoginInfoWrapper>
           <FlexBetween padding="24px 0 ">
             <TextH4B>로그인 정보</TextH4B>
-            <TextH6B
-              color={theme.greyScale65}
-              textDecoration="underline"
-              onClick={logoutHandler}
-            >
+            <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={logoutHandler} pointer>
               로그아웃
             </TextH6B>
           </FlexBetween>
@@ -175,11 +169,7 @@ const ProfilePage = () => {
             <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
             <FlexRow>
               <TextInput />
-              <Button
-                width="30%"
-                margin="0 0 0 8px"
-                onClick={goToChangePassword}
-              >
+              <Button width="30%" margin="0 0 0 8px" onClick={goToChangePassword}>
                 변경하기
               </Button>
             </FlexRow>
@@ -201,26 +191,13 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
-              <TextInput
-                inputType="number"
-                eventHandler={phoneNumberInputHandler}
-                ref={phoneNumberRef}
-              />
+              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} ref={phoneNumberRef} />
               {isAuthTel ? (
-                <Button
-                  width="40%"
-                  margin="0 0 0 8px"
-                  onClick={getAuthTel}
-                  disabled={oneMinuteDisabled}
-                >
+                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
                   요청하기
                 </Button>
               ) : (
-                <Button
-                  width="40%"
-                  margin="0 0 0 8px"
-                  onClick={otherAuthTelHandler}
-                >
+                <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
                   다른번호 인증
                 </Button>
               )}
@@ -233,20 +210,14 @@ const ProfilePage = () => {
                   ref={authCodeNumberRef}
                   inputType="number"
                 />
-                <Button
-                  width="40%"
-                  margin="0 0 0 8px"
-                  disabled={!authCodeValidation}
-                  onClick={getAuthCodeConfirm}
-                >
+                <Button width="40%" margin="0 0 0 8px" disabled={!authCodeValidation} onClick={getAuthCodeConfirm}>
                   확인
                 </Button>
                 {authCodeValidation && <SVGIcon name="confirmCheck" />}
                 {delay && (
                   <TimerWrapper>
                     <TextB3R color={theme.brandColor}>
-                      {minute < 10 ? `0${minute}` : minute}:
-                      {second < 10 ? `0${second}` : second}
+                      {minute < 10 ? `0${minute}` : minute}:{second < 10 ? `0${second}` : second}
                     </TextB3R>
                   </TimerWrapper>
                 )}
@@ -263,10 +234,7 @@ const ProfilePage = () => {
               {GENDER.map((item, index) => {
                 return (
                   <FlexRow padding="0 16px 0 0" key={index}>
-                    <RadioButton
-                      onChange={() => checkGenderHandler(item.id)}
-                      isSelected={checkGender === item.id}
-                    />
+                    <RadioButton onChange={() => checkGenderHandler(item.id)} isSelected={checkGender === item.id} />
                     {checkGender === item.id ? (
                       <TextH5B padding="0 0 0 8px">{item.text}</TextH5B>
                     ) : (

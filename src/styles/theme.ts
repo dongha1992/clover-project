@@ -20,6 +20,9 @@ export const theme: Obj = {
   black: '#242424',
   systemRed: '#D32F2F',
   systemYellow: '#F4D740',
+  morningColor: '#7922BC',
+  parcelColor: '#1E7FF0',
+  quickColor: '#9C9C9C',
 };
 
 export const flexCenter = css`
@@ -58,7 +61,7 @@ export const FlexBetween = styled.div<{
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
-  height: ${({height}) => height && height};
+  height: ${({ height }) => height && height};
 `;
 
 export const FlexBetweenStart = styled.div<{
@@ -96,12 +99,14 @@ export const FlexCol = styled.div<{
   padding?: string;
   margin?: string;
   width?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
+  cursor: ${({ pointer }) => (pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
@@ -140,10 +145,10 @@ export const FlexWrapWrapper = styled.div`
   width: 100%;
 `;
 
-export const FlexStart = styled.div<{ padding?: string; margin?: string; alignItems?: string; }>`
+export const FlexStart = styled.div<{ padding?: string; margin?: string; alignItems?: string }>`
   width: 100%;
   display: flex;
-  align-items: ${(props) => props.alignItems ? props.alignItems : 'center'};
+  align-items: ${(props) => (props.alignItems ? props.alignItems : 'center')};
   justify-content: flex-start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
@@ -284,6 +289,7 @@ export const textBody4 = css`
 `;
 
 export const customInput = css`
+  width: 100%;
   border: none;
   padding: 12px 16px 12px 12px;
   -webkit-appearance: none;

@@ -2,20 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { HomeContainer } from '@styles/theme';
-import { TextH6B, TextH5B, TextB2R } from '@components/Shared/Text';
+import { TextH6B, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
-import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import { query } from 'express';
-
-/* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -23,38 +18,13 @@ const LocationPage = () => {
   const [isFocus, setIsFocus] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [userLocation, setUserLocation] = useState('');
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const dispatch = useDispatch();
   const { isSpot } = router.query;
 
-  const setCurrentLoc = (location: string) => {
-    const locationInfoMsg = `${location}(으)로
-    설정되었습니다.`;
-    dispatch(
-      setAlert({
-        alertMessage: locationInfoMsg,
-        onSubmit: () => {},
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
-  };
-
-  const getGeoLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { data } = await getAddressFromLonLat({
-          y: position.coords.latitude?.toString(),
-          x: position.coords.longitude?.toString(),
-        });
-        setUserLocation(data.documents[0].address_name);
-        setCurrentLoc(data.documents[0].address_name);
-      });
-    }
-  };
+  const getGeoLocation = () => {};
 
   const addressInputHandler = () => {
     const keyword = addressRef.current?.value.length;
@@ -68,9 +38,7 @@ const LocationPage = () => {
     }
   };
 
-  const getSearchAddressResult = async (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (addressRef.current) {
         let query = addressRef.current?.value;
@@ -113,16 +81,16 @@ const LocationPage = () => {
 
   const goToMapScreen = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
-    if(isSpot){
+    if (isSpot) {
       router.push({
         pathname: '/location/address-detail',
         query: { isSpot: true },
       });
-    }else {
+    } else {
       router.push({
         pathname: '/location/address-detail',
         query: { isLocation: true },
-      });  
+      });
     }
   };
 
@@ -162,9 +130,7 @@ const LocationPage = () => {
               })}
             </>
           )}
-          {!resultAddress.length && isSearched && (
-            <div>검색 결과가 없습니다.</div>
-          )}
+          {!resultAddress.length && isSearched && <div>검색 결과가 없습니다.</div>}
         </ResultList>
       </Wrapper>
     </HomeContainer>

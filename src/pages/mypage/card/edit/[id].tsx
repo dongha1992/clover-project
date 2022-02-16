@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import { setAlert } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import router from 'next/router';
+import { useMutation, useQueryClient } from 'react-query';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -23,39 +24,46 @@ interface IProps {
 
 const CardEditPage = ({ id, orginCardName }: IProps) => {
   const [isMainCard, setIsMainCard] = useState<boolean>(false);
-  const [cardName, setCardName] = useState<string>('');
+  const [cardName, setCardName] = useState<string>(orginCardName);
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  const editCardInfo = async () => {
-    const name = cardName ? cardName : orginCardName;
+  const { mutate: mutateDeleteCard } = useMutation((id: number) => deleteCard(id), {
+    onSuccess: async () => {
+      await queryClient.refetchQueries('getCardList');
+      await queryClient.refetchQueries('getMainCard');
+      router.push('/mypage/card');
+    },
+  });
 
-    try {
-      Promise.all([editCard(id, name), setMainCard(id)]).then((responses) => {
-        let isSuccess = false;
-
-        for (let res of responses) {
-          const { data } = res;
-          if (data.code === 200) {
-            isSuccess = true;
-          }
-        }
-
-        if (isSuccess) {
-          router.push('/mypage/card');
-        }
-      });
-    } catch (error) {
-      console.error(error);
+  const { mutateAsync: mutateEditCardAsync } = useMutation(
+    async (params: { id: number; name: string }) => {
+      if (isMainCard) {
+        await setMainCard(id);
+      }
+      return editCard(params);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCardList');
+        await queryClient.refetchQueries('getMainCard');
+      },
     }
-  };
+  );
 
-  const deleteCardInfo = async () => {
+  const mutateEditCard = async () => {
+    const params = {
+      id,
+      name: cardName,
+    };
     try {
-      const { data } = await deleteCard(id);
+      const { data } = await mutateEditCardAsync(params);
       if (data.code === 200) {
         router.push('/mypage/card');
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const changeCardNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +77,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
         alertMessage: '카드를 삭제하시겠어요?',
         submitBtnText: '확인',
         closeBtnText: '취소',
-        onSubmit: () => deleteCardInfo(),
+        onSubmit: () => mutateDeleteCard(id),
       })
     );
   };
@@ -79,7 +87,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
       setAlert({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
-        onSubmit: () => editCardInfo(),
+        onSubmit: () => mutateEditCard(),
       })
     );
   };
@@ -95,10 +103,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
         <TextInput value={orginCardName} eventHandler={changeCardNameHandler} />
       </FlexCol>
       <FlexRow>
-        <Checkbox
-          isSelected={isMainCard}
-          onChange={() => setIsMainCard(!isMainCard)}
-        />
+        <Checkbox isSelected={isMainCard} onChange={() => setIsMainCard(!isMainCard)} />
         <TextH5B padding="4px 0 0 8px">대표 카드로 설정</TextH5B>
       </FlexRow>
       <ButtonGroup

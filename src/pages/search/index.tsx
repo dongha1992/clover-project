@@ -12,6 +12,8 @@ import Link from 'next/link';
 import { BASE_URL } from '@constants/mock';
 import SVGIcon from '@utils/SVGIcon';
 
+/*TODO: 검색 결과는 slug와 static props로? */
+
 const SearchPage = () => {
   const [itemList, setItemList] = useState<any[]>([]);
   const [searchResult, setSearchResult] = useState<any>([]);
