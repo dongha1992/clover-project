@@ -12,12 +12,12 @@ import SVGIcon from '@utils/SVGIcon';
 interface IProps {
   title: string;
   disabledDates: string[];
-  otherDeliveryDate?: string[];
+  otherDeliveryInfo?: any[];
   isSheet?: boolean;
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates, otherDeliveryDate, isSheet }: IProps) => {
+const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const dispatch = useDispatch();
@@ -56,7 +56,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryDate, isSheet }: IPr
         disabledDates={disabledDates}
         selectedDeliveryDay={selectedDeliveryDay}
         setSelectedDeliveryDay={setSelectedDeliveryDay}
-        otherDeliveryDate={otherDeliveryDate}
+        otherDeliveryInfo={otherDeliveryInfo}
         isSheet={isSheet}
       />
       <ButtonContainer onClick={submitHandler}>

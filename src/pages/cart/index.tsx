@@ -55,8 +55,20 @@ interface ILunchOrDinner {
 }
 
 //temp
+export interface IOtherDeliveryInfo {
+  id: number;
+  location: {
+    address: string;
+    addressDetail: string;
+  };
+  delivery: string;
+  deliveryTime: string;
+  deliveryDate: string;
+  totalPrice: number;
+  deliveryFee: number;
+}
 
-const otherDeliveryInfo = [
+const otherDeliveryInfo: IOtherDeliveryInfo[] = [
   {
     id: 1,
     location: {
@@ -65,11 +77,27 @@ const otherDeliveryInfo = [
     },
     delivery: 'QUICK',
     deliveryTime: 'LUNCH',
-    deliveryDate: '2022-02-18',
+    deliveryDate: '2022-02-23',
+    totalPrice: 30000,
+    deliveryFee: 3000,
+  },
+  {
+    id: 2,
+    location: {
+      address: '주소',
+      addressDetail: '상세주소',
+    },
+    delivery: 'QUICK',
+    deliveryTime: 'LUNCH',
+    deliveryDate: '2022-02-19',
     totalPrice: 30000,
     deliveryFee: 3000,
   },
 ];
+
+//temp
+const isSoldout = true;
+const disabledDates = ['2022-02-21', '2022-02-22'];
 
 const CartPage = () => {
   const [itemList, setItemList] = useState([]);
@@ -110,11 +138,6 @@ const CartPage = () => {
 
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
-
-  //temp
-  const isSoldout = true;
-  const disabledDates = ['2022-02-21', '2022-02-22'];
-  const otherDeliveryDate = ['2022-02-25'];
 
   useEffect(() => {
     getLists();
@@ -263,10 +286,15 @@ const CartPage = () => {
     router.push('/payment');
   };
 
-  const goToTogetherDelivery = (): void => {
+  const goToTogetherDelivery = (id: number): void => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <TogetherDeliverySheet title="함께배송 안내" otherDeliveryInfo={otherDeliveryInfo} />,
+        content: (
+          <TogetherDeliverySheet
+            title="함께배송 안내"
+            otherDeliveryInfo={[otherDeliveryInfo.find((item) => item.id === id)]}
+          />
+        ),
       })
     );
   };
@@ -423,7 +451,7 @@ const CartPage = () => {
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
-              otherDeliveryDate={otherDeliveryDate}
+              otherDeliveryInfo={otherDeliveryInfo}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
               goToTogetherDelivery={goToTogetherDelivery}
