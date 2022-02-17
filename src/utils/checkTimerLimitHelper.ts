@@ -1,4 +1,5 @@
 import getCustomDate from './getCustomDate';
+import { getFormatTime } from '@utils/getFormatTime';
 
 export type TResult =
   | '스팟점심타이머'
@@ -19,10 +20,9 @@ interface IProps {
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244 */
 
 const checkTimerLimitHelper = (): TResult => {
-  const { days } = getCustomDate(new Date());
+  let { days, currentTime } = getCustomDate(new Date());
 
-  // let currentTime = Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`);
-  let currentTime;
+  // let currentTime;
   /* 스팟 런치 테스트 */
   currentTime = 8.0;
 

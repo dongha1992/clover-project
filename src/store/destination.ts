@@ -26,6 +26,7 @@ export interface IDestination {
   receiverTel?: string;
   deliveryMessageType?: string;
   id?: number;
+  deliveryTime?: string;
 }
 
 interface TProps {

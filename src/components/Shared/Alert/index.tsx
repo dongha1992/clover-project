@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { ModalLayout } from '@components/Shared/Modal';
 import { TextB2R, TextB1R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
@@ -41,35 +41,24 @@ const Alert = ({
 
   const cancelHandler = (): void => {
     onClose && onClose();
-    dispatch(setAlert(null));
+    dispatch(SET_ALERT(null));
   };
 
   const submitHandler = (): void => {
     onSubmit && onSubmit();
-    dispatch(setAlert(null));
+    dispatch(SET_ALERT(null));
     //  selectedMenu === '로그아웃' && setSelectedMenu && setSelectedMenu('');
   };
 
   return (
-    <ModalLayout
-      width={width}
-      height={height}
-      padding="10px"
-      style={{ borderRadius: '8px' }}
-    >
+    <ModalLayout width={width} height={height} padding="10px" style={{ borderRadius: '8px' }}>
       <AlertBox>
         {children && children}
         <AlertText>
           <TextB1R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}
           </TextB1R>
-          <TextB2R
-            center
-            wordWrap="break-word"
-            wordBreak="keep-all"
-            color={theme.greyScale65}
-            margin="5px 0 0 0"
-          >
+          <TextB2R center wordWrap="break-word" wordBreak="keep-all" color={theme.greyScale65} margin="5px 0 0 0">
             {alertSubMessage}
           </TextB2R>
         </AlertText>

@@ -7,22 +7,20 @@ import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 import { Tooltip } from '@components/Shared/Tooltip';
-import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 
+const mapper: Obj = {
+  morning: { text: '새벽배송이 가능해요!', width: '150px' },
+  parcel: { text: '택배배송만 가능해요!', width: '150px' },
+  spot: { text: '무료 스팟배송이 가능해요!', width: '170px' },
+};
+
 const HomeHeader = () => {
   const { userLocation, locationStatus } = useSelector(destinationForm);
 
-  const [formatAvailableDestination, setFormatAvailableDestination] =
-    useState('');
-
-  const mapper: Obj = {
-    morning: { text: '새벽배송이 가능해요!', width: '150px' },
-    parcel: { text: '택배배송만 가능해요!', width: '150px' },
-    spot: { text: '무료 스팟배송이 가능해요!', width: '170px' },
-  };
+  const [formatAvailableDestination, setFormatAvailableDestination] = useState('');
 
   useEffect(() => {
     setFormatAvailableDestination(locationStatus);
@@ -38,13 +36,7 @@ const HomeHeader = () => {
         <Left>
           <SVGIcon name="location" />
           <AddressWrapper>
-            <Link href="/location">
-              {userLocation?.emdNm ? (
-                <a>{userLocation?.emdNm}</a>
-              ) : (
-                <a>내 위치 찾기</a>
-              )}
-            </Link>
+            <Link href="/location">{userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 찾기</a>}</Link>
             {userLocation?.emdNm && (
               <Tooltip
                 message={mapper[formatAvailableDestination]?.text}
@@ -89,8 +81,7 @@ const Container = styled.div`
     margin: 0 auto;
     left: 0px;
   `};
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1))
-    drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 `;
 
 const Wrapper = styled.div`

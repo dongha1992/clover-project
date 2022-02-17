@@ -7,7 +7,7 @@ import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
@@ -80,7 +80,7 @@ const SignupAuthPage = () => {
   const getAuthTel = async () => {
     if (!phoneValidation) {
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
           submitBtnText: '확인',
         })
@@ -99,7 +99,7 @@ const SignupAuthPage = () => {
 
         if (data.code === 200) {
           dispatch(
-            setAlert({
+            SET_ALERT({
               alertMessage: `인증번호 전송했습니다.`,
               submitBtnText: '확인',
             })
@@ -134,10 +134,10 @@ const SignupAuthPage = () => {
           if (data.code === 200) {
             setAuthCodeConfirm(true);
             setDelay(null);
-            dispatch(setAlert({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
+            dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
           }
         } catch (error) {
-          dispatch(setAlert({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
           setAuthCodeConfirm(false);
           console.error(error);
         }

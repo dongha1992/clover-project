@@ -6,7 +6,7 @@ import { TextH6B, TextH5B, TextB3R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
 import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
@@ -36,7 +36,7 @@ const LocationPage = () => {
     const locationInfoMsg = `${location}(으)로
     설정되었습니다.`;
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: locationInfoMsg,
         onSubmit: () => {},
         submitBtnText: '확인',
@@ -70,8 +70,8 @@ const LocationPage = () => {
     }
   };
 
-  const getSearchAddressResult = async() => {
-    if(addressRef.current) {
+  const getSearchAddressResult = async () => {
+    if (addressRef.current) {
       let query = addressRef.current?.value;
       if (SPECIAL_REGX.test(query) || ADDRESS_KEYWORD_REGX.includes(query)) {
         alert('포함할 수 없는 문자입니다.');
@@ -81,33 +81,28 @@ const LocationPage = () => {
         query,
         page: page,
       };
-      try{
+      try {
         let { data } = await searchAddressJuso(params);
 
         const list = data?.results.juso ?? [];
         setResultAddress((prevList) => [...prevList, ...list]);
         setTotalCount(data.results.common.totalCount);
         setIsSearched(true);
-      }catch(err){
+      } catch (err) {
         console.error(err);
       }
     }
   };
 
-
-  const getSearchAddress = async (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const getSearchAddress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-        getSearchAddressResult();
-    };
+      getSearchAddressResult();
+    }
   };
 
-
-  useEffect(()=> {
+  useEffect(() => {
     getSearchAddressResult();
-  }, [page])
-
+  }, [page]);
 
   const clearInputHandler = () => {
     if (addressRef.current) {
@@ -116,36 +111,35 @@ const LocationPage = () => {
     setIsTyping(false);
   };
 
-  const checkAvailableDeliverySpots = async(i: IJuso) => {
+  const checkAvailableDeliverySpots = async (i: IJuso) => {
     const params = {
       jibunAddress: i.jibunAddr,
       roadAddress: i.roadAddr,
       zipCode: i.zipNo,
       delivery: null,
     };
-    try{
+    try {
       const { data } = await availabilityDestination(params);
-      if(data.code === 200){
+      if (data.code === 200) {
         const result = data.data?.spot;
-        if(result === false){
+        if (result === false) {
           dispatch(
-            setAlert({
+            SET_ALERT({
               alertMessage: '서울 및 분당구(일부 지역 해당)만\n프코스팟 오픈 신청이 가능해요!',
               submitBtnText: '확인',
             })
           );
           return;
-        };
+        }
         router.push({
           pathname: '/spot/location/address',
           query: { type },
         });
-      };
-    }catch(err){
+      }
+    } catch (err) {
       console.error(err);
-    };
+    }
   };
-
 
   const goToMapScreen = (address: IJuso): void => {
     dispatch(SET_LOCATION_TEMP(address));
@@ -162,19 +156,17 @@ const LocationPage = () => {
       if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
         console.log('top!');
         // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
-        setPage((prevPage)=> prevPage + 1);
-
-      };
-     };  
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
     // scroll event listener 등록
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
       // scroll event listener 해제
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <HomeContainer>
