@@ -96,7 +96,7 @@ const CartPage = () => {
   const isSoldout = true;
   const hasDeliveryPlace = true;
 
-  const disabledDates = ['2022-02-17', '2022-02-18', '2022-02-19', '2022-02-21'];
+  const disabledDates = ['2022-02-18', '2022-02-17', '2022-02-22'];
   const otherDeliveryDate = ['2022-02-25'];
 
   useEffect(() => {

@@ -5,8 +5,13 @@ import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import getCustomDate from '@utils/getCustomDate';
+import { Obj } from '@model/index';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
+import { filter, flow, map } from 'lodash/fp';
+import { getValues } from '@utils/getValues';
 
-let WEEKS: any = {
+let WEEKS: Obj = {
   0: '일',
   1: '월',
   2: '화',
@@ -48,13 +53,16 @@ const Calendar = ({
   isSheet,
   goToTogetherDelivery,
 }: ICalendar) => {
-  const [dateList, setDateList] = useState<IDateObj[] | []>([]);
+  const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
+  const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
+
+  const { userDestinationStatus } = useSelector(destinationForm);
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate(new Date());
 
-    const list = [];
+    const dateList = [];
     const firstWeek = [];
 
     for (let i = 0; i < TWO_WEKKS; i++) {
@@ -74,14 +82,15 @@ const Calendar = ({
         dayKor: WEEKS[_day],
       };
 
-      list.push(dateObj);
+      dateList.push(dateObj);
 
       if (isFirstWeek) {
         firstWeek.push(dateObj);
       }
     }
-    checkShowMoreWeek(firstWeek, disabledDates);
-    setDateList(list);
+
+    checkActiveDates(firstWeek, formatDisabledDate(dateList));
+    setDateList(dateList);
   };
 
   const clickDayHandler = (value: string) => {
@@ -95,20 +104,55 @@ const Calendar = ({
     setSelectedDeliveryDay(value);
   };
 
-  const checkShowMoreWeek = (firstWeek: IDateObj[], disabledDates: string[]) => {
-    const filtered = firstWeek.filter((week: any) => !disabledDates.includes(week.value));
-    const firstActiveDate = filtered[0].value;
-    setSelectedDeliveryDay(firstActiveDate);
+  const formatDisabledDate = (dateList: IDateObj[]): string[] => {
+    const isQuickAndSpot = ['spot', 'quick'].includes(userDestinationStatus);
+    const isParcelAndMorning = ['spot', 'quick'].includes(userDestinationStatus);
+    const quickAndSpotDisabled = ['토', '일'];
+    const parcelAndMorningDisabled = ['일', '월'];
 
-    // 첫 번째 주에 배송 가능 날이 2일 이상인 경우 (일요일 제외 6일 중)
-    if (filtered.length - 1 > ACTIVE_DAY_OF_WEEK) {
+    let tempDisabledDate: string[] = [];
+
+    try {
+      switch (true) {
+        case isQuickAndSpot: {
+          tempDisabledDate = flow(
+            filter((date: IDateObj) => quickAndSpotDisabled.includes(date.dayKor)),
+            map((date: IDateObj) => date.value)
+          )(dateList);
+        }
+        case isParcelAndMorning: {
+          tempDisabledDate = flow(
+            filter((date: IDateObj) => parcelAndMorningDisabled.includes(date.dayKor)),
+            map((date: IDateObj) => date.value)
+          )(dateList);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return tempDisabledDate;
+  };
+
+  const checkActiveDates = (firstWeek: IDateObj[], customDisabledDates: string[]) => {
+    // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
+    const mergedDisabledDate = [...disabledDates, ...customDisabledDates];
+
+    const filtered = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
+    const firstActiveDate = filtered[0].value;
+
+    setSelectedDeliveryDay(firstActiveDate);
+    setCustomDisabledDate(mergedDisabledDate);
+
+    // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
+    if (filtered.length > ACTIVE_DAY_OF_WEEK) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
     }
   };
 
-  const RenderCalendar = ({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
+  const RenderCalendar = React.memo(({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
     const { years, months, dates } = getCustomDate(new Date());
 
     const renderWeeks = () => {
@@ -149,7 +193,7 @@ const Calendar = ({
                 key={index}
                 selectedDay={selectedDay}
                 index={index}
-                disabledDates={disabledDates}
+                disabledDates={customDisabledDate}
                 otherDeliveryDate={otherDeliveryDate}
                 dayKor={dateObj.dayKor}
               />
@@ -158,7 +202,7 @@ const Calendar = ({
         </Body>
       </Wrapper>
     );
-  };
+  });
 
   useEffect(() => {
     initCalendar();
