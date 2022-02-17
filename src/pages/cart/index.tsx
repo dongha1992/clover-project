@@ -289,7 +289,6 @@ const CartPage = () => {
           : { ...item, isSelected: false };
       });
     }
-
     setLunchOrDinner(newLunchDinner);
   }, [selectedDeliveryDay]);
 
