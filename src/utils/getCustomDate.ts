@@ -11,7 +11,7 @@ interface IResult {
   seconds: number;
   days: string;
   dayFormatter: string;
-  dayFormatterHyphen: string;
+  currentDate: string;
   currentTime: number;
 }
 
@@ -27,9 +27,9 @@ const getCustomDate = (inputDate: Date): IResult => {
 
   const originalDate = new Date(CURRENT_KOR_DATE);
 
-  const strYears = `${originalDate.getFullYear()}`;
-  let strMonths = `${originalDate.getMonth() + 1}`;
-  let strDates = `${originalDate.getDate()}`;
+  const strYears = originalDate.getFullYear();
+  const strMonths = originalDate.getMonth() + 1;
+  const strDates = originalDate.getDate();
 
   const years = originalDate.getFullYear();
   const months = originalDate.getMonth();
@@ -40,13 +40,6 @@ const getCustomDate = (inputDate: Date): IResult => {
 
   const days = DAYS[originalDate.getDay()];
 
-  // if (strMonths.length === 1) {
-  //   strMonths = `0${strMonths}`;
-  // }
-  // if (strDates.length === 1) {
-  //   strDates = `0${strDates}`;
-  // }
-
   return {
     years,
     months,
@@ -56,7 +49,7 @@ const getCustomDate = (inputDate: Date): IResult => {
     minutes,
     seconds,
     dayFormatter: `${strMonths}월 ${strDates}일 (${days})`,
-    dayFormatterHyphen: `${strYears}-${strMonths}-${strDates}`,
+    currentDate: `${strYears}-${getFormatTime(months + 1)}-${getFormatTime(dates)}`,
     currentTime: Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`),
   };
 };
