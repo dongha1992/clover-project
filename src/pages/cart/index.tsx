@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
@@ -177,8 +177,16 @@ const CartPage = () => {
     setCheckedDisposalbleList(tempCheckedDisposableList);
   };
 
-  const handleLunchOrDinner = (id: number) => {
-    // setLunchOrDinner(id);
+  const handleLunchOrDinner = (selectedItem: ILunchOrDinner) => {
+    if (selectedItem.isDisabled) {
+      return;
+    }
+
+    const newLunchDinner = lunchOrDinner.map((item) => {
+      return item.id === selectedItem.id ? { ...item, isSelected: true } : { ...item, isSelected: false };
+    });
+
+    setLunchOrDinner(newLunchDinner);
   };
 
   const removeItemHandler = () => {
@@ -205,7 +213,7 @@ const CartPage = () => {
   const deliveryTimeInfo = () => {
     const { dates } = getCustomDate(new Date(selectedDeliveryDay));
     const today = new Date().getDate();
-    // const isLunch = lunchOrDinner === 1;
+    const text = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.text;
     const selectToday = dates === today;
 
     switch (userDestinationStatus) {
@@ -241,8 +249,8 @@ const CartPage = () => {
   };
 
   const goToPayment = () => {
-    // const isLunch = lunchOrDinner === 1;
-    userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: isLunch ? 'LUNCH' : 'DINNER' }));
+    const deliveryTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value;
+    userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime }));
     router.push('/payment');
   };
 
@@ -254,7 +262,27 @@ const CartPage = () => {
     );
   };
 
+  useEffect(() => {
+    const { currentTime } = getCustomDate(new Date());
+    const { dates } = getCustomDate(new Date(selectedDeliveryDay));
+    const today = new Date().getDate();
+
+    const isFinishLunch = currentTime >= 9.29;
+    console.log(dates, today);
+
+    if (isFinishLunch) {
+      const newLunchDinner = lunchOrDinner.map((item) => {
+        return item.value === 'LUNCH'
+          ? { ...item, isDisabled: true, isSelected: false }
+          : { ...item, isSelected: true };
+      });
+      setLunchOrDinner(newLunchDinner);
+    }
+  }, [selectedDeliveryDay]);
+
   const isSpot = userDestinationStatus == 'spot';
+  const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
+
   return (
     <Container>
       <DeliveryMethodAndPickupLocation>
@@ -386,23 +414,30 @@ const CartPage = () => {
               setSelectedDeliveryDay={setSelectedDeliveryDay}
               goToTogetherDelivery={goToTogetherDelivery}
             />
-            {!['parcel', 'morning'].includes(userDestinationStatus) && (
-              <>
-                {lunchOrDinner.map((item, index) => {
-                  return (
-                    <FlexRow key={index} padding="16px 0 0 0">
-                      <RadioButton onChange={() => handleLunchOrDinner(item.id)} isSelected={item.isSelected} />
-                      <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
-                      <TextB2R>{item.discription}</TextB2R>
-                    </FlexRow>
-                  );
-                })}
-              </>
-            )}
+            {isSpotAndQuick &&
+              lunchOrDinner.map((item, index) => {
+                return (
+                  <FlexRow key={index} padding="16px 0 0 0">
+                    <RadioButton onChange={() => handleLunchOrDinner(item)} isSelected={item.isSelected} />
+                    {item.isDisabled ? (
+                      <>
+                        <TextH5B padding="0 4px 0 8px" color={theme.greyScale25}>
+                          {item.text}
+                        </TextH5B>
+                        <TextB2R color={theme.greyScale25}>{item.discription}</TextB2R>
+                      </>
+                    ) : (
+                      <>
+                        <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
+                        <TextB2R>{item.discription}</TextB2R>
+                      </>
+                    )}
+                  </FlexRow>
+                );
+              })}
           </FlexCol>
         </>
       )}
-
       <BorderLine height={8} margin="32px 0" />
       <MenuListContainer>
         <MenuListWarpper>
