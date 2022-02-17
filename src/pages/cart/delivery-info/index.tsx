@@ -27,7 +27,7 @@ import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
 import { IDestination } from '@store/destination';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -75,7 +75,7 @@ const DeliverInfoPage = () => {
 
     if (tempDestination && !isMainDestination) {
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: '설정하신 주소는 저장되지 않습니다. 배송방법을 변경하시겠어요?',
           onSubmit: () => {
             setUserSelectDeliveryType(value);
@@ -135,7 +135,7 @@ const DeliverInfoPage = () => {
                 zipCode: reqBody.zipCode,
               },
               main: reqBody.main,
-              deliveryMessage: reqBody.delivery,
+              deliveryMessage: reqBody.deliveryMessage,
               receiverName: reqBody.receiverName,
               receiverTel: reqBody.receiverTel,
               deliveryMessageType: '',

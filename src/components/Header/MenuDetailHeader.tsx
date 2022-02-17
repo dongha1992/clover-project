@@ -5,11 +5,8 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBottomSheet, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { menuSelector } from '@store/menu';
+import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { commonSelector } from '@store/common';
-import { SET_CART_SHEET_OBJ } from '@store/cart';
-import { CartSheet } from '@components/BottomSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 
@@ -22,7 +19,6 @@ type TProps = {
 
 const MenuDetailHeader = ({ title }: TProps) => {
   const dispatch = useDispatch();
-  const { menuItem } = useSelector(menuSelector);
   const { isMobile } = useSelector(commonSelector);
 
   const router = useRouter();
@@ -55,7 +51,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
     } else {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
-        setBottomSheet({
+        SET_BOTTOM_SHEET({
           content: <ShareSheet />,
         })
       );
@@ -63,12 +59,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
   };
 
   const goToCart = () => {
-    dispatch(SET_CART_SHEET_OBJ(menuItem));
-    dispatch(
-      setBottomSheet({
-        content: <CartSheet />,
-      })
-    );
+    router.push('/cart');
   };
 
   return (
@@ -113,8 +104,7 @@ const Container = styled.div`
     left: 0px;
   `};
 
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1))
-    drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 `;
 
 const Wrapper = styled.div`

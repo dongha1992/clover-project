@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH5B, TextH7B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
+import { LIMIT_DAYS } from './Calendar';
 
 type TProps = {
   day: number;
@@ -11,23 +12,14 @@ type TProps = {
   selectedDay: boolean;
   index: number;
   disabledDates: string[];
-  otherDeliveryDate?: string[] | [];
+  otherDeliveryDate?: string[];
 };
 
-const Days = ({
-  day,
-  value,
-  handler,
-  selectedDay,
-  index,
-  disabledDates,
-  otherDeliveryDate,
-}: TProps) => {
-  const isSecondWeeeks = index > 5;
+const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate }: TProps) => {
+  const isSecondWeeks = index > LIMIT_DAYS;
   const isToday = !index;
-  const hasOtherDeliveryDate =
-    otherDeliveryDate && otherDeliveryDate[0] === value;
-  const disabledDate = disabledDates.includes(value);
+  const hasOtherDeliveryDate = otherDeliveryDate?.includes(value);
+  const disabledDate = disabledDates?.includes(value);
 
   const dayColorRender = () => {
     switch (true) {
@@ -69,12 +61,9 @@ const Days = ({
           handler(value);
         }
       }}
-      isSecondWeeeks={isSecondWeeeks}
+      isSecondWeeks={isSecondWeeks}
     >
-      <Wrapper
-        selectedDay={selectedDay}
-        hasOtherDeliveryDate={hasOtherDeliveryDate}
-      >
+      <Wrapper selectedDay={selectedDay} hasOtherDeliveryDate={hasOtherDeliveryDate}>
         <TextH5B color={`${theme[dayColorRender()]}`}>{day}</TextH5B>
       </Wrapper>
       <TextWrapper>{extraTextRender()}</TextWrapper>
@@ -82,14 +71,14 @@ const Days = ({
   );
 };
 
-const Container = styled.div<{ isSecondWeeeks?: boolean }>`
-  width: calc(100% / 6);
+const Container = styled.div<{ isSecondWeeks?: boolean }>`
+  width: calc(100% / 7);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  margin-bottom: ${({ isSecondWeeeks }) => (isSecondWeeeks ? 0 : 12)}px;
+  margin-bottom: ${({ isSecondWeeks }) => (isSecondWeeks ? 0 : 12)}px;
 `;
 
 const Wrapper = styled.div<{
@@ -99,13 +88,11 @@ const Wrapper = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: ${({ hasOtherDeliveryDate }) =>
-    hasOtherDeliveryDate ? `1px dashed #35ad73` : ''};
+  width: 24px;
+  height: 24px;
+  border: ${({ hasOtherDeliveryDate }) => (hasOtherDeliveryDate ? `1px dashed #35ad73` : '')};
   border-radius: 50%;
-  background-color: ${({ selectedDay }) =>
-    selectedDay ? theme.brandColor : ''};
+  background-color: ${({ selectedDay }) => (selectedDay ? theme.brandColor : '')};
   padding: 4px;
   > div {
     padding-top: 4px;

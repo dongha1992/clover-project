@@ -91,7 +91,7 @@ const CheckDestinationPlace = () => {
     const canEverything = status === 'spot';
     const canParcel = status === 'parcel';
     const canNotDelivery = status === 'noDelivery';
-
+    console.log(status, 'd');
     if (isLocation) {
       // 홈 위치 검색
       switch (status) {
@@ -118,10 +118,14 @@ const CheckDestinationPlace = () => {
       const { quick, parcel, morning, spot } = availableDestinationObj;
 
       // 예외 케이스
+      /* TODO: checkDestinationHelper의 예외케이스인데 정리 필요 */
+
       const noQuickButCanParcel = !morning && !quick && parcel;
       const canQuickAndParcel = !morning && quick && parcel;
       const noParcelButCanMorning = !parcel && morning;
       const canParcelAndCanMorning = morning && parcel;
+      const noQuickButCanMorning = !quick && morning;
+      const canQuickAndMorning = quick && morning;
 
       // 배송정보 배송지 검색
       switch (userDestinationStatus) {
@@ -143,9 +147,9 @@ const CheckDestinationPlace = () => {
           }
         }
         case 'quick': {
-          if (canEverything) {
+          if (canQuickAndMorning) {
             return <QuickAndMorningInfo />;
-          } else if (canMorning) {
+          } else if (noQuickButCanMorning) {
             return <MorningInfo />;
           } else if (noQuickButCanParcel) {
             return <ParcelInfo />;

@@ -10,28 +10,18 @@ import {
   FlexColEnd,
   fixedBottom,
 } from '@styles/theme';
-import {
-  TextH4B,
-  TextH5B,
-  TextB2R,
-  TextB3R,
-  TextH6B,
-} from '@components/Shared/Text';
+import { TextH4B, TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import BorderLine from '@components/Shared/BorderLine';
 import { ButtonGroup } from '@components/Shared/Button';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
-import {
-  getDestinations,
-  editDestination,
-  deleteDestinations,
-} from '@api/destination';
+import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
@@ -62,10 +52,8 @@ interface IAddress {
 }
 
 const AddressEditPage = ({ id }: IProps) => {
-  const [selectedAddress, setSelectedAddress] =
-    useState<IDestinationsResponse>();
-  const [selectedAccessMethod, setSelectedAccessMethod] =
-    useState<IAccessMethod>();
+  const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
+  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState({
@@ -91,18 +79,14 @@ const AddressEditPage = ({ id }: IProps) => {
       const { data } = await getDestinations(params);
       if (data.code === 200) {
         const { destinations } = data.data;
-        const foundItem = destinations.find(
-          (item: IDestinationsResponse) => item.id === id
-        );
+        const foundItem = destinations.find((item: IDestinationsResponse) => item.id === id);
         setSelectedAddress(foundItem);
 
         const isMorning = foundItem?.delivery === 'MORNING';
 
         if (isMorning) {
           const userSelectMethod = getValues(foundItem, 'deliveryMessageType');
-          const selectedMethod = ACCESS_METHOD.find(
-            (item) => item.value === userSelectMethod
-          );
+          const selectedMethod = ACCESS_METHOD.find((item) => item.value === userSelectMethod);
           setSelectedAccessMethod(selectedMethod);
         }
 
@@ -126,10 +110,8 @@ const AddressEditPage = ({ id }: IProps) => {
 
   const removeAddressHandler = () => {
     dispatch(
-      setAlert({
-        alertMessage: isSpot
-          ? '프코스팟을 삭제하시겠어요?'
-          : '배송지를 삭제하시겠어요?',
+      SET_ALERT({
+        alertMessage: isSpot ? '프코스팟을 삭제하시겠어요?' : '배송지를 삭제하시겠어요?',
         onSubmit: () => removeAddress(),
         submitBtnText: '확인',
         closeBtnText: '취소',
@@ -143,7 +125,7 @@ const AddressEditPage = ({ id }: IProps) => {
     }
 
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '내용을 수정했습니다.',
         onSubmit: () => editAddress(),
         submitBtnText: '확인',
@@ -158,10 +140,10 @@ const AddressEditPage = ({ id }: IProps) => {
     switch (true) {
       case isMorning: {
         if (noMsg) {
-          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else if (noAccessMethod) {
-          dispatch(setAlert({ alertMessage: '츨입방법을 입력해주세요' }));
+          dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
           return false;
         } else {
           return true;
@@ -170,7 +152,7 @@ const AddressEditPage = ({ id }: IProps) => {
 
       case isParcel: {
         if (noMsg) {
-          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else {
           return true;
@@ -220,14 +202,14 @@ const AddressEditPage = ({ id }: IProps) => {
 
   const selectAccessMethodHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
       })
     );
   };
 
   const changePickUpPlace = () => {
-    dispatch(setBottomSheet({ content: <PickupSheet /> }));
+    dispatch(SET_BOTTOM_SHEET({ content: <PickupSheet /> }));
   };
 
   useEffect(() => {
@@ -273,11 +255,7 @@ const AddressEditPage = ({ id }: IProps) => {
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>배송정보</TextH4B>
             {isSpot && (
-              <TextH6B
-                color={theme.greyScale65}
-                textDecoration="underline"
-                onClick={changePickUpPlace}
-              >
+              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
                 픽업 장소 변경
               </TextH6B>
             )}
@@ -291,9 +269,7 @@ const AddressEditPage = ({ id }: IProps) => {
               <TextH5B>베송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{selectedAddress?.location.addressDetail}</TextB2R>
-                <TextB3R color={theme.greyScale65}>
-                  {selectedAddress?.location.address}
-                </TextB3R>
+                <TextB3R color={theme.greyScale65}>{selectedAddress?.location.address}</TextB3R>
               </FlexColEnd>
             </FlexBetweenStart>
           </FlexCol>
@@ -306,9 +282,7 @@ const AddressEditPage = ({ id }: IProps) => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>
-                  {selectedAccessMethod?.text || '출입방법 선택'}
-                </TextB2R>
+                <TextB2R color={theme.greyScale45}>{selectedAccessMethod?.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
@@ -332,8 +306,7 @@ const AddressEditPage = ({ id }: IProps) => {
                   </TextH6B>
                 </FlexRow>
                 <TextB3R color={theme.brandColor}>
-                  공동현관 및 무인택배함 비밀번호는 조합 방식 및
-                  순서(#,호출버튼)와 함께 자세히 기재해주세요.
+                  공동현관 및 무인택배함 비밀번호는 조합 방식 및 순서(#,호출버튼)와 함께 자세히 기재해주세요.
                 </TextB3R>
               </FlexCol>
             </MustCheckAboutDelivery>
@@ -359,18 +332,12 @@ const AddressEditPage = ({ id }: IProps) => {
         {!isSpot && (
           <FlexCol padding="0 24px 24px 24px">
             <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
-            <TextInput
-              name="deliveryName"
-              value={deliveryEditObj?.deliveryName}
-              eventHandler={changeInputHandler}
-            />
+            <TextInput name="deliveryName" value={deliveryEditObj?.deliveryName} eventHandler={changeInputHandler} />
           </FlexCol>
         )}
         <FlexRow padding="0 24px">
           <Checkbox onChange={checkDefaultSpot} isSelected={isDefaultSpot} />
-          <TextH5B padding="2px 0 0 8px">
-            {isSpot ? '기본 프코 스팟으로 설정' : '기본 배송지로 설정'}
-          </TextH5B>
+          <TextH5B padding="2px 0 0 8px">{isSpot ? '기본 프코 스팟으로 설정' : '기본 배송지로 설정'}</TextH5B>
         </FlexRow>
       </Wrapper>
       <ButtonGroup

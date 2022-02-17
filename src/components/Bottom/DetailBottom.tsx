@@ -4,52 +4,40 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
-import { useToast } from '@hooks/useToast';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
-import { destinationForm } from '@store/destination';
+import { useToast } from '@hooks/useToast';
+import { SET_CART_SHEET_OBJ } from '@store/cart';
+import { CartSheet } from '@components/BottomSheet/CartSheet';
+import { menuSelector } from '@store/menu';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
-/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
+/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
 const DetailBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
-  const [isFirstToastRender, setIsFirstToastRender] = useState<boolean>(true);
-  const { showToast, hideToast } = useToast();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
+  const { menuItem } = useSelector(menuSelector);
 
   const deliveryType = checkTimerLimitHelper();
 
   //temp
   const numOfLike = 10;
-  const tempStatus = 'isSoldout';
+  // const tempStatus = 'isSoldout';
+  const tempStatus = '';
   const tempNotiOff = false;
-  const isAlreadyStockNoti = true;
+  const isAlreadyStockNoti = false;
 
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
-
-  useEffect(() => {
-    setIsFirstToastRender(false);
-  }, []);
-
-  useEffect(() => {
-    /* TODO : 렌더 시 처음에 alert 뜨는 거 */
-    if (isFirstToastRender) return;
-    /* TODO: 빠르게 눌렀을 때 toast 메시지 엉킴 */
-    const message =
-      tempIsLike === true ? '상품을 찜했어요.' : '찜을 해제했어요.';
-    showToast({ message });
-    /* TODO: warning 왜? */
-
-    return () => hideToast();
-  }, [goToDib]);
 
   const buttonStatusRender = useCallback((status: string) => {
     switch (status) {
@@ -57,7 +45,7 @@ const DetailBottom = () => {
         return '일시품절·재입고 알림받기';
       }
       default: {
-        return `5시까지 주문하면 내일 새벽 7시전 도착`;
+        return `장바구니 담기`;
       }
     }
   }, []);
@@ -65,10 +53,18 @@ const DetailBottom = () => {
   const goToRestockSetting = () => {};
 
   const clickButtonHandler = () => {
+    if (!tempNotiOff) {
+      dispatch(SET_CART_SHEET_OBJ(menuItem));
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <CartSheet />,
+        })
+      );
+    }
     if (tempNotiOff) {
       const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: restockMgs,
           onSubmit: () => {
             goToRestockSetting();
@@ -78,21 +74,13 @@ const DetailBottom = () => {
         })
       );
     } else {
-      const message = isAlreadyStockNoti
-        ? '이미 재입고 알림 신청한 상품이에요!'
-        : '재입고 알림 신청을 완료했어요!';
+      const message = isAlreadyStockNoti ? '이미 재입고 알림 신청한 상품이에요!' : '재입고 알림 신청을 완료했어요!';
       showToast({ message });
     }
   };
 
   useEffect(() => {
-    const isNotTimer = [
-      '스팟저녁',
-      '새벽택배',
-      '새벽택배N일',
-      '스팟점심',
-      '스팟점심N일',
-    ].includes(deliveryType);
+    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
 
     if (!isNotTimer) {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
@@ -114,9 +102,7 @@ const DetailBottom = () => {
         </LikeWrapper>
         <Col />
         <BtnWrapper onClick={clickButtonHandler}>
-          <TextH5B color={theme.white}>
-            {buttonStatusRender(tempStatus)}
-          </TextH5B>
+          <TextH5B color={theme.white}>{buttonStatusRender(tempStatus)}</TextH5B>
         </BtnWrapper>
       </Wrapper>
       {isTimerTooltip && (
@@ -135,7 +121,7 @@ const Container = styled.div`
   bottom: 0px;
   right: 0px;
   z-index: 10;
-  height: 56px;
+  /* height: 56px; */
   left: calc(50%);
   background-color: ${({ theme }) => theme.black};
 
@@ -166,7 +152,7 @@ const LikeWrapper = styled.div`
 
 const Col = styled.div`
   width: 1px;
-  height: 24px;
+  height: 26px;
   margin-left: 16px;
   margin-right: 16px;
   background-color: ${({ theme }) => theme.white};

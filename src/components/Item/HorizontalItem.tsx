@@ -5,7 +5,7 @@ import { theme, FlexCol } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
@@ -26,7 +26,7 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
     /* TODO: thunk로? */
     dispatch(SET_CART_SHEET_OBJ(item));
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <CartSheet />,
       })
     );

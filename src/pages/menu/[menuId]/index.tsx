@@ -16,7 +16,7 @@ import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
@@ -93,7 +93,7 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const couponDownloadHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <CouponSheet />,
       })
     );
@@ -115,7 +115,6 @@ const MenuDetailPage = ({ menuId }: any) => {
     timer = setTimeout(() => {
       if (tabRef.current) {
         const offsetTop = tabRef?.current?.offsetTop;
-
         window.scrollTo({
           behavior: 'smooth',
           left: 0,
