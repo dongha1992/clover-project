@@ -9,6 +9,7 @@ import { Obj } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { filter, flow, map } from 'lodash/fp';
+import { getFormatTime } from '@utils/getFormatTime';
 
 let WEEKS: Obj = {
   0: '일',
@@ -57,7 +58,6 @@ const Calendar = ({
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
 
   const { userDestinationStatus } = useSelector(destinationForm);
-  const dispatch = useDispatch();
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate(new Date());
@@ -71,7 +71,7 @@ const Calendar = ({
       const _month = new Date(years, months, dates + i).getMonth() + 1;
       const _date = new Date(years, months, dates + i).getDate();
       const _day = new Date(years, months, dates + i).getDay();
-      const value = `${years}-${_month < 10 ? `0${_month}` : _month}-${_date < 10 ? `0${_date}` : _date}`;
+      const value = `${years}-${getFormatTime(_month)}-${getFormatTime(_date)}`;
 
       const dateObj = {
         years,
@@ -159,10 +159,10 @@ const Calendar = ({
 
   const checkActiveDates = (firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
-    const mergedDisabledDate = [...disabledDates, ...customDisabledDates].sort();
+    const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
 
     const filtered = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = filtered[0].value;
+    const firstActiveDate = filtered[0]?.value;
 
     setSelectedDeliveryDay(firstActiveDate);
     setCustomDisabledDate(mergedDisabledDate);
@@ -180,7 +180,7 @@ const Calendar = ({
       <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
         {otherDeliveryDate.length > 1
           ? '배송예정인 기존 주문이 있습니다. 함께배송 받으세요!'
-          : `${otherDeliveryDate}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
+          : `${new Date(otherDeliveryDate[0]).getDate()}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
       </TextB3R>
     );
   };
@@ -245,7 +245,7 @@ const Calendar = ({
       <CalendarContainer isSheet={isSheet}>
         <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
       </CalendarContainer>
-      {otherDeliveryDate && (
+      {otherDeliveryDate.length > 0 && (
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
           {togetherInfo()}
