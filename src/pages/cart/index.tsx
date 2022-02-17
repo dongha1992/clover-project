@@ -51,6 +51,7 @@ interface ILunchOrDinner {
   discription: string;
   isDisabled: boolean;
   isSelected: boolean;
+  time: string;
 }
 
 //temp
@@ -81,6 +82,7 @@ const CartPage = () => {
       discription: '(오전 9:30까지 주문시 12:00 전 도착)',
       isDisabled: false,
       isSelected: true,
+      time: '12시',
     },
     {
       id: 2,
@@ -89,6 +91,7 @@ const CartPage = () => {
       discription: '(오전 11:00까지 주문시 17:00 전 도착)',
       isDisabled: false,
       isSelected: false,
+      time: '17시',
     },
   ]);
   const [isShow, setIsShow] = useState(false);
@@ -108,7 +111,7 @@ const CartPage = () => {
 
   //temp
   const isSoldout = true;
-  const disabledDates = ['2022-02-18', '2022-02-22'];
+  const disabledDates = ['2022-02-21', '2022-02-22'];
   const otherDeliveryDate = ['2022-02-25'];
 
   useEffect(() => {
@@ -211,28 +214,32 @@ const CartPage = () => {
   };
 
   const deliveryTimeInfo = () => {
-    const { dates } = getCustomDate(new Date(selectedDeliveryDay));
-    const today = new Date().getDate();
-    const text = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.text;
+    const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
+    const today: number = new Date().getDate();
+    const selectedTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected);
     const selectToday = dates === today;
 
-    switch (userDestinationStatus) {
-      case 'parcel': {
-        return <TextH6B>{`${dates}일 도착`}</TextH6B>;
+    try {
+      switch (userDestinationStatus) {
+        case 'parcel': {
+          return <TextH6B>{`${dates}일 도착`}</TextH6B>;
+        }
+        case 'morning': {
+          return <TextH6B>{`${dates}일 새벽 7시 전 도착`}</TextH6B>;
+        }
+        case 'quick':
+        case 'spot': {
+          if (selectToday) {
+            return <TextH6B>{`오늘 ${selectedTime?.time} 전 도착`}</TextH6B>;
+          } else {
+            return <TextH6B>{`${dates}일 ${selectedTime?.time} 전 도착`}</TextH6B>;
+          }
+        }
+        default:
+          return;
       }
-      case 'morning': {
-        return <TextH6B>{`${dates}일 새벽 7시 전 도착`}</TextH6B>;
-      }
-      case 'quick':
-      case 'spot': {
-        // if (selectToday) {
-        //   return <TextH6B>{`오늘 ${isLunch ? '12시' : '17시'} 전 도착`}</TextH6B>;
-        // } else {
-        //   return <TextH6B>{`${dates}일 ${isLunch ? '12시' : '17시'} 전 도착`}</TextH6B>;
-        // }
-      }
-      default:
-        return;
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -263,21 +270,27 @@ const CartPage = () => {
   };
 
   useEffect(() => {
-    const { currentTime } = getCustomDate(new Date());
-    const { dates } = getCustomDate(new Date(selectedDeliveryDay));
-    const today = new Date().getDate();
-
+    const { currentTime, currentDate } = getCustomDate(new Date());
     const isFinishLunch = currentTime >= 9.29;
-    console.log(dates, today);
+    const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
-    if (isFinishLunch) {
-      const newLunchDinner = lunchOrDinner.map((item) => {
+    let newLunchDinner = [];
+
+    if (isDisabledLunch) {
+      newLunchDinner = lunchOrDinner.map((item) => {
         return item.value === 'LUNCH'
           ? { ...item, isDisabled: true, isSelected: false }
           : { ...item, isSelected: true };
       });
-      setLunchOrDinner(newLunchDinner);
+    } else {
+      newLunchDinner = lunchOrDinner.map((item) => {
+        return item.value === 'LUNCH'
+          ? { ...item, isDisabled: false, isSelected: true }
+          : { ...item, isSelected: false };
+      });
     }
+
+    setLunchOrDinner(newLunchDinner);
   }, [selectedDeliveryDay]);
 
   const isSpot = userDestinationStatus == 'spot';

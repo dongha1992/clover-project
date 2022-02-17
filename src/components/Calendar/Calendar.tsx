@@ -6,10 +6,9 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import getCustomDate from '@utils/getCustomDate';
 import { Obj } from '@model/index';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { filter, flow, map } from 'lodash/fp';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 
 let WEEKS: Obj = {
   0: '일',
@@ -58,6 +57,7 @@ const Calendar = ({
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
 
   const { userDestinationStatus } = useSelector(destinationForm);
+  const dispatch = useDispatch();
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate(new Date());
