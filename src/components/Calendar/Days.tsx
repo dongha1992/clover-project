@@ -12,16 +12,14 @@ type TProps = {
   selectedDay: boolean;
   index: number;
   disabledDates: string[];
-  otherDeliveryDate?: string[] | [];
-  dayKor?: string;
+  otherDeliveryDate?: string[];
 };
 
-const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate, dayKor }: TProps) => {
+const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate }: TProps) => {
   const isSecondWeeks = index > LIMIT_DAYS;
   const isToday = !index;
-  const hasOtherDeliveryDate = otherDeliveryDate && otherDeliveryDate[0] === value;
-  const isSunday = dayKor === '일';
-  const disabledDate = disabledDates.includes(value) || isSunday;
+  const hasOtherDeliveryDate = otherDeliveryDate?.includes(value);
+  const disabledDate = disabledDates?.includes(value);
 
   const dayColorRender = () => {
     switch (true) {

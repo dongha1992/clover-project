@@ -9,7 +9,7 @@ import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { filter, flow, map } from 'lodash/fp';
-import { getValues } from '@utils/getValues';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 
 let WEEKS: Obj = {
   0: '일',
@@ -46,8 +46,8 @@ interface ICalendar {
 }
 
 const Calendar = ({
-  disabledDates,
-  otherDeliveryDate,
+  disabledDates = [],
+  otherDeliveryDate = [],
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
@@ -95,9 +95,10 @@ const Calendar = ({
 
   const clickDayHandler = (value: string) => {
     /*TODO: otherDeliveryDate 배열 --> 다형성 */
-    const otherDate = otherDeliveryDate! && otherDeliveryDate[0];
 
-    if (value === otherDate && !isSheet) {
+    const clickTogetherDelivery = otherDeliveryDate.includes(value);
+
+    if (clickTogetherDelivery && !isSheet) {
       goToTogetherDelivery && goToTogetherDelivery();
     }
 
@@ -105,27 +106,49 @@ const Calendar = ({
   };
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
+    // 배송에 따른 기본 휴무일
     const isQuickAndSpot = ['spot', 'quick'].includes(userDestinationStatus);
-    const isParcelAndMorning = ['spot', 'quick'].includes(userDestinationStatus);
+    const isParcelAndMorning = ['parcel', 'morning'].includes(userDestinationStatus);
     const quickAndSpotDisabled = ['토', '일'];
     const parcelAndMorningDisabled = ['일', '월'];
+
+    // 퀵/스팟 <-> 새벽/택배로 나뉨
+
+    // 퀵/스팟 점심 9:30 후 선택 불가
+    // 큇/스팟 저녁 11:00 후 선택 불가 -> 다음 날 active
+
+    // 새벽/택배 17:00 이후 주문 마감
+
+    const { currentTime } = getCustomDate(new Date());
+    const today = new Date().getDate();
+
+    const isFinishLunch = currentTime >= 9.29;
+    const isFinishDinner = currentTime >= 10.59;
+    const isFinishParcelAndMorning = currentTime >= 16.59;
 
     let tempDisabledDate: string[] = [];
 
     try {
       switch (true) {
-        case isQuickAndSpot: {
-          tempDisabledDate = flow(
-            filter((date: IDateObj) => quickAndSpotDisabled.includes(date.dayKor)),
-            map((date: IDateObj) => date.value)
-          )(dateList);
-        }
-        case isParcelAndMorning: {
-          tempDisabledDate = flow(
-            filter((date: IDateObj) => parcelAndMorningDisabled.includes(date.dayKor)),
-            map((date: IDateObj) => date.value)
-          )(dateList);
-        }
+        case isQuickAndSpot:
+          {
+            tempDisabledDate = flow(
+              filter(
+                ({ dayKor, date }: IDateObj) =>
+                  quickAndSpotDisabled.includes(dayKor) || (isFinishDinner && date === today)
+              ),
+              map(({ value }: IDateObj) => value)
+            )(dateList);
+          }
+          break;
+        case isParcelAndMorning:
+          {
+            tempDisabledDate = flow(
+              filter(({ dayKor, date }: IDateObj) => parcelAndMorningDisabled.includes(dayKor) || date === today),
+              map(({ value }: IDateObj) => value)
+            )(dateList);
+          }
+          break;
       }
     } catch (error) {
       console.error(error);
@@ -134,9 +157,9 @@ const Calendar = ({
     return tempDisabledDate;
   };
 
-  const checkActiveDates = (firstWeek: IDateObj[], customDisabledDates: string[]) => {
+  const checkActiveDates = (firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
-    const mergedDisabledDate = [...disabledDates, ...customDisabledDates];
+    const mergedDisabledDate = [...disabledDates, ...customDisabledDates].sort();
 
     const filtered = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filtered[0].value;
@@ -150,6 +173,16 @@ const Calendar = ({
     } else {
       setIsShowMoreWeek(true);
     }
+  };
+
+  const togetherInfo = () => {
+    return (
+      <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
+        {otherDeliveryDate.length > 1
+          ? '배송예정인 기존 주문이 있습니다. 함께배송 받으세요!'
+          : `${otherDeliveryDate}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
+      </TextB3R>
+    );
   };
 
   const RenderCalendar = React.memo(({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
@@ -195,7 +228,6 @@ const Calendar = ({
                 index={index}
                 disabledDates={customDisabledDate}
                 otherDeliveryDate={otherDeliveryDate}
-                dayKor={dateObj.dayKor}
               />
             );
           })}
@@ -216,9 +248,7 @@ const Calendar = ({
       {otherDeliveryDate && (
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
-          <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
-            {otherDeliveryDate}일에 배송예정인 주문이 있습니다. 함께 받아보세요!
-          </TextB3R>
+          {togetherInfo()}
         </FlexRow>
       )}
     </FlexCol>
@@ -237,7 +267,7 @@ const CalendarContainer = styled.div<{ isSheet?: boolean }>`
 `;
 
 const Wrapper = styled.div`
-  padding: 18px 0px 0px 0px;
+  padding: 16px 0px 16px 0px;
   width: 100%;
 `;
 
