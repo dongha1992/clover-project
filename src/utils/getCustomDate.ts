@@ -1,3 +1,5 @@
+import { getFormatTime } from '@utils/getFormatTime';
+
 export const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 interface IResult {
@@ -10,6 +12,7 @@ interface IResult {
   days: string;
   dayFormatter: string;
   dayFormatterHyphen: string;
+  currentTime: number;
 }
 
 const getCustomDate = (inputDate: Date): IResult => {
@@ -54,6 +57,7 @@ const getCustomDate = (inputDate: Date): IResult => {
     seconds,
     dayFormatter: `${strMonths}월 ${strDates}일 (${days})`,
     dayFormatterHyphen: `${strYears}-${strMonths}-${strDates}`,
+    currentTime: Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`),
   };
 };
 

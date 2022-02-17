@@ -32,21 +32,8 @@ import { Obj } from '@model/index';
 import isNill from 'lodash-es/isNil';
 import { TogetherSheet } from '@components/BottomSheet/TogetherSheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-
-const LUNCH_OR_DINNER = [
-  {
-    id: 1,
-    value: 'lunch',
-    text: '점심',
-    discription: '(오전 9:30까지 주문시 12:00 전 도착)',
-  },
-  {
-    id: 2,
-    value: 'dinner',
-    text: '저녁',
-    discription: '(오전 11:00까지 주문시 17:00 전 도착)',
-  },
-];
+import getCustomDate from '@utils/getCustomDate';
+import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -56,6 +43,15 @@ const mapper: Obj = {
 };
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
+
+interface ILunchOrDinner {
+  id: number;
+  value: string;
+  text: string;
+  discription: string;
+  isDisabled: boolean;
+  isSelected: boolean;
+}
 
 //temp
 
@@ -71,14 +67,31 @@ const otherDeliveryInfo = [
     deliveryDate: '2022-02-18',
   },
 ];
+
 const CartPage = () => {
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
-  const [lunchOrDinner, setLunchOrDinner] = useState<number>(1);
+  const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
+    {
+      id: 1,
+      value: 'LUNCH',
+      text: '점심',
+      discription: '(오전 9:30까지 주문시 12:00 전 도착)',
+      isDisabled: false,
+      isSelected: true,
+    },
+    {
+      id: 2,
+      value: 'DINNER',
+      text: '저녁',
+      discription: '(오전 11:00까지 주문시 17:00 전 도착)',
+      isDisabled: false,
+      isSelected: false,
+    },
+  ]);
   const [isShow, setIsShow] = useState(false);
-
   const [disposableList, setDisposableList] = useState([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
@@ -93,10 +106,9 @@ const CartPage = () => {
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
+  //temp
   const isSoldout = true;
-  const hasDeliveryPlace = true;
-
-  const disabledDates = ['2022-02-18', '2022-02-17', '2022-02-22'];
+  const disabledDates = ['2022-02-18', '2022-02-22'];
   const otherDeliveryDate = ['2022-02-25'];
 
   useEffect(() => {
@@ -166,7 +178,7 @@ const CartPage = () => {
   };
 
   const handleLunchOrDinner = (id: number) => {
-    setLunchOrDinner(id);
+    // setLunchOrDinner(id);
   };
 
   const removeItemHandler = () => {
@@ -190,6 +202,32 @@ const CartPage = () => {
     setDisposableList(findItem);
   };
 
+  const deliveryTimeInfo = () => {
+    const { dates } = getCustomDate(new Date(selectedDeliveryDay));
+    const today = new Date().getDate();
+    // const isLunch = lunchOrDinner === 1;
+    const selectToday = dates === today;
+
+    switch (userDestinationStatus) {
+      case 'parcel': {
+        return <TextH6B>{`${dates}일 도착`}</TextH6B>;
+      }
+      case 'morning': {
+        return <TextH6B>{`${dates}일 새벽 7시 전 도착`}</TextH6B>;
+      }
+      case 'quick':
+      case 'spot': {
+        // if (selectToday) {
+        //   return <TextH6B>{`오늘 ${isLunch ? '12시' : '17시'} 전 도착`}</TextH6B>;
+        // } else {
+        //   return <TextH6B>{`${dates}일 ${isLunch ? '12시' : '17시'} 전 도착`}</TextH6B>;
+        // }
+      }
+      default:
+        return;
+    }
+  };
+
   const removeItem = () => {
     console.log('fire');
   };
@@ -203,7 +241,7 @@ const CartPage = () => {
   };
 
   const goToPayment = () => {
-    const isLunch = lunchOrDinner === 1;
+    // const isLunch = lunchOrDinner === 1;
     userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: isLunch ? 'LUNCH' : 'DINNER' }));
     router.push('/payment');
   };
@@ -330,7 +368,7 @@ const CartPage = () => {
           </Button>
         </GetMoreBtn>
       </CartInfoContainer>
-      {hasDeliveryPlace && (
+      {userDestination && (
         <>
           <BorderLine height={8} margin="32px 0" />
           <FlexCol padding="0 24px">
@@ -339,7 +377,7 @@ const CartPage = () => {
                 <TextH3B padding="2px 4px 0 0">{isSpot ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
-              <TextH6B>오늘 12:00 전 도착</TextH6B>
+              {deliveryTimeInfo()}
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
@@ -350,13 +388,10 @@ const CartPage = () => {
             />
             {!['parcel', 'morning'].includes(userDestinationStatus) && (
               <>
-                {LUNCH_OR_DINNER.map((item, index) => {
+                {lunchOrDinner.map((item, index) => {
                   return (
                     <FlexRow key={index} padding="16px 0 0 0">
-                      <RadioButton
-                        onChange={() => handleLunchOrDinner(item.id)}
-                        isSelected={lunchOrDinner === item.id}
-                      />
+                      <RadioButton onChange={() => handleLunchOrDinner(item.id)} isSelected={item.isSelected} />
                       <TextH5B padding="0 4px 0 8px">{item.text}</TextH5B>
                       <TextB2R>{item.discription}</TextB2R>
                     </FlexRow>
