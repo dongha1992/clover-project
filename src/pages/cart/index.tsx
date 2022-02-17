@@ -30,7 +30,7 @@ import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj } from '@model/index';
 import isNill from 'lodash-es/isNil';
-import { TogetherSheet } from '@components/BottomSheet/TogetherSheet';
+import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
@@ -66,6 +66,8 @@ const otherDeliveryInfo = [
     delivery: 'QUICK',
     deliveryTime: 'LUNCH',
     deliveryDate: '2022-02-18',
+    totalPrice: 30000,
+    deliveryFee: 3000,
   },
 ];
 
@@ -264,7 +266,7 @@ const CartPage = () => {
   const goToTogetherDelivery = (): void => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <TogetherSheet title="함께배송 안내" otherDeliveryInfo={otherDeliveryInfo} />,
+        content: <TogetherDeliverySheet title="함께배송 안내" otherDeliveryInfo={otherDeliveryInfo} />,
       })
     );
   };

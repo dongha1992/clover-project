@@ -175,7 +175,7 @@ const Calendar = ({
     }
   };
 
-  const togetherInfo = () => {
+  const togetherDeliveryInfo = () => {
     return (
       <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
         {otherDeliveryDate.length > 1
@@ -248,7 +248,7 @@ const Calendar = ({
       {otherDeliveryDate.length > 0 && (
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
-          {togetherInfo()}
+          {togetherDeliveryInfo()}
         </FlexRow>
       )}
     </FlexCol>
