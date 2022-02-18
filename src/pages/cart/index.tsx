@@ -196,7 +196,9 @@ const CartPage = () => {
     setLunchOrDinner(newLunchDinner);
   };
 
-  const removeItemHandler = () => {
+  const removeItemHandler = async () => {
+    const message = await axios.post(`${BASE_URL}`);
+    console.log(message);
     dispatch(
       SET_ALERT({
         alertMessage: '선택을 상품을 삭제하시겠어요?',
@@ -291,6 +293,11 @@ const CartPage = () => {
     );
   };
 
+  const clickPlusButton = (id: number, quantity: number) => {};
+  const clickMinusButton = (id: number, quantity: number) => {
+    console.log(quantity);
+  };
+
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());
     const isFinishLunch = currentTime >= 9.29;
@@ -372,7 +379,13 @@ const CartPage = () => {
                     onChange={() => handleSelectCartItem(item.id)}
                     isSelected={checkedMenuList.includes(item.id)}
                   />
-                  <CartSheetItem isCart menu={item} isSoldout={item.id === 1 && isSoldout} />
+                  <CartSheetItem
+                    isCart
+                    menu={item}
+                    isSoldout={item.id === 1 && isSoldout}
+                    clickPlusButton={clickPlusButton}
+                    clickMinusButton={clickMinusButton}
+                  />
                 </div>
                 <div className="itemInfo">
                   <InfoMessage status="soldSoon" count={2} />

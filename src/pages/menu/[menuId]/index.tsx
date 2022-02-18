@@ -269,7 +269,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: menuItem.reviews.length }}
+          countObj={{ 후기: menuItem?.reviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
