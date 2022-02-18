@@ -39,7 +39,7 @@ const Home = () => {
   });
 
   const getItemLists = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
     setItemList(data.data);
     dispatch(SET_MENU(data.data));
   };

@@ -84,7 +84,7 @@ const ReviewWrapper = styled.div`
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
 
-  const { data } = await axios.get(`${BASE_URL}`);
+  const { data } = await axios.get(`${BASE_URL}/itemList`);
   const selectedMenuItem: any = data.data.find((item: any) => item.id === Number(menuId));
 
   const { reviews } = selectedMenuItem;
