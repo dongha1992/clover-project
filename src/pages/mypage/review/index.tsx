@@ -26,8 +26,8 @@ const ReviewPage = () => {
   }, []);
 
   const getItemList = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
+    setItemList(data.data);
   };
 
   const selectTabHandler = (tabItem: any) => {
@@ -42,21 +42,14 @@ const ReviewPage = () => {
   return (
     <Container>
       <FixedTab>
-        <TabList
-          tabList={TAB_LIST}
-          onClick={selectTabHandler}
-          selectedTab={selectedTab}
-          countObj={countObj}
-        />
+        <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} countObj={countObj} />
       </FixedTab>
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
       </Wrapper>
       {!itemList.length ? (
         <Center>
-          <TextB2R color={theme.greyScale65}>
-            후기를 작성할 상품이 없습니다.
-          </TextB2R>
+          <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
         </Center>
       ) : (
         <Wrapper>
@@ -64,9 +57,7 @@ const ReviewPage = () => {
             {itemList.map((item, index) => (
               <div key={index}>
                 <MypageReviewItem menu={item} />
-                {itemList.length - 1 !== index && (
-                  <BorderLine height={1} margin="24px 0" />
-                )}
+                {itemList.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
               </div>
             ))}
           </WillReviewItmesWrapper>

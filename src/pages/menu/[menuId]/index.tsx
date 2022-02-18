@@ -83,8 +83,8 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const getMenuDetail = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    const selectedMenuItem: IMenuItem = data.find((item: any) => item.id === Number(menuId));
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
+    const selectedMenuItem: IMenuItem = data.data.find((item: any) => item.id === Number(menuId));
     setMenuItem(() => selectedMenuItem);
     /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
 
@@ -269,7 +269,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: menuItem.reviews.length }}
+          countObj={{ 후기: menuItem?.reviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
