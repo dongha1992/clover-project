@@ -6,10 +6,11 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import getCustomDate from '@utils/getCustomDate';
 import { Obj } from '@model/index';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { filter, flow, map } from 'lodash/fp';
 import { getFormatTime } from '@utils/getFormatTime';
+import { IOtherDeliveryInfo } from '@pages/cart';
 
 let WEEKS: Obj = {
   0: '일',
@@ -38,16 +39,16 @@ export interface IDateObj {
 
 interface ICalendar {
   disabledDates: string[];
-  otherDeliveryDate?: string[];
+  otherDeliveryInfo?: IOtherDeliveryInfo[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
   isSheet?: boolean;
-  goToTogetherDelivery?: () => void;
+  goToTogetherDelivery?: (id: number) => void;
 }
 
 const Calendar = ({
   disabledDates = [],
-  otherDeliveryDate = [],
+  otherDeliveryInfo = [],
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
@@ -56,7 +57,7 @@ const Calendar = ({
   const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
-
+  const [togetherDeliveryInActiveDates, setTogetherDeliveryInActiveDates] = useState<IOtherDeliveryInfo[]>([]);
   const { userDestinationStatus } = useSelector(destinationForm);
 
   const initCalendar = () => {
@@ -89,17 +90,15 @@ const Calendar = ({
       }
     }
 
-    checkActiveDates(firstWeek, formatDisabledDate(dateList));
+    checkActiveDates(dateList, firstWeek, formatDisabledDate(dateList));
     setDateList(dateList);
   };
 
-  const clickDayHandler = (value: string) => {
-    /*TODO: otherDeliveryDate 배열 --> 다형성 */
+  const clickDayHandler = (value: string): void => {
+    const selectedTogetherDelivery = otherDeliveryInfo.find((item) => item.deliveryDate === value);
 
-    const clickTogetherDelivery = otherDeliveryDate.includes(value);
-
-    if (clickTogetherDelivery && !isSheet) {
-      goToTogetherDelivery && goToTogetherDelivery();
+    if (selectedTogetherDelivery && !isSheet) {
+      goToTogetherDelivery && goToTogetherDelivery(selectedTogetherDelivery?.id);
     }
 
     setSelectedDeliveryDay(value);
@@ -157,30 +156,54 @@ const Calendar = ({
     return tempDisabledDate;
   };
 
-  const checkActiveDates = (firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
+  const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
 
-    const filtered = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = filtered[0]?.value;
+    const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
+    const firstActiveDate = filteredActiveDates[0]?.value;
 
+    checkHasTogetherInActiveDates(dateList, mergedDisabledDate);
     setSelectedDeliveryDay(firstActiveDate);
     setCustomDisabledDate(mergedDisabledDate);
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filtered.length > ACTIVE_DAY_OF_WEEK) {
+    if (filteredActiveDates.length > ACTIVE_DAY_OF_WEEK) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
     }
   };
 
-  const togetherInfo = () => {
+  const checkHasTogetherInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
+    // 함께배송 안내는 오픈되어있는 주에서만 안내
+    // 현재 캘린더 렌더되는 날짜 데이터를 1주,2주로 나누지 않고 있음
+    // 휴무일과 겹치는 경우 체크
+
+    /*TODO: 리팩토링 필요 */
+
+    const hasTogetherDeliveryInActiveDates = otherDeliveryInfo
+      ?.filter((oItem) => {
+        return dateList?.some((dItem, index) => {
+          if (index >= ONE_WEEK) {
+            return;
+          }
+          return dItem.value === oItem.deliveryDate;
+        });
+      })
+      ?.filter((a) => !disabledDate.includes(a.deliveryDate));
+
+    setTogetherDeliveryInActiveDates(hasTogetherDeliveryInActiveDates);
+  };
+
+  const togetherDeliveryInfo = (): JSX.Element => {
     return (
       <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
-        {otherDeliveryDate.length > 1
+        {togetherDeliveryInActiveDates.length > 1
           ? '배송예정인 기존 주문이 있습니다. 함께배송 받으세요!'
-          : `${new Date(otherDeliveryDate[0]).getDate()}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
+          : `${new Date(
+              togetherDeliveryInActiveDates[0]?.deliveryDate
+            ).getDate()}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
       </TextB3R>
     );
   };
@@ -213,11 +236,13 @@ const Calendar = ({
         <Body>
           {dateList.map((dateObj, index) => {
             const selectedDay = selectedDeliveryDay === dateObj.value;
+
             if (!isShowMoreWeek) {
               if (index > LIMIT_DAYS) {
                 return;
               }
             }
+
             return (
               <Days
                 handler={clickDayHandler}
@@ -227,7 +252,7 @@ const Calendar = ({
                 selectedDay={selectedDay}
                 index={index}
                 disabledDates={customDisabledDate}
-                otherDeliveryDate={otherDeliveryDate}
+                otherDeliveryInfo={togetherDeliveryInActiveDates}
               />
             );
           })}
@@ -240,15 +265,19 @@ const Calendar = ({
     initCalendar();
   }, []);
 
+  if (dateList.length < 0) {
+    return <div>로딩</div>;
+  }
+
   return (
     <FlexCol>
       <CalendarContainer isSheet={isSheet}>
         <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
       </CalendarContainer>
-      {otherDeliveryDate.length > 0 && (
+      {togetherDeliveryInActiveDates.length > 0 && (
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
-          {togetherInfo()}
+          {togetherDeliveryInfo()}
         </FlexRow>
       )}
     </FlexCol>

@@ -14,7 +14,7 @@ interface IProps {
   otherDeliveryInfo: any;
 }
 
-const TogetherSheet = ({ title, otherDeliveryInfo }: IProps) => {
+const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
   const [selectedDelivery, setSelectedDelivery] = useState(otherDeliveryInfo[0].id);
   const dispatch = useDispatch();
 
@@ -162,4 +162,4 @@ const Col = styled.div`
   height: 50%;
 `;
 
-export default React.memo(TogetherSheet);
+export default React.memo(TogetherDeliverySheet);
