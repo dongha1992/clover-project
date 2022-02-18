@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { TermSheet } from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
@@ -41,14 +41,8 @@ const TermOfUsePage = () => {
 
   const changeVersionHandler = () => {
     dispatch(
-      setBottomSheet({
-        content: (
-          <TermSheet
-            title="이용약관"
-            versions={termOfUser?.versions!}
-            currentVersion={currentVersion || 2}
-          />
-        ),
+      SET_BOTTOM_SHEET({
+        content: <TermSheet title="이용약관" versions={termOfUser?.versions!} currentVersion={currentVersion || 2} />,
       })
     );
   };
@@ -58,16 +52,13 @@ const TermOfUsePage = () => {
     setCurrentVersion(versionOfTerm);
   }, [versionOfTerm]);
 
-  const lastestVersion =
-    termOfUser?.versions[termOfUser?.versions.length - 1].version;
+  const lastestVersion = termOfUser?.versions[termOfUser?.versions.length - 1].version;
 
   const isLastest = currentVersion === lastestVersion;
 
   const currentVersionOfDate = termOfUser?.terms.startedAt.split(' ')[0];
 
-  const formatDate = isLastest
-    ? `${currentVersionOfDate} (현재)`
-    : `${currentVersionOfDate}`;
+  const formatDate = isLastest ? `${currentVersionOfDate} (현재)` : `${currentVersionOfDate}`;
 
   if (!termOfUser) {
     return <div>로딩중</div>;

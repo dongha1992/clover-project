@@ -197,7 +197,7 @@ const CartSheet = () => {
     dispatch(INIT_BOTTOM_SHEET());
     dispatch(SET_CART_LISTS(selectedMenus));
     setTimeout(() => {
-      showToast({ message: '장바구니에 담겼습니다.' });
+      showToast({ message: '상품을 장바구니에 담았어요! 😍' });
     }, 500);
   };
 
