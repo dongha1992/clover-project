@@ -8,7 +8,7 @@ import { TextB2R, TextB3R, TextH2B, TextH5B, TextH6B } from '@components/Shared/
 import TextArea from '@components/Shared/TextArea';
 import { SECESSION_EXPLAIN, SECESSION_REASON } from '@constants/mypage';
 import { ISecessionRequest } from '@model/index';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { fixedBottom, FlexRow } from '@styles/theme';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
@@ -24,12 +24,13 @@ const SecessionPage = () => {
   const [answerDetail, setAnswerDetail] = useState<string>('');
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  // TODO : 회원 탈퇴가 api가 제대로 작동안함, 스웨거는 통과되는데 로컬에서 안되는 이슈있는 request body에 담아 보내는데 에러남
   const { mutate: mutateUserSecession } = useMutation((data: ISecessionRequest) => userSecession(data), {
     onSuccess: (data) => {
       console.log(data);
       // TODO : Alet 메세지 padding 시안과 다름
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: '탈퇴가 정상적으로 처리되었습니다.',
           submitBtnText: '확인',
         })
