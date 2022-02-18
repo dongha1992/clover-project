@@ -4,6 +4,7 @@ import { theme } from '@styles/theme';
 import { TextH5B, TextH7B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { LIMIT_DAYS } from './Calendar';
+import { IOtherDeliveryInfo } from '@pages/cart';
 
 type TProps = {
   day: number;
@@ -12,14 +13,14 @@ type TProps = {
   selectedDay: boolean;
   index: number;
   disabledDates: string[];
-  otherDeliveryDate?: string[];
+  otherDeliveryInfo?: IOtherDeliveryInfo[];
 };
 
-const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryDate }: TProps) => {
+const Days = ({ day, value, handler, selectedDay, index, disabledDates, otherDeliveryInfo }: TProps) => {
   const isSecondWeeks = index > LIMIT_DAYS;
   const isToday = !index;
-  const hasOtherDeliveryDate = otherDeliveryDate?.includes(value);
   const disabledDate = disabledDates?.includes(value);
+  const hasOtherDeliveryDate = otherDeliveryInfo?.some((item) => item.deliveryDate === value);
 
   const dayColorRender = () => {
     switch (true) {

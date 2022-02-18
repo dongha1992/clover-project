@@ -30,7 +30,7 @@ import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj } from '@model/index';
 import isNill from 'lodash-es/isNil';
-import { TogetherSheet } from '@components/BottomSheet/TogetherSheet';
+import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
@@ -55,8 +55,20 @@ interface ILunchOrDinner {
 }
 
 //temp
+export interface IOtherDeliveryInfo {
+  id: number;
+  location: {
+    address: string;
+    addressDetail: string;
+  };
+  delivery: string;
+  deliveryTime: string;
+  deliveryDate: string;
+  totalPrice: number;
+  deliveryFee: number;
+}
 
-const otherDeliveryInfo = [
+const otherDeliveryInfo: IOtherDeliveryInfo[] = [
   {
     id: 1,
     location: {
@@ -65,9 +77,27 @@ const otherDeliveryInfo = [
     },
     delivery: 'QUICK',
     deliveryTime: 'LUNCH',
-    deliveryDate: '2022-02-18',
+    deliveryDate: '2022-02-23',
+    totalPrice: 30000,
+    deliveryFee: 3000,
+  },
+  {
+    id: 2,
+    location: {
+      address: '주소',
+      addressDetail: '상세주소',
+    },
+    delivery: 'QUICK',
+    deliveryTime: 'LUNCH',
+    deliveryDate: '2022-02-19',
+    totalPrice: 30000,
+    deliveryFee: 3000,
   },
 ];
+
+//temp
+const isSoldout = true;
+const disabledDates = ['2022-02-21', '2022-02-22'];
 
 const CartPage = () => {
   const [itemList, setItemList] = useState([]);
@@ -108,32 +138,6 @@ const CartPage = () => {
 
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
-
-  //temp
-  const isSoldout = true;
-  const disabledDates = ['2022-02-21', '2022-02-22'];
-  const otherDeliveryDate = ['2022-02-25'];
-
-  useEffect(() => {
-    getLists();
-  }, []);
-
-  useEffect(() => {
-    /* TODO: 초기값 설정 때문에 조금 버벅임 */
-    if (calendarRef && isFromDeliveryPage) {
-      const offsetTop = calendarRef.current?.offsetTop;
-
-      window.scrollTo({
-        behavior: 'smooth',
-        left: 0,
-        top: offsetTop,
-      });
-    }
-
-    return () => {
-      dispatch(INIT_AFTER_SETTING_DELIVERY());
-    };
-  }, [calendarRef.current?.offsetTop]);
 
   const getLists = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
@@ -213,7 +217,7 @@ const CartPage = () => {
     setDisposableList(findItem);
   };
 
-  const deliveryTimeInfo = () => {
+  const deliveryTimeInfoRenderer = () => {
     const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
     const today: number = new Date().getDate();
     const selectedTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected);
@@ -243,6 +247,19 @@ const CartPage = () => {
     }
   };
 
+  const buttonRenderer = () => {
+    return (
+      <Button borderRadius="0" height="100%">
+        {getTotalPrice()}원 주문하기
+      </Button>
+    );
+  };
+
+  const getTotalPrice = (): number => {
+    console.log(itemList, 'itemList');
+    return 0;
+  };
+
   const removeItem = () => {
     console.log('fire');
   };
@@ -261,10 +278,15 @@ const CartPage = () => {
     router.push('/payment');
   };
 
-  const goToTogetherDelivery = (): void => {
+  const goToTogetherDelivery = (id: number): void => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <TogetherSheet title="함께배송 안내" otherDeliveryInfo={otherDeliveryInfo} />,
+        content: (
+          <TogetherDeliverySheet
+            title="함께배송 안내"
+            otherDeliveryInfo={[otherDeliveryInfo.find((item) => item.id === id)]}
+          />
+        ),
       })
     );
   };
@@ -291,6 +313,27 @@ const CartPage = () => {
     }
     setLunchOrDinner(newLunchDinner);
   }, [selectedDeliveryDay]);
+
+  useEffect(() => {
+    /* TODO: 초기값 설정 때문에 조금 버벅임 */
+    if (calendarRef && isFromDeliveryPage) {
+      const offsetTop = calendarRef.current?.offsetTop;
+
+      window.scrollTo({
+        behavior: 'smooth',
+        left: 0,
+        top: offsetTop,
+      });
+    }
+
+    return () => {
+      dispatch(INIT_AFTER_SETTING_DELIVERY());
+    };
+  }, [calendarRef.current?.offsetTop]);
+
+  useEffect(() => {
+    getLists();
+  }, []);
 
   const isSpot = userDestinationStatus == 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
@@ -417,11 +460,11 @@ const CartPage = () => {
                 <TextH3B padding="2px 4px 0 0">{isSpot ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
-              {deliveryTimeInfo()}
+              {deliveryTimeInfoRenderer()}
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
-              otherDeliveryDate={otherDeliveryDate}
+              otherDeliveryInfo={otherDeliveryInfo}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
               goToTogetherDelivery={goToTogetherDelivery}
@@ -506,7 +549,7 @@ const CartPage = () => {
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>12312원</TextH4B>
+            <TextH4B>{getTotalPrice()}</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -517,11 +560,7 @@ const CartPage = () => {
           </FlexEnd>
         </TotalPriceWrapper>
       </MenuListContainer>
-      <OrderBtn onClick={goToPayment}>
-        <Button borderRadius="0" height="100%">
-          1232원 주문하기
-        </Button>
-      </OrderBtn>
+      <OrderBtn onClick={goToPayment}>{buttonRenderer()}</OrderBtn>
     </Container>
   );
 };
