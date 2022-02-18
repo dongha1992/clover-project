@@ -31,7 +31,7 @@ const OrderDeliveryHistoryPage = () => {
 
   const getItemList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    setItemList(data.data);
   };
 
   return (

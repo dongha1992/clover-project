@@ -35,36 +35,20 @@ const TotalReviewPage = ({ reviews, menuId }: any) => {
     <Container>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
-          <ReviewOnlyImage
-            reviews={reviews}
-            goToReviewImages={goToReviewImages}
-            goToReviewDetail={goToReviewDetail}
-          />
+          <ReviewOnlyImage reviews={reviews} goToReviewImages={goToReviewImages} goToReviewDetail={goToReviewDetail} />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
             상품의 첫 번째 후기를 작성해주세요 :)
           </TextB2R>
         )}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          borderRadius="8"
-          margin="0 0 32px 0"
-        >
+        <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" margin="0 0 32px 0">
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
         {reviews.map((review: any, index: number) => {
-          return (
-            <ReviewDetailItem
-              review={review}
-              key={index}
-              clickImgViewHandler={clickImgViewHandler}
-            />
-          );
+          return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
       </ReviewWrapper>
     </Container>
@@ -101,9 +85,7 @@ export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
 
   const { data } = await axios.get(`${BASE_URL}`);
-  const selectedMenuItem: any = data.find(
-    (item: any) => item.id === Number(menuId)
-  );
+  const selectedMenuItem: any = data.data.find((item: any) => item.id === Number(menuId));
 
   const { reviews } = selectedMenuItem;
   return {

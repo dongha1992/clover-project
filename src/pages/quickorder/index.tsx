@@ -32,7 +32,7 @@ const QuickOrderPage = () => {
   /* 목업 데이터 로직 */
   useEffect(() => {
     axios.get(`${BASE_URL}`).then(({ data }) => {
-      setItemList(data);
+      setItemList(data.data);
     });
   }, []);
   /* 목업 데이터 로직 END */

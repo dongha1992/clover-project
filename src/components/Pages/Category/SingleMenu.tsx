@@ -15,7 +15,7 @@ const SingleMenu = ({ category }: any) => {
 
   const getBanners = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    setItemList(data.data);
   };
 
   return (
