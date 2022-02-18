@@ -201,7 +201,6 @@ const CartSheet = () => {
   const submitHandler = async () => {
     if (checkHasMainMenu()) {
       const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
-      console.log(data, 'data');
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(SET_CART_LISTS(selectedMenus));
 

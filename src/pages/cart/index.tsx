@@ -34,6 +34,7 @@ import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliveryS
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -100,6 +101,7 @@ const isSoldout = true;
 const disabledDates = ['2022-02-21', '2022-02-22'];
 
 const CartPage = () => {
+  const [cartItemList, setCartItemList] = useState([]);
   const [itemList, setItemList] = useState([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>([]);
@@ -140,9 +142,14 @@ const CartPage = () => {
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
   const getLists = async () => {
-    const { data } = await axios.get(`${BASE_URL}/cartList`);
-    console.log(data, 'Dd');
-    setItemList(data.data);
+    try {
+      const { data } = await axios.get(`${BASE_URL}/cartList`);
+      const { data: itemList } = await axios.get(`${BASE_URL}/itemList`);
+      setCartItemList(data.data);
+      setItemList(itemList.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleSelectCartItem = (id: any) => {
@@ -163,7 +170,7 @@ const CartPage = () => {
 
   const handleSelectAllCartItem = () => {
     /*TODO: 하나 해제 했을 때 다 해제 로직 */
-    const checkedMenuId = itemList.map((item: any) => item.id);
+    const checkedMenuId = cartItemList.map((item: any) => item.id);
     if (!isAllChecked) {
       setCheckedMenuList(checkedMenuId);
     } else {
@@ -257,8 +264,9 @@ const CartPage = () => {
   };
 
   const getTotalPrice = (): number => {
-    console.log(itemList, 'itemList');
-    return 0;
+    return cartItemList.reduce((acc: number, cur: any) => {
+      return acc + cur.price;
+    }, 0);
   };
 
   const removeItem = () => {
@@ -293,6 +301,7 @@ const CartPage = () => {
   };
 
   const clickPlusButton = (id: number, quantity: number) => {};
+
   const clickMinusButton = (id: number, quantity: number) => {
     console.log(quantity);
   };
@@ -371,7 +380,7 @@ const CartPage = () => {
           </ListHeader>
           <BorderLine height={1} margin="16px 0" />
           <VerticalCartList>
-            {itemList.map((item: any, index) => (
+            {cartItemList.map((item: any, index) => (
               <ItemWrapper key={index}>
                 <div className="itemCheckbox">
                   <Checkbox
