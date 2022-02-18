@@ -96,7 +96,7 @@ const Calendar = ({
 
   const clickDayHandler = (value: string): void => {
     const selectedTogetherDelivery = otherDeliveryInfo.find((item) => item.deliveryDate === value);
-    console.log(selectedTogetherDelivery, 'selectedTogetherDelivery');
+
     if (selectedTogetherDelivery && !isSheet) {
       goToTogetherDelivery && goToTogetherDelivery(selectedTogetherDelivery?.id);
     }
@@ -160,15 +160,15 @@ const Calendar = ({
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
 
-    const filtered = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = filtered[0]?.value;
+    const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
+    const firstActiveDate = filteredActiveDates[0]?.value;
 
     checkHasTogetherInActiveDates(dateList, mergedDisabledDate);
     setSelectedDeliveryDay(firstActiveDate);
     setCustomDisabledDate(mergedDisabledDate);
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filtered.length > ACTIVE_DAY_OF_WEEK) {
+    if (filteredActiveDates.length > ACTIVE_DAY_OF_WEEK) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
@@ -179,6 +179,8 @@ const Calendar = ({
     // 함께배송 안내는 오픈되어있는 주에서만 안내
     // 현재 캘린더 렌더되는 날짜 데이터를 1주,2주로 나누지 않고 있음
     // 휴무일과 겹치는 경우 체크
+
+    /*TODO: 리팩토링 필요 */
 
     const hasTogetherDeliveryInActiveDates = otherDeliveryInfo
       ?.filter((oItem) => {

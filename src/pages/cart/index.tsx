@@ -139,27 +139,6 @@ const CartPage = () => {
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
-  useEffect(() => {
-    getLists();
-  }, []);
-
-  useEffect(() => {
-    /* TODO: 초기값 설정 때문에 조금 버벅임 */
-    if (calendarRef && isFromDeliveryPage) {
-      const offsetTop = calendarRef.current?.offsetTop;
-
-      window.scrollTo({
-        behavior: 'smooth',
-        left: 0,
-        top: offsetTop,
-      });
-    }
-
-    return () => {
-      dispatch(INIT_AFTER_SETTING_DELIVERY());
-    };
-  }, [calendarRef.current?.offsetTop]);
-
   const getLists = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
     setItemList(data);
@@ -238,7 +217,7 @@ const CartPage = () => {
     setDisposableList(findItem);
   };
 
-  const deliveryTimeInfo = () => {
+  const deliveryTimeInfoRenderer = () => {
     const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
     const today: number = new Date().getDate();
     const selectedTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected);
@@ -266,6 +245,19 @@ const CartPage = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const buttonRenderer = () => {
+    return (
+      <Button borderRadius="0" height="100%">
+        {getTotalPrice()}원 주문하기
+      </Button>
+    );
+  };
+
+  const getTotalPrice = (): number => {
+    console.log(itemList, 'itemList');
+    return 0;
   };
 
   const removeItem = () => {
@@ -321,6 +313,27 @@ const CartPage = () => {
     }
     setLunchOrDinner(newLunchDinner);
   }, [selectedDeliveryDay]);
+
+  useEffect(() => {
+    /* TODO: 초기값 설정 때문에 조금 버벅임 */
+    if (calendarRef && isFromDeliveryPage) {
+      const offsetTop = calendarRef.current?.offsetTop;
+
+      window.scrollTo({
+        behavior: 'smooth',
+        left: 0,
+        top: offsetTop,
+      });
+    }
+
+    return () => {
+      dispatch(INIT_AFTER_SETTING_DELIVERY());
+    };
+  }, [calendarRef.current?.offsetTop]);
+
+  useEffect(() => {
+    getLists();
+  }, []);
 
   const isSpot = userDestinationStatus == 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
@@ -447,7 +460,7 @@ const CartPage = () => {
                 <TextH3B padding="2px 4px 0 0">{isSpot ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
-              {deliveryTimeInfo()}
+              {deliveryTimeInfoRenderer()}
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
@@ -536,7 +549,7 @@ const CartPage = () => {
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>12312원</TextH4B>
+            <TextH4B>{getTotalPrice()}</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -547,11 +560,7 @@ const CartPage = () => {
           </FlexEnd>
         </TotalPriceWrapper>
       </MenuListContainer>
-      <OrderBtn onClick={goToPayment}>
-        <Button borderRadius="0" height="100%">
-          1232원 주문하기
-        </Button>
-      </OrderBtn>
+      <OrderBtn onClick={goToPayment}>{buttonRenderer()}</OrderBtn>
     </Container>
   );
 };
