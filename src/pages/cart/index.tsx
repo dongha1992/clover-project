@@ -141,16 +141,15 @@ const CartPage = () => {
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
-  const getLists = async () => {
-    try {
-      const { data } = await axios.get(`${BASE_URL}/cartList`);
-      const { data: itemList } = await axios.get(`${BASE_URL}/itemList`);
-      setCartItemList(data.data);
-      setItemList(itemList.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const {} = useQuery('getCartList', async () => {
+    const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
+    setCartItemList(data.data);
+  });
+
+  const {} = useQuery('getItemList', async () => {
+    const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
+    setItemList(data.data);
+  });
 
   const handleSelectCartItem = (id: any) => {
     const findItem = checkedMenuList.find((_id: number) => _id === id);
@@ -345,10 +344,6 @@ const CartPage = () => {
       dispatch(INIT_AFTER_SETTING_DELIVERY());
     };
   }, [calendarRef.current?.offsetTop]);
-
-  useEffect(() => {
-    getLists();
-  }, []);
 
   const isSpot = userDestinationStatus == 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);

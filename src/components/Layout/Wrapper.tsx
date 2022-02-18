@@ -53,7 +53,7 @@ const Wrapper: React.FC = ({ children }) => {
   const bottomSheet = useSelector(bottomSheetForm);
   const cart = useSelector(cartForm);
   const toast = useSelector(toastSelector);
-  const { isModalOn, imagesForViewer } = useSelector(commonSelector);
+  const { imagesForViewer } = useSelector(commonSelector);
 
   const isClickReviewImg = imagesForViewer.length > 0;
 
