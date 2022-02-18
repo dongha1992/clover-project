@@ -13,19 +13,22 @@ interface IProps {
   isSoldout?: boolean;
   padding?: string;
   removeCartItemHandler?: (id: number) => void;
+  clickPlusButton: (id: number, quantity: number) => void;
+  clickMinusButton: (id: number, quantity: number) => void;
 }
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
 
-const CartSheetItem = ({ menu, isSoldout, padding, isCart, removeCartItemHandler }: IProps) => {
+const CartSheetItem = ({
+  menu,
+  isSoldout,
+  padding,
+  isCart,
+  removeCartItemHandler,
+  clickPlusButton,
+  clickMinusButton,
+}: IProps) => {
   const clickRestockNoti = () => {};
-
-  const clickPlusButton = (id: number, quantity: number) => {
-    // 비동기 작업
-  };
-  const clickMinusButton = (id: number, quantity: number) => {
-    // 비동기 작업
-  };
 
   return (
     <Container isSoldout={isSoldout} padding={padding} isCart={isCart}>

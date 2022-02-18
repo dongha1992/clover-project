@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { TextH5B } from '@components/Shared/Text';
 import { Select, MenuOption } from '@components/Shared/Dropdown';
@@ -18,13 +18,14 @@ import calculateArrival from '@utils/calculateArrival';
 import getCustomDate from '@utils/getCustomDate';
 import { filter, map, flow } from 'lodash/fp';
 import dayjs from 'dayjs';
+import { useQuery, useQueryClient } from 'react-query';
 
 import 'dayjs/locale/ko';
+import axios from 'axios';
+import { BASE_URL } from '@constants/mock';
+import { Item } from '@components/Item';
 
 dayjs.locale('ko');
-/* TODO: 필수옵션, 선택옵션 api 형에 따라 구조 바꿔야 함. 현재는 목데이터 기준으로 설계함 
-        https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=6128%3A177385
-*/
 
 interface IRolling {
   id: number;
@@ -179,26 +180,71 @@ const CartSheet = () => {
   };
 
   const selectMenuHandler = (menu: any) => {
-    setSelectedMenus([...selectedMenus, menu]);
+    if (!checkAlreadySelect(menu.id)) {
+      setSelectedMenus([...selectedMenus, menu]);
+    } else {
+      clickPlusButton(menu.id);
+    }
   };
 
-  const getCalculateTotalPrice = () => {
+  const getCalculateTotalPrice = useCallback(() => {
     return selectedMenus.reduce((acc: number, cur: any) => {
       return acc + cur.price;
     }, 0);
-  };
+  }, [selectedMenus]);
 
   const removeCartItemHandler = (id: number): void => {
     const newSelectedMenus = selectedMenus.filter((item: any) => item.id !== id);
     setSelectedMenus(newSelectedMenus);
   };
 
-  const submitHandler = () => {
-    dispatch(INIT_BOTTOM_SHEET());
-    dispatch(SET_CART_LISTS(selectedMenus));
-    setTimeout(() => {
-      showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-    }, 500);
+  const submitHandler = async () => {
+    if (checkHasMainMenu()) {
+      const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
+      dispatch(INIT_BOTTOM_SHEET());
+      dispatch(SET_CART_LISTS(selectedMenus));
+
+      setTimeout(() => {
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+      }, 500);
+    } else {
+      showToast({ message: '필수옵션을 선택해주세요.' });
+    }
+  };
+
+  const checkHasMainMenu = (): boolean => {
+    return selectedMenus.some((item: any) => item.main);
+  };
+
+  const checkAlreadySelect = (id: number) => {
+    return selectedMenus.find((item: any) => item.id === id);
+  };
+
+  const clickPlusButton = async (id: number, quantity?: number) => {
+    /*TODO: 중복코드 */
+    const newSelectedMenus = selectedMenus.map((item: any) => {
+      if (item.id === id) {
+        if (item.limitQuantity && item.quantity > item.limitQuantity - 1) {
+          return item;
+        } else {
+          return { ...item, quantity: quantity ? quantity : item.quantity + 1 };
+        }
+      }
+      return item;
+    });
+
+    setSelectedMenus(newSelectedMenus);
+  };
+
+  const clickMinusButton = (id: number, quantity: number) => {
+    const newSelectedMenus = selectedMenus.map((item: any) => {
+      if (item.id === id) {
+        return { ...item, quantity };
+      }
+      return item;
+    });
+
+    setSelectedMenus(newSelectedMenus);
   };
 
   useEffect(() => {
@@ -230,29 +276,36 @@ const CartSheet = () => {
             필수옵션
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
-            {cartSheetObj?.main.map((option: any, index: number) => (
-              <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />
-            ))}
+            {cartSheetObj?.details.map((option: any, index: number) => {
+              if (option.main) {
+                return <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />;
+              }
+            })}
           </Select>
         </MainOption>
         <OptionalOption>
-          {cartSheetObj?.secondary.length > 0 ? (
-            <>
-              <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
-                선택옵션
-              </TextH5B>
-              <Select placeholder="선택옵션" type={'optional'}>
-                {cartSheetObj?.secondary.map((option: any, index: number) => (
-                  <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />
-                ))}
-              </Select>
-            </>
-          ) : null}
+          <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
+            선택옵션
+          </TextH5B>
+          <Select placeholder="선택옵션" type={'optional'}>
+            {cartSheetObj?.details.map((option: any, index: number) => {
+              if (!option.main) {
+                return <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />;
+              }
+            })}
+          </Select>
         </OptionalOption>
         {selectedMenus.length > 0 ? (
           <SelectedCartItemContainer>
             {selectedMenus.map((menu: any, index: number) => (
-              <CartSheetItem menu={menu} key={index} padding="16px" removeCartItemHandler={removeCartItemHandler} />
+              <CartSheetItem
+                menu={menu}
+                key={index}
+                padding="16px"
+                removeCartItemHandler={removeCartItemHandler}
+                clickPlusButton={clickPlusButton}
+                clickMinusButton={clickMinusButton}
+              />
             ))}
           </SelectedCartItemContainer>
         ) : null}

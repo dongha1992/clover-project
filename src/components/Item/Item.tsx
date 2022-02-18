@@ -23,7 +23,6 @@ const Item = ({ item, isQuick = false }: TProps) => {
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    /* TODO: thunk로? */
     dispatch(SET_CART_SHEET_OBJ(item));
     dispatch(
       SET_BOTTOM_SHEET({
