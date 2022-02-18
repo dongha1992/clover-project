@@ -47,21 +47,12 @@ const TextArea = React.forwardRef(
     }: ITextAreaProps,
     ref: React.ForwardedRef<HTMLTextAreaElement>
   ) => {
-    const debounceChangeEvent = debounce(
-      (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-        eventHandler && eventHandler(e);
-      },
-      10
-    );
+    const debounceChangeEvent = debounce((e: React.ChangeEvent<HTMLTextAreaElement>): void => {
+      eventHandler && eventHandler(e);
+    }, 10);
 
     return (
-      <Container
-        width={width}
-        height={height}
-        size={size}
-        padding={padding}
-        margin={margin}
-      >
+      <Container width={width} height={height} size={size} padding={padding} margin={margin}>
         <textarea
           style={style}
           defaultValue={value}
@@ -79,6 +70,8 @@ const TextArea = React.forwardRef(
     );
   }
 );
+
+TextArea.displayName = 'TextArea';
 
 TextArea.defaultProps = defaultProps as ITextAreaProps;
 
