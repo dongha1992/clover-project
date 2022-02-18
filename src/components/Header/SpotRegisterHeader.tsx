@@ -5,18 +5,18 @@ import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
-import { useSelector} from 'react-redux';
+import { SET_ALERT } from '@store/alert';
+import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { putSpotsRegistrationsTemporary } from '@api/spot';
 import { IEditRegistration } from '@model/index';
 
 interface IProps {
   title?: string;
-};
+}
 
 // 이번 스텝에선 빠지는 페이지 '임시저장'
-// 런칭 이후에 추가될수도 있기 때문에 남겨 놓습니다. 
+// 런칭 이후에 추가될수도 있기 때문에 남겨 놓습니다.
 
 const SpotRegisterHeader = ({ title }: IProps) => {
   const { spotLocation, spotsRegistrationInfo, spotsRegistrationOptions } = useSelector(spotSelector);
@@ -60,23 +60,25 @@ const SpotRegisterHeader = ({ title }: IProps) => {
   //     };
   //   }catch(err){
   //     console.error(err);
-  //   };  
+  //   };
   // };
 
   const clickTemporarySave = (): void => {
-    const TitleMsg = !checkAddressInfo ? `주소/장소명(상호명)을 입력해야\n임시저장 기능을 사용할 수 있어요!` : `필수 정보를 모두 입력해야\n신청이 완료됩니다.` ;
-    const SubMsg = !checkAddressInfo ? '' :`[마이페이지>스팟 관리]에서 업데이트할 수 있어요.`;
+    const TitleMsg = !checkAddressInfo
+      ? `주소/장소명(상호명)을 입력해야\n임시저장 기능을 사용할 수 있어요!`
+      : `필수 정보를 모두 입력해야\n신청이 완료됩니다.`;
+    const SubMsg = !checkAddressInfo ? '' : `[마이페이지>스팟 관리]에서 업데이트할 수 있어요.`;
     // 주소와 장소명을 입력해야만 임시저장이 가능함
-    if(checkAddressInfo){
+    if (checkAddressInfo) {
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: TitleMsg,
           alertSubMessage: SubMsg,
           // onSubmit: () => {checkAddressInfo ? putRegistrationsFetch() : null},
           submitBtnText: '확인',
           closeBtnText: '취소',
         })
-      );  
+      );
     }
   };
 
@@ -86,12 +88,14 @@ const SpotRegisterHeader = ({ title }: IProps) => {
         <div className="arrow" onClick={goBack}>
           <SVGIcon name="arrowLeft" />
         </div>
-        <TextH4B margin='0 0 0 23px'>{title}</TextH4B>
-        <TextH5B onClick={clickTemporarySave} pointer>임시저장</TextH5B>
+        <TextH4B margin="0 0 0 23px">{title}</TextH4B>
+        <TextH5B onClick={clickTemporarySave} pointer>
+          임시저장
+        </TextH5B>
       </Wrapper>
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   position: relative;
@@ -129,6 +133,5 @@ const Wrapper = styled.div`
     }
   }
 `;
-
 
 export default React.memo(SpotRegisterHeader);

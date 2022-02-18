@@ -201,7 +201,7 @@ export const fixedBottom = css`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 0;
+    left: 0px;
   `};
 
   ${({ theme }) => theme.mobile`

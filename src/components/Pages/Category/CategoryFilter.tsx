@@ -4,7 +4,7 @@ import { homePadding } from '@styles/theme';
 import { TextH6B, TextH3B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import dynamic from 'next/dynamic';
 
 const MenuFilter = dynamic(() => import('@components/Filter/MenuFilter'));
@@ -14,7 +14,7 @@ const CategoryFilter = ({ title }: any) => {
 
   const clickFilterHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <MenuFilter />,
       })
     );

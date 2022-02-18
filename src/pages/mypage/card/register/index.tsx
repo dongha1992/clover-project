@@ -9,7 +9,7 @@ import TextInput from '@components/Shared/TextInput';
 import { IRegisterCard } from '@model/index';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { registerCard, getMainCardLists } from '@api/card';
 import dynamic from 'next/dynamic';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
@@ -175,7 +175,7 @@ const CardRegisterPage = () => {
   const selectMainCardHandler = () => {
     if (!hasMainCard) {
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: '첫번째 카드 등록 시 대표 카드 설정은 필수입니다. ',
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -251,7 +251,7 @@ const CardRegisterPage = () => {
         const { data } = await mutateAddCard(cardData);
         if (data.code === 200) {
           dispatch(
-            setAlert({
+            SET_ALERT({
               alertMessage: successMsg,
               submitBtnText: '확인',
               onSubmit: () => router.push('/mypage/card'),
@@ -260,7 +260,7 @@ const CardRegisterPage = () => {
         }
       } catch (error) {
         dispatch(
-          setAlert({
+          SET_ALERT({
             alertMessage: disabledMsg,
             submitBtnText: '확인',
           })
