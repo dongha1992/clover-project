@@ -16,12 +16,8 @@ const customServicePage = () => {
       <FlexCol margin="0">
         <TextH5B>고객센터</TextH5B>
         <TimeInfoWrapper>
-          <TextB2R color={theme.greyScale65}>
-            평일 9:00 - 18:00 (점심시간 13:00 - 14:00)
-          </TextB2R>
-          <TextB2R color={theme.greyScale65}>
-            토요일 9:00 - 13:00 (홈페이지 채팅문의만 운영)
-          </TextB2R>
+          <TextB2R color={theme.greyScale65}>평일 9:00 - 18:00 (점심시간 13:00 - 14:00)</TextB2R>
+          <TextB2R color={theme.greyScale65}>토요일 9:00 - 13:00 (홈페이지 채팅문의만 운영)</TextB2R>
           <TextB2R color={theme.greyScale65}>공휴일 휴무</TextB2R>
         </TimeInfoWrapper>
         <ButtonWrapper>
@@ -41,7 +37,7 @@ const Container = styled.div`
 `;
 
 const PaddingWrapper = styled.div`
-  padding-top: 24px;
+  /* padding-top: 24px; */
 `;
 
 const TimeInfoWrapper = styled.div`

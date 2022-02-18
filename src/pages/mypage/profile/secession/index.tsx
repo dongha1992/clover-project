@@ -16,14 +16,13 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const SecessionPage = () => {
+  const dispatch = useDispatch();
   const [isSelected, setIsSelected] = useState<string>('');
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isTextArea, setIsTextArea] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [answerDetail, setAnswerDetail] = useState<string>('');
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const dispatch = useDispatch();
 
   const { mutate: mutateUserSecession } = useMutation((data: ISecessionRequest) => userSecession(data), {
     onSuccess: (data) => {
@@ -51,9 +50,9 @@ const SecessionPage = () => {
   const onSecession = () => {
     if (!disabled) {
       const data = {
-        question: '탈퇴 이유',
         answer: isSelected,
         answerDetail,
+        question: '탈퇴 이유',
       };
       mutateUserSecession(data);
     }

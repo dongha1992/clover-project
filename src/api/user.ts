@@ -41,7 +41,7 @@ export const signup = (data: ISignupUser): Promise<AxiosResponse<ISignupResponse
 };
 
 export const userSecession = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
-  return Api.delete('/user/v1/users', data);
+  return Api.delete('/user/v1/users', { data });
 };
 
 export const userRefreshToken = (refreshToken: string): Promise<AxiosResponse<ILoginResponse>> => {
