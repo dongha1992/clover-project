@@ -23,6 +23,7 @@ import 'swiper/css';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { spotSelector } from '@store/spot';
+import { destinationForm } from '@store/destination';
 
 const FCO_SPOT_BANNER = [
   {
@@ -50,8 +51,9 @@ const FCO_SPOT_BANNER = [
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { user } = useSelector(userForm);
+  const { user, isLoginSuccess} = useSelector(userForm);
   const { spotsPosition } = useSelector(spotSelector);
+  const { userLocation } = useSelector(destinationForm);
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
@@ -75,7 +77,7 @@ const SpotPage = () => {
       const response = await getStationSpots(params);
       return response.data.data;
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const { data: newSpotList } = useQuery(
@@ -89,7 +91,7 @@ const SpotPage = () => {
       const response = await getNewSpots(params);
       return response.data.data;
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const { data: eventSpotList } = useQuery(
@@ -103,7 +105,7 @@ const SpotPage = () => {
       const response = await getSpotEvent(params);
       return response.data.data;
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const { data: popularSpotList } = useQuery(
@@ -117,7 +119,7 @@ const SpotPage = () => {
       const response = await getSpotPopular(params);
       return response.data.data;
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   useEffect(() => {
@@ -177,7 +179,7 @@ const SpotPage = () => {
   return (
     <Container>
       <HeaderTitle>
-        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}<span>{user.name}</span>님을 기다려요!</TextH2B>
+        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}{isLoginSuccess? <span>{user.name}</span> : '회원'}님을 기다려요!</TextH2B>
       </HeaderTitle>
       <RegistrationsCTAWrapper>
         <RegistrationCTA onClick={goToRegiList}>
@@ -187,87 +189,90 @@ const SpotPage = () => {
           </FlexCenter>
         </RegistrationCTA>
       </RegistrationsCTAWrapper>
-      <TopCTASlider
-        className='swiper-container'
-        slidesPerView={"auto"}
-        spaceBetween={15}
-        speed={500}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
-      >
-        {
-          /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
-          registrationsLen && (
-            <SwiperSlide className='swiper-slide'>
-              <BoxHandlerWrapper onClick={goToShare}>
-                <FlexBetween height="92px" padding="22px">
-                  <TextH4B>
-                    {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
-                    <span>{`${
-                      5 - info?.recruitingSpotRegistrations[0].recruitingCount
-                    }`}</span>
-                    명만 더 주문 하면 정식오픈 돼요!
-                  </TextH4B>
-                  <IconWrapper>
-                    <SVGIcon name="blackCircleShare" />
-                  </IconWrapper>
-                </FlexBetween>
-              </BoxHandlerWrapper>
-            </SwiperSlide>
-          )
-        }
-        {
-          /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-          registrationsLen && (
-            <SwiperSlide className='swiper-slide'>
-              <BoxHandlerWrapper onClick={goToShare}>
-                <FlexBetween height="92px" padding="22px">
-                  <TextH4B>
-                    {`[${info?.recruitingSpotRegistrations[0].placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
-                  </TextH4B>
-                  <IconWrapper>
-                    <SVGIcon name="blackCircleShare" />
-                  </IconWrapper>
-                </FlexBetween>
-              </BoxHandlerWrapper>
-            </SwiperSlide>
-          )
-        }
-        {
-          /* 작성중인 스팟 신청서가 있는 경우 노출 */
-          unsubmitSpotRegistrationsLen && (
-            <SwiperSlide className='swiper-slide'>
-              <BoxHandlerWrapper onClick={goToSpotStatus}>
-                <FlexBetween height="92px" padding="22px">
-                  <TextH4B>
-                    {'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}
-                  </TextH4B>
-                  <IconWrapper>
-                    <SVGIcon name="blackCirclePencil" />
-                  </IconWrapper>
-                </FlexBetween>
-              </BoxHandlerWrapper>
-            </SwiperSlide>
-          )
-        }
-        {
-          /* 내가 참여한 스팟 알림 카드*/
-          trialRegistrationsLen && (
-            <SwiperSlide className='swiper-slide'>
-              <BoxHandlerWrapper onClick={goToSpotStatus}>
-                <FlexBetween height="92px" padding="22px">
-                  <TextH4B>
-                    {'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}
-                  </TextH4B>
-                  <IconWrapper>
-                    <SVGIcon name="blackCircleShare" />
-                  </IconWrapper>
-                </FlexBetween>
-              </BoxHandlerWrapper>
-            </SwiperSlide>
-          )
-        }
-      </TopCTASlider>
+      {
+        isLoginSuccess &&
+        <TopCTASlider
+          className='swiper-container'
+          slidesPerView={"auto"}
+          spaceBetween={15}
+          speed={500}
+          onSwiper={(swiper) => console.log(swiper)}
+          onSlideChange={() => console.log("slide change")}
+        >
+          {
+            /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
+            registrationsLen && (
+              <SwiperSlide className='swiper-slide'>
+                <BoxHandlerWrapper onClick={goToShare}>
+                  <FlexBetween height="92px" padding="22px">
+                    <TextH4B>
+                      {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
+                      <span>{`${
+                        5 - info?.recruitingSpotRegistrations[0].recruitingCount
+                      }`}</span>
+                      명만 더 주문 하면 정식오픈 돼요!
+                    </TextH4B>
+                    <IconWrapper>
+                      <SVGIcon name="blackCircleShare" />
+                    </IconWrapper>
+                  </FlexBetween>
+                </BoxHandlerWrapper>
+              </SwiperSlide>
+            )
+          }
+          {
+            /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
+            registrationsLen && (
+              <SwiperSlide className='swiper-slide'>
+                <BoxHandlerWrapper onClick={goToShare}>
+                  <FlexBetween height="92px" padding="22px">
+                    <TextH4B>
+                      {`[${info?.recruitingSpotRegistrations[0].placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
+                    </TextH4B>
+                    <IconWrapper>
+                      <SVGIcon name="blackCircleShare" />
+                    </IconWrapper>
+                  </FlexBetween>
+                </BoxHandlerWrapper>
+              </SwiperSlide>
+            )
+          }
+          {
+            /* 작성중인 스팟 신청서가 있는 경우 노출 */
+            unsubmitSpotRegistrationsLen && (
+              <SwiperSlide className='swiper-slide'>
+                <BoxHandlerWrapper onClick={goToSpotStatus}>
+                  <FlexBetween height="92px" padding="22px">
+                    <TextH4B>
+                      {'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}
+                    </TextH4B>
+                    <IconWrapper>
+                      <SVGIcon name="blackCirclePencil" />
+                    </IconWrapper>
+                  </FlexBetween>
+                </BoxHandlerWrapper>
+              </SwiperSlide>
+            )
+          }
+          {
+            /* 내가 참여한 스팟 알림 카드*/
+            trialRegistrationsLen && (
+              <SwiperSlide className='swiper-slide'>
+                <BoxHandlerWrapper onClick={goToSpotStatus}>
+                  <FlexBetween height="92px" padding="22px">
+                    <TextH4B>
+                      {'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}
+                    </TextH4B>
+                    <IconWrapper>
+                      <SVGIcon name="blackCircleShare" />
+                    </IconWrapper>
+                  </FlexBetween>
+                </BoxHandlerWrapper>
+              </SwiperSlide>
+            )
+          }
+        </TopCTASlider>
+      }
       {/* 근처 인기있는 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
       <SpotsSlider
@@ -414,7 +419,7 @@ const Container = styled.main`
 `;
 
 const TopCTASlider = styled(Swiper)`
-  padding: 0 24px;
+  padding: 48px 24px 0 24px;
   .swiper-slide{
     width: 100%;
   }
@@ -447,7 +452,7 @@ const HeaderTitle = styled.div`
 `;
 
 const RegistrationsCTAWrapper = styled.article`
-  padding: 18px 24px 48px 24px;
+  padding: 18px 24px 0 24px;
 `;
 
 
