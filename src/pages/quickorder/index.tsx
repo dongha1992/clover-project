@@ -31,7 +31,7 @@ const QuickOrderPage = () => {
 
   /* 목업 데이터 로직 */
   useEffect(() => {
-    axios.get(`${BASE_URL}`).then(({ data }) => {
+    axios.get(`${BASE_URL}/itemList`).then(({ data }) => {
       setItemList(data.data);
     });
   }, []);

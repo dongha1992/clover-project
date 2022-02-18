@@ -54,7 +54,7 @@ const WriteReviewPage = ({ menuId }: any) => {
   }, []);
 
   const getItemForReview = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
     const selectedItem: any = data.data.find((item: any) => item.id === Number(menuId));
     setItem(selectedItem);
   };

@@ -30,7 +30,7 @@ const PaymentFinishPage = () => {
   }, []);
 
   const getCartList = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
+    const { data } = await axios.get(`${BASE_URL}/cartList`);
     setItemList(data.data);
   };
 

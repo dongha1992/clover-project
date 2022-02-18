@@ -140,7 +140,8 @@ const CartPage = () => {
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
   const getLists = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
+    const { data } = await axios.get(`${BASE_URL}/cartList`);
+    console.log(data, 'Dd');
     setItemList(data.data);
   };
 
@@ -197,8 +198,6 @@ const CartPage = () => {
   };
 
   const removeItemHandler = async () => {
-    const message = await axios.post(`${BASE_URL}`);
-    console.log(message);
     dispatch(
       SET_ALERT({
         alertMessage: '선택을 상품을 삭제하시겠어요?',
