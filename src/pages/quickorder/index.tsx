@@ -99,7 +99,7 @@ const Container = styled.main`
 const GreetingArticle = styled.article`
   display: flex;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 24px 24px 0;
   margin-bottom: 30px;
 `;
 const TextBox = styled.div`

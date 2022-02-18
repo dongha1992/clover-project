@@ -145,7 +145,10 @@ const ProfilePage = () => {
     setChcekGender(id);
   };
 
-  const getDeleteUser = async () => {};
+  const getDeleteUser = async () => {
+    // TODO : 정기배송, 주문, 후불결제 등 서비스이용이 남은 경우 탈퇴불가처리 해야됨
+    router.push('/mypage/profile/secession');
+  };
 
   const goToChangePassword = () => {
     router.push('/mypage/profile/password');
