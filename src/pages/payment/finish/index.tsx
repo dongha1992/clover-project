@@ -31,7 +31,7 @@ const PaymentFinishPage = () => {
 
   const getCartList = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    setItemList(data.data);
   };
 
   const showSectionHandler = (): void => {

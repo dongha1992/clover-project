@@ -35,7 +35,7 @@ const SearchPage = () => {
 
   const getBanners = async () => {
     const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    setItemList(data.data);
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

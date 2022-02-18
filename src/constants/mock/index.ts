@@ -4,8 +4,7 @@ export const SEARCH_RESULT = [
   { main: '전북 임실군 성수면', sub: '관련주소: 도인리, 봉강리, 상봉리' },
 ];
 
-export const BASE_URL =
-  'https://gist.githubusercontent.com/dongha1992/7780e6a89c3feb8ffab266a8b9e34f12/raw/ffdfaf8b12265c90f11c84437859f089274d1fbf/items.json';
+export const BASE_URL = 'http://localhost:3000/api/cart-test';
 
 export const REVIEWS_URL = 'https://jsonplaceholder.typicode.com';
 
