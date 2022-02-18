@@ -49,6 +49,7 @@ const Header = () => {
         '/mypage/profile/confirm': '회원정보 수정',
         '/mypage/profile/dormant': '회원정보 수정',
         '/mypage/profile': '회원정보 수정',
+        '/mypage/profile/secession': '회원탈퇴',
         '/mypage/dib/general': '찜 관리',
         '/mypage/friend': '친구 초대',
         '/mypage/review': '후기 관리',
