@@ -302,8 +302,8 @@ export interface IKakaoLatLon {
 }
 
 export interface IParamsSpots {
-  latitude: string | null;
-  longitude: string | null;
+  latitude: number | null;
+  longitude: number | null;
   page?: number;
   size?: number;
   keyword?: string;
@@ -385,6 +385,43 @@ export interface ISpots {
       stories: [];
     }
   ];
+}
+
+export interface ISpotsItems {
+  id: number;
+  lunchDeliveryStartTime: string;
+  lunchDeliveryEndTime: string;
+  dinnerDeliveryStartTime: string;
+  dinnerDeliveryEndTime: string;
+  name: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  distance: number;
+  distanceUnit: string;
+  isTrial: boolean;
+  isEvent: boolean;
+  images: [
+    {
+      url: string;
+    }
+  ];
+  type: string;
+  canDinnerDelivery: boolean;
+  canEat: boolean;
+  canLunchDelivery: boolean;
+  canParking: boolean;
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
+  discountRate: number;
+  placeType: string;
+  score: number;
+  userCount: number;
 }
 
 export interface ISpotsDetail {

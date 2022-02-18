@@ -6,38 +6,13 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
-
-export interface ISpotItem {
-  id: number;
-  name: string;
-  address: string;
-  meter: string;
-  type: string;
-  availableTime: string;
-  spaceType: string;
-  url: string;
-  method: string;
-}
-
-export interface ISpotsItems {
-  lunchDeliveryStartTime: string;
-  lunchDeliveryEndTime: string;
-  dinnerDeliveryStartTime: string;
-  dinnerDeliveryEndTime: string;
-  name: string;
-  location: {
-    address: string;
-    addressDetail: string;
-  };
-  distance: number;
-  isTrial: boolean;
-  images: [
-    {
-      url: string;
-    }
-  ];
-  type: string;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { SET_SPOT_PICKUP_SELECTED } from '@store/spot';
+import { ISpotsItems } from '@model/index';
+import { useRouter } from 'next/router';
+import { cartForm } from '@store/cart';
+import { userForm } from '@store/user';
+import { destinationForm } from '@store/destination';
 
 interface IProps {
   item: ISpotsItems;
@@ -45,7 +20,16 @@ interface IProps {
   mapList?: boolean;
 }
 
+// 스팟 검색 - 검색 결과
 const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { cartLists } = useSelector(cartForm);
+  const { isLoginSuccess} = useSelector(userForm);
+  const { userLocation } = useSelector(destinationForm);
+  
+  const userLocationLen = !!userLocation.emdNm?.length;
+
   const typeTag = (): string => {
     const type = item.type;
     switch (type) {
@@ -58,6 +42,22 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
     }
   };
 
+  const orderHandler = () => {
+    if(isLoginSuccess){
+      if(cartLists.length) {
+        // 로그인o and 장바구니 담겨짐
+        dispatch(SET_SPOT_PICKUP_SELECTED(item));
+        router.push('/cart');
+      }else{
+        // 로그인o and 장바구니 비었음
+        router.push('/search');
+      }
+    }else{
+      // 로그인x
+      router.push('/onboarding');
+    }
+  };
+
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   return (
@@ -66,8 +66,13 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
         <MeterAndTime>
-          <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-          <Col />
+          {
+            userLocationLen &&
+            <>
+              <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+              <Col />
+            </>
+          }
           <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
             픽업
           </TextH6B>
@@ -91,7 +96,7 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
         <ImageWrapper mapList>
           <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
         </ImageWrapper>
-        <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={onClick}>
+        <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={orderHandler}>
           주문하기
         </Button>
       </FlexCol>
@@ -112,7 +117,6 @@ const Container = styled.section<{ mapList: boolean }>`
         max-width: ${breakpoints.desktop}px;
         max-width: ${breakpoints.mobile}px;
         height: 146px;
-        padding: 16px;
         border-radius: 8px;
       `;
     }
@@ -125,12 +129,14 @@ const MeterAndTime = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ mapList: boolean }>`
-  width: 80px;
-  padding-left: 15px;
+  width: 70px;
+  margin-left: 15px;
+  border-radius: 8px;
   ${({ mapList }) => {
     if (mapList) {
       return css`
         margin-bottom: 10px;
+        
       `;
     }
   }}

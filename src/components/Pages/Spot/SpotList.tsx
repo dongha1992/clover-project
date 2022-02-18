@@ -4,17 +4,21 @@ import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@component
 import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setAlert } from '@store/alert';
+import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { INormalSpots } from '@model/index';
+import { INormalSpots, ISpotsItems } from '@model/index';
 import {
   getSpotLike,
   postSpotRegistrationsRecruiting,
  } from '@api/spot';
 import { useQuery } from 'react-query';
 import { useDeleteLike, useOnLike } from 'src/query';
+import { cartForm } from '@store/cart';
+import { SET_SPOT_PICKUP_SELECTED } from '@store/spot';
+import { destinationForm } from '@store/destination';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -22,27 +26,50 @@ import { useDeleteLike, useOnLike } from 'src/query';
 interface IProps {
   list: INormalSpots;
   type: string;
+  isSearch: boolean;
 }
 
-const SpotList = ({ list, type }: IProps): ReactElement => {
+const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { isLoginSuccess} = useSelector(userForm);
+  const { cartLists } = useSelector(cartForm);
+  const { userLocation } = useSelector(destinationForm);
+
   const { showToast, hideToast } = useToast();
-  const [mouseMoved, setMouseMoved] = useState(false);
   const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
   // const [registrations, setRegistrations] = useState<boolean>();
+
+  const userLocationLen = !!userLocation.emdNm?.length;
+
   const goToDetail = (id: number): void => {
-    if (!mouseMoved) {
-      router.push(`/spot/detail/${id}`);
+    if(isSearch){
+      return;
+    };
+    router.push(`/spot/detail/${id}`);
+  };
+
+  const orderHandler = (e: any): void => {
+    e.stopPropagation();
+    if(isLoginSuccess){
+      if(cartLists.length) {
+        // 로그인o and 장바구니 담겨짐
+        dispatch(SET_SPOT_PICKUP_SELECTED(list));
+        router.push('/cart');
+      }else{
+        // 로그인o and 장바구니 비었음
+        router.push('/search');
+      }
+    }else{
+      // 로그인x
+      router.push('/onboarding');
     }
   };
 
-  const goToCart = (e: any): void => {
-    e.stopPropagation();
-    router.push('/cart');
-  };
-
   const { data: spotLiked, refetch } = useQuery(['spotLike', list?.id], async () => {
+    if(isSearch){
+      return;
+    };
     if (list?.id) {
       const response = await getSpotLike(list?.id);
       return response.data.data.liked;
@@ -96,11 +123,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       // 오늘 점심, 신규, 역세권 스팟
       case 'normal':
         return (
-          <Container type="normal">
-            
+          <Container type="normal">   
             <StorImgWrapper
-              // onMouseMove={() => setMouseMoved(true)}
-              // onMouseDown={() => setMouseMoved(false)}
               onClick={() => goToDetail(list.id)}
             >
               <Tag>
@@ -113,10 +137,11 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <TextB3R margin="8px 0 0 0" color={theme.black}>
                 {list?.name}
               </TextB3R>
-              <TextH6B
-                color={theme.greyScale65}
-              >{`${Math.round(list?.distance)}m`}</TextH6B>
-              
+              {
+                // 유저 위치정보 있을때 노출
+                userLocationLen &&               
+                  <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+              }
               <LikeWrapper type="normal" onClick={(e)=> hanlderLike(e)}>
                 <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB2R padding="4px 0 0 1px">{list?.likeCount}</TextB2R>
@@ -129,9 +154,13 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
         return (
           <Container type="event">
             <StorImgWrapper onClick={() => goToDetail(list.id)}>
-              <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
-                <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
-              </LikeWrapper>
+              {
+                !isSearch && (
+                  <LikeWrapper type="event" onClick={(e)=> hanlderLike(e)}>
+                    <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
+                  </LikeWrapper>  
+                )
+              }
               <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
@@ -142,10 +171,12 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 </TextH6B>
               </div>
               <ButtonWrapper>
-                <TextH6B
-                  color={theme.greyScale65}
-                >{`${Math.round(list?.distance)}m`}</TextH6B>
-                <Button onClick={goToCart}>주문하기</Button>
+                {
+                  // 유저 위치정보 있을때 노출
+                  userLocationLen &&
+                    <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+                }
+                <Button onClick={orderHandler}>주문하기</Button>
               </ButtonWrapper>
             </LocationInfoWrapper>
           </Container>
@@ -167,7 +198,11 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 <TextH5B margin="8px 0 0 0" color={theme.black}>
                   {list?.placeName}
                 </TextH5B>
-                <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+                {
+                  // 유저 위치정보 있을때 노출
+                  userLocationLen &&
+                    <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+                }
               </TextWrapper>
               <Button onClick={() => clickSpotOpen(list?.id)}>{spotRegisteration ? '참여완료' : '참여하기'}</Button>
             </LocationInfoWrapper>
@@ -177,7 +212,6 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
         return null;
     }
   };
-
   return <>{SpotsListTypeRender()}</>;
 };
 

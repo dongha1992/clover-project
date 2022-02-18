@@ -31,21 +31,31 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
       );
     }
   };
+
+  const goToSpotsRegistrations = () => {
+    router.push('/spot/regi-list');
+  };
+
   return (
     <>
-      <FilterRow>
-        <TextH5B>검색결과 {searchResult.length}개</TextH5B>
-        <FilterWrapper onClick={clickFilterHandler}>
-          <SVGIcon name="filter" />
-          <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
-        </FilterWrapper>
-      </FilterRow>
+    {
+      !!searchResult.length && (
+        <FilterRow>
+          <TextH5B>검색결과 {searchResult.length}개</TextH5B>
+          <FilterWrapper onClick={clickFilterHandler}>
+            <SVGIcon name="filter" />
+            <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
+          </FilterWrapper>
+        </FilterRow>
+      )
+    }
       <ItemListWrapper isSpot={isSpot}>
-        {searchResult.length > 0 ? (
+        {searchResult.length ? (
           searchResult.map((item: any, index: number) => {
             return !isSpot ? (
               <Item item={item} key={index} />
             ) : (
+              // 스팟 검색 결과 리스트
               <SpotRecentSearch item={item} key={index} onClick={goToOrder} />
             );
           })
@@ -61,10 +71,10 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
                 color={theme.black}
                 border
               >
-                지도로 주변 스팟 찾기
+                지도로 주변 프코스팟 찾기
               </Button>
-              <Button backgroundColor={theme.white} color={theme.black} border>
-                나의 회사•학교를 프코스팟으로 신청하기
+              <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
+                직접 프코스팟 신청하기
               </Button>
             </NoResult>
           </NoResultWrapper>
