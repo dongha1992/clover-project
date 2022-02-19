@@ -100,15 +100,6 @@ const otherDeliveryInfo: IOtherDeliveryInfo[] = [
 
 const disabledDates = ['2022-02-21', '2022-02-22'];
 
-/* TODO: 체크 상태 관리
- *
- * 현재 isAllChecked 초기값 true 설정 후 useEffect에서 isAllChecked에 따라 cartItemList의 id 값을 checkedMenuList에 넣어줌
- * 1. cartItemList 갱신 후 allChecked로 변경하는 로직의 경우 1-1 문제 발생
- * 1-1. quantity가 변경될 때 마다 서버 콜 후 refetch를 하면서 cartItemList 갱신됨 -> check 안 한 상태에서 quantity 변경 시 refetch되면서 다시 checked가 됨
- * 2. 현재의 방법으로는 동작이 되지만 플로우가 복잡한 느낌
- *
- ******/
-
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<any[]>([]);
   const [itemList, setItemList] = useState<any[]>([]);
@@ -152,7 +143,7 @@ const CartPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { isLoading } = useQuery(
+  const { data: queryCartList, isLoading } = useQuery(
     'getCartList',
     async () => {
       const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
@@ -161,6 +152,7 @@ const CartPage = () => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
       onSuccess: (data) => {
         setCartItemList(data);
       },
@@ -176,20 +168,20 @@ const CartPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { mutateAsync: mutateItemQuantity } = useMutation(
+  const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
       const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
     },
     {
       onSuccess: async () => {
         // Q. invalidateQueries랑 refetchQueries 차이
-        await queryClient.invalidateQueries('getCartList');
-        // await queryClient.refetchQueries('getCartList');
+        // await queryClient.invalidateQueries('getCartList');
+        await queryClient.refetchQueries('getCartList');
       },
     }
   );
 
-  const { mutateAsync: mutateDeleteItem } = useMutation(
+  const { mutate: mutateDeleteItem } = useMutation(
     async () => {
       const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuList });
     },
@@ -403,16 +395,25 @@ const CartPage = () => {
   }, [calendarRef.current?.offsetTop]);
 
   useEffect(() => {
-    if (checkedMenuList.length === cartItemList.length) {
+    // 선택 메뉴 다 선택 시 all checked, 전체 삭제 하면 전체 선택 풀림
+    if (cartItemList.length > 0 && checkedMenuList.length === cartItemList.length) {
       setIsAllchecked(true);
+    } else if (cartItemList.length === 0) {
+      setIsAllchecked(false);
     }
-  }, [checkedMenuList]);
+  }, [checkedMenuList, cartItemList]);
 
   useEffect(() => {
-    if (isAllChecked) {
-      setCheckedMenuList(cartItemList.map((item) => item.id));
+    // 전체 선택 시 선택 메뉴 다 선택됨
+    if (isAllChecked && !isLoading) {
+      setCheckedMenuList(cartItemList.map((item: any) => item.id));
     }
-  }, [isLoading]);
+  }, [isLoading, cartItemList]);
+
+  useEffect(() => {
+    // 초기 렌더 1회 전체 선택
+    setIsAllchecked(true);
+  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
