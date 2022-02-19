@@ -202,6 +202,16 @@ const CartPage = () => {
         setIsAllchecked(!isAllChecked);
       }
     } else {
+      const checkIsSoldout = cartItemList.find((item) => {
+        if (item.soldout) {
+          return item.id === id;
+        }
+      });
+
+      if (checkIsSoldout) {
+        return;
+      }
+
       tempCheckedMenuList.push(id);
     }
 
@@ -209,7 +219,7 @@ const CartPage = () => {
   };
 
   const handleSelectAllCartItem = useCallback(() => {
-    const checkedMenuId = cartItemList.map((item: any) => item.id);
+    const checkedMenuId = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
 
     if (!isAllChecked) {
       setCheckedMenuList(checkedMenuId);
@@ -405,8 +415,11 @@ const CartPage = () => {
 
   useEffect(() => {
     // 전체 선택 시 선택 메뉴 다 선택됨
+    let tempCheckMenuList = [];
+
     if (isAllChecked && !isLoading) {
-      setCheckedMenuList(cartItemList.map((item: any) => item.id));
+      tempCheckMenuList = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
+      setCheckedMenuList(tempCheckMenuList);
     }
   }, [isLoading, cartItemList]);
 
