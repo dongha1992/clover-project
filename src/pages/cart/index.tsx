@@ -24,7 +24,7 @@ import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
+import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
@@ -34,7 +34,6 @@ import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliveryS
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { identity } from 'lodash-es';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -138,12 +137,12 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { isFromDeliveryPage } = useSelector(cartForm);
+  const { isFromDeliveryPage, cartLists } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
   const queryClient = useQueryClient();
-
-  const { data: queryCartList, isLoading } = useQuery(
+  console.log(cartLists, 'cartLists');
+  const { isLoading } = useQuery(
     'getCartList',
     async () => {
       const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
@@ -154,7 +153,10 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
       cacheTime: 0,
       onSuccess: (data) => {
+        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
         setCartItemList(data);
+        dispatch(INIT_CART_LISTS());
+        dispatch(SET_CART_LISTS(data));
       },
     }
   );
@@ -164,10 +166,15 @@ const CartPage = () => {
     async () => {
       const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
       setItemList(data.data);
+      return data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
+  /* TODO: 동일 기능 useMutation 복붙 하고 있음*/
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
       const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });

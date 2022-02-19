@@ -16,14 +16,13 @@ import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import calculateArrival from '@utils/calculateArrival';
 import getCustomDate from '@utils/getCustomDate';
-import { filter, map, flow } from 'lodash/fp';
+import { filter, map, flow, countBy, includes, pluck, pipe } from 'lodash/fp';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 import 'dayjs/locale/ko';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { Item } from '@components/Item';
 
 dayjs.locale('ko');
 
@@ -60,17 +59,33 @@ const CartSheet = () => {
   const { showToast } = useToast();
 
   const dispatch = useDispatch();
-  const { cartSheetObj } = useSelector(cartForm);
+  const { cartSheetObj, cartLists } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
 
   const queryClient = useQueryClient();
 
+  const { mutate: mutateItemQuantity } = useMutation(
+    async (params: { menuDetailId: number; quantity: number }) => {
+      const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
+    },
+    {
+      onSuccess: async () => {
+        // Q. invalidateQueries랑 refetchQueries 차이
+        // await queryClient.invalidateQueries('getCartList');
+        await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
+
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
       if (checkHasMainMenu()) {
-        const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
-        if ((data.message = 'success')) {
-          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        if (checkAlreadyInCart()) {
+        } else {
+          const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
+          if ((data.message = 'success')) {
+            showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+          }
         }
       } else {
         showToast({ message: '필수옵션을 선택해주세요.' });
@@ -218,6 +233,24 @@ const CartSheet = () => {
   const removeCartItemHandler = (id: number): void => {
     const newSelectedMenus = selectedMenus.filter((item: any) => item.id !== id);
     setSelectedMenus(newSelectedMenus);
+  };
+
+  const checkAlreadyInCart = (): boolean => {
+    const checkDuplicateItem = (inCartItem: any) => {
+      return flow(
+        map((item: any) => item.id),
+        includes(inCartItem.id)
+      )(selectedMenus);
+    };
+
+    const result = flow(
+      filter((inCartItem: any) => checkDuplicateItem(inCartItem)),
+      countBy((item: any) => item.id)
+    )(cartLists);
+
+    console.log(result, 'checkAlreadyInCart');
+
+    return true;
   };
 
   const checkHasMainMenu = (): boolean => {
