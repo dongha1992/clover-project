@@ -16,13 +16,16 @@ import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import calculateArrival from '@utils/calculateArrival';
 import getCustomDate from '@utils/getCustomDate';
-import { filter, map, flow, countBy, includes, pluck, pipe } from 'lodash/fp';
+import { filter, map, flow, countBy, includes, pluck, get } from 'lodash/fp';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { Obj } from '@model/index';
+import { UPDATE_CART_LIST } from '@store/cart';
 
 import 'dayjs/locale/ko';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
+import { onError } from '@api/Api';
 
 dayjs.locale('ko');
 
@@ -67,35 +70,52 @@ const CartSheet = () => {
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
       const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
+      if (data.message === 'success') {
+        return true;
+      }
     },
     {
-      onSuccess: async () => {
+      onSuccess: async (message) => {
         // Q. invalidateQueries랑 refetchQueries 차이
         // await queryClient.invalidateQueries('getCartList');
-        await queryClient.refetchQueries('getCartList');
+        if (message) {
+          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+          dispatch(INIT_BOTTOM_SHEET());
+          await queryClient.refetchQueries('getCartList');
+          dispatch(UPDATE_CART_LIST());
+        }
       },
     }
   );
 
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
-      if (checkHasMainMenu()) {
-        if (checkAlreadyInCart()) {
-        } else {
-          const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
-          if ((data.message = 'success')) {
-            showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-          }
-        }
+      const result = checkAlreadyInCart();
+
+      if (result.length !== 0) {
+        result.map((item: { id: number; quantity: number }) => {
+          const parmas = {
+            menuDetailId: Number(item.id),
+            quantity: item.quantity,
+          };
+          return mutateItemQuantity(parmas);
+        });
       } else {
-        showToast({ message: '필수옵션을 선택해주세요.' });
+        const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
+        if (data.message === 'success') {
+          return true;
+        }
       }
     },
     {
-      onSuccess: async () => {
-        dispatch(INIT_BOTTOM_SHEET());
-        dispatch(SET_CART_LISTS(selectedMenus));
-        await queryClient.refetchQueries('getCartList');
+      onError: () => {},
+      onSuccess: async (mssage) => {
+        if (mssage) {
+          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+          dispatch(INIT_BOTTOM_SHEET());
+          await queryClient.refetchQueries('getCartList');
+          dispatch(UPDATE_CART_LIST());
+        }
       },
     }
   );
@@ -235,7 +255,8 @@ const CartSheet = () => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  const checkAlreadyInCart = (): boolean => {
+  const checkAlreadyInCart = (): { id: number; quantity: number }[] => {
+    /*TODO: 간단하게 로직 수정 */
     const checkDuplicateItem = (inCartItem: any) => {
       return flow(
         map((item: any) => item.id),
@@ -245,12 +266,19 @@ const CartSheet = () => {
 
     const result = flow(
       filter((inCartItem: any) => checkDuplicateItem(inCartItem)),
-      countBy((item: any) => item.id)
+      map((inCartItem) => {
+        const addQuantity = selectedMenus.find((item: any) => item.id === inCartItem.id).quantity;
+        if (addQuantity) {
+          return {
+            id: inCartItem.id,
+            quantity: addQuantity + inCartItem.quantity,
+          };
+        } else {
+          return { id: inCartItem.id, quantity: inCartItem.quantity };
+        }
+      })
     )(cartLists);
-
-    console.log(result, 'checkAlreadyInCart');
-
-    return true;
+    return result;
   };
 
   const checkHasMainMenu = (): boolean => {
@@ -286,6 +314,14 @@ const CartSheet = () => {
     });
 
     setSelectedMenus(newSelectedMenus);
+  };
+
+  const addToCart = async () => {
+    if (checkHasMainMenu()) {
+      await mutateAddCartItem();
+    } else {
+      showToast({ message: '필수옵션을 선택해주세요.' });
+    }
   };
 
   useEffect(() => {
@@ -361,7 +397,7 @@ const CartSheet = () => {
           {isTimerTooltip ? <CheckTimerByDelivery isCartSheet /> : <Rolling list={rollingData} />}
         </DeliveryInforContainer>
       </OrderInfoContainer>
-      <ButtonContainer onClick={() => mutateAddCartItem()}>
+      <ButtonContainer onClick={() => addToCart()}>
         <Button height="100%" width="100%" borderRadius="0">
           장바구니에 담기
         </Button>
