@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-
+import { buildItemDataPath } from './itemList';
 function buildCartListPath() {
   return path.join(process.cwd(), 'data', 'cartList.json');
 }
@@ -20,12 +20,19 @@ export default async function handler(req: any, res: any) {
   }
 
   if (req.method === 'POST') {
-    const filePath = buildCartListPath();
-    let data = await extractData(filePath);
-    const body = req.body;
-    data = [...data.data, ...body.data];
-    await fs.writeFile(filePath, JSON.stringify({ data }));
+    const filePath = await buildItemDataPath();
+    const cartFilePath = await buildCartListPath();
+    const data = await extractData(filePath);
+    let cartData = await extractData(cartFilePath);
 
+    const { menuDetailId, quantity } = req.body.params;
+
+    let foundItem = data.data.find((item: any) => item.id === 1).details.find((item: any) => item.id === menuDetailId);
+    foundItem.quantity = quantity;
+    cartData.data = cartData.data.filter((item: any) => item.id !== foundItem.id);
+    cartData.data.push(foundItem);
+
+    await fs.writeFile(cartFilePath, JSON.stringify(cartData));
     res.status(200).send({ message: 'success' });
     return;
   }
