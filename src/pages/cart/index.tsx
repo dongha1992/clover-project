@@ -34,7 +34,7 @@ import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliveryS
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { reduce } from 'lodash-es';
+import { identity } from 'lodash-es';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -100,12 +100,20 @@ const otherDeliveryInfo: IOtherDeliveryInfo[] = [
 
 const disabledDates = ['2022-02-21', '2022-02-22'];
 
+/* TODO: 체크 상태 관리
+ *
+ * 현재 isAllChecked 초기값 true 설정 후 useEffect에서 isAllChecked에 따라 cartItemList의 id 값을 checkedMenuList에 넣어줌
+ * 1. cartItemList 갱신 후 allChecked로 변경하는 로직의 경우 1-1 문제 발생
+ * 1-1. quantity가 변경될 때 마다 서버 콜 후 refetch를 하면서 cartItemList 갱신됨 -> check 안 한 상태에서 quantity 변경 시 refetch되면서 다시 checked가 됨
+ * 2. 현재의 방법으로는 동작이 되지만 플로우가 복잡한 느낌
+ *
+ ******/
+
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<any[]>([]);
   const [itemList, setItemList] = useState<any[]>([]);
-  const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
-  const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>([]);
-  const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
+  const [checkedMenuList, setCheckedMenuList] = useState<number[]>([]);
+  const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
     {
       id: 1,
@@ -129,8 +137,8 @@ const CartPage = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState([
-    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
-    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
+    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
+    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
@@ -148,9 +156,15 @@ const CartPage = () => {
     'getCartList',
     async () => {
       const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
-      setCartItemList(data.data);
+      return data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setCartItemList(data);
+      },
+    }
   );
 
   const {} = useQuery(
@@ -159,7 +173,7 @@ const CartPage = () => {
       const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
       setItemList(data.data);
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const { mutateAsync: mutateItemQuantity } = useMutation(
@@ -168,7 +182,9 @@ const CartPage = () => {
     },
     {
       onSuccess: async () => {
-        await queryClient.refetchQueries('getCartList');
+        // Q. invalidateQueries랑 refetchQueries 차이
+        await queryClient.invalidateQueries('getCartList');
+        // await queryClient.refetchQueries('getCartList');
       },
     }
   );
@@ -176,7 +192,6 @@ const CartPage = () => {
   const { mutateAsync: mutateDeleteItem } = useMutation(
     async () => {
       const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuList });
-      console.log(data, '1');
     },
     {
       onSuccess: async () => {
@@ -201,28 +216,26 @@ const CartPage = () => {
     setCheckedMenuList(tempCheckedMenuList);
   };
 
-  const handleSelectAllCartItem = () => {
-    /*TODO: 하나 해제 했을 때 다 해제 로직 */
+  const handleSelectAllCartItem = useCallback(() => {
     const checkedMenuId = cartItemList.map((item: any) => item.id);
+
     if (!isAllChecked) {
       setCheckedMenuList(checkedMenuId);
     } else {
       setCheckedMenuList([]);
     }
     setIsAllchecked(!isAllChecked);
-  };
+  }, [isAllChecked]);
 
   const handleSelectDisposable = (id: any) => {
-    const findItem = checkedDisposableList.find((_id) => _id === id);
-    let tempCheckedDisposableList = checkedDisposableList.slice();
-
-    if (findItem) {
-      tempCheckedDisposableList = tempCheckedDisposableList.filter((_id) => _id !== id);
-    } else {
-      tempCheckedDisposableList.push(id);
-    }
-
-    setCheckedDisposalbleList(tempCheckedDisposableList);
+    const newDisposableList = disposableList.map((item) => {
+      if (item.id === id) {
+        return { ...item, isSelected: !item.isSelected };
+      } else {
+        return item;
+      }
+    });
+    setDisposableList(newDisposableList);
   };
 
   const handleLunchOrDinner = (selectedItem: ILunchOrDinner) => {
@@ -306,14 +319,6 @@ const CartPage = () => {
 
   const clickRestockNoti = () => {};
 
-  const buttonRenderer = useCallback(() => {
-    return (
-      <Button borderRadius="0" height="100%">
-        {getTotalPrice()}원 주문하기
-      </Button>
-    );
-  }, [cartItemList]);
-
   const getTotalPrice = useCallback((): number => {
     return (
       cartItemList.reduce((totalPrice, item) => {
@@ -348,6 +353,14 @@ const CartPage = () => {
       })
     );
   };
+
+  const buttonRenderer = useCallback(() => {
+    return (
+      <Button borderRadius="0" height="100%">
+        {getTotalPrice()}원 주문하기
+      </Button>
+    );
+  }, [cartItemList]);
 
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());
@@ -389,6 +402,18 @@ const CartPage = () => {
     };
   }, [calendarRef.current?.offsetTop]);
 
+  useEffect(() => {
+    if (checkedMenuList.length === cartItemList.length) {
+      setIsAllchecked(true);
+    }
+  }, [checkedMenuList]);
+
+  useEffect(() => {
+    if (isAllChecked) {
+      setCheckedMenuList(cartItemList.map((item) => item.id));
+    }
+  }, [isLoading]);
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -413,7 +438,7 @@ const CartPage = () => {
           <ListHeader>
             <div className="itemCheckbox">
               <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
-              <TextB2R padding="0 0 0 8px">전체선택 (3/5)</TextB2R>
+              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenuList.length}/${cartItemList.length}`})</TextB2R>
             </div>
             <Right>
               <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeItemHandler}>
@@ -453,13 +478,10 @@ const CartPage = () => {
             <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
           </WrapperTitle>
           <CheckBoxWrapper>
-            {disposableList.map((item, index) => (
+            {disposableList?.map((item, index) => (
               <DisposableItem key={index}>
                 <div className="disposableLeft">
-                  <Checkbox
-                    onChange={() => handleSelectDisposable(item.id)}
-                    isSelected={checkedDisposableList.includes(item.id)}
-                  />
+                  <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected} />
                   <div className="disposableText">
                     <TextB2R padding="0 4px 0 8px">{item.text}</TextB2R>
                     <TextH5B>+{item.price}원</TextH5B>
