@@ -62,7 +62,8 @@
           "badge": "(만원의 행복 20%)",
           "quantity": 1,
           "main": true,
-          "tags": []
+          "tags": [],
+          "soldout": false
         },
         {
           "id": 2,
@@ -78,7 +79,8 @@
           "badge": "",
           "quantity": 1,
           "main": true,
-          "tags": []
+          "tags": [],
+          "soldout": true
         },
         {
           "id": 3,
@@ -93,7 +95,8 @@
           "badge": "",
           "quantity": 1,
           "main": true,
-          "tags": []
+          "tags": [],
+          "soldout": false
         },
         {
           "id": 4,
@@ -105,7 +108,8 @@
           "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
           "quantity": 1,
           "main": false,
-          "tags": []
+          "tags": [],
+          "soldout": false
         }
       ]
     },
