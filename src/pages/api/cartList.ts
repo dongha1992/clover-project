@@ -33,10 +33,27 @@ export default async function handler(req: any, res: any) {
   if (req.method === 'PUT') {
     const filePath = buildCartListPath();
     let data = await extractData(filePath);
-    const body = req.body;
-    data = [...data.data, ...body.data];
-    await fs.writeFile(filePath, JSON.stringify({ data }));
 
+    const { menuDetailId, quantity } = req.body.params;
+    const newData = data.data.map((item: any) => {
+      if (item.id === menuDetailId) {
+        return { ...item, quantity };
+      } else {
+        return item;
+      }
+    });
+
+    await fs.writeFile(filePath, JSON.stringify({ data: newData }));
+    res.status(200).send({ message: 'success' });
+    return;
+  }
+
+  if (req.method === 'DELETE') {
+    const filePath = buildCartListPath();
+    let data = await extractData(filePath);
+    const selectedIds = req.body;
+    const filteredData = data.data.filter((item: any) => !selectedIds.includes(item.id));
+    await fs.writeFile(filePath, JSON.stringify({ data: filteredData }));
     res.status(200).send({ message: 'success' });
     return;
   }

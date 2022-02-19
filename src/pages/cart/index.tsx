@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
@@ -33,8 +33,8 @@ import isNill from 'lodash-es/isNil';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { reduce } from 'lodash-es';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -97,12 +97,12 @@ const otherDeliveryInfo: IOtherDeliveryInfo[] = [
 ];
 
 //temp
-const isSoldout = true;
+
 const disabledDates = ['2022-02-21', '2022-02-22'];
 
 const CartPage = () => {
-  const [cartItemList, setCartItemList] = useState([]);
-  const [itemList, setItemList] = useState([]);
+  const [cartItemList, setCartItemList] = useState<any[]>([]);
+  const [itemList, setItemList] = useState<any[]>([]);
   const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
   const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
@@ -126,6 +126,7 @@ const CartPage = () => {
       time: '17시',
     },
   ]);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
@@ -141,15 +142,48 @@ const CartPage = () => {
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
-  const {} = useQuery('getCartList', async () => {
-    const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
-    setCartItemList(data.data);
-  });
+  const queryClient = useQueryClient();
 
-  const {} = useQuery('getItemList', async () => {
-    const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
-    setItemList(data.data);
-  });
+  const { isLoading } = useQuery(
+    'getCartList',
+    async () => {
+      const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
+      setCartItemList(data.data);
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const {} = useQuery(
+    'getItemList',
+    async () => {
+      const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
+      setItemList(data.data);
+    },
+    { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { mutateAsync: mutateItemQuantity } = useMutation(
+    async (params: { menuDetailId: number; quantity: number }) => {
+      const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
+
+  const { mutateAsync: mutateDeleteItem } = useMutation(
+    async () => {
+      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuList });
+      console.log(data, '1');
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
 
   const handleSelectCartItem = (id: any) => {
     const findItem = checkedMenuList.find((_id: number) => _id === id);
@@ -209,7 +243,7 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => removeItem(),
+        onSubmit: () => mutateDeleteItem(),
       })
     );
   };
@@ -254,23 +288,39 @@ const CartPage = () => {
     }
   };
 
-  const buttonRenderer = () => {
+  const clickPlusButton = (id: number, quantity: number) => {
+    const parmas = {
+      menuDetailId: id,
+      quantity,
+    };
+    mutateItemQuantity(parmas);
+  };
+
+  const clickMinusButton = (id: number, quantity: number) => {
+    const parmas = {
+      menuDetailId: id,
+      quantity,
+    };
+    mutateItemQuantity(parmas);
+  };
+
+  const clickRestockNoti = () => {};
+
+  const buttonRenderer = useCallback(() => {
     return (
       <Button borderRadius="0" height="100%">
         {getTotalPrice()}원 주문하기
       </Button>
     );
-  };
+  }, [cartItemList]);
 
-  const getTotalPrice = (): number => {
-    return cartItemList.reduce((acc: number, cur: any) => {
-      return acc + cur.price;
-    }, 0);
-  };
-
-  const removeItem = () => {
-    console.log('fire');
-  };
+  const getTotalPrice = useCallback((): number => {
+    return (
+      cartItemList.reduce((totalPrice, item) => {
+        return totalPrice + item.price * item.quantity;
+      }, 0) || 0
+    );
+  }, [cartItemList]);
 
   const goToDeliveryInfo = () => {
     router.push('/cart/delivery-info');
@@ -297,12 +347,6 @@ const CartPage = () => {
         ),
       })
     );
-  };
-
-  const clickPlusButton = (id: number, quantity: number) => {};
-
-  const clickMinusButton = (id: number, quantity: number) => {
-    console.log(quantity);
   };
 
   useEffect(() => {
@@ -345,6 +389,10 @@ const CartPage = () => {
     };
   }, [calendarRef.current?.offsetTop]);
 
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
+
   const isSpot = userDestinationStatus == 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
 
@@ -375,7 +423,7 @@ const CartPage = () => {
           </ListHeader>
           <BorderLine height={1} margin="16px 0" />
           <VerticalCartList>
-            {cartItemList.map((item: any, index) => (
+            {cartItemList?.map((item: any, index) => (
               <ItemWrapper key={index}>
                 <div className="itemCheckbox">
                   <Checkbox
@@ -384,10 +432,11 @@ const CartPage = () => {
                   />
                   <CartSheetItem
                     isCart
+                    isSoldout={item.soldout}
                     menu={item}
-                    isSoldout={item.id === 1 && isSoldout}
                     clickPlusButton={clickPlusButton}
                     clickMinusButton={clickMinusButton}
+                    clickRestockNoti={clickRestockNoti}
                   />
                 </div>
                 <div className="itemInfo">
@@ -565,7 +614,7 @@ const CartPage = () => {
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>{getTotalPrice()}</TextH4B>
+            <TextH4B>{totalPrice}</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
