@@ -18,7 +18,7 @@ import calculateArrival from '@utils/calculateArrival';
 import getCustomDate from '@utils/getCustomDate';
 import { filter, map, flow } from 'lodash/fp';
 import dayjs from 'dayjs';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 import 'dayjs/locale/ko';
 import axios from 'axios';
@@ -62,6 +62,28 @@ const CartSheet = () => {
   const dispatch = useDispatch();
   const { cartSheetObj } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
+
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: mutateAddCartItem } = useMutation(
+    async () => {
+      if (checkHasMainMenu()) {
+        const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
+        if ((data.message = 'success')) {
+          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        }
+      } else {
+        showToast({ message: '필수옵션을 선택해주세요.' });
+      }
+    },
+    {
+      onSuccess: async () => {
+        dispatch(INIT_BOTTOM_SHEET());
+        dispatch(SET_CART_LISTS(selectedMenus));
+        await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
 
   const deliveryType = checkTimerLimitHelper();
 
@@ -198,20 +220,6 @@ const CartSheet = () => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  const submitHandler = async () => {
-    if (checkHasMainMenu()) {
-      const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(SET_CART_LISTS(selectedMenus));
-
-      setTimeout(() => {
-        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-      }, 500);
-    } else {
-      showToast({ message: '필수옵션을 선택해주세요.' });
-    }
-  };
-
   const checkHasMainMenu = (): boolean => {
     return selectedMenus.some((item: any) => item.main);
   };
@@ -320,7 +328,7 @@ const CartSheet = () => {
           {isTimerTooltip ? <CheckTimerByDelivery isCartSheet /> : <Rolling list={rollingData} />}
         </DeliveryInforContainer>
       </OrderInfoContainer>
-      <ButtonContainer onClick={submitHandler}>
+      <ButtonContainer onClick={() => mutateAddCartItem()}>
         <Button height="100%" width="100%" borderRadius="0">
           장바구니에 담기
         </Button>
