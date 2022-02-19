@@ -67,44 +67,24 @@ const CartSheet = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: mutateItemQuantity } = useMutation(
-    async (params: { menuDetailId: number; quantity: number }) => {
-      const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
-      if (data.message === 'success') {
-        return true;
-      }
-    },
-    {
-      onSuccess: async (message) => {
-        // Q. invalidateQueries랑 refetchQueries 차이
-        // await queryClient.invalidateQueries('getCartList');
-        if (message) {
-          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-          dispatch(INIT_BOTTOM_SHEET());
-          await queryClient.refetchQueries('getCartList');
-          dispatch(UPDATE_CART_LIST());
-        }
-      },
-    }
-  );
-
+  /* TODO: axios 여러번 */
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
       const result = checkAlreadyInCart();
+      const data = result.map(async (item: any) => {
+        const params = {
+          menuDetailId: item.id,
+          quantity: item.quantity,
+        };
 
-      if (result.length !== 0) {
-        result.map((item: { id: number; quantity: number }) => {
-          const parmas = {
-            menuDetailId: Number(item.id),
-            quantity: item.quantity,
-          };
-          return mutateItemQuantity(parmas);
+        await axios.post(`${BASE_URL}/cartList`, { params }).then((res) => {
+          if (res.data.message === 'success') {
+            return true;
+          }
         });
-      } else {
-        const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
-        if (data.message === 'success') {
-          return true;
-        }
+      });
+      if (data) {
+        return true;
       }
     },
     {
@@ -255,29 +235,19 @@ const CartSheet = () => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  const checkAlreadyInCart = (): { id: number; quantity: number }[] => {
-    /*TODO: 간단하게 로직 수정 */
-    const checkDuplicateItem = (inCartItem: any) => {
-      return flow(
-        map((item: any) => item.id),
-        includes(inCartItem.id)
-      )(selectedMenus);
-    };
+  const checkAlreadyInCart = () => {
+    const result = selectedMenus?.map((sMenu: any) => {
+      const inCart = cartLists?.find((cartItem: any) => cartItem.id === sMenu.id);
+      if (inCart) {
+        return {
+          ...sMenu,
+          quantity: sMenu.quantity + inCart.quantity,
+        };
+      } else {
+        return sMenu;
+      }
+    });
 
-    const result = flow(
-      filter((inCartItem: any) => checkDuplicateItem(inCartItem)),
-      map((inCartItem) => {
-        const addQuantity = selectedMenus.find((item: any) => item.id === inCartItem.id).quantity;
-        if (addQuantity) {
-          return {
-            id: inCartItem.id,
-            quantity: addQuantity + inCartItem.quantity,
-          };
-        } else {
-          return { id: inCartItem.id, quantity: inCartItem.quantity };
-        }
-      })
-    )(cartLists);
     return result;
   };
 

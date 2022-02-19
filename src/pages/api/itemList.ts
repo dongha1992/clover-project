@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs/promises';
 
-function buildCartDataPath() {
+export function buildItemDataPath() {
   return path.join(process.cwd(), 'data', 'itemList.json');
 }
 
@@ -13,7 +13,7 @@ async function extractData(filePath: any) {
 
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
-    const filePath = buildCartDataPath();
+    const filePath = buildItemDataPath();
     const data = await extractData(filePath);
     res.status(200).json({ data });
     return;
