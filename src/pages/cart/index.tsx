@@ -102,7 +102,8 @@ const disabledDates = ['2022-02-21', '2022-02-22'];
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<any[]>([]);
   const [itemList, setItemList] = useState<any[]>([]);
-  const [checkedMenuList, setCheckedMenuList] = useState<number[]>([]);
+  const [checkedMenuIdList, setCheckedMenuIdList] = useState<number[]>([]);
+  const [selectedMenuList, setSelectedMenuList] = useState<any[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
     {
@@ -174,7 +175,6 @@ const CartPage = () => {
     }
   );
 
-  /* TODO: 동일 기능 useMutation 복붙 하고 있음*/
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
       const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
@@ -190,7 +190,7 @@ const CartPage = () => {
 
   const { mutate: mutateDeleteItem } = useMutation(
     async () => {
-      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuList });
+      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuIdList });
     },
     {
       onSuccess: async () => {
@@ -200,8 +200,8 @@ const CartPage = () => {
   );
 
   const handleSelectCartItem = (id: any) => {
-    const findItem = checkedMenuList.find((_id: number) => _id === id);
-    let tempCheckedMenuList = checkedMenuList.slice();
+    const findItem = checkedMenuIdList.find((_id: number) => _id === id);
+    let tempCheckedMenuList = checkedMenuIdList.slice();
 
     if (findItem) {
       tempCheckedMenuList = tempCheckedMenuList.filter((_id) => _id !== id);
@@ -222,16 +222,16 @@ const CartPage = () => {
       tempCheckedMenuList.push(id);
     }
 
-    setCheckedMenuList(tempCheckedMenuList);
+    setCheckedMenuIdList(tempCheckedMenuList);
   };
 
   const handleSelectAllCartItem = useCallback(() => {
     const checkedMenuId = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
 
     if (!isAllChecked) {
-      setCheckedMenuList(checkedMenuId);
+      setCheckedMenuIdList(checkedMenuId);
     } else {
-      setCheckedMenuList([]);
+      setCheckedMenuIdList([]);
     }
     setIsAllchecked(!isAllChecked);
   }, [isAllChecked]);
@@ -311,6 +311,11 @@ const CartPage = () => {
   };
 
   const clickPlusButton = (id: number, quantity: number) => {
+    const checkHasLimitQuantity = selectedMenuList.find((item) => item.id === id)?.limitQuantity;
+    if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
+      return;
+    }
+
     const parmas = {
       menuDetailId: id,
       quantity,
@@ -329,12 +334,21 @@ const CartPage = () => {
   const clickRestockNoti = () => {};
 
   const getTotalPrice = useCallback((): number => {
+    const itemsPrice = getItemsPrice();
+    const disposablePrice =
+      disposableList.reduce((totalPrice, item) => {
+        return totalPrice + item.price * item.quantity;
+      }, 0) || 0;
+    return itemsPrice + disposablePrice;
+  }, [selectedMenuList]);
+
+  const getItemsPrice = useCallback((): number => {
     return (
-      cartItemList.reduce((totalPrice, item) => {
+      selectedMenuList.reduce((totalPrice, item) => {
         return totalPrice + item.price * item.quantity;
       }, 0) || 0
     );
-  }, [cartItemList]);
+  }, [selectedMenuList]);
 
   const goToDeliveryInfo = () => {
     router.push('/cart/delivery-info');
@@ -369,7 +383,7 @@ const CartPage = () => {
         {getTotalPrice()}원 주문하기
       </Button>
     );
-  }, [cartItemList]);
+  }, [selectedMenuList]);
 
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());
@@ -413,12 +427,12 @@ const CartPage = () => {
 
   useEffect(() => {
     // 선택 메뉴 다 선택 시 all checked, 전체 삭제 하면 전체 선택 풀림
-    if (cartItemList.length > 0 && checkedMenuList.length === cartItemList.length) {
+    if (cartItemList.length > 0 && checkedMenuIdList.length === cartItemList.length) {
       setIsAllchecked(true);
     } else if (cartItemList.length === 0) {
       setIsAllchecked(false);
     }
-  }, [checkedMenuList, cartItemList]);
+  }, [checkedMenuIdList, cartItemList]);
 
   useEffect(() => {
     // 전체 선택 시 선택 메뉴 다 선택됨
@@ -426,9 +440,14 @@ const CartPage = () => {
 
     if (isAllChecked && !isLoading) {
       tempCheckMenuList = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
-      setCheckedMenuList(tempCheckMenuList);
+      setCheckedMenuIdList(tempCheckMenuList);
     }
   }, [isLoading, cartItemList]);
+
+  useEffect(() => {
+    const filteredMenus = cartItemList.filter((item) => checkedMenuIdList.includes(item.id));
+    setSelectedMenuList(filteredMenus);
+  }, [checkedMenuIdList, cartItemList]);
 
   useEffect(() => {
     // 초기 렌더 1회 전체 선택
@@ -459,7 +478,7 @@ const CartPage = () => {
           <ListHeader>
             <div className="itemCheckbox">
               <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
-              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenuList.length}/${cartItemList.length}`})</TextB2R>
+              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenuIdList.length}/${cartItemList.length}`})</TextB2R>
             </div>
             <Right>
               <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeItemHandler}>
@@ -474,7 +493,7 @@ const CartPage = () => {
                 <div className="itemCheckbox">
                   <Checkbox
                     onChange={() => handleSelectCartItem(item.id)}
-                    isSelected={checkedMenuList.includes(item.id)}
+                    isSelected={checkedMenuIdList.includes(item.id)}
                   />
                   <CartSheetItem
                     isCart
@@ -630,7 +649,7 @@ const CartPage = () => {
         <TotalPriceWrapper>
           <FlexBetween>
             <TextH5B>총 상품금액</TextH5B>
-            <TextB2R>30,000원</TextB2R>
+            <TextB2R>{getItemsPrice()}</TextB2R>
           </FlexBetween>
           <BorderLine height={1} margin="16px 0" />
           <FlexBetween>
