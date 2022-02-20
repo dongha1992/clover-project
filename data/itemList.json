@@ -63,7 +63,8 @@
           "quantity": 1,
           "main": true,
           "tags": [],
-          "soldout": false
+          "soldout": false,
+          "limitQuantity": 3
         },
         {
           "id": 2,
