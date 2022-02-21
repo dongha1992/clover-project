@@ -71,12 +71,16 @@ const CartSheet = () => {
     async () => {
       const result = checkAlreadyInCart();
 
-      const data = result.map(async ({ menuDetailId, quantity }: any) => {
+      const data = result.map(async ({ id: menuDetailId, quantity }: any) => {
         /* TODO : 구매제한체크 api */
 
-        await axios.post(`${BASE_URL}/cartList`, { menuDetailId, quantity }).then((res) => {
+        await axios.post(`${BASE_URL}/cartList`, { params: { menuDetailId, quantity } }).then((res) => {
           if (res.data.message === 'success') {
             return true;
+          } else {
+            /*TODO: 에러 핸들링 */
+            showToast({ message: '알 수 없는 에러! 다시 시도해주세요.' });
+            return false;
           }
         });
       });
@@ -244,7 +248,6 @@ const CartSheet = () => {
         return sMenu;
       }
     });
-
     return result;
   };
 
