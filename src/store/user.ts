@@ -19,7 +19,7 @@ interface IUser {
     tel?: string;
     loginType?: string;
   };
-  user: {
+  me: {
     id: string;
     birthDate: string;
     email: string;
@@ -58,7 +58,7 @@ const initialState: IUser = {
     tel: '',
     loginType: '',
   },
-  user: {
+  me: {
     id: '',
     birthDate: '',
     email: '',
@@ -120,8 +120,8 @@ export const user = createSlice({
       state.tempPasswordLogin = payload;
     },
 
-    SET_USER: (state, { payload }: PayloadAction<IUser['user']>) => {
-      state.user = payload;
+    SET_USER: (state, { payload }: PayloadAction<IUser['me']>) => {
+      state.me = payload;
     },
   },
   extraReducers: {},
