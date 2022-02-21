@@ -26,7 +26,7 @@ import {
   getSpotEvent, 
   getSpotSearch 
 } from '@api/spot';
-import { ISpots, ISpotsItems } from '@model/index';
+import { ISpots, ISpotsDetail} from '@model/index';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
@@ -100,10 +100,10 @@ const RECENT_SPOT = [
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
-  const { spotsPosition, spotsSearchRecentList } = useSelector(spotSelector);
+  const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [spotRecommend, setSpotRecommend] = useState<ISpots>();
-  const [searchResult, setSearchResult] = useState<ISpotsItems[]>([]);
+  const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [recentPickedSpotList, setRecentPickedSpotList] = useState<any[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
@@ -267,8 +267,9 @@ const SpotSearchPage = (): ReactElement => {
       :
       <>
        {!isSearched ?
-         spotsSearchRecentList.length ? (
-           // 픽업 이력 있는 경우
+        //  spotsSearchRecentList.length 
+        0 ? (
+           // TODO 픽업 이력 있는 경우
           <DefaultSearchContainer>
             <RecentPickWrapper>
               <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>

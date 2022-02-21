@@ -4,13 +4,13 @@ import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { IMAGE_S3_URL } from '@constants/mock/index';
-import { ISpotsItems } from '@model/index';
+import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 
 interface IParams {
-  item: ISpotsItems;
+  item: ISpotsDetail;
 }
 
 // 스팟 검색 - 추천 스팟

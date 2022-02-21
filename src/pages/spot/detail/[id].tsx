@@ -180,7 +180,20 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
       </SliderWrapper>
       <StoreWrapper>
         <TagWrapper>
-          <Tag>{placeType()}</Tag>
+          <Tag margin='0 5px 0 0'>{placeType()}</Tag>
+          {
+            spotItem?.canEat &&
+              <Tag margin='0 5px 0 0'>취식가능</Tag>
+          }
+          {
+            spotItem?.canParking &&
+              <Tag margin='0 5px 0 0'>주차가능</Tag>
+          }
+ 
+          {
+            !!spotItem?.discountRate &&
+              <Tag margin='0 5px 0 0' backgroundColor='#EDF3F0' color={theme.brandColor}>{`${spotItem?.discountRate}%할인 중`}</Tag>
+          }
         </TagWrapper>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>
         <TextB3R display="inline" margin="0 8px 0 0">
