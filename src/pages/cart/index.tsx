@@ -29,7 +29,7 @@ import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj } from '@model/index';
-import isNill from 'lodash-es/isNil';
+import { isNil, isEqual } from 'lodash-es';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
@@ -60,6 +60,8 @@ export interface IOtherDeliveryInfo {
   location: {
     address: string;
     addressDetail: string;
+    zipCode: string;
+    dong: string;
   };
   delivery: string;
   deliveryTime: string;
@@ -72,11 +74,13 @@ const otherDeliveryInfo: IOtherDeliveryInfo[] = [
   {
     id: 1,
     location: {
-      address: '주소',
-      addressDetail: '상세주소',
+      address: '서울 송파구 거마로2길 34',
+      addressDetail: '로얄아트빌 a동 501호',
+      zipCode: '05768',
+      dong: '거여동',
     },
     delivery: 'QUICK',
-    deliveryTime: 'LUNCH',
+    deliveryTime: 'DINNER',
     deliveryDate: '2022-02-23',
     totalPrice: 30000,
     deliveryFee: 3000,
@@ -84,12 +88,28 @@ const otherDeliveryInfo: IOtherDeliveryInfo[] = [
   {
     id: 2,
     location: {
-      address: '주소',
-      addressDetail: '상세주소',
+      address: '주소2',
+      addressDetail: '상세주소2',
+      zipCode: '1234',
+      dong: '강서',
     },
     delivery: 'QUICK',
     deliveryTime: 'LUNCH',
     deliveryDate: '2022-02-19',
+    totalPrice: 30000,
+    deliveryFee: 3000,
+  },
+  {
+    id: 3,
+    location: {
+      address: '주소3',
+      addressDetail: '상세주소3',
+      zipCode: '1234',
+      dong: '강서',
+    },
+    delivery: 'MORNING',
+    deliveryTime: '',
+    deliveryDate: '2022-02-23',
     totalPrice: 30000,
     deliveryFee: 3000,
   },
@@ -142,7 +162,7 @@ const CartPage = () => {
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
   const queryClient = useQueryClient();
-  console.log(cartLists, 'cartLists');
+
   const { isLoading } = useQuery(
     'getCartList',
     async () => {
@@ -177,6 +197,14 @@ const CartPage = () => {
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
+      const { menuDetailId, quantity } = params;
+
+      /* TODO : 구매제한체크 api */
+      const checkHasLimitQuantity = selectedMenuList.find((item) => item.id === menuDetailId)?.limitQuantity;
+      if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
+        return;
+      }
+
       const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
     },
     {
@@ -198,6 +226,17 @@ const CartPage = () => {
       },
     }
   );
+
+  // const { mutateAsync: mutateAddOrder } = useMutation(
+  //   async () => {
+  //     const { data } = await axios.delete(`${BASE_URL}/orderList`, { data });
+  //   },
+  //   {
+  //     onSuccess: async () => {
+  //       await queryClient.refetchQueries('getOrderList');
+  //     },
+  //   }
+  // );
 
   const handleSelectCartItem = (id: any) => {
     const findItem = checkedMenuIdList.find((_id: number) => _id === id);
@@ -311,11 +350,6 @@ const CartPage = () => {
   };
 
   const clickPlusButton = (id: number, quantity: number) => {
-    const checkHasLimitQuantity = selectedMenuList.find((item) => item.id === id)?.limitQuantity;
-    if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
-      return;
-    }
-
     const parmas = {
       menuDetailId: id,
       quantity,
@@ -450,9 +484,28 @@ const CartPage = () => {
   }, [checkedMenuIdList, cartItemList]);
 
   useEffect(() => {
-    // 초기 렌더 1회 전체 선택
+    // 초기 렌더 1회 장바구니 아이템 전체 선택
     setIsAllchecked(true);
-  }, []);
+
+    // 합배송 관련
+    if (otherDeliveryInfo.length > 0) {
+      const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
+      for (const otherDelivery of otherDeliveryInfo) {
+        const { delivery, deliveryTime, location, deliveryDate } = otherDelivery;
+
+        const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
+        const sameDeliveryTime = isSpotOrQuick
+          ? deliveryTime === lunchOrDinner.find((item) => item.isSelected)?.value!
+          : true;
+        const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
+        const sameDeliveryAddress = isEqual(location, userDestination?.location);
+
+        if (sameDeliveryType && sameDeliveryTime && sameDeliveryDate && sameDeliveryAddress) {
+          goToTogetherDelivery(otherDelivery.id);
+        }
+      }
+    }
+  }, [selectedDeliveryDay, lunchOrDinner]);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -466,7 +519,7 @@ const CartPage = () => {
       <DeliveryMethodAndPickupLocation>
         <Left>
           <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
-          <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
+          <TextH4B>{!isNil(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
         </Left>
         <Right onClick={goToDeliveryInfo}>
           <SVGIcon name="arrowRight" />
@@ -676,7 +729,7 @@ const CartPage = () => {
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>{totalPrice}</TextH4B>
+            <TextH4B>{getTotalPrice()}</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>

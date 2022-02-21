@@ -25,7 +25,6 @@ import { UPDATE_CART_LIST } from '@store/cart';
 import 'dayjs/locale/ko';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { onError } from '@api/Api';
 
 dayjs.locale('ko');
 
@@ -71,13 +70,11 @@ const CartSheet = () => {
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
       const result = checkAlreadyInCart();
-      const data = result.map(async (item: any) => {
-        const params = {
-          menuDetailId: item.id,
-          quantity: item.quantity,
-        };
 
-        await axios.post(`${BASE_URL}/cartList`, { params }).then((res) => {
+      const data = result.map(async ({ menuDetailId, quantity }: any) => {
+        /* TODO : 구매제한체크 api */
+
+        await axios.post(`${BASE_URL}/cartList`, { menuDetailId, quantity }).then((res) => {
           if (res.data.message === 'success') {
             return true;
           }
