@@ -9,7 +9,7 @@ import { setAlert } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { INormalSpots, ISpotsItems } from '@model/index';
+import { ISpotsDetail } from '@model/index';
 import {
   getSpotLike,
   postSpotRegistrationsRecruiting,
@@ -24,7 +24,7 @@ import { destinationForm } from '@store/destination';
 // 1. normal 2. event 3. trial
 
 interface IProps {
-  list: INormalSpots;
+  list: ISpotsDetail;
   type: string;
   isSearch: boolean;
 }

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail, IPostRegistrations, ISpots, ISpotsItems, INormalSpots} from '@model/index';
+import { ISpotsDetail, IPostRegistrations } from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
@@ -45,15 +45,14 @@ interface ISpotsPostions {
 }
 
 interface IProps {
-  spotDetail: ISpotsDetail | any;
+  spotDetail: ISpotsDetail | null;
   isSpotLiked: Boolean;
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
   spotsRegistrationInfo: ISpotsRegistrationInfo | any;
   spotRegistrationsPostResult: IPostRegistrations | any;
   spotsPosition: ISpotsPostions | any;
-  spotsSearchRecentList: any[];
-  spotsPickupSelected: ISpotsItems | INormalSpots | ISpotsDetail | any;
+  spotsPickupSelected: ISpotsDetail | null;
 };
 
 const spotAddressState = {
@@ -90,7 +89,7 @@ const spotsPostionsState = {
 };
 
 const initialState: IProps = {
-  spotDetail: {},
+  spotDetail: null,
   isSpotLiked: false,
   spotLocation: {
     ...spotAddressState,
@@ -105,8 +104,7 @@ const initialState: IProps = {
   spotsPosition: {
     ...spotsPostionsState,
   },
-  spotsSearchRecentList: [],
-  spotsPickupSelected: {},
+  spotsPickupSelected: null,
 };
 
 export const spot = createSlice({
@@ -114,7 +112,7 @@ export const spot = createSlice({
   initialState,
   reducers: {
     // 스팟 상세 페이지 정보
-    SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail>) => {
+    SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
     SET_SPOT_LIKED: (state, action : PayloadAction<boolean>) => {
@@ -141,12 +139,8 @@ export const spot = createSlice({
     SET_SPOT_POSITIONS: (state, action: PayloadAction<ISpotsPostions>) => {
       state.spotsPosition = action.payload;
     },
-    // 스팟 검색, 최근 픽업 이력 Array
-    SET_SPOT_SEARCH_RECENT_LIST: (state, action: PayloadAction<ISpotsItems[]>) => {
-      state.spotsSearchRecentList.push(...action.payload);
-    },
     // 스팟 검색, 주문하기->스팟 픽업장소
-    SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsItems | INormalSpots | ISpotsDetail>) => {
+    SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotsPickupSelected = action.payload;
     },
   },
@@ -162,7 +156,6 @@ export const {
   SET_SPOT_REGISTRATIONS_INFO,
   SET_SPOT_REGISTRATIONS_POST_RESULT,
   SET_SPOT_POSITIONS,
-  SET_SPOT_SEARCH_RECENT_LIST,
   SET_SPOT_PICKUP_SELECTED,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
