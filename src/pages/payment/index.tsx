@@ -35,12 +35,39 @@ import { getMainCardLists } from '@api/card';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj } from '@model/index';
+import { orderForm } from '@store/order';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
 /* TODO: 배송예정 어떻게? */
 /* TODO: 출입 방법 input userDestination에 담아서 서버 콜 */
+
+//temp
+export interface IDeliveries {
+  deliveryDate: string;
+  menus: { menuDetailId: number; menuQuantity: number };
+}
+
+export interface IOrderForm {
+  couponId: number;
+  deliveries: IDeliveries[];
+  delivery: string;
+  deliveryDetail: string;
+  deliveryMessage: string;
+  deliveryMessageType: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  payAmount: number;
+  point: number;
+  receiverName: string;
+  receiverTel: string;
+  spotPickupId: number;
+}
 
 const PAYMENT_METHOD = [
   {
@@ -100,13 +127,13 @@ const PaymentPage = () => {
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { orderItemList } = useSelector(orderForm);
 
   const { data: mainCard, isLoading } = useQuery(
     'getMainCard',
@@ -119,17 +146,8 @@ const PaymentPage = () => {
     { refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
-  const getCartList = async () => {
-    const { data } = await axios.get(`${BASE_URL}/cartList`);
-    setItemList(data.data);
-  };
-
-  useEffect(() => {
-    getCartList();
-  }, []);
-
   const showSectionHandler = (selectedSection: string) => {
-    if (selectedSection === 'customInfo') {
+    if (selectedSection === 'customerInfo') {
       setShowSectionObj({
         ...showSectionObj,
         showCustomerInfoSection: !showSectionObj.showCustomerInfoSection,
@@ -193,14 +211,14 @@ const PaymentPage = () => {
     <Container>
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
-          <TextH4B>주문상품 ({itemList.length})</TextH4B>
+          <TextH4B>주문상품 ({orderItemList.length})</TextH4B>
           <FlexRow onClick={() => showSectionHandler('orderItem')}>
             <TextB2R padding="0 13px 0 0">상품 이름...</TextB2R>
             <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {itemList.map((menu, index) => {
+          {orderItemList.map((menu, index) => {
             return <PaymentItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>
@@ -209,7 +227,7 @@ const PaymentPage = () => {
       <CustomerInfoWrapper>
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문자 정보</TextH4B>
-          <ShowBtnWrapper onClick={() => showSectionHandler('customInfo')}>
+          <ShowBtnWrapper onClick={() => showSectionHandler('customerInfo')}>
             <TextB2R padding="0 13px 0 0">주문자 이름...</TextB2R>
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
