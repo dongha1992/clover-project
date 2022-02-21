@@ -20,7 +20,6 @@ import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -36,6 +35,7 @@ import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj } from '@model/index';
 import { orderForm } from '@store/order';
+import { userForm } from '@store/user';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -134,6 +134,7 @@ const PaymentPage = () => {
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
   const { orderItemList } = useSelector(orderForm);
+  const { me } = useSelector(userForm);
 
   const { data: mainCard, isLoading } = useQuery(
     'getMainCard',
@@ -202,10 +203,11 @@ const PaymentPage = () => {
   const isFcoPay = selectedPaymentMethod === 1;
 
   if (isNil(userDestination)) {
-    return <div>배송정보 없음 에러</div>;
+    router.replace('/cart');
+    return;
   }
 
-  console.log(userDestination, 'userDestination');
+  console.log(me, 'userDestination');
 
   return (
     <Container>
@@ -235,7 +237,7 @@ const PaymentPage = () => {
         <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
           <FlexBetween>
             <TextH5B>보내는 사람</TextH5B>
-            <TextB2R>김프코</TextB2R>
+            <TextB2R></TextB2R>
           </FlexBetween>
           <FlexBetween margin="16px 0">
             <TextH5B>휴대폰 전화</TextH5B>

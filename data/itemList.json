@@ -110,7 +110,10 @@
           "quantity": 1,
           "main": false,
           "tags": [],
-          "soldout": false
+          "soldout": false,
+          "badge": "",
+          "limitDaily": 0,
+          "limit": ""
         }
       ]
     },
@@ -124,7 +127,8 @@
       "like": 10000,
       "review": 10,
       "tags": ["페스코베지", "스팟/새벽"],
-      "quantity": 1
+      "quantity": 1,
+      "details": []
     },
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
@@ -136,7 +140,8 @@
       "like": 10,
       "review": 100,
       "tags": ["페스코베지"],
-      "quantity": 1
+      "quantity": 1,
+      "details": []
     },
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
@@ -148,7 +153,8 @@
       "like": 100,
       "review": 90000,
       "tags": ["페스코베지", "스팟/새벽", "페스코베지"],
-      "quantity": 1
+      "quantity": 1,
+      "details": []
     }
   ]
 }

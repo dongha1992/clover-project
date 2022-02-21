@@ -1,23 +1,6 @@
 {
   "data": [
     {
-      "id": 2,
-      "menuId": 1,
-      "name": "두부 크럼블 낫또 샐러드 (L)",
-      "price": 5000,
-      "limit": "3개 한정",
-      "limitQuantity": 3,
-      "discount": 10,
-      "type": "main",
-      "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
-      "limitDaily": 0,
-      "badge": "",
-      "quantity": 1,
-      "main": true,
-      "tags": [],
-      "soldout": true
-    },
-    {
       "id": 3,
       "menuId": 1,
       "name": "두부 크럼블 낫또 샐러드 + 닭가슴살 (L)",
@@ -28,27 +11,26 @@
       "limitDaily": 0,
       "limit": "일일 70개 한정 판매!",
       "badge": "",
-      "quantity": 8,
+      "quantity": 2,
       "main": true,
       "tags": [],
       "soldout": false
     },
     {
-      "id": 1,
+      "id": 4,
       "menuId": 1,
-      "name": "두부 크럼블 낫또 샐러드 (M)",
-      "price": 10000,
-      "discount": 20,
-      "type": "main",
+      "name": "[프코메이드] 하루과일 스테비아 방울토마토",
+      "price": 1000,
+      "discount": 10,
+      "type": "optional",
       "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
-      "limitDaily": 3,
-      "limit": "",
-      "badge": "(만원의 행복 20%)",
-      "quantity": 4,
-      "main": true,
+      "quantity": 1,
+      "main": false,
       "tags": [],
       "soldout": false,
-      "limitQuantity": 3
+      "badge": "",
+      "limitDaily": 0,
+      "limit": ""
     }
   ]
 }
