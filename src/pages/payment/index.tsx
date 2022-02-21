@@ -134,7 +134,7 @@ const PaymentPage = () => {
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
   const { orderItemList } = useSelector(orderForm);
-  const { me } = useSelector(userForm);
+  const { me, isLoginSuccess } = useSelector(userForm);
 
   const { data: mainCard, isLoading } = useQuery(
     'getMainCard',
@@ -164,6 +164,9 @@ const PaymentPage = () => {
   const checkPaymentTermHandler = () => {};
 
   const checkSamePerson = () => {};
+  const checkAccessMethodReuse = () => {};
+  const checkAlwaysFullPoint = () => {};
+  const checkPaymentMethodReuse = () => {};
 
   const selectAccessMethodHandler = () => {
     dispatch(
@@ -204,10 +207,8 @@ const PaymentPage = () => {
 
   if (isNil(userDestination)) {
     router.replace('/cart');
-    return;
+    return <div>asd</div>;
   }
-
-  console.log(me, 'userDestination');
 
   return (
     <Container>
@@ -237,15 +238,15 @@ const PaymentPage = () => {
         <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
           <FlexBetween>
             <TextH5B>보내는 사람</TextH5B>
-            <TextB2R></TextB2R>
+            <TextB2R>{me?.name}</TextB2R>
           </FlexBetween>
           <FlexBetween margin="16px 0">
             <TextH5B>휴대폰 전화</TextH5B>
-            <TextB2R>010-2222-2222</TextB2R>
+            <TextB2R>{me?.tel}</TextB2R>
           </FlexBetween>
           <FlexBetween>
             <TextH5B>이메일</TextH5B>
-            <TextB2R>fco@freshcode.me</TextB2R>
+            <TextB2R>{me?.email}</TextB2R>
           </FlexBetween>
         </CustomInfoList>
       </CustomerInfoWrapper>
