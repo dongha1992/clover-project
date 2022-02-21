@@ -8,17 +8,18 @@ import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { wrapper } from '@store/index';
 import { SET_IS_MOBILE } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { commonSelector } from '@store/common';
+import { userForm } from '@store/user';
 
 // persist
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
-import { useStore } from 'react-redux';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -42,6 +43,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useMediaQuery('(max-width:512px)');
 
   const store: any = useStore();
+  const { me } = useSelector(userForm);
+  const { loginType, isAutoLogin } = useSelector(commonSelector);
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
@@ -56,19 +59,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     });
   }
 
-  useEffect(() => {
-    if (typeof window === undefined) {
-      const md = new MobileDetect(window.navigator.userAgent);
-      let mobile = !!md.mobile();
-      dispatch(SET_IS_MOBILE(mobile));
-    }
-
-    authCheck();
-  }, []);
-
   const authCheck = async () => {
-    const { loginType, isAutoLogin } = store.getState().common;
-
     try {
       if (loginType !== 'NONMEMBER' && sessionStorage.accessToken) {
         const { data } = await userProfile();
@@ -90,6 +81,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     }
   };
 
+  useEffect(() => {
+    if (typeof window === undefined) {
+      const md = new MobileDetect(window.navigator.userAgent);
+      let mobile = !!md.mobile();
+      dispatch(SET_IS_MOBILE(mobile));
+    }
+  }, []);
+
+  useEffect(() => {
+    authCheck();
+  }, [me]);
   return (
     <>
       <Head>
