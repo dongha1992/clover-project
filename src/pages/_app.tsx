@@ -67,6 +67,12 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
         }
+      } else if (!me) {
+        const { data } = await userProfile();
+        if (data.code === 200) {
+          dispatch(SET_USER(data.data));
+          dispatch(SET_LOGIN_SUCCESS(true));
+        }
       } else {
         if (isAutoLogin) {
           const { data } = await userProfile();
@@ -91,7 +97,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     authCheck();
-  }, [me]);
+  }, []);
   return (
     <>
       <Head>
