@@ -45,15 +45,21 @@ const DeliverInfoPage = () => {
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
   const [tempDestination, setTempDestination] = useState<IDestination | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
+  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
-    useSelector(destinationForm);
+  const { 
+    destinationStatus, 
+    userTempDestination, 
+    locationStatus, 
+    userDestinationStatus, 
+    availableDestination, 
+    userDestination 
+  } =useSelector(destinationForm);
 
   const dispatch = useDispatch();
   const router = useRouter();
 
   const { destinationId } = router.query;
-
   const { isTimerTooltip } = useSelector(orderForm);
 
   // 배송 마감 타이머 체크 + 위치 체크
@@ -61,9 +67,16 @@ const DeliverInfoPage = () => {
 
   const checkTermHandler = () => {};
 
+  const noticeHandler = () => {
+    setNoticeChecked(!noticeChecked);
+  };
+
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
-      router.push('/spot/search');
+      router.push({
+        pathname: '/spot/search',
+        query: {isDelivery: true},
+      });
     } else {
       dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
       router.push('/destination/search');
@@ -99,7 +112,10 @@ const DeliverInfoPage = () => {
   const finishDeliverySetting = async () => {
     if (!tempDestination) {
       return;
-    }
+    }else if((userSelectDeliveryType === 'spot') && (tempDestination?.spaceType === 'PRIVATE') && !noticeChecked){
+      // 스팟 배송이고, 프라이빗일 경우 공지 체크 해야만 넘어감
+        return;
+    };
 
     if (destinationId) {
       dispatch(SET_DESTINATION(tempDestination));
@@ -161,7 +177,7 @@ const DeliverInfoPage = () => {
   const placeInfoRender = () => {
     switch (userDestinationStatus) {
       case 'spot': {
-        return <PickupPlaceBox place={tempDestination} />;
+        return <PickupPlaceBox place={tempDestination} checkTermHandler={noticeHandler} isSelected={noticeChecked} />;
       }
 
       default: {
@@ -298,6 +314,16 @@ const DeliverInfoPage = () => {
     }
   };
 
+  const settingHandler = () => {
+    if(userDestinationStatus === 'spot'){
+      if(tempDestination?.spaceType === 'PRIVATE'){
+        return !noticeChecked;
+      }
+    }else{
+      return !tempDestination
+    };
+  };
+
   useEffect(() => {
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
     if (userTempDestination) {
@@ -401,13 +427,13 @@ const DeliverInfoPage = () => {
             <BorderLine height={8} margin="32px 0" />
             <FlexBetween>
               <TextH3B padding="0 0 14px 0">{isSpotPickupPlace ? '픽업장소' : '배송지'}</TextH3B>
-              {tempDestination && (
-                <TextH6B textDecoration="underline" color={theme.greyScale65} onClick={goToFindAddress}>
+              {(tempDestination) && (
+                <TextH6B textDecoration="underline" color={theme.greyScale65} onClick={goToFindAddress} pointer>
                   변경하기
                 </TextH6B>
               )}
             </FlexBetween>
-            {tempDestination ? placeInfoRender() : ''}
+            {(tempDestination) ? placeInfoRender() : ''}
             {(!userSelectDeliveryType || !tempDestination) && (
               <BtnWrapper onClick={goToFindAddress}>
                 <Button backgroundColor={theme.white} color={theme.black} border>
@@ -419,7 +445,7 @@ const DeliverInfoPage = () => {
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0" disabled={!tempDestination}>
+        <Button borderRadius="0" disabled={settingHandler()}>
           설정하기
         </Button>
       </SettingBtnWrapper>

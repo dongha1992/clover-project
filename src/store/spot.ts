@@ -46,7 +46,7 @@ interface ISpotsPostions {
 
 interface IProps {
   spotDetail: ISpotsDetail | null;
-  isSpotLiked: Boolean;
+  isSpotLiked: boolean;
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
   spotsRegistrationInfo: ISpotsRegistrationInfo | any;

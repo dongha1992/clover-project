@@ -7,15 +7,14 @@ import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
-import { SET_SPOT_PICKUP_SELECTED } from '@store/spot';
-import { ISpotsItems } from '@model/index';
+import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
-import { destinationForm } from '@store/destination';
+import { destinationForm, SET_USER_DESTINATION_STATUS, SET_TEMP_DESTINATION } from '@store/destination';
 
 interface IProps {
-  item: ISpotsItems;
+  item: ISpotsDetail;
   onClick: () => void;
   mapList?: boolean;
 }
@@ -24,11 +23,14 @@ interface IProps {
 const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { isDelivery } = router.query;
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess} = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   
   const userLocationLen = !!userLocation.emdNm?.length;
+
+  const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   const typeTag = (): string => {
     const type = item.type;
@@ -43,13 +45,35 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
   };
 
   const orderHandler = () => {
+    const destinationInfo = {
+      name: item.name,
+      location: {
+        addressDetail: item.location.addressDetail,
+        address: item.location.address,
+        dong: item.name,
+        zipCode: item.location.zipCode,
+      },
+      main: false,
+      availableTime: pickUpTime,
+      spaceType: item.type,
+    };
+    
     if(isLoginSuccess){
       if(cartLists.length) {
-        // 로그인o and 장바구니 담겨짐
-        dispatch(SET_SPOT_PICKUP_SELECTED(item));
-        router.push('/cart');
+        // 로그인o and 장바구니 o
+        if(isDelivery){
+          // 장바구니 o, 배송 정보에서 넘어온 경우
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
+        }else{
+          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));  
+          router.push('/cart');  
+        }
       }else{
-        // 로그인o and 장바구니 비었음
+        // 로그인o and 장바구니 x
         router.push('/search');
       }
     }else{
@@ -58,7 +82,6 @@ const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
     }
   };
 
-  const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   return (
     <Container mapList>
