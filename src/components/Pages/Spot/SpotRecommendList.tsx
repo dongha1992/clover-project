@@ -15,7 +15,7 @@ interface IParams {
 
 // 스팟 검색 - 추천 스팟
 const SpotRecommendList = ({ item }: IParams): ReactElement => {
-  const { userLocation } = useSelector(destinationForm);
+  const { userLocation, userDestinationStatus } = useSelector(destinationForm);
   const router = useRouter();
   const userLocationLen = !!userLocation.emdNm?.length;
 
@@ -32,7 +32,14 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
   };
 
   const goToSpotsDetail = (id: number): void => {
-    router.push(`/spot/detail/${id}`);
+    if(userDestinationStatus === 'spot'){
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: {isDelivery: true},
+      });  
+    }else{
+      router.push(`/spot/detail/${id}`);
+    };
   };
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;

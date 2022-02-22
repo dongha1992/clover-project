@@ -17,8 +17,7 @@ import {
 import { useQuery } from 'react-query';
 import { useDeleteLike, useOnLike } from 'src/query';
 import { cartForm } from '@store/cart';
-import { SET_SPOT_PICKUP_SELECTED } from '@store/spot';
-import { destinationForm } from '@store/destination';
+import { destinationForm, SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -32,6 +31,7 @@ interface IProps {
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { isDelivery } = router.query;
   const { isLoginSuccess} = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { userLocation } = useSelector(destinationForm);
@@ -42,6 +42,8 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
+  const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
+
   const goToDetail = (id: number): void => {
     if(isSearch){
       return;
@@ -51,13 +53,36 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const orderHandler = (e: any): void => {
     e.stopPropagation();
+    const destinationInfo = {
+      name: list.name,
+      location: {
+        addressDetail: list.location.addressDetail,
+        address: list.location.address,
+        dong: list.name,
+        zipCode: list.location.zipCode,
+      },
+      main: false,
+      availableTime: pickUpTime,
+      spaceType: list.type,
+    };
+
     if(isLoginSuccess){
       if(cartLists.length) {
-        // 로그인o and 장바구니 담겨짐
-        dispatch(SET_SPOT_PICKUP_SELECTED(list));
-        router.push('/cart');
+        // 로그인o and 장바구니 o
+        if(isDelivery){
+          // 장바구니 o , 배송 정보에서 넘어온 경우
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push({ pathname: '/cart/delivery-info', query: { destinationId: list.id } });
+        }else{
+          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_DESTINATION(destinationInfo));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push('/cart');  
+        }
       }else{
-        // 로그인o and 장바구니 비었음
+        // 로그인o and 장바구니 x
         router.push('/search');
       }
     }else{
@@ -111,8 +136,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
             closeBtnText: '취소',
           })
         );
-        console.log('참여 완료!!! post');
-      }
+      };
     } catch (err) {
       console.error(err);
     }
