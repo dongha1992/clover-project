@@ -13,6 +13,7 @@ import {
   IPostRegistrationResponse,
   IGetDestinations,
   IGetSpotsRegistrationsStatusResponse,
+  ISpotWishListResponse,
   } from '@model/index';
   
   //신규 스팟
@@ -155,3 +156,10 @@ import {
     ): Promise<AxiosResponse<IGetSpotsRegistrationsStatusResponse>> => {
       return Api.get(`/spot/v1/registrations`, { params });
   };
+
+  export const getSpotsWishList = (
+    params: IParamsSpots
+    ): Promise<AxiosResponse<ISpotWishListResponse>> => {
+      return Api.get(`/spot/v1/spots/like`, { params });
+  };
+  
