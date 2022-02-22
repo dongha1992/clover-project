@@ -128,13 +128,18 @@ const PaymentPage = () => {
     showCustomerInfoSection: false,
   });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
-
+  const [checkForm, setCheckForm] = useState<Obj>({
+    samePerson: { isSelected: false },
+    accessMethodReuse: { isSelected: false },
+    alwaysPointFull: { isSelected: false },
+    paymentMethodReuse: { isSelected: false },
+  });
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
   const { orderItemList } = useSelector(orderForm);
-  const { me, isLoginSuccess } = useSelector(userForm);
+  const { me } = useSelector(userForm);
 
   const { data: mainCard, isLoading } = useQuery(
     'getMainCard',
@@ -163,10 +168,9 @@ const PaymentPage = () => {
 
   const checkPaymentTermHandler = () => {};
 
-  const checkSamePerson = () => {};
-  const checkAccessMethodReuse = () => {};
-  const checkAlwaysFullPoint = () => {};
-  const checkPaymentMethodReuse = () => {};
+  const checkFormHanlder = (name: string) => {
+    setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
+  };
 
   const selectAccessMethodHandler = () => {
     dispatch(
@@ -207,7 +211,7 @@ const PaymentPage = () => {
 
   if (isNil(userDestination)) {
     router.replace('/cart');
-    return <div>asd</div>;
+    return <div>장바구니로 이동합니다.</div>;
   }
 
   return (
@@ -255,7 +259,7 @@ const PaymentPage = () => {
         <FlexBetween padding="0">
           <TextH4B>받는 사람 정보</TextH4B>
           <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
+            <Checkbox onChange={() => checkFormHanlder('samePerson')} isSelected={checkForm.samePerson.isSelected} />
             <TextB2R padding="0 0 0 8px">주문자와 동일</TextB2R>
           </FlexRow>
         </FlexBetween>
@@ -322,7 +326,10 @@ const PaymentPage = () => {
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
               <FlexRow>
-                <Checkbox onChange={checkSamePerson} isSelected />
+                <Checkbox
+                  onChange={() => checkFormHanlder('accessMethodReuse')}
+                  isSelected={checkForm.accessMethodReuse.isSelected}
+                />
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
@@ -364,7 +371,10 @@ const PaymentPage = () => {
             <FlexBetween>
               <TextH4B>배송 메모</TextH4B>
               <FlexRow>
-                <Checkbox onChange={checkSamePerson} isSelected />
+                <Checkbox
+                  onChange={() => checkFormHanlder('accessMethodReuse')}
+                  isSelected={checkForm.accessMethodReuse.isSelected}
+                />
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
@@ -394,7 +404,10 @@ const PaymentPage = () => {
         <FlexBetween>
           <TextH4B>포인트 사용</TextH4B>
           <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
+            <Checkbox
+              onChange={() => checkFormHanlder('alwaysPointFull')}
+              isSelected={checkForm.alwaysPointFull.isSelected}
+            />
             <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
           </FlexRow>
         </FlexBetween>
@@ -414,7 +427,10 @@ const PaymentPage = () => {
         <FlexBetween padding="0 0 24px 0">
           <TextH4B>결제수단</TextH4B>
           <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
+            <Checkbox
+              onChange={() => checkFormHanlder('paymentMethodReuse')}
+              isSelected={checkForm.paymentMethodReuse.isSelected}
+            />
             <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
           </FlexRow>
         </FlexBetween>
