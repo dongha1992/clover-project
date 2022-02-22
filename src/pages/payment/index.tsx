@@ -36,6 +36,7 @@ import { isNil } from 'lodash-es';
 import { Obj } from '@model/index';
 import { orderForm } from '@store/order';
 import { userForm } from '@store/user';
+import { is } from 'immer/dist/internal';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -214,13 +215,21 @@ const PaymentPage = () => {
     return <div>장바구니로 이동합니다.</div>;
   }
 
+  if (isNil(me)) {
+    return <div>로딩</div>;
+  }
   return (
     <Container>
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문상품 ({orderItemList.length})</TextH4B>
           <FlexRow onClick={() => showSectionHandler('orderItem')}>
-            <TextB2R padding="0 13px 0 0">상품 이름...</TextB2R>
+            <TextB2R padding="0 13px 0 0">
+              {orderItemList
+                .map((item) => item.name)
+                ?.toString()
+                .slice(0, 10) + '...'}
+            </TextB2R>
             <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
@@ -235,7 +244,7 @@ const PaymentPage = () => {
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper onClick={() => showSectionHandler('customerInfo')}>
-            <TextB2R padding="0 13px 0 0">주문자 이름...</TextB2R>
+            <TextB2R padding="0 13px 0 0">{`${me?.name},${me?.tel}`}</TextB2R>
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
