@@ -1,126 +1,55 @@
 import React from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
-import { TextB3R, TextH6B } from '@components/Shared/Text';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
+import { useSelector } from 'react-redux';
+import { ISpotsDetail } from '@model/index';
+import { IMAGE_S3_URL } from '@constants/mock';
+import { destinationForm } from '@store/destination';
+import { useRouter } from 'next/router';
 
-export const SPOT_ITEMS = [
-  {
-    id: 0,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 10,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-    detail: {},
-  },
-  {
-    id: 1,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 12,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-    detail: {},
-  },
-  {
-    id: 2,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 31,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-    detail: {},
-  },
-  {
-    id: 3,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 31,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-    detail: {},
-  },
-  {
-    id: 4,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 23,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-    detail: {},
-  },
-  {
-    id: 5,
-    img: 'https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg',
-    users: 21,
-    distance: 125,
-    location: '헤이그라운드 서울숲점',
-    desc: '샐러드 받고 300포인트도 받자',
-    like: 10,
-    detail: {},
-  },
-];
+interface IParams {
+  items: ISpotsDetail;
+};
 
+const SpotWishList = ({items}: IParams) => {
+  const router = useRouter();
+  const { userLocation } = useSelector(destinationForm);
+  const userLocationLen = !!userLocation.emdNm?.length;
 
-const SpotWishList = () => {
+  const goToDetail = () => {
+    router.push(`/spot/detail/${items?.id}`)
+  };
+
   return (
     <Container>
-      <WishListWrapper>
-        {SPOT_ITEMS.map((item: any, index: number) => {
-          return (
-            <WishList onClick={() => {}} key={index}>
-              <StorImgWrapper>
-                <ImgWrapper src={item.img} alt="매장이미지" />
-              </StorImgWrapper>
-              <LocationInfoWrapper>
-                <TextB3R margin="8px 0 0 0" color={theme.black}>
-                  {item.location}
-                </TextB3R>
-                <TextH6B
-                  color={theme.greyScale65}
-                >{`${item.distance}m`}</TextH6B>
-                <LikeWrapper>
-                  <SVGIcon name="likeRed" />
-                  {item.like}
-                </LikeWrapper>
-              </LocationInfoWrapper>
-            </WishList>
-          );
-        })}
-      </WishListWrapper>
+      <WishList onClick={goToDetail}>
+        <StorImgWrapper>
+          <ImgWrapper src={`${IMAGE_S3_URL}${items.images[0].url}`} alt="매장이미지" />
+        </StorImgWrapper>
+        <LocationInfoWrapper>
+          <TextB2R margin="8px 0 0 0" color={theme.black}>
+            {items?.name}
+          </TextB2R>
+          {
+            // 유저 위치정보 있을때 노출
+            userLocationLen &&
+              <TextH5B color={theme.greyScale65}>{`${Math.round(items?.distance)}m`}</TextH5B>
+          }
+          <LikeWrapper>
+            <SVGIcon name={items.liked ? 'likeRed18' : 'likeBorderGray'} />
+            <TextB2R padding="4px 0 0 1px">{items.likeCount}</TextB2R>
+          </LikeWrapper>
+        </LocationInfoWrapper>
+      </WishList>
     </Container>
   );
 };
 
 const Container = styled.div`
-  width: 100%;
-  margin: 0 auto;
-  padding-top: 72px;
-`;
-
-export const WishListWrapper = styled.section`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  cursor: pointer;
-
-  ${({ theme }) => theme.desktop`
-    > div {
-      width: 193px;
-    }
-  `};
-
-  ${({ theme }) => theme.mobile`
-    > div {
-      width: 150px;
-    }
-  `};
+ width: 300px;
+ cursor: pointer;
 `;
 
 const WishList = styled.div`
@@ -141,7 +70,7 @@ const LocationInfoWrapper = styled.div`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 4px;
 `;
 
 export default SpotWishList;

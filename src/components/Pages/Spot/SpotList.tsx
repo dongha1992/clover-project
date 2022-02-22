@@ -25,7 +25,7 @@ import { destinationForm, SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP
 interface IProps {
   list: ISpotsDetail;
   type: string;
-  isSearch: boolean;
+  isSearch?: boolean;
 }
 
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {

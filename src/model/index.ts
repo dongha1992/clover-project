@@ -446,6 +446,21 @@ export interface ISpotStories {
   ];
 }
 
+export interface ISpotWishListResponse {
+  code: number;
+  messages: string;
+  data: {
+    spots: ISpotsDetail[];
+    title: string;
+    pagination: {
+      total: number;
+      totalPage: number;
+      page: number;
+      size: number;
+    };
+  };
+}
+
 export interface ISpotDetailStoriesResponse {
   code: number;
   messages: string;

@@ -195,12 +195,12 @@ const CartPage = () => {
 
   return (
     <Container>
-      <DeliveryMethodAndPickupLocation>
+      <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
         <Left>
           <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
           <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
         </Left>
-        <Right onClick={goToDeliveryInfo}>
+        <Right >
           <SVGIcon name="arrowRight" />
         </Right>
       </DeliveryMethodAndPickupLocation>
@@ -420,6 +420,7 @@ const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 24px 24px 0 24px;
+  cursor: pointer;
 `;
 
 const Left = styled.div`

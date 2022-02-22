@@ -7,6 +7,11 @@ import { SPOT_STATUS } from '@constants/spot';
 import { SpotStatusList, SpotWishList } from '@components/Pages/Mypage/Spot';
 import { homePadding, theme } from '@styles/theme';
 import router from 'next/router';
+import { IParamsSpots } from '@model/index';
+import { useQuery } from 'react-query'
+import { getSpotsWishList } from '@api/spot';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
 
 const STATUS_LIST = [
   {
@@ -75,21 +80,34 @@ const STATUS_LIST = [
 ];
 
 const SpotStatusPage = () => {
+  // TODO 
+  // 필요하다면 무한스크롤 페이지네이션 작업
+  // 좋아요 버튼 활성화 작업
+  const { spotsPosition } = useSelector(spotSelector);
   const [selectedTab, setSelectedTab] = useState('/spot/status/list');
+  const [page, setPage] = useState(1);
+
+  const { data: wishList } = useQuery(
+    ['spotList'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition? spotsPosition.longitude : null,
+        size: 10,
+        page: page,
+      };
+      const response = await getSpotsWishList(params);
+      return response.data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
 
   const goToSpotStatusDetail = () => {
     router.push('/mypage/spot-status/detail');
-  };
-
-  const renderBottomContent = () => {
-    return selectedTab === '/spot/status/list' ? (
-      <SpotStatusList items={STATUS_LIST} onClick={goToSpotStatusDetail} />
-    ) : (
-      <SpotWishList />
-    );
   };
 
   return (
@@ -101,7 +119,23 @@ const SpotStatusPage = () => {
           selectedTab={selectedTab}
         />
       </FixedTab>
-      <ContentWrapper>{renderBottomContent()}</ContentWrapper>
+      <ContentWrapper>
+        {
+        selectedTab === '/spot/status/list' ? (
+          <SpotStatusList items={STATUS_LIST} onClick={goToSpotStatusDetail} />
+        ) : (
+          <SpotWishListWrapper >
+            {
+              wishList?.spots.map((item, idx)=> {
+                return (
+                  <SpotWishList key={idx} items={item}/>
+                )
+              })
+            }
+          </SpotWishListWrapper>
+          )
+        }
+      </ContentWrapper>
     </Container>
   );
 };
@@ -129,8 +163,26 @@ const FixedTab = styled.div`
   `};
 `;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.section`
   ${homePadding};
 `;
 
+const SpotWishListWrapper = styled.div`
+  width: 100%;
+  padding-top: 72px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  ${({ theme }) => theme.desktop`
+    > div {
+      width: 193px;
+    }
+  `};
+
+  ${({ theme }) => theme.mobile`
+    > div {
+      width: 150px;
+    }
+  `};
+`;
 export default SpotStatusPage;
