@@ -327,74 +327,7 @@ export interface ISpotsResponse {
 
 export interface ISpots {
   title: string;
-  spots: [
-    {
-      id: number;
-      name: string;
-      type?: string;
-      eventTitle: string;
-      images: [
-        {
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          main: boolean;
-        }
-      ];
-      location: {
-        zipCode: string;
-        address: string;
-        addressDetail: string;
-        dong: string;
-      };
-      coordinate: {
-        lat: number;
-        lon: number;
-      };
-      score: number;
-      createdAt: string;
-      description: string;
-      liked: boolean;
-      likeCount: number;
-      userCount: number;
-      distance: number;
-      distanceUnit: string;
-      lunchDelivery: boolean;
-      lunchDeliveryStartTime: string;
-      lunchDeliveryEndTime: string;
-      dinnerDelivery: string;
-      dinnerDeliveryStartTime: string;
-      dinnerDeliveryEndTime: string;
-      placeType: string;
-      isTrial: boolean;
-      canEat: boolean;
-      canParking: boolean;
-      discountRate: number;
-      notices: [
-        {
-          content: string;
-          createdAt: string;
-          id: number;
-          spotId: number;
-        }
-      ];
-      pickupEndTime: string;
-      pickupStartTime: string;
-      pickups: [
-        {
-          createdAt: string;
-          id: number;
-          images: [];
-          name: string;
-          spotId: number;
-        }
-      ];
-      placeHoliday: string;
-      placeOpenTime: string;
-      stories: [];
-    }
-  ];
+  spots: ISpotsDetail[];
 }
 
 export interface ISpotsDetail {
@@ -402,6 +335,15 @@ export interface ISpotsDetail {
     lat: number;
     lon: number;
   };
+  title: string;
+  canParking: boolean;
+  canDinnerDelivery: boolean;
+  canEat: boolean;
+  discountRate: number;
+  canLunchDelivery: boolean;
+  isEvent: boolean;
+  isTrial: boolean;
+  visiblePlaceTel: boolean;
   createdAt: string;
   description: string;
   dinnerDelivery: boolean;
@@ -410,7 +352,15 @@ export interface ISpotsDetail {
   lunchDelivery: boolean;
   lunchDeliveryStartTime: string;
   lunchDeliveryEndTime: string;
+  eventTitle: string;
   id: number;
+  distance: number;
+  distanceUnit: string;
+  score: number;
+  userCount: number;
+  recruitingCount: number;
+  recruited: boolean;
+  placeName: string;
   images: [
     {
       url: string;
@@ -418,6 +368,7 @@ export interface ISpotsDetail {
       width: number;
       main: boolean;
       size: number;
+      createdAt: string;
     }
   ];
   likeCount: number;
@@ -470,28 +421,6 @@ export interface ISpotsDetail {
     }
   ];
   type: string;
-}
-
-export interface ISpotDetailResponse {
-  code: number;
-  messages: string;
-  data: ISpotsDetail;
-}
-
-export interface INormalSpots {
-  title: string;
-  id: number;
-  name: string;
-  images: [
-    {
-      url: string;
-      width: number;
-      height: number;
-      size: number;
-      main: boolean;
-      createdAt: string;
-    }
-  ];
   image: {
     url: string;
     width: number;
@@ -500,16 +429,12 @@ export interface INormalSpots {
     main: boolean;
     createdAt: string;
   };
-  liked: boolean;
-  likeCount: number;
-  userCount: number;
-  distance: number;
-  distanceUnit: string;
-  eventTitle?: string;
-  discountRate?: number;
-  recruitingCount: number;
-  recruited: boolean;
-  placeName: string;
+}
+
+export interface ISpotDetailResponse {
+  code: number;
+  messages: string;
+  data: ISpotsDetail;
 }
 
 export interface ISpotStories {
@@ -529,6 +454,21 @@ export interface ISpotStories {
       size: string;
     }
   ];
+}
+
+export interface ISpotWishListResponse {
+  code: number;
+  messages: string;
+  data: {
+    spots: ISpotsDetail[];
+    title: string;
+    pagination: {
+      total: number;
+      totalPage: number;
+      page: number;
+      size: number;
+    };
+  };
 }
 
 export interface ISpotDetailStoriesResponse {

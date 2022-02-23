@@ -41,6 +41,7 @@ const mapper: Obj = {
   parcel: '택배배송',
   quick: '퀵배송',
   noDelivery: '배송불가',
+  spot: '스팟배송',
 };
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
@@ -355,12 +356,12 @@ const CartPage = () => {
 
   return (
     <Container>
-      <DeliveryMethodAndPickupLocation>
+      <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
         <Left>
           <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
           <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
         </Left>
-        <Right onClick={goToDeliveryInfo}>
+        <Right >
           <SVGIcon name="arrowRight" />
         </Right>
       </DeliveryMethodAndPickupLocation>
@@ -594,6 +595,7 @@ const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 24px 24px 0 24px;
+  cursor: pointer;
 `;
 
 const Left = styled.div`
