@@ -19,12 +19,12 @@ export const alert = createSlice({
   name: 'alert',
   initialState: null as null | TAlert,
   reducers: {
-    setAlert: (state, action: PayloadAction<TAlert | null>) => {
+    SET_ALERT: (state, action: PayloadAction<TAlert | null>) => {
       return action.payload;
     },
   },
 });
 
-export const { setAlert } = alert.actions;
+export const { SET_ALERT } = alert.actions;
 export const alertForm = (state: AppState): TAlert | null => state.alert;
 export default alert.reducer;

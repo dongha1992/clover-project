@@ -11,15 +11,15 @@ import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 import router from 'next/router';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import { orderForm } from '@store/order';
-// temp
 
+// temp
 // const status = 'cancel';
 // const status = 'progress' as const;
 // const status = 'ready';
@@ -65,8 +65,8 @@ const OrderDetailPage = () => {
   }, []);
 
   const getCartList = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    const { data } = await axios.get(`${BASE_URL}/cartList`);
+    setItemList(data.data);
   };
 
   const showSectionHandler = () => {
@@ -76,7 +76,7 @@ const OrderDetailPage = () => {
   const deliveryInfoSheetHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     const { innerText } = e.target as HTMLDivElement;
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <DeliveryInfoSheet title="운송장번호" copiedValue={innerText} />,
       })
     );
@@ -193,7 +193,7 @@ const OrderDetailPage = () => {
 
   const cancelOrderHandler = () => {
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '주문을 취소하시겠어요?',
         onSubmit: () => cancelOrder(),
         closeBtnText: '취소',
@@ -204,10 +204,8 @@ const OrderDetailPage = () => {
 
   const changeDevlieryDateHandler = () => {
     dispatch(
-      setBottomSheet({
-        content: (
-          <CalendarSheet title="배송날짜 변경" disabledDates={disabledDates} otherDeliveryDate={otherDeliveryDate} />
-        ),
+      SET_BOTTOM_SHEET({
+        content: <CalendarSheet title="배송일 변경" disabledDates={disabledDates} isSheet />,
       })
     );
   };
@@ -278,7 +276,7 @@ const OrderDetailPage = () => {
             disabled={disabledButton}
             onClick={changeDevlieryDateHandler}
           >
-            배송일 수정하기
+            배송일 변경하기
           </Button>
         </ButtonWrapper>
       </OrderInfoWrapper>

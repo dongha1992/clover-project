@@ -15,7 +15,7 @@ export const style = createSlice({
   name: 'bottomSheet',
   initialState,
   reducers: {
-    setBottomSheet: (state, action: PayloadAction<TProps> | null) => {
+    SET_BOTTOM_SHEET: (state, action: PayloadAction<TProps> | null) => {
       return action?.payload;
     },
     INIT_BOTTOM_SHEET: (state, action: PayloadAction) => {
@@ -24,7 +24,6 @@ export const style = createSlice({
   },
 });
 
-export const { setBottomSheet, INIT_BOTTOM_SHEET } = style.actions;
-export const bottomSheetForm = (state: AppState): TProps | null =>
-  state.bottomSheet;
+export const { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } = style.actions;
+export const bottomSheetForm = (state: AppState): TProps | null => state.bottomSheet;
 export default style.reducer;

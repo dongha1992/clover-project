@@ -31,8 +31,8 @@ const QuickOrderPage = () => {
 
   /* 목업 데이터 로직 */
   useEffect(() => {
-    axios.get(`${BASE_URL}`).then(({ data }) => {
-      setItemList(data);
+    axios.get(`${BASE_URL}/itemList`).then(({ data }) => {
+      setItemList(data.data);
     });
   }, []);
   /* 목업 데이터 로직 END */
@@ -99,7 +99,7 @@ const Container = styled.main`
 const GreetingArticle = styled.article`
   display: flex;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 24px 24px 0;
   margin-bottom: 30px;
 `;
 const TextBox = styled.div`

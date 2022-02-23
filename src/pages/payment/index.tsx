@@ -23,7 +23,7 @@ import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
@@ -33,11 +33,14 @@ import { destinationForm } from '@store/destination';
 import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 import { getMainCardLists } from '@api/card';
 import { useQuery } from 'react-query';
+import { isNil } from 'lodash-es';
+import { Obj } from '@model/index';
+
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
-/* TODO: 카드 api로 메인 카드 조회 */
-/* TODO: 배송 방법은 from 서버 or store */
+/* TODO: 배송예정 어떻게? */
+/* TODO: 출입 방법 input userDestination에 담아서 서버 콜 */
 
 const PAYMENT_METHOD = [
   {
@@ -72,6 +75,17 @@ const PAYMENT_METHOD = [
   },
 ];
 
+const deliveryMap: Obj = {
+  PARCEL: '택배배송',
+  MORNING: '새벽배송',
+  SPOT: '스팟배송',
+  QUICK: '퀵배송',
+};
+
+const deliveryTimeMap: Obj = {
+  LUNCH: '점심',
+  DINNER: '저녁',
+};
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -92,7 +106,7 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { userDestinationStatus } = useSelector(destinationForm);
+  const { userDestinationStatus, userDestination } = useSelector(destinationForm);
 
   const { data: mainCard, isLoading } = useQuery(
     'getMainCard',
@@ -106,8 +120,8 @@ const PaymentPage = () => {
   );
 
   const getCartList = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    setItemList(data);
+    const { data } = await axios.get(`${BASE_URL}/cartList`);
+    setItemList(data.data);
   };
 
   useEffect(() => {
@@ -134,7 +148,7 @@ const PaymentPage = () => {
 
   const selectAccessMethodHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
       })
     );
@@ -168,6 +182,12 @@ const PaymentPage = () => {
   const isParcel = userDestinationStatus === 'parcel';
   const isMorning = userDestinationStatus === 'morning';
   const isFcoPay = selectedPaymentMethod === 1;
+
+  if (isNil(userDestination)) {
+    return <div>배송정보 없음 에러</div>;
+  }
+
+  console.log(userDestination, 'userDestination');
 
   return (
     <Container>
@@ -235,7 +255,13 @@ const PaymentPage = () => {
         <FlexCol padding="24px 0">
           <FlexBetween>
             <TextH5B>배송방법</TextH5B>
-            <TextB2R>스팟배송</TextB2R>
+            {!['parcel', 'morning'].includes(userDestinationStatus) ? (
+              <TextB2R>
+                {deliveryMap[userDestination.delivery!]} - {deliveryTimeMap[userDestination.deliveryTime!]}
+              </TextB2R>
+            ) : (
+              <TextB2R>{deliveryMap[userDestination.delivery!]}</TextB2R>
+            )}
           </FlexBetween>
           <FlexBetweenStart margin="16px 0">
             <TextH5B>배송 예정실시</TextH5B>
@@ -248,8 +274,8 @@ const PaymentPage = () => {
           <FlexBetweenStart>
             <TextH5B>베송장소</TextH5B>
             <FlexColEnd>
-              <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
-              <TextB3R color={theme.greyScale65}>서울 성동구 왕십리로 115 10층</TextB3R>
+              <TextB2R>{userDestination.location.address}</TextB2R>
+              <TextB3R color={theme.greyScale65}>{userDestination.location.addressDetail}</TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
         </FlexCol>
@@ -269,10 +295,9 @@ const PaymentPage = () => {
         </MustCheckAboutDelivery>
       </DevlieryInfoWrapper>
       <BorderLine height={8} />
-
-      <VisitorAccessMethodWrapper>
-        {isMorning && (
-          <>
+      {isMorning && (
+        <>
+          <VisitorAccessMethodWrapper>
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
               <FlexRow>
@@ -290,7 +315,7 @@ const PaymentPage = () => {
                 placeholder={
                   ACCESS_METHOD_MAP[userAccessMethod?.value!]
                     ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
-                    : '요청사항 입력'
+                    : '요청사항 입력 (선택)'
                 }
                 eventHandler={changeInputHandler}
               />
@@ -308,10 +333,13 @@ const PaymentPage = () => {
                 </TextB3R>
               </FlexCol>
             </MustCheckAboutDelivery>
-          </>
-        )}
-        {isParcel && (
-          <>
+          </VisitorAccessMethodWrapper>
+          <BorderLine height={8} />
+        </>
+      )}
+      {isParcel && (
+        <>
+          <VisitorAccessMethodWrapper>
             <FlexBetween>
               <TextH4B>배송 메모</TextH4B>
               <FlexRow>
@@ -320,10 +348,10 @@ const PaymentPage = () => {
               </FlexRow>
             </FlexBetween>
             <TextInput margin="24px 0 0 0" placeholder="요청사항 입력" eventHandler={changeInputHandler} />
-          </>
-        )}
-      </VisitorAccessMethodWrapper>
-      <BorderLine height={8} />
+          </VisitorAccessMethodWrapper>
+          <BorderLine height={8} />
+        </>
+      )}
       <CouponWrapper>
         <FlexBetween>
           <TextH4B>할인 쿠폰</TextH4B>

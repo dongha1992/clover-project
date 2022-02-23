@@ -1,34 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import {
-  theme,
-  FlexBetween,
-  FlexCol,
-  FlexRow,
-  homePadding,
-  fixedBottom,
-} from '@styles/theme';
-import {
-  TextH4B,
-  TextH5B,
-  TextB2R,
-  TextB3R,
-  TextH6B,
-} from '@components/Shared/Text';
+import { theme, FlexBetween, FlexCol, FlexRow, homePadding, fixedBottom } from '@styles/theme';
+import { TextH4B, TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
-import { setBottomSheet } from '@store/bottomSheet';
-import {
-  getDestinations,
-  editDestination,
-  deleteDestinations,
-} from '@api/destination';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
@@ -37,7 +20,7 @@ import { ACCESS_METHOD_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { PickupPlaceBox, DeliveryPlaceBox } from '@pages/cart/delivery-info';
+import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 
 const mapper: Obj = {
   MORNING: '새벽배송',
@@ -50,11 +33,11 @@ interface IProps {
   id: number;
 }
 
+/* TODO: 서버 정보 받으면 수정 */
+
 const OrderDetailAddressEditPage = ({ id }: IProps) => {
-  const [selectedAddress, setSelectedAddress] =
-    useState<IDestinationsResponse>();
-  const [selectedAccessMethod, setSelectedAccessMethod] =
-    useState<IAccessMethod>();
+  const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
+  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState({
@@ -85,7 +68,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     }
 
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '내용을 수정했습니다.',
         onSubmit: () => editDeliveryInfo(),
         submitBtnText: '확인',
@@ -100,10 +83,10 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     switch (true) {
       case isMorning: {
         if (noMsg) {
-          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else if (noAccessMethod) {
-          dispatch(setAlert({ alertMessage: '츨입방법을 입력해주세요' }));
+          dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
           return false;
         } else {
           return true;
@@ -112,7 +95,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
 
       case isParcel: {
         if (noMsg) {
-          dispatch(setAlert({ alertMessage: '메시지를 입력해주세요.' }));
+          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else {
           return true;
@@ -136,7 +119,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
 
   const selectAccessMethodHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
       })
     );
@@ -154,12 +137,12 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     const deliveryType = 'parcel';
 
     switch (deliveryType) {
-      case 'spot': {
-        return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
-      }
+      // case 'spot': {
+      //   return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
+      // }
 
       default: {
-        return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
+        // return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
       }
     }
   };
@@ -209,9 +192,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>
-                  {selectedAccessMethod?.text || '출입방법 선택'}
-                </TextB2R>
+                <TextB2R color={theme.greyScale45}>{selectedAccessMethod?.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
@@ -235,8 +216,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
                   </TextH6B>
                 </FlexRow>
                 <TextB3R color={theme.brandColor}>
-                  공동현관 및 무인택배함 비밀번호는 조합 방식 및
-                  순서(#,호출버튼)와 함께 자세히 기재해주세요.
+                  공동현관 및 무인택배함 비밀번호는 조합 방식 및 순서(#,호출버튼)와 함께 자세히 기재해주세요.
                 </TextB3R>
               </FlexCol>
             </MustCheckAboutDelivery>
@@ -260,12 +240,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
         )}
       </Wrapper>
       <BtnWrapper>
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={editDeliveryInfoHandler}
-        >
+        <Button height="100%" width="100%" borderRadius="0" onClick={editDeliveryInfoHandler}>
           변경하기
         </Button>
       </BtnWrapper>

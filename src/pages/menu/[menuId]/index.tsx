@@ -16,7 +16,7 @@ import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
 import { SET_MENU_ITEM } from '@store/menu';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
@@ -83,8 +83,8 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const getMenuDetail = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    const selectedMenuItem: IMenuItem = data.find((item: any) => item.id === Number(menuId));
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
+    const selectedMenuItem: IMenuItem = data.data.find((item: any) => item.id === Number(menuId));
     setMenuItem(() => selectedMenuItem);
     /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
 
@@ -93,7 +93,7 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const couponDownloadHandler = () => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <CouponSheet />,
       })
     );
@@ -115,7 +115,6 @@ const MenuDetailPage = ({ menuId }: any) => {
     timer = setTimeout(() => {
       if (tabRef.current) {
         const offsetTop = tabRef?.current?.offsetTop;
-
         window.scrollTo({
           behavior: 'smooth',
           left: 0,
@@ -270,7 +269,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: menuItem.reviews.length }}
+          countObj={{ 후기: menuItem?.reviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}

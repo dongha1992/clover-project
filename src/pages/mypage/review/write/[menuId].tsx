@@ -1,21 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { ReviewInfo } from '@components/Pages/Mypage/Review';
-import {
-  homePadding,
-  FlexCol,
-  FlexRow,
-  theme,
-  FlexBetween,
-  fixedBottom,
-} from '@styles/theme';
-import {
-  TextH3B,
-  TextB2R,
-  TextH6B,
-  TextB3R,
-  TextH5B,
-} from '@components/Shared/Text';
+import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
+import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import StarRatingComponent from 'react-star-rating-component';
@@ -26,7 +13,7 @@ import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
 import { getImageSize } from '@utils/getImageSize';
 import { Button } from '@components/Shared/Button';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 interface IWriteMenuReviewObj {
@@ -44,15 +31,14 @@ const WriteReviewPage = ({ menuId }: any) => {
   const [rating, setRating] = useState<number>(5);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
   const [previewImg, setPreviewImg] = useState<string[]>([]);
-  const [writeMenuReviewObj, setWriteMenuReviewObj] =
-    useState<IWriteMenuReviewObj>({
-      dateId: 0,
-      detailId: 0,
-      imgFiles: [],
-      deletedImgIds: [],
-      content: '',
-      rating: 5,
-    });
+  const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
+    dateId: 0,
+    detailId: 0,
+    imgFiles: [],
+    deletedImgIds: [],
+    content: '',
+    rating: 5,
+  });
 
   const dispatch = useDispatch();
 
@@ -68,22 +54,13 @@ const WriteReviewPage = ({ menuId }: any) => {
   }, []);
 
   const getItemForReview = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    const selectedItem: any = data.find(
-      (item: any) => item.id === Number(menuId)
-    );
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
+    const selectedItem: any = data.data.find((item: any) => item.id === Number(menuId));
     setItem(selectedItem);
   };
 
-  const onStarHoverRating = (
-    nextValue: number,
-    prevValue: number,
-    name: string,
-    e?: any
-  ) => {
-    const xPos =
-      (e.pageX - e.currentTarget.getBoundingClientRect().left) /
-      e.currentTarget.offsetWidth;
+  const onStarHoverRating = (nextValue: number, prevValue: number, name: string, e?: any) => {
+    const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
     if (xPos <= 0.5) {
       nextValue -= 0.5;
     }
@@ -123,11 +100,7 @@ const WriteReviewPage = ({ menuId }: any) => {
 
           img.onload = () => {
             URL.revokeObjectURL(blobURL);
-            const [formatWidth, formatHeight] = getImageSize(
-              img,
-              MAX_WIDTH,
-              MAX_HEIGHT
-            );
+            const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
             const canvas = document.createElement('canvas');
             canvas.width = formatWidth;
             canvas.height = formatHeight;
@@ -175,7 +148,7 @@ const WriteReviewPage = ({ menuId }: any) => {
 
   const finishWriteReview = () => {
     dispatch(
-      setAlert({
+      SET_ALERT({
         children: (
           <GreyBg>
             <TextH5B>+ 300P 적립</TextH5B>
@@ -215,11 +188,7 @@ const WriteReviewPage = ({ menuId }: any) => {
             value={rating}
             onStarHover={onStarHoverRating}
             renderStarIcon={(index, value) => {
-              return (
-                <SVGIcon
-                  name={index <= value ? 'reviewStarFull' : 'reviewStarEmpty'}
-                />
-              );
+              return <SVGIcon name={index <= value ? 'reviewStarFull' : 'reviewStarEmpty'} />;
             }}
             renderStarIconHalf={(index, value) => {
               return <SVGIcon name="reviewStarHalf" />;
@@ -239,28 +208,20 @@ const WriteReviewPage = ({ menuId }: any) => {
           ref={textAreaRef}
         />
         <FlexBetween margin="8px 0 0 0">
-          <TextB3R color={theme.brandColor}>
-            {30 - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!
-          </TextB3R>
+          <TextB3R color={theme.brandColor}>{30 - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!</TextB3R>
           <TextB3R>{numberOfReivewContent}/1000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip
-          message={'사진과 함께 등록 시 300원 적립!'}
-          top="-45px"
-          width="200px"
-          left="20px"
-        />
+        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
         </FlexRow>
         <FlexRow>
           <TextB3R color={theme.systemRed} margin="6px 0 0 0">
-            자사 제품과 무관한 사진 첨부 시 통보 없이 후기 삭제 및 포인트 회수가
-            진행 될 수 있습니다.
+            자사 제품과 무관한 사진 첨부 시 통보 없이 후기 삭제 및 포인트 회수가 진행 될 수 있습니다.
           </TextB3R>
         </FlexRow>
         <FlexRow>
@@ -285,10 +246,7 @@ const WriteReviewPage = ({ menuId }: any) => {
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={img} />
-                  <div
-                    className="svgWrapper"
-                    onClick={() => removePreviewImgHandler(index)}
-                  >
+                  <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
                 </PreviewImgWrapper>
@@ -303,12 +261,9 @@ const WriteReviewPage = ({ menuId }: any) => {
           [샐러드/건강간식/세트 상품] 수령일 기준 7일 내 제품만 등록 가능합니다.
         </TextH6B>
         <FlexCol>
-          <TextB3R color={theme.greyScale65}>
-            [정기배송 상품] 2회 수령 후 30일 내 등록 가능합니다.
-          </TextB3R>
+          <TextB3R color={theme.greyScale65}>[정기배송 상품] 2회 수령 후 30일 내 등록 가능합니다.</TextB3R>
           <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            후기 작성일 기준 2-3일 내 적립금이 자동 지급됩니다. (영업일 외 명절
-            및 공휴일은 지연될 수 있음)
+            후기 작성일 기준 2-3일 내 적립금이 자동 지급됩니다. (영업일 외 명절 및 공휴일은 지연될 수 있음)
           </TextB3R>
           <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
             상품마다 개별 작성건만 적립됩니다.
@@ -320,8 +275,7 @@ const WriteReviewPage = ({ menuId }: any) => {
             비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제될 수 있습니다.
           </TextB3R>
           <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 추가 적립금
-            미지급됩니다.
+            상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 추가 적립금 미지급됩니다.
           </TextB3R>
         </FlexCol>
       </PointInfoWrapper>

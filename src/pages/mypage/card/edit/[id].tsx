@@ -8,7 +8,7 @@ import { TextH5B } from '@components/Shared/Text';
 import { editCard, deleteCard, setMainCard } from '@api/card';
 import { ButtonGroup } from '@components/Shared/Button';
 import dynamic from 'next/dynamic';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import router from 'next/router';
 import { useMutation, useQueryClient } from 'react-query';
@@ -73,7 +73,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
 
   const removeCardHandler = async () => {
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '카드를 삭제하시겠어요?',
         submitBtnText: '확인',
         closeBtnText: '취소',
@@ -84,7 +84,7 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
 
   const editCardHandler = async () => {
     dispatch(
-      setAlert({
+      SET_ALERT({
         alertMessage: '내용을 수정했습니다.',
         submitBtnText: '확인',
         onSubmit: () => mutateEditCard(),

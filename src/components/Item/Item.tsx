@@ -5,7 +5,7 @@ import { theme, FlexCol, showMoreText } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
@@ -23,10 +23,9 @@ const Item = ({ item, isQuick = false }: TProps) => {
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    /* TODO: thunk로? */
     dispatch(SET_CART_SHEET_OBJ(item));
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <CartSheet />,
       })
     );
