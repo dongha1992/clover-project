@@ -4,14 +4,16 @@ import { TextH1B, TextB2R, TextH2B } from '@components/Shared/Text';
 import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
   INIT_SPOT_LOCATION, 
   INIT_SPOT_REGISTRATIONS_OPTIONS, 
-  INIT_SPOT_REGISTRATIONS_INFO,
+  SET_SPOT_REGISTRATIONS_INFO
 } from '@store/spot';
+import { userForm } from '@store/user';
 
 const SpotReqPage = () => {
+  const { user } = useSelector(userForm);
   const router = useRouter();
   const dispatch = useDispatch();
   const text = {
@@ -46,9 +48,14 @@ const SpotReqPage = () => {
   };
 
   const goToRegister = () => {
+    const spotsRegistrationInfoState = {
+      userName: user.name,
+      userEmail: user.email,
+      userTel: user.tel,    
+    }
+    dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
     dispatch(INIT_SPOT_LOCATION());
     dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-    dispatch(INIT_SPOT_REGISTRATIONS_INFO());
     router.push({
       pathname: '/spot/register',
       query: { type },

@@ -14,8 +14,11 @@ import { spotSelector, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
 import { userForm } from '@store/user';
 
 const RegisterPage = () => {
-  const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
-  const { user } = useSelector(userForm);
+  const { 
+    spotLocation, 
+    spotsRegistrationOptions, 
+    spotsRegistrationInfo,
+  } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
