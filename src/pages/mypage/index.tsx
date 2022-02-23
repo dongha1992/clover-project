@@ -245,6 +245,7 @@ const ManageWrapper = styled.ul``;
 const MypageItem = styled.li`
   cursor: pointer;
   padding: 0 24px;
+  list-style: none;
   > div {
     border-bottom: 1px solid ${theme.greyScale3};
   }

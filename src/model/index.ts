@@ -119,6 +119,16 @@ export interface ISignupResponse {
   data?: IUserToken;
 }
 
+export interface ISecessionRequest {
+  answer: string;
+  answerDetail: string;
+  question: string;
+}
+export interface ISecessionResponse {
+  code: number;
+  message: string;
+}
+
 export interface IConfirmTelResponse {
   code: number;
   message: string;

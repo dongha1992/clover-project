@@ -1,16 +1,10 @@
-import React, {
-  ReactElement,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-} from 'react';
+import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import SpotRecentSearch from '@components/Pages/Spot/SpotRecentSearch';
 import { SearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
 import { 
@@ -38,63 +32,69 @@ import { destinationForm } from '@store/destination';
 const RECENT_SPOT = [
   {
     id: 1,
-    name: "유니트아이엔씨",
+    name: '유니트아이엔씨',
     location: {
-      address: "서울 성동구 왕십리로 115 10층",
+      address: '서울 성동구 왕십리로 115 10층',
       addressDetail: '',
     },
     distance: 121,
-    type: "PRIVATE",
-    lunchDeliveryStartTime: "11:00:00",
-    lunchDeliveryEndTime: "11:30:00",
-    dinnerDeliveryStartTime: "14:00:00",
-    dinnerDeliveryEndTime: "18:00:00",
+    type: 'PRIVATE',
+    lunchDeliveryStartTime: '11:00:00',
+    lunchDeliveryEndTime: '11:30:00',
+    dinnerDeliveryStartTime: '14:00:00',
+    dinnerDeliveryEndTime: '18:00:00',
     // availableTime: "12:00-12:30 / 15:30-18:00",
     // spaceType: "프라이빗",
-    images: [{
-      url: "/dev/spot/origin/1_20190213142552",
-    }],
-    method: "pickup"
+    images: [
+      {
+        url: '/dev/spot/origin/1_20190213142552',
+      },
+    ],
+    method: 'pickup',
   },
   {
     id: 2,
-    name: "test",
+    name: 'test',
     location: {
-      address: "서울 성동구 왕십리로 115 11층",
+      address: '서울 성동구 왕십리로 115 11층',
       addressDetail: '',
     },
     distance: 11,
-    type: "PRIVATE",
-    lunchDeliveryStartTime: "11:00:00",
-    lunchDeliveryEndTime: "11:30:00",
-    dinnerDeliveryStartTime: "14:00:00",
-    dinnerDeliveryEndTime: "18:00:00",
+    type: 'PRIVATE',
+    lunchDeliveryStartTime: '11:00:00',
+    lunchDeliveryEndTime: '11:30:00',
+    dinnerDeliveryStartTime: '14:00:00',
+    dinnerDeliveryEndTime: '18:00:00',
     // availableTime: "12:00-12:30 / 15:30-18:00",
     // spaceType: "퍼블릭",
-    images: [{
-      url: "/dev/spot/origin/1_20190213142552",
-    }],
-    method: "pickup"
+    images: [
+      {
+        url: '/dev/spot/origin/1_20190213142552',
+      },
+    ],
+    method: 'pickup',
   },
   {
     id: 3,
-    name: "test11",
+    name: 'test11',
     location: {
-      address: "서울 성동구 왕십리로 115 22층",
+      address: '서울 성동구 왕십리로 115 22층',
       addressDetail: '',
     },
     distance: 11,
-    type: "PUBLIC",
-    lunchDeliveryStartTime: "11:00:00",
-    lunchDeliveryEndTime: "11:30:00",
-    dinnerDeliveryStartTime: "14:00:00",
-    dinnerDeliveryEndTime: "18:00:00",
+    type: 'PUBLIC',
+    lunchDeliveryStartTime: '11:00:00',
+    lunchDeliveryEndTime: '11:30:00',
+    dinnerDeliveryStartTime: '14:00:00',
+    dinnerDeliveryEndTime: '18:00:00',
     // availableTime: "12:00-12:30 / 15:30-18:00",
     // spaceType: "퍼블릭",
-    images: [{
-      url: "/dev/spot/origin/1_20190213142552",
-    }],
-    method: "pickup"
+    images: [
+      {
+        url: '/dev/spot/origin/1_20190213142552',
+      },
+    ],
+    method: 'pickup',
   },
 ];
 
@@ -116,13 +116,13 @@ const SpotSearchPage = (): ReactElement => {
       latitude: spotsPosition ? spotsPosition.latitude : null,
       longitude: spotsPosition? spotsPosition.longitude : null,
       size: 3,
-    }
-    try{
-      const {data} = await getSpotSearchRecommend(params);
+    };
+    try {
+      const { data } = await getSpotSearchRecommend(params);
       const items = data.data;
       setSpotRecommend(items);
-    }catch(err){
-      console.error(err)
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -153,44 +153,41 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
-
   // 스팟 검색 결과
-  const getSearchResult = async (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
 
     if (e.key === 'Enter') {
-      if(inputRef.current){
+      if (inputRef.current) {
         let keyword = inputRef.current?.value;
         if (!keyword) {
           setSearchResult([]);
           return;
         }
-        try{
+        try {
           const params = {
             keyword,
             latitude: spotsPosition ? spotsPosition.latitude : Number(37.50101118367814),
             longitude: spotsPosition? spotsPosition.longitude : Number(127.03525895821902),
           };
-          const {data} = await getSpotSearch(params);
+          const { data } = await getSpotSearch(params);
           const fetchData = data.data;
           // setSpotTest(fetchData);
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
           });
           setSearchResult(filtered);
-          setIsSearched(true);    
-        }catch(err){
+          setIsSearched(true);
+        } catch (err) {
           console.error(err);
-        };
-      };
+        }
+      }
     }
   };
 
   const goToOrder = useCallback(() => {
     dispatch(
-      setBottomSheet({
+      SET_BOTTOM_SHEET({
         content: <PickupSheet />,
       })
     );
@@ -211,7 +208,9 @@ const SpotSearchPage = (): ReactElement => {
           svg="searchIcon"
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
-          onFocus={()=>{setInputFocus(true)}}
+          onFocus={() => {
+            setInputFocus(true);
+          }}
           ref={inputRef}
         />
       </Wrapper>
@@ -306,9 +305,9 @@ const SpotSearchPage = (): ReactElement => {
             onClick={goToOrder}
           />
         </SearchResultContainer>
-      )}
-      </>
-    }
+          )}
+        </>
+      }
     </Container>
   );
 };
@@ -334,8 +333,8 @@ const RecentPickWrapper = styled.div`
 const DefaultSearchContainer = styled.section``;
 
 const SearchResultContainer = styled.section`
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
   ${homePadding}
 `;
 

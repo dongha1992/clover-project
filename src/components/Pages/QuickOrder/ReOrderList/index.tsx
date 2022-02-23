@@ -6,7 +6,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OrderDetailSheet } from '@components/BottomSheet/OrderSheet';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { orderForm } from '@store/order';
@@ -212,7 +212,7 @@ const ReOrderList = ({ tooltipTime, timer }: IProps) => {
                   color={theme.greyScale25}
                   onClick={() => {
                     dispatch(
-                      setBottomSheet({
+                      SET_BOTTOM_SHEET({
                         content: <OrderDetailSheet item={item} />,
                       })
                     );

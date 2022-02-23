@@ -17,8 +17,8 @@ const ReviewDetailPage = ({ id }: any) => {
   }, []);
 
   const getReviewDetailItem = async () => {
-    const { data } = await axios.get(`${BASE_URL}`);
-    const selectedReview: any = data
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
+    const selectedReview: any = data.data
       .find((item: any) => item.id === Number(id))
       .reviews.find((item: any) => item.id === Number(id));
     setSelectedReviewDetail(selectedReview);
@@ -34,11 +34,7 @@ const ReviewDetailPage = ({ id }: any) => {
 
   return (
     <Container>
-      <ReviewDetailItem
-        review={selectedReviewDetail}
-        isDetailPage
-        clickImgViewHandler={clickImgViewHandler}
-      />
+      <ReviewDetailItem review={selectedReviewDetail} isDetailPage clickImgViewHandler={clickImgViewHandler} />
     </Container>
   );
 };

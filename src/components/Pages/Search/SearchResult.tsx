@@ -6,7 +6,7 @@ import { Item } from '@components/Item';
 import SpotRecentSearch from '@components/Pages/Spot/SpotRecentSearch';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { MenuFilter } from '@components/Filter';
 import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
@@ -19,13 +19,13 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
   const clickFilterHandler = () => {
     if (!isSpot) {
       dispatch(
-        setBottomSheet({
+        SET_BOTTOM_SHEET({
           content: <MenuFilter />,
         })
       );
     } else {
       dispatch(
-        setBottomSheet({
+        SET_BOTTOM_SHEET({
           content: <SpotSearchFilter />,
         })
       );

@@ -10,7 +10,7 @@ import router from 'next/router';
 import SVGIcon from '@utils/SVGIcon';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/cookie';
@@ -94,7 +94,7 @@ const ProfilePage = () => {
   const getAuthTel = async () => {
     if (!phoneValidation) {
       dispatch(
-        setAlert({
+        SET_ALERT({
           alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
           submitBtnText: '확인',
         })
@@ -110,7 +110,7 @@ const ProfilePage = () => {
 
         if (data.code === 200) {
           dispatch(
-            setAlert({
+            SET_ALERT({
               alertMessage: `인증번호 전송했습니다.`,
               submitBtnText: '확인',
             })
@@ -145,7 +145,10 @@ const ProfilePage = () => {
     setChcekGender(id);
   };
 
-  const getDeleteUser = async () => {};
+  const getDeleteUser = async () => {
+    // TODO : 정기배송, 주문, 후불결제 등 서비스이용이 남은 경우 탈퇴불가처리 해야됨
+    router.push('/mypage/profile/secession');
+  };
 
   const goToChangePassword = () => {
     router.push('/mypage/profile/password');

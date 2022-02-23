@@ -11,20 +11,11 @@ interface IProps {
   clickMinusButton: (id: number, quantity: number) => void;
 }
 
-const CountButton = ({
-  id,
-  quantity,
-  clickPlusButton,
-  clickMinusButton,
-}: IProps) => {
+const CountButton = ({ id, quantity, clickPlusButton, clickMinusButton }: IProps) => {
   return (
     <Container>
       <Wrapper>
-        <Minus
-          onClick={() =>
-            clickMinusButton(id, quantity < 2 ? 1 : (quantity = quantity - 1))
-          }
-        >
+        <Minus onClick={() => clickMinusButton(id, quantity < 2 ? 1 : (quantity = quantity - 1))}>
           <SVGIcon name="minus" />
         </Minus>
         <Count>

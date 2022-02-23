@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAlert } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -124,7 +124,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
         setSpotRegisteration(true);
         const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
         dispatch(
-          setAlert({
+          SET_ALERT({
             alertMessage: TitleMsg,
             onSubmit: () => {
               const message = '참여해주셔서 감사해요:)';

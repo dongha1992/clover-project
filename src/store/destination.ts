@@ -29,6 +29,7 @@ export interface IDestination {
   spaceType?: string;
   type?: string;
   availableTime?: string;
+  deliveryTime?: string;
 }
 
 interface TProps {

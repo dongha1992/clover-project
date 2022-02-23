@@ -4,7 +4,7 @@ import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/
 import { theme, FlexBetween, FlexCenter } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { useDispatch } from 'react-redux';
-import { setBottomSheet } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
@@ -18,7 +18,7 @@ import {
 } from '@api/spot';
 import { IParamsSpots, ISpotRegistrationsResponse, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
@@ -58,12 +58,9 @@ const SpotPage = () => {
   const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
-  const registrationsLen =
-    info && !!info?.recruitingSpotRegistrations?.length;
-  const unsubmitSpotRegistrationsLen =
-    info && !!info?.unsubmitSpotRegistrations?.length;
-  const trialRegistrationsLen =
-    info && !!info?.trialSpotRegistrations?.length;
+  const registrationsLen = info && !!info?.recruitingSpotRegistrations?.length;
+  const unsubmitSpotRegistrationsLen = info && !!info?.unsubmitSpotRegistrations?.length;
+  const trialRegistrationsLen = info && !!info?.trialSpotRegistrations?.length;
 
   // react-query
   const { data: stationSpotList } = useQuery(
@@ -141,7 +138,7 @@ const SpotPage = () => {
         longitude: spotsPosition? spotsPosition.longitude : null,
         size: 6,
       };
-      try{
+      try {
         const { data } = await getSpotRegistrationsRecruiting(params);
         setSpotRegistrations(data);
       } catch (err) {
@@ -153,12 +150,14 @@ const SpotPage = () => {
   }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
-    // dispatch(initBottomSheet());
-    dispatch(
-      setBottomSheet({
-        content: <ShareSheet />,
-      })
-    );
+    if (!mouseMoved) {
+      // dispatch(initBottomSheet());
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <ShareSheet />,
+        })
+      );
+    }
   };
 
   const goToSpotReq = (type: string): void => {
@@ -276,62 +275,56 @@ const SpotPage = () => {
       {/* 근처 인기있는 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
       <SpotsSlider
-        className='swiper-container'
-        slidesPerView={"auto"}
+        className="swiper-container"
+        slidesPerView={'auto'}
         spaceBetween={15}
         speed={700}
         onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
+        onSlideChange={() => console.log('slide change')}
       >
-        {popularSpotList?.spots.map((list, idx)=>{
+        {popularSpotList?.spots.map((list, idx) => {
           return (
-            <SwiperSlide className='swiper-slide' key={idx}>
-              <SpotList 
-                list={list} 
-                type="normal" 
-              />
+            <SwiperSlide className="swiper-slide" key={idx}>
+              <SpotList list={list} type="normal" />
             </SwiperSlide>
-        )})}
+          );
+        })}
       </SpotsSlider>
       {/* 신규 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
       <SpotsSlider
-        className='swiper-container'
-        slidesPerView={"auto"}
+        className="swiper-container"
+        slidesPerView={'auto'}
         spaceBetween={15}
         speed={500}
         onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
+        onSlideChange={() => console.log('slide change')}
       >
-        {newSpotList?.spots.map((list, idx)=>{
+        {newSpotList?.spots.map((list, idx) => {
           return (
-            <SwiperSlide className='swiper-slide' key={idx}>
-              <SpotList 
-                list={list} 
-                type="normal" 
-              />
+            <SwiperSlide className="swiper-slide" key={idx}>
+              <SpotList list={list} type="normal" />
             </SwiperSlide>
-        )})}
+          );
+        })}
       </SpotsSlider>
       {/* 역세권 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{stationSpotList?.title}</TextH2B>
       <SpotsSlider
-        className='swiper-container'
-        slidesPerView={"auto"}
+        className="swiper-container"
+        slidesPerView={'auto'}
         spaceBetween={15}
         speed={500}
         onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
+        onSlideChange={() => console.log('slide change')}
       >
-        {stationSpotList?.spots.map((list, idx)=>{
+        {stationSpotList?.spots.map((list, idx) => {
           return (
-            <SwiperSlide className='swiper-slide' key={idx}>
-            <SpotList 
-            list={list} 
-            type="normal" 
-          />
+            <SwiperSlide className="swiper-slide" key={idx}>
+              <SpotList list={list} type="normal" />
             </SwiperSlide>
-        )})}
+          );
+        })}
       </SpotsSlider>
       {/* 프라이빗 스팟 신청 CTA */}
       <Wrapper>
@@ -345,47 +338,32 @@ const SpotPage = () => {
         </SpotRegistration>
       </Wrapper>
       {/* 이벤트 중인 스팟 */}
-      <TextH2B padding='0 24px 24px 24px'>{eventSpotList?.title}</TextH2B>
+      <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
       <EventSlider
-        className='swiper-container'
-        slidesPerView={"auto"}
+        className="swiper-container"
+        slidesPerView={'auto'}
         spaceBetween={15}
         speed={500}
         onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
+        onSlideChange={() => console.log('slide change')}
       >
-      {
-        eventSpotList?.spots.map((list, idx)=> {
+        {eventSpotList?.spots.map((list, idx) => {
           return (
-            <SwiperSlide className='swiper-slide' key={idx}>
-              <SpotList
-                list={list}
-                type="event"
-              />   
+            <SwiperSlide className="swiper-slide" key={idx}>
+              <SpotList list={list} type="event" />
             </SwiperSlide>
-          )
-        })
-      } 
+          );
+        })}
       </EventSlider>
       {/* 단골가게 스팟 */}
-      <TextH2B padding="10px 24px 0 24px">
-        {spotRegistraions?.data.title}
-      </TextH2B>
+      <TextH2B padding="10px 24px 0 24px">{spotRegistraions?.data.title}</TextH2B>
       <TextB2R color={theme.greyScale65} padding="8px 24px 23px 24px">
         {spotRegistraions?.data.subTitle}
       </TextB2R>
       <SpotListWrapper>
-      {
-        spotRegistraions?.data.spotRegistrations.map((list, idx)=> {
-          return (
-            <SpotList
-            key={idx}
-            list={list}
-            type="trial"
-          />
-          )
-        })
-      }
+        {spotRegistraions?.data.spotRegistrations.map((list, idx) => {
+          return <SpotList key={idx} list={list} type="trial" />;
+        })}
       </SpotListWrapper>
       {/* 퍼블릭 스팟 신청 CTA */}
       <Wrapper>
@@ -428,7 +406,7 @@ const TopCTASlider = styled(Swiper)`
 const SpotsSlider = styled(Swiper)`
   width: auto;
   padding: 0 24px;
-  .swiper-slide{
+  .swiper-slide {
     width: 120px;
   }
   // .swiper-button-next{
@@ -440,13 +418,13 @@ const SpotsSlider = styled(Swiper)`
 
 const EventSlider = styled(Swiper)`
   padding: 0 24px;
-  .swiper-slide{
+  .swiper-slide {
     width: 299px;
   }
 `;
 
 const HeaderTitle = styled.div`
-  span{
+  span {
     color: ${theme.brandColor};
   }
 `;
@@ -454,7 +432,6 @@ const HeaderTitle = styled.div`
 const RegistrationsCTAWrapper = styled.article`
   padding: 18px 24px 0 24px;
 `;
-
 
 const RegistrationCTA = styled.div`
   display: inline-block;
