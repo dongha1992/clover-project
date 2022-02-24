@@ -5,6 +5,7 @@ import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) => {
   return (
@@ -34,10 +35,16 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
             <ReviewBody>
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
-                {review.images.map((img: any, index: number) => {
+                {review.imageUrl?.map((img: any, index: number) => {
+                  /* TODO: menu review 나오면 수정 */
                   if (index > 1) return;
                   return (
-                    <ReviewImage src={img} key={index} isFirst onClick={() => clickImgViewHandler(review.images)} />
+                    <ReviewImage
+                      src={IMAGE_S3_URL + img}
+                      key={index}
+                      isFirst
+                      onClick={() => clickImgViewHandler(review.imageUrl)}
+                    />
                   );
                 })}
               </ImgWrapper>
@@ -117,6 +124,7 @@ const ImgWrapper = styled.div`
 
 const ReviewImage = styled.img<{ isFirst?: boolean }>`
   width: calc((100% - 24px) / 4);
+  height: 72px;
   border-radius: 8px;
   margin-right: ${({ isFirst }) => isFirst && 8}px;
 `;

@@ -49,8 +49,7 @@ const PasswordConfirmPage = () => {
         <FlexCol padding="39px 0 32px 0">
           <TextH2B padding="0 0 16px 0">비밀번호 재확인</TextH2B>
           <TextB2R color={theme.greyScale65}>
-            회원님의 소중한 정보를 보호하기 위해 비밀번호를 다시 한번 입력받고
-            있습니다.
+            회원님의 소중한 정보를 보호하기 위해 비밀번호를 다시 한번 입력받고 있습니다.
           </TextB2R>
         </FlexCol>
         <FlexCol>

@@ -20,6 +20,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -156,7 +157,7 @@ const MenuDetailPage = ({ menuId }: any) => {
         <DailySaleNumber>
           <Tag backgroundColor={theme.brandColor} borderRadius={24}>
             <TextH6B padding="2px 0 0 0" color={theme.white}>
-              {'일일 70개 한정'}
+              일일 70개 한정
             </TextH6B>
           </Tag>
         </DailySaleNumber>

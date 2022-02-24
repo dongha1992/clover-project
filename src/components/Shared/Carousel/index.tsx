@@ -6,10 +6,11 @@ import { IBanners } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
-  banners: IBanners[];
+  // images: IBanners[];
+  images: any[];
 }
 
-const Carousel = ({ banners, setCountIndex }: IProps) => {
+const Carousel = ({ images, setCountIndex }: IProps) => {
   const settings = {
     arrows: false,
     dots: false,
@@ -23,16 +24,23 @@ const Carousel = ({ banners, setCountIndex }: IProps) => {
     centerPadding: '0px',
   };
 
+  /*TODO: menu에 reviews 어떻게 들어오는지 아직 모름, */
   return (
     <Container>
       <Slider {...settings}>
-        {banners?.map((banner: any, index: number) => {
+        {images?.map((image: any, index: number) => {
+          // temp
+          if (!image.imageUrl) {
+            image = {
+              imageUrl: image,
+            };
+          }
           return (
             <ImageWrapper
-              src={IMAGE_S3_URL + banner.imageUrl}
+              src={IMAGE_S3_URL + image.imageUrl}
               alt="image"
               key={index}
-              isLast={index === banners.length + 1}
+              isLast={index === images.length + 1}
             />
           );
         })}

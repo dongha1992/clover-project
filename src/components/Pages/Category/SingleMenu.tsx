@@ -3,10 +3,11 @@ import styled from 'styled-components';
 import { FlexWrapWrapper } from '@styles/theme';
 import axios from 'axios';
 import { Item } from '@components/Item';
-import { CategoryFilter } from '@components/Pages/Category';
+import { TextH3B } from '@components/Shared/Text';
+
 import { BASE_URL } from '@constants/mock';
 
-const SingleMenu = ({ category }: any) => {
+const SingleMenu = ({ title }: any) => {
   const [itemList, setItemList] = useState([]);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ const SingleMenu = ({ category }: any) => {
 
   return (
     <Container>
-      <CategoryFilter title={category} />
+      <TextH3B padding="0 0 17px 0">{title}</TextH3B>
       <FlexWrapWrapper>
         {itemList.length > 0 &&
           itemList.map((item: any, index: number) => {
@@ -33,6 +34,7 @@ const SingleMenu = ({ category }: any) => {
 
 const Container = styled.div`
   width: 100%;
+  margin-top: 42px;
 `;
 
 export default React.memo(SingleMenu);

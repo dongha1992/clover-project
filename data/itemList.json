@@ -16,14 +16,14 @@
           "menuId": 1,
           "user": "유저1",
           "createdAt": "2021-11-11",
-          "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+          "url": "/menu/review/lg/10000_20200408084613",
           "rating": 4,
           "order": 2,
-          "images": [
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg"
+          "imageUrl": [
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613"
           ],
           "content": "리뷰리뷰리뷸",
           "reply": {
@@ -39,10 +39,10 @@
           "menuId": 1,
           "user": "유저2",
           "createdAt": "2021-11-11",
-          "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+          "url": "/menu/review/lg/10000_20200408084613",
           "rating": 3,
           "order": 19,
-          "images": ["https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg"],
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
           "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
         }
       ],
@@ -119,7 +119,43 @@
       "like": 10000,
       "review": 10,
       "tags": ["페스코베지", "스팟/새벽"],
-      "quantity": 1
+      "quantity": 1,
+      "reviews": [
+        {
+          "id": 1,
+          "menuId": 2,
+          "user": "유저1",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 4,
+          "order": 2,
+          "imageUrl": [
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657"
+          ],
+          "content": "리뷰리뷰리뷸",
+          "reply": {
+            "reviewId": 1,
+            "menuId": 2,
+            "name": "프레시코드 MD팀",
+            "createdAt": "2021-20-22",
+            "content": "asdasdasdasda딥뱐딥뱐"
+          }
+        },
+        {
+          "id": 2,
+          "menuId": 2,
+          "user": "유저2",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 3,
+          "order": 19,
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
+          "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
+        }
+      ]
     },
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
@@ -131,7 +167,43 @@
       "like": 10,
       "review": 100,
       "tags": ["페스코베지"],
-      "quantity": 1
+      "quantity": 1,
+      "reviews": [
+        {
+          "id": 1,
+          "menuId": 3,
+          "user": "유저1",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 4,
+          "order": 2,
+          "imageUrl": [
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657"
+          ],
+          "content": "리뷰리뷰리뷸",
+          "reply": {
+            "reviewId": 1,
+            "menuId": 3,
+            "name": "프레시코드 MD팀",
+            "createdAt": "2021-20-22",
+            "content": "asdasdasdasda딥뱐딥뱐"
+          }
+        },
+        {
+          "id": 2,
+          "menuId": 3,
+          "user": "유저2",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 3,
+          "order": 19,
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
+          "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
+        }
+      ]
     },
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
@@ -143,7 +215,43 @@
       "like": 100,
       "review": 90000,
       "tags": ["페스코베지", "스팟/새벽", "페스코베지"],
-      "quantity": 1
+      "quantity": 1,
+      "reviews": [
+        {
+          "id": 1,
+          "menuId": 4,
+          "user": "유저1",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 4,
+          "order": 2,
+          "imageUrl": [
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613"
+          ],
+          "content": "리뷰리뷰리뷸",
+          "reply": {
+            "reviewId": 1,
+            "menuId": 4,
+            "name": "프레시코드 MD팀",
+            "createdAt": "2021-20-22",
+            "content": "asdasdasdasda딥뱐딥뱐"
+          }
+        },
+        {
+          "id": 2,
+          "menuId": 4,
+          "user": "유저2",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 3,
+          "order": 19,
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
+          "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
+        }
+      ]
     }
   ]
 }

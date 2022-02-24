@@ -53,15 +53,16 @@ export interface IAavilabiltyEmail {
 }
 
 export interface ISignupUser {
+  appleToken?: string;
   authCode: string;
   birthDate: string;
   email: string;
-  emailReceived: boolean;
   gender: string;
+  marketingEmailReceived: boolean;
+  marketingSmsReceived: boolean;
   name: string;
-  nickname: string;
+  nickName: string;
   password: string;
-  smsReceived: boolean;
   tel: string;
 }
 
@@ -151,7 +152,34 @@ export interface IChangePassword {
   newPassword: string;
   oldPassword?: string;
 }
+export interface IInvitation {
+  invitationPointValidDays: number;
+  invitationPointValue: number;
+  joinCount: number;
+  orderCount: number;
+  recommendationPointValue: number;
+  totalPoint: number;
+}
+export interface IInvitationResponse {
+  code: number;
+  message: string;
+  data: IInvitation;
+}
 
+export interface IChangeMe {
+  authCode?: string;
+  birthDate: string;
+  gender: string;
+  email: string;
+  marketingEmailReceived: boolean;
+  marketingPushReceived: boolean;
+  marketingSmsReceived: boolean;
+  name: string;
+  nickName: string;
+  notiPushReceived: boolean;
+  primePushReceived: boolean;
+  tel: string;
+}
 export interface IJusoRequest {
   query: string;
   page: number;
