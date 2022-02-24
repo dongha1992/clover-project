@@ -73,6 +73,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       if (loginType !== 'NONMEMBER' && sessionStorage.accessToken) {
         const { data } = await userProfile();
         if (data.code === 200) {
+          data.data.nickName ??= data.data.name;
+          data.data.nickName ||= data.data.name;
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
         }
@@ -80,6 +82,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         if (isAutoLogin) {
           const { data } = await userProfile();
           if (data.code === 200) {
+            data.data.nickName ??= data.data.name;
+            data.data.nickName ||= data.data.name;
             dispatch(SET_USER(data.data));
             dispatch(SET_LOGIN_SUCCESS(true));
           }
