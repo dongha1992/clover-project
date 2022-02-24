@@ -16,9 +16,9 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
+import { userForm } from '@store/user';
 
 const ProfilePage = () => {
-  const { loginType } = useSelector(commonSelector);
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
@@ -30,16 +30,20 @@ const ProfilePage = () => {
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const phoneNumberRef = useRef<HTMLInputElement>(null);
-  const authTimerRef = useRef(2000);
+  const authTimerRef = useRef(300);
+
+  const { loginType } = useSelector(commonSelector);
+  const { me } = useSelector(userForm);
 
   const dispatch = useDispatch();
+  console.log(me, '1');
 
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 440) {
+    if (authTimerRef.current < 240) {
       setOneMinuteDisabled(false);
     }
   }, [second]);
