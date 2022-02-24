@@ -303,9 +303,7 @@ const CartPage = () => {
 
   const clickPlusButton = (id: number, quantity: number) => {};
 
-  const clickMinusButton = (id: number, quantity: number) => {
-    console.log(quantity);
-  };
+  const clickMinusButton = (id: number, quantity: number) => {};
 
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());
@@ -361,7 +359,7 @@ const CartPage = () => {
           <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
           <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
         </Left>
-        <Right >
+        <Right>
           <SVGIcon name="arrowRight" />
         </Right>
       </DeliveryMethodAndPickupLocation>

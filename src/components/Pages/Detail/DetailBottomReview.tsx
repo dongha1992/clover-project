@@ -14,7 +14,6 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   reviews = [...reviews, ...reviews, ...reviews];
   const dispatch = useDispatch();
 
-  console.log(reviews, 'reviews');
   const hasReivew = reviews.length > 0;
 
   const goToReviewImages = useCallback(() => {

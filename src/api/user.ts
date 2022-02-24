@@ -15,6 +15,8 @@ import {
   IHelpPassword,
   IChangePassword,
   ISecessionResponse,
+  IInvitationResponse,
+  IChangeMe,
 } from '@model/index';
 
 export const userLogin = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
@@ -36,7 +38,7 @@ export const userConfirmTel = (data: IConfimTel): Promise<AxiosResponse<IRespons
 export const availabilityEmail = (params: IAavilabiltyEmail): Promise<AxiosResponse<IConfirmTelResponse>> => {
   return Api.get('/user/v1/availability/email', { params });
 };
-export const signup = (data: ISignupUser): Promise<AxiosResponse<ISignupResponse>> => {
+export const userSignup = (data: ISignupUser): Promise<AxiosResponse<ISignupResponse>> => {
   return Api.post('/user/v1/users', data);
 };
 
@@ -72,4 +74,16 @@ export const userChangePassword = (data: IChangePassword): Promise<AxiosResponse
 
 export const userUnlock = (): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/unlock');
+};
+
+export const userRecommendation = (): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('/user/v1/recommendation');
+};
+
+export const userInvitation = (): Promise<AxiosResponse<IInvitationResponse>> => {
+  return Api.post('/user/v1/invitation');
+};
+
+export const userChangeInfo = (data: IChangeMe): Promise<AxiosResponse<IResponse>> => {
+  return Api.patch('/user/v1/me', data);
 };

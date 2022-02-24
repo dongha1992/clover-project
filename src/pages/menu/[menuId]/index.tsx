@@ -142,7 +142,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   if (!Object.keys(menuItem).length) {
     return <Loading />;
   }
-  console.log(menuItem, 'menuItem');
+
   return (
     <Container>
       <ImgWrapper>
