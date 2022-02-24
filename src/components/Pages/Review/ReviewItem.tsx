@@ -4,13 +4,15 @@ import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 const ReviewItem = ({ review, onClick }: any) => {
+  console.log(IMAGE_S3_URL + review.url, 'review');
   return (
     <Container onClick={onClick}>
       <Wrapper>
         <ImgWrapper>
-          <ReviewImg src={review.url} />
+          <ReviewImg src={IMAGE_S3_URL + review.url} />
         </ImgWrapper>
         <ReviewContent>
           <ReviewHeader>
@@ -47,6 +49,7 @@ const Wrapper = styled.div`
 
 const ImgWrapper = styled.div`
   position: relative;
+  height: 72px;
 `;
 
 const ReviewImg = styled.img`

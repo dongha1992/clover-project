@@ -14,6 +14,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   reviews = [...reviews, ...reviews, ...reviews];
   const dispatch = useDispatch();
 
+  console.log(reviews, 'reviews');
   const hasReivew = reviews.length > 0;
 
   const goToReviewImages = useCallback(() => {
@@ -40,11 +41,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
     <Container isSticky={isSticky}>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
-          <ReviewOnlyImage
-            reviews={reviews}
-            goToReviewImages={goToReviewImages}
-            goToReviewDetail={goToReviewDetail}
-          />
+          <ReviewOnlyImage reviews={reviews} goToReviewImages={goToReviewImages} goToReviewDetail={goToReviewDetail} />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
             상품의 첫 번째 후기를 작성해주세요 :)
@@ -64,21 +61,9 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
       <BorderLine height={8} />
       <ReviewWrapper>
         {reviews.map((review: any, index: number) => {
-          return (
-            <ReviewDetailItem
-              review={review}
-              key={index}
-              clickImgViewHandler={clickImgViewHandler}
-            />
-          );
+          return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          borderRadius="8"
-          onClick={goToTotalReview}
-        >
+        <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
           {reviews.length}개 후기 전체보기
         </Button>
       </ReviewWrapper>
