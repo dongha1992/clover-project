@@ -7,7 +7,6 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 
 const ReviewItem = ({ review, onClick }: any) => {
-  console.log(IMAGE_S3_URL + review.url, 'review');
   return (
     <Container onClick={onClick}>
       <Wrapper>

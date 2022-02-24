@@ -8,7 +8,6 @@ import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 
 const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) => {
-  console.log(review, 'review');
   return (
     <>
       <Container>

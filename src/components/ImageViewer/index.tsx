@@ -18,8 +18,6 @@ const ImageViewer = ({ images }: any) => {
 
   const totalImg = images.length;
 
-  console.log(images, '11');
-
   return (
     <ModalFullScreen height={'300px'} padding="10px" style={{ borderRadius: '8px' }}>
       <Container>

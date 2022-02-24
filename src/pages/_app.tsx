@@ -8,7 +8,7 @@ import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { wrapper } from '@store/index';
 import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
 import MobileDetect from 'mobile-detect';
@@ -22,7 +22,7 @@ import { useStore } from 'react-redux';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { SET_LOGIN_SUCCESS, SET_USER } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
@@ -42,6 +42,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useMediaQuery('(max-width:512px)');
 
   const store: any = useStore();
+  const { loginType, isAutoLogin } = store.getState().common;
+  const { me } = useSelector(userForm);
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
@@ -69,10 +71,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   }, []);
 
   const authCheck = async () => {
-    const { loginType, isAutoLogin } = store.getState().common;
-
     try {
-      if (loginType !== 'NONMEMBER' && sessionStorage.accessToken) {
+      if (sessionStorage.accessToken) {
         const { data } = await userProfile();
         if (data.code === 200) {
           dispatch(SET_USER(data.data));
