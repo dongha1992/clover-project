@@ -26,6 +26,9 @@ export interface IDestination {
   receiverTel?: string;
   deliveryMessageType?: string;
   id?: number;
+  spaceType?: string;
+  type?: string;
+  availableTime?: string;
   deliveryTime?: string;
 }
 
