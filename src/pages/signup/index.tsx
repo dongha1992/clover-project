@@ -74,6 +74,7 @@ const SignupPage = () => {
 
     dispatch(
       SET_SIGNUP_USER({
+        loginType: 'EMAIL',
         marketingEmailReceived: userAgreeMarketingTerm.includes(3),
         marketingSmsReceived: userAgreeMarketingTerm.includes(4),
       })

@@ -91,7 +91,7 @@ const CheckDestinationPlace = () => {
     const canEverything = status === 'spot';
     const canParcel = status === 'parcel';
     const canNotDelivery = status === 'noDelivery';
-    console.log(status, 'd');
+
     if (isLocation) {
       // 홈 위치 검색
       switch (status) {

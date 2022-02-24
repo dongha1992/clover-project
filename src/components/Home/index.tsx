@@ -29,14 +29,18 @@ const Home = () => {
       const { data } = await getBannersApi(params);
       setBannerList(data.data);
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { error: eventsError } = useQuery('events-banners', async () => {
-    const params = { type: 'EVENT' };
-    const { data } = await getBannersApi(params);
-    setEventBannerList(data.data);
-  });
+  const { error: eventsError } = useQuery(
+    'events-banners',
+    async () => {
+      const params = { type: 'EVENT' };
+      const { data } = await getBannersApi(params);
+      setEventBannerList(data.data);
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const getItemLists = async () => {
     const { data } = await axios.get(`${BASE_URL}/itemList`);

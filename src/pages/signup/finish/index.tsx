@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
@@ -55,7 +55,7 @@ const SignupFinishPage = () => {
         </PromotionWrapper>
       </Body>
       <BtnWrapper onClick={() => router.push('/event')}>
-        <Button>신규회원 혜택받기</Button>
+        <Button height="100%">신규회원 혜택받기</Button>
       </BtnWrapper>
     </Container>
   );
