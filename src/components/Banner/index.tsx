@@ -22,7 +22,7 @@ const Banner = ({ bannerList }: IProps) => {
 
   return (
     <Container>
-      <Carousel banners={bannerList} setCountIndex={setCurrentImg} />
+      <Carousel images={bannerList} setCountIndex={setCurrentImg} />
       <Count>
         <TextH6B color={theme.white}>{currentImg + 1}</TextH6B>
         <TextH6B color={theme.white} padding="0 4px">

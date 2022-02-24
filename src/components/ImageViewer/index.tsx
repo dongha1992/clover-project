@@ -10,20 +10,18 @@ import { INIT_IMAGE_VIEWER } from '@store/common';
 
 const ImageViewer = ({ images }: any) => {
   const [currentImg, setCurrentImg] = useState(0);
-  const disptach = useDispatch();
+  const dispatch = useDispatch();
 
   const closeModal = () => {
-    disptach(INIT_IMAGE_VIEWER());
+    dispatch(INIT_IMAGE_VIEWER());
   };
 
   const totalImg = images.length;
 
+  console.log(images, '11');
+
   return (
-    <ModalFullScreen
-      height={'300px'}
-      padding="10px"
-      style={{ borderRadius: '8px' }}
-    >
+    <ModalFullScreen height={'300px'} padding="10px" style={{ borderRadius: '8px' }}>
       <Container>
         <Header>
           <TextH5B color={theme.white}>

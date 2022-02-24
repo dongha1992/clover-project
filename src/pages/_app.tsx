@@ -10,7 +10,7 @@ import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { wrapper } from '@store/index';
-import { SET_IS_MOBILE } from '@store/common';
+import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -64,6 +64,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     }
 
     authCheck();
+    // temp
+    dispatch(INIT_IMAGE_VIEWER());
   }, []);
 
   const authCheck = async () => {
