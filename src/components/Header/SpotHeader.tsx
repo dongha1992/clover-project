@@ -5,24 +5,31 @@ import { textH5 } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
-import { destinationForm } from '@store/destination';
-import { useSelector } from 'react-redux';
+import { destinationForm, INIT_USER_DESTINATION_STATUS } from '@store/destination';
+import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 
 const SpotHeader = () => {
-
+  const dispatch = useDispatch();
   const { userLocation } =
   useSelector(destinationForm);
 
   const goToCart = () => {
     router.push('/cart');
   };
+  
   const goToLocation = (): void => {
     router.push({
       pathname: '/location',
       query: { isSpot: true },
     });
-  }
+  };
+
+  const goToSpotSearch = () => {
+    dispatch(INIT_USER_DESTINATION_STATUS());
+    router.push('/spot/search');
+  };
+
 
   return (
     <Container>
@@ -40,12 +47,10 @@ const SpotHeader = () => {
           </AddressWrapper>
         </Left>
         <Right>
-          <div className="search">
-            <Link href="/spot/search" passHref>
+          <div className="search" onClick={goToSpotSearch}>
               <a>
                 <SVGIcon name="searchIcon" />
               </a>
-            </Link>
           </div>
           <CartIcon onClick={goToCart} />
         </Right>

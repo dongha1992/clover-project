@@ -10,10 +10,10 @@ import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { SET_SPOT_POSITIONS } from '@store/spot';
 
 const AddressDetailPage = () => {
   const { tempLocation, availableDestination } = useSelector(destinationForm);
-
   const dispatch = useDispatch();
   const { isSpot } = router.query;
 
@@ -43,6 +43,10 @@ const AddressDetailPage = () => {
           latitude,
           longitude,
         });
+        dispatch(SET_SPOT_POSITIONS({
+          latitude: latitude,
+          longitude: longitude,
+        }));
       } else {
         // 검색 결과가 없는 경우?
       }
