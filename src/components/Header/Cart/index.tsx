@@ -22,6 +22,7 @@ const CartIcon = ({ onClick }: any) => {
 
 const Container = styled.div`
   position: relative;
+  cursor: pointer;
 `;
 
 const CountWrapper = styled.div`

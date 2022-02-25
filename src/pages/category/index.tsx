@@ -1,18 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 import { SingleMenu } from '@components/Pages/Category';
+import { categoryPageSet } from '@styles/theme';
 
 const CategoryPage = () => {
   return (
     <Container>
-      <SingleMenu category="/" />
+      <SingleMenu title="전체" />
+      <SingleMenu title="샐러드" />
     </Container>
   );
 };
 
 const Container = styled.div`
-  width: 100%;
-  padding: 52px 24px;
+  ${categoryPageSet}
 `;
 
 export default React.memo(CategoryPage);

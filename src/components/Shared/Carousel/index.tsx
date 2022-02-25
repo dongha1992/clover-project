@@ -1,17 +1,37 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/getMediaQuery';
 import { IBanners } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
+import SVGIcon from '@utils/SVGIcon';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
-  banners: IBanners[];
+  // images: IBanners[];
+  images: any[];
 }
 
-const Carousel = ({ banners, setCountIndex }: IProps) => {
+const NextArrow = ({ onClick }: any) => {
+  return (
+    <NextArrowWrapper onClick={onClick}>
+      <SVGIcon name="arrowRightBanner" />
+    </NextArrowWrapper>
+  );
+};
+
+const PreviousArrow = ({ onClick }: any) => {
+  return (
+    <PreviousArrowWrapper onClick={onClick}>
+      <SVGIcon name="arrowLeftBanner" />
+    </PreviousArrowWrapper>
+  );
+};
+
+const Carousel = ({ images, setCountIndex }: IProps) => {
+  const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
+
   const settings = {
-    arrows: false,
+    arrows: isArrowShow ? true : false,
     dots: false,
     spped: 500,
     sliderToShow: 1,
@@ -21,18 +41,34 @@ const Carousel = ({ banners, setCountIndex }: IProps) => {
     customPaging: () => <div />,
     afterChange: (current: number) => setCountIndex && setCountIndex(current),
     centerPadding: '0px',
+    nextArrow: <NextArrow />,
+    prevArrow: <PreviousArrow />,
   };
 
+  /*TODO: menu에 reviews 어떻게 들어오는지 아직 모름, */
   return (
-    <Container>
+    <Container
+      onMouseEnter={() => {
+        setIsArrowShow(true);
+      }}
+      onMouseLeave={() => {
+        setIsArrowShow(false);
+      }}
+    >
       <Slider {...settings}>
-        {banners?.map((banner: any, index: number) => {
+        {images?.map((image: any, index: number) => {
+          // temp
+          if (!image.imageUrl) {
+            image = {
+              imageUrl: image,
+            };
+          }
           return (
             <ImageWrapper
-              src={IMAGE_S3_URL + banner.imageUrl}
+              src={IMAGE_S3_URL + image.imageUrl}
               alt="image"
               key={index}
-              isLast={index === banners.length + 1}
+              isLast={index === images.length + 1}
             />
           );
         })}
@@ -42,6 +78,7 @@ const Carousel = ({ banners, setCountIndex }: IProps) => {
 };
 
 const Container = styled.div`
+  position: relative;
   max-width: ${breakpoints.mobile}px;
   min-width: ${breakpoints.sm}px;
   .slick-slider {
@@ -75,6 +112,18 @@ const ImageWrapper = styled.img<{ isLast: boolean }>`
   height: 378px;
   object-fit: cover;
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
+`;
+const NextArrowWrapper = styled.div`
+  position: absolute;
+  right: 10%;
+  top: 50%;
+`;
+
+const PreviousArrowWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  z-index: 10;
 `;
 
 export default React.memo(Carousel);

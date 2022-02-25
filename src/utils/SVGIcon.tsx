@@ -10,13 +10,7 @@ type TProps = {
 
 const svgMap: TSvg = {
   location: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M14.6 10.2583C14.6 11.7752 13.4117 12.9604 12 12.9604C10.5883 12.9604 9.4 11.7752 9.4 10.2583C9.4 8.74145 10.5883 7.55625 12 7.55625C13.4117 7.55625 14.6 8.74145 14.6 10.2583Z"
         stroke="#242424"
@@ -30,13 +24,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   searchIcon: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M21 21L16.9862 16.9791M19.2105 11.6053C19.2105 13.6223 18.4093 15.5567 16.983 16.983C15.5567 18.4093 13.6223 19.2105 11.6053 19.2105C9.58822 19.2105 7.65379 18.4093 6.22753 16.983C4.80127 15.5567 4 13.6223 4 11.6053C4 9.58822 4.80127 7.65379 6.22753 6.22753C7.65379 4.80127 9.58822 4 11.6053 4C13.6223 4 15.5567 4.80127 16.983 6.22753C18.4093 7.65379 19.2105 9.58822 19.2105 11.6053Z"
         stroke="#242424"
@@ -46,13 +34,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   cart: () => (
-    <svg
-      width="21"
-      height="20"
-      viewBox="0 0 21 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M4.03369 5H17.9779C18.2604 5.00001 18.5398 5.05857 18.7981 5.17191C19.0563 5.28524 19.2877 5.45083 19.4773 5.65801C19.6669 5.86519 19.8105 6.10936 19.8988 6.37478C19.9871 6.64019 20.0182 6.92097 19.9901 7.199L19.3834 13.199C19.3335 13.6925 19.1 14.1501 18.7281 14.4829C18.3563 14.8157 17.8727 15 17.3712 15H7.71439C7.24669 15.0002 6.79338 14.84 6.43165 14.5469C6.06992 14.2537 5.82212 13.8456 5.73045 13.392L4.03369 5Z"
         stroke="#242424"
@@ -66,30 +48,12 @@ const svgMap: TSvg = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M7.06689 19H9.08925"
-        stroke="#242424"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M15.1567 19H17.1791"
-        stroke="#242424"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M7.06689 19H9.08925" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15.1567 19H17.1791" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   like: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z"
         fill="#F42D2D"
@@ -100,13 +64,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   home: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -117,13 +75,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   homeActive: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -134,13 +86,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   arrowDown: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M9.31696 11.5883C9.15684 11.7963 8.84316 11.7963 8.68304 11.5883L6.03165 8.144C5.82917 7.88097 6.01667 7.5 6.34861 7.5L11.6514 7.5C11.9833 7.5 12.1708 7.88097 11.9684 8.144L9.31696 11.5883Z"
         fill="#242424"
@@ -148,22 +94,8 @@ const svgMap: TSvg = {
     </svg>
   ),
   arrowLeft: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="4"
-        y="14"
-        width="2"
-        height="18"
-        rx="1"
-        transform="rotate(-90 4 14)"
-        fill="#242424"
-      />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="14" width="2" height="18" rx="1" transform="rotate(-90 4 14)" fill="#242424" />
       <path
         d="M10.5 5.5L3 13L10.5 20.5"
         stroke="#242424"
@@ -173,48 +105,31 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  arrowLeftBanner: () => (
+    <svg width="32" height="48" viewBox="0 0 32 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="48" fill="white" fillOpacity="0.65" />
+      <path d="M19 17L12 24L19 31" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   arrowRight: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M6 15L12 9L6 3"
-        stroke="#242424"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 15L12 9L6 3" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   arrowRightGrey: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M6 15L12 9L6 3"
-        stroke="#C8C8C8"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 15L12 9L6 3" stroke="#C8C8C8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  arrowRightBanner: () => (
+    <svg width="32" height="48" viewBox="0 0 32 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="32" y="48" width="32" height="48" transform="rotate(180 32 48)" fill="white" fillOpacity="0.65" />
+      <path d="M13 31L20 24L13 17" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+
   locationBlack: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M14.5 7.6C14.5 11.623 10.881 14.6465 9.51425 15.6449C9.20524 15.8707 8.79476 15.8707 8.48575 15.6449C7.11903 14.6465 3.5 11.623 3.5 7.6C3.5 4.50721 5.96243 2 9 2C12.0376 2 14.5 4.50721 14.5 7.6Z"
         fill="#242424"
@@ -223,13 +138,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   selectedBottomIcon: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -245,13 +154,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   filter: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="5.50006" cy="6" r="1.75" stroke="#242424" strokeWidth="1.5" />
       <line
         x1="7.75006"
@@ -262,14 +165,7 @@ const svgMap: TSvg = {
         strokeWidth="1.5"
         strokeLinecap="round"
       />
-      <circle
-        cx="12.4999"
-        cy="12"
-        r="1.75"
-        transform="rotate(180 12.4999 12)"
-        stroke="#242424"
-        strokeWidth="1.5"
-      />
+      <circle cx="12.4999" cy="12" r="1.75" transform="rotate(180 12.4999 12)" stroke="#242424" strokeWidth="1.5" />
       <line
         x1="10.2499"
         y1="11.9502"
@@ -282,13 +178,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   removeItem: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="9" cy="9" r="7" fill="#242424" />
       <path
         fillRule="evenodd"
@@ -305,98 +195,33 @@ const svgMap: TSvg = {
     </svg>
   ),
   uncheckedRectBox: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="1.75"
-        y="1.75"
-        width="14.5"
-        height="14.5"
-        rx="1.25"
-        fill="white"
-        stroke="#DEDEDE"
-        strokeWidth="1.5"
-      />
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1.75" y="1.75" width="14.5" height="14.5" rx="1.25" fill="white" stroke="#DEDEDE" strokeWidth="1.5" />
     </svg>
   ),
   checkedRectBox: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="1" y="1" width="16" height="16" rx="2" fill="#35AD73" />
-      <path
-        d="M13 6.5L8 12L5 8"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M13 6.5L8 12L5 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   uncheckedRoundBox: () => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle
-        cx="8"
-        cy="8"
-        r="7.25"
-        fill="white"
-        stroke="#DEDEDE"
-        strokeWidth="1.5"
-      />
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="7.25" fill="white" stroke="#DEDEDE" strokeWidth="1.5" />
     </svg>
   ),
   checkedRoundBox: () => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle
-        cx="8"
-        cy="8"
-        r="5.5"
-        fill="white"
-        stroke="#35AD73"
-        strokeWidth="5"
-      />
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="5.5" fill="white" stroke="#35AD73" strokeWidth="5" />
     </svg>
   ),
   minus: () => (
-    <svg
-      width="4"
-      height="3"
-      viewBox="0 0 4 3"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="4" height="3" viewBox="0 0 4 3" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0.367297 2.192H3.6433V0.932H0.367297V2.192Z" fill="#242424" />
     </svg>
   ),
   plus: () => (
-    <svg
-      width="8"
-      height="7"
-      viewBox="0 0 8 7"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="8" height="7" viewBox="0 0 8 7" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.3468 6.68H4.6548V4.136H7.0788V2.876H4.6548V0.319999H3.3468V2.876H0.922797V4.136H3.3468V6.68Z"
         fill="#242424"
@@ -404,33 +229,13 @@ const svgMap: TSvg = {
     </svg>
   ),
   plus18: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="3" y="8.25" width="12" height="1.5" rx="0.75" fill="#454545" />
-      <rect
-        x="9.75"
-        y="3"
-        width="12"
-        height="1.5"
-        rx="0.75"
-        transform="rotate(90 9.75 3)"
-        fill="#454545"
-      />
+      <rect x="9.75" y="3" width="12" height="1.5" rx="0.75" transform="rotate(90 9.75 3)" fill="#454545" />
     </svg>
   ),
   defaultCancel: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect
         width="1.5"
         height="12.5253"
@@ -448,13 +253,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   whiteCancel: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 11 11"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect
         width="1.5"
         height="12.5253"
@@ -472,13 +271,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   share: () => (
-    <svg
-      width="18"
-      height="20"
-      viewBox="0 0 18 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M14.6361 19.4998C14.132 19.5056 13.6333 19.3944 13.1792 19.1749C12.7251 18.9553 12.3278 18.6334 12.0183 18.2342C11.7089 17.8351 11.4958 17.3695 11.3957 16.874C11.2955 16.3785 11.3111 15.8665 11.4411 15.3781L5.52895 11.9894C5.03022 12.4476 4.40313 12.741 3.73258 12.83C3.06203 12.9189 2.38042 12.7991 1.78003 12.4867C1.17965 12.1743 0.689505 11.6844 0.37596 11.0834C0.0624145 10.4824 -0.0593817 9.79925 0.0270628 9.12651C0.113507 8.45378 0.404016 7.82393 0.859254 7.32225C1.31449 6.82058 1.91247 6.47131 2.57221 6.32175C3.23195 6.17218 3.92159 6.22954 4.54775 6.48605C5.17391 6.74257 5.70634 7.18585 6.07294 7.75588L11.4401 4.67879C11.3707 4.41567 11.3339 4.14497 11.3306 3.87282C11.324 3.104 11.5818 2.3564 12.0606 1.75588C12.5393 1.15537 13.2098 0.73863 13.9591 0.575832C14.7084 0.413035 15.4908 0.514124 16.1744 0.862078C16.8581 1.21003 17.4013 1.7836 17.7127 2.4862C18.024 3.1888 18.0844 3.97752 17.8837 4.71956C17.683 5.46159 17.2335 6.11162 16.6108 6.56019C15.9882 7.00875 15.2304 7.22846 14.4651 7.18232C13.6998 7.13617 12.9737 6.82699 12.4091 6.30683L6.60088 9.63585C6.59427 9.8821 6.56027 10.1255 6.49794 10.3632L12.4101 13.751C12.8058 13.3868 13.2841 13.125 13.8036 12.9882C14.323 12.8514 14.8679 12.8438 15.391 12.966C15.914 13.0882 16.3995 13.3366 16.8051 13.6896C17.2108 14.0426 17.5244 14.4895 17.7188 14.9916C17.9132 15.4936 17.9825 16.0357 17.9207 16.5707C17.8589 17.1057 17.6678 17.6175 17.3641 18.0617C17.0603 18.5059 16.6531 18.869 16.1777 19.1196C15.7023 19.3702 15.1731 19.5007 14.6361 19.4998ZM14.6361 14.7643C14.2604 14.7643 13.9 14.914 13.6344 15.1804C13.3687 15.4469 13.2194 15.8082 13.2194 16.185C13.2194 16.5617 13.3687 16.9231 13.6344 17.1895C13.9 17.4559 14.2604 17.6056 14.6361 17.6056C15.0118 17.6056 15.3721 17.4559 15.6378 17.1895C15.9035 16.9231 16.0527 16.5617 16.0527 16.185C16.0527 15.8082 15.9035 15.4469 15.6378 15.1804C15.3721 14.914 15.0118 14.7643 14.6361 14.7643ZM3.30294 8.13472C2.92722 8.13472 2.56689 8.28439 2.30122 8.55081C2.03555 8.81723 1.88629 9.17857 1.88629 9.55535C1.88629 9.93213 2.03555 10.2935 2.30122 10.5599C2.56689 10.8263 2.92722 10.976 3.30294 10.976C3.67865 10.976 4.03898 10.8263 4.30465 10.5599C4.57032 10.2935 4.71958 9.93213 4.71958 9.55535C4.71958 9.17857 4.57032 8.81723 4.30465 8.55081C4.03898 8.28439 3.67865 8.13472 3.30294 8.13472ZM14.6361 2.45218C14.45 2.45218 14.2658 2.48893 14.0939 2.56032C13.9221 2.63172 13.7659 2.73636 13.6344 2.86828C13.5028 3.0002 13.3985 3.1568 13.3273 3.32916C13.2561 3.50152 13.2194 3.68626 13.2194 3.87282C13.2194 4.05938 13.2561 4.24411 13.3273 4.41647C13.3985 4.58883 13.5028 4.74544 13.6344 4.87736C13.7659 5.00927 13.9221 5.11392 14.0939 5.18531C14.2658 5.2567 14.45 5.29345 14.6361 5.29345C15.0118 5.29345 15.3721 5.14378 15.6378 4.87736C15.9035 4.61094 16.0527 4.24959 16.0527 3.87282C16.0527 3.49604 15.9035 3.1347 15.6378 2.86828C15.3721 2.60186 15.0118 2.45218 14.6361 2.45218Z"
         fill="#242424"
@@ -486,13 +279,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   download: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M13.2859 13.5727H4.71412C4.53314 13.5727 4.35893 13.6414 4.22668 13.7649C4.09444 13.8883 4.01402 14.0573 4.00169 14.2377C3.98935 14.4181 4.04602 14.5964 4.16023 14.7367C4.27444 14.877 4.43768 14.9687 4.61698 14.9933L4.71412 15H13.2859C13.4669 14.9999 13.6411 14.9313 13.7733 14.8078C13.9056 14.6844 13.986 14.5154 13.9983 14.335C14.0107 14.1546 13.954 13.9762 13.8398 13.836C13.7256 13.6957 13.5623 13.604 13.383 13.5793L13.2859 13.5727ZM9.09716 3.00666L9.00001 3C8.8274 3.00001 8.66063 3.06246 8.53054 3.17581C8.40045 3.28917 8.31584 3.44575 8.29237 3.6166L8.2857 3.71366V10.1833L6.13799 8.03852C6.01687 7.91755 5.85628 7.84408 5.68548 7.83151C5.51468 7.81893 5.34504 7.86809 5.20748 7.97001L5.12747 8.03852C5.00639 8.15953 4.93286 8.31997 4.92027 8.49062C4.90768 8.66126 4.95688 8.83074 5.0589 8.96818L5.12747 9.04811L8.49523 12.4118C8.61618 12.5327 8.77652 12.6062 8.94711 12.6189C9.11769 12.6316 9.2872 12.5828 9.42479 12.4813L9.5048 12.4118L12.8726 9.04811C13.0004 8.92077 13.0752 8.74981 13.082 8.5696C13.0887 8.38939 13.027 8.2133 12.9091 8.07673C12.7912 7.94016 12.626 7.85324 12.4466 7.83344C12.2672 7.81364 12.0869 7.86243 11.942 7.97001L11.862 8.03852L9.71433 10.1852V3.71366C9.71432 3.5412 9.65181 3.37458 9.53835 3.24461C9.4249 3.11464 9.26817 3.03012 9.09716 3.00666Z"
         fill="#454545"
@@ -500,13 +287,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   singleStar: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8.12523 1.57917C8.50592 0.891918 9.49405 0.891917 9.87474 1.57917L11.8426 5.13156C11.9804 5.38048 12.2178 5.55886 12.4953 5.62204L16.3922 6.50932C17.1242 6.676 17.4184 7.55983 16.9322 8.13192L14.2239 11.3189C14.0488 11.525 13.9646 11.7932 13.9905 12.0624L14.3951 16.2633C14.4691 17.0324 13.6803 17.5913 12.9793 17.2665L9.42039 15.6175C9.15374 15.494 8.84623 15.494 8.57958 15.6175L5.02072 17.2665C4.31971 17.5913 3.53086 17.0324 3.60491 16.2633L4.00944 12.0624C4.03536 11.7932 3.95117 11.525 3.77606 11.3189L1.06776 8.13193C0.581604 7.55983 0.875747 6.676 1.60777 6.50932L5.50467 5.62204C5.78213 5.55886 6.01953 5.38048 6.15742 5.13156L8.12523 1.57917Z"
         fill="#F4D740"
@@ -514,13 +295,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   singleStarEmpty: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8.12523 1.57917C8.50592 0.891918 9.49405 0.891917 9.87474 1.57917L11.8426 5.13156C11.9804 5.38048 12.2178 5.55886 12.4953 5.62204L16.3922 6.50932C17.1242 6.676 17.4184 7.55983 16.9322 8.13192L14.2239 11.3189C14.0488 11.525 13.9646 11.7932 13.9905 12.0624L14.3951 16.2633C14.4691 17.0324 13.6803 17.5913 12.9793 17.2665L9.42039 15.6175C9.15374 15.494 8.84623 15.494 8.57958 15.6175L5.02072 17.2665C4.31971 17.5913 3.53086 17.0324 3.60491 16.2633L4.00944 12.0624C4.03536 11.7932 3.95117 11.525 3.77606 11.3189L1.06776 8.13193C0.581604 7.55983 0.875747 6.676 1.60777 6.50932L5.50467 5.62204C5.78213 5.55886 6.01953 5.38048 6.15742 5.13156L8.12523 1.57917Z"
         fill="#F2F2F2"
@@ -528,25 +303,12 @@ const svgMap: TSvg = {
     </svg>
   ),
   singleStarHalf: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8.12523 1.57917C8.50592 0.891918 9.49405 0.891917 9.87474 1.57917L11.8426 5.13156C11.9804 5.38048 12.2178 5.55886 12.4953 5.62204L16.3922 6.50932C17.1242 6.676 17.4184 7.55983 16.9322 8.13192L14.2239 11.3189C14.0488 11.525 13.9646 11.7932 13.9905 12.0624L14.3951 16.2633C14.4691 17.0324 13.6803 17.5913 12.9793 17.2665L9.42039 15.6175C9.15374 15.494 8.84623 15.494 8.57958 15.6175L5.02072 17.2665C4.31971 17.5913 3.53086 17.0324 3.60491 16.2633L4.00944 12.0624C4.03536 11.7932 3.95117 11.525 3.77606 11.3189L1.06776 8.13192C0.581604 7.55983 0.875747 6.676 1.60777 6.50932L5.50467 5.62204C5.78213 5.55886 6.01953 5.38048 6.15742 5.13156L8.12523 1.57917Z"
         fill="#F2F2F2"
       />
-      <mask
-        id="mask0_843_634"
-        maskUnits="userSpaceOnUse"
-        x="0"
-        y="1"
-        width="18"
-        height="17"
-      >
+      <mask id="mask0_843_634" maskUnits="userSpaceOnUse" x="0" y="1" width="18" height="17">
         <path
           d="M8.12523 1.57917C8.50592 0.891918 9.49405 0.891917 9.87474 1.57917L11.8426 5.13156C11.9804 5.38048 12.2178 5.55886 12.4953 5.62204L16.3922 6.50932C17.1242 6.676 17.4184 7.55983 16.9322 8.13192L14.2239 11.3189C14.0488 11.525 13.9646 11.7932 13.9905 12.0624L14.3951 16.2633C14.4691 17.0324 13.6803 17.5913 12.9793 17.2665L9.42039 15.6175C9.15374 15.494 8.84623 15.494 8.57958 15.6175L5.02072 17.2665C4.31971 17.5913 3.53086 17.0324 3.60491 16.2633L4.00944 12.0624C4.03536 11.7932 3.95117 11.525 3.77606 11.3189L1.06776 8.13192C0.581604 7.55983 0.875747 6.676 1.60777 6.50932L5.50467 5.62204C5.78213 5.55886 6.01953 5.38048 6.15742 5.13156L8.12523 1.57917Z"
           fill="#F2F2F2"
@@ -558,13 +320,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   likeBlack: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M7.5 3.5C5.0151 3.5 3 5.61243 3 8.21864C3 10.3225 3.7875 15.3157 11.5392 20.3632C11.6781 20.4527 11.8375 20.5 12 20.5C12.1625 20.5 12.3219 20.4527 12.4608 20.3632C20.2125 15.3157 21 10.3225 21 8.21864C21 5.61243 18.9849 3.5 16.5 3.5C14.0151 3.5 12 6.35978 12 6.35978C12 6.35978 9.9849 3.5 7.5 3.5Z"
         stroke="white"
@@ -575,13 +331,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   likeRed: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M7.5 3.5C5.0151 3.5 3 5.61243 3 8.21864C3 10.3225 3.7875 15.3157 11.5392 20.3632C11.6781 20.4527 11.8375 20.5 12 20.5C12.1625 20.5 12.3219 20.4527 12.4608 20.3632C20.2125 15.3157 21 10.3225 21 8.21864C21 5.61243 18.9849 3.5 16.5 3.5C14.0151 3.5 12 6.35978 12 6.35978C12 6.35978 9.9849 3.5 7.5 3.5Z"
         fill="#F42D2D"
@@ -593,13 +343,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   couponDownloadAvailable: () => (
-    <svg
-      width="64"
-      height="64"
-      viewBox="0 0 64 64"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g filter="url(#filter0_dd_2239_17414)">
         <circle cx="32" cy="28" r="24" fill="#35AD73" />
       </g>
@@ -627,15 +371,8 @@ const svgMap: TSvg = {
           <feOffset dy="4" />
           <feGaussianBlur stdDeviation="4" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_2239_17414"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2239_17414" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -645,74 +382,30 @@ const svgMap: TSvg = {
           <feOffset dy="1" />
           <feGaussianBlur stdDeviation="0.5" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="effect1_dropShadow_2239_17414"
-            result="effect2_dropShadow_2239_17414"
-          />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="effect2_dropShadow_2239_17414"
-            result="shape"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="effect1_dropShadow_2239_17414" result="effect2_dropShadow_2239_17414" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_2239_17414" result="shape" />
         </filter>
       </defs>
     </svg>
   ),
   couponDownloadComplete: () => (
-    <svg
-      width="36"
-      height="34"
-      viewBox="0 0 36 34"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M2.1 23.57H5.08V22.5H0.78V28.67H1.57C3.17 28.67 4.43 28.62 5.82 28.37L5.69 27.28C4.5 27.48 3.41 27.55 2.1 27.57V23.57ZM8.98 25.05H7.64V21.65H6.32V30.88H7.64V26.14H8.98V25.05ZM13.3892 22.87C14.5592 22.87 15.2792 23.16 15.2792 23.73C15.2792 24.3 14.5592 24.59 13.3892 24.59C12.2392 24.59 11.5092 24.3 11.5092 23.73C11.5092 23.16 12.2392 22.87 13.3892 22.87ZM13.3892 25.64C15.3792 25.64 16.6992 24.9 16.6992 23.73C16.6992 22.57 15.3792 21.82 13.3892 21.82C11.4092 21.82 10.0792 22.57 10.0792 23.73C10.0792 24.9 11.4092 25.64 13.3892 25.64ZM11.5392 27.94H10.1992V30.7H16.6592V29.65H11.5392V27.94ZM9.22922 26.12V27.17H12.7992V28.75H14.1492V27.17H17.5692V26.12H9.22922ZM19.7084 23.89C19.7084 23.33 20.1384 23.01 20.7684 23.01C21.3984 23.01 21.8484 23.33 21.8484 23.89C21.8484 24.45 21.3984 24.77 20.7684 24.77C20.1384 24.77 19.7084 24.45 19.7084 23.89ZM23.5284 26.17C22.8684 26.27 22.1484 26.32 21.4384 26.36V25.7C22.4184 25.48 23.0684 24.79 23.0684 23.89C23.0684 22.79 22.1084 22.02 20.7684 22.02C19.4384 22.02 18.4784 22.79 18.4784 23.89C18.4784 24.8 19.1384 25.49 20.1184 25.7V26.41C19.3584 26.43 18.6284 26.43 17.9984 26.43L18.1584 27.48C19.6784 27.48 21.7484 27.45 23.6084 27.1L23.5284 26.17ZM20.5184 28.08H19.1984V30.7H25.6384V29.65H20.5184V28.08ZM25.3284 24.54V21.65H24.0084V28.68H25.3284V25.63H26.4884V24.54H25.3284ZM30.2377 27.37H31.8477V28.77H30.2377V27.37ZM33.1477 28.77V27.37H34.4377V26.31H29.0977V25.3H34.2277V22.24H27.7777V23.29H32.9277V24.27H27.7877V27.37H28.9377V28.77H26.8177V29.85H35.1677V28.77H33.1477Z"
         fill="#C8C8C8"
       />
-      <path
-        d="M13 9L16.75 13L23 5"
-        stroke="#C8C8C8"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M13 9L16.75 13L23 5" stroke="#C8C8C8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   dotColumn: () => (
-    <svg
-      width="1"
-      height="107"
-      viewBox="0 0 1 107"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        x1="0.5"
-        y1="0.5"
-        x2="0.499995"
-        y2="106.5"
-        stroke="#DEDEDE"
-        strokeLinecap="round"
-        strokeDasharray="2 6"
-      />
+    <svg width="1" height="107" viewBox="0 0 1 107" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0.5" y1="0.5" x2="0.499995" y2="106.5" stroke="#DEDEDE" strokeLinecap="round" strokeDasharray="2 6" />
     </svg>
   ),
 
   kakao: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="12" cy="12" r="12" fill="#242424" />
       <path
         d="M12.0343 5.7915C8.30089 5.7915 5.29004 8.20016 5.29004 11.1243C5.29004 13.0223 6.54255 14.6843 8.42132 15.6333L7.78543 18.0083C7.77344 18.0439 7.7716 18.0821 7.7801 18.1187C7.78861 18.1553 7.80714 18.1888 7.8336 18.2154C7.87219 18.2495 7.92185 18.2683 7.97331 18.2684C8.01597 18.265 8.05645 18.2481 8.08892 18.2202L10.8252 16.3752C11.2291 16.431 11.6362 16.4599 12.044 16.4619C15.7726 16.4619 18.7883 14.0532 18.7883 11.1243C18.7883 8.19534 15.763 5.7915 12.0343 5.7915Z"
@@ -737,13 +430,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   facebook: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="24" height="24" rx="12" fill="#242424" />
       <path
         d="M15.0413 13.2573L15.4041 10.9223H13.1347V9.40777C13.1347 8.76897 13.4518 8.14563 14.4682 8.14563H15.5V6.15777C15.5 6.15777 14.5636 6 13.6683 6C11.7993 6 10.5776 7.11825 10.5776 9.14272V10.9223H8.5V13.2573H10.5776V18.9019C11.4248 19.0327 12.2875 19.0327 13.1347 18.9019V13.2573H15.0413Z"
@@ -752,13 +439,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   band: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="24" height="24" rx="12" fill="#242424" />
       <path
         d="M12.5237 7.93074C12.0444 7.93074 11.5868 7.98521 11.151 8.10506V7.08093C11.151 5.93696 10.2249 5 9.07004 5C7.92607 5 7 5.93696 7 7.08093V13.4654C7 16.516 9.47315 19 12.5346 19C15.5961 19 18.0693 16.5268 18.0693 13.4654C18.0584 10.4039 15.5852 7.93074 12.5237 7.93074ZM12.5237 18.1611C9.93074 18.1611 7.81712 16.0584 7.81712 13.4545V7.08093C7.81712 6.39455 8.37276 5.82802 9.07004 5.82802C9.76731 5.82802 10.323 6.38366 10.323 7.08093V13.4654C10.323 14.6856 11.3144 15.6661 12.5237 15.6661C13.744 15.6661 14.7245 14.6747 14.7245 13.4654C14.7245 12.256 13.7331 11.2646 12.5237 11.2646C12.0008 11.2646 11.5214 11.4498 11.151 11.744V10.7634C11.565 10.5564 12.0335 10.4366 12.5237 10.4366C14.2016 10.4366 15.5634 11.7984 15.5634 13.4763C15.5634 15.1541 14.2016 16.516 12.5237 16.516C10.8459 16.516 9.48405 15.1541 9.48405 13.4763V7.08093C9.48405 6.85214 9.29883 6.66693 9.07004 6.66693C8.84124 6.66693 8.65603 6.85214 8.65603 7.08093V13.4654C8.65603 15.6008 10.3883 17.3331 12.5237 17.3331C14.6591 17.3331 16.3914 15.6008 16.3914 13.4654C16.3914 11.33 14.6591 9.59766 12.5237 9.59766C12.0444 9.59766 11.5759 9.68482 11.151 9.84825V8.96576C11.5868 8.83502 12.0444 8.75875 12.5237 8.75875C15.1167 8.75875 17.2303 10.8615 17.2303 13.4654C17.2303 16.0584 15.1276 18.1611 12.5237 18.1611ZM11.151 13.4654C11.151 12.7027 11.7611 12.0926 12.5237 12.0926C13.2864 12.0926 13.8965 12.7027 13.8965 13.4654C13.8965 14.228 13.2864 14.8381 12.5237 14.8381C11.772 14.8381 11.151 14.228 11.151 13.4654Z"
@@ -767,13 +448,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   urlIcon: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="24" height="24" rx="12" fill="#242424" />
       <rect width="24" height="24" rx="12" fill="#242424" />
       <path
@@ -785,34 +460,17 @@ const svgMap: TSvg = {
     </svg>
   ),
   exclamationMark: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M9.001 11C8.90251 11 8.80498 11.0194 8.71399 11.0571C8.62299 11.0948 8.54031 11.15 8.47067 11.2197C8.40103 11.2893 8.34578 11.372 8.30809 11.463C8.2704 11.554 8.251 11.6515 8.251 11.75C8.251 11.8485 8.2704 11.946 8.30809 12.037C8.34578 12.128 8.40103 12.2107 8.47067 12.2803C8.54031 12.35 8.62299 12.4052 8.71399 12.4429C8.80498 12.4806 8.90251 12.5 9.001 12.5C9.19965 12.5 9.39016 12.4211 9.53062 12.2806C9.67109 12.1402 9.75 11.9496 9.75 11.751C9.75 11.5524 9.67109 11.3618 9.53062 11.2214C9.39016 11.0809 9.19965 11.002 9.001 11.002L9.001 11Z"
         fill="#35AD73"
       />
-      <path
-        d="M9 6V9.5"
-        stroke="#35AD73"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <path d="M9 6V9.5" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" />
       <circle cx="9" cy="9" r="6.25" stroke="#35AD73" strokeWidth="1.5" />
     </svg>
   ),
   fcoIcon: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.014 2.69995C15.6692 2.69995 16.2002 3.23095 16.2002 3.88615V7.19995C16.2003 8.31355 15.7875 9.38763 15.0415 10.2145C14.2956 11.0414 13.2696 11.5623 12.1619 11.6766C12.4524 10.9702 12.6013 10.2137 12.6002 9.44995C12.6002 8.70295 12.4598 7.98835 12.2042 7.33135L13.3697 6.16855C13.4115 6.12672 13.4447 6.07705 13.4674 6.02238C13.49 5.96771 13.5017 5.90912 13.5017 5.84995C13.5017 5.79079 13.49 5.73219 13.4674 5.67753C13.4447 5.62286 13.4115 5.57319 13.3697 5.53135C13.3279 5.48952 13.2782 5.45633 13.2235 5.43368C13.1689 5.41104 13.1103 5.39939 13.0511 5.39939C12.9919 5.39939 12.9333 5.41104 12.8787 5.43368C12.824 5.45633 12.7743 5.48952 12.7325 5.53135L11.7893 6.47545C11.0767 5.27069 9.95695 4.36032 8.6321 3.90865C9.46418 3.13073 10.5611 2.69859 11.7002 2.69995H15.014Z"
         fill="#35AD73"
@@ -824,13 +482,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   triangleDown: () => (
-    <svg
-      width="8"
-      height="5"
-      viewBox="0 0 8 5"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M4.31696 4.58825C4.15684 4.79626 3.84316 4.79626 3.68304 4.58825L1.03165 1.144C0.829169 0.880971 1.01667 0.500001 1.34861 0.500001L6.65139 0.5C6.98333 0.5 7.17083 0.88097 6.96835 1.144L4.31696 4.58825Z"
         fill="#242424"
@@ -838,13 +490,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   triangleUp: () => (
-    <svg
-      width="8"
-      height="5"
-      viewBox="0 0 8 5"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.68304 0.411746C3.84316 0.203743 4.15684 0.203743 4.31696 0.411746L6.96835 3.856C7.17083 4.11903 6.98333 4.5 6.65139 4.5L1.34861 4.5C1.01667 4.5 0.829169 4.11903 1.03165 3.856L3.68304 0.411746Z"
         fill="#242424"
@@ -852,13 +498,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   questionMark: () => (
-    <svg
-      width="18"
-      height="19"
-      viewBox="0 0 18 19"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="9" cy="9.5" r="6.25" stroke="#717171" strokeWidth="1.5" />
       <path
         d="M8.46061 12.4578L8.46065 12.4578C8.58138 12.3385 8.72349 12.2803 8.89576 12.2803C9.06773 12.2803 9.20771 12.3384 9.325 12.4568C9.44242 12.5755 9.50012 12.7164 9.50012 12.8871C9.50012 13.0928 9.43681 13.2355 9.32239 13.3356L9.32225 13.3357C9.19734 13.4453 9.05419 13.499 8.88573 13.499C8.72202 13.499 8.58197 13.4452 8.45803 13.3343C8.34398 13.2317 8.28137 13.0889 8.28137 12.887C8.28137 12.7174 8.34004 12.5768 8.46061 12.4578Z"
@@ -881,32 +521,13 @@ const svgMap: TSvg = {
     </svg>
   ),
   card: () => (
-    <svg
-      width="26"
-      height="20"
-      viewBox="0 0 26 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="26" height="20" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="26" height="20" rx="2" fill="#242424" />
-      <rect
-        x="3.2666"
-        y="7.59961"
-        width="6.4"
-        height="4.8"
-        rx="1"
-        fill="white"
-      />
+      <rect x="3.2666" y="7.59961" width="6.4" height="4.8" rx="1" fill="white" />
     </svg>
   ),
   blackBackgroundCancel: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="9" cy="9" r="7" fill="#242424" />
       <path
         fillRule="evenodd"
@@ -924,51 +545,19 @@ const svgMap: TSvg = {
   ),
 
   cardRegister: () => (
-    <svg
-      width="112"
-      height="84"
-      viewBox="0 0 112 84"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="112" height="84" viewBox="0 0 112 84" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="112" height="84" rx="8" fill="#242424" />
-      <rect
-        x="12.1082"
-        y="36.3242"
-        width="15.1351"
-        height="11.3514"
-        rx="2"
-        fill="white"
-      />
+      <rect x="12.1082" y="36.3242" width="15.1351" height="11.3514" rx="2" fill="white" />
     </svg>
   ),
   emptyCard: () => (
-    <svg
-      width="42"
-      height="32"
-      viewBox="0 0 42 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="42" height="32" viewBox="0 0 42 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="42" height="32" rx="4" fill="#DEDEDE" />
-      <rect
-        x="5.59998"
-        y="12.8008"
-        width="8.4"
-        height="6.4"
-        rx="1"
-        fill="white"
-      />
+      <rect x="5.59998" y="12.8008" width="8.4" height="6.4" rx="1" fill="white" />
     </svg>
   ),
   delivery: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M7 19.5C8.10457 19.5 9 18.6046 9 17.5C9 16.3954 8.10457 15.5 7 15.5C5.89543 15.5 5 16.3954 5 17.5C5 18.6046 5.89543 19.5 7 19.5Z"
         stroke="#242424"
@@ -990,24 +579,12 @@ const svgMap: TSvg = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M3 9.5H7"
-        stroke="#242424"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M3 9.5H7" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
 
   kakaoBuble: () => (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M6.995 0.5C3.12277 0.5 0 3.00963 0 6.05636C0 8.03398 1.29907 9.76564 3.24768 10.7544L2.58815 13.229C2.57572 13.2661 2.5738 13.3059 2.58263 13.344C2.59145 13.3821 2.61067 13.417 2.63812 13.4448C2.67814 13.4803 2.72964 13.4999 2.78301 13.5C2.82726 13.4964 2.86925 13.4789 2.90293 13.4498L5.7409 11.5274C6.15982 11.5855 6.58211 11.6157 7.005 11.6178C10.8722 11.6178 14 9.10811 14 6.05636C14 3.00462 10.8622 0.5 6.995 0.5Z"
         fill="#392020"
@@ -1016,13 +593,7 @@ const svgMap: TSvg = {
   ),
 
   appleIcon: () => (
-    <svg
-      width="12"
-      height="14"
-      viewBox="0 0 12 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8.02188 2.2347C8.46906 1.71356 8.77935 0.998107 8.77935 0.28265C8.77935 0.185489 8.77023 0.0794953 8.75197 0C8.03101 0.0264984 7.1549 0.468139 6.63471 1.06877C6.22403 1.51924 5.84073 2.2347 5.84073 2.95899C5.84073 3.06498 5.85899 3.17981 5.86811 3.21514C5.91374 3.22397 5.98675 3.23281 6.05976 3.23281C6.71684 3.23281 7.5382 2.80883 8.02188 2.2347ZM8.53295 3.38297C7.43781 3.38297 6.55257 4.02776 5.98675 4.02776C5.38443 4.02776 4.58133 3.4183 3.63221 3.4183C1.83436 3.4183 0 4.86688 0 7.57855C0 9.28328 0.684461 11.0675 1.51494 12.2246C2.23591 13.205 2.86561 14 3.75997 14C4.65433 14 5.05588 13.4259 6.16927 13.4259C7.29179 13.4259 7.54732 13.9823 8.53295 13.9823C9.51857 13.9823 10.1665 13.1167 10.778 12.2599C11.4716 11.2795 11.7636 10.3256 11.7727 10.2726C11.718 10.2549 9.83799 9.52177 9.83799 7.43722C9.83799 5.64416 11.3164 4.84038 11.3986 4.77855C10.4312 3.4183 8.94362 3.38297 8.53295 3.38297Z"
         fill="white"
@@ -1031,13 +602,7 @@ const svgMap: TSvg = {
   ),
 
   defaultCancel24: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect
         width="2.0757"
         height="22.8327"
@@ -1055,13 +620,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   defaultCancel24White: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect
         width="2.0757"
         height="22.8327"
@@ -1079,30 +638,12 @@ const svgMap: TSvg = {
     </svg>
   ),
   confirmCheck: () => (
-    <svg
-      width="12"
-      height="10"
-      viewBox="0 0 12 10"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M1 5L4.75 9L11 1"
-        stroke="#35AD73"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 5L4.75 9L11 1" stroke="#35AD73" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   fastOrder: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_624_1016)">
         <path
           fillRule="evenodd"
@@ -1110,24 +651,8 @@ const svgMap: TSvg = {
           d="M19.5 13.3C19.5 17.4421 16.1421 20.8 12 20.8C9.32191 20.8 6.97168 19.3964 5.64484 17.2846L4.32573 18.0041C5.90882 20.5813 8.75368 22.3 12 22.3C16.9705 22.3 21 18.2706 21 13.3C21 8.32944 16.9705 4.3 12 4.3C8.26719 4.3 5.06517 6.57248 3.7019 9.80944L5.2217 10.0858C6.4254 7.55187 9.0081 5.8 12 5.8C16.1421 5.8 19.5 9.15787 19.5 13.3Z"
           fill="#242424"
         />
-        <line
-          x1="11.85"
-          y1="13.5833"
-          x2="14.95"
-          y2="9.45"
-          stroke="#242424"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <line
-          x1="10.75"
-          y1="2.55"
-          x2="13.25"
-          y2="2.55"
-          stroke="#242424"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
+        <line x1="11.85" y1="13.5833" x2="14.95" y2="9.45" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="10.75" y1="2.55" x2="13.25" y2="2.55" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
         <line
           x1="3.27075"
           y1="15.6833"
@@ -1137,15 +662,7 @@ const svgMap: TSvg = {
           strokeWidth="1.5"
           strokeLinecap="round"
         />
-        <line
-          x1="0.75"
-          y1="12.35"
-          x2="6.11083"
-          y2="12.35"
-          stroke="#242424"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
+        <line x1="0.75" y1="12.35" x2="6.11083" y2="12.35" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
         <rect x="10" y="11.3" width="4" height="4" rx="2" fill="#242424" />
       </g>
       <defs>
@@ -1156,13 +673,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   fastOrderActive: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_628_1415)">
         <path
           fillRule="evenodd"
@@ -1170,24 +681,8 @@ const svgMap: TSvg = {
           d="M19.5 13.3C19.5 17.4421 16.1421 20.8 12 20.8C9.32191 20.8 6.97168 19.3964 5.64484 17.2846L4.32573 18.0041C5.90882 20.5813 8.75368 22.3 12 22.3C16.9705 22.3 21 18.2706 21 13.3C21 8.32944 16.9705 4.3 12 4.3C8.26719 4.3 5.06517 6.57248 3.7019 9.80944L5.2217 10.0858C6.4254 7.55187 9.0081 5.8 12 5.8C16.1421 5.8 19.5 9.15787 19.5 13.3Z"
           fill="#242424"
         />
-        <line
-          x1="11.85"
-          y1="13.5833"
-          x2="14.95"
-          y2="9.45"
-          stroke="#242424"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <line
-          x1="10.75"
-          y1="2.55"
-          x2="13.25"
-          y2="2.55"
-          stroke="#242424"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
+        <line x1="11.85" y1="13.5833" x2="14.95" y2="9.45" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="10.75" y1="2.55" x2="13.25" y2="2.55" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
         <line
           x1="3.27075"
           y1="15.6833"
@@ -1197,15 +692,7 @@ const svgMap: TSvg = {
           strokeWidth="1.5"
           strokeLinecap="round"
         />
-        <line
-          x1="0.75"
-          y1="12.35"
-          x2="6.11083"
-          y2="12.35"
-          stroke="#35AD73"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
+        <line x1="0.75" y1="12.35" x2="6.11083" y2="12.35" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" />
         <rect x="10" y="11.3" width="4" height="4" rx="2" fill="#242424" />
       </g>
       <defs>
@@ -1216,13 +703,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   subscription: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M12.5538 20.0488C8.10746 20.5373 4.10696 17.3289 3.6184 12.8826C3.24646 9.49758 5.01724 6.37095 7.8457 4.85564M3.87537 5.24714L7.99515 4.73302L7.502 8.53147"
         stroke="#242424"
@@ -1240,13 +721,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   subscriptionActive: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_628_1429)">
         <rect x="10" y="10" width="4" height="4" rx="2" fill="#242424" />
         <path
@@ -1272,13 +747,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   fcoSpot: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <mask id="path-1-inside-1_624_933" fill="white">
         <path
           fillRule="evenodd"
@@ -1303,37 +772,13 @@ const svgMap: TSvg = {
         stroke="#242424"
         strokeWidth="1.5"
       />
-      <path
-        d="M9.75 12.8973L11.8269 11.0973L14.25 12.8973"
-        stroke="#242424"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M9.35004 8.85L11.8423 7.05L14.75 8.85"
-        stroke="#242424"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="11.9"
-        y1="15.25"
-        x2="11.9"
-        y2="1.75"
-        stroke="#242424"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <path d="M9.75 12.8973L11.8269 11.0973L14.25 12.8973" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M9.35004 8.85L11.8423 7.05L14.75 8.85" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="11.9" y1="15.25" x2="11.9" y2="1.75" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   ),
   fcoSpotActive: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M16.25 20.5C16.25 20.9253 15.9236 21.4754 15.0299 21.9629C14.1647 22.4349 12.918 22.75 11.5 22.75C10.082 22.75 8.83535 22.4349 7.97005 21.9629C7.07639 21.4754 6.75 20.9253 6.75 20.5C6.75 20.0747 7.07639 19.5246 7.97005 19.0371C8.83535 18.5651 10.082 18.25 11.5 18.25C12.918 18.25 14.1647 18.5651 15.0299 19.0371C15.9236 19.5246 16.25 20.0747 16.25 20.5Z"
         stroke="#35AD73"
@@ -1345,67 +790,25 @@ const svgMap: TSvg = {
         stroke="#242424"
         strokeWidth="1.5"
       />
-      <path
-        d="M9.75 12.8973L11.8269 11.0973L14.25 12.8973"
-        stroke="#242424"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M9.35004 8.85L11.8423 7.05L14.75 8.85"
-        stroke="#242424"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="11.9"
-        y1="15.25"
-        x2="11.9"
-        y2="1.75"
-        stroke="#242424"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <path d="M9.75 12.8973L11.8269 11.0973L14.25 12.8973" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M9.35004 8.85L11.8423 7.05L14.75 8.85" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="11.9" y1="15.25" x2="11.9" y2="1.75" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   ),
 
   mypage: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 25 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M19.6001 18.8586C17.7963 17.0903 15.3256 16 12.6001 16C9.87464 16 7.40385 17.0903 5.6001 18.8586"
         stroke="#242424"
         strokeWidth="1.5"
       />
-      <circle
-        cx="12.6001"
-        cy="12"
-        r="9.25"
-        stroke="#242424"
-        strokeWidth="1.5"
-      />
-      <circle
-        cx="12.6001"
-        cy="10"
-        r="3.25"
-        stroke="#242424"
-        strokeWidth="1.5"
-      />
+      <circle cx="12.6001" cy="12" r="9.25" stroke="#242424" strokeWidth="1.5" />
+      <circle cx="12.6001" cy="10" r="3.25" stroke="#242424" strokeWidth="1.5" />
     </svg>
   ),
   mypageActive: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M19 18.8586C17.1962 17.0903 14.7255 16 12 16C9.27455 16 6.80375 17.0903 5 18.8586"
         stroke="#35AD73"
@@ -1416,13 +819,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   notification: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M12.6761 5.35248L11.3018 5.34963C8.16683 5.34203 5.44532 7.92318 5.42375 11.0496V14.6501C5.42375 15.4006 5.33001 16.1331 4.92595 16.7572L4.65689 17.1733C4.24721 17.8041 4.68783 18.6496 5.42375 18.6496H18.5766C19.3126 18.6496 19.7523 17.8041 19.3435 17.1733L19.0745 16.7572C18.6713 16.1331 18.5766 15.3997 18.5766 14.6492V11.0506C18.5391 7.92318 15.8111 5.36008 12.6761 5.35248V5.35248Z"
         stroke="#242424"
@@ -1447,13 +844,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   deliveryTruckIcon: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M7 19.5C8.10457 19.5 9 18.6046 9 17.5C9 16.3954 8.10457 15.5 7 15.5C5.89543 15.5 5 16.3954 5 17.5C5 18.6046 5.89543 19.5 7 19.5Z"
         stroke="#242424"
@@ -1475,23 +866,11 @@ const svgMap: TSvg = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M3 9.5H7"
-        stroke="#242424"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M3 9.5H7" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   reviewStarFull: () => (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.1252 0.579177C15.5059 -0.108073 16.494 -0.108071 16.8747 0.579178L21.222 8.42703C21.3599 8.67595 21.5973 8.85434 21.8747 8.91751L30.3922 10.8569C31.1242 11.0235 31.4184 11.9074 30.9322 12.4795L25.0739 19.3733C24.8988 19.5793 24.8146 19.8475 24.8405 20.1167L25.7213 29.2633C25.7953 30.0324 25.0065 30.5913 24.3055 30.2665L16.4204 26.613C16.1537 26.4895 15.8462 26.4895 15.5796 26.613L7.69447 30.2665C6.99346 30.5913 6.20461 30.0324 6.27866 29.2633L7.15943 20.1167C7.18535 19.8475 7.10115 19.5793 6.92605 19.3733L1.06775 12.4795C0.581592 11.9074 0.875735 11.0235 1.60776 10.8569L10.1252 8.91751C10.4027 8.85434 10.6401 8.67595 10.778 8.42703L15.1252 0.579177Z"
         fill="#F4D740"
@@ -1499,13 +878,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   reviewStarHalf: () => (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.1252 1.57918C15.5059 0.891927 16.494 0.891929 16.8747 1.57918L21.222 9.42703C21.3599 9.67595 21.5973 9.85434 21.8747 9.91751L30.3922 11.8569C31.1242 12.0235 31.4184 12.9074 30.9322 13.4795L25.0739 20.3733C24.8988 20.5793 24.8146 20.8475 24.8405 21.1167L25.7213 30.2633C25.7953 31.0324 25.0065 31.5913 24.3055 31.2665L16.4204 27.613C16.1537 27.4895 15.8462 27.4895 15.5796 27.613L7.69447 31.2665C6.99346 31.5913 6.20461 31.0324 6.27866 30.2633L7.15943 21.1167C7.18535 20.8475 7.10115 20.5793 6.92605 20.3733L1.06775 13.4795C0.581592 12.9074 0.875735 12.0235 1.60776 11.8569L10.1252 9.91751C10.4027 9.85434 10.6401 9.67595 10.778 9.42703L15.1252 1.57918Z"
         fill="#F2F2F2"
@@ -1519,13 +892,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   reviewStarEmpty: () => (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.1252 1.57918C15.5059 0.891927 16.494 0.891929 16.8747 1.57918L21.222 9.42703C21.3599 9.67595 21.5973 9.85434 21.8747 9.91751L30.3922 11.8569C31.1242 12.0235 31.4184 12.9074 30.9322 13.4795L25.0739 20.3733C24.8988 20.5793 24.8146 20.8475 24.8405 21.1167L25.7213 30.2633C25.7953 31.0324 25.0065 31.5913 24.3055 31.2665L16.4204 27.613C16.1537 27.4895 15.8462 27.4895 15.5796 27.613L7.69447 31.2665C6.99346 31.5913 6.20461 31.0324 6.27866 30.2633L7.15943 21.1167C7.18535 20.8475 7.10115 20.5793 6.92605 20.3733L1.06775 13.4795C0.581592 12.9074 0.875735 12.0235 1.60776 11.8569L10.1252 9.91751C10.4027 9.85434 10.6401 9.67595 10.778 9.42703L15.1252 1.57918Z"
         fill="#F2F2F2"
@@ -1534,30 +901,12 @@ const svgMap: TSvg = {
   ),
 
   checkBlack18: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4 9L7.75 13L14 5"
-        stroke="#242424"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 9L7.75 13L14 5" stroke="#242424" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   blackCirclePencil: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M14.9375 14.7039H7.85802L13.6474 8.91443L13.6478 8.91414L13.6481 8.91379L15.4999 7.0619C15.6044 6.95745 15.6873 6.83343 15.7438 6.69695C15.8004 6.56046 15.8295 6.41417 15.8295 6.26644C15.8295 6.1187 15.8004 5.97241 15.7439 5.83592C15.6873 5.69943 15.6045 5.57541 15.5 5.47094L12.3579 2.32882C12.1468 2.11823 11.8607 1.99999 11.5625 2C11.2642 2.00001 10.9782 2.11829 10.767 2.32889L2.32948 10.7664C2.22021 10.8756 2.13468 11.0062 2.07826 11.1501C2.07249 11.1641 2.06764 11.1784 2.063 11.1928C2.02152 11.3114 2.00022 11.4362 2 11.5619V14.7039C2.00033 15.0022 2.11897 15.2881 2.32987 15.499C2.54078 15.7099 2.82673 15.8286 3.125 15.8289H14.9375C15.0867 15.8289 15.2298 15.7696 15.3352 15.6641C15.4407 15.5586 15.5 15.4156 15.5 15.2664C15.5 15.1172 15.4407 14.9741 15.3352 14.8686C15.2298 14.7631 15.0867 14.7039 14.9375 14.7039V14.7039ZM3.35802 11.3289L9.3125 5.3744L12.4545 8.51639L6.5 14.4709L3.35802 11.3289ZM11.5625 3.12433L14.7045 6.26639L13.25 7.72087L10.108 4.57889L11.5625 3.12433ZM3.125 12.6869L5.14198 14.7039H3.125V12.6869Z"
         fill="white"
@@ -1567,13 +916,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   blackCircleShare: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M13.2271 16.1248C12.849 16.1292 12.475 16.0458 12.1344 15.8812C11.7938 15.7165 11.4958 15.475 11.2638 15.1757C11.0317 14.8763 10.8719 14.5271 10.7968 14.1555C10.7216 13.7839 10.7333 13.3999 10.8308 13.0335L6.39671 10.492C6.02267 10.8357 5.55235 11.0558 5.04943 11.1225C4.54652 11.1892 4.03531 11.0993 3.58503 10.865C3.13474 10.6307 2.76713 10.2633 2.53197 9.81254C2.29681 9.36178 2.20546 8.84943 2.2703 8.34488C2.33513 7.84033 2.55301 7.36795 2.89444 6.99169C3.23587 6.61544 3.68435 6.35349 4.17916 6.24131C4.67396 6.12913 5.1912 6.17215 5.66081 6.36454C6.13043 6.55693 6.52975 6.88939 6.80471 7.31691L10.8301 5.00909C10.778 4.81175 10.7504 4.60873 10.7479 4.40461C10.743 3.828 10.9364 3.2673 11.2954 2.81691C11.6545 2.36653 12.1574 2.05397 12.7193 1.93187C13.2813 1.80978 13.8681 1.88559 14.3808 2.14656C14.8936 2.40752 15.301 2.8377 15.5345 3.36465C15.768 3.8916 15.8133 4.48314 15.6628 5.03967C15.5123 5.5962 15.1751 6.08371 14.7081 6.42014C14.2411 6.75657 13.6728 6.92135 13.0988 6.88674C12.5248 6.85213 11.9803 6.62024 11.5568 6.23013L7.20066 8.72689C7.1957 8.91157 7.1702 9.09412 7.12345 9.27241L11.5575 11.8132C11.8543 11.5401 12.2131 11.3437 12.6027 11.2411C12.9923 11.1385 13.4009 11.1328 13.7932 11.2245C14.1855 11.3162 14.5496 11.5025 14.8538 11.7672C15.1581 12.0319 15.3933 12.3671 15.5391 12.7437C15.6849 13.1202 15.7369 13.5268 15.6905 13.928C15.6442 14.3293 15.5009 14.7131 15.2731 15.0463C15.0453 15.3794 14.7398 15.6518 14.3833 15.8397C14.0267 16.0277 13.6299 16.1255 13.2271 16.1248ZM13.2271 12.5733C12.9453 12.5733 12.675 12.6855 12.4758 12.8853C12.2765 13.0851 12.1646 13.3561 12.1646 13.6387C12.1646 13.9213 12.2765 14.1923 12.4758 14.3921C12.675 14.5919 12.9453 14.7042 13.2271 14.7042C13.5088 14.7042 13.7791 14.5919 13.9783 14.3921C14.1776 14.1923 14.2895 13.9213 14.2895 13.6387C14.2895 13.3561 14.1776 13.0851 13.9783 12.8853C13.7791 12.6855 13.5088 12.5733 13.2271 12.5733ZM4.7272 7.60104C4.44541 7.60104 4.17517 7.71329 3.97591 7.91311C3.77666 8.11292 3.66472 8.38393 3.66472 8.66651C3.66472 8.94909 3.77666 9.2201 3.97591 9.41992C4.17517 9.61973 4.44541 9.73199 4.7272 9.73199C5.00899 9.73199 5.27924 9.61973 5.47849 9.41992C5.67774 9.2201 5.78968 8.94909 5.78968 8.66651C5.78968 8.38393 5.67774 8.11292 5.47849 7.91311C5.27924 7.71329 5.00899 7.60104 4.7272 7.60104ZM13.2271 3.33914C13.0875 3.33914 12.9494 3.3667 12.8205 3.42024C12.6916 3.47379 12.5744 3.55227 12.4758 3.65121C12.3771 3.75015 12.2988 3.8676 12.2454 3.99687C12.1921 4.12614 12.1646 4.26469 12.1646 4.40461C12.1646 4.54453 12.1921 4.68308 12.2454 4.81235C12.2988 4.94162 12.3771 5.05908 12.4758 5.15802C12.5744 5.25696 12.6916 5.33544 12.8205 5.38898C12.9494 5.44253 13.0875 5.47009 13.2271 5.47009C13.5088 5.47009 13.7791 5.35783 13.9783 5.15802C14.1776 4.9582 14.2895 4.68719 14.2895 4.40461C14.2895 4.12203 14.1776 3.85102 13.9783 3.65121C13.7791 3.45139 13.5088 3.33914 13.2271 3.33914Z"
         fill="white"
@@ -1581,13 +924,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   blackCircleBell: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M9.50709 4.01387L8.47633 4.01173C6.12512 4.00603 4.08399 5.94189 4.06782 8.28673V10.9871C4.06782 11.55 3.9975 12.0993 3.69446 12.5674L3.49267 12.8795C3.18541 13.3526 3.51587 13.9867 4.06782 13.9867H13.9325C14.4844 13.9867 14.8142 13.3526 14.5076 12.8795L14.3058 12.5674C14.0035 12.0993 13.9325 11.5493 13.9325 10.9864V8.28744C13.9044 5.94189 11.8583 4.01957 9.50709 4.01387V4.01387Z"
         stroke="white"
@@ -1612,13 +949,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   map: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M10.5 6.70312L9 6L3 8.8125V21L9 18.1875L15 21L21 18.1875V16.3125"
         stroke="#242424"
@@ -1626,13 +957,7 @@ const svgMap: TSvg = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M9 6V18"
-        stroke="#242424"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M9 6V18" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <path
         d="M14.8682 15.7852V20.3398"
         stroke="#242424"
@@ -1649,13 +974,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   whiteMapIcon: () => (
-    <svg
-      width="12"
-      height="14"
-      viewBox="0 0 12 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -1665,13 +984,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   blackMapIcon: () => (
-    <svg
-      width="12"
-      height="14"
-      viewBox="0 0 12 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -1681,26 +994,14 @@ const svgMap: TSvg = {
     </svg>
   ),
   threeLines: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="4.30078" width="16" height="2" rx="1" fill="#242424" />
       <rect x="2" y="11.3008" width="20" height="2" rx="1" fill="#242424" />
       <rect x="2" y="18.3008" width="16" height="2" rx="1" fill="#242424" />
     </svg>
   ),
   brandColorDot: () => (
-    <svg
-      width="6"
-      height="6"
-      viewBox="0 0 6 6"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.002 2.14744e-07C2.60777 1.80279e-07 2.2174 0.0775968 1.85318 0.228361C1.48896 0.379125 1.15803 0.600103 0.879268 0.878679C0.600506 1.15725 0.37938 1.48797 0.228516 1.85195C0.0776509 2.21593 2.9671e-07 2.60603 2.62268e-07 3C2.27827e-07 3.39397 0.0776507 3.78407 0.228515 4.14805C0.37938 4.51203 0.600505 4.84274 0.879267 5.12132C1.15803 5.3999 1.48896 5.62087 1.85318 5.77164C2.2174 5.9224 2.60777 6 3.002 6C3.79712 6 4.55967 5.68435 5.12191 5.12249C5.68414 4.56063 6 3.79859 6 3.004C6 2.20941 5.68414 1.44737 5.12191 0.885508C4.55967 0.323649 3.79712 0.0079997 3.002 0.00799963L3.002 2.14744e-07Z"
         fill="#35AD73"
@@ -1708,13 +1009,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   redRestaurant: () => (
-    <svg
-      width="36"
-      height="39"
-      viewBox="0 0 36 39"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="36" height="39" viewBox="0 0 36 39" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -1729,13 +1024,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   greenMarker: () => (
-    <svg
-      width="48"
-      height="52"
-      viewBox="0 0 48 52"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="48" height="52" viewBox="0 0 48 52" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g filter="url(#filter0_dd_4832_84363)">
         <path
           d="M40 20.6224C40 33.2955 24 40 24 40C24 40 8 33.2955 8 20.6224C8 11.4421 15.1634 4 24 4C32.8366 4 40 11.4421 40 20.6224Z"
@@ -1763,15 +1052,8 @@ const svgMap: TSvg = {
           <feOffset dy="4" />
           <feGaussianBlur stdDeviation="4" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_4832_84363"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4832_84363" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -1781,33 +1063,15 @@ const svgMap: TSvg = {
           <feOffset dy="1" />
           <feGaussianBlur stdDeviation="0.5" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="effect1_dropShadow_4832_84363"
-            result="effect2_dropShadow_4832_84363"
-          />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="effect2_dropShadow_4832_84363"
-            result="shape"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="effect1_dropShadow_4832_84363" result="effect2_dropShadow_4832_84363" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_4832_84363" result="shape" />
         </filter>
       </defs>
     </svg>
   ),
   crossCloseBlack: () => (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect
         width="2.0757"
         height="22.8327"
@@ -1825,13 +1089,7 @@ const svgMap: TSvg = {
     </svg>
   ),
   people: () => (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.8557 13.9176H14.4122V12.5584C14.4122 12.4836 14.3472 12.4224 14.2678 12.4224H13.4017C13.3223 12.4224 13.2574 12.4836 13.2574 12.5584V13.9176H11.8139C11.7345 13.9176 11.6696 13.9787 11.6696 14.0535V14.869C11.6696 14.9437 11.7345 15.0049 11.8139 15.0049H13.2574V16.3641C13.2574 16.4388 13.3223 16.5 13.4017 16.5H14.2678C14.3472 16.5 14.4122 16.4388 14.4122 16.3641V15.0049H15.8557C15.935 15.0049 16 14.9437 16 14.869V14.0535C16 13.9787 15.935 13.9176 15.8557 13.9176ZM6.50009 9.26914C6.48386 9.12133 6.47483 8.97182 6.47483 8.82061C6.47483 8.55047 6.5019 8.28713 6.55242 8.03058C6.56505 7.96942 6.53077 7.90656 6.47122 7.88107C6.22583 7.77743 6.00029 7.63472 5.80542 7.45463C5.5758 7.24499 5.39511 6.99258 5.27488 6.7135C5.15465 6.43443 5.09752 6.13482 5.10714 5.8338C5.12338 5.28843 5.35614 4.77024 5.76212 4.37947C6.20779 3.94963 6.80683 3.71517 7.44377 3.72197C8.01936 3.72706 8.5751 3.93604 8.99551 4.30642C9.13805 4.43214 9.26075 4.57146 9.3636 4.72097C9.39969 4.77364 9.47006 4.79572 9.5314 4.77533C9.84897 4.6717 10.1846 4.59864 10.5292 4.56466C10.6303 4.55447 10.688 4.45253 10.6429 4.36758C10.0565 3.27513 8.85838 2.52079 7.47264 2.5004C5.47342 2.47152 3.8062 4.01589 3.8062 5.89836C3.8062 6.96532 4.32766 7.91675 5.14503 8.54028C4.57124 8.79003 4.04257 9.13492 3.58426 9.56646C2.59548 10.4958 2.03613 11.7225 2.00005 13.0324C1.99956 13.0505 2.00294 13.0686 2.00998 13.0854C2.01702 13.1023 2.02757 13.1177 2.04103 13.1307C2.05448 13.1437 2.07055 13.154 2.08831 13.161C2.10606 13.1681 2.12513 13.1717 2.14439 13.1717H3.15663C3.23422 13.1717 3.29918 13.1139 3.30098 13.0409C3.33526 12.0555 3.75929 11.1329 4.50448 10.4329C5.03496 9.93344 5.68453 9.58685 6.39364 9.41865C6.4622 9.39996 6.50912 9.3371 6.50009 9.26914ZM14.6287 8.82061C14.6287 6.96192 13.0427 5.45153 11.0759 5.42265C9.07671 5.39376 7.41129 6.93814 7.41129 8.82061C7.41129 9.88757 7.93455 10.839 8.75012 11.4625C8.17039 11.7156 7.64265 12.0629 7.19116 12.4887C6.20238 13.4181 5.64303 14.6447 5.60694 15.9529C5.60646 15.9711 5.60984 15.9891 5.61688 16.006C5.62391 16.0229 5.63447 16.0383 5.64792 16.0512C5.66137 16.0642 5.67745 16.0745 5.6952 16.0816C5.71296 16.0886 5.73203 16.0923 5.75129 16.0922H6.76173C6.83931 16.0922 6.90427 16.0345 6.90607 15.9614C6.94036 14.976 7.36438 14.0535 8.10958 13.3535C8.88725 12.6212 9.91934 12.2186 11.02 12.2186C13.012 12.2186 14.6287 10.698 14.6287 8.82061ZM12.6529 10.3582C12.2163 10.7693 11.6371 10.9953 11.02 10.9953C10.4029 10.9953 9.82371 10.7693 9.38706 10.3582C9.16916 10.1541 8.99699 9.91087 8.88076 9.64296C8.76454 9.37505 8.70661 9.0879 8.71042 8.79852C8.71584 8.24126 8.95221 7.70268 9.3654 7.30342C9.79845 6.88547 10.3776 6.65271 10.9965 6.64591C11.6082 6.64082 12.2018 6.86508 12.6385 7.26774C13.086 7.68059 13.3314 8.23276 13.3314 8.82061C13.3296 9.40166 13.0896 9.94703 12.6529 10.3582Z"
         fill="#242424"
@@ -1841,89 +1099,61 @@ const svgMap: TSvg = {
     </svg>
   ),
   whitePeople: () => (
-    <svg 
-      width="16" 
-      height="16" 
-      viewBox="0 0 16 16" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        d="M13.5307 12.034H12.3662V10.9376C12.3662 10.8772 12.3138 10.8279 12.2498 10.8279H11.5511C11.487 10.8279 11.4346 10.8772 11.4346 10.9376V12.034H10.2701C10.2061 12.034 10.1537 12.0834 10.1537 12.1437V12.8016C10.1537 12.8619 10.2061 12.9112 10.2701 12.9112H11.4346V14.0077C11.4346 14.068 11.487 14.1174 11.5511 14.1174H12.2498C12.3138 14.1174 12.3662 14.068 12.3662 14.0077V12.9112H13.5307C13.5947 12.9112 13.6471 12.8619 13.6471 12.8016V12.1437C13.6471 12.0834 13.5947 12.034 13.5307 12.034ZM5.98336 8.28406C5.97025 8.16482 5.96298 8.0442 5.96298 7.92222C5.96298 7.70429 5.98481 7.49185 6.02557 7.28489C6.03576 7.23555 6.0081 7.18483 5.96007 7.16427C5.7621 7.08067 5.58015 6.96554 5.42295 6.82025C5.2377 6.65113 5.09194 6.4475 4.99495 6.22237C4.89795 5.99724 4.85187 5.75554 4.85962 5.51269C4.87272 5.07273 5.0605 4.65469 5.38801 4.33945C5.74755 3.99269 6.23081 3.80355 6.74464 3.80903C7.20898 3.81314 7.65731 3.98173 7.99646 4.28052C8.11146 4.38194 8.21044 4.49433 8.29341 4.61495C8.32252 4.65744 8.37929 4.67525 8.42878 4.65881C8.68497 4.5752 8.95571 4.51626 9.23373 4.48885C9.31525 4.48063 9.36183 4.39839 9.32544 4.32986C8.85236 3.44856 7.88584 2.84001 6.76793 2.82356C5.15511 2.80026 3.81013 4.04614 3.81013 5.56478C3.81013 6.42552 4.2308 7.19306 4.89019 7.69607C4.42731 7.89755 4.00081 8.17578 3.63109 8.52392C2.83342 9.27364 2.38218 10.2632 2.35306 11.32C2.35268 11.3346 2.3554 11.3491 2.36108 11.3628C2.36676 11.3764 2.37527 11.3888 2.38612 11.3993C2.39698 11.4097 2.40995 11.4181 2.42427 11.4237C2.43859 11.4294 2.45397 11.4323 2.46951 11.4323H3.28611C3.3487 11.4323 3.4011 11.3857 3.40256 11.3268C3.43022 10.5319 3.77228 9.78761 4.37345 9.22293C4.8014 8.81997 5.32542 8.54036 5.89747 8.40467C5.95279 8.3896 5.99063 8.33888 5.98336 8.28406ZM12.5409 7.92222C12.5409 6.42278 11.2614 5.20431 9.67478 5.18101C8.06197 5.15771 6.71844 6.40359 6.71844 7.92222C6.71844 8.78296 7.14057 9.5505 7.7985 10.0535C7.33082 10.2576 6.90508 10.5379 6.54085 10.8814C5.74318 11.6311 5.29194 12.6207 5.26283 13.676C5.26244 13.6907 5.26517 13.7052 5.27084 13.7188C5.27652 13.7324 5.28504 13.7449 5.29589 13.7553C5.30674 13.7658 5.31971 13.7741 5.33403 13.7798C5.34835 13.7855 5.36374 13.7884 5.37928 13.7884H6.19442C6.25701 13.7884 6.30941 13.7418 6.31087 13.6829C6.33852 12.8879 6.68059 12.1437 7.28176 11.579C7.90913 10.9883 8.74174 10.6634 9.62966 10.6634C11.2367 10.6634 12.5409 9.43674 12.5409 7.92222ZM10.947 9.16262C10.5947 9.4943 10.1275 9.6766 9.62966 9.6766C9.13184 9.6766 8.66459 9.4943 8.31233 9.16262C8.13655 8.99797 7.99766 8.80176 7.9039 8.58563C7.81013 8.3695 7.7634 8.13785 7.76648 7.9044C7.77084 7.45484 7.96153 7.02036 8.29486 6.69827C8.64421 6.3611 9.11146 6.17333 9.61074 6.16784C10.1042 6.16373 10.5831 6.34465 10.9353 6.66949C11.2963 7.00254 11.4943 7.44799 11.4943 7.92222C11.4928 8.39097 11.2992 8.83093 10.947 9.16262Z" 
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M13.5307 12.034H12.3662V10.9376C12.3662 10.8772 12.3138 10.8279 12.2498 10.8279H11.5511C11.487 10.8279 11.4346 10.8772 11.4346 10.9376V12.034H10.2701C10.2061 12.034 10.1537 12.0834 10.1537 12.1437V12.8016C10.1537 12.8619 10.2061 12.9112 10.2701 12.9112H11.4346V14.0077C11.4346 14.068 11.487 14.1174 11.5511 14.1174H12.2498C12.3138 14.1174 12.3662 14.068 12.3662 14.0077V12.9112H13.5307C13.5947 12.9112 13.6471 12.8619 13.6471 12.8016V12.1437C13.6471 12.0834 13.5947 12.034 13.5307 12.034ZM5.98336 8.28406C5.97025 8.16482 5.96298 8.0442 5.96298 7.92222C5.96298 7.70429 5.98481 7.49185 6.02557 7.28489C6.03576 7.23555 6.0081 7.18483 5.96007 7.16427C5.7621 7.08067 5.58015 6.96554 5.42295 6.82025C5.2377 6.65113 5.09194 6.4475 4.99495 6.22237C4.89795 5.99724 4.85187 5.75554 4.85962 5.51269C4.87272 5.07273 5.0605 4.65469 5.38801 4.33945C5.74755 3.99269 6.23081 3.80355 6.74464 3.80903C7.20898 3.81314 7.65731 3.98173 7.99646 4.28052C8.11146 4.38194 8.21044 4.49433 8.29341 4.61495C8.32252 4.65744 8.37929 4.67525 8.42878 4.65881C8.68497 4.5752 8.95571 4.51626 9.23373 4.48885C9.31525 4.48063 9.36183 4.39839 9.32544 4.32986C8.85236 3.44856 7.88584 2.84001 6.76793 2.82356C5.15511 2.80026 3.81013 4.04614 3.81013 5.56478C3.81013 6.42552 4.2308 7.19306 4.89019 7.69607C4.42731 7.89755 4.00081 8.17578 3.63109 8.52392C2.83342 9.27364 2.38218 10.2632 2.35306 11.32C2.35268 11.3346 2.3554 11.3491 2.36108 11.3628C2.36676 11.3764 2.37527 11.3888 2.38612 11.3993C2.39698 11.4097 2.40995 11.4181 2.42427 11.4237C2.43859 11.4294 2.45397 11.4323 2.46951 11.4323H3.28611C3.3487 11.4323 3.4011 11.3857 3.40256 11.3268C3.43022 10.5319 3.77228 9.78761 4.37345 9.22293C4.8014 8.81997 5.32542 8.54036 5.89747 8.40467C5.95279 8.3896 5.99063 8.33888 5.98336 8.28406ZM12.5409 7.92222C12.5409 6.42278 11.2614 5.20431 9.67478 5.18101C8.06197 5.15771 6.71844 6.40359 6.71844 7.92222C6.71844 8.78296 7.14057 9.5505 7.7985 10.0535C7.33082 10.2576 6.90508 10.5379 6.54085 10.8814C5.74318 11.6311 5.29194 12.6207 5.26283 13.676C5.26244 13.6907 5.26517 13.7052 5.27084 13.7188C5.27652 13.7324 5.28504 13.7449 5.29589 13.7553C5.30674 13.7658 5.31971 13.7741 5.33403 13.7798C5.34835 13.7855 5.36374 13.7884 5.37928 13.7884H6.19442C6.25701 13.7884 6.30941 13.7418 6.31087 13.6829C6.33852 12.8879 6.68059 12.1437 7.28176 11.579C7.90913 10.9883 8.74174 10.6634 9.62966 10.6634C11.2367 10.6634 12.5409 9.43674 12.5409 7.92222ZM10.947 9.16262C10.5947 9.4943 10.1275 9.6766 9.62966 9.6766C9.13184 9.6766 8.66459 9.4943 8.31233 9.16262C8.13655 8.99797 7.99766 8.80176 7.9039 8.58563C7.81013 8.3695 7.7634 8.13785 7.76648 7.9044C7.77084 7.45484 7.96153 7.02036 8.29486 6.69827C8.64421 6.3611 9.11146 6.17333 9.61074 6.16784C10.1042 6.16373 10.5831 6.34465 10.9353 6.66949C11.2963 7.00254 11.4943 7.44799 11.4943 7.92222C11.4928 8.39097 11.2992 8.83093 10.947 9.16262Z"
         fill="white"
       />
     </svg>
   ),
   likeBorderGray: () => (
-    <svg 
-      width="18" 
-      height="18" 
-      viewBox="0 0 18 18" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z" 
-        stroke="#C8C8C8" 
-        strokeWidth="1.6" 
-        strokeLinecap="round" 
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z"
+        stroke="#C8C8C8"
+        strokeWidth="1.6"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
   ),
   likeRed18: () => (
-    <svg 
-      width="18"
-      height="18" 
-      viewBox="0 0 18 18" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z" 
-        fill="#F42D2D" 
-        stroke="#F42D2D" 
-        strokeLinecap="round" 
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M6 4C4.3434 4 3 5.36686 3 7.05324C3 8.41455 3.525 11.6454 8.6928 14.9115C8.78537 14.9694 8.89164 15 9 15C9.10836 15 9.21463 14.9694 9.3072 14.9115C14.475 11.6454 15 8.41455 15 7.05324C15 5.36686 13.6566 4 12 4C10.3434 4 9 5.85045 9 5.85045C9 5.85045 7.6566 4 6 4Z"
+        fill="#F42D2D"
+        stroke="#F42D2D"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
   ),
   greenGood: () => (
-    <svg 
-      width="18" 
-      height="19" 
-      viewBox="0 0 18 19" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        d="M6.04837 15.4999H4.21935C3.89596 15.4999 3.58581 15.3735 3.35714 15.1485C3.12847 14.9234 3 14.6182 3 14.2999V10.1C3 9.7817 3.12847 9.47648 3.35714 9.25144C3.58581 9.02639 3.89596 8.89997 4.21935 8.89997H6.04837M10.3161 7.69997V5.29999C10.3161 4.8226 10.1234 4.36477 9.78038 4.0272C9.43737 3.68964 8.97215 3.5 8.48707 3.5L6.04837 8.89997V15.4999H12.9255C13.2196 15.5032 13.5049 15.4018 13.729 15.2143C13.9531 15.0269 14.1007 14.7661 14.1448 14.4799L14.9862 9.07996C15.0127 8.90798 15.0009 8.73238 14.9516 8.56532C14.9024 8.39826 14.8168 8.24375 14.7008 8.11248C14.5848 7.98121 14.4412 7.87633 14.2799 7.8051C14.1187 7.73388 13.9436 7.698 13.7668 7.69997H10.3161Z" 
-        stroke="#35AD73" 
-        strokeWidth="1.6" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"/>
+    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M6.04837 15.4999H4.21935C3.89596 15.4999 3.58581 15.3735 3.35714 15.1485C3.12847 14.9234 3 14.6182 3 14.2999V10.1C3 9.7817 3.12847 9.47648 3.35714 9.25144C3.58581 9.02639 3.89596 8.89997 4.21935 8.89997H6.04837M10.3161 7.69997V5.29999C10.3161 4.8226 10.1234 4.36477 9.78038 4.0272C9.43737 3.68964 8.97215 3.5 8.48707 3.5L6.04837 8.89997V15.4999H12.9255C13.2196 15.5032 13.5049 15.4018 13.729 15.2143C13.9531 15.0269 14.1007 14.7661 14.1448 14.4799L14.9862 9.07996C15.0127 8.90798 15.0009 8.73238 14.9516 8.56532C14.9024 8.39826 14.8168 8.24375 14.7008 8.11248C14.5848 7.98121 14.4412 7.87633 14.2799 7.8051C14.1187 7.73388 13.9436 7.698 13.7668 7.69997H10.3161Z"
+        stroke="#35AD73"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
   grayGood: () => (
-    <svg 
-      width="18" 
-      height="19" 
-      viewBox="0 0 18 19" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        d="M6.04837 15.4999H4.21935C3.89596 15.4999 3.58581 15.3735 3.35714 15.1485C3.12847 14.9234 3 14.6182 3 14.2999V10.1C3 9.7817 3.12847 9.47648 3.35714 9.25144C3.58581 9.02639 3.89596 8.89997 4.21935 8.89997H6.04837M10.3161 7.69997V5.29999C10.3161 4.8226 10.1234 4.36477 9.78038 4.0272C9.43737 3.68964 8.97215 3.5 8.48707 3.5L6.04837 8.89997V15.4999H12.9255C13.2196 15.5032 13.5049 15.4018 13.729 15.2143C13.9531 15.0269 14.1007 14.7661 14.1448 14.4799L14.9862 9.07996C15.0127 8.90798 15.0009 8.73238 14.9516 8.56532C14.9024 8.39826 14.8168 8.24375 14.7008 8.11248C14.5848 7.98121 14.4412 7.87633 14.2799 7.8051C14.1187 7.73388 13.9436 7.698 13.7668 7.69997H10.3161Z" 
-        stroke="#C8C8C8" 
-        strokeWidth="1.6" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"/>
+    <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M6.04837 15.4999H4.21935C3.89596 15.4999 3.58581 15.3735 3.35714 15.1485C3.12847 14.9234 3 14.6182 3 14.2999V10.1C3 9.7817 3.12847 9.47648 3.35714 9.25144C3.58581 9.02639 3.89596 8.89997 4.21935 8.89997H6.04837M10.3161 7.69997V5.29999C10.3161 4.8226 10.1234 4.36477 9.78038 4.0272C9.43737 3.68964 8.97215 3.5 8.48707 3.5L6.04837 8.89997V15.4999H12.9255C13.2196 15.5032 13.5049 15.4018 13.729 15.2143C13.9531 15.0269 14.1007 14.7661 14.1448 14.4799L14.9862 9.07996C15.0127 8.90798 15.0009 8.73238 14.9516 8.56532C14.9024 8.39826 14.8168 8.24375 14.7008 8.11248C14.5848 7.98121 14.4412 7.87633 14.2799 7.8051C14.1187 7.73388 13.9436 7.698 13.7668 7.69997H10.3161Z"
+        stroke="#C8C8C8"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
   plusWhite: () => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="9.75" y="4" width="10" height="1.5" rx="0.75" transform="rotate(90 9.75 4)" fill="white"/>
-      <rect x="4" y="8.25" width="10" height="1.5" rx="0.75" fill="white"/>
+      <rect x="9.75" y="4" width="10" height="1.5" rx="0.75" transform="rotate(90 9.75 4)" fill="white" />
+      <rect x="4" y="8.25" width="10" height="1.5" rx="0.75" fill="white" />
     </svg>
   ),
 };

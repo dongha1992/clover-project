@@ -16,21 +16,44 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
+import { userForm } from '@store/user';
+import { availabilityEmail, userChangeInfo } from '@api/user';
+import Validation from '@components/Pages/User/Validation';
+import { EMAIL_REGX } from '@pages/signup/email-password';
+interface IVaildation {
+  message: string;
+  isValid: boolean;
+}
+
+/* TODO: 서버에서 받은 정보 어떻게 관리할까 */
 
 const ProfilePage = () => {
-  const { loginType } = useSelector(commonSelector);
+  const { me } = useSelector(userForm);
+
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
   const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
-  const [checkGender, setChcekGender] = useState<number>(1);
-  const [isAuthTel, setIsAuthTel] = useState(false);
   const [delay, setDelay] = useState<number | null>(null);
+
+  const [emailValidation, setEmailValidataion] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
+
+  const [checkGender, setChcekGender] = useState<string>('');
+  const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-  const phoneNumberRef = useRef<HTMLInputElement>(null);
-  const authTimerRef = useRef(2000);
+  const telRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const birthDateRef = useRef<HTMLInputElement>(null);
+  const nicknameRef = useRef<HTMLInputElement>(null);
+  const authTimerRef = useRef(300);
+
+  const { loginType } = useSelector(commonSelector);
 
   const dispatch = useDispatch();
 
@@ -39,7 +62,7 @@ const ProfilePage = () => {
       setDelay(null);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 440) {
+    if (authTimerRef.current < 240) {
       setOneMinuteDisabled(false);
     }
   }, [second]);
@@ -80,13 +103,37 @@ const ProfilePage = () => {
     }
   };
 
-  const phoneNumberInputHandler = () => {
-    if (phoneNumberRef.current) {
-      const tel = phoneNumberRef.current?.value;
+  const phoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    if (telRef.current) {
+      const tel = telRef.current?.value;
       if (PHONE_REGX.test(tel)) {
         setPhoneValidation(true);
       } else {
         setPhoneValidation(false);
+      }
+    }
+  };
+
+  const getAvailabilityEmail = async () => {
+    if (emailRef.current) {
+      const email = emailRef.current?.value;
+      const {
+        data: { data: availability },
+      } = await availabilityEmail({ email });
+      /* TODO: 탈퇴 res? */
+
+      if (availability) {
+        setEmailValidataion({
+          isValid: true,
+          message: '',
+        });
+      } else {
+        setEmailValidataion({
+          isValid: false,
+          message: '사용 중인 이메일 주소입니다.',
+        });
       }
     }
   };
@@ -103,8 +150,8 @@ const ProfilePage = () => {
     }
 
     try {
-      if (phoneNumberRef.current) {
-        const tel = phoneNumberRef.current?.value.toString();
+      if (telRef.current) {
+        const tel = telRef.current?.value.toString();
 
         const { data } = await userAuthTel({ tel });
 
@@ -125,10 +172,10 @@ const ProfilePage = () => {
     }
   };
   const getAuthCodeConfirm = async () => {
-    if (authCodeNumberRef.current && phoneNumberRef.current) {
+    if (authCodeNumberRef.current && telRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
-        const tel = phoneNumberRef.current.value;
+        const tel = telRef.current.value;
 
         try {
           const { data } = await userConfirmTel({ tel, authCode });
@@ -141,8 +188,29 @@ const ProfilePage = () => {
     }
   };
 
-  const checkGenderHandler = (id: number) => {
-    setChcekGender(id);
+  const checkGenderHandler = (value: string) => {
+    setChcekGender(value);
+  };
+
+  const changeEmailHandler = (): void => {
+    if (emailRef.current) {
+      const email = emailRef.current?.value;
+      const checkEmailRegx = EMAIL_REGX.test(email);
+      if (checkEmailRegx) {
+        setEmailValidataion({
+          isValid: true,
+          message: '',
+        });
+
+        /* 이메일 중복 검사 */
+        getAvailabilityEmail();
+      } else {
+        setEmailValidataion({
+          isValid: false,
+          message: '이메일 형식이 올바르지 않습니다.',
+        });
+      }
+    }
   };
 
   const getDeleteUser = async () => {
@@ -154,6 +222,43 @@ const ProfilePage = () => {
     router.push('/mypage/profile/password');
   };
 
+  const changeMeInfo = async () => {
+    const changedNickname = nicknameRef.current?.value;
+    const changedName = nameRef.current?.value;
+    const changedBirthDate = birthDateRef.current?.value;
+    const chagnedEmail = emailRef.current?.value;
+    const chagnedTel = telRef.current?.value;
+
+    const reqBody = {
+      birthDate: changedBirthDate ? changedBirthDate : me?.birthDate!,
+      gender: checkGender ? checkGender : me?.gender!,
+      email: chagnedEmail ? chagnedEmail : me?.email!,
+      marketingEmailReceived: me?.marketingEmailReceived!,
+      marketingPushReceived: me?.marketingPushReceived!,
+      marketingSmsReceived: me?.marketingSmsReceived!,
+      name: changedName ? changedName : me?.name!,
+      nickName: changedNickname ? changedNickname : me?.nickName!,
+      notiPushReceived: me?.notiPushReceived!,
+      primePushReceived: me?.primePushReceived!,
+      tel: chagnedTel ? chagnedTel : me?.tel!,
+    };
+
+    // temp
+    if (birthDateRef.current && birthDateRef.current?.value.length < 10) {
+      return alert('생년월일을 정확하게');
+    }
+    try {
+      const { data } = await userChangeInfo(reqBody);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  /*TODO: me에서 전달되는 초기값 이렇게 하는 거 좀 거슬림 */
+  useEffect(() => {
+    setChcekGender(me?.gender!);
+  }, [me]);
+
   return (
     <Container>
       <Wrapper>
@@ -164,10 +269,20 @@ const ProfilePage = () => {
               로그아웃
             </TextH6B>
           </FlexBetween>
-          <FlexCol padding="0 0 24px 0 ">
+          <NameInputWrapper>
             <TextH5B padding="0 0 9px 0">이메일</TextH5B>
-            <TextInput />
-          </FlexCol>
+            <TextInput
+              placeholder="이메일"
+              ref={emailRef}
+              eventHandler={changeEmailHandler}
+              value={me?.email ? me?.email : ''}
+            />
+            {!emailValidation.isValid ? (
+              <Validation>{emailValidation.message}</Validation>
+            ) : (
+              <SVGIcon name="confirmCheck" />
+            )}
+          </NameInputWrapper>
           <FlexCol>
             <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
             <FlexRow>
@@ -185,16 +300,16 @@ const ProfilePage = () => {
           </FlexRow>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
-            <TextInput />
+            <TextInput value={me?.name} ref={nameRef} />
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
-            <TextH5B padding="0 0 9px 0">닉테임</TextH5B>
-            <TextInput />
+            <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
+            <TextInput value={me?.nickName} ref={nicknameRef} />
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
-              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} ref={phoneNumberRef} />
+              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} ref={telRef} value={me?.tel} />
               {isAuthTel ? (
                 <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
                   요청하기
@@ -229,16 +344,17 @@ const ProfilePage = () => {
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
-            <TextInput />
+            <TextInput value={me?.birthDate} ref={birthDateRef} placeholder="YYYY-MM-DD" />
           </FlexCol>
           <FlexCol>
             <TextH5B>성별</TextH5B>
             <FlexRow padding="17px 0 0 0">
               {GENDER.map((item, index) => {
+                const isSelected = checkGender === item.value;
                 return (
                   <FlexRow padding="0 16px 0 0" key={index}>
-                    <RadioButton onChange={() => checkGenderHandler(item.id)} isSelected={checkGender === item.id} />
-                    {checkGender === item.id ? (
+                    <RadioButton onChange={() => checkGenderHandler(item.value)} isSelected={isSelected} />
+                    {isSelected ? (
                       <TextH5B padding="0 0 0 8px">{item.text}</TextH5B>
                     ) : (
                       <TextB2R padding="0 0 0 8px">{item.text}</TextB2R>
@@ -256,7 +372,7 @@ const ProfilePage = () => {
           </TextH5B>
         </DeleteUser>
       </Wrapper>
-      <BtnWrapper>
+      <BtnWrapper onClick={changeMeInfo}>
         <Button height="100%">수정하기</Button>
       </BtnWrapper>
     </Container>
@@ -269,6 +385,17 @@ const Wrapper = styled.div``;
 
 const BtnWrapper = styled.div`
   ${fixedBottom}
+`;
+
+const NameInputWrapper = styled.div`
+  position: relative;
+  padding: 0 0 24px 0;
+
+  > svg {
+    position: absolute;
+    right: 5%;
+    bottom: 42%;
+  }
 `;
 
 const LoginInfoWrapper = styled.div`

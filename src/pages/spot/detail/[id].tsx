@@ -31,7 +31,7 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
 
   const HEADER_HEIGHT = 56;
   const sliceLen = spotItem && spotItem.notices?.length > 1;
-  const pickupsLen = spotItem && spotItem.pickups?.length > 0;
+  const pickupsLen = spotItem && spotItem.pickups?.length;
   const imgTotalLen = spotItem && spotItem.images?.length;
 
   const selectTabHandler = useCallback(({ link }: string) => {
@@ -180,7 +180,20 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
       </SliderWrapper>
       <StoreWrapper>
         <TagWrapper>
-          <Tag>{placeType()}</Tag>
+          <Tag margin='0 5px 0 0'>{placeType()}</Tag>
+          {
+            spotItem?.canEat &&
+              <Tag margin='0 5px 0 0'>취식가능</Tag>
+          }
+          {
+            spotItem?.canParking &&
+              <Tag margin='0 5px 0 0'>주차가능</Tag>
+          }
+ 
+          {
+            !!spotItem?.discountRate &&
+              <Tag margin='0 5px 0 0' backgroundColor='#EDF3F0' color={theme.brandColor}>{`${spotItem?.discountRate}%할인 중`}</Tag>
+          }
         </TagWrapper>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>
         <TextB3R display="inline" margin="0 8px 0 0">
@@ -226,10 +239,20 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
           </FlexStart>
           <FlexStart margin="0 0 16px 0">
             <TextH5B margin="0 20px 0 0">픽업장소</TextH5B>
-            {pickupsLen && <TextB2R margin="0 8px 0 0">{spotItem.pickups[0].name}</TextB2R>}
-            <TextH6B color={theme.greyScale65} textDecoration="underline" pointer>
-              이미지로 보기
-            </TextH6B>
+            <div>
+              {
+                spotItem?.pickups.map((i, idx) => {
+                  return (
+                    <FlexStart key={idx}>
+                      <TextB2R  margin="0 8px 0 0">{i.name}</TextB2R>
+                      <TextH6B color={theme.greyScale65} textDecoration="underline" pointer>
+                      이미지로 보기
+                      </TextH6B>  
+                    </FlexStart>  
+                  )
+                })
+              }
+            </div>
           </FlexStart>
           {spotItem?.description && (
             <FlexStart margin="0 0 16px 0">

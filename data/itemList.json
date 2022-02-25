@@ -4,6 +4,7 @@
       "name": "두부 크럼블 낫또 샐러드",
       "id": 1,
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 10,
       "price": 7000,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -16,14 +17,14 @@
           "menuId": 1,
           "user": "유저1",
           "createdAt": "2021-11-11",
-          "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+          "url": "/menu/review/lg/10000_20200408084613",
           "rating": 4,
           "order": 2,
-          "images": [
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
-            "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg"
+          "imageUrl": [
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613"
           ],
           "content": "리뷰리뷰리뷸",
           "reply": {
@@ -39,10 +40,10 @@
           "menuId": 1,
           "user": "유저2",
           "createdAt": "2021-11-11",
-          "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+          "url": "/menu/review/lg/10000_20200408084613",
           "rating": 3,
           "order": 19,
-          "images": ["https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg"],
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
           "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
         }
       ],
@@ -121,6 +122,7 @@
       "name": "들기름 메밀면 샐러드",
       "id": 2,
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 30,
       "price": 23210,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -128,12 +130,49 @@
       "review": 10,
       "tags": ["페스코베지", "스팟/새벽"],
       "quantity": 1,
-      "details": []
+      "details": [],
+      "reviews": [
+        {
+          "id": 1,
+          "menuId": 2,
+          "user": "유저1",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 4,
+          "order": 2,
+          "imageUrl": [
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657"
+          ],
+          "content": "리뷰리뷰리뷸",
+          "reply": {
+            "reviewId": 1,
+            "menuId": 2,
+            "name": "프레시코드 MD팀",
+            "createdAt": "2021-20-22",
+            "content": "asdasdasdasda딥뱐딥뱐"
+          }
+        },
+        {
+          "id": 2,
+          "menuId": 2,
+          "user": "유저2",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 3,
+          "order": 19,
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
+          "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
+        }
+      ]
     },
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
       "id": 3,
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 10,
       "price": 1000,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -141,12 +180,50 @@
       "review": 100,
       "tags": ["페스코베지"],
       "quantity": 1,
-      "details": []
+      "details": [],
+      "reviews": [
+        {
+          "id": 1,
+          "menuId": 3,
+          "user": "유저1",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 4,
+          "order": 2,
+          "imageUrl": [
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657",
+            "/banner/mobile/793_20211001102657"
+          ],
+          "content": "리뷰리뷰리뷸",
+          "reply": {
+            "reviewId": 1,
+            "menuId": 3,
+            "name": "프레시코드 MD팀",
+            "createdAt": "2021-20-22",
+            "content": "asdasdasdasda딥뱐딥뱐"
+          }
+        },
+        {
+          "id": 2,
+          "menuId": 3,
+          "user": "유저2",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 3,
+          "order": 19,
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
+          "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
+        }
+      ]
     },
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
       "id": 4,
+
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 10,
       "price": 100,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -154,7 +231,43 @@
       "review": 90000,
       "tags": ["페스코베지", "스팟/새벽", "페스코베지"],
       "quantity": 1,
-      "details": []
+      "details": [],
+      "reviews": [
+        {
+          "id": 1,
+          "menuId": 4,
+          "user": "유저1",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 4,
+          "order": 2,
+          "imageUrl": [
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613",
+            "/menu/review/lg/10000_20200408084613"
+          ],
+          "content": "리뷰리뷰리뷸",
+          "reply": {
+            "reviewId": 1,
+            "menuId": 4,
+            "name": "프레시코드 MD팀",
+            "createdAt": "2021-20-22",
+            "content": "asdasdasdasda딥뱐딥뱐"
+          }
+        },
+        {
+          "id": 2,
+          "menuId": 4,
+          "user": "유저2",
+          "createdAt": "2021-11-11",
+          "url": "/menu/review/lg/10000_20200408084613",
+          "rating": 3,
+          "order": 19,
+          "imageUrl": ["/menu/review/lg/10000_20200408084613"],
+          "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
+        }
+      ]
     }
   ]
 }

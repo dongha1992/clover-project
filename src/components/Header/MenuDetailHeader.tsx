@@ -103,8 +103,6 @@ const Container = styled.div`
     margin: 0 auto;
     left: 0px;
   `};
-
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 `;
 
 const Wrapper = styled.div`

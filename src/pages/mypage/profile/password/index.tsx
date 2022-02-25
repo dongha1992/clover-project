@@ -17,23 +17,30 @@ interface IVaildation {
 }
 
 const ChangePasswordPage = () => {
-  const [oldPasswordLengthValidation, setOldPasswordLengthValidation] =
-    useState<IVaildation>({ message: '', isValid: false });
+  const [oldPasswordLengthValidation, setOldPasswordLengthValidation] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
-  const [newPasswordLengthValidation, setNewPasswordLengthValidation] =
-    useState<IVaildation>({ message: '', isValid: false });
+  const [newPasswordLengthValidation, setNewPasswordLengthValidation] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
-  const [newPasswordValidation, setNewPasswordValidation] =
-    useState<IVaildation>({
-      message: '',
-      isValid: false,
-    });
+  const [newPasswordValidation, setNewPasswordValidation] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
-  const [newPasswordSameValidation, setNewPasswordSameValidation] =
-    useState<IVaildation>({ message: '', isValid: false });
+  const [newPasswordSameValidation, setNewPasswordSameValidation] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
-  const [oldAndNewPasswordSameValidation, setOldAndNewPasswordSameValidation] =
-    useState<IVaildation>({ message: '', isValid: false });
+  const [oldAndNewPasswordSameValidation, setOldAndNewPasswordSameValidation] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
   const { tempPasswordLogin } = useSelector(userForm);
 
@@ -46,8 +53,7 @@ const ChangePasswordPage = () => {
       const oldPassword = oldPasswordRef.current?.value;
       const password = newPasswordRef.current?.value;
 
-      const passwordLengthCheck =
-        oldPassword.length > 7 && oldPassword.length < 21;
+      const passwordLengthCheck = oldPassword.length > 7 && oldPassword.length < 21;
 
       if (!passwordLengthCheck) {
         setOldPasswordLengthValidation({
@@ -157,7 +163,12 @@ const ChangePasswordPage = () => {
         newPassword,
       };
 
-      const { data } = await userChangePassword(reqBody);
+      try {
+        const { data } = await userChangePassword(reqBody);
+        console.log(data, 'data');
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -185,12 +196,8 @@ const ChangePasswordPage = () => {
                 eventHandler={oldPasswordInputHandler}
                 ref={oldPasswordRef}
               />
-              {oldPasswordLengthValidation.isValid && (
-                <SVGIcon name="confirmCheck" />
-              )}
-              {!oldPasswordLengthValidation.isValid && (
-                <Validation>{oldPasswordLengthValidation.message}</Validation>
-              )}
+              {oldPasswordLengthValidation.isValid && <SVGIcon name="confirmCheck" />}
+              {!oldPasswordLengthValidation.isValid && <Validation>{oldPasswordLengthValidation.message}</Validation>}
             </OldPasswordWrapper>
           )}
         </FlexCol>
@@ -204,20 +211,12 @@ const ChangePasswordPage = () => {
             />
             {newPasswordValidation.isValid &&
               newPasswordLengthValidation.isValid &&
-              oldAndNewPasswordSameValidation.isValid && (
-                <SVGIcon name="confirmCheck" />
-              )}
+              oldAndNewPasswordSameValidation.isValid && <SVGIcon name="confirmCheck" />}
             <FlexCol>
-              {!newPasswordValidation.isValid && (
-                <Validation>{newPasswordValidation.message}</Validation>
-              )}
-              {!newPasswordLengthValidation.isValid && (
-                <Validation>{newPasswordLengthValidation.message}</Validation>
-              )}
+              {!newPasswordValidation.isValid && <Validation>{newPasswordValidation.message}</Validation>}
+              {!newPasswordLengthValidation.isValid && <Validation>{newPasswordLengthValidation.message}</Validation>}
               {!oldAndNewPasswordSameValidation.isValid && (
-                <Validation>
-                  {oldAndNewPasswordSameValidation.message}
-                </Validation>
+                <Validation>{oldAndNewPasswordSameValidation.message}</Validation>
               )}
             </FlexCol>
           </NewPasswordWrapper>
@@ -230,12 +229,8 @@ const ChangePasswordPage = () => {
             {newPasswordValidation.isValid &&
               newPasswordLengthValidation.isValid &&
               newPasswordSameValidation.isValid &&
-              oldAndNewPasswordSameValidation.isValid && (
-                <SVGIcon name="confirmCheck" />
-              )}
-            {!newPasswordSameValidation.isValid && (
-              <Validation>{newPasswordSameValidation.message}</Validation>
-            )}
+              oldAndNewPasswordSameValidation.isValid && <SVGIcon name="confirmCheck" />}
+            {!newPasswordSameValidation.isValid && <Validation>{newPasswordSameValidation.message}</Validation>}
           </NewAgainPasswordWrapper>
         </FlexCol>
       </Wrapper>

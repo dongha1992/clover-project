@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { CATEGORY } from '@constants/search';
-import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/getMediaQuery';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
+import { CategoryFilter } from '@components/Pages/Category';
 
 const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 
@@ -50,16 +50,19 @@ const CategorySubHeader = ({ title }: TProps) => {
   };
 
   return (
-    <Container>
-      <Wrapper>
-        <div className="arrow" onClick={goBack}>
-          <SVGIcon name="arrowLeft" />
-        </div>
-        <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        <CartIcon onClick={goToCart} />
-      </Wrapper>
-      <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={CATEGORY} />
-    </Container>
+    <>
+      <Container>
+        <Wrapper>
+          <div className="arrow" onClick={goBack}>
+            <SVGIcon name="arrowLeft" />
+          </div>
+          <TextH4B padding="2px 0 0 0">{title}</TextH4B>
+          <CartIcon onClick={goToCart} />
+        </Wrapper>
+        <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={CATEGORY} />
+        <CategoryFilter />
+      </Container>
+    </>
   );
 };
 
@@ -77,7 +80,7 @@ const Container = styled.div`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 0;
+    left: 0;e
   `};
 
   ${({ theme }) => theme.mobile`
