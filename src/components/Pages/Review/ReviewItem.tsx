@@ -48,11 +48,11 @@ const Wrapper = styled.div`
 
 const ImgWrapper = styled.div`
   position: relative;
-  height: 72px;
 `;
 
 const ReviewImg = styled.img`
   width: 72px;
+  height: 72px;
   border-radius: 8px;
 `;
 
