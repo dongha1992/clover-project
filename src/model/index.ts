@@ -814,3 +814,75 @@ export interface IGetSpotsRegistrationsStatusResponse {
   message: string;
   data: IGetSpotsRegistrationsStatus;
 }
+
+/* Order */
+
+export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
+export interface IGetOrderList {
+  days: number;
+  page: number;
+  size: number;
+  type: TOrderType | string;
+}
+
+export interface IOrderMenus {}
+export interface IOrderPayment {}
+export interface IOderDeliveries {
+  delivery: string;
+  deliveryDate: string;
+  deliveryDetail: string;
+  id: number;
+  invoiceNumber: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: number;
+  };
+  orderMenus: IOrderMenus[];
+  receiverName: string;
+  receiverTel: string;
+  status: string;
+}
+
+export interface IGetOrderListResponse {
+  amount: number;
+  coupon: number;
+  createdAt: string;
+  delivery: string;
+  deliveryDate: string;
+  deliveryDetail: string;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  deliveryStatus: string;
+  discount: number;
+  eventDiscount: number;
+  id: number;
+  image: {
+    createdAt: string;
+    height: number;
+    id: number;
+    name: string;
+    originalName: string;
+    size: number;
+    url: string;
+    width: number;
+  };
+  name: string;
+  orderDeliveries: IOderDeliveries[];
+  orderDiscount: number;
+  orderPayment: IOrderPayment;
+  paidAt: string;
+  payAmount: number;
+  point: number;
+  refundAmount: number;
+  refundCoupon: number;
+  refundDeliveryFee: number;
+  refundDeliveryFeeDiscount: number;
+  refundDiscount: number;
+  refundEventDiscount: number;
+  refundOrderDiscount: number;
+  refundPayAmount: numebr;
+  refundPoint: number;
+  status: string;
+}
