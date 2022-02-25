@@ -218,8 +218,9 @@ const CartPage = () => {
       return data.data;
     },
     {
-      onSuccess: async (data) => {
-        console.log(data, 'Daada');
+      onSuccess: (data) => {
+        const result = checkHasOtherDeliveries(data);
+        console.log(result, 'result');
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -299,6 +300,8 @@ const CartPage = () => {
   //     },
   //   }
   // );
+
+  const checkHasOtherDeliveries = (list: any) => {};
 
   const handleSelectCartItem = (id: any) => {
     const findItem = checkedMenuIdList.find((_id: number) => _id === id);
