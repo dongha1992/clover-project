@@ -11,7 +11,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER } from '@store/user';
 import { userLogin, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
-import { SET_IS_AUTOLOGIN, SET_LOGIN_TYPE } from '@store/common';
+import { SET_LOGIN_TYPE } from '@store/common';
+import { setCookie } from '@utils/cookie';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
@@ -98,7 +99,15 @@ const LoginPage = () => {
           const userInfo = await userProfile().then((res) => {
             return res?.data;
           });
-          dispatch(SET_IS_AUTOLOGIN(checkAutoLogin));
+
+          setCookie({
+            name: 'autoL',
+            value: checkAutoLogin ? 'Y' : 'N',
+            option: {
+              path: '/',
+              maxAge: userTokenObj?.refreshTokenExpiresIn,
+            },
+          });
           dispatch(SET_USER(userInfo.data));
         }
       } catch (error) {

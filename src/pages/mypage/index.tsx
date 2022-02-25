@@ -7,10 +7,13 @@ import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
 import Image from 'next/image';
+import newUserImg from '@public/images/img2.png';
+import friendPushEventImg from '@public/images/img3.png';
 import { Obj } from '@model/index';
 import { userForm } from '@store/user';
 import { useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
+import Link from 'next/link';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -29,7 +32,7 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{me?.name}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.nickName}님은</TextH2B>
                 <IconBox onClick={() => router.push('/mypage/profile/confirm')}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
@@ -159,16 +162,33 @@ const MypagePage = () => {
             </UserInfoWrapper>
             <ManageWrapper>
               <ImageWrapper>
-                <Image
-                  width={340}
-                  height={96}
-                  layout="responsive"
-                  objectFit="cover"
-                  src="http://www.newsworks.co.kr/news/photo/202011/502748_392695_2953.jpg"
-                  alt="Friend invitation banner"
-                />
+                <Link href="/mypage/friend">
+                  <a>
+                    <Image
+                      width={360}
+                      height={96}
+                      layout="responsive"
+                      objectFit="cover"
+                      src={newUserImg}
+                      alt="new member event"
+                    />
+                  </a>
+                </Link>
               </ImageWrapper>
-              <MypageMenu title="친구 초대" link="/mypage/friend" count={1} />
+              <ImageWrapper className="last">
+                <Link href="/mypage/friend">
+                  <a>
+                    <Image
+                      width={360}
+                      height={96}
+                      layout="responsive"
+                      objectFit="cover"
+                      src={friendPushEventImg}
+                      alt="Friend invitation banner"
+                    />
+                  </a>
+                </Link>
+              </ImageWrapper>
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="앱설정" link="/mypage/setting" />
               <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
@@ -251,7 +271,9 @@ const MypageItem = styled.li`
   }
 `;
 const ImageWrapper = styled.li`
-  /* padding: 24px 0; */
+  &.last {
+    padding-top: 8px;
+  }
 `;
 
 const IconBox = styled.div`

@@ -52,7 +52,7 @@
       "coupon": 0,
       "createdAt": "2021-10-27 16:47:06",
       "delivery": "SPOT",
-      "deliveryDate": "2022-02-16",
+      "deliveryDate": "2022-03-01",
       "deliveryDetail": "LUNCH",
       "deliveryFee": 3000,
       "deliveryFeeDiscount": 0,
@@ -98,8 +98,8 @@
       "amount": 100000,
       "coupon": 0,
       "createdAt": "2021-10-27 16:47:06",
-      "delivery": "SPOT",
-      "deliveryDate": "2022-02-16",
+      "delivery": "QUICK",
+      "deliveryDate": "2022-03-02",
       "deliveryDetail": "LUNCH",
       "deliveryFee": 3000,
       "deliveryFeeDiscount": 0,
@@ -119,10 +119,10 @@
       },
       "name": "닭가슴살 아몬드 샐러드(개정 레귤러) 1개 외 1개",
       "location": {
-        "address": "b",
-        "addressDetail": "b",
-        "dong": "b",
-        "zipCode": "12345"
+        "address": "서울특별시 강남구 강남대로 328",
+        "addressDetail": "11",
+        "dong": "역삼동",
+        "zipCode": "06252"
       },
       "orderDeliveries": [
         {
@@ -164,11 +164,11 @@
       "coupon": 0,
       "createdAt": "2021-10-27 16:47:06",
       "delivery": "QUICK",
-      "deliveryDate": "2022-02-16",
+      "deliveryDate": "2022-03-01",
       "deliveryDetail": "DINNER",
       "deliveryFee": 3000,
       "deliveryFeeDiscount": 0,
-      "deliveryStatus": "CANCELED",
+      "deliveryStatus": "PROGRESS",
       "discount": 690,
       "eventDiscount": 0,
       "id": 4,
@@ -184,10 +184,10 @@
       },
       "name": "닭가슴살 아몬드 샐러드(개정 레귤러) 1개 외 1개",
       "location": {
-        "address": "c",
-        "addressDetail": "c",
-        "dong": "c",
-        "zipCode": "12345"
+        "address": "서울특별시 강남구 강남대로 328",
+        "addressDetail": "11",
+        "dong": "역삼동",
+        "zipCode": "06252"
       },
       "orderDeliveries": [
         {

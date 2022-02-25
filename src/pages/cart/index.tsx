@@ -41,6 +41,8 @@ import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
 import { getOrderLists } from '@api/order';
+import { userForm } from '@store/user';
+import { onUnauthorized } from '@api/Api';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -106,6 +108,7 @@ const CartPage = () => {
 
   const { isFromDeliveryPage, cartLists } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { isLoginSuccess } = useSelector(userForm);
 
   const queryClient = useQueryClient();
 
@@ -556,15 +559,27 @@ const CartPage = () => {
 
   return (
     <Container>
-      <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
-        <Left>
-          <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
-          <TextH4B>{!isNil(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
-        </Left>
-        <Right>
-          <SVGIcon name="arrowRight" />
-        </Right>
-      </DeliveryMethodAndPickupLocation>
+      {isLoginSuccess ? (
+        <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
+          <Left>
+            <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
+            <TextH4B>{!isNil(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
+          </Left>
+          <Right>
+            <SVGIcon name="arrowRight" />
+          </Right>
+        </DeliveryMethodAndPickupLocation>
+      ) : (
+        <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
+          <Left>
+            <TextH4B>로그인 후 배송방법과</TextH4B>
+            <TextH4B>배송지를 설정해주세요</TextH4B>
+          </Left>
+          <Right>
+            <SVGIcon name="arrowRight" />
+          </Right>
+        </DeliveryMethodAndPickupLocation>
+      )}
       <BorderLine height={8} margin="24px 0" />
       <CartInfoContainer>
         <CartListWrapper>
@@ -640,7 +655,7 @@ const CartPage = () => {
               이신가요?
             </span>
             <div onClick={() => setIsShow(!isShow)}>
-              <SVGIcon name={isShow ? 'triangleDown' : 'triangleUp'} />
+              <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
             </div>
           </FlexBetween>
           {isShow && (
