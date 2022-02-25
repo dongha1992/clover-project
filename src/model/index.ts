@@ -827,7 +827,7 @@ export interface IGetOrderList {
 
 export interface IOrderMenus {}
 export interface IOrderPayment {}
-export interface IOderDeliveries {
+export interface IOrderDeliveries {
   delivery: string;
   deliveryDate: string;
   deliveryDetail: string;
@@ -837,7 +837,7 @@ export interface IOderDeliveries {
     address: string;
     addressDetail: string;
     dong: string;
-    zipCode: number;
+    zipCode: string;
   };
   orderMenus: IOrderMenus[];
   receiverName: string;
@@ -869,7 +869,13 @@ export interface IGetOrderListResponse {
     width: number;
   };
   name: string;
-  orderDeliveries: IOderDeliveries[];
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  orderDeliveries: IOrderDeliveries[];
   orderDiscount: number;
   orderPayment: IOrderPayment;
   paidAt: string;
@@ -882,7 +888,7 @@ export interface IGetOrderListResponse {
   refundDiscount: number;
   refundEventDiscount: number;
   refundOrderDiscount: number;
-  refundPayAmount: numebr;
+  refundPayAmount: number;
   refundPoint: number;
   status: string;
 }
