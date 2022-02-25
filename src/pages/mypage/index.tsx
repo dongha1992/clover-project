@@ -23,7 +23,7 @@ interface IMypageMenu {
 
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
-
+  console.log(me, 'me');
   return (
     <Container>
       <Wrapper>
@@ -59,7 +59,7 @@ const MypagePage = () => {
             <FlexBetweenStart padding="16px 24px 32px">
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')}>0 P</TextH5B>
+                <TextH5B onClick={() => router.push('/mypage/point')}>{me?.point} P</TextH5B>
               </FlexCol>
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>

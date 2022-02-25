@@ -12,6 +12,7 @@ import { BASE_URL } from '@constants/mock';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
+import SVGIcon from '@utils/SVGIcon';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
 

@@ -6,6 +6,7 @@ import { theme, showMoreText, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
+import Image from 'next/image';
 
 const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) => {
   return (
@@ -39,12 +40,16 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
                   /* TODO: menu review 나오면 수정 */
                   if (index > 1) return;
                   return (
-                    <ReviewImage
-                      src={IMAGE_S3_URL + img}
-                      key={index}
-                      isFirst
-                      onClick={() => clickImgViewHandler(review.imageUrl)}
-                    />
+                    <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(review.imageUrl)} key={index}>
+                      <Image
+                        src={IMAGE_S3_URL + img}
+                        alt="리뷰이미지"
+                        width={'100%'}
+                        height={'100%'}
+                        layout="responsive"
+                        className="rounded"
+                      />
+                    </ReviewImageWrapper>
                   );
                 })}
               </ImgWrapper>
@@ -122,11 +127,12 @@ const ImgWrapper = styled.div`
   margin: 16px 0 24px 0;
 `;
 
-const ReviewImage = styled.img<{ isFirst?: boolean }>`
+const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`
   width: calc((100% - 24px) / 4);
-  height: 72px;
-  border-radius: 8px;
   margin-right: ${({ isFirst }) => isFirst && 8}px;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 const ReplyContent = styled.div`
