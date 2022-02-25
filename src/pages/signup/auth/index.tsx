@@ -50,7 +50,7 @@ const SignupAuthPage = () => {
       setDelay(null);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 290) {
+    if (authTimerRef.current < 240) {
       setOneMinuteDisabled(false);
     }
   }, [second]);

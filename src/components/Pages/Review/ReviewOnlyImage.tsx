@@ -5,12 +5,9 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import StarRatingComponent from 'react-star-rating-component';
+import { IMAGE_S3_URL } from '@constants/mock';
 
-const ReviewOnlyImage = ({
-  reviews,
-  goToReviewImages,
-  goToReviewDetail,
-}: any) => {
+const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail }: any) => {
   return (
     <Container>
       <Wrapper>
@@ -26,11 +23,7 @@ const ReviewOnlyImage = ({
               starCount={5}
               value={4.0}
               renderStarIcon={(index, value) => {
-                return (
-                  <SVGIcon
-                    name={index <= value ? 'singleStar' : 'singleStarEmpty'}
-                  />
-                );
+                return <SVGIcon name={index <= value ? 'singleStar' : 'singleStarEmpty'} />;
               }}
               renderStarIconHalf={(index, value) => {
                 return <SVGIcon name="singleStarHalf" />;
@@ -45,18 +38,16 @@ const ReviewOnlyImage = ({
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>
-                      + {reviews.length - 4}
-                    </TextH1B>
+                    <TextH1B color={theme.white}>+ {reviews.length - 4}</TextH1B>
                   </LastImg>
-                  <ReviewImage src={review?.url} alt="리뷰이미지" />
+                  <ReviewImage src={IMAGE_S3_URL + review?.imageUrl[0]} alt="리뷰이미지" />
                 </LastImgWrapper>
               );
             }
 
             return (
               <ReviewImage
-                src={review?.url}
+                src={IMAGE_S3_URL + review?.imageUrl[0]}
                 alt="리뷰이미지"
                 key={index}
                 onClick={() => goToReviewDetail(review.id)}
@@ -112,7 +103,7 @@ const LastImgWrapper = styled.div`
   width: calc((100% - 24px) / 4);
   > img {
     width: 100%;
-    height: 100%;
+    height: 72px;
   }
 `;
 

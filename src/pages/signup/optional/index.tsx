@@ -6,9 +6,9 @@ import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { userForm, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
+import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS } from '@store/user';
 import { ISignupUser } from '@model/index';
-import { signup } from '@api/user';
+import { userSignup } from '@api/user';
 import { useMutation } from 'react-query';
 
 export const GENDER = [
@@ -25,7 +25,7 @@ export const GENDER = [
   {
     id: 3,
     text: '선택 안 함',
-    value: null,
+    value: '',
   },
 ];
 
@@ -39,12 +39,13 @@ const SignupOptionalPage = () => {
 
   const { mutateAsync: mutateRegisterUser } = useMutation(
     async (reqBody: ISignupUser) => {
-      return signup(reqBody);
+      return userSignup(reqBody);
     },
     {
-      onSuccess: (data) => {
+      onSuccess: ({ data }) => {
         const userTokenObj = data.data;
         dispatch(SET_USER_AUTH(userTokenObj));
+        dispatch(SET_LOGIN_SUCCESS(true));
       },
     }
   );
@@ -60,7 +61,7 @@ const SignupOptionalPage = () => {
   const nicknameInputHandler = () => {};
 
   const registerUser = async () => {
-    const nickname = nicknameRef.current?.value;
+    const nickName = nicknameRef.current?.value;
     const birthDate = birthDateRef.current?.value;
     const gender = GENDER.find((item) => item.id === checkGender)?.value;
 
@@ -68,8 +69,8 @@ const SignupOptionalPage = () => {
 
     const optionalForm = {
       birthDate,
-      gender: gender ? gender : null,
-      nickname: nickname ? nickname : signupUser.name,
+      gender: gender ? gender : '',
+      nickName: nickName ? nickName : signupUser.name,
     };
 
     dispatch(
@@ -86,6 +87,13 @@ const SignupOptionalPage = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    // 마지막 페이지에서 새로고침 시 처음으로
+    if (!signupUser.email) {
+      router.replace('/signup');
+    }
+  }, [signupUser]);
 
   return (
     <Container>

@@ -35,6 +35,11 @@ export const homePadding = css`
   padding: 0 24px;
 `;
 
+export const categoryPageSet = css`
+  width: 100%;
+  padding: 48px 24px 24px 24px;
+`;
+
 export const verticalCenter = css`
   display: flex;
   align-self: center;

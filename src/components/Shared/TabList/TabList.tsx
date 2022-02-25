@@ -3,10 +3,7 @@ import styled from 'styled-components';
 import Tab from '@components/Shared/TabList/Tab';
 import { theme } from '@styles/theme';
 
-const TabList = (
-  { onClick, selectedTab, tabList, countObj }: any,
-  ref: React.ForwardedRef<HTMLDivElement>
-) => {
+const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: React.ForwardedRef<HTMLDivElement>) => {
   return (
     <Container ref={ref}>
       <TabWrapper>

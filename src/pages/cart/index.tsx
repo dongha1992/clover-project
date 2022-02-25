@@ -306,9 +306,7 @@ const CartPage = () => {
 
   const clickPlusButton = (id: number, quantity: number) => {};
 
-  const clickMinusButton = (id: number, quantity: number) => {
-    console.log(quantity);
-  };
+  const clickMinusButton = (id: number, quantity: number) => {};
 
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());

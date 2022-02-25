@@ -11,11 +11,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER } from '@store/user';
 import { userLogin, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
-import { SET_IS_AUTOLOGIN, SET_LOGIN_TYPE } from '@store/common';
+import { SET_LOGIN_TYPE } from '@store/common';
+import { setCookie } from '@utils/cookie';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
-  // const [loginType, setLoginType] = useState('');
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [returnPath, setReturnPath] = useState<string | string[]>('/');
@@ -41,16 +41,6 @@ const LoginPage = () => {
     }
     return () => {};
   }, [isLoginSuccess]);
-
-  // const initLocalStorage = () => {
-  //   try {
-  //     const data = localStorage.getItem('loginType');
-  //     return data ? setLoginType(JSON.parse(data)) : '';
-  //   } catch (error) {
-  //     console.error(error);
-  //     return [];
-  //   }
-  // };
 
   const passwordInputHandler = () => {
     if (emailRef.current && passwordRef.current) {
@@ -109,7 +99,15 @@ const LoginPage = () => {
           const userInfo = await userProfile().then((res) => {
             return res?.data;
           });
-          dispatch(SET_IS_AUTOLOGIN(checkAutoLogin));
+
+          setCookie({
+            name: 'autoL',
+            value: checkAutoLogin ? 'Y' : 'N',
+            option: {
+              path: '/',
+              maxAge: userTokenObj?.refreshTokenExpiresIn,
+            },
+          });
           dispatch(SET_USER(userInfo.data));
         }
       } catch (error) {
@@ -168,6 +166,8 @@ const Col = styled.div`
   margin: 0 8px;
 `;
 
-const SignupBtnWrapper = styled.div``;
+const SignupBtnWrapper = styled.div`
+  padding-top: 48px;
+`;
 
 export default LoginPage;
