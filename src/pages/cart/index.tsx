@@ -32,13 +32,14 @@ import { SET_ORDER_ITEMS } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj } from '@model/index';
+import { Obj, IOderDeliveries } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
+import { getOrderLists } from '@api/order';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -157,7 +158,7 @@ const CartPage = () => {
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
-
+  const [otherDeliveries, setOtherDeliveries] = useState<IOderDeliveries[]>([]);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -195,6 +196,31 @@ const CartPage = () => {
       return data.data;
     },
     {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const {} = useQuery(
+    'getOrderLists',
+    async () => {
+      // const params = {
+      //   days: 90,
+      //   page: 1,
+      //   size: 10,
+      //   type: 'GENERAL',
+      // };
+
+      // const { data } = await getOrderLists(params);
+
+      /* temp */
+      const { data } = await axios.get(`${BASE_URL}/orderList`);
+      return data.data;
+    },
+    {
+      onSuccess: async (data) => {
+        console.log(data, 'Daada');
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -429,6 +455,8 @@ const CartPage = () => {
   };
 
   const goToPayment = () => {
+    if (!hasDeliveryTypeAndDestination) return;
+
     const deliveryTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value;
     userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime }));
     dispatch(SET_ORDER_ITEMS(selectedMenuList));
@@ -450,7 +478,7 @@ const CartPage = () => {
 
   const buttonRenderer = useCallback(() => {
     return (
-      <Button borderRadius="0" height="100%">
+      <Button borderRadius="0" height="100%" disabled={!hasDeliveryTypeAndDestination}>
         {getTotalPrice()}원 주문하기
       </Button>
     );
