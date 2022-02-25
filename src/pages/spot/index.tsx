@@ -51,7 +51,7 @@ const FCO_SPOT_BANNER = [
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { user, isLoginSuccess} = useSelector(userForm);
+  const { me, isLoginSuccess } = useSelector(userForm);
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [info, setInfo] = useState<ISpotsInfo>();
@@ -68,7 +68,7 @@ const SpotPage = () => {
     async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getStationSpots(params);
@@ -82,7 +82,7 @@ const SpotPage = () => {
     async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getNewSpots(params);
@@ -96,7 +96,7 @@ const SpotPage = () => {
     async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getSpotEvent(params);
@@ -110,7 +110,7 @@ const SpotPage = () => {
     async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getSpotPopular(params);
@@ -135,7 +135,7 @@ const SpotPage = () => {
     const getRegistration = async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       try {
@@ -178,37 +178,39 @@ const SpotPage = () => {
   return (
     <Container>
       <HeaderTitle>
-        <TextH2B padding="24px 24px 0 24px">{`${spotCount}개의 프코스팟이\n`}{isLoginSuccess? <span>{user.name}</span> : '회원'}님을 기다려요!</TextH2B>
+        <TextH2B padding="24px 24px 0 24px">
+          {`${spotCount}개의 프코스팟이\n`}
+          {isLoginSuccess ? <span>{me?.name}</span> : '회원'}님을 기다려요!
+        </TextH2B>
       </HeaderTitle>
       <RegistrationsCTAWrapper>
         <RegistrationCTA onClick={goToRegiList}>
           <FlexCenter>
-          <SVGIcon name='plusWhite' />
-          <TextH5B padding='3px 0 0 0' color={theme.white}>프코스팟 신청할래요</TextH5B>
+            <SVGIcon name="plusWhite" />
+            <TextH5B padding="3px 0 0 0" color={theme.white}>
+              프코스팟 신청할래요
+            </TextH5B>
           </FlexCenter>
         </RegistrationCTA>
       </RegistrationsCTAWrapper>
-      {
-        isLoginSuccess &&
+      {isLoginSuccess && (
         <TopCTASlider
-          className='swiper-container'
-          slidesPerView={"auto"}
+          className="swiper-container"
+          slidesPerView={'auto'}
           spaceBetween={15}
           speed={500}
           onSwiper={(swiper) => console.log(swiper)}
-          onSlideChange={() => console.log("slide change")}
+          onSlideChange={() => console.log('slide change')}
         >
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
             registrationsLen && (
-              <SwiperSlide className='swiper-slide'>
+              <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
                       {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
-                      <span>{`${
-                        5 - info?.recruitingSpotRegistrations[0].recruitingCount
-                      }`}</span>
+                      <span>{`${5 - info?.recruitingSpotRegistrations[0].recruitingCount}`}</span>
                       명만 더 주문 하면 정식오픈 돼요!
                     </TextH4B>
                     <IconWrapper>
@@ -222,7 +224,7 @@ const SpotPage = () => {
           {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
             registrationsLen && (
-              <SwiperSlide className='swiper-slide'>
+              <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
@@ -239,12 +241,10 @@ const SpotPage = () => {
           {
             /* 작성중인 스팟 신청서가 있는 경우 노출 */
             unsubmitSpotRegistrationsLen && (
-              <SwiperSlide className='swiper-slide'>
+              <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToSpotStatus}>
                   <FlexBetween height="92px" padding="22px">
-                    <TextH4B>
-                      {'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}
-                    </TextH4B>
+                    <TextH4B>{'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}</TextH4B>
                     <IconWrapper>
                       <SVGIcon name="blackCirclePencil" />
                     </IconWrapper>
@@ -256,12 +256,10 @@ const SpotPage = () => {
           {
             /* 내가 참여한 스팟 알림 카드*/
             trialRegistrationsLen && (
-              <SwiperSlide className='swiper-slide'>
+              <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToSpotStatus}>
                   <FlexBetween height="92px" padding="22px">
-                    <TextH4B>
-                      {'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}
-                    </TextH4B>
+                    <TextH4B>{'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}</TextH4B>
                     <IconWrapper>
                       <SVGIcon name="blackCircleShare" />
                     </IconWrapper>
@@ -271,7 +269,7 @@ const SpotPage = () => {
             )
           }
         </TopCTASlider>
-      }
+      )}
       {/* 근처 인기있는 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
       <SpotsSlider
@@ -398,7 +396,7 @@ const Container = styled.main`
 
 const TopCTASlider = styled(Swiper)`
   padding: 48px 24px 0 24px;
-  .swiper-slide{
+  .swiper-slide {
     width: 100%;
   }
 `;

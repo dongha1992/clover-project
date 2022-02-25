@@ -4,13 +4,9 @@ import { ReviewItem } from '@components/Pages/Review';
 
 const ReviewList = ({ reviews, onClick }: any) => {
   return (
-    <ScrollHorizonList>
+    <ScrollHorizonList height="106px">
       {reviews.map((review: any, index: number) => (
-        <ReviewItem
-          review={review}
-          key={index}
-          onClick={() => onClick(review)}
-        />
+        <ReviewItem review={review} key={index} onClick={() => onClick(review)} />
       ))}
     </ScrollHorizonList>
   );

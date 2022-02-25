@@ -5,6 +5,7 @@ import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@
 import {
   homePadding,
   theme,
+  flexCenter,
   ScrollHorizonList,
   FlexBetween,
   FlexStart,
@@ -12,6 +13,7 @@ import {
   FlexCol,
   FlexRow,
   fixedBottom,
+  FlexCenter,
 } from '@styles/theme';
 import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
@@ -352,6 +354,23 @@ const CartPage = () => {
   const isSpot = userDestinationStatus == 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
 
+  if (cartItemList.length === 0) {
+    return (
+      <EmptyContainer>
+        <FlexCol width="100%">
+          <TextB2R padding="0 0 32px 0" center>
+            장바구니가 비었어요 😭
+          </TextB2R>
+          <BtnWrapper onClick={goToSearchPage}>
+            <Button backgroundColor={theme.white} color={theme.black} border>
+              상품 담으러 가기
+            </Button>
+          </BtnWrapper>
+        </FlexCol>
+      </EmptyContainer>
+    );
+  }
+
   return (
     <Container>
       <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
@@ -589,6 +608,12 @@ const Container = styled.div`
   width: 100%;
   margin-bottom: 50px;
 `;
+
+const EmptyContainer = styled.div`
+  height: 100vh;
+  width: 100%;
+  ${flexCenter}
+`;
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;
@@ -699,6 +724,9 @@ const Protein = styled.div`
 `;
 
 const GetMoreBtn = styled.div``;
+const BtnWrapper = styled.div`
+  margin: 0 24px;
+`;
 
 const CartInfoContainer = styled.div`
   ${homePadding}
