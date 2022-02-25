@@ -32,8 +32,9 @@ import { SET_ORDER_ITEMS } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj, IOderDeliveries } from '@model/index';
-import { isNil, isEqual } from 'lodash-es';
+import { Obj, IOrderDeliveries, IGetOrderListResponse } from '@model/index';
+import { isNil, isEqual, includes } from 'lodash-es';
+import { flow, map, filter } from 'lodash/fp';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
@@ -51,7 +52,7 @@ const mapper: Obj = {
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-interface ILunchOrDinner {
+export interface ILunchOrDinner {
   id: number;
   value: string;
   text: string;
@@ -60,67 +61,6 @@ interface ILunchOrDinner {
   isSelected: boolean;
   time: string;
 }
-
-//temp
-export interface IOtherDeliveryInfo {
-  id: number;
-  location: {
-    address: string;
-    addressDetail: string;
-    zipCode: string;
-    dong: string;
-  };
-  delivery: string;
-  deliveryTime: string;
-  deliveryDate: string;
-  totalPrice: number;
-  deliveryFee: number;
-}
-
-const otherDeliveryInfo: IOtherDeliveryInfo[] = [
-  {
-    id: 1,
-    location: {
-      address: '서울 송파구 거마로2길 34',
-      addressDetail: '로얄아트빌 a동 501호',
-      zipCode: '05768',
-      dong: '거여동',
-    },
-    delivery: 'QUICK',
-    deliveryTime: 'DINNER',
-    deliveryDate: '2022-02-23',
-    totalPrice: 30000,
-    deliveryFee: 3000,
-  },
-  {
-    id: 2,
-    location: {
-      address: '주소2',
-      addressDetail: '상세주소2',
-      zipCode: '1234',
-      dong: '강서',
-    },
-    delivery: 'QUICK',
-    deliveryTime: 'LUNCH',
-    deliveryDate: '2022-02-19',
-    totalPrice: 30000,
-    deliveryFee: 3000,
-  },
-  {
-    id: 3,
-    location: {
-      address: '주소3',
-      addressDetail: '상세주소3',
-      zipCode: '1234',
-      dong: '강서',
-    },
-    delivery: 'MORNING',
-    deliveryTime: '',
-    deliveryDate: '2022-02-23',
-    totalPrice: 30000,
-    deliveryFee: 3000,
-  },
-];
 
 //temp
 
@@ -158,7 +98,7 @@ const CartPage = () => {
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
-  const [otherDeliveries, setOtherDeliveries] = useState<IOderDeliveries[]>([]);
+  const [otherDeliveries, setOtherDeliveries] = useState<IGetOrderListResponse[]>([]);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -220,7 +160,7 @@ const CartPage = () => {
     {
       onSuccess: (data) => {
         const result = checkHasOtherDeliveries(data);
-        console.log(result, 'result');
+        setOtherDeliveries(result);
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -229,34 +169,34 @@ const CartPage = () => {
 
   const hasDeliveryTypeAndDestination = !isNil(userDestinationStatus) && !isNil(userDestination);
 
-  const { data: result, refetch } = useQuery(
-    ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
-    async () => {
-      const params = {
-        roadAddress: userDestination?.location.address!,
-        zipCode: userDestination?.location.zipCode!,
-        delivery: userDestinationStatus.toUpperCase() || null,
-      };
-      const { data } = await availabilityDestination(params);
+  // const { data: result, refetch } = useQuery(
+  //   ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
+  //   async () => {
+  //     const params = {
+  //       roadAddress: userDestination?.location.address!,
+  //       zipCode: userDestination?.location.zipCode!,
+  //       delivery: userDestinationStatus.toUpperCase() || null,
+  //     };
+  //     const { data } = await availabilityDestination(params);
 
-      if (data.code === 200) {
-        const { morning, parcel, quick, spot } = data.data;
-        console.log(data.data, 'data.data');
-      }
-    },
-    {
-      onSuccess: async () => {},
-      onError: (error: AxiosError) => {
-        const { message } = error.response?.data;
-        alert(message);
-        return;
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      cacheTime: 0,
-      enabled: hasDeliveryTypeAndDestination,
-    }
-  );
+  //     if (data.code === 200) {
+  //       const { morning, parcel, quick, spot } = data.data;
+  //       console.log(data.data, 'data.data');
+  //     }
+  //   },
+  //   {
+  //     onSuccess: async () => {},
+  //     onError: (error: AxiosError) => {
+  //       const { message } = error.response?.data;
+  //       alert(message);
+  //       return;
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     cacheTime: 0,
+  //     enabled: hasDeliveryTypeAndDestination,
+  //   }
+  // );
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
@@ -301,7 +241,24 @@ const CartPage = () => {
   //   }
   // );
 
-  const checkHasOtherDeliveries = (list: any) => {};
+  const checkHasOtherDeliveries = (list: IGetOrderListResponse[]) => {
+    const checkAvailableOtherDelivery = ({
+      deliveryStatus,
+      delivery,
+      deliveryDetail,
+      location,
+    }: IGetOrderListResponse) => {
+      const availableDeliveryStatus: string[] = ['PREPARING', 'PROGRESS'];
+      const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
+      const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
+      const sameDeliveryAddress = isEqual(location, userDestination?.location);
+      const avaliableStatus = availableDeliveryStatus.includes(deliveryStatus);
+
+      return sameDeliveryType && sameDeliveryAddress && avaliableStatus;
+    };
+
+    return flow(filter((data: IGetOrderListResponse) => checkAvailableOtherDelivery(data)))(list);
+  };
 
   const handleSelectCartItem = (id: any) => {
     const findItem = checkedMenuIdList.find((_id: number) => _id === id);
@@ -472,7 +429,7 @@ const CartPage = () => {
         content: (
           <TogetherDeliverySheet
             title="함께배송 안내"
-            otherDeliveryInfo={[otherDeliveryInfo.find((item) => item.id === id)]}
+            otherDeliveryInfo={[otherDeliveries.find((item) => item.id === id)]}
           />
         ),
       })
@@ -556,19 +513,17 @@ const CartPage = () => {
     setIsAllchecked(true);
 
     // 합배송 관련
-    if (otherDeliveryInfo.length > 0) {
+    if (otherDeliveries.length > 0) {
       const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
-      for (const otherDelivery of otherDeliveryInfo) {
-        const { delivery, deliveryTime, location, deliveryDate } = otherDelivery;
+      for (const otherDelivery of otherDeliveries) {
+        const { deliveryDate, deliveryDetail } = otherDelivery;
 
-        const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
         const sameDeliveryTime = isSpotOrQuick
-          ? deliveryTime === lunchOrDinner.find((item) => item.isSelected)?.value!
+          ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
           : true;
         const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
-        const sameDeliveryAddress = isEqual(location, userDestination?.location);
 
-        if (sameDeliveryType && sameDeliveryTime && sameDeliveryDate && sameDeliveryAddress) {
+        if (sameDeliveryDate && sameDeliveryTime) {
           goToTogetherDelivery(otherDelivery.id);
         }
       }
@@ -729,10 +684,11 @@ const CartPage = () => {
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
-              otherDeliveryInfo={otherDeliveryInfo}
+              otherDeliveries={otherDeliveries}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
               goToTogetherDelivery={goToTogetherDelivery}
+              lunchOrDinner={lunchOrDinner}
             />
             {isSpotAndQuick &&
               lunchOrDinner.map((item, index) => {
