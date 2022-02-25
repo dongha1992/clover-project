@@ -47,14 +47,14 @@ const DeliverInfoPage = () => {
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const { 
-    destinationStatus, 
-    userTempDestination, 
-    locationStatus, 
-    userDestinationStatus, 
-    availableDestination, 
-    userDestination 
-  } =useSelector(destinationForm);
+  const {
+    destinationStatus,
+    userTempDestination,
+    locationStatus,
+    userDestinationStatus,
+    availableDestination,
+    userDestination,
+  } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -75,7 +75,7 @@ const DeliverInfoPage = () => {
     if (userSelectDeliveryType === 'spot') {
       router.push({
         pathname: '/spot/search',
-        query: {isDelivery: true},
+        query: { isDelivery: true },
       });
     } else {
       dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
@@ -112,10 +112,10 @@ const DeliverInfoPage = () => {
   const finishDeliverySetting = async () => {
     if (!tempDestination) {
       return;
-    }else if((userSelectDeliveryType === 'spot') && (tempDestination?.spaceType === 'PRIVATE') && !noticeChecked){
+    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spaceType === 'PRIVATE' && !noticeChecked) {
       // 스팟 배송이고, 프라이빗일 경우 공지 체크 해야만 넘어감
-        return;
-    };
+      return;
+    }
 
     if (destinationId) {
       dispatch(SET_DESTINATION(tempDestination));
@@ -315,13 +315,13 @@ const DeliverInfoPage = () => {
   };
 
   const settingHandler = () => {
-    if(userDestinationStatus === 'spot'){
-      if(tempDestination?.spaceType === 'PRIVATE'){
+    if (userDestinationStatus === 'spot') {
+      if (tempDestination?.spaceType === 'PRIVATE') {
         return !noticeChecked;
       }
-    }else{
-      return !tempDestination
-    };
+    } else {
+      return !tempDestination;
+    }
   };
 
   useEffect(() => {
@@ -427,13 +427,13 @@ const DeliverInfoPage = () => {
             <BorderLine height={8} margin="32px 0" />
             <FlexBetween>
               <TextH3B padding="0 0 14px 0">{isSpotPickupPlace ? '픽업장소' : '배송지'}</TextH3B>
-              {(tempDestination) && (
+              {tempDestination && (
                 <TextH6B textDecoration="underline" color={theme.greyScale65} onClick={goToFindAddress} pointer>
                   변경하기
                 </TextH6B>
               )}
             </FlexBetween>
-            {(tempDestination) ? placeInfoRender() : ''}
+            {tempDestination ? placeInfoRender() : ''}
             {(!userSelectDeliveryType || !tempDestination) && (
               <BtnWrapper onClick={goToFindAddress}>
                 <Button backgroundColor={theme.white} color={theme.black} border>

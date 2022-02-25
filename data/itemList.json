@@ -4,6 +4,7 @@
       "name": "두부 크럼블 낫또 샐러드",
       "id": 1,
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 10,
       "price": 7000,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -113,6 +114,7 @@
       "name": "들기름 메밀면 샐러드",
       "id": 2,
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 30,
       "price": 23210,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -161,6 +163,7 @@
       "name": "샐러드~~~~~~~~~~~~~~~~",
       "id": 3,
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 10,
       "price": 1000,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",
@@ -208,7 +211,9 @@
     {
       "name": "샐러드~~~~~~~~~~~~~~~~",
       "id": 4,
+
       "url": "https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg",
+      "detailImg": ["/menu/origin/172_20191023170649", "/menu/origin/172_20191023170649"],
       "discount": 10,
       "price": 100,
       "description": "부드러운 훈제연어에 트러플오일과 프렌지 발사믹의 깊은 풍미",

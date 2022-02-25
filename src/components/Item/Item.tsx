@@ -9,13 +9,12 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_CART_SHEET_OBJ } from '@store/cart';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
+import Badge from './Badge';
 
 type TProps = {
   item: any;
   isQuick?: boolean;
 };
-
-const isNew = true;
 
 const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
@@ -34,18 +33,24 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const goToDetail = (menuId: number) => {
     router.push(`/menu/${menuId}`);
   };
+
+  //temp
+  const tempBadgeStatus = ['isNew', 'isSoon', 'isSoldout', 'isBest'];
+
   return (
     <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>
         <ItemImage src={item.url} alt="상품이미지" />
+        {item.id === 1 && (
+          <ForReopen>
+            <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
+          </ForReopen>
+        )}
+
         <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
-        {isNew && (
-          <NewTagWrapper>
-            <TextH6B color={theme.white}>New</TextH6B>
-          </NewTagWrapper>
-        )}
+        <Badge status={tempBadgeStatus[Math.floor(Math.random() * 4)]} />
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
@@ -95,6 +100,21 @@ const Container = styled.div`
   display: inline-block;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
+`;
+
+const ForReopen = styled.div`
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(36, 36, 36, 0.5);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
 `;
 
 const CartBtn = styled.div`
@@ -124,15 +144,6 @@ const ImageWrapper = styled.div`
 const ItemImage = styled.img`
   width: 100%;
   border-radius: 8px;
-`;
-
-const NewTagWrapper = styled.div`
-  position: absolute;
-  display: flex;
-  left: 0;
-  top: 10%;
-  background-color: ${theme.brandColor};
-  padding: 4px 8px;
 `;
 
 const NameWrapper = styled.div`
