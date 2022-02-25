@@ -185,12 +185,13 @@ export const ItemListCol = styled.div`
   grid-gap: 16px;
 `;
 
-export const ScrollHorizonList = styled.div`
+export const ScrollHorizonList = styled.div<{ height?: string }>`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
   width: auto;
   display: flex;
+  height: ${({ height }) => height && height};
 `;
 
 export const fixedBottom = css`
