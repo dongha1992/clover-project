@@ -48,15 +48,12 @@ const DeliveryInfoSheet = ({ title, copiedValue }: IProps) => {
         {DATA.map((item: any, index: number) => {
           const isLast = DATA.length - 1 === index;
           return (
-            <>
-              <ItemWrapper
-                key={index}
-                onClick={() => clickTextHandler(item.id)}
-              >
+            <div key={index}>
+              <ItemWrapper onClick={() => clickTextHandler(item.id)}>
                 <TextH5B padding="0 0 0 8px">{item.text}</TextH5B>
               </ItemWrapper>
               {!isLast && <BorderLine height={1} margin="0 0 16px 0" />}
-            </>
+            </div>
           );
         })}
       </Wrapper>

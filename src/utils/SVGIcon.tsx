@@ -107,7 +107,7 @@ const svgMap: TSvg = {
   ),
   arrowLeftBanner: () => (
     <svg width="32" height="48" viewBox="0 0 32 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="32" y="48" width="32" height="48" fill="white" fillOpacity="0.65" />
+      <rect width="32" height="48" fill="white" fillOpacity="0.65" />
       <path d="M19 17L12 24L19 31" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
