@@ -251,10 +251,10 @@ export interface IRegisterDestination {
 }
 
 export interface IAvilabiltyAddress {
-  jibunAddress: string | null;
+  jibunAddress?: string | null;
   roadAddress: string | null;
   zipCode: string | null;
-  delivery?: TDeliveryType | null;
+  delivery?: TDeliveryType | null | string;
 }
 
 export interface IAvilabiltyAddressResponse {

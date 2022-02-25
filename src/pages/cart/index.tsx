@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
@@ -37,6 +38,7 @@ import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliveryS
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { availabilityDestination } from '@api/destination';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -149,7 +151,6 @@ const CartPage = () => {
       time: '17시',
     },
   ]);
-  const [totalPrice, setTotalPrice] = useState(0);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
@@ -196,6 +197,37 @@ const CartPage = () => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+    }
+  );
+
+  const hasDeliveryTypeAndDestination = !isNil(userDestinationStatus) && !isNil(userDestination);
+
+  const { data: result, refetch } = useQuery(
+    ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
+    async () => {
+      const params = {
+        roadAddress: userDestination?.location.address!,
+        zipCode: userDestination?.location.zipCode!,
+        delivery: userDestinationStatus.toUpperCase() || null,
+      };
+      const { data } = await availabilityDestination(params);
+
+      if (data.code === 200) {
+        const { morning, parcel, quick, spot } = data.data;
+        console.log(data.data, 'data.data');
+      }
+    },
+    {
+      onSuccess: async () => {},
+      onError: (error: AxiosError) => {
+        const { message } = error.response?.data;
+        alert(message);
+        return;
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: hasDeliveryTypeAndDestination,
     }
   );
 
