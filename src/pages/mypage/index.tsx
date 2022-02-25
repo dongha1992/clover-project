@@ -22,7 +22,7 @@ interface IMypageMenu {
 }
 
 const MypagePage = () => {
-  const { user, isLoginSuccess } = useSelector(userForm);
+  const { me, isLoginSuccess } = useSelector(userForm);
 
   return (
     <Container>
@@ -32,7 +32,7 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{user.name}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.nickName}님은</TextH2B>
                 <IconBox onClick={() => router.push('/mypage/profile/confirm')}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
