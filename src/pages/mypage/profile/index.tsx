@@ -286,8 +286,7 @@ const ProfilePage = () => {
           <FlexCol>
             <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
             <FlexRow>
-              <TextInput />
-              <Button width="30%" margin="0 0 0 8px" onClick={goToChangePassword}>
+              <Button width="86px" onClick={goToChangePassword}>
                 변경하기
               </Button>
             </FlexRow>

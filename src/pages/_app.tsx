@@ -24,6 +24,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
+import { getCookie } from '@utils/cookie';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
@@ -42,8 +43,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useMediaQuery('(max-width:512px)');
 
   const store: any = useStore();
-  const { loginType, isAutoLogin } = store.getState().common;
   const { me } = useSelector(userForm);
+  const isAutoLogin = getCookie({ name: 'autoL' });
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
@@ -66,6 +67,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     }
 
     authCheck();
+
     // temp
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
@@ -75,13 +77,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       if (sessionStorage.accessToken) {
         const { data } = await userProfile();
         if (data.code === 200) {
+          data.data.nickName ??= data.data.name;
+          data.data.nickName ||= data.data.name;
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
         }
       } else {
-        if (isAutoLogin) {
+        if (isAutoLogin === 'Y') {
           const { data } = await userProfile();
           if (data.code === 200) {
+            data.data.nickName ??= data.data.name;
+            data.data.nickName ||= data.data.name;
             dispatch(SET_USER(data.data));
             dispatch(SET_LOGIN_SUCCESS(true));
           }
