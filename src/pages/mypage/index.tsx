@@ -19,8 +19,8 @@ interface IMypageMenu {
 }
 
 const MypagePage = () => {
-  const { user, isLoginSuccess } = useSelector(userForm);
-
+  const { me, isLoginSuccess } = useSelector(userForm);
+  console.log(me, 'me');
   return (
     <Container>
       <Wrapper>
@@ -29,7 +29,7 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{user.name}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.name}님은</TextH2B>
                 <IconBox onClick={() => router.push('/mypage/profile/confirm')}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
@@ -56,7 +56,7 @@ const MypagePage = () => {
             <FlexBetweenStart padding="16px 24px 32px">
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')}>0 P</TextH5B>
+                <TextH5B onClick={() => router.push('/mypage/point')}>{me?.point} P</TextH5B>
               </FlexCol>
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>

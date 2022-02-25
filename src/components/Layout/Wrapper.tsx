@@ -77,7 +77,14 @@ const Wrapper: React.FC = ({ children }) => {
           )}
           {isClickReviewImg && <ImageViewer images={imagesForViewer} />}
           <Left>
-            <div className="left-contents">광고</div>
+            <div className="left-contents">
+              {/* <Image
+                src="https://s3.ap-northeast-2.amazonaws.com/freshcode/img/seo/main.png"
+                layout="responsive"
+                objectFit="cover"
+                width={512}
+              /> */}
+            </div>
           </Left>
           <Right>
             <Header />
@@ -114,6 +121,12 @@ const Center = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+  /* TODO: background image 어떻게 할까 */
+  /* background-image: url('https://s3.ap-northeast-2.amazonaws.com/freshcode/img/seo/main.png'); */
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
 `;
 
 const Right = styled.div`

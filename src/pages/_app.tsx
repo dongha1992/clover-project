@@ -10,12 +10,11 @@ import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { wrapper } from '@store/index';
-import { SET_IS_MOBILE } from '@store/common';
+import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { commonSelector } from '@store/common';
-import { userForm } from '@store/user';
 
 // persist
 import { persistStore } from 'redux-persist';
@@ -23,7 +22,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { SET_LOGIN_SUCCESS, SET_USER } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
@@ -43,8 +42,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useMediaQuery('(max-width:512px)');
 
   const store: any = useStore();
+  const { loginType, isAutoLogin } = store.getState().common;
   const { me } = useSelector(userForm);
-  const { loginType, isAutoLogin } = useSelector(commonSelector);
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
@@ -61,13 +60,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   const authCheck = async () => {
     try {
-      if (loginType !== 'NONMEMBER' && sessionStorage.accessToken) {
-        const { data } = await userProfile();
-        if (data.code === 200) {
-          dispatch(SET_USER(data.data));
-          dispatch(SET_LOGIN_SUCCESS(true));
-        }
-      } else if (!me) {
+      if (sessionStorage.accessToken) {
         const { data } = await userProfile();
         if (data.code === 200) {
           dispatch(SET_USER(data.data));
@@ -93,11 +86,12 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       let mobile = !!md.mobile();
       dispatch(SET_IS_MOBILE(mobile));
     }
+
+    authCheck();
+    // temp
+    dispatch(INIT_IMAGE_VIEWER());
   }, []);
 
-  useEffect(() => {
-    authCheck();
-  }, []);
   return (
     <>
       <Head>

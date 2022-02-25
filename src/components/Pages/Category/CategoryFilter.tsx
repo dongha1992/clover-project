@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 
 const MenuFilter = dynamic(() => import('@components/Filter/MenuFilter'));
 
-const CategoryFilter = ({ title }: any) => {
+const CategoryFilter = () => {
   const dispatch = useDispatch();
 
   const clickFilterHandler = () => {
@@ -21,18 +21,18 @@ const CategoryFilter = ({ title }: any) => {
   };
   return (
     <PageTitleWrapper>
-      <CategroyTabWrapper onClick={clickFilterHandler}>
+      <CategroyTabWrapper>
         <SVGIcon name="filter" />
-        <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
+        <TextH6B padding="0 0 0 4px" onClick={clickFilterHandler}>
+          필터 및 정렬
+        </TextH6B>
       </CategroyTabWrapper>
-      <TextH3B padding="0 0 17px 0">{title ? title : '전체'}</TextH3B>
     </PageTitleWrapper>
   );
 };
 
 const CategroyTabWrapper = styled.div`
-  margin: 18px 0px 6px 0px;
-  width: 100%;
+  padding: 18px 0px 6px 0px;
   display: flex;
   align-items: center;
   justify-content: flex-end;

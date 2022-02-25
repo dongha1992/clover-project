@@ -39,13 +39,20 @@ interface ISpotsRegistrationInfo {
   managerInfo?: string | null;
 };
 
+interface ISpotsPostions {
+  latitude: number | null;
+  longitude: number | null;
+}
+
 interface IProps {
-  spotDetail: ISpotsDetail | any;
-  isSpotLiked: Boolean;
+  spotDetail: ISpotsDetail | null;
+  isSpotLiked: boolean;
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
-  spotsRegistrationInfo: ISpotsRegistrationInfo;
+  spotsRegistrationInfo: ISpotsRegistrationInfo | any;
   spotRegistrationsPostResult: IPostRegistrations | any;
+  spotsPosition: ISpotsPostions | any;
+  spotsPickupSelected: ISpotsDetail | null;
 };
 
 const spotAddressState = {
@@ -70,14 +77,19 @@ const spotsRegistrationInfoState = {
   placeName: '',
   pickupLocationEtc: '',
   placeTypeEtc: '',
-  userName: '프프코',
-  userEmail: 'fco@freshcode.me',
-  userTel: '01012341234',
+  userName: '',
+  userEmail: '',
+  userTel: '',
   managerInfo: '',
 };
 
+const spotsPostionsState = {
+  latitude: '',
+  longitude: '',
+};
+
 const initialState: IProps = {
-  spotDetail: {},
+  spotDetail: null,
   isSpotLiked: false,
   spotLocation: {
     ...spotAddressState,
@@ -89,13 +101,18 @@ const initialState: IProps = {
     ...spotsRegistrationInfoState,
   },
   spotRegistrationsPostResult: {},
+  spotsPosition: {
+    ...spotsPostionsState,
+  },
+  spotsPickupSelected: null,
 };
 
 export const spot = createSlice({
   name: 'spot',
   initialState,
   reducers: {
-    SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail>) => {
+    // 스팟 상세 페이지 정보
+    SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
     SET_SPOT_LIKED: (state, action : PayloadAction<boolean>) => {
@@ -116,11 +133,15 @@ export const spot = createSlice({
     SET_SPOT_REGISTRATIONS_INFO: (state, action: PayloadAction<ISpotsRegistrationInfo>) => {
       state.spotsRegistrationInfo = action.payload;
     },
-    INIT_SPOT_REGISTRATIONS_INFO: (state, action: PayloadAction) => {
-      state.spotsRegistrationInfo = spotsRegistrationInfoState;
-    },
     SET_SPOT_REGISTRATIONS_POST_RESULT: (state, action: PayloadAction<IPostRegistrations>) => {
       state.spotRegistrationsPostResult = action.payload;
+    },
+    SET_SPOT_POSITIONS: (state, action: PayloadAction<ISpotsPostions>) => {
+      state.spotsPosition = action.payload;
+    },
+    // 스팟 검색, 주문하기->스팟 픽업장소
+    SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsDetail | null>) => {
+      state.spotsPickupSelected = action.payload;
     },
   },
 });
@@ -133,8 +154,9 @@ export const {
   SET_SPOT_REGISTRATIONS_OPTIONS,
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
-  INIT_SPOT_REGISTRATIONS_INFO,
   SET_SPOT_REGISTRATIONS_POST_RESULT,
+  SET_SPOT_POSITIONS,
+  SET_SPOT_PICKUP_SELECTED,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

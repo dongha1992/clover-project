@@ -8,11 +8,14 @@ interface IMe {
   birthDate: string;
   email: string;
   marketingEmailReceived: boolean;
+  marketingPushReceived: boolean;
   gender: string | null;
   name: string;
-  nickname: string;
+  nickName: string;
   password: string;
   marketingSmsReceived: boolean;
+  notiPushReceived: boolean;
+  primePushReceived: boolean;
   tel: string;
   point: number;
   emailConfirmed: boolean;
@@ -35,7 +38,7 @@ interface IUser {
     marketingEmailReceived?: boolean;
     gender?: string | null;
     name?: string;
-    nickname?: string;
+    nickName?: string;
     password?: string;
     marketingSmsReceived?: boolean;
     tel?: string;
@@ -54,33 +57,12 @@ const initialState: IUser = {
     marketingEmailReceived: false,
     gender: null,
     name: '',
-    nickname: '',
+    nickName: '',
     password: '',
     marketingSmsReceived: false,
     tel: '',
     loginType: '',
   },
-  // me: {
-  //   id: '',
-  //   birthDate: '',
-  //   email: '',
-  //   marketingEmailReceived: false,
-  //   gender: null,
-  //   name: '',
-  //   nickname: '',
-  //   password: '',
-  //   marketingSmsReceived: false,
-  //   tel: '',
-  //   point: 0,
-  //   emailConfirmed: false,
-  //   telConfirmed: false,
-  //   smsDenied: false,
-  //   promotionCode: '',
-  //   promotionCount: 0,
-  //   recommendCode: false,
-  //   joinType: '',
-  //   createdAt: '',
-  // },
   me: null,
 };
 
@@ -93,6 +75,7 @@ export const user = createSlice({
     },
 
     SET_USER_AUTH: (state, { payload }: PayloadAction<any>) => {
+      console.log(payload, 'payload');
       const accessTokenObj = {
         accessToken: payload.accessToken,
         expiresIn: payload.expiresIn,

@@ -15,7 +15,6 @@ import { SET_IS_AUTOLOGIN, SET_LOGIN_TYPE } from '@store/common';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
-  // const [loginType, setLoginType] = useState('');
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [returnPath, setReturnPath] = useState<string | string[]>('/');
@@ -41,16 +40,6 @@ const LoginPage = () => {
     }
     return () => {};
   }, [isLoginSuccess]);
-
-  // const initLocalStorage = () => {
-  //   try {
-  //     const data = localStorage.getItem('loginType');
-  //     return data ? setLoginType(JSON.parse(data)) : '';
-  //   } catch (error) {
-  //     console.error(error);
-  //     return [];
-  //   }
-  // };
 
   const passwordInputHandler = () => {
     if (emailRef.current && passwordRef.current) {
@@ -168,6 +157,8 @@ const Col = styled.div`
   margin: 0 8px;
 `;
 
-const SignupBtnWrapper = styled.div``;
+const SignupBtnWrapper = styled.div`
+  padding-top: 48px;
+`;
 
 export default LoginPage;

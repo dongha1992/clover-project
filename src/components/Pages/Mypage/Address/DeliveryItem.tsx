@@ -6,7 +6,7 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
-
+import { DeliveryTag } from '@components/Shared/Tag';
 interface IProps {
   item: IDestinationsResponse;
   goToCart: () => void;
@@ -14,27 +14,14 @@ interface IProps {
 }
 
 const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
-  const mapper: Obj = {
-    MORNING: '새벽배송',
-    PARCEL: '택배배송',
-    QUICK: '퀵배송',
-  };
   return (
     <Container>
       <FlexCol>
         <FlexBetween>
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{item.name}</TextH5B>
-            <Tag
-              margin="0 4px 0 0"
-              padding="4px 8px 4px 6px"
-              backgroundColor={theme.brandColor5}
-              color={theme.brandColor}
-              center
-            >
-               {mapper[item.delivery]}
-            </Tag>
-            {item.main && <Tag>기본 베송지</Tag>}
+            <DeliveryTag devlieryType={item.delivery} margin="0 4px" />
+            {item.main && <Tag>기본 배송지</Tag>}
           </FlexRow>
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => goToEdit(item.id)}>
             편집
