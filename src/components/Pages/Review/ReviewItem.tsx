@@ -6,6 +6,7 @@ import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+
 const ReviewItem = ({ review, onClick }: any) => {
   return (
     <Container onClick={onClick}>

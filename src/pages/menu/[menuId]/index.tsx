@@ -21,6 +21,7 @@ import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import { IMAGE_S3_URL } from '@constants/mock';
+import Carousel from '@components/Shared/Carousel';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -52,6 +53,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
+  const [currentImg, setCurrentImg] = useState(0);
 
   const HEADER_HEIGHT = 56;
   let timer: any = null;
@@ -146,23 +148,16 @@ const MenuDetailPage = ({ menuId }: any) => {
   return (
     <Container>
       <ImgWrapper>
-        <Image
-          src={menuItem?.url}
-          alt="메뉴대표이미지"
-          width={370}
-          height={370}
-          layout="responsive"
-          objectFit="cover"
-        />
+        <Carousel images={menuItem?.detailImg} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
-          <Tag backgroundColor={theme.brandColor} borderRadius={24}>
-            <TextH6B padding="2px 0 0 0" color={theme.white}>
-              일일 70개 한정
-            </TextH6B>
-          </Tag>
+          <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
+            일일 70개 한정
+          </TextH6B>
         </DailySaleNumber>
+        <CountWrapper>
+          <TextH6B color={theme.white}>{`${currentImg + 1} / ${menuItem?.detailImg.length}`}</TextH6B>
+        </CountWrapper>
       </ImgWrapper>
-
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
@@ -346,6 +341,16 @@ const MLWrapper = styled.div`
 
 const ProteinWrapper = styled.div``;
 
+const CountWrapper = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 50%;
+  background: rgba(36, 36, 36, 0.5);
+  border-radius: 24px;
+`;
+
 const ReviewContainer = styled.div`
   margin-top: 24px;
   background-color: ${theme.greyScale3};
@@ -381,8 +386,8 @@ const BottomContent = styled.div``;
 
 const DailySaleNumber = styled.div`
   position: absolute;
-  right: 10px;
-  bottom: 10px;
+  left: 0;
+  top: 0;
 `;
 
 export async function getServerSideProps(context: any) {
