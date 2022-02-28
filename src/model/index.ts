@@ -825,7 +825,25 @@ export interface IGetOrderList {
   type: TOrderType | string;
 }
 
-export interface IOrderMenus {}
+export interface IOrderMenus {
+  id: number;
+  menuId: number;
+  menuName: string;
+  menuDetailId: number;
+  menuDetailName: string;
+  menuPrice: number;
+  menuDiscount: number;
+  menuQuantity: number;
+  image: {
+    id: number;
+    name: string;
+    url: string;
+    width: number;
+    height: number;
+    size: number;
+    createdAt: string;
+  };
+}
 export interface IOrderPayment {}
 export interface IOrderDeliveries {
   delivery: string;
@@ -891,4 +909,24 @@ export interface IGetOrderListResponse {
   refundPayAmount: number;
   refundPoint: number;
   status: string;
+}
+
+export interface IOrderDetail {
+  id: number;
+  name: string;
+  amount: number;
+  refundAmount: number;
+  discount: number;
+  refundDiscount: number;
+  eventDiscount: number;
+  refundEventDiscount: number;
+  deliveryFee: number;
+  refundDeliveryFee: number;
+  deliveryFeeDiscount: number;
+  refundDeliveryFeeDiscount: number;
+  status: string;
+  createdAt: string;
+  delivery: string;
+  deliveryDetail: string;
+  orderDeliveries: IOrderDeliveries[];
 }

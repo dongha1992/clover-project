@@ -390,6 +390,7 @@ const DailySaleNumber = styled.div`
   top: 0;
 `;
 
+/*TODO: 수정해야함 */
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
   return {

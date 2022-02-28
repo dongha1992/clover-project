@@ -11,6 +11,7 @@
         "deliveryFee": 3000,
         "deliveryFeeDiscount": 0,
         "deliveryStatus": "DELIVERING",
+        "deliveryMessage": "MESSGAE",
         "discount": 690,
         "eventDiscount": 0,
         "id": 1,
@@ -31,6 +32,46 @@
           "dong": "역삼동",
           "zipCode": "06252"
         },
+        "menus": [
+          {
+            "id": 88981,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          },
+          {
+            "id": 88982,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          }
+        ],
         "orderDeliveries": [],
         "orderDiscount": 0,
         "orderPayment": {},
@@ -46,7 +87,9 @@
         "refundOrderDiscount": 0,
         "refundPayAmount": 0,
         "refundPoint": 0,
-        "status": "PROGRESS"
+        "status": "PROGRESS",
+        "receiverTel": "010-2222-2222",
+        "receiverName": "test"
       },
       {
         "amount": 100000,
@@ -61,6 +104,46 @@
         "discount": 690,
         "eventDiscount": 0,
         "id": 2,
+        "menus": [
+          {
+            "id": 88981,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          },
+          {
+            "id": 88982,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          }
+        ],
         "image": {
           "createdAt": "2021-10-27 16:47:06",
           "height": 400,
@@ -78,6 +161,8 @@
           "dong": "a",
           "zipCode": "12345"
         },
+        "receiverName": "김프코1",
+        "receiverTel": "010-2222-2222",
         "orderDeliveries": [],
         "orderDiscount": 0,
         "orderPayment": {},
@@ -108,6 +193,46 @@
         "discount": 690,
         "eventDiscount": 0,
         "id": 3,
+        "menus": [
+          {
+            "id": 88981,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          },
+          {
+            "id": 88982,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          }
+        ],
         "image": {
           "createdAt": "2021-10-27 16:47:06",
           "height": 400,
@@ -140,7 +265,7 @@
               "url": "/dev/spot/origin/1_20190213142552",
               "width": 600
             },
-            "id": 1,
+            "id": 57559,
             "invoiceNumber": "510001698432",
             "location": {
               "address": "test",
@@ -148,12 +273,33 @@
               "dong": "test",
               "zipCode": 12345
             },
-            "orderMenus": [{}],
-            "receiverName": "김프코",
-            "receiverTel": "010-2222-2222",
+            "orderMenus": [
+              {
+                "id": 88981,
+                "menuId": 9,
+                "menuName": "닭가슴살 아몬드 샐러드",
+                "menuDetailId": 99,
+                "menuDetailName": "개정 레귤러",
+                "menuPrice": 6900,
+                "menuDiscount": 0,
+                "menuQuantity": 1,
+                "image": {
+                  "id": 2534,
+                  "name": "",
+                  "url": "/menu/origin/9_20211124111843",
+                  "width": 564,
+                  "height": 564,
+                  "size": 65428,
+                  "createdAt": "2019-01-30 00:00:00"
+                }
+              }
+            ],
+
             "status": "PROGRESS"
           }
         ],
+        "receiverName": "김프코3",
+        "receiverTel": "010-2222-2222",
         "orderDiscount": 0,
         "orderPayment": {},
         "paidAt": "2021-10-27 16:47:06",
@@ -183,6 +329,46 @@
         "discount": 690,
         "eventDiscount": 0,
         "id": 4,
+        "menus": [
+          {
+            "id": 88981,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          },
+          {
+            "id": 88982,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          }
+        ],
         "image": {
           "createdAt": "2021-10-27 16:47:06",
           "height": 400,
@@ -223,12 +409,33 @@
               "dong": "test",
               "zipCode": "12345"
             },
-            "orderMenus": [{}],
-            "receiverName": "김프코",
-            "receiverTel": "010-2222-2222",
+            "orderMenus": [
+              {
+                "id": 88981,
+                "menuId": 9,
+                "menuName": "닭가슴살 아몬드 샐러드",
+                "menuDetailId": 99,
+                "menuDetailName": "개정 레귤러",
+                "menuPrice": 6900,
+                "menuDiscount": 0,
+                "menuQuantity": 1,
+                "image": {
+                  "id": 2534,
+                  "name": "",
+                  "url": "/menu/origin/9_20211124111843",
+                  "width": 564,
+                  "height": 564,
+                  "size": 65428,
+                  "createdAt": "2019-01-30 00:00:00"
+                }
+              }
+            ],
             "status": "PROGRESS"
           }
         ],
+        "receiverName": "김프코4",
+        "receiverTel": "010-2222-2222",
+
         "orderDiscount": 0,
         "orderPayment": {},
         "paidAt": "2021-10-27 16:47:06",
@@ -252,12 +459,53 @@
         "delivery": "MORNING",
         "deliveryDate": "2022-02-16",
         "deliveryDetail": "",
+        "deliveryMessage": "MESSGAE",
         "deliveryFee": 3000,
         "deliveryFeeDiscount": 0,
         "deliveryStatus": "DELIVERING",
         "discount": 690,
         "eventDiscount": 0,
         "id": 5,
+        "menus": [
+          {
+            "id": 88981,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          },
+          {
+            "id": 88982,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 99,
+            "menuDetailName": "개정 레귤러",
+            "menuPrice": 6900,
+            "menuDiscount": 0,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "name": "",
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564,
+              "size": 65428,
+              "createdAt": "2019-01-30 00:00:00"
+            }
+          }
+        ],
         "image": {
           "createdAt": "2021-10-27 16:47:06",
           "height": 400,
@@ -325,12 +573,32 @@
               "dong": "test",
               "zipCode": "12345"
             },
-            "orderMenus": [{}],
-            "receiverName": "김프코",
-            "receiverTel": "010-2222-2222",
+            "orderMenus": [
+              {
+                "id": 88981,
+                "menuId": 9,
+                "menuName": "닭가슴살 아몬드 샐러드",
+                "menuDetailId": 99,
+                "menuDetailName": "개정 레귤러",
+                "menuPrice": 6900,
+                "menuDiscount": 0,
+                "menuQuantity": 1,
+                "image": {
+                  "id": 2534,
+                  "name": "",
+                  "url": "/menu/origin/9_20211124111843",
+                  "width": 564,
+                  "height": 564,
+                  "size": 65428,
+                  "createdAt": "2019-01-30 00:00:00"
+                }
+              }
+            ],
             "status": "PROGRESS"
           }
         ],
+        "receiverName": "김프코5",
+        "receiverTel": "010-2222-2222",
         "orderDiscount": 0,
         "orderPayment": {},
         "paidAt": "2021-10-27 16:47:06",
@@ -354,9 +622,11 @@
         "delivery": "PARCEL",
         "deliveryDate": "2022-02-16",
         "deliveryDetail": "",
+        "deliveryMessage": "MESSGAE",
         "deliveryFee": 3000,
         "deliveryFeeDiscount": 0,
         "deliveryStatus": "COMPLETED",
+        "deliveryMessageType": "CALL_HOUSE",
         "discount": 690,
         "eventDiscount": 0,
         "id": 6,
@@ -382,6 +652,7 @@
             "delivery": "PARCEL",
             "deliveryDate": "2022-02-16",
             "deliveryDetail": "",
+            "deliveryMessageType": "CALL_HOUSE",
             "image": {
               "createdAt": "2021-10-27 16:47:06",
               "height": 400,
@@ -401,8 +672,6 @@
               "zipCode": 12345
             },
             "orderMenus": [{}],
-            "receiverName": "김프코",
-            "receiverTel": "010-2222-2222",
             "status": "PROGRESS"
           },
           {
@@ -428,11 +697,11 @@
               "zipCode": "12345"
             },
             "orderMenus": [{}],
-            "receiverName": "김프코",
-            "receiverTel": "010-2222-2222",
             "status": "PROGRESS"
           }
         ],
+        "receiverName": "김프코6",
+        "receiverTel": "010-2222-2222",
         "orderDiscount": 0,
         "orderPayment": {},
         "paidAt": "2021-10-27 16:47:06",

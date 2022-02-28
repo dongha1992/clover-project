@@ -9,29 +9,16 @@ import { Obj } from '@model/index';
 import DeliveryStatusInfo from './DeliveryStatusInfo';
 import ItemInfo from './ItemInfo';
 import { IOrderDeliveries } from '@model/index';
+import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 interface IProps {
   deliveryItem: any;
   buttonHandler: ({ id, isDelivering }: { id: number; isDelivering: boolean }) => void;
 }
 
 const OrderDeliveryItem = ({ deliveryItem, buttonHandler }: IProps) => {
-  // console.log(deliveryItem, 'deliveryItem');
-
-  const deliveryStatusMap: Obj = {
-    COMPLETED: '배송완료',
-    CANCELED: '주문취소',
-    DELIVERING: '배송 중',
-    PROGRESS: '프로그레스',
-    PREPARING: '상품준비 중',
-  };
-
-  const deliveryDetailMap: Obj = {
-    LUNCH: '점심',
-    DINNER: '저녁',
-  };
   const { dayFormatter: paidAt } = getCustomDate(new Date(deliveryItem.paidAt));
   const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryItem.deliveryDate));
-
+  /* TODO: 아래 중복 코드 많음 헬퍼함수? */
   const deliveryStatus = deliveryStatusMap[deliveryItem.deliveryStatus];
   const deliveryDetail = deliveryDetailMap[deliveryItem.deliveryDetail];
   const isCompleted = deliveryItem.deliveryStatus === 'COMPLETED';

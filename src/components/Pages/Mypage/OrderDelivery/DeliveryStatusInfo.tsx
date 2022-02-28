@@ -1,15 +1,9 @@
-import { FlexBetween, FlexCol, FlexRow, theme } from '@styles/theme';
+import { FlexBetween, FlexRow, theme } from '@styles/theme';
 import React from 'react';
-import styled from 'styled-components';
-import { TextB2R, TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
+import { TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
-import SVGIcon from '@utils/SVGIcon';
-import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { DeliveryTag } from '@components/Shared/Tag';
-import getCustomDate from '@utils/getCustomDate';
-import { Obj } from '@model/index';
-import { IMAGE_S3_URL } from '@constants/mock';
 
 interface IProps {
   isCanceled?: boolean;
