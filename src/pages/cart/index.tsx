@@ -245,19 +245,13 @@ const CartPage = () => {
   // );
 
   const checkHasOtherDeliveries = (list: IGetOrderListResponse[]) => {
-    const checkAvailableOtherDelivery = ({
-      deliveryStatus,
-      delivery,
-      deliveryDetail,
-      location,
-    }: IGetOrderListResponse) => {
+    const checkAvailableOtherDelivery = ({ deliveryStatus, delivery, location }: IGetOrderListResponse) => {
       const availableDeliveryStatus: string[] = ['PREPARING', 'PROGRESS'];
-      const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
       const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
       const sameDeliveryAddress = isEqual(location, userDestination?.location);
       const avaliableStatus = availableDeliveryStatus.includes(deliveryStatus);
 
-      return sameDeliveryType && sameDeliveryAddress && avaliableStatus;
+      return avaliableStatus && sameDeliveryAddress && sameDeliveryType;
     };
 
     return flow(filter((data: IGetOrderListResponse) => checkAvailableOtherDelivery(data)))(list);
@@ -432,7 +426,7 @@ const CartPage = () => {
         content: (
           <TogetherDeliverySheet
             title="함께배송 안내"
-            otherDeliveryInfo={[otherDeliveries.find((item) => item.id === id)]}
+            otherDeliveryInfo={[otherDeliveries.find((item: IGetOrderListResponse) => item.id === id)]}
           />
         ),
       })
@@ -516,7 +510,7 @@ const CartPage = () => {
     setIsAllchecked(true);
 
     // 합배송 관련
-    if (otherDeliveries.length > 0) {
+    if (otherDeliveries?.length > 0) {
       const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
       for (const otherDelivery of otherDeliveries) {
         const { deliveryDate, deliveryDetail } = otherDelivery;
