@@ -14,6 +14,9 @@ import { userForm } from '@store/user';
 import { useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+import { BASE_URL } from '@constants/mock';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -23,7 +26,32 @@ interface IMypageMenu {
 
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
-  console.log(me, 'me');
+
+  const {} = useQuery(
+    'getOrderLists',
+    async () => {
+      // const params = {
+      //   days: 90,
+      //   page: 1,
+      //   size: 10,
+      //   type: 'GENERAL',
+      // };
+
+      // const { data } = await getOrderLists(params);
+
+      /* temp */
+      const { data } = await axios.get(`${BASE_URL}/orderList`);
+      return data.data;
+    },
+    {
+      onSuccess: (data) => {
+        console.log(data, '@@');
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   return (
     <Container>
       <Wrapper>
