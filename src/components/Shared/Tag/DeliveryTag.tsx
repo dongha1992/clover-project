@@ -7,11 +7,11 @@ import { Obj } from '@model/index';
 type TDeliveryType = 'SPOT' | 'MORNING' | 'PARCEL' | 'QUICK';
 
 interface ITagProps {
-  devlieryType: TDeliveryType;
+  deliveryType: TDeliveryType;
   margin?: string;
 }
 
-const DeliveryTag = ({ devlieryType, margin }: ITagProps) => {
+const DeliveryTag = ({ deliveryType, margin }: ITagProps) => {
   const deliveryMap: Obj = {
     PARCEL: '택배배송',
     MORNING: '새벽배송',
@@ -20,31 +20,31 @@ const DeliveryTag = ({ devlieryType, margin }: ITagProps) => {
   };
 
   return (
-    <Container devlieryType={devlieryType} margin={margin}>
-      <TextH7B>{deliveryMap[devlieryType]}</TextH7B>
+    <Container deliveryType={deliveryType} margin={margin}>
+      <TextH7B>{deliveryMap[deliveryType]}</TextH7B>
     </Container>
   );
 };
 
-const Container = styled.div<{ devlieryType: TDeliveryType; margin?: string }>`
+const Container = styled.div<{ deliveryType: TDeliveryType; margin?: string }>`
   display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
   margin: ${({ margin }) => margin && margin};
   text-align: center;
 
-  ${({ devlieryType }) => {
-    if (devlieryType === 'SPOT') {
+  ${({ deliveryType }) => {
+    if (deliveryType === 'SPOT') {
       return css`
-        border: 1px solid ${theme.spotColor};
-        color: ${theme.spotColor};
+        border: 1px solid ${theme.brandColor};
+        color: ${theme.brandColor};
       `;
-    } else if (devlieryType === 'MORNING') {
+    } else if (deliveryType === 'MORNING') {
       return css`
         border: 1px solid ${theme.morningColor};
         color: ${theme.morningColor};
       `;
-    } else if (devlieryType === 'PARCEL') {
+    } else if (deliveryType === 'PARCEL') {
       return css`
         border: 1px solid ${theme.parcelColor};
         color: ${theme.parcelColor};

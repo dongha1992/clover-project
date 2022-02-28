@@ -5,12 +5,21 @@ import styled from 'styled-components';
 import { ORDER_DATE_RADIO_CHECKBOX } from '@constants/filter';
 import { theme, bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
+import { useDispatch } from 'react-redux';
+import { SET_ORDER_LIST_FILTER } from '@store/common';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const OrderDateFilter = () => {
-  const [selectedRadioId, setSelectedRadioId] = useState(1);
+  const [selectedRadioValue, setSelectedRadioValue] = useState(90);
+  const dispatch = useDispatch();
 
-  const radioButtonHandler = (id: number) => {
-    setSelectedRadioId(id);
+  const radioButtonHandler = (value: number) => {
+    setSelectedRadioValue(value);
+  };
+
+  const changeWithInDays = () => {
+    dispatch(SET_ORDER_LIST_FILTER(selectedRadioValue));
+    dispatch(INIT_BOTTOM_SHEET());
   };
 
   return (
@@ -25,11 +34,11 @@ const OrderDateFilter = () => {
         <OrderFilter
           data={ORDER_DATE_RADIO_CHECKBOX}
           changeHandler={radioButtonHandler}
-          selectedRadioId={selectedRadioId}
+          selectedRadioValue={selectedRadioValue}
         />
       </Wrapper>
-      <ButtonContainer onClick={() => {}}>
-        <Button height="100%" width="100%" borderRadius="0">
+      <ButtonContainer>
+        <Button height="100%" width="100%" borderRadius="0" onClick={changeWithInDays}>
           적용하기
         </Button>
       </ButtonContainer>
