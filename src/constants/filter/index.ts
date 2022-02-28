@@ -39,7 +39,7 @@ export const RADIO_CHECKBOX_SPOT = [
 ];
 
 export const ORDER_DATE_RADIO_CHECKBOX = [
-  { id: 1, text: '최근 3개월', value: 'threeMonth' },
-  { id: 2, text: '최근 6개월', value: 'sixMonth' },
-  { id: 3, text: '최근 1년', value: 'oneYear' },
+  { id: 1, text: '최근 3개월', value: 90 },
+  { id: 2, text: '최근 6개월', value: 180 },
+  { id: 3, text: '최근 1년', value: 365 },
 ];
