@@ -12,6 +12,6 @@ export const getOrderLists = ({ days = 90, page = 1, size = 1, type }: IGetOrder
   return Api.get(`order/v1/orders/`, { params });
 };
 
-// export const deleteCard = (id: number): Promise<AxiosResponse<any>> => {
-//   return Api.delete(`card/v1/cards/${id}`);
-// };
+export const getOrderDetail = (id: number): Promise<AxiosResponse<any>> => {
+  return Api.get(`order/v1/orders/${id}`);
+};

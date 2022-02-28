@@ -43,7 +43,7 @@ const Header = () => {
         '/mypage/card/register': '카드등록',
         '/mypage/card/edit': '카드 편집',
         '/mypage/card/register/term': '이용약관',
-        '/mypage/order-detail': '주문 상세',
+        '/mypage/order-detail/[orderId]': '주문 상세',
         '/mypage/order-delivery-history': '주문/배송 내역',
         '/mypage/profile/password': '비밀번호 변경',
         '/mypage/profile/confirm': '회원정보 수정',

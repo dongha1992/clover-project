@@ -11,6 +11,7 @@ interface IResult {
   seconds: number;
   days: string;
   dayFormatter: string;
+  dateFormatter: string;
   currentDate: string;
   currentTime: number;
 }
@@ -48,6 +49,7 @@ const getCustomDate = (inputDate: Date): IResult => {
     hours,
     minutes,
     seconds,
+    dateFormatter: `${strMonths}월 ${strDates}일`,
     dayFormatter: `${strMonths}월 ${strDates}일 (${days})`,
     currentDate: `${strYears}-${getFormatTime(months + 1)}-${getFormatTime(dates)}`,
     currentTime: Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`),

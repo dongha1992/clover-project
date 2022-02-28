@@ -12,9 +12,22 @@ import { BASE_URL } from '@constants/mock';
 import BorderLine from '@components/Shared/BorderLine';
 import { commonSelector } from '@store/common';
 import { useQuery } from 'react-query';
-import { IGetOrderListResponse } from '@model/index';
+import { IGetOrderListResponse, Obj } from '@model/index';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
+
+export const deliveryStatusMap: Obj = {
+  COMPLETED: '배송완료',
+  CANCELED: '주문취소',
+  DELIVERING: '배송 중',
+  PROGRESS: '프로그레스',
+  PREPARING: '상품준비 중',
+};
+
+export const deliveryDetailMap: Obj = {
+  LUNCH: '점심',
+  DINNER: '저녁',
+};
 
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();
