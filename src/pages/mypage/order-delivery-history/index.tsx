@@ -6,7 +6,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { TextH6B } from '@components/Shared/Text';
 import dynamic from 'next/dynamic';
 import { FlexCol, FlexEnd, homePadding } from '@styles/theme';
-import OrderDeliveryItem from '@components/Pages/Mypage/OrderDelivery/OrderDeliveryItem';
+import { OrderDeliveryItem } from '@components/Pages/Mypage/OrderDelivery';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import BorderLine from '@components/Shared/BorderLine';
