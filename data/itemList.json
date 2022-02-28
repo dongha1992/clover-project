@@ -63,7 +63,9 @@
           "badge": "(만원의 행복 20%)",
           "quantity": 1,
           "main": true,
-          "tags": []
+          "tags": [],
+          "soldout": false,
+          "limitQuantity": 3
         },
         {
           "id": 2,
@@ -79,7 +81,8 @@
           "badge": "",
           "quantity": 1,
           "main": true,
-          "tags": []
+          "tags": [],
+          "soldout": true
         },
         {
           "id": 3,
@@ -94,7 +97,8 @@
           "badge": "",
           "quantity": 1,
           "main": true,
-          "tags": []
+          "tags": [],
+          "soldout": false
         },
         {
           "id": 4,
@@ -106,7 +110,11 @@
           "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
           "quantity": 1,
           "main": false,
-          "tags": []
+          "tags": [],
+          "soldout": false,
+          "badge": "",
+          "limitDaily": 0,
+          "limit": ""
         }
       ]
     },
@@ -122,6 +130,7 @@
       "review": 10,
       "tags": ["페스코베지", "스팟/새벽"],
       "quantity": 1,
+      "details": [],
       "reviews": [
         {
           "id": 1,
@@ -171,6 +180,7 @@
       "review": 100,
       "tags": ["페스코베지"],
       "quantity": 1,
+      "details": [],
       "reviews": [
         {
           "id": 1,
@@ -221,6 +231,7 @@
       "review": 90000,
       "tags": ["페스코베지", "스팟/새벽", "페스코베지"],
       "quantity": 1,
+      "details": [],
       "reviews": [
         {
           "id": 1,
