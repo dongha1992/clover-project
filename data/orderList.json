@@ -130,6 +130,16 @@
             "delivery": "SPOT",
             "deliveryDate": "2022-02-16",
             "deliveryDetail": "LUNCH",
+            "image": {
+              "createdAt": "2021-10-27 16:47:06",
+              "height": 400,
+              "id": 1,
+              "name": "test.jpg",
+              "originalName": "test.jpg",
+              "size": 0,
+              "url": "/dev/spot/origin/1_20190213142552",
+              "width": 600
+            },
             "id": 1,
             "invoiceNumber": "510001698432",
             "location": {
@@ -195,6 +205,16 @@
             "delivery": "SPOT",
             "deliveryDate": "2022-02-16",
             "deliveryDetail": "LUNCH",
+            "image": {
+              "createdAt": "2021-10-27 16:47:06",
+              "height": 400,
+              "id": 1,
+              "name": "test.jpg",
+              "originalName": "test.jpg",
+              "size": 0,
+              "url": "/dev/spot/origin/1_20190213142552",
+              "width": 600
+            },
             "id": 1,
             "invoiceNumber": "510001698432",
             "location": {
@@ -260,6 +280,16 @@
             "delivery": "SPOT",
             "deliveryDate": "2022-02-16",
             "deliveryDetail": "LUNCH",
+            "image": {
+              "createdAt": "2021-10-27 16:47:06",
+              "height": 400,
+              "id": 1,
+              "name": "test.jpg",
+              "originalName": "test.jpg",
+              "size": 0,
+              "url": "/dev/spot/origin/1_20190213142552",
+              "width": 600
+            },
             "id": 1,
             "invoiceNumber": "510001698432",
             "location": {
@@ -277,6 +307,16 @@
             "delivery": "SPOT",
             "deliveryDate": "2022-02-16",
             "deliveryDetail": "LUNCH",
+            "image": {
+              "createdAt": "2021-10-27 16:47:06",
+              "height": 400,
+              "id": 1,
+              "name": "test.jpg",
+              "originalName": "test.jpg",
+              "size": 0,
+              "url": "/dev/spot/origin/1_20190213142552",
+              "width": 600
+            },
             "id": 2,
             "invoiceNumber": "510001698432",
             "location": {
@@ -342,6 +382,16 @@
             "delivery": "PARCEL",
             "deliveryDate": "2022-02-16",
             "deliveryDetail": "",
+            "image": {
+              "createdAt": "2021-10-27 16:47:06",
+              "height": 400,
+              "id": 1,
+              "name": "test.jpg",
+              "originalName": "test.jpg",
+              "size": 0,
+              "url": "/dev/spot/origin/1_20190213142552",
+              "width": 600
+            },
             "id": 1,
             "invoiceNumber": "510001698432",
             "location": {
@@ -358,6 +408,16 @@
           {
             "delivery": "SPOT",
             "deliveryDate": "2022-02-16",
+            "image": {
+              "createdAt": "2021-10-27 16:47:06",
+              "height": 400,
+              "id": 1,
+              "name": "test.jpg",
+              "originalName": "test.jpg",
+              "size": 0,
+              "url": "/dev/spot/origin/1_20190213142552",
+              "width": 600
+            },
             "deliveryDetail": "LUNCH",
             "id": 2,
             "invoiceNumber": "510001698432",

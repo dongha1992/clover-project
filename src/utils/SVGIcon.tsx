@@ -1156,6 +1156,11 @@ const svgMap: TSvg = {
       <rect x="4" y="8.25" width="10" height="1.5" rx="0.75" fill="white" />
     </svg>
   ),
+  otherDeliveryArrow: () => (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 6V12H13" stroke="#242424" strokeWidth="2" strokeLinecap="square" />
+    </svg>
+  ),
 };
 
 /* TODO: ref */
