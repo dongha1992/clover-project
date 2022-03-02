@@ -892,3 +892,51 @@ export interface IGetOrderListResponse {
   refundPoint: number;
   status: string;
 }
+
+export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
+export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
+export type TType =
+  | 'DRINK'
+  | 'KOREAN_SOUP_SOUP'
+  | 'LUNCH_BOX_CONVENIENCE_FOOD'
+  | 'SALAD'
+  | 'SET'
+  | 'SNACK'
+  | 'WRAP_SANDWICH';
+export interface IGetMenus {
+  categories: TCategory | string;
+  menuSort: TMenuSort | string;
+  searchKeyword: string;
+  type: TType | string;
+}
+
+export interface IMenuDetails {
+  id: number;
+  name: string;
+  price: number;
+  discountPrice: number;
+  main: boolean;
+}
+
+export interface IMenus {
+  id: number;
+  name: string;
+  type: string;
+  category: string;
+  description: string;
+  thumbnail: string;
+  badgeMessage: string;
+  launchedAt: string;
+  liked: boolean;
+  likeCount: number;
+  reviewCount: number;
+  menuDetails: IMenuDetails[];
+  menuSort: string;
+  orderCount: number;
+  priority: string;
+}
+export interface IGetMenusResponse {
+  code: number;
+  data: IMenus[];
+  message: string;
+}

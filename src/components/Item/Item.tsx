@@ -10,6 +10,8 @@ import { SET_CART_SHEET_OBJ } from '@store/cart';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
+import { IMAGE_S3_URL } from '@constants/mock';
+import Image from 'next/image';
 
 type TProps = {
   item: any;
@@ -34,14 +36,20 @@ const Item = ({ item, isQuick = false }: TProps) => {
     router.push(`/menu/${menuId}`);
   };
 
-  //temp
-  const tempBadgeStatus = ['isNew', 'isSoon', 'isSoldout', 'isBest'];
+  item.tag = '배지테리언';
 
   return (
     <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>
-        <ItemImage src={item.url} alt="상품이미지" />
-        {item.id === 1 && (
+        <Image
+          src={IMAGE_S3_URL + item.thumbnail}
+          alt="상품이미지"
+          width={'100%'}
+          height={'100%'}
+          layout="responsive"
+          className="rounded"
+        />
+        {item.reopen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
@@ -50,7 +58,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
         <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
-        <Badge status={tempBadgeStatus[Math.floor(Math.random() * 4)]} />
+        {item.badgeMessage && <Badge status={item.badgeMessage} />}
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
@@ -64,26 +72,19 @@ const Item = ({ item, isQuick = false }: TProps) => {
           </TextH5B>
           <TextH5B>{item.price}원</TextH5B>
         </PriceWrapper>
-        <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
+        <DesWrapper>
+          <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
+        </DesWrapper>
         {!isQuick && (
           <>
             <LikeAndReview>
               <Like>
                 <SVGIcon name="like" />
-                <TextB3R>{item.like}</TextB3R>
+                <TextB3R>{item.likeCount}</TextB3R>
               </Like>
-              <TextB3R>리뷰 {item.review}</TextB3R>
+              <TextB3R>리뷰 {item.reviewCount}</TextB3R>
             </LikeAndReview>
-            <TagWrapper>
-              {item.tags.map((tag: string, index: number) => {
-                if (index > 1) return;
-                return (
-                  <Tag key={index} margin="0px 8px 8px 0px">
-                    {tag}
-                  </Tag>
-                );
-              })}
-            </TagWrapper>
+            <TagWrapper>{item.tag && <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>}</TagWrapper>
           </>
         )}
       </FlexCol>
@@ -96,11 +97,13 @@ const Container = styled.div`
   width: 48%;
   height: auto;
   background-color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   display: inline-block;
   flex-direction: column;
   align-items: flex-start;
   position: relative;
+  height: auto;
+  max-height: 380px;
 `;
 
 const ForReopen = styled.div`
@@ -115,6 +118,12 @@ const ForReopen = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+`;
+
+const DesWrapper = styled.div`
+  width: 100%;
+  height: 38px;
+  overflow: hidden;
 `;
 
 const CartBtn = styled.div`
@@ -139,11 +148,9 @@ const CartBtn = styled.div`
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-`;
-
-const ItemImage = styled.img`
-  width: 100%;
-  border-radius: 8px;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 const NameWrapper = styled.div`

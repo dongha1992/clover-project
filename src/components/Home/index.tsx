@@ -12,7 +12,8 @@ import { BASE_URL } from '@constants/mock';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import SVGIcon from '@utils/SVGIcon';
+import { getMenusApi } from '@api/menu';
+
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
 
@@ -24,7 +25,7 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const { error: carouselError } = useQuery(
-    'carousel-banners',
+    'carouselBanners',
     async () => {
       const params = { type: 'CAROUSEL' };
       const { data } = await getBannersApi(params);
@@ -34,7 +35,7 @@ const Home = () => {
   );
 
   const { error: eventsError } = useQuery(
-    'events-banners',
+    'eventsBanners',
     async () => {
       const params = { type: 'EVENT' };
       const { data } = await getBannersApi(params);
@@ -43,15 +44,15 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const getItemLists = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    setItemList(data.data);
-    dispatch(SET_MENU(data.data));
-  };
-
-  useEffect(() => {
-    getItemLists();
-  }, []);
+  const { data: menus, error: menuError } = useQuery(
+    'getMenus',
+    async () => {
+      const params = { categories: '', menuSort: '', searchKeyword: '', type: '' };
+      const { data } = await getMenusApi(params);
+      console.log(data.data, '@@');
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   return (
     <Container>
@@ -60,7 +61,7 @@ const Home = () => {
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
-          {itemList.map((item, index) => {
+          {menus.map((item, index) => {
             return <Item item={item} key={index} />;
           })}
         </FlexWrapWrapper>
@@ -73,7 +74,7 @@ const Home = () => {
       <Banner bannerList={eventbannerList} />
       <ItemListRowWrapper>
         <ItemListRow>
-          {itemList.map((item, index) => {
+          {menus.map((item, index) => {
             return <HorizontalItem item={item} key={index} />;
           })}
         </ItemListRow>
