@@ -786,3 +786,29 @@ export interface IGetSpotsRegistrationsStatusResponse {
   message: string;
   data: IGetSpotsRegistrationsStatus;
 }
+
+export interface IGetSpotFilterResponse {
+  code: number;
+  message: string;
+  data: IGetSpotFilter;
+
+}
+
+export interface IGetSpotFilter  {
+  publicFilters: [
+    {
+      value: string | boolean;
+      filtered: boolean;
+      fieldName: string;
+      name: string;
+    },
+  ];
+  etcFilters: [
+    {
+      value: string | boolean;
+      filtered: boolean;
+      fieldName: string;
+      name: string;
+    },
+  ];
+}

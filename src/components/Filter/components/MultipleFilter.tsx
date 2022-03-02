@@ -3,10 +3,16 @@ import { TextH5B, TextB2R } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme, FlexRow } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
+import { IGetSpotFilter } from '@model/index';
 
-type TProps = {
-  data: any;
-  changeHandler: (id: number) => void;
+interface IProps {
+  data: [{
+    value: string | boolean;
+    filtered: boolean;
+    fieldName: string;
+    name: string;
+  }] | undefined;
+  changeHandler: (id: string | boolean) => void;
   selectedCheckboxIds: number[];
 };
 
@@ -14,24 +20,24 @@ const MultipleFilter = ({
   data,
   changeHandler,
   selectedCheckboxIds,
-}: TProps) => {
+}: IProps) => {
   return (
     <Container>
       <BtnContainer>
         {data &&
-          data.map((item: any, index: number) => {
-            const isSelected = selectedCheckboxIds.includes(item.id);
+          data?.map((item, index) => {
+            const isSelected = selectedCheckboxIds.includes(item.value);
             return (
               <FlexRow key={index}>
                 <Checkbox
                   isSelected={isSelected}
-                  onChange={() => changeHandler(item.id)}
+                  onChange={() => changeHandler(item.value)}
                   key={index}
                 />
                 {isSelected ? (
-                  <TextH5B padding="4px 0 0 8px">{item.text}</TextH5B>
+                  <TextH5B padding="4px 0 0 8px">{item.name}</TextH5B>
                 ) : (
-                  <TextB2R padding="4px 0 0 8px">{item.text}</TextB2R>
+                  <TextB2R padding="4px 0 0 8px">{item.name}</TextB2R>
                 )}
               </FlexRow>
             );
