@@ -9,7 +9,7 @@ import { IMenus } from '@model/index';
 
 const SingleMenu = ({ title }: any) => {
   const {
-    data,
+    data = [],
     error: menuError,
     isLoading,
   } = useQuery<IMenus[]>(
@@ -21,15 +21,14 @@ const SingleMenu = ({ title }: any) => {
     },
 
     {
-      onSuccess: (data) => {
-        return data;
-      },
+      onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
-  if (isLoading) {
+  console.log(data, '@@');
+  if (data.length < 0) {
     return <div>로딩중</div>;
   }
 

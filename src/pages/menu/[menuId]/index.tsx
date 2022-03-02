@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import router from 'next/router';
-import axios from 'axios';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
 import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextB4R } from '@components/Shared/Text';
@@ -10,18 +9,19 @@ import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewList } from '@components/Pages/Review';
-import { BASE_URL } from '@constants/mock';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
-import { SET_MENU_ITEM } from '@store/menu';
+import { SET_MENU_DETAIL_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
-import { IMAGE_S3_URL } from '@constants/mock';
 import Carousel from '@components/Shared/Carousel';
+import { useQuery } from 'react-query';
+import { getMenuApi } from '@api/menu';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -31,25 +31,10 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 /* TODO: 영양 정보 샐러드만 보여줌 */
 /* TODO: 베스트후기 없으면 안 보여줌  */
 
-export interface IMenuItem {
-  description: string;
-  discount: number;
-  id: number;
-  like: number;
-  main: any[];
-  name: string;
-  price: number;
-  review: number;
-  secondary: any[];
-  tags: string[];
-  url: string;
-  reviews: any[];
-}
-
 const hasAvailableCoupon = true;
 
 const MenuDetailPage = ({ menuId }: any) => {
-  const [menuItem, setMenuItem] = useState<IMenuItem | any>({});
+  const [menuItem, setMenuItem] = useState<any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -60,18 +45,25 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getMenuDetail();
-  }, []);
+  const {
+    data,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenu',
+    async () => {
+      const { data } = await getMenuApi(menuId);
+      return data.data;
+    },
 
-  useEffect(() => {
-    window.addEventListener('scroll', onScrollHandler);
-    return () => {
-      window.removeEventListener('scroll', onScrollHandler);
-      dispatch(SET_MENU_ITEM({}));
-      clearTimeout(timer);
-    };
-  }, [tabRef?.current?.offsetTop]);
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_DETAIL_ITEM(data.menuDetails));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
@@ -83,15 +75,6 @@ const MenuDetailPage = ({ menuId }: any) => {
         setIsStikcy(false);
       }
     }
-  };
-
-  const getMenuDetail = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    const selectedMenuItem: IMenuItem = data.data.find((item: any) => item.id === Number(menuId));
-    setMenuItem(() => selectedMenuItem);
-    /* TODO: set 못해서 가끔씩 카트 누르면 에러남, reducer를 두 개 쓸 필요 있을까? */
-
-    dispatch(SET_MENU_ITEM(selectedMenuItem));
   };
 
   const couponDownloadHandler = () => {
@@ -141,44 +124,54 @@ const MenuDetailPage = ({ menuId }: any) => {
     }
   };
 
-  if (!Object.keys(menuItem).length) {
+  useEffect(() => {
+    window.addEventListener('scroll', onScrollHandler);
+    return () => {
+      window.removeEventListener('scroll', onScrollHandler);
+      dispatch(SET_MENU_DETAIL_ITEM({}));
+      clearTimeout(timer);
+    };
+  }, [tabRef?.current?.offsetTop]);
+
+  if (isLoading) {
     return <Loading />;
   }
 
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={menuItem?.detailImg} setCountIndex={setCurrentImg} />
+        <Carousel images={data?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
           <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-            일일 70개 한정
+            {data?.badgeMessage}
           </TextH6B>
         </DailySaleNumber>
-        <CountWrapper>
-          <TextH6B color={theme.white}>{`${currentImg + 1} / ${menuItem?.detailImg.length}`}</TextH6B>
-        </CountWrapper>
+        {/* <CountWrapper>
+          <TextH6B color={theme.white}>{`${currentImg + 1} / ${data?.url.length}`}</TextH6B>
+        </CountWrapper> */}
       </ImgWrapper>
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
             <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
-            {menuItem.tags.map((tag: string, index: number) => {
+            {/* {menuItem.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
                 <Tag key={index} margin="0 4px 0 0">
                   {tag}
                 </Tag>
               );
-            })}
+            })} */}
+            {data.tag && <Tag margin="0 4px 0 0">{data.tag}</Tag>}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {menuItem.description}
+            {data.description}
           </TextB2R>
           <PriceAndCouponWrapper>
             <PriceWrapper>
               <OriginPrice>
                 <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                  {menuItem.price}원
+                  {data.price ?? 0}원
                 </TextH6B>
               </OriginPrice>
               <DiscountedPrice>
@@ -239,7 +232,7 @@ const MenuDetailPage = ({ menuId }: any) => {
                 더보기
               </TextH6B>
             </ReviewHeader>
-            {menuItem.reviews && <ReviewList reviews={menuItem.reviews} onClick={goToReviewDetail} />}
+            {/* {data.reviews && <ReviewList reviews={data.reviews} onClick={goToReviewDetail} />} */}
           </ReviewWrapper>
         </ReviewContainer>
         <DetailInfoContainer>
@@ -263,13 +256,13 @@ const MenuDetailPage = ({ menuId }: any) => {
       <AdWrapper></AdWrapper>
       <div ref={tabRef} />
       <Bottom>
-        <StickyTab
+        {/* <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: menuItem?.reviews.length }}
+          countObj={{ 후기: data?.reviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
-        />
+        /> */}
         <BottomContent>{renderBottomContent()}</BottomContent>
       </Bottom>
     </Container>
