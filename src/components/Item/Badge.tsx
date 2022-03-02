@@ -6,11 +6,12 @@ import { Obj } from '@model/index';
 
 const Badge = ({ status }: any) => {
   const map: Obj = {
-    isSoldout: '일시품절',
-    isSoon: '2022-02-22 13시 오픈',
-    isNew: 'New',
-    isBest: 'Best',
+    SOLDOUT: '일시품절',
+    SOON: '2022-02-22 13시 오픈',
+    NEW: 'New',
+    BEST: 'Best',
   };
+
   return (
     <BadgeWrapper status={status}>
       <TextH6B color={theme.white}>{map[status]}</TextH6B>
