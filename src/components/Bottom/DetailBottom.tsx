@@ -24,12 +24,10 @@ const DetailBottom = () => {
   const { showToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
-  const { menuDetailItem } = useSelector(menuSelector);
+  const { menuItem } = useSelector(menuSelector);
 
   const deliveryType = checkTimerLimitHelper();
 
-  //temp
-  const numOfLike = 10;
   // const tempStatus = 'isSoldout';
   const tempStatus = '';
   const tempNotiOff = false;
@@ -54,7 +52,7 @@ const DetailBottom = () => {
 
   const clickButtonHandler = () => {
     if (!tempNotiOff) {
-      dispatch(SET_CART_SHEET_OBJ(menuDetailItem));
+      dispatch(SET_CART_SHEET_OBJ(menuItem.menuDetails));
       dispatch(
         SET_BOTTOM_SHEET({
           content: <CartSheet />,
@@ -99,7 +97,7 @@ const DetailBottom = () => {
             <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {tempIsLike ? numOfLike + 1 : numOfLike}
+            {menuItem.likeCount}
           </TextH5B>
         </LikeWrapper>
         <Col />
