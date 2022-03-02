@@ -14,6 +14,7 @@ import {
   IGetDestinations,
   IGetSpotsRegistrationsStatusResponse,
   ISpotWishListResponse,
+  IGetSpotFilterResponse,
   } from '@model/index';
   
   //신규 스팟
@@ -157,9 +158,15 @@ import {
       return Api.get(`/spot/v1/registrations`, { params });
   };
 
+  // 찜한 스팟
   export const getSpotsWishList = (
     params: IParamsSpots
     ): Promise<AxiosResponse<ISpotWishListResponse>> => {
       return Api.get(`/spot/v1/spots/like`, { params });
   };
   
+  // 필터 정렬
+  export const getSpotsFilter = (
+    ): Promise<AxiosResponse<IGetSpotFilterResponse>> => {
+      return Api.get('/spot/v1/spots/filters');
+  };
