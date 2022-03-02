@@ -13,7 +13,7 @@ import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
-import { SET_MENU_DETAIL_ITEM } from '@store/menu';
+import { SET_MENU_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
@@ -58,7 +58,7 @@ const MenuDetailPage = ({ menuId }: any) => {
 
     {
       onSuccess: (data) => {
-        dispatch(SET_MENU_DETAIL_ITEM(data.menuDetails));
+        dispatch(SET_MENU_ITEM(data));
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -128,7 +128,7 @@ const MenuDetailPage = ({ menuId }: any) => {
     window.addEventListener('scroll', onScrollHandler);
     return () => {
       window.removeEventListener('scroll', onScrollHandler);
-      dispatch(SET_MENU_DETAIL_ITEM({}));
+      dispatch(SET_MENU_ITEM({}));
       clearTimeout(timer);
     };
   }, [tabRef?.current?.offsetTop]);
@@ -142,9 +142,11 @@ const MenuDetailPage = ({ menuId }: any) => {
       <ImgWrapper>
         <Carousel images={data?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
-          <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-            {data?.badgeMessage}
-          </TextH6B>
+          {data?.badgeMessage && (
+            <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
+              {data?.badgeMessage}
+            </TextH6B>
+          )}
         </DailySaleNumber>
         {/* <CountWrapper>
           <TextH6B color={theme.white}>{`${currentImg + 1} / ${data?.url.length}`}</TextH6B>
@@ -153,7 +155,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
+            <TextH2B padding={'0 0 8px 0'}>{data.name}</TextH2B>
             {/* {menuItem.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
@@ -175,8 +177,8 @@ const MenuDetailPage = ({ menuId }: any) => {
                 </TextH6B>
               </OriginPrice>
               <DiscountedPrice>
-                <TextH3B color={theme.brandColor}>{menuItem.discount}%</TextH3B>
-                <TextH3B padding={'0 0 0 4px'}>{menuItem.price - menuItem.price * menuItem.discount * 0.01}원</TextH3B>
+                <TextH3B color={theme.brandColor}>{data.discount}%</TextH3B>
+                <TextH3B padding={'0 0 0 4px'}>{data.price - data.price * data.discount * 0.01}원</TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
             {hasAvailableCoupon ? (
