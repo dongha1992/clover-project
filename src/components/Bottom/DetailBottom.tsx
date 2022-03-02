@@ -24,7 +24,7 @@ const DetailBottom = () => {
   const { showToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
-  const { menuItem } = useSelector(menuSelector);
+  const { menuDetailItem } = useSelector(menuSelector);
 
   const deliveryType = checkTimerLimitHelper();
 
@@ -54,7 +54,7 @@ const DetailBottom = () => {
 
   const clickButtonHandler = () => {
     if (!tempNotiOff) {
-      dispatch(SET_CART_SHEET_OBJ(menuItem));
+      dispatch(SET_CART_SHEET_OBJ(menuDetailItem));
       dispatch(
         SET_BOTTOM_SHEET({
           content: <CartSheet />,

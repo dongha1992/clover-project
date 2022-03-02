@@ -36,6 +36,7 @@ const Header = () => {
         '/category/meal': '도시락·간편식',
         '/category/package': '죽·스프',
         '/category/snack': '간식',
+        '/category/soup': '죽',
         '/category/drink': '음료',
         '/category/soon': '오픈예정',
         '/menu/[menuId]/review/photo': '사진 후기',
@@ -106,6 +107,7 @@ const Header = () => {
           '/category/snack',
           '/category/drink',
           '/category/soon',
+          '/category/soup',
         ].includes(currentPath):
           return <CategorySubHeader title={title} />;
 

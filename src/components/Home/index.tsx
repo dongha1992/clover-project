@@ -4,11 +4,8 @@ import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextB3R } from '@components/Shared/Text';
-import axios from 'axios';
 import { Item, HorizontalItem } from '@components/Item';
 import { useDispatch } from 'react-redux';
-import { SET_MENU } from '@store/menu';
-import { BASE_URL } from '@constants/mock';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
@@ -18,7 +15,6 @@ import { getMenusApi } from '@api/menu';
 /* TODO: static props로  */
 
 const Home = () => {
-  const [itemList, setItemList] = useState([]);
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
@@ -44,15 +40,23 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { data: menus, error: menuError } = useQuery(
+  const {
+    data: menus,
+    error: menuError,
+    isLoading,
+  } = useQuery(
     'getMenus',
     async () => {
       const params = { categories: '', menuSort: '', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);
-      console.log(data.data, '@@');
+      return data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
+
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -61,7 +65,7 @@ const Home = () => {
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
-          {menus.map((item, index) => {
+          {menus?.map((item, index) => {
             return <Item item={item} key={index} />;
           })}
         </FlexWrapWrapper>

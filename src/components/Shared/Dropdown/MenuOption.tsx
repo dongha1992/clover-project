@@ -10,6 +10,7 @@ type TProps = {
 /* TODO: 서버에서 주는 값에 따라 UI 수정 */
 
 const MenuOption = ({ option, selectMenuHandler }: TProps) => {
+  console.log(option, 'option');
   return (
     <OptionList onClick={() => selectMenuHandler(option)}>
       <FlexBetween>
@@ -35,7 +36,6 @@ export default React.memo(MenuOption);
 const OptionList = styled.li`
   display: flex;
   flex-direction: column;
-
   list-style-type: none;
   padding: 12px 16px;
   border-bottom: 1px solid #e4e4e4;
