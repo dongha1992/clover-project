@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
 import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
+import { OrderDetailInfo } from '@components/Pages/Mypage/OrderDelivery';
 // temp
 
 const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
@@ -119,6 +120,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const deliveryInfoRenderer = () => {
     const { receiverName, receiverTel, location } = data;
+    console.log(data, '@');
     return (
       <>
         <FlexBetween>
@@ -236,7 +238,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={deliveryStatus}>
-          {data.menus.map((menu: IOrderMenus, index: number) => {
+          {data.menus?.map((menu: IOrderMenus, index: number) => {
             return <PaymentItem menu={menu} key={index} isDeliveryComplete={isCompleted} />;
           })}
           <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
@@ -284,7 +286,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </ButtonWrapper>
       </OrderInfoWrapper>
       <BorderLine height={8} />
-      <DevlieryInfoWrapper>{deliveryInfoRenderer()}</DevlieryInfoWrapper>
+      <DevlieryInfoWrapper>
+        <OrderDetailInfo />
+      </DevlieryInfoWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
