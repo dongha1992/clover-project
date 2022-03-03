@@ -120,7 +120,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const deliveryInfoRenderer = () => {
     const { receiverName, receiverTel, location } = data;
-    console.log(data, '@');
+
     return (
       <>
         <FlexBetween>
@@ -213,13 +213,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     );
   };
 
-  console.log(data, 'data');
-
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  console.log(deliveryAt, 'deliveryAt');
   return (
     <Container>
       <DeliveryStatusWrapper>

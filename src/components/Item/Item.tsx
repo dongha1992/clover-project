@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import { theme, FlexCol, showMoreText } from '@styles/theme';
+import { theme, FlexCol } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import Badge from './Badge';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
 
 type TProps = {
   item: any;
@@ -21,6 +22,9 @@ type TProps = {
 const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const { menuDetails } = item;
+  const { discount, price } = getMenuDisplayPrice(menuDetails);
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
@@ -63,14 +67,14 @@ const Item = ({ item, isQuick = false }: TProps) => {
       <FlexCol>
         <NameWrapper>
           <TextB3R margin="8px 0 0 0" width="100%" textHide>
-            {item.name}
+            {item.name.trim()}
           </TextB3R>
         </NameWrapper>
         <PriceWrapper>
           <TextH5B color={theme.brandColor} padding="0 4px 0 0">
-            {item.discount}%
+            {discount}%
           </TextH5B>
-          <TextH5B>{item.price}원</TextH5B>
+          <TextH5B>{price}원</TextH5B>
         </PriceWrapper>
         <DesWrapper>
           <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>

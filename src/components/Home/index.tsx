@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
@@ -47,7 +47,7 @@ const Home = () => {
   } = useQuery(
     'getMenus',
     async () => {
-      const params = { categories: '', menuSort: '', searchKeyword: '', type: '' };
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);
       return data.data;
     },
@@ -66,6 +66,7 @@ const Home = () => {
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
           {menus?.map((item, index) => {
+            if (index > 3) return;
             return <Item item={item} key={index} />;
           })}
         </FlexWrapWrapper>
@@ -78,7 +79,8 @@ const Home = () => {
       <Banner bannerList={eventbannerList} />
       <ItemListRowWrapper>
         <ItemListRow>
-          {menus.map((item, index) => {
+          {menus?.map((item, index) => {
+            if (index > 3) return;
             return <HorizontalItem item={item} key={index} />;
           })}
         </ItemListRow>
