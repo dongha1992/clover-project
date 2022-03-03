@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme, FlexRow } from '@styles/theme';
@@ -12,8 +12,8 @@ interface IProps {
     fieldName: string;
     name: string;
   }] | undefined;
-  changeHandler: (id: string | boolean) => void;
-  selectedCheckboxIds: number[];
+  changeHandler: (id: string) => void;
+  selectedCheckboxIds: string[];
 };
 
 const MultipleFilter = ({
@@ -26,12 +26,12 @@ const MultipleFilter = ({
       <BtnContainer>
         {data &&
           data?.map((item, index) => {
-            const isSelected = selectedCheckboxIds.includes(item.value);
+            const isSelected = selectedCheckboxIds.includes(item.name);
             return (
               <FlexRow key={index}>
                 <Checkbox
                   isSelected={isSelected}
-                  onChange={() => changeHandler(item.value)}
+                  onChange={() => changeHandler(item.name)}
                   key={index}
                 />
                 {isSelected ? (
