@@ -62,57 +62,44 @@ const SpotPage = () => {
   const unsubmitSpotRegistrationsLen = info && !!info?.unsubmitSpotRegistrations?.length;
   const trialRegistrationsLen = info && !!info?.trialSpotRegistrations?.length;
 
+  const params: IParamsSpots = {
+    latitude: spotsPosition ? spotsPosition.latitude : null,
+    longitude: spotsPosition? spotsPosition.longitude : null,
+    size: 6,
+  };
+
   // react-query
-  const { data: stationSpotList } = useQuery(
+
+  const { data: stationSpotList, isLoading: isLoadingStation } = useQuery(
     ['spotList', 'station'],
     async () => {
-      const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
-        size: 6,
-      };
       const response = await getStationSpots(params);
       return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { data: newSpotList } = useQuery(
+  const { data: newSpotList, isLoading: isLoadingNew } = useQuery(
     ['spotList', 'new'],
     async () => {
-      const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
-        size: 6,
-      };
       const response = await getNewSpots(params);
       return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { data: eventSpotList } = useQuery(
+  const { data: eventSpotList, isLoading: isLoadingEvent } = useQuery(
     ['spotList', 'event'],
     async () => {
-      const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
-        size: 6,
-      };
       const response = await getSpotEvent(params);
       return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { data: popularSpotList } = useQuery(
+  const { data: popularSpotList, isLoading: isLoadingPopular } = useQuery(
     ['spotList', 'popular'],
     async () => {
-      const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
-        size: 6,
-      };
       const response = await getSpotPopular(params);
       return response.data.data;
     },
@@ -133,11 +120,6 @@ const SpotPage = () => {
 
     // 단골 스팟
     const getRegistration = async () => {
-      const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
-        size: 6,
-      };
       try {
         const { data } = await getSpotRegistrationsRecruiting(params);
         setSpotRegistrations(data);
@@ -150,14 +132,12 @@ const SpotPage = () => {
   }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
-    if (!mouseMoved) {
       // dispatch(initBottomSheet());
       dispatch(
         SET_BOTTOM_SHEET({
           content: <ShareSheet />,
         })
       );
-    }
   };
 
   const goToSpotReq = (type: string): void => {
@@ -173,6 +153,12 @@ const SpotPage = () => {
 
   const goToRegiList = (): void => {
     router.push('/spot/regi-list');
+  };
+
+  const isLoading = isLoadingStation && isLoadingNew && isLoadingEvent && isLoadingPopular;
+
+  if(isLoading){
+    return <div>loading...</div>;
   };
 
   return (
