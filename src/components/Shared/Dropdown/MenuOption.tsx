@@ -7,10 +7,15 @@ type TProps = {
   option: any;
   selectMenuHandler: any;
 };
-/* TODO: 서버에서 주는 값에 따라 UI 수정 */
 
 const MenuOption = ({ option, selectMenuHandler }: TProps) => {
-  console.log(option, 'option');
+  const getMenuOptionPrice = () => {
+    const price = option.price;
+    const discount = Math.floor((option.discountPrice / option.price) * 100);
+    const discountedPrice = option.price - option.discountPrice;
+    return { price, discount, discountedPrice };
+  };
+
   return (
     <OptionList onClick={() => selectMenuHandler(option)}>
       <FlexBetween>
@@ -21,17 +26,15 @@ const MenuOption = ({ option, selectMenuHandler }: TProps) => {
         <TextH7B color={theme.brandColor}>{option.badge}</TextH7B>
       </FlexRowStart>
       <FlexRow>
-        <TextH6B color={theme.brandColor}>{option.discount}%</TextH6B>
-        <TextH6B padding="0 4px">{option.price}원</TextH6B>
+        <TextH6B color={theme.brandColor}>{getMenuOptionPrice().discount}%</TextH6B>
+        <TextH6B padding="0 4px">{getMenuOptionPrice().discountedPrice}원</TextH6B>
         <TextH6B color={theme.greyScale65} textDecoration="line-through">
-          {option.price}원
+          {getMenuOptionPrice().price}원
         </TextH6B>
       </FlexRow>
     </OptionList>
   );
 };
-
-export default React.memo(MenuOption);
 
 const OptionList = styled.li`
   display: flex;
@@ -46,3 +49,5 @@ const OptionList = styled.li`
     background-color: #d9d9d9;
   }
 `;
+
+export default React.memo(MenuOption);

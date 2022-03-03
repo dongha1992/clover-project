@@ -52,7 +52,7 @@ const DetailBottom = () => {
 
   const clickButtonHandler = () => {
     if (!tempNotiOff) {
-      dispatch(SET_CART_SHEET_OBJ(menuItem.menuDetails));
+      dispatch(SET_CART_SHEET_OBJ(menuItem));
       dispatch(
         SET_BOTTOM_SHEET({
           content: <CartSheet />,

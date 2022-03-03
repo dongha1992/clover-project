@@ -22,6 +22,7 @@ import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuApi } from '@api/menu';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -53,6 +54,7 @@ const MenuDetailPage = ({ menuId }: any) => {
     'getMenu',
     async () => {
       const { data } = await getMenuApi(menuId);
+
       return data.data;
     },
 
@@ -124,6 +126,12 @@ const MenuDetailPage = ({ menuId }: any) => {
     }
   };
 
+  const getMenuDetailPrice = () => {
+    const { discount, price, discountedPrice } = getMenuDisplayPrice(data?.menuDetails);
+
+    return { discount, price, discountedPrice };
+  };
+
   useEffect(() => {
     window.addEventListener('scroll', onScrollHandler);
     return () => {
@@ -173,12 +181,12 @@ const MenuDetailPage = ({ menuId }: any) => {
             <PriceWrapper>
               <OriginPrice>
                 <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                  {data.price ?? 0}원
+                  {getMenuDetailPrice().price}원
                 </TextH6B>
               </OriginPrice>
               <DiscountedPrice>
-                <TextH3B color={theme.brandColor}>{data.discount}%</TextH3B>
-                <TextH3B padding={'0 0 0 4px'}>{data.price - data.price * data.discount * 0.01}원</TextH3B>
+                <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
+                <TextH3B padding={'0 0 0 4px'}>{getMenuDetailPrice().discountedPrice}원</TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
             {hasAvailableCoupon ? (
