@@ -140,7 +140,7 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  //최근 픽업 이력
+  //TODO 최근 픽업 이력
   const getRecentSpotList = async () => {
     setRecentPickedSpotList(RECENT_SPOT);
   };
@@ -198,7 +198,7 @@ const SpotSearchPage = (): ReactElement => {
     getRecentSpotList();
     getSearchRecommendList();
   }, []);
-
+  
   return (
     <Container>
       <Wrapper>
@@ -210,6 +210,9 @@ const SpotSearchPage = (): ReactElement => {
           eventHandler={changeInputHandler}
           onFocus={() => {
             setInputFocus(true);
+          }}
+          onBlur={() => {
+            setInputFocus(false);
           }}
           ref={inputRef}
         />
