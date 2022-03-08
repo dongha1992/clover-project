@@ -28,16 +28,8 @@ const TotalReviewPage = ({ menuId }: any) => {
       const { data } = await axios.get(`${BASE_URL}/review`);
 
       const { searchReviewImages, searchReviews } = data.data;
-      const idByReviewImg: Obj = pipe(
-        searchReviewImages,
-        groupBy((review: any) => review.menuReviewId)
-      );
 
-      const mergedReviews = searchReviews.map((review: ISearchReviews) => {
-        return { ...review, reviewImg: idByReviewImg[review.id] || [] };
-      });
-
-      return { searchReviewImages, searchReviews, mergedReviews };
+      return { searchReviewImages, searchReviews };
     },
 
     {
@@ -66,11 +58,22 @@ const TotalReviewPage = ({ menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
+  /* TODO: 함수화 */
+
+  const idByReviewImg: Obj = pipe(
+    data?.searchReviewImages,
+    groupBy((review: any) => review.menuReviewId)
+  );
+
+  const mergedReviews = data?.searchReviews.map((review: ISearchReviews) => {
+    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
+  });
+
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  const hasReivew = data?.mergedReviews.length > 0;
+  const hasReivew = data?.searchReviews.length > 0;
 
   return (
     <Container>
@@ -88,13 +91,20 @@ const TotalReviewPage = ({ menuId }: any) => {
             상품의 첫 번째 후기를 작성해주세요 :)
           </TextB2R>
         )}
-        <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" margin="0 0 32px 0">
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          borderRadius="8"
+          margin="0 0 32px 0"
+          onClick={() => router.push(`/mypage/review/write/${menuId}`)}
+        >
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {data?.mergedReviews.map((review: any, index: number) => {
+        {mergedReviews.map((review: any, index: number) => {
           return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
       </ReviewWrapper>

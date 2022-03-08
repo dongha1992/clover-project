@@ -977,3 +977,24 @@ export interface IReviewsDetailResponse {
     searchReviewImages: ISearchReviewImages[];
   };
 }
+
+export interface IPostMenuReview {
+  files: FormData;
+  content: string;
+  menuDetailId: number;
+  menuId: number;
+  menuReviewImages: [
+    {
+      height: number;
+      main: boolean;
+      name: string;
+      priority: number;
+      size: number;
+      width: number;
+    }
+  ];
+  orderDeliveryId: number;
+  rating: number;
+}
+
+export interface IPostMenuReviewResponse {}
