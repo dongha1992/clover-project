@@ -6,32 +6,40 @@ import { ReviewDetailItem } from '@components/Pages/Review';
 import { homePadding } from '@styles/theme';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
+import { useQuery } from 'react-query';
+import { getReviewDetailApi } from '@api/menu';
+import { Obj } from '@model/index';
+import assignIn from 'lodash-es/assignIn';
 
-const ReviewDetailPage = ({ id }: any) => {
-  const [selectedReviewDetail, setSelectedReviewDetail] = useState<any>({});
-
+const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getReviewDetailItem();
-  }, []);
+  const {
+    data: selectedReviewDetail,
+    error,
+    isLoading,
+  } = useQuery(
+    'getReviewDetail',
+    async () => {
+      const { data } = await getReviewDetailApi(Number(reviewId));
+      const { searchReview, searchReviewImages } = data.data;
 
-  const getReviewDetailItem = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    const selectedReview: any = data.data
-      .find((item: any) => item.id === Number(id))
-      .reviews.find((item: any) => item.id === Number(id));
-    setSelectedReviewDetail(selectedReview);
-  };
+      return assignIn(searchReview, { reviewImg: searchReviewImages });
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const clickImgViewHandler = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
-
-  if (!Object.keys(selectedReviewDetail).length) {
+  if (isLoading) {
     return <div>로딩중</div>;
   }
-
   return (
     <Container>
       <ReviewDetailItem review={selectedReviewDetail} isDetailPage clickImgViewHandler={clickImgViewHandler} />
@@ -46,7 +54,7 @@ const Container = styled.div`
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
   return {
-    props: { id },
+    props: { reviewId: id },
   };
 }
 

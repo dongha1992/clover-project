@@ -52,7 +52,7 @@ const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail, averageR
               );
             }
             return (
-              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.id)}>
+              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.menuReviewId)}>
                 <Image
                   src={IMAGE_S3_URL + review?.url}
                   alt="리뷰이미지"
