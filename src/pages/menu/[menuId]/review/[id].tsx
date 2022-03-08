@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import { ReviewDetailItem } from '@components/Pages/Review';
 import { homePadding } from '@styles/theme';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import { useQuery } from 'react-query';
 import { getReviewDetailApi } from '@api/menu';
-import { Obj } from '@model/index';
 import assignIn from 'lodash-es/assignIn';
 
 const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
@@ -37,9 +34,11 @@ const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
   const clickImgViewHandler = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
+
   if (isLoading) {
     return <div>로딩중</div>;
   }
+
   return (
     <Container>
       <ReviewDetailItem review={selectedReviewDetail} isDetailPage clickImgViewHandler={clickImgViewHandler} />
