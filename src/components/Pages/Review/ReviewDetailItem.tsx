@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
-import { theme, showMoreText, homePadding } from '@styles/theme';
+import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -36,13 +36,11 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
             <ReviewBody>
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
-                {review.imageUrl?.map((img: any, index: number) => {
-                  /* TODO: menu review 나오면 수정 */
-                  if (index > 1) return;
+                {review.reviewImg?.map((img: any, index: number) => {
                   return (
                     <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(review.imageUrl)} key={index}>
                       <Image
-                        src={IMAGE_S3_URL + img}
+                        src={IMAGE_S3_URL + img.url}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}
@@ -53,16 +51,16 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
                   );
                 })}
               </ImgWrapper>
-              {!isDetailPage && review.reply ? (
+              {!isDetailPage && review.comment ? (
                 <ReplyContent>
                   <ReplyHeader>
-                    <TextH6B color={theme.greyScale65}>{review.reply.name}</TextH6B>
+                    <TextH6B color={theme.greyScale65}>{review.comment}</TextH6B>
                     <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
-                      {review.reply.createdAt}
+                      {review.comment}
                     </TextB3R>
                   </ReplyHeader>
                   <ReplyBody>
-                    <TextB3R color={theme.greyScale65}>{review.reply.content}</TextB3R>
+                    <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
                   </ReplyBody>
                 </ReplyContent>
               ) : null}

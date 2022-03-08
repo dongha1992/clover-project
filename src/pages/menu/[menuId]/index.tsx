@@ -79,9 +79,7 @@ const MenuDetailPage = ({ menuId }: any) => {
     },
 
     {
-      onSuccess: (data) => {
-        dispatch(SET_MENU_ITEM(data));
-      },
+      onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -133,8 +131,6 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const renderBottomContent = () => {
-    console.log(reviews, '!!');
-
     switch (selectedTab) {
       case '/menu/detail/review':
         return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
