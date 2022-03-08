@@ -9,12 +9,41 @@ import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
+import { pipe, indexBy } from '@fxts/core';
+import { Obj, ISearchReviews } from '@model/index';
+
+export interface IMergedReview {
+  id: number;
+  userNickName: string;
+  menuName: string;
+  menuDetailName: string;
+  orderCount: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+  reviewImg: { id: number; url: string; width: number; height: number; size: number };
+}
 
 const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
-  reviews = [...reviews, ...reviews, ...reviews];
   const dispatch = useDispatch();
+  const { searchReviews, searchReviewImages } = reviews;
+  const hasReivew = searchReviewImages.length > 0;
 
-  const hasReivew = reviews.length > 0;
+  const idByReviewImg: Obj = pipe(
+    searchReviewImages,
+    indexBy((review: any) => review.menuReviewId)
+  );
+
+  const mergedReviews = searchReviews.map((review: ISearchReviews) => {
+    return { ...review, reviewImg: idByReviewImg[review.id] };
+  });
+
+  const getAverageRate = () => {
+    const totalRating = searchReviews.reduce((rating: number, review: ISearchReviews) => {
+      return rating + review.rating;
+    }, 0);
+    return (totalRating / searchReviews.length).toFixed(1);
+  };
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -36,11 +65,21 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
+  if (mergedReviews.length === 0) {
+    return <div>로딩</div>;
+  }
+
   return (
     <Container isSticky={isSticky}>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
-          <ReviewOnlyImage reviews={reviews} goToReviewImages={goToReviewImages} goToReviewDetail={goToReviewDetail} />
+          <ReviewOnlyImage
+            reviews={searchReviewImages}
+            goToReviewImages={goToReviewImages}
+            goToReviewDetail={goToReviewDetail}
+            averageRating={getAverageRate()}
+            totalReviews={searchReviews.length}
+          />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
             상품의 첫 번째 후기를 작성해주세요 :)
@@ -59,11 +98,11 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {reviews.map((review: any, index: number) => {
+        {mergedReviews.map((review: any, index: number) => {
           return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
         <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-          {reviews.length}개 후기 전체보기
+          {mergedReviews?.length}개 후기 전체보기
         </Button>
       </ReviewWrapper>
     </Container>

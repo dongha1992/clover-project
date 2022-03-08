@@ -1,7 +1,7 @@
 import { pipe, map, sortBy, take, toArray } from '@fxts/core';
 
 export const getMenuDisplayPrice = (
-  menuDetails: any[]
+  menuDetails: any
 ): {
   discount: number;
   discountedPrice: number;
