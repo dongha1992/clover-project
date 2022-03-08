@@ -9,7 +9,7 @@ import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { pipe, indexBy } from '@fxts/core';
+import { pipe, groupBy } from '@fxts/core';
 import { Obj, ISearchReviews } from '@model/index';
 
 export interface IMergedReview {
@@ -31,11 +31,11 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
 
   const idByReviewImg: Obj = pipe(
     searchReviewImages,
-    indexBy((review: any) => review.menuReviewId)
+    groupBy((review: any) => review.menuReviewId)
   );
 
   const mergedReviews = searchReviews.map((review: ISearchReviews) => {
-    return { ...review, reviewImg: idByReviewImg[review.id] };
+    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
   });
 
   const getAverageRate = () => {
