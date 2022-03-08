@@ -22,14 +22,14 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.user}
+                    {review.userNickName}
                   </TextH6B>
                   <TextB3R color={theme.greyScale65}>{review.createdAt}</TextB3R>
                 </UserInfo>
               </RatingAndUser>
               <TagWrapper>
                 <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                  {review.order}번 째 구매
+                  {review.orderCount}번 째 구매
                 </Tag>
               </TagWrapper>
             </ReviewHeader>
@@ -37,8 +37,9 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
                 {review.reviewImg?.map((img: any, index: number) => {
+                  const imgUrlForViwer = review.reviewImg.map((item: any) => item.url);
                   return (
-                    <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(review.imageUrl)} key={index}>
+                    <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(imgUrlForViwer)} key={index}>
                       <Image
                         src={IMAGE_S3_URL + img.url}
                         alt="리뷰이미지"
