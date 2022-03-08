@@ -21,6 +21,7 @@ type TProps = {
 const HorizontalItem = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  console.log(item, 'item');
 
   const { menuDetails } = item;
   const { discount, price } = getMenuDisplayPrice(menuDetails);

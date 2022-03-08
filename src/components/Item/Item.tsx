@@ -24,7 +24,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const router = useRouter();
 
   const { menuDetails } = item;
-  const { discount, price } = getMenuDisplayPrice(menuDetails);
+  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
@@ -74,7 +74,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
           <TextH5B color={theme.brandColor} padding="0 4px 0 0">
             {discount}%
           </TextH5B>
-          <TextH5B>{price}원</TextH5B>
+          <TextH5B>{discountedPrice}원</TextH5B>
         </PriceWrapper>
         <DesWrapper>
           <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>

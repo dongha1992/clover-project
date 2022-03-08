@@ -43,10 +43,12 @@ const AddressDetailPage = () => {
           latitude,
           longitude,
         });
-        dispatch(SET_SPOT_POSITIONS({
-          latitude: latitude,
-          longitude: longitude,
-        }));
+        dispatch(
+          SET_SPOT_POSITIONS({
+            latitude: latitude,
+            longitude: longitude,
+          })
+        );
       } else {
         // 검색 결과가 없는 경우?
       }
@@ -56,9 +58,9 @@ const AddressDetailPage = () => {
   const setUserLocationHandler = () => {
     dispatch(SET_LOCATION(tempLocation));
     dispatch(INIT_LOCATION_TEMP());
-    if(isSpot){
+    if (isSpot) {
       router.push('/spot');
-    }else{
+    } else {
       router.push('/');
     }
   };
@@ -79,10 +81,7 @@ const AddressDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <MapAPI
-          centerLat={latitudeLongitude.latitude}
-          centerLng={latitudeLongitude.longitude}
-        />
+        <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
       </MapWrapper>
       {canNotDelivery ? (
         <ButtonGroup
@@ -93,11 +92,7 @@ const AddressDetailPage = () => {
         />
       ) : (
         <ButtonWrapper>
-          <Button
-            height="100%"
-            borderRadius="0"
-            onClick={setUserLocationHandler}
-          >
+          <Button height="100%" borderRadius="0" onClick={setUserLocationHandler}>
             설정하기
           </Button>
         </ButtonWrapper>

@@ -20,9 +20,11 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuApi } from '@api/menu';
-import { IMAGE_S3_URL } from '@constants/mock';
+import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
+import { BASE_URL, IMAGE_S3_URL } from '@constants/mock';
 import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
+
+import axios from 'axios';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -51,9 +53,27 @@ const MenuDetailPage = ({ menuId }: any) => {
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenu',
+    'getMenuDetail',
     async () => {
-      const { data } = await getMenuApi(menuId);
+      const { data } = await getMenuDetailApi(menuId);
+
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: reviews, error } = useQuery(
+    'getMenuDetailReview',
+    async () => {
+      // const { data } = await getMenuDetailReviewApi(menuId);
+      const { data } = await axios.get(`${BASE_URL}/review`);
 
       return data.data;
     },
@@ -113,8 +133,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const renderBottomContent = () => {
-    if (!menuItem.reviews) return;
-    const { reviews } = menuItem;
+    console.log(reviews, '!!');
 
     switch (selectedTab) {
       case '/menu/detail/review':
@@ -242,7 +261,7 @@ const MenuDetailPage = ({ menuId }: any) => {
                 더보기
               </TextH6B>
             </ReviewHeader>
-            {/* {data.reviews && <ReviewList reviews={data.reviews} onClick={goToReviewDetail} />} */}
+            {reviews && <ReviewList reviews={reviews} onClick={goToReviewDetail} />}
           </ReviewWrapper>
         </ReviewContainer>
         <DetailInfoContainer>
@@ -266,13 +285,13 @@ const MenuDetailPage = ({ menuId }: any) => {
       <AdWrapper></AdWrapper>
       <div ref={tabRef} />
       <Bottom>
-        {/* <StickyTab
+        <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: data?.reviews.length }}
+          countObj={{ 후기: reviews?.searchReviews.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
-        /> */}
+        />
         <BottomContent>{renderBottomContent()}</BottomContent>
       </Bottom>
     </Container>

@@ -940,3 +940,40 @@ export interface IGetMenusResponse {
   data: IMenus[];
   message: string;
 }
+export interface ISearchReviews {
+  id: number;
+  userNickName: string;
+  menuName: string;
+  menuDetailName: string;
+  orderCount: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+}
+
+export interface ISearchReviewImages {
+  id: number;
+  url: string;
+  width: number;
+  height: number;
+  size: number;
+}
+export interface IMenuReviews {
+  searchReviews: ISearchReviews[];
+  searchReviewImages: ISearchReviewImages[];
+}
+
+export interface IMenuReviewsResponse {
+  code: number;
+  data: IMenuReviews[];
+  message: string;
+}
+
+export interface IReviewsDetailResponse {
+  code: number;
+  message: string;
+  data: {
+    searchReview: ISearchReviews;
+    searchReviewImages: ISearchReviewImages[];
+  };
+}
