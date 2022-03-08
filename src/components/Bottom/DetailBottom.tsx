@@ -60,7 +60,9 @@ const DetailBottom = () => {
           content: <CartSheet />,
         })
       );
+      return;
     }
+
     if (tempNotiOff) {
       const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
       dispatch(

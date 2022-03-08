@@ -12,7 +12,7 @@ import router, { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { Obj } from '@model/index';
 import axios from 'axios';
-import { SET_LOGIN_SUCCESS, userForm } from '@store/user';
+import { SET_LOGIN_SUCCESS } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
 import { userLogin } from '@api/user';
@@ -39,7 +39,6 @@ const OnBoarding: NextPage = () => {
     email: 15,
   };
 
-  const { user } = useSelector(userForm);
   const dispatch = useDispatch();
   const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();

@@ -8,13 +8,18 @@ import { theme, FlexCol, FlexBetween, bottomSheetButton } from '@styles/theme';
 import { ToggleButton, Button } from '@components/Shared/Button';
 import { useQuery } from 'react-query';
 import { getSpotsFilter } from '@api/spot';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SET_SPOTS_FILTERED, spotSelector, INIT_SPOT_FILTERED } from '@store/spot';
 
 /* TODO : 다른 필터에서 전체 선택 시 해제되는 거 spot은 없음 이거 로직 변경, toggle시 전체 선택 해제로 */
 
 const SpotSearchFilter = () => {
   const dispatch = useDispatch();
+  const { 
+    spotsSearchResultFiltered
+  } = useSelector(spotSelector);
+
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(['']);
   const [selectedRadioId, setSelectedRadioId] = useState(1);
   const [publicToggle, setPublicToggle] = useState(false);
@@ -64,9 +69,15 @@ const SpotSearchFilter = () => {
     setSelectedCheckboxIds(['']);
     setPublicToggle(false);
     setPrivateToggle(false);
+    dispatch(INIT_SPOT_FILTERED());
   };
 
   const clickButtonHandler = () => {
+    dispatch(SET_SPOTS_FILTERED({
+      ...spotsSearchResultFiltered,
+      public: publicToggle,
+      private: privateToggle,
+    }));
     dispatch(INIT_BOTTOM_SHEET());
   };
 
@@ -114,6 +125,7 @@ const SpotSearchFilter = () => {
           기타
         </TextH4B>
         <MultipleFilter
+          etcFilter
           data={spotsFilter?.etcFilters}
           changeHandler={checkboxHandler}
           selectedCheckboxIds={selectedCheckboxIds}

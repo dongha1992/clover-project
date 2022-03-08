@@ -1,16 +1,27 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
+import { BASE_URL } from '@constants/mock';
+import axios from 'axios';
+
+export const UPDATE_CART_LIST = createAsyncThunk('cart/updateCart', async () => {
+  const { data } = await axios.get(`${BASE_URL}/cartList`);
+  return data.data;
+});
 
 type TProps = {
   cartLists: any[];
   cartSheetObj: any;
   isFromDeliveryPage: boolean;
+  isLoading: boolean;
+  isError: boolean;
 };
 
 const initialState: TProps = {
   cartLists: [],
   cartSheetObj: {},
   isFromDeliveryPage: false,
+  isLoading: false,
+  isError: false,
 };
 
 export const cart = createSlice({
@@ -27,6 +38,10 @@ export const cart = createSlice({
       state.cartLists.push(...action.payload);
     },
 
+    INIT_CART_LISTS: (state, action: PayloadAction) => {
+      state.cartLists = [];
+    },
+
     SET_AFTER_SETTING_DELIVERY: (state, action: PayloadAction) => {
       state.isFromDeliveryPage = true;
     },
@@ -34,11 +49,26 @@ export const cart = createSlice({
     INIT_AFTER_SETTING_DELIVERY: (state, action: PayloadAction) => {
       state.isFromDeliveryPage = false;
     },
+
     REMOVE_CART_ITEM: (state, { payload }: PayloadAction<number>) => {
       // const newState = state.tempSelectedMenus.filter(
       //   (item) => item.id !== payload
       // );
     },
+  },
+
+  extraReducers: (builder) => {
+    builder.addCase(UPDATE_CART_LIST.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(UPDATE_CART_LIST.fulfilled, (state: any, action) => {
+      state.isLoading = false;
+      state.cartLists = action.payload;
+    });
+    builder.addCase(UPDATE_CART_LIST.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+    });
   },
 });
 
@@ -48,6 +78,7 @@ export const {
   SET_AFTER_SETTING_DELIVERY,
   INIT_AFTER_SETTING_DELIVERY,
   REMOVE_CART_ITEM,
+  INIT_CART_LISTS,
 } = cart.actions;
 export const cartForm = (state: AppState): TProps => state.cart;
 export default cart.reducer;

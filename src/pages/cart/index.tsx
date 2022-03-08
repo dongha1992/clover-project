@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { AxiosError } from 'axios';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
 import {
   homePadding,
   theme,
+  flexCenter,
   ScrollHorizonList,
   FlexBetween,
   FlexStart,
@@ -12,6 +14,7 @@ import {
   FlexCol,
   FlexRow,
   fixedBottom,
+  FlexCenter,
 } from '@styles/theme';
 import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
@@ -24,17 +27,22 @@ import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-import { INIT_AFTER_SETTING_DELIVERY, cartForm } from '@store/cart';
+import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
+import { SET_ORDER_ITEMS } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj } from '@model/index';
-import isNill from 'lodash-es/isNil';
+import { Obj, IOrderDeliveries, IGetOrderListResponse } from '@model/index';
+import { isNil, isEqual, includes } from 'lodash-es';
+import { flow, map, filter } from 'lodash/fp';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { availabilityDestination } from '@api/destination';
+import { getOrderLists } from '@api/order';
+import { userForm } from '@store/user';
+import { onUnauthorized } from '@api/Api';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -46,7 +54,7 @@ const mapper: Obj = {
 /*TODO: 장바구니 비었을 때 UI */
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-interface ILunchOrDinner {
+export interface ILunchOrDinner {
   id: number;
   value: string;
   text: string;
@@ -57,56 +65,15 @@ interface ILunchOrDinner {
 }
 
 //temp
-export interface IOtherDeliveryInfo {
-  id: number;
-  location: {
-    address: string;
-    addressDetail: string;
-  };
-  delivery: string;
-  deliveryTime: string;
-  deliveryDate: string;
-  totalPrice: number;
-  deliveryFee: number;
-}
 
-const otherDeliveryInfo: IOtherDeliveryInfo[] = [
-  {
-    id: 1,
-    location: {
-      address: '주소',
-      addressDetail: '상세주소',
-    },
-    delivery: 'QUICK',
-    deliveryTime: 'LUNCH',
-    deliveryDate: '2022-02-23',
-    totalPrice: 30000,
-    deliveryFee: 3000,
-  },
-  {
-    id: 2,
-    location: {
-      address: '주소',
-      addressDetail: '상세주소',
-    },
-    delivery: 'QUICK',
-    deliveryTime: 'LUNCH',
-    deliveryDate: '2022-02-19',
-    totalPrice: 30000,
-    deliveryFee: 3000,
-  },
-];
-
-//temp
-const isSoldout = true;
 const disabledDates = ['2022-02-21', '2022-02-22'];
 
 const CartPage = () => {
-  const [cartItemList, setCartItemList] = useState([]);
-  const [itemList, setItemList] = useState([]);
-  const [checkedMenuList, setCheckedMenuList] = useState<any[]>([]);
-  const [checkedDisposableList, setCheckedDisposalbleList] = useState<any[]>([]);
-  const [isAllChecked, setIsAllchecked] = useState<boolean>(false);
+  const [cartItemList, setCartItemList] = useState<any[]>([]);
+  const [itemList, setItemList] = useState<any[]>([]);
+  const [checkedMenuIdList, setCheckedMenuIdList] = useState<number[]>([]);
+  const [selectedMenuList, setSelectedMenuList] = useState<any[]>([]);
+  const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
     {
       id: 1,
@@ -129,33 +96,170 @@ const CartPage = () => {
   ]);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState([
-    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100 },
-    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100 },
+    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
+    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
-
+  const [otherDeliveries, setOtherDeliveries] = useState<IGetOrderListResponse[]>([]);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { isFromDeliveryPage } = useSelector(cartForm);
+  const { isFromDeliveryPage, cartLists } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { isLoginSuccess } = useSelector(userForm);
 
-  const getLists = async () => {
-    try {
-      const { data } = await axios.get(`${BASE_URL}/cartList`);
-      const { data: itemList } = await axios.get(`${BASE_URL}/itemList`);
-      setCartItemList(data.data);
-      setItemList(itemList.data);
-    } catch (error) {
-      console.error(error);
+  const queryClient = useQueryClient();
+
+  const { isLoading } = useQuery(
+    'getCartList',
+    async () => {
+      const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      onSuccess: (data) => {
+        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
+        setCartItemList(data);
+        dispatch(INIT_CART_LISTS());
+        dispatch(SET_CART_LISTS(data));
+      },
     }
+  );
+
+  const {} = useQuery(
+    'getItemList',
+    async () => {
+      const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
+      setItemList(data.data);
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const {} = useQuery(
+    'getOrderLists',
+    async () => {
+      // const params = {
+      //   days: 90,
+      //   page: 1,
+      //   size: 10,
+      //   type: 'GENERAL',
+      // };
+
+      // const { data } = await getOrderLists(params);
+
+      /* temp */
+      const { data } = await axios.get(`${BASE_URL}/orderList`);
+      return data.data;
+    },
+    {
+      onSuccess: (data) => {
+        const result = checkHasOtherDeliveries(data);
+        setOtherDeliveries(result);
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const hasDeliveryTypeAndDestination = !isNil(userDestinationStatus) && !isNil(userDestination);
+
+  // const { data: result, refetch } = useQuery(
+  //   ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
+  //   async () => {
+  //     const params = {
+  //       roadAddress: userDestination?.location.address!,
+  //       zipCode: userDestination?.location.zipCode!,
+  //       delivery: userDestinationStatus.toUpperCase() || null,
+  //     };
+  //     const { data } = await availabilityDestination(params);
+
+  //     if (data.code === 200) {
+  //       const { morning, parcel, quick, spot } = data.data;
+  //       console.log(data.data, 'data.data');
+  //     }
+  //   },
+  //   {
+  //     onSuccess: async () => {},
+  //     onError: (error: AxiosError) => {
+  //       const { message } = error.response?.data;
+  //       alert(message);
+  //       return;
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     cacheTime: 0,
+  //     enabled: hasDeliveryTypeAndDestination,
+  //   }
+  // );
+
+  const { mutate: mutateItemQuantity } = useMutation(
+    async (params: { menuDetailId: number; quantity: number }) => {
+      const { menuDetailId, quantity } = params;
+
+      /* TODO : 구매제한체크 api */
+      const checkHasLimitQuantity = selectedMenuList.find((item) => item.id === menuDetailId)?.limitQuantity;
+      if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
+        return;
+      }
+
+      const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
+    },
+    {
+      onSuccess: async () => {
+        // Q. invalidateQueries랑 refetchQueries 차이
+        // await queryClient.invalidateQueries('getCartList');
+        await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
+
+  const { mutate: mutateDeleteItem } = useMutation(
+    async () => {
+      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuIdList });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
+
+  // const { mutateAsync: mutateAddOrder } = useMutation(
+  //   async () => {
+  //     const { data } = await axios.delete(`${BASE_URL}/orderList`, { data });
+  //   },
+  //   {
+  //     onSuccess: async () => {
+  //       await queryClient.refetchQueries('getOrderList');
+  //     },
+  //   }
+  // );
+
+  const checkHasOtherDeliveries = (list: IGetOrderListResponse[]) => {
+    const checkAvailableOtherDelivery = ({ deliveryStatus, delivery, location }: IGetOrderListResponse) => {
+      const availableDeliveryStatus: string[] = ['PREPARING', 'PROGRESS'];
+      const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
+      const sameDeliveryAddress = isEqual(location, userDestination?.location);
+      const avaliableStatus = availableDeliveryStatus.includes(deliveryStatus);
+
+      return avaliableStatus && sameDeliveryAddress && sameDeliveryType;
+    };
+
+    return flow(filter((data: IGetOrderListResponse) => checkAvailableOtherDelivery(data)))(list);
   };
 
   const handleSelectCartItem = (id: any) => {
-    const findItem = checkedMenuList.find((_id: number) => _id === id);
-    let tempCheckedMenuList = checkedMenuList.slice();
+    const findItem = checkedMenuIdList.find((_id: number) => _id === id);
+    let tempCheckedMenuList = checkedMenuIdList.slice();
 
     if (findItem) {
       tempCheckedMenuList = tempCheckedMenuList.filter((_id) => _id !== id);
@@ -163,34 +267,42 @@ const CartPage = () => {
         setIsAllchecked(!isAllChecked);
       }
     } else {
+      const checkIsSoldout = cartItemList.find((item) => {
+        if (item.soldout) {
+          return item.id === id;
+        }
+      });
+
+      if (checkIsSoldout) {
+        return;
+      }
+
       tempCheckedMenuList.push(id);
     }
 
-    setCheckedMenuList(tempCheckedMenuList);
+    setCheckedMenuIdList(tempCheckedMenuList);
   };
 
-  const handleSelectAllCartItem = () => {
-    /*TODO: 하나 해제 했을 때 다 해제 로직 */
-    const checkedMenuId = cartItemList.map((item: any) => item.id);
+  const handleSelectAllCartItem = useCallback(() => {
+    const checkedMenuId = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
+
     if (!isAllChecked) {
-      setCheckedMenuList(checkedMenuId);
+      setCheckedMenuIdList(checkedMenuId);
     } else {
-      setCheckedMenuList([]);
+      setCheckedMenuIdList([]);
     }
     setIsAllchecked(!isAllChecked);
-  };
+  }, [isAllChecked]);
 
   const handleSelectDisposable = (id: any) => {
-    const findItem = checkedDisposableList.find((_id) => _id === id);
-    let tempCheckedDisposableList = checkedDisposableList.slice();
-
-    if (findItem) {
-      tempCheckedDisposableList = tempCheckedDisposableList.filter((_id) => _id !== id);
-    } else {
-      tempCheckedDisposableList.push(id);
-    }
-
-    setCheckedDisposalbleList(tempCheckedDisposableList);
+    const newDisposableList = disposableList.map((item) => {
+      if (item.id === id) {
+        return { ...item, isSelected: !item.isSelected };
+      } else {
+        return item;
+      }
+    });
+    setDisposableList(newDisposableList);
   };
 
   const handleLunchOrDinner = (selectedItem: ILunchOrDinner) => {
@@ -211,7 +323,7 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => removeItem(),
+        onSubmit: () => mutateDeleteItem(),
       })
     );
   };
@@ -256,23 +368,40 @@ const CartPage = () => {
     }
   };
 
-  const buttonRenderer = () => {
+  const clickPlusButton = (id: number, quantity: number) => {
+    const parmas = {
+      menuDetailId: id,
+      quantity,
+    };
+    mutateItemQuantity(parmas);
+  };
+
+  const clickMinusButton = (id: number, quantity: number) => {
+    const parmas = {
+      menuDetailId: id,
+      quantity,
+    };
+    mutateItemQuantity(parmas);
+  };
+
+  const clickRestockNoti = () => {};
+
+  const getTotalPrice = useCallback((): number => {
+    const itemsPrice = getItemsPrice();
+    const disposablePrice =
+      disposableList.reduce((totalPrice, item) => {
+        return totalPrice + item.price * item.quantity;
+      }, 0) || 0;
+    return itemsPrice + disposablePrice;
+  }, [selectedMenuList]);
+
+  const getItemsPrice = useCallback((): number => {
     return (
-      <Button borderRadius="0" height="100%">
-        {getTotalPrice()}원 주문하기
-      </Button>
+      selectedMenuList.reduce((totalPrice, item) => {
+        return totalPrice + item.price * item.quantity;
+      }, 0) || 0
     );
-  };
-
-  const getTotalPrice = (): number => {
-    return cartItemList.reduce((acc: number, cur: any) => {
-      return acc + cur.price;
-    }, 0);
-  };
-
-  const removeItem = () => {
-    console.log('fire');
-  };
+  }, [selectedMenuList]);
 
   const goToDeliveryInfo = () => {
     router.push('/cart/delivery-info');
@@ -283,8 +412,11 @@ const CartPage = () => {
   };
 
   const goToPayment = () => {
+    if (!hasDeliveryTypeAndDestination) return;
+
     const deliveryTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value;
     userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime }));
+    dispatch(SET_ORDER_ITEMS(selectedMenuList));
     router.push('/payment');
   };
 
@@ -294,18 +426,20 @@ const CartPage = () => {
         content: (
           <TogetherDeliverySheet
             title="함께배송 안내"
-            otherDeliveryInfo={[otherDeliveryInfo.find((item) => item.id === id)]}
+            otherDeliveryInfo={[otherDeliveries.find((item: IGetOrderListResponse) => item.id === id)]}
           />
         ),
       })
     );
   };
 
-  const clickPlusButton = (id: number, quantity: number) => {};
-
-  const clickMinusButton = (id: number, quantity: number) => {
-    console.log(quantity);
-  };
+  const buttonRenderer = useCallback(() => {
+    return (
+      <Button borderRadius="0" height="100%" disabled={!hasDeliveryTypeAndDestination}>
+        {getTotalPrice()}원 주문하기
+      </Button>
+    );
+  }, [selectedMenuList]);
 
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());
@@ -348,30 +482,105 @@ const CartPage = () => {
   }, [calendarRef.current?.offsetTop]);
 
   useEffect(() => {
-    getLists();
-  }, []);
+    // 선택 메뉴 다 선택 시 all checked, 전체 삭제 하면 전체 선택 풀림
+    if (cartItemList.length > 0 && checkedMenuIdList.length === cartItemList.length) {
+      setIsAllchecked(true);
+    } else if (cartItemList.length === 0) {
+      setIsAllchecked(false);
+    }
+  }, [checkedMenuIdList, cartItemList]);
+
+  useEffect(() => {
+    // 전체 선택 시 선택 메뉴 다 선택됨
+    let tempCheckMenuList = [];
+
+    if (isAllChecked && !isLoading) {
+      tempCheckMenuList = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
+      setCheckedMenuIdList(tempCheckMenuList);
+    }
+  }, [isLoading, cartItemList]);
+
+  useEffect(() => {
+    const filteredMenus = cartItemList.filter((item) => checkedMenuIdList.includes(item.id));
+    setSelectedMenuList(filteredMenus);
+  }, [checkedMenuIdList, cartItemList]);
+
+  useEffect(() => {
+    // 초기 렌더 1회 장바구니 아이템 전체 선택
+    setIsAllchecked(true);
+
+    // 합배송 관련
+    if (otherDeliveries?.length > 0) {
+      const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
+      for (const otherDelivery of otherDeliveries) {
+        const { deliveryDate, deliveryDetail } = otherDelivery;
+
+        const sameDeliveryTime = isSpotOrQuick
+          ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
+          : true;
+        const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
+
+        if (sameDeliveryDate && sameDeliveryTime) {
+          goToTogetherDelivery(otherDelivery.id);
+        }
+      }
+    }
+  }, [selectedDeliveryDay, lunchOrDinner]);
+
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
 
   const isSpot = userDestinationStatus == 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
 
+  if (cartItemList.length === 0) {
+    return (
+      <EmptyContainer>
+        <FlexCol width="100%">
+          <TextB2R padding="0 0 32px 0" center>
+            장바구니가 비었어요 😭
+          </TextB2R>
+          <BtnWrapper onClick={goToSearchPage}>
+            <Button backgroundColor={theme.white} color={theme.black} border>
+              상품 담으러 가기
+            </Button>
+          </BtnWrapper>
+        </FlexCol>
+      </EmptyContainer>
+    );
+  }
+
   return (
     <Container>
-      <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
-        <Left>
-          <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
-          <TextH4B>{!isNill(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
-        </Left>
-        <Right >
-          <SVGIcon name="arrowRight" />
-        </Right>
-      </DeliveryMethodAndPickupLocation>
+      {isLoginSuccess ? (
+        <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
+          <Left>
+            <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
+            <TextH4B>{!isNil(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
+          </Left>
+          <Right>
+            <SVGIcon name="arrowRight" />
+          </Right>
+        </DeliveryMethodAndPickupLocation>
+      ) : (
+        <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
+          <Left>
+            <TextH4B>로그인 후 배송방법과</TextH4B>
+            <TextH4B>배송지를 설정해주세요</TextH4B>
+          </Left>
+          <Right>
+            <SVGIcon name="arrowRight" />
+          </Right>
+        </DeliveryMethodAndPickupLocation>
+      )}
       <BorderLine height={8} margin="24px 0" />
       <CartInfoContainer>
         <CartListWrapper>
           <ListHeader>
             <div className="itemCheckbox">
               <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
-              <TextB2R padding="0 0 0 8px">전체선택 (3/5)</TextB2R>
+              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenuIdList.length}/${cartItemList.length}`})</TextB2R>
             </div>
             <Right>
               <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeItemHandler}>
@@ -381,19 +590,20 @@ const CartPage = () => {
           </ListHeader>
           <BorderLine height={1} margin="16px 0" />
           <VerticalCartList>
-            {cartItemList.map((item: any, index) => (
+            {cartItemList?.map((item: any, index) => (
               <ItemWrapper key={index}>
                 <div className="itemCheckbox">
                   <Checkbox
                     onChange={() => handleSelectCartItem(item.id)}
-                    isSelected={checkedMenuList.includes(item.id)}
+                    isSelected={checkedMenuIdList.includes(item.id)}
                   />
                   <CartSheetItem
                     isCart
+                    isSoldout={item.soldout}
                     menu={item}
-                    isSoldout={item.id === 1 && isSoldout}
                     clickPlusButton={clickPlusButton}
                     clickMinusButton={clickMinusButton}
+                    clickRestockNoti={clickRestockNoti}
                   />
                 </div>
                 <div className="itemInfo">
@@ -410,13 +620,10 @@ const CartPage = () => {
             <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
           </WrapperTitle>
           <CheckBoxWrapper>
-            {disposableList.map((item, index) => (
+            {disposableList?.map((item, index) => (
               <DisposableItem key={index}>
                 <div className="disposableLeft">
-                  <Checkbox
-                    onChange={() => handleSelectDisposable(item.id)}
-                    isSelected={checkedDisposableList.includes(item.id)}
-                  />
+                  <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected} />
                   <div className="disposableText">
                     <TextB2R padding="0 4px 0 8px">{item.text}</TextB2R>
                     <TextH5B>+{item.price}원</TextH5B>
@@ -442,7 +649,7 @@ const CartPage = () => {
               이신가요?
             </span>
             <div onClick={() => setIsShow(!isShow)}>
-              <SVGIcon name={isShow ? 'triangleDown' : 'triangleUp'} />
+              <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
             </div>
           </FlexBetween>
           {isShow && (
@@ -486,10 +693,11 @@ const CartPage = () => {
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
-              otherDeliveryInfo={otherDeliveryInfo}
+              otherDeliveries={otherDeliveries}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
               goToTogetherDelivery={goToTogetherDelivery}
+              lunchOrDinner={lunchOrDinner}
             />
             {isSpotAndQuick &&
               lunchOrDinner.map((item, index) => {
@@ -544,7 +752,7 @@ const CartPage = () => {
         <TotalPriceWrapper>
           <FlexBetween>
             <TextH5B>총 상품금액</TextH5B>
-            <TextB2R>30,000원</TextB2R>
+            <TextB2R>{getItemsPrice()}</TextB2R>
           </FlexBetween>
           <BorderLine height={1} margin="16px 0" />
           <FlexBetween>
@@ -590,6 +798,12 @@ const CartPage = () => {
 const Container = styled.div`
   width: 100%;
   margin-bottom: 50px;
+`;
+
+const EmptyContainer = styled.div`
+  height: 100vh;
+  width: 100%;
+  ${flexCenter}
 `;
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
@@ -701,6 +915,9 @@ const Protein = styled.div`
 `;
 
 const GetMoreBtn = styled.div``;
+const BtnWrapper = styled.div`
+  margin: 0 24px;
+`;
 
 const CartInfoContainer = styled.div`
   ${homePadding}
