@@ -19,6 +19,32 @@ const MapAPI = ({
   centerLng,
   areaArr,
 }: IProps): ReactElement => {
+
+  const initMarkerImages = `<svg width="48" height="52" viewBox="0 0 48 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#filter0_dd_6109_128856)">
+  <path d="M40 20.6224C40 33.2955 24 40 24 40C24 40 8 33.2955 8 20.6224C8 11.4421 15.1634 4 24 4C32.8366 4 40 11.4421 40 20.6224Z" fill="#35AD73"/>
+  </g>
+  <circle cx="24" cy="20" r="5" fill="white"/>
+  <defs>
+  <filter id="filter0_dd_6109_128856" x="0" y="0" width="48" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+  <feOffset dy="4"/>
+  <feGaussianBlur stdDeviation="4"/>
+  <feComposite in2="hardAlpha" operator="out"/>
+  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6109_128856"/>
+  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+  <feOffset dy="1"/>
+  <feGaussianBlur stdDeviation="0.5"/>
+  <feComposite in2="hardAlpha" operator="out"/>
+  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+  <feBlend mode="normal" in2="effect1_dropShadow_6109_128856" result="effect2_dropShadow_6109_128856"/>
+  <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_6109_128856" result="shape"/>
+  </filter>
+  </defs>
+  </svg>`;
+
   useEffect(() => {
     initMap();
   }, [centerLat, centerLng]);
@@ -41,6 +67,14 @@ const MapAPI = ({
       },
     });
     let marker = new naver.maps.Marker({
+      icon: { // 이미지 아이콘
+        content: initMarkerImages,
+        size: new naver.maps.Size(50, 52),
+        anchor: new naver.maps.Point(25, 26),
+        onClick: () => {
+          alert('aa')
+        }
+    },
       position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
       map: map,
     });
@@ -55,7 +89,7 @@ const MapAPI = ({
             Number(areaArr[i].lng)
           ),
           //   icon: { // 이미지 아이콘
-          //     url: '',
+          //     content: `<SVGIcon name='grayGood' />`,
           //     size: new naver.maps.Size(50, 52),
           //     origin: new naver.maps.Point(0, 0),
           //     anchor: new naver.maps.Point(25, 26)

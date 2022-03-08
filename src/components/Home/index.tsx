@@ -12,6 +12,7 @@ import { BASE_URL } from '@constants/mock';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
+import SVGIcon from '@utils/SVGIcon';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
 
@@ -29,14 +30,18 @@ const Home = () => {
       const { data } = await getBannersApi(params);
       setBannerList(data.data);
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { error: eventsError } = useQuery('events-banners', async () => {
-    const params = { type: 'EVENT' };
-    const { data } = await getBannersApi(params);
-    setEventBannerList(data.data);
-  });
+  const { error: eventsError } = useQuery(
+    'events-banners',
+    async () => {
+      const params = { type: 'EVENT' };
+      const { data } = await getBannersApi(params);
+      setEventBannerList(data.data);
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const getItemLists = async () => {
     const { data } = await axios.get(`${BASE_URL}/itemList`);

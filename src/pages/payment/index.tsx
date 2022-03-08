@@ -20,7 +20,6 @@ import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -35,12 +34,41 @@ import { getMainCardLists } from '@api/card';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj } from '@model/index';
+import { orderForm } from '@store/order';
+import { userForm } from '@store/user';
+import { is } from 'immer/dist/internal';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
 /* TODO: 배송예정 어떻게? */
 /* TODO: 출입 방법 input userDestination에 담아서 서버 콜 */
+
+//temp
+export interface IDeliveries {
+  deliveryDate: string;
+  menus: { menuDetailId: number; menuQuantity: number };
+}
+
+export interface IOrderForm {
+  couponId: number;
+  deliveries: IDeliveries[];
+  delivery: string;
+  deliveryDetail: string;
+  deliveryMessage: string;
+  deliveryMessageType: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  payAmount: number;
+  point: number;
+  receiverName: string;
+  receiverTel: string;
+  spotPickupId: number;
+}
 
 const PAYMENT_METHOD = [
   {
@@ -100,13 +128,19 @@ const PaymentPage = () => {
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [itemList, setItemList] = useState<any[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
-
+  const [checkForm, setCheckForm] = useState<Obj>({
+    samePerson: { isSelected: false },
+    accessMethodReuse: { isSelected: false },
+    alwaysPointFull: { isSelected: false },
+    paymentMethodReuse: { isSelected: false },
+  });
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { orderItemList } = useSelector(orderForm);
+  const { me } = useSelector(userForm);
 
   const { data: mainCard, isLoading } = useQuery(
     'getMainCard',
@@ -119,17 +153,8 @@ const PaymentPage = () => {
     { refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
-  const getCartList = async () => {
-    const { data } = await axios.get(`${BASE_URL}/cartList`);
-    setItemList(data.data);
-  };
-
-  useEffect(() => {
-    getCartList();
-  }, []);
-
   const showSectionHandler = (selectedSection: string) => {
-    if (selectedSection === 'customInfo') {
+    if (selectedSection === 'customerInfo') {
       setShowSectionObj({
         ...showSectionObj,
         showCustomerInfoSection: !showSectionObj.showCustomerInfoSection,
@@ -144,7 +169,9 @@ const PaymentPage = () => {
 
   const checkPaymentTermHandler = () => {};
 
-  const checkSamePerson = () => {};
+  const checkFormHanlder = (name: string) => {
+    setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
+  };
 
   const selectAccessMethodHandler = () => {
     dispatch(
@@ -184,23 +211,30 @@ const PaymentPage = () => {
   const isFcoPay = selectedPaymentMethod === 1;
 
   if (isNil(userDestination)) {
-    return <div>배송정보 없음 에러</div>;
+    router.replace('/cart');
+    return <div>장바구니로 이동합니다.</div>;
   }
 
-  console.log(userDestination, 'userDestination');
-
+  if (isNil(me)) {
+    return <div>로딩</div>;
+  }
   return (
     <Container>
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
-          <TextH4B>주문상품 ({itemList.length})</TextH4B>
+          <TextH4B>주문상품 ({orderItemList.length})</TextH4B>
           <FlexRow onClick={() => showSectionHandler('orderItem')}>
-            <TextB2R padding="0 13px 0 0">상품 이름...</TextB2R>
+            <TextB2R padding="0 13px 0 0">
+              {orderItemList
+                .map((item) => item.name)
+                ?.toString()
+                .slice(0, 10) + '...'}
+            </TextB2R>
             <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {itemList.map((menu, index) => {
+          {orderItemList.map((menu, index) => {
             return <PaymentItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>
@@ -209,23 +243,23 @@ const PaymentPage = () => {
       <CustomerInfoWrapper>
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문자 정보</TextH4B>
-          <ShowBtnWrapper onClick={() => showSectionHandler('customInfo')}>
-            <TextB2R padding="0 13px 0 0">주문자 이름...</TextB2R>
+          <ShowBtnWrapper onClick={() => showSectionHandler('customerInfo')}>
+            <TextB2R padding="0 13px 0 0">{`${me?.name},${me?.tel}`}</TextB2R>
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
         <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
           <FlexBetween>
             <TextH5B>보내는 사람</TextH5B>
-            <TextB2R>김프코</TextB2R>
+            <TextB2R>{me?.name}</TextB2R>
           </FlexBetween>
           <FlexBetween margin="16px 0">
             <TextH5B>휴대폰 전화</TextH5B>
-            <TextB2R>010-2222-2222</TextB2R>
+            <TextB2R>{me?.tel}</TextB2R>
           </FlexBetween>
           <FlexBetween>
             <TextH5B>이메일</TextH5B>
-            <TextB2R>fco@freshcode.me</TextB2R>
+            <TextB2R>{me?.email}</TextB2R>
           </FlexBetween>
         </CustomInfoList>
       </CustomerInfoWrapper>
@@ -234,7 +268,7 @@ const PaymentPage = () => {
         <FlexBetween padding="0">
           <TextH4B>받는 사람 정보</TextH4B>
           <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
+            <Checkbox onChange={() => checkFormHanlder('samePerson')} isSelected={checkForm.samePerson.isSelected} />
             <TextB2R padding="0 0 0 8px">주문자와 동일</TextB2R>
           </FlexRow>
         </FlexBetween>
@@ -301,7 +335,10 @@ const PaymentPage = () => {
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
               <FlexRow>
-                <Checkbox onChange={checkSamePerson} isSelected />
+                <Checkbox
+                  onChange={() => checkFormHanlder('accessMethodReuse')}
+                  isSelected={checkForm.accessMethodReuse.isSelected}
+                />
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
@@ -343,7 +380,10 @@ const PaymentPage = () => {
             <FlexBetween>
               <TextH4B>배송 메모</TextH4B>
               <FlexRow>
-                <Checkbox onChange={checkSamePerson} isSelected />
+                <Checkbox
+                  onChange={() => checkFormHanlder('accessMethodReuse')}
+                  isSelected={checkForm.accessMethodReuse.isSelected}
+                />
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
@@ -373,7 +413,10 @@ const PaymentPage = () => {
         <FlexBetween>
           <TextH4B>포인트 사용</TextH4B>
           <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
+            <Checkbox
+              onChange={() => checkFormHanlder('alwaysPointFull')}
+              isSelected={checkForm.alwaysPointFull.isSelected}
+            />
             <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
           </FlexRow>
         </FlexBetween>
@@ -393,7 +436,10 @@ const PaymentPage = () => {
         <FlexBetween padding="0 0 24px 0">
           <TextH4B>결제수단</TextH4B>
           <FlexRow>
-            <Checkbox onChange={checkSamePerson} isSelected />
+            <Checkbox
+              onChange={() => checkFormHanlder('paymentMethodReuse')}
+              isSelected={checkForm.paymentMethodReuse.isSelected}
+            />
             <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
           </FlexRow>
         </FlexBetween>

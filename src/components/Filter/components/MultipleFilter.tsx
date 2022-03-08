@@ -14,26 +14,37 @@ interface IProps {
   }] | undefined;
   changeHandler: (id: string) => void;
   selectedCheckboxIds: string[];
+  etcFilter?: any
 };
 
 const MultipleFilter = ({
   data,
   changeHandler,
   selectedCheckboxIds,
+  etcFilter,
 }: IProps) => {
   return (
     <Container>
       <BtnContainer>
         {data &&
           data?.map((item, index) => {
-            const isSelected = selectedCheckboxIds.includes(item.name);
+            const isSelected = etcFilter ? selectedCheckboxIds.includes(item.fieldName) : selectedCheckboxIds.includes(item.name);
             return (
               <FlexRow key={index}>
-                <Checkbox
+                {
+                  etcFilter ?                 
+                  <Checkbox
+                  isSelected={isSelected}
+                  onChange={() => changeHandler(item.fieldName)}
+                  key={index}
+                />
+                  : 
+                  <Checkbox
                   isSelected={isSelected}
                   onChange={() => changeHandler(item.name)}
                   key={index}
                 />
+                }
                 {isSelected ? (
                   <TextH5B padding="4px 0 0 8px">{item.name}</TextH5B>
                 ) : (

@@ -4,7 +4,7 @@ import { theme, FlexBetween, FlexCol, FlexRow, homePadding } from '@styles/theme
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
+import { ISpotItem } from '@components/Pages/Spot/SpotsSearchItem';
 import { Obj } from '@model/index';
 
 interface IProps {

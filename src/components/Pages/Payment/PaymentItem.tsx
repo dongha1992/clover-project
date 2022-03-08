@@ -23,32 +23,20 @@ const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
           <TextB3R>{menu.name}</TextB3R>
           <FlexBetween>
             <PriceWrapper>
-              <TextH5B
-                color={theme.brandColor}
-                padding={'0 4px 0 0'}
-                className="percent"
-              >
+              <TextH5B color={theme.brandColor} padding={'0 4px 0 0'} className="percent">
                 {menu.discount}%
               </TextH5B>
               <TextH5B>{menu.price}원</TextH5B>
               <Col />
-              <TextB2R>1개</TextB2R>
+              <TextB2R>{menu.quantity}개</TextB2R>
             </PriceWrapper>
             {isDeliveryComplete ? (
               <div>
-                <Button
-                  backgroundColor={theme.white}
-                  color={theme.black}
-                  border
-                  height="38px"
-                  padding="10px 16px"
-                >
+                <Button backgroundColor={theme.white} color={theme.black} border height="38px" padding="10px 16px">
                   후기 작성
                 </Button>
               </div>
-            ) : (
-              ''
-            )}
+            ) : null}
           </FlexBetween>
         </ContentWrapper>
       </Wrapper>

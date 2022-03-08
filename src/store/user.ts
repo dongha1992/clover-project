@@ -3,6 +3,31 @@ import { AppState } from '.';
 import { setCookie, removeCookie } from '@utils/cookie';
 import { userLogin } from '@api/user';
 
+interface IMe {
+  id: string;
+  birthDate: string;
+  email: string;
+  marketingEmailReceived: boolean;
+  marketingPushReceived: boolean;
+  gender: string | null;
+  name: string;
+  nickName: string;
+  password: string;
+  marketingSmsReceived: boolean;
+  notiPushReceived: boolean;
+  primePushReceived: boolean;
+  tel: string;
+  point: number;
+  emailConfirmed: boolean;
+  telConfirmed: boolean;
+  smsDenied: boolean;
+  promotionCode: string;
+  promotionCount: number;
+  recommendCode: boolean;
+  joinType: string;
+  createdAt: string;
+}
+
 interface IUser {
   tempPasswordLogin: string;
   isLoginSuccess: boolean;
@@ -13,33 +38,13 @@ interface IUser {
     marketingEmailReceived?: boolean;
     gender?: string | null;
     name?: string;
-    nickname?: string;
+    nickName?: string;
     password?: string;
     marketingSmsReceived?: boolean;
     tel?: string;
     loginType?: string;
   };
-  user: {
-    id: string;
-    birthDate: string;
-    email: string;
-    marketingEmailReceived: boolean;
-    gender: string | null;
-    name: string;
-    nickname: string;
-    password: string;
-    marketingSmsReceived: boolean;
-    tel: string;
-    point: number;
-    emailConfirmed: boolean;
-    telConfirmed: boolean;
-    smsDenied: boolean;
-    promotionCode: string;
-    promotionCount: number;
-    recommendCode: boolean;
-    joinType: string;
-    createdAt: string;
-  };
+  me: IMe | null;
 }
 
 const initialState: IUser = {
@@ -52,33 +57,13 @@ const initialState: IUser = {
     marketingEmailReceived: false,
     gender: null,
     name: '',
-    nickname: '',
+    nickName: '',
     password: '',
     marketingSmsReceived: false,
     tel: '',
     loginType: '',
   },
-  user: {
-    id: '',
-    birthDate: '',
-    email: '',
-    marketingEmailReceived: false,
-    gender: null,
-    name: '',
-    nickname: '',
-    password: '',
-    marketingSmsReceived: false,
-    tel: '',
-    point: 0,
-    emailConfirmed: false,
-    telConfirmed: false,
-    smsDenied: false,
-    promotionCode: '',
-    promotionCount: 0,
-    recommendCode: false,
-    joinType: '',
-    createdAt: '',
-  },
+  me: null,
 };
 
 export const user = createSlice({
@@ -90,6 +75,7 @@ export const user = createSlice({
     },
 
     SET_USER_AUTH: (state, { payload }: PayloadAction<any>) => {
+      console.log(payload, 'payload');
       const accessTokenObj = {
         accessToken: payload.accessToken,
         expiresIn: payload.expiresIn,
@@ -120,8 +106,8 @@ export const user = createSlice({
       state.tempPasswordLogin = payload;
     },
 
-    SET_USER: (state, { payload }: PayloadAction<IUser['user']>) => {
-      state.user = payload;
+    SET_USER: (state, { payload }: PayloadAction<IUser['me'] | null>) => {
+      state.me = payload;
     },
   },
   extraReducers: {},

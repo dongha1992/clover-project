@@ -5,12 +5,10 @@ import SVGIcon from '@utils/SVGIcon';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import StarRatingComponent from 'react-star-rating-component';
+import { IMAGE_S3_URL } from '@constants/mock';
+import Image from 'next/image';
 
-const ReviewOnlyImage = ({
-  reviews,
-  goToReviewImages,
-  goToReviewDetail,
-}: any) => {
+const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail }: any) => {
   return (
     <Container>
       <Wrapper>
@@ -26,11 +24,7 @@ const ReviewOnlyImage = ({
               starCount={5}
               value={4.0}
               renderStarIcon={(index, value) => {
-                return (
-                  <SVGIcon
-                    name={index <= value ? 'singleStar' : 'singleStarEmpty'}
-                  />
-                );
+                return <SVGIcon name={index <= value ? 'singleStar' : 'singleStarEmpty'} />;
               }}
               renderStarIconHalf={(index, value) => {
                 return <SVGIcon name="singleStarHalf" />;
@@ -45,22 +39,29 @@ const ReviewOnlyImage = ({
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>
-                      + {reviews.length - 4}
-                    </TextH1B>
+                    <TextH1B color={theme.white}>+ {reviews.length - 4}</TextH1B>
                   </LastImg>
-                  <ReviewImage src={review?.url} alt="리뷰이미지" />
+                  <Image
+                    src={IMAGE_S3_URL + review?.imageUrl[0]}
+                    alt="리뷰이미지"
+                    width={'100%'}
+                    height={'100%'}
+                    layout="responsive"
+                  />
                 </LastImgWrapper>
               );
             }
-
             return (
-              <ReviewImage
-                src={review?.url}
-                alt="리뷰이미지"
-                key={index}
-                onClick={() => goToReviewDetail(review.id)}
-              />
+              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.id)}>
+                <Image
+                  src={IMAGE_S3_URL + review?.imageUrl[0]}
+                  alt="리뷰이미지"
+                  key={index}
+                  width={'100%'}
+                  height={'100%'}
+                  layout="responsive"
+                />
+              </ReviewImgWrapper>
             );
           })}
         </ReviewSwipe>
@@ -102,17 +103,19 @@ const ReviewSwipe = styled.div`
   margin: 16px 0 24px 0;
 `;
 
-const ReviewImage = styled.img`
+const ReviewImgWrapper = styled.div`
   width: calc((100% - 24px) / 4);
-  border-radius: 8px;
+
+  > span {
+    border-radius: 8px;
+  }
 `;
 
 const LastImgWrapper = styled.div`
   position: relative;
   width: calc((100% - 24px) / 4);
-  > img {
-    width: 100%;
-    height: 100%;
+  > span {
+    border-radius: 8px;
   }
 `;
 

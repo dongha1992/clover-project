@@ -69,11 +69,11 @@ const PrivacyPage = () => {
   return (
     <Container>
       <Wrapper>
-        <InputWrapper>
+        <InputWrapper onClick={changeVersionHandler}>
           <CustmInput>
             <TextB2R>{formatDate}</TextB2R>
           </CustmInput>
-          <div className="svgWrapper" onClick={changeVersionHandler}>
+          <div className="svgWrapper">
             <SVGIcon name="triangleDown" />
           </div>
         </InputWrapper>
