@@ -2,11 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
-import { textH5 } from '@styles/theme';
-import { useSelector } from 'react-redux';
-import { destinationForm } from '@store/destination';
-import { Tooltip } from '@components/Shared/Tooltip';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { TextH4B } from '@components/Shared/Text';
 
@@ -17,6 +12,10 @@ const MyPageHeader = () => {
     router.back();
   };
 
+  const goToSetting = () => {
+    router.push('/mypage/setting');
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -24,7 +23,7 @@ const MyPageHeader = () => {
           <SVGIcon name="arrowLeft" />
         </Left>
         <TextH4B padding="2px 0 0 0">알림</TextH4B>
-        <Right>
+        <Right onClick={goToSetting}>
           <SVGIcon name="setting" />
         </Right>
       </Wrapper>
@@ -73,6 +72,7 @@ const Left = styled.div`
 const Right = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 export default MyPageHeader;
