@@ -210,6 +210,14 @@ const EditReviewPage = ({ reviewId }: any) => {
     // mutateCreateMenuReview(formData);
   };
 
+  console.log(selectedReviewDetail, 'selectedReviewDetail');
+
+  useEffect(() => {
+    if (selectedReviewDetail) {
+      setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: selectedReviewDetail.rating });
+    }
+  }, [selectedReviewDetail]);
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -242,7 +250,7 @@ const EditReviewPage = ({ reviewId }: any) => {
             name="rate"
             editing
             starCount={5}
-            value={selectedReviewDetail?.rating}
+            value={writeMenuReviewObj.rating}
             onStarHover={onStarHoverRating}
             renderStarIcon={(index, value) => {
               return <SVGIcon name={index <= value ? 'reviewStarFull' : 'reviewStarEmpty'} />;
