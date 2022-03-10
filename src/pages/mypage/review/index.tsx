@@ -9,7 +9,8 @@ import { breakpoints } from '@utils/getMediaQuery';
 import { useQuery } from 'react-query';
 import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';
-import { ReviewDetailItem } from '@components/Pages/Review';
+import { useDispatch } from 'react-redux';
+import { SET_IMAGE_VIEWER } from '@store/common';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -19,6 +20,8 @@ const TAB_LIST = [
 const ReviewPage = () => {
   const [selectedTab, setSelectedTab] = useState('/willWrite');
   const [isShow, setIsShow] = useState(false);
+
+  const dispatch = useDispatch();
 
   const {
     data: willWriteList,
@@ -63,6 +66,10 @@ const ReviewPage = () => {
     setSelectedTab(tabItem.link);
   };
 
+  const clickImgViewHandler = (images: any) => {
+    dispatch(SET_IMAGE_VIEWER(images));
+  };
+
   const countObj = {
     '작성 예정': 123,
     '작성 완료': 55,
@@ -105,10 +112,9 @@ const ReviewPage = () => {
         <Wrapper>
           <WillReviewItmesWrapper>
             {completeWriteList?.map((review, index) => {
-              const isLast = completeWriteList.length - 1 === index;
               return (
                 <div key={index}>
-                  <CompleteReviewItem review={review} isLast={isLast} />
+                  <CompleteReviewItem review={review} clickImgViewHandler={clickImgViewHandler} />
                   {completeWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
                 </div>
               );

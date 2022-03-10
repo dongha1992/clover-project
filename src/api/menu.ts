@@ -33,6 +33,12 @@ export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IRespo
   });
 };
 
+export const editMenuReviewApi = ({ formData, reviewId }: { formData: FormData; reviewId: number }) => {
+  return Api.patch(`menu/v1/review/${reviewId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
 export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsResponse>> => {
   return Api.get(`menu/v1/reviews/completion`);
 };
