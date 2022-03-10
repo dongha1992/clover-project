@@ -50,13 +50,13 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
 
-  // const isParcel = selectedAddress?.delivery === 'PARCEL';
-  // const isSpot = selectedAddress?.delivery === 'SPOT';
-  // const isMorning = selectedAddress?.delivery === 'MORNING';
+  const isParcel = selectedAddress?.delivery === 'PARCEL';
+  const isSpot = selectedAddress?.delivery === 'SPOT';
+  const isMorning = selectedAddress?.delivery === 'MORNING';
 
-  const isParcel = false;
-  const isSpot = false;
-  const isMorning = true;
+  // const isParcel = false;
+  // const isSpot = false;
+  // const isMorning = true;
 
   const getDeliveryInfo = async () => {};
 
