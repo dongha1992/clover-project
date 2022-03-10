@@ -187,6 +187,7 @@ const WriteReviewPage = ({ menuId }: any) => {
   };
 
   const finishWriteReview = async () => {
+    /* TODO: 리뷰 등록 물어봐야 함 */
     let formData = new FormData();
 
     if (writeMenuReviewObj.imgFiles.length > 0) {

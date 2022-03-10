@@ -172,35 +172,35 @@ const CartPage = () => {
 
   const hasDeliveryTypeAndDestination = !isNil(userDestinationStatus) && !isNil(userDestination);
 
-  const { data: result, refetch } = useQuery(
-    ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
-    async () => {
-      const params = {
-        roadAddress: userDestination?.location.address!,
-        jibunAddress: null,
-        zipCode: userDestination?.location.zipCode!,
-        delivery: userDestinationStatus.toUpperCase() || null,
-      };
-      const { data } = await availabilityDestination(params);
+  // const { data: result, refetch } = useQuery(
+  //   ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
+  //   async () => {
+  //     const params = {
+  //       roadAddress: userDestination?.location.address!,
+  //       jibunAddress: null,
+  //       zipCode: userDestination?.location.zipCode!,
+  //       delivery: userDestinationStatus.toUpperCase() || null,
+  //     };
+  //     const { data } = await availabilityDestination(params);
 
-      if (data.code === 200) {
-        const { morning, parcel, quick, spot } = data.data;
-        console.log(data.data, 'data.data');
-      }
-    },
-    {
-      onSuccess: async () => {},
-      onError: (error: AxiosError) => {
-        const { message } = error.response?.data;
-        alert(message);
-        return;
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      cacheTime: 0,
-      enabled: hasDeliveryTypeAndDestination,
-    }
-  );
+  //     if (data.code === 200) {
+  //       const { morning, parcel, quick, spot } = data.data;
+  //       console.log(data.data, 'data.data');
+  //     }
+  //   },
+  //   {
+  //     onSuccess: async () => {},
+  //     onError: (error: AxiosError) => {
+  //       const { message } = error.response?.data;
+  //       alert(message);
+  //       return;
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     cacheTime: 0,
+  //     enabled: hasDeliveryTypeAndDestination,
+  //   }
+  // );
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {

@@ -2,33 +2,62 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
-import { MypageReviewItem, ReviewInfo } from '@components/Pages/Mypage/Review';
+import { WillWriteReviewItem, ReviewInfo, CompleteReviewItem } from '@components/Pages/Mypage/Review';
 import { breakpoints } from '@utils/getMediaQuery';
-
-/* 아이템 수 표기헤야해서 HEADER에 TabList 안붙이고 따로 뺌   */
+import { useQuery } from 'react-query';
+import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
+import { ICompletionReviews, IWillWriteReview } from '@model/index';
+import { ReviewDetailItem } from '@components/Pages/Review';
 
 const TAB_LIST = [
-  { id: 1, text: '작성 예정', value: 'willWrite', link: '/mypage/review' },
-  { id: 2, text: '작성 완료', value: 'completed', link: '/use' },
+  { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
+  { id: 2, text: '작성 완료', value: 'completed', link: '/completed' },
 ];
 
 const ReviewPage = () => {
-  const [selectedTab, setSelectedTab] = useState('/mypage/review');
+  const [selectedTab, setSelectedTab] = useState('/willWrite');
   const [isShow, setIsShow] = useState(false);
-  const [itemList, setItemList] = useState([]);
 
-  useEffect(() => {
-    getItemList();
-  }, []);
+  const {
+    data: willWriteList,
+    error: willWriteError,
+    isLoading: willWriteIsLoading,
+  } = useQuery<IWillWriteReview[]>(
+    'getWillWriteReview',
+    async () => {
+      // temp
+      const { data } = await getWillWriteReviews();
+      return data.data;
+    },
 
-  const getItemList = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    setItemList(data.data);
-  };
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const {
+    data: completeWriteList,
+    error: completeWriteError,
+    isLoading: completeIsLoading,
+  } = useQuery<ICompletionReviews[]>(
+    'getCompleteWriteReview',
+    async () => {
+      // temp
+      const { data } = await getCompleteReviews();
+
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
@@ -39,6 +68,10 @@ const ReviewPage = () => {
     '작성 완료': 55,
   };
 
+  if (completeIsLoading || willWriteIsLoading) {
+    return <div>로딩</div>;
+  }
+
   return (
     <Container>
       <FixedTab>
@@ -47,19 +80,39 @@ const ReviewPage = () => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
       </Wrapper>
-      {!itemList.length ? (
+      {selectedTab === '/willWrite' && !willWriteList?.length && (
         <Center>
           <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
         </Center>
+      )}
+      {selectedTab === '/completed' && !completeWriteList?.length && (
+        <Center>
+          <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
+        </Center>
+      )}
+      {selectedTab === '/willWrite' ? (
+        <Wrapper>
+          <WillReviewItmesWrapper>
+            {willWriteList?.map((review, index) => (
+              <div key={index}>
+                <WillWriteReviewItem menu={review} />
+                {willWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
+              </div>
+            ))}
+          </WillReviewItmesWrapper>
+        </Wrapper>
       ) : (
         <Wrapper>
           <WillReviewItmesWrapper>
-            {itemList.map((item, index) => (
-              <div key={index}>
-                <MypageReviewItem menu={item} />
-                {itemList.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
-              </div>
-            ))}
+            {completeWriteList?.map((review, index) => {
+              const isLast = completeWriteList.length - 1 === index;
+              return (
+                <div key={index}>
+                  <CompleteReviewItem review={review} isLast={isLast} />
+                  {completeWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
+                </div>
+              );
+            })}
           </WillReviewItmesWrapper>
         </Wrapper>
       )}
