@@ -998,3 +998,47 @@ export interface IPostMenuReview {
 }
 
 export interface IPostMenuReviewResponse {}
+
+export interface ICompletionReviewImg {
+  id: number;
+  menuReviewId: number;
+  url: string;
+  width: number;
+  height: number;
+  size: number;
+}
+export interface ICompletionReviews {
+  id: number;
+  userNickName: string;
+  menuName: string;
+  menuDetailName: string;
+  rating: number;
+  content: string;
+  createdAt: string;
+  images: ICompletionReviewImg[];
+}
+
+export interface ICompletionReviewsResponse {
+  code: number;
+  message: string;
+  data: ICompletionReviews[];
+}
+
+export interface IWillWriteReview {
+  delivery: TDeliveryType | string;
+  deliveryDate: string;
+  height: number;
+  menuDetailId: number;
+  menuDetailName: string;
+  menuId: number;
+  menuName: string;
+  orderDeliveryId: number;
+  url: string;
+  width: number;
+}
+
+export interface IWillWriteReviewsResponse {
+  code: number;
+  message: string;
+  data: IWillWriteReview[];
+}

@@ -7,6 +7,8 @@ import {
   IReviewsDetailResponse,
   IPostMenuReview,
   IResponse,
+  ICompletionReviewsResponse,
+  IWillWriteReviewsResponse,
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
@@ -29,4 +31,12 @@ export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IRespo
   return Api.post('menu/v1/reviews', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+};
+
+export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsResponse>> => {
+  return Api.get(`menu/v1/reviews/completion`);
+};
+
+export const getWillWriteReviews = (): Promise<AxiosResponse<IWillWriteReviewsResponse>> => {
+  return Api.get(`menu/v1/reviews/expectation`);
 };
