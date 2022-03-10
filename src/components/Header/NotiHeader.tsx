@@ -2,31 +2,30 @@ import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { breakpoints } from '@utils/getMediaQuery';
-import CartIcon from '@components/Header/Cart';
-import router from 'next/router';
-import { userForm } from '@store/user';
+import { textH5 } from '@styles/theme';
 import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
+import { Tooltip } from '@components/Shared/Tooltip';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { TextH4B } from '@components/Shared/Text';
 
 const MyPageHeader = () => {
-  const { isLoginSuccess } = useSelector(userForm);
-  const goToCart = () => {
-    router.push('/cart');
+  const router = useRouter();
+
+  const goBack = (): void => {
+    router.back();
   };
-  const goToNoti = () => {
-    router.push('/mypage/noti');
-  };
+
   return (
     <Container>
       <Wrapper>
+        <Left onClick={goBack}>
+          <SVGIcon name="arrowLeft" />
+        </Left>
+        <TextH4B padding="2px 0 0 0">알림</TextH4B>
         <Right>
-          {isLoginSuccess && (
-            <NotiWrapper onClick={goToNoti}>
-              <SVGIcon name="notification" />
-            </NotiWrapper>
-          )}
-          <CartWrapper>
-            <CartIcon onClick={goToCart} />
-          </CartWrapper>
+          <SVGIcon name="setting" />
         </Right>
       </Wrapper>
     </Container>
@@ -59,20 +58,21 @@ const Container = styled.div`
 const Wrapper = styled.div`
   position: relative;
   display: flex;
+  height: 100%;
   align-items: center;
-  justify-content: flex-end;
-  margin: 16px 24px;
+  justify-content: space-between;
+  padding: 16px 24px;
+`;
+
+const Left = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const Right = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const CartWrapper = styled.div``;
-const NotiWrapper = styled.div`
-  padding-right: 26px;
-  cursor: pointer;
 `;
 
 export default MyPageHeader;
