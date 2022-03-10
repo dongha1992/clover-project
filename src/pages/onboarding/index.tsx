@@ -39,7 +39,7 @@ const OnBoarding: NextPage = () => {
     email: 15,
   };
 
-  const { user } = useSelector(userForm);
+  const { me } = useSelector(userForm);
   const dispatch = useDispatch();
   const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();

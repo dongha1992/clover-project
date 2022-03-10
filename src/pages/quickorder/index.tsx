@@ -16,7 +16,7 @@ import useQuickOrderList from '@hooks/useQuickOrder';
 dayjs.locale('ko');
 
 const QuickOrderPage = () => {
-  const { isLoginSuccess, user } = useSelector(userForm);
+  const { isLoginSuccess, me } = useSelector(userForm);
   const hours = new Date().getHours();
   const minutes = new Date().getMinutes();
   const weeks = new Date().getDay();
@@ -51,7 +51,7 @@ const QuickOrderPage = () => {
         <TextBox>
           {isLoginSuccess ? (
             <TextH2B>
-              <span>{user.name}</span>님{`\n`}
+              <span>{me?.name}</span>님{`\n`}
               {list.length !== 0 ? ment : '내일 아침도 미리미리!'}
             </TextH2B>
           ) : (

@@ -1,20 +1,5 @@
-import {
-  TextH2B,
-  TextH5B,
-  TextB2R,
-  TextH4B,
-  TextB3R,
-  TextH3B,
-} from '@components/Shared/Text';
-import {
-  FlexCol,
-  FlexRow,
-  homePadding,
-  theme,
-  FlexBetween,
-  FlexColEnd,
-  FlexBetweenStart,
-} from '@styles/theme';
+import { TextH2B, TextH5B, TextB2R, TextH4B, TextB3R, TextH3B } from '@components/Shared/Text';
+import { FlexCol, FlexRow, homePadding, theme, FlexBetween, FlexColEnd, FlexBetweenStart } from '@styles/theme';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
@@ -25,14 +10,14 @@ import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 
 const RankPage = () => {
-  const { user, isLoginSuccess } = useSelector(userForm);
+  const { me, isLoginSuccess } = useSelector(userForm);
 
   return (
     <Container>
       {isLoginSuccess ? (
         <Wrapper>
           <FlexCol padding="24px 0 32px 0">
-            <TextH2B>{user.name}님은</TextH2B>
+            <TextH2B>{me?.name}님은</TextH2B>
             <FlexRow>
               <TextH2B color={theme.brandColor}>프코팡</TextH2B>
               <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
@@ -79,21 +64,9 @@ const RankPage = () => {
         <Wrapper>
           <TextH3B padding="32px 0 29px 0">프레시코드 회원 등급 혜택</TextH3B>
           <FlexCol>
-            <Card
-              title="적립금"
-              brandText="최대 3% 적립"
-              desc="(등급별 구매 금액의 최대 3% 적립)"
-            />
-            <Card
-              title="할인 쿠폰"
-              brandText="최대 5천원 할인 쿠폰"
-              desc="(매달 기준)"
-            />
-            <Card
-              title="생일축하 쿠폰"
-              brandText="최대 3% 적립"
-              desc="(생일 꼭 입력해서 받아가세요)"
-            />
+            <Card title="적립금" brandText="최대 3% 적립" desc="(등급별 구매 금액의 최대 3% 적립)" />
+            <Card title="할인 쿠폰" brandText="최대 5천원 할인 쿠폰" desc="(매달 기준)" />
+            <Card title="생일축하 쿠폰" brandText="최대 3% 적립" desc="(생일 꼭 입력해서 받아가세요)" />
           </FlexCol>
         </Wrapper>
       </BrandColor5>
@@ -131,9 +104,7 @@ const RankPage = () => {
         <BorderLine height={1} margin="16px 0" />
         <FlexRow>
           <Dot />
-          <TextB3R color={theme.greyScale65}>
-            매월 1일 승급된 등급에 해당하는 쿠폰 자동지급
-          </TextB3R>
+          <TextB3R color={theme.greyScale65}>매월 1일 승급된 등급에 해당하는 쿠폰 자동지급</TextB3R>
         </FlexRow>
         <FlexRow>
           <Dot />
@@ -144,8 +115,7 @@ const RankPage = () => {
         <FlexRow>
           <Dot flexStart />
           <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
-            주문 시점 등급 혜택 기준의 적립 포인트를 / 주문완료(*마지막 배송까지
-            완료) 시점에 적립
+            주문 시점 등급 혜택 기준의 적립 포인트를 / 주문완료(*마지막 배송까지 완료) 시점에 적립
           </TextB3R>
         </FlexRow>
         <FlexRow>

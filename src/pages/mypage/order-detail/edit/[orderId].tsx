@@ -50,13 +50,13 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
 
-  // const isParcel = selectedAddress?.delivery === 'PARCEL';
-  // const isSpot = selectedAddress?.delivery === 'SPOT';
-  // const isMorning = selectedAddress?.delivery === 'MORNING';
+  const isParcel = selectedAddress?.delivery === 'PARCEL';
+  const isSpot = selectedAddress?.delivery === 'SPOT';
+  const isMorning = selectedAddress?.delivery === 'MORNING';
 
-  const isParcel = false;
-  const isSpot = false;
-  const isMorning = true;
+  // const isParcel = false;
+  // const isSpot = false;
+  // const isMorning = true;
 
   const getDeliveryInfo = async () => {};
 
@@ -133,19 +133,19 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
 
-  const placeInfoRender = () => {
-    const deliveryType = 'parcel';
+  // const placeInfoRender = () => {
+  //   const deliveryType = 'parcel';
 
-    switch (deliveryType) {
-      // case 'spot': {
-      //   return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
-      // }
+  //   switch (deliveryType) {
+  //     case 'spot': {
+  //       return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
+  //     }
 
-      default: {
-        // return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
-      }
-    }
-  };
+  //     default: {
+  //       return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
+  //     }
+  //   }
+  // };
 
   return (
     <Container>
@@ -182,7 +182,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
           </FlexBetween>
-          <FlexCol>{placeInfoRender()}</FlexCol>
+          {/* <FlexCol>{placeInfoRender()}</FlexCol> */}
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (
