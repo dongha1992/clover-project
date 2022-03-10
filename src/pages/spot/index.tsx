@@ -150,14 +150,14 @@ const SpotPage = () => {
   }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
-    if (!mouseMoved) {
-      // dispatch(initBottomSheet());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet />,
-        })
-      );
-    }
+    // if (!mouseMoved) {
+    //   dispatch(initBottomSheet());
+    //   dispatch(
+    //     SET_BOTTOM_SHEET({
+    //       content: <ShareSheet />,
+    //     })
+    //   );
+    // }
   };
 
   const goToSpotReq = (type: string): void => {
@@ -359,7 +359,7 @@ const SpotPage = () => {
         {spotRegistraions?.data.subTitle}
       </TextB2R>
       <SpotListWrapper>
-        {spotRegistraions?.data.spotRegistrations.map((list, idx) => {
+        {spotRegistraions?.data.spotRegistrations.map((list: any, idx) => {
           return <SpotList key={idx} list={list} type="trial" />;
         })}
       </SpotListWrapper>

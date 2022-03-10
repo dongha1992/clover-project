@@ -261,6 +261,8 @@ const Calendar = ({
     );
   });
 
+  RenderCalendar.displayName = 'RenderCalendar';
+
   useEffect(() => {
     initCalendar();
   }, []);
