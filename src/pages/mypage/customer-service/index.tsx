@@ -13,7 +13,7 @@ const customServicePage = () => {
         <MypageMenu title="공지사항" link="/mypage" />
         <MypageMenu title="FAQ" link="/mypage" />
       </PaddingWrapper>
-      <FlexCol margin="0">
+      <FlexCol margin="0" padding="0 24px">
         <TextH5B>고객센터</TextH5B>
         <TimeInfoWrapper>
           <TextB2R color={theme.greyScale65}>평일 9:00 - 18:00 (점심시간 13:00 - 14:00)</TextB2R>
@@ -29,16 +29,13 @@ const customServicePage = () => {
 };
 
 const Container = styled.div`
-  ${homePadding}
   display: flex;
   flex-direction: column;
   height: 85vh;
   justify-content: space-between;
 `;
 
-const PaddingWrapper = styled.div`
-  /* padding-top: 24px; */
-`;
+const PaddingWrapper = styled.div``;
 
 const TimeInfoWrapper = styled.div`
   margin-top: 12px;
