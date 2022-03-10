@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText, FlexBetween } from '@styles/theme';
@@ -8,14 +8,13 @@ import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import getCustomDate from '@utils/getCustomDate';
-
+import router from 'next/router';
 interface IProps {
   review: any;
-  isLast: boolean;
   clickImgViewHandler: (imgUrlForViwer: string[]) => void;
 }
 
-const CompleteReviewItem = ({ review, clickImgViewHandler, isLast }: IProps) => {
+const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(false);
 
   review.reviewImg = [
@@ -31,8 +30,12 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, isLast }: IProps) => 
         <Wrapper>
           <ReviewContent>
             <FlexBetween padding="0 0 16px 0">
-              <TextH5B>{review.menuName}</TextH5B>
-              <TextH6B color={theme.greyScale65} textDecoration="underline">
+              <TextH5B onClick={() => router.push(`/menu/${review.menuId}`)}>{review.menuName}</TextH5B>
+              <TextH6B
+                color={theme.greyScale65}
+                textDecoration="underline"
+                onClick={() => router.push(`/mypage/review/edit/${review.id}`)}
+              >
                 편집
               </TextH6B>
             </FlexBetween>
@@ -50,18 +53,18 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, isLast }: IProps) => 
                 </UserInfo>
               </RatingAndUser>
             </ReviewHeader>
-            <ReviewBody>
-              <TextB3R>{review.content.repeat(100)}</TextB3R>
-              {isShow ? (
-                <TextH6B color={theme.greySacle65} textDecoration="underLine">
-                  전체 보기
-                </TextH6B>
-              ) : (
-                <TextH6B color={theme.greySacle65} textDecoration="underLine">
-                  더보기
-                </TextH6B>
-              )}
+            <ReviewBody isShow={isShow}>
+              <TextB3R>{review.content.repeat(10)}</TextB3R>
             </ReviewBody>
+            {isShow ? (
+              <TextH6B color={theme.greyScale65} textDecoration="underLine" onClick={() => setIsShow(!isShow)}>
+                전체 보기
+              </TextH6B>
+            ) : (
+              <TextH6B color={theme.greyScale65} textDecoration="underLine" onClick={() => setIsShow(!isShow)}>
+                접기
+              </TextH6B>
+            )}
             {review.reviewImg && (
               <ImgWrapper>
                 {review.reviewImg?.map((img: any, index: number) => {
@@ -83,7 +86,6 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, isLast }: IProps) => 
             )}
           </ReviewContent>
         </Wrapper>
-        {/* {!isLast && <BorderLine margin="0 0 24px 0" height={1} />} */}
       </Container>
     </>
   );
@@ -118,14 +120,20 @@ const Rating = styled.div`
   display: flex;
 `;
 
-const ReviewBody = styled.div`
-  margin-top: 8px;
+const ReviewBody = styled.div<{ isShow?: boolean }>`
+  margin: 8px 0px;
 
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
+  ${({ isShow }) => {
+    if (isShow) {
+      return css`
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+      `;
+    }
+  }}
 `;
 
 const UserInfo = styled.div`
