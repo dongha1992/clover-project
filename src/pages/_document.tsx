@@ -1,11 +1,5 @@
 import React from 'react';
-import Document, {
-  DocumentContext,
-  Head,
-  Html,
-  Main,
-  NextScript,
-} from 'next/document';
+import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
 interface IProps {
@@ -15,9 +9,7 @@ interface IProps {
 class MyDocument extends Document<IProps> {
   static getInitialProps(ctx: DocumentContext): any {
     const sheet = new ServerStyleSheet();
-    const page = ctx.renderPage(
-      (App) => (props) => sheet.collectStyles(<App {...props} />)
-    );
+    const page = ctx.renderPage((App) => (props) => sheet.collectStyles(<App {...props} />));
     const styleTags = sheet.getStyleElement();
     return { ...page, styleTags };
   }
@@ -31,18 +23,6 @@ class MyDocument extends Document<IProps> {
             href="https://fonts.googleapis.com/css2?family=Alata&family=Noto+Sans+KR:wght@300;400;500&display=swap"
             rel="stylesheet"
           />
-          <script
-            defer
-            src="https://developers.kakao.com/sdk/js/kakao.js"
-          ></script>
-          <script
-            type="text/javascript"
-            src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
-          ></script>
-          <script
-            type="text/javascript"
-            src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
-          ></script>
         </Head>
         <body>
           <Main />

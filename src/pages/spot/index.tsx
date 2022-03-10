@@ -345,7 +345,7 @@ const SpotPage = () => {
         {spotRegistraions?.data.subTitle}
       </TextB2R>
       <SpotListWrapper>
-        {spotRegistraions?.data.spotRegistrations.map((list, idx) => {
+        {spotRegistraions?.data.spotRegistrations.map((list: any, idx) => {
           return <SpotList key={idx} list={list} type="trial" />;
         })}
       </SpotListWrapper>
