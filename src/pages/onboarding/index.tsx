@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userLogin } from '@api/user';
 import { setCookie } from '@utils/cookie';
 import { SET_LOGIN_TYPE } from '@store/common';
+import { userForm } from '@store/user';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -39,6 +40,7 @@ const OnBoarding: NextPage = () => {
     email: 15,
   };
 
+  const { me } = useSelector(userForm);
   const dispatch = useDispatch();
   const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();

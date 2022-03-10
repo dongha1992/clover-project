@@ -7,7 +7,6 @@ import { menuSelector } from '@store/menu';
 import { homePadding } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import getUrlLink from '@utils/getUrlLink';
-import getShare from '@utils/getShare';
 
 /* TODO : og 태그 고려 */
 
@@ -41,11 +40,7 @@ const ShareSheet = () => {
   };
 
   const windowOpen = (url: string) => {
-    window.open(
-      url,
-      '',
-      'width=600,height=300,top=100,left=100,scrollbars=yes'
-    );
+    window.open(url, '', 'width=600,height=300,top=100,left=100,scrollbars=yes');
   };
 
   const handleKakaoTalk = () => {
