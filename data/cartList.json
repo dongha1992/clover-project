@@ -32,22 +32,6 @@
       "main": true,
       "tags": [],
       "soldout": true
-    },
-    {
-      "id": 4,
-      "menuId": 1,
-      "name": "[프코메이드] 하루과일 스테비아 방울토마토",
-      "price": 1000,
-      "discount": 10,
-      "type": "optional",
-      "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
-      "quantity": 10,
-      "main": false,
-      "tags": [],
-      "soldout": false,
-      "badge": "",
-      "limitDaily": 0,
-      "limit": ""
     }
   ]
 }
