@@ -111,7 +111,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
 
-  padding: 14px 27px;
+  padding: 16px 24px;
   &.type1 {
     justify-content: space-between;
   }
@@ -129,7 +129,9 @@ const Right = styled.div`
   align-items: center;
 `;
 
-const CartWrapper = styled.div``;
+const CartWrapper = styled.div`
+  padding-top: 2px;
+`;
 
 const OrderType = styled.div`
   cursor: pointer;
