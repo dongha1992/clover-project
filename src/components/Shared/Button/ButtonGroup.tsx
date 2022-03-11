@@ -10,31 +10,19 @@ interface IProps {
   rightText: string;
 }
 
-const ButtonGroup = React.memo(
-  ({ leftButtonHandler, rightButtonHandler, leftText, rightText }: IProps) => {
-    return (
-      <BtnWrapper>
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={leftButtonHandler}
-        >
-          {leftText}
-        </Button>
-        <Col />
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={rightButtonHandler}
-        >
-          {rightText}
-        </Button>
-      </BtnWrapper>
-    );
-  }
-);
+const ButtonGroup = React.memo(({ leftButtonHandler, rightButtonHandler, leftText, rightText }: IProps) => {
+  return (
+    <BtnWrapper>
+      <Button height="100%" width="100%" borderRadius="0" onClick={leftButtonHandler}>
+        {leftText}
+      </Button>
+      <Col />
+      <Button height="100%" width="100%" borderRadius="0" onClick={rightButtonHandler}>
+        {rightText}
+      </Button>
+    </BtnWrapper>
+  );
+});
 
 const BtnWrapper = styled.div`
   ${fixedBottom}
@@ -49,5 +37,7 @@ const Col = styled.div`
   width: 1px;
   height: 50%;
 `;
+
+ButtonGroup.displayName = 'ButtonGroup';
 
 export default ButtonGroup;

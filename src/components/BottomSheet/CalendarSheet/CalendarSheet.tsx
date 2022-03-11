@@ -61,7 +61,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet, deliv
         disabledDates={disabledDates}
         selectedDeliveryDay={selectedDeliveryDay}
         setSelectedDeliveryDay={setSelectedDeliveryDay}
-        otherDeliveryInfo={otherDeliveryInfo}
+        otherDeliveries={otherDeliveryInfo}
         isSheet={isSheet}
       />
       <ButtonContainer onClick={submitHandler}>

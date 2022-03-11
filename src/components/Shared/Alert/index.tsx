@@ -53,7 +53,7 @@ const Alert = ({
   return (
     <ModalLayout width={width} height={height} padding="10px" style={{ borderRadius: '8px' }}>
       <AlertBox>
-        {children && children}
+        {children}
         <AlertText>
           <TextB1R center wordWrap="break-word" wordBreak="keep-all">
             {alertMessage}

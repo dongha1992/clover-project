@@ -33,11 +33,11 @@ const Container = styled.label`
     }
 
     &:checked + .slider::before {
-      transform: translateX(13px);
+      transform: translateX(16px);
     }
 
     &:checked + .slider {
-      background-color: ${theme.greyScale15};
+      background-color: ${theme.brandColor};
     }
   }
 `;
@@ -48,7 +48,7 @@ const Slider = styled.span`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${theme.brandColor};
+  background-color: ${theme.greyScale15};
   border-radius: 20px;
   cursor: pointer;
   &:before {
