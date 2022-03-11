@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
@@ -14,17 +14,21 @@ import {
   getSpotLike,
  } from '@api/spot';
  import { SET_SPOT_LIKED } from '@store/spot';
+import { userForm } from '@store/user';
+import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
 import { SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
  
-/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함s*/
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
   const { isDelivery } = router.query;
+  const { isLoginSuccess } = useSelector(userForm);
+  const { cartLists } = useSelector(cartForm);
   const { spotDetail } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
+  
   const goToCart = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {
@@ -40,18 +44,29 @@ const SpotDetailBottom = () => {
       spaceType: spotDetail?.type,
     };
 
-    if(isDelivery){
-      // 장바구니 o , 배송 정보에서 넘어온 경우
-      dispatch(SET_USER_DESTINATION_STATUS('spot'));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
+    if(isLoginSuccess){
+      if(cartLists.length) {
+        // 로그인o and 장바구니 o
+        if(isDelivery){
+          // 장바구니 o , 배송 정보에서 넘어온 경우
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
+        }else{
+          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_DESTINATION(destinationInfo));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push('/cart');  
+        }
+      }else{
+        // 로그인o and 장바구니 x
+        router.push('/search');
+      }
     }else{
-      // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-      dispatch(SET_USER_DESTINATION_STATUS('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push('/cart');  
-    }
+      // 로그인x
+      router.push('/onboarding');
+    };
   };
 
   useEffect(()=> {
@@ -68,26 +83,30 @@ const SpotDetailBottom = () => {
   }, [spotDetail, spotDetail?.id, spotLike]);
 
   const hanlderLike = async () => {
-    if(!spotLike){
-      try {
-        const { data } = await postSpotLike(spotDetail!.id);
-        if(data.code === 200 ){
-          dispatch(SET_SPOT_LIKED(true));
-          setSpotLike(true);
-        }
-      }catch(err){
-        console.error(err);
+    if(isLoginSuccess){
+      if(!spotLike){
+        try {
+          const { data } = await postSpotLike(spotDetail!.id);
+          if(data.code === 200 ){
+            dispatch(SET_SPOT_LIKED(true));
+            setSpotLike(true);
+          }
+        }catch(err){
+          console.error(err);
+        };
+      }else if(spotLike){
+        try{
+          const { data } = await deleteSpotLike(spotDetail!.id);
+          if(data.code === 200){
+            dispatch(SET_SPOT_LIKED(false));
+            setSpotLike(false);
+          }
+        }catch(err){
+          console.error(err);
+        };
       };
-    }else if(spotLike){
-      try{
-        const { data } = await deleteSpotLike(spotDetail!.id);
-        if(data.code === 200){
-          dispatch(SET_SPOT_LIKED(false));
-          setSpotLike(false);
-        }
-      }catch(err){
-        console.error(err);
-      };
+    }else{
+      router.push('/onboarding');
     };
   };
 
