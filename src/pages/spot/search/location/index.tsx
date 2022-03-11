@@ -155,7 +155,6 @@ const SpotLocationPage = (): ReactElement => {
           zoom={17}
           centerLat={area[2].lat}
           centerLng={area[2].lng}
-          areaArr={area}
         />
         <SpotListWrapper>
           <SpotListSlider {...setting}>
