@@ -5,7 +5,7 @@ import { Select, MenuOption } from '@components/Shared/Dropdown';
 import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
-import { cartForm, SET_CART_LISTS } from '@store/cart';
+import { cartForm } from '@store/cart';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import CartSheetItem from './CartSheetItem';
 import { Button } from '@components/Shared/Button';
@@ -18,12 +18,13 @@ import calculateArrival from '@utils/calculateArrival';
 import getCustomDate from '@utils/getCustomDate';
 import { filter, map, flow } from 'lodash/fp';
 import dayjs from 'dayjs';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { Obj } from '@model/index';
+import { UPDATE_CART_LIST } from '@store/cart';
 
 import 'dayjs/locale/ko';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
-import { Item } from '@components/Item';
 
 dayjs.locale('ko');
 
@@ -60,8 +61,45 @@ const CartSheet = () => {
   const { showToast } = useToast();
 
   const dispatch = useDispatch();
-  const { cartSheetObj } = useSelector(cartForm);
+  const { cartSheetObj, cartLists } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
+
+  const queryClient = useQueryClient();
+
+  /* TODO: axios 여러번 */
+  const { mutateAsync: mutateAddCartItem } = useMutation(
+    async () => {
+      const result = checkAlreadyInCart();
+
+      const data = result.map(async ({ id: menuDetailId, quantity }: any) => {
+        /* TODO : 구매제한체크 api */
+
+        await axios.post(`${BASE_URL}/cartList`, { params: { menuDetailId, quantity } }).then((res) => {
+          if (res.data.message === 'success') {
+            return true;
+          } else {
+            /*TODO: 에러 핸들링 */
+            showToast({ message: '알 수 없는 에러! 다시 시도해주세요.' });
+            return false;
+          }
+        });
+      });
+      if (data) {
+        return true;
+      }
+    },
+    {
+      onError: () => {},
+      onSuccess: async (mssage) => {
+        if (mssage) {
+          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+          dispatch(INIT_BOTTOM_SHEET());
+          await queryClient.refetchQueries('getCartList');
+          dispatch(UPDATE_CART_LIST());
+        }
+      },
+    }
+  );
 
   const deliveryType = checkTimerLimitHelper();
   console.log(cartSheetObj, 'cartSheetObj');
@@ -198,18 +236,19 @@ const CartSheet = () => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  const submitHandler = async () => {
-    if (checkHasMainMenu()) {
-      const { data } = await axios.post(`${BASE_URL}/cartList`, { data: selectedMenus });
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(SET_CART_LISTS(selectedMenus));
-
-      setTimeout(() => {
-        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-      }, 500);
-    } else {
-      showToast({ message: '필수옵션을 선택해주세요.' });
-    }
+  const checkAlreadyInCart = () => {
+    const result = selectedMenus?.map((sMenu: any) => {
+      const inCart = cartLists?.find((cartItem: any) => cartItem.id === sMenu.id);
+      if (inCart) {
+        return {
+          ...sMenu,
+          quantity: sMenu.quantity + inCart.quantity,
+        };
+      } else {
+        return sMenu;
+      }
+    });
+    return result;
   };
 
   const checkHasMainMenu = (): boolean => {
@@ -245,6 +284,14 @@ const CartSheet = () => {
     });
 
     setSelectedMenus(newSelectedMenus);
+  };
+
+  const addToCart = async () => {
+    if (checkHasMainMenu()) {
+      await mutateAddCartItem();
+    } else {
+      showToast({ message: '필수옵션을 선택해주세요.' });
+    }
   };
 
   useEffect(() => {
@@ -320,7 +367,7 @@ const CartSheet = () => {
           {isTimerTooltip ? <CheckTimerByDelivery isCartSheet /> : <Rolling list={rollingData} />}
         </DeliveryInforContainer>
       </OrderInfoContainer>
-      <ButtonContainer onClick={submitHandler}>
+      <ButtonContainer onClick={() => addToCart()}>
         <Button height="100%" width="100%" borderRadius="0">
           장바구니에 담기
         </Button>

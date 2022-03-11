@@ -3,18 +3,21 @@ import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { Item } from '@components/Item';
-import SpotRecentSearch from '@components/Pages/Spot/SpotRecentSearch';
-import { useDispatch } from 'react-redux';
+import { SpotsSearchItem } from '@components/Pages/Spot';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { MenuFilter } from '@components/Filter';
 import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
+import { spotSelector } from '@store/spot';
 
 const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
+  console.log(spotsSearchResultFiltered);
 
   const clickFilterHandler = () => {
     if (!isSpot) {
@@ -56,7 +59,7 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
               <Item item={item} key={index} />
             ) : (
               // 스팟 검색 결과 리스트
-              <SpotRecentSearch item={item} key={index} onClick={goToOrder} />
+              <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
             );
           })
         ) : router.pathname === '/spot/search' ? (

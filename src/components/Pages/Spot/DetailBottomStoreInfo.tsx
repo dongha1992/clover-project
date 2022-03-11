@@ -53,7 +53,7 @@ const FlexWrapper = styled.div`
 
 const MapWrapper = styled.div`
   width: 100%;
-  height: 270px;
+  height: 350px;
 `;
 
 export default DetailBottomStoreInfo;

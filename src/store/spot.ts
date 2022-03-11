@@ -44,6 +44,23 @@ interface ISpotsPostions {
   longitude: number | null;
 }
 
+interface ISpotSearchFilterd {
+  public: boolean;
+  private: boolean;
+  canEat: boolean;
+  canParking: boolean;
+  canDeliveryDinner: boolean;
+  isEvent: boolean;
+  STORE: string;
+  GS25: string;
+  BOOKSTORE: string;
+  STORYWAY: string;
+  CAFE: string;
+  SEVEN_ELEVEN: string;
+  FITNESS_CENTER: string;
+  DRUGSTORE: string;
+}
+
 interface IProps {
   spotDetail: ISpotsDetail | null;
   isSpotLiked: boolean;
@@ -53,7 +70,25 @@ interface IProps {
   spotRegistrationsPostResult: IPostRegistrations | any;
   spotsPosition: ISpotsPostions | any;
   spotsPickupSelected: ISpotsDetail | null;
+  spotsSearchResultFiltered: ISpotSearchFilterd;
 };
+
+const spotsSearchResultFilteredState = {
+  public: false,
+  private: false,
+  canEat: false,
+  canParking: false,
+  canDeliveryDinner: false,
+  isEvent: false,
+  STORE: '',
+  GS25: '',
+  BOOKSTORE: '',
+  STORYWAY: '',
+  CAFE: '',
+  SEVEN_ELEVEN: '',
+  FITNESS_CENTER: '',
+  DRUGSTORE: '',
+}
 
 const spotAddressState = {
   addressDetail: '',
@@ -105,6 +140,9 @@ const initialState: IProps = {
     ...spotsPostionsState,
   },
   spotsPickupSelected: null,
+  spotsSearchResultFiltered: {
+    ...spotsSearchResultFilteredState
+  },
 };
 
 export const spot = createSlice({
@@ -143,6 +181,12 @@ export const spot = createSlice({
     SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotsPickupSelected = action.payload;
     },
+    SET_SPOTS_FILTERED: (state, action: PayloadAction<ISpotSearchFilterd>) => {
+      state.spotsSearchResultFiltered = action.payload;
+    },
+    INIT_SPOT_FILTERED: (state, action: PayloadAction) => {
+      state.spotsSearchResultFiltered = spotsSearchResultFilteredState;
+    },
   },
 });
 
@@ -157,6 +201,8 @@ export const {
   SET_SPOT_REGISTRATIONS_POST_RESULT,
   SET_SPOT_POSITIONS,
   SET_SPOT_PICKUP_SELECTED,
+  SET_SPOTS_FILTERED,
+  INIT_SPOT_FILTERED,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;
