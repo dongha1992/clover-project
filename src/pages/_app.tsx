@@ -14,6 +14,7 @@ import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import Script from 'next/script';
 import { commonSelector } from '@store/common';
 
 // persist
@@ -110,6 +111,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <Wrapper>
               <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
+              <Script src="https://developers.kakao.com/sdk/js/kakao.js"></Script>
+              <Script
+                type="text/javascript"
+                src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+              ></Script>
+              <Script
+                type="text/javascript"
+                src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
+              ></Script>
             </Wrapper>
           </PersistGate>
         </ThemeProvider>

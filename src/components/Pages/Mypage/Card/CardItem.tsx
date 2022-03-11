@@ -18,6 +18,7 @@ interface IProps {
 }
 
 const CardItem = ({ onClick, card }: IProps) => {
+  console.log(card, '@@');
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>

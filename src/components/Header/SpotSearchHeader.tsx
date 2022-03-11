@@ -56,7 +56,7 @@ const Container = styled.div`
   height: auto;
   left: calc(50%);
   background-color: white;
-  z-index: 100000;
+  z-index: 900;
   height: 56px;
 
   ${({ theme }) => theme.desktop`
@@ -85,6 +85,7 @@ const Wrapper = styled.div`
 const BtnWrapper = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 export default React.memo(SpotSearchHeader);
