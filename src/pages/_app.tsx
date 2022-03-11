@@ -8,23 +8,24 @@ import { mediaQuery } from '@utils/getMediaQuery';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { wrapper } from '@store/index';
 import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
+import { commonSelector } from '@store/common';
 
 // persist
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
-import { useStore } from 'react-redux';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
+import { getCookie } from '@utils/cookie';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
@@ -43,8 +44,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const isMobile = useMediaQuery('(max-width:512px)');
 
   const store: any = useStore();
-  const { loginType, isAutoLogin } = store.getState().common;
   const { me } = useSelector(userForm);
+  const isAutoLogin = getCookie({ name: 'autoL' });
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
@@ -67,6 +68,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     }
 
     authCheck();
+
     // temp
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
@@ -76,13 +78,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       if (sessionStorage.accessToken) {
         const { data } = await userProfile();
         if (data.code === 200) {
+          data.data.nickName ??= data.data.name;
+          data.data.nickName ||= data.data.name;
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
         }
       } else {
-        if (isAutoLogin) {
+        if (isAutoLogin === 'Y') {
           const { data } = await userProfile();
           if (data.code === 200) {
+            data.data.nickName ??= data.data.name;
+            data.data.nickName ||= data.data.name;
             dispatch(SET_USER(data.data));
             dispatch(SET_LOGIN_SUCCESS(true));
           }

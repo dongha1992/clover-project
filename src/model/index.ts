@@ -251,10 +251,10 @@ export interface IRegisterDestination {
 }
 
 export interface IAvilabiltyAddress {
-  jibunAddress: string | null;
+  jibunAddress?: string | null;
   roadAddress: string | null;
   zipCode: string | null;
-  delivery?: TDeliveryType | null;
+  delivery?: TDeliveryType | null | string;
 }
 
 export interface IAvilabiltyAddressResponse {
@@ -813,4 +813,82 @@ export interface IGetSpotsRegistrationsStatusResponse {
   code: number;
   message: string;
   data: IGetSpotsRegistrationsStatus;
+}
+
+/* Order */
+
+export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
+export interface IGetOrderList {
+  days: number;
+  page: number;
+  size: number;
+  type: TOrderType | string;
+}
+
+export interface IOrderMenus {}
+export interface IOrderPayment {}
+export interface IOrderDeliveries {
+  delivery: string;
+  deliveryDate: string;
+  deliveryDetail: string;
+  id: number;
+  invoiceNumber: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  orderMenus: IOrderMenus[];
+  receiverName: string;
+  receiverTel: string;
+  status: string;
+}
+
+export interface IGetOrderListResponse {
+  amount: number;
+  coupon: number;
+  createdAt: string;
+  delivery: string;
+  deliveryDate: string;
+  deliveryDetail: string;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  deliveryStatus: string;
+  discount: number;
+  eventDiscount: number;
+  id: number;
+  image: {
+    createdAt: string;
+    height: number;
+    id: number;
+    name: string;
+    originalName: string;
+    size: number;
+    url: string;
+    width: number;
+  };
+  name: string;
+  location: {
+    address: string;
+    addressDetail: string;
+    dong: string;
+    zipCode: string;
+  };
+  orderDeliveries: IOrderDeliveries[];
+  orderDiscount: number;
+  orderPayment: IOrderPayment;
+  paidAt: string;
+  payAmount: number;
+  point: number;
+  refundAmount: number;
+  refundCoupon: number;
+  refundDeliveryFee: number;
+  refundDeliveryFeeDiscount: number;
+  refundDiscount: number;
+  refundEventDiscount: number;
+  refundOrderDiscount: number;
+  refundPayAmount: number;
+  refundPoint: number;
+  status: string;
 }

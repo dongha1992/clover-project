@@ -64,7 +64,7 @@ const ToastContainer = styled.div<{ duration: number }>`
   background: rgba(36, 36, 36, 0.9);
   border-radius: 8px;
   /* margin: 0 auto; */
-  z-index: 100;
+  z-index: 1000;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -97,8 +97,7 @@ const ToastContainer = styled.div<{ duration: number }>`
     }
   }
 
-  animation: fadeIn 0.3s ease-in,
-    fadeOut 0.3s ${({ duration }) => duration / 1000 - 0.3}s ease-in;
+  animation: fadeIn 0.3s ease-in, fadeOut 0.3s ${({ duration }) => duration / 1000 - 0.3}s ease-in;
 `;
 
 const TextContainer = styled.div`

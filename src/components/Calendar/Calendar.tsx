@@ -10,7 +10,8 @@ import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { filter, flow, map } from 'lodash/fp';
 import { getFormatTime } from '@utils/getFormatTime';
-import { IOtherDeliveryInfo } from '@pages/cart';
+import { IGetOrderListResponse } from '@model/index';
+import { ILunchOrDinner } from '@pages/cart';
 
 let WEEKS: Obj = {
   0: '일',
@@ -39,25 +40,27 @@ export interface IDateObj {
 
 interface ICalendar {
   disabledDates: string[];
-  otherDeliveryInfo?: IOtherDeliveryInfo[];
+  otherDeliveries?: IGetOrderListResponse[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
-  isSheet?: boolean;
   goToTogetherDelivery?: (id: number) => void;
+  lunchOrDinner: ILunchOrDinner[];
+  isSheet?: boolean;
 }
 
 const Calendar = ({
   disabledDates = [],
-  otherDeliveryInfo = [],
+  otherDeliveries = [],
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
   goToTogetherDelivery,
+  lunchOrDinner,
 }: ICalendar) => {
   const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
-  const [togetherDeliveryInActiveDates, setTogetherDeliveryInActiveDates] = useState<IOtherDeliveryInfo[]>([]);
+  const [togetherDeliveryInActiveDates, setTogetherDeliveryInActiveDates] = useState<IGetOrderListResponse[]>([]);
   const { userDestinationStatus } = useSelector(destinationForm);
 
   const initCalendar = () => {
@@ -95,7 +98,12 @@ const Calendar = ({
   };
 
   const clickDayHandler = (value: string): void => {
-    const selectedTogetherDelivery = otherDeliveryInfo.find((item) => item.deliveryDate === value);
+    const isQuickAndSpot = ['spot', 'quick'].includes(userDestinationStatus);
+    const selectedTogetherDelivery = otherDeliveries.find((item) =>
+      isQuickAndSpot
+        ? item.deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value && item.deliveryDate === value
+        : item.deliveryDate === value
+    );
 
     if (selectedTogetherDelivery && !isSheet) {
       goToTogetherDelivery && goToTogetherDelivery(selectedTogetherDelivery?.id);
@@ -182,7 +190,7 @@ const Calendar = ({
 
     /*TODO: 리팩토링 필요 */
 
-    const hasTogetherDeliveryInActiveDates = otherDeliveryInfo
+    const hasTogetherDeliveryInActiveDates = otherDeliveries
       ?.filter((oItem) => {
         return dateList?.some((dItem, index) => {
           if (index >= ONE_WEEK) {
@@ -265,7 +273,7 @@ const Calendar = ({
 
   useEffect(() => {
     initCalendar();
-  }, []);
+  }, [otherDeliveries]);
 
   if (dateList.length < 0) {
     return <div>로딩</div>;

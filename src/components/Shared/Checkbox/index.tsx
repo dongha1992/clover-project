@@ -4,12 +4,13 @@ import styled, { css } from 'styled-components';
 
 type TProps = {
   isSelected: boolean;
+  id?: string;
   onChange: React.MouseEventHandler<HTMLElement>;
 };
 
-const Checkbox = ({ isSelected, onChange }: TProps) => {
+const Checkbox = ({ isSelected, onChange, id }: TProps) => {
   return (
-    <CheckboxContainer onClick={onChange}>
+    <CheckboxContainer onClick={onChange} id={id}>
       <SVGIcon name={isSelected ? 'checkedRectBox' : 'uncheckedRectBox'} />
     </CheckboxContainer>
   );

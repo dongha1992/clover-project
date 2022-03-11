@@ -51,7 +51,7 @@ const QuickOrderPage = () => {
         <TextBox>
           {isLoginSuccess ? (
             <TextH2B>
-              <span>{me?.name}</span>님{`\n`}
+              <span>{me?.nickName}</span>님{`\n`}
               {list.length !== 0 ? ment : '내일 아침도 미리미리!'}
             </TextH2B>
           ) : (
