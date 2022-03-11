@@ -64,7 +64,7 @@ const CartSheet = () => {
   const { isTimerTooltip } = useSelector(orderForm);
 
   const deliveryType = checkTimerLimitHelper();
-  console.log(cartSheetObj, 'cartSheetObj');
+
   const canSpotLunchAndDinnerToday = deliveryType === '스팟점심';
   const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟점심N일';
   const canMorningAndParcelTomorrow = deliveryType === '새벽택배';
