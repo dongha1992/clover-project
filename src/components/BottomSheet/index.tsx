@@ -13,17 +13,18 @@ const BottomSheet = () => {
   const { sheetRef, contentRef, size, height } = useBottomSheet();
   const dispatch = useDispatch();
   const { content }: any = useSelector(bottomSheetForm);
+  document.body.style.overflow = 'hidden';
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
       sheetRef.current.style.setProperty('transform', `translateY(${-95}px)`);
     }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, []);
 
-  const closeBottmSheet = ({
-    target,
-    currentTarget,
-  }: React.MouseEvent<HTMLDivElement>): void => {
+  const closeBottmSheet = ({ target, currentTarget }: React.MouseEvent<HTMLDivElement>): void => {
     if (target !== currentTarget) {
       return;
     }

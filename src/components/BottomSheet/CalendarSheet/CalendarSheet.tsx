@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { bottomSheetButton, FlexCol, FlexRow, FlexBetween } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
@@ -12,12 +12,13 @@ import SVGIcon from '@utils/SVGIcon';
 interface IProps {
   title: string;
   disabledDates: string[];
+  deliveryDate: string;
   otherDeliveryInfo?: any[];
   isSheet?: boolean;
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet }: IProps) => {
+const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet, deliveryDate }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const dispatch = useDispatch();
@@ -35,6 +36,10 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet }: IPr
       })
     );
   };
+
+  useEffect(() => {
+    setSelectedDeliveryDay(deliveryDate);
+  }, []);
 
   return (
     <Container>
@@ -56,7 +61,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet }: IPr
         disabledDates={disabledDates}
         selectedDeliveryDay={selectedDeliveryDay}
         setSelectedDeliveryDay={setSelectedDeliveryDay}
-        otherDeliveryInfo={otherDeliveryInfo}
+        otherDeliveries={otherDeliveryInfo}
         isSheet={isSheet}
       />
       <ButtonContainer onClick={submitHandler}>

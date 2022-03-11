@@ -46,7 +46,7 @@ const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
 
     const deliveryInfo = `${
       hasDeliveryTime
-        ? `${deliveryMap[item.delivery]} - ${deliveryTime[item.deliveryTime]}`
+        ? `${deliveryMap[item.delivery]} - ${deliveryTime[item.deliveryDetail]}`
         : deliveryMap[item.delivery]
     }`;
 
