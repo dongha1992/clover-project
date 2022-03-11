@@ -1,10 +1,4 @@
-import {
-  configureStore,
-  getDefaultMiddleware,
-  combineReducers,
-  AnyAction,
-  CombinedState,
-} from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware, combineReducers, AnyAction, CombinedState } from '@reduxjs/toolkit';
 import alert from './alert';
 import menu from './menu';
 import bottomSheet from './bottomSheet';
@@ -47,8 +41,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 const makeConfigureStore = (reducer: any) =>
   configureStore({
     reducer: reducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat(),
     devTools: isDev,
   });
 
@@ -76,15 +69,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: [
-        'order',
-        'destination',
-        'cart',
-        'menu',
-        'common',
-        'coupon',
-        'spot',
-      ],
+      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'coupon', 'spot'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);
