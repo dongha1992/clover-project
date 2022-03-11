@@ -66,9 +66,11 @@ export const useBottomSheet = () => {
 
     const handleTouchMove = (e: TouchEvent) => {
       e.preventDefault();
+
       if (metrics.current && sheetRef.current) {
         const { touchStart, touchMove } = metrics.current;
         const currentTouch = e.touches[0];
+
         if (touchMove.prevTouchY === undefined) {
           touchMove.prevTouchY = touchStart.touchY;
         }
@@ -97,10 +99,7 @@ export const useBottomSheet = () => {
             nextSheetY = size.maxY;
           }
           if (size.maxY) {
-            sheetRef.current.style.setProperty(
-              'transform',
-              `translateY(${nextSheetY - size.maxY}px)`
-            );
+            sheetRef.current.style.setProperty('transform', `translateY(${nextSheetY - size.maxY}px)`);
           }
         } else {
           // 컨텐츠를 스크롤하는 동안에는 body가 스크롤되는 것을 막습니다
@@ -122,10 +121,7 @@ export const useBottomSheet = () => {
           }
           if (size.maxY) {
             if (touchMove.movingDirection === 'up') {
-              sheetRef.current.style.setProperty(
-                'transform',
-                `translateY(${size.minY - size.maxY}px)`
-              );
+              sheetRef.current.style.setProperty('transform', `translateY(${size.minY - size.maxY}px)`);
             }
           }
 
@@ -146,14 +142,12 @@ export const useBottomSheet = () => {
 
     if (sheetRef.current) {
       sheetRef.current.addEventListener('touchstart', handleTouchStart);
-      sheetRef.current.addEventListener('touchmove', handleTouchMove);
       sheetRef.current.addEventListener('touchend', handleTouchEnd);
     }
 
     return () => {
       if (sheetRef.current) {
         sheetRef.current.removeEventListener('touchstart', handleTouchStart);
-        sheetRef.current.removeEventListener('touchmove', handleTouchMove);
         sheetRef.current.removeEventListener('touchend', handleTouchEnd);
       }
     };

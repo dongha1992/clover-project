@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { putSpotsRegistrationsTemporary } from '@api/spot';
+// import { putSpotsRegistrationsTemporary } from '@api/spot';
 import { IEditRegistration } from '@model/index';
 
 interface IProps {
