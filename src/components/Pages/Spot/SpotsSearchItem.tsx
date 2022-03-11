@@ -19,8 +19,8 @@ interface IProps {
   mapList?: boolean;
 }
 
-// 스팟 검색 - 검색 결과
-const SpotRecentSearch = ({ item, onClick, mapList }: IProps): ReactElement => {
+// 스팟 검색 - 최근픽업이력 & 검색 결과
+const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery } = router.query;
@@ -175,4 +175,4 @@ const Col = styled.div`
   background-color: ${theme.greyScale6};
   margin: 0 4px;
 `;
-export default React.memo(SpotRecentSearch);
+export default React.memo(SpotsSearchItem);

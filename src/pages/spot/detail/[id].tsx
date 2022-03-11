@@ -28,6 +28,7 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
   const [stories, setStories] = useState<ISpotStories[]>([]);
   const [page, setPage] = useState<number>(1);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const HEADER_HEIGHT = 56;
   const sliceLen = spotItem && spotItem.notices?.length > 1;
@@ -111,6 +112,7 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
         if (data.code === 200) {
           getSpotItem(data.data);
           dispatch(SPOT_ITEM(data.data));
+          setIsLoading(true);
         }
       } catch (err) {
         console.error(err);
@@ -165,6 +167,10 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
       //   dispatch(SET_MENU_ITEM({}));
     };
   }, [tabRef?.current?.offsetTop]);
+
+  if(!isLoading){
+    return <div>loading...</div>
+  };
 
   return (
     <Container>
