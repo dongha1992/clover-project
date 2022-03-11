@@ -32,14 +32,13 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { isDelivery } = router.query;
-  const { isLoginSuccess} = useSelector(userForm);
+  const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { userLocation } = useSelector(destinationForm);
 
   const { showToast, hideToast } = useToast();
   const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
-  // const [registrations, setRegistrations] = useState<boolean>();
-
+  
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
@@ -107,11 +106,15 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const hanlderLike = async (e: any) => {
     e.stopPropagation();
-    if (spotLiked) {
-      deleteLike(list.id);
-    } else {
-      onLike(list.id);
-    }
+    if(isLoginSuccess){
+      if (spotLiked) {
+        deleteLike(list.id);
+      } else {
+        onLike(list.id);
+      }  
+    }else{
+      router.push('/onboarding');
+    };
   };
 
   const clickSpotOpen = async (id: number) => {
