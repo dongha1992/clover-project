@@ -15,6 +15,7 @@ interface IProps {
   removeCartItemHandler?: (id: number) => void;
   clickPlusButton: (id: number, quantity: number) => void;
   clickMinusButton: (id: number, quantity: number) => void;
+  clickRestockNoti?: () => void;
 }
 
 /* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
@@ -27,9 +28,8 @@ const CartSheetItem = ({
   removeCartItemHandler,
   clickPlusButton,
   clickMinusButton,
+  clickRestockNoti,
 }: IProps) => {
-  const clickRestockNoti = () => {};
-
   return (
     <Container isSoldout={isSoldout} padding={padding} isCart={isCart}>
       <Wrapper>
