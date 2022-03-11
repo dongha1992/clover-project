@@ -71,34 +71,6 @@ const locationState = {
   detailJuso: null,
 };
 
-// const destinationState = {
-//   addressDetail: '',
-//   name: '',
-//   address: '',
-//   delivery: '',
-//   deliveryMessage: '',
-//   dong: '',
-//   main: false,
-//   receiverName: '',
-//   receiverTel: '',
-//   zipCode: '',
-//   deliveryMessageType: '',
-// };
-
-// const tempDestinationState = {
-// name: '',
-// location: {
-//   addressDetail: '',
-//   address: '',
-//   dong: '',
-//   zipCode: '',
-// },
-// main: false,
-// deliveryMessage: '',
-// receiverName: '',
-// receiverTel: '',
-// };
-
 const INITIAL_STATE: TProps = {
   userDestination: null,
   userTempDestination: null,
