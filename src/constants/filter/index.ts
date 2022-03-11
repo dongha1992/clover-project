@@ -1,11 +1,11 @@
 /* TODO: 확장성 고려 못하고 변수명 지음 */
 
 export const MUTILPLE_CHECKBOX_MENU = [
-  { id: 1, text: '전체', value: 'all' },
-  { id: 2, text: '비건', value: 'vegan' },
-  { id: 3, text: '해산물', value: 'fish' },
-  { id: 4, text: '육류', value: 'meat' },
-  { id: 5, text: '유제품', value: 'milk' },
+  { name: '전체', value: 'all', filtered: false, fieldName: '' },
+  { name: '비건', value: 'vegan', filtered: false, fieldName: '' },
+  { name: '해산물', value: 'fish', filtered: false, fieldName: '' },
+  { name: '육류', value: 'meat', filtered: false, fieldName: '' },
+  { name: '유제품', value: 'milk', filtered: false, fieldName: '' },
 ];
 
 export const RADIO_CHECKBOX_MENU = [
@@ -26,7 +26,6 @@ export const MUTILPLE_CHECKBOX_SPOT = {
     { id: 6, text: '세븐일레븐', value: 'SEVEN_ELEVEN' },
     { id: 7, text: '피트니스', value: 'FITNESS_CENTER' },
     { id: 8, text: '약국', value: 'DRUGSTORE' },
-
   ],
   etc: [
     { id: 9, text: '취식가능', value: 'test' },

@@ -5,46 +5,35 @@ import { theme, FlexRow } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
 import { IGetSpotFilter } from '@model/index';
 
+interface IData {
+  value: string | boolean;
+  filtered: boolean;
+  fieldName: string;
+  name: string;
+}
 interface IProps {
-  data: [{
-    value: string | boolean;
-    filtered: boolean;
-    fieldName: string;
-    name: string;
-  }] | undefined;
+  data: IData[] | any;
   changeHandler: (id: string) => void;
   selectedCheckboxIds: string[];
-  etcFilter?: any
-};
+  etcFilter?: any;
+}
 
-const MultipleFilter = ({
-  data,
-  changeHandler,
-  selectedCheckboxIds,
-  etcFilter,
-}: IProps) => {
+const MultipleFilter = ({ data, changeHandler, selectedCheckboxIds, etcFilter }: IProps) => {
   return (
     <Container>
       <BtnContainer>
         {data &&
-          data?.map((item, index) => {
-            const isSelected = etcFilter ? selectedCheckboxIds.includes(item.fieldName) : selectedCheckboxIds.includes(item.name);
+          data?.map((item: any, index: number) => {
+            const isSelected = etcFilter
+              ? selectedCheckboxIds.includes(item.fieldName)
+              : selectedCheckboxIds.includes(item.name);
             return (
               <FlexRow key={index}>
-                {
-                  etcFilter ?                 
-                  <Checkbox
-                  isSelected={isSelected}
-                  onChange={() => changeHandler(item.fieldName)}
-                  key={index}
-                />
-                  : 
-                  <Checkbox
-                  isSelected={isSelected}
-                  onChange={() => changeHandler(item.name)}
-                  key={index}
-                />
-                }
+                {etcFilter ? (
+                  <Checkbox isSelected={isSelected} onChange={() => changeHandler(item.fieldName)} key={index} />
+                ) : (
+                  <Checkbox isSelected={isSelected} onChange={() => changeHandler(item.name)} key={index} />
+                )}
                 {isSelected ? (
                   <TextH5B padding="4px 0 0 8px">{item.name}</TextH5B>
                 ) : (

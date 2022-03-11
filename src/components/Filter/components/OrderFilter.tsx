@@ -19,11 +19,7 @@ const OrderFilter = ({ data, changeHandler, selectedRadioId }: TProps) => {
             const isSelected = selectedRadioId === item.id;
             return (
               <FlexRow key={index}>
-                <RadioButton
-                  isSelected={isSelected}
-                  onChange={() => changeHandler(item.id)}
-                  key={index}
-                />
+                <RadioButton isSelected={isSelected} onChange={() => changeHandler(item.id)} key={index} />
                 {isSelected ? (
                   <TextH5B padding="0px 0 0 8px">{item.text}</TextH5B>
                 ) : (
