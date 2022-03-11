@@ -24,6 +24,7 @@ interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
   rating: number;
+  content: string;
 }
 
 export const FinishReview = () => {
@@ -36,13 +37,13 @@ export const FinishReview = () => {
 
 const EditReviewPage = ({ reviewId }: any) => {
   const [isShow, setIsShow] = useState(false);
-  const [rating, setRating] = useState<number>(5);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
   const [previewImg, setPreviewImg] = useState<string[]>([]);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
     rating: 5,
+    content: '',
   });
 
   const dispatch = useDispatch();
@@ -63,7 +64,6 @@ const EditReviewPage = ({ reviewId }: any) => {
     'getReviewDetail',
     async () => {
       const { data } = await getReviewDetailApi(reviewId);
-      console.log(data, '@@@@');
       const { searchReview, searchReviewImages } = data.data;
 
       return assignIn(searchReview, { reviewImg: searchReviewImages });
@@ -102,18 +102,19 @@ const EditReviewPage = ({ reviewId }: any) => {
 
   const onStarHoverRating = (nextValue: number, prevValue: number, name: string, e?: any) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
+
     if (xPos <= 0.5) {
       nextValue -= 0.5;
     }
 
-    setRating(nextValue);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: nextValue });
   };
 
   const writeReviewHandler = debounce(() => {
     if (textAreaRef.current) {
-      setNumberOfReivewContent(textAreaRef.current?.value.length);
+      setWriteMenuReviewObj({ ...writeMenuReviewObj, content: textAreaRef.current?.value });
     }
-  }, 50);
+  }, 80);
 
   const onChangeFileHandler = (e: any) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
@@ -214,7 +215,12 @@ const EditReviewPage = ({ reviewId }: any) => {
 
   useEffect(() => {
     if (selectedReviewDetail) {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: selectedReviewDetail.rating });
+      setWriteMenuReviewObj({
+        ...writeMenuReviewObj,
+        content: selectedReviewDetail.content,
+        rating: selectedReviewDetail.rating,
+        imgFiles: selectedReviewDetail.reviewImg?.map((img) => img.url),
+      });
     }
   }, [selectedReviewDetail]);
 
@@ -271,10 +277,14 @@ const EditReviewPage = ({ reviewId }: any) => {
           rows={20}
           eventHandler={writeReviewHandler}
           ref={textAreaRef}
+          value={writeMenuReviewObj?.content}
         />
         <FlexBetween margin="8px 0 0 0">
-          <TextB3R color={theme.brandColor}>{30 - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!</TextB3R>
-          <TextB3R>{numberOfReivewContent}/1000</TextB3R>
+          <TextB3R color={theme.brandColor}>
+            {30 - writeMenuReviewObj?.content.length > 0 &&
+              `${30 - writeMenuReviewObj?.content.length}자만 더 쓰면 포인트 적립 조건 충족!`}
+          </TextB3R>
+          <TextB3R>{writeMenuReviewObj?.content.length}/1000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
