@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userLogin } from '@api/user';
 import { setCookie } from '@utils/cookie';
 import { SET_LOGIN_TYPE } from '@store/common';
+import { userForm } from '@store/user';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {

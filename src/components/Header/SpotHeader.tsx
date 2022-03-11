@@ -107,6 +107,7 @@ const Right = styled.div`
 
   .search {
     padding-right: 27px;
+    cursor: pointer;
   }
 `;
 

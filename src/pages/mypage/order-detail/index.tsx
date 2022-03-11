@@ -174,7 +174,7 @@ const OrderDetailPage = () => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={disabledButton}
+            disabled={false}
             onClick={changeDeliveryInfoHandler}
           >
             배송 정보 변경하기
@@ -210,8 +210,8 @@ const OrderDetailPage = () => {
     );
   };
 
-  const disabledButton = status === 'cancel';
-  const inProgressDelivery = status === 'progress';
+  // const disabledButton = status === 'cancel';
+  // const inProgressDelivery = status === 'progress';
 
   return (
     <Container>
@@ -264,7 +264,7 @@ const OrderDetailPage = () => {
             color={theme.black}
             border
             margin="0 16px 0 0"
-            disabled={disabledButton}
+            disabled={false}
             onClick={cancelOrderHandler}
           >
             주문 취소하기
@@ -273,7 +273,7 @@ const OrderDetailPage = () => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={disabledButton}
+            disabled={false}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기

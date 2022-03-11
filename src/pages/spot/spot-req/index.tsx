@@ -5,15 +5,11 @@ import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  INIT_SPOT_LOCATION, 
-  INIT_SPOT_REGISTRATIONS_OPTIONS, 
-  SET_SPOT_REGISTRATIONS_INFO
-} from '@store/spot';
+import { INIT_SPOT_LOCATION, INIT_SPOT_REGISTRATIONS_OPTIONS, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
 import { userForm } from '@store/user';
 
 const SpotReqPage = () => {
-  const { user } = useSelector(userForm);
+  const { me } = useSelector(userForm);
   const router = useRouter();
   const dispatch = useDispatch();
   const text = {
@@ -48,11 +44,11 @@ const SpotReqPage = () => {
   };
 
   const goToRegister = () => {
-    const spotsRegistrationInfoState = {
-      userName: user.name,
-      userEmail: user.email,
-      userTel: user.tel,    
-    }
+    const spotsRegistrationInfoState: any = {
+      userName: me?.name,
+      userEmail: me?.email,
+      userTel: me?.tel,
+    };
     dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
     dispatch(INIT_SPOT_LOCATION());
     dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
@@ -77,19 +73,15 @@ const SpotReqPage = () => {
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
           <TextH2B margin="0 0 24px 0">{text.askText}</TextH2B>
-          <Button
-            pointer
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            borderRadius="8"
-          >
+          <Button pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
             {text.askBtnText}
           </Button>
         </BtnWrapper>
       </BottomWrapper>
       <FixedButton onClick={goToRegister}>
-        <Button borderRadius="0" padding='10px 0 0 0'>{text.registerBtn}</Button>
+        <Button borderRadius="0" padding="10px 0 0 0">
+          {text.registerBtn}
+        </Button>
       </FixedButton>
     </Container>
   );

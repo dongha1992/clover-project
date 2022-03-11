@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
@@ -12,12 +12,18 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 
-const TotalReviewPage = ({ reviews, menuId }: any) => {
-  reviews = [...reviews, ...reviews, ...reviews];
-
+const TotalReviewPage = ({ menuId }: any) => {
+  const [reviews, setReviews] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const hasReivew = reviews.length > 0;
+  const getTempItemList = async () => {
+    setIsLoading(true);
+    const { data } = await axios.get(`${BASE_URL}/itemList`);
+    const selectedMenuItem: any = data.data.find((item: any) => item.id === Number(menuId));
+    setReviews(selectedMenuItem.reviews);
+    setIsLoading(false);
+  };
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -31,6 +37,15 @@ const TotalReviewPage = ({ reviews, menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
+  useEffect(() => {
+    getTempItemList();
+  }, []);
+
+  const hasReivew = reviews.length > 0;
+
+  if (isLoading) {
+    <div>로딩</div>;
+  }
   return (
     <Container>
       <Wrapper hasReivew={hasReivew}>
@@ -47,7 +62,7 @@ const TotalReviewPage = ({ reviews, menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {reviews.map((review: any, index: number) => {
+        {reviews?.map((review: any, index: number) => {
           return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
       </ReviewWrapper>
@@ -84,12 +99,8 @@ const ReviewWrapper = styled.div`
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
 
-  const { data } = await axios.get(`${BASE_URL}/itemList`);
-  const selectedMenuItem: any = data.data.find((item: any) => item.id === Number(menuId));
-
-  const { reviews } = selectedMenuItem;
   return {
-    props: { menuId, reviews },
+    props: { menuId },
   };
 }
 
