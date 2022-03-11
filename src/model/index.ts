@@ -815,9 +815,35 @@ export interface IGetSpotsRegistrationsStatusResponse {
   data: IGetSpotsRegistrationsStatus;
 }
 
+export interface IGetSpotFilterResponse {
+  code: number;
+  message: string;
+  data: IGetSpotFilter;
+
+}
+
+export interface IGetSpotFilter  {
+  publicFilters: [
+    {
+      value: string | boolean;
+      filtered: boolean;
+      fieldName: string;
+      name: string;
+    },
+  ];
+  etcFilters: [
+    {
+      value: string | boolean;
+      filtered: boolean;
+      fieldName: string;
+      name: string;
+    },
+  ];
+}
 /* Order */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
+
 export interface IGetOrderList {
   days: number;
   page: number;

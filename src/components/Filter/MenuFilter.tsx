@@ -16,30 +16,30 @@ OrderFilter: 단일 선택 필터
 /* TODO : 전체선택 시  */
 
 const MenuFilter = () => {
-  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<number[]>([1]);
-  const [selectedRadioId, setSelectedRadioId] = useState(1);
+  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(['']);
+  const [selectedRadioId, setSelectedRadioId] = useState<number>(1);
   const [isCheckedAll, setIsCheckedAll] = useState(false);
 
-  const checkboxHandler = (id: number) => {
+  const checkboxHandler = (name: string) => {
     /* TODO filter 왜 그래.. */
     /* TODO 로직 넘 복잡 */
-    const findItem = selectedCheckboxIds.find((_id) => _id === id);
+    const findItem = selectedCheckboxIds.find((_name) => _name === name);
     const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
 
-    if (id === 1) {
-      setSelectedCheckboxIds([1]);
+    if (name === '전체') {
+      setSelectedCheckboxIds(['전체']);
       return;
     }
 
     if (findItem) {
-      tempSelectedCheckboxIds.filter((_id) => _id !== id);
+      tempSelectedCheckboxIds.filter((_name) => _name !== name);
     } else {
-      const allCheckedIdx = tempSelectedCheckboxIds.indexOf(1);
+      const allCheckedIdx = tempSelectedCheckboxIds.indexOf('전체');
 
       if (allCheckedIdx !== -1) {
         tempSelectedCheckboxIds.splice(allCheckedIdx, 1);
       }
-      tempSelectedCheckboxIds.push(id);
+      tempSelectedCheckboxIds.push(name);
     }
     setSelectedCheckboxIds(tempSelectedCheckboxIds);
   };
@@ -69,11 +69,7 @@ const MenuFilter = () => {
         <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
           정렬
         </TextH5B>
-        <OrderFilter
-          data={RADIO_CHECKBOX_MENU}
-          changeHandler={radioButtonHandler}
-          selectedRadioId={selectedRadioId}
-        />
+        <OrderFilter data={RADIO_CHECKBOX_MENU} changeHandler={radioButtonHandler} selectedRadioId={selectedRadioId} />
       </Wrapper>
       <ButtonContainer onClick={() => submitHandler()}>
         <Button height="100%" width="100%" borderRadius="0">

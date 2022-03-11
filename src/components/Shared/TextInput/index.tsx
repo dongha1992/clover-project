@@ -180,4 +180,6 @@ const Container = styled.div<{
   }
 `;
 
+TextInput.displayName = 'TextInput';
+
 export default React.memo(TextInput);

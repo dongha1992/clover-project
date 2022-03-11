@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
