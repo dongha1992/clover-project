@@ -5,7 +5,7 @@ import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
 import axios from 'axios';
-import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
+// import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinations } from '@api/destination';
@@ -66,29 +66,15 @@ const AddressManagementPage = () => {
   return (
     <Container>
       <FixedTab>
-        <TabList
-          tabList={TAB_LIST}
-          onClick={selectTabHandler}
-          selectedTab={selectedTab}
-        />
+        <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </FixedTab>
       <Wrapper>
         {selectedTab === '/pickup'
-          ? pickupList.map((item: ISpotItem, index: number) => (
-              <PickupItem
-                key={index}
-                item={item}
-                goToCart={goToCart}
-                goToEdit={goToEdit}
-              />
+          ? pickupList.map((item: any, index: number) => (
+              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
             ))
           : deliveryList.map((item: IDestinationsResponse, index: number) => (
-              <DeliveryItem
-                key={index}
-                item={item}
-                goToCart={goToCart}
-                goToEdit={goToEdit}
-              />
+              <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
             ))}
       </Wrapper>
     </Container>

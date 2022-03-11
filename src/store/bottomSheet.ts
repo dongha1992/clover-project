@@ -20,6 +20,7 @@ export const style = createSlice({
     },
     INIT_BOTTOM_SHEET: (state, action: PayloadAction) => {
       state.content = null;
+      // document.body.style.overflow = 'unset';
     },
   },
 });
