@@ -40,8 +40,6 @@ const Item = ({ item, isQuick = false }: TProps) => {
     router.push(`/menu/${menuId}`);
   };
 
-  item.tag = '배지테리언';
-
   return (
     <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>

@@ -65,7 +65,7 @@ const CartSheet = () => {
   const { isTimerTooltip } = useSelector(orderForm);
 
   const queryClient = useQueryClient();
-
+  console.log(cartSheetObj, 'cartSheetObj');
   /* TODO: axios 여러번 */
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
