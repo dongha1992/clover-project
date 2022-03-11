@@ -44,7 +44,7 @@ interface ICalendar {
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
   goToTogetherDelivery?: (id: number) => void;
-  lunchOrDinner: ILunchOrDinner[];
+  lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
 }
 
@@ -101,7 +101,7 @@ const Calendar = ({
     const isQuickAndSpot = ['spot', 'quick'].includes(userDestinationStatus);
     const selectedTogetherDelivery = otherDeliveries.find((item) =>
       isQuickAndSpot
-        ? item.deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value && item.deliveryDate === value
+        ? item.deliveryDetail === lunchOrDinner?.find((item) => item.isSelected)?.value && item.deliveryDate === value
         : item.deliveryDate === value
     );
 
