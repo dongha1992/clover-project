@@ -11,18 +11,39 @@ import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
+import { useQuery } from 'react-query';
+import { Obj, ISearchReviews } from '@model/index';
+import { groupBy, pipe } from '@fxts/core';
+
+/* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
+/* TODO: 중복 코드 많음 , 리팩토링 */
 
 const TotalReviewPage = ({ menuId }: any) => {
-  const [reviews, setReviews] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const getTempItemList = async () => {
-    setIsLoading(true);
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    const selectedMenuItem: any = data.data.find((item: any) => item.id === Number(menuId));
-    setReviews(selectedMenuItem.reviews);
-    setIsLoading(false);
+  const { data, error, isLoading } = useQuery(
+    'getMenuDetailReview',
+    async () => {
+      // const { data } = await getMenuDetailReviewApi(menuId);
+      const { data } = await axios.get(`${BASE_URL}/review`);
+
+      const { searchReviewImages, searchReviews } = data.data;
+
+      return { searchReviewImages, searchReviews };
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const getAverageRate = () => {
+    const totalRating = data?.searchReviews.reduce((rating: number, review: ISearchReviews) => {
+      return rating + review.rating;
+    }, 0);
+    return (totalRating / data?.searchReviews.length).toFixed(1);
   };
 
   const goToReviewImages = useCallback(() => {
@@ -37,32 +58,53 @@ const TotalReviewPage = ({ menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
-  useEffect(() => {
-    getTempItemList();
-  }, []);
+  /* TODO: 함수화 */
 
-  const hasReivew = reviews.length > 0;
+  const idByReviewImg: Obj = pipe(
+    data?.searchReviewImages,
+    groupBy((review: any) => review.menuReviewId)
+  );
+
+  const mergedReviews = data?.searchReviews.map((review: ISearchReviews) => {
+    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
+  });
 
   if (isLoading) {
-    <div>로딩</div>;
+    return <div>로딩</div>;
   }
+
+  const hasReivew = data?.searchReviews.length > 0;
+
   return (
     <Container>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
-          <ReviewOnlyImage reviews={reviews} goToReviewImages={goToReviewImages} goToReviewDetail={goToReviewDetail} />
+          <ReviewOnlyImage
+            reviews={data?.searchReviewImages}
+            goToReviewImages={goToReviewImages}
+            goToReviewDetail={goToReviewDetail}
+            averageRating={getAverageRate()}
+            totalReviews={data?.searchReviews.length}
+          />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
             상품의 첫 번째 후기를 작성해주세요 :)
           </TextB2R>
         )}
-        <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" margin="0 0 32px 0">
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          borderRadius="8"
+          margin="0 0 32px 0"
+          onClick={() => router.push(`/mypage/review/write/${menuId}`)}
+        >
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {reviews?.map((review: any, index: number) => {
+        {mergedReviews.map((review: any, index: number) => {
           return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
       </ReviewWrapper>

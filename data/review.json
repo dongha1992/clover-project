@@ -1,0 +1,136 @@
+{
+  "data": {
+    "searchReviews": [
+      {
+        "id": 29,
+        "userNickName": "s****g",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "1번의 디테일네임",
+        "orderCount": 3,
+        "rating": 4.5,
+        "content": "너무 맛있어서 감동이에요!",
+        "createdAt": "2022-02-24"
+      },
+      {
+        "id": 25,
+        "userNickName": "마****랩",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "1번의 디테일네임",
+        "orderCount": 1,
+        "rating": 4,
+        "content": "88888888888너무 맛있어서 감동이에요!",
+        "comment": "안녕하세요. 프레시코드입니다 (୨୧ ❛ᴗ❛)✧ 소중한 시간에 이렇게 후기까지 남겨 주셔서 정말 감사합니다",
+        "createdAt": "2022-02-22"
+      },
+      {
+        "id": 16,
+        "userNickName": "마****랩",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "1번의 디테일네임",
+        "orderCount": 1,
+        "rating": 4.5,
+        "content": "세상에서 가장 맛 있는",
+        "createdAt": "2022-02-22"
+      },
+      {
+        "id": 7,
+        "userNickName": "마****랩",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "1번의 디테일네임",
+        "orderCount": 4,
+        "rating": 3.5,
+        "content": "수정해용",
+        "createdAt": "2022-02-17"
+      },
+      {
+        "id": 3,
+        "userNickName": "u***3",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "3번의 디테일네임",
+        "orderCount": 3,
+        "rating": 2,
+        "content": "good3",
+        "createdAt": "2022-02-10"
+      },
+      {
+        "id": 2,
+        "userNickName": "u***2",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "2번의 디테일네임",
+        "orderCount": 2,
+        "rating": 3.5,
+        "content": "good2",
+        "createdAt": "2022-02-09"
+      },
+      {
+        "id": 1,
+        "userNickName": "u***1",
+        "menuName": "[EWHA] 소프트 두부 샐러드",
+        "menuDetailName": "1번의 디테일네임",
+        "orderCount": 1,
+        "rating": 4.5,
+        "content": "good1",
+        "comment": "안녕하세요. 프레시코드입니다 (୨୧ ❛ᴗ❛)✧ 소중한 시간에 이렇게 후기까지 남겨 주셔서 정말 감사합니다",
+        "createdAt": "2022-02-08"
+      }
+    ],
+    "searchReviewImages": [
+      {
+        "id": 32,
+        "menuReviewId": 29,
+        "url": "/dev/menu/review/origin/1_20190213142553",
+        "width": 0,
+        "height": 0,
+        "size": 0
+      },
+      {
+        "id": 23,
+        "menuReviewId": 25,
+        "url": "/dev/menu/review/origin/1_20190213142553",
+        "width": 55,
+        "height": 100,
+        "size": 55
+      },
+      {
+        "id": 33,
+        "menuReviewId": 29,
+        "url": "/dev/menu/review/origin/1_20190213142553",
+        "width": 0,
+        "height": 0,
+        "size": 0
+      },
+      {
+        "id": 5,
+        "menuReviewId": 7,
+        "url": "/dev/menu/review/origin/1_20190213142553",
+        "width": 0,
+        "height": 0,
+        "size": 0
+      },
+      {
+        "id": 4,
+        "menuReviewId": 7,
+        "url": "url",
+        "width": 0,
+        "height": 0,
+        "size": 0
+      },
+      {
+        "id": 2,
+        "menuReviewId": 1,
+        "url": "/dev/menu/review/origin/1_20190213142553",
+        "width": 0,
+        "height": 0,
+        "size": 0
+      },
+      {
+        "id": 1,
+        "menuReviewId": 1,
+        "url": "/dev/menu/review/origin/1_20190213142552",
+        "width": 0,
+        "height": 0,
+        "size": 0
+      }
+    ]
+  }
+}
