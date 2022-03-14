@@ -65,7 +65,7 @@ const CartSheet = () => {
   const { isTimerTooltip } = useSelector(orderForm);
 
   const queryClient = useQueryClient();
-
+  console.log(cartSheetObj, 'cartSheetObj');
   /* TODO: axios 여러번 */
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
@@ -308,7 +308,7 @@ const CartSheet = () => {
     }
   }, []);
 
-  if (!Object.keys(cartSheetObj).length) {
+  if (cartSheetObj.length === 0) {
     return <div>로딩</div>;
   }
 
@@ -323,7 +323,7 @@ const CartSheet = () => {
             필수옵션
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
-            {cartSheetObj?.details.map((option: any, index: number) => {
+            {cartSheetObj?.menuDetails.map((option: any, index: number) => {
               if (option.main) {
                 return <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />;
               }
@@ -335,7 +335,7 @@ const CartSheet = () => {
             선택옵션
           </TextH5B>
           <Select placeholder="선택옵션" type={'optional'}>
-            {cartSheetObj?.details.map((option: any, index: number) => {
+            {cartSheetObj?.menuDetails.map((option: any, index: number) => {
               if (!option.main) {
                 return <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />;
               }

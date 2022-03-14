@@ -33,7 +33,7 @@ const CheckDestinationPlace = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { isLocation } = router.query;
+  const { isLocation, isSpot } = router.query;
 
   const {
     data: result,
@@ -92,7 +92,7 @@ const CheckDestinationPlace = () => {
     const canParcel = status === 'parcel';
     const canNotDelivery = status === 'noDelivery';
 
-    if (isLocation) {
+    if (isLocation || isSpot) {
       // 홈 위치 검색
       switch (status) {
         case 'spot': {

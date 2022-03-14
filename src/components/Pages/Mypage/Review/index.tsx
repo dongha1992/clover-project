@@ -1,4 +1,5 @@
-import MypageReviewItem from './MypageReviewItem';
+import WillWriteReviewItem from './WillWriteReviewItem';
+import CompleteReviewItem from './CompleteReviewItem';
 import ReviewInfo from './ReviewInfo';
 
-export { MypageReviewItem, ReviewInfo };
+export { WillWriteReviewItem, ReviewInfo, CompleteReviewItem };

@@ -28,8 +28,6 @@ const DetailBottom = () => {
 
   const deliveryType = checkTimerLimitHelper();
 
-  //temp
-  const numOfLike = 10;
   // const tempStatus = 'isSoldout';
   const tempStatus = '';
   const tempNotiOff = false;
@@ -99,7 +97,7 @@ const DetailBottom = () => {
             <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {tempIsLike ? numOfLike + 1 : numOfLike}
+            {menuItem.likeCount}
           </TextH5B>
         </LikeWrapper>
         <Col />

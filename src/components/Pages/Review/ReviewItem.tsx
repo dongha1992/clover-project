@@ -7,12 +7,12 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 
-const ReviewItem = ({ review, onClick }: any) => {
+const ReviewItem = ({ review, onClick, reviewImg }: any) => {
   return (
     <Container onClick={onClick}>
       <Wrapper>
         <ImgWrapper>
-          <ReviewImg src={IMAGE_S3_URL + review.url} />
+          <ReviewImg src={IMAGE_S3_URL + reviewImg?.url} />
         </ImgWrapper>
         <ReviewContent>
           <ReviewHeader>
@@ -21,7 +21,7 @@ const ReviewItem = ({ review, onClick }: any) => {
               <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
             </Rating>
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 16px 0 0">
-              {review.order}번 째 구매
+              {review.orderCount}번 째 구매
             </Tag>
           </ReviewHeader>
           <ReviewBody>
