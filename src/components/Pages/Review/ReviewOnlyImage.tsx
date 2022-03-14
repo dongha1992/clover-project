@@ -8,21 +8,21 @@ import StarRatingComponent from 'react-star-rating-component';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 
-const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail }: any) => {
+const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail, averageRating, totalReviews }: any) => {
   return (
     <Container>
       <Wrapper>
         <Header>
           <Count>
-            <TextH2B padding="0 4px 0 0">5.0</TextH2B>
-            <TextH5B>{`(${reviews.length})`}</TextH5B>
+            <TextH2B padding="0 4px 0 0">{averageRating}</TextH2B>
+            <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
             <StarRatingComponent
               name="rate"
               editing={false}
               starCount={5}
-              value={4.0}
+              value={averageRating}
               renderStarIcon={(index, value) => {
                 return <SVGIcon name={index <= value ? 'singleStar' : 'singleStarEmpty'} />;
               }}
@@ -33,7 +33,7 @@ const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail }: any) =
           </Star>
         </Header>
         <ReviewSwipe>
-          {reviews.map((review: any, index: number) => {
+          {reviews?.map((review: any, index: number) => {
             if (index > 3) return;
             if (reviews.length > 4 && index === 3) {
               return (
@@ -42,7 +42,7 @@ const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail }: any) =
                     <TextH1B color={theme.white}>+ {reviews.length - 4}</TextH1B>
                   </LastImg>
                   <Image
-                    src={IMAGE_S3_URL + review?.imageUrl[0]}
+                    src={IMAGE_S3_URL + review?.url}
                     alt="리뷰이미지"
                     width={'100%'}
                     height={'100%'}
@@ -52,9 +52,9 @@ const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail }: any) =
               );
             }
             return (
-              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.id)}>
+              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.menuReviewId)}>
                 <Image
-                  src={IMAGE_S3_URL + review?.imageUrl[0]}
+                  src={IMAGE_S3_URL + review?.url}
                   alt="리뷰이미지"
                   key={index}
                   width={'100%'}
@@ -126,7 +126,7 @@ const LastImg = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(36, 36, 36, 0.5);
-  z-index: 10;
+  z-index: 9;
   display: flex;
   justify-content: center;
   align-items: center;

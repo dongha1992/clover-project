@@ -18,7 +18,7 @@ interface IProps {
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet, deliveryDate }: IProps) => {
+const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo = [], isSheet, deliveryDate }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const dispatch = useDispatch();
@@ -61,7 +61,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo, isSheet, deliv
         disabledDates={disabledDates}
         selectedDeliveryDay={selectedDeliveryDay}
         setSelectedDeliveryDay={setSelectedDeliveryDay}
-        otherDeliveryInfo={otherDeliveryInfo}
+        otherDeliveries={otherDeliveryInfo}
         isSheet={isSheet}
       />
       <ButtonContainer onClick={submitHandler}>

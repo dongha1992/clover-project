@@ -11,7 +11,7 @@ interface IProps {
   menu: any;
 }
 
-const MypageReviewItem = ({ menu }: IProps) => {
+const WillWriteReviewItem = ({ menu }: IProps) => {
   return (
     <Container>
       <Wrapper>
@@ -69,4 +69,4 @@ const ItemImage = styled.img`
   border-radius: 8px;
 `;
 
-export default MypageReviewItem;
+export default WillWriteReviewItem;
