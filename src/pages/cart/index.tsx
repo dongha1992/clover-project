@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
@@ -16,9 +15,7 @@ import {
   fixedBottom,
   FlexCenter,
 } from '@styles/theme';
-import { CartSheetItem } from '@components/BottomSheet/CartSheet';
 import Checkbox from '@components/Shared/Checkbox';
-import InfoMessage from '@components/Shared/Message';
 import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
@@ -43,6 +40,7 @@ import { availabilityDestination } from '@api/destination';
 import { getOrderLists } from '@api/order';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
+import { CartItem } from '@components/Pages/Cart';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -318,7 +316,7 @@ const CartPage = () => {
     setLunchOrDinner(newLunchDinner);
   };
 
-  const removeItemHandler = async () => {
+  const removeSelectedItemHandler = async () => {
     dispatch(
       SET_ALERT({
         alertMessage: '선택을 상품을 삭제하시겠어요?',
@@ -328,6 +326,10 @@ const CartPage = () => {
       })
     );
   };
+
+  const removeCartItemHandler = () => {};
+
+  const removeCartDisplayItemHandler = () => {};
 
   const clickDisposableItemCount = (id: number, quantity: number) => {
     const findItem = disposableList.map((item) => {
@@ -552,8 +554,6 @@ const CartPage = () => {
     );
   }
 
-  console.log(itemList, 'itemList');
-
   return (
     <Container>
       {isLoginSuccess ? (
@@ -586,7 +586,7 @@ const CartPage = () => {
               <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenuIdList.length}/${cartItemList.length}`})</TextB2R>
             </div>
             <Right>
-              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeItemHandler}>
+              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeSelectedItemHandler}>
                 선택삭제
               </TextH6B>
             </Right>
@@ -594,26 +594,17 @@ const CartPage = () => {
           <BorderLine height={1} margin="16px 0" />
           <VerticalCartList>
             {cartItemList?.map((item: any, index) => (
-              <ItemWrapper key={index}>
-                <div className="itemCheckbox">
-                  <Checkbox
-                    onChange={() => handleSelectCartItem(item.id)}
-                    isSelected={checkedMenuIdList.includes(item.id)}
-                  />
-                  <CartSheetItem
-                    isCart
-                    isSoldout={item.soldout}
-                    menu={item}
-                    clickPlusButton={clickPlusButton}
-                    clickMinusButton={clickMinusButton}
-                    clickRestockNoti={clickRestockNoti}
-                  />
-                </div>
-                <div className="itemInfo">
-                  <InfoMessage status="soldSoon" count={2} />
-                </div>
-                <BorderLine height={1} margin="16px 0" />
-              </ItemWrapper>
+              <CartItem
+                item={item}
+                handleSelectCartItem={handleSelectCartItem}
+                checkedMenuIdList={checkedMenuIdList}
+                clickPlusButton={clickPlusButton}
+                clickMinusButton={clickMinusButton}
+                clickRestockNoti={clickRestockNoti}
+                removeCartDisplayItemHandler={removeCartDisplayItemHandler}
+                removeCartItemHandler={removeCartItemHandler}
+                key={index}
+              />
             ))}
           </VerticalCartList>
         </CartListWrapper>
@@ -838,20 +829,6 @@ const ListHeader = styled.div`
 `;
 
 const VerticalCartList = styled.div``;
-
-const ItemWrapper = styled.div`
-  .itemCheckbox {
-    display: flex;
-    width: 100%;
-    > div {
-      align-self: flex-start;
-      padding-right: 9px;
-    }
-  }
-  .itemInfo {
-    padding-left: 30px;
-  }
-`;
 
 const DisposableSelectWrapper = styled.div`
   padding: 24px;

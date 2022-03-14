@@ -819,17 +819,16 @@ export interface IGetSpotFilterResponse {
   code: number;
   message: string;
   data: IGetSpotFilter;
-
 }
 
-export interface IGetSpotFilter  {
+export interface IGetSpotFilter {
   publicFilters: [
     {
       value: string | boolean;
       filtered: boolean;
       fieldName: string;
       name: string;
-    },
+    }
   ];
   etcFilters: [
     {
@@ -837,7 +836,7 @@ export interface IGetSpotFilter  {
       filtered: boolean;
       fieldName: string;
       name: string;
-    },
+    }
   ];
 }
 /* Order */
@@ -1067,4 +1066,25 @@ export interface IWillWriteReviewsResponse {
   code: number;
   message: string;
   data: IWillWriteReview[];
+}
+
+export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
+export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
+export interface IGetCart {
+  calorie: number;
+  discountPrice: number;
+  isSold: boolean;
+  menuDetailId: number;
+  menuQuantity: number;
+  name: string;
+  price: number;
+  protein: number;
+  size: TCartMenuSize;
+  status: TCartMenuStatus;
+}
+
+export interface IGetCartResponse {
+  code: number;
+  message: string;
+  data: IGetCart[];
 }

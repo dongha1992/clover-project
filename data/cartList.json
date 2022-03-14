@@ -1,19 +1,16 @@
 {
   "data": [
     {
-      "id": 3,
-      "menuId": 1,
-      "name": "두부 크럼블 낫또 샐러드 + 닭가슴살 (L)",
-      "price": 100000,
-      "discount": 10,
-      "type": "main",
-      "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
-      "limitDaily": 0,
-      "limit": "일일 70개 한정 판매!",
-      "badge": "",
-      "quantity": 1,
-      "main": true,
-      "tags": []
+      "calorie": 2,
+      "discountPrice": 1231,
+      "isSold": false,
+      "menuDetailId": 23,
+      "menuQuantity": 2,
+      "name": "두부 크럼블 낫또 샐러드",
+      "price": 2222,
+      "protein": 123,
+      "size": "SMALL",
+      "status": "NORMAL"
     }
   ]
 }
