@@ -7,7 +7,6 @@ const CategoryPage = () => {
   return (
     <Container>
       <SingleMenu title="전체" />
-      <SingleMenu title="샐러드" />
     </Container>
   );
 };

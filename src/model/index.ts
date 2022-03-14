@@ -815,9 +815,34 @@ export interface IGetSpotsRegistrationsStatusResponse {
   data: IGetSpotsRegistrationsStatus;
 }
 
+export interface IGetSpotFilterResponse {
+  code: number;
+  message: string;
+  data: IGetSpotFilter;
+}
+
+export interface IGetSpotFilter {
+  publicFilters: [
+    {
+      value: string | boolean;
+      filtered: boolean;
+      fieldName: string;
+      name: string;
+    }
+  ];
+  etcFilters: [
+    {
+      value: string | boolean;
+      filtered: boolean;
+      fieldName: string;
+      name: string;
+    }
+  ];
+}
 /* Order */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
+
 export interface IGetOrderList {
   days: number;
   page: number;
@@ -929,4 +954,154 @@ export interface IOrderDetail {
   delivery: string;
   deliveryDetail: string;
   orderDeliveries: IOrderDeliveries[];
+}
+
+export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
+export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
+export type TType =
+  | 'DRINK'
+  | 'KOREAN_SOUP_SOUP'
+  | 'LUNCH_BOX_CONVENIENCE_FOOD'
+  | 'SALAD'
+  | 'SET'
+  | 'SNACK'
+  | 'WRAP_SANDWICH';
+export interface IGetMenus {
+  categories: TCategory | string;
+  menuSort: TMenuSort | string;
+  searchKeyword: string;
+  type: TType | string;
+}
+
+export interface IMenuDetails {
+  id: number;
+  name: string;
+  price: number;
+  discountPrice: number;
+  main: boolean;
+}
+
+export interface IMenus {
+  id: number;
+  name: string;
+  type: string;
+  category: string;
+  description: string;
+  thumbnail: string;
+  badgeMessage: string;
+  launchedAt: string;
+  liked: boolean;
+  likeCount: number;
+  reviewCount: number;
+  menuDetails: IMenuDetails[];
+  menuSort: string;
+  orderCount: number;
+  priority: string;
+}
+export interface IGetMenusResponse {
+  code: number;
+  data: IMenus[];
+  message: string;
+}
+export interface ISearchReviews {
+  id: number;
+  userNickName: string;
+  menuName: string;
+  menuDetailName: string;
+  orderCount: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+}
+
+export interface ISearchReviewImages {
+  id: number;
+  url: string;
+  width: number;
+  height: number;
+  size: number;
+}
+export interface IMenuReviews {
+  searchReviews: ISearchReviews[];
+  searchReviewImages: ISearchReviewImages[];
+}
+
+export interface IMenuReviewsResponse {
+  code: number;
+  data: IMenuReviews[];
+  message: string;
+}
+
+export interface IReviewsDetailResponse {
+  code: number;
+  message: string;
+  data: {
+    searchReview: ISearchReviews;
+    searchReviewImages: ISearchReviewImages[];
+  };
+}
+
+export interface IPostMenuReview {
+  files: FormData;
+  content: string;
+  menuDetailId: number;
+  menuId: number;
+  menuReviewImages: [
+    {
+      height: number;
+      main: boolean;
+      name: string;
+      priority: number;
+      size: number;
+      width: number;
+    }
+  ];
+  orderDeliveryId: number;
+  rating: number;
+}
+
+export interface IPostMenuReviewResponse {}
+
+export interface ICompletionReviewImg {
+  id: number;
+  menuReviewId: number;
+  url: string;
+  width: number;
+  height: number;
+  size: number;
+}
+export interface ICompletionReviews {
+  id: number;
+  userNickName: string;
+  menuName: string;
+  menuDetailName: string;
+  rating: number;
+  content: string;
+  createdAt: string;
+  images: ICompletionReviewImg[];
+}
+
+export interface ICompletionReviewsResponse {
+  code: number;
+  message: string;
+  data: ICompletionReviews[];
+}
+
+export interface IWillWriteReview {
+  delivery: TDeliveryType | string;
+  deliveryDate: string;
+  height: number;
+  menuDetailId: number;
+  menuDetailName: string;
+  menuId: number;
+  menuName: string;
+  orderDeliveryId: number;
+  url: string;
+  width: number;
+}
+
+export interface IWillWriteReviewsResponse {
+  code: number;
+  message: string;
+  data: IWillWriteReview[];
 }

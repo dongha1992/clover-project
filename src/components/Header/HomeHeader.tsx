@@ -66,7 +66,7 @@ const Container = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 10;
+  z-index: 1000;
   height: 56px;
   left: calc(50%);
   background-color: white;

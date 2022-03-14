@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import SpotRecentSearch from '@components/Pages/Spot/SpotRecentSearch';
+import { SpotsSearchItem } from '@components/Pages/Spot';
 import { SearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -140,7 +140,7 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  //최근 픽업 이력
+  //TODO 최근 픽업 이력
   const getRecentSpotList = async () => {
     setRecentPickedSpotList(RECENT_SPOT);
   };
@@ -185,6 +185,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
+
   const goToOrder = useCallback(() => {
     dispatch(
       SET_BOTTOM_SHEET({
@@ -198,7 +199,7 @@ const SpotSearchPage = (): ReactElement => {
     getRecentSpotList();
     getSearchRecommendList();
   }, []);
-
+  
   return (
     <Container>
       <Wrapper>
@@ -273,7 +274,7 @@ const SpotSearchPage = (): ReactElement => {
             <RecentPickWrapper>
               <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
               {recentPickedSpotList.map((item: any, index) => (
-                <SpotRecentSearch item={item} key={index} onClick={goToOrder} />
+                <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
               ))}
             </RecentPickWrapper>
           </DefaultSearchContainer>

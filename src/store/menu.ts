@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IMenuItem } from '@pages/menu/[menuId]';
+import { IMenus } from '@model/index';
 /* TODO: type 지정 엉망임 */
 
 type TProps = {
   menu: any;
-  menuItem: IMenuItem | any;
+  menuItem: IMenus | any;
 };
 
 const initialState: TProps = {
@@ -20,7 +20,7 @@ export const menu = createSlice({
     SET_MENU: (state, action: PayloadAction<TProps>) => {
       state.menu = action.payload;
     },
-    SET_MENU_ITEM: (state, action: PayloadAction<IMenuItem> | any) => {
+    SET_MENU_ITEM: (state, action: PayloadAction<IMenus> | any) => {
       state.menuItem = action.payload;
     },
   },

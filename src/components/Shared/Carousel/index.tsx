@@ -45,6 +45,11 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
     prevArrow: <PreviousArrow />,
   };
 
+  //temp
+  if (typeof images === 'string') {
+    images = [images];
+  }
+
   /*TODO: menu에 reviews 어떻게 들어오는지 아직 모름, */
   return (
     <Container
