@@ -1,12 +1,11 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
-import { FlexBetween, theme } from '@styles/theme';
-import CountButton from '@components/Shared/Button/CountButton';
+import styled from 'styled-components';
+import { TextB3R } from '@components/Shared/Text';
+import { FlexBetween, FlexRow, theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import { Tag } from '@components/Shared/Tag';
 import Checkbox from '@components/Shared/Checkbox';
-
+import { IMAGE_S3_URL } from '@constants/mock';
+import Image from 'next/image';
 interface IProps {
   handleSelectCartItem: any;
   checkedMenuIdList: any;
@@ -17,19 +16,26 @@ interface IProps {
 const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
   return (
     <Container>
-      <Checkbox onChange={() => handleSelectCartItem(menu.id)} isSelected={checkedMenuIdList.includes(menu.id)} />
       <Wrapper>
-        <ImageWrapper>
-          <ItemImage src={menu.url} alt="상품이미지" />
-        </ImageWrapper>
-        <ContentWrapper>
+        <FlexRow width="40%">
+          <Checkbox onChange={() => handleSelectCartItem(menu.id)} isSelected={checkedMenuIdList.includes(menu.id)} />
+          <ImageWrapper>
+            <Image
+              src={IMAGE_S3_URL + menu.url}
+              alt="상품이미지"
+              width={'100%'}
+              height={'100%'}
+              layout="responsive"
+              className="rounded"
+            />
+          </ImageWrapper>
+        </FlexRow>
+        <FlexBetween>
           <TextB3R>{menu.name}</TextB3R>
-          <FlexBetween>
-            <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
-              <SVGIcon name="defaultCancel" />
-            </RemoveBtnContainer>
-          </FlexBetween>
-        </ContentWrapper>
+          <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
+            <SVGIcon name="defaultCancel" />
+          </RemoveBtnContainer>
+        </FlexBetween>
       </Wrapper>
     </Container>
   );
@@ -50,27 +56,20 @@ const Container = styled.div<{
 
 const Wrapper = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
 `;
 
 const ImageWrapper = styled.div`
-  width: 75px;
-`;
-
-const ContentWrapper = styled.div`
-  margin-left: 8px;
+  position: relative;
   width: 100%;
-  height: 60px;
 `;
 
 const RemoveBtnContainer = styled.div`
-  position: absolute;
+  /* position: absolute;
   right: 12px;
-  top: 12px;
-`;
-
-const ItemImage = styled.img`
-  width: 100%;
-  border-radius: 8px;
+  top: 12px; */
 `;
 
 export default React.memo(CartDisplayItem);

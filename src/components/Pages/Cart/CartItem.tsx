@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CartSheetItem } from '@components/BottomSheet/CartSheet';
-import InfoMessage from '@components/Shared/Message';
 import BorderLine from '@components/Shared/BorderLine';
 import CartDisplayItem from './CartDisplayItem';
 import CartActualItem from './CartActualItem';
@@ -35,14 +33,19 @@ const CartItem = ({
         removeCartDisplayItemHandler={removeCartDisplayItemHandler}
         menu={item}
       />
-      {/*  CartActualItem 는 리스트로 받아야 함*/}
-      <CartActualItem
-        clickPlusButton={clickPlusButton}
-        clickMinusButton={clickMinusButton}
-        clickRestockNoti={clickRestockNoti}
-        removeCartItemHandler={removeCartItemHandler}
-        menu={item}
-      />
+      {item?.menuDetails.map((menu: any, index: number) => {
+        return (
+          <CartActualItem
+            clickPlusButton={clickPlusButton}
+            clickMinusButton={clickMinusButton}
+            clickRestockNoti={clickRestockNoti}
+            removeCartItemHandler={removeCartItemHandler}
+            menu={menu}
+            key={index}
+          />
+        );
+      })}
+
       <BorderLine height={1} margin="16px 0" />
     </Container>
   );
