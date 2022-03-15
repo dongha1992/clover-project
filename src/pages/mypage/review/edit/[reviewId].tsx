@@ -16,13 +16,15 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
+import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
+import assignIn from 'lodash-es/assignIn';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
   rating: number;
+  content: string;
 }
 
 export const FinishReview = () => {
@@ -33,15 +35,15 @@ export const FinishReview = () => {
   );
 };
 
-const WriteReviewPage = ({ menuId }: any) => {
+const EditReviewPage = ({ reviewId }: any) => {
   const [isShow, setIsShow] = useState(false);
-  const [rating, setRating] = useState<number>(5);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
   const [previewImg, setPreviewImg] = useState<string[]>([]);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
     rating: 5,
+    content: '',
   });
 
   const dispatch = useDispatch();
@@ -55,16 +57,16 @@ const WriteReviewPage = ({ menuId }: any) => {
   /* TODO: 상수 파일에서 관리 */
 
   const {
-    data,
+    data: selectedReviewDetail,
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenuDetail',
+    'getReviewDetail',
     async () => {
-      // temp
-      const { data } = await getMenuDetailApi(menuId);
+      const { data } = await getReviewDetailApi(reviewId);
+      const { searchReview, searchReviewImages } = data.data;
 
-      return data.data;
+      return assignIn(searchReview, { reviewImg: searchReviewImages });
     },
 
     {
@@ -74,44 +76,45 @@ const WriteReviewPage = ({ menuId }: any) => {
     }
   );
 
-  const { mutateAsync: mutateCreateMenuReview } = useMutation(
-    async (formData: FormData) => {
-      console.log(formData, 'formData1');
-      const { data } = await createMenuReviewApi(formData);
-      console.log(data, 'result from api');
-    },
-    {
-      onSuccess: async () => {
-        dispatch(
-          SET_ALERT({
-            children: (
-              <GreyBg>
-                <TextH5B>+ 300P 적립</TextH5B>
-              </GreyBg>
-            ),
-            alertMessage: '제이미님의 소중한 후기에 감사드려요!',
-            submitBtnText: '확인',
-          })
-        );
-        await queryClient.refetchQueries('getCardList');
-      },
-    }
-  );
+  // const { mutateAsync: mutateCreateMenuReview } = useMutation(
+  //   async (formData: FormData) => {
+  //     console.log(formData, 'formData1');
+  //     const { data } = await createMenuReviewApi(formData);
+  //     console.log(data, 'result from api');
+  //   },
+  //   {
+  //     onSuccess: async () => {
+  //       dispatch(
+  //         SET_ALERT({
+  //           children: (
+  //             <GreyBg>
+  //               <TextH5B>+ 300P 적립</TextH5B>
+  //             </GreyBg>
+  //           ),
+  //           alertMessage: '제이미님의 소중한 후기에 감사드려요!',
+  //           submitBtnText: '확인',
+  //         })
+  //       );
+  //       await queryClient.refetchQueries('getCardList');
+  //     },
+  //   }
+  // );
 
   const onStarHoverRating = (nextValue: number, prevValue: number, name: string, e?: any) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
+
     if (xPos <= 0.5) {
       nextValue -= 0.5;
     }
 
-    setRating(nextValue);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: nextValue });
   };
 
   const writeReviewHandler = debounce(() => {
     if (textAreaRef.current) {
-      setNumberOfReivewContent(textAreaRef.current?.value.length);
+      setWriteMenuReviewObj({ ...writeMenuReviewObj, content: textAreaRef.current?.value });
     }
-  }, 50);
+  }, 80);
 
   const onChangeFileHandler = (e: any) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
@@ -205,8 +208,21 @@ const WriteReviewPage = ({ menuId }: any) => {
     formData.append('orderDeliveryId', '11');
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
-    mutateCreateMenuReview(formData);
+    // mutateCreateMenuReview(formData);
   };
+
+  console.log(selectedReviewDetail, 'selectedReviewDetail');
+
+  useEffect(() => {
+    if (selectedReviewDetail) {
+      setWriteMenuReviewObj({
+        ...writeMenuReviewObj,
+        content: selectedReviewDetail.content,
+        rating: selectedReviewDetail.rating,
+        imgFiles: selectedReviewDetail.reviewImg?.map((img) => img.url),
+      });
+    }
+  }, [selectedReviewDetail]);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -223,7 +239,7 @@ const WriteReviewPage = ({ menuId }: any) => {
         <FlexRow>
           <ImgWrapper>
             <NextImage
-              src={IMAGE_S3_URL + data.thumbnail}
+              src={IMAGE_S3_URL + selectedReviewDetail?.thumbnail}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
@@ -232,7 +248,7 @@ const WriteReviewPage = ({ menuId }: any) => {
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{data.name}</TextB2R>
+            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.name}</TextB2R>
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
@@ -240,7 +256,7 @@ const WriteReviewPage = ({ menuId }: any) => {
             name="rate"
             editing
             starCount={5}
-            value={rating}
+            value={writeMenuReviewObj.rating}
             onStarHover={onStarHoverRating}
             renderStarIcon={(index, value) => {
               return <SVGIcon name={index <= value ? 'reviewStarFull' : 'reviewStarEmpty'} />;
@@ -261,10 +277,14 @@ const WriteReviewPage = ({ menuId }: any) => {
           rows={20}
           eventHandler={writeReviewHandler}
           ref={textAreaRef}
+          value={writeMenuReviewObj?.content}
         />
         <FlexBetween margin="8px 0 0 0">
-          <TextB3R color={theme.brandColor}>{30 - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!</TextB3R>
-          <TextB3R>{numberOfReivewContent}/1000</TextB3R>
+          <TextB3R color={theme.brandColor}>
+            {30 - writeMenuReviewObj?.content.length > 0 &&
+              `${30 - writeMenuReviewObj?.content.length}자만 더 쓰면 포인트 적립 조건 충족!`}
+          </TextB3R>
+          <TextB3R>{writeMenuReviewObj?.content.length}/1000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
@@ -436,10 +456,10 @@ const GreyBg = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
+  const { reviewId } = context.query;
   return {
-    props: { menuId },
+    props: { reviewId },
   };
 }
 
-export default WriteReviewPage;
+export default EditReviewPage;

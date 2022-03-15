@@ -177,6 +177,7 @@ const CartPage = () => {
   //   async () => {
   //     const params = {
   //       roadAddress: userDestination?.location.address!,
+  //       jibunAddress: null,
   //       zipCode: userDestination?.location.zipCode!,
   //       delivery: userDestinationStatus.toUpperCase() || null,
   //     };
@@ -551,6 +552,8 @@ const CartPage = () => {
     );
   }
 
+  console.log(itemList, 'itemList');
+
   return (
     <Container>
       {isLoginSuccess ? (
@@ -729,11 +732,11 @@ const CartPage = () => {
           <MenuListHeader>
             <TextH3B padding="0 0 24px 0">루이스님이 찜한 상품이에요</TextH3B>
             <ScrollHorizonList>
-              <ScrollHorizonListGroup>
+              {/* <ScrollHorizonListGroup>
                 {itemList.map((item, index) => {
                   return <HorizontalItem item={item} key={index} />;
                 })}
-              </ScrollHorizonListGroup>
+              </ScrollHorizonListGroup> */}
             </ScrollHorizonList>
           </MenuListHeader>
         </MenuListWarpper>
@@ -741,11 +744,11 @@ const CartPage = () => {
           <MenuListHeader>
             <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
             <ScrollHorizonList>
-              <ScrollHorizonListGroup>
+              {/* <ScrollHorizonListGroup>
                 {itemList.map((item, index) => {
                   return <HorizontalItem item={item} key={index} />;
                 })}
-              </ScrollHorizonListGroup>
+              </ScrollHorizonListGroup> */}
             </ScrollHorizonList>
           </MenuListHeader>
         </MenuListWarpper>
