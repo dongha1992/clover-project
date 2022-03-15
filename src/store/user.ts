@@ -75,7 +75,6 @@ export const user = createSlice({
     },
 
     SET_USER_AUTH: (state, { payload }: PayloadAction<any>) => {
-      console.log(payload, 'payload');
       const accessTokenObj = {
         accessToken: payload.accessToken,
         expiresIn: payload.expiresIn,

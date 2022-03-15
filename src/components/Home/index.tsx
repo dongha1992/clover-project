@@ -1,30 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextB3R } from '@components/Shared/Text';
-import axios from 'axios';
 import { Item, HorizontalItem } from '@components/Item';
 import { useDispatch } from 'react-redux';
-import { SET_MENU } from '@store/menu';
-import { BASE_URL } from '@constants/mock';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import SVGIcon from '@utils/SVGIcon';
+import { getMenusApi } from '@api/menu';
+
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
 
 const Home = () => {
-  const [itemList, setItemList] = useState([]);
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
   const dispatch = useDispatch();
 
   const { error: carouselError } = useQuery(
-    'carousel-banners',
+    'carouselBanners',
     async () => {
       const params = { type: 'CAROUSEL' };
       const { data } = await getBannersApi(params);
@@ -34,7 +31,7 @@ const Home = () => {
   );
 
   const { error: eventsError } = useQuery(
-    'events-banners',
+    'eventsBanners',
     async () => {
       const params = { type: 'EVENT' };
       const { data } = await getBannersApi(params);
@@ -43,15 +40,23 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const getItemLists = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    setItemList(data.data);
-    dispatch(SET_MENU(data.data));
-  };
+  const {
+    data: menus,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenus',
+    async () => {
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
+      const { data } = await getMenusApi(params);
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
-  useEffect(() => {
-    getItemLists();
-  }, []);
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -60,7 +65,8 @@ const Home = () => {
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
-          {itemList.map((item, index) => {
+          {menus?.map((item, index) => {
+            if (index > 3) return;
             return <Item item={item} key={index} />;
           })}
         </FlexWrapWrapper>
@@ -73,7 +79,8 @@ const Home = () => {
       <Banner bannerList={eventbannerList} />
       <ItemListRowWrapper>
         <ItemListRow>
-          {itemList.map((item, index) => {
+          {menus?.map((item, index) => {
+            if (index > 3) return;
             return <HorizontalItem item={item} key={index} />;
           })}
         </ItemListRow>
