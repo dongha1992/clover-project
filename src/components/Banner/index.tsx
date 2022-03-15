@@ -5,8 +5,6 @@ import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { IBanners } from '@model/index';
 
-/*TODO : 왼쪽오른쪽 버튼 */
-
 interface IProps {
   bannerList: IBanners[];
 }

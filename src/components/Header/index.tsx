@@ -33,6 +33,13 @@ const Header = () => {
         '/location/address-detail': '배송위치',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
+        '/category/wrap': '랩·샌드위치',
+        '/category/meal': '도시락·간편식',
+        '/category/package': '죽·스프',
+        '/category/snack': '간식',
+        '/category/soup': '죽',
+        '/category/drink': '음료',
+        '/category/soon': '오픈예정',
         '/menu/[menuId]/review/photo': '사진 후기',
         '/menu/[menuId]/review/total': '전체 후기',
         '/menu/[menuId]/review/[id]': '후기 상세',
@@ -92,7 +99,17 @@ const Header = () => {
       const title = headerTitleMap[currentPath];
 
       switch (true) {
-        case ['/category', '/category/salad'].includes(currentPath):
+        case [
+          '/category',
+          '/category/salad',
+          '/category/wrap',
+          '/category/meal',
+          '/category/package',
+          '/category/snack',
+          '/category/drink',
+          '/category/soon',
+          '/category/soup',
+        ].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
         case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {

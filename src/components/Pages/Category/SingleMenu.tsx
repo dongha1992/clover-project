@@ -1,32 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { FlexWrapWrapper } from '@styles/theme';
-import axios from 'axios';
 import { Item } from '@components/Item';
 import { TextH3B } from '@components/Shared/Text';
-
-import { BASE_URL } from '@constants/mock';
+import { useQuery } from 'react-query';
+import { getMenusApi } from '@api/menu';
+import { IMenus } from '@model/index';
 
 const SingleMenu = ({ title }: any) => {
-  const [itemList, setItemList] = useState([]);
+  const {
+    data = [],
+    error: menuError,
+    isLoading,
+  } = useQuery<IMenus[]>(
+    'getMenus',
+    async () => {
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SALAD' };
+      const { data } = await getMenusApi(params);
+      return data.data;
+    },
 
-  useEffect(() => {
-    getBanners();
-  }, []);
+    {
+      onSuccess: () => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
-  const getBanners = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    setItemList(data.data);
-  };
+  console.log(data, '@@');
+  if (data.length < 0) {
+    return <div>로딩중</div>;
+  }
 
   return (
     <Container>
-      <TextH3B padding="0 0 17px 0">{title}</TextH3B>
+      <TextH3B padding="0 0 17px 0">{title || '전체'}</TextH3B>
       <FlexWrapWrapper>
-        {itemList.length > 0 &&
-          itemList.map((item: any, index: number) => {
-            return <Item item={item} key={index} />;
-          })}
+        {data?.map((item: any, index: number) => {
+          return <Item item={item} key={index} />;
+        })}
       </FlexWrapWrapper>
     </Container>
   );

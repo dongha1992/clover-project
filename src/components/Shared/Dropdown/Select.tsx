@@ -31,17 +31,10 @@ const Select = ({ children, value, placeholder, type }: TProps) => {
 
   return (
     <SelectContainer ref={selectContainerRef}>
-      <TextB2R
-        className="SelectedText"
-        onClick={showDropdownHandler}
-        color={value ? theme.black : theme.greyScale45}
-      >
+      <TextB2R className="SelectedText" onClick={showDropdownHandler} color={value ? theme.black : theme.greyScale45}>
         {value ? value : selectPlaceholder}
       </TextB2R>
-      <OptionContainer
-        isShowDropdown={isShowDropdown}
-        onClick={showDropdownHandler}
-      >
+      <OptionContainer isShowDropdown={isShowDropdown} onClick={showDropdownHandler}>
         {children}
       </OptionContainer>
     </SelectContainer>
@@ -53,6 +46,7 @@ const SelectContainer = styled.div`
   flex-direction: column;
   position: relative;
   width: 100%;
+  max-height: 350px;
   background-color: ${theme.white};
   border-radius: 8px;
   border: 1px solid ${theme.greyScale15};
