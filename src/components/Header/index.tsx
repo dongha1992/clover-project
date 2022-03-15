@@ -14,6 +14,7 @@ const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
+const SubscriptionHeader = dynamic(() => import('./SubscriptionHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Header = () => {
@@ -122,6 +123,9 @@ const Header = () => {
 
         case ['/'].includes(currentPath): {
           return <HomeHeader />;
+        }
+        case ['/subscription'].includes(currentPath): {
+          return <SubscriptionHeader />;
         }
 
         case ['/spot'].includes(currentPath): {
