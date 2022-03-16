@@ -5,20 +5,17 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-const InfoCard = () => {
-  const { isLoginSuccess, me } = useSelector(userForm);
+interface IProps {
+  subsList: any;
+}
 
-  // TODO : 구독 리스트 api
-  const [subsList, setSubsList] = useState([
-    {
-      list: [{}],
-    },
-  ]);
+const InfoCard = ({ subsList }: IProps) => {
+  const { isLoginSuccess, me } = useSelector(userForm);
 
   return (
     <Container>
       {isLoginSuccess &&
-        (subsList.length !== 0 ? (
+        (subsList?.length !== 0 ? (
           <TextH2B>
             <span>{me?.nickName}</span>님 <br />
             건강한 식단을 구독해 보세요!
