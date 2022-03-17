@@ -223,8 +223,8 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async () => {
-      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: checkedMenuIdList });
+    async (reqBody: number[]) => {
+      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: reqBody });
     },
     {
       onSuccess: async () => {
@@ -323,14 +323,36 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(),
+        onSubmit: () => mutateDeleteItem(checkedMenuIdList),
       })
     );
   };
 
-  const removeCartItemHandler = () => {};
+  const removeCartActualItemHandler = ({ id, main }: { id: number; main: boolean }) => {
+    if (main) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.',
+          closeBtnText: '취소',
+          submitBtnText: '확인',
+          onSubmit: () => mutateDeleteItem([id]),
+        })
+      );
+    } else {
+      mutateDeleteItem([id]);
+    }
+  };
 
-  const removeCartDisplayItemHandler = () => {};
+  const removeCartDisplayItemHandler = (id: number) => {
+    dispatch(
+      SET_ALERT({
+        alertMessage: '선택을 상품을 삭제하시겠어요?',
+        closeBtnText: '취소',
+        submitBtnText: '확인',
+        onSubmit: () => mutateDeleteItem([id]),
+      })
+    );
+  };
 
   const clickDisposableItemCount = (id: number, quantity: number) => {
     const findItem = disposableList.map((item) => {
@@ -603,7 +625,7 @@ const CartPage = () => {
                 clickMinusButton={clickMinusButton}
                 clickRestockNoti={clickRestockNoti}
                 removeCartDisplayItemHandler={removeCartDisplayItemHandler}
-                removeCartItemHandler={removeCartItemHandler}
+                removeCartActualItemHandler={removeCartActualItemHandler}
                 key={index}
               />
             ))}

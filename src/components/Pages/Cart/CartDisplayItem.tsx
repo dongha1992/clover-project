@@ -7,9 +7,9 @@ import Checkbox from '@components/Shared/Checkbox';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 interface IProps {
-  handleSelectCartItem: any;
-  checkedMenuIdList: any;
-  removeCartDisplayItemHandler: any;
+  handleSelectCartItem: (id: number) => void;
+  checkedMenuIdList: number[];
+  removeCartDisplayItemHandler: (id: number) => void;
   menu: any;
 }
 

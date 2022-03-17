@@ -9,26 +9,27 @@ import InfoMessage from '@components/Shared/Message';
 
 interface IProps {
   menu: any;
-  removeCartItemHandler: any;
-  clickPlusButton: any;
-  clickMinusButton: any;
+  removeCartActualItemHandler: ({ id, main }: { id: number; main: boolean }) => void;
+  clickPlusButton: (id: number, quantity: number) => void;
+  clickMinusButton: (id: number, quantity: number) => void;
   clickRestockNoti: any;
 }
 
 const CartActualItem = ({
   menu,
-  removeCartItemHandler,
+  removeCartActualItemHandler,
   clickPlusButton,
   clickMinusButton,
   clickRestockNoti,
 }: IProps) => {
-  console.log(menu);
   return (
     <Container isSoldout={menu.isSoldout}>
       <ContentWrapper>
         <FlexBetween>
           <TextB3R>{!menu.main ? `[선택옵션] ${menu.name}` : menu.name}</TextB3R>
-          <div onClick={() => removeCartItemHandler && removeCartItemHandler(menu.id)}>
+          <div
+            onClick={() => removeCartActualItemHandler && removeCartActualItemHandler({ id: menu.id, main: menu.main })}
+          >
             <SVGIcon name="defaultCancel" />
           </div>
         </FlexBetween>

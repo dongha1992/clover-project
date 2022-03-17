@@ -4,13 +4,13 @@ import CartDisplayItem from './CartDisplayItem';
 import CartActualItem from './CartActualItem';
 
 interface handleSelectCartItemIProps {
-  handleSelectCartItem: any;
-  checkedMenuIdList: any;
-  clickPlusButton: any;
-  clickMinusButton: any;
+  handleSelectCartItem: (id: number) => void;
+  checkedMenuIdList: number[];
+  clickPlusButton: (id: number, quantity: number) => void;
+  clickMinusButton: (id: number, quantity: number) => void;
   clickRestockNoti: any;
-  removeCartItemHandler: any;
-  removeCartDisplayItemHandler: any;
+  removeCartActualItemHandler: ({ id, main }: { id: number; main: boolean }) => void;
+  removeCartDisplayItemHandler: (id: number) => void;
   item: any;
 }
 
@@ -20,7 +20,7 @@ const CartItem = ({
   clickPlusButton,
   clickMinusButton,
   clickRestockNoti,
-  removeCartItemHandler,
+  removeCartActualItemHandler,
   removeCartDisplayItemHandler,
   item,
 }: handleSelectCartItemIProps) => {
@@ -38,7 +38,7 @@ const CartItem = ({
             clickPlusButton={clickPlusButton}
             clickMinusButton={clickMinusButton}
             clickRestockNoti={clickRestockNoti}
-            removeCartItemHandler={removeCartItemHandler}
+            removeCartActualItemHandler={removeCartActualItemHandler}
             menu={menu}
             key={index}
           />
