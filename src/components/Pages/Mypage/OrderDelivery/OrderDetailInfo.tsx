@@ -13,9 +13,9 @@ interface IProps {
     address: string;
     addressDetail: string;
     dong: string;
-    zipcode: string;
+    zipCode: string;
   };
-  deliveryStatus: string;
+  status: string;
   changeDeliveryInfoHandler: () => void;
 }
 
@@ -25,9 +25,12 @@ const OrderDetailInfo = ({
   deliveryDate,
   delivery,
   location,
-  deliveryStatus,
+  status,
   changeDeliveryInfoHandler,
 }: IProps) => {
+  const isSpot = delivery === 'SPOT';
+  const isParcel = delivery === 'PARCEL';
+
   return (
     <>
       <FlexBetween>
@@ -83,7 +86,7 @@ const OrderDetailInfo = ({
           backgroundColor={theme.white}
           color={theme.black}
           border
-          disabled={isCanceled}
+          disabled={status === 'CANCEL'}
           onClick={changeDeliveryInfoHandler}
         >
           배송 정보 변경하기

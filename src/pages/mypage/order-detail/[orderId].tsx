@@ -23,6 +23,8 @@ import { IOrderMenus } from '@model/index';
 import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo } from '@components/Pages/Mypage/OrderDelivery';
+import { getOrderDetailApi } from '@api/order';
+
 // temp
 
 const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
@@ -38,15 +40,11 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const router = useRouter();
 
-  const { data, isLoading } = useQuery(
+  const { data: orderDetail, isLoading } = useQuery(
     'getOrderDetail',
     async () => {
-      // const { data } = await getOrderDetail(id);
-
-      /* temp */
-
-      const { data } = await axios.get(`${BASE_URL}/orderList`);
-      return data.data.orders.find((item: any) => item.id === Number(orderId));
+      const { data } = await getOrderDetailApi(orderId);
+      return data.data;
     },
     {
       onSuccess: (data) => {},
@@ -56,16 +54,16 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  const deliveryStatus = deliveryStatusMap[data?.deliveryStatus];
-  const deliveryDetail = deliveryDetailMap[data?.deliveryDetail];
-  const isCompleted = data?.deliveryStatus === 'COMPLETED';
-  const isCanceled = data?.deliveryStatus === 'CANCELED';
-  const isDelivering = data?.deliveryStatus === 'DELIVERING';
+  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.status];
+  const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
+  const isCompleted = orderDetail?.deliveryStatus === 'COMPLETED';
+  const isCanceled = orderDetail?.deliveryStatus === 'CANCELED';
+  const isDelivering = orderDetail?.deliveryStatus === 'DELIVERING';
 
-  const isSpot = data?.deliveryStatus === 'SPOT';
-  const isParcel = data?.deliveryStatus === 'PARCEL';
+  const isSpot = orderDetail?.deliveryStatus === 'SPOT';
+  const isParcel = orderDetail?.deliveryStatus === 'PARCEL';
 
-  const { dateFormatter: deliveryAt } = getCustomDate(new Date(data?.deliveryDate));
+  const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
 
   const showSectionHandler = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
@@ -118,78 +116,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   };
 
-  const deliveryInfoRenderer = () => {
-    const { receiverName, receiverTel, location } = data;
-    console.log(data, '@');
-    return (
-      <>
-        <FlexBetween>
-          <TextH4B>배송정보</TextH4B>
-        </FlexBetween>
-        <FlexCol padding="24px 0 0 0">
-          <FlexBetween>
-            <TextH5B>받는 사람</TextH5B>
-            <TextB2R>{receiverName}</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0 0 0">
-            <TextH5B>휴대폰 번호</TextH5B>
-            <TextB2R>{receiverTel}</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0 0 0">
-            <TextH5B>배송방법</TextH5B>
-            <TextB2R>스팟배송 - 점심</TextB2R>
-          </FlexBetween>
-          <FlexBetweenStart margin="16px 0 24px 0">
-            <TextH5B>배송 예정실시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart>
-            <TextH5B>{isSpot ? '픽업장소' : '배송지'}</TextH5B>
-            {isSpot ? (
-              <FlexColEnd>
-                <TextB2R>
-                  {location.address} {location.addressDetail}
-                </TextB2R>
-                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
-              </FlexColEnd>
-            ) : (
-              <FlexColEnd>
-                <TextB2R>{location.address}</TextB2R>
-                <TextB2R>{location.addressDetail}</TextB2R>
-              </FlexColEnd>
-            )}
-          </FlexBetweenStart>
-          {isParcel && (
-            <FlexBetweenStart margin="16px 0 24px 0">
-              <TextH5B>출입방법</TextH5B>
-              <FlexColEnd>
-                <TextB2R>공동현관 비밀번호</TextB2R>
-                <TextB2R>#1099</TextB2R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          )}
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            disabled={isCanceled}
-            onClick={changeDeliveryInfoHandler}
-          >
-            배송 정보 변경하기
-          </Button>
-        </FlexCol>
-      </>
-    );
-  };
-
   const changeDeliveryInfoHandler = () => {
     router.push({
       pathname: '/mypage/order-detail/edit/[orderId]',
-      query: { orderId: 1 },
+      query: { orderId },
     });
   };
 
@@ -213,14 +143,12 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     );
   };
 
-  // const disabledButton = status === 'cancel';
-  // const inProgressDelivery = status === 'progress';
-
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  console.log(deliveryAt, 'deliveryAt');
+  const { receiverName, receiverTel, location, orderMenus, delivery, status } = orderDetail?.orderDeliveries[0]!;
+
   return (
     <Container>
       <DeliveryStatusWrapper>
@@ -228,7 +156,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           <TextH4B color={theme.black}>{deliveryStatus}</TextH4B>
           <TextB1R padding="0 0 0 4px">{deliveryAt} 도착예정</TextB1R>
         </FlexRow>
-        <FlexRow>{deliveryDescription(data.deliveryStatus)}</FlexRow>
+        <FlexRow>{deliveryDescription(orderDetail?.status!)}</FlexRow>
       </DeliveryStatusWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
@@ -239,7 +167,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={deliveryStatus}>
-          {data.menus?.map((menu: IOrderMenus, index: number) => {
+          {orderMenus?.map((menu: IOrderMenus, index: number) => {
             return <PaymentItem menu={menu} key={index} isDeliveryComplete={isCompleted} />;
           })}
           <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
@@ -253,7 +181,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         <FlexCol padding="24px 0 0 0">
           <FlexBetween>
             <TextH5B>주문 번호</TextH5B>
-            <TextB2R>{data.id}</TextB2R>
+            <TextB2R>{orderDetail?.id}</TextB2R>
           </FlexBetween>
           <FlexBetween margin="16px 0">
             <TextH5B>주문 상태</TextH5B>
@@ -261,7 +189,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           </FlexBetween>
           <FlexBetween>
             <TextH5B>주문(결제)일시</TextH5B>
-            <TextB2R>{data.paidAt}</TextB2R>
+            <TextB2R>{orderDetail?.paidAt}</TextB2R>
           </FlexBetween>
         </FlexCol>
         <ButtonWrapper>
@@ -287,7 +215,17 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </ButtonWrapper>
       </OrderInfoWrapper>
       <BorderLine height={8} />
-      <DevlieryInfoWrapper>{/* <OrderDetailInfo /> */}</DevlieryInfoWrapper>
+      <DevlieryInfoWrapper>
+        <OrderDetailInfo
+          receiverName={receiverName}
+          receiverTel={receiverTel}
+          deliveryDate={deliveryDate}
+          delivery={delivery}
+          location={location}
+          status={status}
+          changeDeliveryInfoHandler={changeDeliveryInfoHandler}
+        />
+      </DevlieryInfoWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>

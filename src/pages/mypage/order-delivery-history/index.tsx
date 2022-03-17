@@ -12,15 +12,16 @@ import { BASE_URL } from '@constants/mock';
 import BorderLine from '@components/Shared/BorderLine';
 import { commonSelector } from '@store/common';
 import { useQuery } from 'react-query';
-import { IGetOrderListResponse, Obj } from '@model/index';
+import { IGetOrderList, IGetOrderListResponse, Obj } from '@model/index';
+import { getOrderLists } from '@api/order';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
 
 export const deliveryStatusMap: Obj = {
   COMPLETED: '배송완료',
   CANCELED: '주문취소',
-  DELIVERING: '배송 중',
-  PROGRESS: '프로그레스',
+  RESERVED: '주문완료',
+  DELIVERING: '배송중',
   PREPARING: '상품준비 중',
 };
 
@@ -36,17 +37,15 @@ const OrderDeliveryHistoryPage = () => {
   const { data, isLoading } = useQuery(
     'getOrderLists',
     async () => {
-      // const params = {
-      //   days: 90,
-      //   page: 1,
-      //   size: 10,
-      //   type: 'GENERAL',
-      // };
+      const params = {
+        days: 90,
+        page: 1,
+        size: 10,
+        type: 'GENERAL',
+      };
 
-      // const { data } = await getOrderLists(params);
+      const { data } = await getOrderLists(params);
 
-      /* temp */
-      const { data } = await axios.get(`${BASE_URL}/orderList`);
       return data.data.orders;
     },
     {
@@ -67,7 +66,9 @@ const OrderDeliveryHistoryPage = () => {
 
   const buttonHandler = ({ id, isDelivering }: { id: number; isDelivering: boolean }) => {
     if (isDelivering) {
+      // 장바구니 담기
     } else {
+      // 배송조회
     }
   };
 
@@ -83,10 +84,10 @@ const OrderDeliveryHistoryPage = () => {
           <TextH6B padding="0 0 0 4px">정렬</TextH6B>
         </FlexEnd>
         <FlexCol>
-          {data.map((item: IGetOrderListResponse, index: number) => (
+          {data?.map((item: IGetOrderList, index: number) => (
             <FlexCol key={index}>
-              <OrderDeliveryItem deliveryItem={item} buttonHandler={buttonHandler} />
-              {data.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
+              <OrderDeliveryItem orderDeliveryItem={item} buttonHandler={buttonHandler} />
+              {data?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
             </FlexCol>
           ))}
         </FlexCol>

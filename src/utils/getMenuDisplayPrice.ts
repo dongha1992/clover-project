@@ -1,24 +1,20 @@
 import { pipe, map, sortBy, take, toArray } from '@fxts/core';
 
-export const getMenuDisplayPrice = (
-  menuDetails: any
-): {
+interface IResult {
   discount: number;
   discountedPrice: number;
   price: number;
-} => {
+}
+
+export const getMenuDisplayPrice = (menuDetails: any): IResult => {
   /* TODO: 케이스 추가 */
 
   // if (!menuDetails) return null;
 
-  const [result] = pipe(
+  const [result]: any = pipe(
     menuDetails,
-    map((item) => {
-      return {
-        discount: Math.floor((item.discountPrice / item.price) * 100),
-        discountedPrice: item.price - item.discountPrice,
-        price: item.price,
-      };
+    map((item: any) => {
+      return getDiscountPrice({ discountPrice: item.discountPrice, price: item.price });
     }),
     sortBy((item) => item.price),
     take(1),
@@ -26,4 +22,12 @@ export const getMenuDisplayPrice = (
   );
 
   return result;
+};
+
+export const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; price: number }): IResult => {
+  return {
+    discount: Math.floor((discountPrice / price) * 100),
+    discountedPrice: price - discountPrice,
+    price: price,
+  };
 };
