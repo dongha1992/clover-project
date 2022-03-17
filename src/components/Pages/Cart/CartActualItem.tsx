@@ -27,7 +27,7 @@ const CartActualItem = ({
     <Container isSoldout={menu.isSoldout}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R>{menu.name}</TextB3R>
+          <TextB3R>{!menu.main ? `[선택옵션] ${menu.name}` : menu.name}</TextB3R>
           <div onClick={() => removeCartItemHandler && removeCartItemHandler(menu.id)}>
             <SVGIcon name="defaultCancel" />
           </div>

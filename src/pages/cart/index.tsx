@@ -38,6 +38,7 @@ import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
 import { getOrderLists } from '@api/order';
+import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { CartItem } from '@components/Pages/Cart';
@@ -129,17 +130,17 @@ const CartPage = () => {
     }
   );
 
-  const {} = useQuery(
-    'getItemList',
+  /* TODO: 찜한 상품, 이전 구매 상품 리스트 받아오면 변경해야함 */
+
+  const { error: menuError } = useQuery(
+    'getMenus',
     async () => {
-      const { data }: { data: any } = await axios.get(`${BASE_URL}/itemList`);
-      setItemList(data.data);
-      return data.data;
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
+      const { data } = await getMenusApi(params);
+      const temp = data.data.slice(0, 10);
+      setItemList(temp);
     },
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const {} = useQuery(
@@ -724,7 +725,7 @@ const CartPage = () => {
             <TextH3B padding="0 0 24px 0">루이스님이 찜한 상품이에요</TextH3B>
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
-                {itemList.map((item, index) => {
+                {itemList?.map((item, index) => {
                   return <HorizontalItem item={item} key={index} />;
                 })}
               </ScrollHorizonListGroup>
@@ -736,7 +737,7 @@ const CartPage = () => {
             <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
-                {itemList.map((item, index) => {
+                {itemList?.map((item, index) => {
                   return <HorizontalItem item={item} key={index} />;
                 })}
               </ScrollHorizonListGroup>
