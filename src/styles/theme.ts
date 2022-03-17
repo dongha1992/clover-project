@@ -80,11 +80,12 @@ export const FlexBetweenStart = styled.div<{
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexRowStart = styled.div<{ padding?: string; margin?: string }>`
+export const FlexRowStart = styled.div<{ padding?: string; margin?: string; width?: string }>`
   display: flex;
   align-items: start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
 `;
 
 export const FlexRow = styled.div<{
