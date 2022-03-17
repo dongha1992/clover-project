@@ -24,12 +24,10 @@ import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delive
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi } from '@api/order';
-
+import { DELIVERY_TYPE_MAP } from '@constants/payment';
 // temp
 
 const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
-
-const otherDeliveryDate = ['2022-01-27'];
 
 const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
@@ -54,16 +52,18 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.status];
-  const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
-  const isCompleted = orderDetail?.deliveryStatus === 'COMPLETED';
-  const isCanceled = orderDetail?.deliveryStatus === 'CANCELED';
-  const isDelivering = orderDetail?.deliveryStatus === 'DELIVERING';
-
-  const isSpot = orderDetail?.deliveryStatus === 'SPOT';
-  const isParcel = orderDetail?.deliveryStatus === 'PARCEL';
-
+  const { dayFormatter: paidAt } = getCustomDate(new Date(orderDetail?.paidAt));
   const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
+
+  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0].status];
+  const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
+  const isCompleted = orderDetail?.orderDeliveries[0].status === 'COMPLETED';
+  const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
+  const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
+  const canChangeDeliveryDate = orderDetail?.orderDeliveries[0].status === 'RESERVED';
+
+  const isSpot = orderDetail?.delivery === 'SPOT';
+  const isParcel = orderDetail?.delivery === 'PARCEL';
 
   const showSectionHandler = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
@@ -117,6 +117,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDeliveryInfoHandler = () => {
+    if (isCanceled) {
+      return;
+    }
+
     router.push({
       pathname: '/mypage/order-detail/edit/[orderId]',
       query: { orderId },
@@ -124,6 +128,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const cancelOrderHandler = () => {
+    if (isCanceled) {
+      return;
+    }
+
     dispatch(
       SET_ALERT({
         alertMessage: '주문을 취소하시겠어요?',
@@ -136,6 +144,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const cancelOrder = async () => {};
 
   const changeDevlieryDateHandler = () => {
+    if (!canChangeDeliveryDate) {
+      return;
+    }
     dispatch(
       SET_BOTTOM_SHEET({
         content: <CalendarSheet title="배송일 변경" disabledDates={disabledDates} deliveryDate="2022-02-24" isSheet />,
@@ -153,10 +164,12 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     <Container>
       <DeliveryStatusWrapper>
         <FlexRow padding="0 0 13px 0">
-          <TextH4B color={theme.black}>{deliveryStatus}</TextH4B>
-          <TextB1R padding="0 0 0 4px">{deliveryAt} 도착예정</TextB1R>
+          <TextH4B color={isCanceled ? theme.greyScale65 : theme.black}>{deliveryStatus}</TextH4B>
+          <TextB1R padding="0 0 0 4px" color={isCanceled && theme.greyScale25}>
+            {deliveryAt} 도착예정
+          </TextB1R>
         </FlexRow>
-        <FlexRow>{deliveryDescription(orderDetail?.status!)}</FlexRow>
+        <FlexRow>{deliveryDescription(status)}</FlexRow>
       </DeliveryStatusWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
@@ -168,7 +181,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={deliveryStatus}>
           {orderMenus?.map((menu: IOrderMenus, index: number) => {
-            return <PaymentItem menu={menu} key={index} isDeliveryComplete={isCompleted} />;
+            return <PaymentItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
           })}
           <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
             재주문하기
@@ -198,7 +211,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             color={theme.black}
             border
             margin="0 16px 0 0"
-            disabled={false}
+            disabled={isCanceled}
             onClick={cancelOrderHandler}
           >
             주문 취소하기
@@ -207,7 +220,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={isCanceled}
+            disabled={!canChangeDeliveryDate}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기
@@ -220,11 +233,20 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           receiverName={receiverName}
           receiverTel={receiverTel}
           deliveryDate={deliveryDate}
-          delivery={delivery}
+          delivery={DELIVERY_TYPE_MAP[delivery]}
+          deliveryDetail={deliveryDetail}
           location={location}
           status={status}
-          changeDeliveryInfoHandler={changeDeliveryInfoHandler}
         />
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          disabled={isCanceled}
+          onClick={changeDeliveryInfoHandler}
+        >
+          배송 정보 변경하기
+        </Button>
       </DevlieryInfoWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>

@@ -53,3 +53,10 @@ export const ACCESS_METHOD_MAP: Obj = {
   DELIVERY_INTERNAL_UNMANNED_COURIER_BOX: ' 공동현관 비밀번호 / 무인택배함 비밀번호 입력',
   ETC: '직접 입력',
 };
+
+export const DELIVERY_TYPE_MAP: Obj = {
+  PARCEL: '택배배송',
+  MORNING: '새벽배송',
+  SPOT: '스팟배송',
+  QUICK: '퀵배송',
+};

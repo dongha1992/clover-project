@@ -9,6 +9,7 @@ interface IProps {
   receiverTel: string;
   deliveryDate: string;
   delivery: string;
+  deliveryDetail?: string;
   location: {
     address: string;
     addressDetail: string;
@@ -16,7 +17,6 @@ interface IProps {
     zipCode: string;
   };
   status: string;
-  changeDeliveryInfoHandler: () => void;
 }
 
 const OrderDetailInfo = ({
@@ -26,7 +26,7 @@ const OrderDetailInfo = ({
   delivery,
   location,
   status,
-  changeDeliveryInfoHandler,
+  deliveryDetail,
 }: IProps) => {
   const isSpot = delivery === 'SPOT';
   const isParcel = delivery === 'PARCEL';
@@ -47,7 +47,9 @@ const OrderDetailInfo = ({
         </FlexBetween>
         <FlexBetween margin="16px 0 0 0">
           <TextH5B>배송방법</TextH5B>
-          <TextB2R>스팟배송 - 점심</TextB2R>
+          <TextB2R>
+            {delivery} - {deliveryDetail}
+          </TextB2R>
         </FlexBetween>
         <FlexBetweenStart margin="16px 0 24px 0">
           <TextH5B>배송 예정실시</TextH5B>
@@ -82,15 +84,6 @@ const OrderDetailInfo = ({
             </FlexColEnd>
           </FlexBetweenStart>
         )}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          disabled={status === 'CANCEL'}
-          onClick={changeDeliveryInfoHandler}
-        >
-          배송 정보 변경하기
-        </Button>
       </FlexCol>
     </>
   );
