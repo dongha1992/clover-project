@@ -17,11 +17,6 @@ interface IProps {
 const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(false);
 
-  review.reviewImg = [
-    {
-      url: '/menu/origin/172_20191023170649',
-    },
-  ];
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
 
   return (
@@ -30,7 +25,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
         <Wrapper>
           <ReviewContent>
             <FlexBetween padding="0 0 16px 0">
-              <TextH5B onClick={() => router.push(`/menu/${review.menuId}`)}>{review.menuName}</TextH5B>
+              <TextH5B onClick={() => router.push(`/menu/${review.menuDetailId}`)}>{review.menuName}</TextH5B>
               <TextH6B
                 color={theme.greyScale65}
                 textDecoration="underline"
@@ -65,10 +60,10 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 접기
               </TextH6B>
             )}
-            {review.reviewImg && (
+            {review.images && (
               <ImgWrapper>
-                {review.reviewImg?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review.reviewImg.map((item: any) => item.url);
+                {review.images?.map((img: any, index: number) => {
+                  const imgUrlForViwer = review.images.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(imgUrlForViwer)} key={index}>
                       <Image

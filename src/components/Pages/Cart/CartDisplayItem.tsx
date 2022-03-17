@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextB3R } from '@components/Shared/Text';
-import { FlexBetween, FlexRow, theme } from '@styles/theme';
+import { FlexBetween, FlexRow, theme, FlexRowStart } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import Checkbox from '@components/Shared/Checkbox';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -17,7 +17,7 @@ const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDi
   return (
     <Container>
       <Wrapper>
-        <FlexRow width="40%">
+        <FlexRowStart width="40%">
           <Checkbox onChange={() => handleSelectCartItem(menu.id)} isSelected={checkedMenuIdList.includes(menu.id)} />
           <ImageWrapper>
             <Image
@@ -29,7 +29,7 @@ const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDi
               className="rounded"
             />
           </ImageWrapper>
-        </FlexRow>
+        </FlexRowStart>
         <FlexBetween>
           <TextB3R>{menu.name}</TextB3R>
           <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
