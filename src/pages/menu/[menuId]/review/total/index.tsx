@@ -12,8 +12,9 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useQuery } from 'react-query';
-import { Obj, ISearchReviews } from '@model/index';
+import { Obj, ISearchReviews, IMenuReviews } from '@model/index';
 import { groupBy, pipe } from '@fxts/core';
+import { getMenuDetailReviewApi } from '@api/menu';
 
 /* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
 /* TODO: 중복 코드 많음 , 리팩토링 */
@@ -24,8 +25,8 @@ const TotalReviewPage = ({ menuId }: any) => {
   const { data, error, isLoading } = useQuery(
     'getMenuDetailReview',
     async () => {
-      // const { data } = await getMenuDetailReviewApi(menuId);
-      const { data } = await axios.get(`${BASE_URL}/review`);
+      const { data } = await getMenuDetailReviewApi(menuId);
+      // const { data } = await axios.get(`${BASE_URL}/review`);
 
       const { searchReviewImages, searchReviews } = data.data;
 

@@ -1,8 +1,9 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 interface IProps {
   menu: any;
@@ -10,25 +11,22 @@ interface IProps {
 }
 
 const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
-  const removeCartItemHandler = () => {};
-  const clickRestockNoti = () => {};
-
   return (
     <Container>
       <Wrapper>
         <ImageWrapper>
-          <ItemImage src={menu.url} alt="상품이미지" />
+          <ItemImage src={IMAGE_S3_URL + menu.image.url} alt="상품이미지" />
         </ImageWrapper>
         <ContentWrapper>
-          <TextB3R>{menu.name}</TextB3R>
+          <TextB3R>{menu.menuDetailName}</TextB3R>
           <FlexBetween>
             <PriceWrapper>
               <TextH5B color={theme.brandColor} padding={'0 4px 0 0'} className="percent">
                 {menu.discount}%
               </TextH5B>
-              <TextH5B>{menu.price}원</TextH5B>
+              <TextH5B>{menu.menuPrice}원</TextH5B>
               <Col />
-              <TextB2R>{menu.quantity}개</TextB2R>
+              <TextB2R>{menu.menuQuantity}개</TextB2R>
             </PriceWrapper>
             {isDeliveryComplete ? (
               <div>

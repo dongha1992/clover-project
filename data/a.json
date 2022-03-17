@@ -1,0 +1,98 @@
+{
+  "code": 200,
+  "message": "OK",
+  "data": {
+    "id": 722367,
+    "delivery": "SPOT",
+    "deliveryDetail": "DINNER",
+    "name": "닭가슴살 아몬드 샐러드 / 미디움 (M) 1개",
+    "menuAmount": 6500,
+    "refundMenuAmount": 6500,
+    "menuDiscount": 1000,
+    "refundMenuDiscount": 1000,
+    "eventDiscount": 275,
+    "refundEventDiscount": 275,
+    "deliveryFee": 0,
+    "refundDeliveryFee": 0,
+    "deliveryFeeDiscount": 0,
+    "refundDeliveryFeeDiscount": 0,
+    "status": "CANCELED",
+    "createdAt": "2022-03-15 19:41:56",
+    "orderDeliveries": [
+      {
+        "id": 1436091,
+        "delivery": "SPOT",
+        "deliveryDetail": "DINNER",
+        "deliveryDate": "2022-03-16",
+        "receiverName": "마천동킹크랩",
+        "receiverTel": "01021380952",
+        "location": {
+          "zipCode": "06182",
+          "address": "서울 강남구 영동대로 417",
+          "addressDetail": " 지하 2층 (오토웨이타워)",
+          "dong": "대치동"
+        },
+        "spot": {
+          "id": 1,
+          "type": "PRIVATE",
+          "name": "캠퍼스 서울",
+          "description": "[멤버전용] 엘에스타워, 저녁배송 가능 취식 가능(음료 구매시)",
+          "location": {
+            "zipCode": "06182",
+            "address": "서울 강남구 영동대로 417",
+            "addressDetail": " 지하 2층 (오토웨이타워)",
+            "dong": "대치동"
+          },
+          "canLunchDelivery": true,
+          "lunchDeliveryStartTime": "11:15",
+          "lunchDeliveryEndTime": "11:30",
+          "canDinnerDelivery": false,
+          "dinnerDeliveryStartTime": "13:00",
+          "dinnerDeliveryEndTime": "17:00",
+          "pickupStartTime": "11:00",
+          "pickupEndTime": "18:00",
+          "coordinate": {
+            "lat": 37.5061058,
+            "lon": 127.0638233
+          },
+          "placeType": "OFFICE",
+          "visiblePlaceTel": true,
+          "placeTel": "02) 123-5679",
+          "placeOpenTime": "[멤버전용] 엘에스타워, 저녁배송 가능\n취식 가능(음료 구매시)",
+          "placeHoliday": "연중무휴",
+          "isTrial": false,
+          "canEat": true,
+          "canParking": true,
+          "isEvent": true,
+          "discountRate": 5,
+          "createdAt": "2016-10-05 00:00:00"
+        },
+        "spotPickup": {
+          "id": 1,
+          "spotId": 1,
+          "name": "지하 2층 안내데스크",
+          "createdAt": "2016-09-28 11:40:00"
+        },
+        "status": "CANCELED",
+        "orderMenus": [
+          {
+            "id": 3535135,
+            "menuId": 9,
+            "menuName": "닭가슴살 아몬드 샐러드",
+            "menuDetailId": 72,
+            "menuDetailName": "미디움 (M)",
+            "menuPrice": 6500,
+            "menuDiscount": 1000,
+            "menuQuantity": 1,
+            "image": {
+              "id": 2534,
+              "url": "/menu/origin/9_20211124111843",
+              "width": 564,
+              "height": 564
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

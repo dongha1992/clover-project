@@ -100,6 +100,13 @@ export interface IResponse {
   message: string;
 }
 
+export interface IPagination {
+  page: number;
+  size: number;
+  total: number;
+  totalPage: number;
+}
+
 export interface IUserToken {
   accessToken: string;
   expiresIn: number;
@@ -843,7 +850,7 @@ export interface IGetSpotFilter {
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
 
-export interface IGetOrderList {
+export interface IGetOrderListRequest {
   days: number;
   page: number;
   size: number;
@@ -875,42 +882,6 @@ export interface IOrderDeliveries {
   deliveryDate: string;
   deliveryDetail: string;
   id: number;
-  invoiceNumber: string;
-  location: {
-    address: string;
-    addressDetail: string;
-    dong: string;
-    zipCode: string;
-  };
-  orderMenus: IOrderMenus[];
-  receiverName: string;
-  receiverTel: string;
-  status: string;
-}
-
-export interface IGetOrderListResponse {
-  amount: number;
-  coupon: number;
-  createdAt: string;
-  delivery: string;
-  deliveryDate: string;
-  deliveryDetail: string;
-  deliveryFee: number;
-  deliveryFeeDiscount: number;
-  deliveryStatus: string;
-  discount: number;
-  eventDiscount: number;
-  id: number;
-  image: {
-    createdAt: string;
-    height: number;
-    id: number;
-    name: string;
-    originalName: string;
-    size: number;
-    url: string;
-    width: number;
-  };
   name: string;
   location: {
     address: string;
@@ -918,42 +889,136 @@ export interface IGetOrderListResponse {
     dong: string;
     zipCode: string;
   };
+  status: string;
+}
+
+export interface IOrderDetailInOrderDeliveries {
+  id: number;
+  delivery: TDeliveryType;
+  deliveryDetail: string;
+  deliveryDate: string;
+  receiverName: string;
+  receiverTel: string;
+  location: {
+    zipCode: string;
+    address: string;
+    addressDetail: string;
+    dong: string;
+  };
+  spot: {
+    id: number;
+    type: string;
+    name: string;
+    description: string;
+    location: {
+      zipCode: string;
+      address: string;
+      addressDetail: string;
+      dong: string;
+    };
+    canLunchDelivery: boolean;
+    lunchDeliveryStartTime: string;
+    lunchDeliveryEndTime: string;
+    canDinnerDelivery: false;
+    dinnerDeliveryStartTime: string;
+    dinnerDeliveryEndTime: string;
+    pickupStartTime: string;
+    pickupEndTime: string;
+    coordinate: {
+      lat: number;
+      lon: number;
+    };
+    placeType: string;
+    visiblePlaceTel: boolean;
+    placeTel: string;
+    placeOpenTime: string;
+    placeHoliday: string;
+    isTrial: boolean;
+    canEat: boolean;
+    canParking: boolean;
+    isEvent: boolean;
+    discountRate: number;
+    createdAt: string;
+  };
+  spotPickup: {
+    id: number;
+    spotId: number;
+    name: string;
+    createdAt: string;
+  };
+  status: string;
+  orderMenus: IOrderMenus[];
+}
+export type TDeliveryStatus = 'CANCELED' | 'COMPLETED' | 'DELIVERING' | 'PREPARING' | 'PROGRESS' | string;
+
+export interface IGetOrderInImage {
+  createdAt: string;
+  height: number;
+  id: number;
+  name: string;
+  originalName: string;
+  size: number;
+  url: string;
+  width: number;
+}
+
+export interface IGetOrderList {
+  delivery: string;
   orderDeliveries: IOrderDeliveries[];
-  orderDiscount: number;
+  paidAt: string;
+  payAmount: number;
+  name: string;
+  image: IGetOrderInImage;
+  deliveryDetail: string;
+}
+
+export interface IGetOrderListResponse {
+  message: string;
+  code: number;
+  data: {
+    orders: IGetOrderList[];
+    pagination: IPagination;
+  };
+}
+
+export interface IGetOtherDeliveries {}
+
+export interface IOrderDetail {
+  id: number;
+  delivery: TDeliveryType;
+  deliveryDetail: string;
+  name: string;
+  menuAmount: number;
+  refundMenuAmount: number;
+  menuDiscount: number;
+  refundMenuDiscount: number;
+  eventDiscount: number;
+  refundEventDiscount: number;
+  deliveryFee: number;
+  coupon: number;
+  createdAt: string;
+  deliveryDate: string;
+  deliveryFeeDiscount: number;
+  deliveryStatus: TDeliveryStatus;
+  image: IGetOrderInImage;
+  orderDeliveries: IOrderDetailInOrderDeliveries[];
   orderPayment: IOrderPayment;
   paidAt: string;
   payAmount: number;
   point: number;
-  refundAmount: number;
   refundCoupon: number;
   refundDeliveryFee: number;
   refundDeliveryFeeDiscount: number;
-  refundDiscount: number;
-  refundEventDiscount: number;
   refundOrderDiscount: number;
   refundPayAmount: number;
   refundPoint: number;
   status: string;
 }
 
-export interface IOrderDetail {
-  id: number;
-  name: string;
-  amount: number;
-  refundAmount: number;
-  discount: number;
-  refundDiscount: number;
-  eventDiscount: number;
-  refundEventDiscount: number;
-  deliveryFee: number;
-  refundDeliveryFee: number;
-  deliveryFeeDiscount: number;
-  refundDeliveryFeeDiscount: number;
-  status: string;
-  createdAt: string;
-  delivery: string;
-  deliveryDetail: string;
-  orderDeliveries: IOrderDeliveries[];
+export interface IGetOrderDetailResponse {
+  code: number;
+  message: string;
+  data: IOrderDetail;
 }
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';

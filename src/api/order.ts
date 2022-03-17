@@ -1,8 +1,13 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
-import { IGetOrderList } from '@model/index';
+import { IGetOrderListRequest, IGetOrderListResponse, IGetOrderDetailResponse } from '@model/index';
 
-export const getOrderLists = ({ days = 90, page = 1, size = 1, type }: IGetOrderList): Promise<AxiosResponse<any>> => {
+export const getOrderLists = ({
+  days = 90,
+  page = 1,
+  size = 1,
+  type,
+}: IGetOrderListRequest): Promise<AxiosResponse<IGetOrderListResponse>> => {
   const params = {
     days,
     page,
@@ -12,6 +17,6 @@ export const getOrderLists = ({ days = 90, page = 1, size = 1, type }: IGetOrder
   return Api.get(`order/v1/orders/`, { params });
 };
 
-export const getOrderDetail = (id: number): Promise<AxiosResponse<any>> => {
+export const getOrderDetailApi = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
   return Api.get(`order/v1/orders/${id}`);
 };
