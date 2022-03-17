@@ -4,27 +4,38 @@ import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { IMAGE_S3_URL } from '@constants/mock';
-
+import { getDiscountPrice } from '@utils/getMenuDisplayPrice';
 interface IProps {
   menu: any;
   isDeliveryComplete?: boolean;
+  isCanceled?: boolean;
 }
 
-const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
+const PaymentItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
+  const { discountedPrice, discount } = getDiscountPrice({
+    discountPrice: menu.menuDiscount,
+    price: menu.menuPrice,
+  });
   return (
-    <Container>
+    <Container isCanceled={isCanceled}>
       <Wrapper>
         <ImageWrapper>
           <ItemImage src={IMAGE_S3_URL + menu.image.url} alt="상품이미지" />
         </ImageWrapper>
         <ContentWrapper>
-          <TextB3R>{menu.menuDetailName}</TextB3R>
+          <TextB3R>
+            {menu.menuName} / {menu.menuDetailName}
+          </TextB3R>
           <FlexBetween>
             <PriceWrapper>
-              <TextH5B color={theme.brandColor} padding={'0 4px 0 0'} className="percent">
-                {menu.discount}%
+              <TextH5B
+                color={isCanceled ? theme.greyScale26 : theme.brandColor}
+                padding={'0 4px 0 0'}
+                className="percent"
+              >
+                {discount}%
               </TextH5B>
-              <TextH5B>{menu.menuPrice}원</TextH5B>
+              <TextH5B>{discountedPrice}원</TextH5B>
               <Col />
               <TextB2R>{menu.menuQuantity}개</TextB2R>
             </PriceWrapper>
@@ -42,13 +53,13 @@ const PaymentItem = ({ menu, isDeliveryComplete }: IProps) => {
   );
 };
 
-const Container = styled.div<{ isSoldout?: boolean }>`
+const Container = styled.div<{ isCanceled?: boolean }>`
   position: relative;
   width: 100%;
   background-color: ${theme.white};
   border-radius: 8px;
   margin-bottom: 16px;
-  color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
+  color: ${({ isCanceled }) => isCanceled && theme.greyScale25};
 `;
 
 const Wrapper = styled.div`

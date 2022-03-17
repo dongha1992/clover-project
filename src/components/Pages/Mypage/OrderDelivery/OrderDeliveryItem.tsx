@@ -16,18 +16,18 @@ interface IProps {
 }
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
+  const { deliveryDate, status } = orderDeliveryItem.orderDeliveries[0];
+
   const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.paidAt));
-  const { dayFormatter: deliverAt } = getCustomDate(new Date(orderDeliveryItem.deliveryDate));
+  const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryDate));
   /* TODO: 아래 중복 코드 많음 헬퍼함수? */
 
-  const deliveryStatus = deliveryStatusMap[orderDeliveryItem.deliveryStatus];
+  const deliveryStatus = deliveryStatusMap[status];
   const deliveryDetail = deliveryDetailMap[orderDeliveryItem.deliveryDetail];
   const isCompleted = orderDeliveryItem.deliveryStatus === 'COMPLETED';
   const isCanceled = orderDeliveryItem.deliveryStatus === 'CANCELED';
   const isDelivering = orderDeliveryItem.deliveryStatus === 'DELIVERING';
   // const hasOtherDeliveries = orderDeliveryItem.orderDeliveries.length > 0;
-
-  console.log(orderDeliveryItem, 'orderDeliveryItem');
 
   return (
     <Container>
