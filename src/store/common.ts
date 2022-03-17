@@ -8,6 +8,7 @@ interface IState {
   loginType: string;
   versionOfTerm: number;
   userAccessMethod: IAccessMethod;
+  withInDays: number;
 }
 
 const INITIAL_STATE: IState = {
@@ -21,6 +22,7 @@ const INITIAL_STATE: IState = {
     text: '',
     value: '',
   },
+  withInDays: 90,
 };
 
 export const commonSlice = createSlice({
@@ -48,6 +50,9 @@ export const commonSlice = createSlice({
     SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod>) => {
       state.userAccessMethod = payload;
     },
+    SET_ORDER_LIST_FILTER: (state, { payload }: PayloadAction<number>) => {
+      state.withInDays = payload;
+    },
   },
 });
 
@@ -59,6 +64,7 @@ export const {
   SET_LOGIN_TYPE,
   SET_VERSION_OF_TERM,
   SET_ACCESS_METHOD,
+  SET_ORDER_LIST_FILTER,
 } = commonSlice.actions;
 export const commonSelector = (state: AppState): IState => state.common;
 export default commonSlice.reducer;

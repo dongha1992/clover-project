@@ -20,7 +20,7 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
         <FlexBetween>
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{item.name}</TextH5B>
-            <DeliveryTag devlieryType={item.delivery} margin="0 4px" />
+            <DeliveryTag deliveryType={item.delivery} margin="0 4px" />
             {item.main && <Tag>기본 배송지</Tag>}
           </FlexRow>
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => goToEdit(item.id)}>
