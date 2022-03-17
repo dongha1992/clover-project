@@ -10,6 +10,7 @@ const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
+const NotiHeader = dynamic(() => import('./NotiHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
@@ -117,6 +118,10 @@ const Header = () => {
 
         case ['/mypage'].includes(currentPath): {
           return <MyPageHeader />;
+        }
+
+        case ['/mypage/noti'].includes(currentPath): {
+          return <NotiHeader />;
         }
 
         case [
