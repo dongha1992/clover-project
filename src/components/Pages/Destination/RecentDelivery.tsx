@@ -19,7 +19,7 @@ const RecentDelivery = ({ filteredList, onClick }: IProps) => {
           <FlexCol key={index} padding="24px 0 0 0" onClick={() => onClick(item)} pointer>
             <FlexRow>
               <TextH5B>{item.name}</TextH5B>
-              <DeliveryTag devlieryType={item.delivery} margin="0 4px" />
+              <DeliveryTag deliveryType={item.delivery} margin="0 4px" />
               {item.main && <Tag>메인 배송지</Tag>}
             </FlexRow>
             <TextB3R padding="4px 0 0 0">{item.location.address}</TextB3R>

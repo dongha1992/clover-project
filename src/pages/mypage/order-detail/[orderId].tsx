@@ -120,7 +120,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const deliveryInfoRenderer = () => {
     const { receiverName, receiverTel, location } = data;
-
+    console.log(data, '@');
     return (
       <>
         <FlexBetween>
@@ -213,10 +213,14 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     );
   };
 
+  // const disabledButton = status === 'cancel';
+  // const inProgressDelivery = status === 'progress';
+
   if (isLoading) {
     return <div>로딩</div>;
   }
 
+  console.log(deliveryAt, 'deliveryAt');
   return (
     <Container>
       <DeliveryStatusWrapper>
@@ -266,7 +270,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             color={theme.black}
             border
             margin="0 16px 0 0"
-            disabled={isCanceled}
+            disabled={false}
             onClick={cancelOrderHandler}
           >
             주문 취소하기
@@ -283,9 +287,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </ButtonWrapper>
       </OrderInfoWrapper>
       <BorderLine height={8} />
-      <DevlieryInfoWrapper>
-        <OrderDetailInfo />
-      </DevlieryInfoWrapper>
+      <DevlieryInfoWrapper>{/* <OrderDetailInfo /> */}</DevlieryInfoWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
