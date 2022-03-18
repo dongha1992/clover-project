@@ -12,6 +12,7 @@ export interface ITagProps {
   center?: boolean;
   borderRadius?: number;
   children: React.ReactNode;
+  border?: string;
   onClick?: () => void;
 }
 
@@ -24,6 +25,7 @@ const Tag = ({
   borderRadius,
   center,
   width,
+  border,
   onClick,
 }: ITagProps) => {
   return (
@@ -36,6 +38,7 @@ const Tag = ({
       borderRadius={borderRadius}
       width={width}
       center={center}
+      border={border}
     >
       {children}
     </Container>
@@ -51,6 +54,8 @@ const Container = styled(TextH7B)<ITagProps>`
   background-color: ${(props) => props.backgroundColor && props.backgroundColor};
   color: ${(props) => props.color && props.color};
   text-align: ${(props) => props.center && 'center'};
+  /* border: ${(props) => (props.border ? `1px solid ${theme.black}` : `1px solid ${props.border}`)}; */
+  border: ${(props) => props.border && `1px solid ${props.border}`};
 `;
 
 export default React.memo(Tag);

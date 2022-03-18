@@ -11,7 +11,7 @@ const DeliveryPlaceBox = ({ place, type }: any): ReactElement => {
         <PlaceName>
           <FlexRow>
             <TextH5B padding="0 4px 0 0">{place.name}</TextH5B>
-            <DeliveryTag devlieryType={place.delivery || type} margin="0 4px" />
+            <DeliveryTag deliveryType={place.delivery || type} margin="0 4px" />
             {place.main && <Tag>메인 배송지</Tag>}
           </FlexRow>
         </PlaceName>
