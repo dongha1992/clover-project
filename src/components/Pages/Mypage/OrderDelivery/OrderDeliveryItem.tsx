@@ -24,9 +24,9 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
 
   const deliveryStatus = deliveryStatusMap[status];
   const deliveryDetail = deliveryDetailMap[orderDeliveryItem.deliveryDetail];
-  const isCompleted = orderDeliveryItem.deliveryStatus === 'COMPLETED';
-  const isCanceled = orderDeliveryItem.deliveryStatus === 'CANCELED';
-  const isDelivering = orderDeliveryItem.deliveryStatus === 'DELIVERING';
+  const isCompleted = deliveryStatus === '배송완료';
+  const isCanceled = deliveryStatus === '주문취소';
+  const isDelivering = deliveryStatus === '배송중';
   // const hasOtherDeliveries = orderDeliveryItem.orderDeliveries.length > 0;
 
   return (
@@ -41,8 +41,12 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
           deliveryType={orderDeliveryItem.delivery}
         />
         <FlexRow padding="0 0 8px 0">
-          <SVGIcon name="deliveryTruckIcon" />
-          <TextH5B padding="2px 0 0 4px">{deliverAt} 도착예정</TextH5B>
+          {!isCanceled && (
+            <>
+              <SVGIcon name="deliveryTruckIcon" />
+              <TextH5B padding="2px 0 0 4px">{deliverAt} 도착예정</TextH5B>
+            </>
+          )}
         </FlexRow>
         <ItemInfo
           url={orderDeliveryItem.image.url}

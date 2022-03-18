@@ -13,7 +13,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import { commonSelector } from '@store/common';
 import { useQuery } from 'react-query';
 import { IGetOrderList, IGetOrderListResponse, Obj } from '@model/index';
-import { getOrderLists } from '@api/order';
+import { getOrderListsApi } from '@api/order';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
 
@@ -44,7 +44,7 @@ const OrderDeliveryHistoryPage = () => {
         type: 'GENERAL',
       };
 
-      const { data } = await getOrderLists(params);
+      const { data } = await getOrderListsApi(params);
 
       return data.data.orders;
     },

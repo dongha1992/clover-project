@@ -40,7 +40,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
-import { getOrderLists } from '@api/order';
+import { getOrderListsApi } from '@api/order';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 
@@ -154,7 +154,7 @@ const CartPage = () => {
       //   type: 'GENERAL',
       // };
 
-      // const { data } = await getOrderLists(params);
+      // const { data } = await getOrderListsApi(params);
 
       /* temp */
       const { data } = await axios.get(`${BASE_URL}/orderList`);
