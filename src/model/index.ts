@@ -819,17 +819,16 @@ export interface IGetSpotFilterResponse {
   code: number;
   message: string;
   data: IGetSpotFilter;
-
 }
 
-export interface IGetSpotFilter  {
+export interface IGetSpotFilter {
   publicFilters: [
     {
       value: string | boolean;
       filtered: boolean;
       fieldName: string;
       name: string;
-    },
+    }
   ];
   etcFilters: [
     {
@@ -837,7 +836,7 @@ export interface IGetSpotFilter  {
       filtered: boolean;
       fieldName: string;
       name: string;
-    },
+    }
   ];
 }
 /* Order */
@@ -1067,4 +1066,9 @@ export interface IWillWriteReviewsResponse {
   code: number;
   message: string;
   data: IWillWriteReview[];
+}
+declare global {
+  interface Window {
+    ReactNativeWebView: any;
+  }
 }
