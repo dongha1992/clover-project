@@ -12,6 +12,7 @@ import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
+import { getOrderDetailApi } from '@api/order';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
@@ -21,21 +22,14 @@ import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
-
-const mapper: Obj = {
-  MORNING: '새벽배송',
-  SPOT: '스팟배송',
-  PARCEL: '택배배송',
-  QUICK: '퀵배송',
-};
+import { DELIVERY_TYPE_MAP } from '@constants/payment/index';
+import { useQuery } from 'react-query';
 
 interface IProps {
-  id: number;
+  orderId: number;
 }
 
-/* TODO: 서버 정보 받으면 수정 */
-
-const OrderDetailAddressEditPage = ({ id }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
   const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
   const [isSamePerson, setIsSamePerson] = useState(false);
@@ -50,13 +44,24 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
 
+  const { data: orderDetail, isLoading } = useQuery(
+    'getOrderDetail',
+    async () => {
+      const { data } = await getOrderDetailApi(orderId);
+      console.log(data.data, 'data.data');
+      return data.data.orderDeliveries[0] || {};
+    },
+    {
+      onSuccess: (data) => {},
+
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+  console.log(orderDetail, 'orderDetail');
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
   const isMorning = selectedAddress?.delivery === 'MORNING';
-
-  // const isParcel = false;
-  // const isSpot = false;
-  // const isMorning = true;
 
   const getDeliveryInfo = async () => {};
 
@@ -133,16 +138,20 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
 
-  // const placeInfoRender = () => {
-  //   const deliveryType = 'parcel';
-
+  // const placeInfoRender = (deliveryType: string) => {
   //   switch (deliveryType) {
-  //     case 'spot': {
-  //       return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
+  //     case 'SPOT': {
+  //       return (
+  //         <PickupPlaceBox
+  //           place={orderDetail?.location}
+  //           checkTermHandler={setIsDefaultSpot}
+  //           isSelected={isDefaultSpot}
+  //         />
+  //       );
   //     }
 
   //     default: {
-  //       return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
+  //       return <DeliveryPlaceBox place={orderDetail?.location} type={orderDetail?.delivery!} />;
   //     }
   //   }
   // };
@@ -182,7 +191,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
           </FlexBetween>
-          {/* <FlexCol>{placeInfoRender()}</FlexCol> */}
+          {/* <FlexCol>{placeInfoRender(orderDetail?.delivery!)}</FlexCol> */}
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (

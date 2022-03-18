@@ -7,18 +7,16 @@ import styled from 'styled-components';
 import router from 'next/router';
 
 interface IDeliveryList {
-  PROGRESS?: any[];
+  DELIVERING?: any[];
   COMPLETED?: any[];
-  CANCELD?: any[];
-  UNPAID?: any[];
+  PREPARING?: any[];
+  RESERVED?: any[];
 }
 
 interface IProps {
   deliveryList: IDeliveryList[];
   total: number;
 }
-
-/* TODO: deliveryStatus인지 status인지 확인 */
 
 const OrderDashboard = ({ deliveryList, total }: IProps) => {
   return (
@@ -37,7 +35,7 @@ const OrderDashboard = ({ deliveryList, total }: IProps) => {
       <Wrapper>
         <FlexBetween padding="20px 21px 15px 21px">
           <FlexColCenter>
-            <TextH3B>{deliveryList['PROGRESS']?.length || 0}</TextH3B>
+            <TextH3B>{deliveryList['RESERVED']?.length || 0}</TextH3B>
             <TextB4R color={theme.greyScale65}>주문완료</TextB4R>
           </FlexColCenter>
           <ArrowWrapper>

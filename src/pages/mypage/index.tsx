@@ -47,9 +47,9 @@ const MypagePage = () => {
       onSuccess: (data) => {
         const result = pipe(
           data,
-          groupBy((item: any) => item.status)
+          groupBy((item: any) => item.orderDeliveries[0]?.status)
         );
-        console.log(result, '@@@@@');
+
         setDeliveryList(result);
         return data;
       },
@@ -107,7 +107,7 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>
-              <OrderDashboard deliveryList={deliveryList} total={orderList?.length} />
+              <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
             </OrderAndDeliveryWrapper>
             <ManageWrapper>
               <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
