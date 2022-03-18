@@ -45,9 +45,11 @@ const Wrapper = styled.div`
 `;
 const Button = styled.button`
   cursor: pointer;
-  width: 59px;
+
   height: 26px;
   padding-top: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
   justify-content: center;
   align-items: center;
   background-color: ${theme.brandColor};
