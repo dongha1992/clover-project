@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import { Api } from './Api';
 import { IGetOrderListRequest, IGetOrderListResponse, IGetOrderDetailResponse } from '@model/index';
 
-export const getOrderLists = ({
+export const getOrderListsApi = ({
   days = 90,
   page = 1,
   size = 1,

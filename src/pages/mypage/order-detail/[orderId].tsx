@@ -25,6 +25,8 @@ import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi } from '@api/order';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
+import dayjs from 'dayjs';
+import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
 // temp
 
 const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
@@ -52,8 +54,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  const { dayFormatter: paidAt } = getCustomDate(new Date(orderDetail?.paidAt));
+  const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
   const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
+  const { dayFormatter: deliveryAtWithDay } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
 
   const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0].status];
   const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
@@ -154,18 +157,34 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     );
   };
 
+  const getTotalPayment = (): number => {
+    return 1;
+  };
+
   if (isLoading) {
     return <div>로딩</div>;
   }
+  const {
+    refundDeliveryFee,
+    refundDeliveryFeeDiscount,
+    refundEventDiscount,
+    refundMenuAmount,
+    refundMenuDiscount,
+    deliveryFee,
+    deliveryFeeDiscount,
+    eventDiscount,
+    menuAmount,
+    menuDiscount,
+  } = orderDetail!;
 
   const { receiverName, receiverTel, location, orderMenus, delivery, status } = orderDetail?.orderDeliveries[0]!;
-
+  console.log(orderDetail, 'orderDetail');
   return (
     <Container>
       <DeliveryStatusWrapper>
         <FlexRow padding="0 0 13px 0">
           <TextH4B color={isCanceled ? theme.greyScale65 : theme.black}>{deliveryStatus}</TextH4B>
-          <TextB1R padding="0 0 0 4px" color={isCanceled && theme.greyScale25}>
+          <TextB1R padding="0 0 0 4px" color={isCanceled ? theme.greyScale25 : ''}>
             {deliveryAt} 도착예정
           </TextB1R>
         </FlexRow>
@@ -191,20 +210,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       <BorderLine height={8} />
       <OrderInfoWrapper>
         <TextH4B>주문자 정보</TextH4B>
-        <FlexCol padding="24px 0 0 0">
-          <FlexBetween>
-            <TextH5B>주문 번호</TextH5B>
-            <TextB2R>{orderDetail?.id}</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0">
-            <TextH5B>주문 상태</TextH5B>
-            <TextB2R>{deliveryStatus}</TextB2R>
-          </FlexBetween>
-          <FlexBetween>
-            <TextH5B>주문(결제)일시</TextH5B>
-            <TextB2R>{orderDetail?.paidAt}</TextB2R>
-          </FlexBetween>
-        </FlexCol>
+        <OrderUserInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} />
         <ButtonWrapper>
           <Button
             backgroundColor={theme.white}
@@ -232,7 +238,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         <OrderDetailInfo
           receiverName={receiverName}
           receiverTel={receiverTel}
-          deliveryDate={deliveryDate}
+          deliveryAt={deliveryAtWithDay}
           delivery={DELIVERY_TYPE_MAP[delivery]}
           deliveryDetail={deliveryDetail}
           location={location}
@@ -253,24 +259,24 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
-          <TextB2R>222원</TextB2R>
+          <TextB2R>{menuAmount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>22원</TextB2R>
+          <TextB2R>{menuDiscount + eventDiscount}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>상품 할인</TextB2R>
-          <TextB2R>22원</TextB2R>
+          <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{eventDiscount}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
@@ -280,16 +286,16 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>배송비</TextH5B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{deliveryFee}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비 할인</TextB2R>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{deliveryFeeDiscount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>12312원</TextH4B>
+          <TextH4B>{getTotalPayment()}원</TextH4B>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -299,49 +305,53 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
         </FlexEnd>
       </TotalPriceWrapper>
-      <BorderLine height={8} />
-      <RefundInfoWrapper>
-        <TextH4B padding="0 0 24px 0">환불정보</TextH4B>
-        <FlexBetween>
-          <TextH5B>총 상품 금액</TextH5B>
-          <TextB2R>222원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>22원</TextB2R>
-        </FlexBetween>
-        <BorderLine height={1} margin="8px 0" />
-        <FlexBetween padding="8px 0 0 0">
-          <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
-        <BorderLine height={1} margin="16px 0" />
-        <FlexBetween>
-          <TextH5B>배송비</TextH5B>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
-        <BorderLine height={1} margin="16px 0" />
-        <FlexBetween>
-          <TextH5B>총 결제 금액</TextH5B>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>환불 포인트</TextB2R>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
-        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
-        <FlexBetween>
-          <TextH4B>최종 환불금액</TextH4B>
-          <TextH4B>12312원</TextH4B>
-        </FlexBetween>
-        <FlexEnd padding="11px 0 0 0">
-          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-            프코 회원
-          </Tag>
-          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-          <TextH6B>n 포인트 (n%) 취소 예정</TextH6B>
-        </FlexEnd>
-      </RefundInfoWrapper>
+      {isCanceled && (
+        <>
+          <BorderLine height={8} />
+          <RefundInfoWrapper>
+            <TextH4B padding="0 0 24px 0">환불정보</TextH4B>
+            <FlexBetween>
+              <TextH5B>총 상품 금액</TextH5B>
+              <TextB2R>{menuAmount}원</TextB2R>
+            </FlexBetween>
+            <FlexBetween padding="8px 0 0 0">
+              <TextH5B>총 할인 금액</TextH5B>
+              <TextB2R>{menuDiscount}원</TextB2R>
+            </FlexBetween>
+            <BorderLine height={1} margin="8px 0" />
+            <FlexBetween padding="8px 0 0 0">
+              <TextH5B>환경부담금 (일회용품)</TextH5B>
+              <TextB2R>12312원</TextB2R>
+            </FlexBetween>
+            <BorderLine height={1} margin="16px 0" />
+            <FlexBetween>
+              <TextH5B>배송비</TextH5B>
+              <TextB2R>{refundDeliveryFee}원</TextB2R>
+            </FlexBetween>
+            <BorderLine height={1} margin="16px 0" />
+            <FlexBetween>
+              <TextH5B>총 결제 금액</TextH5B>
+              <TextB2R>12312원</TextB2R>
+            </FlexBetween>
+            <FlexBetween padding="8px 0 0 0">
+              <TextB2R>환불 포인트</TextB2R>
+              <TextB2R>12312원</TextB2R>
+            </FlexBetween>
+            <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+            <FlexBetween>
+              <TextH4B>최종 환불금액</TextH4B>
+              <TextH4B>12312원</TextH4B>
+            </FlexBetween>
+            <FlexEnd padding="11px 0 0 0">
+              <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+                프코 회원
+              </Tag>
+              <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+              <TextH6B>n 포인트 (n%) 취소 예정</TextH6B>
+            </FlexEnd>
+          </RefundInfoWrapper>
+        </>
+      )}
     </Container>
   );
 };

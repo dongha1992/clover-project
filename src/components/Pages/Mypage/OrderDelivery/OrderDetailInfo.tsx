@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } from '@styles/theme';
 import { TextH4B, TextB3R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
-
+import { Obj } from '@model/index';
 interface IProps {
   receiverName: string;
   receiverTel: string;
-  deliveryDate: string;
+  deliveryAt: string;
   delivery: string;
   deliveryDetail?: string;
   location: {
@@ -22,7 +22,7 @@ interface IProps {
 const OrderDetailInfo = ({
   receiverName,
   receiverTel,
-  deliveryDate,
+  deliveryAt,
   delivery,
   location,
   status,
@@ -31,8 +31,13 @@ const OrderDetailInfo = ({
   const isSpot = delivery === 'SPOT';
   const isParcel = delivery === 'PARCEL';
 
+  const DELIVERTY_DETAIL_MAP: Obj = {
+    LUNCH: '11:30-12:00',
+    DIINER: '18:00-18:30',
+  };
+
   return (
-    <>
+    <FlexCol margin="0 0 24px 0">
       <FlexBetween>
         <TextH4B>배송정보</TextH4B>
       </FlexBetween>
@@ -48,13 +53,15 @@ const OrderDetailInfo = ({
         <FlexBetween margin="16px 0 0 0">
           <TextH5B>배송방법</TextH5B>
           <TextB2R>
-            {delivery} - {deliveryDetail}
+            {delivery} {deliveryDetail ? '-' + deliveryDetail : null}
           </TextB2R>
         </FlexBetween>
         <FlexBetweenStart margin="16px 0 24px 0">
           <TextH5B>배송 예정실시</TextH5B>
           <FlexColEnd>
-            <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
+            <TextB2R>
+              {deliveryAt} {deliveryDetail && DELIVERTY_DETAIL_MAP[deliveryDetail]}
+            </TextB2R>
             <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
             <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
           </FlexColEnd>
@@ -85,7 +92,7 @@ const OrderDetailInfo = ({
           </FlexBetweenStart>
         )}
       </FlexCol>
-    </>
+    </FlexCol>
   );
 };
 

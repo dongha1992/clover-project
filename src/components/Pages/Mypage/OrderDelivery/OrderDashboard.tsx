@@ -10,8 +10,7 @@ interface IDeliveryList {
   PROGRESS?: any[];
   COMPLETED?: any[];
   CANCELD?: any[];
-  PREPARING?: any[];
-  DELIVERING?: any[];
+  UNPAID?: any[];
 }
 
 interface IProps {
