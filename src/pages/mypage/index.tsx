@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween, FlexColCenter } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import React from 'react';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
@@ -17,6 +17,9 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
+import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
+import { pipe, groupBy } from '@fxts/core';
+
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -26,8 +29,9 @@ interface IMypageMenu {
 
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
+  const [deliveryList, setDeliveryList] = useState<any>([]);
 
-  const {} = useQuery(
+  const { data: list, isLoading } = useQuery(
     'getOrderLists',
     async () => {
       // const params = {
@@ -41,16 +45,26 @@ const MypagePage = () => {
 
       /* temp */
       const { data } = await axios.get(`${BASE_URL}/orderList`);
-      return data.data;
+      return data.data.orders;
     },
     {
       onSuccess: (data) => {
-        console.log(data, '@@');
+        const result = pipe(
+          data,
+          groupBy((item: any) => item.deliveryStatus)
+        );
+        setDeliveryList(result);
+        return data;
       },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
+
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -96,46 +110,7 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>
-              <FlexCol>
-                <FlexBetween>
-                  <TextH4B>주문/배송 내역</TextH4B>
-                  <FlexRow>
-                    <TextB2R padding="0 8px 0 0">2 건</TextB2R>
-                    <div onClick={() => router.push('/mypage/order-delivery-history')}>
-                      <SVGIcon name="arrowRight" />
-                    </div>
-                  </FlexRow>
-                </FlexBetween>
-                <DeliveryDiagram>
-                  <FlexBetween padding="20px 21px 15px 21px">
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>주문완료</TextB4R>
-                    </FlexColCenter>
-                    <ArrowWrapper>
-                      <SVGIcon name="arrowRightGrey" />
-                    </ArrowWrapper>
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>상품준비중</TextB4R>
-                    </FlexColCenter>
-                    <ArrowWrapper>
-                      <SVGIcon name="arrowRightGrey" />
-                    </ArrowWrapper>
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>배송중</TextB4R>
-                    </FlexColCenter>
-                    <ArrowWrapper>
-                      <SVGIcon name="arrowRightGrey" />
-                    </ArrowWrapper>
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>배송완료</TextB4R>
-                    </FlexColCenter>
-                  </FlexBetween>
-                </DeliveryDiagram>
-              </FlexCol>
+              <OrderDashboard deliveryList={deliveryList} total={list.length} />
             </OrderAndDeliveryWrapper>
             <ManageWrapper>
               <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
@@ -278,17 +253,6 @@ const OrderAndDeliveryWrapper = styled.div`
   ${homePadding}
   padding-top: 32px;
 `;
-
-const DeliveryDiagram = styled.div`
-  background-color: ${theme.greyScale3};
-  margin-top: 15px;
-  border-radius: 8px;
-`;
-
-const ArrowWrapper = styled.div`
-  padding-bottom: 16px;
-`;
-
 const ManageWrapper = styled.ul``;
 const MypageItem = styled.li`
   cursor: pointer;

@@ -1,55 +1,87 @@
-import { FlexBetween, FlexCol, FlexRow, theme } from '@styles/theme';
+import { FlexRow, FlexRowStart, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
-import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
-import { Tag } from '@components/Shared/Tag';
+import { TextH5B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { Button } from '@components/Shared/Button';
-import router from 'next/router';
+import getCustomDate from '@utils/getCustomDate';
+import { Obj } from '@model/index';
+import DeliveryStatusInfo from './DeliveryStatusInfo';
+import ItemInfo from './ItemInfo';
+import { IOrderDeliveries } from '@model/index';
+import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 interface IProps {
-  menu: any;
+  deliveryItem: any;
+  buttonHandler: ({ id, isDelivering }: { id: number; isDelivering: boolean }) => void;
 }
 
-const OrderDeliveryItem = ({ menu }: IProps) => {
-  const addToCart = () => {};
+const OrderDeliveryItem = ({ deliveryItem, buttonHandler }: IProps) => {
+  const { dayFormatter: paidAt } = getCustomDate(new Date(deliveryItem.paidAt));
+  const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryItem.deliveryDate));
+  /* TODO: 아래 중복 코드 많음 헬퍼함수? */
+  const deliveryStatus = deliveryStatusMap[deliveryItem.deliveryStatus];
+  const deliveryDetail = deliveryDetailMap[deliveryItem.deliveryDetail];
+  const isCompleted = deliveryItem.deliveryStatus === 'COMPLETED';
+  const isCanceled = deliveryItem.deliveryStatus === 'CANCELED';
+  const isDelivering = deliveryItem.deliveryStatus === 'DELIVERING';
+  const hasOtherDeliveries = deliveryItem.orderDeliveries.length > 0;
+
   return (
     <Container>
       <Wrapper>
-        <FlexRow margin="0 0 8px 0">
-          <TextH5B color={theme.brandColor}>주문완료</TextH5B>
-          <Tag margin="0 4px 0 8px">스팟배송</Tag>
-          <Tag>점심</Tag>
-        </FlexRow>
+        <DeliveryStatusInfo
+          isCanceled={isCanceled}
+          isCompleted={isCompleted}
+          deliveryStatus={deliveryStatus}
+          deliveryDetail={deliveryDetail}
+          id={deliveryItem.id}
+          deliveryType={deliveryItem.delivery}
+        />
         <FlexRow padding="0 0 8px 0">
           <SVGIcon name="deliveryTruckIcon" />
-          <TextH5B padding="2px 0 0 4px">11월 4일 (목) 도착예정</TextH5B>
+          <TextH5B padding="2px 0 0 4px">{deliverAt} 도착예정</TextH5B>
         </FlexRow>
-        <FlexRow padding="0 0 16px 0">
-          <ImageWrapper>
-            <ItemImage src={menu.url} alt="상품이미지" />
-          </ImageWrapper>
-          <FlexCol width="70%" margin="0 0 0 16px">
-            <TextB2R padding="0 0 4px 0">{menu.name}</TextB2R>
-            <FlexBetween>
-              <TextH5B>{menu.price}원</TextH5B>
-              <TextB3R color={theme.greyScale65}>11월 2일 (화) 결제</TextB3R>
-            </FlexBetween>
-          </FlexCol>
-        </FlexRow>
+        <ItemInfo
+          url={deliveryItem.image.url}
+          name={deliveryItem.name}
+          payAmount={deliveryItem.payAmount}
+          paidAt={paidAt}
+        />
         <FlexRow>
-          <Button backgroundColor={theme.white} color={theme.black} border margin="0 8px 0 0" onClick={addToCart}>
-            장바구니 담기
-          </Button>
           <Button
             backgroundColor={theme.white}
             color={theme.black}
             border
-            onClick={() => router.push('/mypage/order-detail')}
+            margin="0 8px 0 0"
+            onClick={() => buttonHandler({ id: deliveryItem.id, isDelivering })}
           >
-            주문상세 보기
+            {isDelivering ? '배송조회하기' : '장바구니 담기'}
           </Button>
         </FlexRow>
       </Wrapper>
+      {hasOtherDeliveries &&
+        deliveryItem.orderDeliveries.map((otherItem: IOrderDeliveries, index: number) => {
+          const isFirst = !index;
+          return (
+            <FlexRowStart margin="19px 0 0 0" key={index}>
+              {isFirst && <SVGIcon name="otherDeliveryArrow" />}
+              <OtherDeliveryWrapper isFirst={isFirst}>
+                <DeliveryStatusInfo
+                  deliveryDetail={deliveryDetail}
+                  deliveryStatus={deliveryStatusMap[otherItem.status]}
+                  id={otherItem.id}
+                  deliveryType={otherItem.delivery}
+                />
+                <ItemInfo
+                  url={otherItem.image.url}
+                  name={otherItem.name || 'test'}
+                  payAmount={otherItem.payAmount || 0}
+                  paidAt={paidAt}
+                />
+              </OtherDeliveryWrapper>
+            </FlexRowStart>
+          );
+        })}
     </Container>
   );
 };
@@ -62,13 +94,9 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const ImageWrapper = styled.div`
-  width: 75px;
-`;
-
-const ItemImage = styled.img`
+const OtherDeliveryWrapper = styled.div<{ isFirst: boolean }>`
   width: 100%;
-  border-radius: 8px;
+  margin-left: ${({ isFirst }) => (isFirst ? 0 : 16)}px;
 `;
 
 export default OrderDeliveryItem;
