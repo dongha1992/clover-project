@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
-import { ACCESS_METHOD_MAP } from '@constants/payment';
+import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { destinationForm } from '@store/destination';
 import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 import { getMainCardLists } from '@api/card';
@@ -343,8 +343,8 @@ const PaymentPage = () => {
               <TextInput
                 margin="8px 0 0 0"
                 placeholder={
-                  ACCESS_METHOD_MAP[userAccessMethod?.value!]
-                    ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
+                  ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
+                    ? ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
                     : '요청사항 입력 (선택)'
                 }
                 eventHandler={changeInputHandler}

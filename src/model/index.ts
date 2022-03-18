@@ -889,7 +889,9 @@ export interface IOrderDetailInOrderDeliveries {
   receiverName: string;
   receiverTel: string;
   location: ILocation;
-  spot: {
+  deliveryMessageType: string;
+  deliveryMessage: string;
+  spot?: {
     id: number;
     type: string;
     name: string;
@@ -919,7 +921,7 @@ export interface IOrderDetailInOrderDeliveries {
     discountRate: number;
     createdAt: string;
   };
-  spotPickup: {
+  spotPickup?: {
     id: number;
     spotId: number;
     name: string;
@@ -992,6 +994,7 @@ export interface IOrderDetail {
   orderPayment: IOrderPayment;
   paidAt: string;
   payAmount: number;
+  optionAmount: number;
   point: number;
   refundCoupon: number;
   refundDeliveryFee: number;

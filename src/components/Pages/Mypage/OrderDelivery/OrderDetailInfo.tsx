@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } from '@styles/theme';
 import { TextH4B, TextB3R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
+import { ACCESS_METHOD_VALUE } from '@constants/payment';
 interface IProps {
   receiverName: string;
   receiverTel: string;
@@ -17,6 +18,8 @@ interface IProps {
     zipCode: string;
   };
   status: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
 }
 
 const OrderDetailInfo = ({
@@ -27,15 +30,19 @@ const OrderDetailInfo = ({
   location,
   status,
   deliveryDetail,
+  deliveryMessage,
+  deliveryMessageType,
 }: IProps) => {
-  const isSpot = delivery === 'SPOT';
-  const isParcel = delivery === 'PARCEL';
+  const isSpot = delivery === '스팟배송';
+  const isParcel = delivery === '택배배송';
+  const isMorning = delivery === '새벽배송';
 
   const DELIVERTY_DETAIL_MAP: Obj = {
     LUNCH: '11:30-12:00',
     DIINER: '18:00-18:30',
   };
 
+  console.log(delivery, 'isMorning');
   return (
     <FlexCol margin="0 0 24px 0">
       <FlexBetween>
@@ -84,10 +91,18 @@ const OrderDetailInfo = ({
         </FlexBetweenStart>
         {isParcel && (
           <FlexBetweenStart margin="16px 0 24px 0">
+            <TextH5B>배송메모</TextH5B>
+            <FlexColEnd>
+              <TextB2R>{deliveryMessage}</TextB2R>
+            </FlexColEnd>
+          </FlexBetweenStart>
+        )}
+        {isMorning && (
+          <FlexBetweenStart margin="16px 0 24px 0">
             <TextH5B>출입방법</TextH5B>
             <FlexColEnd>
-              <TextB2R>공동현관 비밀번호</TextB2R>
-              <TextB2R>#1099</TextB2R>
+              <TextB2R>{deliveryMessageType && ACCESS_METHOD_VALUE[deliveryMessageType]}</TextB2R>
+              <TextB2R>{deliveryMessage}</TextB2R>
             </FlexColEnd>
           </FlexBetweenStart>
         )}

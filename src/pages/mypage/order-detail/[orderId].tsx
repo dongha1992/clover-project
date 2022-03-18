@@ -176,9 +176,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     eventDiscount,
     menuAmount,
     menuDiscount,
+    point,
+    optionAmount,
+    coupon,
   } = orderDetail!;
 
-  const { receiverName, receiverTel, location, orderMenus, delivery, status } = orderDetail?.orderDeliveries[0]!;
+  const { receiverName, receiverTel, location, orderMenus, delivery, status, deliveryMessageType, deliveryMessage } =
+    orderDetail?.orderDeliveries[0]!;
   console.log(orderDetail, 'orderDetail');
   return (
     <Container>
@@ -240,6 +244,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           receiverName={receiverName}
           receiverTel={receiverTel}
           deliveryAt={deliveryAtWithDay}
+          deliveryMessage={deliveryMessage}
+          deliveryMessageType={deliveryMessageType}
           delivery={DELIVERY_TYPE_MAP[delivery]}
           deliveryDetail={deliveryDetail}
           location={location}
@@ -265,7 +271,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>{menuDiscount + eventDiscount}원</TextB2R>
+          <TextB2R>{menuDiscount + eventDiscount + coupon}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>상품 할인</TextB2R>
@@ -277,12 +283,12 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>{}원</TextB2R>
+          <TextB2R>{coupon}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{optionAmount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
@@ -293,10 +299,22 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           <TextB2R>배송비 할인</TextB2R>
           <TextB2R>{deliveryFeeDiscount}원</TextB2R>
         </FlexBetween>
+        <BorderLine height={1} margin="16px 0" />
+        <FlexBetween padding="8px 0 0 0">
+          <TextH5B>포인트 사용</TextH5B>
+          <TextB2R>{point}원</TextB2R>
+        </FlexBetween>
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>{getTotalPayment()}원</TextH4B>
+          <TextH4B>
+            {menuAmount -
+              (menuDiscount + eventDiscount + coupon) -
+              (deliveryFee - deliveryFeeDiscount) -
+              point -
+              optionAmount}
+            원
+          </TextH4B>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
