@@ -11,6 +11,15 @@ const SubscriptiopPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
   // TODO : 구독 리스트 api 추후 리액트 쿼리로 변경
   const [subsList, setSubsList] = useState([{}]);
+  const onClick = () => {
+    let message = {
+      cmd: 'webview-route-onBoarding',
+      data: {
+        msg: '온보딩 페이지로 이동',
+      },
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(message));
+  };
   return (
     <Container>
       <InfoCard subsList={subsList} />
@@ -19,7 +28,7 @@ const SubscriptiopPage = () => {
         <TitleBox>
           <div className="row">
             <TextH3B>프코스팟 정기구독</TextH3B>
-            <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
+            <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={onClick}>
               더보기
             </TextH6B>
           </div>
