@@ -1,6 +1,12 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
-import { IGetOrderListRequest, IGetOrderListResponse, IGetOrderDetailResponse } from '@model/index';
+import {
+  IGetOrderListRequest,
+  IGetOrderListResponse,
+  IGetOrderDetailResponse,
+  IResponse,
+  IEditOrderDestination,
+} from '@model/index';
 
 export const getOrderListsApi = ({
   days = 90,
@@ -19,4 +25,12 @@ export const getOrderListsApi = ({
 
 export const getOrderDetailApi = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
   return Api.get(`order/v1/orders/${id}`);
+};
+
+export const deleteDeliveryApi = (id: number): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`order/v1/deliveries/${id}`);
+};
+
+export const editDeliveryDestinationApi = (data: IEditOrderDestination): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries`, data);
 };

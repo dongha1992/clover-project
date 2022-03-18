@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { FlexRow, theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
@@ -23,7 +21,7 @@ import { IOrderMenus } from '@model/index';
 import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo } from '@components/Pages/Mypage/OrderDelivery';
-import { getOrderDetailApi } from '@api/order';
+import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
 import dayjs from 'dayjs';
 import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
@@ -63,7 +61,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const isCompleted = orderDetail?.orderDeliveries[0].status === 'COMPLETED';
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
   const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
-  const canChangeDeliveryDate = orderDetail?.orderDeliveries[0].status === 'RESERVED';
+  const canChangeDelivery = orderDetail?.orderDeliveries[0].status === 'RESERVED';
 
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
@@ -120,9 +118,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDeliveryInfoHandler = () => {
-    if (isCanceled) {
-      return;
-    }
+    // if (!canChangeDelivery) {
+    //   return;
+    // }
 
     router.push({
       pathname: '/mypage/order-detail/edit/[orderId]',
@@ -131,7 +129,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const cancelOrderHandler = () => {
-    if (isCanceled) {
+    if (!canChangeDelivery) {
       return;
     }
 
@@ -144,10 +142,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     );
   };
 
-  const cancelOrder = async () => {};
+  const cancelOrder = async () => {
+    const { data } = await deleteDeliveryApi(orderId);
+    console.log(data, '@@');
+  };
 
   const changeDevlieryDateHandler = () => {
-    if (!canChangeDeliveryDate) {
+    if (!canChangeDelivery) {
       return;
     }
     dispatch(
@@ -217,7 +218,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             color={theme.black}
             border
             margin="0 16px 0 0"
-            disabled={isCanceled}
+            disabled={!canChangeDelivery}
             onClick={cancelOrderHandler}
           >
             주문 취소하기
@@ -226,7 +227,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={!canChangeDeliveryDate}
+            disabled={!canChangeDelivery}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기

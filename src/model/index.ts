@@ -1,3 +1,5 @@
+import { TLocationType } from '@utils/checkDestinationHelper';
+
 export type Obj<T = any> = {
   [k: string]: T;
 };
@@ -275,6 +277,13 @@ export interface IAvilabiltyAddressResponse {
   };
 }
 
+export interface ILocation {
+  address: string;
+  addressDetail: string;
+  zipCode: string;
+  dong: string;
+}
+
 export interface IDestinationsResponse {
   id: number;
   delivery: TDeliveryType;
@@ -283,12 +292,7 @@ export interface IDestinationsResponse {
   name: string;
   receiverTel: string;
   receiverName: string;
-  location: {
-    address: string;
-    addressDetail: string;
-    zipCode: string;
-    dong: string;
-  };
+  location: ILocation;
   main: boolean;
   createdAt: string;
 }
@@ -408,12 +412,7 @@ export interface ISpotsDetail {
   ];
   likeCount: number;
   liked: boolean;
-  location: {
-    address: string;
-    addressDetail: string;
-    done: string;
-    zipCode: string;
-  };
+  location: ILocation;
   name: string;
   notices: [
     {
@@ -770,12 +769,7 @@ export interface IPostRegistrations {
     url: string;
     width: number;
   };
-  location: {
-    address: string;
-    addressDetail: string;
-    dong: string;
-    zipCode: string;
-  };
+  location: ILocation;
   lunchTime?: string;
   pickupType?: TSpotPickupType;
   placeName?: string | null;
@@ -883,12 +877,7 @@ export interface IOrderDeliveries {
   deliveryDetail: string;
   id: number;
   name: string;
-  location: {
-    address: string;
-    addressDetail: string;
-    dong: string;
-    zipCode: string;
-  };
+  location: ILocation;
   status: string;
 }
 
@@ -899,23 +888,13 @@ export interface IOrderDetailInOrderDeliveries {
   deliveryDate: string;
   receiverName: string;
   receiverTel: string;
-  location: {
-    zipCode: string;
-    address: string;
-    addressDetail: string;
-    dong: string;
-  };
+  location: ILocation;
   spot: {
     id: number;
     type: string;
     name: string;
     description: string;
-    location: {
-      zipCode: string;
-      address: string;
-      addressDetail: string;
-      dong: string;
-    };
+    location: ILocation;
     canLunchDelivery: boolean;
     lunchDeliveryStartTime: string;
     lunchDeliveryEndTime: string;
@@ -948,6 +927,14 @@ export interface IOrderDetailInOrderDeliveries {
   };
   status: string;
   orderMenus: IOrderMenus[];
+}
+
+export interface IEditOrderDestination {
+  deliveryMessage: string;
+  deliveryMessageType: string;
+  location: ILocation;
+  receiverName: string;
+  receiverTel: string;
 }
 export type TDeliveryStatus = 'CANCELED' | 'COMPLETED' | 'DELIVERING' | 'PREPARING' | 'PROGRESS' | string;
 
