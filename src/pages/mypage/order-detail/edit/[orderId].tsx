@@ -17,7 +17,7 @@ import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
 import { getValues } from '@utils/getValues';
-import { ACCESS_METHOD_MAP } from '@constants/payment';
+import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
@@ -59,6 +59,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     }
   );
   console.log(orderDetail, 'orderDetail');
+
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
   const isMorning = selectedAddress?.delivery === 'MORNING';
@@ -207,8 +208,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
               <TextInput
                 name="deliveryMessage"
                 placeholder={
-                  ACCESS_METHOD_MAP[selectedAccessMethod?.value!]
-                    ? ACCESS_METHOD_MAP[selectedAccessMethod?.value!]
+                  ACCESS_METHOD_PLACEHOLDER[selectedAccessMethod?.value!]
+                    ? ACCESS_METHOD_PLACEHOLDER[selectedAccessMethod?.value!]
                     : '요청사항 입력'
                 }
                 margin="8px 0 0 0"
