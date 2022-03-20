@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
@@ -11,11 +11,13 @@ interface IProps {
   isCanceled?: boolean;
 }
 
+/* TODO: menu img 데이터 형 일치 or 컴포넌트 분리 */
 const PaymentItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
   const { discountedPrice, discount } = getDiscountPrice({
     discountPrice: menu.menuDiscount,
     price: menu.menuPrice,
   });
+
   return (
     <Container isCanceled={isCanceled}>
       <Wrapper>

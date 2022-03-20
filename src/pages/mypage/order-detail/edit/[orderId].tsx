@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { theme, FlexBetween, FlexCol, FlexRow, homePadding, fixedBottom } from '@styles/theme';
+import { theme, FlexBetween, FlexCol, FlexRow, homePadding, fixedBottom, FlexColEnd } from '@styles/theme';
 import { TextH4B, TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
@@ -21,7 +21,6 @@ import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { DELIVERY_TYPE_MAP } from '@constants/payment/index';
 import { useQuery } from 'react-query';
 
@@ -192,7 +191,17 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
           </FlexBetween>
-          {/* <FlexCol>{placeInfoRender(orderDetail?.delivery!)}</FlexCol> */}
+          <FlexBetween>
+            <TextH5B>배송방법</TextH5B>
+            <TextB2R></TextB2R>
+          </FlexBetween>
+          <FlexBetween padding="16px 0 0 0">
+            <TextH5B>배송지</TextH5B>
+            <FlexColEnd>
+              <TextB2R>{orderDetail.address}</TextB2R>
+              <TextB2R>{orderDetail.addressDetail}</TextB2R>
+            </FlexColEnd>
+          </FlexBetween>
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (

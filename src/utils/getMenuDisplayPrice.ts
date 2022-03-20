@@ -11,17 +11,16 @@ export const getMenuDisplayPrice = (menuDetails: any): IResult => {
 
   // if (!menuDetails) return null;
 
-  const [result]: any = pipe(
+  const [...result]: any = pipe(
     menuDetails,
     map((item: any) => {
       return getDiscountPrice({ discountPrice: item.discountPrice, price: item.price });
     }),
     sortBy((item) => item.price),
-    take(1),
-    toArray
+    take(1)
   );
 
-  return result;
+  return result[0];
 };
 
 export const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; price: number }): IResult => {
