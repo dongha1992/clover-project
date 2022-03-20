@@ -7,7 +7,9 @@
       "price": 100000,
       "discount": 10,
       "type": "main",
-      "url": "https://media.dongwon.com/assets/_temp/post/200603/01.jpg",
+      "image": {
+        "url": "/menu/origin/9_20211124111843"
+      },
       "limitDaily": 0,
       "limit": "일일 70개 한정 판매!",
       "badge": "",
