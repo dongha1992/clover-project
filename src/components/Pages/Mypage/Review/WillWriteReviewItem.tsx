@@ -19,13 +19,16 @@ const WillWriteReviewItem = ({ menu }: IProps) => {
   const { dayFormatter: deliveryAt } = getCustomDate(new Date(menu.deliveryDate));
   const writeReviewLimit = dayjs(menu.deliveryDate).add(6, 'day').format('YYYY-MM-DD');
   const { dayFormatter: limitAt } = getCustomDate(new Date(writeReviewLimit));
+
   const isSpot = menu.delivery === 'SPOT';
+  const isSubscription = (menu.orderType = 'SUBSCRIPTION');
 
   return (
     <Container>
       <Wrapper>
         <FlexRow margin="0 0 8px 0">
           <TextH5B color={theme.brandColor}>주문완료</TextH5B>
+          {isSubscription && <Tag margin="0 4px 0 8px">정기구독</Tag>}
           <Tag margin="0 4px 0 8px">{menu.delivery}</Tag>
           {isSpot && <Tag>{menu.deliveryDetail}</Tag>}
         </FlexRow>

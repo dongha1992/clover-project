@@ -85,7 +85,6 @@ const MenuDetailPage = ({ menuId }: any) => {
       refetchOnWindowFocus: false,
     }
   );
-  console.log(reviews, 'reviews');
 
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
