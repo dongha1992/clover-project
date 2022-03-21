@@ -18,7 +18,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(false);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-
+  console.log(review, '@@');
   return (
     <>
       <Container>
@@ -79,6 +79,19 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 })}
               </ImgWrapper>
             )}
+            {review.commentCreatedAt ? (
+              <ReplyContent>
+                <ReplyHeader>
+                  <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
+                  <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
+                    {review.commentCreatedAt}
+                  </TextB3R>
+                </ReplyHeader>
+                <ReplyBody>
+                  <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
+                </ReplyBody>
+              </ReplyContent>
+            ) : null}
           </ReviewContent>
         </Wrapper>
       </Container>
@@ -148,6 +161,20 @@ const ImgWrapper = styled.div`
   .rounded {
     border-radius: 8px;
   }
+`;
+
+const ReplyContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${theme.greyScale3};
+  padding: 16px;
+  border-radius: 8px;
+`;
+const ReplyHeader = styled.div`
+  display: flex;
+`;
+const ReplyBody = styled.div`
+  margin-top: 8px;
 `;
 
 const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`

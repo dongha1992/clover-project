@@ -22,6 +22,7 @@ import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
 import { BASE_URL, IMAGE_S3_URL } from '@constants/mock';
+import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
 
 import axios from 'axios';
@@ -73,9 +74,9 @@ const MenuDetailPage = ({ menuId }: any) => {
     'getMenuDetailReview',
     async () => {
       // const { data } = await getMenuDetailReviewApi(menuId);
-      const { data } = await axios.get(`${BASE_URL}/review`);
 
-      return data.data;
+      // return data.data;
+      return ALL_REVIEW.data.data;
     },
 
     {
@@ -84,6 +85,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       refetchOnWindowFocus: false,
     }
   );
+  console.log(reviews, 'reviews');
 
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;

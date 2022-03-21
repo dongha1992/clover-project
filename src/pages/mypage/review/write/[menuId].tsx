@@ -18,7 +18,7 @@ import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
-
+import { DETAIL } from '@constants/menu/index';
 interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
@@ -62,9 +62,9 @@ const WriteReviewPage = ({ menuId }: any) => {
     'getMenuDetail',
     async () => {
       // temp
-      const { data } = await getMenuDetailApi(menuId);
-
-      return data.data;
+      // const { data } = await getMenuDetailApi(menuId);
+      // return data.data;
+      return DETAIL.data.data;
     },
 
     {
