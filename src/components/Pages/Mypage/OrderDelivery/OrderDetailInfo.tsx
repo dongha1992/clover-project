@@ -42,7 +42,6 @@ const OrderDetailInfo = ({
     DIINER: '18:00-18:30',
   };
 
-  console.log(delivery, 'isMorning');
   return (
     <FlexCol margin="0 0 24px 0">
       <FlexBetween>

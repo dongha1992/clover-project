@@ -56,7 +56,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
   const { dayFormatter: deliveryAtWithDay } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
 
-  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0].status];
+  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0]?.status];
   const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
   const isCompleted = orderDetail?.orderDeliveries[0].status === 'COMPLETED';
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
@@ -144,7 +144,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const cancelOrder = async () => {
     const { data } = await deleteDeliveryApi(orderId);
-    console.log(data, '@@');
   };
 
   const changeDevlieryDateHandler = () => {
@@ -183,7 +182,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const { receiverName, receiverTel, location, orderMenus, delivery, status, deliveryMessageType, deliveryMessage } =
     orderDetail?.orderDeliveries[0]!;
-  console.log(orderDetail, 'orderDetail');
+
   return (
     <Container>
       <DeliveryStatusWrapper>
