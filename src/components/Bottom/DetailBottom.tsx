@@ -11,9 +11,8 @@ import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
 import { useToast } from '@hooks/useToast';
-import { SET_CART_SHEET_OBJ } from '@store/cart';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
-import { menuSelector } from '@store/menu';
+import { menuSelector, SET_MENU_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
@@ -52,7 +51,8 @@ const DetailBottom = () => {
 
   const clickButtonHandler = () => {
     if (!tempNotiOff) {
-      dispatch(SET_CART_SHEET_OBJ(menuItem));
+      /* TODO: 이거 뭔지 확인 */
+      dispatch(SET_MENU_ITEM(menuItem));
       dispatch(
         SET_BOTTOM_SHEET({
           content: <CartSheet />,

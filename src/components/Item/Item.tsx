@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
@@ -6,13 +6,21 @@ import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_CART_SHEET_OBJ } from '@store/cart';
+import { SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
+import getCustomDate from '@utils/getCustomDate';
+import { Obj } from '@model/index';
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import 'dayjs/locale/ko';
+
+dayjs.extend(isSameOrBefore);
+dayjs.locale('ko');
 
 type TProps = {
   item: any;
@@ -23,13 +31,41 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { menuDetails } = item;
+  let { menuDetails } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
+  menuDetails = menuDetails.map((item: any) => {
+    return { ...item, isSoldout: true };
+  });
+
+  const checkIsAllSold: boolean = menuDetails.every((item: any) => item.isSoldout === true);
+
+  const checkIsSoon = (): string | boolean => {
+    let { launchedAt } = item;
+
+    const today = dayjs();
+    const isBeforeThanLaunchedAt = today.isSameOrBefore(launchedAt, 'day');
+
+    try {
+      if (isBeforeThanLaunchedAt) {
+        const { dayWithTime } = getCustomDate(new Date(launchedAt));
+        return dayWithTime;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return false;
+  };
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    console.log(item, 'item');
-    dispatch(SET_CART_SHEET_OBJ(item));
+    if (checkIsAllSold || checkIsSoon()) {
+      return;
+    }
+
+    dispatch(SET_MENU_ITEM(item));
     dispatch(
       SET_BOTTOM_SHEET({
         content: <CartSheet />,
@@ -37,12 +73,33 @@ const Item = ({ item, isQuick = false }: TProps) => {
     );
   };
 
-  const goToDetail = (menuId: number) => {
-    router.push(`/menu/${menuId}`);
+  const goToDetail = (item: any) => {
+    dispatch(SET_MENU_ITEM(item));
+    router.push(`/menu/${item.id}`);
+  };
+
+  const badgeRenderer = () => {
+    const badgeMap: Obj = {
+      NEW: 'New',
+      BEST: 'Best',
+    };
+
+    const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
+    const { badgeMessage } = item.badgeMessage;
+
+    if (checkIsAllSold) {
+      return <Badge message="일시품절" />;
+    } else if (checkIsBeforeThanLaunchAt) {
+      return <Badge message={`${checkIsSoon()}시 오픈`} />;
+    } else if (badgeMessage) {
+      return <Badge message={badgeMap[badgeMessage]} />;
+    } else {
+      return;
+    }
   };
 
   return (
-    <Container onClick={() => goToDetail(item.id)}>
+    <Container onClick={() => goToDetail(item)}>
       <ImageWrapper>
         <Image
           src={IMAGE_S3_URL + item.thumbnail}
@@ -61,7 +118,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
         <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
-        {item.badgeMessage && <Badge status={item.badgeMessage} />}
+        {badgeRenderer()}
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
@@ -183,4 +240,4 @@ const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default Item;
+export default React.memo(Item);
