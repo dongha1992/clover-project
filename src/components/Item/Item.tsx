@@ -74,6 +74,10 @@ const Item = ({ item, isQuick = false }: TProps) => {
   };
 
   const goToDetail = (item: any) => {
+    if (checkIsAllSold || checkIsSoon()) {
+      return;
+    }
+
     dispatch(SET_MENU_ITEM(item));
     router.push(`/menu/${item.id}`);
   };
