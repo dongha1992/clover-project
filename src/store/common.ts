@@ -7,7 +7,7 @@ interface IState {
   isLoading: boolean;
   loginType: string;
   versionOfTerm: number;
-  userAccessMethod: IAccessMethod;
+  userAccessMethod: IAccessMethod | undefined;
   withInDays: number;
 }
 
@@ -17,11 +17,7 @@ const INITIAL_STATE: IState = {
   isLoading: false,
   loginType: 'NONMEMBER',
   versionOfTerm: 2,
-  userAccessMethod: {
-    id: 1,
-    text: '',
-    value: '',
-  },
+  userAccessMethod: undefined,
   withInDays: 90,
 };
 
@@ -47,7 +43,7 @@ export const commonSlice = createSlice({
     SET_VERSION_OF_TERM: (state, { payload }: PayloadAction<number>) => {
       state.versionOfTerm = payload;
     },
-    SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod>) => {
+    SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod | undefined>) => {
       state.userAccessMethod = payload;
     },
     SET_ORDER_LIST_FILTER: (state, { payload }: PayloadAction<number>) => {

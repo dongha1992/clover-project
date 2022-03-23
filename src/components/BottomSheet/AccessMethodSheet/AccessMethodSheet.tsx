@@ -10,16 +10,11 @@ import { IAccessMethod } from '@pages/payment';
 import { SET_ACCESS_METHOD } from '@store/common';
 
 interface IProps {
-  userAccessMethod: IAccessMethod;
+  userAccessMethod: IAccessMethod | undefined;
 }
 
 const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
-  const [selectedAccessMethod, setSelectedAccessMethod] =
-    useState<IAccessMethod>({
-      id: 1,
-      text: '',
-      value: '',
-    });
+  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod | undefined>(undefined);
 
   const dispatch = useDispatch();
 
@@ -46,10 +41,7 @@ const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
           const isSelected = selectedAccessMethod?.id === method.id;
           return (
             <PickWrapper key={index}>
-              <RadioButton
-                onChange={() => changeRadioHandler(method)}
-                isSelected={isSelected}
-              />
+              <RadioButton onChange={() => changeRadioHandler(method)} isSelected={isSelected} />
               {isSelected ? (
                 <TextH5B padding="0 0 0 8px">{method.text}</TextH5B>
               ) : (

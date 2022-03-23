@@ -17,34 +17,36 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
 import { getOrderDetailApi } from '@api/order';
 import { IDestinationsResponse } from '@model/index';
-import { Obj } from '@model/index';
 import router from 'next/router';
-import { getValues } from '@utils/getValues';
-import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
+import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { DELIVERY_TYPE_MAP } from '@constants/payment/index';
 import { useQuery, useQueryClient } from 'react-query';
-import { SET_USER_DESTINATION_STATUS } from '@store/destination';
-
+import { destinationForm, INIT_TEMP_DESTINATION, SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { pipe, indexBy } from '@fxts/core';
+import { Obj } from '@model/index';
 interface IProps {
   orderId: number;
 }
 
+const DELIVERY_DETAIL_MAP: Obj = {
+  LUNCH: '점심',
+  DINNER: '저녁',
+};
+
 const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
-  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
+  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod | undefined>(undefined);
   const [isSamePerson, setIsSamePerson] = useState(true);
-  const [isDefaultSpot, setIsDefaultSpot] = useState(false);
-  const [deliveryEditObj, setDeliveryEditObj] = useState({
-    deliveryName: '',
+  const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
+    selectedMethod: {},
+    deliveryMessageType: '',
     receiverTel: '',
     receiverName: '',
     deliveryMessage: '',
@@ -52,7 +54,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
-
+  const { userTempDestination } = useSelector(destinationForm);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery(
@@ -62,10 +64,23 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
       return data.data;
     },
     {
-      onSuccess: (data) => {},
-      onSettled: async () => {
-        // await queryClient.refetchQueries('getOrderDetail');
+      onSuccess: (data) => {
+        const orderDetail = data?.orderDeliveries[0];
+
+        const userAccessMethodMap = pipe(
+          ACCESS_METHOD,
+          indexBy((item) => item.value)
+        );
+
+        setDeliveryEditObj({
+          selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
+          deliveryMessageType: orderDetail?.deliveryMessageType!,
+          deliveryMessage: orderDetail?.deliveryMessage!,
+          receiverName: orderDetail?.receiverName!,
+          receiverTel: orderDetail?.receiverTel!,
+        });
       },
+      onSettled: async () => {},
 
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -78,10 +93,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isMorning = orderDetail?.delivery === 'MORNING';
 
-  const getDeliveryInfo = async () => {};
-
   const checkSamePerson = () => {
-    setIsSamePerson(!isSamePerson);
+    setIsSamePerson((prev) => !prev);
   };
 
   const editDeliveryInfoHandler = () => {
@@ -132,6 +145,9 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
   const editDeliveryInfo = async () => {
     const reqBody = {};
+    console.log(selectedAddress);
+
+    dispatch(INIT_TEMP_DESTINATION());
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,24 +165,19 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
   const changeDeliveryPlace = () => {
     if (isSpot) {
-      router.push('/spot/search');
+      router.push({ pathname: '/spot/search', query: { orderId } });
     } else {
-      router.push('/destination/search');
+      router.push({ pathname: '/destination/search', query: { orderId } });
       dispatch(SET_USER_DESTINATION_STATUS(orderDetail?.delivery.toLowerCase()!));
     }
   };
 
   useEffect(() => {
-    getDeliveryInfo();
-    // setDeliveryEditObj({
-    //   ...deliveryEditObj,
-    //   receiverName: orderDetail?.receiverName!,
-    //   receiverTel: orderDetail?.receiverTel!,
-    // });
-  }, []);
-
-  useEffect(() => {
-    setSelectedAccessMethod(userAccessMethod);
+    /* TODO : 출입방법 선택하는 거 로직 너무 드러움 */
+    setDeliveryEditObj({
+      ...deliveryEditObj,
+      selectedMethod: userAccessMethod,
+    });
   }, [userAccessMethod]);
 
   return (
@@ -211,7 +222,13 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
           </FlexBetween>
           <FlexBetween>
             <TextH5B>배송방법</TextH5B>
-            <TextB2R>{DELIVERY_TYPE_MAP[orderDetail?.delivery!]}</TextB2R>
+            {isSpot ? (
+              <TextB2R>
+                {`${DELIVERY_TYPE_MAP[orderDetail?.delivery!]} - ${DELIVERY_DETAIL_MAP[orderDetail?.deliveryDetail!]}`}
+              </TextB2R>
+            ) : (
+              <TextB2R>{DELIVERY_TYPE_MAP[orderDetail?.delivery!]}</TextB2R>
+            )}
           </FlexBetween>
           {isSpot ? (
             <FlexBetweenStart padding="16px 0 0 0">
@@ -229,13 +246,19 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
               </FlexColEnd>
             </FlexBetweenStart>
           ) : (
-            <FlexBetween padding="16px 0 0 0">
+            <FlexBetweenStart padding="16px 0 0 0">
               <TextH5B>배송지</TextH5B>
               <FlexColEnd>
-                <TextB2R>{orderDetail?.location?.address}</TextB2R>
-                <TextB2R>{orderDetail?.location?.addressDetail}</TextB2R>
+                <TextB2R>
+                  {userTempDestination ? userTempDestination.location.address : orderDetail?.location?.address}
+                </TextB2R>
+                <TextB2R>
+                  {userTempDestination
+                    ? userTempDestination.location.addressDetail
+                    : orderDetail?.location?.addressDetail}
+                </TextB2R>
               </FlexColEnd>
-            </FlexBetween>
+            </FlexBetweenStart>
           )}
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
@@ -246,18 +269,18 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>{selectedAccessMethod?.text || '출입방법 선택'}</TextB2R>
+                <TextB2R color={theme.greyScale45}>{deliveryEditObj?.selectedMethod.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
                 name="deliveryMessage"
                 placeholder={
-                  ACCESS_METHOD_PLACEHOLDER[selectedAccessMethod?.value!]
-                    ? ACCESS_METHOD_PLACEHOLDER[selectedAccessMethod?.value!]
-                    : '요청사항 입력'
+                  ACCESS_METHOD_PLACEHOLDER[deliveryEditObj.deliveryMessageType]
+                    ? ACCESS_METHOD_PLACEHOLDER[deliveryEditObj.deliveryMessageType]
+                    : '요청사항을 입력해주세요'
                 }
                 margin="8px 0 0 0"
-                value={deliveryEditObj?.deliveryMessage}
+                value={deliveryEditObj?.deliveryMessage || ''}
                 eventHandler={changeInputHandler}
               />
             </FlexCol>

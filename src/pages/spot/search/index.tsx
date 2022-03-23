@@ -7,25 +7,16 @@ import { homePadding } from '@styles/theme';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
-import { 
-  TextH3B, 
-  TextB3R, 
-  TextH6B, 
-  TextH2B 
-} from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
-import { 
-  getSpotSearchRecommend, 
-  getSpotEvent, 
-  getSpotSearch 
-} from '@api/spot';
-import { ISpots, ISpotsDetail} from '@model/index';
+import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
+import { ISpots, ISpotsDetail } from '@model/index';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
 
@@ -110,11 +101,11 @@ const SpotSearchPage = (): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
-  
-  const getSearchRecommendList = async() => {
+
+  const getSearchRecommendList = async () => {
     const params = {
       latitude: spotsPosition ? spotsPosition.latitude : null,
-      longitude: spotsPosition? spotsPosition.longitude : null,
+      longitude: spotsPosition ? spotsPosition.longitude : null,
       size: 3,
     };
     try {
@@ -131,7 +122,7 @@ const SpotSearchPage = (): ReactElement => {
     async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getSpotEvent(params);
@@ -168,7 +159,7 @@ const SpotSearchPage = (): ReactElement => {
           const params = {
             keyword,
             latitude: spotsPosition ? spotsPosition.latitude : Number(37.50101118367814),
-            longitude: spotsPosition? spotsPosition.longitude : Number(127.03525895821902),
+            longitude: spotsPosition ? spotsPosition.longitude : Number(127.03525895821902),
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
@@ -185,7 +176,6 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
-
   const goToOrder = useCallback(() => {
     dispatch(
       SET_BOTTOM_SHEET({
@@ -199,7 +189,7 @@ const SpotSearchPage = (): ReactElement => {
     getRecentSpotList();
     getSearchRecommendList();
   }, []);
-  
+
   return (
     <Container>
       <Wrapper>
@@ -215,100 +205,77 @@ const SpotSearchPage = (): ReactElement => {
           ref={inputRef}
         />
       </Wrapper>
-      {
-        !inputFocus ?
-      <>
-      <SpotRecommendWrapper>
-        <FlexEnd padding='0 0 24px 0'>
-          <SVGIcon name='locationBlack' />
-          <TextH6B margin='0 0 0 2px' padding='3px 0 0 0'>현 위치로 설정하기</TextH6B>
-        </FlexEnd>
-        <FlexBetween margin='0 0 24px 0'>
-          <TextH2B>{spotRecommend?.title}</TextH2B>
-          {
-            // 사용자 위치 설정 했을 경우 노출
-            userLocationLen && 
-              <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
-          }
-        </FlexBetween>
-        {
-         spotRecommend?.spots.map((item: any, index: number)=> {
-          return (
-            <SpotRecommendList item={item} key={index} />
-            )
-          })
-        }
-      </SpotRecommendWrapper>
-      <BottomContentWrapper>
-        <Row />
-        <TextH2B padding='24px 24px 24px 24px'>{eventSpotList?.title}</TextH2B>
-        <EventSlider
-          className='swiper-container'
-          slidesPerView={"auto"}
-          spaceBetween={20}
-          speed={500}
-        >
-        {
-          eventSpotList?.spots.map((list, idx)=> {
-            return (
-              <SwiperSlide className='swiper-slide' key={idx}>
-                <SpotList
-                  list={list}
-                  type="event"
-                  isSearch
-                />   
-              </SwiperSlide>
-            )
-          })
-        } 
-        </EventSlider>
-      </BottomContentWrapper>
-      </>
-      :
-      <>
-       {!isSearched ?
-        //  spotsSearchRecentList.length 
-        0 ? (
-           // TODO 픽업 이력 있는 경우
-          <DefaultSearchContainer>
-            <RecentPickWrapper>
-              <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-              {recentPickedSpotList.map((item: any, index) => (
-                <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
-              ))}
-            </RecentPickWrapper>
-          </DefaultSearchContainer>
-        ) : (
-          // 픽업 이력 없는 경우, 추천 스팟 노출
+      {!inputFocus ? (
+        <>
           <SpotRecommendWrapper>
-            <FlexBetween margin='0 0 24px 0'>
+            <FlexEnd padding="0 0 24px 0">
+              <SVGIcon name="locationBlack" />
+              <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
+                현 위치로 설정하기
+              </TextH6B>
+            </FlexEnd>
+            <FlexBetween margin="0 0 24px 0">
               <TextH2B>{spotRecommend?.title}</TextH2B>
               {
                 // 사용자 위치 설정 했을 경우 노출
-              userLocationLen && 
-                <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
               }
             </FlexBetween>
-            {
-            spotRecommend?.spots.map((item: any, index: number)=> {
-              return (
-                <SpotRecommendList item={item} key={index} />
-                )
-              })
-            }
+            {spotRecommend?.spots.map((item: any, index: number) => {
+              return <SpotRecommendList item={item} key={index} />;
+            })}
           </SpotRecommendWrapper>
-       ) : (
-         // 검색 결과
-        <SearchResultContainer>
-          <SearchResult
-            searchResult={searchResult}
-            isSpot
-            onClick={goToOrder}
-          />
-        </SearchResultContainer>
+          <BottomContentWrapper>
+            <Row />
+            <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
+            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
+              {eventSpotList?.spots.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="event" isSearch />
+                  </SwiperSlide>
+                );
+              })}
+            </EventSlider>
+          </BottomContentWrapper>
+        </>
+      ) : (
+        <>
+          {!isSearched ? (
+            //  spotsSearchRecentList.length
+            0 ? (
+              // TODO 픽업 이력 있는 경우
+              <DefaultSearchContainer>
+                <RecentPickWrapper>
+                  <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                  {recentPickedSpotList.map((item: any, index) => (
+                    <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
+                  ))}
+                </RecentPickWrapper>
+              </DefaultSearchContainer>
+            ) : (
+              // 픽업 이력 없는 경우, 추천 스팟 노출
+              <SpotRecommendWrapper>
+                <FlexBetween margin="0 0 24px 0">
+                  <TextH2B>{spotRecommend?.title}</TextH2B>
+                  {
+                    // 사용자 위치 설정 했을 경우 노출
+                    userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                  }
+                </FlexBetween>
+                {spotRecommend?.spots.map((item: any, index: number) => {
+                  return <SpotRecommendList item={item} key={index} />;
+                })}
+              </SpotRecommendWrapper>
+            )
+          ) : (
+            // 검색 결과
+            <SearchResultContainer>
+              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} />
+            </SearchResultContainer>
           )}
         </>
-      }
+      )}
     </Container>
   );
 };
@@ -341,11 +308,10 @@ const SearchResultContainer = styled.section`
 
 const EventSlider = styled(Swiper)`
   padding: 0 24px;
-  .swiper-slide{
+  .swiper-slide {
     width: 299px;
   }
 `;
-
 
 const RecentSearchContainer = styled.div``;
 
