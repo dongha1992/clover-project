@@ -52,6 +52,14 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
+  const { mutate: mutateDeleteCard } = useMutation((id: number) => deleteCard(id), {
+    onSuccess: async () => {
+      await queryClient.refetchQueries('getCardList');
+      await queryClient.refetchQueries('getMainCard');
+      router.push('/mypage/card');
+    },
+  });
+
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
   const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
   const { dayFormatter: deliveryAtWithDay } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
@@ -144,6 +152,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
   const cancelOrder = async () => {
     const { data } = await deleteDeliveryApi(orderId);
+    console.log(data, 'dd');
   };
 
   const changeDevlieryDateHandler = () => {
@@ -231,7 +240,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             color={theme.black}
             border
             margin="0 16px 0 0"
-            disabled={!canChangeDelivery}
+            // disabled={!canChangeDelivery}
             onClick={cancelOrderHandler}
           >
             주문 취소하기
