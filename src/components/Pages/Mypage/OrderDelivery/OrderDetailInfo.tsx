@@ -20,6 +20,8 @@ interface IProps {
   status: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
+  spotName?: string;
+  spotPickupName?: string;
 }
 
 const OrderDetailInfo = ({
@@ -32,6 +34,8 @@ const OrderDetailInfo = ({
   deliveryDetail,
   deliveryMessage,
   deliveryMessageType,
+  spotName,
+  spotPickupName,
 }: IProps) => {
   const isSpot = delivery === '스팟배송';
   const isParcel = delivery === '택배배송';
@@ -77,9 +81,11 @@ const OrderDetailInfo = ({
           {isSpot ? (
             <FlexColEnd>
               <TextB2R>
-                {location.address} {location.addressDetail}
+                {spotName} {spotPickupName}
               </TextB2R>
-              <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              <TextB3R color={theme.greyScale65}>
+                ({location.zipCode}) {location.address}
+              </TextB3R>
             </FlexColEnd>
           ) : (
             <FlexColEnd>

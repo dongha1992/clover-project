@@ -24,6 +24,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const router = useRouter();
 
   const { menuDetails } = item;
+
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
 
   const goToCartSheet = (e: any) => {
