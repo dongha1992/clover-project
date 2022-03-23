@@ -18,6 +18,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
+import { SbsDashboard } from '@components/Pages/Mypage/Subscription';
 import { pipe, groupBy } from '@fxts/core';
 
 interface IMypageMenu {
@@ -112,8 +113,8 @@ const MypagePage = () => {
             <OrderAndDeliveryWrapper>
               <OrderDashboard deliveryList={deliveryList} total={list.length} />
             </OrderAndDeliveryWrapper>
+            <SbsDashboard />
             <ManageWrapper>
-              <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
               <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
