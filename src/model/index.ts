@@ -881,6 +881,42 @@ export interface IOrderDeliveries {
   status: string;
 }
 
+export interface IOrderDeliveriesInSpot {
+  id: number;
+  type: string;
+  name: string;
+  description: string;
+  location: ILocation;
+  canLunchDelivery: boolean;
+  lunchDeliveryStartTime: string;
+  lunchDeliveryEndTime: string;
+  canDinnerDelivery: false;
+  dinnerDeliveryStartTime: string;
+  dinnerDeliveryEndTime: string;
+  pickupStartTime: string;
+  pickupEndTime: string;
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
+  placeType: string;
+  visiblePlaceTel: boolean;
+  placeTel: string;
+  placeOpenTime: string;
+  placeHoliday: string;
+  isTrial: boolean;
+  canEat: boolean;
+  canParking: boolean;
+  isEvent: boolean;
+  discountRate: number;
+  createdAt: string;
+}
+export interface IOrderDeliveriesInSpotPickUp {
+  id: number;
+  spotId: number;
+  name: string;
+  createdAt: string;
+}
 export interface IOrderDetailInOrderDeliveries {
   id: number;
   delivery: TDeliveryType;
@@ -891,42 +927,8 @@ export interface IOrderDetailInOrderDeliveries {
   location: ILocation;
   deliveryMessageType: string;
   deliveryMessage: string;
-  spot?: {
-    id: number;
-    type: string;
-    name: string;
-    description: string;
-    location: ILocation;
-    canLunchDelivery: boolean;
-    lunchDeliveryStartTime: string;
-    lunchDeliveryEndTime: string;
-    canDinnerDelivery: false;
-    dinnerDeliveryStartTime: string;
-    dinnerDeliveryEndTime: string;
-    pickupStartTime: string;
-    pickupEndTime: string;
-    coordinate: {
-      lat: number;
-      lon: number;
-    };
-    placeType: string;
-    visiblePlaceTel: boolean;
-    placeTel: string;
-    placeOpenTime: string;
-    placeHoliday: string;
-    isTrial: boolean;
-    canEat: boolean;
-    canParking: boolean;
-    isEvent: boolean;
-    discountRate: number;
-    createdAt: string;
-  };
-  spotPickup?: {
-    id: number;
-    spotId: number;
-    name: string;
-    createdAt: string;
-  };
+  spot?: IOrderDeliveriesInSpot;
+  spotPickup?: IOrderDeliveriesInSpotPickUp;
   status: string;
   orderMenus: IOrderMenus[];
 }
@@ -937,6 +939,12 @@ export interface IEditOrderDestination {
   location: ILocation;
   receiverName: string;
   receiverTel: string;
+}
+
+export interface IEditOrderSpotDestination {
+  receiverName: string;
+  receiverTel: string;
+  spotPickupId: number;
 }
 export type TDeliveryStatus = 'CANCELED' | 'COMPLETED' | 'DELIVERING' | 'PREPARING' | 'PROGRESS' | string;
 

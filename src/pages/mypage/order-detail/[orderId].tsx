@@ -180,8 +180,18 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     coupon,
   } = orderDetail!;
 
-  const { receiverName, receiverTel, location, orderMenus, delivery, status, deliveryMessageType, deliveryMessage } =
-    orderDetail?.orderDeliveries[0]!;
+  const {
+    receiverName,
+    receiverTel,
+    location,
+    orderMenus,
+    delivery,
+    status,
+    deliveryMessageType,
+    deliveryMessage,
+    spot,
+    spotPickup,
+  } = orderDetail?.orderDeliveries[0]!;
 
   return (
     <Container>
@@ -248,6 +258,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           delivery={DELIVERY_TYPE_MAP[delivery]}
           deliveryDetail={deliveryDetail}
           location={location}
+          spotName={spot?.name}
+          spotPickupName={spotPickup?.name}
           status={status}
         />
         <Button

@@ -6,7 +6,7 @@ interface IResult {
   price: number;
 }
 
-export const getMenuDisplayPrice = (menuDetails: any): IResult => {
+export const getMenuDisplayPrice = (menuDetails: any = []): IResult => {
   /* TODO: 케이스 추가 */
 
   // if (!menuDetails) return null;

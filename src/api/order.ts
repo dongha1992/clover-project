@@ -6,6 +6,7 @@ import {
   IGetOrderDetailResponse,
   IResponse,
   IEditOrderDestination,
+  IEditOrderSpotDestination,
 } from '@model/index';
 
 export const getOrderListsApi = ({
@@ -31,6 +32,22 @@ export const deleteDeliveryApi = (id: number): Promise<AxiosResponse<IResponse>>
   return Api.delete(`order/v1/deliveries/${id}`);
 };
 
-export const editDeliveryDestinationApi = (data: IEditOrderDestination): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/deliveries`, data);
+export const editDeliveryDestinationApi = ({
+  data,
+  orderId,
+}: {
+  data: IEditOrderDestination;
+  orderId: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${orderId}/destination`, data);
+};
+
+export const editSpotDestinationApi = ({
+  orderId,
+  data,
+}: {
+  data: IEditOrderSpotDestination;
+  orderId: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${orderId}/pickup`, data);
 };
