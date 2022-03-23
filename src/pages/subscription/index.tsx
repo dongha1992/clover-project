@@ -5,6 +5,7 @@ import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import router from 'next/router';
 import styled from 'styled-components';
 
 const SubscriptiopPage = () => {
@@ -20,6 +21,12 @@ const SubscriptiopPage = () => {
     };
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
   };
+  const goToRegularSpot = () => {
+    router.push('/subscription/regular?tab=spot');
+  };
+  const goToRegularDawn = () => {
+    router.push('/subscription/regular?tab=dawn');
+  };
   return (
     <Container>
       <InfoCard subsList={subsList} />
@@ -28,7 +35,7 @@ const SubscriptiopPage = () => {
         <TitleBox>
           <div className="row">
             <TextH3B>프코스팟 정기구독</TextH3B>
-            <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={onClick}>
+            <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToRegularSpot}>
               더보기
             </TextH6B>
           </div>
@@ -40,7 +47,7 @@ const SubscriptiopPage = () => {
         <TitleBox>
           <div className="row">
             <TextH3B>새벽/택배 정기구독</TextH3B>
-            <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
+            <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToRegularDawn}>
               더보기
             </TextH6B>
           </div>
@@ -54,13 +61,13 @@ const SubscriptiopPage = () => {
 };
 
 const Container = styled.div`
-  padding: 0 24px;
+  padding: 0 0 68px;
 `;
 const SbsListBox = styled.article`
   padding-bottom: 44px;
 `;
 const TitleBox = styled.div`
-  padding-bottom: 24px;
+  padding: 0 24px 24px;
   .row {
     display: flex;
     justify-content: space-between;
