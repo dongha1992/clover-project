@@ -36,8 +36,7 @@ const InfoCard = ({ subsList }: IProps) => {
   );
 };
 const Container = styled.div`
-  padding-top: 24px;
-  padding-bottom: 48px;
+  padding: 24px 24px 48px;
   & > div span {
     color: ${theme.brandColor};
   }

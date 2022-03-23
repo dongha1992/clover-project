@@ -28,15 +28,16 @@ const MySbsList = () => {
 const MySbsBox = styled.div`
   padding-bottom: 56px;
 `;
+
 const Head = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
+  padding: 0 24px 16px;
 `;
+
 const ListContainer = styled.div`
   display: flex;
-
   padding: 24px;
   background-color: ${theme.greyScale3};
 `;
