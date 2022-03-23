@@ -102,7 +102,7 @@ export const destination = createSlice({
     INIT_DESTINATION: (state, action: PayloadAction) => {
       state.userDestination = null;
     },
-
+    // 서버에 등록하지 않은 유저가 검색한 모든 배송지 정보
     SET_TEMP_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
       state.userTempDestination = action.payload;
     },
