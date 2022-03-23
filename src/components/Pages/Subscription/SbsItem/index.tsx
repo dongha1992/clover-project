@@ -44,9 +44,10 @@ const SbsItem = () => {
 };
 const ItemBox = styled.div`
   width: 100%;
-  padding-bottom: 24px;
+  margin-bottom: 24px;
+  cursor: pointer;
   &:last-child {
-    padding-bottom: 0;
+    margin-bottom: 0;
   }
 `;
 
