@@ -133,7 +133,6 @@
       "review": 10,
       "tags": ["페스코베지", "스팟/새벽"],
       "quantity": 1,
-      "menuDetails": [],
       "reviews": [
         {
           "id": 1,
@@ -170,13 +169,13 @@
           "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
         }
       ],
-      "details": [
+      "menuDetails": [
         {
           "id": 1,
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 (M)",
           "price": 10000,
-          "discount": 20,
+          "discountPrice": 20,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 3,
@@ -193,7 +192,7 @@
           "price": 5000,
           "limit": "3개 한정",
           "limitQuantity": 3,
-          "discount": 10,
+          "discountPrice": 10,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 0,
@@ -207,7 +206,7 @@
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 + 닭가슴살 (L)",
           "price": 100000,
-          "discount": 10,
+          "discountPrice": 10,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 0,
@@ -222,7 +221,7 @@
           "menuId": 1,
           "name": "[프코메이드] 하루과일 스테비아 방울토마토",
           "price": 1000,
-          "discount": 10,
+          "discountPrice": 10,
           "type": "optional",
           "url": "/menu/origin/9_20211124111843",
           "quantity": 1,
@@ -243,7 +242,6 @@
       "review": 100,
       "tags": ["페스코베지"],
       "quantity": 1,
-      "menuDetails": [],
       "reviews": [
         {
           "id": 1,
@@ -280,13 +278,13 @@
           "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
         }
       ],
-      "details": [
+      "menuDetails": [
         {
           "id": 1,
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 (M)",
           "price": 10000,
-          "discount": 20,
+          "discountPrice": 20,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 3,
@@ -300,7 +298,7 @@
           "id": 2,
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 (L)",
-          "price": 5000,
+          "discountPrice": 5000,
           "limit": "3개 한정",
           "limitQuantity": 3,
           "discount": 10,
@@ -316,7 +314,7 @@
           "id": 3,
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 + 닭가슴살 (L)",
-          "price": 100000,
+          "discountPrice": 100000,
           "discount": 10,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
@@ -331,7 +329,7 @@
           "id": 4,
           "menuId": 1,
           "name": "[프코메이드] 하루과일 스테비아 방울토마토",
-          "price": 1000,
+          "discountPrice": 1000,
           "discount": 10,
           "type": "optional",
           "url": "/menu/origin/9_20211124111843",
@@ -353,7 +351,7 @@
       "review": 90000,
       "tags": ["페스코베지", "스팟/새벽", "페스코베지"],
       "quantity": 1,
-      "menuDetails": [],
+
       "reviews": [
         {
           "id": 1,
@@ -390,13 +388,13 @@
           "content": "리뷰리뷰ㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ리뷸"
         }
       ],
-      "details": [
+      "menuDetails": [
         {
           "id": 1,
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 (M)",
           "price": 10000,
-          "discount": 20,
+          "discountPrice": 20,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 3,
@@ -413,7 +411,7 @@
           "price": 5000,
           "limit": "3개 한정",
           "limitQuantity": 3,
-          "discount": 10,
+          "discountPrice": 10,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 0,
@@ -427,7 +425,7 @@
           "menuId": 1,
           "name": "두부 크럼블 낫또 샐러드 + 닭가슴살 (L)",
           "price": 100000,
-          "discount": 10,
+          "discountPrice": 10,
           "type": "main",
           "url": "/menu/origin/9_20211124111843",
           "limitDaily": 0,
@@ -442,7 +440,7 @@
           "menuId": 1,
           "name": "[프코메이드] 하루과일 스테비아 방울토마토",
           "price": 1000,
-          "discount": 10,
+          "discountPrice": 10,
           "type": "optional",
           "url": "/menu/origin/9_20211124111843",
           "quantity": 1,
