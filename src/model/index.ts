@@ -1168,3 +1168,24 @@ export interface IWillWriteReviewsResponse {
   message: string;
   data: IWillWriteReview[];
 }
+
+export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
+export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
+export interface IGetCart {
+  calorie: number;
+  discountPrice: number;
+  isSold: boolean;
+  menuDetailId: number;
+  menuQuantity: number;
+  name: string;
+  price: number;
+  protein: number;
+  size: TCartMenuSize;
+  status: TCartMenuStatus;
+}
+
+export interface IGetCartResponse {
+  code: number;
+  message: string;
+  data: IGetCart[];
+}
