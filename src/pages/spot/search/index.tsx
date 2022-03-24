@@ -16,6 +16,7 @@ import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector } from '@store/spot';
+import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
@@ -102,6 +103,9 @@ const SpotSearchPage = (): ReactElement => {
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
+  const router = useRouter();
+  const { orderId } = router.query;
+
   const getSearchRecommendList = async () => {
     const params = {
       latitude: spotsPosition ? spotsPosition.latitude : null,
@@ -138,6 +142,7 @@ const SpotSearchPage = (): ReactElement => {
 
   const changeInputHandler = () => {
     const inputText = inputRef.current?.value.length;
+    console.log(inputRef.current?.value, '@@@');
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -163,10 +168,12 @@ const SpotSearchPage = (): ReactElement => {
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
+          console.log(data.data);
           // setSpotTest(fetchData);
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
           });
+
           setSearchResult(filtered);
           setIsSearched(true);
         } catch (err) {
@@ -189,6 +196,12 @@ const SpotSearchPage = (): ReactElement => {
     getRecentSpotList();
     getSearchRecommendList();
   }, []);
+
+  useEffect(() => {
+    if (orderId) {
+      setIsSearched(true);
+    }
+  }, [orderId]);
 
   return (
     <Container>
@@ -271,7 +284,7 @@ const SpotSearchPage = (): ReactElement => {
           ) : (
             // 검색 결과
             <SearchResultContainer>
-              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} />
+              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} orderId={orderId} />
             </SearchResultContainer>
           )}
         </>

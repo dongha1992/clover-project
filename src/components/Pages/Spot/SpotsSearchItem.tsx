@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DESTINATION_STATUS, SET_TEMP_DESTINATION } from '@store/destination';
+import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 
 interface IProps {
   item: ISpotsDetail;
@@ -31,7 +32,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
-
+  console.log(item, 'item');
   const typeTag = (): string => {
     const type = item.type;
     switch (type) {
@@ -59,6 +60,14 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
     };
 
     if (isLoginSuccess) {
+      if (orderId) {
+        dispatch(SET_TEMP_EDIT_DESTINATION(destinationInfo));
+        router.push({
+          pathname: '/mypage/order-detail/edit/[orderId]',
+          query: { orderId },
+        });
+      }
+
       if (cartLists.length) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
@@ -66,12 +75,6 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
-        } else if (orderId) {
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({
-            pathname: '/mypage/order-detail/edit/[orderId]',
-            query: { orderId },
-          });
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));

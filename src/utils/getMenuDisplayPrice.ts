@@ -29,7 +29,7 @@ export const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
     take(1)
   );
 
-  return result[0];
+  return result;
 };
 
 export const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; price: number }): IResult => {
