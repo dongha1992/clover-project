@@ -31,8 +31,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { menuDetails } = item;
-
+  let { menuDetails } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
   menuDetails = menuDetails.map((item: any) => {
     return { ...item, isSoldout: true };
