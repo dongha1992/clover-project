@@ -11,6 +11,7 @@ import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
+import { COMPLETE, WILL_WRITE } from '@constants/menu/index';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -31,8 +32,9 @@ const ReviewPage = () => {
     'getWillWriteReview',
     async () => {
       // temp
-      const { data } = await getWillWriteReviews();
-      return data.data;
+      // const { data } = await getWillWriteReviews();
+      // return data.data;
+      return WILL_WRITE.data.data;
     },
 
     {
@@ -50,9 +52,10 @@ const ReviewPage = () => {
     'getCompleteWriteReview',
     async () => {
       // temp
-      const { data } = await getCompleteReviews();
+      // const { data } = await getCompleteReviews();
 
-      return data.data;
+      // return data.data;
+      return COMPLETE.data.data;
     },
 
     {
@@ -79,6 +82,7 @@ const ReviewPage = () => {
     return <div>로딩</div>;
   }
 
+  console.log(willWriteList, 'willWriteList');
   return (
     <Container>
       <FixedTab>
