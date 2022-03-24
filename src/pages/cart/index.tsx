@@ -37,7 +37,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
-import { getOrderLists } from '@api/order';
+import { getOrderListsApi } from '@api/order';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';

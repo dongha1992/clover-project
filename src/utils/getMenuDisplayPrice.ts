@@ -1,5 +1,10 @@
 import { pipe, map, sortBy, take, toArray } from '@fxts/core';
 
+interface IResult {
+  discount: number;
+  discountedPrice: number;
+  price: number;
+}
 interface IPriceResult {
   discount: number;
   discountedPrice: number;
