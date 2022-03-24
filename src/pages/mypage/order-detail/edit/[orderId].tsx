@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
-import { getOrderDetailApi, editDeliveryDestinationApi } from '@api/order';
+import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import { IDestinationsResponse } from '@model/index';
 import router from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/payment';
@@ -98,7 +98,9 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({ orderId, data: rest });
+        console.log(data, 'Dd');
       } else {
+        const { data } = await editSpotDestinationApi({ orderId, data: rest });
       }
     },
     {
@@ -190,6 +192,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     });
   }, [userAccessMethod, userTempDestination]);
 
+  console.log(userTempDestination);
   return (
     <Container>
       <Wrapper>
