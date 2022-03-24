@@ -1,35 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } from '@styles/theme';
 import { TextH4B, TextB3R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
-
+import { Obj } from '@model/index';
+import { ACCESS_METHOD_VALUE } from '@constants/payment';
 interface IProps {
   receiverName: string;
   receiverTel: string;
-  deliveryDate: string;
+  deliveryAt: string;
   delivery: string;
+  deliveryDetail?: string;
   location: {
     address: string;
     addressDetail: string;
     dong: string;
-    zipcode: string;
+    zipCode: string;
   };
-  deliveryStatus: string;
-  changeDeliveryInfoHandler: () => void;
+  status: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  spotName?: string;
+  spotPickupName?: string;
 }
 
 const OrderDetailInfo = ({
   receiverName,
   receiverTel,
-  deliveryDate,
+  deliveryAt,
   delivery,
   location,
-  deliveryStatus,
-  changeDeliveryInfoHandler,
+  status,
+  deliveryDetail,
+  deliveryMessage,
+  deliveryMessageType,
+  spotName,
+  spotPickupName,
 }: IProps) => {
+  const isSpot = delivery === '스팟배송';
+  const isParcel = delivery === '택배배송';
+  const isMorning = delivery === '새벽배송';
+
+  const DELIVERTY_DETAIL_MAP: Obj = {
+    LUNCH: '11:30-12:00',
+    DIINER: '18:00-18:30',
+  };
+
   return (
-    <>
+    <FlexCol margin="0 0 24px 0">
       <FlexBetween>
         <TextH4B>배송정보</TextH4B>
       </FlexBetween>
@@ -44,12 +62,16 @@ const OrderDetailInfo = ({
         </FlexBetween>
         <FlexBetween margin="16px 0 0 0">
           <TextH5B>배송방법</TextH5B>
-          <TextB2R>스팟배송 - 점심</TextB2R>
+          <TextB2R>
+            {delivery} {deliveryDetail ? '-' + deliveryDetail : null}
+          </TextB2R>
         </FlexBetween>
         <FlexBetweenStart margin="16px 0 24px 0">
           <TextH5B>배송 예정실시</TextH5B>
           <FlexColEnd>
-            <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
+            <TextB2R>
+              {deliveryAt} {deliveryDetail && DELIVERTY_DETAIL_MAP[deliveryDetail]}
+            </TextB2R>
             <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
             <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
           </FlexColEnd>
@@ -59,9 +81,11 @@ const OrderDetailInfo = ({
           {isSpot ? (
             <FlexColEnd>
               <TextB2R>
-                {location.address} {location.addressDetail}
+                {spotName} {spotPickupName}
               </TextB2R>
-              <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              <TextB3R color={theme.greyScale65}>
+                ({location.zipCode}) {location.address}
+              </TextB3R>
             </FlexColEnd>
           ) : (
             <FlexColEnd>
@@ -72,24 +96,23 @@ const OrderDetailInfo = ({
         </FlexBetweenStart>
         {isParcel && (
           <FlexBetweenStart margin="16px 0 24px 0">
-            <TextH5B>출입방법</TextH5B>
+            <TextH5B>배송메모</TextH5B>
             <FlexColEnd>
-              <TextB2R>공동현관 비밀번호</TextB2R>
-              <TextB2R>#1099</TextB2R>
+              <TextB2R>{deliveryMessage}</TextB2R>
             </FlexColEnd>
           </FlexBetweenStart>
         )}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          disabled={isCanceled}
-          onClick={changeDeliveryInfoHandler}
-        >
-          배송 정보 변경하기
-        </Button>
+        {isMorning && (
+          <FlexBetweenStart margin="16px 0 24px 0">
+            <TextH5B>출입방법</TextH5B>
+            <FlexColEnd>
+              <TextB2R>{deliveryMessageType && ACCESS_METHOD_VALUE[deliveryMessageType]}</TextB2R>
+              <TextB2R>{deliveryMessage}</TextB2R>
+            </FlexColEnd>
+          </FlexBetweenStart>
+        )}
       </FlexCol>
-    </>
+    </FlexCol>
   );
 };
 

@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { theme, FlexBetween, FlexCol, FlexRow, homePadding, fixedBottom } from '@styles/theme';
+import {
+  theme,
+  FlexBetween,
+  FlexCol,
+  FlexRow,
+  homePadding,
+  fixedBottom,
+  FlexColEnd,
+  FlexBetweenStart,
+} from '@styles/theme';
 import { TextH4B, TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
@@ -8,40 +17,35 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
+import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import { IDestinationsResponse } from '@model/index';
-import { Obj } from '@model/index';
 import router from 'next/router';
-import { getValues } from '@utils/getValues';
-import { ACCESS_METHOD_MAP } from '@constants/payment';
+import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
-
-const mapper: Obj = {
-  MORNING: '새벽배송',
-  SPOT: '스팟배송',
-  PARCEL: '택배배송',
-  QUICK: '퀵배송',
-};
-
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { destinationForm, INIT_TEMP_DESTINATION, SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { pipe, indexBy } from '@fxts/core';
+import { Obj } from '@model/index';
 interface IProps {
-  id: number;
+  orderId: number;
 }
 
-/* TODO: 서버 정보 받으면 수정 */
+const DELIVERY_DETAIL_MAP: Obj = {
+  LUNCH: '점심',
+  DINNER: '저녁',
+};
 
-const OrderDetailAddressEditPage = ({ id }: IProps) => {
-  const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
-  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
-  const [isSamePerson, setIsSamePerson] = useState(false);
-  const [isDefaultSpot, setIsDefaultSpot] = useState(false);
-  const [deliveryEditObj, setDeliveryEditObj] = useState({
-    deliveryName: '',
+const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
+  const [isSamePerson, setIsSamePerson] = useState(true);
+  const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
+    selectedMethod: {},
+    location: {},
+    deliveryMessageType: '',
     receiverTel: '',
     receiverName: '',
     deliveryMessage: '',
@@ -49,18 +53,67 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
+  const { userTempDestination } = useSelector(destinationForm);
+  const queryClient = useQueryClient();
 
-  const isParcel = selectedAddress?.delivery === 'PARCEL';
-  const isSpot = selectedAddress?.delivery === 'SPOT';
-  const isMorning = selectedAddress?.delivery === 'MORNING';
+  const { data, isLoading } = useQuery(
+    'getOrderDetail',
+    async () => {
+      const { data } = await getOrderDetailApi(orderId);
+      return data.data;
+    },
+    {
+      onSuccess: (data) => {
+        const orderDetail = data?.orderDeliveries[0];
 
-  // const isParcel = false;
-  // const isSpot = false;
-  // const isMorning = true;
+        const userAccessMethodMap = pipe(
+          ACCESS_METHOD,
+          indexBy((item) => item.value)
+        );
 
-  const getDeliveryInfo = async () => {};
+        setDeliveryEditObj({
+          selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
+          deliveryMessageType: orderDetail?.deliveryMessageType!,
+          deliveryMessage: orderDetail?.deliveryMessage!,
+          receiverName: orderDetail?.receiverName!,
+          receiverTel: orderDetail?.receiverTel!,
+          location: orderDetail?.location,
+        });
+      },
+      onSettled: async () => {},
 
-  const checkSamePerson = () => {};
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const orderDetail = data?.orderDeliveries[0];
+
+  const isParcel = orderDetail?.delivery === 'PARCEL';
+  const isSpot = orderDetail?.delivery === 'SPOT';
+  const isMorning = orderDetail?.delivery === 'MORNING';
+
+  const { mutateAsync: mutationDeliveryInfo } = useMutation(
+    async (reqBody: any) => {
+      if (!isSpot) {
+        const { selectedMethod, ...rest } = reqBody;
+        const { data } = await editDeliveryDestinationApi({ orderId, data: rest });
+        console.log(data, 'Dd');
+      } else {
+        const { data } = await editSpotDestinationApi({ orderId, data: rest });
+      }
+    },
+    {
+      onSuccess: async () => {
+        // await queryClient.refetchQueries('getOrderDetail');
+        // dispatch(INIT_TEMP_DESTINATION());
+      },
+    }
+  );
+
+  const checkSamePerson = () => {
+    setIsSamePerson((prev) => !prev);
+  };
 
   const editDeliveryInfoHandler = () => {
     if (!cheekBeforeEdit()) {
@@ -70,15 +123,16 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     dispatch(
       SET_ALERT({
         alertMessage: '내용을 수정했습니다.',
-        onSubmit: () => editDeliveryInfo(),
+        onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
         submitBtnText: '확인',
       })
     );
   };
 
   const cheekBeforeEdit = (): boolean => {
-    const noMsg = !deliveryEditObj.deliveryMessage.length;
-    const noAccessMethod = !selectedAccessMethod?.value!;
+    // const noMsg = !deliveryEditObj.deliveryMessage.length;
+    const noMsg = false;
+    const noAccessMethod = !deliveryEditObj.deliveryMessageType;
 
     switch (true) {
       case isMorning: {
@@ -108,10 +162,6 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     }
   };
 
-  const editDeliveryInfo = async () => {
-    const reqBody = {};
-  };
-
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
@@ -125,28 +175,24 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
     );
   };
 
-  useEffect(() => {
-    getDeliveryInfo();
-  }, []);
+  const changeDeliveryPlace = () => {
+    if (isSpot) {
+      router.push({ pathname: '/spot/search', query: { orderId } });
+    } else {
+      router.push({ pathname: '/destination/search', query: { orderId } });
+      dispatch(SET_USER_DESTINATION_STATUS(orderDetail?.delivery.toLowerCase()!));
+    }
+  };
 
   useEffect(() => {
-    setSelectedAccessMethod(userAccessMethod);
-  }, [userAccessMethod]);
+    setDeliveryEditObj({
+      ...deliveryEditObj,
+      selectedMethod: userAccessMethod,
+      location: userTempDestination?.location,
+    });
+  }, [userAccessMethod, userTempDestination]);
 
-  // const placeInfoRender = () => {
-  //   const deliveryType = 'parcel';
-
-  //   switch (deliveryType) {
-  //     case 'spot': {
-  //       return <PickupPlaceBox place={{ name: 'test', address: 'test' }} />;
-  //     }
-
-  //     default: {
-  //       return <DeliveryPlaceBox place={{ name: 'test', address: 'test' }} />;
-  //     }
-  //   }
-  // };
-
+  console.log(userTempDestination);
   return (
     <Container>
       <Wrapper>
@@ -163,7 +209,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
             <TextInput
               placeholder="이름"
               name="receiverName"
-              value={deliveryEditObj?.receiverName}
+              value={isSamePerson ? orderDetail?.receiverName : deliveryEditObj?.receiverName}
               eventHandler={changeInputHandler}
             />
           </FlexCol>
@@ -172,7 +218,7 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
             <TextInput
               placeholder="휴대폰 번호"
               name="receiverTel"
-              value={deliveryEditObj?.receiverTel}
+              value={isSamePerson ? orderDetail?.receiverTel : deliveryEditObj?.receiverTel}
               eventHandler={changeInputHandler}
             />
           </FlexCol>
@@ -180,9 +226,47 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
         <BorderLine height={8} margin="24px 0" />
         <DevlieryInfoWrapper>
           <FlexBetween padding="0 0 24px 0">
-            <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
+            <FlexBetween>
+              <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
+              <TextH6B color={theme.greyScale65} onClick={changeDeliveryPlace} textDecoration="underLine">
+                배송지 변경
+              </TextH6B>
+            </FlexBetween>
           </FlexBetween>
-          {/* <FlexCol>{placeInfoRender()}</FlexCol> */}
+          <FlexBetween>
+            <TextH5B>배송방법</TextH5B>
+            {isSpot ? (
+              <TextB2R>
+                {`${DELIVERY_TYPE_MAP[orderDetail?.delivery!]} - ${DELIVERY_DETAIL_MAP[orderDetail?.deliveryDetail!]}`}
+              </TextB2R>
+            ) : (
+              <TextB2R>{DELIVERY_TYPE_MAP[orderDetail?.delivery!]}</TextB2R>
+            )}
+          </FlexBetween>
+          {isSpot ? (
+            <FlexBetweenStart padding="16px 0 0 0">
+              <TextH5B>픽업장소</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {orderDetail?.spot?.name} {orderDetail?.spotPickup?.name!}
+                </TextB2R>
+                <FlexRow>
+                  <TextB3R color={theme.greyScale65} padding="0 4px 0 0">
+                    ({orderDetail?.location?.zipCode})
+                  </TextB3R>
+                  <TextB3R color={theme.greyScale65}>{orderDetail?.location?.address}</TextB3R>
+                </FlexRow>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          ) : (
+            <FlexBetweenStart padding="16px 0 0 0">
+              <TextH5B>배송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
+                <TextB2R>{deliveryEditObj?.location?.addressDetail}</TextB2R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          )}
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (
@@ -192,18 +276,18 @@ const OrderDetailAddressEditPage = ({ id }: IProps) => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>{selectedAccessMethod?.text || '출입방법 선택'}</TextB2R>
+                <TextB2R color={theme.greyScale45}>{deliveryEditObj?.selectedMethod.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
                 name="deliveryMessage"
                 placeholder={
-                  ACCESS_METHOD_MAP[selectedAccessMethod?.value!]
-                    ? ACCESS_METHOD_MAP[selectedAccessMethod?.value!]
-                    : '요청사항 입력'
+                  ACCESS_METHOD_PLACEHOLDER[deliveryEditObj.deliveryMessageType]
+                    ? ACCESS_METHOD_PLACEHOLDER[deliveryEditObj.deliveryMessageType]
+                    : '요청사항을 입력해주세요'
                 }
                 margin="8px 0 0 0"
-                value={deliveryEditObj?.deliveryMessage}
+                value={deliveryEditObj?.deliveryMessage || ''}
                 eventHandler={changeInputHandler}
               />
             </FlexCol>

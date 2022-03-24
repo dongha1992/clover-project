@@ -26,11 +26,9 @@ const DeliveryStatusInfo = ({ isCompleted, isCanceled, deliveryStatus, deliveryD
           </Tag>
         )}
       </FlexRow>
-      {!isCanceled && (
-        <TextH6B textDecoration="underline" color="#757575" onClick={() => router.push(`/mypage/order-detail/${id}`)}>
-          주문상세 보기
-        </TextH6B>
-      )}
+      <TextH6B textDecoration="underline" color="#757575" onClick={() => router.push(`/mypage/order-detail/${id}`)}>
+        주문상세 보기
+      </TextH6B>
     </FlexBetween>
   );
 };
