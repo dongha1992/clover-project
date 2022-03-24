@@ -8,27 +8,23 @@ import router from 'next/router';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { TimerTooltip } from '@components/Shared/Tooltip';
-import {   
-  postSpotLike,
-  deleteSpotLike,
-  getSpotLike,
- } from '@api/spot';
- import { SET_SPOT_LIKED } from '@store/spot';
+import { postSpotLike, deleteSpotLike, getSpotLike } from '@api/spot';
+import { SET_SPOT_LIKED } from '@store/spot';
 import { userForm } from '@store/user';
 import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
 import { SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
- 
+
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
-  const { isDelivery } = router.query;
+  const { isDelivery, orderId } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
-  
+
   const goToCart = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {
@@ -44,70 +40,70 @@ const SpotDetailBottom = () => {
       spaceType: spotDetail?.type,
     };
 
-    if(isLoginSuccess){
-      if(cartLists.length) {
+    if (isLoginSuccess) {
+      if (cartLists.length) {
         // 로그인o and 장바구니 o
-        if(isDelivery){
+        if (isDelivery) {
           // 장바구니 o , 배송 정보에서 넘어온 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
-        }else{
+        } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push('/cart');  
+          router.push('/cart');
         }
-      }else{
+      } else {
         // 로그인o and 장바구니 x
         router.push('/search');
       }
-    }else{
+    } else {
       // 로그인x
       router.push('/onboarding');
-    };
+    }
   };
 
-  useEffect(()=> {
-    const spotLikeData = async() => {
-      try{
+  useEffect(() => {
+    const spotLikeData = async () => {
+      try {
         const { data } = await getSpotLike(spotDetail!.id);
-        setSpotLike(data.data.liked)
-      }catch(err){
+        setSpotLike(data.data.liked);
+      } catch (err) {
         console.error(err);
-      };
+      }
     };
-  
+
     spotLikeData();
   }, [spotDetail, spotDetail?.id, spotLike]);
 
   const hanlderLike = async () => {
-    if(isLoginSuccess){
-      if(!spotLike){
+    if (isLoginSuccess) {
+      if (!spotLike) {
         try {
           const { data } = await postSpotLike(spotDetail!.id);
-          if(data.code === 200 ){
+          if (data.code === 200) {
             dispatch(SET_SPOT_LIKED(true));
             setSpotLike(true);
           }
-        }catch(err){
+        } catch (err) {
           console.error(err);
-        };
-      }else if(spotLike){
-        try{
+        }
+      } else if (spotLike) {
+        try {
           const { data } = await deleteSpotLike(spotDetail!.id);
-          if(data.code === 200){
+          if (data.code === 200) {
             dispatch(SET_SPOT_LIKED(false));
             setSpotLike(false);
           }
-        }catch(err){
+        } catch (err) {
           console.error(err);
-        };
-      };
-    }else{
+        }
+      }
+    } else {
       router.push('/onboarding');
-    };
+    }
   };
 
   return (
@@ -123,21 +119,22 @@ const SpotDetailBottom = () => {
         </LikeWrapper>
         <Col />
         <BtnWrapper onClick={goToCart}>
-          <TextH5B color={theme.white}>
-              주문하기
-          </TextH5B>
+          <TextH5B color={theme.white}>주문하기</TextH5B>
         </BtnWrapper>
       </Wrapper>
-      {
-        spotDetail?.discountRate !== 0 && (
-          <TootipWrapper>
-            <TimerTooltip message={`${spotDetail?.discountRate}% 할인 중`} bgColor={theme.brandColor} color={theme.white} minWidth='78px' />
-          </TootipWrapper>
-        )
-      }
+      {spotDetail?.discountRate !== 0 && (
+        <TootipWrapper>
+          <TimerTooltip
+            message={`${spotDetail?.discountRate}% 할인 중`}
+            bgColor={theme.brandColor}
+            color={theme.white}
+            minWidth="78px"
+          />
+        </TootipWrapper>
+      )}
     </Container>
   );
-}
+};
 
 const Container = styled.section`
   width: 100%;

@@ -17,6 +17,10 @@ import {
   SET_TEMP_DESTINATION,
   SET_DESTINATION_STATUS,
   SET_USER_DESTINATION_STATUS,
+  INIT_TEMP_DESTINATION,
+  SET_DESTINATION,
+  INIT_DESTINATION_STATUS,
+  INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { Obj } from '@model/index';
@@ -40,6 +44,9 @@ const DestinationDetailPage = () => {
   const destinationDetailRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
+
+  const { orderId } = router.query;
+
   // 배송 가능 여부
   const { tempLocation, availableDestination, userDestinationStatus } = useSelector(destinationForm);
   const destinationStatus = checkDestinationHelper(availableDestination);
@@ -87,13 +94,22 @@ const DestinationDetailPage = () => {
         },
         main: isDefaultDestination,
       };
+      if (orderId) {
+        dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
+        dispatch(INIT_DESTINATION_STATUS());
+        dispatch(INIT_AVAILABLE_DESTINATION());
+        router.push({
+          pathname: '/mypage/order-detail/edit/[orderId]',
+          query: { orderId },
+        });
+      } else {
+        dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
+        dispatch(SET_DESTINATION_STATUS(destinationStatus));
+        dispatch(SET_USER_DESTINATION_STATUS(destinationStatusByRule));
+        dispatch(INIT_LOCATION_TEMP());
 
-      dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
-      dispatch(SET_DESTINATION_STATUS(destinationStatus));
-      dispatch(SET_USER_DESTINATION_STATUS(destinationStatusByRule));
-      dispatch(INIT_LOCATION_TEMP());
-
-      router.push('/cart/delivery-info');
+        router.push('/cart/delivery-info');
+      }
     }
   };
 
@@ -181,14 +197,19 @@ const DestinationDetailPage = () => {
           <TextH5B padding="0 0 8px 0">배송지명</TextH5B>
           <TextInput placeholder="배송지명 입력" ref={destinationNameRef} />
         </FlexCol>
-        <FlexRow padding="0">
-          <Checkbox onChange={() => setIsDefaultDestination(!isDefaultDestination)} isSelected={isDefaultDestination} />
-          {isDefaultDestination ? (
-            <TextH5B padding="4px 0 0 4px">기본 배송지로 설정</TextH5B>
-          ) : (
-            <TextB2R padding="4px 0 0 4px">기본 배송지로 설정</TextB2R>
-          )}
-        </FlexRow>
+        {!orderId && (
+          <FlexRow padding="0">
+            <Checkbox
+              onChange={() => setIsDefaultDestination(!isDefaultDestination)}
+              isSelected={isDefaultDestination}
+            />
+            {isDefaultDestination ? (
+              <TextH5B padding="4px 0 0 4px">기본 배송지로 설정</TextH5B>
+            ) : (
+              <TextB2R padding="4px 0 0 4px">기본 배송지로 설정</TextB2R>
+            )}
+          </FlexRow>
+        )}
       </DestinationInfoWrarpper>
       {canNotDelivery && (
         <ButtonGroup

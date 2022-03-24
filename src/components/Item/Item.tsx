@@ -31,7 +31,12 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+<<<<<<< HEAD
+  const { menuDetails } = item;
+
+=======
   let { menuDetails } = item;
+>>>>>>> 9977a45bf01f70c5a45fd80f003c816450730c41
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
   menuDetails = menuDetails.map((item: any) => {
     return { ...item, isSoldout: true };

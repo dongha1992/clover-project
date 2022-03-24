@@ -15,11 +15,9 @@ import { useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { pipe, groupBy } from '@fxts/core';
-
+import { getOrderListsApi } from '@api/order';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -31,28 +29,27 @@ const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
   const [deliveryList, setDeliveryList] = useState<any>([]);
 
-  const { data: list, isLoading } = useQuery(
+  const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
-      // const params = {
-      //   days: 90,
-      //   page: 1,
-      //   size: 10,
-      //   type: 'GENERAL',
-      // };
+      const params = {
+        days: 90,
+        page: 1,
+        size: 10,
+        type: 'GENERAL',
+      };
 
-      // const { data } = await getOrderLists(params);
+      const { data } = await getOrderListsApi(params);
 
-      /* temp */
-      const { data } = await axios.get(`${BASE_URL}/orderList`);
       return data.data.orders;
     },
     {
       onSuccess: (data) => {
         const result = pipe(
           data,
-          groupBy((item: any) => item.deliveryStatus)
+          groupBy((item: any) => item.orderDeliveries[0]?.status)
         );
+
         setDeliveryList(result);
         return data;
       },
@@ -110,7 +107,7 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>
-              <OrderDashboard deliveryList={deliveryList} total={list.length} />
+              <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
             </OrderAndDeliveryWrapper>
             <ManageWrapper>
               <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />

@@ -23,11 +23,11 @@ interface IProps {
 const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery } = router.query;
+  const { isDelivery, orderId } = router.query;
   const { cartLists } = useSelector(cartForm);
-  const { isLoginSuccess} = useSelector(userForm);
+  const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
-  
+
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
@@ -57,31 +57,36 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
       availableTime: pickUpTime,
       spaceType: item.type,
     };
-    
-    if(isLoginSuccess){
-      if(cartLists.length) {
+
+    if (isLoginSuccess) {
+      if (cartLists.length) {
         // 로그인o and 장바구니 o
-        if(isDelivery){
+        if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
-        }else{
+        } else if (orderId) {
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push({
+            pathname: '/mypage/order-detail/edit/[orderId]',
+            query: { orderId },
+          });
+        } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));  
-          router.push('/cart');  
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push('/cart');
         }
-      }else{
+      } else {
         // 로그인o and 장바구니 x
         router.push('/search');
       }
-    }else{
+    } else {
       // 로그인x
       router.push('/onboarding');
     }
   };
-
 
   return (
     <Container mapList>
@@ -89,13 +94,12 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
         <MeterAndTime>
-          {
-            userLocationLen &&
+          {userLocationLen && (
             <>
               <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
               <Col />
             </>
-          }
+          )}
           <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
             픽업
           </TextH6B>
@@ -159,7 +163,6 @@ const ImageWrapper = styled.div<{ mapList: boolean }>`
     if (mapList) {
       return css`
         margin-bottom: 10px;
-        
       `;
     }
   }}

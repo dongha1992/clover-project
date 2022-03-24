@@ -29,7 +29,7 @@ import { SET_ORDER_ITEMS } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj, IOrderDeliveries, IGetOrderListResponse } from '@model/index';
+import { Obj, IOrderDeliveries, IGetOtherDeliveries } from '@model/index';
 import { isNil, isEqual, includes } from 'lodash-es';
 import { flow, map, filter } from 'lodash/fp';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
@@ -37,8 +37,12 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
+<<<<<<< HEAD
+import { getOrderListsApi } from '@api/order';
+=======
 import { getOrderLists } from '@api/order';
 import { getMenusApi } from '@api/menu';
+>>>>>>> 9977a45bf01f70c5a45fd80f003c816450730c41
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { CartItem } from '@components/Pages/Cart';
@@ -99,7 +103,7 @@ const CartPage = () => {
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
-  const [otherDeliveries, setOtherDeliveries] = useState<IGetOrderListResponse[]>([]);
+  const [otherDeliveries, setOtherDeliveries] = useState<IGetOtherDeliveries[]>([]);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -153,7 +157,7 @@ const CartPage = () => {
       //   type: 'GENERAL',
       // };
 
-      // const { data } = await getOrderLists(params);
+      // const { data } = await getOrderListsApi(params);
 
       /* temp */
       const { data } = await axios.get(`${BASE_URL}/orderList`);
@@ -244,8 +248,8 @@ const CartPage = () => {
   //   }
   // );
 
-  const checkHasOtherDeliveries = (list: IGetOrderListResponse[]) => {
-    const checkAvailableOtherDelivery = ({ deliveryStatus, delivery, location }: IGetOrderListResponse) => {
+  const checkHasOtherDeliveries = (list: IGetOtherDeliveries[]) => {
+    const checkAvailableOtherDelivery = ({ deliveryStatus, delivery, location }: IGetOtherDeliveries) => {
       const availableDeliveryStatus: string[] = ['PREPARING', 'PROGRESS'];
       const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
       const sameDeliveryAddress = isEqual(location, userDestination?.location);
@@ -254,7 +258,7 @@ const CartPage = () => {
       return avaliableStatus && sameDeliveryAddress && sameDeliveryType;
     };
 
-    return flow(filter((data: IGetOrderListResponse) => checkAvailableOtherDelivery(data)))(list);
+    return flow(filter((data: IGetOtherDeliveries) => checkAvailableOtherDelivery(data)))(list);
   };
 
   const handleSelectCartItem = (id: any) => {
@@ -452,7 +456,7 @@ const CartPage = () => {
         content: (
           <TogetherDeliverySheet
             title="함께배송 안내"
-            otherDeliveryInfo={[otherDeliveries.find((item: IGetOrderListResponse) => item.id === id)]}
+            otherDeliveryInfo={[otherDeliveries.find((item: IGetOtherDeliveries) => item.id === id)]}
           />
         ),
       })
@@ -547,7 +551,7 @@ const CartPage = () => {
         const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
 
         if (sameDeliveryDate && sameDeliveryTime) {
-          goToTogetherDelivery(otherDelivery.id);
+          goToTogetherDelivery(otherDelivery?.id);
         }
       }
     }
