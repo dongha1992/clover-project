@@ -15,7 +15,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import { orderForm } from '@store/order';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
 import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
@@ -25,6 +25,7 @@ import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
 import dayjs from 'dayjs';
 import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
+
 // temp
 
 const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
@@ -37,6 +38,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const dispatch = useDispatch();
 
   const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const { data: orderDetail, isLoading } = useQuery(
     'getOrderDetail',
@@ -52,15 +55,21 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  const { mutate: mutateDeleteCard } = useMutation((id: number) => deleteCard(id), {
-    onSuccess: async () => {
-      await queryClient.refetchQueries('getCardList');
-      await queryClient.refetchQueries('getMainCard');
-      router.push('/mypage/card');
+  const { mutate: deleteOrderMutation } = useMutation(
+    async () => {
+      const { data } = await deleteDeliveryApi(orderId);
     },
-  });
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getOrderDetail');
+
+        // router.push('/mypage/order-delivery-history');
+      },
+    }
+  );
 
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
+
   const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
   const { dayFormatter: deliveryAtWithDay } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
 
@@ -144,15 +153,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     dispatch(
       SET_ALERT({
         alertMessage: '주문을 취소하시겠어요?',
-        onSubmit: () => cancelOrder(),
+        onSubmit: () => deleteOrderMutation(),
         closeBtnText: '취소',
       })
     );
-  };
-
-  const cancelOrder = async () => {
-    const { data } = await deleteDeliveryApi(orderId);
-    console.log(data, 'dd');
   };
 
   const changeDevlieryDateHandler = () => {

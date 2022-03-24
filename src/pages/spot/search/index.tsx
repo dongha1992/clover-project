@@ -326,7 +326,7 @@ const BottomContentWrapper = styled.section`
   position: relative;
   bottom: 0px;
   right: 0px;
-  bacfground: ${theme.white};
+  background-color: ${theme.white};
 `;
 
 export default SpotSearchPage;

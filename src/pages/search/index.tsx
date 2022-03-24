@@ -5,13 +5,12 @@ import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { Item } from '@components/Item';
-import axios from 'axios';
 import { SearchResult, RecentSearch } from '@components/Pages/Search';
 import { homePadding, FlexWrapWrapper } from '@styles/theme';
 import Link from 'next/link';
-import { BASE_URL } from '@constants/mock';
 import SVGIcon from '@utils/SVGIcon';
-
+import { useQuery } from 'react-query';
+import { getMenusApi } from '@api/menu';
 /*TODO: 검색 결과는 slug와 static props로? */
 
 const SearchPage = () => {
@@ -25,7 +24,6 @@ const SearchPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getBanners();
     initLocalStorage();
   }, []);
 
@@ -33,10 +31,20 @@ const SearchPage = () => {
     setLocalStorage();
   }, [recentKeywords]);
 
-  const getBanners = async () => {
-    const { data } = await axios.get(`${BASE_URL}/itemList`);
-    setItemList(data.data);
-  };
+  const {
+    data: menus,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenus',
+    async () => {
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
+      const { data } = await getMenusApi(params);
+
+      return data.data.filter((item, index) => index < 4);
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -113,6 +121,10 @@ const SearchPage = () => {
     localStorage.setItem('recentSearch', JSON.stringify(recentKeywords));
   };
 
+  if (isLoading) {
+    return <div>로딩중</div>;
+  }
+
   return (
     <Container>
       <Wrapper>
@@ -157,7 +169,7 @@ const SearchPage = () => {
               <MdRecommendationWrapper>
                 <TextH3B padding="24px">MD 추천</TextH3B>
                 <FlexWrapWrapper>
-                  {itemList.map((item, index) => {
+                  {menus?.map((item, index) => {
                     return <Item item={item} key={index} />;
                   })}
                 </FlexWrapWrapper>

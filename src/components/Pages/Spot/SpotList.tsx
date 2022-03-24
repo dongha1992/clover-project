@@ -68,6 +68,16 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     };
 
     if (isLoginSuccess) {
+      // 배송정보 변경에서 넘어온 경우
+      if (orderId) {
+        dispatch(SET_TEMP_DESTINATION(destinationInfo));
+        router.push({
+          pathname: '/mypage/order-detail/edit/[orderId]',
+          query: { orderId },
+        });
+        return;
+      }
+
       if (cartLists.length) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
@@ -75,7 +85,6 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart/delivery-info', query: { destinationId: list.id } });
-        } else if (orderId) {
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
