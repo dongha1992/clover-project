@@ -65,9 +65,9 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               {!isDetailPage && review.comment ? (
                 <ReplyContent>
                   <ReplyHeader>
-                    <TextH6B color={theme.greyScale65}>{review.comment}</TextH6B>
+                    <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
                     <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
-                      {review.comment}
+                      {review.commentCreatedAt}
                     </TextB3R>
                   </ReplyHeader>
                   <ReplyBody>

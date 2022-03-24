@@ -1,19 +1,19 @@
 import { pipe, map, sortBy, take, toArray } from '@fxts/core';
 
-export const getMenuDisplayPrice = (
-  menuDetails: any
-): {
+interface IPriceResult {
   discount: number;
   discountedPrice: number;
   price: number;
-} => {
+}
+
+export const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
   /* TODO: 케이스 추가 */
 
   // if (!menuDetails) return null;
 
-  const [result] = pipe(
+  const [result]: any = pipe(
     menuDetails,
-    map((item) => {
+    map((item: any) => {
       return {
         discount: Math.floor((item.discountPrice / item.price) * 100),
         discountedPrice: item.price - item.discountPrice,

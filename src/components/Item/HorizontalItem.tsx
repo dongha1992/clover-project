@@ -6,7 +6,7 @@ import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_CART_SHEET_OBJ } from '@store/cart';
+import { SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -21,7 +21,6 @@ type TProps = {
 const HorizontalItem = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  console.log(item, 'item');
 
   const { menuDetails } = item;
   const { discount, price } = getMenuDisplayPrice(menuDetails);
@@ -29,7 +28,7 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
     /* TODO: thunk로? */
-    dispatch(SET_CART_SHEET_OBJ(item));
+    dispatch(SET_MENU_ITEM(item));
     dispatch(
       SET_BOTTOM_SHEET({
         content: <CartSheet />,

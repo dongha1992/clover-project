@@ -19,6 +19,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
 import assignIn from 'lodash-es/assignIn';
+import { DETAIL } from '@constants/menu/index';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
@@ -63,10 +64,10 @@ const EditReviewPage = ({ reviewId }: any) => {
   } = useQuery(
     'getReviewDetail',
     async () => {
-      const { data } = await getReviewDetailApi(reviewId);
-      const { searchReview, searchReviewImages } = data.data;
-
-      return assignIn(searchReview, { reviewImg: searchReviewImages });
+      // const { data } = await getReviewDetailApi(reviewId);
+      // const { searchReview, searchReviewImages } = data.data;
+      // return assignIn(searchReview, { reviewImg: searchReviewImages });
+      return DETAIL.data.data.searchReview;
     },
 
     {
