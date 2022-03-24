@@ -37,12 +37,9 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
-<<<<<<< HEAD
 import { getOrderListsApi } from '@api/order';
-=======
 import { getOrderLists } from '@api/order';
 import { getMenusApi } from '@api/menu';
->>>>>>> 9977a45bf01f70c5a45fd80f003c816450730c41
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { CartItem } from '@components/Pages/Cart';
