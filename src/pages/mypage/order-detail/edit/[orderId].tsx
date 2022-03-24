@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import {
   theme,
@@ -25,12 +25,17 @@ import { IDestinationsResponse } from '@model/index';
 import router from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
-import { commonSelector } from '@store/common';
+import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
+import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO } from '@store/mypage';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { destinationForm, INIT_TEMP_DESTINATION, SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { destinationForm, SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { pipe, indexBy } from '@fxts/core';
 import { Obj } from '@model/index';
+import { order } from '@store/order';
+import debounce from 'lodash-es/debounce';
+
 interface IProps {
   orderId: number;
 }
@@ -41,7 +46,11 @@ const DELIVERY_DETAIL_MAP: Obj = {
 };
 
 const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
-  const [isSamePerson, setIsSamePerson] = useState(true);
+  const { userAccessMethod } = useSelector(commonSelector);
+  const { tempOrderInfo } = useSelector(mypageSelector);
+  const { tempEditDestination } = useSelector(mypageSelector);
+
+  const [isSamePerson, setIsSamePerson] = useState(tempOrderInfo.isSamePerson);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
     selectedMethod: {},
     location: {},
@@ -52,14 +61,14 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   });
 
   const dispatch = useDispatch();
-  const { userAccessMethod } = useSelector(commonSelector);
-  const { userTempDestination } = useSelector(destinationForm);
+
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery(
-    'getOrderDetail',
+    ['getOrderDetail'],
     async () => {
       const { data } = await getOrderDetailApi(orderId);
+
       return data.data;
     },
     {
@@ -75,9 +84,9 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
           selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
           deliveryMessageType: orderDetail?.deliveryMessageType!,
           deliveryMessage: orderDetail?.deliveryMessage!,
-          receiverName: orderDetail?.receiverName!,
-          receiverTel: orderDetail?.receiverTel!,
-          location: orderDetail?.location,
+          receiverName: tempOrderInfo.receiverName ? tempOrderInfo.receiverName : orderDetail?.receiverName!,
+          receiverTel: tempOrderInfo.receiverTel ? tempOrderInfo.receiverTel : orderDetail?.receiverTel!,
+          location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
         });
       },
       onSettled: async () => {},
@@ -97,8 +106,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     async (reqBody: any) => {
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
+
         const { data } = await editDeliveryDestinationApi({ orderId, data: rest });
-        console.log(data, 'Dd');
       } else {
         const { data } = await editSpotDestinationApi({ orderId, data: rest });
       }
@@ -106,7 +115,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     {
       onSuccess: async () => {
         // await queryClient.refetchQueries('getOrderDetail');
-        // dispatch(INIT_TEMP_DESTINATION());
+        // dispatch(INIT_TEMP_EDIT_DESTINATION());
       },
     }
   );
@@ -162,10 +171,19 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     }
   };
 
-  const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
-  };
+  const changeInputHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value, name } = e.target;
+
+      if (isSamePerson) {
+        setIsSamePerson(false);
+        // dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
+      }
+
+      setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
+    },
+    [deliveryEditObj]
+  );
 
   const selectAccessMethodHandler = () => {
     dispatch(
@@ -184,15 +202,54 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     }
   };
 
+  const onBlur = () => {
+    dispatch(
+      SET_TEMP_ORDER_INFO({
+        isSamePerson: false,
+        receiverName: deliveryEditObj.receiverName,
+        receiverTel: deliveryEditObj.receiverTel,
+      })
+    );
+  };
+
   useEffect(() => {
     setDeliveryEditObj({
       ...deliveryEditObj,
       selectedMethod: userAccessMethod,
-      location: userTempDestination?.location,
     });
-  }, [userAccessMethod, userTempDestination]);
+  }, [userAccessMethod]);
 
-  console.log(userTempDestination);
+  useEffect(() => {
+    setDeliveryEditObj({
+      ...deliveryEditObj,
+      location: tempEditDestination?.location,
+    });
+  }, [tempEditDestination]);
+
+  useEffect(() => {
+    const isFirstRender = tempOrderInfo.receiverName === '' && tempOrderInfo.receiverTel === '';
+
+    if (isSamePerson && orderDetail) {
+      setDeliveryEditObj({
+        ...deliveryEditObj,
+        receiverName: orderDetail?.receiverName,
+        receiverTel: orderDetail?.receiverTel,
+      });
+      dispatch(INIT_TEMP_ORDER_INFO());
+    }
+    if (!isSamePerson) {
+      dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
+    }
+  }, [isSamePerson]);
+
+  // useEffect(() => {
+  //   setIsSamePerson(tempOrderInfo.isSamePerson);
+  // }, []);
+
+  useEffect(() => {
+    dispatch(INIT_ACCESS_METHOD());
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -209,8 +266,9 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
             <TextInput
               placeholder="이름"
               name="receiverName"
-              value={isSamePerson ? orderDetail?.receiverName : deliveryEditObj?.receiverName}
+              value={deliveryEditObj.receiverName}
               eventHandler={changeInputHandler}
+              onBlur={onBlur}
             />
           </FlexCol>
           <FlexCol>
@@ -218,8 +276,9 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
             <TextInput
               placeholder="휴대폰 번호"
               name="receiverTel"
-              value={isSamePerson ? orderDetail?.receiverTel : deliveryEditObj?.receiverTel}
+              value={deliveryEditObj.receiverTel}
               eventHandler={changeInputHandler}
+              onBlur={onBlur}
             />
           </FlexCol>
         </ReceiverInfoWrapper>
@@ -276,7 +335,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>{deliveryEditObj?.selectedMethod.text || '출입방법 선택'}</TextB2R>
+                <TextB2R color={theme.greyScale45}>{deliveryEditObj?.selectedMethod?.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput

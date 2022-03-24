@@ -11,6 +11,7 @@ import common from './common';
 import spot from './spot';
 import destination from './destination';
 import coupon from './coupon';
+import mypage from './mypage';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
@@ -33,6 +34,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     order,
     spot,
     coupon,
+    mypage,
   })(state, action);
 };
 

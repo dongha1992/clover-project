@@ -11,6 +11,7 @@ import { IJuso } from '@model/index';
 import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
 import { destinationForm, SET_LOCATION_TEMP, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
+import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { getDestinations } from '@api/destination';
 import { useQuery } from 'react-query';
 import { IDestinationsResponse } from '@model/index';
@@ -68,12 +69,15 @@ const DestinationSearchPage = () => {
   };
 
   const selectDestinationByList = (destination: IDestinationsResponse): void => {
-    dispatch(SET_TEMP_DESTINATION(destination));
-
     if (orderId) {
-      router.back();
+      router.push({
+        pathname: '/mypage/order-detail/edit/[orderId]',
+        query: { orderId },
+      });
+      dispatch(SET_TEMP_EDIT_DESTINATION(destination));
     } else {
       router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
+      dispatch(SET_TEMP_DESTINATION(destination));
     }
   };
 
@@ -83,7 +87,6 @@ const DestinationSearchPage = () => {
     } else {
       router.push('/destination/destination-detail');
     }
-    dispatch(SET_LOCATION_TEMP(address));
   };
 
   const beforeSearch = resultAddress && !resultAddress.length;
