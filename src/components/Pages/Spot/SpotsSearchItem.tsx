@@ -12,15 +12,18 @@ import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DESTINATION_STATUS, SET_TEMP_DESTINATION } from '@store/destination';
-import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
+import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 
 interface IProps {
-  item: ISpotsDetail;
+  item: ISpotsDetail | any;
   onClick: () => void;
   mapList?: boolean;
 }
 
 // 스팟 검색 - 최근픽업이력 & 검색 결과
+
+/* TODO: 최근 픽업 이력과 검색 결과 item에 데이터 형이 다름 */
+
 const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -32,7 +35,10 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
-  console.log(item, 'item');
+
+  /* TODO: 임시로 이렇게 해둠 */
+  const imageUrl = item?.images ? item?.images[0]?.url : item?.spotPickup?.spot?.images[0].url;
+
   const typeTag = (): string => {
     const type = item.type;
     switch (type) {
@@ -44,7 +50,6 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         return '';
     }
   };
-
   const orderHandler = () => {
     const destinationInfo = {
       name: item.name,
@@ -61,11 +66,18 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
 
     if (isLoginSuccess) {
       if (orderId) {
-        dispatch(SET_TEMP_EDIT_DESTINATION(destinationInfo));
+        dispatch(
+          SET_TEMP_EDIT_SPOT({
+            spotPickupId: item.pickups ? item.pickups[0].id : item.spotPickup.id,
+            name: item.name,
+            spotPickup: item.pickups ? item.pickups[0].name : item.spotPickup.name,
+          })
+        );
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
           query: { orderId },
         });
+        return;
       }
 
       if (cartLists.length) {
@@ -124,7 +136,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+          <SpotImg src={`${IMAGE_S3_URL}${imageUrl}`} />
         </ImageWrapper>
         <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={orderHandler}>
           주문하기

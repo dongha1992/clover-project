@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
+import { getDestinations } from '@api/destination';
+import { IDestinationsResponse } from '@model/index';
 
 const RECENT_SPOT = [
   {
@@ -96,7 +98,6 @@ const SpotSearchPage = (): ReactElement => {
   const { userLocation } = useSelector(destinationForm);
   const [spotRecommend, setSpotRecommend] = useState<ISpots>();
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
-  const [recentPickedSpotList, setRecentPickedSpotList] = useState<any[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -135,14 +136,26 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  //TODO 최근 픽업 이력
-  const getRecentSpotList = async () => {
-    setRecentPickedSpotList(RECENT_SPOT);
-  };
+  /* TAYLER: 배송지목록 전체 조회에서 spot만 뽑음 */
+  const { data: recentPickedSpotList, isLoading } = useQuery<IDestinationsResponse[]>(
+    'getDestinationList',
+    async () => {
+      const params = {
+        page: 1,
+        size: 10,
+      };
+      const { data } = await getDestinations(params);
+      const totalList = data.data.destinations;
+      return totalList.filter((item) => {
+        return item.delivery === 'SPOT';
+      });
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const changeInputHandler = () => {
     const inputText = inputRef.current?.value.length;
-    console.log(inputRef.current?.value, '@@@');
+
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -168,7 +181,7 @@ const SpotSearchPage = (): ReactElement => {
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
-          console.log(data.data);
+
           // setSpotTest(fetchData);
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
@@ -193,15 +206,18 @@ const SpotSearchPage = (): ReactElement => {
   }, []);
 
   useEffect(() => {
-    getRecentSpotList();
     getSearchRecommendList();
   }, []);
 
   useEffect(() => {
     if (orderId) {
-      setIsSearched(true);
+      setInputFocus(true);
     }
   }, [orderId]);
+
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -255,13 +271,11 @@ const SpotSearchPage = (): ReactElement => {
       ) : (
         <>
           {!isSearched ? (
-            //  spotsSearchRecentList.length
-            0 ? (
-              // TODO 픽업 이력 있는 경우
+            recentPickedSpotList?.length! > 0 ? (
               <DefaultSearchContainer>
                 <RecentPickWrapper>
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                  {recentPickedSpotList.map((item: any, index) => (
+                  {recentPickedSpotList?.map((item: any, index) => (
                     <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
                   ))}
                 </RecentPickWrapper>
