@@ -2,6 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IDestination } from '@store/destination';
 
+interface IEditSpot {
+  spotPickupId: number;
+  name: string;
+  spotPickup: string;
+}
+
 interface IState {
   tempOrderInfo: {
     isSamePerson: boolean;
@@ -9,6 +15,7 @@ interface IState {
     receiverTel: string;
   };
   tempEditDestination: IDestination | null;
+  tempEditSpot: IEditSpot | null;
 }
 
 const INITIAL_STATE: IState = {
@@ -18,6 +25,7 @@ const INITIAL_STATE: IState = {
     receiverTel: '',
   },
   tempEditDestination: null,
+  tempEditSpot: null,
 };
 
 export const mypageSlice = createSlice({
@@ -42,10 +50,19 @@ export const mypageSlice = createSlice({
     INIT_TEMP_EDIT_DESTINATION: (state, action: PayloadAction) => {
       state.tempEditDestination = null;
     },
+
+    SET_TEMP_EDIT_SPOT: (state, action: PayloadAction<IEditSpot | null>) => {
+      state.tempEditSpot = action.payload;
+    },
   },
 });
 
-export const { SET_TEMP_ORDER_INFO, INIT_TEMP_ORDER_INFO, SET_TEMP_EDIT_DESTINATION, INIT_TEMP_EDIT_DESTINATION } =
-  mypageSlice.actions;
+export const {
+  SET_TEMP_ORDER_INFO,
+  INIT_TEMP_ORDER_INFO,
+  SET_TEMP_EDIT_DESTINATION,
+  INIT_TEMP_EDIT_DESTINATION,
+  SET_TEMP_EDIT_SPOT,
+} = mypageSlice.actions;
 export const mypageSelector = (state: AppState): IState => state.mypage;
 export default mypageSlice.reducer;

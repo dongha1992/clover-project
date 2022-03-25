@@ -21,7 +21,6 @@ import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
-import { IDestinationsResponse } from '@model/index';
 import router from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/payment';
 import { IAccessMethod } from '@pages/payment';
@@ -30,12 +29,11 @@ import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO } from '@stor
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { destinationForm, SET_USER_DESTINATION_STATUS } from '@store/destination';
-import { INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { pipe, indexBy } from '@fxts/core';
 import { Obj } from '@model/index';
-import { order } from '@store/order';
 import debounce from 'lodash-es/debounce';
 
+/* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
   orderId: number;
 }
@@ -48,7 +46,7 @@ const DELIVERY_DETAIL_MAP: Obj = {
 const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   const { userAccessMethod } = useSelector(commonSelector);
   const { tempOrderInfo } = useSelector(mypageSelector);
-  const { tempEditDestination } = useSelector(mypageSelector);
+  const { tempEditDestination, tempEditSpot } = useSelector(mypageSelector);
 
   const [isSamePerson, setIsSamePerson] = useState(tempOrderInfo.isSamePerson);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
@@ -79,7 +77,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
           ACCESS_METHOD,
           indexBy((item) => item.value)
         );
-
         setDeliveryEditObj({
           selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
           deliveryMessageType: orderDetail?.deliveryMessageType!,
@@ -107,9 +104,21 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
 
-        const { data } = await editDeliveryDestinationApi({ orderId, data: rest });
+        const { data } = await editDeliveryDestinationApi({
+          orderId,
+          data: { ...rest, deliveryMessageType: selectedMethod.value },
+        });
+        console.log(data, 'after no spot');
       } else {
-        const { data } = await editSpotDestinationApi({ orderId, data: rest });
+        const { data } = await editSpotDestinationApi({
+          orderId,
+          data: {
+            receiverName: deliveryEditObj.receiverName,
+            receiverTel: deliveryEditObj.receiverTel,
+            spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickup?.id!,
+          },
+        });
+        console.log(data, 'after spot');
       }
     },
     {
@@ -177,7 +186,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
       if (isSamePerson) {
         setIsSamePerson(false);
-        // dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
       }
 
       setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
@@ -227,8 +235,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   }, [tempEditDestination]);
 
   useEffect(() => {
-    const isFirstRender = tempOrderInfo.receiverName === '' && tempOrderInfo.receiverTel === '';
-
     if (isSamePerson && orderDetail) {
       setDeliveryEditObj({
         ...deliveryEditObj,
@@ -241,10 +247,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
       dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
     }
   }, [isSamePerson]);
-
-  // useEffect(() => {
-  //   setIsSamePerson(tempOrderInfo.isSamePerson);
-  // }, []);
 
   useEffect(() => {
     dispatch(INIT_ACCESS_METHOD());
@@ -307,7 +309,9 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
               <TextH5B>픽업장소</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {orderDetail?.spot?.name} {orderDetail?.spotPickup?.name!}
+                  {`${tempEditSpot ? tempEditSpot.name : orderDetail?.spot?.name} ${
+                    tempEditSpot ? tempEditSpot.spotPickup : orderDetail?.spotPickup?.name!
+                  }`}
                 </TextB2R>
                 <FlexRow>
                   <TextB3R color={theme.greyScale65} padding="0 4px 0 0">
