@@ -101,17 +101,19 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
   const { mutateAsync: mutationDeliveryInfo } = useMutation(
     async (reqBody: any) => {
+      // const deliveryId = orderDetail?.id!;
+      const deliveryId = 990849;
+
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
-
         const { data } = await editDeliveryDestinationApi({
-          orderId,
+          deliveryId,
           data: { ...rest, deliveryMessageType: selectedMethod.value },
         });
         console.log(data, 'after no spot');
       } else {
         const { data } = await editSpotDestinationApi({
-          orderId,
+          deliveryId,
           data: {
             receiverName: deliveryEditObj.receiverName,
             receiverTel: deliveryEditObj.receiverTel,

@@ -34,20 +34,20 @@ export const deleteDeliveryApi = (id: number): Promise<AxiosResponse<IResponse>>
 
 export const editDeliveryDestinationApi = ({
   data,
-  orderId,
+  deliveryId,
 }: {
   data: IEditOrderDestination;
-  orderId: number;
+  deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/deliveries/${orderId}/destination`, data);
+  return Api.post(`order/v1/deliveries/${deliveryId}/destination`, data);
 };
 
 export const editSpotDestinationApi = ({
-  orderId,
+  deliveryId,
   data,
 }: {
   data: IEditOrderSpotDestination;
-  orderId: number;
+  deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/deliveries/${orderId}/pickup`, data);
+  return Api.post(`order/v1/deliveries/${deliveryId}/pickup`, data);
 };
