@@ -5,7 +5,7 @@ const SpotTab = () => {
   return (
     <SpotBox>
       {[1, 2, 3, 4].map((item, index) => (
-        <SbsItem key={index} />
+        <SbsItem item={item} key={index} />
       ))}
     </SpotBox>
   );

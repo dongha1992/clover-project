@@ -95,7 +95,7 @@ const Header = () => {
         '/spot/location': '주소 검색',
         '/spot/location/address': '주소 검색',
         '/spot/regi-list': '프코스팟 안내',
-        '/subscription/regular': '정기구독',
+        '/subscription/products': '정기구독',
       };
 
       const title = headerTitleMap[currentPath];
@@ -114,7 +114,7 @@ const Header = () => {
         ].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
-        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]', '/spot/detail/[id]', '/subscription/products/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
 
