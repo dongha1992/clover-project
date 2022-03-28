@@ -17,20 +17,15 @@ interface IProps {
 const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(false);
 
-  review.reviewImg = [
-    {
-      url: '/menu/origin/172_20191023170649',
-    },
-  ];
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-
+  console.log(review, '@@');
   return (
     <>
       <Container>
         <Wrapper>
           <ReviewContent>
             <FlexBetween padding="0 0 16px 0">
-              <TextH5B onClick={() => router.push(`/menu/${review.menuId}`)}>{review.menuName}</TextH5B>
+              <TextH5B onClick={() => router.push(`/menu/${review.menuDetailId}`)}>{review.menuName}</TextH5B>
               <TextH6B
                 color={theme.greyScale65}
                 textDecoration="underline"
@@ -65,10 +60,10 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 접기
               </TextH6B>
             )}
-            {review.reviewImg && (
+            {review.images && (
               <ImgWrapper>
-                {review.reviewImg?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review.reviewImg.map((item: any) => item.url);
+                {review.images?.map((img: any, index: number) => {
+                  const imgUrlForViwer = review.images.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(imgUrlForViwer)} key={index}>
                       <Image
@@ -84,6 +79,19 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 })}
               </ImgWrapper>
             )}
+            {review.commentCreatedAt ? (
+              <ReplyContent>
+                <ReplyHeader>
+                  <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
+                  <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
+                    {review.commentCreatedAt}
+                  </TextB3R>
+                </ReplyHeader>
+                <ReplyBody>
+                  <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
+                </ReplyBody>
+              </ReplyContent>
+            ) : null}
           </ReviewContent>
         </Wrapper>
       </Container>
@@ -153,6 +161,20 @@ const ImgWrapper = styled.div`
   .rounded {
     border-radius: 8px;
   }
+`;
+
+const ReplyContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${theme.greyScale3};
+  padding: 16px;
+  border-radius: 8px;
+`;
+const ReplyHeader = styled.div`
+  display: flex;
+`;
+const ReplyBody = styled.div`
+  margin-top: 8px;
 `;
 
 const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`

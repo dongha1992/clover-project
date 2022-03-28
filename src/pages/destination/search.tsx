@@ -10,7 +10,7 @@ import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
-import { destinationForm, SET_LOCATION_TEMP, SET_TEMP_DESTINATION } from '@store/destination';
+import { destinationForm, SET_LOCATION_TEMP, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { getDestinations } from '@api/destination';
 import { useQuery } from 'react-query';
 import { IDestinationsResponse } from '@model/index';
@@ -23,6 +23,8 @@ const DestinationSearchPage = () => {
 
   const dispatch = useDispatch();
   const { userDestinationStatus } = useSelector(destinationForm);
+
+  const { orderId } = router.query;
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
@@ -66,14 +68,22 @@ const DestinationSearchPage = () => {
   };
 
   const selectDestinationByList = (destination: IDestinationsResponse): void => {
-    router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
-
     dispatch(SET_TEMP_DESTINATION(destination));
+
+    if (orderId) {
+      router.back();
+    } else {
+      router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
+    }
   };
 
   const goToDestinationDetail = (address: any) => {
+    if (orderId) {
+      router.push({ pathname: '/destination/destination-detail', query: { orderId } });
+    } else {
+      router.push('/destination/destination-detail');
+    }
     dispatch(SET_LOCATION_TEMP(address));
-    router.push('/destination/destination-detail');
   };
 
   const beforeSearch = resultAddress && !resultAddress.length;

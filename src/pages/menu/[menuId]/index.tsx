@@ -12,8 +12,9 @@ import { ReviewList } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
 import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
-import { useDispatch } from 'react-redux';
-import { SET_MENU_ITEM } from '@store/menu';
+import { useDispatch, useSelector } from 'react-redux';
+import { cartForm } from '@store/cart';
+import { menuSelector, SET_MENU_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
@@ -22,9 +23,8 @@ import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
 import { BASE_URL, IMAGE_S3_URL } from '@constants/mock';
+import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
-
-import axios from 'axios';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -37,45 +37,46 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 const hasAvailableCoupon = true;
 
 const MenuDetailPage = ({ menuId }: any) => {
-  const [menuItem, setMenuItem] = useState<any>({});
+  // const [menuItem, setMenuItem] = useState<any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
   const [currentImg, setCurrentImg] = useState(0);
 
+  const { menuItem } = useSelector(menuSelector);
   const HEADER_HEIGHT = 56;
   let timer: any = null;
 
   const dispatch = useDispatch();
 
-  const {
-    data,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    'getMenuDetail',
-    async () => {
-      const { data } = await getMenuDetailApi(menuId);
+  // const {
+  //   data,
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery(
+  //   'getMenuDetail',
+  //   async () => {
+  //     const { data } = await getMenuDetailApi(menuId);
 
-      return data.data;
-    },
+  //     return data.data;
+  //   },
 
-    {
-      onSuccess: (data) => {
-        dispatch(SET_MENU_ITEM(data));
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
-  );
+  //   {
+  //     onSuccess: (data) => {
+  //       dispatch(SET_MENU_ITEM(data));
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
       // const { data } = await getMenuDetailReviewApi(menuId);
-      const { data } = await axios.get(`${BASE_URL}/review`);
 
-      return data.data;
+      // return data.data;
+      return ALL_REVIEW.data.data;
     },
 
     {
@@ -142,7 +143,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(data?.menuDetails);
+    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
 
     return { discount, price, discountedPrice };
   };
@@ -151,23 +152,24 @@ const MenuDetailPage = ({ menuId }: any) => {
     window.addEventListener('scroll', onScrollHandler);
     return () => {
       window.removeEventListener('scroll', onScrollHandler);
-      dispatch(SET_MENU_ITEM({}));
       clearTimeout(timer);
     };
   }, [tabRef?.current?.offsetTop]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  useEffect(() => {
+    return () => {
+      // dispatch(SET_MENU_ITEM({}));
+    };
+  }, []);
 
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={data?.thumbnail} setCountIndex={setCurrentImg} />
+        <Carousel images={menuItem?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
-          {data?.badgeMessage && (
+          {menuItem?.badgeMessage && (
             <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-              {data?.badgeMessage}
+              {menuItem?.badgeMessage}
             </TextH6B>
           )}
         </DailySaleNumber>
@@ -178,7 +180,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{data.name}</TextH2B>
+            <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
             {/* {menuItem.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
@@ -187,10 +189,10 @@ const MenuDetailPage = ({ menuId }: any) => {
                 </Tag>
               );
             })} */}
-            {data.tag && <Tag margin="0 4px 0 0">{data.tag}</Tag>}
+            {menuItem.tag && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {data.description}
+            {menuItem.description}
           </TextB2R>
           <PriceAndCouponWrapper>
             <PriceWrapper>
@@ -409,11 +411,17 @@ const DailySaleNumber = styled.div`
 `;
 
 /*TODO: 수정해야함 */
+
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
+
   return {
     props: { menuId },
   };
 }
+
+// export async function getStaticPaths() {}
+
+// export async function getStaticProps() {}
 
 export default React.memo(MenuDetailPage);

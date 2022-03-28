@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
-import { ACCESS_METHOD_MAP } from '@constants/payment';
+import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { destinationForm } from '@store/destination';
 import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
 import { getMainCardLists } from '@api/card';
@@ -36,7 +36,7 @@ import { isNil } from 'lodash-es';
 import { Obj } from '@model/index';
 import { orderForm } from '@store/order';
 import { userForm } from '@store/user';
-import { is } from 'immer/dist/internal';
+import { DELIVERY_TYPE_MAP } from '@constants/payment';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -102,13 +102,6 @@ const PAYMENT_METHOD = [
     value: 'fcopay',
   },
 ];
-
-const deliveryMap: Obj = {
-  PARCEL: '택배배송',
-  MORNING: '새벽배송',
-  SPOT: '스팟배송',
-  QUICK: '퀵배송',
-};
 
 const deliveryTimeMap: Obj = {
   LUNCH: '점심',
@@ -218,6 +211,7 @@ const PaymentPage = () => {
   if (isNil(me)) {
     return <div>로딩</div>;
   }
+
   return (
     <Container>
       <OrderItemsWrapper>
@@ -291,10 +285,10 @@ const PaymentPage = () => {
             <TextH5B>배송방법</TextH5B>
             {!['parcel', 'morning'].includes(userDestinationStatus) ? (
               <TextB2R>
-                {deliveryMap[userDestination.delivery!]} - {deliveryTimeMap[userDestination.deliveryTime!]}
+                {DELIVERY_TYPE_MAP[userDestination.delivery!]} - {deliveryTimeMap[userDestination.deliveryTime!]}
               </TextB2R>
             ) : (
-              <TextB2R>{deliveryMap[userDestination.delivery!]}</TextB2R>
+              <TextB2R>{DELIVERY_TYPE_MAP[userDestination.delivery!]}</TextB2R>
             )}
           </FlexBetween>
           <FlexBetweenStart margin="16px 0">
@@ -350,8 +344,8 @@ const PaymentPage = () => {
               <TextInput
                 margin="8px 0 0 0"
                 placeholder={
-                  ACCESS_METHOD_MAP[userAccessMethod?.value!]
-                    ? ACCESS_METHOD_MAP[userAccessMethod?.value!]
+                  ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
+                    ? ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
                     : '요청사항 입력 (선택)'
                 }
                 eventHandler={changeInputHandler}
