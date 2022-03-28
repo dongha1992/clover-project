@@ -91,6 +91,7 @@ const Container = styled.div`
       padding: 0 !important;
       .slick-track {
         .slick-slide {
+          font-size: 0;
         }
       }
     }
