@@ -3,11 +3,19 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { FlexWrapWrapper, theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import Image from 'next/image';
+import router from 'next/router';
 import styled from 'styled-components';
 
-const SbsItem = () => {
+interface IProps {
+  item: any;
+}
+const SbsItem = ({ item }: IProps) => {
+  const goToDetail = () => {
+    router.push(`/subscription/products/135`);
+  };
+
   return (
-    <ItemBox>
+    <ItemBox onClick={goToDetail}>
       <ImageWrapper>
         <Image
           src="https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg"

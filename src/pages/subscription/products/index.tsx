@@ -10,19 +10,19 @@ const DawnTab = dynamic(() => import('@components/Pages/Subscription/Tab/DawnTab
 const MENU = [
   {
     text: '프코스팟',
-    link: '/subscription/regular?tab=spot',
+    link: '/subscription/products?tab=spot',
   },
   {
     text: '새벽/택배',
-    link: '/subscription/regular?tab=dawn',
+    link: '/subscription/products?tab=dawn',
   },
 ];
 
-const RegularPage = () => {
+const SbsProductPage = () => {
   const router = useRouter();
 
   const [isSticky, setIsStikcy] = useState<boolean>(false);
-  const [selectedTab, setSelectedTab] = useState(router.asPath);
+  const [selectedTab, setSelectedTab] = useState(`${router.route}?tab=${router.query.tab ? router.query.tab : 'spot'}`);
 
   const selectTabHandler = useCallback(
     ({ link }: any) => {
@@ -35,8 +35,8 @@ const RegularPage = () => {
     <Container>
       <StickyTab tabList={MENU} isSticky={isSticky} selectedTab={selectedTab} onClick={selectTabHandler} />
       <TabContent>
-        {selectedTab === '/subscription/regular?tab=spot' && <SpotTab />}
-        {selectedTab === '/subscription/regular?tab=dawn' && <DawnTab />}
+        {selectedTab === '/subscription/products?tab=spot' && <SpotTab />}
+        {selectedTab === '/subscription/products?tab=dawn' && <DawnTab />}
       </TabContent>
     </Container>
   );
@@ -47,4 +47,4 @@ const TabContent = styled.div`
   padding: 26px 24px;
 `;
 
-export default RegularPage;
+export default SbsProductPage;

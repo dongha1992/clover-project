@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import router from 'next/router';
 import styled from 'styled-components';
+import SbsCalendar from '@components/Calendar/SbsCalendar';
 
 const SubscriptiopPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
@@ -22,15 +23,16 @@ const SubscriptiopPage = () => {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
   };
   const goToRegularSpot = () => {
-    router.push('/subscription/regular?tab=spot');
+    router.push('/subscription/products?tab=spot');
   };
   const goToRegularDawn = () => {
-    router.push('/subscription/regular?tab=dawn');
+    router.push('/subscription/products?tab=dawn');
   };
   return (
     <Container>
       <InfoCard subsList={subsList} />
       {subsList && <MySbsList />}
+      <SbsCalendar />
       <SbsListBox>
         <TitleBox>
           <div className="row">
