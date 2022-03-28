@@ -1,8 +1,20 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
-import { IGetOrderList } from '@model/index';
+import {
+  IGetOrderListRequest,
+  IGetOrderListResponse,
+  IGetOrderDetailResponse,
+  IResponse,
+  IEditOrderDestination,
+  IEditOrderSpotDestination,
+} from '@model/index';
 
-export const getOrderLists = ({ days = 90, page = 1, size = 1, type }: IGetOrderList): Promise<AxiosResponse<any>> => {
+export const getOrderListsApi = ({
+  days = 90,
+  page = 1,
+  size = 1,
+  type,
+}: IGetOrderListRequest): Promise<AxiosResponse<IGetOrderListResponse>> => {
   const params = {
     days,
     page,
@@ -12,6 +24,30 @@ export const getOrderLists = ({ days = 90, page = 1, size = 1, type }: IGetOrder
   return Api.get(`order/v1/orders/`, { params });
 };
 
-export const getOrderDetail = (id: number): Promise<AxiosResponse<any>> => {
+export const getOrderDetailApi = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
   return Api.get(`order/v1/orders/${id}`);
+};
+
+export const deleteDeliveryApi = (id: number): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`order/v1/deliveries/${id}`);
+};
+
+export const editDeliveryDestinationApi = ({
+  data,
+  orderId,
+}: {
+  data: IEditOrderDestination;
+  orderId: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${orderId}/destination`, data);
+};
+
+export const editSpotDestinationApi = ({
+  orderId,
+  data,
+}: {
+  data: IEditOrderSpotDestination;
+  orderId: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${orderId}/pickup`, data);
 };

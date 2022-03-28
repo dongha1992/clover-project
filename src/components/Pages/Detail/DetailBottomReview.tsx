@@ -28,7 +28,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   const dispatch = useDispatch();
   const { searchReviews, searchReviewImages } = reviews;
   const hasReivew = searchReviewImages.length > 0;
-  console.log(reviews, 'reviews');
+
   const idByReviewImg: Obj = pipe(
     searchReviewImages,
     groupBy((review: any) => review.menuReviewId)

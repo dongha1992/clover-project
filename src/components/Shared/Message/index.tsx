@@ -15,7 +15,7 @@ const InfoMessage = ({ status, count, date }: IProps) => {
     soldSoon: `품절 임박! 상품이 ${count}개 남았어요`,
     hasLimit: `해당 상품은 최대 ${count}개까지 구매 가능해요`,
     deliveryDate: `해당상품은 ${date} 부터 배송 가능해요`,
-    soldOut: `배송불가 또는 판매종료된 상품이에요`,
+    soldOut: `품절된 상품이에요.`,
   };
   return (
     <Container>

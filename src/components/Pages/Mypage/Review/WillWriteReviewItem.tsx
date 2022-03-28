@@ -6,34 +6,45 @@ import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
-
+import getCustomDate from '@utils/getCustomDate';
+import { getDisplayMenuName } from '@utils/getDisplayMenuName';
+import dayjs from 'dayjs';
 interface IProps {
   menu: any;
 }
 
 const WillWriteReviewItem = ({ menu }: IProps) => {
+  const { menuName } = getDisplayMenuName(menu.orderMenus);
+
+  const { dayFormatter: deliveryAt } = getCustomDate(new Date(menu.deliveryDate));
+  const writeReviewLimit = dayjs(menu.deliveryDate).add(6, 'day').format('YYYY-MM-DD');
+  const { dayFormatter: limitAt } = getCustomDate(new Date(writeReviewLimit));
+
+  const isSpot = menu.delivery === 'SPOT';
+  const isSubscription = (menu.orderType = 'SUBSCRIPTION');
+
   return (
     <Container>
       <Wrapper>
         <FlexRow margin="0 0 8px 0">
           <TextH5B color={theme.brandColor}>주문완료</TextH5B>
-          <Tag margin="0 4px 0 8px">스팟배송</Tag>
-          <Tag>점심</Tag>
+          {isSubscription && <Tag margin="0 4px 0 8px">정기구독</Tag>}
+          <Tag margin="0 4px 0 8px">{menu.delivery}</Tag>
+          {isSpot && <Tag>{menu.deliveryDetail}</Tag>}
         </FlexRow>
         <FlexRow padding="0 0 8px 0">
           <SVGIcon name="deliveryTruckIcon" />
-          <TextH5B padding="2px 0 0 4px">11월 4일 (목) 도착</TextH5B>
+          <TextH5B padding="2px 0 0 4px">{deliveryAt} 도착</TextH5B>
         </FlexRow>
         <FlexRow padding="0 0 16px 0">
           <ImageWrapper>
             <ItemImage src={menu.url} alt="상품이미지" />
           </ImageWrapper>
           <FlexCol width="70%" margin="0 0 0 16px">
-            <TextB2R padding="0 0 4px 0">{menu.name}</TextB2R>
-            <FlexBetween>
-              <TextH5B>{menu.price}원</TextH5B>
-              <TextB3R color={theme.greyScale65}>11월 2일 (화) 까지 작성</TextB3R>
-            </FlexBetween>
+            <TextB2R padding="0 0 4px 0">{menuName}</TextB2R>
+            <FlexRow>
+              <TextB3R color={theme.greyScale65}>{limitAt} 까지 작성 가능</TextB3R>
+            </FlexRow>
           </FlexCol>
         </FlexRow>
         <FlexRow>

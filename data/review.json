@@ -20,6 +20,8 @@
         "rating": 4,
         "content": "88888888888너무 맛있어서 감동이에요!",
         "comment": "안녕하세요. 프레시코드입니다 (୨୧ ❛ᴗ❛)✧ 소중한 시간에 이렇게 후기까지 남겨 주셔서 정말 감사합니다",
+        "commenter": "md",
+        "commentCreatedAt": "2022-02-23",
         "createdAt": "2022-02-22"
       },
       {
@@ -71,7 +73,9 @@
         "rating": 4.5,
         "content": "good1",
         "comment": "안녕하세요. 프레시코드입니다 (୨୧ ❛ᴗ❛)✧ 소중한 시간에 이렇게 후기까지 남겨 주셔서 정말 감사합니다",
-        "createdAt": "2022-02-08"
+        "createdAt": "2022-02-08",
+        "commenter": "md",
+        "commentCreatedAt": "2022-02-23"
       }
     ],
     "searchReviewImages": [
