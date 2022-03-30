@@ -7,8 +7,6 @@ import { TextH6B } from '@components/Shared/Text';
 import dynamic from 'next/dynamic';
 import { FlexCol, FlexEnd, homePadding } from '@styles/theme';
 import { OrderDeliveryItem } from '@components/Pages/Mypage/OrderDelivery';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import BorderLine from '@components/Shared/BorderLine';
 import { commonSelector } from '@store/common';
 import { useQuery } from 'react-query';
@@ -46,7 +44,7 @@ const OrderDeliveryHistoryPage = () => {
 
       const { data } = await getOrderListsApi(params);
 
-      return data.data.orders;
+      return data.data.orderDeliveries;
     },
     {
       onSuccess: (data) => {},

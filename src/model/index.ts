@@ -1,4 +1,5 @@
 import { TLocationType } from '@utils/checkDestinationHelper';
+import { Tracing } from 'trace_events';
 
 export type Obj<T = any> = {
   [k: string]: T;
@@ -840,6 +841,7 @@ export interface IGetSpotFilter {
     }
   ];
 }
+
 /* Order */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
@@ -871,14 +873,12 @@ export interface IOrderMenus {
   };
 }
 export interface IOrderPayment {}
-export interface IOrderDeliveries {
-  delivery: string;
-  deliveryDate: string;
-  deliveryDetail: string;
+export interface IOrder {
   id: number;
   name: string;
-  location: ILocation;
-  status: string;
+  paidAt: string;
+  type: string;
+  payAmount: number;
 }
 
 export interface IOrderDeliveriesInSpot {
@@ -959,26 +959,59 @@ export interface IGetOrderInImage {
   width: number;
 }
 
+export interface IOrderMenusInOrderList {
+  menuDetailId: number;
+  menuQuantity: number;
+}
+
+export interface IOrderOptions {
+  id: number;
+  optionId: number;
+  optionName: number;
+  optionPrice: number;
+  optionQuantity: number;
+}
+
+export interface ISubOrderDelivery {
+  delivery: string;
+  deliveryDetail: string;
+  deliveryDate: string;
+  id: number;
+  location: ILocation;
+  image: IGetOrderInImage;
+  orderMenus: IOrderMenusInOrderList[];
+  orderOptions: IOrderOptions[];
+  spotId?: number;
+  spotName?: string;
+  spotPickupId: number;
+  status: string;
+  subOrderDelivery?: ISubOrderDelivery[];
+}
+
 export interface IGetOrderList {
   delivery: string;
-  orderDeliveries: IOrderDeliveries[];
-  paidAt: string;
-  payAmount: number;
-  name: string;
-  image: IGetOrderInImage;
   deliveryDetail: string;
+  deliveryDate: string;
+  id: number;
+  location: ILocation;
+  image: IGetOrderInImage;
+  orderMenus: IOrderMenusInOrderList[];
+  orderOptions: IOrderOptions[];
+  spotId?: number;
+  spotName?: string;
+  spotPickupId: number;
+  status: string;
+  subOrderDelivery: ISubOrderDelivery[];
 }
 
 export interface IGetOrderListResponse {
   message: string;
   code: number;
   data: {
-    orders: IGetOrderList[];
+    orderDeliveries: IGetOrderList[];
     pagination: IPagination;
   };
 }
-
-export interface IGetOtherDeliveries {}
 
 export interface IOrderDetail {
   id: number;
@@ -1010,6 +1043,9 @@ export interface IOrderDetail {
   refundOrderDiscount: number;
   refundPayAmount: number;
   refundPoint: number;
+  refundOptionQuantity: number;
+  refundMenuQuantity: number;
+  refundOptionAmount: number;
   status: string;
 }
 
