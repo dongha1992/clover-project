@@ -56,7 +56,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
       location: {
         addressDetail: item.location.addressDetail,
         address: item.location.address,
-        dong: item.name,
+        dong: item.location.dong,
         zipCode: item.location.zipCode,
       },
       main: false,

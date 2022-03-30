@@ -7,6 +7,7 @@ import {
   IResponse,
   IEditOrderDestination,
   IEditOrderSpotDestination,
+  IGetSubOrdersResponse,
 } from '@model/index';
 
 export const getOrderListsApi = ({
@@ -50,4 +51,18 @@ export const editSpotDestinationApi = ({
   deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
   return Api.post(`order/v1/deliveries/${deliveryId}/pickup`, data);
+};
+
+export const editDeliveryDateApi = ({
+  deliveryId,
+  data,
+}: {
+  data: string;
+  deliveryId: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${deliveryId}/date`, data);
+};
+
+export const getSubOrdersCheckApi = (): Promise<AxiosResponse<IGetSubOrdersResponse>> => {
+  return Api.get(`order/v1/deliveries/together`);
 };

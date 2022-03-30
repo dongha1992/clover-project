@@ -43,7 +43,16 @@ const DeliveryStatusInfo = ({
           </>
         )}
       </FlexRow>
-      <TextH6B textDecoration="underline" color="#757575" onClick={() => router.push(`/mypage/order-detail/${id}`)}>
+      <TextH6B
+        textDecoration="underline"
+        color="#757575"
+        onClick={() =>
+          router.push({
+            pathname: `/mypage/order-detail/${id}`,
+            query: { isSubOrder: isSubOrder ? isSubOrder : false },
+          })
+        }
+      >
         주문상세 보기
       </TextH6B>
     </FlexBetween>
