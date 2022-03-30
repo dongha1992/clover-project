@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
-  const [selectedDelivery, setSelectedDelivery] = useState(otherDeliveryInfo[0].id);
+  const [selectedDelivery, setSelectedDelivery] = useState(otherDeliveryInfo[0]?.id);
   const dispatch = useDispatch();
 
   const changeRadioHandler = (id: number) => {

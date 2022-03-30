@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { filter, flow, map } from 'lodash/fp';
 import { getFormatTime } from '@utils/getFormatTime';
-import { IGetOrderListResponse } from '@model/index';
+import { IGetOrderListResponse, ISubOrderDelivery } from '@model/index';
 import { ILunchOrDinner } from '@pages/cart';
 
 let WEEKS: Obj = {
@@ -40,27 +40,27 @@ export interface IDateObj {
 
 interface ICalendar {
   disabledDates: string[];
-  otherDeliveries?: IGetOrderListResponse[];
+  subOrderDelivery?: ISubOrderDelivery[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
-  goToTogetherDelivery?: (id: number) => void;
+  goToSubDelivery?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
 }
 
 const Calendar = ({
   disabledDates = [],
-  otherDeliveries = [],
+  subOrderDelivery,
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
-  goToTogetherDelivery,
+  goToSubDelivery,
   lunchOrDinner,
 }: ICalendar) => {
   const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
-  const [togetherDeliveryInActiveDates, setTogetherDeliveryInActiveDates] = useState<IGetOrderListResponse[]>([]);
+  const [togetherDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
   const { userDestinationStatus } = useSelector(destinationForm);
 
   const initCalendar = () => {
@@ -99,14 +99,15 @@ const Calendar = ({
 
   const clickDayHandler = (value: string): void => {
     const isQuickAndSpot = ['spot', 'quick'].includes(userDestinationStatus);
-    const selectedTogetherDelivery = otherDeliveries.find((item) =>
+
+    const selectedSubDelivery = subOrderDelivery?.find((item) =>
       isQuickAndSpot
         ? item.deliveryDetail === lunchOrDinner?.find((item) => item.isSelected)?.value && item.deliveryDate === value
         : item.deliveryDate === value
     );
 
-    if (selectedTogetherDelivery && !isSheet) {
-      goToTogetherDelivery && goToTogetherDelivery(selectedTogetherDelivery?.id);
+    if (selectedSubDelivery && !isSheet) {
+      goToSubDelivery && goToSubDelivery(selectedSubDelivery?.id);
     }
 
     setSelectedDeliveryDay(value);
@@ -171,7 +172,7 @@ const Calendar = ({
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filteredActiveDates[0]?.value;
 
-    checkHasTogetherInActiveDates(dateList, mergedDisabledDate);
+    checkHaSubInActiveDates(dateList, mergedDisabledDate);
     setSelectedDeliveryDay(firstActiveDate);
     setCustomDisabledDate(mergedDisabledDate);
 
@@ -183,14 +184,12 @@ const Calendar = ({
     }
   };
 
-  const checkHasTogetherInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
+  const checkHaSubInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
     // 함께배송 안내는 오픈되어있는 주에서만 안내
     // 현재 캘린더 렌더되는 날짜 데이터를 1주,2주로 나누지 않고 있음
     // 휴무일과 겹치는 경우 체크
 
-    /*TODO: 리팩토링 필요 */
-
-    const hasTogetherDeliveryInActiveDates = otherDeliveries
+    const haSubDeliveryInActiveDates = subOrderDelivery
       ?.filter((oItem) => {
         return dateList?.some((dItem, index) => {
           if (index >= ONE_WEEK) {
@@ -201,7 +200,7 @@ const Calendar = ({
       })
       ?.filter((a) => !disabledDate.includes(a.deliveryDate));
 
-    setTogetherDeliveryInActiveDates(hasTogetherDeliveryInActiveDates);
+    setSubDeliveryInActiveDates(haSubDeliveryInActiveDates || []);
   };
 
   const togetherDeliveryInfo = (): JSX.Element => {
@@ -273,7 +272,7 @@ const Calendar = ({
 
   useEffect(() => {
     initCalendar();
-  }, [otherDeliveries]);
+  }, [subOrderDelivery]);
 
   if (dateList.length < 0) {
     return <div>로딩</div>;

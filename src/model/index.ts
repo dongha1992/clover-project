@@ -972,6 +972,37 @@ export interface IOrderOptions {
   optionQuantity: number;
 }
 
+export interface ISpotInSubOrder {
+  id: number;
+  type: string;
+  name: string;
+  description: string;
+  location: ILocation;
+  canLunchDelivery: boolean;
+  lunchDeliveryStartTime: string;
+  lunchDeliveryEndTime: string;
+  canDinnerDelivery: boolean;
+  dinnerDeliveryStartTime: string;
+  dinnerDeliveryEndTime: string;
+  pickupStartTime: string;
+  pickupEndTime: string;
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
+  placeType: string;
+  visiblePlaceTel: boolean;
+  placeTel: string;
+  placeOpenTime: string;
+  placeHoliday: string;
+  isTrial: false;
+  canEat: true;
+  canParking: true;
+  isEvent: true;
+  discountRate: number;
+  createdAt: string;
+}
+
 export interface ISubOrderDelivery {
   delivery: string;
   deliveryDetail: string;
@@ -981,11 +1012,12 @@ export interface ISubOrderDelivery {
   image: IGetOrderInImage;
   orderMenus: IOrderMenusInOrderList[];
   orderOptions: IOrderOptions[];
+  spot?: ISpotInSubOrder;
   spotId?: number;
   spotName?: string;
-  spotPickupId: number;
-  status: string;
-  subOrderDelivery?: ISubOrderDelivery[];
+  spotPickupId?: number;
+  status?: string;
+  subOrderDelivery?: ISubOrderDelivery;
 }
 
 export interface IGetOrderList {
@@ -1001,7 +1033,7 @@ export interface IGetOrderList {
   spotName?: string;
   spotPickupId: number;
   status: string;
-  subOrderDelivery: ISubOrderDelivery[];
+  subOrderDelivery: ISubOrderDelivery;
 }
 
 export interface IGetOrderListResponse {
@@ -1010,6 +1042,14 @@ export interface IGetOrderListResponse {
   data: {
     orderDeliveries: IGetOrderList[];
     pagination: IPagination;
+  };
+}
+
+export interface IGetSubOrdersResponse {
+  message: string;
+  code: number;
+  data: {
+    orderDeliveries: ISubOrderDelivery[];
   };
 }
 

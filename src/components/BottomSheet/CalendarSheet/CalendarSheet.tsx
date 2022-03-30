@@ -9,19 +9,22 @@ import { Calendar } from '@components/Calendar';
 import { SET_DELIVERY_DATE } from '@store/order';
 import { SET_ALERT } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
+import getCustomDate from '@utils/getCustomDate';
 interface IProps {
   title: string;
   disabledDates: string[];
   deliveryDate: string;
-  otherDeliveryInfo?: any[];
+  subOrderDelivery?: any[];
   isSheet?: boolean;
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo = [], isSheet, deliveryDate }: IProps) => {
+const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, deliveryDate }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
 
   const dispatch = useDispatch();
+
+  const { dates } = getCustomDate(new Date(selectedDeliveryDay));
 
   const submitHandler = () => {
     dispatch(
@@ -41,6 +44,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo = [], isSheet, 
     setSelectedDeliveryDay(deliveryDate);
   }, []);
 
+  console.log(selectedDeliveryDay, 'selectedDeliveryDay');
   return (
     <Container>
       <Wrapper>
@@ -53,7 +57,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo = [], isSheet, 
               <TextH3B padding="0 4px 0 0">배송일</TextH3B>
               <SVGIcon name="questionMark" />
             </FlexRow>
-            <TextH6B>12일 도착</TextH6B>
+            <TextH6B>{dates}일 도착</TextH6B>
           </FlexBetween>
         </FlexCol>
       </Wrapper>
@@ -61,7 +65,7 @@ const CalendarSheet = ({ title, disabledDates, otherDeliveryInfo = [], isSheet, 
         disabledDates={disabledDates}
         selectedDeliveryDay={selectedDeliveryDay}
         setSelectedDeliveryDay={setSelectedDeliveryDay}
-        otherDeliveries={otherDeliveryInfo}
+        subOrderDelivery={subOrderDelivery}
         isSheet={isSheet}
       />
       <ButtonContainer onClick={submitHandler}>

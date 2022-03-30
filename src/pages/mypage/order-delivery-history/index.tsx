@@ -44,6 +44,8 @@ const OrderDeliveryHistoryPage = () => {
 
       const { data } = await getOrderListsApi(params);
 
+      /*TODO: 정기구독이랑 묶일 경우 type="SUB" */
+
       return data.data.orderDeliveries;
     },
     {
