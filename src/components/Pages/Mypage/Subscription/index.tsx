@@ -1,3 +1,3 @@
-import SubscriptionDashboard from './SubscriptionDashboard';
+import SbsDashboard from './SbsDashboard';
 
-export { SubscriptionDashboard };
+export { SbsDashboard };

@@ -1168,6 +1168,11 @@ export interface IWillWriteReviewsResponse {
   message: string;
   data: IWillWriteReview[];
 }
+declare global {
+  interface Window {
+    ReactNativeWebView: any;
+  }
+}
 
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
