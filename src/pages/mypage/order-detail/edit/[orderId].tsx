@@ -101,8 +101,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
   const { mutateAsync: mutationDeliveryInfo } = useMutation(
     async (reqBody: any) => {
-      // const deliveryId = orderDetail?.id!;
-      const deliveryId = 990849;
+      const deliveryId = orderDetail?.id!;
 
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;

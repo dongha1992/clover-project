@@ -16,6 +16,7 @@ import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
+import { SubscriptionDashboard } from '@components/Pages/Mypage/Subscription';
 import { pipe, groupBy } from '@fxts/core';
 import { getOrderListsApi } from '@api/order';
 interface IMypageMenu {
@@ -58,6 +59,8 @@ const MypagePage = () => {
       refetchOnWindowFocus: false,
     }
   );
+
+  console.log(orderList);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -109,6 +112,9 @@ const MypagePage = () => {
             <OrderAndDeliveryWrapper>
               <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
             </OrderAndDeliveryWrapper>
+            <SubscriptionWrapper>
+              <SubscriptionDashboard deliveryList={deliveryList} total={orderList?.length!} />
+            </SubscriptionWrapper>
             <ManageWrapper>
               <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
@@ -250,6 +256,12 @@ const OrderAndDeliveryWrapper = styled.div`
   ${homePadding}
   padding-top: 32px;
 `;
+
+const SubscriptionWrapper = styled.div`
+  ${homePadding}
+  padding-top: 32px;
+`;
+
 const ManageWrapper = styled.ul``;
 const MypageItem = styled.li`
   cursor: pointer;
