@@ -41,14 +41,13 @@ const MypagePage = () => {
       };
 
       const { data } = await getOrderListsApi(params);
-
-      return data.data.orders;
+      return data.data.orderDeliveries;
     },
     {
       onSuccess: (data) => {
         const result = pipe(
           data,
-          groupBy((item: any) => item.orderDeliveries[0]?.status)
+          groupBy((item: any) => item.status)
         );
 
         setDeliveryList(result);
@@ -59,8 +58,6 @@ const MypagePage = () => {
       refetchOnWindowFocus: false,
     }
   );
-
-  console.log(orderList);
 
   if (isLoading) {
     return <div>로딩</div>;

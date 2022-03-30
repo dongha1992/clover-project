@@ -68,6 +68,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
+  console.log(orderDetail, 'orderDetail');
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
   const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
@@ -183,6 +184,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     refundEventDiscount,
     refundMenuAmount,
     refundMenuDiscount,
+    refundOptionAmount,
+    refundOptionQuantity,
+    refundPoint,
     deliveryFee,
     deliveryFeeDiscount,
     eventDiscount,
@@ -364,7 +368,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             <BorderLine height={1} margin="8px 0" />
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>환경부담금 (일회용품)</TextH5B>
-              <TextB2R>12312원</TextB2R>
+              <TextB2R>{refundOptionAmount}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
@@ -374,16 +378,16 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
               <TextH5B>총 결제 금액</TextH5B>
-              <TextB2R>12312원</TextB2R>
+              <TextB2R>{1111}원</TextB2R>
             </FlexBetween>
             <FlexBetween padding="8px 0 0 0">
               <TextB2R>환불 포인트</TextB2R>
-              <TextB2R>12312원</TextB2R>
+              <TextB2R>{refundPoint}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween>
               <TextH4B>최종 환불금액</TextH4B>
-              <TextH4B>12312원</TextH4B>
+              <TextH4B>{11111}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
