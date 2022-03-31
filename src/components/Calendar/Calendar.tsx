@@ -172,8 +172,11 @@ const Calendar = ({
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filteredActiveDates[0]?.value;
 
-    checkHaSubInActiveDates(dateList, mergedDisabledDate);
-    setSelectedDeliveryDay(firstActiveDate);
+    checkHasSubInActiveDates(dateList, mergedDisabledDate);
+    /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
+    if (!selectedDeliveryDay) {
+      setSelectedDeliveryDay(firstActiveDate);
+    }
     setCustomDisabledDate(mergedDisabledDate);
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
@@ -184,7 +187,7 @@ const Calendar = ({
     }
   };
 
-  const checkHaSubInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
+  const checkHasSubInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
     // 함께배송 안내는 오픈되어있는 주에서만 안내
     // 현재 캘린더 렌더되는 날짜 데이터를 1주,2주로 나누지 않고 있음
     // 휴무일과 겹치는 경우 체크

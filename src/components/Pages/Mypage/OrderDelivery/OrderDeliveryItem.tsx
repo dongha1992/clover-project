@@ -27,6 +27,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   const isCompleted = deliveryStatus === '배송완료';
   const isCanceled = deliveryStatus === '주문취소';
   const isDelivering = deliveryStatus === '배송중';
+  const hasSubOrder = orderDeliveryItem.subOrderDelivery;
 
   return (
     <Container>
@@ -38,6 +39,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
           deliveryDetail={deliveryDetail}
           id={orderDeliveryItem.order.id}
           deliveryType={orderDeliveryItem.delivery}
+          isSubOrder={hasSubOrder ? 'main' : 'false'}
         />
         <FlexRow padding="0 0 8px 0">
           {!isCanceled && (
@@ -58,14 +60,14 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            margin="0 8px 0 0"
+            margin="16px 8px 0 0"
             onClick={() => buttonHandler({ id: orderDeliveryItem.order.id, isDelivering })}
           >
             {isDelivering ? '배송조회하기' : '장바구니 담기'}
           </Button>
         </FlexRow>
       </Wrapper>
-      {orderDeliveryItem.subOrderDelivery && (
+      {hasSubOrder && (
         <FlexRowStart margin="19px 0 0 0">
           <SVGIcon name="otherDeliveryArrow" />
           <OtherDeliveryWrapper>
@@ -74,7 +76,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
               deliveryStatus={deliveryStatusMap[orderDeliveryItem.subOrderDelivery.status]}
               id={orderDeliveryItem.subOrderDelivery.order.id}
               deliveryType={orderDeliveryItem.subOrderDelivery.delivery}
-              isSubOrder
+              isSubOrder="sub"
             />
             <ItemInfo
               url={orderDeliveryItem.subOrderDelivery?.image?.url}

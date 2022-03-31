@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { bottomSheetButton, FlexCol, FlexRow, FlexBetween } from '@styles/theme';
+import { bottomSheetButton, FlexCol, FlexRow, FlexBetween, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import { TextH3B, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB3R, TextH3B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { Calendar } from '@components/Calendar';
-import { SET_DELIVERY_DATE } from '@store/order';
 import { SET_ALERT } from '@store/alert';
 import SVGIcon from '@utils/SVGIcon';
 import getCustomDate from '@utils/getCustomDate';
+import { INIT_USER_DESTINATION_STATUS } from '@store/destination';
+import { useMutation, useQueryClient } from 'react-query';
+import { editDeliveryDateApi } from '@api/order';
 interface IProps {
   title: string;
   disabledDates: string[];
-  deliveryDate: string;
+  deliveryAt: string;
   subOrderDelivery?: any[];
   isSheet?: boolean;
+  deliveryId: number;
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, deliveryDate }: IProps) => {
+const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, deliveryAt, deliveryId }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
+
+  const queryClient = useQueryClient();
+
+  const { mutate: changeDeliveryDateMutation } = useMutation(
+    async () => {
+      const { data } = await editDeliveryDateApi({ deliveryId, selectedDeliveryDay });
+      console.log(data, 'AFTER CHANGE DELIVERY DATE');
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getOrderDetail');
+      },
+    }
+  );
 
   const dispatch = useDispatch();
 
@@ -33,18 +50,18 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
-          dispatch(SET_DELIVERY_DATE(selectedDeliveryDay));
           dispatch(INIT_BOTTOM_SHEET());
+          dispatch(INIT_USER_DESTINATION_STATUS());
+          changeDeliveryDateMutation();
         },
       })
     );
   };
 
   useEffect(() => {
-    setSelectedDeliveryDay(deliveryDate);
+    setSelectedDeliveryDay(deliveryAt);
   }, []);
 
-  console.log(selectedDeliveryDay, 'selectedDeliveryDay');
   return (
     <Container>
       <Wrapper>
@@ -68,6 +85,20 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
         subOrderDelivery={subOrderDelivery}
         isSheet={isSheet}
       />
+      <FlexCol padding="16px 24px">
+        <FlexRow>
+          <Dot />
+          <FlexRow>
+            <TextB3R>배송일 변경은 </TextB3R>
+            <TextB3R color={theme.brandColor}>총 1회</TextB3R>
+            <TextB3R padding="0 0 0 4px">가능합니다.</TextB3R>
+          </FlexRow>
+        </FlexRow>
+        <FlexRow>
+          <Dot />
+          <TextB3R>품절이나 시즌오프 등의 상품이 포함되어 있는 배송일은 선택할 수 없습니다. </TextB3R>
+        </FlexRow>
+      </FlexCol>
       <ButtonContainer onClick={submitHandler}>
         <Button height="100%" width="100%" borderRadius="0">
           변경하기
@@ -84,6 +115,15 @@ const Wrapper = styled.div`
 
 const ButtonContainer = styled.div`
   ${bottomSheetButton}
+`;
+
+const Dot = styled.div`
+  display: flex;
+  background-color: ${theme.black};
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin: 0px 8px;
 `;
 
 export default React.memo(CalendarSheet);

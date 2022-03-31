@@ -38,7 +38,7 @@ const OrderDeliveryHistoryPage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 10,
+        size: 20,
         type: 'GENERAL',
       };
 

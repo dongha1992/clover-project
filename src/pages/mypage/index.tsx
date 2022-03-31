@@ -36,7 +36,7 @@ const MypagePage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 10,
+        size: 100,
         type: 'GENERAL',
       };
 
