@@ -8,7 +8,7 @@ import { DeliveryTag } from '@components/Shared/Tag';
 interface IProps {
   isCanceled?: boolean;
   isCompleted?: boolean;
-  isSubOrder?: boolean;
+  isSubOrder?: string;
   deliveryStatus: string;
   deliveryDetail?: string;
   id: number;
@@ -28,7 +28,7 @@ const DeliveryStatusInfo = ({
     <FlexBetween>
       <FlexRow margin="0 0 8px 0">
         <TextH5B color={isCanceled ? theme.greyScale65 : theme.black}>{deliveryStatus}</TextH5B>
-        {isSubOrder ? (
+        {isSubOrder === 'sub' ? (
           <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor} margin="0 4px 0 8px">
             함께배송
           </Tag>
@@ -49,7 +49,7 @@ const DeliveryStatusInfo = ({
         onClick={() =>
           router.push({
             pathname: `/mypage/order-detail/${id}`,
-            query: { isSubOrder: isSubOrder ? isSubOrder : false },
+            query: { isSubOrder },
           })
         }
       >

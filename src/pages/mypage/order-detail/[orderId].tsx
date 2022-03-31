@@ -12,23 +12,24 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SET_USER_DESTINATION_STATUS } from '@store/destination';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
-import { orderForm } from '@store/order';
+import { mypageSelector } from '@store/mypage';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
 import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo, SubOrderInfo } from '@components/Pages/Mypage/OrderDelivery';
-import { getOrderDetailApi, deleteDeliveryApi, editDeliveryDateApi } from '@api/order';
+import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
 import dayjs from 'dayjs';
 import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
 
 // temp
 
-const disabledDates = ['2022-03-31', '2022-04-01'];
+const disabledDates = [];
 
 /* TODO: delvieryId의 경우 orderDeliveris[0].id 사용 */
 /* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
@@ -37,7 +38,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
 
   const { showToast } = useToast();
-  const { deliveryDate } = useSelector(orderForm);
+
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -53,7 +54,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     },
     {
       onSuccess: (data) => {},
-
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -72,30 +72,11 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  const { mutate: changeDeliveryDateMutation } = useMutation(
-    async () => {
-      const reqBody = {
-        deliveryId: orderDetail?.orderDeliveries[0].id!,
-        data: deliveryDate,
-      };
-      const { data } = await editDeliveryDateApi(reqBody);
-      console.log(data, 'AFTER CHANGE DELIVERY DATE');
-    },
-    {
-      onSuccess: async () => {
-        await queryClient.refetchQueries('getOrderDetail');
-      },
-    }
-  );
-
-  console.log(deliveryDate, 'DELIVERT DATE');
-
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
-  let { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
+  const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
     new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!)
   );
-  deliveryAt = '2022-03-09';
 
   const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0]?.status];
   const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
@@ -103,7 +84,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
   const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
   const canChangeDelivery = orderDetail?.orderDeliveries[0].status === 'RESERVED';
-
+  const deliveryId = orderDetail?.orderDeliveries[0].id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
 
@@ -163,7 +144,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
-    if (isSubOrder === 'true') {
+    if (isSubOrder === 'main') {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송정보를 변경하시면 함께배송 주문 배송정보도 함께 변경됩니다. 변경하시겠어요?',
@@ -188,12 +169,19 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
+    let alertMessage = '';
+
+    if (isSubOrder === 'sub') {
+      alertMessage = '함께배송 주문을 취소하시겠습니까?';
+    } else if (isSubOrder === 'main') {
+      alertMessage = '기존 주문을 취소하면 함께배송 주문도 함께 취소됩니다. 주문을 취소하시겠습니까?';
+    } else {
+      alertMessage = '정말 주문을 취소하시겠어요?';
+    }
+
     dispatch(
       SET_ALERT({
-        alertMessage:
-          isSubOrder === 'true'
-            ? '함께배송 주문을 취소하시겠습니까?'
-            : '기존 주문을 취소하면 함께배송 주문도 함께 취소됩니다. 주문을 취소하시겠습니까?',
+        alertMessage,
         onSubmit: () => deleteOrderMutation(),
         closeBtnText: '취소',
       })
@@ -201,25 +189,49 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDevlieryDateHandler = () => {
-    // if (!canChangeDelivery || isSubOrder==='true') {
+    // if (!canChangeDelivery || isSubOrder==='sub') {
     //   return;
     // }
 
-    dispatch(
-      SET_ALERT({
-        alertMessage: '기존 주문 배송일을 변경하시면 함께배송 주문 배송일도 함께 변경됩니다. 변경하시겠어요?',
-        onSubmit: () => {
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: (
-                <CalendarSheet title="배송일 변경" disabledDates={disabledDates} deliveryDate={deliveryAt} isSheet />
-              ),
-            })
-          );
-        },
-        closeBtnText: '취소',
-      })
-    );
+    if (isSubOrder === 'main') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '기존 주문 배송일을 변경하시면 함께배송 주문 배송일도 함께 변경됩니다. 변경하시겠어요?',
+          onSubmit: () => {
+            dispatch(
+              SET_BOTTOM_SHEET({
+                content: (
+                  <CalendarSheet
+                    isSheet
+                    title="배송일 변경"
+                    disabledDates={disabledDates}
+                    deliveryAt={orderDetail?.orderDeliveries[0]?.deliveryDate!}
+                    deliveryId={deliveryId}
+                  />
+                ),
+              })
+            );
+            dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+          },
+          closeBtnText: '취소',
+        })
+      );
+    } else {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: (
+            <CalendarSheet
+              isSheet
+              title="배송일 변경"
+              disabledDates={disabledDates}
+              deliveryAt={orderDetail?.orderDeliveries[0]?.deliveryDate!}
+              deliveryId={deliveryId}
+            />
+          ),
+        })
+      );
+      dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+    }
   };
 
   const getTotalPayment = (): number => {
@@ -315,7 +327,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            // disabled={!canChangeDelivery || isSubOrder === 'true'}
+            // disabled={!canChangeDelivery || isSubOrder === 'sub'}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기

@@ -10,6 +10,10 @@ import {
   IGetSubOrdersResponse,
 } from '@model/index';
 
+// export const createOrder = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
+//   return Api.get(`order/v1/orders/${id}`);
+// };
+
 export const getOrderListsApi = ({
   days = 90,
   page = 1,
@@ -55,12 +59,12 @@ export const editSpotDestinationApi = ({
 
 export const editDeliveryDateApi = ({
   deliveryId,
-  data,
+  selectedDeliveryDay,
 }: {
-  data: string;
+  selectedDeliveryDay: string;
   deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/deliveries/${deliveryId}/date`, data);
+  return Api.post(`order/v1/deliveries/${deliveryId}/date`, { deliveryDate: selectedDeliveryDay });
 };
 
 export const getSubOrdersCheckApi = (): Promise<AxiosResponse<IGetSubOrdersResponse>> => {
