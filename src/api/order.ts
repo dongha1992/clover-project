@@ -7,7 +7,12 @@ import {
   IResponse,
   IEditOrderDestination,
   IEditOrderSpotDestination,
+  IGetSubOrdersResponse,
 } from '@model/index';
+
+// export const createOrder = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
+//   return Api.get(`order/v1/orders/${id}`);
+// };
 
 export const getOrderListsApi = ({
   days = 90,
@@ -21,7 +26,7 @@ export const getOrderListsApi = ({
     size,
     type,
   };
-  return Api.get(`order/v1/orders/`, { params });
+  return Api.get(`order/v1/deliveries/`, { params });
 };
 
 export const getOrderDetailApi = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
@@ -34,20 +39,34 @@ export const deleteDeliveryApi = (id: number): Promise<AxiosResponse<IResponse>>
 
 export const editDeliveryDestinationApi = ({
   data,
-  orderId,
+  deliveryId,
 }: {
   data: IEditOrderDestination;
-  orderId: number;
+  deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/deliveries/${orderId}/destination`, data);
+  return Api.post(`order/v1/deliveries/${deliveryId}/destination`, data);
 };
 
 export const editSpotDestinationApi = ({
-  orderId,
+  deliveryId,
   data,
 }: {
   data: IEditOrderSpotDestination;
-  orderId: number;
+  deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/deliveries/${orderId}/pickup`, data);
+  return Api.post(`order/v1/deliveries/${deliveryId}/pickup`, data);
+};
+
+export const editDeliveryDateApi = ({
+  deliveryId,
+  selectedDeliveryDay,
+}: {
+  selectedDeliveryDay: string;
+  deliveryId: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${deliveryId}/date`, { deliveryDate: selectedDeliveryDay });
+};
+
+export const getSubOrdersCheckApi = (): Promise<AxiosResponse<IGetSubOrdersResponse>> => {
+  return Api.get(`order/v1/deliveries/together`);
 };

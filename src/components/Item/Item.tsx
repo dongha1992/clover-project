@@ -31,11 +31,8 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  let { menuDetails } = item;
+  const { menuDetails } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
-  menuDetails = menuDetails.map((item: any) => {
-    return { ...item, isSoldout: true };
-  });
 
   const checkIsAllSold: boolean = menuDetails.every((item: any) => item.isSoldout === true);
 
@@ -89,7 +86,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
     };
 
     const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
-    const { badgeMessage } = item.badgeMessage;
+    const { badgeMessage } = item;
 
     if (checkIsAllSold) {
       return <Badge message="일시품절" />;

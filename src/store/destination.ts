@@ -36,6 +36,7 @@ interface TProps {
   userDestination: IDestination | null;
   tempLocation: IJuso;
   userTempDestination: IDestination | null;
+  tempEditDestination: IDestination | null;
   userLocation: IJuso;
   availableDestination: IAvailableDestination;
   destinationStatus: string;
@@ -74,6 +75,7 @@ const locationState = {
 const INITIAL_STATE: TProps = {
   userDestination: null,
   userTempDestination: null,
+  tempEditDestination: null,
   tempLocation: {
     ...locationState,
   },
@@ -102,7 +104,7 @@ export const destination = createSlice({
     INIT_DESTINATION: (state, action: PayloadAction) => {
       state.userDestination = null;
     },
-    // 서버에 등록하지 않은 유저가 검색한 모든 배송지 정보
+    // 서버에 등록하지 않은 유저가 검색한 배송지 정보
     SET_TEMP_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
       state.userTempDestination = action.payload;
     },
@@ -110,6 +112,7 @@ export const destination = createSlice({
     INIT_TEMP_DESTINATION: (state, action: PayloadAction) => {
       state.userTempDestination = null;
     },
+
     SET_LOCATION: (state, action: PayloadAction<IJuso>) => {
       state.userLocation = action.payload;
     },
