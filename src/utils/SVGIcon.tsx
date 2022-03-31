@@ -1,12 +1,19 @@
 import React from 'react';
 
-type TSvg = {
-  [key: string]: () => React.SVGProps<SVGSVGElement> | any;
-};
+interface TSvg {
+  [key: string]: ({ width, height }: IStyle) => React.SVGProps<SVGSVGElement> | any;
+}
 
-type TProps = {
+interface TProps {
   name: string;
-};
+  width?: string;
+  height?: string;
+}
+
+interface IStyle {
+  height?: string;
+  width?: string;
+}
 
 const svgMap: TSvg = {
   location: () => (
@@ -459,16 +466,25 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
-  exclamationMark: () => (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M9.001 11C8.90251 11 8.80498 11.0194 8.71399 11.0571C8.62299 11.0948 8.54031 11.15 8.47067 11.2197C8.40103 11.2893 8.34578 11.372 8.30809 11.463C8.2704 11.554 8.251 11.6515 8.251 11.75C8.251 11.8485 8.2704 11.946 8.30809 12.037C8.34578 12.128 8.40103 12.2107 8.47067 12.2803C8.54031 12.35 8.62299 12.4052 8.71399 12.4429C8.80498 12.4806 8.90251 12.5 9.001 12.5C9.19965 12.5 9.39016 12.4211 9.53062 12.2806C9.67109 12.1402 9.75 11.9496 9.75 11.751C9.75 11.5524 9.67109 11.3618 9.53062 11.2214C9.39016 11.0809 9.19965 11.002 9.001 11.002L9.001 11Z"
-        fill="#35AD73"
-      />
-      <path d="M9 6V9.5" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="9" cy="9" r="6.25" stroke="#35AD73" strokeWidth="1.5" />
-    </svg>
-  ),
+
+  exclamationMark: ({ width, height }: IStyle) => {
+    return (
+      <svg
+        width={width ? width : 18}
+        height={height ? height : 18}
+        viewBox="0 0 18 18"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M9.001 11C8.90251 11 8.80498 11.0194 8.71399 11.0571C8.62299 11.0948 8.54031 11.15 8.47067 11.2197C8.40103 11.2893 8.34578 11.372 8.30809 11.463C8.2704 11.554 8.251 11.6515 8.251 11.75C8.251 11.8485 8.2704 11.946 8.30809 12.037C8.34578 12.128 8.40103 12.2107 8.47067 12.2803C8.54031 12.35 8.62299 12.4052 8.71399 12.4429C8.80498 12.4806 8.90251 12.5 9.001 12.5C9.19965 12.5 9.39016 12.4211 9.53062 12.2806C9.67109 12.1402 9.75 11.9496 9.75 11.751C9.75 11.5524 9.67109 11.3618 9.53062 11.2214C9.39016 11.0809 9.19965 11.002 9.001 11.002L9.001 11Z"
+          fill="#35AD73"
+        />
+        <path d="M9 6V9.5" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="9" cy="9" r="6.25" stroke="#35AD73" strokeWidth="1.5" />
+      </svg>
+    );
+  },
   fcoIcon: () => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -1008,8 +1024,14 @@ const svgMap: TSvg = {
       <rect x="2" y="18.3008" width="16" height="2" rx="1" fill="#242424" />
     </svg>
   ),
-  brandColorDot: () => (
-    <svg width="6" height="6" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+  brandColorDot: ({ width, height }: IStyle) => (
+    <svg
+      width={width ? width : 6}
+      height={height ? height : 6}
+      viewBox="0 0 6 6"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M3.002 2.14744e-07C2.60777 1.80279e-07 2.2174 0.0775968 1.85318 0.228361C1.48896 0.379125 1.15803 0.600103 0.879268 0.878679C0.600506 1.15725 0.37938 1.48797 0.228516 1.85195C0.0776509 2.21593 2.9671e-07 2.60603 2.62268e-07 3C2.27827e-07 3.39397 0.0776507 3.78407 0.228515 4.14805C0.37938 4.51203 0.600505 4.84274 0.879267 5.12132C1.15803 5.3999 1.48896 5.62087 1.85318 5.77164C2.2174 5.9224 2.60777 6 3.002 6C3.79712 6 4.55967 5.68435 5.12191 5.12249C5.68414 4.56063 6 3.79859 6 3.004C6 2.20941 5.68414 1.44737 5.12191 0.885508C4.55967 0.323649 3.79712 0.0079997 3.002 0.00799963L3.002 2.14744e-07Z"
         fill="#35AD73"
@@ -1264,10 +1286,10 @@ const svgMap: TSvg = {
 
 /* TODO: ref */
 
-const SVGIcon = ({ name }: TProps) => {
+const SVGIcon = ({ name, width, height }: TProps) => {
   const MappedSVG = svgMap[name];
 
-  return <MappedSVG />;
+  return <MappedSVG width={width} height={height} />;
 };
 
 export default SVGIcon;

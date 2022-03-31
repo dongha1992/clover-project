@@ -13,7 +13,7 @@ interface IProps {
 
 const ItemInfo = ({ url, name, payAmount, paidAt }: IProps) => {
   return (
-    <FlexRow padding="0 0 16px 0px">
+    <FlexRow padding="0 0 0px 0px">
       <ImageWrapper>
         <ItemImage src={IMAGE_S3_URL + url} alt="상품이미지" />
       </ImageWrapper>

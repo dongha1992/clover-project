@@ -12,14 +12,18 @@ import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DESTINATION_STATUS, SET_TEMP_DESTINATION } from '@store/destination';
+import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 
 interface IProps {
-  item: ISpotsDetail;
+  item: ISpotsDetail | any;
   onClick: () => void;
   mapList?: boolean;
 }
 
 // 스팟 검색 - 최근픽업이력 & 검색 결과
+
+/* TODO: 최근 픽업 이력과 검색 결과 item에 데이터 형이 다름 */
+
 const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -32,6 +36,9 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
+  /* TODO: 임시로 이렇게 해둠 */
+  const imageUrl = item?.images ? item?.images[0]?.url : item?.spotPickup?.spot?.images[0].url;
+
   const typeTag = (): string => {
     const type = item.type;
     switch (type) {
@@ -43,14 +50,13 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         return '';
     }
   };
-
   const orderHandler = () => {
     const destinationInfo = {
       name: item.name,
       location: {
         addressDetail: item.location.addressDetail,
         address: item.location.address,
-        dong: item.name,
+        dong: item.location.dong,
         zipCode: item.location.zipCode,
       },
       main: false,
@@ -59,6 +65,21 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
     };
 
     if (isLoginSuccess) {
+      if (orderId) {
+        dispatch(
+          SET_TEMP_EDIT_SPOT({
+            spotPickupId: item.pickups ? item.pickups[0].id : item.spotPickup.id,
+            name: item.name,
+            spotPickup: item.pickups ? item.pickups[0].name : item.spotPickup.name,
+          })
+        );
+        router.push({
+          pathname: '/mypage/order-detail/edit/[orderId]',
+          query: { orderId },
+        });
+        return;
+      }
+
       if (cartLists.length) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
@@ -66,12 +87,6 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
-        } else if (orderId) {
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({
-            pathname: '/mypage/order-detail/edit/[orderId]',
-            query: { orderId },
-          });
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
@@ -121,7 +136,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+          <SpotImg src={`${IMAGE_S3_URL}${imageUrl}`} />
         </ImageWrapper>
         <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={orderHandler}>
           주문하기

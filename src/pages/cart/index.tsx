@@ -29,15 +29,15 @@ import { SET_ORDER_ITEMS } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj, IOrderDeliveries, IGetOtherDeliveries } from '@model/index';
+import { Obj, ISubOrderDelivery } from '@model/index';
 import { isNil, isEqual, includes } from 'lodash-es';
-import { flow, map, filter } from 'lodash/fp';
+import { pipe, filter, each } from '@fxts/core';
 import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
-import { getOrderListsApi } from '@api/order';
+import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
@@ -50,7 +50,7 @@ const mapper: Obj = {
   noDelivery: '배송불가',
   spot: '스팟배송',
 };
-/*TODO: 장바구니 비었을 때 UI */
+
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
 export interface ILunchOrDinner {
@@ -99,7 +99,7 @@ const CartPage = () => {
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
-  const [otherDeliveries, setOtherDeliveries] = useState<IGetOtherDeliveries[]>([]);
+  const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -146,23 +146,13 @@ const CartPage = () => {
   const {} = useQuery(
     'getOrderLists',
     async () => {
-      // const params = {
-      //   days: 90,
-      //   page: 1,
-      //   size: 10,
-      //   type: 'GENERAL',
-      // };
-
-      // const { data } = await getOrderListsApi(params);
-
-      /* temp */
-      const { data } = await axios.get(`${BASE_URL}/orderList`);
-      return data.data;
+      const { data } = await getSubOrdersCheckApi();
+      return data.data.orderDeliveries;
     },
     {
       onSuccess: (data) => {
-        const result = checkHasOtherDeliveries(data);
-        setOtherDeliveries(result);
+        const result = checkHasSubOrderDeliery(data);
+        setSubOrderDeliery(result);
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -244,17 +234,14 @@ const CartPage = () => {
   //   }
   // );
 
-  const checkHasOtherDeliveries = (list: IGetOtherDeliveries[]) => {
-    const checkAvailableOtherDelivery = ({ deliveryStatus, delivery, location }: IGetOtherDeliveries) => {
-      const availableDeliveryStatus: string[] = ['PREPARING', 'PROGRESS'];
+  const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
+    const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
       const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
       const sameDeliveryAddress = isEqual(location, userDestination?.location);
-      const avaliableStatus = availableDeliveryStatus.includes(deliveryStatus);
-
-      return avaliableStatus && sameDeliveryAddress && sameDeliveryType;
+      return sameDeliveryAddress && sameDeliveryType;
     };
 
-    return flow(filter((data: IGetOtherDeliveries) => checkAvailableOtherDelivery(data)))(list);
+    return canSubOrderlist.filter((subOrder: ISubOrderDelivery) => checkAvailableSubDelivery(subOrder));
   };
 
   const handleSelectCartItem = (id: any) => {
@@ -446,15 +433,10 @@ const CartPage = () => {
     router.push('/payment');
   };
 
-  const goToTogetherDelivery = (id: number): void => {
+  const goToSubDelivery = (id: number): void => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: (
-          <TogetherDeliverySheet
-            title="함께배송 안내"
-            otherDeliveryInfo={[otherDeliveries.find((item: IGetOtherDeliveries) => item.id === id)]}
-          />
-        ),
+        content: <TogetherDeliverySheet title="함께배송 안내" otherDeliveryInfo={subOrderDelivery} />,
       })
     );
   };
@@ -535,11 +517,15 @@ const CartPage = () => {
     // 초기 렌더 1회 장바구니 아이템 전체 선택
     setIsAllchecked(true);
 
+    console.log(subOrderDelivery, 'subOrderDelivery');
+
     // 합배송 관련
-    if (otherDeliveries?.length > 0) {
+    if (subOrderDelivery) {
       const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
-      for (const otherDelivery of otherDeliveries) {
-        const { deliveryDate, deliveryDetail } = otherDelivery;
+      /* TODO: 캘린더에서 점심/저녁 or 날짜 선택 합배송 뜨는 거  */
+
+      for (const subOrder of subOrderDelivery) {
+        const { deliveryDate, deliveryDetail } = subOrder;
 
         const sameDeliveryTime = isSpotOrQuick
           ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
@@ -547,7 +533,7 @@ const CartPage = () => {
         const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
 
         if (sameDeliveryDate && sameDeliveryTime) {
-          goToTogetherDelivery(otherDelivery?.id);
+          goToSubDelivery(subOrder?.id);
         }
       }
     }
@@ -710,10 +696,10 @@ const CartPage = () => {
             </FlexBetween>
             <Calendar
               disabledDates={disabledDates}
-              otherDeliveries={otherDeliveries}
+              subOrderDelivery={subOrderDelivery}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
-              goToTogetherDelivery={goToTogetherDelivery}
+              goToSubDelivery={goToSubDelivery}
               lunchOrDinner={lunchOrDinner}
             />
             {isSpotAndQuick &&
