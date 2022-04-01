@@ -8,7 +8,7 @@ import getCustomDate from '@utils/getCustomDate';
 import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
-import { filter, flow, map } from 'lodash/fp';
+import { pipe, filter, map, toArray } from '@fxts/core';
 import { getFormatTime } from '@utils/getFormatTime';
 import { IGetOrderListResponse, ISubOrderDelivery } from '@model/index';
 import { ILunchOrDinner } from '@pages/cart';
@@ -60,7 +60,7 @@ const Calendar = ({
   const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
-  const [togetherDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
+  const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
   const { userDestinationStatus } = useSelector(destinationForm);
 
   const initCalendar = () => {
@@ -140,21 +140,25 @@ const Calendar = ({
       switch (true) {
         case isQuickAndSpot:
           {
-            tempDisabledDate = flow(
+            tempDisabledDate = pipe(
+              dateList,
               filter(
                 ({ dayKor, date }: IDateObj) =>
                   quickAndSpotDisabled.includes(dayKor) || (isFinishDinner && date === today)
               ),
-              map(({ value }: IDateObj) => value)
-            )(dateList);
+              map(({ value }: IDateObj) => value),
+              toArray
+            );
           }
           break;
         case isParcelAndMorning:
           {
-            tempDisabledDate = flow(
+            tempDisabledDate = pipe(
+              dateList,
               filter(({ dayKor, date }: IDateObj) => parcelAndMorningDisabled.includes(dayKor) || date === today),
-              map(({ value }: IDateObj) => value)
-            )(dateList);
+              map(({ value }: IDateObj) => value),
+              toArray
+            );
           }
           break;
       }
@@ -192,7 +196,7 @@ const Calendar = ({
     // 현재 캘린더 렌더되는 날짜 데이터를 1주,2주로 나누지 않고 있음
     // 휴무일과 겹치는 경우 체크
 
-    const haSubDeliveryInActiveDates = subOrderDelivery
+    const hasSubDeliveryInActiveDates = subOrderDelivery
       ?.filter((oItem) => {
         return dateList?.some((dItem, index) => {
           if (index >= ONE_WEEK) {
@@ -203,16 +207,16 @@ const Calendar = ({
       })
       ?.filter((a) => !disabledDate.includes(a.deliveryDate));
 
-    setSubDeliveryInActiveDates(haSubDeliveryInActiveDates || []);
+    setSubDeliveryInActiveDates(hasSubDeliveryInActiveDates || []);
   };
 
-  const togetherDeliveryInfo = (): JSX.Element => {
+  const subOrderDeliveryInfo = (): JSX.Element => {
     return (
       <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
-        {togetherDeliveryInActiveDates.length > 1
+        {subOrderDeliveryInActiveDates.length > 1
           ? '배송예정인 기존 주문이 있습니다. 함께배송 받으세요!'
           : `${new Date(
-              togetherDeliveryInActiveDates[0]?.deliveryDate
+              subOrderDeliveryInActiveDates[0]?.deliveryDate
             ).getDate()}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
       </TextB3R>
     );
@@ -262,7 +266,7 @@ const Calendar = ({
                 selectedDay={selectedDay}
                 index={index}
                 disabledDates={customDisabledDate}
-                otherDeliveryInfo={togetherDeliveryInActiveDates}
+                otherDeliveryInfo={subOrderDeliveryInActiveDates}
               />
             );
           })}
@@ -286,10 +290,10 @@ const Calendar = ({
       <CalendarContainer isSheet={isSheet}>
         <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
       </CalendarContainer>
-      {togetherDeliveryInActiveDates.length > 0 && (
+      {subOrderDeliveryInActiveDates.length > 0 && (
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
-          {togetherDeliveryInfo()}
+          {subOrderDeliveryInfo()}
         </FlexRow>
       )}
     </FlexCol>
