@@ -4,21 +4,14 @@ import { FlexBetweenStart, FlexRowStart, FlexRow, FlexCol, theme } from '@styles
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
+import { IGetCard } from '@model/index';
 
-export interface ICard {
-  createdAt: string;
-  id: number;
-  main: boolean;
-  name: string;
-  type: string;
-}
 interface IProps {
-  onClick: (card: ICard) => void;
-  card?: ICard;
+  onClick: (card: IGetCard) => void;
+  card?: IGetCard;
 }
 
 const CardItem = ({ onClick, card }: IProps) => {
-  console.log(card, '@@');
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>

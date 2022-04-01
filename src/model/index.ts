@@ -581,6 +581,7 @@ export interface ISpotRegistrationsResponse {
   };
 }
 
+/* CARD */
 export interface IRegisterCardResponse {
   code: number;
   message: string;
@@ -598,6 +599,21 @@ export interface IRegisterCard {
   password?: string;
   type: string;
 }
+
+export interface IGetCard {
+  id: number;
+  type: string;
+  name: string;
+  main: boolean;
+  createdAt: string;
+}
+export interface IGetCardResponse {
+  code: number;
+  message: string;
+  data: IGetCard[];
+}
+
+/* BANNER */
 export interface IBanners {
   content: string;
   createdAt: string;
@@ -854,7 +870,7 @@ export interface IGetOrderListRequest {
 }
 
 export interface IOrderMenus {
-  id: number;
+  id?: number;
   menuId: number;
   menuName: string;
   menuDetailId: number;
@@ -864,12 +880,12 @@ export interface IOrderMenus {
   menuQuantity: number;
   image: {
     id: number;
-    name: string;
+    name?: string;
     url: string;
     width: number;
     height: number;
-    size: number;
-    createdAt: string;
+    size?: number;
+    createdAt?: string;
   };
 }
 export interface IOrderPayment {}
@@ -925,8 +941,8 @@ export interface IOrderDetailInOrderDeliveries {
   receiverName: string;
   receiverTel: string;
   location: ILocation;
-  deliveryMessageType: string;
-  deliveryMessage: string;
+  deliveryMessageType?: string;
+  deliveryMessage?: string;
   spot?: IOrderDeliveriesInSpot;
   spotPickup?: IOrderDeliveriesInSpotPickUp;
   status: string;
@@ -1094,6 +1110,73 @@ export interface IGetOrderDetailResponse {
   message: string;
   data: IOrderDetail;
 }
+export interface IOrderOptionsInOrderPreviewRequest {
+  productOptionId: number;
+  productOptionQuantity: number;
+}
+export interface IOrderDeliveriesInOrderPreviewRequest {
+  deliveryDate: string;
+  orderMenus: IOrderMenusInOrderList[];
+  orderOptions: IOrderOptionsInOrderPreviewRequest[];
+}
+export interface IOrderPreviewRequest {
+  delivery: string;
+  deliveryDetail: string;
+  destinationId: number;
+  isDeliveryTogether: boolean;
+  orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
+  type: string;
+}
+export interface ICreateOrderPreview {
+  type: string;
+  userName: string;
+  userTel: string;
+  userEmail: string;
+  receiverName: string;
+  receiverTel: string;
+  delivery: string;
+  deliveryDetail: string;
+  location: ILocation;
+  destinationId: number;
+  menuAmount: number;
+  menuDiscount: number;
+  optionAmount: number;
+  eventDiscount: number;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  point: number;
+  coupon: number;
+  payAmount: number;
+  orderDeliveries: [
+    {
+      deliveryDate: string;
+      deliveryStartTime: string;
+      deliveryEndTime: string;
+      receiverName: string;
+      receiverTel: string;
+      location: ILocation;
+      subOrderDelivery: ISubOrderDelivery | null;
+      orderMenus: IOrderMenus[];
+      orderOptions: IOrderOptions[];
+    }
+  ];
+}
+export interface ICreateOrderPreviewResponse {
+  code: number;
+  message: string;
+  data: {
+    order: ICreateOrderPreview;
+    coupons: ICoupon[];
+    point: number;
+    cards: IGetCard[];
+    isDeliveryTogether: boolean;
+  };
+}
+
+export interface ICreateOrder {}
+export interface ICreateOrderResponse {}
+
+/* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
 export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
@@ -1137,6 +1220,8 @@ export interface IMenus {
   orderCount: number;
   priority: string;
 }
+
+/* REVIEW */
 export interface IGetMenusResponse {
   code: number;
   data: IMenus[];
@@ -1250,6 +1335,8 @@ declare global {
   }
 }
 
+/* CART */
+
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 export interface IGetCart {
@@ -1269,4 +1356,16 @@ export interface IGetCartResponse {
   code: number;
   message: string;
   data: IGetCart[];
+}
+
+/* COUPON */
+
+export interface ICoupon {
+  id: number;
+  name: string;
+  comment: string;
+  criteria: string;
+  value: number;
+  expiredDate: string;
+  createdAt: string;
 }

@@ -16,7 +16,7 @@ import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import calculateArrival from '@utils/calculateArrival';
 import getCustomDate from '@utils/getCustomDate';
-import { filter, map, flow } from 'lodash/fp';
+import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { Obj } from '@model/index';
@@ -169,7 +169,8 @@ const CartSheet = () => {
     switch (true) {
       case canSpotLunchAndDinnerTomorrow:
         {
-          newRollingData = flow(
+          newRollingData = pipe(
+            rollingData,
             filter((item: IRolling) => item.id < 3),
             map((data: IRolling) => {
               const isSpotLunch = data.type === '스팟점심';
@@ -179,8 +180,9 @@ const CartSheet = () => {
                   ? `9시30분까지 주문 시 ${arrivalDate}일 12시 전 도착`
                   : `11시까지 주문 시 ${arrivalDate}일 17시 전 도착`,
               };
-            })
-          )(rollingData);
+            }),
+            toArray
+          );
         }
         break;
       case canSpotLunchAndDinnerToday:
@@ -190,7 +192,8 @@ const CartSheet = () => {
         break;
       case canMorningAndParcelNday:
         {
-          newRollingData = flow(
+          newRollingData = pipe(
+            rollingData,
             filter((item: IRolling) => item.id > 2),
             map((data: IRolling) => {
               const isParcel = data.type === '택배배송';
@@ -200,8 +203,9 @@ const CartSheet = () => {
                   isParcel ? `${arrivalDate}일 당일 발송` : `${arrivalDate}일 새벽 7시 전 도착`
                 }`,
               };
-            })
-          )(rollingData);
+            }),
+            toArray
+          );
         }
         break;
       case canMorningAndParcelTomorrow:
