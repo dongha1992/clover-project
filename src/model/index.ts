@@ -1,5 +1,4 @@
 import { TLocationType } from '@utils/checkDestinationHelper';
-import { Tracing } from 'trace_events';
 
 export type Obj<T = any> = {
   [k: string]: T;
@@ -861,6 +860,50 @@ export interface IGetSpotFilter {
 /* Order */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
+export type TPayMethod =
+  | 'KAKAO_CARD'
+  | 'KAKAO_MONEY'
+  | 'NICE_BANK'
+  | 'NICE_BILLING'
+  | 'NICE_CARD'
+  | 'PAYCO_EASY'
+  | 'TOSS_CARD'
+  | 'TOSS_MONEY';
+export interface ICreateOrderRequest {
+  type: string;
+  payMethod: TPayMethod | string;
+  cardId: number;
+  userName: string;
+  userTel: string;
+  receiverName: string;
+  receiverTel: string;
+  delivery: string;
+  deliveryDetail: string;
+  location: ILocation;
+  destinationId: number;
+  menuAmount: number;
+  menuDiscount: number;
+  optionAmount: number;
+  eventDiscount: number;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  point: number;
+  coupon: number;
+  payAmount: number;
+  isDeliveryTogether: boolean;
+  orderDeliveries: IOrderRequestInOrderDeliveries[];
+}
+
+export interface IOrderRequestInOrderDeliveries {
+  deliveryDate: string;
+  deliveryStartTime: string;
+  deliveryEndTime: string;
+  receiverName: string;
+  receiverTel: string;
+  location: ILocation;
+  orderMenus: IOrderMenus[];
+  orderOptions: IOrderOptions[];
+}
 
 export interface IGetOrderListRequest {
   days: number;
@@ -981,9 +1024,9 @@ export interface IOrderMenusInOrderList {
 }
 
 export interface IOrderOptions {
-  id: number;
+  id?: number;
   optionId: number;
-  optionName: number;
+  optionName: string;
   optionPrice: number;
   optionQuantity: number;
 }
@@ -1414,12 +1457,29 @@ export interface IGetCartResponse {
 
 /* COUPON */
 
+export interface IMenuInCoupon {
+  badgeMessage: string;
+  category: string;
+  description: string;
+  id: number;
+  menuDetails: IMenuDetails[];
+  menuSort: TMenuSort | string | null;
+  name: string;
+  orderCount: number | null;
+  priority: number | null;
+  thumbnail: string;
+  type: string;
+}
 export interface ICoupon {
   id: number;
   name: string;
+  canUse: boolean;
   comment: string;
   criteria: string;
   value: number;
   expiredDate: string;
   createdAt: string;
+  usedValue?: number;
+  menuIds?: number[];
+  menus?: IMenuInCoupon[];
 }

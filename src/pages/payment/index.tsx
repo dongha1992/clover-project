@@ -29,13 +29,14 @@ import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
-import { createOrderPreviewApi } from '@api/order';
+import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
 import getCustomDate from '@utils/getCustomDate';
 import { PaymentCouponSheet } from '@components/BottomSheet/PaymentCouponSheet';
+import { useMutation, useQueryClient } from 'react-query';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -67,12 +68,12 @@ const PAYMENT_METHOD = [
   {
     id: 5,
     text: '페이코',
-    value: 'fcopay',
+    value: 'payco',
   },
   {
     id: 6,
     text: '토스',
-    value: 'fcopay',
+    value: 'toss',
   },
 ];
 
@@ -92,7 +93,7 @@ const PaymentPage = () => {
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('fcopay');
   const [checkForm, setCheckForm] = useState<Obj>({
     samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
@@ -113,7 +114,8 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { userDestination } = useSelector(destinationForm);
+  const queryClient = useQueryClient();
 
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
@@ -125,7 +127,7 @@ const PaymentPage = () => {
         isDeliveryTogether: false,
         orderDeliveries: [
           {
-            deliveryDate: '2022-04-04',
+            deliveryDate: '2022-04-06',
             orderMenus: [
               {
                 menuDetailId: 72,
@@ -149,6 +151,89 @@ const PaymentPage = () => {
       }
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { mutateAsync: mutateCreateOrder } = useMutation(
+    async () => {
+      const reqBody = {
+        type: 'GENERAL',
+        payMethod: 'NICE_BILLING',
+        cardId: 81,
+        userName: 'string',
+        userTel: '010509630481',
+        receiverName: '마천동킹크랩',
+        receiverTel: '01021380952',
+        delivery: 'SPOT',
+        deliveryDetail: 'DINNER',
+        location: {
+          zipCode: '06182',
+          address: '서울 강남구 영동대로 417',
+          addressDetail: ' 지하 2층 (오토웨이타워)',
+          dong: '대치동',
+        },
+        destinationId: 1,
+        menuAmount: 6500,
+        menuDiscount: 1000,
+        optionAmount: 100,
+        eventDiscount: 275,
+        deliveryFee: 0,
+        deliveryFeeDiscount: 0,
+        point: 0,
+        coupon: 0,
+        payAmount: 5225,
+        isDeliveryTogether: false,
+        orderDeliveries: [
+          {
+            deliveryDate: '2022-04-06',
+            deliveryStartTime: '13:00',
+            deliveryEndTime: '17:00',
+            receiverName: '마천동킹크랩',
+            receiverTel: '01021380952',
+            location: {
+              zipCode: '06182',
+              address: '서울 강남구 영동대로 417',
+              addressDetail: ' 지하 2층 (오토웨이타워)',
+              dong: '대치동',
+            },
+            orderMenus: [
+              {
+                menuId: 9,
+                menuName: '닭가슴살 아몬드 샐러드',
+                menuDetailId: 72,
+                menuDetailName: '미디움 (M)',
+                menuPrice: 6500,
+                menuDiscount: 1000,
+                menuQuantity: 1,
+                image: {
+                  id: 2534,
+                  url: '/menu/origin/9_20211124111843',
+                  width: 564,
+                  height: 564,
+                },
+              },
+            ],
+            orderOptions: [
+              {
+                optionId: 1,
+                optionName: '수저',
+                optionPrice: 100,
+                optionQuantity: 1,
+              },
+            ],
+          },
+        ],
+      };
+
+      const { data } = await createOrderApi(reqBody);
+      const { id: orderId } = data.data;
+      return orderId;
+    },
+    {
+      onError: () => {},
+      onSuccess: async (orderId: number) => {
+        router.push({ pathname: '/payment/finish', query: { orderId } });
+      },
+    }
   );
 
   const showSectionHandler = (selectedSection: string) => {
@@ -185,12 +270,13 @@ const PaymentPage = () => {
   };
 
   const changePointHandler = (val: number): void => {
-    console.log(val, 'val');
+    const { point: limitPoint } = previewOrder!;
+
     const regex = /^[0-9]/g;
     if (!regex.test(val.toString())) return;
 
-    if (val >= 5000) {
-      val = 5000;
+    if (val >= limitPoint) {
+      val = limitPoint;
     }
 
     setUserInputObj({ ...userInputObj, point: val });
@@ -205,15 +291,18 @@ const PaymentPage = () => {
   };
 
   const selectPaymentMethodHanlder = (method: any) => {
-    const { id } = method;
-    setSelectedPaymentMethod(id);
+    const { value } = method;
+    setSelectedPaymentMethod(value);
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
   };
 
-  const useAllOfPointHandler = () => {};
+  const useAllOfPointHandler = () => {
+    const { point: limitPoint } = previewOrder!;
+    setUserInputObj({ ...userInputObj, point: limitPoint });
+  };
 
   const deliveryDateRenderer = ({
     location,
@@ -337,8 +426,8 @@ const PaymentPage = () => {
     dispatch(SET_BOTTOM_SHEET({ content: <PaymentCouponSheet coupons={coupons} /> }));
   };
 
-  const goToFinishPayment = () => {
-    router.push('/payment/finish');
+  const clearPointHandler = () => {
+    setUserInputObj({ ...userInputObj, point: 0 });
   };
 
   const goToCardManagemnet = (card: IGetCard) => {
@@ -349,13 +438,11 @@ const PaymentPage = () => {
     router.push('/mypage/card/register');
   };
 
+  const goToTermInfo = () => {};
+
   const getMainCardHandler = (cards: IGetCard[] = []) => {
     return cards.find((c) => c.main);
   };
-
-  const isParcel = userDestinationStatus === 'parcel';
-  const isMorning = userDestinationStatus === 'morning';
-  const isFcoPay = selectedPaymentMethod === 1;
 
   useEffect(() => {
     const { isSelected } = checkForm.samePerson;
@@ -371,6 +458,18 @@ const PaymentPage = () => {
     }
   }, [checkForm.samePerson.isSelected]);
 
+  useEffect(() => {
+    /* TODO: 항상 전액 사용 어케? */
+
+    const { point: limitPoint } = previewOrder!;
+
+    const usePointAll = checkForm.alwaysPointAll.isSelected;
+
+    if (usePointAll) {
+      setUserInputObj({ ...userInputObj, point: limitPoint });
+    }
+  }, [checkForm.alwaysPointAll.isSelected]);
+
   if (isNil(userDestination)) {
     router.replace('/cart');
     return <div>장바구니로 이동합니다.</div>;
@@ -380,16 +479,37 @@ const PaymentPage = () => {
     return <div>로딩</div>;
   }
 
-  /* TODO: undefined 혹 빈값 처리? */
-
+  const {
+    userName,
+    userTel,
+    userEmail,
+    delivery,
+    deliveryDetail,
+    location,
+    payAmount,
+    optionAmount,
+    menuDiscount,
+    menuAmount,
+    eventDiscount,
+    deliveryFeeDiscount,
+    deliveryFee,
+    coupon,
+  } = previewOrder?.order!;
+  const { deliveryDate, spotName, spotPickupName, orderOptions } = previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
-  const { deliveryDate, spotName, spotPickupName } = previewOrder?.order?.orderDeliveries[0]!;
-  const { userName, userTel, userEmail, delivery, deliveryDetail, location } = previewOrder?.order!;
-  let { point } = previewOrder!;
+  const { point } = previewOrder!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
-  point = 5000;
+
+  const totalPayAmount =
+    menuAmount - (menuDiscount + eventDiscount + coupon + deliveryFeeDiscount) + optionAmount + deliveryFee - point;
+
+  const isParcel = delivery === 'PARCEL';
+  const isMorning = delivery === 'MORNING';
+  const isFcoPay = selectedPaymentMethod === 'fcopay';
+  const isKakaoPay = selectedPaymentMethod === 'kakaopay';
 
   console.log(previewOrder, 'previewOrder');
+
   return (
     <Container>
       <OrderItemsWrapper>
@@ -566,7 +686,7 @@ const PaymentPage = () => {
           <TextH4B>할인 쿠폰</TextH4B>
           <FlexRow>
             {selectedCoupon ? (
-              <TextB2R padding="0 10px 0 0">{selectedCoupon.discount}</TextB2R>
+              <TextB2R padding="0 10px 0 0">{selectedCoupon.value}</TextB2R>
             ) : (
               <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
@@ -594,12 +714,14 @@ const PaymentPage = () => {
             width="100%"
             margin="0 8px 0 0"
             placeholder="0"
-            value={checkForm.alwaysPointAll.isSelected ? point : userInputObj.point}
+            value={userInputObj.point}
             eventHandler={(e) => changePointHandler(Number(e.target.value))}
           />
-          <DeletePoint>
-            <SVGIcon name="blackBackgroundCancel" />
-          </DeletePoint>
+          {userInputObj.point > 0 && (
+            <DeletePoint onClick={clearPointHandler}>
+              <SVGIcon name="blackBackgroundCancel" />
+            </DeletePoint>
+          )}
           <Button width="86px" height="48px" onClick={useAllOfPointHandler}>
             전액 사용
           </Button>
@@ -620,7 +742,7 @@ const PaymentPage = () => {
         </FlexBetween>
         <GridWrapper gap={16}>
           {PAYMENT_METHOD.map((method, index) => {
-            const isSelected = selectedPaymentMethod === method.id;
+            const isSelected = selectedPaymentMethod === method.value;
             return (
               <Button
                 onClick={() => selectPaymentMethodHanlder(method)}
@@ -634,61 +756,98 @@ const PaymentPage = () => {
             );
           })}
         </GridWrapper>
-        <BorderLine height={1} margin="24px 0" />
-        {previewOrder?.cards?.length > 0 ? (
-          <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
-        ) : (
-          <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
-            카드 등록하기
-          </Button>
+        {isFcoPay && (
+          <>
+            <BorderLine height={1} margin="24px 0" />
+            {previewOrder?.cards?.length! > 0 ? (
+              <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+            ) : (
+              <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
+                카드 등록하기
+              </Button>
+            )}
+          </>
         )}
       </PaymentMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
-          <TextB2R>222원</TextB2R>
+          <TextB2R>{menuAmount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>22원</TextB2R>
+          <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>상품 할인</TextB2R>
-          <TextB2R>22원</TextB2R>
+          <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
+        {eventDiscount && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>스팟 이벤트 할인</TextB2R>
+            <TextB2R>{eventDiscount}원</TextB2R>
+          </FlexBetween>
+        )}
+        {selectedCoupon && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>쿠폰 사용</TextB2R>
+            <TextB2R>{coupon}원</TextB2R>
+          </FlexBetween>
+        )}
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{optionAmount}원</TextB2R>
         </FlexBetween>
+        {orderOptions.length > 0 &&
+          orderOptions.map((optionItem, index) => {
+            const { optionId, optionPrice, optionQuantity, optionName } = optionItem;
+            const hasFork = optionId === 1;
+            const hasChopsticks = optionId === 2;
+            return (
+              <div key={index}>
+                {hasFork && (
+                  <FlexBetween padding="8px 0 0 0">
+                    <TextB2R>포크+물티슈</TextB2R>
+                    <TextB2R>
+                      {optionQuantity}개 / {optionPrice * optionQuantity}원
+                    </TextB2R>
+                  </FlexBetween>
+                )}
+                {hasChopsticks && (
+                  <FlexBetween padding="8px 0 0 0">
+                    <TextB2R>젓가락+물티슈</TextB2R>
+                    <TextB2R>
+                      {optionQuantity}개 / {optionPrice * optionQuantity}원
+                    </TextB2R>
+                  </FlexBetween>
+                )}
+              </div>
+            );
+          })}
+
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>배송비</TextH5B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{deliveryFee}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비 할인</TextB2R>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{deliveryFeeDiscount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
-        <FlexBetween>
-          <TextH5B>포인트 사용</TextH5B>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
+        {userInputObj.point > 0 && (
+          <FlexBetween>
+            <TextH5B>포인트 사용</TextH5B>
+            <TextB2R>{point}원</TextB2R>
+          </FlexBetween>
+        )}
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{payAmount}원</TextB2R>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -703,14 +862,14 @@ const PaymentPage = () => {
         <FlexRow padding="17px 0 0 0">
           <Checkbox isSelected onChange={checkPaymentTermHandler} />
           <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
-          <TextH6B color={theme.greyScale65} textDecoration="underline">
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
             자세히
           </TextH6B>
         </FlexRow>
       </PaymentTermWrapper>
-      <PaymentBtn onClick={goToFinishPayment}>
+      <PaymentBtn onClick={() => mutateCreateOrder()}>
         <Button borderRadius="0" height="100%">
-          1232원 결제하기
+          {payAmount}원 결제하기
         </Button>
       </PaymentBtn>
     </Container>

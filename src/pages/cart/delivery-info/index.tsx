@@ -56,6 +56,9 @@ const DeliverInfoPage = () => {
     userDestination,
   } = useSelector(destinationForm);
 
+  console.log(userDestinationStatus, 'userDestinationStatus');
+  console.log(destinationStatus, 'destinationStatus');
+
   const dispatch = useDispatch();
   const router = useRouter();
 
