@@ -9,12 +9,22 @@ import router from 'next/router';
 import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useDispatch } from 'react-redux';
 
-const SignupFinishPage = () => {
+const WelcomeSheet = () => {
+  const dispatch = useDispatch();
+
   return (
     <Container>
       <Header>
-        <FlexEnd onClick={() => router.push('/')}>
+        <FlexEnd
+          margin="40px 0 0 0"
+          onClick={() => {
+            dispatch(INIT_BOTTOM_SHEET());
+            router.push('/');
+          }}
+        >
           <SVGIcon name="defaultCancel24" />
         </FlexEnd>
       </Header>
@@ -62,7 +72,8 @@ const SignupFinishPage = () => {
 };
 
 const Container = styled.div`
-  ${homePadding}
+  ${homePadding};
+  height: 90vh;
 `;
 const Header = styled.div`
   height: 80px;
@@ -93,4 +104,4 @@ const PromotionWrapper = styled.div`
   padding: 24px;
 `;
 
-export default SignupFinishPage;
+export default WelcomeSheet;

@@ -25,22 +25,10 @@ export interface ICoupon {
 const CouponManagementPage = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
   const router = useRouter();
-  const { isPayment } = router.query;
-
-  const dispatch = useDispatch();
-
-  const goToPayment = () => {
-    dispatch(SET_USER_SELECT_COUPON(selectedCoupon!));
-    router.back();
-  };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
     setSelectedCoupon(coupon);
   };
-
-  /*TODO: undefined로 잡아도 되는지 */
-
-  const isDisabled = selectedCoupon !== undefined;
 
   return (
     <Container>
@@ -62,18 +50,6 @@ const CouponManagementPage = () => {
             />
           ))}
         </FlexCol>
-        {isPayment && (
-          <ButtonWrapper onClick={goToPayment}>
-            <Button
-              height="100%"
-              width="100%"
-              borderRadius="0"
-              disabled={!isDisabled}
-            >
-              적용하기
-            </Button>
-          </ButtonWrapper>
-        )}
       </Wrapper>
     </Container>
   );

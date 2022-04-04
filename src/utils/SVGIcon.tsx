@@ -241,8 +241,14 @@ const svgMap: TSvg = {
       <rect x="9.75" y="3" width="12" height="1.5" rx="0.75" transform="rotate(90 9.75 3)" fill="#454545" />
     </svg>
   ),
-  defaultCancel: () => (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+  defaultCancel: ({ width, height }: IStyle) => (
+    <svg
+      width={width ? width : 18}
+      height={height ? height : 18}
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <rect
         width="1.5"
         height="12.5253"

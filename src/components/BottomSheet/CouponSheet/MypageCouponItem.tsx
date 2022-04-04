@@ -1,37 +1,40 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextH3B, TextB3R, TextB2R, TextH7B, TextB4R } from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextH5B, TextH7B, TextB4R } from '@components/Shared/Text';
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
-import { ICoupon } from '@pages/mypage/coupon';
-
+import { ICoupon } from '@model/index';
+import getCustomDate from '@utils/getCustomDate';
+import dayjs from 'dayjs';
 interface IProps {
   coupon: ICoupon;
   selectCouponHandler: (coupon: ICoupon) => void;
   isSelected: boolean;
 }
+
+const now = dayjs();
+
 const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
-  const isRateDiscount = coupon.type === 'rate';
-  const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
-
+  const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon.expiredDate));
+  const isRateDiscount = coupon.criteria === 'RATIO';
+  // const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
+  console.log(coupon, '2');
+  const dDay = now.diff(dayjs(coupon.expiredDate), 'day');
   return (
-    <Container isDownload={coupon.isDownload} isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
+    <Container isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">
-            <TextH3B color={theme.brandColor}>
-              {isRateDiscount ? `${coupon.discount}%` : `${coupon.discount}원`}
-            </TextH3B>
+            <TextH3B color={theme.brandColor}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH3B>
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-              D-1
+              D-{dDay}
             </Tag>
           </FlexBetween>
-          <TextB2R>{coupon.name}</TextB2R>
-
-          {coupon.deliveryMethod && (
+          <TextH5B>{coupon.name}</TextH5B>
+          {/* {coupon.deliveryMethod && (
             <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
               배송방법: {coupon.deliveryMethod}
             </TextB3R>
@@ -46,8 +49,8 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
               사용가능 메뉴:
               {isMoreThenOneMenu ? '특정 상품 한정' : coupon.canUseMenu[0]}
             </TextB3R>
-          )}
-          {isShow &&
+          )} */}
+          {/* {isShow &&
             coupon.canUseMenu.map((menu: any, index: number) => {
               return (
                 <FlexRow key={index}>
@@ -66,10 +69,10 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
             >
               {isShow ? '접기' : '더보기'}
             </TextH7B>
-          )}
+          )} */}
 
           <TextB3R color={theme.brandColor} padding="4px 0 0 0">
-            {coupon.expireDate}
+            {expiredDate} 까지
           </TextB3R>
         </Content>
       </Wrapper>
@@ -77,7 +80,7 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
   );
 };
 
-const Container = styled.div<{ isDownload: boolean; isSelected?: boolean }>`
+const Container = styled.div<{ isDownload?: boolean; isSelected?: boolean }>`
   border: 1px solid ${({ isSelected }) => (isSelected ? theme.brandColor : theme.brandColor5)};
   box-sizing: border-box;
   border-radius: 8px;

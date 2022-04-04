@@ -8,11 +8,21 @@ import {
   IEditOrderDestination,
   IEditOrderSpotDestination,
   IGetSubOrdersResponse,
+  IOrderPreviewRequest,
+  ICreateOrderPreviewResponse,
+  ICreateOrderResponse,
+  ICreateOrderRequest,
 } from '@model/index';
 
-// export const createOrder = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
-//   return Api.get(`order/v1/orders/${id}`);
-// };
+export const createOrderApi = (data: ICreateOrderRequest): Promise<AxiosResponse<ICreateOrderResponse>> => {
+  return Api.post(`order/v1/orders`, data);
+};
+
+export const createOrderPreviewApi = (
+  data: IOrderPreviewRequest
+): Promise<AxiosResponse<ICreateOrderPreviewResponse>> => {
+  return Api.post(`order/v1/orders/preview`, data);
+};
 
 export const getOrderListsApi = ({
   days = 90,
