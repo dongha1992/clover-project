@@ -32,8 +32,6 @@ const CardItem = ({ onClick, card }: IProps) => {
   );
 };
 
-const RegisteredCardWrapper = styled.div`
-  padding-bottom: 24px;
-`;
+const RegisteredCardWrapper = styled.div``;
 
 export default React.memo(CardItem);
