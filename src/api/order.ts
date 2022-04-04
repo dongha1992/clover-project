@@ -11,9 +11,10 @@ import {
   IOrderPreviewRequest,
   ICreateOrderPreviewResponse,
   ICreateOrderResponse,
+  ICreateOrderRequest,
 } from '@model/index';
 
-export const createOrderApi = (data: any): Promise<AxiosResponse<ICreateOrderResponse>> => {
+export const createOrderApi = (data: ICreateOrderRequest): Promise<AxiosResponse<ICreateOrderResponse>> => {
   return Api.post(`order/v1/orders`, data);
 };
 
