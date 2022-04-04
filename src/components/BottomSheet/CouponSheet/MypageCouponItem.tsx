@@ -4,7 +4,7 @@ import { TextH3B, TextB3R, TextB2R, TextH7B, TextB4R } from '@components/Shared/
 import { FlexBetween, theme, FlexRow } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
-import { ICoupon } from '@pages/mypage/coupon';
+import { ICoupon } from '@model/index';
 
 interface IProps {
   coupon: ICoupon;
@@ -14,7 +14,7 @@ interface IProps {
 const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
-  const isRateDiscount = coupon.type === 'rate';
+  const isRateDiscount = coupon.criteria === 'RATE';
   const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
 
   return (

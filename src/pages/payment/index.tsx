@@ -19,7 +19,6 @@ import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
 import PaymentItem from '@components/Pages/Payment/PaymentItem';
-import axios from 'axios';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -30,47 +29,19 @@ import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
-import { getMainCardLists } from '@api/card';
 import { createOrderPreviewApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard } from '@model/index';
-import { orderForm } from '@store/order';
-import { userForm } from '@store/user';
+import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
-import { ConsoleView } from 'react-device-detect';
+import getCustomDate from '@utils/getCustomDate';
+import { PaymentCouponSheet } from '@components/BottomSheet/PaymentCouponSheet';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
 /* TODO: 배송예정 어떻게? */
 /* TODO: 출입 방법 input userDestination에 담아서 서버 콜 */
-
-//temp
-export interface IDeliveries {
-  deliveryDate: string;
-  menus: { menuDetailId: number; menuQuantity: number };
-}
-
-export interface IOrderForm {
-  couponId: number;
-  deliveries: IDeliveries[];
-  delivery: string;
-  deliveryDetail: string;
-  deliveryMessage: string;
-  deliveryMessageType: string;
-  location: {
-    address: string;
-    addressDetail: string;
-    dong: string;
-    zipCode: string;
-  };
-  payAmount: number;
-  point: number;
-  receiverName: string;
-  receiverTel: string;
-  spotPickupId: number;
-}
 
 const PAYMENT_METHOD = [
   {
@@ -109,14 +80,12 @@ const deliveryTimeMap: Obj = {
   LUNCH: '점심',
   DINNER: '저녁',
 };
+
 export interface IAccessMethod {
   id: number;
   text: string;
   value: string;
 }
-
-const hasRegisteredCard = true;
-const point = 5000;
 
 const PaymentPage = () => {
   const [showSectionObj, setShowSectionObj] = useState({
@@ -127,30 +96,24 @@ const PaymentPage = () => {
   const [checkForm, setCheckForm] = useState<Obj>({
     samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
-    alwaysPointFull: { isSelected: false },
+    alwaysPointAll: { isSelected: false },
     paymentMethodReuse: { isSelected: false },
   });
-  const [receiverObj, setReceiverObj] = useState({
+
+  const [userInputObj, setUserInputObj] = useState<{
+    receiverName: string;
+    receiverTel: string;
+    point: number;
+  }>({
     receiverName: '',
     receiverTel: '',
+    point: 0,
   });
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
-  const { me } = useSelector(userForm);
-
-  const { data: mainCard, isLoading } = useQuery(
-    'getMainCard',
-    async () => {
-      const { data } = await getMainCardLists();
-      if (data.code === 200) {
-        return data.data;
-      }
-    },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
-  );
 
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
@@ -171,8 +134,8 @@ const PaymentPage = () => {
             ],
             orderOptions: [
               {
-                productOptionId: 1,
-                productOptionQuantity: 1,
+                optionId: 1,
+                optionQuantity: 1,
               },
             ],
           },
@@ -204,19 +167,33 @@ const PaymentPage = () => {
 
   const checkPaymentTermHandler = () => {};
 
-  const receiverHandeler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+  const userInputHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
       const { name, value } = e.target;
+
       if (checkForm.samePerson.isSelected) {
         setCheckForm({ ...checkForm, samePerson: { isSelected: false } });
       }
-      setReceiverObj({ ...receiverObj, [name]: value });
+
+      setUserInputObj({ ...userInputObj, [name]: value });
     },
-    [receiverObj]
+    [userInputObj]
   );
 
   const checkFormHanlder = (name: string) => {
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
+  };
+
+  const changePointHandler = (val: number): void => {
+    console.log(val, 'val');
+    const regex = /^[0-9]/g;
+    if (!regex.test(val.toString())) return;
+
+    if (val >= 5000) {
+      val = 5000;
+    }
+
+    setUserInputObj({ ...userInputObj, point: val });
   };
 
   const selectAccessMethodHandler = () => {
@@ -236,8 +213,128 @@ const PaymentPage = () => {
     const { value, name } = e.target;
   };
 
-  const couponHandler = () => {
-    router.push({ pathname: '/mypage/coupon', query: { isPayment: true } });
+  const useAllOfPointHandler = () => {};
+
+  const deliveryDateRenderer = ({
+    location,
+    delivery,
+    deliveryDetail,
+    dayFormatter,
+    spotName,
+    spotPickupName,
+  }: {
+    location: ILocation;
+    delivery: string;
+    deliveryDetail: string;
+    dayFormatter: string;
+    spotName: string;
+    spotPickupName: string;
+  }) => {
+    const isLunch = deliveryDetail === 'LUNCH';
+
+    switch (delivery) {
+      case 'PARCEL': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{dayFormatter}</TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'MORNING': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{dayFormatter} 00:00-07:00</TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'QUICK': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {dayFormatter} {isLunch ? '11:30-12:00' : '15:30-18:00'}
+                </TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'SPOT': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {dayFormatter} {isLunch ? '11:30-12:00' : '17:30-18:00'}
+                </TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>픽업장소</TextH5B>
+              <FlexColEnd>
+                <FlexRow>
+                  <TextB3R>
+                    {spotName} {spotPickupName}
+                  </TextB3R>
+                </FlexRow>
+                <FlexRow>
+                  <TextB3R color={theme.greyScale65} margin="0 4px 0 0">
+                    ({location.zipCode})
+                  </TextB3R>
+                  <TextB3R color={theme.greyScale65}>{location.address}</TextB3R>
+                </FlexRow>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+    }
+  };
+
+  const couponHandler = (coupons: ICoupon[]) => {
+    dispatch(SET_BOTTOM_SHEET({ content: <PaymentCouponSheet coupons={coupons} /> }));
   };
 
   const goToFinishPayment = () => {
@@ -252,6 +349,10 @@ const PaymentPage = () => {
     router.push('/mypage/card/register');
   };
 
+  const getMainCardHandler = (cards: IGetCard[] = []) => {
+    return cards.find((c) => c.main);
+  };
+
   const isParcel = userDestinationStatus === 'parcel';
   const isMorning = userDestinationStatus === 'morning';
   const isFcoPay = selectedPaymentMethod === 1;
@@ -262,7 +363,8 @@ const PaymentPage = () => {
     if (previewOrder?.order && isSelected) {
       const { userName, userTel } = previewOrder?.order;
 
-      setReceiverObj({
+      setUserInputObj({
+        ...userInputObj,
         receiverName: userName,
         receiverTel: userTel,
       });
@@ -274,10 +376,6 @@ const PaymentPage = () => {
     return <div>장바구니로 이동합니다.</div>;
   }
 
-  if (isNil(me)) {
-    return <div>로딩</div>;
-  }
-
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
   }
@@ -285,7 +383,11 @@ const PaymentPage = () => {
   /* TODO: undefined 혹 빈값 처리? */
 
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
-  const { userName, userTel, userEmail } = previewOrder?.order!;
+  const { deliveryDate, spotName, spotPickupName } = previewOrder?.order?.orderDeliveries[0]!;
+  const { userName, userTel, userEmail, delivery, deliveryDetail, location } = previewOrder?.order!;
+  let { point } = previewOrder!;
+  const { dayFormatter } = getCustomDate(new Date(deliveryDate));
+  point = 5000;
 
   console.log(previewOrder, 'previewOrder');
   return (
@@ -314,7 +416,7 @@ const PaymentPage = () => {
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper onClick={() => showSectionHandler('customerInfo')}>
-            <TextB2R padding="0 13px 0 0">{`${me?.name},${me?.tel}`}</TextB2R>
+            <TextB2R padding="0 13px 0 0">{`${userName},${userTel}`}</TextB2R>
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
@@ -346,18 +448,19 @@ const PaymentPage = () => {
           <TextH5B padding="0 0 8px 0">이름</TextH5B>
           <TextInput
             placeholder="이름"
-            value={receiverObj.receiverName}
+            value={userInputObj.receiverName}
             name="receiverName"
-            eventHandler={receiverHandeler}
+            eventHandler={userInputHandler}
           />
         </FlexCol>
         <FlexCol>
           <TextH5B padding="0 0 8px 0">휴대폰 번호</TextH5B>
           <TextInput
+            inputType="number"
             placeholder="휴대폰 번호"
             name="receiverTel"
-            value={receiverObj.receiverTel}
-            eventHandler={receiverHandeler}
+            value={userInputObj.receiverTel}
+            eventHandler={userInputHandler}
           />
         </FlexCol>
       </ReceiverInfoWrapper>
@@ -369,29 +472,15 @@ const PaymentPage = () => {
         <FlexCol padding="24px 0">
           <FlexBetween>
             <TextH5B>배송방법</TextH5B>
-            {!['parcel', 'morning'].includes(userDestinationStatus) ? (
+            {!['PARCEL', 'MORNING'].includes(delivery) ? (
               <TextB2R>
-                {DELIVERY_TYPE_MAP[userDestination.delivery!]} - {deliveryTimeMap[userDestination.deliveryTime!]}
+                {DELIVERY_TYPE_MAP[delivery]} - {deliveryTimeMap[deliveryDetail]}
               </TextB2R>
             ) : (
-              <TextB2R>{DELIVERY_TYPE_MAP[userDestination.delivery!]}</TextB2R>
+              <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>
             )}
           </FlexBetween>
-          <FlexBetweenStart margin="16px 0">
-            <TextH5B>배송 예정실시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart>
-            <TextH5B>베송장소</TextH5B>
-            <FlexColEnd>
-              <TextB2R>{userDestination.location.address}</TextB2R>
-              <TextB3R color={theme.greyScale65}>{userDestination.location.addressDetail}</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
+          {deliveryDateRenderer({ location, delivery, deliveryDetail, dayFormatter, spotName, spotPickupName })}
         </FlexCol>
         <MustCheckAboutDelivery>
           <FlexCol>
@@ -479,10 +568,9 @@ const PaymentPage = () => {
             {selectedCoupon ? (
               <TextB2R padding="0 10px 0 0">{selectedCoupon.discount}</TextB2R>
             ) : (
-              <TextB2R padding="0 10px 0 0">4장 보유</TextB2R>
+              <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
-
-            <div onClick={couponHandler}>
+            <div onClick={() => couponHandler(previewOrder?.coupons!)}>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
@@ -494,18 +582,25 @@ const PaymentPage = () => {
           <TextH4B>포인트 사용</TextH4B>
           <FlexRow>
             <Checkbox
-              onChange={() => checkFormHanlder('alwaysPointFull')}
-              isSelected={checkForm.alwaysPointFull.isSelected}
+              onChange={() => checkFormHanlder('alwaysPointAll')}
+              isSelected={checkForm.alwaysPointAll.isSelected}
             />
             <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
           </FlexRow>
         </FlexBetween>
         <FlexRow padding="24px 0 0 0">
-          <TextInput width="100%" margin="0 8px 0 0" value={point} />
+          <TextInput
+            name="point"
+            width="100%"
+            margin="0 8px 0 0"
+            placeholder="0"
+            value={checkForm.alwaysPointAll.isSelected ? point : userInputObj.point}
+            eventHandler={(e) => changePointHandler(Number(e.target.value))}
+          />
           <DeletePoint>
             <SVGIcon name="blackBackgroundCancel" />
           </DeletePoint>
-          <Button width="86px" height="48px">
+          <Button width="86px" height="48px" onClick={useAllOfPointHandler}>
             전액 사용
           </Button>
         </FlexRow>
@@ -540,10 +635,13 @@ const PaymentPage = () => {
           })}
         </GridWrapper>
         <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} card={mainCard} />}
-        <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
-          카드 등록하기
-        </Button>
+        {previewOrder?.cards?.length > 0 ? (
+          <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+        ) : (
+          <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
+            카드 등록하기
+          </Button>
+        )}
       </PaymentMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>

@@ -1111,8 +1111,8 @@ export interface IGetOrderDetailResponse {
   data: IOrderDetail;
 }
 export interface IOrderOptionsInOrderPreviewRequest {
-  productOptionId: number;
-  productOptionQuantity: number;
+  optionId: number;
+  optionQuantity: number;
 }
 export interface IOrderDeliveriesInOrderPreviewRequest {
   deliveryDate: string;
@@ -1149,13 +1149,19 @@ export interface ICreateOrderPreview {
   payAmount: number;
   orderDeliveries: [
     {
+      delivery: string;
+      deliveryDetail: string;
       deliveryDate: string;
       deliveryStartTime: string;
       deliveryEndTime: string;
       receiverName: string;
       receiverTel: string;
       location: ILocation;
-      subOrderDelivery: ISubOrderDelivery | null;
+      subOrderDelivery?: ISubOrderDelivery | null;
+      spotId: number;
+      spotName: string;
+      spotPickupId: number;
+      spotPickupName: string;
       orderMenus: IOrderMenus[];
       orderOptions: IOrderOptions[];
     }
@@ -1173,8 +1179,56 @@ export interface ICreateOrderPreviewResponse {
   };
 }
 
-export interface ICreateOrder {}
-export interface ICreateOrderResponse {}
+export interface ICreateOrder {
+  id: number;
+  delivery: string;
+  deliveryDetail: string;
+  name: string;
+  menuQuantity: number;
+  refundMenuQuantity: number;
+  optionQuantity: number;
+  refundOptionQuantity: number;
+  menuAmount: number;
+  refundMenuAmount: number;
+  menuDiscount: number;
+  refundMenuDiscount: number;
+  optionAmount: number;
+  refundOptionAmount: number;
+  eventDiscount: number;
+  refundEventDiscount: number;
+  deliveryFee: number;
+  refundDeliveryFee: number;
+  deliveryFeeDiscount: number;
+  refundDeliveryFeeDiscount: number;
+  point: number;
+  refundPoint: number;
+  coupon: number;
+  refundCoupon: number;
+  status: string;
+  createdAt: string;
+  paidAt: string;
+  orderDeliveries: [
+    {
+      id: number;
+      delivery: string;
+      deliveryDetail: string;
+      deliveryDate: string;
+      receiverName: string;
+      receiverTel: string;
+      location: ILocation;
+      spot?: IOrderDeliveriesInSpot;
+      spotPickup?: IOrderDeliveriesInSpotPickUp;
+      status: string;
+      orderMenus: IOrderMenus[];
+      orderOptions: IOrderOptions[];
+    }
+  ];
+}
+export interface ICreateOrderResponse {
+  code: number;
+  message: string;
+  data: ICreateOrder;
+}
 
 /* MENU */
 
