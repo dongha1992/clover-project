@@ -1,5 +1,4 @@
 import { TLocationType } from '@utils/checkDestinationHelper';
-import { Tracing } from 'trace_events';
 
 export type Obj<T = any> = {
   [k: string]: T;
@@ -581,6 +580,7 @@ export interface ISpotRegistrationsResponse {
   };
 }
 
+/* CARD */
 export interface IRegisterCardResponse {
   code: number;
   message: string;
@@ -598,6 +598,21 @@ export interface IRegisterCard {
   password?: string;
   type: string;
 }
+
+export interface IGetCard {
+  id: number;
+  type: string;
+  name: string;
+  main: boolean;
+  createdAt: string;
+}
+export interface IGetCardResponse {
+  code: number;
+  message: string;
+  data: IGetCard[];
+}
+
+/* BANNER */
 export interface IBanners {
   content: string;
   createdAt: string;
@@ -845,6 +860,50 @@ export interface IGetSpotFilter {
 /* Order */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
+export type TPayMethod =
+  | 'KAKAO_CARD'
+  | 'KAKAO_MONEY'
+  | 'NICE_BANK'
+  | 'NICE_BILLING'
+  | 'NICE_CARD'
+  | 'PAYCO_EASY'
+  | 'TOSS_CARD'
+  | 'TOSS_MONEY';
+export interface ICreateOrderRequest {
+  type: string;
+  payMethod: TPayMethod | string;
+  cardId: number;
+  userName: string;
+  userTel: string;
+  receiverName: string;
+  receiverTel: string;
+  delivery: string;
+  deliveryDetail: string;
+  location: ILocation;
+  destinationId: number;
+  menuAmount: number;
+  menuDiscount: number;
+  optionAmount: number;
+  eventDiscount: number;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  point: number;
+  coupon: number;
+  payAmount: number;
+  isDeliveryTogether: boolean;
+  orderDeliveries: IOrderRequestInOrderDeliveries[];
+}
+
+export interface IOrderRequestInOrderDeliveries {
+  deliveryDate: string;
+  deliveryStartTime: string;
+  deliveryEndTime: string;
+  receiverName: string;
+  receiverTel: string;
+  location: ILocation;
+  orderMenus: IOrderMenus[];
+  orderOptions: IOrderOptions[];
+}
 
 export interface IGetOrderListRequest {
   days: number;
@@ -854,7 +913,7 @@ export interface IGetOrderListRequest {
 }
 
 export interface IOrderMenus {
-  id: number;
+  id?: number;
   menuId: number;
   menuName: string;
   menuDetailId: number;
@@ -864,12 +923,12 @@ export interface IOrderMenus {
   menuQuantity: number;
   image: {
     id: number;
-    name: string;
+    name?: string;
     url: string;
     width: number;
     height: number;
-    size: number;
-    createdAt: string;
+    size?: number;
+    createdAt?: string;
   };
 }
 export interface IOrderPayment {}
@@ -925,8 +984,8 @@ export interface IOrderDetailInOrderDeliveries {
   receiverName: string;
   receiverTel: string;
   location: ILocation;
-  deliveryMessageType: string;
-  deliveryMessage: string;
+  deliveryMessageType?: string;
+  deliveryMessage?: string;
   spot?: IOrderDeliveriesInSpot;
   spotPickup?: IOrderDeliveriesInSpotPickUp;
   status: string;
@@ -965,9 +1024,9 @@ export interface IOrderMenusInOrderList {
 }
 
 export interface IOrderOptions {
-  id: number;
+  id?: number;
   optionId: number;
-  optionName: number;
+  optionName: string;
   optionPrice: number;
   optionQuantity: number;
 }
@@ -1094,6 +1153,127 @@ export interface IGetOrderDetailResponse {
   message: string;
   data: IOrderDetail;
 }
+export interface IOrderOptionsInOrderPreviewRequest {
+  optionId: number;
+  optionQuantity: number;
+}
+export interface IOrderDeliveriesInOrderPreviewRequest {
+  deliveryDate: string;
+  orderMenus: IOrderMenusInOrderList[];
+  orderOptions: IOrderOptionsInOrderPreviewRequest[];
+}
+export interface IOrderPreviewRequest {
+  delivery: string;
+  deliveryDetail: string;
+  destinationId: number;
+  isDeliveryTogether: boolean;
+  orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
+  type: string;
+}
+export interface ICreateOrderPreview {
+  type: string;
+  userName: string;
+  userTel: string;
+  userEmail: string;
+  receiverName: string;
+  receiverTel: string;
+  delivery: string;
+  deliveryDetail: string;
+  location: ILocation;
+  destinationId: number;
+  menuAmount: number;
+  menuDiscount: number;
+  optionAmount: number;
+  eventDiscount: number;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  point: number;
+  coupon: number;
+  payAmount: number;
+  orderDeliveries: [
+    {
+      delivery: string;
+      deliveryDetail: string;
+      deliveryDate: string;
+      deliveryStartTime: string;
+      deliveryEndTime: string;
+      receiverName: string;
+      receiverTel: string;
+      location: ILocation;
+      subOrderDelivery?: ISubOrderDelivery | null;
+      spotId: number;
+      spotName: string;
+      spotPickupId: number;
+      spotPickupName: string;
+      orderMenus: IOrderMenus[];
+      orderOptions: IOrderOptions[];
+    }
+  ];
+}
+export interface ICreateOrderPreviewResponse {
+  code: number;
+  message: string;
+  data: {
+    order: ICreateOrderPreview;
+    coupons: ICoupon[];
+    point: number;
+    cards: IGetCard[];
+    isDeliveryTogether: boolean;
+  };
+}
+
+export interface ICreateOrder {
+  id: number;
+  delivery: string;
+  deliveryDetail: string;
+  name: string;
+  menuQuantity: number;
+  refundMenuQuantity: number;
+  optionQuantity: number;
+  refundOptionQuantity: number;
+  menuAmount: number;
+  refundMenuAmount: number;
+  menuDiscount: number;
+  refundMenuDiscount: number;
+  optionAmount: number;
+  refundOptionAmount: number;
+  eventDiscount: number;
+  refundEventDiscount: number;
+  deliveryFee: number;
+  refundDeliveryFee: number;
+  deliveryFeeDiscount: number;
+  refundDeliveryFeeDiscount: number;
+  point: number;
+  refundPoint: number;
+  coupon: number;
+  refundCoupon: number;
+  status: string;
+  createdAt: string;
+  paidAt: string;
+  orderDeliveries: [
+    {
+      id: number;
+      delivery: string;
+      deliveryDetail: string;
+      deliveryDate: string;
+      receiverName: string;
+      receiverTel: string;
+      location: ILocation;
+      spot?: IOrderDeliveriesInSpot;
+      spotPickup?: IOrderDeliveriesInSpotPickUp;
+      status: string;
+      orderMenus: IOrderMenus[];
+      orderOptions: IOrderOptions[];
+    }
+  ];
+}
+export interface ICreateOrderResponse {
+  code: number;
+  message: string;
+  data: ICreateOrder;
+}
+
+/* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
 export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
@@ -1137,6 +1317,8 @@ export interface IMenus {
   orderCount: number;
   priority: string;
 }
+
+/* REVIEW */
 export interface IGetMenusResponse {
   code: number;
   data: IMenus[];
@@ -1250,6 +1432,8 @@ declare global {
   }
 }
 
+/* CART */
+
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 export interface IGetCart {
@@ -1269,4 +1453,33 @@ export interface IGetCartResponse {
   code: number;
   message: string;
   data: IGetCart[];
+}
+
+/* COUPON */
+
+export interface IMenuInCoupon {
+  badgeMessage: string;
+  category: string;
+  description: string;
+  id: number;
+  menuDetails: IMenuDetails[];
+  menuSort: TMenuSort | string | null;
+  name: string;
+  orderCount: number | null;
+  priority: number | null;
+  thumbnail: string;
+  type: string;
+}
+export interface ICoupon {
+  id: number;
+  name: string;
+  canUse: boolean;
+  comment: string;
+  criteria: string;
+  value: number;
+  expiredDate: string;
+  createdAt: string;
+  usedValue?: number;
+  menuIds?: number[];
+  menus?: IMenuInCoupon[];
 }
