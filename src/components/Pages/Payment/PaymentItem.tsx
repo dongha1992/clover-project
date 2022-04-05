@@ -11,7 +11,6 @@ interface IProps {
   isCanceled?: boolean;
 }
 
-/* TODO: menu img 데이터 형 일치 or 컴포넌트 분리 */
 const PaymentItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
   const { discountedPrice, discount } = getDiscountPrice({
     discountPrice: menu.menuDiscount,
@@ -39,7 +38,7 @@ const PaymentItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
               </TextH5B>
               <TextH5B>{discountedPrice}원</TextH5B>
               <Col />
-              <TextB2R>{menu.menuQuantity}개</TextB2R>
+              <TextB2R>{menu.menuQuantity}개 외 </TextB2R>
             </PriceWrapper>
             {isDeliveryComplete ? (
               <div>

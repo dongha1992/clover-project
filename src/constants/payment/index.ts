@@ -71,3 +71,8 @@ export const DELIVERY_TYPE_MAP: Obj = {
   SPOT: '스팟배송',
   QUICK: '퀵배송',
 };
+
+export const DELIVERY_TIME_MAP: Obj = {
+  LUNCH: '점심',
+  DINNER: '저녁',
+};
