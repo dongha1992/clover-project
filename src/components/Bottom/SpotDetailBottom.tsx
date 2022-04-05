@@ -15,13 +15,16 @@ import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
 import { SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { PickupSheet } from '@components/BottomSheet/PickupSheet';
+
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
   const { isDelivery } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
-  const { spotDetail } = useSelector(spotSelector);
+  const { spotDetail, spotPickupPlace } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
   const detailId: number = spotDetail!.id;
 
@@ -40,26 +43,64 @@ const SpotDetailBottom = () => {
       main: false,
       availableTime: pickUpTime,
       spaceType: spotDetail?.type,
+      spotPickup: spotPickupPlace,
     };
 
     if (isLoginSuccess) {
+      //로그인 o
       if (cartLists.length) {
-        // 로그인o and 장바구니 o
+        // 장바구니 o
         if (isDelivery) {
           // 장바구니 o , 배송 정보에서 넘어온 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
+          if(spotDetail?.pickups.length! > 1) {
+            // 스팟 핏업 장소 2개 이상인 경우
+            dispatch(SET_BOTTOM_SHEET({
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} />
+            }));
+
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            dispatch(SET_TEMP_DESTINATION(destinationInfo));
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });  
+          }else {
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            dispatch(SET_TEMP_DESTINATION(destinationInfo));
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });  
+          }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          if(spotDetail?.pickups.length! > 1) {
+            dispatch(SET_BOTTOM_SHEET({
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} />
+            }));  
+
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            dispatch(SET_DESTINATION(destinationInfo));
+            dispatch(SET_TEMP_DESTINATION(destinationInfo));
+            router.push('/cart');
+          }else {
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            dispatch(SET_DESTINATION(destinationInfo));
+            dispatch(SET_TEMP_DESTINATION(destinationInfo));
+            router.push('/cart');  
+          }
+        }
+      } else {
+        // 장바구니 x
+        if(spotDetail?.pickups.length! > 1) {
+          dispatch(SET_BOTTOM_SHEET({
+            content: <PickupSheet pickupInfo={spotDetail?.pickups} />
+          }));
+          
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push('/cart');
+          router.push('/search');
+        }else{
+          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_DESTINATION(destinationInfo));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push('/search');
         }
-      } else {
-        // 로그인o and 장바구니 x
-        router.push('/search');
       }
     } else {
       // 로그인x
