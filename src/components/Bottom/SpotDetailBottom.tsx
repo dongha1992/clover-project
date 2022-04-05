@@ -14,6 +14,7 @@ import { userForm } from '@store/user';
 import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
 import { SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
+import { SET_ALERT } from '@store/alert';
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
@@ -104,7 +105,15 @@ const SpotDetailBottom = () => {
         console.error(e);
       }
     } else {
-      router.push('/onboarding');
+      const TitleMsg = `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`;
+      dispatch(SET_ALERT({
+        alertMessage: TitleMsg,
+        onSubmit: () => {
+          router.push('/onboarding');
+        },
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      }))
     }
   };
 
