@@ -13,6 +13,10 @@ import {
   getSpotsStoryLike 
 } from '@api/spot';
 import {ISpotStories} from '@model/index';
+import { useSelector } from 'react-redux';
+import { userForm } from '@store/user';
+import router from 'next/router';
+import { SET_ALERT } from '@store/alert';
 
 interface IProps {
   list: ISpotStories;
@@ -20,6 +24,7 @@ interface IProps {
 
 const DetailBottomStory = ({ list }: IProps): ReactElement => {
   const dispatch = useDispatch();
+  const { isLoginSuccess } = useSelector(userForm);
   const [storyLike, setStoryLike] = useState<boolean>();
   const [likeCount, setLikeCount] = useState(list.likeCount);
 
@@ -41,29 +46,43 @@ const DetailBottomStory = ({ list }: IProps): ReactElement => {
   }, [list]);
 
   const handlerLike = async () => {
-    if (!storyLike) {
-      try {
-        const { data } = await postSpotsStoryLike(list.spotId, list.id);
-        if (data.code === 200) {
-          setStoryLike(true);
-          setLikeCount(likeCount + 1);
-          console.log('post!');
+    if(isLoginSuccess){
+      if (!storyLike) {
+        try {
+          const { data } = await postSpotsStoryLike(list.spotId, list.id);
+          if (data.code === 200) {
+            setStoryLike(true);
+            setLikeCount(likeCount + 1);
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
-      }
-    } else if (storyLike) {
-      try {
-        const { data } = await deleteSpotsStoryLike(list.spotId, list.id);
-        if (data.code === 200) {
-          setStoryLike(false);
-          setLikeCount(likeCount - 1);
-          console.log('delete!');
+      } else if (storyLike) {
+        try {
+          const { data } = await deleteSpotsStoryLike(list.spotId, list.id);
+          if (data.code === 200) {
+            setStoryLike(false);
+            if(likeCount > 0){
+              setLikeCount(likeCount - 1);
+            }else {
+              return
+            };
+          }
+        } catch (err) {
+          console.error(err);
         }
-      } catch (err) {
-        console.error(err);
-      }
-    }
+      }  
+    }else {
+      const TitleMsg = `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`;
+      dispatch(SET_ALERT({
+        alertMessage: TitleMsg,
+        onSubmit: () => {
+          router.push('/onboarding');
+        },
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      }))
+    };
   };
 
   const TagType = () => {
