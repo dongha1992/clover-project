@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
 import {
@@ -12,77 +12,239 @@ import {
   fixedBottom,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Pages/Payment/PaymentItem';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
+import { FinishPaymentItem } from '@components/Pages/Payment';
 import { ButtonGroup } from '@components/Shared/Button';
-import router from 'next/router';
+import { getOrderDetailApi } from '@api/order';
+import { useRouter } from 'next/router';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/payment';
+import getCustomDate from '@utils/getCustomDate';
+import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
+interface IProps {
+  orderId: number;
+}
 
-/* TODO: 주문 완료 api 나오면 수정 */
+/* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const PaymentFinishPage = () => {
-  const [itemList, setItemList] = useState([]);
-  const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
+const PaymentFinishPage = ({ orderId }: IProps) => {
+  const router = useRouter();
 
-  useEffect(() => {
-    getCartList();
-  }, []);
-
-  const getCartList = async () => {
-    const { data } = await axios.get(`${BASE_URL}/cartList`);
-    setItemList(data.data);
-  };
-
-  const showSectionHandler = (): void => {
-    setIsShowOrderItemSection(!isShowOrderItemSection);
-  };
+  const { data: orderDetail, isLoading } = useQuery(
+    ['getOrderDetail'],
+    async () => {
+      const { data } = await getOrderDetailApi(orderId);
+      return data.data;
+    },
+    {
+      onSuccess: () => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const goToOrderDetail = () => {
-    router.push('/mypage/order-detail');
+    router.push({ pathname: `/mypage/order-detail/${orderId}` });
   };
 
-  const goToShopping = () => {};
+  const goToShopping = () => {
+    router.push('/');
+  };
 
-  if (!itemList.length) {
+  const deliveryDateRenderer = ({
+    location,
+    delivery,
+    deliveryDetail,
+    dayFormatter,
+    spotName,
+    spotPickupName,
+    lunchDeliveryEndTime,
+    lunchDeliveryStartTime,
+    dinnerDeliveryEndTime,
+    dinnerDeliveryStartTime,
+  }: {
+    location: ILocation;
+    delivery: string;
+    deliveryDetail: string;
+    dayFormatter: string;
+    spotName: string;
+    spotPickupName: string;
+    lunchDeliveryEndTime: string;
+    lunchDeliveryStartTime: string;
+    dinnerDeliveryEndTime: string;
+    dinnerDeliveryStartTime: string;
+  }) => {
+    const isLunch = deliveryDetail === 'LUNCH';
+
+    const spotLunchDevlieryTime = `${lunchDeliveryStartTime}-${lunchDeliveryEndTime}`;
+    const spotDinnerDevlieryTime = `${dinnerDeliveryStartTime}-${dinnerDeliveryEndTime}`;
+
+    switch (delivery) {
+      case 'PARCEL': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{dayFormatter}</TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'MORNING': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{dayFormatter} 00:00-07:00</TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'QUICK': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {dayFormatter} {isLunch ? '11:30-12:00' : '15:30-18:00'}
+                </TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'SPOT': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {dayFormatter} {isLunch ? spotLunchDevlieryTime : spotDinnerDevlieryTime}
+                </TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>픽업장소</TextH5B>
+              <FlexColEnd>
+                <FlexRow>
+                  <TextB3R>
+                    {spotName} {spotPickupName}
+                  </TextB3R>
+                </FlexRow>
+                <FlexRow>
+                  <TextB3R color={theme.greyScale65} margin="0 4px 0 0">
+                    ({location.zipCode})
+                  </TextB3R>
+                  <TextB3R color={theme.greyScale65}>{location.address}</TextB3R>
+                </FlexRow>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+    }
+  };
+
+  const cancelOrderInfoRenderer = (delivery: string, deliveryDetail: string) => {
+    const isLunch = deliveryDetail === 'LUNCH';
+
+    switch (delivery) {
+      case 'QUICK':
+      case 'SPOT': {
+        return (
+          <>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
+              취소할 수 있어요!
+            </TextB3R>
+          </>
+        );
+      }
+      case 'PARCEL':
+      case 'MORNING': {
+        return (
+          <>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
+            </TextB3R>
+          </>
+        );
+      }
+    }
+  };
+
+  if (isLoading) {
     return <div>로딩중</div>;
   }
-  const showFirstItem = itemList[0];
-  const showMoreItmeList = itemList.filter((item, index) => index);
+
+  const { delivery, deliveryDetail } = orderDetail!;
+  const { orderMenus, spot, spotPickup, location, deliveryDate } = orderDetail?.orderDeliveries[0]!;
+  const { dayFormatter } = getCustomDate(new Date(deliveryDate));
+  const isSpot = delivery === 'SPOT';
+
+  console.log(orderDetail, 'orderDetail');
 
   return (
     <Container>
       <PlaceInfoWrapper>
         <div className="title">
-          <TextH2B color={theme.brandColor}>스팟배송</TextH2B>
-          <TextH2B>점심주문이 완료되었습니다.</TextH2B>
+          <TextH2B color={theme.brandColor}>{DELIVERY_TYPE_MAP[delivery]}</TextH2B>
+          {orderDetail ? (
+            <TextH2B>{DELIVERY_TIME_MAP[deliveryDetail]}주문이 완료되었습니다.</TextH2B>
+          ) : (
+            <TextH2B>주문이 완료되었습니다.</TextH2B>
+          )}
         </div>
-
-        <div className="discription">
-          <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-            주문취소는 배송일 전날 오전 7시까지 입니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65}>
-            단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소 불가합니다.
-          </TextB3R>
-        </div>
+        <div className="discription">{cancelOrderInfoRenderer(delivery, deliveryDetail)}</div>
       </PlaceInfoWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문상품</TextH4B>
-          <FlexRow onClick={() => showSectionHandler()}>
-            <SVGIcon name={isShowOrderItemSection ? 'triangleUp' : 'triangleDown'} />
-          </FlexRow>
         </FlexBetween>
         <SingleOrderItemWrapper>
-          <PaymentItem menu={showFirstItem} />
+          <FinishPaymentItem menu={orderDetail} />
         </SingleOrderItemWrapper>
-        <OrderListWrapper isShow={isShowOrderItemSection}>
-          {showMoreItmeList.map((menu, index) => {
-            return <PaymentItem menu={menu} key={index} />;
-          })}
-        </OrderListWrapper>
       </OrderItemsWrapper>
       <BorderLine height={8} />
       <DevlieryInfoWrapper>
@@ -90,21 +252,18 @@ const PaymentFinishPage = () => {
           <TextH4B>배송정보</TextH4B>
         </FlexBetween>
         <FlexCol padding="24px 0">
-          <FlexBetweenStart margin="16px 0">
-            <TextH5B>배송 예정실시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart>
-            <TextH5B>베송장소</TextH5B>
-            <FlexColEnd>
-              <TextB2R>헤이그라운드 서울숲점 - 10층 냉장고</TextB2R>
-              <TextB3R color={theme.greyScale65}>서울 성동구 왕십리로 115 10층</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
+          {deliveryDateRenderer({
+            location,
+            delivery,
+            deliveryDetail,
+            dayFormatter,
+            spotName: spot?.name!,
+            spotPickupName: spotPickup?.name!,
+            lunchDeliveryEndTime: spot?.lunchDeliveryEndTime!,
+            lunchDeliveryStartTime: spot?.lunchDeliveryStartTime!,
+            dinnerDeliveryEndTime: spot?.dinnerDeliveryEndTime!,
+            dinnerDeliveryStartTime: spot?.dinnerDeliveryStartTime!,
+          })}
         </FlexCol>
       </DevlieryInfoWrapper>
       <ButtonGroup
@@ -152,6 +311,7 @@ const OrderDetailBtn = styled.div`
   width: 100%;
   ${fixedBottom}
 `;
+
 const Col = styled.div`
   position: absolute;
   left: 50%;
@@ -160,5 +320,12 @@ const Col = styled.div`
   width: 1px;
   height: 50%;
 `;
+
+export async function getServerSideProps(context: any) {
+  const { orderId } = context.query;
+  return {
+    props: { orderId: +orderId },
+  };
+}
 
 export default PaymentFinishPage;

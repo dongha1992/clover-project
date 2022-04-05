@@ -58,6 +58,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     deliveryMessage: '',
   });
 
+  console.log(tempEditSpot, 'tempEditSpot');
+
   const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
