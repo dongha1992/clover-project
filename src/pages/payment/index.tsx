@@ -18,9 +18,9 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Pages/Payment/PaymentItem';
+import { PaymentItem } from '@components/Pages/Payment';
 import TextInput from '@components/Shared/TextInput';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
@@ -33,7 +33,7 @@ import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
-import { DELIVERY_TYPE_MAP } from '@constants/payment';
+import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/payment';
 import getCustomDate from '@utils/getCustomDate';
 import { PaymentCouponSheet } from '@components/BottomSheet/PaymentCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
@@ -77,11 +77,6 @@ const PAYMENT_METHOD = [
   },
 ];
 
-const deliveryTimeMap: Obj = {
-  LUNCH: '점심',
-  DINNER: '저녁',
-};
-
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -116,11 +111,12 @@ const PaymentPage = () => {
   const { selectedCoupon } = useSelector(couponForm);
   const { userDestination } = useSelector(destinationForm);
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
     async () => {
-      const reqBody = {
+      const previewBody = {
         delivery: 'SPOT',
         deliveryDetail: 'DINNER',
         destinationId: 1,
@@ -131,6 +127,10 @@ const PaymentPage = () => {
             orderMenus: [
               {
                 menuDetailId: 72,
+                menuQuantity: 1,
+              },
+              {
+                menuDetailId: 511,
                 menuQuantity: 1,
               },
             ],
@@ -145,7 +145,7 @@ const PaymentPage = () => {
         type: 'GENERAL',
       };
 
-      const { data } = await createOrderPreviewApi(reqBody);
+      const { data } = await createOrderPreviewApi(previewBody);
       if (data.code === 200) {
         return data.data;
       }
@@ -156,74 +156,10 @@ const PaymentPage = () => {
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       const reqBody = {
-        type: 'GENERAL',
         payMethod: 'NICE_BILLING',
         cardId: 81,
-        userName: 'string',
-        userTel: '010509630481',
-        receiverName: '마천동킹크랩',
-        receiverTel: '01021380952',
-        delivery: 'SPOT',
-        deliveryDetail: 'DINNER',
-        location: {
-          zipCode: '06182',
-          address: '서울 강남구 영동대로 417',
-          addressDetail: ' 지하 2층 (오토웨이타워)',
-          dong: '대치동',
-        },
-        destinationId: 1,
-        menuAmount: 6500,
-        menuDiscount: 1000,
-        optionAmount: 100,
-        eventDiscount: 275,
-        deliveryFee: 0,
-        deliveryFeeDiscount: 0,
-        point: 0,
-        coupon: 0,
-        payAmount: 5225,
-        isDeliveryTogether: false,
-        orderDeliveries: [
-          {
-            deliveryDate: '2022-04-06',
-            deliveryStartTime: '13:00',
-            deliveryEndTime: '17:00',
-            receiverName: '마천동킹크랩',
-            receiverTel: '01021380952',
-            location: {
-              zipCode: '06182',
-              address: '서울 강남구 영동대로 417',
-              addressDetail: ' 지하 2층 (오토웨이타워)',
-              dong: '대치동',
-            },
-            orderMenus: [
-              {
-                menuId: 9,
-                menuName: '닭가슴살 아몬드 샐러드',
-                menuDetailId: 72,
-                menuDetailName: '미디움 (M)',
-                menuPrice: 6500,
-                menuDiscount: 1000,
-                menuQuantity: 1,
-                image: {
-                  id: 2534,
-                  url: '/menu/origin/9_20211124111843',
-                  width: 564,
-                  height: 564,
-                },
-              },
-            ],
-            orderOptions: [
-              {
-                optionId: 1,
-                optionName: '수저',
-                optionPrice: 100,
-                optionQuantity: 1,
-              },
-            ],
-          },
-        ],
+        ...previewOrder?.order!,
       };
-
       const { data } = await createOrderApi(reqBody);
       const { id: orderId } = data.data;
       return orderId;
@@ -326,7 +262,7 @@ const PaymentPage = () => {
         return (
           <>
             <FlexBetweenStart margin="16px 0">
-              <TextH5B>배송 예정실시</TextH5B>
+              <TextH5B>배송 예정일시</TextH5B>
               <FlexColEnd>
                 <TextB2R>{dayFormatter}</TextB2R>
                 <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
@@ -460,12 +396,12 @@ const PaymentPage = () => {
 
   useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
-
-    const { point: limitPoint } = previewOrder!;
+    console.log(previewOrder, 'previewOrder');
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
-    if (usePointAll) {
+    if (usePointAll && previewOrder) {
+      const { point: limitPoint } = previewOrder!;
       setUserInputObj({ ...userInputObj, point: limitPoint });
     }
   }, [checkForm.alwaysPointAll.isSelected]);
@@ -526,7 +462,7 @@ const PaymentPage = () => {
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {orderMenus.map((menu, index) => {
+          {orderMenus?.map((menu, index) => {
             return <PaymentItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>
@@ -594,7 +530,7 @@ const PaymentPage = () => {
             <TextH5B>배송방법</TextH5B>
             {!['PARCEL', 'MORNING'].includes(delivery) ? (
               <TextB2R>
-                {DELIVERY_TYPE_MAP[delivery]} - {deliveryTimeMap[deliveryDetail]}
+                {DELIVERY_TYPE_MAP[delivery]} - {DELIVERY_TIME_MAP[deliveryDetail]}
               </TextB2R>
             ) : (
               <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>

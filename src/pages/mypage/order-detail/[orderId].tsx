@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FlexRow, theme, FlexBetween, FlexEnd, FlexRowStart } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Pages/Payment/PaymentItem';
+import { PaymentItem } from '@components/Pages/Payment';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
