@@ -120,7 +120,7 @@ const PaymentPage = () => {
         delivery: 'SPOT',
         deliveryDetail: 'DINNER',
         destinationId: 1,
-        isDeliveryTogether: false,
+        isSubOrderDelivery: false,
         orderDeliveries: [
           {
             deliveryDate: '2022-04-06',
@@ -247,6 +247,10 @@ const PaymentPage = () => {
     dayFormatter,
     spotName,
     spotPickupName,
+    lunchDeliveryEndTime,
+    lunchDeliveryStartTime,
+    dinnerDeliveryEndTime,
+    dinnerDeliveryStartTime,
   }: {
     location: ILocation;
     delivery: string;
@@ -254,8 +258,15 @@ const PaymentPage = () => {
     dayFormatter: string;
     spotName: string;
     spotPickupName: string;
+    lunchDeliveryEndTime: string;
+    lunchDeliveryStartTime: string;
+    dinnerDeliveryEndTime: string;
+    dinnerDeliveryStartTime: string;
   }) => {
     const isLunch = deliveryDetail === 'LUNCH';
+
+    const spotLunchDevlieryTime = `${lunchDeliveryStartTime}-${lunchDeliveryEndTime}`;
+    const spotDinnerDevlieryTime = `${dinnerDeliveryStartTime}-${dinnerDeliveryEndTime}`;
 
     switch (delivery) {
       case 'PARCEL': {
@@ -330,7 +341,7 @@ const PaymentPage = () => {
               <TextH5B>배송 예정실시</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {dayFormatter} {isLunch ? '11:30-12:00' : '17:30-18:00'}
+                  {dayFormatter} {isLunch ? spotLunchDevlieryTime : spotDinnerDevlieryTime}
                 </TextB2R>
                 <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
                 <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
@@ -352,6 +363,40 @@ const PaymentPage = () => {
                 </FlexRow>
               </FlexColEnd>
             </FlexBetweenStart>
+          </>
+        );
+      }
+    }
+  };
+
+  const cancelOrderInfoRenderer = (delivery: string, deliveryDetail: string) => {
+    const isLunch = deliveryDetail === 'LUNCH';
+
+    switch (delivery) {
+      case 'QUICK':
+      case 'SPOT': {
+        return (
+          <>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
+              취소할 수 있어요!
+            </TextB3R>
+          </>
+        );
+      }
+      case 'PARCEL':
+      case 'MORNING': {
+        return (
+          <>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
+            </TextB3R>
           </>
         );
       }
@@ -431,13 +476,10 @@ const PaymentPage = () => {
     deliveryFee,
     coupon,
   } = previewOrder?.order!;
-  const { deliveryDate, spotName, spotPickupName, orderOptions } = previewOrder?.order?.orderDeliveries[0]!;
+  const { deliveryDate, spot, spotPickup, orderOptions } = previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
   const { point } = previewOrder!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
-
-  const totalPayAmount =
-    menuAmount - (menuDiscount + eventDiscount + coupon + deliveryFeeDiscount) + optionAmount + deliveryFee - point;
 
   const isParcel = delivery === 'PARCEL';
   const isMorning = delivery === 'MORNING';
@@ -536,7 +578,18 @@ const PaymentPage = () => {
               <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>
             )}
           </FlexBetween>
-          {deliveryDateRenderer({ location, delivery, deliveryDetail, dayFormatter, spotName, spotPickupName })}
+          {deliveryDateRenderer({
+            location,
+            delivery,
+            deliveryDetail,
+            dayFormatter,
+            spotName: spot?.name!,
+            spotPickupName: spotPickup?.name!,
+            lunchDeliveryEndTime: spot?.lunchDeliveryEndTime!,
+            lunchDeliveryStartTime: spot?.lunchDeliveryStartTime!,
+            dinnerDeliveryEndTime: spot?.dinnerDeliveryEndTime!,
+            dinnerDeliveryStartTime: spot?.dinnerDeliveryStartTime!,
+          })}
         </FlexCol>
         <MustCheckAboutDelivery>
           <FlexCol>
@@ -546,10 +599,7 @@ const PaymentPage = () => {
                 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
-            <TextB3R color={theme.brandColor}>주문취소는 배송일 전날 오전 7시까지 입니다.</TextB3R>
-            <TextB3R color={theme.brandColor}>
-              단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소 불가합니다.
-            </TextB3R>
+            {cancelOrderInfoRenderer(delivery, deliveryDetail)}
           </FlexCol>
         </MustCheckAboutDelivery>
       </DevlieryInfoWrapper>
