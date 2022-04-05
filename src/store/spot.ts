@@ -153,8 +153,11 @@ export const spot = createSlice({
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
-    SET_SPOT_LIKED: (state, action : PayloadAction<boolean>) => {
-      state.isSpotLiked = action.payload;
+    INIT_SPOT_LIKED: (state, action : PayloadAction) => {
+      state.isSpotLiked = false;
+    },
+    SET_SPOT_LIKED: (state, action : PayloadAction) => {
+      state.isSpotLiked = true;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
       state.spotLocation = action.payload;
@@ -192,7 +195,8 @@ export const spot = createSlice({
 
 export const { 
   SPOT_ITEM, 
-  SET_SPOT_LIKED, 
+  SET_SPOT_LIKED,
+  INIT_SPOT_LIKED,
   SET_SPOT_LOCATION, 
   INIT_SPOT_LOCATION, 
   SET_SPOT_REGISTRATIONS_OPTIONS,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { postSpotLike, deleteSpotLike, getSpotLike } from '@api/spot';
-import { SET_SPOT_LIKED } from '@store/spot';
+import { SET_SPOT_LIKED, INIT_SPOT_LIKED } from '@store/spot';
 import { userForm } from '@store/user';
 import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
@@ -17,11 +17,12 @@ import { SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } fr
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
-  const { isDelivery, orderId } = router.query;
+  const { isDelivery } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
+  const detailId: number = spotDetail!.id;
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
 
@@ -68,8 +69,13 @@ const SpotDetailBottom = () => {
   useEffect(() => {
     const spotLikeData = async () => {
       try {
-        const { data } = await getSpotLike(spotDetail!.id);
+        const { data } = await getSpotLike(detailId);
         setSpotLike(data.data.liked);
+        if(data.data.liked){
+          dispatch(SET_SPOT_LIKED());
+        }else{
+          dispatch(INIT_SPOT_LIKED());
+        }
       } catch (err) {
         console.error(err);
       }
@@ -78,28 +84,24 @@ const SpotDetailBottom = () => {
     spotLikeData();
   }, [spotDetail, spotDetail?.id, spotLike]);
 
-  const hanlderLike = async () => {
+  const hanlderLike = async() => {
     if (isLoginSuccess) {
-      if (!spotLike) {
-        try {
-          const { data } = await postSpotLike(spotDetail!.id);
-          if (data.code === 200) {
-            dispatch(SET_SPOT_LIKED(true));
-            setSpotLike(true);
+      try {
+        if(!spotLike) {
+          const { data } = await postSpotLike(detailId);
+          if(data.code === 200){
+            dispatch(SET_SPOT_LIKED());
+            setSpotLike(true);    
           }
-        } catch (err) {
-          console.error(err);
-        }
-      } else if (spotLike) {
-        try {
-          const { data } = await deleteSpotLike(spotDetail!.id);
-          if (data.code === 200) {
-            dispatch(SET_SPOT_LIKED(false));
-            setSpotLike(false);
+        }else {
+          const { data } = await deleteSpotLike(detailId);
+          if(data.code === 200){
+            dispatch(INIT_SPOT_LIKED());
+            setSpotLike(false);      
           }
-        } catch (err) {
-          console.error(err);
         }
+      } catch(e){
+        console.error(e);
       }
     } else {
       router.push('/onboarding');
