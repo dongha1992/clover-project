@@ -38,7 +38,7 @@ const PaymentItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
               </TextH5B>
               <TextH5B>{discountedPrice}원</TextH5B>
               <Col />
-              <TextB2R>{menu.menuQuantity}개 외 </TextB2R>
+              <TextB2R>{menu.menuQuantity}개</TextB2R>
             </PriceWrapper>
             {isDeliveryComplete ? (
               <div>

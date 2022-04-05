@@ -60,14 +60,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   );
 
   const { mutate: deleteOrderMutation } = useMutation(
-    async () => {
-      const { data } = await deleteDeliveryApi(orderId);
+    async (deliveryId: number) => {
+      const { data } = await deleteDeliveryApi(deliveryId);
     },
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getOrderDetail');
-
-        // router.push('/mypage/order-delivery-history');
+        router.push('/mypage/order-delivery-history');
       },
     }
   );
@@ -169,6 +168,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
+    const deliveryId = orderDetail?.orderDeliveries[0].id!;
+
     let alertMessage = '';
 
     if (isSubOrder === 'sub') {
@@ -182,7 +183,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     dispatch(
       SET_ALERT({
         alertMessage,
-        onSubmit: () => deleteOrderMutation(),
+        onSubmit: () => deleteOrderMutation(deliveryId),
         closeBtnText: '취소',
       })
     );
@@ -251,6 +252,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     refundOptionAmount,
     refundOptionQuantity,
     refundPoint,
+    optionQuantity,
     deliveryFee,
     deliveryFeeDiscount,
     eventDiscount,
@@ -409,10 +411,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>
             {menuAmount -
-              (menuDiscount + eventDiscount + coupon) -
-              (deliveryFee - deliveryFeeDiscount) -
-              point -
-              optionAmount}
+              (menuDiscount + eventDiscount + deliveryFeeDiscount + coupon + point) +
+              optionAmount * optionQuantity +
+              deliveryFee}
             원
           </TextH4B>
         </FlexBetween>

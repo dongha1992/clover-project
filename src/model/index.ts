@@ -892,7 +892,7 @@ export interface ICreateOrderRequest {
   eventDiscount: number;
   point: number;
   payAmount: number;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   orderDeliveries: IOrderRequestInOrderDeliveries[];
 }
 
@@ -1137,6 +1137,7 @@ export interface IOrderDetail {
   paidAt: string;
   payAmount: number;
   optionAmount: number;
+  optionQuantity: number;
   point: number;
   refundCoupon: number;
   refundDeliveryFee: number;
@@ -1168,7 +1169,7 @@ export interface IOrderPreviewRequest {
   delivery: string;
   deliveryDetail: string;
   destinationId: number;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
   type: string;
 }
@@ -1212,7 +1213,7 @@ export interface ICreateOrderPreview {
       orderOptions: IOrderOptions[];
     }
   ];
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
 }
 export interface ICreateOrderPreviewResponse {
   code: number;
@@ -1222,7 +1223,7 @@ export interface ICreateOrderPreviewResponse {
     coupons: ICoupon[];
     point: number;
     cards: IGetCard[];
-    isDeliveryTogether: boolean;
+    isSubOrderDelivery: boolean;
   };
 }
 
