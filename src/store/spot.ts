@@ -71,6 +71,7 @@ interface IProps {
   spotsPosition: ISpotsPostions | any;
   spotsPickupSelected: ISpotsDetail | null;
   spotsSearchResultFiltered: ISpotSearchFilterd;
+  spotPickupPlace: string;
 };
 
 const spotsSearchResultFilteredState = {
@@ -143,6 +144,7 @@ const initialState: IProps = {
   spotsSearchResultFiltered: {
     ...spotsSearchResultFilteredState
   },
+  spotPickupPlace: '',
 };
 
 export const spot = createSlice({
@@ -190,6 +192,9 @@ export const spot = createSlice({
     INIT_SPOT_FILTERED: (state, action: PayloadAction) => {
       state.spotsSearchResultFiltered = spotsSearchResultFilteredState;
     },
+    SET_SPOT_PICKUP_PLACE: (state, action: PayloadAction<string>) => {
+      state.spotPickupPlace = action.payload;
+    },
   },
 });
 
@@ -207,6 +212,7 @@ export const {
   SET_SPOT_PICKUP_SELECTED,
   SET_SPOTS_FILTERED,
   INIT_SPOT_FILTERED,
+  SET_SPOT_PICKUP_PLACE,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;
