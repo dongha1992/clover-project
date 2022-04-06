@@ -17,7 +17,6 @@ import BorderLine from '@components/Shared/BorderLine';
 import { ButtonGroup } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { ACCESS_METHOD } from '@constants/payment/index';
 import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
@@ -26,8 +25,8 @@ import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
 import { getValues } from '@utils/getValues';
-import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
-import { IAccessMethod } from '@pages/payment';
+import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD } from '@constants/order';
+import { IAccessMethod } from '@pages/order';
 import { commonSelector } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 /*TODO: 주문자와 동일 기능 */

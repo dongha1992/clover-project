@@ -5,8 +5,8 @@ import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
-import { ACCESS_METHOD } from '@constants/payment';
-import { IAccessMethod } from '@pages/payment';
+import { ACCESS_METHOD } from '@constants/order';
+import { IAccessMethod } from '@pages/order';
 import { SET_ACCESS_METHOD } from '@store/common';
 
 interface IProps {

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FlexRow, theme, FlexBetween, FlexEnd, FlexRowStart } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import { PaymentItem } from '@components/Pages/Payment';
+import { OrderItem } from '@components/Pages/Order';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
@@ -23,7 +23,7 @@ import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delive
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo, SubOrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
-import { DELIVERY_TYPE_MAP } from '@constants/payment';
+import { DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
 import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
 
@@ -235,7 +235,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   };
 
-  const getTotalPayment = (): number => {
+  const getTotalOrder = (): number => {
     return 1;
   };
 
@@ -304,7 +304,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={deliveryStatus}>
           {orderMenus?.map((menu: IOrderMenus, index: number) => {
-            return <PaymentItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
+            return <OrderItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
           })}
           <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
             재주문하기

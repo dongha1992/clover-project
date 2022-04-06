@@ -42,7 +42,7 @@ interface ICalendar {
   disabledDates: string[];
   subOrderDelivery?: ISubOrderDelivery[];
   selectedDeliveryDay: string;
-  setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
+  changeDeliveryDate: (value: string) => void;
   goToSubDeliverySheet?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
@@ -52,7 +52,7 @@ const Calendar = ({
   disabledDates = [],
   subOrderDelivery,
   selectedDeliveryDay,
-  setSelectedDeliveryDay,
+  changeDeliveryDate,
   isSheet,
   goToSubDeliverySheet,
   lunchOrDinner,
@@ -110,7 +110,7 @@ const Calendar = ({
       goToSubDeliverySheet && goToSubDeliverySheet(selectedSubDelivery?.id);
     }
 
-    setSelectedDeliveryDay(value);
+    changeDeliveryDate(value);
   };
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
@@ -179,7 +179,7 @@ const Calendar = ({
     checkHasSubInActiveDates(dateList, mergedDisabledDate);
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!selectedDeliveryDay) {
-      setSelectedDeliveryDay(firstActiveDate);
+      changeDeliveryDate(firstActiveDate);
     }
     setCustomDisabledDate(mergedDisabledDate);
 

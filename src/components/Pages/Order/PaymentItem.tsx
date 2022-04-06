@@ -11,7 +11,7 @@ interface IProps {
   isCanceled?: boolean;
 }
 
-const PaymentItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
+const OrderItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
   const { discountedPrice, discount } = getDiscountPrice({
     discountPrice: menu.menuDiscount,
     price: menu.menuPrice,
@@ -100,4 +100,4 @@ const Col = styled.div`
   align-items: center;
   margin: 2px 8px;
 `;
-export default React.memo(PaymentItem);
+export default React.memo(OrderItem);
