@@ -272,8 +272,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     status,
     deliveryMessageType,
     deliveryMessage,
-    spot,
-    spotPickup,
+    spotName,
+    spotPickupId,
+    spotPickupName,
+    spotPickupType,
   } = orderDetail?.orderDeliveries[0]!;
 
   return (
@@ -347,8 +349,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           delivery={DELIVERY_TYPE_MAP[delivery]}
           deliveryDetail={deliveryDetail}
           location={location}
-          spotName={spot?.name}
-          spotPickupName={spotPickup?.name}
+          spotName={spotName}
+          spotPickupName={spotPickupName}
           status={status}
         />
         {isSubOrder === 'true' && <SubOrderInfo isDestinationChange />}

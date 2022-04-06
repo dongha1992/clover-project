@@ -68,6 +68,7 @@ const SpotSearchPage = (): ReactElement => {
   );
 
   /* TAYLER: 배송지목록 전체 조회에서 spot만 뽑음 */
+
   const { data: recentPickedSpotList, isLoading } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
     async () => {

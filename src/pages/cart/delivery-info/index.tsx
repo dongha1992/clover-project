@@ -47,17 +47,8 @@ const DeliverInfoPage = () => {
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const {
-    destinationStatus,
-    userTempDestination,
-    locationStatus,
-    userDestinationStatus,
-    availableDestination,
-    userDestination,
-  } = useSelector(destinationForm);
-
-  console.log(userDestinationStatus, 'userDestinationStatus');
-  console.log(destinationStatus, 'destinationStatus');
+  const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
+    useSelector(destinationForm);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -129,6 +120,7 @@ const DeliverInfoPage = () => {
       dispatch(INIT_AVAILABLE_DESTINATION());
       router.push('/cart');
     } else {
+      /* TODO spotPickupId 형 체크 */
       const reqBody = {
         addressDetail: tempDestination.location.addressDetail,
         name: tempDestination.name,
@@ -140,7 +132,9 @@ const DeliverInfoPage = () => {
         receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
         receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
         zipCode: tempDestination.location.zipCode,
+        spotPickupId: tempDestination.spotPickupId || tempDestination.spotPickup.id,
       };
+
       try {
         const { data } = await destinationRegister(reqBody);
         if (data.code === 200) {
@@ -178,13 +172,13 @@ const DeliverInfoPage = () => {
   };
 
   const placeInfoRender = () => {
-    switch (userDestinationStatus) {
+    switch (userSelectDeliveryType) {
       case 'spot': {
         return <PickupPlaceBox place={tempDestination} checkTermHandler={noticeHandler} isSelected={noticeChecked} />;
       }
 
       default: {
-        return <DeliveryPlaceBox place={tempDestination} type={userDestinationStatus.toUpperCase()} />;
+        return <DeliveryPlaceBox place={tempDestination} type={userSelectDeliveryType.toUpperCase()} />;
       }
     }
   };
