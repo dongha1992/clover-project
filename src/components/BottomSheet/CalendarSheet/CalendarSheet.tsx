@@ -58,6 +58,10 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
     );
   };
 
+  const changeDeliveryDate = (value: string) => {
+    setSelectedDeliveryDay(value);
+  };
+
   useEffect(() => {
     setSelectedDeliveryDay(deliveryAt);
   }, []);
@@ -81,7 +85,7 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
       <Calendar
         disabledDates={disabledDates}
         selectedDeliveryDay={selectedDeliveryDay}
-        setSelectedDeliveryDay={setSelectedDeliveryDay}
+        changeDeliveryDate={changeDeliveryDate}
         subOrderDelivery={subOrderDelivery}
         isSheet={isSheet}
       />

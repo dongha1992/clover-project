@@ -10,7 +10,7 @@ interface IProps {
   menu: any;
 }
 
-const FinishPaymentItem = ({ menu }: IProps) => {
+const FinishOrderItem = ({ menu }: IProps) => {
   const menuImg = menu.orderDeliveries[0].orderMenus[0].image.url;
   console.log(menu, 'orderMenus');
 
@@ -91,4 +91,4 @@ const PriceWrapper = styled.div`
   margin-top: 2px;
 `;
 
-export default React.memo(FinishPaymentItem);
+export default React.memo(FinishOrderItem);

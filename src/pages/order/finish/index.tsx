@@ -12,12 +12,12 @@ import {
   fixedBottom,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import { FinishPaymentItem } from '@components/Pages/Payment';
+import { FinishOrderItem } from '@components/Pages/Order';
 import { ButtonGroup } from '@components/Shared/Button';
 import { getOrderDetailApi } from '@api/order';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/payment';
+import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import getCustomDate from '@utils/getCustomDate';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 interface IProps {
@@ -26,7 +26,7 @@ interface IProps {
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const PaymentFinishPage = ({ orderId }: IProps) => {
+const OrderFinishPage = ({ orderId }: IProps) => {
   const router = useRouter();
 
   const { data: orderDetail, isLoading } = useQuery(
@@ -239,7 +239,7 @@ const PaymentFinishPage = ({ orderId }: IProps) => {
           <TextH4B>주문상품</TextH4B>
         </FlexBetween>
         <SingleOrderItemWrapper>
-          <FinishPaymentItem menu={orderDetail} />
+          <FinishOrderItem menu={orderDetail} />
         </SingleOrderItemWrapper>
       </OrderItemsWrapper>
       <BorderLine height={8} />
@@ -322,4 +322,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default PaymentFinishPage;
+export default OrderFinishPage;

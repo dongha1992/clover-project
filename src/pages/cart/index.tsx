@@ -220,17 +220,6 @@ const CartPage = () => {
     }
   );
 
-  // const { mutateAsync: mutateAddOrder } = useMutation(
-  //   async () => {
-  //     const { data } = await axios.delete(`${BASE_URL}/orderList`, { data });
-  //   },
-  //   {
-  //     onSuccess: async () => {
-  //       await queryClient.refetchQueries('getOrderList');
-  //     },
-  //   }
-  // );
-
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
       const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
@@ -397,46 +386,49 @@ const CartPage = () => {
 
   const clickRestockNoti = () => {};
 
-  const getTotalPrice = useCallback((): number => {
-    const itemsPrice = getItemsPrice();
-    const disposablePrice =
-      disposableList.reduce((totalPrice, item) => {
-        return totalPrice + item.price * item.quantity;
-      }, 0) || 0;
-    return itemsPrice + disposablePrice;
-  }, [selectedMenuList]);
+  const changeDeliveryDate = (dateValue: string) => {
+    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
 
-  const getItemsPrice = useCallback((): number => {
-    return (
-      selectedMenuList.reduce((totalPrice, item) => {
-        return totalPrice + item.price * item.quantity;
-      }, 0) || 0
+    if (!canSubDelivery && subDeliveryId) {
+      displayAlertForSubDelivery(setSelectedDeliveryDay(dateValue));
+      setSubDeliveryId(null);
+    }
+    setSelectedDeliveryDay(dateValue);
+  };
+
+  const displayAlertForSubDelivery = (callback: any) => {
+    dispatch(
+      SET_ALERT({
+        alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
+        alertSubMessage: '(배송정보는 함께 받을 기존 주문에서 변경할 수 있어요)',
+        submitBtnText: '변경하기',
+        closeBtnText: '취소',
+        onSubmit: () => callback,
+      })
     );
-  }, [selectedMenuList]);
+  };
 
   const goToDeliveryInfo = () => {
+    const callback = router.push('/cart/delivery-info');
     // 합배송 선택한 경우
     if (subDeliveryId) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
-        })
-      );
+      displayAlertForSubDelivery(callback);
+    } else {
+      router.push('/cart/delivery-info');
     }
-    router.push('/cart/delivery-info');
   };
 
   const goToSearchPage = () => {
     router.push('/search');
   };
 
-  const goToPayment = () => {
+  const goToOrder = () => {
     if (!hasDeliveryTypeAndDestination) return;
 
     const deliveryTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value;
     userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime }));
     dispatch(SET_ORDER_ITEMS(selectedMenuList));
-    router.push('/payment');
+    router.push('/order');
   };
 
   const goToSubDeliverySheet = (deliveryId: number): void => {
@@ -457,6 +449,23 @@ const CartPage = () => {
   const subDelieryHandler = (deliveryId: number) => {
     setSubDeliveryId(deliveryId);
   };
+
+  const getTotalPrice = useCallback((): number => {
+    const itemsPrice = getItemsPrice();
+    const disposablePrice =
+      disposableList.reduce((totalPrice, item) => {
+        return totalPrice + item.price * item.quantity;
+      }, 0) || 0;
+    return itemsPrice + disposablePrice;
+  }, [selectedMenuList]);
+
+  const getItemsPrice = useCallback((): number => {
+    return (
+      selectedMenuList.reduce((totalPrice, item) => {
+        return totalPrice + item.price * item.quantity;
+      }, 0) || 0
+    );
+  }, [selectedMenuList]);
 
   const buttonRenderer = useCallback(() => {
     return (
@@ -506,6 +515,24 @@ const CartPage = () => {
     };
   }, [calendarRef.current?.offsetTop]);
 
+  const checkSameDateSubDelivery = () => {
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
+
+    for (const subOrder of subOrderDelivery) {
+      const { deliveryDate, deliveryDetail } = subOrder;
+
+      const sameDeliveryTime = isSpotOrQuick
+        ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
+        : true;
+      const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
+      const canSubDelivery = sameDeliveryDate && sameDeliveryTime;
+
+      if (canSubDelivery) {
+        goToSubDeliverySheet(subOrder?.id);
+      }
+    }
+  };
+
   useEffect(() => {
     // 선택 메뉴 다 선택 시 all checked, 전체 삭제 하면 전체 선택 풀림
     if (cartItemList.length > 0 && checkedMenuIdList.length === cartItemList.length) {
@@ -533,21 +560,7 @@ const CartPage = () => {
   useEffect(() => {
     // 합배송 관련
     if (subOrderDelivery.length > 0) {
-      const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
-      /* TODO: 캘린더에서 점심/저녁 or 날짜 선택 합배송 뜨는 거  */
-
-      for (const subOrder of subOrderDelivery) {
-        const { deliveryDate, deliveryDetail } = subOrder;
-
-        const sameDeliveryTime = isSpotOrQuick
-          ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
-          : true;
-        const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
-
-        if (sameDeliveryDate && sameDeliveryTime) {
-          goToSubDeliverySheet(subOrder?.id);
-        }
-      }
+      checkSameDateSubDelivery();
     }
   }, [selectedDeliveryDay, lunchOrDinner, subOrderDelivery]);
 
@@ -715,7 +728,7 @@ const CartPage = () => {
               disabledDates={disabledDates}
               subOrderDelivery={subOrderDelivery}
               selectedDeliveryDay={selectedDeliveryDay}
-              setSelectedDeliveryDay={setSelectedDeliveryDay}
+              changeDeliveryDate={changeDeliveryDate}
               goToSubDeliverySheet={goToSubDeliverySheet}
               lunchOrDinner={lunchOrDinner}
             />
@@ -810,7 +823,7 @@ const CartPage = () => {
           </FlexEnd>
         </TotalPriceWrapper>
       </MenuListContainer>
-      <OrderBtn onClick={goToPayment}>{buttonRenderer()}</OrderBtn>
+      <OrderBtn onClick={goToOrder}>{buttonRenderer()}</OrderBtn>
     </Container>
   );
 };
