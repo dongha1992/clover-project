@@ -11,11 +11,13 @@ import { Obj } from '@model/index';
 
 interface IProps {
   title: string;
-  otherDeliveryInfo: any;
+  selectedSubDelivery: any;
+  subDelieryHandler: (deliveryId: number) => void;
 }
 
-const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
-  const [selectedDelivery, setSelectedDelivery] = useState(otherDeliveryInfo[0]?.id);
+const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IProps) => {
+  console.log(selectedSubDelivery, 'selectedSubDelivery');
+  const [selectedDelivery, setSelectedDelivery] = useState(selectedSubDelivery.id);
   const dispatch = useDispatch();
 
   const changeRadioHandler = (id: number) => {
@@ -25,9 +27,9 @@ const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
   const goToNewOrder = () => {
     dispatch(INIT_BOTTOM_SHEET());
   };
-
-  const goToTogetherDeliery = () => {
+  const getSubDeliveryHandler = (deliveryId: number) => {
     dispatch(INIT_BOTTOM_SHEET());
+    subDelieryHandler(deliveryId);
   };
 
   const formatDeliveryInfoToString = (item: any) => {
@@ -50,12 +52,22 @@ const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
         : deliveryMap[item.delivery]
     }`;
 
+    const isSpot = item.delivery === 'SPOT';
+
     return (
       <FlexCol>
         <TextH5B>
           {dayFormatter} / {deliveryInfo}
         </TextH5B>
-        <TextH5B>{item.location.addressDetail}</TextH5B>
+        {isSpot ? (
+          <TextH5B>
+            {item.spotName} - {item.spotPickupName}
+          </TextH5B>
+        ) : (
+          <TextH5B>
+            {item.location.addressDetail}-{item.location.addressDetail}
+          </TextH5B>
+        )}
       </FlexCol>
     );
   };
@@ -68,19 +80,15 @@ const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
         </TextH5B>
         <TextB2R>배송예정인 기존 주문이 있습니다. 기존 주문과 함께 받아보세요!</TextB2R>
         <BorderLine height={1} margin="16px 0" />
-        {otherDeliveryInfo.map((item: any) => {
-          return (
-            <FlexRow key={item.id}>
-              <RadioButton
-                onChange={() => {
-                  changeRadioHandler(item.id);
-                }}
-                isSelected={selectedDelivery === item.id}
-              />
-              <FlexRow padding="2px 0 0 8px">{formatDeliveryInfoToString(item)}</FlexRow>
-            </FlexRow>
-          );
-        })}
+        <FlexRow>
+          <RadioButton
+            onChange={() => {
+              changeRadioHandler(selectedSubDelivery.id);
+            }}
+            isSelected={selectedDelivery === selectedSubDelivery.id}
+          />
+          <FlexRow padding="2px 0 0 8px">{formatDeliveryInfoToString(selectedSubDelivery)}</FlexRow>
+        </FlexRow>
         <BorderLine height={1} margin="16px 0" />
         <TextH6B padding="0 0 12px 0">함께배송 이용 안내</TextH6B>
         <FlexCol>
@@ -123,7 +131,12 @@ const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
             신규 주문하기
           </Button>
           <Col />
-          <Button height="100%" width="100%" borderRadius="0" onClick={goToTogetherDeliery}>
+          <Button
+            height="100%"
+            width="100%"
+            borderRadius="0"
+            onClick={() => getSubDeliveryHandler(selectedSubDelivery.id)}
+          >
             함께 배송받기
           </Button>
         </BtnWrapper>
@@ -132,7 +145,9 @@ const TogetherDeliverySheet = ({ title, otherDeliveryInfo }: IProps) => {
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  margin-bottom: 24px;
+`;
 const Wrapper = styled.div`
   ${homePadding}
 `;
@@ -162,4 +177,4 @@ const Col = styled.div`
   height: 50%;
 `;
 
-export default React.memo(TogetherDeliverySheet);
+export default React.memo(SubDeliverySheet);

@@ -983,13 +983,17 @@ export interface IOrderDetailInOrderDeliveries {
   delivery: TDeliveryType;
   deliveryDetail: string;
   deliveryDate: string;
+  deliveryEndTime: string;
+  deliveryStartTime: string;
   receiverName: string;
   receiverTel: string;
   location: ILocation;
   deliveryMessageType?: string;
   deliveryMessage?: string;
-  spot?: IOrderDeliveriesInSpot;
-  spotPickup?: IOrderDeliveriesInSpotPickUp;
+  spotName: string;
+  spotPickupId: number;
+  spotPickupName: string;
+  spotPickupType: string;
   status: string;
   orderMenus: IOrderMenus[];
 }
@@ -1230,7 +1234,10 @@ export interface ICreateOrderPreviewResponse {
 export interface ICreateOrder {
   id: number;
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  isDeliveryTogether: boolean;
   name: string;
   menuQuantity: number;
   refundMenuQuantity: number;

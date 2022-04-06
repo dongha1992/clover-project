@@ -57,10 +57,8 @@ const PaymentFinishPage = ({ orderId }: IProps) => {
     dayFormatter,
     spotName,
     spotPickupName,
-    lunchDeliveryEndTime,
-    lunchDeliveryStartTime,
-    dinnerDeliveryEndTime,
-    dinnerDeliveryStartTime,
+    deliveryEndTime,
+    deliveryStartTime,
   }: {
     location: ILocation;
     delivery: string;
@@ -68,15 +66,12 @@ const PaymentFinishPage = ({ orderId }: IProps) => {
     dayFormatter: string;
     spotName: string;
     spotPickupName: string;
-    lunchDeliveryEndTime: string;
-    lunchDeliveryStartTime: string;
-    dinnerDeliveryEndTime: string;
-    dinnerDeliveryStartTime: string;
+    deliveryEndTime: string;
+    deliveryStartTime: string;
   }) => {
     const isLunch = deliveryDetail === 'LUNCH';
 
-    const spotLunchDevlieryTime = `${lunchDeliveryStartTime}-${lunchDeliveryEndTime}`;
-    const spotDinnerDevlieryTime = `${dinnerDeliveryStartTime}-${dinnerDeliveryEndTime}`;
+    const devlieryTime = `${deliveryStartTime}-${deliveryEndTime}`;
 
     switch (delivery) {
       case 'PARCEL': {
@@ -151,7 +146,7 @@ const PaymentFinishPage = ({ orderId }: IProps) => {
               <TextH5B>배송 예정실시</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {dayFormatter} {isLunch ? spotLunchDevlieryTime : spotDinnerDevlieryTime}
+                  {dayFormatter} {devlieryTime}
                 </TextB2R>
                 <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
                 <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
@@ -218,7 +213,8 @@ const PaymentFinishPage = ({ orderId }: IProps) => {
   }
 
   const { delivery, deliveryDetail } = orderDetail!;
-  const { orderMenus, spot, spotPickup, location, deliveryDate } = orderDetail?.orderDeliveries[0]!;
+  const { orderMenus, spotName, spotPickupName, location, deliveryDate, deliveryEndTime, deliveryStartTime } =
+    orderDetail?.orderDeliveries[0]!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
   const isSpot = delivery === 'SPOT';
 
@@ -257,12 +253,10 @@ const PaymentFinishPage = ({ orderId }: IProps) => {
             delivery,
             deliveryDetail,
             dayFormatter,
-            spotName: spot?.name!,
-            spotPickupName: spotPickup?.name!,
-            lunchDeliveryEndTime: spot?.lunchDeliveryEndTime!,
-            lunchDeliveryStartTime: spot?.lunchDeliveryStartTime!,
-            dinnerDeliveryEndTime: spot?.dinnerDeliveryEndTime!,
-            dinnerDeliveryStartTime: spot?.dinnerDeliveryStartTime!,
+            spotName,
+            spotPickupName,
+            deliveryEndTime,
+            deliveryStartTime,
           })}
         </FlexCol>
       </DevlieryInfoWrapper>
