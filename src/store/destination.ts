@@ -30,6 +30,8 @@ export interface IDestination {
   type?: string;
   availableTime?: string;
   deliveryTime?: string;
+  spotPickupId?: number;
+  spotPickup?: any;
 }
 
 interface TProps {

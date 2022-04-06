@@ -35,13 +35,15 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
+  const recentPickupTime = `${item.spotPickup?.spot.lunchDeliveryStartTime}-${item.spotPickup?.spot.lunchDeliveryEndTime} / ${item.spotPickup?.spot.dinnerDeliveryStartTime}-${item.spotPickup?.spot.dinnerDeliveryEndTime}`;
+  const spaceType = item.type ? item.type : item.spotPickup.spot.type;
+  const availableTime = item.spotPickup ? recentPickupTime : pickUpTime;
 
   /* TODO: 임시로 이렇게 해둠 */
   const imageUrl = item?.images ? item?.images[0]?.url : item?.spotPickup?.spot?.images[0].url;
 
   const typeTag = (): string => {
-    const type = item.type;
-    switch (type) {
+    switch (spaceType) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
@@ -50,6 +52,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         return '';
     }
   };
+
   const orderHandler = () => {
     const destinationInfo = {
       name: item.name,
@@ -60,8 +63,9 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         zipCode: item.location.zipCode,
       },
       main: false,
-      availableTime: pickUpTime,
-      spaceType: item.type,
+      availableTime,
+      spaceType,
+      spotPickupId: item.spotPickup?.id,
     };
 
     if (isLoginSuccess) {
@@ -118,7 +122,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
           <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
             픽업
           </TextH6B>
-          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          <TextH6B color={theme.greyScale65}>{availableTime}</TextH6B>
         </MeterAndTime>
         {!item.isTrial ? (
           <div>

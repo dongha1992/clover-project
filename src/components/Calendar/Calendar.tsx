@@ -43,7 +43,7 @@ interface ICalendar {
   subOrderDelivery?: ISubOrderDelivery[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
-  goToSubDelivery?: (id: number) => void;
+  goToSubDeliverySheet?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
 }
@@ -54,7 +54,7 @@ const Calendar = ({
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
-  goToSubDelivery,
+  goToSubDeliverySheet,
   lunchOrDinner,
 }: ICalendar) => {
   const [dateList, setDateList] = useState<IDateObj[]>([]);
@@ -107,7 +107,7 @@ const Calendar = ({
     );
 
     if (selectedSubDelivery && !isSheet) {
-      goToSubDelivery && goToSubDelivery(selectedSubDelivery?.id);
+      goToSubDeliverySheet && goToSubDeliverySheet(selectedSubDelivery?.id);
     }
 
     setSelectedDeliveryDay(value);

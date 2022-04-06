@@ -86,6 +86,7 @@ const DestinationSearchPage = () => {
       router.push({ pathname: '/destination/destination-detail', query: { orderId } });
     } else {
       router.push('/destination/destination-detail');
+      dispatch(SET_LOCATION_TEMP(address));
     }
   };
 
