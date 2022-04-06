@@ -31,7 +31,7 @@ import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
 import { Obj, ISubOrderDelivery } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
-import { TogetherDeliverySheet } from '@components/BottomSheet/TogetherDeliverySheet';
+import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
@@ -62,9 +62,7 @@ export interface ILunchOrDinner {
   time: string;
 }
 
-//temp
-
-const disabledDates = ['2022-02-21', '2022-02-22'];
+const disabledDates = [];
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<any[]>([]);
@@ -99,12 +97,13 @@ const CartPage = () => {
   ]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
+  const [subDeliveryId, setSubDeliveryId] = useState<number | null>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { isFromDeliveryPage, cartLists } = useSelector(cartForm);
+  const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDestinationStatus, userDestination } = useSelector(destinationForm);
   const { isLoginSuccess } = useSelector(userForm);
 
@@ -204,7 +203,6 @@ const CartPage = () => {
     },
     {
       onSuccess: async () => {
-        // Q. invalidateQueries랑 refetchQueries 차이
         // await queryClient.invalidateQueries('getCartList');
         await queryClient.refetchQueries('getCartList');
       },
@@ -236,7 +234,8 @@ const CartPage = () => {
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
       const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
-      const sameDeliveryAddress = isEqual(location, userDestination?.location);
+      let sameDeliveryAddress = isEqual(location, userDestination?.location);
+      sameDeliveryAddress = true;
       return sameDeliveryAddress && sameDeliveryType;
     };
 
@@ -416,6 +415,14 @@ const CartPage = () => {
   }, [selectedMenuList]);
 
   const goToDeliveryInfo = () => {
+    // 합배송 선택한 경우
+    if (subDeliveryId) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
+        })
+      );
+    }
     router.push('/cart/delivery-info');
   };
 
@@ -432,12 +439,23 @@ const CartPage = () => {
     router.push('/payment');
   };
 
-  const goToSubDelivery = (id: number): void => {
+  const goToSubDeliverySheet = (deliveryId: number): void => {
+    const selectedSubDelivery = subOrderDelivery.find((item) => item.id === deliveryId);
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <TogetherDeliverySheet title="함께배송 안내" otherDeliveryInfo={subOrderDelivery} />,
+        content: (
+          <SubDeliverySheet
+            title="함께배송 안내"
+            selectedSubDelivery={selectedSubDelivery}
+            subDelieryHandler={subDelieryHandler}
+          />
+        ),
       })
     );
+  };
+
+  const subDelieryHandler = (deliveryId: number) => {
+    setSubDeliveryId(deliveryId);
   };
 
   const buttonRenderer = useCallback(() => {
@@ -513,13 +531,8 @@ const CartPage = () => {
   }, [checkedMenuIdList, cartItemList]);
 
   useEffect(() => {
-    // 초기 렌더 1회 장바구니 아이템 전체 선택
-    setIsAllchecked(true);
-
-    console.log(subOrderDelivery, 'subOrderDelivery');
-
     // 합배송 관련
-    if (subOrderDelivery) {
+    if (subOrderDelivery.length > 0) {
       const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
       /* TODO: 캘린더에서 점심/저녁 or 날짜 선택 합배송 뜨는 거  */
 
@@ -532,11 +545,16 @@ const CartPage = () => {
         const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
 
         if (sameDeliveryDate && sameDeliveryTime) {
-          goToSubDelivery(subOrder?.id);
+          goToSubDeliverySheet(subOrder?.id);
         }
       }
     }
-  }, [selectedDeliveryDay, lunchOrDinner]);
+  }, [selectedDeliveryDay, lunchOrDinner, subOrderDelivery]);
+
+  useEffect(() => {
+    // 초기 렌더 1회 장바구니 아이템 전체 선택
+    setIsAllchecked(true);
+  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -698,7 +716,7 @@ const CartPage = () => {
               subOrderDelivery={subOrderDelivery}
               selectedDeliveryDay={selectedDeliveryDay}
               setSelectedDeliveryDay={setSelectedDeliveryDay}
-              goToSubDelivery={goToSubDelivery}
+              goToSubDeliverySheet={goToSubDeliverySheet}
               lunchOrDinner={lunchOrDinner}
             />
             {isSpotAndQuick &&
