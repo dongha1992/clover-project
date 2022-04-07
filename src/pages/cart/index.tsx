@@ -29,7 +29,7 @@ import { SET_ORDER_ITEMS } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj, ISubOrderDelivery } from '@model/index';
+import { Obj, ISubOrderDelivery, IMenuDetailsInCart, IGetCart } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -37,10 +37,12 @@ import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { availabilityDestination } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
+import { getCartsApi } from '@api/cart';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { CartItem } from '@components/Pages/Cart';
+import { pluck, pipe, reduce, toArray } from '@fxts/core';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -63,6 +65,11 @@ export interface ILunchOrDinner {
 }
 
 const disabledDates = [];
+
+const INITIAL_NUTRITION = {
+  protein: 0,
+  calorie: 0,
+};
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<any[]>([]);
@@ -98,6 +105,7 @@ const CartPage = () => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
   const [subDeliveryId, setSubDeliveryId] = useState<number | null>(null);
+  const [nutritionObj, setNutritionObj] = useState({ ...INITIAL_NUTRITION });
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -112,7 +120,7 @@ const CartPage = () => {
   const { isLoading } = useQuery(
     'getCartList',
     async () => {
-      const { data }: { data: any } = await axios.get(`${BASE_URL}/cartList`);
+      const { data } = await getCartsApi();
       return data.data;
     },
     {
@@ -121,6 +129,7 @@ const CartPage = () => {
       cacheTime: 0,
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
+        setNutritionObj(getTotalNutrition(data));
         setCartItemList(data);
         dispatch(INIT_CART_LISTS());
         dispatch(SET_CART_LISTS(data));
@@ -220,16 +229,24 @@ const CartPage = () => {
     }
   );
 
-  // const { mutateAsync: mutateAddOrder } = useMutation(
-  //   async () => {
-  //     const { data } = await axios.delete(`${BASE_URL}/orderList`, { data });
-  //   },
-  //   {
-  //     onSuccess: async () => {
-  //       await queryClient.refetchQueries('getOrderList');
-  //     },
-  //   }
-  // );
+  const getTotalNutrition = (
+    menus: IGetCart[]
+  ): {
+    calorie: number;
+    protein: number;
+  } => {
+    return menus.reduce(
+      (total, menu) => {
+        return menu.menuDetails.reduce((total, cur) => {
+          return {
+            calorie: total.calorie + cur.calorie,
+            protein: total.protein + cur.protein,
+          };
+        }, total);
+      },
+      { ...INITIAL_NUTRITION }
+    );
+  };
 
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
@@ -680,14 +697,14 @@ const CartPage = () => {
                   <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
                     총 열량
                   </TextH7B>
-                  <TextH4B padding="0 2px 0 0">12,000</TextH4B>
+                  <TextH4B padding="0 2px 0 0">{nutritionObj.calorie}</TextH4B>
                   <TextB3R>Kcal</TextB3R>
                 </Calorie>
                 <Protein>
                   <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
                     총 단백질
                   </TextH7B>
-                  <TextH4B padding="0 2px 0 0">12,00</TextH4B>
+                  <TextH4B padding="0 2px 0 0">{nutritionObj.protein}</TextH4B>
                   <TextB3R>g</TextB3R>
                 </Protein>
               </FlexStart>
