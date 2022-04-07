@@ -16,78 +16,12 @@ import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector } from '@store/spot';
+import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
-
-const RECENT_SPOT = [
-  {
-    id: 1,
-    name: '유니트아이엔씨',
-    location: {
-      address: '서울 성동구 왕십리로 115 10층',
-      addressDetail: '',
-    },
-    distance: 121,
-    type: 'PRIVATE',
-    lunchDeliveryStartTime: '11:00:00',
-    lunchDeliveryEndTime: '11:30:00',
-    dinnerDeliveryStartTime: '14:00:00',
-    dinnerDeliveryEndTime: '18:00:00',
-    // availableTime: "12:00-12:30 / 15:30-18:00",
-    // spaceType: "프라이빗",
-    images: [
-      {
-        url: '/dev/spot/origin/1_20190213142552',
-      },
-    ],
-    method: 'pickup',
-  },
-  {
-    id: 2,
-    name: 'test',
-    location: {
-      address: '서울 성동구 왕십리로 115 11층',
-      addressDetail: '',
-    },
-    distance: 11,
-    type: 'PRIVATE',
-    lunchDeliveryStartTime: '11:00:00',
-    lunchDeliveryEndTime: '11:30:00',
-    dinnerDeliveryStartTime: '14:00:00',
-    dinnerDeliveryEndTime: '18:00:00',
-    // availableTime: "12:00-12:30 / 15:30-18:00",
-    // spaceType: "퍼블릭",
-    images: [
-      {
-        url: '/dev/spot/origin/1_20190213142552',
-      },
-    ],
-    method: 'pickup',
-  },
-  {
-    id: 3,
-    name: 'test11',
-    location: {
-      address: '서울 성동구 왕십리로 115 22층',
-      addressDetail: '',
-    },
-    distance: 11,
-    type: 'PUBLIC',
-    lunchDeliveryStartTime: '11:00:00',
-    lunchDeliveryEndTime: '11:30:00',
-    dinnerDeliveryStartTime: '14:00:00',
-    dinnerDeliveryEndTime: '18:00:00',
-    // availableTime: "12:00-12:30 / 15:30-18:00",
-    // spaceType: "퍼블릭",
-    images: [
-      {
-        url: '/dev/spot/origin/1_20190213142552',
-      },
-    ],
-    method: 'pickup',
-  },
-];
+import { getDestinations } from '@api/destination';
+import { IDestinationsResponse } from '@model/index';
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -95,12 +29,14 @@ const SpotSearchPage = (): ReactElement => {
   const { userLocation } = useSelector(destinationForm);
   const [spotRecommend, setSpotRecommend] = useState<ISpots>();
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
-  const [recentPickedSpotList, setRecentPickedSpotList] = useState<any[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
+
+  const router = useRouter();
+  const { orderId } = router.query;
 
   const getSearchRecommendList = async () => {
     const params = {
@@ -131,13 +67,27 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  //TODO 최근 픽업 이력
-  const getRecentSpotList = async () => {
-    setRecentPickedSpotList(RECENT_SPOT);
-  };
+  /* TAYLER: 배송지목록 전체 조회에서 spot만 뽑음 */
+
+  const { data: recentPickedSpotList, isLoading } = useQuery<IDestinationsResponse[]>(
+    'getDestinationList',
+    async () => {
+      const params = {
+        page: 1,
+        size: 10,
+      };
+      const { data } = await getDestinations(params);
+      const totalList = data.data.destinations;
+      return totalList.filter((item) => {
+        return item.delivery === 'SPOT';
+      });
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const changeInputHandler = () => {
     const inputText = inputRef.current?.value.length;
+
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -163,10 +113,12 @@ const SpotSearchPage = (): ReactElement => {
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
+
           // setSpotTest(fetchData);
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
           });
+
           setSearchResult(filtered);
           setIsSearched(true);
         } catch (err) {
@@ -186,9 +138,18 @@ const SpotSearchPage = (): ReactElement => {
   }, []);
 
   useEffect(() => {
-    getRecentSpotList();
     getSearchRecommendList();
   }, []);
+
+  useEffect(() => {
+    if (orderId) {
+      setInputFocus(true);
+    }
+  }, [orderId]);
+
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -242,13 +203,11 @@ const SpotSearchPage = (): ReactElement => {
       ) : (
         <>
           {!isSearched ? (
-            //  spotsSearchRecentList.length
-            0 ? (
-              // TODO 픽업 이력 있는 경우
+            recentPickedSpotList?.length! > 0 ? (
               <DefaultSearchContainer>
                 <RecentPickWrapper>
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                  {recentPickedSpotList.map((item: any, index) => (
+                  {recentPickedSpotList?.map((item: any, index) => (
                     <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
                   ))}
                 </RecentPickWrapper>
@@ -271,7 +230,7 @@ const SpotSearchPage = (): ReactElement => {
           ) : (
             // 검색 결과
             <SearchResultContainer>
-              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} />
+              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} orderId={orderId} />
             </SearchResultContainer>
           )}
         </>

@@ -31,7 +31,7 @@ const Header = () => {
       const headerTitleMap: Obj = {
         '/search': '검색',
         '/location': '내 위치 설정하기',
-        '/location/address-detail': '배송위치',
+        '/location/address-detail': '내 위치 설정하기',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
         '/category/wrap': '랩·샌드위치',

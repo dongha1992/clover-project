@@ -36,19 +36,18 @@ const MypagePage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 10,
+        size: 100,
         type: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);
-
-      return data.data.orders;
+      return data.data.orderDeliveries;
     },
     {
       onSuccess: (data) => {
         const result = pipe(
           data,
-          groupBy((item: any) => item.orderDeliveries[0]?.status)
+          groupBy((item: any) => item.status)
         );
 
         setDeliveryList(result);
@@ -60,7 +59,7 @@ const MypagePage = () => {
     }
   );
 
-  if (isLoading) {
+  if (isLoginSuccess && isLoading) {
     return <div>로딩</div>;
   }
 
@@ -251,6 +250,12 @@ const OrderAndDeliveryWrapper = styled.div`
   ${homePadding}
   padding-top: 32px;
 `;
+
+const SubscriptionWrapper = styled.div`
+  ${homePadding}
+  padding-top: 32px;
+`;
+
 const ManageWrapper = styled.ul``;
 const MypageItem = styled.li`
   cursor: pointer;

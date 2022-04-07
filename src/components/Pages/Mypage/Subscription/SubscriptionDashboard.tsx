@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
-import { FlexCol, FlexRow, theme, FlexBetween, FlexColCenter } from '@styles/theme';
+import { FlexCol, FlexRow, theme, FlexBetween, FlexColCenter, FlexCenter } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 
@@ -23,7 +23,7 @@ const OrderDashboard = ({ deliveryList, total }: IProps) => {
     <>
       <FlexCol>
         <FlexBetween>
-          <TextH4B>주문/배송 내역</TextH4B>
+          <TextH4B>구독 관리</TextH4B>
           <FlexRow>
             <TextB2R padding="0 8px 0 0">{total} 건</TextB2R>
             <div onClick={() => router.push('/mypage/order-delivery-history')}>
@@ -33,33 +33,29 @@ const OrderDashboard = ({ deliveryList, total }: IProps) => {
         </FlexBetween>
       </FlexCol>
       <Wrapper>
-        <FlexBetween padding="0 24px">
+        <FlexBetween padding="0 45px">
           <FlexColCenter>
             <TextH3B>{deliveryList['RESERVED']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>주문완료</TextB4R>
+            <TextB4R color={theme.greyScale65}>구독예정</TextB4R>
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
             <TextH3B>{deliveryList['PREPARING']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>상품준비중</TextB4R>
+            <TextB4R color={theme.greyScale65}>구독중</TextB4R>
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
             <TextH3B>{deliveryList['DELIVERING']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>배송중</TextB4R>
-          </FlexColCenter>
-          <ArrowWrapper>
-            <SVGIcon name="arrowRightGrey" />
-          </ArrowWrapper>
-          <FlexColCenter>
-            <TextH3B>{deliveryList['COMPLETED']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>배송완료</TextB4R>
+            <TextB4R color={theme.greyScale65}>구독완료</TextB4R>
           </FlexColCenter>
         </FlexBetween>
+        <SubscriptipnInfo>
+          <SVGIcon name="exclamationMark" width="14" height="14" />
+        </SubscriptipnInfo>
       </Wrapper>
     </>
   );
@@ -75,5 +71,6 @@ const Wrapper = styled.div`
 const ArrowWrapper = styled.div`
   padding-bottom: 16px;
 `;
+const SubscriptipnInfo = styled.div``;
 
 export default OrderDashboard;

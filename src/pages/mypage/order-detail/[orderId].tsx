@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FlexRow, theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } from '@styles/theme';
+import { FlexRow, theme, FlexBetween, FlexEnd, FlexRowStart } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Pages/Payment/PaymentItem';
+import { PaymentItem } from '@components/Pages/Payment';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
@@ -12,15 +12,16 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SET_USER_DESTINATION_STATUS } from '@store/destination';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
-import { orderForm } from '@store/order';
+import { mypageSelector } from '@store/mypage';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
 import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
-import { OrderDetailInfo } from '@components/Pages/Mypage/OrderDelivery';
+import { OrderDetailInfo, SubOrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_TYPE_MAP } from '@constants/payment';
 import dayjs from 'dayjs';
@@ -28,16 +29,20 @@ import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo'
 
 // temp
 
-const disabledDates = ['2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28'];
+const disabledDates = [];
+
+/* TODO: delvieryId의 경우 orderDeliveris[0].id 사용 */
+/* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
 
 const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
 
   const { showToast } = useToast();
-  const { deliveryDate } = useSelector(orderForm);
+
   const dispatch = useDispatch();
 
   const router = useRouter();
+  const { isSubOrder } = router.query;
 
   const queryClient = useQueryClient();
 
@@ -49,29 +54,28 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     },
     {
       onSuccess: (data) => {},
-
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
   const { mutate: deleteOrderMutation } = useMutation(
-    async () => {
-      const { data } = await deleteDeliveryApi(orderId);
+    async (deliveryId: number) => {
+      const { data } = await deleteDeliveryApi(deliveryId);
     },
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getOrderDetail');
-
-        // router.push('/mypage/order-delivery-history');
+        router.push('/mypage/order-delivery-history');
       },
     }
   );
 
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
-  const { dateFormatter: deliveryAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
-  const { dayFormatter: deliveryAtWithDay } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
+  const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
+    new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!)
+  );
 
   const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0]?.status];
   const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
@@ -79,7 +83,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
   const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
   const canChangeDelivery = orderDetail?.orderDeliveries[0].status === 'RESERVED';
-
+  const deliveryId = orderDetail?.orderDeliveries[0].id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
 
@@ -139,35 +143,96 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
-    router.push({
-      pathname: '/mypage/order-detail/edit/[orderId]',
-      query: { orderId },
-    });
+    if (isSubOrder === 'main') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '기존 주문 배송정보를 변경하시면 함께배송 주문 배송정보도 함께 변경됩니다. 변경하시겠어요?',
+          onSubmit: () =>
+            router.push({
+              pathname: '/mypage/order-detail/edit/[orderId]',
+              query: { orderId },
+            }),
+          closeBtnText: '취소',
+        })
+      );
+    } else {
+      router.push({
+        pathname: '/mypage/order-detail/edit/[orderId]',
+        query: { orderId },
+      });
+    }
   };
 
   const cancelOrderHandler = () => {
-    if (!canChangeDelivery) {
-      return;
+    // if (!canChangeDelivery) {
+    //   return;
+    // }
+
+    const deliveryId = orderDetail?.orderDeliveries[0].id!;
+
+    let alertMessage = '';
+
+    if (isSubOrder === 'sub') {
+      alertMessage = '함께배송 주문을 취소하시겠습니까?';
+    } else if (isSubOrder === 'main') {
+      alertMessage = '기존 주문을 취소하면 함께배송 주문도 함께 취소됩니다. 주문을 취소하시겠습니까?';
+    } else {
+      alertMessage = '정말 주문을 취소하시겠어요?';
     }
 
     dispatch(
       SET_ALERT({
-        alertMessage: '주문을 취소하시겠어요?',
-        onSubmit: () => deleteOrderMutation(),
+        alertMessage,
+        onSubmit: () => deleteOrderMutation(deliveryId),
         closeBtnText: '취소',
       })
     );
   };
 
   const changeDevlieryDateHandler = () => {
-    if (!canChangeDelivery) {
-      return;
+    // if (!canChangeDelivery || isSubOrder==='sub') {
+    //   return;
+    // }
+
+    if (isSubOrder === 'main') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '기존 주문 배송일을 변경하시면 함께배송 주문 배송일도 함께 변경됩니다. 변경하시겠어요?',
+          onSubmit: () => {
+            dispatch(
+              SET_BOTTOM_SHEET({
+                content: (
+                  <CalendarSheet
+                    isSheet
+                    title="배송일 변경"
+                    disabledDates={disabledDates}
+                    deliveryAt={orderDetail?.orderDeliveries[0]?.deliveryDate!}
+                    deliveryId={deliveryId}
+                  />
+                ),
+              })
+            );
+            dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+          },
+          closeBtnText: '취소',
+        })
+      );
+    } else {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: (
+            <CalendarSheet
+              isSheet
+              title="배송일 변경"
+              disabledDates={disabledDates}
+              deliveryAt={orderDetail?.orderDeliveries[0]?.deliveryDate!}
+              deliveryId={deliveryId}
+            />
+          ),
+        })
+      );
+      dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
     }
-    dispatch(
-      SET_BOTTOM_SHEET({
-        content: <CalendarSheet title="배송일 변경" disabledDates={disabledDates} deliveryDate="2022-02-24" isSheet />,
-      })
-    );
   };
 
   const getTotalPayment = (): number => {
@@ -177,12 +242,17 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   if (isLoading) {
     return <div>로딩</div>;
   }
+
   const {
     refundDeliveryFee,
     refundDeliveryFeeDiscount,
     refundEventDiscount,
     refundMenuAmount,
     refundMenuDiscount,
+    refundOptionAmount,
+    refundOptionQuantity,
+    refundPoint,
+    optionQuantity,
     deliveryFee,
     deliveryFeeDiscount,
     eventDiscount,
@@ -202,14 +272,21 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     status,
     deliveryMessageType,
     deliveryMessage,
-    spot,
-    spotPickup,
+    spotName,
+    spotPickupId,
+    spotPickupName,
+    spotPickupType,
   } = orderDetail?.orderDeliveries[0]!;
 
   return (
     <Container>
       <DeliveryStatusWrapper>
         <FlexRow padding="0 0 13px 0">
+          {isSubOrder === 'true' && (
+            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor} margin="0 4px 0 0px">
+              함께배송
+            </Tag>
+          )}
           <TextH4B color={isCanceled ? theme.greyScale65 : theme.black}>{deliveryStatus}</TextH4B>
           <TextB1R padding="0 0 0 4px" color={isCanceled ? theme.greyScale25 : ''}>
             {deliveryAt} 도착예정
@@ -238,6 +315,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       <OrderInfoWrapper>
         <TextH4B>주문자 정보</TextH4B>
         <OrderUserInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} />
+        {isSubOrder === 'true' && <SubOrderInfo isChange />}
         <ButtonWrapper>
           <Button
             backgroundColor={theme.white}
@@ -253,7 +331,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={!canChangeDelivery}
+            // disabled={!canChangeDelivery || isSubOrder === 'sub'}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기
@@ -271,16 +349,18 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           delivery={DELIVERY_TYPE_MAP[delivery]}
           deliveryDetail={deliveryDetail}
           location={location}
-          spotName={spot?.name}
-          spotPickupName={spotPickup?.name}
+          spotName={spotName}
+          spotPickupName={spotPickupName}
           status={status}
         />
+        {isSubOrder === 'true' && <SubOrderInfo isDestinationChange />}
         <Button
           backgroundColor={theme.white}
           color={theme.black}
           border
-          disabled={isCanceled}
+          disabled={isCanceled || isSubOrder === 'true'}
           onClick={changeDeliveryInfoHandler}
+          margin="16px 0 0 0"
         >
           배송 정보 변경하기
         </Button>
@@ -333,10 +413,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>
             {menuAmount -
-              (menuDiscount + eventDiscount + coupon) -
-              (deliveryFee - deliveryFeeDiscount) -
-              point -
-              optionAmount}
+              (menuDiscount + eventDiscount + deliveryFeeDiscount + coupon + point) +
+              optionAmount * optionQuantity +
+              deliveryFee}
             원
           </TextH4B>
         </FlexBetween>
@@ -364,7 +443,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             <BorderLine height={1} margin="8px 0" />
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>환경부담금 (일회용품)</TextH5B>
-              <TextB2R>12312원</TextB2R>
+              <TextB2R>{refundOptionAmount}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
@@ -374,16 +453,16 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
               <TextH5B>총 결제 금액</TextH5B>
-              <TextB2R>12312원</TextB2R>
+              <TextB2R>{1111}원</TextB2R>
             </FlexBetween>
             <FlexBetween padding="8px 0 0 0">
               <TextB2R>환불 포인트</TextB2R>
-              <TextB2R>12312원</TextB2R>
+              <TextB2R>{refundPoint}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween>
               <TextH4B>최종 환불금액</TextH4B>
-              <TextH4B>12312원</TextH4B>
+              <TextH4B>{11111}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>

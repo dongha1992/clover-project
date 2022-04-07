@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import {
@@ -18,10 +18,9 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Pages/Payment/PaymentItem';
-import axios from 'axios';
+import { PaymentItem } from '@components/Pages/Payment';
 import TextInput from '@components/Shared/TextInput';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
@@ -29,46 +28,21 @@ import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
 import { destinationForm } from '@store/destination';
-import CardItem, { ICard } from '@components/Pages/Mypage/Card/CardItem';
-import { getMainCardLists } from '@api/card';
+import CardItem from '@components/Pages/Mypage/Card/CardItem';
+import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj } from '@model/index';
-import { orderForm } from '@store/order';
-import { userForm } from '@store/user';
-import { DELIVERY_TYPE_MAP } from '@constants/payment';
+import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
+import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/payment';
+import getCustomDate from '@utils/getCustomDate';
+import { PaymentCouponSheet } from '@components/BottomSheet/PaymentCouponSheet';
+import { useMutation, useQueryClient } from 'react-query';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
 /* TODO: 배송예정 어떻게? */
 /* TODO: 출입 방법 input userDestination에 담아서 서버 콜 */
-
-//temp
-export interface IDeliveries {
-  deliveryDate: string;
-  menus: { menuDetailId: number; menuQuantity: number };
-}
-
-export interface IOrderForm {
-  couponId: number;
-  deliveries: IDeliveries[];
-  delivery: string;
-  deliveryDetail: string;
-  deliveryMessage: string;
-  deliveryMessageType: string;
-  location: {
-    address: string;
-    addressDetail: string;
-    dong: string;
-    zipCode: string;
-  };
-  payAmount: number;
-  point: number;
-  receiverName: string;
-  receiverTel: string;
-  spotPickupId: number;
-}
 
 const PAYMENT_METHOD = [
   {
@@ -94,56 +68,108 @@ const PAYMENT_METHOD = [
   {
     id: 5,
     text: '페이코',
-    value: 'fcopay',
+    value: 'payco',
   },
   {
     id: 6,
     text: '토스',
-    value: 'fcopay',
+    value: 'toss',
   },
 ];
 
-const deliveryTimeMap: Obj = {
-  LUNCH: '점심',
-  DINNER: '저녁',
-};
 export interface IAccessMethod {
   id: number;
   text: string;
   value: string;
 }
 
-const hasRegisteredCard = true;
-const point = 5000;
-
 const PaymentPage = () => {
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number>(1);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('fcopay');
   const [checkForm, setCheckForm] = useState<Obj>({
     samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
-    alwaysPointFull: { isSelected: false },
+    alwaysPointAll: { isSelected: false },
     paymentMethodReuse: { isSelected: false },
   });
+
+  const [userInputObj, setUserInputObj] = useState<{
+    receiverName: string;
+    receiverTel: string;
+    point: number;
+  }>({
+    receiverName: '',
+    receiverTel: '',
+    point: 0,
+  });
+
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { userDestinationStatus, userDestination } = useSelector(destinationForm);
-  const { orderItemList } = useSelector(orderForm);
-  const { me } = useSelector(userForm);
+  const { userDestination } = useSelector(destinationForm);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const { data: mainCard, isLoading } = useQuery(
-    'getMainCard',
+  const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
+    'getPreviewOrder',
     async () => {
-      const { data } = await getMainCardLists();
+      const previewBody = {
+        delivery: 'SPOT',
+        deliveryDetail: 'DINNER',
+        destinationId: 1,
+        isSubOrderDelivery: false,
+        orderDeliveries: [
+          {
+            deliveryDate: '2022-04-06',
+            orderMenus: [
+              {
+                menuDetailId: 72,
+                menuQuantity: 1,
+              },
+              {
+                menuDetailId: 511,
+                menuQuantity: 1,
+              },
+            ],
+            orderOptions: [
+              {
+                optionId: 1,
+                optionQuantity: 1,
+              },
+            ],
+          },
+        ],
+        type: 'GENERAL',
+      };
+
+      const { data } = await createOrderPreviewApi(previewBody);
       if (data.code === 200) {
         return data.data;
       }
     },
     { refetchOnMount: false, refetchOnWindowFocus: false }
+  );
+
+  const { mutateAsync: mutateCreateOrder } = useMutation(
+    async () => {
+      const reqBody = {
+        payMethod: 'NICE_BILLING',
+        cardId: 81,
+        ...previewOrder?.order!,
+      };
+      const { data } = await createOrderApi(reqBody);
+      const { id: orderId } = data.data;
+      return orderId;
+    },
+    {
+      onError: () => {},
+      onSuccess: async (orderId: number) => {
+        router.push({ pathname: '/payment/finish', query: { orderId } });
+      },
+    }
   );
 
   const showSectionHandler = (selectedSection: string) => {
@@ -162,8 +188,34 @@ const PaymentPage = () => {
 
   const checkPaymentTermHandler = () => {};
 
+  const userInputHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const { name, value } = e.target;
+
+      if (checkForm.samePerson.isSelected) {
+        setCheckForm({ ...checkForm, samePerson: { isSelected: false } });
+      }
+
+      setUserInputObj({ ...userInputObj, [name]: value });
+    },
+    [userInputObj]
+  );
+
   const checkFormHanlder = (name: string) => {
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
+  };
+
+  const changePointHandler = (val: number): void => {
+    const { point: limitPoint } = previewOrder!;
+
+    const regex = /^[0-9]/g;
+    if (!regex.test(val.toString())) return;
+
+    if (val >= limitPoint) {
+      val = limitPoint;
+    }
+
+    setUserInputObj({ ...userInputObj, point: val });
   };
 
   const selectAccessMethodHandler = () => {
@@ -175,23 +227,191 @@ const PaymentPage = () => {
   };
 
   const selectPaymentMethodHanlder = (method: any) => {
-    const { id } = method;
-    setSelectedPaymentMethod(id);
+    const { value } = method;
+    setSelectedPaymentMethod(value);
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
   };
 
-  const couponHandler = () => {
-    router.push({ pathname: '/mypage/coupon', query: { isPayment: true } });
+  const useAllOfPointHandler = () => {
+    const { point: limitPoint } = previewOrder!;
+    setUserInputObj({ ...userInputObj, point: limitPoint });
   };
 
-  const goToFinishPayment = () => {
-    router.push('/payment/finish');
+  const deliveryDateRenderer = ({
+    location,
+    delivery,
+    deliveryDetail,
+    dayFormatter,
+    spotName,
+    spotPickupName,
+    lunchDeliveryEndTime,
+    lunchDeliveryStartTime,
+    dinnerDeliveryEndTime,
+    dinnerDeliveryStartTime,
+  }: {
+    location: ILocation;
+    delivery: string;
+    deliveryDetail: string;
+    dayFormatter: string;
+    spotName: string;
+    spotPickupName: string;
+    lunchDeliveryEndTime: string;
+    lunchDeliveryStartTime: string;
+    dinnerDeliveryEndTime: string;
+    dinnerDeliveryStartTime: string;
+  }) => {
+    const isLunch = deliveryDetail === 'LUNCH';
+
+    const spotLunchDevlieryTime = `${lunchDeliveryStartTime}-${lunchDeliveryEndTime}`;
+    const spotDinnerDevlieryTime = `${dinnerDeliveryStartTime}-${dinnerDeliveryEndTime}`;
+
+    switch (delivery) {
+      case 'PARCEL': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정일시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{dayFormatter}</TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'MORNING': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{dayFormatter} 00:00-07:00</TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'QUICK': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {dayFormatter} {isLunch ? '11:30-12:00' : '15:30-18:00'}
+                </TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>베송지</TextH5B>
+              <FlexColEnd>
+                <TextB2R>{location.address}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+      case 'SPOT': {
+        return (
+          <>
+            <FlexBetweenStart margin="16px 0">
+              <TextH5B>배송 예정실시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {dayFormatter} {isLunch ? spotLunchDevlieryTime : spotDinnerDevlieryTime}
+                </TextB2R>
+                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
+                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>픽업장소</TextH5B>
+              <FlexColEnd>
+                <FlexRow>
+                  <TextB3R>
+                    {spotName} {spotPickupName}
+                  </TextB3R>
+                </FlexRow>
+                <FlexRow>
+                  <TextB3R color={theme.greyScale65} margin="0 4px 0 0">
+                    ({location.zipCode})
+                  </TextB3R>
+                  <TextB3R color={theme.greyScale65}>{location.address}</TextB3R>
+                </FlexRow>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          </>
+        );
+      }
+    }
   };
 
-  const goToCardManagemnet = (card: ICard) => {
+  const cancelOrderInfoRenderer = (delivery: string, deliveryDetail: string) => {
+    const isLunch = deliveryDetail === 'LUNCH';
+
+    switch (delivery) {
+      case 'QUICK':
+      case 'SPOT': {
+        return (
+          <>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
+              취소할 수 있어요!
+            </TextB3R>
+          </>
+        );
+      }
+      case 'PARCEL':
+      case 'MORNING': {
+        return (
+          <>
+            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
+              주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!
+            </TextB3R>
+            <TextB3R color={theme.greyScale65}>
+              단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
+            </TextB3R>
+          </>
+        );
+      }
+    }
+  };
+
+  const couponHandler = (coupons: ICoupon[]) => {
+    dispatch(SET_BOTTOM_SHEET({ content: <PaymentCouponSheet coupons={coupons} /> }));
+  };
+
+  const clearPointHandler = () => {
+    setUserInputObj({ ...userInputObj, point: 0 });
+  };
+
+  const goToCardManagemnet = (card: IGetCard) => {
     router.push('/mypage/card');
   };
 
@@ -199,28 +419,84 @@ const PaymentPage = () => {
     router.push('/mypage/card/register');
   };
 
-  const isParcel = userDestinationStatus === 'parcel';
-  const isMorning = userDestinationStatus === 'morning';
-  const isFcoPay = selectedPaymentMethod === 1;
+  const goToTermInfo = () => {};
+
+  const getMainCardHandler = (cards: IGetCard[] = []) => {
+    return cards.find((c) => c.main);
+  };
+
+  useEffect(() => {
+    const { isSelected } = checkForm.samePerson;
+
+    if (previewOrder?.order && isSelected) {
+      const { userName, userTel } = previewOrder?.order;
+
+      setUserInputObj({
+        ...userInputObj,
+        receiverName: userName,
+        receiverTel: userTel,
+      });
+    }
+  }, [checkForm.samePerson.isSelected]);
+
+  useEffect(() => {
+    /* TODO: 항상 전액 사용 어케? */
+    console.log(previewOrder, 'previewOrder');
+
+    const usePointAll = checkForm.alwaysPointAll.isSelected;
+
+    if (usePointAll && previewOrder) {
+      const { point: limitPoint } = previewOrder!;
+      setUserInputObj({ ...userInputObj, point: limitPoint });
+    }
+  }, [checkForm.alwaysPointAll.isSelected]);
 
   if (isNil(userDestination)) {
     router.replace('/cart');
     return <div>장바구니로 이동합니다.</div>;
   }
 
-  if (isNil(me)) {
+  if (preveiwOrderLoading) {
     return <div>로딩</div>;
   }
+
+  const {
+    userName,
+    userTel,
+    userEmail,
+    delivery,
+    deliveryDetail,
+    location,
+    payAmount,
+    optionAmount,
+    menuDiscount,
+    menuAmount,
+    eventDiscount,
+    deliveryFeeDiscount,
+    deliveryFee,
+    coupon,
+  } = previewOrder?.order!;
+  const { deliveryDate, spot, spotPickup, orderOptions } = previewOrder?.order?.orderDeliveries[0]!;
+  const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
+  const { point } = previewOrder!;
+  const { dayFormatter } = getCustomDate(new Date(deliveryDate));
+
+  const isParcel = delivery === 'PARCEL';
+  const isMorning = delivery === 'MORNING';
+  const isFcoPay = selectedPaymentMethod === 'fcopay';
+  const isKakaoPay = selectedPaymentMethod === 'kakaopay';
+
+  console.log(previewOrder, 'previewOrder');
 
   return (
     <Container>
       <OrderItemsWrapper>
         <FlexBetween padding="24px 0 0 0">
-          <TextH4B>주문상품 ({orderItemList.length})</TextH4B>
+          <TextH4B>주문상품 ({orderMenus.length})</TextH4B>
           <FlexRow onClick={() => showSectionHandler('orderItem')}>
             <TextB2R padding="0 13px 0 0">
-              {orderItemList
-                .map((item) => item.name)
+              {orderMenus
+                .map((item) => item.menuName)
                 ?.toString()
                 .slice(0, 10) + '...'}
             </TextB2R>
@@ -228,7 +504,7 @@ const PaymentPage = () => {
           </FlexRow>
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {orderItemList.map((menu, index) => {
+          {orderMenus?.map((menu, index) => {
             return <PaymentItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>
@@ -238,22 +514,22 @@ const PaymentPage = () => {
         <FlexBetween padding="24px 0 0 0">
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper onClick={() => showSectionHandler('customerInfo')}>
-            <TextB2R padding="0 13px 0 0">{`${me?.name},${me?.tel}`}</TextB2R>
+            <TextB2R padding="0 13px 0 0">{`${userName},${userTel}`}</TextB2R>
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
         <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
           <FlexBetween>
             <TextH5B>보내는 사람</TextH5B>
-            <TextB2R>{me?.name}</TextB2R>
+            <TextB2R>{userName}</TextB2R>
           </FlexBetween>
           <FlexBetween margin="16px 0">
             <TextH5B>휴대폰 전화</TextH5B>
-            <TextB2R>{me?.tel}</TextB2R>
+            <TextB2R>{userTel}</TextB2R>
           </FlexBetween>
           <FlexBetween>
             <TextH5B>이메일</TextH5B>
-            <TextB2R>{me?.email}</TextB2R>
+            <TextB2R>{userEmail}</TextB2R>
           </FlexBetween>
         </CustomInfoList>
       </CustomerInfoWrapper>
@@ -268,11 +544,22 @@ const PaymentPage = () => {
         </FlexBetween>
         <FlexCol padding="24px 0">
           <TextH5B padding="0 0 8px 0">이름</TextH5B>
-          <TextInput placeholder="이름" />
+          <TextInput
+            placeholder="이름"
+            value={userInputObj.receiverName}
+            name="receiverName"
+            eventHandler={userInputHandler}
+          />
         </FlexCol>
         <FlexCol>
           <TextH5B padding="0 0 8px 0">휴대폰 번호</TextH5B>
-          <TextInput placeholder="휴대폰 번호" />
+          <TextInput
+            inputType="number"
+            placeholder="휴대폰 번호"
+            name="receiverTel"
+            value={userInputObj.receiverTel}
+            eventHandler={userInputHandler}
+          />
         </FlexCol>
       </ReceiverInfoWrapper>
       <BorderLine height={8} />
@@ -283,29 +570,26 @@ const PaymentPage = () => {
         <FlexCol padding="24px 0">
           <FlexBetween>
             <TextH5B>배송방법</TextH5B>
-            {!['parcel', 'morning'].includes(userDestinationStatus) ? (
+            {!['PARCEL', 'MORNING'].includes(delivery) ? (
               <TextB2R>
-                {DELIVERY_TYPE_MAP[userDestination.delivery!]} - {deliveryTimeMap[userDestination.deliveryTime!]}
+                {DELIVERY_TYPE_MAP[delivery]} - {DELIVERY_TIME_MAP[deliveryDetail]}
               </TextB2R>
             ) : (
-              <TextB2R>{DELIVERY_TYPE_MAP[userDestination.delivery!]}</TextB2R>
+              <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>
             )}
           </FlexBetween>
-          <FlexBetweenStart margin="16px 0">
-            <TextH5B>배송 예정실시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>11월 12일 (금) 11:30-12:00</TextB2R>
-              <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-              <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart>
-            <TextH5B>베송장소</TextH5B>
-            <FlexColEnd>
-              <TextB2R>{userDestination.location.address}</TextB2R>
-              <TextB3R color={theme.greyScale65}>{userDestination.location.addressDetail}</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
+          {deliveryDateRenderer({
+            location,
+            delivery,
+            deliveryDetail,
+            dayFormatter,
+            spotName: spot?.name!,
+            spotPickupName: spotPickup?.name!,
+            lunchDeliveryEndTime: spot?.lunchDeliveryEndTime!,
+            lunchDeliveryStartTime: spot?.lunchDeliveryStartTime!,
+            dinnerDeliveryEndTime: spot?.dinnerDeliveryEndTime!,
+            dinnerDeliveryStartTime: spot?.dinnerDeliveryStartTime!,
+          })}
         </FlexCol>
         <MustCheckAboutDelivery>
           <FlexCol>
@@ -315,10 +599,7 @@ const PaymentPage = () => {
                 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
-            <TextB3R color={theme.brandColor}>주문취소는 배송일 전날 오전 7시까지 입니다.</TextB3R>
-            <TextB3R color={theme.brandColor}>
-              단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소 불가합니다.
-            </TextB3R>
+            {cancelOrderInfoRenderer(delivery, deliveryDetail)}
           </FlexCol>
         </MustCheckAboutDelivery>
       </DevlieryInfoWrapper>
@@ -338,7 +619,7 @@ const PaymentPage = () => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>{userAccessMethod.text || '출입방법 선택'}</TextB2R>
+                <TextB2R color={theme.greyScale45}>{userAccessMethod?.text || '출입방법 선택'}</TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
@@ -391,12 +672,11 @@ const PaymentPage = () => {
           <TextH4B>할인 쿠폰</TextH4B>
           <FlexRow>
             {selectedCoupon ? (
-              <TextB2R padding="0 10px 0 0">{selectedCoupon.discount}</TextB2R>
+              <TextB2R padding="0 10px 0 0">{selectedCoupon.value}</TextB2R>
             ) : (
-              <TextB2R padding="0 10px 0 0">4장 보유</TextB2R>
+              <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
-
-            <div onClick={couponHandler}>
+            <div onClick={() => couponHandler(previewOrder?.coupons!)}>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
@@ -408,18 +688,27 @@ const PaymentPage = () => {
           <TextH4B>포인트 사용</TextH4B>
           <FlexRow>
             <Checkbox
-              onChange={() => checkFormHanlder('alwaysPointFull')}
-              isSelected={checkForm.alwaysPointFull.isSelected}
+              onChange={() => checkFormHanlder('alwaysPointAll')}
+              isSelected={checkForm.alwaysPointAll.isSelected}
             />
             <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
           </FlexRow>
         </FlexBetween>
         <FlexRow padding="24px 0 0 0">
-          <TextInput width="100%" margin="0 8px 0 0" value={point} />
-          <DeletePoint>
-            <SVGIcon name="blackBackgroundCancel" />
-          </DeletePoint>
-          <Button width="86px" height="48px">
+          <TextInput
+            name="point"
+            width="100%"
+            margin="0 8px 0 0"
+            placeholder="0"
+            value={userInputObj.point}
+            eventHandler={(e) => changePointHandler(Number(e.target.value))}
+          />
+          {userInputObj.point > 0 && (
+            <DeletePoint onClick={clearPointHandler}>
+              <SVGIcon name="blackBackgroundCancel" />
+            </DeletePoint>
+          )}
+          <Button width="86px" height="48px" onClick={useAllOfPointHandler}>
             전액 사용
           </Button>
         </FlexRow>
@@ -439,7 +728,7 @@ const PaymentPage = () => {
         </FlexBetween>
         <GridWrapper gap={16}>
           {PAYMENT_METHOD.map((method, index) => {
-            const isSelected = selectedPaymentMethod === method.id;
+            const isSelected = selectedPaymentMethod === method.value;
             return (
               <Button
                 onClick={() => selectPaymentMethodHanlder(method)}
@@ -453,58 +742,98 @@ const PaymentPage = () => {
             );
           })}
         </GridWrapper>
-        <BorderLine height={1} margin="24px 0" />
-        {hasRegisteredCard && <CardItem onClick={goToCardManagemnet} card={mainCard} />}
-        <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
-          카드 등록하기
-        </Button>
+        {isFcoPay && (
+          <>
+            <BorderLine height={1} margin="24px 0" />
+            {previewOrder?.cards?.length! > 0 ? (
+              <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+            ) : (
+              <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
+                카드 등록하기
+              </Button>
+            )}
+          </>
+        )}
       </PaymentMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
-          <TextB2R>222원</TextB2R>
+          <TextB2R>{menuAmount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>22원</TextB2R>
+          <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>상품 할인</TextB2R>
-          <TextB2R>22원</TextB2R>
+          <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
+        {eventDiscount && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>스팟 이벤트 할인</TextB2R>
+            <TextB2R>{eventDiscount}원</TextB2R>
+          </FlexBetween>
+        )}
+        {selectedCoupon && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>쿠폰 사용</TextB2R>
+            <TextB2R>{coupon}원</TextB2R>
+          </FlexBetween>
+        )}
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{optionAmount}원</TextB2R>
         </FlexBetween>
+        {orderOptions.length > 0 &&
+          orderOptions.map((optionItem, index) => {
+            const { optionId, optionPrice, optionQuantity, optionName } = optionItem;
+            const hasFork = optionId === 1;
+            const hasChopsticks = optionId === 2;
+            return (
+              <div key={index}>
+                {hasFork && (
+                  <FlexBetween padding="8px 0 0 0">
+                    <TextB2R>포크+물티슈</TextB2R>
+                    <TextB2R>
+                      {optionQuantity}개 / {optionPrice * optionQuantity}원
+                    </TextB2R>
+                  </FlexBetween>
+                )}
+                {hasChopsticks && (
+                  <FlexBetween padding="8px 0 0 0">
+                    <TextB2R>젓가락+물티슈</TextB2R>
+                    <TextB2R>
+                      {optionQuantity}개 / {optionPrice * optionQuantity}원
+                    </TextB2R>
+                  </FlexBetween>
+                )}
+              </div>
+            );
+          })}
+
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>배송비</TextH5B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{deliveryFee}원</TextB2R>
         </FlexBetween>
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비 할인</TextB2R>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{deliveryFeeDiscount}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
-        <FlexBetween>
-          <TextH5B>포인트 사용</TextH5B>
-          <TextB2R>12312원</TextB2R>
-        </FlexBetween>
+        {userInputObj.point > 0 && (
+          <FlexBetween>
+            <TextH5B>포인트 사용</TextH5B>
+            <TextB2R>{point}원</TextB2R>
+          </FlexBetween>
+        )}
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextB2R>12312원</TextB2R>
+          <TextB2R>{payAmount}원</TextB2R>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -519,14 +848,14 @@ const PaymentPage = () => {
         <FlexRow padding="17px 0 0 0">
           <Checkbox isSelected onChange={checkPaymentTermHandler} />
           <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
-          <TextH6B color={theme.greyScale65} textDecoration="underline">
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
             자세히
           </TextH6B>
         </FlexRow>
       </PaymentTermWrapper>
-      <PaymentBtn onClick={goToFinishPayment}>
+      <PaymentBtn onClick={() => mutateCreateOrder()}>
         <Button borderRadius="0" height="100%">
-          1232원 결제하기
+          {payAmount}원 결제하기
         </Button>
       </PaymentBtn>
     </Container>

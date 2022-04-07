@@ -22,8 +22,10 @@ import {
   INIT_DESTINATION_STATUS,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
+import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { Obj } from '@model/index';
+
 /* TODO: receiverName, receiverTel  */
 
 const deliveryMap: Obj = {
@@ -95,7 +97,7 @@ const DestinationDetailPage = () => {
         main: isDefaultDestination,
       };
       if (orderId) {
-        dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
+        dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
         dispatch(INIT_DESTINATION_STATUS());
         dispatch(INIT_AVAILABLE_DESTINATION());
         router.push({
