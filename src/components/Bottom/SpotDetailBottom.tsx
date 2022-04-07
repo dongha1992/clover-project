@@ -17,7 +17,7 @@ import { SET_USER_DESTINATION_STATUS, SET_DESTINATION, SET_TEMP_DESTINATION } fr
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
-  const { isDelivery, orderId } = router.query;
+  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail } = useSelector(spotSelector);
@@ -40,14 +40,23 @@ const SpotDetailBottom = () => {
       spaceType: spotDetail?.type,
     };
 
+    // TODO : destinationId 리덕스로 수정?
     if (isLoginSuccess) {
       if (cartLists.length) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o , 배송 정보에서 넘어온 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
+          if (isSubscription) {
+            dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+            });
+          } else {
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
+          }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
@@ -57,7 +66,16 @@ const SpotDetailBottom = () => {
         }
       } else {
         // 로그인o and 장바구니 x
-        router.push('/search');
+        if (isSubscription) {
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+          });
+        } else {
+          router.push('/search');
+        }
       }
     } else {
       // 로그인x
