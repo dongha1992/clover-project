@@ -7,8 +7,6 @@ import { TextH6B } from '@components/Shared/Text';
 import dynamic from 'next/dynamic';
 import { FlexCol, FlexEnd, homePadding } from '@styles/theme';
 import { OrderDeliveryItem } from '@components/Pages/Mypage/OrderDelivery';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import BorderLine from '@components/Shared/BorderLine';
 import { commonSelector } from '@store/common';
 import { useQuery } from 'react-query';
@@ -40,13 +38,15 @@ const OrderDeliveryHistoryPage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 10,
+        size: 20,
         type: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);
 
-      return data.data.orders;
+      /*TODO: 정기구독이랑 묶일 경우 type="SUB" */
+
+      return data.data.orderDeliveries;
     },
     {
       onSuccess: (data) => {},

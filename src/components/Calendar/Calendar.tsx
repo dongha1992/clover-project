@@ -8,9 +8,9 @@ import getCustomDate from '@utils/getCustomDate';
 import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
-import { filter, flow, map } from 'lodash/fp';
+import { pipe, filter, map, toArray } from '@fxts/core';
 import { getFormatTime } from '@utils/getFormatTime';
-import { IGetOrderListResponse } from '@model/index';
+import { IGetOrderListResponse, ISubOrderDelivery } from '@model/index';
 import { ILunchOrDinner } from '@pages/cart';
 
 let WEEKS: Obj = {
@@ -40,27 +40,27 @@ export interface IDateObj {
 
 interface ICalendar {
   disabledDates: string[];
-  otherDeliveries?: IGetOrderListResponse[];
+  subOrderDelivery?: ISubOrderDelivery[];
   selectedDeliveryDay: string;
   setSelectedDeliveryDay: React.Dispatch<React.SetStateAction<string>>;
-  goToTogetherDelivery?: (id: number) => void;
+  goToSubDeliverySheet?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
 }
 
 const Calendar = ({
   disabledDates = [],
-  otherDeliveries = [],
+  subOrderDelivery,
   selectedDeliveryDay,
   setSelectedDeliveryDay,
   isSheet,
-  goToTogetherDelivery,
+  goToSubDeliverySheet,
   lunchOrDinner,
 }: ICalendar) => {
   const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
-  const [togetherDeliveryInActiveDates, setTogetherDeliveryInActiveDates] = useState<IGetOrderListResponse[]>([]);
+  const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
   const { userDestinationStatus } = useSelector(destinationForm);
 
   const initCalendar = () => {
@@ -99,14 +99,15 @@ const Calendar = ({
 
   const clickDayHandler = (value: string): void => {
     const isQuickAndSpot = ['spot', 'quick'].includes(userDestinationStatus);
-    const selectedTogetherDelivery = otherDeliveries.find((item) =>
+
+    const selectedSubDelivery = subOrderDelivery?.find((item) =>
       isQuickAndSpot
         ? item.deliveryDetail === lunchOrDinner?.find((item) => item.isSelected)?.value && item.deliveryDate === value
         : item.deliveryDate === value
     );
 
-    if (selectedTogetherDelivery && !isSheet) {
-      goToTogetherDelivery && goToTogetherDelivery(selectedTogetherDelivery?.id);
+    if (selectedSubDelivery && !isSheet) {
+      goToSubDeliverySheet && goToSubDeliverySheet(selectedSubDelivery?.id);
     }
 
     setSelectedDeliveryDay(value);
@@ -139,21 +140,25 @@ const Calendar = ({
       switch (true) {
         case isQuickAndSpot:
           {
-            tempDisabledDate = flow(
+            tempDisabledDate = pipe(
+              dateList,
               filter(
                 ({ dayKor, date }: IDateObj) =>
                   quickAndSpotDisabled.includes(dayKor) || (isFinishDinner && date === today)
               ),
-              map(({ value }: IDateObj) => value)
-            )(dateList);
+              map(({ value }: IDateObj) => value),
+              toArray
+            );
           }
           break;
         case isParcelAndMorning:
           {
-            tempDisabledDate = flow(
+            tempDisabledDate = pipe(
+              dateList,
               filter(({ dayKor, date }: IDateObj) => parcelAndMorningDisabled.includes(dayKor) || date === today),
-              map(({ value }: IDateObj) => value)
-            )(dateList);
+              map(({ value }: IDateObj) => value),
+              toArray
+            );
           }
           break;
       }
@@ -171,8 +176,11 @@ const Calendar = ({
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filteredActiveDates[0]?.value;
 
-    checkHasTogetherInActiveDates(dateList, mergedDisabledDate);
-    setSelectedDeliveryDay(firstActiveDate);
+    checkHasSubInActiveDates(dateList, mergedDisabledDate);
+    /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
+    if (!selectedDeliveryDay) {
+      setSelectedDeliveryDay(firstActiveDate);
+    }
     setCustomDisabledDate(mergedDisabledDate);
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
@@ -183,14 +191,12 @@ const Calendar = ({
     }
   };
 
-  const checkHasTogetherInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
+  const checkHasSubInActiveDates = (dateList: IDateObj[], disabledDate: string[]): void => {
     // 함께배송 안내는 오픈되어있는 주에서만 안내
     // 현재 캘린더 렌더되는 날짜 데이터를 1주,2주로 나누지 않고 있음
     // 휴무일과 겹치는 경우 체크
 
-    /*TODO: 리팩토링 필요 */
-
-    const hasTogetherDeliveryInActiveDates = otherDeliveries
+    const hasSubDeliveryInActiveDates = subOrderDelivery
       ?.filter((oItem) => {
         return dateList?.some((dItem, index) => {
           if (index >= ONE_WEEK) {
@@ -201,16 +207,16 @@ const Calendar = ({
       })
       ?.filter((a) => !disabledDate.includes(a.deliveryDate));
 
-    setTogetherDeliveryInActiveDates(hasTogetherDeliveryInActiveDates);
+    setSubDeliveryInActiveDates(hasSubDeliveryInActiveDates || []);
   };
 
-  const togetherDeliveryInfo = (): JSX.Element => {
+  const subOrderDeliveryInfo = (): JSX.Element => {
     return (
       <TextB3R color={theme.greyScale65} padding="2px 0 0 4px">
-        {togetherDeliveryInActiveDates.length > 1
+        {subOrderDeliveryInActiveDates.length > 1
           ? '배송예정인 기존 주문이 있습니다. 함께배송 받으세요!'
           : `${new Date(
-              togetherDeliveryInActiveDates[0]?.deliveryDate
+              subOrderDeliveryInActiveDates[0]?.deliveryDate
             ).getDate()}일에 배송예정인 기존 주문이 있습니다. 함께배송 받으세요!`}
       </TextB3R>
     );
@@ -260,7 +266,7 @@ const Calendar = ({
                 selectedDay={selectedDay}
                 index={index}
                 disabledDates={customDisabledDate}
-                otherDeliveryInfo={togetherDeliveryInActiveDates}
+                otherDeliveryInfo={subOrderDeliveryInActiveDates}
               />
             );
           })}
@@ -273,7 +279,7 @@ const Calendar = ({
 
   useEffect(() => {
     initCalendar();
-  }, [otherDeliveries]);
+  }, [subOrderDelivery]);
 
   if (dateList.length < 0) {
     return <div>로딩</div>;
@@ -284,10 +290,10 @@ const Calendar = ({
       <CalendarContainer isSheet={isSheet}>
         <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
       </CalendarContainer>
-      {togetherDeliveryInActiveDates.length > 0 && (
+      {subOrderDeliveryInActiveDates.length > 0 && (
         <FlexRow padding="16px 0 0 0">
           <SVGIcon name="brandColorDot" />
-          {togetherDeliveryInfo()}
+          {subOrderDeliveryInfo()}
         </FlexRow>
       )}
     </FlexCol>

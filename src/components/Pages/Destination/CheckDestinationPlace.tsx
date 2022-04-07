@@ -48,6 +48,7 @@ const CheckDestinationPlace = () => {
         zipCode: tempLocation.zipNo,
         delivery: null,
       };
+      console.log(params, '@@@');
       const { data } = await availabilityDestination(params);
 
       if (data.code === 200) {
@@ -138,7 +139,7 @@ const CheckDestinationPlace = () => {
           }
         }
         case 'parcel': {
-          if (canEverything || canParcelAndCanMorning) {
+          if ((canEverything && parcel) || canParcelAndCanMorning) {
             return <MorningAndPacelInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;

@@ -10,6 +10,8 @@ import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS } from '@st
 import { ISignupUser } from '@model/index';
 import { userSignup } from '@api/user';
 import { useMutation } from 'react-query';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
 export const GENDER = [
   {
@@ -79,9 +81,10 @@ const SignupOptionalPage = () => {
       })
     );
     try {
-      const { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
+      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
+      data.code === 200;
       if (data.code === 200) {
-        router.push('/signup/finish');
+        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
       }
     } catch (error) {
       console.error(error);

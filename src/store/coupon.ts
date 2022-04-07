@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ICoupon } from '@pages/mypage/coupon';
+import { ICoupon } from '@model/index';
 
 interface TState {
   selectedCoupon: ICoupon | null;
