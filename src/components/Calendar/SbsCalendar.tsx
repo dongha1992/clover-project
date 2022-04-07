@@ -1,51 +1,72 @@
 import { theme } from '@styles/theme';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import styled from 'styled-components';
 
-const SbsCalendar = () => {
-  const [value, onChange] = useState(new Date());
+interface IProps {
+  calendarActivePeriod?: string[];
+  disabledDate?: string[];
+  deliveryComplete?: string[];
+  deliveryExpectedDate?: string[];
+  deliveryHoliday?: string[];
+  deliveryChange?: string[];
+  sumDelivery?: string[];
+  sumDeliveryComplete?: string[];
+}
+
+const SbsCalendar = ({
+  calendarActivePeriod = [],
+  disabledDate = [],
+  deliveryComplete = [],
+  deliveryExpectedDate = [],
+  deliveryHoliday = [],
+  deliveryChange = [],
+  sumDelivery = [],
+  sumDeliveryComplete = [],
+}: IProps) => {
+  const [value, setValue] = useState(new Date(calendarActivePeriod[0]));
   const today = dayjs().format('YYYY-MM-DD');
-  const complete = ['2022-03-26'];
-  const deliveryExpectedDate = ['2022-03-25'];
-  const deliveryHoliday = ['2022-03-27'];
-  const deliveryChange = ['2022-03-28'];
-  const sumDelivery = ['2022-03-29'];
-  const sumDeliveryComplete = ['2022-03-30'];
 
   const titleContent = ({ date, view }: { date: any; view: any }) => {
     let element = [];
 
     if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      element.push(<div className="dot" key={0}></div>);
+      // 배송 예정일
+      element.push(<div className="deliveryExpectedDate" key={0}></div>);
     } else if (today === dayjs(date).format('YYYY-MM-DD')) {
+      // 오늘
       element.push(
         <div className="today" key={0}>
           오늘
         </div>
       );
     } else if (deliveryHoliday.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      // 배송 휴무일
       element.push(
         <div className="deliveryHoliday" key={0}>
           배송휴무일
         </div>
       );
-    } else if (complete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      element.push(<div className="complete" key={0}></div>);
+    } else if (deliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      // 배송완료 or 주문취소
+      element.push(<div className="deliveryComplete" key={0}></div>);
     } else if (deliveryChange.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      // 배송일변경
       element.push(
         <div className="deliveryChange" key={0}>
-          <span>배송휴무일</span>
+          <span>배송일변경</span>
         </div>
       );
     } else if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      // 배송예정일(합배송 포함)
       element.push(
         <div className="sumDelivery" key={0}>
           <span></span>
         </div>
       );
     } else if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      // 배송완료(합배송 포함)
       element.push(
         <div className="sumDeliveryComplete" key={0}>
           <span></span>
@@ -55,17 +76,38 @@ const SbsCalendar = () => {
     return <>{element}</>;
   };
 
+  const tileDisabled = ({ date, view }: { date: any; view: any }) => {
+    if (date.getDay() === 0) {
+      // 일요일 비활성화
+      return true;
+    } else if (disabledDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      // 비활성 날짜
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const onChange = (value: Date, event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(value);
+    console.log(value);
+    // TODO(young) : 구독 리스트 정보 받는 api
+  };
+
   return (
     <CalendarBox className="sbsCalendar">
       <Calendar
+        calendarType={'Hebrew'}
         prev2Label={null}
         next2Label={null}
-        minDate={new Date()}
+        minDate={new Date(calendarActivePeriod[0])}
+        maxDate={new Date(calendarActivePeriod[1])}
         onChange={onChange}
-        value={value}
-        showNeighboringMonth={false}
+        // value={value}
+        // showNeighboringMonth={false}
         formatDay={(locale, date) => dayjs(date).format('D')}
         tileContent={titleContent}
+        tileDisabled={tileDisabled}
       />
     </CalendarBox>
   );
@@ -102,15 +144,18 @@ const CalendarBox = styled.div`
 
       // < left 버튼
       .react-calendar__navigation__prev-button {
-        background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 3L6 9L12 15' stroke='%23242424' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' /%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 3L6 9L12 15' stroke='%23242424' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
         &:disabled {
-          background-image: url("data:image/svg+xml, %3Csvg width='19' height='18' viewBox='0 0 19 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.7656 3L6.76563 9L12.7656 15' stroke='%23C8C8C8' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' /%3E%3C/svg%3E");
+          background-image: url("data:image/svg+xml,%3Csvg width='19' height='18' viewBox='0 0 19 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.4951 3L6.49512 9L12.4951 15' stroke='%23C8C8C8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
         }
       }
 
       // > right 버튼
       .react-calendar__navigation__next-button {
-        background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 15L12 9L6 3' stroke='%23242424' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' /%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 15L12 9L6 3' stroke='%23242424' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+        &:disabled {
+          background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 15L12 9L6 3' stroke='%23C8C8C8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        }
       }
       .react-calendar__navigation__prev-button,
       .react-calendar__navigation__next-button {
@@ -185,8 +230,8 @@ const CalendarBox = styled.div`
           abbr {
             z-index: 1;
           }
-          .dot,
-          .complete,
+          .deliveryExpectedDate,
+          .deliveryComplete,
           .today,
           .deliveryHoliday,
           .deliveryChange,
@@ -201,14 +246,14 @@ const CalendarBox = styled.div`
   }
 
   // 구독 라벨
-  .dot {
+  .deliveryExpectedDate {
     position: absolute;
     width: 32px;
     height: 32px;
     border-radius: 50%;
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='15.5' stroke='%2335AD73' stroke-dasharray='2 2'/%3E%3C/svg%3E%0A");
   }
-  .complete {
+  .deliveryComplete {
     position: absolute;
     width: 32px;
     height: 32px;

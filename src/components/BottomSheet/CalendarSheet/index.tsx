@@ -1,3 +1,4 @@
 import CalendarSheet from './CalendarSheet';
+import SbsCalendarSheet from './SbsCalendarSheet';
 
-export { CalendarSheet };
+export { CalendarSheet, SbsCalendarSheet };
