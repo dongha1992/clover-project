@@ -25,7 +25,7 @@ import { Calendar } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
-import { SET_ORDER_ITEMS } from '@store/order';
+import { SET_ORDER } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
@@ -268,7 +268,7 @@ const CartPage = () => {
     setIsAllchecked(!isAllChecked);
   }, [isAllChecked]);
 
-  const handleSelectDisposable = (id: any) => {
+  const handleSelectDisposable = (id: number) => {
     const newDisposableList = disposableList.map((item) => {
       if (item.id === id) {
         return { ...item, isSelected: !item.isSelected };
@@ -425,10 +425,37 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!hasDeliveryTypeAndDestination) return;
 
-    const deliveryTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value;
-    userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime }));
-    dispatch(SET_ORDER_ITEMS(selectedMenuList));
-    router.push('/order');
+    const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
+    userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
+
+    const reqBody = {
+      delivery: userDestinationStatus.toUpperCase(),
+      deliveryDetail,
+      destinationId: 1,
+      isSubOrderDelivery: subDeliveryId ? true : false,
+      orderDeliveries: {
+        deliveryDate: selectedDeliveryDay,
+        orderMenus: [
+          {
+            menuDetailId: 72,
+            menuQuantity: 1,
+          },
+          {
+            menuDetailId: 511,
+            menuQuantity: 1,
+          },
+        ],
+        orderOptions: [
+          {
+            optionId: 1,
+            optionQuantity: 1,
+          },
+        ],
+      },
+      type: 'GENERAL',
+    };
+    dispatch(SET_ORDER(reqBody));
+    // router.push('/order');
   };
 
   const goToSubDeliverySheet = (deliveryId: number): void => {

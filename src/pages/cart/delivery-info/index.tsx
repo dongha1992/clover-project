@@ -104,6 +104,8 @@ const DeliverInfoPage = () => {
   };
 
   const finishDeliverySetting = async () => {
+    const isSpot = userSelectDeliveryType === 'spot';
+
     if (!tempDestination) {
       return;
     } else if (userSelectDeliveryType === 'spot' && tempDestination?.spaceType === 'PRIVATE' && !noticeChecked) {
@@ -121,6 +123,7 @@ const DeliverInfoPage = () => {
       router.push('/cart');
     } else {
       /* TODO spotPickupId 형 체크 */
+
       const reqBody = {
         addressDetail: tempDestination.location.addressDetail,
         name: tempDestination.name,
@@ -132,7 +135,6 @@ const DeliverInfoPage = () => {
         receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
         receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
         zipCode: tempDestination.location.zipCode,
-        spotPickupId: tempDestination.spotPickupId || tempDestination.spotPickup.id,
       };
 
       try {
@@ -285,6 +287,7 @@ const DeliverInfoPage = () => {
 
     try {
       const { data } = await getMainDestinations(params);
+      console.log(data, '@');
       if (data.code === 200) {
         setTempDestination(data.data);
         setIsMaindestination(true);
