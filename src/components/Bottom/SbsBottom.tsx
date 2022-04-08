@@ -5,6 +5,7 @@ import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { TimerTooltip } from '@components/Shared/Tooltip';
+import router from 'next/router';
 
 const SbsBottom = () => {
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
@@ -13,7 +14,9 @@ const SbsBottom = () => {
     setTempIsLike((prev) => !prev);
   }, []);
 
-  const clickButtonHandler = () => {};
+  const clickButtonHandler = () => {
+    router.push('/subscription/register');
+  };
 
   return (
     <Container>

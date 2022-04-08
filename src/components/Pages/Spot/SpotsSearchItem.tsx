@@ -27,7 +27,7 @@ interface IProps {
 const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId } = router.query;
+  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
@@ -68,6 +68,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
       spotPickupId: item.spotPickup?.id,
     };
 
+    // TODO : destinationId 리덕스로 수정?
     if (isLoginSuccess) {
       if (orderId) {
         dispatch(
@@ -88,9 +89,18 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
+
+          if (isSubscription) {
+            dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: { destinationId: item.id, isSubscription, deliveryInfo },
+            });
+          } else {
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
+          }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
@@ -99,7 +109,16 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         }
       } else {
         // 로그인o and 장바구니 x
-        router.push('/search');
+        if (isSubscription) {
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { destinationId: item.id, isSubscription, deliveryInfo },
+          });
+        } else {
+          router.push('/search');
+        }
       }
     } else {
       // 로그인x

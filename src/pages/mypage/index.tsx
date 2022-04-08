@@ -59,7 +59,7 @@ const MypagePage = () => {
     }
   );
 
-  if (isLoading) {
+  if (isLoginSuccess && isLoading) {
     return <div>로딩</div>;
   }
 
