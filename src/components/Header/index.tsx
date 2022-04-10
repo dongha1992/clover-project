@@ -96,6 +96,7 @@ const Header = () => {
         '/spot/location/address': '주소 검색',
         '/spot/regi-list': '프코스팟 안내',
         '/subscription/products': '정기구독',
+        '/subscription/set-info': '구독하기',
         '/subscription/register': '구독하기',
       };
 

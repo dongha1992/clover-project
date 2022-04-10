@@ -1,82 +1,115 @@
+import { onError } from '@api/Api';
 import { theme } from '@styles/theme';
+import axios from 'axios';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
+import { useMutation } from 'react-query';
 import styled from 'styled-components';
-
+import 'dayjs/locale/ko';
+import { SET_SBS_DELIVERY_EXPECTED_DATE, subscriptionForm } from '@store/subscription';
+import { useDispatch, useSelector } from 'react-redux';
+dayjs.locale('ko');
 interface IProps {
-  calendarActivePeriod?: string[];
   disabledDate?: string[];
   deliveryComplete?: string[];
   deliveryExpectedDate?: string[];
+  setDeliveryExpectedDate: (value: string[]) => void;
   deliveryHoliday?: string[];
   deliveryChange?: string[];
   sumDelivery?: string[];
   sumDeliveryComplete?: string[];
+  sbsDates: string[];
+  setPickupDay: (value: any[]) => void;
 }
 
 const SbsCalendar = ({
-  calendarActivePeriod = [],
-  disabledDate = [],
-  deliveryComplete = [],
-  deliveryExpectedDate = [],
-  deliveryHoliday = [],
-  deliveryChange = [],
-  sumDelivery = [],
-  sumDeliveryComplete = [],
+  disabledDate = [], // 구독캘린더 inactive 날짜리스트
+  deliveryComplete = [], // 배송완료 or 주문취소
+  deliveryExpectedDate = [], // 배송예정일
+  setDeliveryExpectedDate, // 배송예정일 setState
+  deliveryHoliday = [], // 배송휴무일
+  deliveryChange = [], // 배송일변경
+  sumDelivery = [], // 배송예정일(합배송 포함)
+  sumDeliveryComplete = [], // 배송완료(합배송 포함)
+  sbsDates, // 초기 구독캘린더 active 날짜리스트
+  setPickupDay,
 }: IProps) => {
-  const [value, setValue] = useState(new Date(calendarActivePeriod[0]));
+  const dispatch = useDispatch();
+  const { sbsDeliveryExpectedDate } = useSelector(subscriptionForm);
+  const [value, setValue] = useState<Date>();
+  const [maxDate, setMaxDate] = useState(new Date(sbsDates[sbsDates.length - 1]));
+
+  useEffect(() => {
+    if (sbsDeliveryExpectedDate) {
+      setValue(new Date(sbsDeliveryExpectedDate[0]));
+    }
+  }, [sbsDeliveryExpectedDate]);
+
+  useEffect(() => {
+    if (sbsDeliveryExpectedDate) {
+      setMaxDate(new Date(sbsDeliveryExpectedDate[sbsDeliveryExpectedDate.length - 1]));
+    }
+  }, [sbsDeliveryExpectedDate]);
+
   const today = dayjs().format('YYYY-MM-DD');
 
-  const titleContent = ({ date, view }: { date: any; view: any }) => {
-    let element = [];
+  const titleContent = useCallback(
+    ({ date, view }: { date: any; view: any }) => {
+      let element = [];
 
-    if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      // 배송 예정일
-      element.push(<div className="deliveryExpectedDate" key={0}></div>);
-    } else if (today === dayjs(date).format('YYYY-MM-DD')) {
-      // 오늘
-      element.push(
-        <div className="today" key={0}>
-          오늘
-        </div>
-      );
-    } else if (deliveryHoliday.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      // 배송 휴무일
-      element.push(
-        <div className="deliveryHoliday" key={0}>
-          배송휴무일
-        </div>
-      );
-    } else if (deliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      // 배송완료 or 주문취소
-      element.push(<div className="deliveryComplete" key={0}></div>);
-    } else if (deliveryChange.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      // 배송일변경
-      element.push(
-        <div className="deliveryChange" key={0}>
-          <span>배송일변경</span>
-        </div>
-      );
-    } else if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      // 배송예정일(합배송 포함)
-      element.push(
-        <div className="sumDelivery" key={0}>
-          <span></span>
-        </div>
-      );
-    } else if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-      // 배송완료(합배송 포함)
-      element.push(
-        <div className="sumDeliveryComplete" key={0}>
-          <span></span>
-        </div>
-      );
-    }
-    return <>{element}</>;
-  };
+      if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        // 배송 예정일
+        element.push(<div className="deliveryExpectedDate" key={0}></div>);
+      } else if (today === dayjs(date).format('YYYY-MM-DD')) {
+        // 오늘
+        element.push(
+          <div className="today" key={0}>
+            오늘
+          </div>
+        );
+      } else if (deliveryHoliday.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        // 배송 휴무일
+        element.push(
+          <div className="deliveryHoliday" key={0}>
+            배송휴무일
+          </div>
+        );
+      } else if (deliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        // 배송완료 or 주문취소
+        element.push(<div className="deliveryComplete" key={0}></div>);
+      } else if (deliveryChange.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        // 배송일변경
+        element.push(
+          <div className="deliveryChange" key={0}>
+            <span>배송일변경</span>
+          </div>
+        );
+      } else if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        // 배송예정일(합배송 포함)
+        element.push(
+          <div className="sumDelivery" key={0}>
+            <span></span>
+          </div>
+        );
+      } else if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        // 배송완료(합배송 포함)
+        element.push(
+          <div className="sumDeliveryComplete" key={0}>
+            <span></span>
+          </div>
+        );
+      }
+
+      return <>{element}</>;
+    },
+    [deliveryExpectedDate]
+  );
 
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
+    if (!sbsDates.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      return true;
+    }
     if (date.getDay() === 0) {
       // 일요일 비활성화
       return true;
@@ -88,10 +121,41 @@ const SbsCalendar = ({
     }
   };
 
+  const { mutate: mutateSelectDate } = useMutation(
+    async (id: string) => {
+      const { data } = await axios.get(`http://localhost:9009/api/sbsList/${id}`);
+
+      return data.data;
+    },
+    {
+      onSuccess: async (data) => {
+        console.log(data);
+
+        let dates: string[] = [];
+        let pickupDayObj = new Set();
+
+        await data.deliveryDates.map((item: any) => {
+          dates.push(item.deliveryDate);
+          pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
+        });
+
+        setDeliveryExpectedDate(dates);
+        setMaxDate(new Date(dates[dates.length - 1]));
+
+        // 픽업 요일
+        setPickupDay(Array.from(pickupDayObj));
+      },
+      onSettled: () => {},
+      onError: () => {
+        console.log('error');
+      },
+    }
+  );
+
   const onChange = (value: Date, event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(value);
-    console.log(value);
     // TODO(young) : 구독 리스트 정보 받는 api
+    mutateSelectDate(dayjs(value).format('YYYY-MM-DD'));
   };
 
   return (
@@ -100,10 +164,10 @@ const SbsCalendar = ({
         calendarType={'Hebrew'}
         prev2Label={null}
         next2Label={null}
-        minDate={new Date(calendarActivePeriod[0])}
-        maxDate={new Date(calendarActivePeriod[1])}
+        minDate={new Date(sbsDates[0])}
+        maxDate={maxDate}
         onChange={onChange}
-        // value={value}
+        value={value}
         // showNeighboringMonth={false}
         formatDay={(locale, date) => dayjs(date).format('D')}
         tileContent={titleContent}
