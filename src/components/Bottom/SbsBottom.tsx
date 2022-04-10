@@ -15,7 +15,7 @@ const SbsBottom = () => {
   }, []);
 
   const clickButtonHandler = () => {
-    router.push('/subscription/register');
+    router.push('/subscription/set-info');
   };
 
   return (
