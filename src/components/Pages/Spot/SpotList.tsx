@@ -166,9 +166,25 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
             <StorImgWrapper onClick={() => goToDetail(list.id)}>
               <Tag>
                 <SVGIcon name="whitePeople" />
-                <TextH7B padding="1px 0 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
+                {
+                  list.userCount ? (
+                    <TextH7B padding="1px 0 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
+                  )
+                  :
+                  (
+                    <TextH7B padding="1px 0 0 2px" color={theme.white}>0명 이용중</TextH7B>
+                  )
+                }
               </Tag>
-              <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
+              {
+                list.images.map((i, idx) => {
+                  return (
+                    <div key={idx}>
+                      <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
+                    </div>
+                  )
+                })
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
@@ -195,7 +211,15 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              <Img src={`${IMAGE_S3_URL}${list?.images[0].url}`} alt="매장이미지" />
+              {
+                list.images.map((i, idx) => {
+                  return (
+                    <div key={idx}>
+                      <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
+                    </div>
+                  )
+                })
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
