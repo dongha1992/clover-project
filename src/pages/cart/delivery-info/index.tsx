@@ -141,7 +141,7 @@ const DeliverInfoPage = () => {
       dispatch(INIT_DESTINATION_STATUS());
       dispatch(INIT_AVAILABLE_DESTINATION());
       if (isSubscription) {
-        router.push('/subscription/register');
+        router.push('/subscription/set-info');
       } else {
         router.push('/cart');
       }
