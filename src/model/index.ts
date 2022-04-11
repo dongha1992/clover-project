@@ -870,27 +870,29 @@ export type TPayMethod =
   | 'TOSS_CARD'
   | 'TOSS_MONEY';
 export interface ICreateOrderRequest {
+  coupon: number;
+  delivery: string;
+  deliveryDetail: string;
+  deliveryFee: number;
+  deliveryFeeDiscount: number;
+  destinationId: number;
+  location: ILocation;
+  menuAmount: number;
+  menuDiscount: number;
+  optionAmount: number;
+  name: string;
   type: string;
   payMethod: TPayMethod | string;
   cardId: number;
   userName: string;
   userTel: string;
+  userEmail: string;
   receiverName: string;
   receiverTel: string;
-  delivery: string;
-  deliveryDetail: string;
-  location: ILocation;
-  destinationId: number;
-  menuAmount: number;
-  menuDiscount: number;
-  optionAmount: number;
   eventDiscount: number;
-  deliveryFee: number;
-  deliveryFeeDiscount: number;
   point: number;
-  coupon: number;
   payAmount: number;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   orderDeliveries: IOrderRequestInOrderDeliveries[];
 }
 
@@ -981,13 +983,17 @@ export interface IOrderDetailInOrderDeliveries {
   delivery: TDeliveryType;
   deliveryDetail: string;
   deliveryDate: string;
+  deliveryEndTime: string;
+  deliveryStartTime: string;
   receiverName: string;
   receiverTel: string;
   location: ILocation;
   deliveryMessageType?: string;
   deliveryMessage?: string;
-  spot?: IOrderDeliveriesInSpot;
-  spotPickup?: IOrderDeliveriesInSpotPickUp;
+  spotName: string;
+  spotPickupId: number;
+  spotPickupName: string;
+  spotPickupType: string;
   status: string;
   orderMenus: IOrderMenus[];
 }
@@ -1114,7 +1120,7 @@ export interface IGetSubOrdersResponse {
 
 export interface IOrderDetail {
   id: number;
-  delivery: TDeliveryType;
+  delivery: TDeliveryType | string;
   deliveryDetail: string;
   name: string;
   menuAmount: number;
@@ -1135,6 +1141,7 @@ export interface IOrderDetail {
   paidAt: string;
   payAmount: number;
   optionAmount: number;
+  optionQuantity: number;
   point: number;
   refundCoupon: number;
   refundDeliveryFee: number;
@@ -1166,11 +1173,12 @@ export interface IOrderPreviewRequest {
   delivery: string;
   deliveryDetail: string;
   destinationId: number;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
   type: string;
 }
 export interface ICreateOrderPreview {
+  name: string;
   type: string;
   userName: string;
   userTel: string;
@@ -1209,6 +1217,7 @@ export interface ICreateOrderPreview {
       orderOptions: IOrderOptions[];
     }
   ];
+  isSubOrderDelivery: boolean;
 }
 export interface ICreateOrderPreviewResponse {
   code: number;
@@ -1218,14 +1227,17 @@ export interface ICreateOrderPreviewResponse {
     coupons: ICoupon[];
     point: number;
     cards: IGetCard[];
-    isDeliveryTogether: boolean;
+    isSubOrderDelivery: boolean;
   };
 }
 
 export interface ICreateOrder {
   id: number;
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  isDeliveryTogether: boolean;
   name: string;
   menuQuantity: number;
   refundMenuQuantity: number;

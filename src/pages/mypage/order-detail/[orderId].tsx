@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FlexRow, theme, FlexBetween, FlexEnd, FlexRowStart } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import PaymentItem from '@components/Pages/Payment/PaymentItem';
+import { PaymentItem } from '@components/Pages/Payment';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
@@ -60,14 +60,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   );
 
   const { mutate: deleteOrderMutation } = useMutation(
-    async () => {
-      const { data } = await deleteDeliveryApi(orderId);
+    async (deliveryId: number) => {
+      const { data } = await deleteDeliveryApi(deliveryId);
     },
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getOrderDetail');
-
-        // router.push('/mypage/order-delivery-history');
+        router.push('/mypage/order-delivery-history');
       },
     }
   );
@@ -169,6 +168,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
+    const deliveryId = orderDetail?.orderDeliveries[0].id!;
+
     let alertMessage = '';
 
     if (isSubOrder === 'sub') {
@@ -182,7 +183,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     dispatch(
       SET_ALERT({
         alertMessage,
-        onSubmit: () => deleteOrderMutation(),
+        onSubmit: () => deleteOrderMutation(deliveryId),
         closeBtnText: '취소',
       })
     );
@@ -251,6 +252,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     refundOptionAmount,
     refundOptionQuantity,
     refundPoint,
+    optionQuantity,
     deliveryFee,
     deliveryFeeDiscount,
     eventDiscount,
@@ -270,8 +272,10 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     status,
     deliveryMessageType,
     deliveryMessage,
-    spot,
-    spotPickup,
+    spotName,
+    spotPickupId,
+    spotPickupName,
+    spotPickupType,
   } = orderDetail?.orderDeliveries[0]!;
 
   return (
@@ -345,8 +349,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           delivery={DELIVERY_TYPE_MAP[delivery]}
           deliveryDetail={deliveryDetail}
           location={location}
-          spotName={spot?.name}
-          spotPickupName={spotPickup?.name}
+          spotName={spotName}
+          spotPickupName={spotPickupName}
           status={status}
         />
         {isSubOrder === 'true' && <SubOrderInfo isDestinationChange />}
@@ -409,10 +413,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>
             {menuAmount -
-              (menuDiscount + eventDiscount + coupon) -
-              (deliveryFee - deliveryFeeDiscount) -
-              point -
-              optionAmount}
+              (menuDiscount + eventDiscount + deliveryFeeDiscount + coupon + point) +
+              optionAmount * optionQuantity +
+              deliveryFee}
             원
           </TextH4B>
         </FlexBetween>

@@ -21,7 +21,7 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
-  const { isDelivery } = router.query;
+  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupPlace } = useSelector(spotSelector);
@@ -46,25 +46,23 @@ const SpotDetailBottom = () => {
       spotPickup: spotPickupPlace,
     };
 
+    // TODO : destinationId 리덕스로 수정?
     if (isLoginSuccess) {
       //로그인 o
       if (cartLists.length) {
         // 장바구니 o
         if (isDelivery) {
           // 장바구니 o , 배송 정보에서 넘어온 경우
-          if(spotDetail?.pickups.length! > 1) {
-            // 스팟 핏업 장소 2개 이상인 경우
-            dispatch(SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={spotDetail?.pickups} />
-            }));
-
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          if (isSubscription) {
+            dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+            });
+          } else {
             dispatch(SET_USER_DESTINATION_STATUS('spot'));
-            dispatch(SET_TEMP_DESTINATION(destinationInfo));
-            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });  
-          }else {
-            dispatch(SET_USER_DESTINATION_STATUS('spot'));
-            dispatch(SET_TEMP_DESTINATION(destinationInfo));
-            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });  
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
           }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
@@ -86,15 +84,13 @@ const SpotDetailBottom = () => {
         }
       } else {
         // 장바구니 x
-        if(spotDetail?.pickups.length! > 1) {
-          dispatch(SET_BOTTOM_SHEET({
-            content: <PickupSheet pickupInfo={spotDetail?.pickups} />
-          }));
-          
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
-          dispatch(SET_DESTINATION(destinationInfo));
+        if(isSubscription) {
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push('/search');
+          dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+          });
         }else{
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_DESTINATION(destinationInfo));

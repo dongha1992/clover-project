@@ -65,6 +65,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       main: false,
       availableTime: pickUpTime,
       spaceType: list.type,
+      spotPickupId: list.pickups[0].id,
     };
 
     if (isLoginSuccess) {

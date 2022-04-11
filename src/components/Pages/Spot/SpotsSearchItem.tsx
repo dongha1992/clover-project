@@ -27,7 +27,7 @@ interface IProps {
 const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId } = router.query;
+  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
@@ -35,13 +35,15 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
+  const recentPickupTime = `${item.spotPickup?.spot.lunchDeliveryStartTime}-${item.spotPickup?.spot.lunchDeliveryEndTime} / ${item.spotPickup?.spot.dinnerDeliveryStartTime}-${item.spotPickup?.spot.dinnerDeliveryEndTime}`;
+  const spaceType = item.type ? item.type : item.spotPickup.spot.type;
+  const availableTime = item.spotPickup ? recentPickupTime : pickUpTime;
 
   /* TODO: 임시로 이렇게 해둠 */
   const imageUrl = item?.images ? item?.images[0]?.url : item?.spotPickup?.spot?.images[0].url;
 
   const typeTag = (): string => {
-    const type = item.type;
-    switch (type) {
+    switch (spaceType) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
@@ -50,6 +52,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         return '';
     }
   };
+
   const orderHandler = () => {
     const destinationInfo = {
       name: item.name,
@@ -60,10 +63,12 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         zipCode: item.location.zipCode,
       },
       main: false,
-      availableTime: pickUpTime,
-      spaceType: item.type,
+      availableTime,
+      spaceType,
+      spotPickupId: item.spotPickup?.id,
     };
 
+    // TODO : destinationId 리덕스로 수정?
     if (isLoginSuccess) {
       if (orderId) {
         dispatch(
@@ -84,9 +89,18 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
+
+          if (isSubscription) {
+            dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: { destinationId: item.id, isSubscription, deliveryInfo },
+            });
+          } else {
+            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
+          }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DESTINATION_STATUS('spot'));
@@ -95,7 +109,16 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         }
       } else {
         // 로그인o and 장바구니 x
-        router.push('/search');
+        if (isSubscription) {
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { destinationId: item.id, isSubscription, deliveryInfo },
+          });
+        } else {
+          router.push('/search');
+        }
       }
     } else {
       // 로그인x
@@ -118,7 +141,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
           <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
             픽업
           </TextH6B>
-          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          <TextH6B color={theme.greyScale65}>{availableTime}</TextH6B>
         </MeterAndTime>
         {!item.isTrial ? (
           <div>

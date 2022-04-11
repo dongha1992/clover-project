@@ -58,6 +58,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     deliveryMessage: '',
   });
 
+  console.log(tempEditSpot, 'tempEditSpot');
+
   const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
@@ -116,7 +118,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
           data: {
             receiverName: deliveryEditObj.receiverName,
             receiverTel: deliveryEditObj.receiverTel,
-            spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickup?.id!,
+            spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickupId!,
           },
         });
         console.log(data, 'after spot');
@@ -310,8 +312,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
               <TextH5B>픽업장소</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {`${tempEditSpot ? tempEditSpot.name : orderDetail?.spot?.name} ${
-                    tempEditSpot ? tempEditSpot.spotPickup : orderDetail?.spotPickup?.name!
+                  {`${tempEditSpot ? tempEditSpot.name : orderDetail?.spotName} ${
+                    tempEditSpot ? tempEditSpot.spotPickup : orderDetail?.spotPickupName!
                   }`}
                 </TextB2R>
                 <FlexRow>
