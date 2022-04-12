@@ -32,7 +32,7 @@ const SubscriptiopPage = () => {
     <Container>
       <InfoCard subsList={subsList} />
       {subsList && <MySbsList />}
-      <SbsCalendar />
+
       <SbsListBox>
         <TitleBox>
           <div className="row">

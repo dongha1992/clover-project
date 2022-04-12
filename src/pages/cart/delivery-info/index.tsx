@@ -53,7 +53,7 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId } = router.query;
+  const { destinationId, isSubscription, deliveryInfo } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
 
   // 배송 마감 타이머 체크 + 위치 체크
@@ -67,13 +67,34 @@ const DeliverInfoPage = () => {
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
-      router.push({
-        pathname: '/spot/search',
-        query: { isDelivery: true },
-      });
+      if (isSubscription) {
+        router.push({
+          pathname: '/spot/search',
+          query: {
+            deliveryInfo,
+            isSubscription: true,
+            isDelivery: true,
+          },
+        });
+      } else {
+        router.push({
+          pathname: '/spot/search',
+          query: { isDelivery: true },
+        });
+      }
     } else {
       dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
-      router.push('/destination/search');
+      if (isSubscription) {
+        router.push({
+          pathname: '/destination/search',
+          query: {
+            deliveryInfo,
+            isSubscription: true,
+          },
+        });
+      } else {
+        router.push('/destination/search');
+      }
     }
   };
 
@@ -99,6 +120,7 @@ const DeliverInfoPage = () => {
       if (value === deliveryTypeWithTooltip) {
         setDeliveryTypeWithTooltip('');
       }
+
       setUserSelectDeliveryType(value);
     }
   };
@@ -118,7 +140,11 @@ const DeliverInfoPage = () => {
       dispatch(INIT_TEMP_DESTINATION());
       dispatch(INIT_DESTINATION_STATUS());
       dispatch(INIT_AVAILABLE_DESTINATION());
-      router.push('/cart');
+      if (isSubscription) {
+        router.push('/subscription/set-info');
+      } else {
+        router.push('/cart');
+      }
     } else {
       /* TODO spotPickupId 형 체크 */
       const reqBody = {
@@ -344,6 +370,14 @@ const DeliverInfoPage = () => {
     checkTooltipMsgByDeliveryType();
   }, []);
 
+  useEffect(() => {
+    // 구독하기로 들어왔을 떄 스팟 정기구독이면 배송방법 스팟배송체크 / 새벽&택배 정기구독이면 배송방법 새벽배송체크
+    if (isSubscription) {
+      deliveryInfo === 'spot' && setUserSelectDeliveryType('spot');
+      deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
+    }
+  }, [deliveryInfo, isSubscription]);
+
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
 
   return (
@@ -351,73 +385,90 @@ const DeliverInfoPage = () => {
       <Wrapper>
         <TextH3B padding="24px 0">배송방법</TextH3B>
         <DeliveryMethodWrapper>
-          <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
-            픽업
-          </TextH5B>
-          {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
-            const isSelected = userSelectDeliveryType === item.value;
-            return (
-              <MethodGroup key={index}>
-                <RowWrapper>
-                  <RadioWrapper>
-                    <RadioButton isSelected={isSelected} onChange={() => changeDeliveryTypeHandler(item.value)} />
-                  </RadioWrapper>
-                  <Content>
-                    <FlexBetween margin="0 0 8px 0">
-                      <RowLeft>
-                        <TextH5B margin="0 4px 0px 8px">{item.name}</TextH5B>
-                        {item.tag && (
-                          <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                            {item.tag}
-                          </Tag>
-                        )}
-                      </RowLeft>
-                      {deliveryTypeWithTooltip === item.value && tooltipRender()}
-                      {isTimerTooltip && item.name === timerDevlieryType && <CheckTimerByDelivery />}
-                    </FlexBetween>
-                    <Body>
-                      <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
-                      <TextH6B color={theme.greyScale45}>{item.feeInfo}</TextH6B>
-                    </Body>
-                  </Content>
-                </RowWrapper>
-              </MethodGroup>
-            );
-          })}
-          <BorderLine height={1} margin="24px 0" />
-          <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
-            배송
-          </TextH5B>
-          {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
-            const isSelected = userSelectDeliveryType === item.value;
-            return (
-              <MethodGroup key={index}>
-                <RowWrapper>
-                  <RadioWrapper>
-                    <RadioButton isSelected={isSelected} onChange={() => changeDeliveryTypeHandler(item.value)} />
-                  </RadioWrapper>
-                  <Content>
-                    <FlexBetween margin="0 0 8px 0">
-                      <RowLeft>
-                        <TextH5B margin="0 4px 0 8px">{item.name}</TextH5B>
-                        {item.tag && (
-                          <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                            {item.tag}
-                          </Tag>
-                        )}
-                      </RowLeft>
-                      {deliveryTypeWithTooltip === item.value && tooltipRender()}
-                      {isTimerTooltip && item.name === timerDevlieryType && <CheckTimerByDelivery />}
-                    </FlexBetween>
-                    <Body>
-                      <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
-                      <TextH6B color={theme.greyScale45}>{item.feeInfo}</TextH6B>
-                    </Body>
-                  </Content>
-                </RowWrapper>
-              </MethodGroup>
-            );
-          })}
+          {deliveryInfo !== 'parcel' && (
+            <>
+              <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
+                픽업
+              </TextH5B>
+              {DELIVERY_METHOD['pickup'].map((item: any, index: number) => {
+                const isSelected = userSelectDeliveryType === item.value;
+
+                return (
+                  <MethodGroup key={index}>
+                    <RowWrapper>
+                      <RadioWrapper>
+                        <RadioButton isSelected={isSelected} onChange={() => changeDeliveryTypeHandler(item.value)} />
+                      </RadioWrapper>
+                      <Content>
+                        <FlexBetween margin="0 0 8px 0">
+                          <RowLeft>
+                            <TextH5B margin="0 4px 0px 8px">{item.name}</TextH5B>
+                            {item.tag && (
+                              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                                {item.tag}
+                              </Tag>
+                            )}
+                          </RowLeft>
+
+                          {!isSubscription && deliveryTypeWithTooltip === item.value && tooltipRender()}
+                          {!isSubscription && isTimerTooltip && item.name === timerDevlieryType && (
+                            <CheckTimerByDelivery />
+                          )}
+                        </FlexBetween>
+                        <Body>
+                          <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
+                          <TextH6B color={theme.greyScale45}>{item.feeInfo}</TextH6B>
+                        </Body>
+                      </Content>
+                    </RowWrapper>
+                  </MethodGroup>
+                );
+              })}
+            </>
+          )}
+          {!isSubscription && <BorderLine height={1} margin="24px 0" />}
+          {deliveryInfo !== 'spot' && (
+            <>
+              <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
+                배송
+              </TextH5B>
+              {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
+                // 구독하기로 들어오면 퀵배송은 제외하고 출력
+                if (isSubscription && item.name === '퀵배송') return;
+
+                const isSelected = userSelectDeliveryType === item.value;
+                return (
+                  <MethodGroup key={index}>
+                    <RowWrapper>
+                      <RadioWrapper>
+                        <RadioButton isSelected={isSelected} onChange={() => changeDeliveryTypeHandler(item.value)} />
+                      </RadioWrapper>
+                      <Content>
+                        <FlexBetween margin="0 0 8px 0">
+                          <RowLeft>
+                            <TextH5B margin="0 4px 0 8px">{item.name}</TextH5B>
+                            {item.tag && (
+                              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                                {item.tag}
+                              </Tag>
+                            )}
+                          </RowLeft>
+                          {!isSubscription && deliveryTypeWithTooltip === item.value && tooltipRender()}
+                          {!isSubscription && isTimerTooltip && item.name === timerDevlieryType && (
+                            <CheckTimerByDelivery />
+                          )}
+                        </FlexBetween>
+                        <Body>
+                          <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
+                          <TextH6B color={theme.greyScale45}>{item.feeInfo}</TextH6B>
+                        </Body>
+                      </Content>
+                    </RowWrapper>
+                  </MethodGroup>
+                );
+              })}
+            </>
+          )}
         </DeliveryMethodWrapper>
         {userSelectDeliveryType && (
           <>
@@ -434,7 +485,7 @@ const DeliverInfoPage = () => {
             {(!userSelectDeliveryType || !tempDestination) && (
               <BtnWrapper onClick={goToFindAddress}>
                 <Button backgroundColor={theme.white} color={theme.black} border>
-                  {isSpotPickupPlace ? '픽업지 검색하기' : '배송지 검색하기'}
+                  {isSpotPickupPlace ? '프코스팟 검색하기' : '배송지 검색하기'}
                 </Button>
               </BtnWrapper>
             )}
