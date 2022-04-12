@@ -261,6 +261,24 @@ export interface IRegisterDestinationRequest {
   zipCode: string | null;
 }
 
+export interface IRegisterDestination {
+  id: number;
+  delivery: string;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+  location: ILocation;
+  main: boolean;
+  createdAt: string;
+  deliveryMessage: string;
+}
+
+export interface IRegisterDestinationResponse {
+  code: number;
+  message: string;
+  data: IRegisterDestination;
+}
+
 export interface IAvilabiltyAddress {
   jibunAddress?: string | null;
   roadAddress: string | null;
@@ -1188,7 +1206,7 @@ export interface IOrderDeliveriesInOrderPreviewRequest {
 }
 export interface IOrderPreviewRequest {
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string | null;
   destinationId: number;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];

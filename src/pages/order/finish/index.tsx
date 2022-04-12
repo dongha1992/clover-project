@@ -264,7 +264,7 @@ const OrderFinishPage = ({ orderId }: IProps) => {
         rightButtonHandler={goToShopping}
         leftButtonHandler={goToOrderDetail}
         rightText="쇼핑 계속하기"
-        leftText="  주문 상세보기"
+        leftText="주문 상세보기"
       />
     </Container>
   );
@@ -287,32 +287,12 @@ const OrderItemsWrapper = styled.div`
   ${homePadding}
 `;
 
-const OrderListWrapper = styled.div<{ isShow: boolean }>`
-  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
-  flex-direction: column;
-`;
-
 const SingleOrderItemWrapper = styled.div`
   margin-top: 24px;
 `;
 
 const DevlieryInfoWrapper = styled.div`
   padding: 24px;
-`;
-
-const OrderDetailBtn = styled.div`
-  display: flex;
-  width: 100%;
-  ${fixedBottom}
-`;
-
-const Col = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 25%;
-  background-color: ${theme.white};
-  width: 1px;
-  height: 50%;
 `;
 
 export async function getServerSideProps(context: any) {

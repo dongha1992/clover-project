@@ -155,10 +155,11 @@ const DeliverInfoPage = () => {
     if (destinationId) {
       dispatch(SET_DESTINATION(tempDestination));
       dispatch(SET_AFTER_SETTING_DELIVERY());
-      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(SET_USER_DESTINATION_STATUS(tempDestination?.delivery?.toLowerCase()!));
       dispatch(INIT_TEMP_DESTINATION());
       dispatch(INIT_DESTINATION_STATUS());
       dispatch(INIT_AVAILABLE_DESTINATION());
+
       if (isSubscription) {
         router.push('/subscription/set-info');
       } else {
@@ -184,25 +185,27 @@ const DeliverInfoPage = () => {
         const { data } = await postDestinationApi(reqBody);
 
         if (data.code === 200) {
+          const response = data.data;
           dispatch(
             SET_DESTINATION({
-              name: reqBody.name,
+              name: response.name,
               location: {
-                addressDetail: reqBody.addressDetail,
-                address: reqBody.address,
-                dong: reqBody.dong,
-                zipCode: reqBody.zipCode,
+                addressDetail: response.location.addressDetail,
+                address: response.location.address,
+                dong: response.location.dong,
+                zipCode: response.location.zipCode,
               },
-              main: reqBody.main,
-              deliveryMessage: reqBody.deliveryMessage,
-              receiverName: reqBody.receiverName,
-              receiverTel: reqBody.receiverTel,
+              main: response.main,
+              deliveryMessage: response.deliveryMessage,
+              receiverName: response.receiverName,
+              receiverTel: response.receiverTel,
               deliveryMessageType: '',
-              delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
+              delivery: response.delivery,
+              id: response.id,
             })
           );
           dispatch(SET_AFTER_SETTING_DELIVERY());
-          dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+          dispatch(SET_USER_DESTINATION_STATUS(response.delivery.toLowerCase()));
           dispatch(INIT_TEMP_DESTINATION());
           dispatch(INIT_DESTINATION_STATUS());
           dispatch(INIT_AVAILABLE_DESTINATION());
@@ -322,7 +325,6 @@ const DeliverInfoPage = () => {
 
     try {
       const { data } = await getMainDestinationsApi(params);
-      console.log(data, '@');
       if (data.code === 200) {
         setTempDestination(data.data);
         setIsMaindestination(true);
