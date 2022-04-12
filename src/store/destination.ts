@@ -1,6 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso, IRegisterDestination } from '@model/index';
+import {
+  IJuso,
+  IMenuImage,
+  IOrderMenusInOrderList,
+  IOrderOptions,
+  IRegisterDestination,
+  IGetOrderInImage,
+  IOrderInOrderList,
+} from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
 import { availabilityDestination } from '@api/destination';
 
@@ -32,6 +40,20 @@ export interface IDestination {
   deliveryTime?: string;
   spotPickupId?: number;
   spotPickup?: any;
+
+  deliveryDate?: string;
+  deliveryDateChangeCount?: number;
+  deliveryDateChangeMaximum?: number;
+  deliveryDetail?: string;
+
+  image?: IGetOrderInImage;
+  order?: IOrderInOrderList;
+  orderMenus?: IOrderMenusInOrderList[];
+  orderOptions?: IOrderOptions[];
+  spotId?: number;
+  spotName?: string;
+  spotPickupName?: string;
+  status?: string;
 }
 
 interface TProps {
