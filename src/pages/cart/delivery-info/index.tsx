@@ -17,8 +17,8 @@ import {
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
-import { destinationRegister } from '@api/destination';
-import { getMainDestinations } from '@api/destination';
+import { postDestinationApi, getMainDestinationsApi } from '@api/destination';
+
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
@@ -38,8 +38,6 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 /* TODO: map 리팩토링 */
 /* TODO: 스팟 배송일 경우 추가 */
 
-const recentOrder = '';
-
 const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
@@ -48,7 +46,7 @@ const DeliverInfoPage = () => {
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
+  const { destinationDeliveryType, userTempDestination, locationStatus, userDeliveryType, availableDestination } =
     useSelector(destinationForm);
 
   const dispatch = useDispatch();
@@ -79,8 +77,6 @@ const DeliverInfoPage = () => {
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
-
-  const checkTermHandler = () => {};
 
   const noticeHandler = () => {
     setNoticeChecked(!noticeChecked);
@@ -147,6 +143,8 @@ const DeliverInfoPage = () => {
   };
 
   const finishDeliverySetting = async () => {
+    const isSpot = userSelectDeliveryType === 'spot';
+
     if (!tempDestination) {
       return;
     } else if (userSelectDeliveryType === 'spot' && tempDestination?.spaceType === 'PRIVATE' && !noticeChecked) {
@@ -157,10 +155,11 @@ const DeliverInfoPage = () => {
     if (destinationId) {
       dispatch(SET_DESTINATION(tempDestination));
       dispatch(SET_AFTER_SETTING_DELIVERY());
-      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(SET_USER_DESTINATION_STATUS(tempDestination?.delivery?.toLowerCase()!));
       dispatch(INIT_TEMP_DESTINATION());
       dispatch(INIT_DESTINATION_STATUS());
       dispatch(INIT_AVAILABLE_DESTINATION());
+
       if (isSubscription) {
         router.push('/subscription/set-info');
       } else {
@@ -168,11 +167,12 @@ const DeliverInfoPage = () => {
       }
     } else {
       /* TODO spotPickupId 형 체크 */
+
       const reqBody = {
         addressDetail: tempDestination.location.addressDetail,
         name: tempDestination.name,
         address: tempDestination.location.address,
-        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDestinationStatus.toUpperCase(),
+        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
         deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
         dong: tempDestination.location.dong,
         main: tempDestination.main,
@@ -182,29 +182,30 @@ const DeliverInfoPage = () => {
       };
 
       try {
-        const { data } = await destinationRegister(reqBody);
+        const { data } = await postDestinationApi(reqBody);
+
         if (data.code === 200) {
+          const response = data.data;
           dispatch(
             SET_DESTINATION({
-              name: reqBody.name,
+              name: response.name,
               location: {
-                addressDetail: reqBody.addressDetail,
-                address: reqBody.address,
-                dong: reqBody.dong,
-                zipCode: reqBody.zipCode,
+                addressDetail: response.location.addressDetail,
+                address: response.location.address,
+                dong: response.location.dong,
+                zipCode: response.location.zipCode,
               },
-              main: reqBody.main,
-              deliveryMessage: reqBody.deliveryMessage,
-              receiverName: reqBody.receiverName,
-              receiverTel: reqBody.receiverTel,
+              main: response.main,
+              deliveryMessage: response.deliveryMessage,
+              receiverName: response.receiverName,
+              receiverTel: response.receiverTel,
               deliveryMessageType: '',
-              delivery: userSelectDeliveryType
-                ? userSelectDeliveryType.toUpperCase()
-                : userDestinationStatus.toUpperCase(),
+              delivery: response.delivery,
+              id: response.id,
             })
           );
           dispatch(SET_AFTER_SETTING_DELIVERY());
-          dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+          dispatch(SET_USER_DESTINATION_STATUS(response.delivery.toLowerCase()));
           dispatch(INIT_TEMP_DESTINATION());
           dispatch(INIT_DESTINATION_STATUS());
           dispatch(INIT_AVAILABLE_DESTINATION());
@@ -244,7 +245,7 @@ const DeliverInfoPage = () => {
   };
 
   const checkTooltipMsgByDeliveryType = () => {
-    const canEverything = destinationStatus === 'spot';
+    const canEverything = destinationDeliveryType === 'spot';
 
     const locationCanMorning = locationStatus === 'morning';
     const locationCanEverything = locationStatus === 'spot';
@@ -262,7 +263,7 @@ const DeliverInfoPage = () => {
     }
 
     // 획득 위치 정보만 있음
-    if (locationStatus && !destinationStatus) {
+    if (locationStatus && !destinationDeliveryType) {
       switch (true) {
         case locationCanEverything:
           {
@@ -285,7 +286,7 @@ const DeliverInfoPage = () => {
     }
 
     // 배송지 주소 검색 후 배송 가능한 배송지 타입
-    switch (userDestinationStatus) {
+    switch (userDeliveryType) {
       case 'parcel':
         {
           if (canEverything || canParcelAndCanMorning) {
@@ -306,15 +307,9 @@ const DeliverInfoPage = () => {
   };
 
   const userSelectDeliveryTypeHelper = () => {
-    // 최근 주문 이력이 있는지
-    if (recentOrder && !userDestinationStatus) {
-      setUserSelectDeliveryType(recentOrder);
-      setIsMaindestination(false);
-    }
-
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
-    if (userDestinationStatus) {
-      setUserSelectDeliveryType(userDestinationStatus);
+    if (userDeliveryType) {
+      setUserSelectDeliveryType(userDeliveryType);
     }
   };
 
@@ -329,7 +324,7 @@ const DeliverInfoPage = () => {
     };
 
     try {
-      const { data } = await getMainDestinations(params);
+      const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
         setTempDestination(data.data);
         setIsMaindestination(true);
@@ -357,7 +352,7 @@ const DeliverInfoPage = () => {
   };
 
   const settingHandler = () => {
-    if (userDestinationStatus === 'spot') {
+    if (userDeliveryType === 'spot') {
       if (tempDestination?.spaceType === 'PRIVATE') {
         return !noticeChecked;
       }
@@ -371,6 +366,7 @@ const DeliverInfoPage = () => {
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
+      // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery) {
       setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
       setIsMaindestination(true);

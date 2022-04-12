@@ -243,9 +243,11 @@ export interface ICommon {
   errorMessage: string;
 }
 
+/* DESTINATION */
+
 export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 
-export interface IRegisterDestination {
+export interface IRegisterDestinationRequest {
   address: string | null;
   addressDetail: string;
   delivery?: string;
@@ -257,6 +259,24 @@ export interface IRegisterDestination {
   receiverName?: string;
   receiverTel?: string;
   zipCode: string | null;
+}
+
+export interface IRegisterDestination {
+  id: number;
+  delivery: string;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+  location: ILocation;
+  main: boolean;
+  createdAt: string;
+  deliveryMessage: string;
+}
+
+export interface IRegisterDestinationResponse {
+  code: number;
+  message: string;
+  data: IRegisterDestination;
 }
 
 export interface IAvilabiltyAddress {
@@ -282,16 +302,6 @@ export interface ILocation {
   addressDetail: string;
   zipCode: string;
   dong: string;
-}
-
-export interface IOrderInOrderList {
-  delivery: string;
-  deliveryDetail: string;
-  id: number;
-  name: string;
-  paidAt: string;
-  payAmount: number;
-  type: string;
 }
 
 export interface IDestinationsResponse {
@@ -320,12 +330,12 @@ export interface IGetDestinationsResponse {
   };
 }
 
-export interface IGetDestinations {
+export interface IGetDestinationsRequest {
   page: number;
   size: number;
 }
 
-export interface IEditDestination {
+export interface IEditDestinationRequest {
   address: string | undefined;
   addressDetail: string | undefined;
   delivery: TDeliveryType | undefined;
@@ -339,7 +349,7 @@ export interface IEditDestination {
   zipCode: string | undefined;
 }
 
-export interface IGetMainDestinations {
+export interface IGetMainDestinationsRequest {
   delivery: TDeliveryType | string;
 }
 
@@ -867,7 +877,7 @@ export interface IGetSpotFilter {
   ];
 }
 
-/* Order */
+/* ORDER */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
 export type TPayMethod =
@@ -944,6 +954,17 @@ export interface IOrderMenus {
   };
 }
 export interface IOrderPayment {}
+
+export interface IOrderInOrderList {
+  delivery: string;
+  deliveryDetail: string;
+  id: number;
+  name: string;
+  paidAt: string;
+  payAmount: number;
+  type: string;
+}
+
 export interface IOrder {
   id: number;
   name: string;
@@ -1185,7 +1206,7 @@ export interface IOrderDeliveriesInOrderPreviewRequest {
 }
 export interface IOrderPreviewRequest {
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string | null;
   destinationId: number;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];

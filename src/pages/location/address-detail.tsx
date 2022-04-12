@@ -24,8 +24,8 @@ const AddressDetailPage = () => {
 
   // 배송 가능 여부
 
-  const destinationStatus = checkDestinationHelper(availableDestination);
-  const canNotDelivery = destinationStatus === 'noDelivery';
+  const destinationDeliveryType = checkDestinationHelper(availableDestination);
+  const canNotDelivery = destinationDeliveryType === 'noDelivery';
 
   const getLonLanForMap = async () => {
     const params = {
