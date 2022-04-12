@@ -1,7 +1,7 @@
 import React, { useState, ReactNode } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH6B } from '@components/Shared/Text';
-import { IAccessMethod } from '@pages/payment';
+import { IAccessMethod } from '@pages/order';
 type TProps = {
   option: any;
   selectOptionHandler: (option: IAccessMethod) => void;
