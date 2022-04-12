@@ -38,8 +38,6 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 /* TODO: map 리팩토링 */
 /* TODO: 스팟 배송일 경우 추가 */
 
-const recentOrder = '';
-
 const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
@@ -79,8 +77,6 @@ const DeliverInfoPage = () => {
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
-
-  const checkTermHandler = () => {};
 
   const noticeHandler = () => {
     setNoticeChecked(!noticeChecked);
@@ -309,12 +305,6 @@ const DeliverInfoPage = () => {
   };
 
   const userSelectDeliveryTypeHelper = () => {
-    // 최근 주문 이력이 있는지
-    if (recentOrder && !userDestinationStatus) {
-      setUserSelectDeliveryType(recentOrder);
-      setIsMaindestination(false);
-    }
-
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
     if (userDestinationStatus) {
       setUserSelectDeliveryType(userDestinationStatus);
@@ -375,6 +365,7 @@ const DeliverInfoPage = () => {
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
+      // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery) {
       setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
       setIsMaindestination(true);

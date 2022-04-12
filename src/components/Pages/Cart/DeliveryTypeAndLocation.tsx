@@ -4,7 +4,7 @@ import { TextH4B } from '@components/Shared/Text';
 import {} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { isNil, isEqual } from 'lodash-es';
-import { DELIVERY_TYPE_MAP } from '@constants/payment';
+import { DELIVERY_TYPE_MAP } from '@constants/order';
 import { IDestination } from '@store/destination';
 import { IGetOrderList } from '@model/index';
 
