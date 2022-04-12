@@ -11,8 +11,6 @@ import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { ISpotsDetail } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
-import { useQuery } from 'react-query';
-import { useDeleteLike, useOnLike } from 'src/query';
 import { cartForm } from '@store/cart';
 import {
   destinationForm,
@@ -20,6 +18,8 @@ import {
   SET_DESTINATION,
   SET_TEMP_DESTINATION,
 } from '@store/destination';
+import { deleteSpotLike, postSpotLike } from "@api/spot";
+import { useMutation, useQueryClient } from "react-query";
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -33,18 +33,18 @@ interface IProps {
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const { isDelivery, orderId } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { userLocation } = useSelector(destinationForm);
-
   const { showToast, hideToast } = useToast();
   const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
 
   const userLocationLen = !!userLocation.emdNm?.length;
-
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
-
+  const KEYS = ['POPULAR', 'NEW', 'STATION', 'EVENT'];
+  
   const goToDetail = (id: number): void => {
     if (isSearch) {
       return;
@@ -103,32 +103,78 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     }
   };
 
-  const { data: spotLiked, refetch } = useQuery(['spotLike', list?.id], async () => {
-    if (isSearch) {
-      return;
-    }
-    if (list?.id) {
-      const response = await getSpotLike(list?.id);
-      return response.data.data.liked;
-    }
-  });
+  const spots: any = [];
 
-  // react-query
-  const onLike = useOnLike();
-  const deleteLike = useDeleteLike();
-
-  const hanlderLike = async (e: any) => {
+  const onClickLike = (e: any) => {
     e.stopPropagation();
-    if (isLoginSuccess) {
-      if (spotLiked) {
-        deleteLike(list.id);
-      } else {
-        onLike(list.id);
-      }
-    } else {
-      router.push('/onboarding');
-    }
+    onLike();
   };
+
+  const deepClone = (obj: any) => {
+    if (obj === null || typeof obj !== 'object') {
+      return obj;
+    };
+    const result: any = Array.isArray(obj) ? [] : {};
+    for (let key of Object.keys(obj)) {
+      result[key] = deepClone(obj[key]);
+    };
+    return result;
+  };
+
+  const toggleLike = async () => {
+    try {
+      if(list.liked){
+        await deleteSpotLike(list.id);
+      } else {
+        await postSpotLike(list.id);
+      }
+    } catch (e) {
+      console.error(e);
+    };
+  };
+
+  const {mutate: onLike } = useMutation(toggleLike, {
+    onMutate: async () => {
+      for (const i of KEYS ) {
+        await queryClient.cancelQueries(['spotList', i]);
+      }
+      // console.log('Item', `id: ${list.id}, name: ${list.name}, liked: ${list.liked}`);
+      for(const key of KEYS) {
+        const prevSpots = queryClient.getQueryData(['spotList', key]);
+        spots.push(prevSpots);
+
+        if(prevSpots) {
+          const editSpots: any = deepClone(prevSpots);
+          queryClient.setQueryData(['spotList', key], {
+            ...editSpots,
+            spots: editSpots.spots.map(i => {
+              if (i.id === list.id) {
+                if (i.liked) {
+                  i.liked = false;
+                  if (i.likeCount > 0) {
+                    i.likeCount -= 1;
+                  } else {
+                    i.likeCount = 0;
+                  }
+                } else {
+                  i.liked = true;
+                  i.likeCount += 1;
+                }
+              };
+              return i;
+            }),
+          });
+        }
+      }
+      return spots;
+    },
+    onError: (context: any) => {
+      for (const key of KEYS) {
+        queryClient.setQueryData(['spotList', key], context[key]);
+      }
+    },
+    onSettled: () => {}
+  });
 
   const clickSpotOpen = async () => {
     if (list.recruited) {
@@ -203,8 +249,8 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 // 유저 위치정보 있을때 노출
                 userLocationLen && <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
               }
-              <LikeWrapper type="normal" onClick={(e) => hanlderLike(e)}>
-                <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
+              <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
+                <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB2R padding="4px 0 0 1px">{list?.likeCount}</TextB2R>
               </LikeWrapper>
             </LocationInfoWrapper>
@@ -216,8 +262,8 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
           <Container type="event">
             <StorImgWrapper onClick={() => goToDetail(list.id)}>
               {!isSearch && (
-                <LikeWrapper type="event" onClick={(e) => hanlderLike(e)}>
-                  <SVGIcon name={spotLiked ? 'likeRed18' : 'likeBorderGray'} />
+                <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
+                  <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
               {
