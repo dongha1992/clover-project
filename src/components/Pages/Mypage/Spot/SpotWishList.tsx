@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
@@ -8,19 +8,31 @@ import { ISpotsDetail } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { destinationForm } from '@store/destination';
 import { useRouter } from 'next/router';
+import { deleteSpotLike } from '@api/spot';
 
 interface IParams {
   items: ISpotsDetail;
+  onClick: any;
 };
 
-const SpotWishList = ({items}: IParams) => {
+const SpotWishList = ({items, onClick}: IParams) => {
   const router = useRouter();
   const { userLocation } = useSelector(destinationForm);
   const userLocationLen = !!userLocation.emdNm?.length;
-
   const goToDetail = () => {
     router.push(`/spot/detail/${items?.id}`)
   };
+
+  // const handlerDislike = async (e: any) => {
+  //   e.stopPropagation();
+  //   try {
+  //     const { data } = await deleteSpotLike(items.id);
+  //     if (data.code === 200) {
+  //     }
+  //   } catch(e) { 
+  //     console.error(e);
+  //   }
+  // };
 
   return (
     <Container>
@@ -37,7 +49,7 @@ const SpotWishList = ({items}: IParams) => {
             userLocationLen &&
               <TextH5B color={theme.greyScale65}>{`${Math.round(items?.distance)}m`}</TextH5B>
           }
-          <LikeWrapper>
+          <LikeWrapper onClick={(e)=> onClick(e, items.id)}>
             <SVGIcon name={items.liked ? 'likeRed18' : 'likeBorderGray'} />
             <TextB2R padding="4px 0 0 1px">{items.likeCount}</TextB2R>
           </LikeWrapper>
@@ -48,8 +60,9 @@ const SpotWishList = ({items}: IParams) => {
 };
 
 const Container = styled.div`
- width: 300px;
- cursor: pointer;
+  width: 48%;
+  max-width: 220px;
+  cursor: pointer;
 `;
 
 const WishList = styled.div`
