@@ -509,7 +509,6 @@ const BottomStory = styled.div`
   height: 514px;
   background: ${theme.greyScale6};
   font-weight: 700;
-  margin-bottom: 49px;
 `;
 
 const SpotOpenBannerWrapper = styled.div`
