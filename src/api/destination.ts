@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import { Api } from './Api';
 import {
   IRegisterDestinationRequest,
+  IRegisterDestinationResponse,
   IResponse,
   IAvilabiltyAddress,
   IAvilabiltyAddressResponse,
@@ -24,7 +25,9 @@ export const getDestinationsApi = (
   return Api.get('destination/v1/destinations', { params });
 };
 
-export const postDestinationApi = (data: IRegisterDestinationRequest): Promise<AxiosResponse<IResponse>> => {
+export const postDestinationApi = (
+  data: IRegisterDestinationRequest
+): Promise<AxiosResponse<IRegisterDestinationResponse>> => {
   return Api.post('destination/v1/destinations', data);
 };
 

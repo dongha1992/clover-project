@@ -118,35 +118,14 @@ const OrderPage = () => {
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
     async () => {
-      const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder;
-
+      const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
       const previewBody = {
-        delivery: 'SPOT',
-        deliveryDetail: 'LUNCH',
-        destinationId: 1,
-        isSubOrderDelivery: false,
-        orderDeliveries: [
-          {
-            deliveryDate: '2022-04-13',
-            orderMenus: [
-              {
-                menuDetailId: 72,
-                menuQuantity: 1,
-              },
-              {
-                menuDetailId: 511,
-                menuQuantity: 1,
-              },
-            ],
-            orderOptions: [
-              {
-                optionId: 1,
-                optionQuantity: 1,
-              },
-            ],
-          },
-        ],
-        type: 'GENERAL',
+        delivery,
+        deliveryDetail: deliveryDetail ? deliveryDetail : null,
+        destinationId,
+        isSubOrderDelivery,
+        orderDeliveries,
+        type,
       };
 
       const { data } = await createOrderPreviewApi(previewBody);
@@ -154,7 +133,7 @@ const OrderPage = () => {
         return data.data;
       }
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const { mutateAsync: mutateCreateOrder } = useMutation(

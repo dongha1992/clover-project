@@ -2,9 +2,7 @@ import React, { memo } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
-import { Button } from '@components/Shared/Button';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { getDiscountPrice } from '@utils/getMenuDisplayPrice';
 
 interface IProps {
   menu: any;
@@ -12,7 +10,6 @@ interface IProps {
 
 const FinishOrderItem = ({ menu }: IProps) => {
   const menuImg = menu.orderDeliveries[0].orderMenus[0].image.url;
-  console.log(menu, 'orderMenus');
 
   const {
     menuAmount,
@@ -25,7 +22,6 @@ const FinishOrderItem = ({ menu }: IProps) => {
     coupon,
     point,
   } = menu;
-
   const getTotalPrice = () => {
     return (
       menuAmount -

@@ -42,14 +42,6 @@ import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
 
-const mapper: Obj = {
-  morning: '새벽배송',
-  parcel: '택배배송',
-  quick: '퀵배송',
-  noDelivery: '배송불가',
-  spot: '스팟배송',
-};
-
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
 export interface ILunchOrDinner {
@@ -179,6 +171,8 @@ const CartPage = () => {
 
   const deliveryType = userDeliveryType ? userDeliveryType : recentOrderDelivery && recentOrderDelivery?.delivery!;
   const deliveryDestination = userDestination ? userDestination : recentOrderDelivery && recentOrderDelivery!;
+  const destinationId = userDestination ? userDestination.id : recentOrderDelivery && recentOrderDelivery.id!;
+
   const hasDeliveryTypeAndDestination = !isNil(deliveryType) && !isNil(deliveryDestination);
 
   // const { data: result, refetch } = useQuery(
@@ -447,13 +441,15 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!hasDeliveryTypeAndDestination) return;
 
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
+
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
     userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
 
     const reqBody = {
       delivery: userDeliveryType.toUpperCase(),
-      deliveryDetail,
-      destinationId: 1,
+      deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
+      destinationId,
       isSubOrderDelivery: subDeliveryId ? true : false,
       orderDeliveries: [
         {
@@ -527,26 +523,29 @@ const CartPage = () => {
   }, [selectedMenuList, hasDeliveryTypeAndDestination]);
 
   useEffect(() => {
-    const { currentTime, currentDate } = getCustomDate(new Date());
-    const isFinishLunch = currentTime >= 9.29;
-    const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
+    if (isSpotOrQuick) {
+      const { currentTime, currentDate } = getCustomDate(new Date());
+      const isFinishLunch = currentTime >= 9.29;
+      const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
-    let newLunchDinner = [];
+      let newLunchDinner = [];
 
-    if (isDisabledLunch) {
-      newLunchDinner = lunchOrDinner.map((item) => {
-        return item.value === 'LUNCH'
-          ? { ...item, isDisabled: true, isSelected: false }
-          : { ...item, isSelected: true };
-      });
-    } else {
-      newLunchDinner = lunchOrDinner.map((item) => {
-        return item.value === 'LUNCH'
-          ? { ...item, isDisabled: false, isSelected: true }
-          : { ...item, isSelected: false };
-      });
+      if (isDisabledLunch) {
+        newLunchDinner = lunchOrDinner.map((item) => {
+          return item.value === 'LUNCH'
+            ? { ...item, isDisabled: true, isSelected: false }
+            : { ...item, isSelected: true };
+        });
+      } else {
+        newLunchDinner = lunchOrDinner.map((item) => {
+          return item.value === 'LUNCH'
+            ? { ...item, isDisabled: false, isSelected: true }
+            : { ...item, isSelected: false };
+        });
+      }
+      setLunchOrDinner(newLunchDinner);
     }
-    setLunchOrDinner(newLunchDinner);
   }, [selectedDeliveryDay]);
 
   useEffect(() => {
