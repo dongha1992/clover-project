@@ -71,6 +71,7 @@ interface IProps {
   spotsPosition: ISpotsPostions | any;
   spotsPickupSelected: ISpotsDetail | null;
   spotsSearchResultFiltered: ISpotSearchFilterd;
+  spotPickupPlace: string;
 };
 
 const spotsSearchResultFilteredState = {
@@ -143,6 +144,7 @@ const initialState: IProps = {
   spotsSearchResultFiltered: {
     ...spotsSearchResultFilteredState
   },
+  spotPickupPlace: '',
 };
 
 export const spot = createSlice({
@@ -153,8 +155,11 @@ export const spot = createSlice({
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
-    SET_SPOT_LIKED: (state, action : PayloadAction<boolean>) => {
-      state.isSpotLiked = action.payload;
+    INIT_SPOT_LIKED: (state, action : PayloadAction) => {
+      state.isSpotLiked = false;
+    },
+    SET_SPOT_LIKED: (state, action : PayloadAction) => {
+      state.isSpotLiked = true;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
       state.spotLocation = action.payload;
@@ -187,12 +192,16 @@ export const spot = createSlice({
     INIT_SPOT_FILTERED: (state, action: PayloadAction) => {
       state.spotsSearchResultFiltered = spotsSearchResultFilteredState;
     },
+    SET_SPOT_PICKUP_PLACE: (state, action: PayloadAction<string>) => {
+      state.spotPickupPlace = action.payload;
+    },
   },
 });
 
 export const { 
   SPOT_ITEM, 
-  SET_SPOT_LIKED, 
+  SET_SPOT_LIKED,
+  INIT_SPOT_LIKED,
   SET_SPOT_LOCATION, 
   INIT_SPOT_LOCATION, 
   SET_SPOT_REGISTRATIONS_OPTIONS,
@@ -203,6 +212,7 @@ export const {
   SET_SPOT_PICKUP_SELECTED,
   SET_SPOTS_FILTERED,
   INIT_SPOT_FILTERED,
+  SET_SPOT_PICKUP_PLACE,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

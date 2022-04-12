@@ -16,6 +16,7 @@ import { SPOT_ITEM } from '@store/spot';
 import { ISpotsDetail, ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
+import { SET_IMAGE_VIEWER } from '@store/common';
 
 const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
   const dispatch = useDispatch();
@@ -172,6 +173,10 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
     return <div>loading...</div>
   };
 
+  const openImgViewer = (images: any) => {
+    dispatch(SET_IMAGE_VIEWER(images));
+  };
+
   return (
     <Container>
       <SliderWrapper>
@@ -243,7 +248,7 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
             <TextH5B margin="0 20px 0 0">픽업가능</TextH5B>
             <TextB2R>{`${spotItem?.pickupStartTime}~${spotItem?.pickupEndTime}`}</TextB2R>
           </FlexStart>
-          <FlexStart margin="0 0 16px 0">
+          <FlexStart margin="0 0 16px 0" alignItems="flex-start">
             <TextH5B margin="0 20px 0 0">픽업장소</TextH5B>
             <div>
               {
