@@ -17,8 +17,8 @@ import {
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
-import { destinationRegister } from '@api/destination';
-import { getMainDestinations } from '@api/destination';
+import { postDestinationApi, getMainDestinationsApi } from '@api/destination';
+
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
@@ -46,7 +46,7 @@ const DeliverInfoPage = () => {
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
+  const { destinationDeliveryType, userTempDestination, locationStatus, userDeliveryType, availableDestination } =
     useSelector(destinationForm);
 
   const dispatch = useDispatch();
@@ -171,7 +171,7 @@ const DeliverInfoPage = () => {
         addressDetail: tempDestination.location.addressDetail,
         name: tempDestination.name,
         address: tempDestination.location.address,
-        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDestinationStatus.toUpperCase(),
+        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
         deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
         dong: tempDestination.location.dong,
         main: tempDestination.main,
@@ -181,7 +181,8 @@ const DeliverInfoPage = () => {
       };
 
       try {
-        const { data } = await destinationRegister(reqBody);
+        const { data } = await postDestinationApi(reqBody);
+
         if (data.code === 200) {
           dispatch(
             SET_DESTINATION({
@@ -197,9 +198,7 @@ const DeliverInfoPage = () => {
               receiverName: reqBody.receiverName,
               receiverTel: reqBody.receiverTel,
               deliveryMessageType: '',
-              delivery: userSelectDeliveryType
-                ? userSelectDeliveryType.toUpperCase()
-                : userDestinationStatus.toUpperCase(),
+              delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
             })
           );
           dispatch(SET_AFTER_SETTING_DELIVERY());
@@ -243,7 +242,7 @@ const DeliverInfoPage = () => {
   };
 
   const checkTooltipMsgByDeliveryType = () => {
-    const canEverything = destinationStatus === 'spot';
+    const canEverything = destinationDeliveryType === 'spot';
 
     const locationCanMorning = locationStatus === 'morning';
     const locationCanEverything = locationStatus === 'spot';
@@ -261,7 +260,7 @@ const DeliverInfoPage = () => {
     }
 
     // 획득 위치 정보만 있음
-    if (locationStatus && !destinationStatus) {
+    if (locationStatus && !destinationDeliveryType) {
       switch (true) {
         case locationCanEverything:
           {
@@ -284,7 +283,7 @@ const DeliverInfoPage = () => {
     }
 
     // 배송지 주소 검색 후 배송 가능한 배송지 타입
-    switch (userDestinationStatus) {
+    switch (userDeliveryType) {
       case 'parcel':
         {
           if (canEverything || canParcelAndCanMorning) {
@@ -306,8 +305,8 @@ const DeliverInfoPage = () => {
 
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
-    if (userDestinationStatus) {
-      setUserSelectDeliveryType(userDestinationStatus);
+    if (userDeliveryType) {
+      setUserSelectDeliveryType(userDeliveryType);
     }
   };
 
@@ -322,7 +321,7 @@ const DeliverInfoPage = () => {
     };
 
     try {
-      const { data } = await getMainDestinations(params);
+      const { data } = await getMainDestinationsApi(params);
       console.log(data, '@');
       if (data.code === 200) {
         setTempDestination(data.data);
@@ -351,7 +350,7 @@ const DeliverInfoPage = () => {
   };
 
   const settingHandler = () => {
-    if (userDestinationStatus === 'spot') {
+    if (userDeliveryType === 'spot') {
       if (tempDestination?.spaceType === 'PRIVATE') {
         return !noticeChecked;
       }

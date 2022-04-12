@@ -1,46 +1,48 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
 import {
-  IRegisterDestination,
+  IRegisterDestinationRequest,
   IResponse,
   IAvilabiltyAddress,
   IAvilabiltyAddressResponse,
   IGetDestinationsResponse,
-  IEditDestination,
-  IGetDestinations,
-  IGetMainDestinations,
+  IEditDestinationRequest,
+  IGetDestinationsRequest,
+  IGetMainDestinationsRequest,
   IGetMainDestinationsResponse,
 } from '@model/index';
 
-export const availabilityDestination = (
+export const getAvailabilityDestinationApi = (
   params: IAvilabiltyAddress
 ): Promise<AxiosResponse<IAvilabiltyAddressResponse>> => {
   return Api.get('destination/v1/availability/address', { params });
 };
 
-export const getDestinations = (params: IGetDestinations): Promise<AxiosResponse<IGetDestinationsResponse>> => {
+export const getDestinationsApi = (
+  params: IGetDestinationsRequest
+): Promise<AxiosResponse<IGetDestinationsResponse>> => {
   return Api.get('destination/v1/destinations', { params });
 };
 
-export const destinationRegister = (data: IRegisterDestination): Promise<AxiosResponse<IResponse>> => {
+export const postDestinationApi = (data: IRegisterDestinationRequest): Promise<AxiosResponse<IResponse>> => {
   return Api.post('destination/v1/destinations', data);
 };
 
-export const editDestination = (id: number, data: IEditDestination): Promise<AxiosResponse<IResponse>> => {
+export const editDestinationApi = (id: number, data: IEditDestinationRequest): Promise<AxiosResponse<IResponse>> => {
   return Api.put(`destination/v1/destinations/${id}`, data);
 };
 
-export const deleteDestinations = (id: number): Promise<AxiosResponse<IResponse>> => {
+export const deleteDestinationsApi = (id: number): Promise<AxiosResponse<IResponse>> => {
   return Api.delete(`destination/v1/destinations/${id}`, { params: id });
 };
 
-export const getMainDestinations = (
-  params: IGetMainDestinations
+export const getMainDestinationsApi = (
+  params: IGetMainDestinationsRequest
 ): Promise<AxiosResponse<IGetMainDestinationsResponse>> => {
   return Api.get('destination/v1/destinations/main', { params });
 };
 
-export const setMainDestinations = (id: number, delivery: string): Promise<AxiosResponse<IResponse>> => {
+export const patchMainDestinationsApi = (id: number, delivery: string): Promise<AxiosResponse<IResponse>> => {
   return Api.patch(`destination/v1/destinations/${id}/main`, {
     params: { id, delivery },
   });

@@ -37,6 +37,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
+import { orderForm } from '@store/order';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -109,12 +110,16 @@ const OrderPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
+  const { tempOrder } = useSelector(orderForm);
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
     async () => {
+      const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder;
+
       const previewBody = {
         delivery: 'SPOT',
         deliveryDetail: 'LUNCH',

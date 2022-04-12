@@ -243,9 +243,11 @@ export interface ICommon {
   errorMessage: string;
 }
 
+/* DESTINATION */
+
 export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 
-export interface IRegisterDestination {
+export interface IRegisterDestinationRequest {
   address: string | null;
   addressDetail: string;
   delivery?: string;
@@ -284,16 +286,6 @@ export interface ILocation {
   dong: string;
 }
 
-export interface IOrderInOrderList {
-  delivery: string;
-  deliveryDetail: string;
-  id: number;
-  name: string;
-  paidAt: string;
-  payAmount: number;
-  type: string;
-}
-
 export interface IDestinationsResponse {
   id: number;
   delivery: TDeliveryType;
@@ -320,12 +312,12 @@ export interface IGetDestinationsResponse {
   };
 }
 
-export interface IGetDestinations {
+export interface IGetDestinationsRequest {
   page: number;
   size: number;
 }
 
-export interface IEditDestination {
+export interface IEditDestinationRequest {
   address: string | undefined;
   addressDetail: string | undefined;
   delivery: TDeliveryType | undefined;
@@ -339,7 +331,7 @@ export interface IEditDestination {
   zipCode: string | undefined;
 }
 
-export interface IGetMainDestinations {
+export interface IGetMainDestinationsRequest {
   delivery: TDeliveryType | string;
 }
 
@@ -867,7 +859,7 @@ export interface IGetSpotFilter {
   ];
 }
 
-/* Order */
+/* ORDER */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
 export type TPayMethod =
@@ -944,6 +936,17 @@ export interface IOrderMenus {
   };
 }
 export interface IOrderPayment {}
+
+export interface IOrderInOrderList {
+  delivery: string;
+  deliveryDetail: string;
+  id: number;
+  name: string;
+  paidAt: string;
+  payAmount: number;
+  type: string;
+}
+
 export interface IOrder {
   id: number;
   name: string;

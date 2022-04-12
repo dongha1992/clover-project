@@ -12,7 +12,7 @@ import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
 import { destinationForm, SET_LOCATION_TEMP, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
-import { getDestinations } from '@api/destination';
+import { getDestinationsApi } from '@api/destination';
 import { useQuery } from 'react-query';
 import { IDestinationsResponse } from '@model/index';
 
@@ -23,7 +23,7 @@ const DestinationSearchPage = () => {
   const addressRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
-  const { userDestinationStatus } = useSelector(destinationForm);
+  const { userDeliveryType } = useSelector(destinationForm);
 
   const { orderId } = router.query;
 
@@ -34,10 +34,10 @@ const DestinationSearchPage = () => {
         page: 1,
         size: 10,
       };
-      const { data } = await getDestinations(params);
+      const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
       return totalList.filter((item) => {
-        return item.delivery === userDestinationStatus.toUpperCase();
+        return item.delivery === userDeliveryType.toUpperCase();
       });
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }

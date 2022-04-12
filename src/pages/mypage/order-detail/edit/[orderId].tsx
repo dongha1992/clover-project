@@ -19,7 +19,6 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { getDestinations, editDestination, deleteDestinations } from '@api/destination';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import router from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/order';
