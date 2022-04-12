@@ -28,6 +28,8 @@ import { DELIVERY_METHOD } from '@constants/delivery-info';
 import { IDestination } from '@store/destination';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { SET_ALERT } from '@store/alert';
+import { getOrderListsApi } from '@api/order';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -132,7 +134,6 @@ const DeliverInfoPage = () => {
         receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
         receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
         zipCode: tempDestination.location.zipCode,
-        spotPickupId: tempDestination.spotPickupId || tempDestination.spotPickup.id,
       };
 
       try {
