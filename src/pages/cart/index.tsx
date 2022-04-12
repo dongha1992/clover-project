@@ -457,29 +457,31 @@ const CartPage = () => {
       deliveryDetail,
       destinationId: 1,
       isSubOrderDelivery: subDeliveryId ? true : false,
-      orderDeliveries: {
-        deliveryDate: selectedDeliveryDay,
-        orderMenus: [
-          {
-            menuDetailId: 72,
-            menuQuantity: 1,
-          },
-          {
-            menuDetailId: 511,
-            menuQuantity: 1,
-          },
-        ],
-        orderOptions: [
-          {
-            optionId: 1,
-            optionQuantity: 1,
-          },
-        ],
-      },
+      orderDeliveries: [
+        {
+          deliveryDate: selectedDeliveryDay,
+          orderMenus: [
+            {
+              menuDetailId: 72,
+              menuQuantity: 1,
+            },
+            {
+              menuDetailId: 511,
+              menuQuantity: 1,
+            },
+          ],
+          orderOptions: [
+            {
+              optionId: 1,
+              optionQuantity: 1,
+            },
+          ],
+        },
+      ],
       type: 'GENERAL',
     };
     dispatch(SET_ORDER(reqBody));
-    // router.push('/order');
+    router.push('/order');
   };
 
   const goToSubDeliverySheet = (deliveryId: number): void => {

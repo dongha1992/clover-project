@@ -109,7 +109,6 @@ const OrderPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { userDestination } = useSelector(destinationForm);
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -117,7 +116,7 @@ const OrderPage = () => {
     'getPreviewOrder',
     async () => {
       const previewBody = {
-        delivery: 'QUICK',
+        delivery: 'SPOT',
         deliveryDetail: 'LUNCH',
         destinationId: 1,
         isSubOrderDelivery: false,
@@ -247,10 +246,8 @@ const OrderPage = () => {
     dayFormatter,
     spotName,
     spotPickupName,
-    lunchDeliveryEndTime,
-    lunchDeliveryStartTime,
-    dinnerDeliveryEndTime,
-    dinnerDeliveryStartTime,
+    deliveryStartTime,
+    deliveryEndTime,
   }: {
     location: ILocation;
     delivery: string;
@@ -258,15 +255,12 @@ const OrderPage = () => {
     dayFormatter: string;
     spotName: string;
     spotPickupName: string;
-    lunchDeliveryEndTime: string;
-    lunchDeliveryStartTime: string;
-    dinnerDeliveryEndTime: string;
-    dinnerDeliveryStartTime: string;
+    deliveryStartTime: string;
+    deliveryEndTime: string;
   }) => {
     const isLunch = deliveryDetail === 'LUNCH';
 
-    const spotLunchDevlieryTime = `${lunchDeliveryStartTime}-${lunchDeliveryEndTime}`;
-    const spotDinnerDevlieryTime = `${dinnerDeliveryStartTime}-${dinnerDeliveryEndTime}`;
+    const deliveryTimeInfo = `${deliveryStartTime}-${deliveryEndTime}`;
 
     switch (delivery) {
       case 'PARCEL': {
@@ -341,7 +335,7 @@ const OrderPage = () => {
               <TextH5B>배송 예정실시</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {dayFormatter} {isLunch ? spotLunchDevlieryTime : spotDinnerDevlieryTime}
+                  {dayFormatter} {deliveryTimeInfo}
                 </TextB2R>
                 <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
                 <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
@@ -451,10 +445,10 @@ const OrderPage = () => {
     }
   }, [checkForm.alwaysPointAll.isSelected]);
 
-  if (isNil(userDestination)) {
-    router.replace('/cart');
-    return <div>장바구니로 이동합니다.</div>;
-  }
+  // if (isNil(userDestination)) {
+  //   router.replace('/cart');
+  //   return <div>장바구니로 이동합니다.</div>;
+  // }
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
@@ -476,7 +470,8 @@ const OrderPage = () => {
     deliveryFee,
     coupon,
   } = previewOrder?.order!;
-  const { deliveryDate, spot, spotPickup, orderOptions } = previewOrder?.order?.orderDeliveries[0]!;
+  const { deliveryDate, spotName, spotPickupName, orderOptions, deliveryStartTime, deliveryEndTime } =
+    previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
   const { point } = previewOrder!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
@@ -583,12 +578,10 @@ const OrderPage = () => {
             delivery,
             deliveryDetail,
             dayFormatter,
-            spotName: spot?.name!,
-            spotPickupName: spotPickup?.name!,
-            lunchDeliveryEndTime: spot?.lunchDeliveryEndTime!,
-            lunchDeliveryStartTime: spot?.lunchDeliveryStartTime!,
-            dinnerDeliveryEndTime: spot?.dinnerDeliveryEndTime!,
-            dinnerDeliveryStartTime: spot?.dinnerDeliveryStartTime!,
+            spotName,
+            spotPickupName,
+            deliveryStartTime,
+            deliveryEndTime,
           })}
         </FlexCol>
         <MustCheckAboutDelivery>
