@@ -25,6 +25,7 @@ export const order = createSlice({
     SET_ORDER_TYPE: (state, action: PayloadAction<any>) => {
       state.orderType = action.payload.orderType;
     },
+
     SET_TIMER_STATUS: (state, action: PayloadAction<any>) => {
       state.isTimerTooltip = action.payload.isTimerTooltip;
     },
@@ -33,9 +34,10 @@ export const order = createSlice({
       state.isInitDelay = action.payload.isInitDelay;
     },
 
-    SET_ORDER: (state, action: PayloadAction<IOrderPreviewRequest>) => {
+    SET_ORDER: (state, action: PayloadAction<IOrderPreviewRequest | null>) => {
       state.tempOrder = action.payload;
     },
+
     INIT_ORDER: (state, action: PayloadAction) => {
       state.tempOrder = null;
     },

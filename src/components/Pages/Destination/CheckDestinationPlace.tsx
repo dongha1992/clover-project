@@ -48,7 +48,6 @@ const CheckDestinationPlace = () => {
         zipCode: tempLocation.zipNo,
         delivery: null,
       };
-      console.log(params, '@@@');
       const { data } = await availabilityDestination(params);
 
       if (data.code === 200) {
