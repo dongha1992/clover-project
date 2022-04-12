@@ -123,7 +123,7 @@ const PaymentPage = () => {
         isSubOrderDelivery: false,
         orderDeliveries: [
           {
-            deliveryDate: '2022-04-06',
+            deliveryDate: '2022-04-13',
             orderMenus: [
               {
                 menuDetailId: 72,

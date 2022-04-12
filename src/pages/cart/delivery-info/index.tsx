@@ -37,7 +37,6 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 
 /* TODO: map 리팩토링 */
 /* TODO: 스팟 배송일 경우 추가 */
-/* TODO: 최근 주문 나오면 userDestination와 싱크 */
 
 const recentOrder = '';
 
@@ -57,6 +56,26 @@ const DeliverInfoPage = () => {
 
   const { destinationId, isSubscription, deliveryInfo } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
+
+  const { data: recentOrderDelivery } = useQuery(
+    'getOrderLists',
+    async () => {
+      const params = {
+        days: 90,
+        page: 1,
+        size: 100,
+        type: 'GENERAL',
+      };
+
+      const { data } = await getOrderListsApi(params);
+      return data.data.orderDeliveries[0];
+    },
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
@@ -305,7 +324,6 @@ const DeliverInfoPage = () => {
     }
 
     // 최근 이력에서 고른 경우
-
     const params = {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
@@ -313,6 +331,7 @@ const DeliverInfoPage = () => {
     try {
       const { data } = await getMainDestinations(params);
       if (data.code === 200) {
+        console.log(data.data, '@@@@@');
         setTempDestination(data.data);
         setIsMaindestination(true);
       }
@@ -347,6 +366,15 @@ const DeliverInfoPage = () => {
       return !tempDestination;
     }
   };
+  console.log(recentOrderDelivery, 'recentOrderDelivery');
+
+  useEffect(() => {
+    if (recentOrderDelivery) {
+      setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
+    }
+  }, [recentOrderDelivery]);
+
+  console.log(tempDestination, 'tempDestination');
 
   useEffect(() => {
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
