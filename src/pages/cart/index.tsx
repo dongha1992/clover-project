@@ -35,7 +35,7 @@ import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { availabilityDestination } from '@api/destination';
+import { getAvailabilityDestinationApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
@@ -104,7 +104,7 @@ const CartPage = () => {
   const router = useRouter();
 
   const { isFromDeliveryPage } = useSelector(cartForm);
-  const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const { isLoginSuccess } = useSelector(userForm);
 
   const queryClient = useQueryClient();
@@ -177,9 +177,7 @@ const CartPage = () => {
     }
   );
 
-  const deliveryType = userDestinationStatus
-    ? userDestinationStatus
-    : recentOrderDelivery && recentOrderDelivery?.delivery!;
+  const deliveryType = userDeliveryType ? userDeliveryType : recentOrderDelivery && recentOrderDelivery?.delivery!;
   const deliveryDestination = userDestination ? userDestination : recentOrderDelivery && recentOrderDelivery!;
   const hasDeliveryTypeAndDestination = !isNil(deliveryType) && !isNil(deliveryDestination);
 
@@ -190,9 +188,9 @@ const CartPage = () => {
   //       roadAddress: userDestination?.location.address!,
   //       jibunAddress: null,
   //       zipCode: userDestination?.location.zipCode!,
-  //       delivery: userDestinationStatus.toUpperCase() || null,
+  //       delivery: userDeliveryType.toUpperCase() || null,
   //     };
-  //     const { data } = await availabilityDestination(params);
+  //     const { data } = await getAvailabilityDestinationApi(params);
 
   //     if (data.code === 200) {
   //       const { morning, parcel, quick, spot } = data.data;
@@ -246,7 +244,7 @@ const CartPage = () => {
 
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryType = delivery === userDestinationStatus?.toUpperCase();
+      const sameDeliveryType = delivery === userDeliveryType?.toUpperCase();
       let sameDeliveryAddress = isEqual(location, userDestination?.location);
       sameDeliveryAddress = true;
       return sameDeliveryAddress && sameDeliveryType;
@@ -369,7 +367,7 @@ const CartPage = () => {
     const selectToday = dates === today;
 
     try {
-      switch (userDestinationStatus) {
+      switch (userDeliveryType) {
         case 'parcel': {
           return <TextH6B>{`${dates}일 도착`}</TextH6B>;
         }
@@ -453,7 +451,7 @@ const CartPage = () => {
     userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
 
     const reqBody = {
-      delivery: userDestinationStatus.toUpperCase(),
+      delivery: userDeliveryType.toUpperCase(),
       deliveryDetail,
       destinationId: 1,
       isSubOrderDelivery: subDeliveryId ? true : false,
@@ -569,7 +567,7 @@ const CartPage = () => {
   }, [calendarRef.current?.offsetTop]);
 
   const checkSameDateSubDelivery = () => {
-    const isSpotOrQuick = ['spot', 'quick'].includes(userDestinationStatus);
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
 
     for (const subOrder of subOrderDelivery) {
       const { deliveryDate, deliveryDetail } = subOrder;
@@ -626,8 +624,8 @@ const CartPage = () => {
     return <div>로딩</div>;
   }
 
-  const isSpot = userDestinationStatus == 'spot';
-  const isSpotAndQuick = ['spot', 'quick'].includes(userDestinationStatus);
+  const isSpot = userDeliveryType == 'spot';
+  const isSpotAndQuick = ['spot', 'quick'].includes(userDeliveryType);
 
   if (cartItemList.length === 0) {
     return (

@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso, IRegisterDestination } from '@model/index';
+import { IJuso, IRegisterDestinationRequest } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
-import { availabilityDestination } from '@api/destination';
 
 interface IAvailableDestination {
   morning: boolean;
@@ -41,8 +40,8 @@ interface TProps {
   tempEditDestination: IDestination | null;
   userLocation: IJuso;
   availableDestination: IAvailableDestination;
-  destinationStatus: string;
-  userDestinationStatus: string;
+  destinationDeliveryType: string;
+  userDeliveryType: string;
   locationStatus: TLocationType;
 }
 
@@ -91,8 +90,8 @@ const INITIAL_STATE: TProps = {
     spot: false,
   },
   locationStatus: '',
-  destinationStatus: '',
-  userDestinationStatus: '',
+  destinationDeliveryType: '',
+  userDeliveryType: '',
 };
 
 export const destination = createSlice({
@@ -145,20 +144,20 @@ export const destination = createSlice({
 
     // 배송지 체크 api
     SET_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
-      state.destinationStatus = action.payload;
+      state.destinationDeliveryType = action.payload;
     },
 
     INIT_DESTINATION_STATUS: (state, action: PayloadAction) => {
-      state.destinationStatus = '';
+      state.destinationDeliveryType = '';
     },
 
     // 유저가 선택한 배송방법
     SET_USER_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
-      state.userDestinationStatus = action.payload;
+      state.userDeliveryType = action.payload;
     },
 
     INIT_USER_DESTINATION_STATUS: (state, action: PayloadAction) => {
-      state.userDestinationStatus = '';
+      state.userDeliveryType = '';
     },
   },
 });
