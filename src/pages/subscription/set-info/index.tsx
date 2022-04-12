@@ -15,7 +15,7 @@ import {
   subscriptionForm,
 } from '@store/subscription';
 import { userForm } from '@store/user';
-import { theme } from '@styles/theme';
+import { fixedBottom, theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import axios from 'axios';
 import { isNil } from 'lodash-es';
@@ -39,14 +39,6 @@ const SbsSetInfoPage = () => {
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const [sbsDates, setSbsDates] = useState([]);
   const [userSelectPeriod, setUserSelectPeriod] = useState('subscription');
-
-  useEffect(() => {
-    return () => {
-      // dispatch(SET_SBS_START_DATE({ sbsStartDate: null }));
-      // dispatch(SET_SBS_DELIVERY_EXPECTED_DATE({ sbsDeliveryExpectedDate: null }));
-      // dispatch(SET_SBS_DELIVERY_TIME({ sbsDeliveryTime: null }));
-    };
-  }, []);
 
   const goToDeliveryInfo = () => {
     router.push({
@@ -219,18 +211,8 @@ const DateSetting = styled.div`
 `;
 
 const BottomButton = styled.button`
+  ${fixedBottom}
   cursor: pointer;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 512px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
   background-color: ${theme.black};
   color: #fff;
   &:disabled {
