@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
-import { TextB2R } from '@components/Shared/Text';
 import { SPOT_STATUS } from '@constants/spot';
 import { SpotStatusList, SpotWishList } from '@components/Pages/Mypage/Spot';
-import { homePadding, theme } from '@styles/theme';
+import { homePadding } from '@styles/theme';
 import router from 'next/router';
-import { IParamsSpots } from '@model/index';
+import { IParamsSpots  } from '@model/index';
 import { useQuery } from 'react-query'
 import { getSpotsWishList } from '@api/spot';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
+import { deleteSpotLike } from '@api/spot';
 
 const STATUS_LIST = [
   {
@@ -85,7 +85,8 @@ const SpotStatusPage = () => {
   // 좋아요 버튼 활성화 작업
   const { spotsPosition } = useSelector(spotSelector);
   const [selectedTab, setSelectedTab] = useState('/spot/status/list');
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
+  const [items, setItems] = useState(false);
 
   const { data: wishList } = useQuery(
     ['spotList'],
@@ -94,7 +95,7 @@ const SpotStatusPage = () => {
         latitude: spotsPosition ? spotsPosition.latitude : null,
         longitude: spotsPosition? spotsPosition.longitude : null,
         size: 10,
-        page: page,
+        page: 1,
       };
       const response = await getSpotsWishList(params);
       return response.data.data;
@@ -109,6 +110,23 @@ const SpotStatusPage = () => {
   const goToSpotStatusDetail = () => {
     router.push('/mypage/spot-status/detail');
   };
+
+  const handlerDislike = async (e: any, id: number) => {
+    e.stopPropagation();
+    try {
+      const { data } = await deleteSpotLike(id);
+      if (data.code === 200) {
+        setItems(true)
+      }
+    } catch(e) { 
+      console.error(e);
+    }
+  };
+
+  useEffect(()=> {
+
+  }, [items]);
+
 
   return (
     <Container>
@@ -128,7 +146,7 @@ const SpotStatusPage = () => {
             {
               wishList?.spots.map((item, idx)=> {
                 return (
-                  <SpotWishList key={idx} items={item}/>
+                  <SpotWishList key={idx} items={item} onClick={handlerDislike}/>
                 )
               })
             }
@@ -173,16 +191,5 @@ const SpotWishListWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  ${({ theme }) => theme.desktop`
-    > div {
-      width: 193px;
-    }
-  `};
-
-  ${({ theme }) => theme.mobile`
-    > div {
-      width: 150px;
-    }
-  `};
 `;
 export default SpotStatusPage;
