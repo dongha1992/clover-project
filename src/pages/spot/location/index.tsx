@@ -14,7 +14,7 @@ import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 import { Tag } from '@components/Shared/Tag';
-import { availabilityDestination } from '@api/destination';
+import { getAvailabilityDestinationApi } from '@api/destination';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 
@@ -119,7 +119,7 @@ const LocationPage = () => {
       delivery: null,
     };
     try {
-      const { data } = await availabilityDestination(params);
+      const { data } = await getAvailabilityDestinationApi(params);
       if (data.code === 200) {
         const result = data.data?.spot;
         if (result === false) {

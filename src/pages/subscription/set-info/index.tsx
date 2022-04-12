@@ -36,7 +36,7 @@ const SbsSetInfoPage = () => {
   const dispatch = useDispatch();
   const { sbsStartDate } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
-  const { userDestinationStatus, userDestination } = useSelector(destinationForm);
+  const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const [sbsDates, setSbsDates] = useState([]);
   const [userSelectPeriod, setUserSelectPeriod] = useState('subscription');
 

@@ -4,7 +4,7 @@ import { theme, FlexBetween, FlexCol, FlexBetweenStart, FlexColEnd, FlexEnd } fr
 import { TextH4B, TextB3R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
-import { ACCESS_METHOD_VALUE } from '@constants/payment';
+import { ACCESS_METHOD_VALUE } from '@constants/order';
 interface IProps {
   receiverName: string;
   receiverTel: string;

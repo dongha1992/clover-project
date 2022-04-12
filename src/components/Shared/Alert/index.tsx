@@ -47,7 +47,6 @@ const Alert = ({
   const submitHandler = (): void => {
     onSubmit && onSubmit();
     dispatch(SET_ALERT(null));
-    //  selectedMenu === '로그아웃' && setSelectedMenu && setSelectedMenu('');
   };
 
   return (
