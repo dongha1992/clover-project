@@ -18,7 +18,7 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
-import { PaymentItem } from '@components/Pages/Payment';
+import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -26,17 +26,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
 import { couponForm } from '@store/coupon';
-import { ACCESS_METHOD_PLACEHOLDER } from '@constants/payment';
+import { ACCESS_METHOD_PLACEHOLDER } from '@constants/order';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
-import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/payment';
+import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import getCustomDate from '@utils/getCustomDate';
-import { PaymentCouponSheet } from '@components/BottomSheet/PaymentCouponSheet';
+import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
+import { orderForm } from '@store/order';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -83,17 +84,17 @@ export interface IAccessMethod {
   value: string;
 }
 
-const PaymentPage = () => {
+const OrderPage = () => {
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('fcopay');
+  const [selectedOrderMethod, setSelectedOrderMethod] = useState<string>('fcopay');
   const [checkForm, setCheckForm] = useState<Obj>({
     samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
     alwaysPointAll: { isSelected: false },
-    paymentMethodReuse: { isSelected: false },
+    orderMethodReuse: { isSelected: false },
   });
 
   const [userInputObj, setUserInputObj] = useState<{
@@ -109,40 +110,22 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { userDestination } = useSelector(destinationForm);
+  const { tempOrder } = useSelector(orderForm);
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
     async () => {
+      const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
       const previewBody = {
-        delivery: 'QUICK',
-        deliveryDetail: 'LUNCH',
-        destinationId: 1,
-        isSubOrderDelivery: false,
-        orderDeliveries: [
-          {
-            deliveryDate: '2022-04-13',
-            orderMenus: [
-              {
-                menuDetailId: 72,
-                menuQuantity: 1,
-              },
-              {
-                menuDetailId: 511,
-                menuQuantity: 1,
-              },
-            ],
-            orderOptions: [
-              {
-                optionId: 1,
-                optionQuantity: 1,
-              },
-            ],
-          },
-        ],
-        type: 'GENERAL',
+        delivery,
+        deliveryDetail: deliveryDetail ? deliveryDetail : null,
+        destinationId,
+        isSubOrderDelivery,
+        orderDeliveries,
+        type,
       };
 
       const { data } = await createOrderPreviewApi(previewBody);
@@ -150,7 +133,7 @@ const PaymentPage = () => {
         return data.data;
       }
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const { mutateAsync: mutateCreateOrder } = useMutation(
@@ -167,7 +150,7 @@ const PaymentPage = () => {
     {
       onError: () => {},
       onSuccess: async (orderId: number) => {
-        router.push({ pathname: '/payment/finish', query: { orderId } });
+        router.push({ pathname: '/order/finish', query: { orderId } });
       },
     }
   );
@@ -186,7 +169,7 @@ const PaymentPage = () => {
     }
   };
 
-  const checkPaymentTermHandler = () => {};
+  const checkOrderTermHandler = () => {};
 
   const userInputHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -226,9 +209,9 @@ const PaymentPage = () => {
     );
   };
 
-  const selectPaymentMethodHanlder = (method: any) => {
+  const selectOrderMethodHanlder = (method: any) => {
     const { value } = method;
-    setSelectedPaymentMethod(value);
+    setSelectedOrderMethod(value);
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,10 +230,8 @@ const PaymentPage = () => {
     dayFormatter,
     spotName,
     spotPickupName,
-    lunchDeliveryEndTime,
-    lunchDeliveryStartTime,
-    dinnerDeliveryEndTime,
-    dinnerDeliveryStartTime,
+    deliveryStartTime,
+    deliveryEndTime,
   }: {
     location: ILocation;
     delivery: string;
@@ -258,15 +239,12 @@ const PaymentPage = () => {
     dayFormatter: string;
     spotName: string;
     spotPickupName: string;
-    lunchDeliveryEndTime: string;
-    lunchDeliveryStartTime: string;
-    dinnerDeliveryEndTime: string;
-    dinnerDeliveryStartTime: string;
+    deliveryStartTime: string;
+    deliveryEndTime: string;
   }) => {
     const isLunch = deliveryDetail === 'LUNCH';
 
-    const spotLunchDevlieryTime = `${lunchDeliveryStartTime}-${lunchDeliveryEndTime}`;
-    const spotDinnerDevlieryTime = `${dinnerDeliveryStartTime}-${dinnerDeliveryEndTime}`;
+    const deliveryTimeInfo = `${deliveryStartTime}-${deliveryEndTime}`;
 
     switch (delivery) {
       case 'PARCEL': {
@@ -341,7 +319,7 @@ const PaymentPage = () => {
               <TextH5B>배송 예정실시</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {dayFormatter} {isLunch ? spotLunchDevlieryTime : spotDinnerDevlieryTime}
+                  {dayFormatter} {deliveryTimeInfo}
                 </TextB2R>
                 <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
                 <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
@@ -404,7 +382,7 @@ const PaymentPage = () => {
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
-    dispatch(SET_BOTTOM_SHEET({ content: <PaymentCouponSheet coupons={coupons} /> }));
+    dispatch(SET_BOTTOM_SHEET({ content: <OrderCouponSheet coupons={coupons} /> }));
   };
 
   const clearPointHandler = () => {
@@ -451,10 +429,10 @@ const PaymentPage = () => {
     }
   }, [checkForm.alwaysPointAll.isSelected]);
 
-  if (isNil(userDestination)) {
-    router.replace('/cart');
-    return <div>장바구니로 이동합니다.</div>;
-  }
+  // if (isNil(userDestination)) {
+  //   router.replace('/cart');
+  //   return <div>장바구니로 이동합니다.</div>;
+  // }
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
@@ -476,15 +454,16 @@ const PaymentPage = () => {
     deliveryFee,
     coupon,
   } = previewOrder?.order!;
-  const { deliveryDate, spot, spotPickup, orderOptions } = previewOrder?.order?.orderDeliveries[0]!;
+  const { deliveryDate, spotName, spotPickupName, orderOptions, deliveryStartTime, deliveryEndTime } =
+    previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
   const { point } = previewOrder!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
 
   const isParcel = delivery === 'PARCEL';
   const isMorning = delivery === 'MORNING';
-  const isFcoPay = selectedPaymentMethod === 'fcopay';
-  const isKakaoPay = selectedPaymentMethod === 'kakaopay';
+  const isFcoPay = selectedOrderMethod === 'fcopay';
+  const isKakaoPay = selectedOrderMethod === 'kakaopay';
 
   console.log(previewOrder, 'previewOrder');
 
@@ -505,7 +484,7 @@ const PaymentPage = () => {
         </FlexBetween>
         <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
           {orderMenus?.map((menu, index) => {
-            return <PaymentItem menu={menu} key={index} />;
+            return <OrderItem menu={menu} key={index} />;
           })}
         </OrderListWrapper>
       </OrderItemsWrapper>
@@ -583,12 +562,10 @@ const PaymentPage = () => {
             delivery,
             deliveryDetail,
             dayFormatter,
-            spotName: spot?.name!,
-            spotPickupName: spotPickup?.name!,
-            lunchDeliveryEndTime: spot?.lunchDeliveryEndTime!,
-            lunchDeliveryStartTime: spot?.lunchDeliveryStartTime!,
-            dinnerDeliveryEndTime: spot?.dinnerDeliveryEndTime!,
-            dinnerDeliveryStartTime: spot?.dinnerDeliveryStartTime!,
+            spotName,
+            spotPickupName,
+            deliveryStartTime,
+            deliveryEndTime,
           })}
         </FlexCol>
         <MustCheckAboutDelivery>
@@ -715,23 +692,23 @@ const PaymentPage = () => {
         <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point}원</TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
-      <PaymentMethodWrapper>
+      <OrderMethodWrapper>
         <FlexBetween padding="0 0 24px 0">
           <TextH4B>결제수단</TextH4B>
           <FlexRow>
             <Checkbox
-              onChange={() => checkFormHanlder('paymentMethodReuse')}
-              isSelected={checkForm.paymentMethodReuse.isSelected}
+              onChange={() => checkFormHanlder('orderMethodReuse')}
+              isSelected={checkForm.orderMethodReuse.isSelected}
             />
             <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
           </FlexRow>
         </FlexBetween>
         <GridWrapper gap={16}>
           {PAYMENT_METHOD.map((method, index) => {
-            const isSelected = selectedPaymentMethod === method.value;
+            const isSelected = selectedOrderMethod === method.value;
             return (
               <Button
-                onClick={() => selectPaymentMethodHanlder(method)}
+                onClick={() => selectOrderMethodHanlder(method)}
                 backgroundColor={isSelected ? theme.black : theme.white}
                 color={isSelected ? theme.white : theme.black}
                 border
@@ -754,7 +731,7 @@ const PaymentPage = () => {
             )}
           </>
         )}
-      </PaymentMethodWrapper>
+      </OrderMethodWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
         <FlexBetween>
@@ -843,21 +820,21 @@ const PaymentPage = () => {
           <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
         </FlexEnd>
       </TotalPriceWrapper>
-      <PaymentTermWrapper>
+      <OrderTermWrapper>
         <TextH5B>구매 조건 확인 및 결제 진행 필수 동의</TextH5B>
         <FlexRow padding="17px 0 0 0">
-          <Checkbox isSelected onChange={checkPaymentTermHandler} />
+          <Checkbox isSelected onChange={checkOrderTermHandler} />
           <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
             자세히
           </TextH6B>
         </FlexRow>
-      </PaymentTermWrapper>
-      <PaymentBtn onClick={() => mutateCreateOrder()}>
+      </OrderTermWrapper>
+      <OrderBtn onClick={() => mutateCreateOrder()}>
         <Button borderRadius="0" height="100%">
           {payAmount}원 결제하기
         </Button>
-      </PaymentBtn>
+      </OrderBtn>
     </Container>
   );
 };
@@ -925,7 +902,7 @@ const PointWrapper = styled.div`
   padding: 24px;
 `;
 
-const PaymentMethodWrapper = styled.div`
+const OrderMethodWrapper = styled.div`
   padding: 24px;
   width: 100%;
 `;
@@ -942,7 +919,7 @@ const TotalPriceWrapper = styled.div`
   flex-direction: column;
 `;
 
-const PaymentTermWrapper = styled.div`
+const OrderTermWrapper = styled.div`
   ${homePadding}
   display: flex;
   flex-direction: column;
@@ -950,8 +927,8 @@ const PaymentTermWrapper = styled.div`
   margin-bottom: 160px;
 `;
 
-const PaymentBtn = styled.div`
+const OrderBtn = styled.div`
   ${fixedBottom}
 `;
 
-export default PaymentPage;
+export default OrderPage;

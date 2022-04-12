@@ -8,7 +8,7 @@ import axios from 'axios';
 // import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
-import { getDestinations } from '@api/destination';
+import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 
 const TAB_LIST = [
@@ -34,7 +34,7 @@ const AddressManagementPage = () => {
       size: 10,
     };
     try {
-      const { data } = await getDestinations(params);
+      const { data } = await getDestinationsApi(params);
       if (data.code === 200) {
         const { destinations } = data.data;
         setDeliveryList(destinations);
