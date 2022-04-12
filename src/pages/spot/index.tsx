@@ -107,7 +107,7 @@ const SpotPage = () => {
   // react-query
 
   const { data: stationSpotList, isLoading: isLoadingStation } = useQuery(
-    ['spotList', 'station'],
+    ['spotList', 'STATION'],
     async () => {
       const response = await getStationSpots(params);
       return response.data.data;
@@ -116,7 +116,7 @@ const SpotPage = () => {
   );
 
   const { data: newSpotList, isLoading: isLoadingNew } = useQuery(
-    ['spotList', 'new'],
+    ['spotList', 'NEW'],
     async () => {
       const response = await getNewSpots(params);
       return response.data.data;
@@ -125,7 +125,7 @@ const SpotPage = () => {
   );
 
   const { data: eventSpotList, isLoading: isLoadingEvent } = useQuery(
-    ['spotList', 'event'],
+    ['spotList', 'EVENT'],
     async () => {
       const response = await getSpotEvent(params);
       return response.data.data;
@@ -134,7 +134,7 @@ const SpotPage = () => {
   );
 
   const { data: popularSpotList, isLoading: isLoadingPopular } = useQuery(
-    ['spotList', 'popular'],
+    ['spotList', 'POPULAR'],
     async () => {
       const response = await getSpotPopular(params);
       return response.data.data;
