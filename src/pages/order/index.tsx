@@ -117,13 +117,13 @@ const OrderPage = () => {
     'getPreviewOrder',
     async () => {
       const previewBody = {
-        delivery: 'SPOT',
-        deliveryDetail: 'DINNER',
+        delivery: 'QUICK',
+        deliveryDetail: 'LUNCH',
         destinationId: 1,
         isSubOrderDelivery: false,
         orderDeliveries: [
           {
-            deliveryDate: '2022-04-06',
+            deliveryDate: '2022-04-13',
             orderMenus: [
               {
                 menuDetailId: 72,

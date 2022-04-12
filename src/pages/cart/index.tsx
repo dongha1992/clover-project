@@ -40,7 +40,7 @@ import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { CartItem } from '@components/Pages/Cart';
+import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
 
 const mapper: Obj = {
   morning: '새벽배송',
@@ -128,6 +128,26 @@ const CartPage = () => {
     }
   );
 
+  const { data: recentOrderDelivery } = useQuery(
+    'getOrderLists',
+    async () => {
+      const params = {
+        days: 90,
+        page: 1,
+        size: 100,
+        type: 'GENERAL',
+      };
+
+      const { data } = await getOrderListsApi(params);
+      return data.data.orderDeliveries[0];
+    },
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   /* TODO: 찜한 상품, 이전 구매 상품 리스트 받아오면 변경해야함 */
 
   const { error: menuError } = useQuery(
@@ -142,7 +162,7 @@ const CartPage = () => {
   );
 
   const {} = useQuery(
-    'getOrderLists',
+    'getSubOrderLists',
     async () => {
       const { data } = await getSubOrdersCheckApi();
       return data.data.orderDeliveries;
@@ -157,7 +177,11 @@ const CartPage = () => {
     }
   );
 
-  const hasDeliveryTypeAndDestination = !isNil(userDestinationStatus) && !isNil(userDestination);
+  const deliveryType = userDestinationStatus
+    ? userDestinationStatus
+    : recentOrderDelivery && recentOrderDelivery?.delivery!;
+  const deliveryDestination = userDestination ? userDestination : recentOrderDelivery && recentOrderDelivery!;
+  const hasDeliveryTypeAndDestination = !isNil(deliveryType) && !isNil(deliveryDestination);
 
   // const { data: result, refetch } = useQuery(
   //   ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
@@ -500,7 +524,7 @@ const CartPage = () => {
         {getTotalPrice()}원 주문하기
       </Button>
     );
-  }, [selectedMenuList]);
+  }, [selectedMenuList, hasDeliveryTypeAndDestination]);
 
   useEffect(() => {
     const { currentTime, currentDate } = getCustomDate(new Date());
@@ -607,6 +631,11 @@ const CartPage = () => {
     return (
       <EmptyContainer>
         <FlexCol width="100%">
+          <DeliveryTypeAndLocation
+            goToDeliveryInfo={goToDeliveryInfo}
+            deliveryType={deliveryType}
+            deliveryDestination={deliveryDestination}
+          />
           <TextB2R padding="0 0 32px 0" center>
             장바구니가 비었어요 😭
           </TextB2R>
@@ -623,15 +652,11 @@ const CartPage = () => {
   return (
     <Container>
       {isLoginSuccess ? (
-        <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
-          <Left>
-            <TextH4B>{userDestinationStatus ? mapper[userDestinationStatus] : '배송방법과'}</TextH4B>
-            <TextH4B>{!isNil(userDestination) ? userDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
-          </Left>
-          <Right>
-            <SVGIcon name="arrowRight" />
-          </Right>
-        </DeliveryMethodAndPickupLocation>
+        <DeliveryTypeAndLocation
+          goToDeliveryInfo={goToDeliveryInfo}
+          deliveryType={deliveryType}
+          deliveryDestination={deliveryDestination}
+        />
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
           <Left>
@@ -740,7 +765,7 @@ const CartPage = () => {
           </Button>
         </GetMoreBtn>
       </CartInfoContainer>
-      {userDestination && (
+      {deliveryDestination && (
         <>
           <BorderLine height={8} margin="32px 0" />
           <FlexCol padding="0 24px">

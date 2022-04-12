@@ -284,6 +284,16 @@ export interface ILocation {
   dong: string;
 }
 
+export interface IOrderInOrderList {
+  delivery: string;
+  deliveryDetail: string;
+  id: number;
+  name: string;
+  paidAt: string;
+  payAmount: number;
+  type: string;
+}
+
 export interface IDestinationsResponse {
   id: number;
   delivery: TDeliveryType;
@@ -1089,6 +1099,8 @@ export interface IGetOrderList {
   delivery: string;
   deliveryDetail: string;
   deliveryDate: string;
+  deliveryDateChangeCount: number;
+  deliveryDateChangeMaximum: number;
   id: number;
   location: ILocation;
   image: IGetOrderInImage;
@@ -1098,7 +1110,9 @@ export interface IGetOrderList {
   spotName?: string;
   spotPickupId: number;
   status: string;
-  subOrderDelivery: ISubOrderDelivery;
+  subOrderDelivery?: ISubOrderDelivery;
+  order: IOrderInOrderList;
+  type: string;
 }
 
 export interface IGetOrderListResponse {
@@ -1302,6 +1316,13 @@ export interface IGetMenus {
   menuSort: TMenuSort | string;
   searchKeyword: string;
   type: TType | string;
+}
+
+export interface IMenuImage {
+  height: number;
+  id: number;
+  url: string;
+  width: number;
 }
 
 export interface IMenuDetails {
