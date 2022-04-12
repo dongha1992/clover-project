@@ -28,6 +28,8 @@ import { DELIVERY_METHOD } from '@constants/delivery-info';
 import { IDestination } from '@store/destination';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { SET_ALERT } from '@store/alert';
+import { getOrderListsApi } from '@api/order';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -35,7 +37,6 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 
 /* TODO: map 리팩토링 */
 /* TODO: 스팟 배송일 경우 추가 */
-/* TODO: 최근 주문 나오면 userDestination와 싱크 */
 
 const recentOrder = '';
 
@@ -55,6 +56,26 @@ const DeliverInfoPage = () => {
 
   const { destinationId, isSubscription, deliveryInfo } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
+
+  const { data: recentOrderDelivery } = useQuery(
+    'getOrderLists',
+    async () => {
+      const params = {
+        days: 90,
+        page: 1,
+        size: 100,
+        type: 'GENERAL',
+      };
+
+      const { data } = await getOrderListsApi(params);
+      return data.data.orderDeliveries[0];
+    },
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
@@ -158,7 +179,6 @@ const DeliverInfoPage = () => {
         receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
         receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
         zipCode: tempDestination.location.zipCode,
-        spotPickupId: tempDestination.spotPickupId || tempDestination.spotPickup.id,
       };
 
       try {
@@ -304,7 +324,6 @@ const DeliverInfoPage = () => {
     }
 
     // 최근 이력에서 고른 경우
-
     const params = {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
@@ -352,8 +371,11 @@ const DeliverInfoPage = () => {
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
+    } else if (!userTempDestination && recentOrderDelivery) {
+      setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
+      setIsMaindestination(true);
     }
-  }, [userTempDestination]);
+  }, [userTempDestination, recentOrderDelivery]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
