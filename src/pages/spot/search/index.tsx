@@ -20,7 +20,7 @@ import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
-import { getDestinations } from '@api/destination';
+import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 
 const SpotSearchPage = (): ReactElement => {
@@ -76,7 +76,7 @@ const SpotSearchPage = (): ReactElement => {
         page: 1,
         size: 10,
       };
-      const { data } = await getDestinations(params);
+      const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
       return totalList.filter((item) => {
         return item.delivery === 'SPOT';
