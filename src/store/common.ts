@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IAccessMethod } from '@pages/payment';
+import { IAccessMethod } from '@pages/order';
 interface IState {
   imagesForViewer: string[];
   isMobile: boolean;

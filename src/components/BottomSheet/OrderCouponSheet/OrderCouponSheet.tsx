@@ -16,7 +16,7 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 interface IProps {
   coupons: ICoupon[];
 }
-const PaymentCouponSheet = ({ coupons }: IProps) => {
+const OrderCouponSheet = ({ coupons }: IProps) => {
   const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
   const router = useRouter();
 
@@ -24,7 +24,7 @@ const PaymentCouponSheet = ({ coupons }: IProps) => {
 
   const dispatch = useDispatch();
 
-  const goToPayment = () => {
+  const goToOrder = () => {
     dispatch(SET_USER_SELECT_COUPON(selectedCoupon!));
     router.back();
   };
@@ -68,7 +68,7 @@ const PaymentCouponSheet = ({ coupons }: IProps) => {
             />
           ))}
         </FlexCol>
-        <ButtonWrapper onClick={goToPayment}>
+        <ButtonWrapper onClick={goToOrder}>
           <Button height="100%" width="100%" borderRadius="0" disabled={!isDisabled}>
             적용하기
           </Button>
@@ -89,4 +89,4 @@ const ButtonWrapper = styled.div`
   ${fixedBottom}
 `;
 
-export default PaymentCouponSheet;
+export default OrderCouponSheet;
