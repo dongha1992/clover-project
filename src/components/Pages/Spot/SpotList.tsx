@@ -18,8 +18,7 @@ import {
   SET_DESTINATION,
   SET_TEMP_DESTINATION,
 } from '@store/destination';
-import { deleteSpotLike, postSpotLike } from "@api/spot";
-import { useMutation, useQueryClient } from "react-query";
+import { useOnLike } from 'src/query';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -33,7 +32,6 @@ interface IProps {
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const { isDelivery, orderId } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
@@ -43,7 +41,6 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
-  const KEYS = ['POPULAR', 'NEW', 'STATION', 'EVENT'];
   
   const goToDetail = (id: number): void => {
     if (isSearch) {
@@ -103,78 +100,12 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     }
   };
 
-  const spots: any = [];
-
   const onClickLike = (e: any) => {
     e.stopPropagation();
-    onLike();
+    onLikeTest();
   };
 
-  const deepClone = (obj: any) => {
-    if (obj === null || typeof obj !== 'object') {
-      return obj;
-    };
-    const result: any = Array.isArray(obj) ? [] : {};
-    for (let key of Object.keys(obj)) {
-      result[key] = deepClone(obj[key]);
-    };
-    return result;
-  };
-
-  const toggleLike = async () => {
-    try {
-      if(list.liked){
-        await deleteSpotLike(list.id);
-      } else {
-        await postSpotLike(list.id);
-      }
-    } catch (e) {
-      console.error(e);
-    };
-  };
-
-  const {mutate: onLike } = useMutation(toggleLike, {
-    onMutate: async () => {
-      for (const i of KEYS ) {
-        await queryClient.cancelQueries(['spotList', i]);
-      }
-      // console.log('Item', `id: ${list.id}, name: ${list.name}, liked: ${list.liked}`);
-      for(const key of KEYS) {
-        const prevSpots = queryClient.getQueryData(['spotList', key]);
-        spots.push(prevSpots);
-
-        if(prevSpots) {
-          const editSpots: any = deepClone(prevSpots);
-          queryClient.setQueryData(['spotList', key], {
-            ...editSpots,
-            spots: editSpots.spots.map(i => {
-              if (i.id === list.id) {
-                if (i.liked) {
-                  i.liked = false;
-                  if (i.likeCount > 0) {
-                    i.likeCount -= 1;
-                  } else {
-                    i.likeCount = 0;
-                  }
-                } else {
-                  i.liked = true;
-                  i.likeCount += 1;
-                }
-              };
-              return i;
-            }),
-          });
-        }
-      }
-      return spots;
-    },
-    onError: (context: any) => {
-      for (const key of KEYS) {
-        queryClient.setQueryData(['spotList', key], context[key]);
-      }
-    },
-    onSettled: () => {}
-  });
+  const onLikeTest = useOnLike(list.id, list.liked);
 
   const clickSpotOpen = async () => {
     if (list.recruited) {
