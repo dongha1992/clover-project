@@ -19,13 +19,13 @@ import { mypageSelector } from '@store/mypage';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
-import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo, SubOrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
-import { DELIVERY_TYPE_MAP } from '@constants/order';
+import { DELIVERY_STATUS_MAP } from '@constants/mypage';
+import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
-import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
+import { OrderUserInfo } from '@components/Pages/Mypage/OrderDelivery';
 
 // temp
 
@@ -71,14 +71,15 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
+  console.log(orderDetail, 'ORDER DETAIL');
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
   const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
     new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!)
   );
 
-  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0]?.status];
-  const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
+  const deliveryStatus = orderDetail && DELIVERY_STATUS_MAP[orderDetail?.orderDeliveries[0]?.status];
+  const deliveryDetail = orderDetail && DELIVERY_TIME_MAP[orderDetail?.deliveryDetail];
   const isCompleted = orderDetail?.orderDeliveries[0].status === 'COMPLETED';
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
   const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
@@ -190,9 +191,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDevlieryDateHandler = () => {
-    // if (!canChangeDelivery || isSubOrder==='sub') {
-    //   return;
-    // }
+    if (!canChangeDelivery || isSubOrder === 'sub') {
+      return;
+    }
 
     if (isSubOrder === 'main') {
       dispatch(
@@ -331,7 +332,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            // disabled={!canChangeDelivery || isSubOrder === 'sub'}
+            disabled={!canChangeDelivery || isSubOrder === 'sub'}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기

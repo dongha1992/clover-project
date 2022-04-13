@@ -21,10 +21,9 @@ import SVGIcon from '@utils/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import router from 'next/router';
-import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/order';
-import { IAccessMethod } from '@pages/order';
+import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
-import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO } from '@store/mypage';
+import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { destinationForm, SET_USER_DESTINATION_STATUS } from '@store/destination';
@@ -37,27 +36,19 @@ interface IProps {
   orderId: number;
 }
 
-const DELIVERY_DETAIL_MAP: Obj = {
-  LUNCH: '점심',
-  DINNER: '저녁',
-};
-
 const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   const { userAccessMethod } = useSelector(commonSelector);
-  const { tempOrderInfo } = useSelector(mypageSelector);
-  const { tempEditDestination, tempEditSpot } = useSelector(mypageSelector);
+  const { tempEditDestination, tempEditSpot, tempOrderInfo } = useSelector(mypageSelector);
 
-  const [isSamePerson, setIsSamePerson] = useState(tempOrderInfo.isSamePerson);
+  const [isSamePerson, setIsSamePerson] = useState(tempOrderInfo?.isSamePerson);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
     selectedMethod: {},
     location: {},
     deliveryMessageType: '',
+    deliveryMessage: '',
     receiverTel: '',
     receiverName: '',
-    deliveryMessage: '',
   });
-
-  console.log(tempEditSpot, 'tempEditSpot');
 
   const dispatch = useDispatch();
 
@@ -82,8 +73,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
           selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
           deliveryMessageType: orderDetail?.deliveryMessageType!,
           deliveryMessage: orderDetail?.deliveryMessage!,
-          receiverName: tempOrderInfo.receiverName ? tempOrderInfo.receiverName : orderDetail?.receiverName!,
-          receiverTel: tempOrderInfo.receiverTel ? tempOrderInfo.receiverTel : orderDetail?.receiverTel!,
+          receiverName: tempOrderInfo?.receiverName ? tempOrderInfo?.receiverName : orderDetail?.receiverName!,
+          receiverTel: tempOrderInfo?.receiverTel ? tempOrderInfo?.receiverTel : orderDetail?.receiverTel!,
           location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
         });
       },
@@ -108,9 +99,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
           deliveryId,
-          data: { ...rest, deliveryMessageType: selectedMethod.value },
+          data: { ...rest },
         });
-        console.log(data, 'after no spot');
       } else {
         const { data } = await editSpotDestinationApi({
           deliveryId,
@@ -125,8 +115,8 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     },
     {
       onSuccess: async () => {
-        // await queryClient.refetchQueries('getOrderDetail');
-        // dispatch(INIT_TEMP_EDIT_DESTINATION());
+        await queryClient.refetchQueries('getOrderDetail');
+        dispatch(INIT_TEMP_EDIT_DESTINATION());
       },
     }
   );
@@ -136,6 +126,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   };
 
   const editDeliveryInfoHandler = () => {
+    console.log(deliveryEditObj, 'deliveryEditObj');
     if (!cheekBeforeEdit()) {
       return;
     }
@@ -226,6 +217,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     setDeliveryEditObj({
       ...deliveryEditObj,
       selectedMethod: userAccessMethod,
+      deliveryMessageType: userAccessMethod?.value!,
     });
   }, [userAccessMethod]);
 
@@ -300,7 +292,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
             <TextH5B>배송방법</TextH5B>
             {isSpot ? (
               <TextB2R>
-                {`${DELIVERY_TYPE_MAP[orderDetail?.delivery!]} - ${DELIVERY_DETAIL_MAP[orderDetail?.deliveryDetail!]}`}
+                {`${DELIVERY_TYPE_MAP[orderDetail?.delivery!]} - ${DELIVERY_TIME_MAP[orderDetail?.deliveryDetail!]}`}
               </TextB2R>
             ) : (
               <TextB2R>{DELIVERY_TYPE_MAP[orderDetail?.delivery!]}</TextB2R>

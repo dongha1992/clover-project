@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IDestination } from '@store/destination';
+import { IDestinationsResponse } from '@model/index';
 
 interface IEditSpot {
   spotPickupId: number;
@@ -14,7 +14,7 @@ interface IState {
     receiverName: string;
     receiverTel: string;
   };
-  tempEditDestination: IDestination | null;
+  tempEditDestination: IDestinationsResponse | null;
   tempEditSpot: IEditSpot | null;
 }
 
@@ -42,8 +42,8 @@ export const mypageSlice = createSlice({
         receiverTel: '',
       };
     },
-    // 서버에 등록하지 않은 유저가 검색한 배송지 변경 시 배송지 정보
-    SET_TEMP_EDIT_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
+    // 유저가 서버에 등록하지 않은 검색한 배송지 변경 시 배송지 정보
+    SET_TEMP_EDIT_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | null>) => {
       state.tempEditDestination = action.payload;
     },
 

@@ -25,7 +25,7 @@ import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import { useRouter } from 'next/router';
 import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
-import { IDestination } from '@store/destination';
+import { IDestinationsResponse } from '@model/index';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { SET_ALERT } from '@store/alert';
 import { getOrderListsApi } from '@api/order';
@@ -42,7 +42,7 @@ const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
-  const [tempDestination, setTempDestination] = useState<IDestination | null>();
+  const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
@@ -147,12 +147,13 @@ const DeliverInfoPage = () => {
 
     if (!tempDestination) {
       return;
-    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spaceType === 'PRIVATE' && !noticeChecked) {
+    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spotPickup?.type === 'PRIVATE' && !noticeChecked) {
       // 스팟 배송이고, 프라이빗일 경우 공지 체크 해야만 넘어감
       return;
     }
 
-    if (destinationId) {
+    // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
+    if (destinationId || isMainDestination) {
       dispatch(SET_DESTINATION(tempDestination));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(SET_USER_DESTINATION_STATUS(tempDestination?.delivery?.toLowerCase()!));
@@ -183,7 +184,6 @@ const DeliverInfoPage = () => {
 
       try {
         const { data } = await postDestinationApi(reqBody);
-
         if (data.code === 200) {
           const response = data.data;
           dispatch(
@@ -318,6 +318,8 @@ const DeliverInfoPage = () => {
       return;
     }
 
+    const isSpot = userSelectDeliveryType === 'spot';
+
     // 최근 이력에서 고른 경우
     const params = {
       delivery: userSelectDeliveryType.toUpperCase(),
@@ -326,7 +328,7 @@ const DeliverInfoPage = () => {
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        setTempDestination(data.data);
+        setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
         setIsMaindestination(true);
       }
     } catch (error) {
@@ -353,7 +355,7 @@ const DeliverInfoPage = () => {
 
   const settingHandler = () => {
     if (userDeliveryType === 'spot') {
-      if (tempDestination?.spaceType === 'PRIVATE') {
+      if (tempDestination?.spotPickup?.type === 'PRIVATE') {
         return !noticeChecked;
       }
     } else {

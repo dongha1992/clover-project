@@ -304,17 +304,39 @@ export interface ILocation {
   dong: string;
 }
 
+export interface ISpotInSpotPickUp {
+  canDinnerDelivery: boolean;
+  canLunchDelivery: boolean;
+  coordinate: { lat: number; lon: number };
+  dinnerDeliveryEndTime: string;
+  dinnerDeliveryStartTime: string;
+  distanceUnit: string;
+  id: number;
+  images: IMenuImage[];
+  location: ILocation;
+  lunchDeliveryEndTime: string;
+  lunchDeliveryStartTime: string;
+  name: string;
+}
+export interface ISpotPickupInDestinaion {
+  id: number;
+  name: string;
+  spot: ISpotInSpotPickUp;
+  type: string;
+}
+
 export interface IDestinationsResponse {
   id: number;
-  delivery: TDeliveryType;
-  deliveryMessage: string;
+  delivery: TDeliveryType | string;
+  deliveryMessage?: string;
   deliveryMessageType?: string;
   name: string;
   receiverTel: string;
   receiverName: string;
   location: ILocation;
   main: boolean;
-  createdAt: string;
+  createdAt?: string;
+  spotPickup?: ISpotPickupInDestinaion;
 }
 export interface IGetDestinationsResponse {
   code: number;
