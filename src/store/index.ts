@@ -73,7 +73,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'coupon', 'spot', 'mypage'],
+      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'coupon', 'spot', 'subscription', 'mypage'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);

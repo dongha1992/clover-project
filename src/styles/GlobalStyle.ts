@@ -70,6 +70,7 @@ const GlobalStyle = createGlobalStyle`
     }
     button{
         border: none;
+        background-color: transparent;
     }
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
