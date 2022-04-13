@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso, IRegisterDestinationRequest } from '@model/index';
+import { IJuso, IRegisterDestinationRequest, IDestinationsResponse } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
 
 interface IAvailableDestination {
@@ -10,34 +10,11 @@ interface IAvailableDestination {
   spot: boolean;
 }
 
-export interface IDestination {
-  name: string;
-  location: {
-    addressDetail: string;
-    address: string | null;
-    dong: string | null;
-    zipCode: string | null;
-  };
-  main: boolean;
-  delivery?: string;
-  deliveryMessage?: string;
-  receiverName?: string;
-  receiverTel?: string;
-  deliveryMessageType?: string;
-  id?: number;
-  spaceType?: string;
-  type?: string;
-  availableTime?: string;
-  deliveryTime?: string;
-  spotPickupId?: number;
-  spotPickup?: any;
-}
-
 interface TProps {
-  userDestination: IDestination | null;
+  userDestination: IDestinationsResponse | null;
   tempLocation: IJuso;
-  userTempDestination: IDestination | null;
-  tempEditDestination: IDestination | null;
+  userTempDestination: IDestinationsResponse | null;
+  tempEditDestination: IDestinationsResponse | null;
   userLocation: IJuso;
   availableDestination: IAvailableDestination;
   destinationDeliveryType: string;
@@ -117,7 +94,7 @@ export const destination = createSlice({
     },
 
     // 배송지 검색 후
-    SET_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
+    SET_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | null>) => {
       state.userDestination = action.payload;
     },
 
@@ -126,7 +103,7 @@ export const destination = createSlice({
     },
 
     // 서버에 등록하지 않은 유저가 검색한 배송지 정보
-    SET_TEMP_DESTINATION: (state, action: PayloadAction<IDestination | null>) => {
+    SET_TEMP_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | null>) => {
       state.userTempDestination = action.payload;
     },
 

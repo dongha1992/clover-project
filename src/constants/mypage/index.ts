@@ -1,3 +1,15 @@
+import { Obj } from '@model/index';
+
+/* ORDER-DELIERY-HISTORY */
+
+export const DELIVERY_STATUS_MAP: Obj = {
+  COMPLETED: '배송완료',
+  CANCELED: '주문취소',
+  RESERVED: '주문완료',
+  DELIVERING: '배송중',
+  PREPARING: '상품준비 중',
+};
+
 export const MANAGE_MENU = [
   { id: 1, text: '구독 관리', link: '/mypage/subscrition' },
   { id: 2, text: '스팟 관리', link: '/mypage/spot' },
