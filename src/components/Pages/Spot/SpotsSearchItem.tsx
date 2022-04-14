@@ -11,7 +11,7 @@ import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
-import { destinationForm, SET_USER_DESTINATION_STATUS, SET_TEMP_DESTINATION } from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 
 interface IProps {
@@ -92,18 +92,18 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
 
           if (isSubscription) {
-            dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+            dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
             router.push({
               pathname: '/cart/delivery-info',
               query: { destinationId: item.id, isSubscription, deliveryInfo },
             });
           } else {
-            dispatch(SET_USER_DESTINATION_STATUS('spot'));
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
             router.push({ pathname: '/cart/delivery-info', query: { destinationId: item.id } });
           }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push('/cart');
         }
@@ -111,7 +111,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
         // 로그인o and 장바구니 x
         if (isSubscription) {
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+          dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
           router.push({
             pathname: '/cart/delivery-info',
             query: { destinationId: item.id, isSubscription, deliveryInfo },
