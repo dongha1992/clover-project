@@ -20,6 +20,8 @@ import {
   SET_DESTINATION,
   SET_TEMP_DESTINATION,
 } from '@store/destination';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -40,17 +42,25 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const { showToast, hideToast } = useToast();
   const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
+  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
 
-  const goToDetail = (id: number): void => {
+  const checkHandler = () => {
+    setNoticeChecked(!noticeChecked);
+  };
+
+  const goToDetail = (id: number | undefined): void => {
     if (isSearch) {
       return;
     }
     router.push(`/spot/detail/${id}`);
   };
+
+
+
 
   const orderHandler = (e: any): void => {
     e.stopPropagation();
@@ -66,11 +76,35 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       availableTime: pickUpTime,
       spaceType: list.type,
       spotPickupId: list.pickups[0].id,
+    };  
+
+    const goToCart = () =>{
+      // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+      dispatch(SET_USER_DESTINATION_STATUS('spot'));
+      dispatch(SET_DESTINATION(destinationInfo));
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push('/cart');
     };
 
+    const goToDeliveryInfo = () => {
+      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
+      dispatch(SET_USER_DESTINATION_STATUS('spot'));
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push({ pathname: '/cart/delivery-info', query: { destinationId: list.id } });
+    };
+
+    const goToSelectMenu = () => {
+      // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+      dispatch(SET_USER_DESTINATION_STATUS('spot'));
+      dispatch(SET_DESTINATION(destinationInfo));
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));  
+      router.push('/search');
+    };
+  
     if (isLoginSuccess) {
-      // 배송정보 변경에서 넘어온 경우
+      // 로그인o
       if (orderId) {
+        // 배송정보 변경에서 넘어온 경우
         dispatch(SET_TEMP_DESTINATION(destinationInfo));
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
@@ -78,28 +112,33 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
         });
         return;
       }
-
       if (cartLists.length) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
-          // 장바구니 o , 배송 정보에서 넘어온 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({ pathname: '/cart/delivery-info', query: { destinationId: list.id } });
+          // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
+          dispatch(SET_BOTTOM_SHEET({
+            content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToDeliveryInfo} />,
+          }));
         } else {
-          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
-          dispatch(SET_DESTINATION(destinationInfo));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push('/cart');
+          // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          dispatch(SET_BOTTOM_SHEET({
+            content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToCart} />,
+          }));
         }
       } else {
-        // 로그인o and 장바구니 x
-        router.push('/search');
+        // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+        dispatch(SET_BOTTOM_SHEET({
+          content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToSelectMenu} />,
+        }));
       }
     } else {
-      // 로그인x
-      router.push('/onboarding');
+      // 로그인x, 로그인 이동
+      dispatch(SET_ALERT({
+        alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => router.push('/onboarding'),
+      }))
     }
   };
 
@@ -130,7 +169,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     }
   };
 
-  const clickSpotOpen = async (id: number) => {
+  const clickSpotOpen = async (id: number | undefined) => {
     if (list.recruited) {
       return;
     }
