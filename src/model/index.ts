@@ -337,6 +337,7 @@ export interface IDestinationsResponse {
   main: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
+  deliveryTime?: string;
 }
 export interface IGetDestinationsResponse {
   code: number;
@@ -1229,7 +1230,7 @@ export interface IOrderDeliveriesInOrderPreviewRequest {
 export interface IOrderPreviewRequest {
   delivery: string;
   deliveryDetail?: string | null;
-  destinationId: number;
+  destinationId: number | undefined;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
   type: string;

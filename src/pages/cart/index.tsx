@@ -14,6 +14,7 @@ import {
   FlexRow,
   fixedBottom,
   FlexCenter,
+  FlexColStart,
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
@@ -28,8 +29,8 @@ import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS 
 import { SET_ORDER } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
-import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { Obj, ISubOrderDelivery, IMenuDetailsInCart, IGetCart } from '@model/index';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
+import { Obj, ISubOrderDelivery, IMenuDetailsInCart, IGetCart, ILocation } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -54,6 +55,13 @@ export interface ILunchOrDinner {
   isDisabled: boolean;
   isSelected: boolean;
   time: string;
+}
+
+export interface IDeliveryObj {
+  destinationId: number | null;
+  delivery: string | null;
+  deliveryDetail: string | null;
+  location: ILocation | null;
 }
 
 const disabledDates = [];
@@ -98,6 +106,13 @@ const CartPage = () => {
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
   const [subDeliveryId, setSubDeliveryId] = useState<number | null>(null);
   const [nutritionObj, setNutritionObj] = useState({ ...INITIAL_NUTRITION });
+  const [destinationObj, setDestinationObj] = useState<IDeliveryObj>({
+    destinationId: null,
+    delivery: null,
+    deliveryDetail: null,
+    location: null,
+  });
+
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -129,6 +144,8 @@ const CartPage = () => {
     }
   );
 
+  /* TODO: 최근 이력 배송방법 / 기본배송지 api 따로 나옴 */
+
   const { data: recentOrderDelivery } = useQuery(
     'getOrderLists',
     async () => {
@@ -143,7 +160,28 @@ const CartPage = () => {
       return data.data.orderDeliveries[0];
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        if (userDeliveryType && userDestination) {
+          const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickupId! : userDestination?.id!;
+          setDestinationObj({
+            ...destinationObj,
+            delivery: userDeliveryType,
+            destinationId,
+            location: userDestination.location,
+          });
+          SET_USER_DELIVERY_TYPE(userDeliveryType);
+        } else if (data) {
+          const destinationId = data.delivery === 'SPOT' ? data?.spotPickupId! : data?.id!;
+          setDestinationObj({
+            ...destinationObj,
+            delivery: data.delivery.toLowerCase(),
+            destinationId,
+            location: data.location,
+          });
+          console.log(data, 'destinationId');
+          SET_USER_DELIVERY_TYPE(data.delivery.toLowerCase());
+        }
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -156,8 +194,8 @@ const CartPage = () => {
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);
-      const temp = data.data.slice(0, 10);
-      setItemList(temp);
+
+      setItemList(data.data);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -177,12 +215,6 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
     }
   );
-
-  const deliveryType = userDeliveryType ? userDeliveryType : recentOrderDelivery && recentOrderDelivery?.delivery!;
-  const deliveryDestination = userDestination ? userDestination : recentOrderDelivery && recentOrderDelivery!;
-  const destinationId = userDestination ? userDestination.id : recentOrderDelivery && recentOrderDelivery.id!;
-
-  const hasDeliveryTypeAndDestination = !isNil(deliveryType) && !isNil(deliveryDestination);
 
   // const { data: result, refetch } = useQuery(
   //   ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
@@ -266,8 +298,8 @@ const CartPage = () => {
 
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryType = delivery === userDeliveryType?.toUpperCase();
-      let sameDeliveryAddress = isEqual(location, userDestination?.location);
+      const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
+      let sameDeliveryAddress = isEqual(location, destinationObj?.location);
       sameDeliveryAddress = true;
       return sameDeliveryAddress && sameDeliveryType;
     };
@@ -389,7 +421,7 @@ const CartPage = () => {
     const selectToday = dates === today;
 
     try {
-      switch (userDeliveryType) {
+      switch (destinationObj.delivery) {
         case 'parcel': {
           return <TextH6B>{`${dates}일 도착`}</TextH6B>;
         }
@@ -467,17 +499,16 @@ const CartPage = () => {
   };
 
   const goToOrder = () => {
-    if (!hasDeliveryTypeAndDestination) return;
+    if (isNil(destinationObj)) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
-
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
-    userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
+    // userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
 
     const reqBody = {
-      delivery: userDeliveryType.toUpperCase(),
+      destinationId: destinationObj.destinationId!,
+      delivery: destinationObj.delivery?.toUpperCase()!,
       deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
-      destinationId,
       isSubOrderDelivery: subDeliveryId ? true : false,
       orderDeliveries: [
         {
@@ -544,14 +575,14 @@ const CartPage = () => {
 
   const buttonRenderer = useCallback(() => {
     return (
-      <Button borderRadius="0" height="100%" disabled={!hasDeliveryTypeAndDestination}>
+      <Button borderRadius="0" height="100%" disabled={isNil(destinationObj)}>
         {getTotalPrice()}원 주문하기
       </Button>
     );
-  }, [selectedMenuList, hasDeliveryTypeAndDestination]);
+  }, [selectedMenuList, destinationObj]);
 
   useEffect(() => {
-    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
+    const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
       const { currentTime, currentDate } = getCustomDate(new Date());
       const isFinishLunch = currentTime >= 9.29;
@@ -594,7 +625,7 @@ const CartPage = () => {
   }, [calendarRef.current?.offsetTop]);
 
   const checkSameDateSubDelivery = () => {
-    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
+    const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
 
     for (const subOrder of subOrderDelivery) {
       const { deliveryDate, deliveryDetail } = subOrder;
@@ -642,27 +673,25 @@ const CartPage = () => {
     }
   }, [selectedDeliveryDay, lunchOrDinner, subOrderDelivery]);
 
-  useEffect(() => {
-    // 초기 렌더 1회 장바구니 아이템 전체 선택
-    setIsAllchecked(true);
-  }, []);
-
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  const isSpot = userDeliveryType == 'spot';
-  const isSpotAndQuick = ['spot', 'quick'].includes(userDeliveryType);
+  const isSpot = destinationObj.delivery === 'spot';
+  const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
 
   if (cartItemList.length === 0) {
     return (
       <EmptyContainer>
-        <FlexCol width="100%">
+        <FlexColStart>
           <DeliveryTypeAndLocation
             goToDeliveryInfo={goToDeliveryInfo}
-            deliveryType={deliveryType}
-            deliveryDestination={deliveryDestination}
+            deliveryType={destinationObj.delivery!}
+            deliveryDestination={destinationObj.location}
           />
+          <BorderLine height={8} margin="24px 0" />
+        </FlexColStart>
+        <FlexCol width="100%">
           <TextB2R padding="0 0 32px 0" center>
             장바구니가 비었어요 😭
           </TextB2R>
@@ -681,8 +710,8 @@ const CartPage = () => {
       {isLoginSuccess ? (
         <DeliveryTypeAndLocation
           goToDeliveryInfo={goToDeliveryInfo}
-          deliveryType={deliveryType}
-          deliveryDestination={deliveryDestination}
+          deliveryType={destinationObj.delivery!}
+          deliveryDestination={destinationObj.location}
         />
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
@@ -792,7 +821,7 @@ const CartPage = () => {
           </Button>
         </GetMoreBtn>
       </CartInfoContainer>
-      {deliveryDestination && (
+      {destinationObj.delivery && (
         <>
           <BorderLine height={8} margin="32px 0" />
           <FlexCol padding="0 24px">
@@ -916,6 +945,8 @@ const EmptyContainer = styled.div`
   height: 100vh;
   width: 100%;
   ${flexCenter}
+  display: flex;
+  flex-direction: column;
 `;
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
