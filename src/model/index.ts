@@ -1572,3 +1572,36 @@ export interface ICoupon {
   menuIds?: number[];
   menus?: IMenuInCoupon[];
 }
+
+/* POINT */
+export interface IPoint {
+  availablePoint: number;
+  expirePoint: number;
+}
+export interface IPointResponse {
+  code: number;
+  message: string;
+  data: IPoint;
+}
+export interface IPointHistories {
+  content: string;
+  createdAt: string;
+  expiredDate: string;
+  id: number;
+  type: TPointHistoryType;
+  value: number;
+}
+
+export interface IPointHistoriesResponse {
+  code: number;
+  message: string;
+  data: { pointHistories: IPointHistories[]; pagination: {} };
+}
+
+type TPointHistoryType = 'EXPIRATION' | 'SAVE' | 'USE' | string;
+
+export interface IPointHistoriesRequest {
+  page: number;
+  size: number;
+  types: TPointHistoryType;
+}
