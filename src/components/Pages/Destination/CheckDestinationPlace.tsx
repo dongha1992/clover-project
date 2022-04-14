@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import React from 'react';
 import styled from 'styled-components';
-import { availabilityDestination } from '@api/destination';
+import { getAvailabilityDestinationApi } from '@api/destination';
 import { checkDestinationHelper } from '@utils/checkDestinationHelper';
 import { useSelector, useDispatch } from 'react-redux';
 import { destinationForm, SET_AVAILABLE_DESTINATION, SET_LOCATION_STATUS } from '@store/destination';
@@ -29,11 +29,11 @@ interface IResponse {
 }
 
 const CheckDestinationPlace = () => {
-  const { tempLocation, userDestinationStatus } = useSelector(destinationForm);
+  const { tempLocation, userDeliveryType } = useSelector(destinationForm);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { isLocation } = router.query;
+  const { isLocation, isSpot } = router.query;
 
   const {
     data: result,
@@ -48,7 +48,7 @@ const CheckDestinationPlace = () => {
         zipCode: tempLocation.zipNo,
         delivery: null,
       };
-      const { data } = await availabilityDestination(params);
+      const { data } = await getAvailabilityDestinationApi(params);
 
       if (data.code === 200) {
         const { morning, parcel, quick, spot } = data.data;
@@ -92,7 +92,7 @@ const CheckDestinationPlace = () => {
     const canParcel = status === 'parcel';
     const canNotDelivery = status === 'noDelivery';
 
-    if (isLocation) {
+    if (isLocation || isSpot) {
       // 홈 위치 검색
       switch (status) {
         case 'spot': {
@@ -128,7 +128,7 @@ const CheckDestinationPlace = () => {
       const canQuickAndMorning = quick && morning;
 
       // 배송정보 배송지 검색
-      switch (userDestinationStatus) {
+      switch (userDeliveryType) {
         // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
         case 'morning': {
           if (canEverything || canMorning) {
@@ -138,7 +138,7 @@ const CheckDestinationPlace = () => {
           }
         }
         case 'parcel': {
-          if (canEverything || canParcelAndCanMorning) {
+          if ((canEverything && parcel) || canParcelAndCanMorning) {
             return <MorningAndPacelInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;

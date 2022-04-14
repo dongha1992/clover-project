@@ -11,6 +11,8 @@ import common from './common';
 import spot from './spot';
 import destination from './destination';
 import coupon from './coupon';
+import mypage from './mypage';
+import subscription from './subscription';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
@@ -33,6 +35,8 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     order,
     spot,
     coupon,
+    mypage,
+    subscription,
   })(state, action);
 };
 
@@ -69,7 +73,7 @@ const makeStore = (context: any) => {
     const persistConfig = {
       key: 'nextjs',
       storage,
-      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'coupon', 'spot'],
+      whitelist: ['order', 'destination', 'cart', 'menu', 'common', 'coupon', 'spot', 'subscription', 'mypage'],
     };
 
     const persistedReducer = persistReducer(persistConfig, rootReducer);

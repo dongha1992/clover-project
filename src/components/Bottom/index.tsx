@@ -6,6 +6,7 @@ import styled from 'styled-components';
 const HomeBottom = dynamic(() => import('./HomeBottom'));
 const DetailBottom = dynamic(() => import('./DetailBottom'));
 const SpotDetailBottom = dynamic(() => import('./SpotDetailBottom'));
+const SbsBottom = dynamic(() => import('./SbsBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Bottom = () => {
@@ -19,9 +20,7 @@ const Bottom = () => {
   const renderComponent = useCallback(
     (currentPath: string) => {
       switch (true) {
-        case ['/quickorder', '/', '/spot', '/mypage', '/subscription'].includes(
-          currentPath
-        ): {
+        case ['/quickorder', '/', '/spot', '/mypage', '/subscription'].includes(currentPath): {
           return <HomeBottom />;
         }
         case ['/menu/[menuId]'].includes(currentPath): {
@@ -29,6 +28,9 @@ const Bottom = () => {
         }
         case ['/spot/detail/[id]'].includes(currentPath): {
           return <SpotDetailBottom />;
+        }
+        case ['/subscription/products/[id]'].includes(currentPath): {
+          return <SbsBottom />;
         }
         default: {
           return;
@@ -38,11 +40,7 @@ const Bottom = () => {
     [currentPath]
   );
 
-  return (
-    <Container isShow={renderComponent(currentPath)}>
-      {renderComponent(currentPath)}
-    </Container>
-  );
+  return <Container isShow={renderComponent(currentPath)}>{renderComponent(currentPath)}</Container>;
 };
 
 const Container = styled.div<{ isShow: React.ReactNode }>`

@@ -12,12 +12,15 @@ const MyPageHeader = () => {
   const goToCart = () => {
     router.push('/cart');
   };
+  const goToNoti = () => {
+    router.push('/mypage/noti');
+  };
   return (
     <Container>
       <Wrapper>
         <Right>
           {isLoginSuccess && (
-            <NotiWrapper>
+            <NotiWrapper onClick={goToNoti}>
               <SVGIcon name="notification" />
             </NotiWrapper>
           )}
@@ -69,6 +72,7 @@ const Right = styled.div`
 const CartWrapper = styled.div``;
 const NotiWrapper = styled.div`
   padding-right: 26px;
+  cursor: pointer;
 `;
 
 export default MyPageHeader;

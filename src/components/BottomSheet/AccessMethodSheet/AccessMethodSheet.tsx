@@ -5,21 +5,16 @@ import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
-import { ACCESS_METHOD } from '@constants/payment';
-import { IAccessMethod } from '@pages/payment';
+import { ACCESS_METHOD } from '@constants/order';
+import { IAccessMethod } from '@pages/order';
 import { SET_ACCESS_METHOD } from '@store/common';
 
 interface IProps {
-  userAccessMethod: IAccessMethod;
+  userAccessMethod: IAccessMethod | undefined;
 }
 
 const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
-  const [selectedAccessMethod, setSelectedAccessMethod] =
-    useState<IAccessMethod>({
-      id: 1,
-      text: '',
-      value: '',
-    });
+  const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod | undefined>(undefined);
 
   const dispatch = useDispatch();
 
@@ -46,10 +41,7 @@ const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
           const isSelected = selectedAccessMethod?.id === method.id;
           return (
             <PickWrapper key={index}>
-              <RadioButton
-                onChange={() => changeRadioHandler(method)}
-                isSelected={isSelected}
-              />
+              <RadioButton onChange={() => changeRadioHandler(method)} isSelected={isSelected} />
               {isSelected ? (
                 <TextH5B padding="0 0 0 8px">{method.text}</TextH5B>
               ) : (

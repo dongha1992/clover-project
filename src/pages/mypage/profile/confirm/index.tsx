@@ -25,6 +25,8 @@ const PasswordConfirmPage = () => {
 
       if (emailVaildCheck && passwordVaildCheck) {
         setIsValid(true);
+      } else {
+        setIsValid(false);
       }
     }
   };

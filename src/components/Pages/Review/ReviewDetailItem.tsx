@@ -2,13 +2,19 @@ import React from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
-import { theme, showMoreText, homePadding } from '@styles/theme';
+import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 
-const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) => {
+interface IProps {
+  review: any;
+  isDetailPage?: boolean;
+  clickImgViewHandler?: (imgUrlForViwer: string[]) => void;
+}
+
+const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps) => {
   return (
     <>
       <Container>
@@ -22,27 +28,30 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.user}
+                    {review.userNickName}
                   </TextH6B>
                   <TextB3R color={theme.greyScale65}>{review.createdAt}</TextB3R>
                 </UserInfo>
               </RatingAndUser>
               <TagWrapper>
                 <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                  {review.order}번 째 구매
+                  {review.orderCount}번 째 구매
                 </Tag>
               </TagWrapper>
             </ReviewHeader>
             <ReviewBody>
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
-                {review.imageUrl?.map((img: any, index: number) => {
-                  /* TODO: menu review 나오면 수정 */
-                  if (index > 1) return;
+                {review.reviewImg?.map((img: any, index: number) => {
+                  const imgUrlForViwer: string[] = review.reviewImg.map((item: any) => item.url);
                   return (
-                    <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(review.imageUrl)} key={index}>
+                    <ReviewImageWrapper
+                      isFirst
+                      onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForViwer)}
+                      key={index}
+                    >
                       <Image
-                        src={IMAGE_S3_URL + img}
+                        src={IMAGE_S3_URL + img.url}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}
@@ -53,16 +62,16 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: any) =>
                   );
                 })}
               </ImgWrapper>
-              {!isDetailPage && review.reply ? (
+              {!isDetailPage && review.comment ? (
                 <ReplyContent>
                   <ReplyHeader>
-                    <TextH6B color={theme.greyScale65}>{review.reply.name}</TextH6B>
+                    <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
                     <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
-                      {review.reply.createdAt}
+                      {review.commentCreatedAt}
                     </TextB3R>
                   </ReplyHeader>
                   <ReplyBody>
-                    <TextB3R color={theme.greyScale65}>{review.reply.content}</TextB3R>
+                    <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
                   </ReplyBody>
                 </ReplyContent>
               ) : null}

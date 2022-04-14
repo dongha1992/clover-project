@@ -8,7 +8,8 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
-import { ICard } from '@components/Pages/Mypage/Card/CardItem';
+import { IGetCard } from '@model/index';
+
 import { useQuery, useQueryClient } from 'react-query';
 import isNil from 'lodash-es/isNil';
 
@@ -17,7 +18,7 @@ const CardManagementPage = () => {
     data: cards,
     isLoading,
     refetch,
-  } = useQuery<ICard[]>(
+  } = useQuery(
     'getCardList',
     async () => {
       const { data } = await getCardLists();
@@ -28,7 +29,7 @@ const CardManagementPage = () => {
     { refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
-  const cardEditHandler = (card: ICard) => {
+  const cardEditHandler = (card: IGetCard) => {
     router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
   };
 
@@ -42,7 +43,7 @@ const CardManagementPage = () => {
 
   return (
     <Container>
-      {!cards.length ? (
+      {!cards?.length ? (
         <EmptyWrapper>
           <SVGIcon name="emptyCard" />
           <TextB2R color={theme.greyScale65} padding="16px 0 32px 0">
@@ -55,7 +56,7 @@ const CardManagementPage = () => {
       ) : (
         <Wrapper>
           <TextH4B padding="24px 0">카드 관리</TextH4B>
-          {cards.map((card, index) => (
+          {cards.map((card: IGetCard, index: number) => (
             <div key={index}>
               <CardItem onClick={cardEditHandler} card={card} />
               {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}

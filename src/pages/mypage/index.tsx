@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween, FlexColCenter } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
-import React from 'react';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
@@ -15,8 +15,10 @@ import { useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
+import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
+import { SbsDashboard } from '@components/Pages/Mypage/Subscription';
+import { pipe, groupBy } from '@fxts/core';
+import { getOrderListsApi } from '@api/order';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -26,31 +28,40 @@ interface IMypageMenu {
 
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
+  const [deliveryList, setDeliveryList] = useState<any>([]);
 
-  const {} = useQuery(
+  const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
-      // const params = {
-      //   days: 90,
-      //   page: 1,
-      //   size: 10,
-      //   type: 'GENERAL',
-      // };
+      const params = {
+        days: 90,
+        page: 1,
+        size: 100,
+        type: 'GENERAL',
+      };
 
-      // const { data } = await getOrderLists(params);
-
-      /* temp */
-      const { data } = await axios.get(`${BASE_URL}/orderList`);
-      return data.data;
+      const { data } = await getOrderListsApi(params);
+      return data.data.orderDeliveries;
     },
     {
       onSuccess: (data) => {
-        console.log(data, '@@');
+        const result = pipe(
+          data,
+          groupBy((item: any) => item.status)
+        );
+
+        setDeliveryList(result);
+        return data;
       },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
+
+  if (isLoginSuccess && isLoading) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -96,49 +107,10 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>
-              <FlexCol>
-                <FlexBetween>
-                  <TextH4B>주문/배송 내역</TextH4B>
-                  <FlexRow>
-                    <TextB2R padding="0 8px 0 0">2 건</TextB2R>
-                    <div onClick={() => router.push('/mypage/order-delivery-history')}>
-                      <SVGIcon name="arrowRight" />
-                    </div>
-                  </FlexRow>
-                </FlexBetween>
-                <DeliveryDiagram>
-                  <FlexBetween padding="20px 21px 15px 21px">
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>주문완료</TextB4R>
-                    </FlexColCenter>
-                    <ArrowWrapper>
-                      <SVGIcon name="arrowRightGrey" />
-                    </ArrowWrapper>
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>상품준비중</TextB4R>
-                    </FlexColCenter>
-                    <ArrowWrapper>
-                      <SVGIcon name="arrowRightGrey" />
-                    </ArrowWrapper>
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>배송중</TextB4R>
-                    </FlexColCenter>
-                    <ArrowWrapper>
-                      <SVGIcon name="arrowRightGrey" />
-                    </ArrowWrapper>
-                    <FlexColCenter>
-                      <TextH3B>0</TextH3B>
-                      <TextB4R color={theme.greyScale65}>배송완료</TextB4R>
-                    </FlexColCenter>
-                  </FlexBetween>
-                </DeliveryDiagram>
-              </FlexCol>
+              <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
             </OrderAndDeliveryWrapper>
+            <SbsDashboard />
             <ManageWrapper>
-              <MypageMenu title="구독 관리" link="/mypage/subscrition" count={1} />
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
               <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
@@ -279,14 +251,9 @@ const OrderAndDeliveryWrapper = styled.div`
   padding-top: 32px;
 `;
 
-const DeliveryDiagram = styled.div`
-  background-color: ${theme.greyScale3};
-  margin-top: 15px;
-  border-radius: 8px;
-`;
-
-const ArrowWrapper = styled.div`
-  padding-bottom: 16px;
+const SubscriptionWrapper = styled.div`
+  ${homePadding}
+  padding-top: 32px;
 `;
 
 const ManageWrapper = styled.ul``;

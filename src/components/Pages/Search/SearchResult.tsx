@@ -13,11 +13,17 @@ import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
 
-const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
+interface IProps {
+  searchResult: any;
+  onClick?: any;
+  isSpot?: boolean;
+  orderId?: string | string[];
+}
+
+const SearchResult = ({ searchResult, onClick, isSpot, orderId }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
-  console.log(spotsSearchResultFiltered);
 
   const clickFilterHandler = () => {
     if (!isSpot) {
@@ -41,8 +47,7 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
 
   return (
     <>
-    {
-      !!searchResult.length && (
+      {!!searchResult.length && (
         <FilterRow>
           <TextH5B>검색결과 {searchResult.length}개</TextH5B>
           <FilterWrapper onClick={clickFilterHandler}>
@@ -50,8 +55,7 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
             <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
           </FilterWrapper>
         </FilterRow>
-      )
-    }
+      )}
       <ItemListWrapper isSpot={isSpot}>
         {searchResult.length ? (
           searchResult.map((item: any, index: number) => {
@@ -59,7 +63,7 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
               <Item item={item} key={index} />
             ) : (
               // 스팟 검색 결과 리스트
-              <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
+              <SpotsSearchItem item={item} key={index} onClick={onClick} />
             );
           })
         ) : router.pathname === '/spot/search' ? (
@@ -68,17 +72,14 @@ const SearchResult = ({ searchResult, goToOrder, isSpot }: any) => {
               <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>
                 등록된 스팟이 없어 보이네요.😭
               </TextB2R>
-              <Button
-                margin="0 0 16px 0"
-                backgroundColor={theme.white}
-                color={theme.black}
-                border
-              >
+              <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border>
                 지도로 주변 프코스팟 찾기
               </Button>
-              <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
-                직접 프코스팟 신청하기
-              </Button>
+              {!orderId && (
+                <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
+                  직접 프코스팟 신청하기
+                </Button>
+              )}
             </NoResult>
           </NoResultWrapper>
         ) : (

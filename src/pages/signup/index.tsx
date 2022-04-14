@@ -8,6 +8,7 @@ import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const textPaddingStyle = {
   padding: '0 0 0 8px',

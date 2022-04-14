@@ -7,6 +7,7 @@ import { Obj } from '@model/index';
 export const theme: Obj = {
   brandColor: '#35AD73',
   brandColor5: '#EDF3F0',
+  brandColor5P: '#EBF7F1',
   fontFamily: "'Noto Sans KR', sans-serif;",
   white: '#FFFFFF',
   greyScale3: '#F8F8F8',
@@ -80,11 +81,12 @@ export const FlexBetweenStart = styled.div<{
   margin: ${({ margin }) => margin && margin};
 `;
 
-export const FlexRowStart = styled.div<{ padding?: string; margin?: string }>`
+export const FlexRowStart = styled.div<{ padding?: string; margin?: string; width?: string }>`
   display: flex;
   align-items: start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
 `;
 
 export const FlexRow = styled.div<{

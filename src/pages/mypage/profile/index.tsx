@@ -53,8 +53,6 @@ const ProfilePage = () => {
   const nicknameRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
 
-  const { loginType } = useSelector(commonSelector);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -80,12 +78,10 @@ const ProfilePage = () => {
   useInterval(timerHandler, delay);
 
   const logoutHandler = () => {
-    if (loginType === 'EMAIL') {
-      dispatch(SET_LOGIN_SUCCESS(false));
-      delete sessionStorage.accessToken;
-      removeCookie({ name: 'refreshTokenObj' });
-      router.push('/mypage');
-    }
+    dispatch(SET_LOGIN_SUCCESS(false));
+    delete sessionStorage.accessToken;
+    removeCookie({ name: 'refreshTokenObj' });
+    router.push('/mypage');
   };
 
   const otherAuthTelHandler = () => {
