@@ -126,7 +126,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   };
 
   const editDeliveryInfoHandler = () => {
-    console.log(deliveryEditObj, 'deliveryEditObj');
     if (!cheekBeforeEdit()) {
       return;
     }

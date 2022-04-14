@@ -212,8 +212,6 @@ const EditReviewPage = ({ reviewId }: any) => {
     // mutateCreateMenuReview(formData);
   };
 
-  console.log(selectedReviewDetail, 'selectedReviewDetail');
-
   useEffect(() => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
