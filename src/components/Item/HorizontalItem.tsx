@@ -6,25 +6,29 @@ import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_CART_SHEET_OBJ } from '@store/cart';
+import { SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { IMAGE_S3_URL } from '@constants/mock';
+import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
 
 type TProps = {
   item: any;
   isQuick?: boolean;
 };
 
-const isNew = true;
-
 const HorizontalItem = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const { menuDetails } = item;
+  const { discount, price } = getMenuDisplayPrice(menuDetails);
+
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
     /* TODO: thunk로? */
-    dispatch(SET_CART_SHEET_OBJ(item));
+    dispatch(SET_MENU_ITEM(item));
     dispatch(
       SET_BOTTOM_SHEET({
         content: <CartSheet />,
@@ -35,16 +39,24 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
   const goToDetail = (id: number) => {
     router.push(`/menu/${id}`);
   };
+
   return (
     <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>
-        <ItemImage src={item.url} alt="상품이미지" />
+        <Image
+          src={IMAGE_S3_URL + item.thumbnail}
+          alt="상품이미지"
+          width={'100%'}
+          height={'100%'}
+          layout="responsive"
+          className="rounded"
+        />
         <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
-        {isNew && (
+        {item.badgeMessage && (
           <NewTagWrapper>
-            <TextH6B color={theme.white}>New</TextH6B>
+            <TextH6B color={theme.white}>{item.badgeMessage}</TextH6B>
           </NewTagWrapper>
         )}
       </ImageWrapper>
@@ -56,20 +68,21 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
         </NameWrapper>
         <PriceWrapper>
           <TextH5B color={theme.brandColor} padding="0 4px 0 0">
-            {item.discount}%
+            {discount}%
           </TextH5B>
-          <TextH5B>{item.price}원</TextH5B>
+          <TextH5B>{price}원</TextH5B>
         </PriceWrapper>
         {!isQuick && (
           <TagWrapper>
-            {item.tags.map((tag: string, index: number) => {
+            <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>
+            {/* {item.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
                 <Tag key={index} margin="0px 8px 8px 0px">
                   {tag}
                 </Tag>
               );
-            })}
+            })} */}
           </TagWrapper>
         )}
       </FlexCol>
@@ -109,11 +122,9 @@ const CartBtn = styled.div`
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-`;
-
-const ItemImage = styled.img`
-  width: 100%;
-  border-radius: 8px;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 const NewTagWrapper = styled.div`
@@ -126,8 +137,8 @@ const NewTagWrapper = styled.div`
 `;
 
 const NameWrapper = styled.div`
-  height: 40px;
   width: 100%;
+  height: 35px;
 `;
 
 const PriceWrapper = styled.div`

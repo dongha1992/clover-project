@@ -68,7 +68,10 @@ const GlobalStyle = createGlobalStyle`
     a, a:link, a:visited, a:focus, a:hover, a:active {
         text-decoration: none; 
     }
-
+    button{
+        border: none;
+        background-color: transparent;
+    }
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         -webkit-appearance: none;

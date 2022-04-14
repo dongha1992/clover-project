@@ -10,10 +10,12 @@ const CategorySubHeader = dynamic(() => import('./CategorySubHeader'));
 const MenuDetailHeader = dynamic(() => import('./MenuDetailHeader'));
 const TabHeader = dynamic(() => import('./TabHeader'));
 const MyPageHeader = dynamic(() => import('./MyPageHeader'));
+const NotiHeader = dynamic(() => import('./NotiHeader'));
 const SpotHeader = dynamic(() => import('./SpotHeader'));
 const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
+const SubscriptionHeader = dynamic(() => import('./SubscriptionHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Header = () => {
@@ -29,21 +31,28 @@ const Header = () => {
       const headerTitleMap: Obj = {
         '/search': '검색',
         '/location': '내 위치 설정하기',
-        '/location/address-detail': '배송위치',
+        '/location/address-detail': '내 위치 설정하기',
         '/category': '전체메뉴',
         '/category/salad': '샐러드',
+        '/category/wrap': '랩·샌드위치',
+        '/category/meal': '도시락·간편식',
+        '/category/package': '죽·스프',
+        '/category/snack': '간식',
+        '/category/soup': '죽',
+        '/category/drink': '음료',
+        '/category/soon': '오픈예정',
         '/menu/[menuId]/review/photo': '사진 후기',
         '/menu/[menuId]/review/total': '전체 후기',
         '/menu/[menuId]/review/[id]': '후기 상세',
         '/cart': '장바구니',
         '/cart/delivery-info': '배송정보',
         '/spot/search': '프코스팟 검색',
-        '/payment': '결제',
+        '/order': '결제',
         '/mypage/card': '결제관리',
         '/mypage/card/register': '카드등록',
         '/mypage/card/edit': '카드 편집',
         '/mypage/card/register/term': '이용약관',
-        '/mypage/order-detail': '주문 상세',
+        '/mypage/order-detail/[orderId]': '주문 상세',
         '/mypage/order-delivery-history': '주문/배송 내역',
         '/mypage/profile/password': '비밀번호 변경',
         '/mypage/profile/confirm': '회원정보 수정',
@@ -67,7 +76,7 @@ const Header = () => {
         '/mypage/setting': '앱설정',
         '/mypage/dib/subscription': '찜 관리',
         '/mypage/order-detail/edit/[orderId]': '배송정보 변경',
-        '/payment/finish': '결제완료',
+        '/order/finish': '결제완료',
         '/signup': '회원가입',
         '/signup/auth': '회원가입',
         '/signup/email-password': '회원가입',
@@ -86,20 +95,37 @@ const Header = () => {
         '/spot/location': '주소 검색',
         '/spot/location/address': '주소 검색',
         '/spot/regi-list': '프코스팟 안내',
+        '/subscription/products': '정기구독',
+        '/subscription/set-info': '구독하기',
+        '/subscription/register': '구독하기',
       };
 
       const title = headerTitleMap[currentPath];
 
       switch (true) {
-        case ['/category', '/category/salad'].includes(currentPath):
+        case [
+          '/category',
+          '/category/salad',
+          '/category/wrap',
+          '/category/meal',
+          '/category/package',
+          '/category/snack',
+          '/category/drink',
+          '/category/soon',
+          '/category/soup',
+        ].includes(currentPath):
           return <CategorySubHeader title={title} />;
 
-        case ['/menu/[menuId]', '/spot/detail/[id]'].includes(currentPath): {
+        case ['/menu/[menuId]', '/spot/detail/[id]', '/subscription/products/[id]'].includes(currentPath): {
           return <MenuDetailHeader />;
         }
 
         case ['/mypage'].includes(currentPath): {
           return <MyPageHeader />;
+        }
+
+        case ['/mypage/noti'].includes(currentPath): {
+          return <NotiHeader />;
         }
 
         case [
@@ -122,6 +148,9 @@ const Header = () => {
 
         case ['/'].includes(currentPath): {
           return <HomeHeader />;
+        }
+        case ['/subscription'].includes(currentPath): {
+          return <SubscriptionHeader />;
         }
 
         case ['/spot'].includes(currentPath): {

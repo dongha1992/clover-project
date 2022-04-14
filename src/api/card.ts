@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
-import { IRegisterCard, IRegisterCardResponse } from '@model/index';
+import { IGetCardResponse, IRegisterCard, IRegisterCardResponse } from '@model/index';
 
-export const getCardLists = (): Promise<AxiosResponse<any>> => {
+export const getCardLists = (): Promise<AxiosResponse<IGetCardResponse>> => {
   return Api.get('card/v1/cards');
 };
 

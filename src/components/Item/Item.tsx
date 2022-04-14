@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import { theme, FlexCol, showMoreText } from '@styles/theme';
+import { theme, FlexCol } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_CART_SHEET_OBJ } from '@store/cart';
+import { SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
+import { IMAGE_S3_URL } from '@constants/mock';
+import Image from 'next/image';
+import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
+import getCustomDate from '@utils/getCustomDate';
+import { Obj } from '@model/index';
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import 'dayjs/locale/ko';
+
+dayjs.extend(isSameOrBefore);
+dayjs.locale('ko');
 
 type TProps = {
   item: any;
@@ -20,10 +31,38 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const { menuDetails } = item;
+  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
+
+  const checkIsAllSold: boolean = menuDetails.every((item: any) => item.isSoldout === true);
+
+  const checkIsSoon = (): string | boolean => {
+    let { launchedAt } = item;
+
+    const today = dayjs();
+    const isBeforeThanLaunchedAt = today.isSameOrBefore(launchedAt, 'day');
+
+    try {
+      if (isBeforeThanLaunchedAt) {
+        const { dayWithTime } = getCustomDate(new Date(launchedAt));
+        return dayWithTime;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return false;
+  };
+
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    console.log(item, 'item');
-    dispatch(SET_CART_SHEET_OBJ(item));
+    if (checkIsAllSold || checkIsSoon()) {
+      return;
+    }
+
+    dispatch(SET_MENU_ITEM(item));
     dispatch(
       SET_BOTTOM_SHEET({
         content: <CartSheet />,
@@ -31,18 +70,47 @@ const Item = ({ item, isQuick = false }: TProps) => {
     );
   };
 
-  const goToDetail = (menuId: number) => {
-    router.push(`/menu/${menuId}`);
+  const goToDetail = (item: any) => {
+    if (checkIsAllSold || checkIsSoon()) {
+      return;
+    }
+
+    dispatch(SET_MENU_ITEM(item));
+    router.push(`/menu/${item.id}`);
   };
 
-  //temp
-  const tempBadgeStatus = ['isNew', 'isSoon', 'isSoldout', 'isBest'];
+  const badgeRenderer = () => {
+    const badgeMap: Obj = {
+      NEW: 'New',
+      BEST: 'Best',
+    };
+
+    const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
+    const { badgeMessage } = item;
+
+    if (checkIsAllSold) {
+      return <Badge message="일시품절" />;
+    } else if (checkIsBeforeThanLaunchAt) {
+      return <Badge message={`${checkIsSoon()}시 오픈`} />;
+    } else if (badgeMessage) {
+      return <Badge message={badgeMap[badgeMessage]} />;
+    } else {
+      return;
+    }
+  };
 
   return (
-    <Container onClick={() => goToDetail(item.id)}>
+    <Container onClick={() => goToDetail(item)}>
       <ImageWrapper>
-        <ItemImage src={item.url} alt="상품이미지" />
-        {item.id === 1 && (
+        <Image
+          src={IMAGE_S3_URL + item.thumbnail}
+          alt="상품이미지"
+          width={'100%'}
+          height={'100%'}
+          layout="responsive"
+          className="rounded"
+        />
+        {item.reopen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
@@ -51,40 +119,33 @@ const Item = ({ item, isQuick = false }: TProps) => {
         <CartBtn onClick={goToCartSheet}>
           <SVGIcon name="cart" />
         </CartBtn>
-        <Badge status={tempBadgeStatus[Math.floor(Math.random() * 4)]} />
+        {badgeRenderer()}
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
           <TextB3R margin="8px 0 0 0" width="100%" textHide>
-            {item.name}
+            {item.name.trim()}
           </TextB3R>
         </NameWrapper>
         <PriceWrapper>
           <TextH5B color={theme.brandColor} padding="0 4px 0 0">
-            {item.discount}%
+            {discount}%
           </TextH5B>
-          <TextH5B>{item.price}원</TextH5B>
+          <TextH5B>{discountedPrice}원</TextH5B>
         </PriceWrapper>
-        <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
+        <DesWrapper>
+          <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
+        </DesWrapper>
         {!isQuick && (
           <>
             <LikeAndReview>
               <Like>
                 <SVGIcon name="like" />
-                <TextB3R>{item.like}</TextB3R>
+                <TextB3R>{item.likeCount}</TextB3R>
               </Like>
-              <TextB3R>리뷰 {item.review}</TextB3R>
+              <TextB3R>리뷰 {item.reviewCount}</TextB3R>
             </LikeAndReview>
-            <TagWrapper>
-              {item.tags.map((tag: string, index: number) => {
-                if (index > 1) return;
-                return (
-                  <Tag key={index} margin="0px 8px 8px 0px">
-                    {tag}
-                  </Tag>
-                );
-              })}
-            </TagWrapper>
+            <TagWrapper>{item.tag && <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>}</TagWrapper>
           </>
         )}
       </FlexCol>
@@ -97,11 +158,13 @@ const Container = styled.div`
   width: 48%;
   height: auto;
   background-color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   display: inline-block;
   flex-direction: column;
   align-items: flex-start;
   position: relative;
+  height: auto;
+  max-height: 380px;
 `;
 
 const ForReopen = styled.div`
@@ -116,6 +179,12 @@ const ForReopen = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+`;
+
+const DesWrapper = styled.div`
+  width: 100%;
+  height: 38px;
+  overflow: hidden;
 `;
 
 const CartBtn = styled.div`
@@ -140,11 +209,9 @@ const CartBtn = styled.div`
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-`;
-
-const ItemImage = styled.img`
-  width: 100%;
-  border-radius: 8px;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 const NameWrapper = styled.div`
@@ -174,4 +241,4 @@ const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default Item;
+export default React.memo(Item);

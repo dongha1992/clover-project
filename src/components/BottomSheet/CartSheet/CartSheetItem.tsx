@@ -5,7 +5,6 @@ import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
 import SVGIcon from '@utils/SVGIcon';
 import { Tag } from '@components/Shared/Tag';
-import { useDispatch } from 'react-redux';
 
 interface IProps {
   menu: any;

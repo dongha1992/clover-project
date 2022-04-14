@@ -530,6 +530,13 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
+"@types/react-calendar@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@types/react-calendar/-/react-calendar-3.5.0.tgz#8195a33e20395e1f5171eea9c80156f3a5115b43"
+  integrity sha512-qVSA5M0+SwLRINpE81TMUTh0NwJVed8T+lplJ7v0XAe4EHlMyNeNlkN9suKBxlwIEZ/62QP/m0QjGNCwdOy8PQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-cookies@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@types/react-cookies/-/react-cookies-0.1.0.tgz#121182c7c5b72472769389f6d421d3fa45f2c57b"
@@ -667,6 +674,11 @@
   dependencies:
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
+
+"@wojtekmaj/date-utils@^1.0.2":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@wojtekmaj/date-utils/-/date-utils-1.0.3.tgz#2dcfd92881425c5923e429c2aec86fb3609032a1"
+  integrity sha512-1VPkkTBk07gMR1fjpBtse4G+oJqpmE+0gUFB0dg3VIL7qJmUVaBoD/vlzMm/jNeOPfvlmerl1lpnsZyBUFIRuw==
 
 acorn-jsx@^5.3.1:
   version "5.3.2"
@@ -1928,6 +1940,13 @@ get-symbol-description@^1.0.0:
     call-bind "^1.0.2"
     get-intrinsic "^1.1.1"
 
+get-user-locale@^1.2.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/get-user-locale/-/get-user-locale-1.4.0.tgz#a2c4b5da46feec9f03c9b07d197b1620490a5370"
+  integrity sha512-gQo03lP1OArHLKlnoglqrGGl7b04u2EP9Xutmp72cMdtrrSD7ZgIsCsUKZynYWLDkVJW33Cj3pliP7uP0UonHQ==
+  dependencies:
+    lodash.once "^4.1.1"
+
 glob-parent@^5.1.2, glob-parent@~5.1.0:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
@@ -2465,6 +2484,11 @@ lodash.merge@^4.6.2:
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
+lodash.once@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
+  integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
+
 lodash.sortby@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
@@ -2656,6 +2680,11 @@ mdurl@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/mdurl/-/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
   integrity sha1-/oWy7HWlkDfyrf7BAP1sYBdhFS4=
+
+merge-class-names@^1.1.1:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/merge-class-names/-/merge-class-names-1.4.2.tgz#78d6d95ab259e7e647252a7988fd25a27d5a8835"
+  integrity sha512-bOl98VzwCGi25Gcn3xKxnR5p/WrhWFQB59MS/aGENcmUc6iSm96yrFDF0XSNurX9qN4LbJm0R9kfvsQ17i8zCw==
 
 merge-stream@^2.0.0:
   version "2.0.0"
@@ -3394,7 +3423,7 @@ progress@^2.0.0:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-prop-types@^15.0.0, prop-types@^15.6.1, prop-types@^15.7.2:
+prop-types@^15.0.0, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.7.2:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -3466,6 +3495,16 @@ raw-body@2.4.1:
     http-errors "1.7.3"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+react-calendar@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/react-calendar/-/react-calendar-3.7.0.tgz#951d56e91afb33b1c1e019cb790349fbffcc6894"
+  integrity sha512-zkK95zWLWLC6w3O7p3SHx/FJXEyyD2UMd4jr3CrKD+G73N+G5vEwrXxYQCNivIPoFNBjqoyYYGlkHA+TBDPLCw==
+  dependencies:
+    "@wojtekmaj/date-utils" "^1.0.2"
+    get-user-locale "^1.2.0"
+    merge-class-names "^1.1.1"
+    prop-types "^15.6.0"
 
 react-cookie@^4.1.1:
   version "4.1.1"

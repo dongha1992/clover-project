@@ -15,8 +15,10 @@ interface IParams {
 
 // 스팟 검색 - 추천 스팟
 const SpotRecommendList = ({ item }: IParams): ReactElement => {
-  const { userLocation, userDestinationStatus } = useSelector(destinationForm);
+  const { userLocation, userDeliveryType } = useSelector(destinationForm);
   const router = useRouter();
+  const { isSubscription, deliveryInfo } = router.query;
+
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const typeTag = (): string | null => {
@@ -32,31 +34,44 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
   };
 
   const goToSpotsDetail = (id: number): void => {
-    if(userDestinationStatus === 'spot'){
-      router.push({
-        pathname: `/spot/detail/${id}`,
-        query: {isDelivery: true},
-      });  
-    }else{
-      router.push(`/spot/detail/${id}`);
-    };
+    if (userDeliveryType === 'spot') {
+      if (isSubscription) {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: { isDelivery: true, isSubscription, deliveryInfo },
+        });
+      } else {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: { isDelivery: true },
+        });
+      }
+    } else {
+      if (isSubscription) {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: { isDelivery: true, isSubscription, deliveryInfo },
+        });
+      } else {
+        router.push(`/spot/detail/${id}`);
+      }
+    }
   };
 
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   return (
-    <Container onClick={()=>goToSpotsDetail(item.id)}>
+    <Container onClick={() => goToSpotsDetail(item.id)}>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{`${item.location.address} ${item.location.addressDetail}`}</TextB3R>
         <MeterAndTime>
-          {
-            userLocationLen &&
-              <>
-                <TextH6B color={theme.greyScale65}>{`${Math.round(item.distance)}m`}</TextH6B>
-                <Col />
-              </>
-          }
+          {userLocationLen && (
+            <>
+              <TextH6B color={theme.greyScale65}>{`${Math.round(item.distance)}m`}</TextH6B>
+              <Col />
+            </>
+          )}
           <TextH6B color={theme.greyScale65}>픽업&nbsp;</TextH6B>
           <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
         </MeterAndTime>

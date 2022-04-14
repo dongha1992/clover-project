@@ -5,21 +5,19 @@ import { TextH5B } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
+import { SET_SPOT_PICKUP_PLACE } from '@store/spot';
 
-const PICK_UP_PLACE = [
-  { id: 1, name: '1506호 사무실 문 앞' },
-  { id: 2, name: '1506호 사무실 문 옆' },
-];
-
-const PickupSheet = () => {
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(1);
+const PickupSheet = ({pickupInfo}: any) => {
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(pickupInfo[0]?.spotId);
   const dispatch = useDispatch();
-
   const changeRadioHandler = (id: number) => {
     setSelectedPickupPlace(id);
   };
 
+  const selectedPickup = pickupInfo.find((i: any) => i.spotId === selectedPickupPlace);
+
   const submitHandler = () => {
+    dispatch(SET_SPOT_PICKUP_PLACE(selectedPickup.name));
     dispatch(INIT_BOTTOM_SHEET());
   };
 
@@ -29,14 +27,14 @@ const PickupSheet = () => {
         <TextH5B padding="24px 0 16px 0" center>
           픽업 장소 선택
         </TextH5B>
-        {PICK_UP_PLACE.map((place, index) => {
+        {pickupInfo?.map((i: any, index: number) => {
           return (
             <PickWrapper key={index}>
               <RadioButton
-                onChange={() => changeRadioHandler(place.id)}
-                isSelected={selectedPickupPlace === place.id}
+                onChange={() => changeRadioHandler(i.spotId)}
+                isSelected={selectedPickupPlace === i.spotId}
               />
-              <TextH5B padding="0 0 0 8px">{place.name}</TextH5B>
+              <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
             </PickWrapper>
           );
         })}

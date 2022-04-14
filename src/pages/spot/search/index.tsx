@@ -7,96 +7,21 @@ import { homePadding } from '@styles/theme';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
-import { 
-  TextH3B, 
-  TextB3R, 
-  TextH6B, 
-  TextH2B 
-} from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
-import { 
-  getSpotSearchRecommend, 
-  getSpotEvent, 
-  getSpotSearch 
-} from '@api/spot';
-import { ISpots, ISpotsDetail} from '@model/index';
+import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
+import { ISpots, ISpotsDetail } from '@model/index';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useRouter } from 'next/router';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
-
-const RECENT_SPOT = [
-  {
-    id: 1,
-    name: '유니트아이엔씨',
-    location: {
-      address: '서울 성동구 왕십리로 115 10층',
-      addressDetail: '',
-    },
-    distance: 121,
-    type: 'PRIVATE',
-    lunchDeliveryStartTime: '11:00:00',
-    lunchDeliveryEndTime: '11:30:00',
-    dinnerDeliveryStartTime: '14:00:00',
-    dinnerDeliveryEndTime: '18:00:00',
-    // availableTime: "12:00-12:30 / 15:30-18:00",
-    // spaceType: "프라이빗",
-    images: [
-      {
-        url: '/dev/spot/origin/1_20190213142552',
-      },
-    ],
-    method: 'pickup',
-  },
-  {
-    id: 2,
-    name: 'test',
-    location: {
-      address: '서울 성동구 왕십리로 115 11층',
-      addressDetail: '',
-    },
-    distance: 11,
-    type: 'PRIVATE',
-    lunchDeliveryStartTime: '11:00:00',
-    lunchDeliveryEndTime: '11:30:00',
-    dinnerDeliveryStartTime: '14:00:00',
-    dinnerDeliveryEndTime: '18:00:00',
-    // availableTime: "12:00-12:30 / 15:30-18:00",
-    // spaceType: "퍼블릭",
-    images: [
-      {
-        url: '/dev/spot/origin/1_20190213142552',
-      },
-    ],
-    method: 'pickup',
-  },
-  {
-    id: 3,
-    name: 'test11',
-    location: {
-      address: '서울 성동구 왕십리로 115 22층',
-      addressDetail: '',
-    },
-    distance: 11,
-    type: 'PUBLIC',
-    lunchDeliveryStartTime: '11:00:00',
-    lunchDeliveryEndTime: '11:30:00',
-    dinnerDeliveryStartTime: '14:00:00',
-    dinnerDeliveryEndTime: '18:00:00',
-    // availableTime: "12:00-12:30 / 15:30-18:00",
-    // spaceType: "퍼블릭",
-    images: [
-      {
-        url: '/dev/spot/origin/1_20190213142552',
-      },
-    ],
-    method: 'pickup',
-  },
-];
+import { getDestinationsApi } from '@api/destination';
+import { IDestinationsResponse } from '@model/index';
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -104,17 +29,19 @@ const SpotSearchPage = (): ReactElement => {
   const { userLocation } = useSelector(destinationForm);
   const [spotRecommend, setSpotRecommend] = useState<ISpots>();
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
-  const [recentPickedSpotList, setRecentPickedSpotList] = useState<any[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
-  
-  const getSearchRecommendList = async() => {
+
+  const router = useRouter();
+  const { orderId } = router.query;
+
+  const getSearchRecommendList = async () => {
     const params = {
       latitude: spotsPosition ? spotsPosition.latitude : null,
-      longitude: spotsPosition? spotsPosition.longitude : null,
+      longitude: spotsPosition ? spotsPosition.longitude : null,
       size: 3,
     };
     try {
@@ -131,7 +58,7 @@ const SpotSearchPage = (): ReactElement => {
     async () => {
       const params: IParamsSpots = {
         latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition? spotsPosition.longitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
         size: 6,
       };
       const response = await getSpotEvent(params);
@@ -140,13 +67,27 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  //TODO 최근 픽업 이력
-  const getRecentSpotList = async () => {
-    setRecentPickedSpotList(RECENT_SPOT);
-  };
+  /* TAYLER: 배송지목록 전체 조회에서 spot만 뽑음 */
+
+  const { data: recentPickedSpotList, isLoading } = useQuery<IDestinationsResponse[]>(
+    'getDestinationList',
+    async () => {
+      const params = {
+        page: 1,
+        size: 10,
+      };
+      const { data } = await getDestinationsApi(params);
+      const totalList = data.data.destinations;
+      return totalList.filter((item) => {
+        return item.delivery === 'SPOT';
+      });
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const changeInputHandler = () => {
     const inputText = inputRef.current?.value.length;
+
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -168,14 +109,16 @@ const SpotSearchPage = (): ReactElement => {
           const params = {
             keyword,
             latitude: spotsPosition ? spotsPosition.latitude : Number(37.50101118367814),
-            longitude: spotsPosition? spotsPosition.longitude : Number(127.03525895821902),
+            longitude: spotsPosition ? spotsPosition.longitude : Number(127.03525895821902),
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
+
           // setSpotTest(fetchData);
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
           });
+
           setSearchResult(filtered);
           setIsSearched(true);
         } catch (err) {
@@ -184,7 +127,6 @@ const SpotSearchPage = (): ReactElement => {
       }
     }
   };
-
 
   const goToOrder = useCallback(() => {
     dispatch(
@@ -196,10 +138,19 @@ const SpotSearchPage = (): ReactElement => {
   }, []);
 
   useEffect(() => {
-    getRecentSpotList();
     getSearchRecommendList();
   }, []);
-  
+
+  useEffect(() => {
+    if (orderId) {
+      setInputFocus(true);
+    }
+  }, [orderId]);
+
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
+
   return (
     <Container>
       <Wrapper>
@@ -215,100 +166,75 @@ const SpotSearchPage = (): ReactElement => {
           ref={inputRef}
         />
       </Wrapper>
-      {
-        !inputFocus ?
-      <>
-      <SpotRecommendWrapper>
-        <FlexEnd padding='0 0 24px 0'>
-          <SVGIcon name='locationBlack' />
-          <TextH6B margin='0 0 0 2px' padding='3px 0 0 0'>현 위치로 설정하기</TextH6B>
-        </FlexEnd>
-        <FlexBetween margin='0 0 24px 0'>
-          <TextH2B>{spotRecommend?.title}</TextH2B>
-          {
-            // 사용자 위치 설정 했을 경우 노출
-            userLocationLen && 
-              <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
-          }
-        </FlexBetween>
-        {
-         spotRecommend?.spots.map((item: any, index: number)=> {
-          return (
-            <SpotRecommendList item={item} key={index} />
-            )
-          })
-        }
-      </SpotRecommendWrapper>
-      <BottomContentWrapper>
-        <Row />
-        <TextH2B padding='24px 24px 24px 24px'>{eventSpotList?.title}</TextH2B>
-        <EventSlider
-          className='swiper-container'
-          slidesPerView={"auto"}
-          spaceBetween={20}
-          speed={500}
-        >
-        {
-          eventSpotList?.spots.map((list, idx)=> {
-            return (
-              <SwiperSlide className='swiper-slide' key={idx}>
-                <SpotList
-                  list={list}
-                  type="event"
-                  isSearch
-                />   
-              </SwiperSlide>
-            )
-          })
-        } 
-        </EventSlider>
-      </BottomContentWrapper>
-      </>
-      :
-      <>
-       {!isSearched ?
-        //  spotsSearchRecentList.length 
-        0 ? (
-           // TODO 픽업 이력 있는 경우
-          <DefaultSearchContainer>
-            <RecentPickWrapper>
-              <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-              {recentPickedSpotList.map((item: any, index) => (
-                <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
-              ))}
-            </RecentPickWrapper>
-          </DefaultSearchContainer>
-        ) : (
-          // 픽업 이력 없는 경우, 추천 스팟 노출
+      {!inputFocus ? (
+        <>
           <SpotRecommendWrapper>
-            <FlexBetween margin='0 0 24px 0'>
+            <FlexEnd padding="0 0 24px 0">
+              <SVGIcon name="locationBlack" />
+              <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
+                현 위치로 설정하기
+              </TextH6B>
+            </FlexEnd>
+            <FlexBetween margin="0 0 24px 0">
               <TextH2B>{spotRecommend?.title}</TextH2B>
               {
                 // 사용자 위치 설정 했을 경우 노출
-              userLocationLen && 
-                <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
               }
             </FlexBetween>
-            {
-            spotRecommend?.spots.map((item: any, index: number)=> {
-              return (
-                <SpotRecommendList item={item} key={index} />
-                )
-              })
-            }
+            {spotRecommend?.spots.map((item: any, index: number) => {
+              return <SpotRecommendList item={item} key={index} />;
+            })}
           </SpotRecommendWrapper>
-       ) : (
-         // 검색 결과
-        <SearchResultContainer>
-          <SearchResult
-            searchResult={searchResult}
-            isSpot
-            onClick={goToOrder}
-          />
-        </SearchResultContainer>
+          <BottomContentWrapper>
+            <Row />
+            <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
+            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
+              {eventSpotList?.spots.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="event" isSearch />
+                  </SwiperSlide>
+                );
+              })}
+            </EventSlider>
+          </BottomContentWrapper>
+        </>
+      ) : (
+        <>
+          {!isSearched ? (
+            recentPickedSpotList?.length! > 0 ? (
+              <DefaultSearchContainer>
+                <RecentPickWrapper>
+                  <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                  {recentPickedSpotList?.map((item: any, index) => (
+                    <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
+                  ))}
+                </RecentPickWrapper>
+              </DefaultSearchContainer>
+            ) : (
+              // 픽업 이력 없는 경우, 추천 스팟 노출
+              <SpotRecommendWrapper>
+                <FlexBetween margin="0 0 24px 0">
+                  <TextH2B>{spotRecommend?.title}</TextH2B>
+                  {
+                    // 사용자 위치 설정 했을 경우 노출
+                    userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                  }
+                </FlexBetween>
+                {spotRecommend?.spots.map((item: any, index: number) => {
+                  return <SpotRecommendList item={item} key={index} />;
+                })}
+              </SpotRecommendWrapper>
+            )
+          ) : (
+            // 검색 결과
+            <SearchResultContainer>
+              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} orderId={orderId} />
+            </SearchResultContainer>
           )}
         </>
-      }
+      )}
     </Container>
   );
 };
@@ -341,11 +267,10 @@ const SearchResultContainer = styled.section`
 
 const EventSlider = styled(Swiper)`
   padding: 0 24px;
-  .swiper-slide{
+  .swiper-slide {
     width: 299px;
   }
 `;
-
 
 const RecentSearchContainer = styled.div``;
 
@@ -360,7 +285,7 @@ const BottomContentWrapper = styled.section`
   position: relative;
   bottom: 0px;
   right: 0px;
-  bacfground: ${theme.white};
+  background-color: ${theme.white};
 `;
 
 export default SpotSearchPage;

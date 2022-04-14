@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IAccessMethod } from '@pages/payment';
+import { IAccessMethod } from '@pages/order';
 interface IState {
   imagesForViewer: string[];
   isMobile: boolean;
   isLoading: boolean;
   loginType: string;
   versionOfTerm: number;
-  userAccessMethod: IAccessMethod;
+  withInDays: number;
+  userAccessMethod: IAccessMethod | undefined;
 }
 
 const INITIAL_STATE: IState = {
@@ -16,11 +17,8 @@ const INITIAL_STATE: IState = {
   isLoading: false,
   loginType: 'NONMEMBER',
   versionOfTerm: 2,
-  userAccessMethod: {
-    id: 1,
-    text: '',
-    value: '',
-  },
+  withInDays: 90,
+  userAccessMethod: undefined,
 };
 
 export const commonSlice = createSlice({
@@ -45,8 +43,15 @@ export const commonSlice = createSlice({
     SET_VERSION_OF_TERM: (state, { payload }: PayloadAction<number>) => {
       state.versionOfTerm = payload;
     },
-    SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod>) => {
+    SET_ORDER_LIST_FILTER: (state, { payload }: PayloadAction<number>) => {
+      state.withInDays = payload;
+    },
+    SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod | undefined>) => {
       state.userAccessMethod = payload;
+    },
+
+    INIT_ACCESS_METHOD: (state, action: PayloadAction) => {
+      state.userAccessMethod = undefined;
     },
   },
 });
@@ -58,7 +63,9 @@ export const {
   SET_IS_LOADING,
   SET_LOGIN_TYPE,
   SET_VERSION_OF_TERM,
+  SET_ORDER_LIST_FILTER,
   SET_ACCESS_METHOD,
+  INIT_ACCESS_METHOD,
 } = commonSlice.actions;
 export const commonSelector = (state: AppState): IState => state.common;
 export default commonSlice.reducer;

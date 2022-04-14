@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
@@ -49,6 +49,7 @@ export interface ITextFieldProps {
   svg?: string;
   margin?: string;
   accept?: string;
+  disabled?: boolean;
 }
 
 const defaultProps = {
@@ -80,14 +81,13 @@ const TextInput = React.forwardRef(
       svg,
       margin,
       accept,
+      disabled,
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
-    const debounceChangeEvent = debounce((e: React.ChangeEvent<HTMLInputElement>): void => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
       eventHandler && eventHandler(e);
-    }, 300);
-
-    const debounceSetStateValue = useRef(debounce((value) => setStateAction && setStateAction(value), 500)).current;
+    };
 
     return (
       <Container
@@ -105,8 +105,8 @@ const TextInput = React.forwardRef(
           <input
             style={style}
             type={inputType ? inputType : 'text'}
-            defaultValue={value}
-            onChange={(e) => (eventHandler ? debounceChangeEvent(e) : debounceSetStateValue(e.target.value))}
+            value={value}
+            onChange={onChange}
             placeholder={placeholder}
             name={name}
             onKeyPress={keyPressHandler}
@@ -114,6 +114,7 @@ const TextInput = React.forwardRef(
             onFocus={onFocus}
             onBlur={onBlur}
             accept={accept}
+            disabled={disabled}
           />
         </div>
       </Container>
@@ -176,6 +177,10 @@ const Container = styled.div<{
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
+    }
+
+    input:disabled {
+      background: ${theme.white};
     }
   }
 `;
