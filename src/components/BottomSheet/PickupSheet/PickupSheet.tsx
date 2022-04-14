@@ -73,7 +73,7 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element =>
         {spotType === 'PRIVATE' && (
         <>
           <Row /> 
-          <CheckTerm>
+          <CheckTerm onClick={checkHandler}>
             <Checkbox isSelected={noticeChecked} onChange={checkHandler} />
             <span className="h5B">
               <span className="brandColor">임직원 전용</span>
@@ -122,6 +122,7 @@ const CheckTerm = styled.div`
   display: flex;
   align-items: center;
   padding: 16px 0 24px 0;
+  cursor: pointer;
   .h5B {
     padding-top: 2px;
     font-size: 12px;
