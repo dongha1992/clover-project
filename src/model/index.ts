@@ -1605,3 +1605,11 @@ export interface IPointHistoriesRequest {
   size: number;
   types: TPointHistoryType;
 }
+
+/* PRMOTION */
+
+type TReward = 'COUPON' | 'POINT' | string;
+export interface IPromotionRequest {
+  code: string;
+  reward: TReward;
+}
