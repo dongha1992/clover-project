@@ -9,7 +9,11 @@ import { useDispatch } from 'react-redux';
 import { SET_ORDER_LIST_FILTER } from '@store/common';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
-const OrderDateFilter = () => {
+interface IProps {
+  handler: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const OrderDateFilter = ({ handler }: IProps) => {
   const [selectedRadioValue, setSelectedRadioValue] = useState(90);
   const dispatch = useDispatch();
 
@@ -18,7 +22,8 @@ const OrderDateFilter = () => {
   };
 
   const changeWithInDays = () => {
-    dispatch(SET_ORDER_LIST_FILTER(selectedRadioValue));
+    // dispatch(SET_ORDER_LIST_FILTER(selectedRadioValue));
+    handler(selectedRadioValue);
     dispatch(INIT_BOTTOM_SHEET());
   };
 

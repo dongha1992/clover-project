@@ -71,7 +71,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  console.log(orderDetail, 'ORDER DETAIL');
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
   const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(

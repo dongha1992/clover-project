@@ -142,8 +142,6 @@ const DeliverInfoPage = () => {
     }
   };
 
-  console.log(tempDestination, 'tempDestination');
-
   const finishDeliverySetting = async () => {
     const isSpot = userSelectDeliveryType === 'spot';
 
