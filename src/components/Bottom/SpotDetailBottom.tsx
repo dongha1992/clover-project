@@ -30,6 +30,7 @@ const SpotDetailBottom = () => {
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
 
   const goToCart = (e: any): void => {
+    /* TODO TAYLER: destinationInfo의 인터페이스 충돌남. 나중에 제가 수정할게요  */
     e.stopPropagation();
     const destinationInfo = {
       name: spotDetail?.name!,
