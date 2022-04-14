@@ -8,8 +8,9 @@ import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getPointHistoryApi, getPointApi } from '@api/point';
+import { postPromotionCodeApi } from '@api/promotion';
 import { IPointHistories } from '@model/index';
 import getCustomDate from '@utils/getCustomDate';
 
@@ -22,6 +23,8 @@ const PointPage = () => {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
   const codeRef = useRef<HTMLInputElement>(null);
+
+  const queryClient = useQueryClient();
 
   const { data: pointHistory, isLoading } = useQuery(
     ['getPointHistoryList', selectedTab],
@@ -68,11 +71,26 @@ const PointPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  const { mutate: mutatePostPromotionCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const reqBody = {
+          code: codeRef?.current?.value,
+          reward: 'POINT',
+        };
+        const { data } = await postPromotionCodeApi(reqBody);
+      }
+    },
+    {
+      onSuccess: async () => {
+        /* TODO: 성공 혹 실패시 작업 */
+      },
+    }
+  );
+
   const formatTanNameHandler = (tabName: string): string => {
     return tabName.replace('/', '').toUpperCase();
   };
-
-  const registerPromotionCodeHandler = (code: string): void => {};
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
@@ -95,7 +113,7 @@ const PointPage = () => {
       <Wrapper>
         <FlexRow padding="24px 0 0 0">
           <TextInput placeholder="프로모션 코드를 입력해주세요." ref={codeRef} />
-          <Button width="30%" margin="0 0 0 8px" onClick={registerPromotionCodeHandler}>
+          <Button width="30%" margin="0 0 0 8px" onClick={mutatePostPromotionCode}>
             등록하기
           </Button>
         </FlexRow>

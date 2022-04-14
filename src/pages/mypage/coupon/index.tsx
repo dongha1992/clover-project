@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { fixedBottom, FlexCol, FlexRow, homePadding } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
@@ -9,6 +9,8 @@ import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
 import { useRouter } from 'next/router';
 import { SET_USER_SELECT_COUPON } from '@store/coupon';
 import { useDispatch } from 'react-redux';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { postPromotionCodeApi } from '@api/promotion';
 
 export interface ICoupon {
   id: number;
@@ -25,6 +27,23 @@ export interface ICoupon {
 const CouponManagementPage = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
   const router = useRouter();
+
+  const { mutate: mutatePostPromotionCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const reqBody = {
+          code: codeRef?.current?.value,
+          reward: 'POINT',
+        };
+        const { data } = await postPromotionCodeApi(reqBody);
+      }
+    },
+    {
+      onSuccess: async () => {
+        /* TODO: 성공 혹 실패시 작업 */
+      },
+    }
+  );
 
   const selectCouponHandler = (coupon: ICoupon): void => {
     setSelectedCoupon(coupon);
