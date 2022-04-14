@@ -337,6 +337,7 @@ export interface IDestinationsResponse {
   main: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
+  deliveryTime?: string;
 }
 export interface IGetDestinationsResponse {
   code: number;
@@ -1229,7 +1230,7 @@ export interface IOrderDeliveriesInOrderPreviewRequest {
 export interface IOrderPreviewRequest {
   delivery: string;
   deliveryDetail?: string | null;
-  destinationId: number;
+  destinationId: number | undefined;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
   type: string;
@@ -1512,17 +1513,29 @@ declare global {
 
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
-export interface IGetCart {
-  calorie: number;
-  discountPrice: number;
-  isSold: boolean;
+
+export interface IMenuDetailsInCart {
   menuDetailId: number;
-  menuQuantity: number;
   name: string;
   price: number;
+  menuQuantity: number;
+  calorie: number;
   protein: number;
-  size: TCartMenuSize;
+  isSold: boolean;
+  main: boolean;
   status: TCartMenuStatus;
+}
+
+export interface IGetCart {
+  menuId: number;
+  menuName: string;
+  image: {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
+  };
+  menuDetails: IMenuDetailsInCart[];
 }
 
 export interface IGetCartResponse {

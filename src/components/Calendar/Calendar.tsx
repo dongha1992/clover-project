@@ -57,11 +57,13 @@ const Calendar = ({
   goToSubDeliverySheet,
   lunchOrDinner,
 }: ICalendar) => {
+  const { userDeliveryType } = useSelector(destinationForm);
+
   const [dateList, setDateList] = useState<IDateObj[]>([]);
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
-  const { userDeliveryType } = useSelector(destinationForm);
+  const [deliveryType, setDeliveryType] = useState<string>(userDeliveryType);
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate(new Date());
@@ -98,7 +100,7 @@ const Calendar = ({
   };
 
   const clickDayHandler = (value: string): void => {
-    const isQuickAndSpot = ['spot', 'quick'].includes(userDeliveryType);
+    const isQuickAndSpot = ['spot', 'quick'].includes(deliveryType!);
 
     const selectedSubDelivery = subOrderDelivery?.find((item) =>
       isQuickAndSpot
@@ -115,8 +117,8 @@ const Calendar = ({
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
     // 배송에 따른 기본 휴무일
-    const isQuickAndSpot = ['spot', 'quick'].includes(userDeliveryType);
-    const isParcelAndMorning = ['parcel', 'morning'].includes(userDeliveryType);
+    const isQuickAndSpot = ['spot', 'quick'].includes(deliveryType!);
+    const isParcelAndMorning = ['parcel', 'morning'].includes(deliveryType!);
     const quickAndSpotDisabled = ['토', '일'];
     const parcelAndMorningDisabled = ['일', '월'];
 
@@ -276,6 +278,10 @@ const Calendar = ({
   });
 
   RenderCalendar.displayName = 'RenderCalendar';
+
+  useEffect(() => {
+    setDeliveryType(userDeliveryType);
+  }, [userDeliveryType]);
 
   useEffect(() => {
     initCalendar();

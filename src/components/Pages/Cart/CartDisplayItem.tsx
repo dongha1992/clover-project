@@ -14,14 +14,20 @@ interface IProps {
 }
 
 const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
+  console.log(menu, 'menu');
   return (
     <Container>
       <Wrapper>
         <FlexRowStart width="40%">
-          <Checkbox onChange={() => handleSelectCartItem(menu.id)} isSelected={checkedMenuIdList.includes(menu.id)} />
+          <CheckboxWrapper>
+            <Checkbox
+              onChange={() => handleSelectCartItem(menu.menuId)}
+              isSelected={checkedMenuIdList.includes(menu.id)}
+            />
+          </CheckboxWrapper>
           <ImageWrapper>
             <Image
-              src={IMAGE_S3_URL + menu.url}
+              src={IMAGE_S3_URL + menu.image.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
@@ -31,7 +37,7 @@ const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDi
           </ImageWrapper>
         </FlexRowStart>
         <FlexBetween>
-          <TextB3R>{menu.name}</TextB3R>
+          <TextB3R>{menu.menuName}</TextB3R>
           <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
             <SVGIcon name="defaultCancel" />
           </RemoveBtnContainer>
@@ -52,6 +58,10 @@ const Container = styled.div<{
   background-color: ${theme.white};
   border-radius: 8px;
   margin-bottom: 8px;
+`;
+
+const CheckboxWrapper = styled.div`
+  margin-right: 8px;
 `;
 
 const Wrapper = styled.div`
