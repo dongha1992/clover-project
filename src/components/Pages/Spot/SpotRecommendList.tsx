@@ -15,7 +15,7 @@ interface IParams {
 
 // 스팟 검색 - 추천 스팟
 const SpotRecommendList = ({ item }: IParams): ReactElement => {
-  const { userLocation, userDestinationStatus } = useSelector(destinationForm);
+  const { userLocation, userDeliveryType } = useSelector(destinationForm);
   const router = useRouter();
   const { isSubscription, deliveryInfo } = router.query;
 
@@ -34,7 +34,7 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
   };
 
   const goToSpotsDetail = (id: number): void => {
-    if (userDestinationStatus === 'spot') {
+    if (userDeliveryType === 'spot') {
       if (isSubscription) {
         router.push({
           pathname: `/spot/detail/${id}`,

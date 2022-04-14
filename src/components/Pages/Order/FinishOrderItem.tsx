@@ -2,17 +2,14 @@ import React, { memo } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
-import { Button } from '@components/Shared/Button';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { getDiscountPrice } from '@utils/getMenuDisplayPrice';
 
 interface IProps {
   menu: any;
 }
 
-const FinishPaymentItem = ({ menu }: IProps) => {
+const FinishOrderItem = ({ menu }: IProps) => {
   const menuImg = menu.orderDeliveries[0].orderMenus[0].image.url;
-  console.log(menu, 'orderMenus');
 
   const {
     menuAmount,
@@ -25,7 +22,6 @@ const FinishPaymentItem = ({ menu }: IProps) => {
     coupon,
     point,
   } = menu;
-
   const getTotalPrice = () => {
     return (
       menuAmount -
@@ -91,4 +87,4 @@ const PriceWrapper = styled.div`
   margin-top: 2px;
 `;
 
-export default React.memo(FinishPaymentItem);
+export default React.memo(FinishOrderItem);

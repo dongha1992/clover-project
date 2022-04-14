@@ -14,7 +14,7 @@ import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
 import {
   destinationForm,
-  SET_USER_DESTINATION_STATUS,
+  SET_USER_DELIVERY_TYPE,
   SET_DESTINATION,
   SET_TEMP_DESTINATION,
 } from '@store/destination';
@@ -80,12 +80,12 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o , 배송 정보에서 넘어온 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart/delivery-info', query: { destinationId: list.id } });
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(SET_USER_DESTINATION_STATUS('spot'));
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push('/cart');
@@ -162,15 +162,13 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {
-                list.images.map((i, idx) => {
-                  return (
-                    <div key={idx}>
-                      <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                    </div>
-                  )
-                })
-              }
+              {list.images.map((i, idx) => {
+                return (
+                  <div key={idx}>
+                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
+                  </div>
+                );
+              })}
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
@@ -197,15 +195,13 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              {
-                list.images.map((i, idx) => {
-                  return (
-                    <div key={idx}>
-                      <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                    </div>
-                  )
-                })
-              }
+              {list.images.map((i, idx) => {
+                return (
+                  <div key={idx}>
+                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
+                  </div>
+                );
+              })}
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>

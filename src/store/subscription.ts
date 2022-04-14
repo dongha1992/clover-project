@@ -4,13 +4,15 @@ import { AppState } from '.';
 interface TProps {
   sbsStartDate: string | null;
   sbsDeliveryTime: string | null;
-  sbsDeliveryExpectedDate: string[] | null;
+  sbsOrderMenus: any[] | null;
+  sbsDeliveryExpectedDate: string[];
   sbsPickupDay: any[] | null;
 }
 const initialState: TProps = {
-  sbsDeliveryTime: null,
   sbsStartDate: null,
-  sbsDeliveryExpectedDate: null,
+  sbsDeliveryTime: null,
+  sbsOrderMenus: [],
+  sbsDeliveryExpectedDate: [],
   sbsPickupDay: null,
 };
 
@@ -24,15 +26,31 @@ export const subscription = createSlice({
     SET_SBS_DELIVERY_TIME: (state, action) => {
       state.sbsDeliveryTime = action.payload.sbsDeliveryTime;
     },
+    SET_SBS_ORDER_MENUS: (state, action: PayloadAction<any>) => {
+      state.sbsOrderMenus = action.payload;
+    },
     SET_SBS_DELIVERY_EXPECTED_DATE: (state, action) => {
       state.sbsDeliveryExpectedDate = action.payload.sbsDeliveryExpectedDate;
     },
     SET_PICKUP_DAY: (state, action) => {
       state.sbsPickupDay = action.payload.sbsPickupDay;
     },
+    SBS_INIT: (state) => {
+      state.sbsStartDate = null;
+      state.sbsDeliveryTime = null;
+      state.sbsOrderMenus = [];
+      state.sbsDeliveryExpectedDate = [];
+      state.sbsPickupDay = null;
+    },
   },
 });
-export const { SET_SBS_START_DATE, SET_SBS_DELIVERY_EXPECTED_DATE, SET_SBS_DELIVERY_TIME, SET_PICKUP_DAY } =
-  subscription.actions;
+export const {
+  SET_SBS_START_DATE,
+  SET_SBS_DELIVERY_TIME,
+  SET_SBS_ORDER_MENUS,
+  SET_SBS_DELIVERY_EXPECTED_DATE,
+  SET_PICKUP_DAY,
+  SBS_INIT,
+} = subscription.actions;
 export const subscriptionForm = (state: AppState): TProps => state.subscription;
 export default subscription.reducer;

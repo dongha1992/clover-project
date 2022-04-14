@@ -15,11 +15,11 @@ import {
   destinationForm,
   INIT_LOCATION_TEMP,
   SET_TEMP_DESTINATION,
-  SET_DESTINATION_STATUS,
-  SET_USER_DESTINATION_STATUS,
+  SET_DESTINATION_TYPE,
+  SET_USER_DELIVERY_TYPE,
   INIT_TEMP_DESTINATION,
   SET_DESTINATION,
-  INIT_DESTINATION_STATUS,
+  INIT_DESTINATION_TYPE,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
@@ -50,10 +50,10 @@ const DestinationDetailPage = () => {
   const { orderId } = router.query;
 
   // 배송 가능 여부
-  const { tempLocation, availableDestination, userDestinationStatus } = useSelector(destinationForm);
-  const destinationStatus = checkDestinationHelper(availableDestination);
+  const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
+  const destinationDeliveryType = checkDestinationHelper(availableDestination);
 
-  const canNotDelivery = destinationStatus === 'noDelivery';
+  const canNotDelivery = destinationDeliveryType === 'noDelivery';
 
   const getLonLanForMap = async () => {
     const params = {
@@ -98,7 +98,7 @@ const DestinationDetailPage = () => {
       };
       if (orderId) {
         dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
-        dispatch(INIT_DESTINATION_STATUS());
+        dispatch(INIT_DESTINATION_TYPE());
         dispatch(INIT_AVAILABLE_DESTINATION());
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
@@ -106,8 +106,8 @@ const DestinationDetailPage = () => {
         });
       } else {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
-        dispatch(SET_DESTINATION_STATUS(destinationStatus));
-        dispatch(SET_USER_DESTINATION_STATUS(destinationStatusByRule));
+        dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
+        dispatch(SET_USER_DELIVERY_TYPE(destinationStatusByRule));
         dispatch(INIT_LOCATION_TEMP());
 
         router.push('/cart/delivery-info');
@@ -131,10 +131,10 @@ const DestinationDetailPage = () => {
     /* TODO: 리팩토링 필요 */
     const { morning, parcel, quick } = availableDestination;
 
-    const userMorningButParcel = userDestinationStatus === 'morning' && !morning && parcel;
-    const userQuickButMorning = userDestinationStatus === 'quick' && !quick && morning;
-    const userQuickButParcel = userDestinationStatus === 'quick' && !quick && parcel;
-    const onlyMorning = userDestinationStatus === 'parcel' && !parcel && morning;
+    const userMorningButParcel = userDeliveryType === 'morning' && !morning && parcel;
+    const userQuickButMorning = userDeliveryType === 'quick' && !quick && morning;
+    const userQuickButParcel = userDeliveryType === 'quick' && !quick && parcel;
+    const onlyMorning = userDeliveryType === 'parcel' && !parcel && morning;
 
     if (userMorningButParcel || userQuickButMorning || userQuickButParcel || onlyMorning) {
       setIsMaybeChangeType(true);
@@ -165,13 +165,13 @@ const DestinationDetailPage = () => {
 
         default:
           {
-            setDestinationStatusByRule(userDestinationStatus);
+            setDestinationStatusByRule(userDeliveryType);
           }
           break;
       }
     } else {
       setIsMaybeChangeType(false);
-      setDestinationStatusByRule(userDestinationStatus);
+      setDestinationStatusByRule(userDeliveryType);
     }
   }, [availableDestination]);
 

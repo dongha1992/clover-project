@@ -8,22 +8,22 @@ import getCustomDate from '@utils/getCustomDate';
 import { Obj } from '@model/index';
 import DeliveryStatusInfo from './DeliveryStatusInfo';
 import ItemInfo from './ItemInfo';
-import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
+import { DELIVERY_STATUS_MAP } from '@constants/mypage';
+import { DELIVERY_TIME_MAP } from '@constants/order';
 interface IProps {
   orderDeliveryItem: any;
   buttonHandler: ({ id, isDelivering }: { id: number; isDelivering: boolean }) => void;
 }
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
-  console.log(orderDeliveryItem, 'orderDeliveryItem');
   const { deliveryDate, status } = orderDeliveryItem;
 
   const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.order.paidAt));
   const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryDate));
   /* TODO: 아래 중복 코드 많음 헬퍼함수? */
 
-  const deliveryStatus = deliveryStatusMap[status];
-  const deliveryDetail = deliveryDetailMap[orderDeliveryItem.deliveryDetail];
+  const deliveryStatus = DELIVERY_STATUS_MAP[status];
+  const deliveryDetail = DELIVERY_TIME_MAP[orderDeliveryItem.deliveryDetail];
   const isCompleted = deliveryStatus === '배송완료';
   const isCanceled = deliveryStatus === '주문취소';
   const isDelivering = deliveryStatus === '배송중';
@@ -72,8 +72,10 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
           <SVGIcon name="otherDeliveryArrow" />
           <OtherDeliveryWrapper>
             <DeliveryStatusInfo
+              isCanceled={DELIVERY_STATUS_MAP[orderDeliveryItem.subOrderDelivery.status] === '주문취소'}
+              isCompleted={DELIVERY_STATUS_MAP[orderDeliveryItem.subOrderDelivery.status] === '배송완료'}
               deliveryDetail={deliveryDetail}
-              deliveryStatus={deliveryStatusMap[orderDeliveryItem.subOrderDelivery.status]}
+              deliveryStatus={DELIVERY_STATUS_MAP[orderDeliveryItem.subOrderDelivery.status]}
               id={orderDeliveryItem.subOrderDelivery.order.id}
               deliveryType={orderDeliveryItem.subOrderDelivery.delivery}
               isSubOrder="sub"

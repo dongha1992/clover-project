@@ -9,25 +9,27 @@ import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 import {
-  SET_USER_DESTINATION_STATUS,
+  SET_USER_DELIVERY_TYPE,
   SET_DESTINATION,
   INIT_TEMP_DESTINATION,
-  INIT_DESTINATION_STATUS,
-  INIT_USER_DESTINATION_STATUS,
+  INIT_DESTINATION_TYPE,
+  INIT_USER_DELIVERY_TYPE,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
-import { destinationRegister } from '@api/destination';
-import { getMainDestinations } from '@api/destination';
+import { postDestinationApi, getMainDestinationsApi } from '@api/destination';
+
 import { CheckTimerByDelivery } from '@components/CheckTimer';
 import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import { useRouter } from 'next/router';
 import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
-import { IDestination } from '@store/destination';
+import { IDestinationsResponse } from '@model/index';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { SET_ALERT } from '@store/alert';
+import { getOrderListsApi } from '@api/order';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -35,19 +37,16 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 
 /* TODO: map 리팩토링 */
 /* TODO: 스팟 배송일 경우 추가 */
-/* TODO: 최근 주문 나오면 userDestination와 싱크 */
-
-const recentOrder = '';
 
 const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
-  const [tempDestination, setTempDestination] = useState<IDestination | null>();
+  const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const { destinationStatus, userTempDestination, locationStatus, userDestinationStatus, availableDestination } =
+  const { destinationDeliveryType, userTempDestination, locationStatus, userDeliveryType, availableDestination } =
     useSelector(destinationForm);
 
   const dispatch = useDispatch();
@@ -56,10 +55,28 @@ const DeliverInfoPage = () => {
   const { destinationId, isSubscription, deliveryInfo } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
 
+  const { data: recentOrderDelivery } = useQuery(
+    'getOrderLists',
+    async () => {
+      const params = {
+        days: 90,
+        page: 1,
+        size: 100,
+        type: 'GENERAL',
+      };
+
+      const { data } = await getOrderListsApi(params);
+      return data.data.orderDeliveries[0];
+    },
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
-
-  const checkTermHandler = () => {};
 
   const noticeHandler = () => {
     setNoticeChecked(!noticeChecked);
@@ -83,7 +100,7 @@ const DeliverInfoPage = () => {
         });
       }
     } else {
-      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(SET_USER_DELIVERY_TYPE(userSelectDeliveryType));
       if (isSubscription) {
         router.push({
           pathname: '/destination/search',
@@ -109,8 +126,8 @@ const DeliverInfoPage = () => {
             setUserSelectDeliveryType(value);
             setTempDestination(null);
             dispatch(INIT_TEMP_DESTINATION());
-            dispatch(INIT_DESTINATION_STATUS());
-            dispatch(INIT_USER_DESTINATION_STATUS());
+            dispatch(INIT_DESTINATION_TYPE());
+            dispatch(INIT_USER_DELIVERY_TYPE());
           },
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -126,20 +143,24 @@ const DeliverInfoPage = () => {
   };
 
   const finishDeliverySetting = async () => {
+    const isSpot = userSelectDeliveryType === 'spot';
+
     if (!tempDestination) {
       return;
-    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spaceType === 'PRIVATE' && !noticeChecked) {
+    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spotPickup?.type === 'PRIVATE' && !noticeChecked) {
       // 스팟 배송이고, 프라이빗일 경우 공지 체크 해야만 넘어감
       return;
     }
 
-    if (destinationId) {
+    // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
+    if (destinationId || isMainDestination || isSpot) {
       dispatch(SET_DESTINATION(tempDestination));
       dispatch(SET_AFTER_SETTING_DELIVERY());
-      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(INIT_TEMP_DESTINATION());
-      dispatch(INIT_DESTINATION_STATUS());
+      dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
+
       if (isSubscription) {
         router.push('/subscription/set-info');
       } else {
@@ -147,46 +168,46 @@ const DeliverInfoPage = () => {
       }
     } else {
       /* TODO spotPickupId 형 체크 */
+
       const reqBody = {
         addressDetail: tempDestination.location.addressDetail,
         name: tempDestination.name,
         address: tempDestination.location.address,
-        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDestinationStatus.toUpperCase(),
+        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
         deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
         dong: tempDestination.location.dong,
         main: tempDestination.main,
         receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
         receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
         zipCode: tempDestination.location.zipCode,
-        spotPickupId: tempDestination.spotPickupId || tempDestination.spotPickup.id,
       };
 
       try {
-        const { data } = await destinationRegister(reqBody);
+        const { data } = await postDestinationApi(reqBody);
         if (data.code === 200) {
+          const response = data.data;
           dispatch(
             SET_DESTINATION({
-              name: reqBody.name,
+              name: response.name,
               location: {
-                addressDetail: reqBody.addressDetail,
-                address: reqBody.address,
-                dong: reqBody.dong,
-                zipCode: reqBody.zipCode,
+                addressDetail: response.location.addressDetail,
+                address: response.location.address,
+                dong: response.location.dong,
+                zipCode: response.location.zipCode,
               },
-              main: reqBody.main,
-              deliveryMessage: reqBody.deliveryMessage,
-              receiverName: reqBody.receiverName,
-              receiverTel: reqBody.receiverTel,
+              main: response.main,
+              deliveryMessage: response.deliveryMessage,
+              receiverName: response.receiverName,
+              receiverTel: response.receiverTel,
               deliveryMessageType: '',
-              delivery: userSelectDeliveryType
-                ? userSelectDeliveryType.toUpperCase()
-                : userDestinationStatus.toUpperCase(),
+              delivery: response.delivery,
+              id: response.id,
             })
           );
           dispatch(SET_AFTER_SETTING_DELIVERY());
-          dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+          dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
           dispatch(INIT_TEMP_DESTINATION());
-          dispatch(INIT_DESTINATION_STATUS());
+          dispatch(INIT_DESTINATION_TYPE());
           dispatch(INIT_AVAILABLE_DESTINATION());
           router.push('/cart');
         }
@@ -224,7 +245,7 @@ const DeliverInfoPage = () => {
   };
 
   const checkTooltipMsgByDeliveryType = () => {
-    const canEverything = destinationStatus === 'spot';
+    const canEverything = destinationDeliveryType === 'spot';
 
     const locationCanMorning = locationStatus === 'morning';
     const locationCanEverything = locationStatus === 'spot';
@@ -242,7 +263,7 @@ const DeliverInfoPage = () => {
     }
 
     // 획득 위치 정보만 있음
-    if (locationStatus && !destinationStatus) {
+    if (locationStatus && !destinationDeliveryType) {
       switch (true) {
         case locationCanEverything:
           {
@@ -265,7 +286,7 @@ const DeliverInfoPage = () => {
     }
 
     // 배송지 주소 검색 후 배송 가능한 배송지 타입
-    switch (userDestinationStatus) {
+    switch (userDeliveryType) {
       case 'parcel':
         {
           if (canEverything || canParcelAndCanMorning) {
@@ -286,15 +307,9 @@ const DeliverInfoPage = () => {
   };
 
   const userSelectDeliveryTypeHelper = () => {
-    // 최근 주문 이력이 있는지
-    if (recentOrder && !userDestinationStatus) {
-      setUserSelectDeliveryType(recentOrder);
-      setIsMaindestination(false);
-    }
-
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
-    if (userDestinationStatus) {
-      setUserSelectDeliveryType(userDestinationStatus);
+    if (userDeliveryType) {
+      setUserSelectDeliveryType(userDeliveryType);
     }
   };
 
@@ -303,16 +318,17 @@ const DeliverInfoPage = () => {
       return;
     }
 
-    // 최근 이력에서 고른 경우
+    const isSpot = userSelectDeliveryType === 'spot';
 
+    // 최근 이력에서 고른 경우
     const params = {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
 
     try {
-      const { data } = await getMainDestinations(params);
+      const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        setTempDestination(data.data);
+        setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
         setIsMaindestination(true);
       }
     } catch (error) {
@@ -338,8 +354,8 @@ const DeliverInfoPage = () => {
   };
 
   const settingHandler = () => {
-    if (userDestinationStatus === 'spot') {
-      if (tempDestination?.spaceType === 'PRIVATE') {
+    if (userDeliveryType === 'spot') {
+      if (tempDestination?.spotPickup?.type === 'PRIVATE') {
         return !noticeChecked;
       }
     } else {
@@ -352,8 +368,12 @@ const DeliverInfoPage = () => {
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
+      // 최근 주문 이력이 있는지
+    } else if (!userTempDestination && recentOrderDelivery) {
+      setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
+      setIsMaindestination(true);
     }
-  }, [userTempDestination]);
+  }, [userTempDestination, recentOrderDelivery]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
