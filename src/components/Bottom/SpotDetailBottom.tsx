@@ -90,15 +90,12 @@ const SpotDetailBottom = () => {
       if (cartLists.length) {
         // 장바구니 o
         if (isDelivery) {
-          // 장바구니 o , 배송 정보에서 넘어온 경우
-          dispatch(SET_BOTTOM_SHEET({
-            content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToDeliveryInfo} />,
-          }));
           if (isSubscription) {
             dispatch(SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={handleSbsDeliveryInfo} />,
             }));
           } else {
+            // 장바구니 o , 배송 정보에서 넘어온 경우
             dispatch(SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToDeliveryInfo} />,
             }));
@@ -112,6 +109,7 @@ const SpotDetailBottom = () => {
       } else {
         // 장바구니 x
         if(isSubscription) {
+          // 구독에서 넘어옴
           dispatch(SET_BOTTOM_SHEET({
             content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={handleSbsDeliveryInfoWithSpot} />,
           }));
