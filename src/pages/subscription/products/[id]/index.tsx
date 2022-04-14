@@ -24,6 +24,7 @@ import { BASE_URL } from '@constants/mock';
 import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
 
 import axios from 'axios';
+import { SBS_INIT } from '@store/subscription';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -45,6 +46,10 @@ const SbsProductIdPage = ({ menuId = 135 }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(SBS_INIT());
+  }, []);
 
   const {
     data,

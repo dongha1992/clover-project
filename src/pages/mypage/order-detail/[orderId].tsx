@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FlexRow, theme, FlexBetween, FlexEnd, FlexRowStart } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
-import { PaymentItem } from '@components/Pages/Payment';
+import { OrderItem } from '@components/Pages/Order';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
@@ -12,20 +12,20 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import { mypageSelector } from '@store/mypage';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
-import { deliveryStatusMap, deliveryDetailMap } from '@pages/mypage/order-delivery-history';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderDetailInfo, SubOrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
-import { DELIVERY_TYPE_MAP } from '@constants/payment';
+import { DELIVERY_STATUS_MAP } from '@constants/mypage';
+import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
-import OrderUserInfo from '@components/Pages/Mypage/OrderDelivery/OrderUserInfo';
+import { OrderUserInfo } from '@components/Pages/Mypage/OrderDelivery';
 
 // temp
 
@@ -77,8 +77,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!)
   );
 
-  const deliveryStatus = orderDetail && deliveryStatusMap[orderDetail?.orderDeliveries[0]?.status];
-  const deliveryDetail = orderDetail && deliveryDetailMap[orderDetail?.deliveryDetail];
+  const deliveryStatus = orderDetail && DELIVERY_STATUS_MAP[orderDetail?.orderDeliveries[0]?.status];
+  const deliveryDetail = orderDetail && DELIVERY_TIME_MAP[orderDetail?.deliveryDetail];
   const isCompleted = orderDetail?.orderDeliveries[0].status === 'COMPLETED';
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
   const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
@@ -190,9 +190,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDevlieryDateHandler = () => {
-    // if (!canChangeDelivery || isSubOrder==='sub') {
-    //   return;
-    // }
+    if (!canChangeDelivery || isSubOrder === 'sub') {
+      return;
+    }
 
     if (isSubOrder === 'main') {
       dispatch(
@@ -212,7 +212,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
                 ),
               })
             );
-            dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+            dispatch(SET_USER_DELIVERY_TYPE(delivery.toLocaleLowerCase()));
           },
           closeBtnText: '취소',
         })
@@ -231,11 +231,11 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           ),
         })
       );
-      dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+      dispatch(SET_USER_DELIVERY_TYPE(delivery.toLocaleLowerCase()));
     }
   };
 
-  const getTotalPayment = (): number => {
+  const getTotalOrder = (): number => {
     return 1;
   };
 
@@ -304,7 +304,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={deliveryStatus}>
           {orderMenus?.map((menu: IOrderMenus, index: number) => {
-            return <PaymentItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
+            return <OrderItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
           })}
           <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
             재주문하기
@@ -331,7 +331,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            // disabled={!canChangeDelivery || isSubOrder === 'sub'}
+            disabled={!canChangeDelivery || isSubOrder === 'sub'}
             onClick={changeDevlieryDateHandler}
           >
             배송일 변경하기

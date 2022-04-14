@@ -161,8 +161,8 @@ const ReOrderList = ({ tooltipTime, timer }: IProps) => {
   }, [arrivalDate]);
 
   // TODO : 주문시 배송방법,배송방법 상세,스팟명,픽업정보,주문상품 리스트 넘기기
-  const goToPayment = () => {
-    router.push('/payment');
+  const goToOrder = () => {
+    router.push('/Order');
   };
 
   return (
@@ -199,7 +199,7 @@ const ReOrderList = ({ tooltipTime, timer }: IProps) => {
                   </TextH4B>
                   <TextB3R color={theme.greyScale25}>서울시 성동구 왕십리로 115, 708호</TextB3R>
                 </div>
-                <OrderButton type="button" onClick={goToPayment}>
+                <OrderButton type="button" onClick={goToOrder}>
                   주문하기
                 </OrderButton>
               </article>
