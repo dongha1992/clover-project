@@ -30,15 +30,15 @@ export const deliveryDetailMap: Obj = {
 
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();
-  const { withInDays } = useSelector(commonSelector);
+  const [withInDays, setWithInDays] = useState<number>(90);
 
   const { data, isLoading } = useQuery(
-    'getOrderLists',
+    ['getOrderLists', withInDays],
     async () => {
       const params = {
-        days: 90,
+        days: withInDays,
         page: 1,
-        size: 20,
+        size: 10,
         type: 'GENERAL',
       };
 
@@ -59,7 +59,7 @@ const OrderDeliveryHistoryPage = () => {
   const clickFilterHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <OrderDateFilter />,
+        content: <OrderDateFilter handler={setWithInDays} />,
       })
     );
   };

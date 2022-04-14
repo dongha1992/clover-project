@@ -178,7 +178,6 @@ const CartPage = () => {
             destinationId,
             location: data.location,
           });
-          console.log(data, 'destinationId');
           SET_USER_DELIVERY_TYPE(data.delivery.toLowerCase());
         }
       },

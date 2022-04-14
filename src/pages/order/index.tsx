@@ -465,8 +465,6 @@ const OrderPage = () => {
   const isFcoPay = selectedOrderMethod === 'fcopay';
   const isKakaoPay = selectedOrderMethod === 'kakaopay';
 
-  console.log(previewOrder, 'previewOrder');
-
   return (
     <Container>
       <OrderItemsWrapper>

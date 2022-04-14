@@ -82,7 +82,6 @@ const ReviewPage = () => {
     return <div>로딩</div>;
   }
 
-  console.log(willWriteList, 'willWriteList');
   return (
     <Container>
       <FixedTab>
