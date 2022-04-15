@@ -1,4 +1,4 @@
-import SbsCalendar from '@components/Calendar/SbsCalendar';
+import SubsCalendar from '@components/Calendar/SubsCalendar';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB1R, TextB2R, TextB3R, TextH4B, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
@@ -10,14 +10,51 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
+import router from 'next/router';
+import { SET_ORDER } from '@store/order';
 
-const SbsRegisterPage = () => {
+const SubsRegisterPage = () => {
   const dispatch = useDispatch();
-  const { sbsOrderMenus, sbsDeliveryExpectedDate } = useSelector(subscriptionForm);
+  const { subsOrderMenus, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const [toggleState, setToggleState] = useState(false);
   const [disposable, setDisposable] = useState(false);
   const clickEvent = () => {
     setToggleState((prev) => !prev);
+  };
+
+  const onSubscribe = () => {
+    // TODO(young) : 임시
+    const reqBody = {
+      destinationId: 244,
+      delivery: 'PARCEL',
+      deliveryDetail: '',
+      isSubOrderDelivery: false,
+      orderDeliveries: [
+        {
+          deliveryDate: '2022-04-16',
+          orderMenus: [
+            {
+              menuDetailId: 72,
+              menuQuantity: 1,
+            },
+            {
+              menuDetailId: 511,
+              menuQuantity: 1,
+            },
+          ],
+          orderOptions: [
+            {
+              optionId: 1,
+              optionQuantity: 1,
+            },
+          ],
+        },
+      ],
+      type: 'GENERAL',
+    };
+
+    dispatch(SET_ORDER(reqBody));
+    router.push('/order');
   };
 
   return (
@@ -77,7 +114,7 @@ const SbsRegisterPage = () => {
         <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
           1월, 2월 식단을 모두 확인해 주세요!
         </TextH5B>
-        <SbsCalendar sbsDates={sbsDeliveryExpectedDate} deliveryExpectedDate={sbsDeliveryExpectedDate} />
+        <SubsCalendar subsDates={subsDeliveryExpectedDate} deliveryExpectedDate={subsDeliveryExpectedDate} />
       </CalendarBox>
 
       <SelectDateInfoBox>
@@ -234,7 +271,7 @@ const SbsRegisterPage = () => {
           </TextB3R>
         </FlexEnd>
       </ReceiptBox>
-      <BottomButton>
+      <BottomButton onClick={onSubscribe}>
         <TextH5B>구독하기</TextH5B>
       </BottomButton>
     </Container>
@@ -406,4 +443,4 @@ const BottomButton = styled.button`
   color: #fff;
 `;
 
-export default SbsRegisterPage;
+export default SubsRegisterPage;

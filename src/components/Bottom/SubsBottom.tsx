@@ -9,7 +9,7 @@ import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 
-const SbsBottom = () => {
+const SubsBottom = () => {
   const dispatch = useDispatch();
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
 
@@ -113,4 +113,4 @@ const LikeBtn = styled.div`
   cursor: pointer;
 `;
 
-export default SbsBottom;
+export default SubsBottom;

@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import SbsItem from '../SbsItem';
+import SubsItem from '../SubsItem';
 
 const SpotTab = () => {
   return (
     <SpotBox>
       {[1, 2, 3, 4].map((item, index) => (
-        <SbsItem item={item} key={index} />
+        <SubsItem item={item} key={index} />
       ))}
     </SpotBox>
   );
