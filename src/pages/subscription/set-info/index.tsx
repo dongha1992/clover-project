@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 const deliveryInfo: any = 'spot';
@@ -41,6 +42,8 @@ const SbsSetInfoPage = () => {
   const [userSelectPeriod, setUserSelectPeriod] = useState('subscription');
 
   const goToDeliveryInfo = () => {
+    dispatch(INIT_DESTINATION());
+    dispatch(INIT_TEMP_DESTINATION());
     router.push({
       pathname: '/cart/delivery-info',
       query: {
