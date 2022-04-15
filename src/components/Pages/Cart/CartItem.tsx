@@ -32,14 +32,14 @@ const CartItem = ({
         removeCartDisplayItemHandler={removeCartDisplayItemHandler}
         menu={item}
       />
-      {item?.menuDetails.map((menu: any, index: number) => {
+      {item?.menuDetails.map((menuDetail: any, index: number) => {
         return (
           <CartActualItem
             clickPlusButton={clickPlusButton}
             clickMinusButton={clickMinusButton}
             clickRestockNoti={clickRestockNoti}
             removeCartActualItemHandler={removeCartActualItemHandler}
-            menu={menu}
+            menuDetail={menuDetail}
             key={index}
           />
         );

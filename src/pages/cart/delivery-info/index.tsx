@@ -9,11 +9,11 @@ import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 import {
-  SET_USER_DESTINATION_STATUS,
+  SET_USER_DELIVERY_TYPE,
   SET_DESTINATION,
   INIT_TEMP_DESTINATION,
-  INIT_DESTINATION_STATUS,
-  INIT_USER_DESTINATION_STATUS,
+  INIT_DESTINATION_TYPE,
+  INIT_USER_DELIVERY_TYPE,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
@@ -95,7 +95,7 @@ const DeliverInfoPage = () => {
         });
       }
     } else {
-      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(SET_USER_DELIVERY_TYPE(userSelectDeliveryType));
       if (isSubscription) {
         router.push({
           pathname: '/destination/search',
@@ -121,8 +121,8 @@ const DeliverInfoPage = () => {
             setUserSelectDeliveryType(value);
             setTempDestination(null);
             dispatch(INIT_TEMP_DESTINATION());
-            dispatch(INIT_DESTINATION_STATUS());
-            dispatch(INIT_USER_DESTINATION_STATUS());
+            dispatch(INIT_DESTINATION_TYPE());
+            dispatch(INIT_USER_DELIVERY_TYPE());
           },
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -145,12 +145,12 @@ const DeliverInfoPage = () => {
     }
 
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
-    if (destinationId || isMainDestination) {
+    if (destinationId || isMainDestination || isSpot) {
       dispatch(SET_DESTINATION(tempDestination));
       dispatch(SET_AFTER_SETTING_DELIVERY());
-      dispatch(SET_USER_DESTINATION_STATUS(tempDestination?.delivery?.toLowerCase()!));
+      dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(INIT_TEMP_DESTINATION());
-      dispatch(INIT_DESTINATION_STATUS());
+      dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
 
       if (isSubscription) {
@@ -197,9 +197,9 @@ const DeliverInfoPage = () => {
             })
           );
           dispatch(SET_AFTER_SETTING_DELIVERY());
-          dispatch(SET_USER_DESTINATION_STATUS(response.delivery.toLowerCase()));
+          dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
           dispatch(INIT_TEMP_DESTINATION());
-          dispatch(INIT_DESTINATION_STATUS());
+          dispatch(INIT_DESTINATION_TYPE());
           dispatch(INIT_AVAILABLE_DESTINATION());
           router.push('/cart');
         }

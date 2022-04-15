@@ -5,19 +5,18 @@ import { textH5 } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
-import { destinationForm, INIT_USER_DESTINATION_STATUS } from '@store/destination';
+import { destinationForm, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 
 const SpotHeader = () => {
   const dispatch = useDispatch();
-  const { userLocation } =
-  useSelector(destinationForm);
+  const { userLocation } = useSelector(destinationForm);
 
   const goToCart = () => {
     router.push('/cart');
   };
-  
+
   const goToLocation = (): void => {
     router.push({
       pathname: '/location',
@@ -26,10 +25,9 @@ const SpotHeader = () => {
   };
 
   const goToSpotSearch = () => {
-    dispatch(INIT_USER_DESTINATION_STATUS());
+    dispatch(INIT_USER_DELIVERY_TYPE());
     router.push('/spot/search');
   };
-
 
   return (
     <Container>
@@ -38,19 +36,15 @@ const SpotHeader = () => {
           <SVGIcon name="location" />
           <AddressWrapper>
             <div onClick={goToLocation}>
-            {userLocation?.emdNm ? (
-                <a>{userLocation?.emdNm}</a>
-              ) : (
-                <a>내 위치 설정하기</a>
-              )}
+              {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
           </AddressWrapper>
         </Left>
         <Right>
           <div className="search" onClick={goToSpotSearch}>
-              <a>
-                <SVGIcon name="searchIcon" />
-              </a>
+            <a>
+              <SVGIcon name="searchIcon" />
+            </a>
           </div>
           <CartIcon onClick={goToCart} />
         </Right>

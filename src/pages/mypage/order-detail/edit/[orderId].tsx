@@ -26,7 +26,7 @@ import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { destinationForm, SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { pipe, indexBy } from '@fxts/core';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
@@ -126,7 +126,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   };
 
   const editDeliveryInfoHandler = () => {
-    console.log(deliveryEditObj, 'deliveryEditObj');
     if (!cheekBeforeEdit()) {
       return;
     }
@@ -199,7 +198,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
       router.push({ pathname: '/spot/search', query: { orderId } });
     } else {
       router.push({ pathname: '/destination/search', query: { orderId } });
-      dispatch(SET_USER_DESTINATION_STATUS(orderDetail?.delivery.toLowerCase()!));
+      dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
     }
   };
 

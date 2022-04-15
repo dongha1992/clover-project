@@ -5,13 +5,13 @@ import {} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { isNil, isEqual } from 'lodash-es';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
-import { IDestinationsResponse } from '@model/index';
+import { IDestinationsResponse, ILocation } from '@model/index';
 import { IGetOrderList } from '@model/index';
 
 interface IProps {
   goToDeliveryInfo: () => void;
   deliveryType?: string;
-  deliveryDestination?: IDestinationsResponse | IGetOrderList;
+  deliveryDestination?: IDestinationsResponse | null;
 }
 
 const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDestination }: IProps) => {
