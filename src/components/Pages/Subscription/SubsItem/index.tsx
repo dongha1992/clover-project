@@ -9,7 +9,7 @@ import styled from 'styled-components';
 interface IProps {
   item: any;
 }
-const SbsItem = ({ item }: IProps) => {
+const SubsItem = ({ item }: IProps) => {
   const goToDetail = () => {
     router.push(`/subscription/products/135`);
   };
@@ -29,7 +29,7 @@ const SbsItem = ({ item }: IProps) => {
         />
 
         <BadgeArea className={true ? '' : 'pl'}>
-          <Badge status={'BEST'} />
+          <Badge message={'BEST'} />
           <Label>단기구독전용</Label>
           <Label>단기구독전용</Label>
         </BadgeArea>
@@ -105,4 +105,4 @@ const Like = styled.div`
   display: flex;
   align-items: center;
 `;
-export default SbsItem;
+export default SubsItem;

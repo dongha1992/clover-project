@@ -1,12 +1,12 @@
-import SbsCalendar from '@components/Calendar/SbsCalendar';
+import SubsCalendar from '@components/Calendar/SubsCalendar';
 import { RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { SUBSCRIBE_TIME_SELECT } from '@constants/subscription';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import {
-  SET_SBS_DELIVERY_EXPECTED_DATE,
-  SET_SBS_DELIVERY_TIME,
-  SET_SBS_START_DATE,
+  SET_SUBS_DELIVERY_EXPECTED_DATE,
+  SET_SUBS_DELIVERY_TIME,
+  SET_SUBS_START_DATE,
   SET_PICKUP_DAY,
   subscriptionForm,
 } from '@store/subscription';
@@ -20,16 +20,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
   userSelectPeriod: string; // 유저가 선택한 구독기간(1주,2주,3주,4주,정기구독)
-  sbsDates: string[];
+  subsDates: string[];
 }
-const SbsCalendarSheet = ({ userSelectPeriod, sbsDates }: IProps) => {
+const SubsCalendarSheet = ({ userSelectPeriod, subsDates }: IProps) => {
   const dispatch = useDispatch();
-  const { sbsDeliveryExpectedDate, sbsStartDate, sbsDeliveryTime, sbsPickupDay } = useSelector(subscriptionForm);
+  const { subsDeliveryExpectedDate, subsStartDate, subsDeliveryTime, subsPickupDay } = useSelector(subscriptionForm);
   const [disabledDate, setDisabledDate] = useState<any>([]);
-  const [userSelectTime, setUserSelectTime] = useState(sbsDeliveryTime ? sbsDeliveryTime : '점심');
+  const [userSelectTime, setUserSelectTime] = useState(subsDeliveryTime ? subsDeliveryTime : '점심');
   const [deliveryExpectedDate, setDeliveryExpectedDate] = useState<string[]>(['']);
   const [pickupDay, setPickupDay] = useState<any[]>();
-  const [sbsStartDateText, setSbsStartDateText] = useState('');
+  const [subsStartDateText, setSubsStartDateText] = useState('');
   const deliveryComplete = ['']; // 배송완료 or 주문취소
   const deliveryHoliday = ['']; // 배송휴무일
   const deliveryChange = ['']; // 배송일변경
@@ -46,18 +46,18 @@ const SbsCalendarSheet = ({ userSelectPeriod, sbsDates }: IProps) => {
   }, []);
 
   useEffect(() => {
-    if (sbsDeliveryExpectedDate) {
-      setDeliveryExpectedDate(sbsDeliveryExpectedDate);
+    if (subsDeliveryExpectedDate) {
+      setDeliveryExpectedDate(subsDeliveryExpectedDate);
     }
   }, []);
 
   useEffect(() => {
     // store에 구독요일이 있으면 구독요일 useState에 저장
-    if (sbsPickupDay) setPickupDay(sbsPickupDay);
+    if (subsPickupDay) setPickupDay(subsPickupDay);
   }, []);
 
   useEffect(() => {
-    setSbsStartDateText(
+    setSubsStartDateText(
       `${dayjs(deliveryExpectedDate[0]).format('M')}월 ${dayjs(deliveryExpectedDate[0]).format('DD')}일 (${dayjs(
         deliveryExpectedDate[0]
       ).format('dd')}) / ${pickupDay?.join('·')} / ${userSelectTime}`
@@ -70,13 +70,13 @@ const SbsCalendarSheet = ({ userSelectPeriod, sbsDates }: IProps) => {
 
   const subscribeClickHandler = () => {
     dispatch(
-      SET_SBS_START_DATE({
-        sbsStartDate: `${sbsStartDateText}`,
+      SET_SUBS_START_DATE({
+        subsStartDate: `${subsStartDateText}`,
       })
     );
-    dispatch(SET_PICKUP_DAY({ sbsPickupDay: pickupDay }));
-    dispatch(SET_SBS_DELIVERY_EXPECTED_DATE({ sbsDeliveryExpectedDate: deliveryExpectedDate }));
-    dispatch(SET_SBS_DELIVERY_TIME({ sbsDeliveryTime: userSelectTime }));
+    dispatch(SET_PICKUP_DAY({ subsPickupDay: pickupDay }));
+    dispatch(SET_SUBS_DELIVERY_EXPECTED_DATE({ subsDeliveryExpectedDate: deliveryExpectedDate }));
+    dispatch(SET_SUBS_DELIVERY_TIME({ subsDeliveryTime: userSelectTime }));
     dispatch(INIT_BOTTOM_SHEET());
   };
 
@@ -86,7 +86,7 @@ const SbsCalendarSheet = ({ userSelectPeriod, sbsDates }: IProps) => {
         <TextH5B padding="24px 0 16px 0">구독 시작/배송일</TextH5B>
         <TextB2R padding="0 0 16px 0">시작일을 선택하면 배송 플랜이 자동으로 설정됩니다.</TextB2R>
       </TitleBox>
-      <SbsCalendar
+      <SubsCalendar
         disabledDate={disabledDate}
         deliveryComplete={deliveryComplete}
         deliveryExpectedDate={deliveryExpectedDate}
@@ -95,7 +95,7 @@ const SbsCalendarSheet = ({ userSelectPeriod, sbsDates }: IProps) => {
         deliveryChange={deliveryChange}
         sumDelivery={sumDelivery}
         sumDeliveryComplete={sumDeliveryComplete}
-        sbsDates={sbsDates}
+        subsDates={subsDates}
         setPickupDay={setPickupDay}
       />
       <RadioWrapper>
@@ -113,12 +113,12 @@ const SbsCalendarSheet = ({ userSelectPeriod, sbsDates }: IProps) => {
           );
         })}
       </RadioWrapper>
-      <BottomButton onClick={subscribeClickHandler} disabled={pickupDay ? false : sbsStartDate ? false : true}>
+      <BottomButton onClick={subscribeClickHandler} disabled={pickupDay ? false : subsStartDate ? false : true}>
         <TextH5B>
           {pickupDay
-            ? `${sbsStartDateText} 구독하기`
-            : sbsStartDate
-            ? `${sbsStartDate} 구독하기`
+            ? `${subsStartDateText} 구독하기`
+            : subsStartDate
+            ? `${subsStartDate} 구독하기`
             : '구독 시작/배송일을 설정해주세요'}
         </TextH5B>
       </BottomButton>
@@ -170,4 +170,4 @@ const BottomButton = styled.button`
     color: ${theme.greyScale25};
   }
 `;
-export default React.memo(SbsCalendarSheet);
+export default React.memo(SubsCalendarSheet);

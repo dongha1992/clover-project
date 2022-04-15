@@ -16,7 +16,7 @@ import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
 import { useQuery } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
-import { SbsDashboard } from '@components/Pages/Mypage/Subscription';
+import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { pipe, groupBy } from '@fxts/core';
 import { getOrderListsApi } from '@api/order';
 interface IMypageMenu {
@@ -109,7 +109,7 @@ const MypagePage = () => {
             <OrderAndDeliveryWrapper>
               <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
             </OrderAndDeliveryWrapper>
-            <SbsDashboard />
+            <SubsDashboard />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
