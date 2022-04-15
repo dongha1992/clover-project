@@ -33,7 +33,7 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
     }
   };
 
-  const goToSpotsDetail = (id: number): void => {
+  const goToSpotsDetail = (id: number | undefined): void => {
     if (userDeliveryType === 'spot') {
       if (isSubscription) {
         router.push({
@@ -77,7 +77,7 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
         </MeterAndTime>
         {!item.isTrial ? (
           <div>
-            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
               {typeTag()}
             </Tag>
           </div>
