@@ -1,4 +1,6 @@
 import { StickyTab } from '@components/Shared/TabList';
+import { FixedTab } from '@styles/theme';
+
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
@@ -33,7 +35,9 @@ const SubsProductPage = () => {
 
   return (
     <Container>
-      <StickyTab tabList={MENU} isSticky={isSticky} selectedTab={selectedTab} onClick={selectTabHandler} />
+      <FixedTab>
+        <StickyTab tabList={MENU} isSticky={isSticky} selectedTab={selectedTab} onClick={selectTabHandler} />
+      </FixedTab>
       <TabContent>
         {selectedTab === '/subscription/products?tab=spot' && <SpotTab />}
         {selectedTab === '/subscription/products?tab=dawn' && <DawnTab />}
@@ -44,7 +48,7 @@ const SubsProductPage = () => {
 
 const Container = styled.div``;
 const TabContent = styled.div`
-  padding: 26px 24px;
+  padding: 74px 24px 26px;
 `;
 
 export default SubsProductPage;

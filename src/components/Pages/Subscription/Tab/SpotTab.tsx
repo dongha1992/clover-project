@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import SubsItem from '../SubsItem';
+import { SubsItem } from '@components/Pages/Subscription';
 
 const SpotTab = () => {
   return (
