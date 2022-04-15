@@ -38,6 +38,10 @@ import getCustomDate from '@utils/getCustomDate';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm } from '@store/order';
+import SlideToggle from '@components/Shared/SlideToggle';
+import SubsOrderItem from '@components/Pages/Subscription/payment/SubsOrderItem';
+import SubsOrderList from '@components/Pages/Subscription/payment/SubsOrderList';
+import SubsPaymentWay from '@components/Pages/Subscription/payment/SubsPaymentWay';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -259,7 +263,7 @@ const OrderPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -280,7 +284,7 @@ const OrderPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -303,7 +307,7 @@ const OrderPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -355,10 +359,8 @@ const OrderPage = () => {
       case 'SPOT': {
         return (
           <>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
+            <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!</TextB3R>
+            <TextB3R color={theme.brandColor}>
               단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
               취소할 수 있어요!
             </TextB3R>
@@ -369,10 +371,8 @@ const OrderPage = () => {
       case 'MORNING': {
         return (
           <>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
+            <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!</TextB3R>
+            <TextB3R color={theme.brandColor}>
               단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
             </TextB3R>
           </>
@@ -454,6 +454,7 @@ const OrderPage = () => {
     deliveryFee,
     coupon,
   } = previewOrder?.order!;
+
   const { deliveryDate, spotName, spotPickupName, orderOptions, deliveryStartTime, deliveryEndTime } =
     previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
@@ -482,11 +483,17 @@ const OrderPage = () => {
             <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
-        <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {orderMenus?.map((menu, index) => {
-            return <OrderItem menu={menu} key={index} />;
-          })}
-        </OrderListWrapper>
+        <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.3}>
+          <OrderListWrapper>
+            {orderMenus?.map((menu, index) => {
+              return <OrderItem menu={menu} key={index} />;
+            })}
+          </OrderListWrapper>
+        </SlideToggle>
+        {/* <SubsOrderItem />
+        <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
+          <SubsOrderList />
+        </SlideToggle> */}
       </OrderItemsWrapper>
       <BorderLine height={8} margin="16px 0 0 0" />
       <CustomerInfoWrapper>
@@ -497,20 +504,22 @@ const OrderPage = () => {
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
-        <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
-          <FlexBetween>
-            <TextH5B>보내는 사람</TextH5B>
-            <TextB2R>{userName}</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0">
-            <TextH5B>휴대폰 전화</TextH5B>
-            <TextB2R>{userTel}</TextB2R>
-          </FlexBetween>
-          <FlexBetween>
-            <TextH5B>이메일</TextH5B>
-            <TextB2R>{userEmail}</TextB2R>
-          </FlexBetween>
-        </CustomInfoList>
+        <SlideToggle state={showSectionObj.showCustomerInfoSection} duration={0.3}>
+          <CustomInfoList>
+            <FlexBetween>
+              <TextH5B>보내는 사람</TextH5B>
+              <TextB2R>{userName}</TextB2R>
+            </FlexBetween>
+            <FlexBetween margin="16px 0">
+              <TextH5B>휴대폰 전화</TextH5B>
+              <TextB2R>{userTel}</TextB2R>
+            </FlexBetween>
+            <FlexBetween>
+              <TextH5B>이메일</TextH5B>
+              <TextB2R>{userEmail}</TextB2R>
+            </FlexBetween>
+          </CustomInfoList>
+        </SlideToggle>
       </CustomerInfoWrapper>
       <BorderLine height={8} margin="24px 0 0 0" />
       <ReceiverInfoWrapper>
@@ -573,7 +582,7 @@ const OrderPage = () => {
             <FlexRow padding="0 0 8px 0">
               <SVGIcon name="exclamationMark" />
               <TextH6B padding="2px 0 0 2px" color={theme.brandColor}>
-                반드시 확인해주세요!
+                주문 변경 및 취소 시 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
             {cancelOrderInfoRenderer(delivery, deliveryDetail)}
@@ -723,7 +732,18 @@ const OrderPage = () => {
           <>
             <BorderLine height={1} margin="24px 0" />
             {previewOrder?.cards?.length! > 0 ? (
-              <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+              <>
+                <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+                <Button
+                  border
+                  backgroundColor={theme.white}
+                  color={theme.black}
+                  onClick={goToRegisteredCard}
+                  margin="16px 0 0 0"
+                >
+                  카드 등록하기
+                </Button>
+              </>
             ) : (
               <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
                 카드 등록하기
@@ -732,7 +752,11 @@ const OrderPage = () => {
           </>
         )}
       </OrderMethodWrapper>
-      <BorderLine height={8} />
+      {/* <SubsPaymentWay
+        previewOrder={previewOrder}
+        goToCardManagemnet={goToCardManagemnet}
+        getMainCardHandler={getMainCardHandler}
+      /> */}
       <TotalPriceWrapper>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
@@ -829,6 +853,13 @@ const OrderPage = () => {
             자세히
           </TextH6B>
         </FlexRow>
+        {/* <FlexRow padding="8px 0 0 0">
+          <Checkbox isSelected onChange={checkOrderTermHandler} />
+          <TextB2R padding="0 8px">정기구독 이용약관・주의사항 동의 (필수)</TextB2R>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
+            자세히
+          </TextH6B>
+        </FlexRow> */}
       </OrderTermWrapper>
       <OrderBtn onClick={() => mutateCreateOrder()}>
         <Button borderRadius="0" height="100%">
@@ -843,8 +874,7 @@ const Container = styled.div``;
 const OrderItemsWrapper = styled.div`
   ${homePadding}
 `;
-const OrderListWrapper = styled.div<{ isShow: boolean }>`
-  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
+const OrderListWrapper = styled.div`
   flex-direction: column;
   padding: 24px 0 0 0;
 `;
@@ -858,9 +888,8 @@ const CustomerInfoWrapper = styled.div`
   flex-direction: column;
 `;
 
-const CustomInfoList = styled.div<{ isShow: boolean }>`
+const CustomInfoList = styled.div`
   padding-top: 24px;
-  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
   flex-direction: column;
 `;
 const ReceiverInfoWrapper = styled.div`
