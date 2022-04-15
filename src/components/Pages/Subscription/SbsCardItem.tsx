@@ -8,7 +8,7 @@ const SbsCardItem = () => {
     <CardBox>
       <Content>
         <LabelList>
-          <Label className="sbsc">구독 정보</Label>
+          <Label className="subs">구독 정보</Label>
           <Label className="dawn">배송 타입</Label>
         </LabelList>
         <TextH5B className="name">900Kcal 집중관리</TextH5B>
@@ -51,7 +51,7 @@ const LabelList = styled.div`
   display: flex;
   padding-bottom: 8px;
 `;
-const Label = styled.span`
+export const Label = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,16 +62,15 @@ const Label = styled.span`
   height: 24px;
   margin-right: 4px;
   border-radius: 4px;
+  border: 1px solid ${theme.brandColor};
+  color: ${theme.brandColor};
   &:last-child {
     margin-right: 0;
   }
-  &.sbsc {
+  &.subs {
     background-color: #ebf7f1;
     color: ${theme.brandColor};
-  }
-  &.spot {
-    border: 1px solid ${theme.brandColor};
-    color: ${theme.brandColor};
+    border: none;
   }
   &.dawn {
     border: 1px solid #7922bc;

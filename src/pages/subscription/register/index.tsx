@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
+import router from 'next/router';
 
 const SbsRegisterPage = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,10 @@ const SbsRegisterPage = () => {
   const [disposable, setDisposable] = useState(false);
   const clickEvent = () => {
     setToggleState((prev) => !prev);
+  };
+
+  const onSubscribe = () => {
+    router.push('/order');
   };
 
   return (
@@ -234,7 +239,7 @@ const SbsRegisterPage = () => {
           </TextB3R>
         </FlexEnd>
       </ReceiptBox>
-      <BottomButton>
+      <BottomButton onClick={onSubscribe}>
         <TextH5B>구독하기</TextH5B>
       </BottomButton>
     </Container>
