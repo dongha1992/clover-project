@@ -23,7 +23,7 @@ const SpotDetailBottom = () => {
   const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
-  const { spotDetail } = useSelector(spotSelector);
+  const { spotDetail, spotPickupId } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
@@ -41,7 +41,7 @@ const SpotDetailBottom = () => {
       main: false,
       availableTime: pickUpTime,
       spaceType: spotDetail?.type,
-      spotPickupId: spotDetail?.pickups[0].id,
+      spotPickupId: spotPickupId,
     };
 
     const goToCart = () =>{

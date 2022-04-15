@@ -5,7 +5,7 @@ import { TextH5B } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
-import { SET_SPOT_PICKUP_PLACE } from '@store/spot';
+import { SET_SPOT_PICKUP_ID } from '@store/spot';
 import Checkbox from '@components/Shared/Checkbox';
 
 interface IPickupInfo {
@@ -23,32 +23,32 @@ type TPrams = {
 }
 
 const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element => {
-  const [selectedPickupPlace, setSelectedPickupPlace] = useState<number>(pickupInfo[0]?.spotId);
+  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo[0]?.spotId);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const changeRadioHandler = (id: number) => {
-    setSelectedPickupPlace(id);
+    setSelectedPickupId(id);
   };
 
   const checkHandler = () => {
     setNoticeChecked(!noticeChecked);
   };
-  
-  const selectedPickup = pickupInfo?.find((i) => i.spotId === selectedPickupPlace);
+
+  // const selectedPickup = pickupInfo?.find((i) => i.id === selectedPickupPlace);
 
   const submitHandler = (): void => {
     if (spotType === 'PRIVATE') {
       if(noticeChecked){
         onSubmit && onSubmit();
-        dispatch(SET_SPOT_PICKUP_PLACE(selectedPickup?.name!));
+        dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
         dispatch(INIT_BOTTOM_SHEET());    
       } else  {
         return;
       }
     } else {
       onSubmit && onSubmit();
-      dispatch(SET_SPOT_PICKUP_PLACE(selectedPickup?.name!));
+      dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
       dispatch(INIT_BOTTOM_SHEET());    
     }
   };
@@ -64,7 +64,7 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element =>
             <PickWrapper key={index}>
               <RadioButton
                 onChange={() => changeRadioHandler(i.spotId)}
-                isSelected={selectedPickupPlace === i.spotId}
+                isSelected={selectedPickupId === i.spotId}
               />
               <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
             </PickWrapper>
