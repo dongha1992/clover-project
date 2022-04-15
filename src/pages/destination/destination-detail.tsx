@@ -15,11 +15,11 @@ import {
   destinationForm,
   INIT_LOCATION_TEMP,
   SET_TEMP_DESTINATION,
-  SET_DESTINATION_STATUS,
-  SET_USER_DESTINATION_STATUS,
+  SET_DESTINATION_TYPE,
+  SET_USER_DELIVERY_TYPE,
   INIT_TEMP_DESTINATION,
   SET_DESTINATION,
-  INIT_DESTINATION_STATUS,
+  INIT_DESTINATION_TYPE,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
@@ -98,7 +98,7 @@ const DestinationDetailPage = () => {
       };
       if (orderId) {
         dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
-        dispatch(INIT_DESTINATION_STATUS());
+        dispatch(INIT_DESTINATION_TYPE());
         dispatch(INIT_AVAILABLE_DESTINATION());
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
@@ -106,8 +106,8 @@ const DestinationDetailPage = () => {
         });
       } else {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
-        dispatch(SET_DESTINATION_STATUS(destinationDeliveryType));
-        dispatch(SET_USER_DESTINATION_STATUS(destinationStatusByRule));
+        dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
+        dispatch(SET_USER_DELIVERY_TYPE(destinationStatusByRule));
         dispatch(INIT_LOCATION_TEMP());
 
         router.push('/cart/delivery-info');

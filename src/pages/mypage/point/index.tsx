@@ -8,105 +8,94 @@ import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/getMediaQuery';
+import { useQuery } from 'react-query';
+import { getPointHistoryApi, getPointApi } from '@api/point';
+import { IPointHistories } from '@model/index';
+import getCustomDate from '@utils/getCustomDate';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
   { id: 2, text: '사용/소멸', value: 'use', link: '/use' },
 ];
 
-let MOCK_SAVE_POINT_HISTORY = [
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-  {
-    text: '후기 작성',
-    point: 3000,
-    createdAt: '1월 8일 (화)',
-    expiryDate: '1월 9일 (수)',
-  },
-];
-
-const MOCK_USE_POINT_HISTORY = [
-  {
-    text: '결제 사용',
-    point: 3000,
-    createdAt: '10월 8일 (화)',
-    expiryDate: '',
-  },
-];
-
 const PointPage = () => {
   const [isShow, setIsShow] = useState(false);
   const [selectedTab, setSelectedTab] = useState('/save');
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  const { data: pointHistory, isLoading } = useQuery(
+    ['getPointHistoryList', selectedTab],
+    async () => {
+      const types = formatTanNameHandler(selectedTab);
+      const params = {
+        page: 1,
+        size: 1,
+        types,
+      };
+      const { data } = await getPointHistoryApi(params);
+      if (data.code === 200) {
+        //  return data.data.pointHistories
+        return [
+          ...data.data.pointHistories.map((item) => {
+            return { ...item, id: 36, createdAt: '2022-02-22 11:11:11' };
+          }),
+          ...data.data.pointHistories.map((item) => {
+            return { ...item, createdAt: '2021-02-22 11:11:11' };
+          }),
+          ...data.data.pointHistories.map((item) => {
+            return { ...item, id: 38, createdAt: '2021-02-21 11:11:11' };
+          }),
+          ...data.data.pointHistories.map((item) => {
+            return { ...item, id: 39, createdAt: '2021-02-20 11:11:11' };
+          }),
+          ...data.data.pointHistories.map((item) => {
+            return { ...item, id: 40, createdAt: '2021-02-19 11:11:11' };
+          }),
+        ];
+      }
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const { data: points, isLoading: pointLoading } = useQuery(
+    'getPoint',
+    async () => {
+      const { data } = await getPointApi();
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const formatTanNameHandler = (tabName: string): string => {
+    return tabName.replace('/', '').toUpperCase();
+  };
+
+  const registerPromotionCodeHandler = (code: string): void => {};
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
 
+  if (isLoading || pointLoading) {
+    return <div>로딩</div>;
+  }
+
+  const targetIndex = pointHistory?.find((item) => {
+    let currentYear = new Date().getFullYear();
+    const itemYear = new Date(item.createdAt).getFullYear();
+    if (currentYear !== itemYear) {
+      return item;
+    }
+  })?.id!;
+
   return (
     <Container>
       <Wrapper>
         <FlexRow padding="24px 0 0 0">
-          <TextInput placeholder="프로모션 코드를 입력해주세요." />
-          <Button width="30%" margin="0 0 0 8px">
+          <TextInput placeholder="프로모션 코드를 입력해주세요." ref={codeRef} />
+          <Button width="30%" margin="0 0 0 8px" onClick={registerPromotionCodeHandler}>
             등록하기
           </Button>
         </FlexRow>
@@ -115,12 +104,12 @@ const PointPage = () => {
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
             <TextH5B color={theme.brandColor} padding="6px 0 0 0">
-              123123 P
+              {points?.availablePoint} P
             </TextH5B>
           </FlexCol>
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>7일 이내 소멸 예정 포인트</TextH6B>
-            <TextH5B padding="6px 0 0 0">0 개</TextH5B>
+            <TextH5B padding="6px 0 0 0"> {points?.expirePoint} P</TextH5B>
           </FlexCol>
         </FlexBetweenStart>
         <PaddingWrapper>
@@ -149,30 +138,31 @@ const PointPage = () => {
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </Wrapper>
       <ScrollView>
-        {MOCK_SAVE_POINT_HISTORY.map((item, index) => {
-          const YearChange = index === 4;
-          if (YearChange) {
+        {pointHistory?.map((item: IPointHistories, index: number) => {
+          if (targetIndex === item.id) {
+            const itemYear = new Date(item.createdAt).getFullYear();
             return (
-              <FlexCol key={index} padding="0 0 24px 0">
-                <PointItem
-                  title={item.text}
-                  point={item.point}
-                  createdAt={item.createdAt}
-                  expiryDate={item.expiryDate}
-                />
+              <FlexCol key={index}>
                 <BorderLine height={1} />
                 <TextH5B color={theme.greyScale45} center padding="8px 0 0 0">
-                  2022년
+                  {itemYear}년
                 </TextH5B>
+                <PointItem
+                  content={item.content}
+                  value={item.value}
+                  createdAt={item.createdAt}
+                  expiredDate={item.expiredDate}
+                  key={index}
+                />
               </FlexCol>
             );
           }
           return (
             <PointItem
-              title={item.text}
-              point={item.point}
+              content={item.content}
+              value={item.value}
               createdAt={item.createdAt}
-              expiryDate={item.expiryDate}
+              expiredDate={item.expiredDate}
               key={index}
             />
           );
@@ -183,16 +173,19 @@ const PointPage = () => {
 };
 
 const PointItem = React.forwardRef(
-  ({ title, point, createdAt, expiryDate }: any, ref: React.ForwardedRef<HTMLDivElement>) => {
+  ({ content, value, createdAt, expiredDate }: any, ref: React.ForwardedRef<HTMLDivElement>) => {
+    const { dayFormatter: formatCreatedAt } = getCustomDate(new Date(createdAt));
+    const { dayFormatter: formatExpiredDate } = getCustomDate(new Date(expiredDate));
+
     return (
       <FlexCol padding="0 0 24px 0" ref={ref}>
         <FlexBetween padding="0 0 6px 0">
-          <TextH5B>{title}</TextH5B>
-          <TextH5B>+ {point}</TextH5B>
+          <TextH5B>{content}</TextH5B>
+          <TextH5B>+ {value}</TextH5B>
         </FlexBetween>
         <FlexBetween>
-          <TextB2R>{createdAt}</TextB2R>
-          <TextB2R color={theme.greyScale45}>{expiryDate} 소멸예정</TextB2R>
+          <TextB2R>{formatCreatedAt}</TextB2R>
+          <TextB2R color={theme.greyScale45}>{formatExpiredDate && formatExpiredDate} 소멸예정</TextB2R>
         </FlexBetween>
       </FlexCol>
     );

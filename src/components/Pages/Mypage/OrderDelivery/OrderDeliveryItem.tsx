@@ -16,7 +16,6 @@ interface IProps {
 }
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
-  console.log(orderDeliveryItem, 'orderDeliveryItem');
   const { deliveryDate, status } = orderDeliveryItem;
 
   const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.order.paidAt));

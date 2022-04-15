@@ -8,7 +8,7 @@ import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
 
 interface IProps {
-  menu: any;
+  menuDetail: any;
   removeCartActualItemHandler: ({ id, main }: { id: number; main: boolean }) => void;
   clickPlusButton: (id: number, quantity: number) => void;
   clickMinusButton: (id: number, quantity: number) => void;
@@ -16,41 +16,43 @@ interface IProps {
 }
 
 const CartActualItem = ({
-  menu,
+  menuDetail,
   removeCartActualItemHandler,
   clickPlusButton,
   clickMinusButton,
   clickRestockNoti,
 }: IProps) => {
   return (
-    <Container isSoldout={menu.isSoldout}>
+    <Container isSoldout={menuDetail.isSold}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R>{!menu.main ? `[선택옵션] ${menu.name}` : menu.name}</TextB3R>
+          <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : menuDetail.name}</TextB3R>
           <div
-            onClick={() => removeCartActualItemHandler && removeCartActualItemHandler({ id: menu.id, main: menu.main })}
+            onClick={() =>
+              removeCartActualItemHandler && removeCartActualItemHandler({ id: menuDetail.id, main: menuDetail.main })
+            }
           >
             <SVGIcon name="defaultCancel" />
           </div>
         </FlexBetween>
         <FlexCol>
           <PriceWrapper>
-            <TextH5B color={menu.isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
-              {menu.discount}%
+            <TextH5B color={menuDetail.isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
+              {menuDetail.discount}%
             </TextH5B>
-            <TextH5B>{menu.price}원</TextH5B>
+            <TextH5B>{menuDetail.price}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
-            <InfoMessage status={menu.isSoldout ? 'soldOut' : 'soldSoon'} count={2} />
+            <InfoMessage status={menuDetail.isSoldout ? 'soldOut' : 'soldSoon'} count={2} />
             <CountButtonContainer>
-              {menu.isSoldout ? (
+              {menuDetail.isSoldout ? (
                 <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
                   <TextH6B color={theme.white}>재입고 알림</TextH6B>
                 </Tag>
               ) : (
                 <CountButton
-                  id={menu.id}
-                  quantity={menu.quantity}
+                  id={menuDetail.menuDetailId}
+                  quantity={menuDetail.menuQuantity}
                   clickPlusButton={clickPlusButton}
                   clickMinusButton={clickMinusButton}
                 />

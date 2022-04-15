@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso, IRegisterDestinationRequest, IDestinationsResponse } from '@model/index';
+import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderList } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
 
 interface IAvailableDestination {
@@ -11,7 +11,7 @@ interface IAvailableDestination {
 }
 
 interface TProps {
-  userDestination: IDestinationsResponse | null;
+  userDestination: IDestinationsResponse | IGetOrderList | null;
   tempLocation: IJuso;
   userTempDestination: IDestinationsResponse | null;
   tempEditDestination: IDestinationsResponse | null;
@@ -94,7 +94,7 @@ export const destination = createSlice({
     },
 
     // 배송지 검색 후
-    SET_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | null>) => {
+    SET_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | IGetOrderList | null>) => {
       state.userDestination = action.payload;
     },
 
@@ -120,20 +120,20 @@ export const destination = createSlice({
     },
 
     // 배송지 체크 api
-    SET_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
+    SET_DESTINATION_TYPE: (state, action: PayloadAction<string>) => {
       state.destinationDeliveryType = action.payload;
     },
 
-    INIT_DESTINATION_STATUS: (state, action: PayloadAction) => {
+    INIT_DESTINATION_TYPE: (state, action: PayloadAction) => {
       state.destinationDeliveryType = '';
     },
 
     // 유저가 선택한 배송방법
-    SET_USER_DESTINATION_STATUS: (state, action: PayloadAction<string>) => {
+    SET_USER_DELIVERY_TYPE: (state, action: PayloadAction<string>) => {
       state.userDeliveryType = action.payload;
     },
 
-    INIT_USER_DESTINATION_STATUS: (state, action: PayloadAction) => {
+    INIT_USER_DELIVERY_TYPE: (state, action: PayloadAction) => {
       state.userDeliveryType = '';
     },
   },
@@ -150,10 +150,10 @@ export const {
   SET_AVAILABLE_DESTINATION,
   INIT_AVAILABLE_DESTINATION,
   INIT_LOCATION_TEMP,
-  SET_DESTINATION_STATUS,
-  INIT_DESTINATION_STATUS,
-  SET_USER_DESTINATION_STATUS,
-  INIT_USER_DESTINATION_STATUS,
+  SET_DESTINATION_TYPE,
+  INIT_DESTINATION_TYPE,
+  SET_USER_DELIVERY_TYPE,
+  INIT_USER_DELIVERY_TYPE,
 } = destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;

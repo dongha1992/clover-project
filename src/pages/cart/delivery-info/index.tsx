@@ -9,11 +9,11 @@ import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_AFTER_SETTING_DELIVERY } from '@store/cart';
 import {
-  SET_USER_DESTINATION_STATUS,
+  SET_USER_DELIVERY_TYPE,
   SET_DESTINATION,
   INIT_TEMP_DESTINATION,
-  INIT_DESTINATION_STATUS,
-  INIT_USER_DESTINATION_STATUS,
+  INIT_DESTINATION_TYPE,
+  INIT_USER_DELIVERY_TYPE,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
@@ -44,7 +44,6 @@ const DeliverInfoPage = () => {
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
   const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
-  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const { destinationDeliveryType, userTempDestination, locationStatus, userDeliveryType, availableDestination } =
     useSelector(destinationForm);
@@ -78,10 +77,6 @@ const DeliverInfoPage = () => {
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
-  const noticeHandler = () => {
-    setNoticeChecked(!noticeChecked);
-  };
-
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
       if (isSubscription) {
@@ -100,7 +95,7 @@ const DeliverInfoPage = () => {
         });
       }
     } else {
-      dispatch(SET_USER_DESTINATION_STATUS(userSelectDeliveryType));
+      dispatch(SET_USER_DELIVERY_TYPE(userSelectDeliveryType));
       if (isSubscription) {
         router.push({
           pathname: '/destination/search',
@@ -126,8 +121,8 @@ const DeliverInfoPage = () => {
             setUserSelectDeliveryType(value);
             setTempDestination(null);
             dispatch(INIT_TEMP_DESTINATION());
-            dispatch(INIT_DESTINATION_STATUS());
-            dispatch(INIT_USER_DESTINATION_STATUS());
+            dispatch(INIT_DESTINATION_TYPE());
+            dispatch(INIT_USER_DELIVERY_TYPE());
           },
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -147,18 +142,15 @@ const DeliverInfoPage = () => {
 
     if (!tempDestination) {
       return;
-    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spotPickup?.type === 'PRIVATE' && !noticeChecked) {
-      // 스팟 배송이고, 프라이빗일 경우 공지 체크 해야만 넘어감
-      return;
     }
 
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
-    if (destinationId || isMainDestination) {
+    if (destinationId || isMainDestination || isSpot) {
       dispatch(SET_DESTINATION(tempDestination));
       dispatch(SET_AFTER_SETTING_DELIVERY());
-      dispatch(SET_USER_DESTINATION_STATUS(tempDestination?.delivery?.toLowerCase()!));
+      dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(INIT_TEMP_DESTINATION());
-      dispatch(INIT_DESTINATION_STATUS());
+      dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
 
       if (isSubscription) {
@@ -205,9 +197,9 @@ const DeliverInfoPage = () => {
             })
           );
           dispatch(SET_AFTER_SETTING_DELIVERY());
-          dispatch(SET_USER_DESTINATION_STATUS(response.delivery.toLowerCase()));
+          dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
           dispatch(INIT_TEMP_DESTINATION());
-          dispatch(INIT_DESTINATION_STATUS());
+          dispatch(INIT_DESTINATION_TYPE());
           dispatch(INIT_AVAILABLE_DESTINATION());
           router.push('/cart');
         }
@@ -221,7 +213,7 @@ const DeliverInfoPage = () => {
   const placeInfoRender = () => {
     switch (userSelectDeliveryType) {
       case 'spot': {
-        return <PickupPlaceBox place={tempDestination} checkTermHandler={noticeHandler} isSelected={noticeChecked} />;
+        return <PickupPlaceBox place={tempDestination} />;
       }
 
       default: {
@@ -350,16 +342,6 @@ const DeliverInfoPage = () => {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
-    }
-  };
-
-  const settingHandler = () => {
-    if (userDeliveryType === 'spot') {
-      if (tempDestination?.spotPickup?.type === 'PRIVATE') {
-        return !noticeChecked;
-      }
-    } else {
-      return !tempDestination;
     }
   };
 
@@ -513,7 +495,7 @@ const DeliverInfoPage = () => {
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0" disabled={settingHandler()}>
+        <Button borderRadius="0" disabled={!tempDestination}>
           설정하기
         </Button>
       </SettingBtnWrapper>

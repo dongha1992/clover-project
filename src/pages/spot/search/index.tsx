@@ -1,14 +1,13 @@
 import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { SpotsSearchItem } from '@components/Pages/Spot';
 import { SearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
-import { SpotList, SpotRecommendList } from '@components/Pages/Spot';
+import { SpotList, SpotRecommendList, SpotRecentPickupList } from '@components/Pages/Spot';
 import SVGIcon from '@utils/SVGIcon';
 import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
 import { ISpots, ISpotsDetail } from '@model/index';
@@ -25,18 +24,20 @@ import { IDestinationsResponse } from '@model/index';
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const { orderId, isDelivery } = router.query;
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [spotRecommend, setSpotRecommend] = useState<ISpots>();
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
+  const [isLoadingRecomand, setIsLoadingRecomand] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
-  const router = useRouter();
-  const { orderId } = router.query;
+
 
   const getSearchRecommendList = async () => {
     const params = {
@@ -46,14 +47,17 @@ const SpotSearchPage = (): ReactElement => {
     };
     try {
       const { data } = await getSpotSearchRecommend(params);
-      const items = data.data;
-      setSpotRecommend(items);
+      if (data.code === 200) {
+        setIsLoadingRecomand(true);
+        const items = data.data;
+        setSpotRecommend(items);  
+      }
     } catch (err) {
       console.error(err);
     }
   };
 
-  const { data: eventSpotList } = useQuery(
+  const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
     ['spotList'],
     async () => {
       const params: IParamsSpots = {
@@ -68,8 +72,7 @@ const SpotSearchPage = (): ReactElement => {
   );
 
   /* TAYLER: 배송지목록 전체 조회에서 spot만 뽑음 */
-
-  const { data: recentPickedSpotList, isLoading } = useQuery<IDestinationsResponse[]>(
+  const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
     async () => {
       const params = {
@@ -147,7 +150,17 @@ const SpotSearchPage = (): ReactElement => {
     }
   }, [orderId]);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (isDelivery) {
+      if(inputRef.current){
+        inputRef.current.focus();
+      }
+    } else {
+      return;
+    };
+  }, [])
+
+  if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup) {
     return <div>로딩</div>;
   }
 
@@ -208,7 +221,8 @@ const SpotSearchPage = (): ReactElement => {
                 <RecentPickWrapper>
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
                   {recentPickedSpotList?.map((item: any, index) => (
-                    <SpotsSearchItem item={item} key={index} onClick={goToOrder} />
+                    // 스팟 최근 픽업 이력 리스트
+                    <SpotRecentPickupList item={item} key={index} />
                   ))}
                 </RecentPickWrapper>
               </DefaultSearchContainer>
