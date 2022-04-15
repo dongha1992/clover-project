@@ -4,7 +4,7 @@ import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 import router from 'next/router';
 
-const SbsDashboard = () => {
+const SubsDashboard = () => {
   return (
     <DashBoardBox>
       <FlexCol>
@@ -40,13 +40,13 @@ const SbsDashboard = () => {
           </FlexColCenter>
         </FlexBetween>
       </Wrapper>
-      <SbsInfoBox>
+      <SubsInfoBox>
         <SVGIcon name="exclamationMark" />
         <TextB3R color={theme.brandColor}>
           <b>구독 3회차 N% 할인</b> <br />
           1월 6일 (목) 자동 결제되는 새 구독플랜을 확인해 주세요!
         </TextB3R>
-      </SbsInfoBox>
+      </SubsInfoBox>
     </DashBoardBox>
   );
 };
@@ -66,7 +66,7 @@ const ArrowWrapper = styled.div`
   padding-bottom: 16px;
 `;
 
-const SbsInfoBox = styled.div`
+const SubsInfoBox = styled.div`
   padding-left: 22px;
   position: relative;
   padding-top: 8px;
@@ -79,4 +79,4 @@ const SbsInfoBox = styled.div`
     font-weight: bold;
   }
 `;
-export default SbsDashboard;
+export default SubsDashboard;
