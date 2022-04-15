@@ -218,6 +218,27 @@ export const fixedBottom = css`
   `};
 `;
 
+export const FixedTab = styled.div`
+  position: fixed;
+  width: 100%;
+  left: calc(50%);
+  right: 0;
+  background-color: white;
+  max-width: ${breakpoints.mobile}px;
+  width: 100%;
+  z-index: 99;
+  ${({ theme }) => theme.desktop`
+  margin: 0 auto;
+  left: 0px;
+
+`};
+
+  ${({ theme }) => theme.mobile`
+  margin: 0 auto;
+  left: 0px;
+`};
+`;
+
 export const bottomSheetButton = css`
   z-index: 100;
   position: absolute;
