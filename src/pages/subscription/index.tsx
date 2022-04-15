@@ -1,5 +1,5 @@
-import InfoCard from '@components/Pages/Subscription/InfoCard';
-import MySubsList from '@components/Pages/Subscription/MySubsList';
+import { InfoCard } from '@components/Pages/Subscription';
+import { MySubsList } from '@components/Pages/Subscription';
 import { TextB2R, TextH3B, TextH6B } from '@components/Shared/Text';
 import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
@@ -33,7 +33,7 @@ const SubscriptiopPage = () => {
       <InfoCard subsList={subsList} />
       {subsList && <MySubsList />}
 
-      <SubsListBox>
+      <SubsListContainer>
         <TitleBox>
           <div className="row">
             <TextH3B>프코스팟 정기구독</TextH3B>
@@ -44,8 +44,8 @@ const SubscriptiopPage = () => {
           <TextB2R color={theme.greyScale65}>매주 무료배송으로 스팟에서 픽업해보세요</TextB2R>
         </TitleBox>
         <ListBox />
-      </SubsListBox>
-      <SubsListBox>
+      </SubsListContainer>
+      <SubsListContainer>
         <TitleBox>
           <div className="row">
             <TextH3B>새벽/택배 정기구독</TextH3B>
@@ -56,7 +56,7 @@ const SubscriptiopPage = () => {
           <TextB2R color={theme.greyScale65}>매주 무료배송으로 스팟에서 픽업해보세요</TextB2R>
         </TitleBox>
         <ListBox />
-      </SubsListBox>
+      </SubsListContainer>
       <Banner>정기구독 안내 배너</Banner>
     </Container>
   );
@@ -65,7 +65,7 @@ const SubscriptiopPage = () => {
 const Container = styled.div`
   padding: 0 0 68px;
 `;
-const SubsListBox = styled.article`
+const SubsListContainer = styled.article`
   padding-bottom: 44px;
 `;
 const TitleBox = styled.div`
