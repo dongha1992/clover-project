@@ -16,6 +16,7 @@ import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { SET_ALERT } from '@store/alert';
+import { spotSelector } from '@store/spot';
 
 interface IProps {
   item: ISpotsDetail | any;
@@ -29,12 +30,13 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
+  const { spotPickupId } = useSelector(spotSelector);
 
   const userLocationLen = !!userLocation.emdNm?.length;
   const recentPickupTime = `${item.spotPickup?.spot.lunchDeliveryStartTime}-${item.spotPickup?.spot.lunchDeliveryEndTime} / ${item.spotPickup?.spot.dinnerDeliveryStartTime}-${item.spotPickup?.spot.dinnerDeliveryEndTime}`;
 
   const typeTag = (): string => {
-    switch (item.spotPickup.spot.type) {
+    switch (item?.spotPickup.type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
@@ -56,7 +58,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
       main: false,
       availableTime: recentPickupTime,
       spaceType: item.spotPickup.spot.type,
-      spotPickupId: item.spotPickup?.id,
+      spotPickupId: spotPickupId,
     };
 
     const goToCart = () =>{
