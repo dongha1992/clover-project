@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
 import router from 'next/router';
+import { SET_ORDER } from '@store/order';
 
 const SbsRegisterPage = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,37 @@ const SbsRegisterPage = () => {
   };
 
   const onSubscribe = () => {
+    // TODO(young) : 임시
+    const reqBody = {
+      destinationId: 244,
+      delivery: 'PARCEL',
+      deliveryDetail: '',
+      isSubOrderDelivery: false,
+      orderDeliveries: [
+        {
+          deliveryDate: '2022-04-16',
+          orderMenus: [
+            {
+              menuDetailId: 72,
+              menuQuantity: 1,
+            },
+            {
+              menuDetailId: 511,
+              menuQuantity: 1,
+            },
+          ],
+          orderOptions: [
+            {
+              optionId: 1,
+              optionQuantity: 1,
+            },
+          ],
+        },
+      ],
+      type: 'GENERAL',
+    };
+
+    dispatch(SET_ORDER(reqBody));
     router.push('/order');
   };
 
