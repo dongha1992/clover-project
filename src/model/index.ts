@@ -333,13 +333,13 @@ export interface IDestinationsResponse {
   name?: string;
   receiverTel?: string;
   receiverName?: string;
-  location: ILocation;
+  location?: ILocation;
   main?: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
   spaceType?: string;
   availableTime?: string;
-  spotPickupId?: number;
+  spotPickupId?: number | null;
 }
 
 export interface IGetDestinationsResponse {

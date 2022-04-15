@@ -21,6 +21,7 @@ import {
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { useOnLike } from 'src/query';
+import { spotSelector } from '@store/spot';
 
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
@@ -38,6 +39,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { userLocation } = useSelector(destinationForm);
+  const { spotPickupId } = useSelector(spotSelector);
   const { showToast, hideToast } = useToast();
   const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
@@ -56,9 +58,6 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     router.push(`/spot/detail/${id}`);
   };
 
-
-
-
   const orderHandler = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {
@@ -72,7 +71,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       main: false,
       availableTime: pickUpTime,
       spaceType: list.type,
-      spotPickupId: list.pickups[0].id,
+      spotPickupId: spotPickupId,
     };  
 
     const goToCart = () =>{
@@ -266,7 +265,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
             <LocationInfoWrapper type="trial">
               <FlexCol>
                 <TextH5B margin='0 0 4px 0'>{list.title}</TextH5B>
-                <TextB3R margin='0 0 4px 0'>{list.location.address}</TextB3R>
+                <TextB3R margin='0 0 4px 0'>{list.address}</TextB3R>
                 <TextH6B margin='0 0 8px 0' color={theme.greyScale65}>{`${list.distance}m`}</TextH6B>
                 <FlexRow margin='0 0 16px 0'>
                   <SVGIcon name="people" />
