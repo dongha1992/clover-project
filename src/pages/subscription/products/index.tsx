@@ -18,7 +18,7 @@ const MENU = [
   },
 ];
 
-const SbsProductPage = () => {
+const SubsProductPage = () => {
   const router = useRouter();
 
   const [isSticky, setIsStikcy] = useState<boolean>(false);
@@ -47,4 +47,4 @@ const TabContent = styled.div`
   padding: 26px 24px;
 `;
 
-export default SbsProductPage;
+export default SubsProductPage;

@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs/promises';
 
-function buildSbsDate() {
-  return path.join(process.cwd(), 'data', `sbsDates.json`);
+function buildSubsDate() {
+  return path.join(process.cwd(), 'data', `subsDates.json`);
 }
 async function extractData(filePath: any) {
   const fileData: any = await fs.readFile(filePath);
@@ -11,7 +11,7 @@ async function extractData(filePath: any) {
 }
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
-    const filePath = buildSbsDate();
+    const filePath = buildSubsDate();
     const data = await extractData(filePath);
     res.status(200).json(data);
     return;

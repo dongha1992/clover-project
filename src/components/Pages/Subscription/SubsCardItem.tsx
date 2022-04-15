@@ -3,7 +3,7 @@ import { theme } from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import styled from 'styled-components';
 
-const SbsCardItem = () => {
+const SubsCardItem = () => {
   return (
     <CardBox>
       <Content>
@@ -78,4 +78,4 @@ export const Label = styled.span`
   }
 `;
 
-export default SbsCardItem;
+export default SubsCardItem;
