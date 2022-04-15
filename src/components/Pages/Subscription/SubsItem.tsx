@@ -9,14 +9,15 @@ import styled from 'styled-components';
 interface IProps {
   item: any;
   height?: string;
+  width?: string;
 }
-const SubsItem = ({ item, height }: IProps) => {
+const SubsItem = ({ item, height, width }: IProps) => {
   const goToDetail = () => {
     router.push(`/subscription/products/135`);
   };
 
   return (
-    <ItemBox onClick={goToDetail}>
+    <ItemBox onClick={goToDetail} width={width}>
       <ImageWrapper height={height}>
         <Image
           src="https://data.0app0.com/diet/shop/goods/20200221/20200221114721_3233114066_2.jpg"
@@ -51,8 +52,8 @@ const SubsItem = ({ item, height }: IProps) => {
     </ItemBox>
   );
 };
-const ItemBox = styled.div`
-  width: 100%;
+const ItemBox = styled.div<{ width: string | undefined }>`
+  width: ${(props) => (props.width ? props.width : '100%')};
   margin-bottom: 24px;
   cursor: pointer;
   &:last-child {
