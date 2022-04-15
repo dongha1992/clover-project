@@ -330,11 +330,11 @@ export interface IDestinationsResponse {
   delivery?: TDeliveryType | string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  name: string;
+  name?: string;
   receiverTel?: string;
   receiverName?: string;
   location: ILocation;
-  main: boolean;
+  main?: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
   spaceType?: string;
@@ -416,6 +416,7 @@ export interface ISpots {
 }
 
 export interface ISpotsDetail {
+  submit: any;
   coordinate: {
     lat: number;
     lon: number;
@@ -1235,7 +1236,7 @@ export interface IOrderDeliveriesInOrderPreviewRequest {
 export interface IOrderPreviewRequest {
   delivery: string;
   deliveryDetail?: string | null;
-  destinationId: number;
+  destinationId: number | undefined;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
   type: string;
@@ -1518,17 +1519,29 @@ declare global {
 
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
-export interface IGetCart {
-  calorie: number;
-  discountPrice: number;
-  isSold: boolean;
+
+export interface IMenuDetailsInCart {
   menuDetailId: number;
-  menuQuantity: number;
   name: string;
   price: number;
+  menuQuantity: number;
+  calorie: number;
   protein: number;
-  size: TCartMenuSize;
+  isSold: boolean;
+  main: boolean;
   status: TCartMenuStatus;
+}
+
+export interface IGetCart {
+  menuId: number;
+  menuName: string;
+  image: {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
+  };
+  menuDetails: IMenuDetailsInCart[];
 }
 
 export interface IGetCartResponse {
@@ -1564,4 +1577,37 @@ export interface ICoupon {
   usedValue?: number;
   menuIds?: number[];
   menus?: IMenuInCoupon[];
+}
+
+/* POINT */
+export interface IPoint {
+  availablePoint: number;
+  expirePoint: number;
+}
+export interface IPointResponse {
+  code: number;
+  message: string;
+  data: IPoint;
+}
+export interface IPointHistories {
+  content: string;
+  createdAt: string;
+  expiredDate: string;
+  id: number;
+  type: TPointHistoryType;
+  value: number;
+}
+
+export interface IPointHistoriesResponse {
+  code: number;
+  message: string;
+  data: { pointHistories: IPointHistories[]; pagination: {} };
+}
+
+type TPointHistoryType = 'EXPIRATION' | 'SAVE' | 'USE' | string;
+
+export interface IPointHistoriesRequest {
+  page: number;
+  size: number;
+  types: TPointHistoryType;
 }

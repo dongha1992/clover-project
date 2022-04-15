@@ -12,7 +12,7 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_USER_DESTINATION_STATUS } from '@store/destination';
+import { SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import { mypageSelector } from '@store/mypage';
@@ -71,7 +71,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  console.log(orderDetail, 'ORDER DETAIL');
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
   const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
@@ -213,7 +212,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
                 ),
               })
             );
-            dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+            dispatch(SET_USER_DELIVERY_TYPE(delivery.toLocaleLowerCase()));
           },
           closeBtnText: '취소',
         })
@@ -232,7 +231,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           ),
         })
       );
-      dispatch(SET_USER_DESTINATION_STATUS(delivery.toLocaleLowerCase()));
+      dispatch(SET_USER_DELIVERY_TYPE(delivery.toLocaleLowerCase()));
     }
   };
 

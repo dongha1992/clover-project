@@ -11,7 +11,7 @@ import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
-import { destinationForm, SET_USER_DESTINATION_STATUS, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
@@ -61,7 +61,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
 
     const goToCart = () =>{
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-      dispatch(SET_USER_DESTINATION_STATUS('spot'));
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push('/cart');
@@ -69,21 +69,21 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
 
     const goToDeliveryInfo = () => {
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
-      dispatch(SET_USER_DESTINATION_STATUS('spot'));
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id } });
     };
 
     const goToSelectMenu = () => {
       // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-      dispatch(SET_USER_DESTINATION_STATUS('spot'));
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));  
       router.push('/search');
     };
 
     const handleSbsDeliveryInfo = () => {
-      dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
       router.push({
         pathname: '/cart/delivery-info',
         query: { destinationId: item?.id, isSubscription, deliveryInfo },
@@ -92,7 +92,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
 
     const handleSbsDeliveryInfoWithSpot = () => {
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      dispatch(SET_USER_DESTINATION_STATUS(deliveryInfo));
+      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
       router.push({
         pathname: '/cart/delivery-info',
         query: { destinationId: item?.id, isSubscription, deliveryInfo },
