@@ -2,7 +2,7 @@ import { TextH3B, TextH6B } from '@components/Shared/Text';
 import { ScrollHorizonList, theme } from '@styles/theme';
 import { useState } from 'react';
 import styled from 'styled-components';
-import SubsCardItem from './SubsCardItem';
+import { SubsCardItem } from '@components/Pages/Subscription';
 
 const MySubsList = () => {
   // TODO : 구독 리스트 api 추후 리액트 쿼리로 변경

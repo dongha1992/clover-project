@@ -39,9 +39,7 @@ import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
-import SubsOrderItem from '@components/Pages/Subscription/payment/SubsOrderItem';
-import SubsOrderList from '@components/Pages/Subscription/payment/SubsOrderList';
-import SubsPaymentWay from '@components/Pages/Subscription/payment/SubsPaymentWay';
+import { SubsOrderItem, SubsOrderList, SubsPaymentWay } from '@components/Pages/Subscription/payment';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */

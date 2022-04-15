@@ -1,7 +1,7 @@
 import { TextB2R, TextB3R } from '@components/Shared/Text';
 import { FlexRow, FlexRowStart, theme } from '@styles/theme';
 import styled from 'styled-components';
-import { Label } from '../../SubsCardItem';
+import { Label } from '../SubsCardItem';
 
 const SubsOrderItem = () => {
   return (

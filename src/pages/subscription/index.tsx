@@ -1,8 +1,8 @@
-import InfoCard from '@components/Pages/Subscription/InfoCard';
-import MySubsList from '@components/Pages/Subscription/MySubsList';
+import { InfoCard, SubsItem } from '@components/Pages/Subscription';
+import { MySubsList } from '@components/Pages/Subscription';
 import { TextB2R, TextH3B, TextH6B } from '@components/Shared/Text';
 import { userForm } from '@store/user';
-import { theme } from '@styles/theme';
+import { ScrollHorizonList, theme } from '@styles/theme';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import router from 'next/router';
@@ -33,7 +33,7 @@ const SubscriptiopPage = () => {
       <InfoCard subsList={subsList} />
       {subsList && <MySubsList />}
 
-      <SubsListBox>
+      <SubsListContainer>
         <TitleBox>
           <div className="row">
             <TextH3B>프코스팟 정기구독</TextH3B>
@@ -43,9 +43,17 @@ const SubscriptiopPage = () => {
           </div>
           <TextB2R color={theme.greyScale65}>매주 무료배송으로 스팟에서 픽업해보세요</TextB2R>
         </TitleBox>
-        <ListBox />
-      </SubsListBox>
-      <SubsListBox>
+        <ListBox>
+          <ScrollHorizonList>
+            <SubsList>
+              {[1, 2, 3].map((item, index) => (
+                <SubsItem item={item} key={index} height="168px" width="298px" />
+              ))}
+            </SubsList>
+          </ScrollHorizonList>
+        </ListBox>
+      </SubsListContainer>
+      <SubsListContainer>
         <TitleBox>
           <div className="row">
             <TextH3B>새벽/택배 정기구독</TextH3B>
@@ -55,8 +63,16 @@ const SubscriptiopPage = () => {
           </div>
           <TextB2R color={theme.greyScale65}>매주 무료배송으로 스팟에서 픽업해보세요</TextB2R>
         </TitleBox>
-        <ListBox />
-      </SubsListBox>
+        <ListBox>
+          <ScrollHorizonList>
+            <SubsList>
+              {[1, 2, 3].map((item, index) => (
+                <SubsItem item={item} key={index} height="168px" width="298px" />
+              ))}
+            </SubsList>
+          </ScrollHorizonList>
+        </ListBox>
+      </SubsListContainer>
       <Banner>정기구독 안내 배너</Banner>
     </Container>
   );
@@ -65,9 +81,10 @@ const SubscriptiopPage = () => {
 const Container = styled.div`
   padding: 0 0 68px;
 `;
-const SubsListBox = styled.article`
+const SubsListContainer = styled.article`
   padding-bottom: 44px;
 `;
+
 const TitleBox = styled.div`
   padding: 0 24px 24px;
   .row {
@@ -78,9 +95,17 @@ const TitleBox = styled.div`
   }
 `;
 const ListBox = styled.div`
-  width: 100%;
-  height: 250px;
-  background-color: #f2f2f2;
+  padding-left: 24px;
+`;
+const SubsList = styled.div`
+  display: flex;
+  > div {
+    margin-right: 16px;
+    margin-bottom: 0;
+  }
+  > div:last-of-type {
+    margin-right: 0;
+  }
 `;
 const Banner = styled.div`
   width: 100%;
