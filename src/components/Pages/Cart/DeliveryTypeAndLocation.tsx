@@ -11,7 +11,7 @@ import { IGetOrderList } from '@model/index';
 interface IProps {
   goToDeliveryInfo: () => void;
   deliveryType?: string;
-  deliveryDestination?: ILocation | null;
+  deliveryDestination?: IDestinationsResponse | null;
 }
 
 const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDestination }: IProps) => {
@@ -19,7 +19,13 @@ const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDesti
     <Container onClick={goToDeliveryInfo}>
       <Left>
         <TextH4B>{deliveryType ? DELIVERY_TYPE_MAP[deliveryType.toUpperCase()] : '배송방법과'}</TextH4B>
-        <TextH4B>{deliveryDestination ? deliveryDestination?.dong : '배송장소를 설정해주세요'}</TextH4B>
+        {
+          deliveryType === 'spot' ? (
+            <TextH4B>{deliveryDestination ? deliveryDestination?.name : '배송장소를 설정해주세요'}</TextH4B>
+          ) : (
+            <TextH4B>{deliveryDestination ? deliveryDestination?.location.dong : '배송장소를 설정해주세요'}</TextH4B>
+          )
+        }
       </Left>
       <Right>
         <SVGIcon name="arrowRight" />
