@@ -99,7 +99,7 @@ const SubsSetInfoPage = () => {
           <TextH4B>{ment[deliveryInfo]}</TextH4B>
           <TextH4B>
             {!isNil(userDestination)
-              ? userDestination?.location.dong
+              ? userDestination?.location?.dong
               : (deliveryInfo === 'spot' && '픽업장소를 설정해주세요') ||
                 (deliveryInfo === 'parcel' && '배송지를 설정해주세요')}
           </TextH4B>

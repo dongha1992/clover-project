@@ -301,7 +301,14 @@ const DeliverInfoPage = () => {
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
     if (userDeliveryType) {
-      setUserSelectDeliveryType(userDeliveryType);
+      console.log('userDeliveryType이 있음');
+      if (!isSubscription) {
+        setUserSelectDeliveryType(userDeliveryType);
+      } else {
+        // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
+        deliveryInfo === 'spot' && setUserSelectDeliveryType('spot');
+        deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
+      }
     }
   };
 
@@ -352,8 +359,15 @@ const DeliverInfoPage = () => {
       setIsMaindestination(false);
       // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery) {
-      setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
-      setIsMaindestination(true);
+      if (!isSubscription) {
+        setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
+        setIsMaindestination(true);
+      } else {
+        // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
+        deliveryInfo === 'spot' && setUserSelectDeliveryType('spot');
+        deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
+        setIsMaindestination(true);
+      }
     }
   }, [userTempDestination, recentOrderDelivery]);
 
@@ -372,13 +386,13 @@ const DeliverInfoPage = () => {
     checkTooltipMsgByDeliveryType();
   }, []);
 
-  useEffect(() => {
-    // 구독하기로 들어왔을 떄 스팟 정기구독이면 배송방법 스팟배송체크 / 새벽&택배 정기구독이면 배송방법 새벽배송체크
-    if (isSubscription) {
-      deliveryInfo === 'spot' && setUserSelectDeliveryType('spot');
-      deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
-    }
-  }, [deliveryInfo, isSubscription]);
+  // useEffect(() => {
+  //   // 구독하기로 들어왔을 떄 스팟 정기구독이면 배송방법 스팟배송체크 / 새벽&택배 정기구독이면 배송방법 새벽배송체크
+  //   if (isSubscription) {
+  //     deliveryInfo === 'spot' && setUserSelectDeliveryType('spot');
+  //     deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
+  //   }
+  // }, [deliveryInfo, isSubscription]);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
 
