@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
@@ -11,9 +11,46 @@ import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { postPromotionCodeApi } from '@api/promotion';
+import { SET_ALERT } from '@store/alert';
 
 const WelcomeSheet = () => {
   const dispatch = useDispatch();
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  const { mutateAsync: mutatePostPromotionCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const reqBody = {
+          code: codeRef?.current?.value,
+          reward: 'POINT',
+        };
+
+        const { data } = await postPromotionCodeApi(reqBody);
+
+        let alertMessage = '';
+        if (data.code === 2002) {
+          alertMessage = '이미 등록한 프로모션 코드입니다.';
+        } else if (data.code === 1105) {
+          alertMessage = '존재하지 않는 프로모션 코드입니다.';
+        } else {
+          alertMessage = '프로모션 코드가 등록되었습니다.';
+        }
+
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
+      }
+    },
+    {
+      onSuccess: async (data) => {},
+      onError: async (data) => {},
+    }
+  );
 
   return (
     <Container>
@@ -53,8 +90,8 @@ const WelcomeSheet = () => {
           <TextB2R>(가입 이후에도 마이페이지{'>'}쿠폰조회 에서 등록 가능)</TextB2R>
           <FlexCol padding="24px 0 0 0">
             <FlexRow>
-              <TextInput margin="0 8px 0 0" />
-              <Button width="30%" height="48px">
+              <TextInput margin="0 8px 0 0" ref={codeRef} />
+              <Button width="30%" height="48px" onClick={() => mutatePostPromotionCode()}>
                 등록하기
               </Button>
             </FlexRow>
