@@ -24,7 +24,7 @@ interface IProps {
 const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
@@ -80,10 +80,10 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
           if (isSubscription) {
-            dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+            dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
             router.push({
               pathname: '/cart/delivery-info',
-              query: { destinationId: item?.id, isSubscription, deliveryInfo },
+              query: { destinationId: item?.id, isSubscription, subsDeliveryType },
             });
           } else {
             // 장바구니 o , 배송 정보에서 넘어온 경우
@@ -103,10 +103,10 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
         if (isSubscription) {
           // 구독에서 넘어옴
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+          dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
           router.push({
             pathname: '/cart/delivery-info',
-            query: { destinationId: item?.id, isSubscription, deliveryInfo },
+            query: { destinationId: item?.id, isSubscription, subsDeliveryType },
           });    
         } else {
           // 로그인o and 장바구니 x, 메뉴 검색으로 이동

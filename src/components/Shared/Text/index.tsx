@@ -59,8 +59,7 @@ const Container = styled.div<IProps>`
   height: ${(props) => props.height && props.height};
   margin: ${(props) => props.margin && props.margin};
   padding: ${(props) => props.padding && props.padding};
-  background-color: ${(props) =>
-    props.backgroundColor && props.backgroundColor};
+  background-color: ${(props) => props.backgroundColor && props.backgroundColor};
   color: ${(props) => props.color && props.color};
   text-decoration: ${(props) => props.textDecoration && props.textDecoration};
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
@@ -143,17 +142,17 @@ export const TextH7B = styled(Text)`
   line-height: 16px;
 `;
 
-export const TextB1R = styled(Text)`
-  font-size: 16px;
-  letter-spacing: -0.4px;
-  font-weight: normal;
-  line-height: 24px;
-`;
-
 export const TextB1B = styled(Text)`
   font-size: 16px;
   letter-spacing: -0.4px;
   font-weight: bold;
+  line-height: 24px;
+`;
+
+export const TextB1R = styled(Text)`
+  font-size: 16px;
+  letter-spacing: -0.4px;
+  font-weight: normal;
   line-height: 24px;
 `;
 
@@ -163,6 +162,14 @@ export const TextB2R = styled(Text)`
   font-weight: normal;
   line-height: 22px;
 `;
+
+export const TextB2R18 = styled(Text)`
+  font-size: 14px;
+  letter-spacing: -0.4px;
+  font-weight: normal;
+  line-height: 18px;
+`;
+
 export const TextB3R = styled(Text)`
   font-size: 12px;
   letter-spacing: -0.4px;
