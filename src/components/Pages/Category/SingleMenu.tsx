@@ -27,7 +27,6 @@ const SingleMenu = ({ title }: any) => {
     }
   );
 
-  console.log(data, '@@');
   if (data.length < 0) {
     return <div>로딩중</div>;
   }

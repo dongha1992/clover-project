@@ -167,7 +167,7 @@ const CartPage = () => {
             ...destinationObj,
             delivery: userDeliveryType,
             destinationId,
-            location: userDestination.location,
+            location: userDestination.location!,
           });
           SET_USER_DELIVERY_TYPE(userDeliveryType);
         } else if (data) {

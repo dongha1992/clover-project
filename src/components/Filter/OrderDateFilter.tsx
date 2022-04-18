@@ -10,14 +10,14 @@ import { SET_ORDER_LIST_FILTER } from '@store/common';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
-  handler: React.Dispatch<React.SetStateAction<number>>;
+  handler: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const OrderDateFilter = ({ handler }: IProps) => {
-  const [selectedRadioValue, setSelectedRadioValue] = useState<any>(90);
+  const [selectedRadioValue, setSelectedRadioValue] = useState<string>('90');
   const dispatch = useDispatch();
 
-  const radioButtonHandler = (value: any) => {
+  const radioButtonHandler = (value: string) => {
     setSelectedRadioValue(value);
   };
 

@@ -69,7 +69,11 @@ const MenuFilter = () => {
         <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
           정렬
         </TextH5B>
-        <OrderFilter data={RADIO_CHECKBOX_MENU} changeHandler={radioButtonHandler} selectedRadioId={selectedRadioId} />
+        <OrderFilter
+          data={RADIO_CHECKBOX_MENU}
+          changeHandler={radioButtonHandler}
+          selectedRadioValue={selectedRadioId}
+        />
       </Wrapper>
       <ButtonContainer onClick={() => submitHandler()}>
         <Button height="100%" width="100%" borderRadius="0">

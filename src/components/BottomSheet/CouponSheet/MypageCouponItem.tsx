@@ -21,7 +21,6 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
   const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon.expiredDate));
   const isRateDiscount = coupon.criteria === 'RATIO';
 
-  console.log(coupon, '2');
   const dDay = now.diff(dayjs(coupon.expiredDate), 'day');
   return (
     <Container isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>

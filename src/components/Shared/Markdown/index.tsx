@@ -11,7 +11,6 @@ interface IProps {
 /* TODO: CSS 현재 이용약관 기준이라 확장성 고려 나중에 수정해야함 */
 
 const MarkdownRender = ({ content }: IProps) => {
-  console.log(content);
   if (!content) {
     return <div>로딩</div>;
   }

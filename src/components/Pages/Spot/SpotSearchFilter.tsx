@@ -19,7 +19,7 @@ const SpotSearchFilter = () => {
   const { spotsSearchResultFiltered } = useSelector(spotSelector);
 
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
-  const [selectedRadioId, setSelectedRadioId] = useState<string>();
+  const [selectedRadioId, setSelectedRadioId] = useState<string>('');
   const [publicToggle, setPublicToggle] = useState(false);
   const [privateToggle, setPrivateToggle] = useState(false);
 
@@ -87,7 +87,11 @@ const SpotSearchFilter = () => {
         <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>
           정렬
         </TextH4B>
-        <OrderFilter data={RADIO_CHECKBOX_SPOT} changeHandler={radioButtonHandler} selectedRadioId={selectedRadioId} />
+        <OrderFilter
+          data={RADIO_CHECKBOX_SPOT}
+          changeHandler={radioButtonHandler}
+          selectedRadioValue={selectedRadioId}
+        />
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="0 24px 16px 0">
           <FlexCol>
