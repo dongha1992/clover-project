@@ -45,7 +45,6 @@ const DeliverInfoPage = () => {
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
   const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
-  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const { destinationDeliveryType, userTempDestination, locationStatus, userDeliveryType, availableDestination } =
     useSelector(destinationForm);
@@ -81,10 +80,6 @@ const DeliverInfoPage = () => {
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
-
-  const noticeHandler = () => {
-    setNoticeChecked(!noticeChecked);
-  };
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
@@ -151,9 +146,6 @@ const DeliverInfoPage = () => {
     const isSpot = userSelectDeliveryType === 'spot';
 
     if (!tempDestination) {
-      return;
-    } else if (userSelectDeliveryType === 'spot' && tempDestination?.spotPickup?.type === 'PRIVATE' && !noticeChecked) {
-      // 스팟 배송이고, 프라이빗일 경우 공지 체크 해야만 넘어감
       return;
     }
 
@@ -226,7 +218,7 @@ const DeliverInfoPage = () => {
   const placeInfoRender = () => {
     switch (userSelectDeliveryType) {
       case 'spot': {
-        return <PickupPlaceBox place={tempDestination} checkTermHandler={noticeHandler} isSelected={noticeChecked} />;
+        return <PickupPlaceBox place={tempDestination} />;
       }
 
       default: {
@@ -355,16 +347,6 @@ const DeliverInfoPage = () => {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
-    }
-  };
-
-  const settingHandler = () => {
-    if (userDeliveryType === 'spot') {
-      if (tempDestination?.spotPickup?.type === 'PRIVATE') {
-        return !noticeChecked;
-      }
-    } else {
-      return !tempDestination;
     }
   };
 
@@ -526,7 +508,7 @@ const DeliverInfoPage = () => {
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0" disabled={settingHandler()}>
+        <Button borderRadius="0" disabled={!tempDestination}>
           설정하기
         </Button>
       </SettingBtnWrapper>

@@ -24,7 +24,7 @@ import { BASE_URL } from '@constants/mock';
 import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
 
 import axios from 'axios';
-import { SBS_INIT } from '@store/subscription';
+import { SUBS_INIT } from '@store/subscription';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -36,7 +36,7 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const SbsProductIdPage = ({ menuId = 135 }: any) => {
+const SubsProductIdPage = ({ menuId = 135 }: any) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,7 @@ const SbsProductIdPage = ({ menuId = 135 }: any) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(SBS_INIT());
+    dispatch(SUBS_INIT());
   }, []);
 
   const {
@@ -368,4 +368,4 @@ const DailySaleNumber = styled.div`
   top: 0;
 `;
 
-export default React.memo(SbsProductIdPage);
+export default React.memo(SubsProductIdPage);

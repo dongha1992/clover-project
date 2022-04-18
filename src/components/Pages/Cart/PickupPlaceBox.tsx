@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH6B, TextB3R, TextH4B } from '@components/Shared/Text';
-import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
-import Checkbox from '@components/Shared/Checkbox';
+import { FlexCol, theme } from '@styles/theme';
 import { Tag } from '@components/Shared/Tag';
 
-const PickupPlaceBox = ({ place, checkTermHandler, isSelected }: any) => {
+const PickupPlaceBox = ({ place }: any) => {
   const availableTime =
     place.availableTime ||
     `${place.spotPickup?.spot?.lunchDeliveryStartTime}-${place.spotPickup?.spot?.lunchDeliveryEndTime} / ${place.spotPickup?.spot?.dinnerDeliveryStartTime} - ${place.spotPickup?.spot?.dinnerDeliveryEndTime}`;
@@ -43,15 +42,6 @@ const PickupPlaceBox = ({ place, checkTermHandler, isSelected }: any) => {
           <TextB3R color={theme.greyScale65}>{availableTime}</TextB3R>
         </PlaceInfo>
       </PickPlaceInfo>
-      {place.spaceType === 'PRIVATE' && (
-        <CheckTerm>
-          <Checkbox isSelected={isSelected} onChange={checkTermHandler} />
-          <span className="h5B">
-            <span className="brandColor">임직원 전용</span>
-            스팟으로, 외부인은 이용이 불가합니다.
-          </span>
-        </CheckTerm>
-      )}
     </FlexCol>
   );
 };

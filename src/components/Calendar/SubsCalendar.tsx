@@ -7,7 +7,7 @@ import Calendar from 'react-calendar';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 import 'dayjs/locale/ko';
-import { SET_SBS_DELIVERY_EXPECTED_DATE, SET_SBS_ORDER_MENUS, subscriptionForm } from '@store/subscription';
+import { SET_SUBS_DELIVERY_EXPECTED_DATE, SET_SUBS_ORDER_MENUS, subscriptionForm } from '@store/subscription';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 dayjs.locale('ko');
@@ -20,11 +20,11 @@ interface IProps {
   deliveryChange?: string[];
   sumDelivery?: string[];
   sumDeliveryComplete?: string[];
-  sbsDates: string[];
+  subsDates: string[];
   setPickupDay?: (value: any[]) => void;
 }
 
-const SbsCalendar = ({
+const SubsCalendar = ({
   disabledDate = [], // 구독캘린더 inactive 날짜리스트
   deliveryComplete = [], // 배송완료 or 주문취소
   deliveryExpectedDate = [], // 배송예정일
@@ -33,26 +33,26 @@ const SbsCalendar = ({
   deliveryChange = [], // 배송일변경
   sumDelivery = [], // 배송예정일(합배송 포함)
   sumDeliveryComplete = [], // 배송완료(합배송 포함)
-  sbsDates, // 초기 구독캘린더 active 날짜리스트
+  subsDates, // 초기 구독캘린더 active 날짜리스트
   setPickupDay,
 }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { sbsDeliveryExpectedDate } = useSelector(subscriptionForm);
+  const { subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const [value, setValue] = useState<Date>();
-  const [maxDate, setMaxDate] = useState(new Date(sbsDates[sbsDates.length - 1]));
+  const [maxDate, setMaxDate] = useState(new Date(subsDates[subsDates.length - 1]));
 
   useEffect(() => {
-    if (sbsDeliveryExpectedDate.length !== 0) {
-      setValue(new Date(sbsDeliveryExpectedDate[0]));
+    if (subsDeliveryExpectedDate.length !== 0) {
+      setValue(new Date(subsDeliveryExpectedDate[0]));
     }
-  }, [sbsDeliveryExpectedDate]);
+  }, [subsDeliveryExpectedDate]);
 
   useEffect(() => {
-    if (sbsDeliveryExpectedDate.length !== 0) {
-      setMaxDate(new Date(sbsDeliveryExpectedDate[sbsDeliveryExpectedDate.length - 1]));
+    if (subsDeliveryExpectedDate.length !== 0) {
+      setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1]));
     }
-  }, [sbsDeliveryExpectedDate]);
+  }, [subsDeliveryExpectedDate]);
 
   const today = dayjs().format('YYYY-MM-DD');
 
@@ -109,7 +109,7 @@ const SbsCalendar = ({
   );
 
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
-    if (!sbsDates.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+    if (!subsDates.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
       return true;
     }
     if (date.getDay() === 0) {
@@ -125,7 +125,7 @@ const SbsCalendar = ({
 
   const { mutate: mutateSelectDate } = useMutation(
     async (id: string) => {
-      const { data } = await axios.get(`http://localhost:9009/api/sbsList/${id}`);
+      const { data } = await axios.get(`http://localhost:9009/api/subsList/${id}`);
 
       return data.data;
     },
@@ -144,7 +144,7 @@ const SbsCalendar = ({
 
         // 픽업 요일
         setPickupDay && setPickupDay(Array.from(pickupDayObj));
-        dispatch(SET_SBS_ORDER_MENUS(data));
+        dispatch(SET_SUBS_ORDER_MENUS(data));
       },
       onSettled: () => {},
       onError: () => {
@@ -162,12 +162,12 @@ const SbsCalendar = ({
   };
 
   return (
-    <CalendarBox className="sbsCalendar">
+    <CalendarBox className="subsCalendar">
       <Calendar
         calendarType={'Hebrew'}
         prev2Label={null}
         next2Label={null}
-        minDate={new Date(sbsDates[0])}
+        minDate={new Date(subsDates[0])}
         maxDate={maxDate}
         onChange={onChange}
         value={value}
@@ -183,7 +183,7 @@ const CalendarBox = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px 24px;
 
-  &.sbsCalendar {
+  &.subsCalendar {
     // 캘린더 화살표 <,> + YYYY년 MM월 헤더
     .react-calendar__navigation {
       display: flex;
@@ -405,4 +405,4 @@ const CalendarBox = styled.div`
     }
   }
 `;
-export default SbsCalendar;
+export default SubsCalendar;
