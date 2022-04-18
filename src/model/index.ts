@@ -1057,6 +1057,7 @@ export interface IOrderDetailInOrderDeliveries {
   status: string;
   orderMenus: IOrderMenus[];
   type: string;
+  subOrderDelivery: ISubOrderDelivery;
 }
 
 export interface IEditOrderDestination {
@@ -1203,7 +1204,6 @@ export interface IOrderDetail {
   deliveryFee: number;
   coupon: number;
   createdAt: string;
-  deliveryDate: string;
   deliveryFeeDiscount: number;
   deliveryStatus: TDeliveryStatus;
   image: IGetOrderInImage;
