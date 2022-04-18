@@ -26,7 +26,7 @@ interface IProps {
 const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
@@ -84,20 +84,20 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
       router.push('/search');
     };
 
-    const handleSubsDeliveryInfo = () => {
-      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+    const handleSubsDeliveryType = () => {
+      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, deliveryInfo },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
       });
     };
 
-    const handleSubsDeliveryInfoWithSpot = () => {
+    const handleSubsDeliveryTypeWithSpot = () => {
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, deliveryInfo },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
       });
     };
 
@@ -125,7 +125,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
-                  <PickupSheet pickupInfo={item?.spotPickup} spotType={item?.type} onSubmit={handleSubsDeliveryInfo} />
+                  <PickupSheet pickupInfo={item?.spotPickup} spotType={item?.type} onSubmit={handleSubsDeliveryType} />
                 ),
               })
             );
@@ -157,7 +157,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
                 <PickupSheet
                   pickupInfo={item?.spotPickup}
                   spotType={item?.type}
-                  onSubmit={handleSubsDeliveryInfoWithSpot}
+                  onSubmit={handleSubsDeliveryTypeWithSpot}
                 />
               ),
             })
