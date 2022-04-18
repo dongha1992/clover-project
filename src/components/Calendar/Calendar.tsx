@@ -280,6 +280,7 @@ const Calendar = ({
   RenderCalendar.displayName = 'RenderCalendar';
 
   useEffect(() => {
+    console.log(userDeliveryType, 'userDeliveryType');
     setDeliveryType(userDeliveryType);
   }, [userDeliveryType]);
 
