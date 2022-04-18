@@ -68,7 +68,7 @@ const Header = () => {
         '/mypage/point': '포인트',
         '/mypage/address': '주소 관리',
         '/mypage/address/edit/[id]': '편집',
-        '/mypage/coupon': '포인트',
+        '/mypage/coupon': '쿠폰',
         '/mypage/term': '약관 및 정책',
         '/mypage/term/use': '이용약관',
         '/mypage/term/privacy': '개인정보 처리방침',

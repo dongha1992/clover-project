@@ -8,7 +8,6 @@ interface IProps {
 }
 
 const Badge = ({ message }: IProps) => {
-  console.log(message);
   return (
     <BadgeWrapper message={message}>
       <TextH6B color={theme.white}>{message}</TextH6B>
