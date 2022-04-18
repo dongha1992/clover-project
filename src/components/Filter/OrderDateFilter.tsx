@@ -14,10 +14,10 @@ interface IProps {
 }
 
 const OrderDateFilter = ({ handler }: IProps) => {
-  const [selectedRadioValue, setSelectedRadioValue] = useState(90);
+  const [selectedRadioValue, setSelectedRadioValue] = useState<any>(90);
   const dispatch = useDispatch();
 
-  const radioButtonHandler = (value: number) => {
+  const radioButtonHandler = (value: any) => {
     setSelectedRadioValue(value);
   };
 

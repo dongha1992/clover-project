@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderList } from '@model/index';
+import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderList, ILocation } from '@model/index';
 import { TLocationType } from '@utils/checkDestinationHelper';
 
 interface IAvailableDestination {

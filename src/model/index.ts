@@ -326,17 +326,17 @@ export interface ISpotPickupInDestinaion {
 }
 
 export interface IDestinationsResponse {
-  id: number;
-  delivery: TDeliveryType | string;
+  id?: number;
+  delivery?: TDeliveryType | string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
   name: string;
-  receiverTel: string;
-  receiverName: string;
+  receiverTel?: string;
+  receiverName?: string;
   location: ILocation;
   main: boolean;
   createdAt?: string;
-  spotPickup?: ISpotPickupInDestinaion;
+  spotPickup?: ISpotPickupInDestinaion | any;
   deliveryTime?: string;
 }
 export interface IGetDestinationsResponse {

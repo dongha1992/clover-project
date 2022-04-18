@@ -72,8 +72,6 @@ const PointPage = () => {
     return tabName.replace('/', '').toUpperCase();
   };
 
-  const registerPromotionCodeHandler = (code: string): void => {};
-
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
@@ -95,7 +93,7 @@ const PointPage = () => {
       <Wrapper>
         <FlexRow padding="24px 0 0 0">
           <TextInput placeholder="프로모션 코드를 입력해주세요." ref={codeRef} />
-          <Button width="30%" margin="0 0 0 8px" onClick={registerPromotionCodeHandler}>
+          <Button width="30%" margin="0 0 0 8px">
             등록하기
           </Button>
         </FlexRow>

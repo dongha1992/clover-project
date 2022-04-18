@@ -54,6 +54,7 @@ const SpotsSearchItem = ({ item, onClick, mapList }: IProps): ReactElement => {
   };
 
   const orderHandler = () => {
+    /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
     const destinationInfo = {
       name: item.name,
       location: {
