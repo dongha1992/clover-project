@@ -26,7 +26,7 @@ import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
 import { OrderUserInfo } from '@components/Pages/Mypage/OrderDelivery';
-
+import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 // temp
 
 const disabledDates = [];
@@ -42,7 +42,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const dispatch = useDispatch();
 
   const router = useRouter();
-  const { isSubOrder } = router.query;
+  const { name, url, payAmount } = router.query;
 
   const queryClient = useQueryClient();
 
@@ -70,6 +70,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       },
     }
   );
+  console.log(orderDetail, 'orderDetail');
 
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
 
@@ -83,6 +84,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const isCanceled = orderDetail?.orderDeliveries[0].status === 'CANCELED';
   const isDelivering = orderDetail?.orderDeliveries[0].status === 'DELIVERING';
   const canChangeDelivery = orderDetail?.orderDeliveries[0].status === 'RESERVED';
+  const isSubOrder = orderDetail?.orderDeliveries[0].type === 'SUB';
   const deliveryId = orderDetail?.orderDeliveries[0].id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
@@ -123,7 +125,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           </FlexBetween>
         );
       }
-      case 'PREPARING': {
+      case 'RESERVED': {
         return (
           <>
             <SVGIcon name="delivery" />
@@ -143,7 +145,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
-    if (isSubOrder === 'main') {
+    if (!isSubOrder) {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송정보를 변경하시면 함께배송 주문 배송정보도 함께 변경됩니다. 변경하시겠어요?',
@@ -168,33 +170,35 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     //   return;
     // }
 
-    const deliveryId = orderDetail?.orderDeliveries[0].id!;
+    dispatch(SET_BOTTOM_SHEET({ content: <OrderCancelSheet name={name!} url={url!} payAmount={payAmount!} /> }));
 
-    let alertMessage = '';
+    // const deliveryId = orderDetail?.orderDeliveries[0].id!;
 
-    if (isSubOrder === 'sub') {
-      alertMessage = '함께배송 주문을 취소하시겠습니까?';
-    } else if (isSubOrder === 'main') {
-      alertMessage = '기존 주문을 취소하면 함께배송 주문도 함께 취소됩니다. 주문을 취소하시겠습니까?';
-    } else {
-      alertMessage = '정말 주문을 취소하시겠어요?';
-    }
+    // let alertMessage = '';
 
-    dispatch(
-      SET_ALERT({
-        alertMessage,
-        onSubmit: () => deleteOrderMutation(deliveryId),
-        closeBtnText: '취소',
-      })
-    );
+    // if (isSubOrder) {
+    //   alertMessage = '함께배송 주문은 취소 후 재주문할 수 없어요. 정말 취소하시겠어요?';
+    // } else if (!isSubOrder) {
+    //   alertMessage = '기존 주문을 취소하면 함께배송 주문도 함께 취소됩니다. 주문을 취소하시겠습니까?';
+    // } else {
+    //   alertMessage = '정말 주문을 취소하시겠어요?';
+    // }
+
+    // dispatch(
+    //   SET_ALERT({
+    //     alertMessage,
+    //     onSubmit: () => deleteOrderMutation(deliveryId),
+    //     closeBtnText: '취소',
+    //   })
+    // );
   };
 
   const changeDevlieryDateHandler = () => {
-    if (!canChangeDelivery || isSubOrder === 'sub') {
+    if (!canChangeDelivery || isSubOrder) {
       return;
     }
 
-    if (isSubOrder === 'main') {
+    if (!isSubOrder) {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송일을 변경하시면 함께배송 주문 배송일도 함께 변경됩니다. 변경하시겠어요?',
@@ -282,7 +286,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     <Container>
       <DeliveryStatusWrapper>
         <FlexRow padding="0 0 13px 0">
-          {isSubOrder === 'true' && (
+          {isSubOrder && (
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor} margin="0 4px 0 0px">
               함께배송
             </Tag>
@@ -315,28 +319,17 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       <OrderInfoWrapper>
         <TextH4B>주문자 정보</TextH4B>
         <OrderUserInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} />
-        {isSubOrder === 'true' && <SubOrderInfo isChange />}
-        <ButtonWrapper>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            margin="0 16px 0 0"
-            // disabled={!canChangeDelivery}
-            onClick={cancelOrderHandler}
-          >
-            주문 취소하기
-          </Button>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            border
-            disabled={!canChangeDelivery || isSubOrder === 'sub'}
-            onClick={changeDevlieryDateHandler}
-          >
-            배송일 변경하기
-          </Button>
-        </ButtonWrapper>
+        {isSubOrder && <SubOrderInfo isChange />}
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          margin="24px 0 0 0"
+          // disabled={!canChangeDelivery}
+          onClick={cancelOrderHandler}
+        >
+          주문 취소하기
+        </Button>
       </OrderInfoWrapper>
       <BorderLine height={8} />
       <DevlieryInfoWrapper>
@@ -353,17 +346,28 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
           spotPickupName={spotPickupName}
           status={status}
         />
-        {isSubOrder === 'true' && <SubOrderInfo isDestinationChange />}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          disabled={isCanceled || isSubOrder === 'true'}
-          onClick={changeDeliveryInfoHandler}
-          margin="16px 0 0 0"
-        >
-          배송 정보 변경하기
-        </Button>
+        {isSubOrder && <SubOrderInfo isDestinationChange />}
+        <ButtonWrapper>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            disabled={isCanceled || isSubOrder}
+            onClick={changeDeliveryInfoHandler}
+            margin="0 16px 0 0"
+          >
+            배송 정보 변경하기
+          </Button>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            disabled={!canChangeDelivery || isSubOrder}
+            onClick={changeDevlieryDateHandler}
+          >
+            배송일 변경하기
+          </Button>
+        </ButtonWrapper>
       </DevlieryInfoWrapper>
       <BorderLine height={8} />
       <TotalPriceWrapper>
