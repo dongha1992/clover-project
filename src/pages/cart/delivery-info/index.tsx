@@ -308,6 +308,7 @@ const DeliverInfoPage = () => {
         // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
         subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
         subsDeliveryType === 'parcel' && setUserSelectDeliveryType('parcel');
+        subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
       }
     }
   };
@@ -366,6 +367,7 @@ const DeliverInfoPage = () => {
         // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
         subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
         subsDeliveryType === 'parcel' && setUserSelectDeliveryType('parcel');
+        subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
       }
     }
   }, [userTempDestination, recentOrderDelivery]);
@@ -392,7 +394,7 @@ const DeliverInfoPage = () => {
       <Wrapper>
         <TextH3B padding="24px 0">배송방법</TextH3B>
         <DeliveryMethodWrapper>
-          {subsDeliveryType !== 'parcel' && (
+          {subsDeliveryType === 'spot' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 픽업
