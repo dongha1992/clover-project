@@ -27,10 +27,11 @@ import styled from 'styled-components';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
-const subsDeliveryType: any = 'parcel';
+const subsDeliveryType: any = 'spot';
 const ment: Obj = {
   spot: '스팟배송',
   parcel: '배송방법',
+  morning: '배송방법',
 };
 
 const SubsSetInfoPage = () => {
@@ -101,7 +102,7 @@ const SubsSetInfoPage = () => {
             {!isNil(userDestination)
               ? userDestination?.location?.dong
               : (subsDeliveryType === 'spot' && '픽업장소를 설정해주세요') ||
-                (subsDeliveryType === 'parcel' && '배송지를 설정해주세요')}
+                ((subsDeliveryType === 'parcel' || subsDeliveryType === 'morning') && '배송지를 설정해주세요')}
           </TextH4B>
           <TextB3R color={theme.greyScale65} padding="8px 0 0">
             배송방법이 제한된 상품입니다.
