@@ -340,7 +340,8 @@ const Tag = styled.span`
 const Img = styled.img`
   width: 120px;
   heigth: 120px;
-  border-radius: 10px;
+  border: 1px solid ${theme.greyScale6};
+  border-radius: 8px;
 `;
 
 const LocationInfoWrapper = styled.div<{ type: string }>`
