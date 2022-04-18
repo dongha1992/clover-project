@@ -13,6 +13,8 @@ import { getPointHistoryApi, getPointApi } from '@api/point';
 import { postPromotionCodeApi } from '@api/promotion';
 import { IPointHistories } from '@model/index';
 import getCustomDate from '@utils/getCustomDate';
+import { useDispatch } from 'react-redux';
+import { SET_ALERT } from '@store/alert';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
@@ -25,6 +27,7 @@ const PointPage = () => {
   const codeRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   const { data: pointHistory, isLoading } = useQuery(
     ['getPointHistoryList', selectedTab],
@@ -79,6 +82,22 @@ const PointPage = () => {
           reward: 'POINT',
         };
         const { data } = await postPromotionCodeApi(reqBody);
+
+        let alertMessage = '';
+        if (data.code === 2002) {
+          alertMessage = '이미 등록한 프로모션 코드입니다.';
+        } else if (data.code === 1105) {
+          alertMessage = '존재하지 않는 프로모션 코드입니다.';
+        } else {
+          alertMessage = '프로모션 코드가 등록되었습니다.';
+        }
+
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
       }
     },
     {
@@ -113,7 +132,7 @@ const PointPage = () => {
       <Wrapper>
         <FlexRow padding="24px 0 0 0">
           <TextInput placeholder="프로모션 코드를 입력해주세요." ref={codeRef} />
-          <Button width="30%" margin="0 0 0 8px" onClick={mutatePostPromotionCode}>
+          <Button width="30%" margin="0 0 0 8px" onClick={() => mutatePostPromotionCode()}>
             등록하기
           </Button>
         </FlexRow>

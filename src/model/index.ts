@@ -1560,17 +1560,20 @@ export interface IMenuInCoupon {
   type: string;
 }
 export interface ICoupon {
-  id: number;
-  name: string;
-  canUse: boolean;
-  comment: string;
-  criteria: string;
-  value: number;
-  expiredDate: string;
   createdAt: string;
-  usedValue?: number;
-  menuIds?: number[];
-  menus?: IMenuInCoupon[];
+  criteria: string;
+  descriptions: string[];
+  expiredDate: string;
+  id: number;
+  isApp: false;
+  name: string;
+  value: number;
+}
+
+export interface ICouponResponse {
+  message: string;
+  code: number;
+  data: ICoupon[];
 }
 
 /* POINT */

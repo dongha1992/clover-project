@@ -130,6 +130,7 @@ export const destination = createSlice({
 
     // 유저가 선택한 배송방법
     SET_USER_DELIVERY_TYPE: (state, action: PayloadAction<string>) => {
+      console.log(action.payload, ' action.payload');
       state.userDeliveryType = action.payload;
     },
 

@@ -40,6 +40,7 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 
 const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
+  const [hasRecentOrder, setHasRecentOrder] = useState<boolean>(false);
   const [userSelectDeliveryType, setUserSelectDeliveryType] = useState<string>('');
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
   const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
@@ -69,7 +70,10 @@ const DeliverInfoPage = () => {
       return data.data.orderDeliveries[0];
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        setHasRecentOrder(true);
+      },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -123,11 +127,12 @@ const DeliverInfoPage = () => {
         SET_ALERT({
           alertMessage: '설정하신 주소는 저장되지 않습니다. 배송방법을 변경하시겠어요?',
           onSubmit: () => {
-            setUserSelectDeliveryType(value);
-            setTempDestination(null);
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_USER_DELIVERY_TYPE());
+            setUserSelectDeliveryType(value);
+            setTempDestination(null);
+            setHasRecentOrder(false);
           },
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -369,7 +374,7 @@ const DeliverInfoPage = () => {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
       // 최근 주문 이력이 있는지
-    } else if (!userTempDestination && recentOrderDelivery) {
+    } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
       setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
       setIsMaindestination(true);
     }
@@ -397,6 +402,14 @@ const DeliverInfoPage = () => {
       deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
     }
   }, [deliveryInfo, isSubscription]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_TEMP_DESTINATION());
+      dispatch(INIT_DESTINATION_TYPE());
+      dispatch(INIT_AVAILABLE_DESTINATION());
+    };
+  }, []);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
 
