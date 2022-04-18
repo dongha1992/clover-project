@@ -18,7 +18,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(false);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-  console.log(review, '@@');
+
   return (
     <>
       <Container>

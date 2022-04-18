@@ -30,7 +30,6 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
   const { mutate: changeDeliveryDateMutation } = useMutation(
     async () => {
       const { data } = await editDeliveryDateApi({ deliveryId, selectedDeliveryDay });
-      console.log(data, 'AFTER CHANGE DELIVERY DATE');
     },
     {
       onSuccess: async () => {

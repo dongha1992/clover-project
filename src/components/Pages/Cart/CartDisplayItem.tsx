@@ -14,7 +14,6 @@ interface IProps {
 }
 
 const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
-  console.log(menu, 'menu');
   return (
     <Container>
       <Wrapper>

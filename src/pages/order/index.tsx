@@ -417,7 +417,6 @@ const OrderPage = () => {
 
   useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
-    console.log(previewOrder, 'previewOrder');
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
