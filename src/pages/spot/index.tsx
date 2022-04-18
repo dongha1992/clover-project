@@ -25,6 +25,42 @@ import { userForm } from '@store/user';
 import { spotSelector } from '@store/spot';
 import { destinationForm } from '@store/destination';
 
+const trialRes = [
+  {
+    title: '제이앤케이 (전자조합회관빌...',
+    address: '서울 서초구 방배동 925-22 3층 ...',
+    distance: '125',
+    meter: 'METER',
+    userCount: '56',
+    submit: false,
+  },
+  {
+    title: '노스테라스',
+    address: '서울 서초구 방배동 925-22 3층 ...',
+    distance: '125',
+    meter: 'METER',
+    userCount: '56',
+    submit: true,
+  },
+  {
+    title: '제이앤케이 (전자조합회관빌...',
+    address: '서울 서초구 방배동 925-22 3층 ...',
+    distance: '125',
+    meter: 'METER',
+    userCount: '56',
+    submit: false,
+  },
+  {
+    title: '제이앤케이 (전자조합회관빌...',
+    address: '서울 서초구 방배동 925-22 3층 ...',
+    distance: '125',
+    meter: 'METER',
+    userCount: '56',
+    submit: true,
+  },
+];
+
+
 const FCO_SPOT_BANNER = [
   {
     id: 1,
@@ -71,7 +107,7 @@ const SpotPage = () => {
   // react-query
 
   const { data: stationSpotList, isLoading: isLoadingStation } = useQuery(
-    ['spotList', 'station'],
+    ['spotList', 'STATION'],
     async () => {
       const response = await getStationSpots(params);
       return response.data.data;
@@ -80,7 +116,7 @@ const SpotPage = () => {
   );
 
   const { data: newSpotList, isLoading: isLoadingNew } = useQuery(
-    ['spotList', 'new'],
+    ['spotList', 'NEW'],
     async () => {
       const response = await getNewSpots(params);
       return response.data.data;
@@ -89,7 +125,7 @@ const SpotPage = () => {
   );
 
   const { data: eventSpotList, isLoading: isLoadingEvent } = useQuery(
-    ['spotList', 'event'],
+    ['spotList', 'EVENT'],
     async () => {
       const response = await getSpotEvent(params);
       return response.data.data;
@@ -98,7 +134,7 @@ const SpotPage = () => {
   );
 
   const { data: popularSpotList, isLoading: isLoadingPopular } = useQuery(
-    ['spotList', 'popular'],
+    ['spotList', 'POPULAR'],
     async () => {
       const response = await getSpotPopular(params);
       return response.data.data;
@@ -185,8 +221,6 @@ const SpotPage = () => {
           slidesPerView={'auto'}
           spaceBetween={15}
           speed={500}
-          onSwiper={(swiper) => console.log(swiper)}
-          onSlideChange={() => console.log('slide change')}
         >
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
@@ -263,8 +297,6 @@ const SpotPage = () => {
         slidesPerView={'auto'}
         spaceBetween={15}
         speed={700}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
       >
         {popularSpotList?.spots.map((list, idx) => {
           return (
@@ -281,8 +313,6 @@ const SpotPage = () => {
         slidesPerView={'auto'}
         spaceBetween={15}
         speed={500}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
       >
         {newSpotList?.spots.map((list, idx) => {
           return (
@@ -299,8 +329,6 @@ const SpotPage = () => {
         slidesPerView={'auto'}
         spaceBetween={15}
         speed={500}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
       >
         {stationSpotList?.spots.map((list, idx) => {
           return (
@@ -328,8 +356,6 @@ const SpotPage = () => {
         slidesPerView={'auto'}
         spaceBetween={15}
         speed={500}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
       >
         {eventSpotList?.spots.map((list, idx) => {
           return (
@@ -340,15 +366,30 @@ const SpotPage = () => {
         })}
       </EventSlider>
       {/* 단골가게 스팟 */}
-      <TextH2B padding="10px 24px 0 24px">{spotRegistraions?.data.title}</TextH2B>
+      <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
+      <SpotOpenBannerWrapper>
+        <SpotOpenBanner>스팟 오픈 베너 이미지 제작 예정</SpotOpenBanner>
+      </SpotOpenBannerWrapper>
+      {/* <TextH2B padding="10px 24px 0 24px">{spotRegistraions?.data.title}</TextH2B>
       <TextB2R color={theme.greyScale65} padding="8px 24px 23px 24px">
         {spotRegistraions?.data.subTitle}
-      </TextB2R>
-      <SpotListWrapper>
-        {spotRegistraions?.data.spotRegistrations.map((list: any, idx) => {
-          return <SpotList key={idx} list={list} type="trial" />;
+      </TextB2R> */}
+      <TrialSlider
+        className="swiper-container"
+        slidesPerView={'auto'}
+        spaceBetween={15}
+        speed={500}
+      >
+        {trialRes.map((list: any, idx) => {
+          return(
+            <SwiperSlide className="swiper-slide" key={idx}>
+              <SpotList  list={list} type="trial" />
+            </SwiperSlide>)
         })}
-      </SpotListWrapper>
+        {/* {spotRegistraions?.data.spotRegistrations.map((list: any, idx) => {
+          return <SpotList key={idx} list={list} type="trial" />;
+        })} */}
+      </TrialSlider>
       {/* 퍼블릭 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
@@ -393,17 +434,20 @@ const SpotsSlider = styled(Swiper)`
   .swiper-slide {
     width: 120px;
   }
-  // .swiper-button-next{
-  //   width: 25px;
-  //   height: 25px;
-  //   background: gray;
-  // }
 `;
 
 const EventSlider = styled(Swiper)`
   padding: 0 24px;
   .swiper-slide {
     width: 299px;
+  }
+`;
+
+const TrialSlider = styled(Swiper)`
+  padding: 0 24px;
+  height: 224px;
+  .swiper-slide {
+    width: 220px;
   }
 `;
 
@@ -436,33 +480,25 @@ const IconWrapper = styled.div`
   box-shadow: 0px 4px 8px 0px #00000033;
 `;
 
-const SpotListWrapper = styled.section`
-  display: flex;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  padding: 0 24px;
-`;
-
 const BoxHandlerWrapper = styled.div`
   width: 100%;
   background: ${theme.greyScale3};
   border-radius: 8px;
   cursor: pointer;
+  
   span {
     color: ${theme.brandColor};
   }
 `;
 
 const Wrapper = styled.div`
-  padding: 0 24px;
+  padding: 48px 24px;
 `;
 const SpotRegistration = styled.div`
   width: 100%;
   background: ${theme.greyScale3};
   border-radius: 8px;
   cursor: pointer;
-  margin: 48px 0;
 `;
 
 const BottomStory = styled.div`
@@ -473,7 +509,21 @@ const BottomStory = styled.div`
   height: 514px;
   background: ${theme.greyScale6};
   font-weight: 700;
-  margin-bottom: 49px;
+`;
+
+const SpotOpenBannerWrapper = styled.div`
+  width: 100%;
+  height: 200px;
+  padding: 24px 0;
+`;
+
+const SpotOpenBanner = styled.div`
+  width: 100%;
+  height: 100%;
+  background: ${theme.greyScale3};
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default SpotPage;

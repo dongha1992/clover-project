@@ -4,7 +4,7 @@ import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import SVGIcon from '@utils/SVGIcon';
-import { SpotsSearchItem } from '@components/Pages/Spot';
+import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/getMediaQuery';
 import Slider from 'react-slick';
@@ -159,7 +159,7 @@ const SpotLocationPage = (): ReactElement => {
         <SpotListWrapper>
           <SpotListSlider {...setting}>
             {RECENT_SPOT.map((item: any, index) => (
-              <SpotsSearchItem item={item} key={index} onClick={goToSpot} mapList />
+              <SpotsSearchResultList item={item} key={index} />
             ))}
           </SpotListSlider>
         </SpotListWrapper>

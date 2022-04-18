@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import SVGIcon from '@utils/SVGIcon';
 import { Item } from '@components/Item';
-import { SpotsSearchItem } from '@components/Pages/Spot';
+import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -63,7 +63,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId }: IProps) => {
               <Item item={item} key={index} />
             ) : (
               // 스팟 검색 결과 리스트
-              <SpotsSearchItem item={item} key={index} onClick={onClick} />
+              <SpotsSearchResultList item={item} key={index} />
             );
           })
         ) : router.pathname === '/spot/search' ? (
