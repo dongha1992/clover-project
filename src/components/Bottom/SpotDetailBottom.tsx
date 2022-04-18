@@ -23,9 +23,8 @@ const SpotDetailBottom = () => {
   const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
-  const { spotDetail, spotPickupPlace } = useSelector(spotSelector);
+  const { spotDetail, spotPickupId } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
-  const detailId: number = spotDetail!.id;
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
 
@@ -42,73 +41,131 @@ const SpotDetailBottom = () => {
       main: false,
       availableTime: pickUpTime,
       spaceType: spotDetail?.type,
-      spotPickup: spotPickupPlace,
+      spotPickupId: spotPickupId,
     };
 
-    // TODO : destinationId 리덕스로 수정?
+    const goToCart = () => {
+      // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
+      dispatch(SET_DESTINATION(destinationInfo));
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push('/cart');
+    };
+
+    const goToDeliveryInfo = () => {
+      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
+    };
+
+    const goToSelectMenu = () => {
+      // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
+      dispatch(SET_DESTINATION(destinationInfo));
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push('/search');
+    };
+
+    const handleSubsDeliveryInfo = () => {
+      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+      router.push({
+        pathname: '/cart/delivery-info',
+        query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+      });
+    };
+
+    const handleSubsDeliveryInfoWithSpot = () => {
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+      router.push({
+        pathname: '/cart/delivery-info',
+        query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+      });
+    };
+
     if (isLoginSuccess) {
       //로그인 o
       if (cartLists.length) {
         // 장바구니 o
         if (isDelivery) {
-          // 장바구니 o , 배송 정보에서 넘어온 경우
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
           if (isSubscription) {
-            dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
-            router.push({
-              pathname: '/cart/delivery-info',
-              query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
-            });
-          } else {
-            dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id } });
-          }
-        } else {
-          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          if (spotDetail?.pickups.length! > 1) {
             dispatch(
               SET_BOTTOM_SHEET({
-                content: <PickupSheet pickupInfo={spotDetail?.pickups} />,
+                content: (
+                  <PickupSheet
+                    pickupInfo={spotDetail?.pickups}
+                    spotType={spotDetail?.type}
+                    onSubmit={handleSubsDeliveryInfo}
+                  />
+                ),
               })
             );
-
-            dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            dispatch(SET_DESTINATION(destinationInfo));
-            dispatch(SET_TEMP_DESTINATION(destinationInfo));
-            router.push('/cart');
           } else {
-            dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            dispatch(SET_DESTINATION(destinationInfo));
-            dispatch(SET_TEMP_DESTINATION(destinationInfo));
-            router.push('/cart');
+            // 장바구니 o , 배송 정보에서 넘어온 경우
+            dispatch(
+              SET_BOTTOM_SHEET({
+                content: (
+                  <PickupSheet
+                    pickupInfo={spotDetail?.pickups}
+                    spotType={spotDetail?.type}
+                    onSubmit={goToDeliveryInfo}
+                  />
+                ),
+              })
+            );
           }
+        } else {
+          // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
+            })
+          );
         }
       } else {
         // 장바구니 x
         if (isSubscription) {
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
-          router.push({
-            pathname: '/cart/delivery-info',
-            query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
-          });
+          // 구독에서 넘어옴
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: (
+                <PickupSheet
+                  pickupInfo={spotDetail?.pickups}
+                  spotType={spotDetail?.type}
+                  onSubmit={handleSubsDeliveryInfoWithSpot}
+                />
+              ),
+            })
+          );
         } else {
-          dispatch(SET_USER_DELIVERY_TYPE('spot'));
-          dispatch(SET_DESTINATION(destinationInfo));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push('/search');
+          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: (
+                <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToSelectMenu} />
+              ),
+            })
+          );
         }
       }
     } else {
-      // 로그인x
-      router.push('/onboarding');
+      // 로그인x, 로그인 이동
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
     }
   };
 
   useEffect(() => {
     const spotLikeData = async () => {
       try {
-        const { data } = await getSpotLike(detailId);
+        const { data } = await getSpotLike(spotDetail?.id!);
         setSpotLike(data.data.liked);
         if (data.data.liked) {
           dispatch(SET_SPOT_LIKED());
@@ -127,13 +184,13 @@ const SpotDetailBottom = () => {
     if (isLoginSuccess) {
       try {
         if (!spotLike) {
-          const { data } = await postSpotLike(detailId);
+          const { data } = await postSpotLike(spotDetail?.id!);
           if (data.code === 200) {
             dispatch(SET_SPOT_LIKED());
             setSpotLike(true);
           }
         } else {
-          const { data } = await deleteSpotLike(detailId);
+          const { data } = await deleteSpotLike(spotDetail?.id!);
           if (data.code === 200) {
             dispatch(INIT_SPOT_LIKED());
             setSpotLike(false);

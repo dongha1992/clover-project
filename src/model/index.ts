@@ -326,19 +326,22 @@ export interface ISpotPickupInDestinaion {
 }
 
 export interface IDestinationsResponse {
-  id: number;
-  delivery: TDeliveryType | string;
+  id?: number;
+  delivery?: TDeliveryType | string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  name: string;
-  receiverTel: string;
-  receiverName: string;
-  location: ILocation;
-  main: boolean;
+  name?: string;
+  receiverTel?: string;
+  receiverName?: string;
+  location?: ILocation;
+  main?: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
-  deliveryTime?: string;
+  spaceType?: string;
+  availableTime?: string;
+  spotPickupId?: number | null;
 }
+
 export interface IGetDestinationsResponse {
   code: number;
   message: string;
@@ -413,6 +416,7 @@ export interface ISpots {
 }
 
 export interface ISpotsDetail {
+  submit: any;
   coordinate: {
     lat: number;
     lon: number;
@@ -435,7 +439,7 @@ export interface ISpotsDetail {
   lunchDeliveryStartTime: string;
   lunchDeliveryEndTime: string;
   eventTitle: string;
-  id: number;
+  id: number | undefined;
   distance: number;
   distanceUnit: string;
   score: number;
@@ -474,6 +478,7 @@ export interface ISpotsDetail {
       images: [];
       name: string;
       spotId: number;
+      type: string;
     }
   ];
   placeHoliday: string;
@@ -1157,6 +1162,7 @@ export interface IGetOrderList {
   subOrderDelivery?: ISubOrderDelivery;
   order: IOrderInOrderList;
   type: string;
+  name?: string;
 }
 
 export interface IGetOrderListResponse {

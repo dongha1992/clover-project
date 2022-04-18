@@ -1,3 +1,3 @@
-import SbsDashboard from './SbsDashboard';
+import SubsDashboard from './SubsDashboard';
 
-export { SbsDashboard };
+export { SubsDashboard };

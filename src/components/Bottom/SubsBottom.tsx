@@ -6,8 +6,11 @@ import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import router from 'next/router';
+import { useDispatch } from 'react-redux';
+import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 
-const SbsBottom = () => {
+const SubsBottom = () => {
+  const dispatch = useDispatch();
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
 
   const goToDib = useCallback(() => {
@@ -15,6 +18,8 @@ const SbsBottom = () => {
   }, []);
 
   const clickButtonHandler = () => {
+    dispatch(INIT_DESTINATION());
+    dispatch(INIT_TEMP_DESTINATION());
     router.push('/subscription/set-info');
   };
 
@@ -108,4 +113,4 @@ const LikeBtn = styled.div`
   cursor: pointer;
 `;
 
-export default SbsBottom;
+export default SubsBottom;

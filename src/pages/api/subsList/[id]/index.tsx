@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs/promises';
 
-export function buildSbsListDataPath(id: any) {
-  return path.join(process.cwd(), 'data', `sbsList/${id}.json`);
+export function buildSubsListDataPath(id: any) {
+  return path.join(process.cwd(), 'data', `subsList/${id}.json`);
 }
 
 async function extractData(filePath: any) {
@@ -14,7 +14,7 @@ async function extractData(filePath: any) {
 export default async function handler(req: any, res: any) {
   if (req.method === 'GET') {
     const { id } = req.query;
-    const filePath = buildSbsListDataPath(id);
+    const filePath = buildSubsListDataPath(id);
     const data = await extractData(filePath);
     res.status(200).json({ data });
     return;

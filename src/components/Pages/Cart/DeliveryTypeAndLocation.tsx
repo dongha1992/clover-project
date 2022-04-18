@@ -5,7 +5,7 @@ import {} from '@styles/theme';
 import SVGIcon from '@utils/SVGIcon';
 import { isNil, isEqual } from 'lodash-es';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
-import { IDestinationsResponse, ILocation } from '@model/index';
+import { ILocation } from '@model/index';
 import { IGetOrderList } from '@model/index';
 
 interface IProps {

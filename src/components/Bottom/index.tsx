@@ -6,7 +6,7 @@ import styled from 'styled-components';
 const HomeBottom = dynamic(() => import('./HomeBottom'));
 const DetailBottom = dynamic(() => import('./DetailBottom'));
 const SpotDetailBottom = dynamic(() => import('./SpotDetailBottom'));
-const SbsBottom = dynamic(() => import('./SbsBottom'));
+const SubsBottom = dynamic(() => import('./SubsBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Bottom = () => {
@@ -30,7 +30,7 @@ const Bottom = () => {
           return <SpotDetailBottom />;
         }
         case ['/subscription/products/[id]'].includes(currentPath): {
-          return <SbsBottom />;
+          return <SubsBottom />;
         }
         default: {
           return;
