@@ -165,7 +165,6 @@ const ChangePasswordPage = () => {
 
       try {
         const { data } = await userChangePassword(reqBody);
-        console.log(data, 'data');
       } catch (error) {
         console.error(error);
       }
