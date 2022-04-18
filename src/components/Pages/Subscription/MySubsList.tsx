@@ -2,13 +2,13 @@ import { TextH3B, TextH6B } from '@components/Shared/Text';
 import { ScrollHorizonList, theme } from '@styles/theme';
 import { useState } from 'react';
 import styled from 'styled-components';
-import SbsCardItem from './SbsCardItem';
+import { SubsCardItem } from '@components/Pages/Subscription';
 
-const MySbsList = () => {
+const MySubsList = () => {
   // TODO : 구독 리스트 api 추후 리액트 쿼리로 변경
   const [subsList, setSubsList] = useState([{}, {}, {}]);
   return (
-    <MySbsBox>
+    <MySubsBox>
       <Head>
         <TextH3B>내 구독 ({subsList.length})</TextH3B>
         <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
@@ -18,14 +18,14 @@ const MySbsList = () => {
       <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
         <ListContainer>
           {subsList.map((item, index) => (
-            <SbsCardItem key={index} />
+            <SubsCardItem key={index} />
           ))}
         </ListContainer>
       </ScrollHorizonList>
-    </MySbsBox>
+    </MySubsBox>
   );
 };
-const MySbsBox = styled.div`
+const MySubsBox = styled.div`
   padding-bottom: 56px;
 `;
 
@@ -42,4 +42,4 @@ const ListContainer = styled.div`
   background-color: ${theme.greyScale3};
 `;
 
-export default MySbsList;
+export default MySubsList;

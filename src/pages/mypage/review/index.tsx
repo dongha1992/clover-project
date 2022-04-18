@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { homePadding, theme } from '@styles/theme';
+import { FixedTab, homePadding, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
@@ -147,27 +147,6 @@ const Center = styled.div`
   justify-content: center;
   align-items: center;
   height: 70vh;
-`;
-
-const FixedTab = styled.div`
-  position: fixed;
-  width: 100%;
-  left: calc(50%);
-  right: 0;
-  background-color: white;
-  max-width: ${breakpoints.mobile}px;
-  width: 100%;
-
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 0px;
-
-  `};
-
-  ${({ theme }) => theme.mobile`
-    margin: 0 auto;
-    left: 0px;
-  `};
 `;
 
 export default ReviewPage;
