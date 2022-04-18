@@ -7,19 +7,17 @@ import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
-import { ISpotsDetail } from '@model/index';
+import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 
 interface IProps {
-  item: ISpotsDetail | any;
+  item: IDestinationsResponse | undefined;
 }
 
 // 스팟 검색 - 최근픽업이력
@@ -33,10 +31,10 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
   const { spotPickupId } = useSelector(spotSelector);
 
   const userLocationLen = !!userLocation.emdNm?.length;
-  const recentPickupTime = `${item.spotPickup?.spot.lunchDeliveryStartTime}-${item.spotPickup?.spot.lunchDeliveryEndTime} / ${item.spotPickup?.spot.dinnerDeliveryStartTime}-${item.spotPickup?.spot.dinnerDeliveryEndTime}`;
+  const recentPickupTime = `${item?.spotPickup?.spot.lunchDeliveryStartTime}-${item?.spotPickup?.spot.lunchDeliveryEndTime} / ${item?.spotPickup?.spot.dinnerDeliveryStartTime}-${item?.spotPickup?.spot.dinnerDeliveryEndTime}`;
 
   const typeTag = (): string => {
-    switch (item?.spotPickup.type) {
+    switch (item?.spotPickup?.spot.type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
@@ -48,66 +46,26 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
 
   const orderHandler = () => {
     const destinationInfo = {
-      name: item.name,
+      name: item?.name!,
       location: {
-        addressDetail: item.location.addressDetail,
-        address: item.location.address,
-        dong: item.location.dong,
-        zipCode: item.location.zipCode,
+        addressDetail: item?.location?.addressDetail!,
+        address: item?.location?.address!,
+        dong: item?.location?.dong!,
+        zipCode: item?.location?.zipCode!,
       },
       main: false,
-      availableTime: recentPickupTime,
-      spaceType: item.spotPickup.spot.type,
-      spotPickupId: spotPickupId,
-    };
-
-    const goToCart = () => {
-      // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push('/cart');
-    };
-
-    const goToDeliveryInfo = () => {
-      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id } });
-    };
-
-    const goToSelectMenu = () => {
-      // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push('/search');
-    };
-
-    const handleSubsDeliveryType = () => {
-      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
-      router.push({
-        pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
-      });
-    };
-
-    const handleSubsDeliveryTypeWithSpot = () => {
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
-      router.push({
-        pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
-      });
+      availableTime: recentPickupTime!,
+      spaceType: item?.spotPickup?.spot.type!,
+      spotPickupId: spotPickupId!,
     };
 
     if (isLoginSuccess) {
       if (orderId) {
         dispatch(
           SET_TEMP_EDIT_SPOT({
-            spotPickupId: item.pickups[0].id,
-            name: item.name,
-            spotPickup: item.pickups[0].name,
+            spotPickupId: item?.spotPickup?.id!,
+            name: item?.name!,
+            spotPickup: item?.spotPickup?.name!,
           })
         );
         router.push({
@@ -122,53 +80,40 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
           if (isSubscription) {
-            dispatch(
-              SET_BOTTOM_SHEET({
-                content: (
-                  <PickupSheet pickupInfo={item?.spotPickup} spotType={item?.type} onSubmit={handleSubsDeliveryType} />
-                ),
-              })
-            );
+            dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+            });
           } else {
             // 장바구니 o , 배송 정보에서 넘어온 경우
-            dispatch(
-              SET_BOTTOM_SHEET({
-                content: (
-                  <PickupSheet pickupInfo={item?.spotPickup} spotType={item?.type} onSubmit={goToDeliveryInfo} />
-                ),
-              })
-            );
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
+            dispatch(SET_TEMP_DESTINATION(destinationInfo));
+            router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id } });
           }
         } else {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={item?.spotPickup} spotType={item?.type} onSubmit={goToCart} />,
-            })
-          );
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
+          dispatch(SET_DESTINATION(destinationInfo));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push('/cart');
         }
       } else {
         // 로그인o and 장바구니 x
         if (isSubscription) {
           // 구독에서 넘어옴
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: (
-                <PickupSheet
-                  pickupInfo={item?.spotPickup}
-                  spotType={item?.type}
-                  onSubmit={handleSubsDeliveryTypeWithSpot}
-                />
-              ),
-            })
-          );
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+          });    
         } else {
           // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={item?.spotPickup} spotType={item?.type} onSubmit={goToSelectMenu} />,
-            })
-          );
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
+          dispatch(SET_DESTINATION(destinationInfo));
+          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          router.push('/search');    
         }
       }
     } else {
@@ -187,12 +132,12 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
   return (
     <Container mapList>
       <FlexColStart>
-        <TextH5B>{item.name}</TextH5B>
-        <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
+        <TextH5B>{item?.name}</TextH5B>
+        <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
         <MeterAndTime>
           {userLocationLen && (
             <>
-              <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+              <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
               <Col />
             </>
           )}
@@ -209,7 +154,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          {item?.spotPickup.spot.images?.map((i: { url: string }, idx: number) => {
+          {item?.spotPickup?.spot.images?.map((i: { url: string }, idx: number) => {
             return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />;
           })}
         </ImageWrapper>

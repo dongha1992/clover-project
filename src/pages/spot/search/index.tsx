@@ -38,7 +38,7 @@ const SpotSearchPage = (): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
 
 
-
+  // 스팟 검색 - 추천 스팟 api
   const getSearchRecommendList = async () => {
     const params = {
       latitude: spotsPosition ? spotsPosition.latitude : null,
@@ -57,6 +57,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
+  // 스팟 검색 - 이벤트 스팟 api
   const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
     ['spotList'],
     async () => {
@@ -71,19 +72,20 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  /* TAYLER: 배송지목록 전체 조회에서 spot만 뽑음 */
+  // 최근 픽업 이력 조회 api 
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
     async () => {
       const params = {
         page: 1,
         size: 10,
+        delivery: 'SPOT',
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
       };
       const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
-      return totalList.filter((item) => {
-        return item.delivery === 'SPOT';
-      });
+      return totalList
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -97,7 +99,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
-  // 스팟 검색 결과
+  // 스팟 검색 결과 api
   const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
 
