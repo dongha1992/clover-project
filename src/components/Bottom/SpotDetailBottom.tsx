@@ -20,7 +20,7 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
-  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupId } = useSelector(spotSelector);
@@ -67,20 +67,20 @@ const SpotDetailBottom = () => {
       router.push('/search');
     };
 
-    const handleSubsDeliveryInfo = () => {
-      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+    const handleSubsDeliveryType = () => {
+      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+        query: { destinationId: spotDetail?.id, isSubscription, subsDeliveryType },
       });
     };
 
-    const handleSubsDeliveryInfoWithSpot = () => {
+    const handleSubsDeliveryTypeWithSpot = () => {
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: spotDetail?.id, isSubscription, deliveryInfo },
+        query: { destinationId: spotDetail?.id, isSubscription, subsDeliveryType },
       });
     };
 
@@ -96,7 +96,7 @@ const SpotDetailBottom = () => {
                   <PickupSheet
                     pickupInfo={spotDetail?.pickups}
                     spotType={spotDetail?.type}
-                    onSubmit={handleSubsDeliveryInfo}
+                    onSubmit={handleSubsDeliveryType}
                   />
                 ),
               })
@@ -133,7 +133,7 @@ const SpotDetailBottom = () => {
                 <PickupSheet
                   pickupInfo={spotDetail?.pickups}
                   spotType={spotDetail?.type}
-                  onSubmit={handleSubsDeliveryInfoWithSpot}
+                  onSubmit={handleSubsDeliveryTypeWithSpot}
                 />
               ),
             })
