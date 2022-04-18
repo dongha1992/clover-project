@@ -981,11 +981,10 @@ export interface IOrderMenus {
     createdAt?: string;
   };
 }
-export interface IOrderPayment {}
 
 export interface IOrderInOrderList {
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string;
   id: number;
   name: string;
   paidAt: string;
@@ -1055,6 +1054,7 @@ export interface IOrderDetailInOrderDeliveries {
   spotPickupType: string;
   status: string;
   orderMenus: IOrderMenus[];
+  type: string;
 }
 
 export interface IEditOrderDestination {
@@ -1141,7 +1141,10 @@ export interface ISubOrderDelivery {
   spotName?: string;
   spotPickupId?: number;
   status?: string;
-  subOrderDelivery?: ISubOrderDelivery;
+  deliveryDateChangeCount: number;
+  deliveryDateChangeMaximum: number;
+  order: IOrderInOrderList;
+  type: string;
 }
 
 export interface IGetOrderList {
