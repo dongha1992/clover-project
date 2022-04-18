@@ -14,7 +14,7 @@ import { ItemInfo } from '@components/Pages/Mypage/OrderDelivery';
 interface IProps {
   name: string;
   url: string;
-  payAmount: string;
+  payAmount: number;
 }
 
 const OrderCancelSheet = ({ url, name, payAmount }: IProps) => {

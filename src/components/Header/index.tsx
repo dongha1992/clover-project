@@ -76,6 +76,7 @@ const Header = () => {
         '/mypage/setting': '앱설정',
         '/mypage/dib/subscription': '찜 관리',
         '/mypage/order-detail/edit/[orderId]': '배송정보 변경',
+        '/mypage/order-detail/cancel/[orderId]': '주문취소',
         '/order/finish': '결제완료',
         '/signup': '회원가입',
         '/signup/auth': '회원가입',
