@@ -49,7 +49,6 @@ const CouponManagementPage = () => {
     },
     {
       onSuccess: async (data) => {
-        console.log(data, 'asdasd');
         /* TODO: 성공 혹 실패시 작업 */
       },
       onError: async (data) => {},
