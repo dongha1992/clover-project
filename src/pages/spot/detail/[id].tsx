@@ -200,10 +200,9 @@ const SpotDetailPage = ({ id }: ISpotsDetail): ReactElement => {
             spotItem?.canParking &&
               <Tag margin='0 5px 0 0'>주차가능</Tag>
           }
- 
           {
             !!spotItem?.discountRate &&
-              <Tag margin='0 5px 0 0' backgroundColor='#EDF3F0' color={theme.brandColor}>{`${spotItem?.discountRate}%할인 중`}</Tag>
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${spotItem?.discountRate}% 할인 중`}</Tag>
           }
         </TagWrapper>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>

@@ -36,7 +36,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
   const recentPickupTime = `${item.spotPickup?.spot.lunchDeliveryStartTime}-${item.spotPickup?.spot.lunchDeliveryEndTime} / ${item.spotPickup?.spot.dinnerDeliveryStartTime}-${item.spotPickup?.spot.dinnerDeliveryEndTime}`;
 
   const typeTag = (): string => {
-    switch (item?.spotPickup.type) {
+    switch (item?.spotPickup?.spot.type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
@@ -242,6 +242,8 @@ const ImageWrapper = styled.div<{ mapList: boolean }>`
 
 const SpotImg = styled.img`
   width: 100%;
+  border: 1px solid ${theme.greyScale6};
+  border-radius: 8px;
 `;
 
 const Col = styled.div`

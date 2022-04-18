@@ -180,11 +180,19 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
           </TextH6B>
           <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
         </MeterAndTime>
-        <div>
-          <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-            {typeTag()}
-          </Tag>
-        </div>
+        {!item.isTrial ? (
+          <div>
+            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              {typeTag()}
+            </Tag>
+          </div>
+        ) : (
+          <div>
+            <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+              트라이얼
+            </Tag>
+          </div>
+        )}
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
@@ -243,6 +251,8 @@ const ImageWrapper = styled.div<{ mapList: boolean }>`
 
 const SpotImg = styled.img`
   width: 100%;
+  border-radius: 8px;
+  border: 1px solid ${theme.greyScale6};
 `;
 
 const Col = styled.div`

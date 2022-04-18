@@ -191,6 +191,10 @@ const SpotPage = () => {
     router.push('/spot/regi-list');
   };
 
+  const goToSpotNotice = ():void => {
+    router.push('/spot/notice');
+  };
+
   const isLoading = isLoadingStation && isLoadingNew && isLoadingEvent && isLoadingPopular;
 
   if(isLoading){
@@ -401,7 +405,7 @@ const SpotPage = () => {
           </FlexBetween>
         </SpotRegistration>
       </Wrapper>
-      <BottomStory>프코스팟 스토리</BottomStory>
+      <BottomStory onClick={goToSpotNotice}>프코스팟 브랜딩 베너영역 + 링크</BottomStory>
       {/* 우리가게 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
@@ -509,6 +513,7 @@ const BottomStory = styled.div`
   height: 514px;
   background: ${theme.greyScale6};
   font-weight: 700;
+  cursor: pointer;
 `;
 
 const SpotOpenBannerWrapper = styled.div`
