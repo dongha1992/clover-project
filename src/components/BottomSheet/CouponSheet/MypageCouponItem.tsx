@@ -20,7 +20,7 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
 
   const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon.expiredDate));
   const isRateDiscount = coupon.criteria === 'RATIO';
-  // const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
+
   console.log(coupon, '2');
   const dDay = now.diff(dayjs(coupon.expiredDate), 'day');
   return (

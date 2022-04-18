@@ -7,13 +7,13 @@ import { IGetSpotFilter } from '@model/index';
 
 interface IData {
   value: string | boolean;
-  filtered: boolean;
+  filtered: boolean | any;
   fieldName: string;
   name: string;
 }
 interface IProps {
   data: IData[] | any;
-  changeHandler: (id: string) => void;
+  changeHandler: (id: any) => void;
   selectedCheckboxIds: string[];
   etcFilter?: any;
 }
