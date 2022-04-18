@@ -310,6 +310,7 @@ export interface ISpotInSpotPickUp {
   coordinate: { lat: number; lon: number };
   dinnerDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
+  distance: number;
   distanceUnit: string;
   id: number;
   images: IMenuImage[];
@@ -317,6 +318,7 @@ export interface ISpotInSpotPickUp {
   lunchDeliveryEndTime: string;
   lunchDeliveryStartTime: string;
   name: string;
+  type: string;
 }
 export interface ISpotPickupInDestinaion {
   id: number;
@@ -1184,6 +1186,8 @@ export interface IGetSubOrdersResponse {
     orderDeliveries: ISubOrderDelivery[];
   };
 }
+
+export interface IOrderPayment {}
 
 export interface IOrderDetail {
   id: number;
