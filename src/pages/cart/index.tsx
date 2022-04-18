@@ -167,7 +167,7 @@ const CartPage = () => {
             ...destinationObj,
             delivery: userDeliveryType,
             destinationId,
-            location: userDestination.location,
+            location: userDestination.location!,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
         } else if (response) {
@@ -183,7 +183,7 @@ const CartPage = () => {
                 ...destinationObj,
                 delivery: response.delivery.toLowerCase(),
                 destinationId,
-                location: data.data.location,
+                location: data.data.location!,
               });
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
             }

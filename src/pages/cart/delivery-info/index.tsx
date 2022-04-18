@@ -165,52 +165,53 @@ const DeliverInfoPage = () => {
       }
     } else {
       /* TODO spotPickupId 형 체크 */
+      if (tempDestination) {
+        const reqBody = {
+          addressDetail: tempDestination?.location?.addressDetail!,
+          name: tempDestination?.name!,
+          address: tempDestination?.location?.address!,
+          delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
+          deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
+          dong: tempDestination?.location?.dong!,
+          main: tempDestination?.main!,
+          receiverName: tempDestination?.receiverName ? tempDestination.receiverName : '테스트',
+          receiverTel: tempDestination?.receiverTel ? tempDestination.receiverTel : '01012341234',
+          zipCode: tempDestination?.location?.zipCode!,
+        };
 
-      const reqBody = {
-        addressDetail: tempDestination.location.addressDetail,
-        name: tempDestination.name,
-        address: tempDestination.location.address,
-        delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
-        deliveryMessage: tempDestination.deliveryMessage ? tempDestination.deliveryMessage : '',
-        dong: tempDestination.location.dong,
-        main: tempDestination.main,
-        receiverName: tempDestination.receiverName ? tempDestination.receiverName : '테스트',
-        receiverTel: tempDestination.receiverTel ? tempDestination.receiverTel : '01012341234',
-        zipCode: tempDestination.location.zipCode,
-      };
-
-      try {
-        const { data } = await postDestinationApi(reqBody);
-        if (data.code === 200) {
-          const response = data.data;
-          dispatch(
-            SET_DESTINATION({
-              name: response.name,
-              location: {
-                addressDetail: response.location.addressDetail,
-                address: response.location.address,
-                dong: response.location.dong,
-                zipCode: response.location.zipCode,
-              },
-              main: response.main,
-              deliveryMessage: response.deliveryMessage,
-              receiverName: response.receiverName,
-              receiverTel: response.receiverTel,
-              deliveryMessageType: '',
-              delivery: response.delivery,
-              id: response.id,
-            })
-          );
-          dispatch(SET_AFTER_SETTING_DELIVERY());
-          dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
-          dispatch(INIT_TEMP_DESTINATION());
-          dispatch(INIT_DESTINATION_TYPE());
-          dispatch(INIT_AVAILABLE_DESTINATION());
-          router.push('/cart');
+        try {
+          const { data } = await postDestinationApi(reqBody);
+          if (data.code === 200) {
+            const response = data.data;
+            dispatch(
+              SET_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: response.main,
+                deliveryMessage: response.deliveryMessage,
+                receiverName: response.receiverName,
+                receiverTel: response.receiverTel,
+                deliveryMessageType: '',
+                delivery: response.delivery,
+                id: response.id,
+              })
+            );
+            dispatch(SET_AFTER_SETTING_DELIVERY());
+            dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
+            dispatch(INIT_TEMP_DESTINATION());
+            dispatch(INIT_DESTINATION_TYPE());
+            dispatch(INIT_AVAILABLE_DESTINATION());
+            router.push('/cart');
+          }
+        } catch (error) {
+          console.error(error);
+          return;
         }
-      } catch (error) {
-        console.error(error);
-        return;
       }
     }
   };
