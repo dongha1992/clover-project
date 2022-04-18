@@ -52,7 +52,7 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId, isSubscription, deliveryInfo } = router.query;
+  const { destinationId, isSubscription, subsDeliveryType } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
 
   const { data: recentOrderDelivery } = useQuery(
@@ -87,7 +87,7 @@ const DeliverInfoPage = () => {
         router.push({
           pathname: '/spot/search',
           query: {
-            deliveryInfo,
+            subsDeliveryType,
             isSubscription: true,
             isDelivery: true,
           },
@@ -104,7 +104,7 @@ const DeliverInfoPage = () => {
         router.push({
           pathname: '/destination/search',
           query: {
-            deliveryInfo,
+            subsDeliveryType,
             isSubscription: true,
           },
         });
@@ -307,7 +307,15 @@ const DeliverInfoPage = () => {
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
     if (userDeliveryType) {
-      setUserSelectDeliveryType(userDeliveryType);
+      console.log('userDeliveryType이 있음');
+      if (!isSubscription) {
+        setUserSelectDeliveryType(userDeliveryType);
+      } else {
+        // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
+        subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+        subsDeliveryType === 'parcel' && setUserSelectDeliveryType('parcel');
+        subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
+      }
     }
   };
 
@@ -358,8 +366,15 @@ const DeliverInfoPage = () => {
       setIsMaindestination(false);
       // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
-      setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
-      setIsMaindestination(true);
+      if (!isSubscription) {
+        setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
+        setIsMaindestination(true);
+      } else {
+        // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
+        subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+        subsDeliveryType === 'parcel' && setUserSelectDeliveryType('parcel');
+        subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
+      }
     }
   }, [userTempDestination, recentOrderDelivery]);
 
@@ -378,22 +393,6 @@ const DeliverInfoPage = () => {
     checkTooltipMsgByDeliveryType();
   }, []);
 
-  useEffect(() => {
-    // 구독하기로 들어왔을 떄 스팟 정기구독이면 배송방법 스팟배송체크 / 새벽&택배 정기구독이면 배송방법 새벽배송체크
-    if (isSubscription) {
-      deliveryInfo === 'spot' && setUserSelectDeliveryType('spot');
-      deliveryInfo === 'parcel' && setUserSelectDeliveryType('parcel');
-    }
-  }, [deliveryInfo, isSubscription]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(INIT_TEMP_DESTINATION());
-      dispatch(INIT_DESTINATION_TYPE());
-      dispatch(INIT_AVAILABLE_DESTINATION());
-    };
-  }, []);
-
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
 
   return (
@@ -401,7 +400,7 @@ const DeliverInfoPage = () => {
       <Wrapper>
         <TextH3B padding="24px 0">배송방법</TextH3B>
         <DeliveryMethodWrapper>
-          {deliveryInfo !== 'parcel' && (
+          {subsDeliveryType === 'spot' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 픽업
@@ -443,7 +442,7 @@ const DeliverInfoPage = () => {
             </>
           )}
           {!isSubscription && <BorderLine height={1} margin="24px 0" />}
-          {deliveryInfo !== 'spot' && (
+          {subsDeliveryType !== 'spot' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 배송
