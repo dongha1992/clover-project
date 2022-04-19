@@ -341,7 +341,6 @@ export interface IDestinationsResponse {
   spotPickup?: ISpotPickupInDestinaion;
   spaceType?: string;
   availableTime?: string;
-  spotPickupId?: number | null;
 }
 
 export interface IGetDestinationsResponse {
