@@ -7,26 +7,33 @@ import { IMAGE_S3_URL } from '@constants/mock';
 interface IProps {
   url: string;
   name: string;
-  payAmount: string;
-  paidAt: string;
+  amount: number;
+  paidAt?: string;
 }
 
-const ItemInfo = ({ url, name, payAmount, paidAt }: IProps) => {
+const ItemInfo = ({ url, name, amount, paidAt }: IProps) => {
   return (
-    <FlexRow padding="0 0 0px 0px">
+    <Container>
       <ImageWrapper>
         <ItemImage src={IMAGE_S3_URL + url} alt="상품이미지" />
       </ImageWrapper>
-      <FlexCol width="70%" margin="0 0 0 16px">
+      <FlexCol width="80%" margin="0 0 0 16px">
         <TextB2R padding="0 0 4px 0">{name}</TextB2R>
         <FlexBetween>
-          <TextH5B>{payAmount}원</TextH5B>
-          <TextB3R color={theme.greyScale65}>{paidAt} 결제</TextB3R>
+          <TextH5B>{amount}원</TextH5B>
+          {paidAt && <TextB3R color={theme.greyScale65}>{paidAt} 결제</TextB3R>}
         </FlexBetween>
       </FlexCol>
-    </FlexRow>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  display: flex;
+  justify-content: space-between;
+  max-width: 512px;
+  width: 100%;
+`;
 
 const ImageWrapper = styled.div`
   width: 75px;

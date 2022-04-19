@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextH3B, TextB3R, TextH5B, TextH7B, TextB4R } from '@components/Shared/Text';
-import { FlexBetween, theme, FlexRow } from '@styles/theme';
+import { TextH4B, TextH7B, TextB4R, TextB2R18 } from '@components/Shared/Text';
+import { FlexBetween, theme, FlexRow, FlexCol } from '@styles/theme';
 import { breakpoints } from '@utils/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
 import { ICoupon } from '@model/index';
@@ -22,33 +22,36 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
   const isRateDiscount = coupon.criteria === 'RATIO';
 
   const dDay = now.diff(dayjs(coupon.expiredDate), 'day');
+
   return (
     <Container isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">
-            <TextH3B color={theme.brandColor}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH3B>
+            <TextH4B color={theme.brandColor}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH4B>
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
               D-{dDay}
             </Tag>
           </FlexBetween>
-          <TextH5B>{coupon.name}</TextH5B>
-          {/* {coupon.deliveryMethod && (
-            <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
-              배송방법: {coupon.deliveryMethod}
-            </TextB3R>
-          )}
-          {coupon.condition && (
-            <TextB3R padding="2px 0 0 0" color={theme.greyScale65}>
-              {coupon.condition}
-            </TextB3R>
-          )}
-          {coupon.canUseMenu && (
-            <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
-              사용가능 메뉴:
-              {isMoreThenOneMenu ? '특정 상품 한정' : coupon.canUseMenu[0]}
-            </TextB3R>
-          )} */}
+          <TextB2R18>{coupon.name}</TextB2R18>
+          <FlexCol padding="8px 0 0 0">
+            {coupon.descriptions.map((description, index) => {
+              return (
+                <TextB4R color={theme.greyScale65} key={index}>
+                  {description}
+                </TextB4R>
+              );
+            })}
+          </FlexCol>
+          <FlexRow margin="8px 0 0 0">
+            {coupon.isApp && (
+              <TextH7B color={theme.brandColor} margin="0 4px 0 0">
+                APP 전용
+              </TextH7B>
+            )}
+            <TextB4R color={theme.brandColor}>{expiredDate} 까지</TextB4R>
+          </FlexRow>
+
           {/* {isShow &&
             coupon.canUseMenu.map((menu: any, index: number) => {
               return (
@@ -69,10 +72,6 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
               {isShow ? '접기' : '더보기'}
             </TextH7B>
           )} */}
-
-          <TextB3R color={theme.brandColor} padding="4px 0 0 0">
-            {expiredDate} 까지
-          </TextB3R>
         </Content>
       </Wrapper>
     </Container>

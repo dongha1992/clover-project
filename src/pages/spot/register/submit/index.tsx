@@ -1,17 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  TextH2B,
-  TextB1B,
-  TextH5B,
-  TextB2R,
-} from '@components/Shared/Text';
-import { 
-  theme, 
-  homePadding, 
-  fixedBottom, 
-  FlexBetween 
-} from '@styles/theme';
+import { TextH2B, TextB1B, TextH5B, TextB2R } from '@components/Shared/Text';
+import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
 import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
@@ -24,14 +14,10 @@ import { SET_SPOT_REGISTRATIONS_POST_RESULT } from '@store/spot';
 const SubmitPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const {
-    spotLocation, 
-    spotsRegistrationOptions, 
-    spotsRegistrationInfo,
-  } = useSelector(spotSelector);
+  const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
   const { type } = router.query;
 
-  const registrationsSubmitHandeler = async() => {
+  const registrationsSubmitHandeler = async () => {
     const params: IEditRegistration = {
       coordinate: {
         lat: Number(spotLocation.lat),
@@ -51,27 +37,23 @@ const SubmitPage = () => {
       pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
       lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
       placeType: spotsRegistrationOptions.placeTypeOptions.value,
-      placeTypeDetail: spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' 
-        ? 
-          spotsRegistrationInfo.placeTypeEtc 
-        : 
-          null,
-      userPosition: type === 'owner' ?spotsRegistrationInfo.managerInfo : null,
+      placeTypeDetail:
+        spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
+      userPosition: type === 'owner' ? spotsRegistrationInfo.managerInfo : null,
     };
 
-    try{
+    try {
       const { data } = await postSpotsRegistrationsInfoSubmit(params);
-      if(data.code === 200){
-        console.log('submit success!!');
+      if (data.code === 200) {
         dispatch(SET_SPOT_REGISTRATIONS_POST_RESULT(data?.data));
         router.push({
           pathname: '/spot/register/submit/finish',
           query: { type },
-        });   
-      };
-    }catch(err){
+        });
+      }
+    } catch (err) {
       console.error(err);
-    };  
+    }
   };
 
   return (
@@ -93,41 +75,41 @@ const SubmitPage = () => {
           {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
-              <TextB2R>{spotsRegistrationOptions.pickupLocationTypeOptions.name?.length && 
-                spotsRegistrationOptions.pickupLocationTypeOptions.value !== 'ETC' ?
-                  spotsRegistrationOptions.pickupLocationTypeOptions.name
-                :
-                  `기타 / ${spotsRegistrationInfo.pickupLocationEtc}`
-              }</TextB2R>
+              <TextB2R>
+                {spotsRegistrationOptions.pickupLocationTypeOptions.name?.length &&
+                spotsRegistrationOptions.pickupLocationTypeOptions.value !== 'ETC'
+                  ? spotsRegistrationOptions.pickupLocationTypeOptions.name
+                  : `기타 / ${spotsRegistrationInfo.pickupLocationEtc}`}
+              </TextB2R>
             </Content>
           )}
           <Content>
             <TextH5B margin="0 0 8px 0">장소 종류</TextH5B>
-            <TextB2R>{spotsRegistrationOptions.placeTypeOptions.name?.length &&
-              spotsRegistrationOptions.placeTypeOptions.value !== 'ETC' ?
-                spotsRegistrationOptions.placeTypeOptions.name
-              :
-                `기타 / ${spotsRegistrationInfo.placeTypeEtc}`
-              }</TextB2R>
+            <TextB2R>
+              {spotsRegistrationOptions.placeTypeOptions.name?.length &&
+              spotsRegistrationOptions.placeTypeOptions.value !== 'ETC'
+                ? spotsRegistrationOptions.placeTypeOptions.name
+                : `기타 / ${spotsRegistrationInfo.placeTypeEtc}`}
+            </TextB2R>
           </Content>
           {type === 'private' && (
             <Content>
               <TextH5B margin="0 0 8px 0">점심시간</TextH5B>
-              <TextB2R>{spotsRegistrationOptions.lunchTimeOptions.name?.length && 
-                spotsRegistrationOptions.lunchTimeOptions.name}</TextB2R>
+              <TextB2R>
+                {spotsRegistrationOptions.lunchTimeOptions.name?.length &&
+                  spotsRegistrationOptions.lunchTimeOptions.name}
+              </TextB2R>
             </Content>
           )}
         </ContentWrapper>
-        </Wrapper>
-        <Row />
-        <Wrapper>
+      </Wrapper>
+      <Row />
+      <Wrapper>
         {type !== 'public' && (
           <>
             <ContentWrapper>
               <FlexBetween margin="0 0 24px 0">
-                <TextB1B>
-                  {type === 'private' ? '신청자 정보' : '장소 관리자 정보'}
-                </TextB1B>
+                <TextB1B>{type === 'private' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
@@ -151,7 +133,9 @@ const SubmitPage = () => {
           </>
         )}
         <FixedButton onClick={registrationsSubmitHandeler}>
-          <Button borderRadius="0" padding='10px 0 0 0'>신청서 제출하기</Button>
+          <Button borderRadius="0" padding="10px 0 0 0">
+            신청서 제출하기
+          </Button>
         </FixedButton>
       </Wrapper>
     </Container>

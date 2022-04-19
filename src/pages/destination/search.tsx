@@ -33,12 +33,10 @@ const DestinationSearchPage = () => {
       const params = {
         page: 1,
         size: 10,
+        delivery: userDeliveryType.toUpperCase(),
       };
       const { data } = await getDestinationsApi(params);
-      const totalList = data.data.destinations;
-      return totalList.filter((item) => {
-        return item.delivery === userDeliveryType.toUpperCase();
-      });
+      return data.data.destinations;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
