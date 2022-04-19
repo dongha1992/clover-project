@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const SpotNoticePage = () => {
   return (
     <Container>
-        SpotNoticePage
+        프코스팟 안내 페이지 
     </Container>
   )
 };
