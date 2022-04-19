@@ -310,6 +310,7 @@ export interface ISpotInSpotPickUp {
   coordinate: { lat: number; lon: number };
   dinnerDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
+  distance: number;
   distanceUnit: string;
   id: number;
   images: IMenuImage[];
@@ -317,6 +318,7 @@ export interface ISpotInSpotPickUp {
   lunchDeliveryEndTime: string;
   lunchDeliveryStartTime: string;
   name: string;
+  type: string;
 }
 export interface ISpotPickupInDestinaion {
   id: number;
@@ -982,16 +984,16 @@ export interface IOrderMenus {
     createdAt?: string;
   };
 }
-export interface IOrderPayment {}
 
 export interface IOrderInOrderList {
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string;
   id: number;
   name: string;
   paidAt: string;
   payAmount: number;
   type: string;
+  amount: number;
 }
 
 export interface IOrder {
@@ -1056,6 +1058,8 @@ export interface IOrderDetailInOrderDeliveries {
   spotPickupType: string;
   status: string;
   orderMenus: IOrderMenus[];
+  type: string;
+  subOrderDelivery: ISubOrderDelivery;
 }
 
 export interface IEditOrderDestination {
@@ -1142,7 +1146,10 @@ export interface ISubOrderDelivery {
   spotName?: string;
   spotPickupId?: number;
   status?: string;
-  subOrderDelivery?: ISubOrderDelivery;
+  deliveryDateChangeCount: number;
+  deliveryDateChangeMaximum: number;
+  order: IOrderInOrderList;
+  type: string;
 }
 
 export interface IGetOrderList {
@@ -1183,6 +1190,8 @@ export interface IGetSubOrdersResponse {
   };
 }
 
+export interface IOrderPayment {}
+
 export interface IOrderDetail {
   id: number;
   delivery: TDeliveryType | string;
@@ -1197,7 +1206,6 @@ export interface IOrderDetail {
   deliveryFee: number;
   coupon: number;
   createdAt: string;
-  deliveryDate: string;
   deliveryFeeDiscount: number;
   deliveryStatus: TDeliveryStatus;
   image: IGetOrderInImage;
@@ -1567,17 +1575,20 @@ export interface IMenuInCoupon {
   type: string;
 }
 export interface ICoupon {
-  id: number;
-  name: string;
-  canUse: boolean;
-  comment: string;
-  criteria: string;
-  value: number;
-  expiredDate: string;
   createdAt: string;
-  usedValue?: number;
-  menuIds?: number[];
-  menus?: IMenuInCoupon[];
+  criteria: string;
+  descriptions: string[];
+  expiredDate: string;
+  id: number;
+  isApp: false;
+  name: string;
+  value: number;
+}
+
+export interface ICouponResponse {
+  message: string;
+  code: number;
+  data: ICoupon[];
 }
 
 /* POINT */
@@ -1611,4 +1622,12 @@ export interface IPointHistoriesRequest {
   page: number;
   size: number;
   types: TPointHistoryType;
+}
+
+/* PRMOTION */
+
+type TReward = 'COUPON' | 'POINT' | string;
+export interface IPromotionRequest {
+  code: string;
+  reward: TReward;
 }

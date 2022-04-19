@@ -218,8 +218,6 @@ const OrderFinishPage = ({ orderId }: IProps) => {
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
   const isSpot = delivery === 'SPOT';
 
-  console.log(orderDetail, 'orderDetail');
-
   return (
     <Container>
       <PlaceInfoWrapper>

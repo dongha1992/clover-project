@@ -36,7 +36,7 @@ import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { getAvailabilityDestinationApi } from '@api/destination';
+import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getCartsApi } from '@api/cart';
 import { getMenusApi } from '@api/menu';
@@ -160,7 +160,7 @@ const CartPage = () => {
       return data.data.orderDeliveries[0];
     },
     {
-      onSuccess: (data) => {
+      onSuccess: async (response) => {
         if (userDeliveryType && userDestination) {
           const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickupId! : userDestination?.id!;
           setDestinationObj({
@@ -169,17 +169,29 @@ const CartPage = () => {
             destinationId,
             location: userDestination.location!,
           });
-          SET_USER_DELIVERY_TYPE(userDeliveryType);
-        } else if (data) {
-          const destinationId = data.delivery === 'SPOT' ? data?.spotPickupId! : data?.id!;
-          setDestinationObj({
-            ...destinationObj,
-            delivery: data.delivery.toLowerCase(),
-            destinationId,
-            location: data.location,
-          });
-          SET_USER_DELIVERY_TYPE(data.delivery.toLowerCase());
+          dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
+        } else if (response) {
+          const params = {
+            delivery: response.delivery,
+          };
+
+          try {
+            const { data } = await getMainDestinationsApi(params);
+            if (data.code === 200) {
+              const destinationId = response?.delivery === 'SPOT' ? data.data?.spotPickupId! : data.data?.id!;
+              setDestinationObj({
+                ...destinationObj,
+                delivery: response.delivery.toLowerCase(),
+                destinationId,
+                location: data.data.location!,
+              });
+              dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
+            }
+          } catch (error) {
+            console.error(error);
+          }
         }
+        await queryClient.refetchQueries('getSubOrderLists');
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -208,6 +220,7 @@ const CartPage = () => {
     {
       onSuccess: (data) => {
         const result = checkHasSubOrderDeliery(data);
+        console.log(result, '@');
         setSubOrderDeliery(result);
       },
       refetchOnMount: true,
@@ -298,6 +311,7 @@ const CartPage = () => {
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
       const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
+      console.log(destinationObj, 'destinationObj');
       let sameDeliveryAddress = isEqual(location, destinationObj?.location);
       sameDeliveryAddress = true;
       return sameDeliveryAddress && sameDeliveryType;
@@ -947,6 +961,7 @@ const EmptyContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;

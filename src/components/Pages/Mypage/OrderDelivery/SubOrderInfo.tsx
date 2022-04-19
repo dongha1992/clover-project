@@ -70,7 +70,6 @@ const SubOrderInfo = ({ isChange, isDestinationChange }: IProps) => {
 const SubOrderInfoWrapper = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
-  margin-top: 16px;
 `;
 
 const SVGWrapper = styled.div`

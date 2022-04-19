@@ -91,7 +91,6 @@ const SpotPage = () => {
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [info, setInfo] = useState<ISpotsInfo>();
-  const [spotRegistraions, setSpotRegistrations] = useState<ISpotRegistrationsResponse>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
   const registrationsLen = info && !!info?.recruitingSpotRegistrations?.length;
@@ -142,6 +141,18 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  // 단골 스팟 (트라이얼)
+  const { data: trialSpotList, isLoading: isLoadingTrial } = useQuery(
+    ['trialSpot'],
+    async () => {
+      const response = await getSpotRegistrationsRecruiting(params);
+      return response.data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  console.log(trialSpotList)
+
   useEffect(() => {
     const getInfoData = async () => {
       try {
@@ -154,17 +165,6 @@ const SpotPage = () => {
     };
     getInfoData();
 
-    // 단골 스팟
-    const getRegistration = async () => {
-      try {
-        const { data } = await getSpotRegistrationsRecruiting(params);
-        setSpotRegistrations(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getRegistration();
   }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
@@ -191,7 +191,11 @@ const SpotPage = () => {
     router.push('/spot/regi-list');
   };
 
-  const isLoading = isLoadingStation && isLoadingNew && isLoadingEvent && isLoadingPopular;
+  const goToSpotNotice = ():void => {
+    router.push('/spot/notice');
+  };
+
+  const isLoading = isLoadingStation && isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
 
   if(isLoading){
     return <div>loading...</div>;
@@ -401,7 +405,7 @@ const SpotPage = () => {
           </FlexBetween>
         </SpotRegistration>
       </Wrapper>
-      <BottomStory>프코스팟 스토리</BottomStory>
+      <BottomStory onClick={goToSpotNotice}>프코스팟 브랜딩 베너영역 + 링크</BottomStory>
       {/* 우리가게 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
@@ -509,6 +513,7 @@ const BottomStory = styled.div`
   height: 514px;
   background: ${theme.greyScale6};
   font-weight: 700;
+  cursor: pointer;
 `;
 
 const SpotOpenBannerWrapper = styled.div`

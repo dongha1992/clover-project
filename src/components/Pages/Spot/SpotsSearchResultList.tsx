@@ -26,7 +26,7 @@ interface IProps {
 const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, deliveryInfo }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
@@ -84,20 +84,20 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
       router.push('/search');
     };
 
-    const handleSubsDeliveryInfo = () => {
-      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+    const handleSubsDeliveryType = () => {
+      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, deliveryInfo },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
       });
     };
 
-    const handleSubsDeliveryInfoWithSpot = () => {
+    const handleSubsDeliveryTypeWithSpot = () => {
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      dispatch(SET_USER_DELIVERY_TYPE(deliveryInfo));
+      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, deliveryInfo },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
       });
     };
 
@@ -126,7 +126,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
-                  <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={handleSubsDeliveryInfo} />
+                  <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={handleSubsDeliveryType} />
                 ),
               })
             );
@@ -156,7 +156,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
                 <PickupSheet
                   pickupInfo={item?.pickups}
                   spotType={item?.type}
-                  onSubmit={handleSubsDeliveryInfoWithSpot}
+                  onSubmit={handleSubsDeliveryTypeWithSpot}
                 />
               ),
             })
@@ -200,11 +200,19 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
           </TextH6B>
           <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
         </MeterAndTime>
-        <div>
-          <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-            {typeTag()}
-          </Tag>
-        </div>
+        {!item.isTrial ? (
+          <div>
+            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              {typeTag()}
+            </Tag>
+          </div>
+        ) : (
+          <div>
+            <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+              트라이얼
+            </Tag>
+          </div>
+        )}
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
@@ -259,6 +267,8 @@ const ImageWrapper = styled.div<{ mapList: boolean }>`
 
 const SpotImg = styled.img`
   width: 100%;
+  border-radius: 8px;
+  border: 1px solid ${theme.greyScale6};
 `;
 
 const Col = styled.div`

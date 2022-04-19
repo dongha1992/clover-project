@@ -142,7 +142,7 @@ const OrderPage = () => {
     async () => {
       const reqBody = {
         payMethod: 'NICE_BILLING',
-        cardId: 81,
+        cardId: getMainCardHandler(previewOrder?.cards)?.id!,
         ...previewOrder?.order!,
       };
       const { data } = await createOrderApi(reqBody);
@@ -728,7 +728,7 @@ const OrderPage = () => {
             <BorderLine height={1} margin="24px 0" />
             {previewOrder?.cards?.length! > 0 ? (
               <>
-                <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+                <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards)} />
                 <Button
                   border
                   backgroundColor={theme.white}
