@@ -120,6 +120,7 @@ const ImageWrapper = styled.div`
 const SpotImg = styled.img`
   width: 100%;
   border-radius: 8px;
+  border: 1px solid ${theme.greyScale6};
 `;
 
 const Col = styled.div`
