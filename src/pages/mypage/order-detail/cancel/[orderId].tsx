@@ -38,11 +38,18 @@ const orderCancelPage = ({ orderId }: IProps) => {
       return data.data;
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        const isSubOrderCanceled = data?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
+        if (isSubOrderCanceled) {
+          router.replace('/mypage/order-delivery-history');
+        }
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
+
+  const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
 
   const { mutate: deleteOrderMutation } = useMutation(
     async (deliveryId: number) => {
@@ -51,7 +58,13 @@ const orderCancelPage = ({ orderId }: IProps) => {
       if (data.code === 200) {
         dispatch(
           SET_BOTTOM_SHEET({
-            content: <OrderCancelSheet url={url} name={name} payAmount={orderDetail?.payAmount!} />,
+            content: (
+              <OrderCancelSheet
+                url={subOrder?.image.url!}
+                name={subOrder?.order.name!}
+                payAmount={subOrder?.order.amount!}
+              />
+            ),
           })
         );
       } else {
@@ -69,9 +82,6 @@ const orderCancelPage = ({ orderId }: IProps) => {
     }
   );
 
-  console.log(orderDetail);
-  const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
-
   const { dayFormatter: deliverAt } = getCustomDate(new Date(subOrder?.deliveryDate!));
 
   const cancelOrderHandler = () => {
@@ -83,13 +93,13 @@ const orderCancelPage = ({ orderId }: IProps) => {
     return refundPoint + refundPayAmount + refundCoupon;
   };
 
-  useEffect(() => {
-    const isSubOrderCanceled = orderDetail?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
-    console.log(orderDetail?.orderDeliveries[0].subOrderDelivery?.status);
-    if (isSubOrderCanceled) {
-      router.replace('/mypage/order-delivery-history');
-    }
-  }, []);
+  // useEffect(() => {
+  //   const isSubOrderCanceled = orderDetail?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
+  //   console.log(orderDetail?.orderDeliveries[0].subOrderDelivery);
+  //   if (isSubOrderCanceled) {
+  //     router.replace('/mypage/order-delivery-history');
+  //   }
+  // }, [orderDetail]);
 
   if (isLoading) {
     return <div>로딩</div>;

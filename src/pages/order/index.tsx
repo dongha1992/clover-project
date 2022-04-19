@@ -427,11 +427,6 @@ const OrderPage = () => {
     }
   }, [checkForm.alwaysPointAll.isSelected]);
 
-  // if (isNil(userDestination)) {
-  //   router.replace('/cart');
-  //   return <div>장바구니로 이동합니다.</div>;
-  // }
-
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
   }
@@ -486,10 +481,6 @@ const OrderPage = () => {
             })}
           </OrderListWrapper>
         </SlideToggle>
-        {/* <SubsOrderItem />
-        <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
-          <SubsOrderList />
-        </SlideToggle> */}
       </OrderItemsWrapper>
       <BorderLine height={8} margin="16px 0 0 0" />
       <CustomerInfoWrapper>
@@ -767,7 +758,7 @@ const OrderPage = () => {
           <TextB2R>상품 할인</TextB2R>
           <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
-        {eventDiscount && (
+        {eventDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>스팟 이벤트 할인</TextB2R>
             <TextB2R>{eventDiscount}원</TextB2R>
