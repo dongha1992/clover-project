@@ -313,7 +313,6 @@ const DeliverInfoPage = () => {
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
     if (userDeliveryType) {
-      console.log('userDeliveryType이 있음');
       if (!isSubscription) {
         setUserSelectDeliveryType(userDeliveryType);
       } else {
@@ -411,7 +410,7 @@ const DeliverInfoPage = () => {
       <Wrapper>
         <TextH3B padding="24px 0">배송방법</TextH3B>
         <DeliveryMethodWrapper>
-          {subsDeliveryType === 'spot' && (
+          {subsDeliveryType !== 'parcel' && subsDeliveryType !== 'morning' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 픽업
