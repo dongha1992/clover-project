@@ -96,10 +96,12 @@ const Header = () => {
         '/spot/location': '주소 검색',
         '/spot/location/address': '주소 검색',
         '/spot/regi-list': '프코스팟 신청 안내',
-        '/spot/notice' : '프코스팟 안내',
+        '/spot/notice': '프코스팟 안내',
         '/subscription/products': '정기구독',
         '/subscription/set-info': '구독하기',
         '/subscription/register': '구독하기',
+        '/mypage/subscription': '구독관리',
+        '/subscription/detail': '구독상세',
       };
 
       const title = headerTitleMap[currentPath];
