@@ -731,15 +731,6 @@ const OrderPage = () => {
             {previewOrder?.cards?.length! > 0 ? (
               <>
                 <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards)} />
-                <Button
-                  border
-                  backgroundColor={theme.white}
-                  color={theme.black}
-                  onClick={goToRegisteredCard}
-                  margin="16px 0 0 0"
-                >
-                  카드 등록하기
-                </Button>
               </>
             ) : (
               <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
