@@ -15,9 +15,10 @@ interface IProps {
   name: string;
   url: string;
   payAmount: number;
+  orderId: number;
 }
 
-const OrderCancelSheet = ({ url, name, payAmount }: IProps) => {
+const OrderCancelSheet = ({ url, name, payAmount, orderId }: IProps) => {
   const dispatch = useDispatch();
 
   return (
@@ -42,14 +43,17 @@ const OrderCancelSheet = ({ url, name, payAmount }: IProps) => {
             <TextH2B>완료되었어요.</TextH2B>
           </FlexCol>
           <FlexCol>
-            <TextB3R>마이 {'>'} 주문/배송 내역에서</TextB3R>
-            <TextB3R>취소 내역을 확인하실 수 있어요 </TextB3R>
+            <TextB3R color={theme.greyScale65}>마이 {'>'} 주문/배송 내역에서</TextB3R>
+            <TextB3R color={theme.greyScale65}>취소 내역을 확인하실 수 있어요 </TextB3R>
           </FlexCol>
         </FlexCol>
         <BorderLine height={8} margin="72px 0 24px 0" />
+        <TextH4B padding="0 0 24px 0" color={theme.greyScale65}>
+          취소완료
+        </TextH4B>
         <ItemInfo url={url} name={name} amount={payAmount} />
       </Body>
-      <BtnWrapper onClick={() => router.push('/event')}>
+      <BtnWrapper onClick={() => router.push(`/mypage/order-detail/${orderId}`)}>
         <Button height="100%">주문상세보기</Button>
       </BtnWrapper>
     </Container>

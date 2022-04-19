@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
+import { AxiosError } from 'axios';
 // temp
 
 const disabledDates = [];
@@ -65,8 +66,33 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     },
     {
       onSuccess: async () => {
+        if (orderDeliveries?.type === 'SUB') {
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: (
+                <OrderCancelSheet
+                  name={orderDetail?.name!}
+                  url={orderDetail?.image.url!}
+                  payAmount={orderDetail?.payAmount!}
+                  orderId={orderDetail?.id!}
+                />
+              ),
+            })
+          );
+        } else {
+          router.push('/mypage/order-delivery-history');
+        }
+
         await queryClient.refetchQueries('getOrderDetail');
-        router.push('/mypage/order-delivery-history');
+      },
+      onError: async (error: AxiosError) => {
+        if (error?.response?.data.code === 1201) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: error?.response?.data.message,
+            })
+          );
+        }
       },
     }
   );
@@ -89,7 +115,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const deliveryId = orderDeliveries?.id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
-  const name = orderDetail?.name;
 
   const showSectionHandler = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
@@ -171,9 +196,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     if (!canChangeDelivery || isCanceled) {
       return;
     }
-
-    // dispatch(SET_BOTTOM_SHEET({ content: <OrderCancelSheet name={name!} url={url!} payAmount={payAmount!} /> }));
-
+    const hasSubOrder = orderDeliveries?.subOrderDelivery;
     const deliveryId = orderDeliveries?.id!;
     const subOrderId = !isSubOrder && orderDeliveries?.subOrderDelivery?.order?.id;
     const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
@@ -185,10 +208,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     if (isSubOrder) {
       alertMessage = '함께배송 주문은 취소 후 재주문할 수 없어요. 정말 취소하시겠어요?';
       onSubmit = () => deleteOrderMutation(deliveryId);
-    } else if (!isSubOrder && !isSubOrderCanceled) {
+    } else if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       alertMessage = '함께배송 주문을 먼저 취소해야 기존 주문을 취소할 수 있어요. 함께배송 주문을 취소하시겠어요?';
       submitBtnText = '주문 취소하기';
       onSubmit = () => router.push(`/mypage/order-detail/cancel/${subOrderId}`);
+    } else if (!hasSubOrder) {
+      alertMessage = '정말 주문을 취소하시겠어요?';
+      onSubmit = () => deleteOrderMutation(deliveryId);
     } else {
       alertMessage = '정말 주문을 취소하시겠어요?';
       onSubmit = () => deleteOrderMutation(deliveryId);
