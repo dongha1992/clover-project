@@ -19,7 +19,7 @@ const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDesti
     <Container onClick={goToDeliveryInfo}>
       <Left>
         <TextH4B>{deliveryType ? DELIVERY_TYPE_MAP[deliveryType.toUpperCase()] : '배송방법과'}</TextH4B>
-        <TextH4B>{deliveryDestination ? deliveryDestination?.dong : '배송장소를 설정해주세요'}</TextH4B>
+        <TextH4B>{deliveryDestination ? deliveryDestination?.dong : '배송지를 설정해 주세요'}</TextH4B>
       </Left>
       <Right>
         <SVGIcon name="arrowRight" />
