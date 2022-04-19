@@ -408,13 +408,14 @@ const DeliverInfoPage = () => {
   }, []);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
+  const subsParcelAndMorning = ['parcel', 'morning'].includes(subsDeliveryType as string);
 
   return (
     <Container>
       <Wrapper>
         <TextH3B padding="24px 0">배송방법</TextH3B>
         <DeliveryMethodWrapper>
-          {subsDeliveryType !== 'parcel' && subsDeliveryType !== 'morning' && (
+          {!subsParcelAndMorning && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 픽업
