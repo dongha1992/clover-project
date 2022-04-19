@@ -205,6 +205,8 @@ const ImageWrapper = styled.div<{ mapList: boolean }>`
 
 const SpotImg = styled.img`
   width: 100%;
+  border: 1px solid ${theme.greyScale6};
+  border-radius: 8px;
 `;
 
 const Col = styled.div`
