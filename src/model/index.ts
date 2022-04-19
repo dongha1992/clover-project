@@ -983,16 +983,16 @@ export interface IOrderMenus {
     createdAt?: string;
   };
 }
-export interface IOrderPayment {}
 
 export interface IOrderInOrderList {
   delivery: string;
-  deliveryDetail: string;
+  deliveryDetail?: string;
   id: number;
   name: string;
   paidAt: string;
   payAmount: number;
   type: string;
+  amount: number;
 }
 
 export interface IOrder {
@@ -1057,6 +1057,8 @@ export interface IOrderDetailInOrderDeliveries {
   spotPickupType: string;
   status: string;
   orderMenus: IOrderMenus[];
+  type: string;
+  subOrderDelivery: ISubOrderDelivery;
 }
 
 export interface IEditOrderDestination {
@@ -1143,7 +1145,10 @@ export interface ISubOrderDelivery {
   spotName?: string;
   spotPickupId?: number;
   status?: string;
-  subOrderDelivery?: ISubOrderDelivery;
+  deliveryDateChangeCount: number;
+  deliveryDateChangeMaximum: number;
+  order: IOrderInOrderList;
+  type: string;
 }
 
 export interface IGetOrderList {
@@ -1184,6 +1189,8 @@ export interface IGetSubOrdersResponse {
   };
 }
 
+export interface IOrderPayment {}
+
 export interface IOrderDetail {
   id: number;
   delivery: TDeliveryType | string;
@@ -1198,7 +1205,6 @@ export interface IOrderDetail {
   deliveryFee: number;
   coupon: number;
   createdAt: string;
-  deliveryDate: string;
   deliveryFeeDiscount: number;
   deliveryStatus: TDeliveryStatus;
   image: IGetOrderInImage;

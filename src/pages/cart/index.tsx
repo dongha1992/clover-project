@@ -191,6 +191,7 @@ const CartPage = () => {
             console.error(error);
           }
         }
+        await queryClient.refetchQueries('getSubOrderLists');
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -219,6 +220,7 @@ const CartPage = () => {
     {
       onSuccess: (data) => {
         const result = checkHasSubOrderDeliery(data);
+        console.log(result, '@');
         setSubOrderDeliery(result);
       },
       refetchOnMount: true,
@@ -309,6 +311,7 @@ const CartPage = () => {
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
       const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
+      console.log(destinationObj, 'destinationObj');
       let sameDeliveryAddress = isEqual(location, destinationObj?.location);
       sameDeliveryAddress = true;
       return sameDeliveryAddress && sameDeliveryType;
