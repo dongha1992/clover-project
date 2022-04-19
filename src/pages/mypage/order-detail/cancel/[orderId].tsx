@@ -50,7 +50,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
   );
 
   const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
-
+  console.log(orderDetail, 'orderDetail');
   const { mutate: deleteOrderMutation } = useMutation(
     async (deliveryId: number) => {
       const { data } = await deleteDeliveryApi(deliveryId);
@@ -92,14 +92,6 @@ const orderCancelPage = ({ orderId }: IProps) => {
   const getTotalRefund = ({ refundPayAmount, refundCoupon, refundPoint }: IRefund): number => {
     return refundPoint + refundPayAmount + refundCoupon;
   };
-
-  // useEffect(() => {
-  //   const isSubOrderCanceled = orderDetail?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
-  //   console.log(orderDetail?.orderDeliveries[0].subOrderDelivery);
-  //   if (isSubOrderCanceled) {
-  //     router.replace('/mypage/order-delivery-history');
-  //   }
-  // }, [orderDetail]);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -150,7 +142,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
               color="#757575"
               onClick={() =>
                 router.push({
-                  pathname: `/mypage/order-detail/${orderId}`,
+                  pathname: `/mypage/order-detail/${subOrder.id}`,
                 })
               }
             >
@@ -205,7 +197,9 @@ const orderCancelPage = ({ orderId }: IProps) => {
         </RefundInfoWrapper>
       </Wrapper>
       <BtnWrapper onClick={cancelOrderHandler}>
-        <Button height="100%">주문 취소하기</Button>
+        <Button height="100%" width="100%">
+          주문 취소하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
