@@ -37,6 +37,10 @@ const FinishPage = () => {
       }
     }
   };
+  
+  const goToSpotNotice = ():void => {
+    router.push('/spot/notice');
+  };
 
   return (
     <Container>
@@ -48,7 +52,7 @@ const FinishPage = () => {
       {type !== 'public' && (
         <OpenTipWrapper>
           <TextH5B padding="48px 24px 16px 24px">프코스팟 오픈 TIP!</TextH5B>
-          <BannerWrapper>
+          <BannerWrapper onClick={goToSpotNotice}>
               <TextH5B>프코스팟 이용방법 및 혜택 알아보기</TextH5B>
           </BannerWrapper>
         </OpenTipWrapper>
@@ -85,6 +89,7 @@ const BannerWrapper = styled.div`
   padding: 16px 24px;
   margin-bottom: 8px;
   background: ${theme.greyScale25};
+  cursor: pointer;
 `;
 
 const ChannelIokWrapper = styled.div`
