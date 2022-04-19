@@ -992,6 +992,7 @@ export interface IOrderInOrderList {
   paidAt: string;
   payAmount: number;
   type: string;
+  amount: number;
 }
 
 export interface IOrder {

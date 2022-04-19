@@ -46,8 +46,14 @@ const DeliverInfoPage = () => {
   const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
 
-  const { destinationDeliveryType, userTempDestination, locationStatus, userDeliveryType, availableDestination } =
-    useSelector(destinationForm);
+  const {
+    destinationDeliveryType,
+    userTempDestination,
+    locationStatus,
+    userDeliveryType,
+    availableDestination,
+    userDestination,
+  } = useSelector(destinationForm);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -361,10 +367,15 @@ const DeliverInfoPage = () => {
 
   useEffect(() => {
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
+    console.log(userTempDestination, userDestination, 'userTempDestination');
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
       // 최근 주문 이력이 있는지
+    } else if (userDestination) {
+      setTempDestination(userDestination);
+      setUserSelectDeliveryType(userDestination?.delivery!.toLowerCase());
+      setIsMaindestination(true);
     } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
       if (!isSubscription) {
         setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
@@ -376,7 +387,7 @@ const DeliverInfoPage = () => {
         subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
       }
     }
-  }, [userTempDestination, recentOrderDelivery]);
+  }, [userTempDestination, recentOrderDelivery, userDestination]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회

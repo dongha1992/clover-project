@@ -3,15 +3,7 @@ import OrderDeliveryItem from './OrderDeliveryItem';
 import ItemInfo from './ItemInfo';
 import OrderDetailInfo from './OrderDetailInfo';
 import SubOrderInfo from './SubOrderInfo';
-import OrderUserInfo from './OrderUserInfo';
+import OrderInfo from './OrderInfo';
 import DeliveryStatusInfo from './DeliveryStatusInfo';
 
-export {
-  OrderDashboard,
-  OrderDeliveryItem,
-  ItemInfo,
-  OrderDetailInfo,
-  SubOrderInfo,
-  OrderUserInfo,
-  DeliveryStatusInfo,
-};
+export { OrderDashboard, OrderDeliveryItem, ItemInfo, OrderDetailInfo, SubOrderInfo, OrderInfo, DeliveryStatusInfo };

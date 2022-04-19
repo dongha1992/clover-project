@@ -7,11 +7,11 @@ import { IMAGE_S3_URL } from '@constants/mock';
 interface IProps {
   url: string;
   name: string;
-  payAmount: number;
+  amount: number;
   paidAt?: string;
 }
 
-const ItemInfo = ({ url, name, payAmount, paidAt }: IProps) => {
+const ItemInfo = ({ url, name, amount, paidAt }: IProps) => {
   return (
     <Container>
       <ImageWrapper>
@@ -20,7 +20,7 @@ const ItemInfo = ({ url, name, payAmount, paidAt }: IProps) => {
       <FlexCol width="80%" margin="0 0 0 16px">
         <TextB2R padding="0 0 4px 0">{name}</TextB2R>
         <FlexBetween>
-          <TextH5B>{payAmount}원</TextH5B>
+          <TextH5B>{amount}원</TextH5B>
           {paidAt && <TextB3R color={theme.greyScale65}>{paidAt} 결제</TextB3R>}
         </FlexBetween>
       </FlexCol>
