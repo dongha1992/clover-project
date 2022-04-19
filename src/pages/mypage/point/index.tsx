@@ -77,6 +77,7 @@ const PointPage = () => {
   const { mutate: mutatePostPromotionCode } = useMutation(
     async () => {
       if (codeRef.current) {
+        console.log(codeRef?.current?.value, 'codeRef?.current?.value');
         const reqBody = {
           code: codeRef?.current?.value,
           reward: 'POINT',
