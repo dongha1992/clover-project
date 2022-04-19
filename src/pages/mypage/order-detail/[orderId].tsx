@@ -20,12 +20,12 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
 import getCustomDate from '@utils/getCustomDate';
-import { OrderDetailInfo, SubOrderInfo } from '@components/Pages/Mypage/OrderDelivery';
+import { OrderDetailInfo, SubOrderInfo, OrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
-import { OrderUserInfo } from '@components/Pages/Mypage/OrderDelivery';
+
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
 // temp
@@ -143,9 +143,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDeliveryInfoHandler = () => {
-    // if (!canChangeDelivery) {
-    //   return;
-    // }
+    if (!canChangeDelivery || isCanceled) {
+      return;
+    }
 
     if (!isSubOrder) {
       dispatch(
@@ -168,14 +168,15 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const cancelOrderHandler = () => {
-    // if (!canChangeDelivery) {
-    //   return;
-    // }
+    if (!canChangeDelivery || isCanceled) {
+      return;
+    }
 
     // dispatch(SET_BOTTOM_SHEET({ content: <OrderCancelSheet name={name!} url={url!} payAmount={payAmount!} /> }));
 
     const deliveryId = orderDeliveries?.id!;
     const subOrderId = !isSubOrder && orderDeliveries?.subOrderDelivery?.order?.id;
+    const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
 
     let alertMessage = '';
     let submitBtnText = '확인';
@@ -184,7 +185,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     if (isSubOrder) {
       alertMessage = '함께배송 주문은 취소 후 재주문할 수 없어요. 정말 취소하시겠어요?';
       onSubmit = () => deleteOrderMutation(deliveryId);
-    } else if (!isSubOrder) {
+    } else if (!isSubOrder && !isSubOrderCanceled) {
       alertMessage = '함께배송 주문을 먼저 취소해야 기존 주문을 취소할 수 있어요. 함께배송 주문을 취소하시겠어요?';
       submitBtnText = '주문 취소하기';
       onSubmit = () => router.push(`/mypage/order-detail/cancel/${subOrderId}`);
@@ -268,6 +269,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     eventDiscount,
     menuAmount,
     menuDiscount,
+    refundPayAmount,
+    payAmount,
     point,
     optionAmount,
     coupon,
@@ -323,15 +326,15 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       </OrderItemsWrapper>
       <BorderLine height={8} />
       <OrderInfoWrapper>
-        <TextH4B>주문자 정보</TextH4B>
-        <OrderUserInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} />
+        <TextH4B>주문정보</TextH4B>
+        <OrderInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} />
         {isSubOrder && <SubOrderInfo isChange />}
         <Button
           backgroundColor={theme.white}
           color={theme.black}
           border
           margin="24px 0 0 0"
-          // disabled={!canChangeDelivery}
+          disabled={!canChangeDelivery}
           onClick={cancelOrderHandler}
         >
           주문 취소하기
@@ -421,20 +424,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>
-            {getTotalPayment({
-              menuAmount,
-              menuDiscount,
-              eventDiscount,
-              deliveryFeeDiscount,
-              coupon,
-              point,
-              optionAmount,
-              optionQuantity,
-              deliveryFee,
-            })}
-            원
-          </TextH4B>
+          <TextH4B>{payAmount}원</TextH4B>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -482,12 +472,12 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             </FlexBetween>
             <FlexBetween padding="8px 0 0 0">
               <TextB2R>환불 포인트</TextB2R>
-              <TextB2R>{11111}원</TextB2R>
+              <TextB2R>{refundPoint}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween>
               <TextH4B>최종 환불금액</TextH4B>
-              <TextH4B>11원</TextH4B>
+              <TextH4B>{refundPayAmount}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>

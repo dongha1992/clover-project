@@ -17,7 +17,7 @@ interface IProps {
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   const { deliveryDate, status } = orderDeliveryItem;
-  const { name, payAmount } = orderDeliveryItem.order;
+  const { name, payAmount, amount } = orderDeliveryItem.order;
   const { url } = orderDeliveryItem.image;
 
   const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.order.paidAt));
@@ -34,8 +34,10 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   const subItemObj = {
     name: orderDeliveryItem?.subOrderDelivery?.order.name!,
     url: orderDeliveryItem?.subOrderDelivery?.image.url!,
-    payAmount: orderDeliveryItem?.subOrderDelivery?.order.payAmount!,
+    amount: orderDeliveryItem?.subOrderDelivery?.order.amount!,
   };
+
+  console.log(orderDeliveryItem, 'orderDeliveryItem');
 
   return (
     <Container>
@@ -57,7 +59,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
             </>
           )}
         </FlexRow>
-        <ItemInfo url={url} name={name} payAmount={payAmount} paidAt={paidAt} />
+        <ItemInfo url={url} name={name} amount={amount} paidAt={paidAt} />
         <FlexRow>
           <Button
             backgroundColor={theme.white}
@@ -83,7 +85,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
               deliveryType={orderDeliveryItem?.subOrderDelivery?.delivery!}
               type={orderDeliveryItem?.subOrderDelivery?.type!}
             />
-            <ItemInfo url={subItemObj.url!} name={subItemObj.name!} payAmount={subItemObj.payAmount!} paidAt={paidAt} />
+            <ItemInfo url={subItemObj.url!} name={subItemObj.name!} amount={subItemObj.amount!} paidAt={paidAt} />
           </OtherDeliveryWrapper>
         </FlexRowStart>
       )}

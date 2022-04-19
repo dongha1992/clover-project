@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexBetween, FlexCol, FlexRow, FlexEnd } from '@styles/theme';
@@ -11,10 +11,11 @@ import BorderLine from '@components/Shared/BorderLine';
 import { ItemInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { getTotalPayment } from '@utils/getTotalPayment';
 import { Tag } from '@components/Shared/Tag';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 
 interface IProps {
   orderId: number;
@@ -46,6 +47,16 @@ const orderCancelPage = ({ orderId }: IProps) => {
   const { mutate: deleteOrderMutation } = useMutation(
     async (deliveryId: number) => {
       const { data } = await deleteDeliveryApi(deliveryId);
+
+      if (data.code === 200) {
+        dispatch(
+          SET_BOTTOM_SHEET({
+            content: <OrderCancelSheet url={url} name={name} payAmount={orderDetail?.payAmount!} />,
+          })
+        );
+      } else {
+        dispatch(SET_ALERT({ alertMessage: '앗, 잠시 문제가 생겼어요! 다시 시도해 주세요.' }));
+      }
     },
     {
       onSuccess: async () => {
@@ -59,17 +70,26 @@ const orderCancelPage = ({ orderId }: IProps) => {
   );
 
   console.log(orderDetail);
+  const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
 
-  const { dayFormatter: deliverAt } = getCustomDate(new Date(orderDetail?.orderDeliveries[0]?.deliveryDate!));
+  const { dayFormatter: deliverAt } = getCustomDate(new Date(subOrder?.deliveryDate!));
 
   const cancelOrderHandler = () => {
-    const deliveryId = orderDetail?.orderDeliveries[0]?.id!;
+    const deliveryId = orderDetail?.orderDeliveries[0]?.subOrderDelivery.id!;
     deleteOrderMutation(deliveryId);
   };
 
   const getTotalRefund = ({ refundPayAmount, refundCoupon, refundPoint }: IRefund): number => {
     return refundPoint + refundPayAmount + refundCoupon;
   };
+
+  useEffect(() => {
+    const isSubOrderCanceled = orderDetail?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
+    console.log(orderDetail?.orderDeliveries[0].subOrderDelivery?.status);
+    if (isSubOrderCanceled) {
+      router.replace('/mypage/order-delivery-history');
+    }
+  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -87,9 +107,8 @@ const orderCancelPage = ({ orderId }: IProps) => {
     menuDiscount,
     point,
     optionAmount,
+    payAmount,
     coupon,
-    name,
-    image: { url },
   } = orderDetail!;
 
   return (
@@ -128,21 +147,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
               주문상세 보기
             </TextH6B>
           </FlexBetween>
-          <ItemInfo
-            url={url}
-            name={name}
-            payAmount={getTotalPayment({
-              menuAmount,
-              menuDiscount,
-              eventDiscount,
-              deliveryFeeDiscount,
-              coupon,
-              point,
-              optionAmount,
-              optionQuantity,
-              deliveryFee,
-            })}
-          />
+          <ItemInfo url={subOrder?.image.url!} name={subOrder?.order?.name!} amount={subOrder?.order?.amount!} />
         </Header>
         <RefundInfoWrapper>
           <FlexBetween>

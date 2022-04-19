@@ -47,7 +47,7 @@ const OrderCancelSheet = ({ url, name, payAmount }: IProps) => {
           </FlexCol>
         </FlexCol>
         <BorderLine height={8} margin="72px 0 24px 0" />
-        <ItemInfo url={url} name={name} payAmount={payAmount} />
+        <ItemInfo url={url} name={name} amount={payAmount} />
       </Body>
       <BtnWrapper onClick={() => router.push('/event')}>
         <Button height="100%">주문상세보기</Button>
