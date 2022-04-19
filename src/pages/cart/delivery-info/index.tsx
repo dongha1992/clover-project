@@ -331,11 +331,17 @@ const DeliverInfoPage = () => {
 
     const isSpot = userSelectDeliveryType === 'spot';
 
-    // 최근 이력에서 고른 경우
+    if (userDestination?.delivery === userSelectDeliveryType.toUpperCase()) {
+      setTempDestination(userDestination);
+      setIsMaindestination(true);
+      return;
+    }
+
     const params = {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
 
+    console.log(userDestination?.delivery, 'userDestination');
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
@@ -366,15 +372,13 @@ const DeliverInfoPage = () => {
 
   useEffect(() => {
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
-    console.log(userTempDestination, userDestination, 'userTempDestination');
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
-      // 최근 주문 이력이 있는지
-    } else if (userDestination) {
+      // 설정한 주소가 있는지
+    } else if (!userTempDestination && userDestination) {
       setTempDestination(userDestination);
-      setUserSelectDeliveryType(userDestination?.delivery!.toLowerCase());
-      setIsMaindestination(true);
+      // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
       if (!isSubscription) {
         setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
