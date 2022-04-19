@@ -85,15 +85,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
 
         await queryClient.refetchQueries('getOrderDetail');
       },
-      onError: async (error: AxiosError) => {
-        if (error?.response?.data.code === 1201) {
-          dispatch(
-            SET_ALERT({
-              alertMessage: error?.response?.data.message,
-            })
-          );
-        }
-      },
+      onError: async (error: AxiosError) => {},
     }
   );
 
@@ -112,6 +104,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const isDelivering = orderDeliveries?.status === 'DELIVERING';
   const canChangeDelivery = orderDeliveries?.status === 'RESERVED';
   const isSubOrder = orderDeliveries?.type === 'SUB';
+  const hasSubOrder = orderDeliveries?.subOrderDelivery;
+  const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
   const deliveryId = orderDeliveries?.id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
@@ -196,10 +190,8 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     if (!canChangeDelivery || isCanceled) {
       return;
     }
-    const hasSubOrder = orderDeliveries?.subOrderDelivery;
+
     const deliveryId = orderDeliveries?.id!;
-    const subOrderId = !isSubOrder && orderDeliveries?.subOrderDelivery?.order?.id;
-    const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
 
     let alertMessage = '';
     let submitBtnText = '확인';
@@ -211,7 +203,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     } else if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       alertMessage = '함께배송 주문을 먼저 취소해야 기존 주문을 취소할 수 있어요. 함께배송 주문을 취소하시겠어요?';
       submitBtnText = '주문 취소하기';
-      onSubmit = () => router.push(`/mypage/order-detail/cancel/${subOrderId}`);
+      onSubmit = () => router.push(`/mypage/order-detail/cancel/${orderId}`);
     } else if (!hasSubOrder) {
       alertMessage = '정말 주문을 취소하시겠어요?';
       onSubmit = () => deleteOrderMutation(deliveryId);
@@ -235,7 +227,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       return;
     }
 
-    if (!isSubOrder) {
+    console.log(orderDetail, '@@@@@@');
+
+    if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송일을 변경하시면 함께배송 주문 배송일도 함께 변경됩니다. 변경하시겠어요?',

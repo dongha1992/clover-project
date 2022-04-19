@@ -162,7 +162,7 @@ const CartPage = () => {
     {
       onSuccess: async (response) => {
         if (userDeliveryType && userDestination) {
-          const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickupId! : userDestination?.id!;
+          const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickup?.id! : userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -178,7 +178,7 @@ const CartPage = () => {
           try {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
-              const destinationId = response?.delivery === 'SPOT' ? data.data?.spotPickupId! : data.data?.id!;
+              const destinationId = response?.delivery === 'SPOT' ? data?.data?.spotPickup?.id! : data.data?.id!;
               setDestinationObj({
                 ...destinationObj,
                 delivery: response.delivery.toLowerCase(),

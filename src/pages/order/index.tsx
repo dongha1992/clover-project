@@ -32,7 +32,7 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
+import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import getCustomDate from '@utils/getCustomDate';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
@@ -108,6 +108,7 @@ const OrderPage = () => {
     receiverTel: '',
     point: 0,
   });
+  const [loadingState, setLoadingState] = useState(false);
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
@@ -145,6 +146,9 @@ const OrderPage = () => {
         cardId: getMainCardHandler(previewOrder?.cards)?.id!,
         ...previewOrder?.order!,
       };
+
+      setLoadingState(true);
+
       const { data } = await createOrderApi(reqBody);
       const { id: orderId } = data.data;
       return orderId;
@@ -153,6 +157,7 @@ const OrderPage = () => {
       onError: () => {},
       onSuccess: async (orderId: number) => {
         router.push({ pathname: '/order/finish', query: { orderId } });
+        setLoadingState(false);
       },
     }
   );
@@ -399,6 +404,11 @@ const OrderPage = () => {
 
   const getMainCardHandler = (cards: IGetCard[] = []) => {
     return cards.find((c) => c.main);
+  };
+
+  const paymentHandler = () => {
+    if (loadingState) return;
+    mutateCreateOrder();
   };
 
   useEffect(() => {
@@ -848,7 +858,7 @@ const OrderPage = () => {
           </TextH6B>
         </FlexRow> */}
       </OrderTermWrapper>
-      <OrderBtn onClick={() => mutateCreateOrder()}>
+      <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%">
           {payAmount}원 결제하기
         </Button>
