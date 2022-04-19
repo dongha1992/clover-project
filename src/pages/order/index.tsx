@@ -491,6 +491,13 @@ const OrderPage = () => {
             })}
           </OrderListWrapper>
         </SlideToggle>
+        {/* <TextB2R padding="8px 0 16px 0" color={theme.brandColor}>
+          5주간, 주 2회씩 (화·목) 총 9회 배송되는 식단입니다.
+        </TextB2R>
+        <SubsOrderItem /> */}
+        {/* <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
+          <SubsOrderList />
+        </SlideToggle> */}
       </OrderItemsWrapper>
       <BorderLine height={8} margin="16px 0 0 0" />
       <CustomerInfoWrapper>
