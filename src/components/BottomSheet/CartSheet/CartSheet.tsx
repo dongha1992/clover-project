@@ -21,10 +21,9 @@ import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { Obj } from '@model/index';
 import { UPDATE_CART_LIST } from '@store/cart';
+import { postCartsApi } from '@api/cart';
 
 import 'dayjs/locale/ko';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import { menuSelector } from '@store/menu';
 
 dayjs.locale('ko');
@@ -35,8 +34,15 @@ interface IRolling {
   description: string;
 }
 
-// temp
-let disabledDates = ['2022-02-12'];
+interface ISelectedMenu {
+  discountPrice: number;
+  id: number;
+  main: boolean;
+  menuId: number;
+  name: string;
+  price: number;
+  menuQuantity?: number;
+}
 
 const CartSheet = () => {
   const [rollingData, setRollingData] = useState([
@@ -57,7 +63,7 @@ const CartSheet = () => {
       description: '17시까지 주문 시 당일 발송',
     },
   ]);
-  const [selectedMenus, setSelectedMenus] = useState<any>([]);
+  let [selectedMenus, setSelectedMenus] = useState<ISelectedMenu[]>([]);
 
   const { showToast } = useToast();
 
@@ -71,33 +77,44 @@ const CartSheet = () => {
   /* TODO: axios 여러번 */
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
+      selectedMenus = [...selectedMenus, ...selectedMenus];
+
+      // const reqBody = selectedMenus.map((item) => {
+      //   return {
+      //     menuId: item.menuId,
+      //     menuDetailId: item.id,
+      //     menuQuantity: item.menuQuantity || null,
+      //     main: item.main,
+      //   };
+      // });
+
+      const reqBody = [
+        // {
+        //   menuDetailId: 72,
+        //   menuQuantity: 1,
+        //   menuId: 9,
+        //   main: true,
+        // },
+        {
+          menuDetailId: 511,
+          menuQuantity: 1,
+          menuId: 135,
+          main: true,
+        },
+      ];
+
       const result = checkAlreadyInCart();
-
-      const data = result.map(async ({ id: menuDetailId, quantity }: any) => {
-        /* TODO : 구매제한체크 api */
-
-        await axios.post(`${BASE_URL}/cartList`, { params: { menuDetailId, quantity } }).then((res) => {
-          if (res.data.message === 'success') {
-            return true;
-          } else {
-            /*TODO: 에러 핸들링 */
-            showToast({ message: '알 수 없는 에러! 다시 시도해주세요.' });
-            return false;
-          }
-        });
-      });
-      if (data) {
-        return true;
-      }
+      const { data } = await postCartsApi(reqBody);
+      console.log(data, '!!!!');
     },
     {
       onError: () => {},
-      onSuccess: async (mssage) => {
-        if (mssage) {
-          showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-          dispatch(INIT_BOTTOM_SHEET());
-          await queryClient.refetchQueries('getCartList');
-          dispatch(UPDATE_CART_LIST());
+      onSuccess: async (message) => {
+        if (message) {
+          // showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+          // dispatch(INIT_BOTTOM_SHEET());
+          // await queryClient.refetchQueries('getCartList');
+          // dispatch(UPDATE_CART_LIST());
         }
       },
     }
@@ -331,7 +348,9 @@ const CartSheet = () => {
           <Select placeholder="필수옵션" type={'main'}>
             {menuItem?.menuDetails.map((option: any, index: number) => {
               if (option.main) {
-                return <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />;
+                return (
+                  <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
+                );
               }
             })}
           </Select>
@@ -343,7 +362,9 @@ const CartSheet = () => {
           <Select placeholder="선택옵션" type={'optional'}>
             {menuItem?.menuDetails.map((option: any, index: number) => {
               if (!option.main) {
-                return <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} />;
+                return (
+                  <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
+                );
               }
             })}
           </Select>

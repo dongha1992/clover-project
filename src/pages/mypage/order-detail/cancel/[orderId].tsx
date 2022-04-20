@@ -27,7 +27,7 @@ interface IRefund {
   refundCoupon: number;
 }
 
-const orderCancelPage = ({ orderId }: IProps) => {
+const OrderCancelPage = ({ orderId }: IProps) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
@@ -142,7 +142,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
               color="#757575"
               onClick={() =>
                 router.push({
-                  pathname: `/mypage/order-detail/${subOrder.id}`,
+                  pathname: `/mypage/order-detail/${subOrder?.id}`,
                 })
               }
             >
@@ -198,7 +198,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
       </Wrapper>
       <BtnWrapper onClick={cancelOrderHandler}>
         <Button height="100%" width="100%">
-          주문 취소하기
+          함께배송 주문 취소하기
         </Button>
       </BtnWrapper>
     </Container>
@@ -232,4 +232,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default orderCancelPage;
+export default OrderCancelPage;
