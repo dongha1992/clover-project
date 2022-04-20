@@ -17,7 +17,7 @@ interface IProps {
 }
 
 const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
-  const isSelected = !isNil(checkedMenus.find((item) => item.menuId === menu.menuId));
+  const isSelected = !isNil(checkedMenus?.find((item) => item.menuId === menu.menuId));
 
   return (
     <Container>

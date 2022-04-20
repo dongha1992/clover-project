@@ -6,13 +6,15 @@ import CountButton from '@components/Shared/Button/CountButton';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
+import { IMenuDetailsInCart } from '@model/index';
 
 interface IProps {
-  menuDetail: any;
-  removeCartActualItemHandler: ({ id, main }: { id: number; main: boolean }) => void;
+  menuDetail: IMenuDetailsInCart;
+  removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
   clickPlusButton: (id: number, quantity: number) => void;
   clickMinusButton: (id: number, quantity: number) => void;
   clickRestockNoti: any;
+  menuId: number;
 }
 
 const CartActualItem = ({
@@ -21,6 +23,7 @@ const CartActualItem = ({
   clickPlusButton,
   clickMinusButton,
   clickRestockNoti,
+  menuId,
 }: IProps) => {
   return (
     <Container isSoldout={menuDetail.isSold}>
@@ -29,7 +32,8 @@ const CartActualItem = ({
           <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : menuDetail.name}</TextB3R>
           <div
             onClick={() =>
-              removeCartActualItemHandler && removeCartActualItemHandler({ id: menuDetail.id, main: menuDetail.main })
+              removeCartActualItemHandler &&
+              removeCartActualItemHandler({ menuDetailId: menuDetail.menuDetailId, menuId })
             }
           >
             <SVGIcon name="defaultCancel" />
@@ -37,7 +41,7 @@ const CartActualItem = ({
         </FlexBetween>
         <FlexCol>
           <PriceWrapper>
-            <TextH5B color={menuDetail.isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
+            <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
               {menuDetail.discount}%
             </TextH5B>
             <TextH5B>{menuDetail.price}원</TextH5B>

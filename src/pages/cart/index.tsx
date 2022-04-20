@@ -35,6 +35,8 @@ import {
   ILocation,
   ILunchOrDinner,
   IDeliveryObj,
+  IMenus,
+  IDeleteCartRequest,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -50,6 +52,7 @@ import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { pluck, pipe, reduce, toArray, map } from '@fxts/core';
 import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
+import { Retryer } from 'react-query/types/core/retryer';
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
@@ -85,6 +88,7 @@ const CartPage = () => {
       time: '17시',
     },
   ]);
+  const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
@@ -112,10 +116,11 @@ const CartPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { isLoading } = useQuery(
+  const { data: initCartItemList, isLoading } = useQuery(
     'getCartList',
     async () => {
       const { data } = await getCartsApi();
+
       return data.data;
     },
     {
@@ -124,8 +129,9 @@ const CartPage = () => {
       cacheTime: 0,
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
-        setNutritionObj(getTotalNutrition(data));
+
         setCartItemList(data);
+        setNutritionObj(getTotalNutrition(data));
         dispatch(INIT_CART_LISTS());
         dispatch(SET_CART_LISTS(data));
       },
@@ -265,10 +271,10 @@ const CartPage = () => {
       const { menuDetailId, quantity } = params;
 
       /* TODO : 구매제한체크 api */
-      const checkHasLimitQuantity = checkedMenus.find((item) => item.id === menuDetailId)?.limitQuantity;
-      if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
-        return;
-      }
+      // const checkHasLimitQuantity = checkedMenus.find((item) => item.id === menuDetailId)?.limitQuantity;
+      // if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
+      //   return;
+      // }
       const { data } = await patchCartsApi();
     },
     {
@@ -280,8 +286,8 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async (reqBody: number[]) => {
-      const { data } = await deleteCartsApi();
+    async (reqBody: IDeleteCartRequest[]) => {
+      const { data } = await deleteCartsApi(reqBody);
     },
     {
       onSuccess: async () => {
@@ -383,28 +389,78 @@ const CartPage = () => {
     );
   };
 
-  const removeCartActualItemHandler = ({ id, main }: { id: number; main: boolean }) => {
-    if (main) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.',
-          closeBtnText: '취소',
-          submitBtnText: '확인',
-          onSubmit: () => mutateDeleteItem([id]),
-        })
-      );
+  const removeCartActualItemHandler = ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => {
+    let foundMenu = cartItemList.find((item) => item.menuId === menuId);
+    let temp = foundMenu?.menuDetails.map((item, index) => {
+      if (index) {
+        return { ...item, main: false };
+      } else {
+        return item;
+      }
+    });
+
+    foundMenu = {
+      ...foundMenu,
+      menuDetails: temp,
+    };
+
+    const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+
+    let reqBody = [{ menuId, menuDetailId }];
+    let alertMessage = '';
+
+    if (isMain) {
+      const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
+      if (hasOptionalMenu) {
+        const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main).length === 1;
+
+        if (hasMoreOneMainMenu) {
+          alertMessage = '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.';
+          const foundOptional = foundMenu?.menuDetails
+            .filter((item) => !item.main)
+            .map((item) => {
+              return {
+                menuDetailId: item.menuDetailId,
+                menuId: menuId,
+              };
+            });
+          reqBody = [...reqBody, ...foundOptional];
+        } else {
+          alertMessage = '상품을 삭제하시겠어요?';
+        }
+      } else {
+        alertMessage = '상품을 삭제하시겠어요?';
+      }
     } else {
-      mutateDeleteItem([id]);
+      alertMessage = '상품을 삭제하시겠어요?';
     }
+
+    console.log(reqBody, 'reqBody');
+
+    dispatch(
+      SET_ALERT({
+        alertMessage,
+        closeBtnText: '취소',
+        submitBtnText: '확인',
+        onSubmit: () => mutateDeleteItem(reqBody),
+      })
+    );
   };
 
-  const removeCartDisplayItemHandler = (id: number) => {
+  const removeCartDisplayItemHandler = (menu: IGetCart) => {
+    const reqBody = menu.menuDetails.map((item) => {
+      return {
+        menuId: menu.menuId,
+        menuDetailId: item.menuDetailId,
+      };
+    });
+
     dispatch(
       SET_ALERT({
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem([id]),
+        onSubmit: () => mutateDeleteItem(reqBody),
       })
     );
   };
@@ -590,7 +646,7 @@ const CartPage = () => {
 
   const getItemsPrice = useCallback((): number => {
     return (
-      checkedMenus.reduce((totalPrice, item) => {
+      checkedMenus?.reduce((totalPrice, item) => {
         return totalPrice + item.price * item.quantity;
       }, 0) || 0
     );
@@ -654,26 +710,31 @@ const CartPage = () => {
     }
   }, [selectedDeliveryDay, lunchOrDinner, subOrderDelivery]);
 
+  useEffect(() => {
+    // 개별 선택 아이템이 전체 카트 아이템의 수량과 일치하면 all 전체선택
+    if (checkedMenus?.length === cartItemList?.length) {
+      setIsAllchecked(true);
+    }
+  }, [checkedMenus]);
 
   useEffect(() => {
     //  첫 렌딩 때 체크
-    const canCheckMenus = cartItemList.filter((item) => !checkIsAllSoldout(item.menuDetails));
-
-    if (cartItemList.length > 0 && canCheckMenus.length === cartItemList.length) {
-      setIsAllchecked(true);
-      setCheckedMenus(cartItemList);
-    } else {
-      setIsAllchecked(false);
-      setCheckedMenus(canCheckMenus);
+    if (isFirstRender) {
+      const canCheckMenus = cartItemList?.filter((item) => !checkIsAllSoldout(item.menuDetails))!;
+      if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
+        setIsAllchecked(true);
+        setCheckedMenus(cartItemList);
+      } else {
+        setIsAllchecked(false);
+        setCheckedMenus(canCheckMenus);
+      }
+      setIsFirstRender(false);
     }
   }, [cartItemList]);
 
   useEffect(() => {
-    // 개별 선택 아이템이 전체 카트 아이템의 수량과 일치하면 all 전체선택
-    if (checkedMenus.length === cartItemList.length) {
-      setIsAllchecked(true);
-    }
-  }, [checkedMenus]);
+    setIsFirstRender(true);
+  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -732,7 +793,7 @@ const CartPage = () => {
           <ListHeader>
             <div className="itemCheckbox">
               <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
-              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus.length}/${cartItemList.length}`})</TextB2R>
+              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus?.length}/${cartItemList?.length}`})</TextB2R>
             </div>
             <Right>
               <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeSelectedItemHandler}>
