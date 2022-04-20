@@ -7,23 +7,24 @@ import Checkbox from '@components/Shared/Checkbox';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { IGetCart } from '@model/index';
+import isNil from 'lodash-es/isNil';
 
 interface IProps {
   handleSelectCartItem: (menu: IGetCart) => void;
-  checkedMenuIdList: number[];
-  removeCartDisplayItemHandler: (id: number) => void;
+  checkedMenus: IGetCart[];
+  removeCartDisplayItemHandler: (menu: IGetCart) => void;
   menu: IGetCart;
 }
 
-const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
+const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
+  const isSelected = !isNil(checkedMenus.find((item) => item.menuId === menu.menuId));
+
   return (
     <Container>
       <Wrapper>
         <FlexRowStart width="40%">
           <CheckboxWrapper>
-            <Checkbox
-              onChange={() => handleSelectCartItem(menu)} /*isSelected={checkedMenuIdList.includes(menu.id)}*/
-            />
+            <Checkbox onChange={() => handleSelectCartItem(menu)} isSelected={isSelected} />
           </CheckboxWrapper>
           <ImageWrapper>
             <Image
@@ -38,7 +39,7 @@ const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDi
         </FlexRowStart>
         <FlexBetween>
           <TextB2R margin="0 0 0 8px">{menu.menuName}</TextB2R>
-          <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
+          <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu)}>
             <SVGIcon name="defaultCancel" />
           </RemoveBtnContainer>
         </FlexBetween>
