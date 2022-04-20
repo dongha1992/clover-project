@@ -13,9 +13,7 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useToast } from '@hooks/useToast';
 import { Rolling } from '@components/Rolling';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import calculateArrival from '@utils/calculateArrival';
-import getCustomDate from '@utils/getCustomDate';
+import { calculateArrival, getCustomDate, checkTimerLimitHelper } from '@utils/destination';
 import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
@@ -89,16 +87,22 @@ const CartSheet = () => {
       // });
 
       const reqBody = [
-        // {
-        //   menuDetailId: 72,
-        //   menuQuantity: 1,
-        //   menuId: 9,
-        //   main: true,
-        // },
         {
-          menuDetailId: 511,
+          menuDetailId: 110,
           menuQuantity: 1,
-          menuId: 135,
+          menuId: 10,
+          main: true,
+        },
+        {
+          menuDetailId: 72,
+          menuQuantity: 1,
+          menuId: 9,
+          main: true,
+        },
+        {
+          menuDetailId: 99,
+          menuQuantity: 1,
+          menuId: 9,
           main: true,
         },
       ];

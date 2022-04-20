@@ -4,7 +4,7 @@ import { useBottomSheet } from '@hooks/useBottomSheet';
 import Content from '@components/BottomSheet/Content';
 import { INIT_BOTTOM_SHEET, bottomSheetForm } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 
 /* TODO: height 조절해야함 */
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */

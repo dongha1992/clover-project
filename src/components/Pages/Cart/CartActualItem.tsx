@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
 import { FlexBetween, theme, FlexCol, FlexBetweenStart } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
 
@@ -43,20 +43,17 @@ const CartActualItem = ({
             <TextH5B>{menuDetail.price}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
-            <InfoMessage status={menuDetail.isSoldout ? 'soldOut' : 'soldSoon'} count={2} />
+            <InfoMessage status={menuDetail.isSold ? 'soldOut' : 'soldSoon'} count={2} />
             <CountButtonContainer>
-              {menuDetail.isSoldout ? (
-                <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
-                  <TextH6B color={theme.white}>재입고 알림</TextH6B>
-                </Tag>
-              ) : (
-                <CountButton
-                  id={menuDetail.menuDetailId}
-                  quantity={menuDetail.menuQuantity}
-                  clickPlusButton={clickPlusButton}
-                  clickMinusButton={clickMinusButton}
-                />
-              )}
+              {/* <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
+                <TextH6B color={theme.white}>재입고 알림</TextH6B>
+              </Tag> */}
+              <CountButton
+                id={menuDetail.menuDetailId}
+                quantity={menuDetail.menuQuantity}
+                clickPlusButton={clickPlusButton}
+                clickMinusButton={clickMinusButton}
+              />
             </CountButtonContainer>
           </FlexBetweenStart>
         </FlexCol>
@@ -73,6 +70,7 @@ const Container = styled.div<{ isSoldout?: boolean }>`
   margin-bottom: 8px;
   border-radius: 8px;
   position: relative;
+  margin-left: 28px;
 `;
 
 const ContentWrapper = styled.div`

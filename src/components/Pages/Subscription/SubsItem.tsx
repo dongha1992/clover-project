@@ -1,7 +1,7 @@
 import Badge from '@components/Item/Badge';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { FlexWrapWrapper, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import Image from 'next/image';
 import router from 'next/router';
 import styled from 'styled-components';

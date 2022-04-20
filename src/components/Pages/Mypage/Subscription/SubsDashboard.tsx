@@ -1,6 +1,6 @@
 import { TextB2R, TextB3R, TextB4R, TextH3B, TextH4B } from '@components/Shared/Text';
 import { FlexBetween, FlexCol, FlexColCenter, FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import router from 'next/router';
 

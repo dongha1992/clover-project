@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { TextH6B } from '@components/Shared/Text';

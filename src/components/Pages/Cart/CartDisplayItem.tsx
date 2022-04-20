@@ -1,28 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextB3R } from '@components/Shared/Text';
+import { TextB2R } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, theme, FlexRowStart } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import Checkbox from '@components/Shared/Checkbox';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+import { IGetCart } from '@model/index';
+
 interface IProps {
-  handleSelectCartItem: (id: number) => void;
+  handleSelectCartItem: (menu: IGetCart) => void;
   checkedMenuIdList: number[];
   removeCartDisplayItemHandler: (id: number) => void;
-  menu: any;
+  menu: IGetCart;
 }
 
 const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
-  console.log(menu, 'menu');
   return (
     <Container>
       <Wrapper>
         <FlexRowStart width="40%">
           <CheckboxWrapper>
             <Checkbox
-              onChange={() => handleSelectCartItem(menu.menuId)}
-              isSelected={checkedMenuIdList.includes(menu.id)}
+              onChange={() => handleSelectCartItem(menu)} /*isSelected={checkedMenuIdList.includes(menu.id)}*/
             />
           </CheckboxWrapper>
           <ImageWrapper>
@@ -37,7 +37,7 @@ const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDi
           </ImageWrapper>
         </FlexRowStart>
         <FlexBetween>
-          <TextB3R>{menu.menuName}</TextB3R>
+          <TextB2R margin="0 0 0 8px">{menu.menuName}</TextB2R>
           <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
             <SVGIcon name="defaultCancel" />
           </RemoveBtnContainer>
@@ -57,7 +57,7 @@ const Container = styled.div<{
   height: 100%;
   background-color: ${theme.white};
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -74,6 +74,9 @@ const Wrapper = styled.div`
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 const RemoveBtnContainer = styled.div`

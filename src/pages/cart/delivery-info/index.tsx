@@ -18,12 +18,10 @@ import {
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { postDestinationApi, getMainDestinationsApi } from '@api/destination';
-
 import { CheckTimerByDelivery } from '@components/CheckTimer';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { checkTimerLimitHelper, checkIsValidTimer } from '@utils/destination';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import { useRouter } from 'next/router';
-import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
 import { IDestinationsResponse } from '@model/index';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';

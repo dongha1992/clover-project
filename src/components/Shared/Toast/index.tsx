@@ -4,7 +4,7 @@ import { toastSelector } from '@store/toast';
 import { useSelector } from 'react-redux';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 
 const Toast = (): JSX.Element | null => {
   const [isToastOpen, setIsToastOpen] = useState<boolean>(false);

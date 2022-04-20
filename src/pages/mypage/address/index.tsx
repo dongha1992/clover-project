@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SPOT_URL } from '@constants/mock';
 import { TabList } from '@components/Shared/TabList';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
 import axios from 'axios';
 // import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';

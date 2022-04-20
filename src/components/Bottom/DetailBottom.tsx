@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import SVGIcon from '@utils/common/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { checkTimerLimitHelper } from '@utils/destination';
 import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
 import { useToast } from '@hooks/useToast';

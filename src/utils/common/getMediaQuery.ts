@@ -7,7 +7,7 @@ export const breakpoints: { [index: string]: number } = {
   sm: 320,
 };
 
-export const mediaQuery = Object.keys(breakpoints)
+const getMediaQuery = Object.keys(breakpoints)
   .map((key) => [key, breakpoints[key]] as [string, number])
   .reduce((prev, [key]) => {
     prev[key] = (...args: string[]) => css`
@@ -17,3 +17,5 @@ export const mediaQuery = Object.keys(breakpoints)
     `;
     return prev;
   }, {} as { [index: string]: (...args: string[]) => any });
+
+export default getMediaQuery;

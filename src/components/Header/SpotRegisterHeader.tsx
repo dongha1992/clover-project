@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';

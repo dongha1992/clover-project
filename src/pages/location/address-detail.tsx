@@ -9,7 +9,7 @@ import { CheckDestinationPlace } from '@components/Pages/Destination/';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
-import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { checkDestinationHelper } from '@utils/destination';
 import { SET_SPOT_POSITIONS } from '@store/spot';
 
 const AddressDetailPage = () => {

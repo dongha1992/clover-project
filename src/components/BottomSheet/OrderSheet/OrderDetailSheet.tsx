@@ -2,7 +2,7 @@ import { Button } from '@components/Shared/Button';
 import { TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { theme, bottomSheetButton } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
@@ -26,9 +26,7 @@ const OrderDetailSheet = ({ item }: IProps) => {
           <TextH4B color={theme.black}>
             <SVGIcon name={'blackMapIcon'} /> 헤이그라운드 서울숲점
           </TextH4B>
-          <TextB3R color={theme.greyScale65}>
-            서울시 성동구 왕십리로 115, 708호
-          </TextB3R>
+          <TextB3R color={theme.greyScale65}>서울시 성동구 왕십리로 115, 708호</TextB3R>
         </div>
         <OrderButton type="button">주문하기</OrderButton>
       </AdressInfo>

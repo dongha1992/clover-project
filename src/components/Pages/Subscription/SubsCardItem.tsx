@@ -1,6 +1,6 @@
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 
 const SubsCardItem = () => {

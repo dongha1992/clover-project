@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { textH5 } from '@styles/theme';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 import { destinationForm, INIT_USER_DELIVERY_TYPE } from '@store/destination';
@@ -37,14 +37,7 @@ const SpotHeader = () => {
             <div onClick={goToLocation}>
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
-            {userLocation?.emdNm && (
-              <Tooltip
-                message='현재 위치가 맞나요?'
-                width='139px'
-                left='-5px'
-                top='29px'
-              />
-            )}
+            {userLocation?.emdNm && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />}
           </AddressWrapper>
         </Left>
         <Right>

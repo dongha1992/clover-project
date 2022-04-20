@@ -1,7 +1,7 @@
 import { TextB1B, TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import SVGIcon from '@utils/common/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
