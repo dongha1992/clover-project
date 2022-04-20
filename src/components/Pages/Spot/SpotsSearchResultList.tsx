@@ -4,7 +4,7 @@ import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { ISpotsDetail } from '@model/index';

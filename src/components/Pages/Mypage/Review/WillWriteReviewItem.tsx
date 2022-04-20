@@ -3,18 +3,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
-import SVGIcon from '@utils/SVGIcon';
+import SVGIcon from '@utils/common/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
-import getCustomDate from '@utils/getCustomDate';
-import { getDisplayMenuName } from '@utils/getDisplayMenuName';
+import getCustomDate from '@utils/destination/getCustomDate';
+import { getDisplayMenuName } from '@utils/menu';
 import dayjs from 'dayjs';
 interface IProps {
   menu: any;
 }
 
 const WillWriteReviewItem = ({ menu }: IProps) => {
-  const { menuName } = getDisplayMenuName(menu.orderMenus);
+  // const { menuName } = getDisplayMenuName(menu.orderMenus);
 
   const { dayFormatter: deliveryAt } = getCustomDate(new Date(menu.deliveryDate));
   const writeReviewLimit = dayjs(menu.deliveryDate).add(6, 'day').format('YYYY-MM-DD');
@@ -41,7 +41,7 @@ const WillWriteReviewItem = ({ menu }: IProps) => {
             <ItemImage src={menu.url} alt="상품이미지" />
           </ImageWrapper>
           <FlexCol width="70%" margin="0 0 0 16px">
-            <TextB2R padding="0 0 4px 0">{menuName}</TextB2R>
+            <TextB2R padding="0 0 4px 0">{menu.name}</TextB2R>
             <FlexRow>
               <TextB3R color={theme.greyScale65}>{limitAt} 까지 작성 가능</TextB3R>
             </FlexRow>

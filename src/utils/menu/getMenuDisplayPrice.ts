@@ -11,7 +11,7 @@ interface IPriceResult {
   price: number;
 }
 
-export const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
+const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
   /* TODO: 케이스 추가 */
 
   // if (!menuDetails) return null;
@@ -32,10 +32,12 @@ export const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
   return result;
 };
 
-export const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; price: number }): IResult => {
+const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; price: number }): IResult => {
   return {
     discount: Math.floor((discountPrice / price) * 100),
     discountedPrice: price - discountPrice,
     price: price,
   };
 };
+
+export { getMenuDisplayPrice, getDiscountPrice };

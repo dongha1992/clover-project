@@ -5,14 +5,14 @@ import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TabList } from '@components/Shared/TabList';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getPointHistoryApi, getPointApi } from '@api/point';
 import { postPromotionCodeApi } from '@api/promotion';
 import { IPointHistories } from '@model/index';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 

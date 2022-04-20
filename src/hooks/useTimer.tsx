@@ -2,8 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_TIMER_STATUS, orderForm } from '@store/order';
-import getCustomDate from '@utils/getCustomDate';
-import { getFormatTimeStr } from '@utils/getFormatTime';
+import { getCustomDate, getFormatTimeStr } from '@utils/destination';
 
 const AUTH_TIME_LIMIT = 299;
 const DELIVERY_TIME_LIMIT = 1799;

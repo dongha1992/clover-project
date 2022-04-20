@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { theme, verticalCenter } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 

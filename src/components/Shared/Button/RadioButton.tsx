@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 
 export interface IRadioProps {
   onChange: React.MouseEventHandler<HTMLElement>;

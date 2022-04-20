@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { getCookie } from '@utils/cookie';
+import { getCookie } from '@utils/common';
 import { userRefreshToken } from './user';
 import router from 'next/router';
 

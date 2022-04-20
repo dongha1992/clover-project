@@ -5,8 +5,7 @@ import ShareSheetItem from './SheetSheetItem';
 import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { homePadding } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
-import getUrlLink from '@utils/getUrlLink';
+import { SVGIcon, getUrlLink } from '@utils/common';
 
 /* TODO : og 태그 고려 */
 

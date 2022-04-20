@@ -17,7 +17,7 @@ import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -34,7 +34,7 @@ import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm } from '@store/order';

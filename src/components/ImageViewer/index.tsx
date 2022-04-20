@@ -4,7 +4,7 @@ import Carousel from '@components/Shared/Carousel';
 import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { INIT_IMAGE_VIEWER } from '@store/common';
 
