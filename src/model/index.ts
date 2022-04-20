@@ -1388,6 +1388,8 @@ export interface IMenuDetails {
   price: number;
   discountPrice: number;
   main: boolean;
+  dailyMaximum: number;
+  isSold: number;
 }
 
 export interface IMenus {
@@ -1406,6 +1408,10 @@ export interface IMenus {
   menuSort: string;
   orderCount: number;
   priority: string;
+  closedAt: string;
+  openedAt: string;
+  subscriptionDelivery?: string;
+  subscriptionPeriods?: string;
 }
 
 /* REVIEW */
@@ -1555,6 +1561,22 @@ export interface IGetCartResponse {
   code: number;
   message: string;
   data: IGetCart[];
+}
+export interface ICreateCartRequest {
+  main: boolean;
+  menuDetailId: number;
+  menuId: number;
+  menuQuantity?: number | null;
+}
+
+export interface IDeleteCartRequest {
+  menuDetailId: number;
+  menuId: number;
+}
+
+export interface IPatchCartRequest {
+  menuDetailId: number;
+  menuQuantity: number;
 }
 
 /* COUPON */

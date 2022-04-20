@@ -18,8 +18,6 @@ import {
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
 import SVGIcon from '@utils/SVGIcon';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
@@ -38,7 +36,7 @@ import getCustomDate from '@utils/getCustomDate';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
-import { getCartsApi } from '@api/cart';
+import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi } from '@api/cart';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
@@ -128,6 +126,7 @@ const CartPage = () => {
     'getCartList',
     async () => {
       const { data } = await getCartsApi();
+      console.log(data, '!!!!!!!!!');
       return data.data;
     },
     {
@@ -198,6 +197,21 @@ const CartPage = () => {
     }
   );
 
+  /* TODO : 최근 배송 API 무엇이지? */
+
+  // const { data } = useQuery(
+  //   'getRecentDelivery',
+  //   async () => {
+  //     const { data } = await getRecentDeliveryApi();
+  //     return data.data;
+  //   },
+  //   {
+  //     onSuccess: async (response) => {},
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
+
   /* TODO: 찜한 상품, 이전 구매 상품 리스트 받아오면 변경해야함 */
 
   const { error: menuError } = useQuery(
@@ -267,8 +281,7 @@ const CartPage = () => {
       if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
         return;
       }
-
-      const { data }: { data: any } = await axios.put(`${BASE_URL}/cartList`, { params });
+      const { data } = await patchCartsApi();
     },
     {
       onSuccess: async () => {
@@ -280,7 +293,7 @@ const CartPage = () => {
 
   const { mutate: mutateDeleteItem } = useMutation(
     async (reqBody: number[]) => {
-      const { data } = await axios.delete(`${BASE_URL}/cartList`, { data: reqBody });
+      const { data } = await deleteCartsApi();
     },
     {
       onSuccess: async () => {
