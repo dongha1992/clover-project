@@ -12,7 +12,7 @@ const SubsDashboard = () => {
           <TextH4B>구독 관리</TextH4B>
           <FlexRow>
             <TextB2R padding="0 8px 0 0">{1} 건</TextB2R>
-            <div className="rightArrow" onClick={() => router.push('/mypage/subscrition')}>
+            <div className="rightArrow" onClick={() => router.push('/mypage/subscription')}>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
