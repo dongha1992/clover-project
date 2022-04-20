@@ -6,10 +6,18 @@ import { IGetCart, IMenuDetailsInCart } from '@model/index';
 interface handleSelectCartItemIProps {
   handleSelectCartItem: (menu: IGetCart) => void;
   checkedMenus: IGetCart[];
-  clickPlusButton: (id: number, quantity: number) => void;
-  clickMinusButton: (id: number, quantity: number) => void;
+  clickPlusButton: (menuDetailId: number, quantity: number) => void;
+  clickMinusButton: (menuDetailId: number, quantity: number) => void;
   clickRestockNoti: any;
-  removeCartActualItemHandler: ({ id, main }: { id: number; main: boolean }) => void;
+  removeCartActualItemHandler: ({
+    menuDetailId,
+
+    menuId,
+  }: {
+    menuId: number;
+
+    menuDetailId: number;
+  }) => void;
   removeCartDisplayItemHandler: (menu: IGetCart) => void;
   menu: IGetCart;
 }
@@ -41,6 +49,7 @@ const CartItem = ({
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
             key={index}
+            menuId={menu.menuId}
           />
         );
       })}
