@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
@@ -13,7 +13,6 @@ import {
   FlexCol,
   FlexRow,
   fixedBottom,
-  FlexCenter,
   FlexColStart,
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
@@ -65,7 +64,6 @@ const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
   const [itemList, setItemList] = useState<any[]>([]);
   const [checkedMenus, setCheckedMenus] = useState<IGetCart[]>([]);
-  const [selectedMenuList, setSelectedMenuList] = useState<any[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
     {
@@ -267,7 +265,7 @@ const CartPage = () => {
       const { menuDetailId, quantity } = params;
 
       /* TODO : 구매제한체크 api */
-      const checkHasLimitQuantity = selectedMenuList.find((item) => item.id === menuDetailId)?.limitQuantity;
+      const checkHasLimitQuantity = checkedMenus.find((item) => item.id === menuDetailId)?.limitQuantity;
       if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
         return;
       }
@@ -324,24 +322,15 @@ const CartPage = () => {
 
   const handleSelectCartItem = (menu: IGetCart) => {
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
-    let tempCheckedMenus: IGetCart[] = [];
-
+    let tempCheckedMenus: IGetCart[] = checkedMenus.slice();
     if (foundItem) {
       tempCheckedMenus = tempCheckedMenus.filter((item) => item.menuId !== menu.menuId);
       if (isAllChecked) {
         setIsAllchecked(!isAllChecked);
       }
     } else {
-      checkIsAllSoldout();
-      // const checkIsSoldout = cartItemList.find((item) => {
-      //   if (item.soldout) {
-      //     return item.id === id;
-      //   }
-      // });
-
-      // if (checkIsSoldout) {
-      //   return;
-      // }
+      const isAllSoldout = checkIsAllSoldout(menu.menuDetails);
+      if (isAllSoldout) return;
 
       tempCheckedMenus.push(menu);
     }
@@ -349,15 +338,16 @@ const CartPage = () => {
     setCheckedMenus(tempCheckedMenus);
   };
 
-  const handleSelectAllCartItem = useCallback(() => {
-    // const checkedMenuId = cartItemList?.filter((item) => !item.soldout).map((item) => item.id);
-    // if (!isAllChecked) {
-    //   setCheckedMenus(checkedMenuId);
-    // } else {
-    //   setCheckedMenus([]);
-    // }
-    // setIsAllchecked(!isAllChecked);
-  }, [isAllChecked]);
+  const handleSelectAllCartItem = () => {
+    const canCheckMenus = cartItemList.filter((item) => !checkIsAllSoldout(item.menuDetails));
+
+    if (!isAllChecked) {
+      setCheckedMenus(canCheckMenus);
+    } else {
+      setCheckedMenus([]);
+    }
+    setIsAllchecked((prev) => !prev);
+  };
 
   const handleSelectDisposable = (id: number) => {
     const newDisposableList = disposableList.map((item) => {
@@ -596,15 +586,15 @@ const CartPage = () => {
         return totalPrice + item.price * item.quantity;
       }, 0) || 0;
     return itemsPrice + disposablePrice;
-  }, [selectedMenuList]);
+  }, [checkedMenus]);
 
   const getItemsPrice = useCallback((): number => {
     return (
-      selectedMenuList.reduce((totalPrice, item) => {
+      checkedMenus.reduce((totalPrice, item) => {
         return totalPrice + item.price * item.quantity;
       }, 0) || 0
     );
-  }, [selectedMenuList]);
+  }, [checkedMenus]);
 
   const buttonRenderer = useCallback(() => {
     return (
@@ -612,7 +602,7 @@ const CartPage = () => {
         {getTotalPrice()}원 주문하기
       </Button>
     );
-  }, [selectedMenuList, destinationObj]);
+  }, [checkedMenus, destinationObj]);
 
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
@@ -658,34 +648,32 @@ const CartPage = () => {
   }, [calendarRef.current?.offsetTop]);
 
   useEffect(() => {
-    /* 선택 메뉴 다 선택 시 all checked, 전체 삭제 하면 전체 선택 풀림 */
-    // if (cartItemList.length > 0 && checkedMenus.length === cartItemList.length) {
-    //   setIsAllchecked(true);
-    // } else if (cartItemList.length === 0) {
-    //   setIsAllchecked(false);
-    // }
-  }, [checkedMenus, cartItemList]);
-
-  useEffect(() => {
-    const filteredMenus = cartItemList.filter((item) => checkedMenus.includes(item.id));
-    setSelectedMenuList(filteredMenus);
-  }, [checkedMenus, cartItemList]);
-
-  useEffect(() => {
     // 합배송 관련
     if (subOrderDelivery.length > 0) {
       checkSameDateSubDelivery();
     }
   }, [selectedDeliveryDay, lunchOrDinner, subOrderDelivery]);
 
+
   useEffect(() => {
-    // let tempCheckMenuList = [];
-    // console.log(isAllChecked);
-    // if (isAllChecked && !isLoading) {
-    //   tempCheckMenuList = cartItemList?.filter((item) => !item.soldOut).map((item) => item.id);
-    // }
-    // setCheckedMenus(tempCheckMenuList);
-  }, [isLoading, isAllChecked, cartItemList]);
+    //  첫 렌딩 때 체크
+    const canCheckMenus = cartItemList.filter((item) => !checkIsAllSoldout(item.menuDetails));
+
+    if (cartItemList.length > 0 && canCheckMenus.length === cartItemList.length) {
+      setIsAllchecked(true);
+      setCheckedMenus(cartItemList);
+    } else {
+      setIsAllchecked(false);
+      setCheckedMenus(canCheckMenus);
+    }
+  }, [cartItemList]);
+
+  useEffect(() => {
+    // 개별 선택 아이템이 전체 카트 아이템의 수량과 일치하면 all 전체선택
+    if (checkedMenus.length === cartItemList.length) {
+      setIsAllchecked(true);
+    }
+  }, [checkedMenus]);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -754,9 +742,9 @@ const CartPage = () => {
           </ListHeader>
           <BorderLine height={1} margin="16px 0" />
           <VerticalCartList>
-            {cartItemList?.map((item: any, index) => (
+            {cartItemList?.map((menu: any, index) => (
               <CartItem
-                item={item}
+                menu={menu}
                 handleSelectCartItem={handleSelectCartItem}
                 checkedMenus={checkedMenus}
                 clickPlusButton={clickPlusButton}
