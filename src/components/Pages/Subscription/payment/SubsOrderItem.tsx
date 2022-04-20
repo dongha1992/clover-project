@@ -6,9 +6,6 @@ import { Label } from '../SubsCardItem';
 const SubsOrderItem = () => {
   return (
     <SubsOrderContainer>
-      <TextB2R padding="0 0 16px" color={theme.brandColor}>
-        5주간, 주 2회씩 (화·목) 총 9회 배송되는 식단입니다.
-      </TextB2R>
       <FlexRowStart>
         <ImgBox></ImgBox>
         <InfoBox>
@@ -25,9 +22,7 @@ const SubsOrderItem = () => {
     </SubsOrderContainer>
   );
 };
-const SubsOrderContainer = styled.div`
-  padding-top: 8px;
-`;
+const SubsOrderContainer = styled.div``;
 const ImgBox = styled.div`
   width: 60px;
   height: 60px;
