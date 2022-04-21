@@ -11,8 +11,8 @@ import { IMenuDetailsInCart } from '@model/index';
 interface IProps {
   menuDetail: IMenuDetailsInCart;
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
-  clickPlusButton: (id: number, quantity: number) => void;
-  clickMinusButton: (id: number, quantity: number) => void;
+  clickPlusButton: (menuDetailId: number, quantity: number) => void;
+  clickMinusButton: (menuDetailId: number, quantity: number) => void;
   clickRestockNoti: any;
   menuId: number;
 }
@@ -53,7 +53,7 @@ const CartActualItem = ({
                 <TextH6B color={theme.white}>재입고 알림</TextH6B>
               </Tag> */}
               <CountButton
-                id={menuDetail.menuDetailId}
+                menuDetailId={menuDetail.menuDetailId}
                 quantity={menuDetail.menuQuantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}

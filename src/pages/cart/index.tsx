@@ -116,7 +116,7 @@ const CartPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: initCartItemList, isLoading } = useQuery(
+  const { isLoading } = useQuery(
     'getCartList',
     async () => {
       const { data } = await getCartsApi();
@@ -129,8 +129,8 @@ const CartPage = () => {
       cacheTime: 0,
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
+        reOrderCartList(data);
 
-        setCartItemList(data);
         setNutritionObj(getTotalNutrition(data));
         dispatch(INIT_CART_LISTS());
         dispatch(SET_CART_LISTS(data));
@@ -194,19 +194,6 @@ const CartPage = () => {
 
   /* TODO : 최근 배송 API 무엇이지? */
 
-  // const { data } = useQuery(
-  //   'getRecentDelivery',
-  //   async () => {
-  //     const { data } = await getRecentDeliveryApi();
-  //     return data.data;
-  //   },
-  //   {
-  //     onSuccess: async (response) => {},
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
   /* TODO: 찜한 상품, 이전 구매 상품 리스트 받아오면 변경해야함 */
 
   const { error: menuError } = useQuery(
@@ -267,19 +254,17 @@ const CartPage = () => {
   // );
 
   const { mutate: mutateItemQuantity } = useMutation(
-    async (params: { menuDetailId: number; quantity: number }) => {
-      const { menuDetailId, quantity } = params;
-
+    async (params: { menuDetailId: number; menuQuantity: number }) => {
       /* TODO : 구매제한체크 api */
       // const checkHasLimitQuantity = checkedMenus.find((item) => item.id === menuDetailId)?.limitQuantity;
       // if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
       //   return;
       // }
-      const { data } = await patchCartsApi();
+
+      const { data } = await patchCartsApi(params);
     },
     {
       onSuccess: async () => {
-        // await queryClient.invalidateQueries('getCartList');
         await queryClient.refetchQueries('getCartList');
       },
     }
@@ -296,6 +281,9 @@ const CartPage = () => {
     }
   );
 
+  const reOrderCartList = (data: IGetCart[]) => {
+    setCartItemList(data);
+  };
   const getTotalNutrition = (
     menus: IGetCart[]
   ): {
@@ -391,18 +379,6 @@ const CartPage = () => {
 
   const removeCartActualItemHandler = ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => {
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
-    let temp = foundMenu?.menuDetails.map((item, index) => {
-      if (index) {
-        return { ...item, main: false };
-      } else {
-        return item;
-      }
-    });
-
-    foundMenu = {
-      ...foundMenu,
-      menuDetails: temp,
-    };
 
     const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
 
@@ -416,14 +392,15 @@ const CartPage = () => {
 
         if (hasMoreOneMainMenu) {
           alertMessage = '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.';
-          const foundOptional = foundMenu?.menuDetails
-            .filter((item) => !item.main)
-            .map((item) => {
-              return {
-                menuDetailId: item.menuDetailId,
-                menuId: menuId,
-              };
-            });
+          const foundOptional =
+            foundMenu?.menuDetails
+              .filter((item) => !item.main)
+              .map((item) => {
+                return {
+                  menuDetailId: item.menuDetailId,
+                  menuId: menuId,
+                };
+              })! || [];
           reqBody = [...reqBody, ...foundOptional];
         } else {
           alertMessage = '상품을 삭제하시겠어요?';
@@ -434,8 +411,6 @@ const CartPage = () => {
     } else {
       alertMessage = '상품을 삭제하시겠어요?';
     }
-
-    console.log(reqBody, 'reqBody');
 
     dispatch(
       SET_ALERT({
@@ -505,18 +480,18 @@ const CartPage = () => {
     }
   };
 
-  const clickPlusButton = (id: number, quantity: number) => {
+  const clickPlusButton = (menuDetailId: number, quantity: number) => {
     const parmas = {
-      menuDetailId: id,
-      quantity,
+      menuDetailId,
+      menuQuantity: quantity,
     };
     mutateItemQuantity(parmas);
   };
 
-  const clickMinusButton = (id: number, quantity: number) => {
+  const clickMinusButton = (menuDetailId: number, quantity: number) => {
     const parmas = {
-      menuDetailId: id,
-      quantity,
+      menuDetailId,
+      menuQuantity: quantity,
     };
     mutateItemQuantity(parmas);
   };
@@ -835,7 +810,7 @@ const CartPage = () => {
                 </div>
                 <Right>
                   <CountButton
-                    id={item.id}
+                    menuDetailId={item.id}
                     quantity={item.quantity}
                     clickPlusButton={clickDisposableItemCount}
                     clickMinusButton={clickDisposableItemCount}
