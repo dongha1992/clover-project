@@ -1,8 +1,7 @@
 import { CARD, MENT } from '@constants/quick';
 import { INIT_TIMER, SET_TIMER_STATUS } from '@store/order';
-import calculateArrival from '@utils/calculateArrival';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import getCustomDate from '@utils/getCustomDate';
+import { checkTimerLimitHelper, calculateArrival } from '@utils/destination';
+import { getCustomDate } from '@utils/destination';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';

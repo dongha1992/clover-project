@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import Validation from '@components/Pages/User/Validation';
 import { PASSWORD_REGX } from '@pages/signup/email-password';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { userChangePassword } from '@api/user';
 
 interface IVaildation {

@@ -4,7 +4,7 @@ import { theme, FlexStart, FlexBetween } from '@styles/theme';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 
 const SpotStatusList = ({ items, onClick }: any) => {
   return (

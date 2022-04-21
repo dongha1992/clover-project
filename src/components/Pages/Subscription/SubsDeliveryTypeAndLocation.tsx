@@ -2,7 +2,7 @@ import { TextB3R, TextH4B } from '@components/Shared/Text';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
 import { ILocation } from '@model/index';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 interface IProps {
   goToDeliveryInfo: () => void;

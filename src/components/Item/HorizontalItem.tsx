@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -11,7 +11,7 @@ import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
+import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
 
 type TProps = {
   item: any;

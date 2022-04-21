@@ -5,12 +5,11 @@ import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import StarRatingComponent from 'react-star-rating-component';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon, getImageSize } from '@utils/common';
 import debounce from 'lodash-es/debounce';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
-import { getImageSize } from '@utils/getImageSize';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';

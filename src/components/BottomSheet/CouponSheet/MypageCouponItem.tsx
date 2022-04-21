@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH4B, TextH7B, TextB4R, TextB2R18 } from '@components/Shared/Text';
 import { FlexBetween, theme, FlexRow, FlexCol } from '@styles/theme';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
 import { ICoupon } from '@model/index';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination/';
 import dayjs from 'dayjs';
 interface IProps {
   coupon: ICoupon;

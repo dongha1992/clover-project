@@ -1,5 +1,5 @@
 import React from 'react';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled, { css } from 'styled-components';
 
 type TProps = {
