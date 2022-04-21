@@ -1,4 +1,4 @@
-import { css, FlattenSimpleInterpolation } from 'styled-components';
+import { css } from 'styled-components';
 
 export const breakpoints: { [index: string]: number } = {
   full: 1440,
