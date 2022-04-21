@@ -2,8 +2,8 @@ import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH7B, TextB4R } from '@components/Shared/Text';
-import { breakpoints } from '@utils/getMediaQuery';
-import SVGIcon from '@utils/SVGIcon';
+import { breakpoints } from '@utils/common/getMediaQuery';
+import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 
 const textStyle = {
@@ -62,9 +62,7 @@ const Bottom = () => {
       <MenuWrapper>
         {BOTTOM_MENU.map((menu, index) => (
           <MenuItem onClick={() => goToPage(menu.link)} key={index}>
-            <SVGIcon
-              name={selectedTab === menu.link ? menu.activeSvg : menu.svg}
-            />
+            <SVGIcon name={selectedTab === menu.link ? menu.activeSvg : menu.svg} />
             {selectedTab === menu.link ? (
               <TextH7B {...textStyle}>{menu.text}</TextH7B>
             ) : (

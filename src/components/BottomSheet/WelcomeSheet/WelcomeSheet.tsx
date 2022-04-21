@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import Image from 'next/image';
 import router from 'next/router';

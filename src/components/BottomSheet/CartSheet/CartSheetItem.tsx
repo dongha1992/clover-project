@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 
 interface IProps {

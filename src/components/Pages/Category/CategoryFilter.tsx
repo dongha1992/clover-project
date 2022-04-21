@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { homePadding } from '@styles/theme';
 import { TextH6B, TextH3B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import dynamic from 'next/dynamic';

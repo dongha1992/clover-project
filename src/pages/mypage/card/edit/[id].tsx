@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { FlexCenter, FlexCol, homePadding, FlexRow } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';

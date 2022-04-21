@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { TextH6B } from '@components/Shared/Text';
 import { useDispatch, useSelector } from 'react-redux';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common/';
 import { RecentDelivery } from '@components/Pages/Destination';
 import { ADDRESS_KEYWORD_REGX, SPECIAL_REGX } from '@constants/regex';
 import { searchAddressJuso } from '@api/search';

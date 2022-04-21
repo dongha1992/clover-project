@@ -1,12 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { BASE_URL } from '@constants/mock';
-import axios from 'axios';
-
-export const UPDATE_CART_LIST = createAsyncThunk('cart/updateCart', async () => {
-  const { data } = await axios.get(`${BASE_URL}/cartList`);
-  return data.data;
-});
 
 type TProps = {
   cartLists: any[];
@@ -58,17 +51,17 @@ export const cart = createSlice({
   },
 
   extraReducers: (builder) => {
-    builder.addCase(UPDATE_CART_LIST.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(UPDATE_CART_LIST.fulfilled, (state: any, action) => {
-      state.isLoading = false;
-      state.cartLists = action.payload;
-    });
-    builder.addCase(UPDATE_CART_LIST.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isError = true;
-    });
+    // builder.addCase(UPDATE_CART_LIST.pending, (state) => {
+    //   state.isLoading = true;
+    // });
+    // builder.addCase(UPDATE_CART_LIST.fulfilled, (state: any, action) => {
+    //   state.isLoading = false;
+    //   state.cartLists = action.payload;
+    // });
+    // builder.addCase(UPDATE_CART_LIST.rejected, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isError = true;
+    // });
   },
 });
 

@@ -4,7 +4,7 @@ import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { IDestinationsResponse } from '@model/index';
@@ -107,13 +107,13 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
           router.push({
             pathname: '/cart/delivery-info',
             query: { destinationId: item?.id, isSubscription, subsDeliveryType },
-          });    
+          });
         } else {
           // 로그인o and 장바구니 x, 메뉴 검색으로 이동
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
           dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push('/search');    
+          router.push('/search');
         }
       }
     } else {

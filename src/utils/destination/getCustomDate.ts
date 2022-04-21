@@ -1,4 +1,4 @@
-import { getFormatTime } from '@utils/getFormatTime';
+import { getFormatTime } from '@utils/destination/getFormatTime';
 
 export const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 

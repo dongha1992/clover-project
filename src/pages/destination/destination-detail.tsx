@@ -23,7 +23,7 @@ import {
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
-import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
 
 /* TODO: receiverName, receiverTel  */

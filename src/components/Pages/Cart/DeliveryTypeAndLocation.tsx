@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
-import {} from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { isNil, isEqual } from 'lodash-es';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
-import { ILocation } from '@model/index';
-import { IGetOrderList } from '@model/index';
+import { ILocation, IGetOrderList } from '@model/index';
 
 interface IProps {
   goToDeliveryInfo: () => void;

@@ -1,6 +1,6 @@
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 

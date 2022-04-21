@@ -5,7 +5,7 @@ import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { WillWriteReviewItem, ReviewInfo, CompleteReviewItem } from '@components/Pages/Mypage/Review';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useQuery } from 'react-query';
 import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';

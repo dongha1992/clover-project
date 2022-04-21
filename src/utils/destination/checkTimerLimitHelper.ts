@@ -1,5 +1,5 @@
 import getCustomDate from './getCustomDate';
-import { getFormatTime } from '@utils/getFormatTime';
+import { getFormatTime } from '@utils/destination';
 
 export type TResult =
   | '스팟점심타이머'

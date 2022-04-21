@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';

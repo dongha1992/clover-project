@@ -18,7 +18,7 @@ import { getOrderDetailApi } from '@api/order';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 interface IProps {
   orderId: number;

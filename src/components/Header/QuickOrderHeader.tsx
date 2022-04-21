@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import CartIcon from '@components/Header/Cart';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';

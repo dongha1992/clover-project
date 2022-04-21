@@ -6,9 +6,10 @@ import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
 type TProps = {
   option: any;
   selectMenuHandler: any;
+  menuId: number;
 };
 
-const MenuOption = ({ option, selectMenuHandler }: TProps) => {
+const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
   const getMenuOptionPrice = () => {
     const price = option.price;
     const discount = Math.floor((option.discountPrice / option.price) * 100);
@@ -17,7 +18,7 @@ const MenuOption = ({ option, selectMenuHandler }: TProps) => {
   };
 
   return (
-    <OptionList onClick={() => selectMenuHandler(option)}>
+    <OptionList onClick={() => selectMenuHandler({ ...option, menuId })}>
       <FlexBetween>
         <TextB3R>{option.name}</TextB3R>
         <TextH7B>{option.limit}</TextH7B>

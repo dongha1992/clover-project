@@ -1,10 +1,10 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { IBanners } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
   // images: IBanners[];

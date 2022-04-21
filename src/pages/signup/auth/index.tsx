@@ -8,7 +8,7 @@ import router from 'next/router';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
 import { userAuthTel, userConfirmTel } from '@api/user';

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
 
 const SubscriptionHeader = () => {
