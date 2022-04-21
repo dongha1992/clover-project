@@ -4,11 +4,7 @@ import { FlexCol } from '@styles/theme';
 import styled from 'styled-components';
 import AddressItem from '../Location/AddressItem';
 
-const DestinationSearchResult = ({
-  resultAddress,
-  onClick,
-  totalCount,
-}: any) => {
+const DestinationSearchResult = ({ resultAddress, onClick, totalCount }: any) => {
   return (
     <Container>
       <TextH5B padding="0 0 24px 0">검색 결과 {totalCount}개</TextH5B>

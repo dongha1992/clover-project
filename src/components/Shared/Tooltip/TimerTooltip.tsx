@@ -19,7 +19,7 @@ const TimerTooltip: React.FC<Props> = (props) => {
 };
 const Container = styled.div<Props>`
   width: auto;
-  min-width: ${(props) => props.minWidth ? props.minWidth : '128px'};
+  min-width: ${(props) => (props.minWidth ? props.minWidth : '128px')};
   display: inline-block;
   text-align: center;
   position: absolute;

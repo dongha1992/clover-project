@@ -84,14 +84,16 @@ const AddressDetailPage = () => {
   return (
     <Container>
       <Wrapper>
-        <TextH1B padding='0 0 16px 0'>프코스팟 신청이 가능해요</TextH1B>
-        <TextB2R color={theme.greyScale65}>{'서울 및 분당구 지역만 프코스팟 신청이 가능해요!\n(분당구 일부 지역은 담당자 확인 후, 오픈 진행됩니다.)'}</TextB2R>
+        <TextH1B padding="0 0 16px 0">프코스팟 신청이 가능해요</TextH1B>
+        <TextB2R color={theme.greyScale65}>
+          {'서울 및 분당구 지역만 프코스팟 신청이 가능해요!\n(분당구 일부 지역은 담당자 확인 후, 오픈 진행됩니다.)'}
+        </TextB2R>
       </Wrapper>
       <MapWrapper>
         <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
       </MapWrapper>
       <Wrapper>
-        <TextH4B padding='0 0 4px 0'>{tempLocation.roadAddr}</TextH4B>
+        <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>
         <FlexRow>
           <Tag padding="2px" width="8%" center>
             지번
