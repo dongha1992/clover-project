@@ -100,7 +100,7 @@ const CartSheet = () => {
           main: true,
         },
         {
-          menuDetailId: 99,
+          menuDetailId: 73,
           menuQuantity: 1,
           menuId: 9,
           main: true,

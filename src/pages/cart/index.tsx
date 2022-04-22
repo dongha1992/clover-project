@@ -46,7 +46,7 @@ import { checkIsAllSoldout } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
-import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi } from '@api/cart';
+import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postCartsApi } from '@api/cart';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
@@ -57,6 +57,20 @@ import { Retryer } from 'react-query/types/core/retryer';
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
 const disabledDates = [];
+
+interface IMenuDetailsId {
+  menuDetailId: number;
+  menuQuantity: number;
+}
+
+interface IDisposable {
+  id: number;
+  value: string;
+  quantity: number;
+  text: string;
+  price: number;
+  isSelected: boolean;
+}
 
 const INITIAL_NUTRITION = {
   protein: 0,
@@ -90,7 +104,7 @@ const CartPage = () => {
   ]);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
-  const [disposableList, setDisposableList] = useState([
+  const [disposableList, setDisposableList] = useState<IDisposable[]>([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
@@ -539,16 +553,24 @@ const CartPage = () => {
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
-    // userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
+
+    const orderMenus = getMenuDetailsId(checkedMenus);
+    const orderOptions = getOptionsItemId(disposableList);
 
     const reqBody = {
       destinationId: destinationObj.destinationId!,
       delivery: destinationObj.delivery?.toUpperCase()!,
       deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
       isSubOrderDelivery: subDeliveryId ? true : false,
+      // orderDeliveries: [
+      //   {
+      //     orderMenus,
+      //     orderOptions,
+      //     deliveryDate: selectedDeliveryDay,
+      //   },
+      // ],
       orderDeliveries: [
         {
-          deliveryDate: selectedDeliveryDay,
           orderMenus: [
             {
               menuDetailId: 72,
@@ -559,6 +581,8 @@ const CartPage = () => {
               menuQuantity: 1,
             },
           ],
+        },
+        {
           orderOptions: [
             {
               optionId: 1,
@@ -567,10 +591,35 @@ const CartPage = () => {
           ],
         },
       ],
+
       type: 'GENERAL',
     };
     dispatch(SET_ORDER(reqBody));
     router.push('/order');
+  };
+
+  const getMenuDetailsId = (list: IGetCart[]): IMenuDetailsId[] => {
+    const tempOrderMenus: IMenuDetailsId[] = [];
+
+    list.forEach((item: IGetCart) =>
+      item.menuDetails.forEach((detail) => {
+        tempOrderMenus.push({
+          menuDetailId: detail.menuDetailId,
+          menuQuantity: detail.menuQuantity,
+        });
+      })
+    );
+
+    return tempOrderMenus;
+  };
+
+  const getOptionsItemId = (list: IDisposable[]): { optionId: number; optionQuantity: number }[] => {
+    return list.map((item: IDisposable) => {
+      return {
+        optionId: item.id,
+        optionQuantity: item.quantity,
+      };
+    });
   };
 
   const goToSubDeliverySheet = (deliveryId: number): void => {
@@ -711,6 +760,47 @@ const CartPage = () => {
     setIsFirstRender(true);
   }, []);
 
+  const test = async () => {
+    const reqBody = [
+      {
+        menuDetailId: 110,
+        menuQuantity: 1,
+        menuId: 10,
+        main: true,
+      },
+      {
+        menuDetailId: 72,
+        menuQuantity: 1,
+        menuId: 9,
+        main: true,
+      },
+      {
+        menuDetailId: 73,
+        menuQuantity: 1,
+        menuId: 9,
+        main: true,
+      },
+      {
+        menuDetailId: 74,
+        menuQuantity: 1,
+        menuId: 9,
+        main: true,
+      },
+      {
+        menuDetailId: 75,
+        menuQuantity: 1,
+        menuId: 9,
+        main: true,
+      },
+    ];
+
+    const { data } = await postCartsApi(reqBody);
+  };
+
+  useEffect(() => {
+    test();
+  }, []);
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -721,14 +811,14 @@ const CartPage = () => {
   if (cartItemList.length === 0) {
     return (
       <EmptyContainer>
-        <FlexColStart>
+        <FlexCol width="100%">
           <DeliveryTypeAndLocation
             goToDeliveryInfo={goToDeliveryInfo}
             deliveryType={destinationObj.delivery!}
             deliveryDestination={destinationObj.location}
           />
           <BorderLine height={8} margin="24px 0" />
-        </FlexColStart>
+        </FlexCol>
         <FlexCol width="100%">
           <TextB2R padding="0 0 32px 0" center>
             장바구니가 비었어요 😭
@@ -985,6 +1075,7 @@ const EmptyContainer = styled.div`
   ${flexCenter}
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
 `;
 
 const DeliveryMethodAndPickupLocation = styled.div`

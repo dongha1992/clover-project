@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Days from './Days';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
@@ -170,13 +170,17 @@ const Calendar = ({
     return tempDisabledDate;
   };
 
+  /* 배송지를 선택 안 하고(최근 주문 이력으로) 주문시 deliveryType이 state에 저장돼서 useCallback 사용 */
+
+  console.log(deliveryType, 'deliveryType');
+
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
-
+    console.log(customDisabledDates, 'customDisabledDates');
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filteredActiveDates[0]?.value;
-
+    console.log(firstActiveDate, 'firstActiveDate');
     checkHasSubInActiveDates(dateList, mergedDisabledDate);
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!selectedDeliveryDay) {
