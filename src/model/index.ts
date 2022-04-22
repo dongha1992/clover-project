@@ -1543,6 +1543,7 @@ export interface IMenuDetailsInCart {
   isSold: boolean;
   main: boolean;
   status: TCartMenuStatus;
+  createdAt: string;
 }
 
 export interface IGetCart {
@@ -1555,6 +1556,7 @@ export interface IGetCart {
     height: number;
   };
   menuDetails: IMenuDetailsInCart[];
+  isSold: boolean;
 }
 
 export interface IGetCartResponse {
