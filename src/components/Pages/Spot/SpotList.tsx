@@ -264,12 +264,15 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
           <Container type="trial">
             <LocationInfoWrapper type="trial">
               <FlexCol>
-                <TextH5B margin='0 0 4px 0'>{list.title}</TextH5B>
-                <TextB3R margin='0 0 4px 0'>{list.address}</TextB3R>
-                <TextH6B margin='0 0 8px 0' color={theme.greyScale65}>{`${list.distance}m`}</TextH6B>
+                <TextH5B margin='0 0 4px 0'>{list.placeName}</TextH5B>
+                <TextB3R margin='0 0 4px 0'>{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
+                {
+                  // 유저 위치정보 있을때 노출
+                  userLocationLen && <TextH6B margin='0 0 8px 0' color={theme.greyScale65}>{`${Math.round(list.distance)}m`}</TextH6B> 
+                }
                 <FlexRow margin='0 0 16px 0'>
                   <SVGIcon name="people" />
-                  <TextH6B padding='4px 0 0 2px' color={theme.brandColor}>{`${list.userCount}/100명 참여중`}</TextH6B>
+                  <TextH6B padding='4px 0 0 2px' color={theme.brandColor}>{`${list.recruitingCount}/100명 참여중`}</TextH6B>
                 </FlexRow>
                 { 
                   list.submit ? (
@@ -310,7 +313,7 @@ const Container = styled.section<{ type: string }>`
     } else if (type === 'trial') {
       return css`
         min-width: 220px;
-        min-height: 200px;
+        min-height: 174px;
         display: inline-block;
         padding: 24px;
         border: 1px solid ${theme.greyScale6};

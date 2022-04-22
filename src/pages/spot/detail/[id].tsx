@@ -193,6 +193,7 @@ const SpotDetailPage = ({id}: IParams): ReactElement => {
           <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
         </SlideCount>
       </SliderWrapper>
+      {/* 스팟 상세 상단 태그 리스트 */}
       <PlaceTypeTagWrapper>
         <>
           { spotItem?.type === 'PRIVATE' && 
@@ -210,6 +211,10 @@ const SpotDetailPage = ({id}: IParams): ReactElement => {
           {
             !!spotItem?.discountRate &&
               <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${spotItem?.discountRate}% 할인 중`}</Tag>
+          }
+          {
+            !spotItem?.isOpened &&
+            <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>오픈예정</Tag>
           }
         </>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>

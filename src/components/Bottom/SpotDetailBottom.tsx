@@ -28,6 +28,7 @@ const SpotDetailBottom = () => {
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
 
+  //주문하기 btn
   const goToCart = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {
@@ -84,81 +85,87 @@ const SpotDetailBottom = () => {
       });
     };
 
-    if (isLoginSuccess) {
-      //로그인 o
-      if (cartLists.length) {
-        // 장바구니 o
-        if (isDelivery) {
+    if(spotDetail?.isOpened){
+      // 스찻 오픈된 상태
+      if (isLoginSuccess) {
+        //로그인 o
+        if (cartLists.length) {
+          // 장바구니 o
+          if (isDelivery) {
+            if (isSubscription) {
+              dispatch(
+                SET_BOTTOM_SHEET({
+                  content: (
+                    <PickupSheet
+                      pickupInfo={spotDetail?.pickups}
+                      spotType={spotDetail?.type}
+                      onSubmit={handleSubsDeliveryType}
+                    />
+                  ),
+                })
+              );
+            } else {
+              // 장바구니 o , 배송 정보에서 넘어온 경우
+              dispatch(
+                SET_BOTTOM_SHEET({
+                  content: (
+                    <PickupSheet
+                      pickupInfo={spotDetail?.pickups}
+                      spotType={spotDetail?.type}
+                      onSubmit={goToDeliveryInfo}
+                    />
+                  ),
+                })
+              );
+            }
+          } else {
+            // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+            dispatch(
+              SET_BOTTOM_SHEET({
+                content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
+              })
+            );
+          }
+        } else {
+          // 장바구니 x
           if (isSubscription) {
+            // 구독에서 넘어옴
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
                   <PickupSheet
                     pickupInfo={spotDetail?.pickups}
                     spotType={spotDetail?.type}
-                    onSubmit={handleSubsDeliveryType}
+                    onSubmit={handleSubsDeliveryTypeWithSpot}
                   />
                 ),
               })
             );
           } else {
-            // 장바구니 o , 배송 정보에서 넘어온 경우
+            // 로그인o and 장바구니 x, 메뉴 검색으로 이동
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
-                  <PickupSheet
-                    pickupInfo={spotDetail?.pickups}
-                    spotType={spotDetail?.type}
-                    onSubmit={goToDeliveryInfo}
-                  />
+                  <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToSelectMenu} />
                 ),
               })
             );
           }
-        } else {
-          // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
-            })
-          );
         }
       } else {
-        // 장바구니 x
-        if (isSubscription) {
-          // 구독에서 넘어옴
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: (
-                <PickupSheet
-                  pickupInfo={spotDetail?.pickups}
-                  spotType={spotDetail?.type}
-                  onSubmit={handleSubsDeliveryTypeWithSpot}
-                />
-              ),
-            })
-          );
-        } else {
-          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: (
-                <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToSelectMenu} />
-              ),
-            })
-          );
-        }
+        // 로그인x, 로그인 이동
+        dispatch(
+          SET_ALERT({
+            alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+            onSubmit: () => router.push('/onboarding'),
+          })
+        );
       }
     } else {
-      // 로그인x, 로그인 이동
-      dispatch(
-        SET_ALERT({
-          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-          submitBtnText: '확인',
-          closeBtnText: '취소',
-          onSubmit: () => router.push('/onboarding'),
-        })
-      );
+      // 오픈 예정인 스팟 - 주문하기 비활성화
+      return;
     }
   };
 
@@ -180,6 +187,7 @@ const SpotDetailBottom = () => {
     spotLikeData();
   }, [spotDetail, spotDetail?.id, spotLike]);
 
+  // 좋아요 버튼
   const hanlderLike = async () => {
     if (isLoginSuccess) {
       try {
@@ -214,6 +222,10 @@ const SpotDetailBottom = () => {
     }
   };
 
+  // 날짜 커스텀
+  const dt = new Date(spotDetail?.openedAt!);
+  const openDate = `${dt?.getMonth()+1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
+
   return (
     <Container>
       <Wrapper>
@@ -227,10 +239,10 @@ const SpotDetailBottom = () => {
         </LikeWrapper>
         <Col />
         <BtnWrapper onClick={goToCart}>
-          <TextH5B color={theme.white}>주문하기</TextH5B>
+          <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
         </BtnWrapper>
       </Wrapper>
-      {spotDetail?.discountRate !== 0 && (
+      { !spotDetail?.isOpened && (spotDetail?.discountRate !== 0) && (
         <TootipWrapper>
           <TimerTooltip
             message={`${spotDetail?.discountRate}% 할인 중`}

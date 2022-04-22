@@ -476,7 +476,15 @@ export interface ISpotsDetail {
     {
       createdAt: string;
       id: number;
-      images: [];
+      images: [
+        {
+          url: string;
+          size: number;
+          main: boolean;
+          width: number;
+          height: number;
+        }
+      ];
       name: string;
       spotId: number;
       type: string;
@@ -512,6 +520,11 @@ export interface ISpotsDetail {
     main: boolean;
     createdAt: string;
   };
+  placeOpenDays: string[];
+  isClosed: boolean;
+  isOpened: boolean;
+  openedAt: string;
+  closedDate: string;
 }
 
 export interface ISpotDetailResponse {
