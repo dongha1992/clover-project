@@ -151,8 +151,6 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  console.log(trialSpotList)
-
   useEffect(() => {
     const getInfoData = async () => {
       try {
@@ -384,7 +382,7 @@ const SpotPage = () => {
         spaceBetween={15}
         speed={500}
       >
-        {trialRes.map((list: any, idx) => {
+        {trialSpotList?.spotRegistrations.map((list, idx) => {
           return(
             <SwiperSlide className="swiper-slide" key={idx}>
               <SpotList  list={list} type="trial" />

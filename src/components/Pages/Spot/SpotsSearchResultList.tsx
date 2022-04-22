@@ -42,7 +42,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
       case 'PUBLIC':
         return '퍼블릭';
       default:
-        return '퍼블릭';
+        return '';
     }
   };
 
@@ -100,87 +100,93 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
         query: { destinationId: item?.id, isSubscription, subsDeliveryType },
       });
     };
-
-    if (isLoginSuccess) {
-      if (orderId) {
-        dispatch(
-          SET_TEMP_EDIT_SPOT({
-            spotPickupId: item.pickups[0].id,
-            name: item.name,
-            spotPickup: item.pickups[0].name,
-          })
-        );
-        router.push({
-          pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId },
-        });
-        return;
-      }
-
-      if (cartLists.length) {
-        // 로그인o and 장바구니 o
-        if (isDelivery) {
-          // 장바구니 o, 배송 정보에서 넘어온 경우
+    
+    if(item.isOpened) {
+      // 스찻 오픈된 상태
+      if (isLoginSuccess) {
+        //로그인 o
+        if (orderId) {
+          dispatch(
+            SET_TEMP_EDIT_SPOT({
+              spotPickupId: item.pickups[0].id,
+              name: item.name,
+              spotPickup: item.pickups[0].name,
+            })
+          );
+          router.push({
+            pathname: '/mypage/order-detail/edit/[orderId]',
+            query: { orderId },
+          });
+          return;
+        }
+        if (cartLists.length) {
+          // 로그인o and 장바구니 o
+          if (isDelivery) {
+            // 장바구니 o, 배송 정보에서 넘어온 경우
+            if (isSubscription) {
+              // 구독에서 넘어옴
+              dispatch(
+                SET_BOTTOM_SHEET({
+                  content: (
+                    <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={handleSubsDeliveryType} />
+                  ),
+                })
+              );
+            } else {
+              // 장바구니 o , 배송 정보에서 넘어온 경우
+              dispatch(
+                SET_BOTTOM_SHEET({
+                  content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToDeliveryInfo} />,
+                })
+              );
+            }
+          } else {
+            // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+            dispatch(
+              SET_BOTTOM_SHEET({
+                content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
+              })
+            );
+          }
+        } else {
+          // 로그인o and 장바구니 x
           if (isSubscription) {
             // 구독에서 넘어옴
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
-                  <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={handleSubsDeliveryType} />
+                  <PickupSheet
+                    pickupInfo={item?.pickups}
+                    spotType={item?.type}
+                    onSubmit={handleSubsDeliveryTypeWithSpot}
+                  />
                 ),
               })
             );
           } else {
-            // 장바구니 o , 배송 정보에서 넘어온 경우
+            // 로그인o and 장바구니 x, 메뉴 검색으로 이동
             dispatch(
               SET_BOTTOM_SHEET({
-                content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToDeliveryInfo} />,
+                content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToSelectMenu} />,
               })
             );
           }
-        } else {
-          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
-            })
-          );
         }
       } else {
-        // 로그인o and 장바구니 x
-        if (isSubscription) {
-          // 구독에서 넘어옴
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: (
-                <PickupSheet
-                  pickupInfo={item?.pickups}
-                  spotType={item?.type}
-                  onSubmit={handleSubsDeliveryTypeWithSpot}
-                />
-              ),
-            })
-          );
-        } else {
-          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToSelectMenu} />,
-            })
-          );
-        }
+        // 로그인x, 로그인 이동
+        dispatch(
+          SET_ALERT({
+            alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+            onSubmit: () => router.push('/onboarding'),
+          })
+        );
       }
     } else {
-      // 로그인x, 로그인 이동
-      dispatch(
-        SET_ALERT({
-          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-          submitBtnText: '확인',
-          closeBtnText: '취소',
-          onSubmit: () => router.push('/onboarding'),
-        })
-      );
-    }
+      // 오픈 예정인 스팟 - 주문하기 비활성화
+      return;
+    };
   };
 
   return (
@@ -200,19 +206,27 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
           </TextH6B>
           <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
         </MeterAndTime>
-        {!item.isTrial ? (
+        {item.isOpened ? 
+            !item.isTrial ? (
+              <div>
+                <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                  {typeTag()}
+                </Tag>
+              </div>
+            ) : (
+              <div>
+                <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                  트라이얼
+                </Tag>
+              </div>
+            )
+          :
           <div>
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-              {typeTag()}
+              오픈예정
             </Tag>
           </div>
-        ) : (
-          <div>
-            <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-              트라이얼
-            </Tag>
-          </div>
-        )}
+      }
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
@@ -220,9 +234,17 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
             return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />;
           })}
         </ImageWrapper>
-        <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={orderHandler}>
-          주문하기
-        </Button>
+        {
+          item.isOpened ? (
+            <Button backgroundColor={theme.white} color={theme.black} height="38px" border onClick={orderHandler}>
+              주문하기
+            </Button>
+          ) : (
+            <Button backgroundColor={theme.white} height="38px" disabled>
+              주문하기
+            </Button>
+          )
+        }
       </FlexCol>
     </Container>
   );
