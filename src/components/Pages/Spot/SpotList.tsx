@@ -1,8 +1,8 @@
 import React, { ReactElement, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B, } from '@components/Shared/Text';
+import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
@@ -12,12 +12,7 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { ISpotsDetail } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
-import {
-  destinationForm,
-  SET_USER_DELIVERY_TYPE,
-  SET_DESTINATION,
-  SET_TEMP_DESTINATION,
-} from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { useOnLike } from 'src/query';
@@ -30,7 +25,7 @@ interface IProps {
   list: ISpotsDetail;
   type: string;
   isSearch?: boolean;
-};
+}
 
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const router = useRouter();
@@ -72,9 +67,9 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       availableTime: pickUpTime,
       spaceType: list.type,
       spotPickupId: spotPickupId,
-    };  
+    };
 
-    const goToCart = () =>{
+    const goToCart = () => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
@@ -93,10 +88,10 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       // 로그인o and 장바구니 x, 메뉴 검색으로 이동
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));  
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push('/search');
     };
-  
+
     if (isLoginSuccess) {
       // 로그인o
       if (orderId) {
@@ -112,29 +107,37 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
-          dispatch(SET_BOTTOM_SHEET({
-            content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToDeliveryInfo} />,
-          }));
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToDeliveryInfo} />,
+            })
+          );
         } else {
           // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(SET_BOTTOM_SHEET({
-            content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToCart} />,
-          }));
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToCart} />,
+            })
+          );
         }
       } else {
         // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-        dispatch(SET_BOTTOM_SHEET({
-          content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToSelectMenu} />,
-        }));
+        dispatch(
+          SET_BOTTOM_SHEET({
+            content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToSelectMenu} />,
+          })
+        );
       }
     } else {
       // 로그인x, 로그인 이동
-      dispatch(SET_ALERT({
-        alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-        onSubmit: () => router.push('/onboarding'),
-      }))
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
     }
   };
 
@@ -264,25 +267,21 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
           <Container type="trial">
             <LocationInfoWrapper type="trial">
               <FlexCol>
-                <TextH5B margin='0 0 4px 0'>{list.title}</TextH5B>
-                <TextB3R margin='0 0 4px 0'>{list.address}</TextB3R>
-                <TextH6B margin='0 0 8px 0' color={theme.greyScale65}>{`${list.distance}m`}</TextH6B>
-                <FlexRow margin='0 0 16px 0'>
+                <TextH5B margin="0 0 4px 0">{list.title}</TextH5B>
+                <TextB3R margin="0 0 4px 0">{list.address}</TextB3R>
+                <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>{`${list.distance}m`}</TextH6B>
+                <FlexRow margin="0 0 16px 0">
                   <SVGIcon name="people" />
-                  <TextH6B padding='4px 0 0 2px' color={theme.brandColor}>{`${list.userCount}/100명 참여중`}</TextH6B>
+                  <TextH6B padding="4px 0 0 2px" color={theme.brandColor}>{`${list.userCount}/100명 참여중`}</TextH6B>
                 </FlexRow>
-                { 
-                  list.submit ? (
-                    <Button onClick={()=>clickSpotOpen(list.id)}>참여하기</Button> 
-                  )
-                  :
-                  (
-                    <ButtonComplete onClick={() => {}}>참여완료</ButtonComplete> 
-                  )
-                }
+                {list.submit ? (
+                  <Button onClick={() => clickSpotOpen(list.id)}>참여하기</Button>
+                ) : (
+                  <ButtonComplete onClick={() => {}}>참여완료</ButtonComplete>
+                )}
               </FlexCol>
             </LocationInfoWrapper>
-        </Container>
+          </Container>
         );
       default:
         return null;

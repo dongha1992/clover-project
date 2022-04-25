@@ -2,12 +2,12 @@ import { AxiosError } from 'axios';
 import React from 'react';
 import styled from 'styled-components';
 import { getAvailabilityDestinationApi } from '@api/destination';
-import { checkDestinationHelper } from '@utils/checkDestinationHelper';
+import { checkDestinationHelper } from '@utils/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import { destinationForm, SET_AVAILABLE_DESTINATION, SET_LOCATION_STATUS } from '@store/destination';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
-import { TLocationType } from '@utils/checkDestinationHelper';
+import { TLocationType } from '@utils/destination/checkDestinationHelper';
 import {
   CanNotDeliveryInfo,
   SpotInfo,
@@ -18,14 +18,17 @@ import {
   MorningAndPacelInfo,
 } from '@components/Pages/Destination';
 import isNil from 'lodash-es/isNil';
+import { Obj } from '@model/index';
+
+interface IObj {
+  morning: boolean;
+  parcel: boolean;
+  quick: boolean;
+  spot: boolean;
+}
 interface IResponse {
   status: TLocationType;
-  availableDestinationObj: {
-    morning: boolean;
-    parcel: boolean;
-    spot: boolean;
-    quick: boolean;
-  };
+  availableDestinationObj: IObj;
 }
 
 const CheckDestinationPlace = () => {
@@ -52,7 +55,7 @@ const CheckDestinationPlace = () => {
 
       if (data.code === 200) {
         const { morning, parcel, quick, spot } = data.data;
-        const availableDestinationObj = {
+        const availableDestinationObj: IObj = {
           morning,
           parcel,
           quick,

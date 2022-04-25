@@ -3,16 +3,15 @@ import Slider from 'react-slick';
 import { TextB3R, TextH4B, TextH6B } from '@components/Shared/Text';
 import { useEffect, useState } from 'react';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OrderDetailSheet } from '@components/BottomSheet/OrderSheet';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { orderForm } from '@store/order';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate, calculateArrival } from '@utils/destination';
 import dayjs from 'dayjs';
-import calculateArrival from '@utils/calculateArrival';
 
 interface IProps {
   tooltipTime: any;

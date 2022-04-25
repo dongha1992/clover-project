@@ -2,37 +2,45 @@ import React from 'react';
 import styled from 'styled-components';
 import CartDisplayItem from './CartDisplayItem';
 import CartActualItem from './CartActualItem';
-
+import { IGetCart, IMenuDetailsInCart } from '@model/index';
 interface handleSelectCartItemIProps {
-  handleSelectCartItem: (id: number) => void;
-  checkedMenuIdList: number[];
-  clickPlusButton: (id: number, quantity: number) => void;
-  clickMinusButton: (id: number, quantity: number) => void;
+  handleSelectCartItem: (menu: IGetCart) => void;
+  checkedMenus: IGetCart[];
+  clickPlusButton: (menuDetailId: number, quantity: number) => void;
+  clickMinusButton: (menuDetailId: number, quantity: number) => void;
   clickRestockNoti: any;
-  removeCartActualItemHandler: ({ id, main }: { id: number; main: boolean }) => void;
-  removeCartDisplayItemHandler: (id: number) => void;
-  item: any;
+  removeCartActualItemHandler: ({
+    menuDetailId,
+
+    menuId,
+  }: {
+    menuId: number;
+
+    menuDetailId: number;
+  }) => void;
+  removeCartDisplayItemHandler: (menu: IGetCart) => void;
+  menu: IGetCart;
 }
 
 const CartItem = ({
   handleSelectCartItem,
-  checkedMenuIdList,
+  checkedMenus,
   clickPlusButton,
   clickMinusButton,
   clickRestockNoti,
   removeCartActualItemHandler,
   removeCartDisplayItemHandler,
-  item,
+  menu,
 }: handleSelectCartItemIProps) => {
   return (
     <Container>
       <CartDisplayItem
         handleSelectCartItem={handleSelectCartItem}
-        checkedMenuIdList={checkedMenuIdList}
+        checkedMenus={checkedMenus}
         removeCartDisplayItemHandler={removeCartDisplayItemHandler}
-        menu={item}
+        menu={menu}
       />
-      {item?.menuDetails.map((menuDetail: any, index: number) => {
+      {menu?.menuDetails.map((menuDetail: IMenuDetailsInCart, index: number) => {
         return (
           <CartActualItem
             clickPlusButton={clickPlusButton}
@@ -41,6 +49,7 @@ const CartItem = ({
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
             key={index}
+            menuId={menu.menuId}
           />
         );
       })}
@@ -52,4 +61,4 @@ const Container = styled.div`
   padding-bottom: 24px;
 `;
 
-export default CartItem;
+export default React.memo(CartItem);

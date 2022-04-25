@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, ChangeEvent, useCallback } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { textBody2, theme, homePadding, FlexCenter, FlexStart, FlexRow, fixedBottom, customInput } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -13,7 +13,6 @@ import { SET_ALERT } from '@store/alert';
 import { registerCard, getMainCardLists } from '@api/card';
 import dynamic from 'next/dynamic';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { ICard } from '@components/Pages/Mypage/Card/CardItem';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderList } from '@model/index';
-import { TLocationType } from '@utils/checkDestinationHelper';
+import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
 interface IAvailableDestination {
   morning: boolean;

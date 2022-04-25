@@ -12,7 +12,7 @@ import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER
 import { userLogin, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import { SET_LOGIN_TYPE } from '@store/common';
-import { setCookie } from '@utils/cookie';
+import { setCookie } from '@utils/common';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);

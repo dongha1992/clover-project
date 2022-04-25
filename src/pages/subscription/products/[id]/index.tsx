@@ -5,7 +5,7 @@ import { theme } from '@styles/theme';
 import { TextH2B, TextB2R, TextH6B, TextH3B, TextH4B, TextH5B } from '@components/Shared/Text';
 import Loading from '@components/Loading';
 import { Tag } from '@components/Shared/Tag';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewList } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
@@ -21,7 +21,7 @@ import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuDetailApi } from '@api/menu';
 import { BASE_URL } from '@constants/mock';
-import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
+import { getMenuDisplayPrice } from '@utils/menu';
 
 import axios from 'axios';
 import { SUBS_INIT } from '@store/subscription';

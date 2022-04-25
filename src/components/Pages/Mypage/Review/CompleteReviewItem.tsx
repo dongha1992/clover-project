@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText, FlexBetween } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 interface IProps {
   review: any;

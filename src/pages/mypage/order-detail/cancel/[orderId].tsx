@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexBetween, FlexCol, FlexRow, FlexEnd } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextH4B, TextH2B, TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import router from 'next/router';
 import { theme } from '@styles/theme';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import BorderLine from '@components/Shared/BorderLine';
 import { ItemInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
@@ -27,7 +27,7 @@ interface IRefund {
   refundCoupon: number;
 }
 
-const orderCancelPage = ({ orderId }: IProps) => {
+const OrderCancelPage = ({ orderId }: IProps) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
@@ -142,7 +142,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
               color="#757575"
               onClick={() =>
                 router.push({
-                  pathname: `/mypage/order-detail/${subOrder.id}`,
+                  pathname: `/mypage/order-detail/${subOrder?.id}`,
                 })
               }
             >
@@ -198,7 +198,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
       </Wrapper>
       <BtnWrapper onClick={cancelOrderHandler}>
         <Button height="100%" width="100%">
-          주문 취소하기
+          함께배송 주문 취소하기
         </Button>
       </BtnWrapper>
     </Container>
@@ -232,4 +232,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default orderCancelPage;
+export default OrderCancelPage;

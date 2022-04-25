@@ -10,7 +10,7 @@ import { SET_USER_SELECT_COUPON } from '@store/coupon';
 import { useDispatch } from 'react-redux';
 import { ICoupon } from '@model/index';
 import { useMutation, useQueryClient } from 'react-query';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
