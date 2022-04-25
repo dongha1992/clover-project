@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
 import { availabilityEmail } from '@api/user';
 
-const SVGIcon = dynamic(() => import('../../../utils/SVGIcon'), {
+const SVGIcon = dynamic(() => import('../../../utils/common/SVGIcon'), {
   ssr: false,
 });
 
@@ -35,11 +35,12 @@ const EmailAndPasswordPage = () => {
     isValid: false,
   });
 
-  const [passwordLengthValidation, setPasswordLengthValidation] =
-    useState<IVaildation>({ message: '', isValid: false });
+  const [passwordLengthValidation, setPasswordLengthValidation] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
-  const [passwordSameValidation, setPasswordSameValidation] =
-    useState<IVaildation>({ message: '', isValid: false });
+  const [passwordSameValidation, setPasswordSameValidation] = useState<IVaildation>({ message: '', isValid: false });
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -198,22 +199,11 @@ const EmailAndPasswordPage = () => {
           <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
           <FlexCol>
             <FirstPasswordWrapper>
-              <TextInput
-                placeholder="비밀번호"
-                ref={passwordRef}
-                eventHandler={passwordInputHandler}
-              />
-              {passwordValidation.isValid &&
-                passwordLengthValidation.isValid && (
-                  <SVGIcon name="confirmCheck" />
-                )}
+              <TextInput placeholder="비밀번호" ref={passwordRef} eventHandler={passwordInputHandler} />
+              {passwordValidation.isValid && passwordLengthValidation.isValid && <SVGIcon name="confirmCheck" />}
               <ValidationWrapper>
-                {!passwordValidation.isValid && (
-                  <Validation>{passwordValidation.message}</Validation>
-                )}
-                {!passwordLengthValidation.isValid && (
-                  <Validation>{passwordLengthValidation.message}</Validation>
-                )}
+                {!passwordValidation.isValid && <Validation>{passwordValidation.message}</Validation>}
+                {!passwordLengthValidation.isValid && <Validation>{passwordLengthValidation.message}</Validation>}
               </ValidationWrapper>
             </FirstPasswordWrapper>
             <SecondPasswordWrapper>
@@ -223,16 +213,12 @@ const EmailAndPasswordPage = () => {
                 eventHandler={passwordAginInputHandler}
                 margin="8px 0 0 0"
               />
-              {passwordValidation.isValid &&
-                passwordLengthValidation.isValid &&
-                passwordSameValidation.isValid && (
-                  <SVGIcon name="confirmCheck" />
-                )}
+              {passwordValidation.isValid && passwordLengthValidation.isValid && passwordSameValidation.isValid && (
+                <SVGIcon name="confirmCheck" />
+              )}
             </SecondPasswordWrapper>
             <ValidationWrapper>
-              {!passwordSameValidation.isValid && (
-                <Validation>{passwordSameValidation.message}</Validation>
-              )}
+              {!passwordSameValidation.isValid && <Validation>{passwordSameValidation.message}</Validation>}
             </ValidationWrapper>
           </FlexCol>
         </PasswordInputWrapper>

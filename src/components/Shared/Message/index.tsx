@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextB3R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Obj } from '@model/index';
 interface IProps {

@@ -8,7 +8,7 @@ import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
 import Header from '@components/Header';
 import Bottom from '@components/Bottom';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { commonSelector } from '@store/common';
 
 const Alert = dynamic(() => import('@components/Shared/Alert'), {

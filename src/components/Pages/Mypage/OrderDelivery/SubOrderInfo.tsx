@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FlexRow, theme, FlexCol, FlexRowStart } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextB3R, TextH6B } from '@components/Shared/Text';
 
 interface IProps {
