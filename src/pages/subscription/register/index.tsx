@@ -4,7 +4,7 @@ import { Button } from '@components/Shared/Button';
 import { TextB1R, TextB2R, TextB3R, TextH4B, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexBetween, FlexCol, FlexEnd, FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -12,6 +12,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
 import router from 'next/router';
 import { SET_ORDER } from '@store/order';
+import { SVGIcon } from '@utils/common';
 
 const SubsRegisterPage = () => {
   const dispatch = useDispatch();
