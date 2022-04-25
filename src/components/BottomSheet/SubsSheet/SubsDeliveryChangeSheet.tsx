@@ -3,7 +3,7 @@ import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
