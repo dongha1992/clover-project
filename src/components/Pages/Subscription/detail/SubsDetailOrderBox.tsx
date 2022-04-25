@@ -14,7 +14,7 @@ import {
 } from '@pages/subscription/register';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexBetweenStart, FlexColEnd } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
