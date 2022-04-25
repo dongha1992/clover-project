@@ -113,8 +113,8 @@ const SpotSearchPage = (): ReactElement => {
         try {
           const params = {
             keyword,
-            latitude: spotsPosition ? spotsPosition.latitude : Number(37.50101118367814),
-            longitude: spotsPosition ? spotsPosition.longitude : Number(127.03525895821902),
+            latitude: spotsPosition ? spotsPosition.latitude : null,
+            longitude: spotsPosition ? spotsPosition.longitude : null,
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
@@ -123,8 +123,7 @@ const SpotSearchPage = (): ReactElement => {
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
           });
-
-          setSearchResult(filtered);
+          setSearchResult(fetchData?.spots);
           setIsSearched(true);
         } catch (err) {
           console.error(err);
