@@ -14,8 +14,8 @@ import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
 
 interface IProps {
-  searchResult: any;
-  onClick?: any;
+  searchResult?: any;
+  onClick?: () => void;
   isSpot?: boolean;
   orderId?: string | string[];
 }

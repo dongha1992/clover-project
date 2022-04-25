@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
@@ -21,6 +21,7 @@ const SpotWishList = ({items, onClick}: IParams) => {
   const { userLocation } = useSelector(destinationForm);
   const userLocationLen = !!userLocation.emdNm?.length;
   const [like, setLike] = useState(false);
+
   const goToDetail = () => {
     router.push(`/spot/detail/${items?.id}`)
   };
@@ -51,6 +52,10 @@ const SpotWishList = ({items, onClick}: IParams) => {
               <OpenLabel>
                 <TextH6B color={theme.white} padding='5px 10px 4px 10px'>{openDate}</TextH6B>
               </OpenLabel>
+          }
+          {
+            items.isClosed &&
+              <ClosedFilter><TextB2R color={theme.white}>운영종료</TextB2R></ClosedFilter>
           }
         </StorImgWrapper>
         <LocationInfoWrapper>
@@ -93,6 +98,19 @@ const OpenLabel = styled.div`
   top: 22px;
   background: ${theme.brandColor};
   border-radius: 0 4px 4px 0;
+`;
+
+const ClosedFilter = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #24242480;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ImgWrapper = styled.img`

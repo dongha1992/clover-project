@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import SVGIcon from '@utils/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
@@ -27,6 +27,9 @@ const SpotDetailBottom = () => {
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
+  // 날짜 커스텀
+  const dt = new Date(spotDetail?.openedAt!);
+  const openDate = `${dt?.getMonth()+1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
 
   //주문하기 btn
   const goToCart = (e: any): void => {
@@ -85,87 +88,89 @@ const SpotDetailBottom = () => {
       });
     };
 
-    if(spotDetail?.isOpened){
-      // 스찻 오픈된 상태
-      if (isLoginSuccess) {
-        //로그인 o
-        if (cartLists.length) {
-          // 장바구니 o
-          if (isDelivery) {
-            if (isSubscription) {
-              dispatch(
-                SET_BOTTOM_SHEET({
-                  content: (
-                    <PickupSheet
-                      pickupInfo={spotDetail?.pickups}
-                      spotType={spotDetail?.type}
-                      onSubmit={handleSubsDeliveryType}
-                    />
-                  ),
-                })
-              );
-            } else {
-              // 장바구니 o , 배송 정보에서 넘어온 경우
-              dispatch(
-                SET_BOTTOM_SHEET({
-                  content: (
-                    <PickupSheet
-                      pickupInfo={spotDetail?.pickups}
-                      spotType={spotDetail?.type}
-                      onSubmit={goToDeliveryInfo}
-                    />
-                  ),
-                })
-              );
-            }
-          } else {
-            // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-            dispatch(
-              SET_BOTTOM_SHEET({
-                content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
-              })
-            );
-          }
-        } else {
-          // 장바구니 x
+    if(!spotDetail?.isOpened) {
+      // 스찻 오픈 예정인 상태 - 주문 불가
+      return;
+    }
+    if(spotDetail?.isClosed) {
+      // 스팟 종료된 상태 - 주문 불가
+      return;
+    } 
+    if (isLoginSuccess) {
+      //로그인 o
+      if (cartLists.length) {
+        // 장바구니 o
+        if (isDelivery) {
           if (isSubscription) {
-            // 구독에서 넘어옴
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
                   <PickupSheet
                     pickupInfo={spotDetail?.pickups}
                     spotType={spotDetail?.type}
-                    onSubmit={handleSubsDeliveryTypeWithSpot}
+                    onSubmit={handleSubsDeliveryType}
                   />
                 ),
               })
             );
           } else {
-            // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+            // 장바구니 o , 배송 정보에서 넘어온 경우
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
-                  <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToSelectMenu} />
+                  <PickupSheet
+                    pickupInfo={spotDetail?.pickups}
+                    spotType={spotDetail?.type}
+                    onSubmit={goToDeliveryInfo}
+                  />
                 ),
               })
             );
           }
+        } else {
+          // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
+            })
+          );
         }
       } else {
-        // 로그인x, 로그인 이동
-        dispatch(
-          SET_ALERT({
-            alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-            submitBtnText: '확인',
-            closeBtnText: '취소',
-            onSubmit: () => router.push('/onboarding'),
-          })
-        );
+        // 장바구니 x
+        if (isSubscription) {
+          // 구독에서 넘어옴
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: (
+                <PickupSheet
+                  pickupInfo={spotDetail?.pickups}
+                  spotType={spotDetail?.type}
+                  onSubmit={handleSubsDeliveryTypeWithSpot}
+                />
+              ),
+            })
+          );
+        } else {
+          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: (
+                <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToSelectMenu} />
+              ),
+            })
+          );
+        }
       }
     } else {
-      // 오픈 예정인 스팟 - 주문하기 비활성화
-      return;
+      // 로그인x, 로그인 이동
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
     }
   };
 
@@ -222,41 +227,49 @@ const SpotDetailBottom = () => {
     }
   };
 
-  // 날짜 커스텀
-  const dt = new Date(spotDetail?.openedAt!);
-  const openDate = `${dt?.getMonth()+1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
-
   return (
-    <Container>
-      <Wrapper>
-        <LikeWrapper>
-          <LikeBtn onClick={hanlderLike}>
-            <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
-          </LikeBtn>
-          <TextH5B color={theme.white} padding="0 0 0 4px">
-            {spotDetail?.likeCount}
-          </TextH5B>
-        </LikeWrapper>
-        <Col />
-        <BtnWrapper onClick={goToCart}>
-          <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
-        </BtnWrapper>
-      </Wrapper>
-      { !spotDetail?.isOpened && (spotDetail?.discountRate !== 0) && (
-        <TootipWrapper>
-          <TimerTooltip
-            message={`${spotDetail?.discountRate}% 할인 중`}
-            bgColor={theme.brandColor}
-            color={theme.white}
-            minWidth="78px"
-          />
-        </TootipWrapper>
-      )}
+    <Container isClosed={spotDetail?.isClosed}>
+      {
+        spotDetail?.isClosed ?(
+          <Wrapper>
+            <BtnWrapper>
+              <TextH5B color={theme.greyScale25}>운영 종료된 프코스팟이에요</TextH5B>
+            </BtnWrapper>
+          </Wrapper>
+        ) : (
+          <>
+            <Wrapper>
+              <LikeWrapper>
+                <LikeBtn onClick={hanlderLike}>
+                  <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
+                </LikeBtn>
+                <TextH5B color={theme.white} padding="0 0 0 4px">
+                  {spotDetail?.likeCount}
+                </TextH5B>
+              </LikeWrapper>
+              <Col />
+              <BtnWrapper onClick={goToCart}>
+                <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
+              </BtnWrapper>
+            </Wrapper>
+            { !spotDetail?.isOpened && (spotDetail?.discountRate !== 0) && (
+              <TootipWrapper>
+                <TimerTooltip
+                  message={`${spotDetail?.discountRate}% 할인 중`}
+                  bgColor={theme.brandColor}
+                  color={theme.white}
+                  minWidth="78px"
+                />
+              </TootipWrapper>
+            )}
+          </>
+        )
+      }
     </Container>
   );
 };
 
-const Container = styled.section`
+const Container = styled.section<{isClosed?:boolean}>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -265,7 +278,17 @@ const Container = styled.section`
   z-index: 10;
   height: 56px;
   left: calc(50%);
-  background-color: ${({ theme }) => theme.black};
+  ${({ isClosed }) => {
+    if(isClosed) {
+      return css `
+        background-color: ${theme.greyScale6};
+      `
+    } else {
+      return css `
+        background-color: ${theme.black};
+      `
+    }
+  }}
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
