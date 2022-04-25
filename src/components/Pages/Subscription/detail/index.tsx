@@ -1,2 +1,2 @@
-import SubsDetailDeliveryBox from './SubsDetailDeliveryBox';
-export { SubsDetailDeliveryBox };
+import SubsDetailOrderBox from './SubsDetailOrderBox';
+export { SubsDetailOrderBox };

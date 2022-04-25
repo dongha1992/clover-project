@@ -346,8 +346,8 @@ const DeliveryInfoBox = styled.div`
     }
   }
 `;
-const MenuUl = styled.ul``;
-const MenuLi = styled.li`
+export const MenuUl = styled.ul``;
+export const MenuLi = styled.li`
   display: flex;
   padding: 16px 0;
   border-bottom: 1px solid ${theme.greyScale6};
@@ -364,13 +364,13 @@ const MenuLi = styled.li`
     border-radius: 8px;
   }
 `;
-const MenuImgBox = styled.div`
+export const MenuImgBox = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 8px;
   background-color: #dedede;
 `;
-const MenuTextBox = styled.div`
+export const MenuTextBox = styled.div`
   padding-left: 8px;
   flex: 1;
   .wrap {
@@ -386,7 +386,7 @@ const MenuTextBox = styled.div`
   }
 `;
 
-const ReceiptBox = styled.div`
+export const ReceiptBox = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
   .btB {
@@ -399,10 +399,10 @@ const ReceiptBox = styled.div`
     border-bottom: 1px solid #ececec;
   }
 `;
-const ReceiptUl = styled.ul`
+export const ReceiptUl = styled.ul`
   padding-bottom: 16px;
 `;
-const ReceiptLi = styled.li<{ padding?: string }>`
+export const ReceiptLi = styled.li<{ padding?: string }>`
   display: flex;
   justify-content: space-between;
   padding: ${(props) => props.padding && props.padding};
