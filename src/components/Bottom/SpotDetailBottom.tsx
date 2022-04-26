@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import SVGIcon from '@utils/common/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
@@ -27,7 +27,11 @@ const SpotDetailBottom = () => {
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
+  // 날짜 커스텀
+  const dt = new Date(spotDetail?.openedAt!);
+  const openDate = `${dt?.getMonth()+1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
 
+  //주문하기 btn
   const goToCart = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {
@@ -84,6 +88,14 @@ const SpotDetailBottom = () => {
       });
     };
 
+    if(!spotDetail?.isOpened) {
+      // 스찻 오픈 예정인 상태 - 주문 불가
+      return;
+    }
+    if(spotDetail?.isClosed) {
+      // 스팟 종료된 상태 - 주문 불가
+      return;
+    } 
     if (isLoginSuccess) {
       //로그인 o
       if (cartLists.length) {
@@ -180,6 +192,7 @@ const SpotDetailBottom = () => {
     spotLikeData();
   }, [spotDetail, spotDetail?.id, spotLike]);
 
+  // 좋아요 버튼
   const hanlderLike = async () => {
     if (isLoginSuccess) {
       try {
@@ -215,36 +228,48 @@ const SpotDetailBottom = () => {
   };
 
   return (
-    <Container>
-      <Wrapper>
-        <LikeWrapper>
-          <LikeBtn onClick={hanlderLike}>
-            <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
-          </LikeBtn>
-          <TextH5B color={theme.white} padding="0 0 0 4px">
-            {spotDetail?.likeCount}
-          </TextH5B>
-        </LikeWrapper>
-        <Col />
-        <BtnWrapper onClick={goToCart}>
-          <TextH5B color={theme.white}>주문하기</TextH5B>
-        </BtnWrapper>
-      </Wrapper>
-      {spotDetail?.discountRate !== 0 && (
-        <TootipWrapper>
-          <TimerTooltip
-            message={`${spotDetail?.discountRate}% 할인 중`}
-            bgColor={theme.brandColor}
-            color={theme.white}
-            minWidth="78px"
-          />
-        </TootipWrapper>
-      )}
+    <Container isClosed={spotDetail?.isClosed}>
+      {
+        spotDetail?.isClosed ?(
+          <Wrapper>
+            <BtnWrapper>
+              <TextH5B color={theme.greyScale25}>운영 종료된 프코스팟이에요</TextH5B>
+            </BtnWrapper>
+          </Wrapper>
+        ) : (
+          <>
+            <Wrapper>
+              <LikeWrapper>
+                <LikeBtn onClick={hanlderLike}>
+                  <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
+                </LikeBtn>
+                <TextH5B color={theme.white} padding="0 0 0 4px">
+                  {spotDetail?.likeCount}
+                </TextH5B>
+              </LikeWrapper>
+              <Col />
+              <BtnWrapper onClick={goToCart}>
+                <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
+              </BtnWrapper>
+            </Wrapper>
+            { !spotDetail?.isOpened && (spotDetail?.discountRate !== 0) && (
+              <TootipWrapper>
+                <TimerTooltip
+                  message={`${spotDetail?.discountRate}% 할인 중`}
+                  bgColor={theme.brandColor}
+                  color={theme.white}
+                  minWidth="78px"
+                />
+              </TootipWrapper>
+            )}
+          </>
+        )
+      }
     </Container>
   );
 };
 
-const Container = styled.section`
+const Container = styled.section<{isClosed?:boolean}>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -253,7 +278,17 @@ const Container = styled.section`
   z-index: 10;
   height: 56px;
   left: calc(50%);
-  background-color: ${({ theme }) => theme.black};
+  ${({ isClosed }) => {
+    if(isClosed) {
+      return css `
+        background-color: ${theme.greyScale6};
+      `
+    } else {
+      return css `
+        background-color: ${theme.black};
+      `
+    }
+  }}
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
