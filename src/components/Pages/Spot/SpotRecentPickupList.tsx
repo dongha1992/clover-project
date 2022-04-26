@@ -81,6 +81,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
           // 장바구니 o, 배송 정보에서 넘어온 경우
           if (isSubscription) {
             dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
+            dispatch(SET_TEMP_DESTINATION(destinationInfo));
             router.push({
               pathname: '/cart/delivery-info',
               query: { destinationId: item?.id, isSubscription, subsDeliveryType },
