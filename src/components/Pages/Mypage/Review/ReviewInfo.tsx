@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlexBetween, FlexRow, theme, FlexCol } from '@styles/theme';
 import { TextH6B, TextB3R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import styled from 'styled-components';
 
@@ -25,15 +25,11 @@ const ReviewInfo = ({ isShow, setIsShow }: any) => {
           <BorderLine height={1} margin="16px 0" />
           <FlexCol>
             <TextH6B color={theme.greyScale65}>[일반상품]</TextH6B>
-            <TextB3R color={theme.greyScale65}>
-              텍스트 후기: 100 포인트 / 사진후기: 300 포인트
-            </TextB3R>
+            <TextB3R color={theme.greyScale65}>텍스트 후기: 100 포인트 / 사진후기: 300 포인트</TextB3R>
           </FlexCol>
           <FlexCol>
             <TextH6B color={theme.greyScale65}>[정기배송]</TextH6B>
-            <TextB3R color={theme.greyScale65}>
-              텍스트 후기: 1,000 포인트 / 사진 후기: 3,000 포인트
-            </TextB3R>
+            <TextB3R color={theme.greyScale65}>텍스트 후기: 1,000 포인트 / 사진 후기: 3,000 포인트</TextB3R>
           </FlexCol>
         </>
       )}

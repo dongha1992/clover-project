@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TextH6B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 
 /*TODO: 확장성 고려해서 리팩토링 */
 /*TODO: minWitdh 수정해야함 */
@@ -16,13 +16,7 @@ interface ITooltip {
   left?: string;
 }
 
-const Tooltip = ({
-  message,
-  top,
-  width,
-  bottom,
-  left,
-}: ITooltip): JSX.Element | null => {
+const Tooltip = ({ message, top, width, bottom, left }: ITooltip): JSX.Element | null => {
   const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false);
 
   const showTooltip = (): void => {

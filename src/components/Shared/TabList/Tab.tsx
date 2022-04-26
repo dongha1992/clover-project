@@ -21,8 +21,7 @@ const Tab = ({ tabItem, onClick, selectedTab, countObj }: ITabProps) => {
   /* Tab에 카운트 있는지 판별 */
   const hasCount = countObj && countObj[tabItem.text];
 
-  const tabNameWithCount =
-    hasCount && `${tabItem.text} (${countObj[tabItem.text]})`;
+  const tabNameWithCount = hasCount && `${tabItem.text} (${countObj[tabItem.text]})`;
 
   return (
     <Wrapper onClick={() => onClick(tabItem)} selectedTab={selectedTab}>

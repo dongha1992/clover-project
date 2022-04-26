@@ -1,4 +1,4 @@
-export const getImageSize = (img: any, maxWidth: number, maxHeight: number) => {
+const getImageSize = (img: any, maxWidth: number, maxHeight: number) => {
   let width = img.width;
   let height = img.height;
 
@@ -16,3 +16,4 @@ export const getImageSize = (img: any, maxWidth: number, maxHeight: number) => {
   }
   return [width, height];
 };
+export default getImageSize;

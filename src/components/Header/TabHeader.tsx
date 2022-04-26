@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import { FIND_ACCOUNT } from '@constants/login';
 import { DIB_MENU } from '@constants/mypage';
 import dynamic from 'next/dynamic';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 
@@ -19,9 +19,7 @@ type TProps = {
 /* TODO: 뒤로가기 시 replace로 교체 */
 
 const TabHeader = ({ title }: TProps) => {
-  const [selectedTab, setSelectedTab] = useState<string>(
-    '/login/find-account/email'
-  );
+  const [selectedTab, setSelectedTab] = useState<string>('/login/find-account/email');
 
   const router = useRouter();
 
@@ -32,10 +30,7 @@ const TabHeader = ({ title }: TProps) => {
 
   const goBack = (): void => {
     /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
-    if (
-      router.asPath === '/login/find-account/password' ||
-      router.asPath === '/login/find-account/email'
-    ) {
+    if (router.asPath === '/login/find-account/password' || router.asPath === '/login/find-account/email') {
       router.push('/login');
     } else {
       router.back();
@@ -65,11 +60,7 @@ const TabHeader = ({ title }: TProps) => {
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
       </Wrapper>
-      <TabList
-        onClick={clickTabHandler}
-        selectedTab={selectedTab}
-        tabList={data ? data : MENU_DETAIL_INFORMATION}
-      />
+      <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={data ? data : MENU_DETAIL_INFORMATION} />
     </Container>
   );
 };

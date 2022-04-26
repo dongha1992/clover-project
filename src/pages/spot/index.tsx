@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexCenter } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
@@ -60,7 +60,6 @@ const trialRes = [
   },
 ];
 
-
 const FCO_SPOT_BANNER = [
   {
     id: 1,
@@ -99,7 +98,7 @@ const SpotPage = () => {
 
   const params: IParamsSpots = {
     latitude: spotsPosition ? spotsPosition.latitude : null,
-    longitude: spotsPosition? spotsPosition.longitude : null,
+    longitude: spotsPosition ? spotsPosition.longitude : null,
     size: 6,
   };
 
@@ -162,16 +161,15 @@ const SpotPage = () => {
       }
     };
     getInfoData();
-
   }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
-      // dispatch(initBottomSheet());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet />,
-        })
-      );
+    // dispatch(initBottomSheet());
+    dispatch(
+      SET_BOTTOM_SHEET({
+        content: <ShareSheet />,
+      })
+    );
   };
 
   const goToSpotReq = (type: string): void => {
@@ -189,15 +187,15 @@ const SpotPage = () => {
     router.push('/spot/regi-list');
   };
 
-  const goToSpotNotice = ():void => {
+  const goToSpotNotice = (): void => {
     router.push('/spot/notice');
   };
 
   const isLoading = isLoadingStation && isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
 
-  if(isLoading){
+  if (isLoading) {
     return <div>loading...</div>;
-  };
+  }
 
   return (
     <Container>
@@ -218,12 +216,7 @@ const SpotPage = () => {
         </RegistrationCTA>
       </RegistrationsCTAWrapper>
       {isLoginSuccess && (
-        <TopCTASlider
-          className="swiper-container"
-          slidesPerView={'auto'}
-          spaceBetween={15}
-          speed={500}
-        >
+        <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
             registrationsLen && (
@@ -294,12 +287,7 @@ const SpotPage = () => {
       )}
       {/* 근처 인기있는 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
-      <SpotsSlider
-        className="swiper-container"
-        slidesPerView={'auto'}
-        spaceBetween={15}
-        speed={700}
-      >
+      <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={700}>
         {popularSpotList?.spots.map((list, idx) => {
           return (
             <SwiperSlide className="swiper-slide" key={idx}>
@@ -310,12 +298,7 @@ const SpotPage = () => {
       </SpotsSlider>
       {/* 신규 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
-      <SpotsSlider
-        className="swiper-container"
-        slidesPerView={'auto'}
-        spaceBetween={15}
-        speed={500}
-      >
+      <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
         {newSpotList?.spots.map((list, idx) => {
           return (
             <SwiperSlide className="swiper-slide" key={idx}>
@@ -326,12 +309,7 @@ const SpotPage = () => {
       </SpotsSlider>
       {/* 역세권 스팟 */}
       <TextH2B padding="49px 24px 24px 24px">{stationSpotList?.title}</TextH2B>
-      <SpotsSlider
-        className="swiper-container"
-        slidesPerView={'auto'}
-        spaceBetween={15}
-        speed={500}
-      >
+      <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
         {stationSpotList?.spots.map((list, idx) => {
           return (
             <SwiperSlide className="swiper-slide" key={idx}>
@@ -353,12 +331,7 @@ const SpotPage = () => {
       </Wrapper>
       {/* 이벤트 중인 스팟 */}
       <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
-      <EventSlider
-        className="swiper-container"
-        slidesPerView={'auto'}
-        spaceBetween={15}
-        speed={500}
-      >
+      <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
         {eventSpotList?.spots.map((list, idx) => {
           return (
             <SwiperSlide className="swiper-slide" key={idx}>
@@ -385,8 +358,9 @@ const SpotPage = () => {
         {trialSpotList?.spotRegistrations.map((list, idx) => {
           return(
             <SwiperSlide className="swiper-slide" key={idx}>
-              <SpotList  list={list} type="trial" />
-            </SwiperSlide>)
+              <SpotList list={list} type="trial" />
+            </SwiperSlide>
+          );
         })}
         {/* {spotRegistraions?.data.spotRegistrations.map((list: any, idx) => {
           return <SpotList key={idx} list={list} type="trial" />;
@@ -487,7 +461,7 @@ const BoxHandlerWrapper = styled.div`
   background: ${theme.greyScale3};
   border-radius: 8px;
   cursor: pointer;
-  
+
   span {
     color: ${theme.brandColor};
   }

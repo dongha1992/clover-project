@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextB2R } from '@components/Shared/Text';
 
 const RecentSearchItem = ({ keyword, onClick }: any) => {

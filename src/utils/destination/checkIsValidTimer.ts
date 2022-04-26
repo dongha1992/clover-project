@@ -4,7 +4,7 @@ import { TResult } from './checkTimerLimitHelper';
 import getCustomDate from './getCustomDate';
 import { useDispatch } from 'react-redux';
 import { INIT_TIMER } from '@store/order';
-import { TLocationType } from '@utils/checkDestinationHelper';
+import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
 /* 현재 위치와 요일 관련하여 배송 마감 타이머 체크 */
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=3055%3A40726 */
@@ -36,13 +36,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   /* 지방 테스트(parcel) */
   // locationStatus = 'parcel';
 
-  const isRolling = [
-    '스팟저녁',
-    '새벽택배',
-    '새벽택배N일',
-    '스팟점심',
-    '스팟점심N일',
-  ].includes(deliveryType);
+  const isRolling = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
 
   if (isWeekends || isRolling || !deliveryType) {
     dispatch(INIT_TIMER({ isInitDelay: true }));

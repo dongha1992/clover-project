@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { CATEGORY } from '@constants/search';
 import dynamic from 'next/dynamic';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';

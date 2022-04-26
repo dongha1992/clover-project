@@ -3,16 +3,12 @@ import styled from 'styled-components';
 import { TextB1R, TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexBetween } from '@styles/theme';
 import { Tag } from '@components/Shared/Tag';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import { IMAGE_S3_URL } from '@constants/mock/index';
-import { 
-  postSpotsStoryLike, 
-  deleteSpotsStoryLike, 
-  getSpotsStoryLike 
-} from '@api/spot';
-import {ISpotStories} from '@model/index';
+import { postSpotsStoryLike, deleteSpotsStoryLike, getSpotsStoryLike } from '@api/spot';
+import { ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import router from 'next/router';
@@ -46,7 +42,7 @@ const DetailBottomStory = ({ list }: IProps): ReactElement => {
   }, [list]);
 
   const handlerLike = async () => {
-    if(isLoginSuccess){
+    if (isLoginSuccess) {
       if (!storyLike) {
         try {
           const { data } = await postSpotsStoryLike(list.spotId, list.id);
@@ -62,27 +58,29 @@ const DetailBottomStory = ({ list }: IProps): ReactElement => {
           const { data } = await deleteSpotsStoryLike(list.spotId, list.id);
           if (data.code === 200) {
             setStoryLike(false);
-            if(likeCount > 0){
+            if (likeCount > 0) {
               setLikeCount(likeCount - 1);
-            }else {
-              return
-            };
+            } else {
+              return;
+            }
           }
         } catch (err) {
           console.error(err);
         }
-      }  
-    }else {
+      }
+    } else {
       const TitleMsg = `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`;
-      dispatch(SET_ALERT({
-        alertMessage: TitleMsg,
-        onSubmit: () => {
-          router.push('/onboarding');
-        },
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      }))
-    };
+      dispatch(
+        SET_ALERT({
+          alertMessage: TitleMsg,
+          onSubmit: () => {
+            router.push('/onboarding');
+          },
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+        })
+      );
+    }
   };
 
   const TagType = () => {
