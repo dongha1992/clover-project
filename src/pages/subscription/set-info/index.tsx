@@ -16,7 +16,7 @@ import {
 } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import axios from 'axios';
 import { isNil } from 'lodash-es';
 import router from 'next/router';

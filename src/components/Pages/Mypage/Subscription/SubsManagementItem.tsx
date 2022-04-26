@@ -2,7 +2,7 @@ import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import router from 'next/router';
 import styled from 'styled-components';
 import SubsProgressBar from './ProgressBar';

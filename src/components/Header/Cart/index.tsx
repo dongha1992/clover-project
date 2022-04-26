@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
 import { theme } from '@styles/theme';

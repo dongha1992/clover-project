@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Item } from '@components/Item';
 import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useDispatch, useSelector } from 'react-redux';

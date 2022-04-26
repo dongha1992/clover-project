@@ -3,82 +3,87 @@ import styled from 'styled-components';
 import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import Slider from 'react-slick';
 import Map from '@components/Map';
 
 const RECENT_SPOT = [
   {
     id: 1,
-    name: "유니트아이엔씨",
+    name: '유니트아이엔씨',
     location: {
-      address: "서울 성동구 왕십리로 115 10층",
+      address: '서울 성동구 왕십리로 115 10층',
       addressDetail: '',
     },
     distance: 121,
-    type: "PRIVATE",
-    lunchDeliveryStartTime: "11:00:00",
-    lunchDeliveryEndTime: "11:30:00",
-    dinnerDeliveryStartTime: "14:00:00",
-    dinnerDeliveryEndTime: "18:00:00",
+    type: 'PRIVATE',
+    lunchDeliveryStartTime: '11:00:00',
+    lunchDeliveryEndTime: '11:30:00',
+    dinnerDeliveryStartTime: '14:00:00',
+    dinnerDeliveryEndTime: '18:00:00',
     // availableTime: "12:00-12:30 / 15:30-18:00",
     // spaceType: "프라이빗",
-    images: [{
-      url: "/dev/spot/origin/1_20190213142552",
-    }],
-    method: "pickup"
+    images: [
+      {
+        url: '/dev/spot/origin/1_20190213142552',
+      },
+    ],
+    method: 'pickup',
   },
   {
     id: 2,
-    name: "test",
+    name: 'test',
     location: {
-      address: "서울 성동구 왕십리로 115 11층",
+      address: '서울 성동구 왕십리로 115 11층',
       addressDetail: '',
     },
     distance: 11,
-    type: "PRIVATE",
-    lunchDeliveryStartTime: "11:00:00",
-    lunchDeliveryEndTime: "11:30:00",
-    dinnerDeliveryStartTime: "14:00:00",
-    dinnerDeliveryEndTime: "18:00:00",
+    type: 'PRIVATE',
+    lunchDeliveryStartTime: '11:00:00',
+    lunchDeliveryEndTime: '11:30:00',
+    dinnerDeliveryStartTime: '14:00:00',
+    dinnerDeliveryEndTime: '18:00:00',
     // availableTime: "12:00-12:30 / 15:30-18:00",
     // spaceType: "퍼블릭",
-    images: [{
-      url: "/dev/spot/origin/1_20190213142552",
-    }],
-    method: "pickup"
+    images: [
+      {
+        url: '/dev/spot/origin/1_20190213142552',
+      },
+    ],
+    method: 'pickup',
   },
   {
     id: 3,
-    name: "test11",
+    name: 'test11',
     location: {
-      address: "서울 성동구 왕십리로 115 22층",
+      address: '서울 성동구 왕십리로 115 22층',
       addressDetail: '',
     },
     distance: 11,
-    type: "PUBLIC",
-    lunchDeliveryStartTime: "11:00:00",
-    lunchDeliveryEndTime: "11:30:00",
-    dinnerDeliveryStartTime: "14:00:00",
-    dinnerDeliveryEndTime: "18:00:00",
+    type: 'PUBLIC',
+    lunchDeliveryStartTime: '11:00:00',
+    lunchDeliveryEndTime: '11:30:00',
+    dinnerDeliveryStartTime: '14:00:00',
+    dinnerDeliveryEndTime: '18:00:00',
     // availableTime: "12:00-12:30 / 15:30-18:00",
     // spaceType: "퍼블릭",
-    images: [{
-      url: "/dev/spot/origin/1_20190213142552",
-    }],
-    method: "pickup"
+    images: [
+      {
+        url: '/dev/spot/origin/1_20190213142552',
+      },
+    ],
+    method: 'pickup',
   },
 ];
 
-export interface IArea{
+export interface IArea {
   location: string;
   lat: string;
   lng: string;
 }
-
 
 const area: IArea[] = [
   {
@@ -151,11 +156,7 @@ const SpotLocationPage = (): ReactElement => {
         </FlexEnd>
       </Wrapper>
       <MapWrapper>
-        <Map
-          zoom={17}
-          centerLat={area[2].lat}
-          centerLng={area[2].lng}
-        />
+        <Map zoom={17} centerLat={area[2].lat} centerLng={area[2].lng} />
         <SpotListWrapper>
           <SpotListSlider {...setting}>
             {RECENT_SPOT.map((item: any, index) => (

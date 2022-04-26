@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
 import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart } from '@styles/theme';
@@ -20,9 +20,9 @@ import { SET_IMAGE_VIEWER } from '@store/common';
 
 interface IParams {
   id: number;
-};
+}
 
-const SpotDetailPage = ({id}: IParams): ReactElement => {
+const SpotDetailPage = ({ id }: IParams): ReactElement => {
   const dispatch = useDispatch();
   const { isSpotLiked } = useSelector(spotSelector);
   const tabRef = useRef<HTMLDivElement>(null);
@@ -173,9 +173,9 @@ const SpotDetailPage = ({id}: IParams): ReactElement => {
     };
   }, [tabRef?.current?.offsetTop]);
 
-  if(!isLoading){
-    return <div>loading...</div>
-  };
+  if (!isLoading) {
+    return <div>loading...</div>;
+  }
 
   const openImgViewer = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
@@ -236,7 +236,7 @@ const SpotDetailPage = ({id}: IParams): ReactElement => {
             );
           })}
         </NoticeSlider>
-       )}
+      )}
       <PickupWrapper>
         <TextH5B color={theme.greyScale65} margin="0 0 16px 0">
           픽업정보
@@ -262,24 +262,26 @@ const SpotDetailPage = ({id}: IParams): ReactElement => {
           <FlexStart margin="0 0 16px 0" alignItems="flex-start">
             <TextH5B margin="0 20px 0 0">픽업장소</TextH5B>
             <div>
-              {
-                spotItem?.pickups.map((i, idx) => {
-                  return (
-                    <FlexStart key={idx}>
-                      <TextB2R  margin="0 8px 0 0">{i.name}</TextB2R>
-                      {
-                        i?.images?.map((j: {url: string,}, idx) => {
-                          return(
-                            <TextH6B key={idx} color={theme.greyScale65} textDecoration="underline" pointer onClick={() => openImgViewer(j?.url)}>
-                            이미지로 보기
-                            </TextH6B>  
-                          )
-                        })
-                      }
-                    </FlexStart>  
-                  )
-                })
-              }
+              {spotItem?.pickups.map((i, idx) => {
+                return (
+                  <FlexStart key={idx}>
+                    <TextB2R margin="0 8px 0 0">{i.name}</TextB2R>
+                    {i?.images?.map((j: { url: string }, idx) => {
+                      return (
+                        <TextH6B
+                          key={idx}
+                          color={theme.greyScale65}
+                          textDecoration="underline"
+                          pointer
+                          onClick={() => openImgViewer(j?.url)}
+                        >
+                          이미지로 보기
+                        </TextH6B>
+                      );
+                    })}
+                  </FlexStart>
+                );
+              })}
             </div>
           </FlexStart>
           {spotItem?.description && (
@@ -358,7 +360,6 @@ const StoreImgWrapper = styled.img`
 const PlaceTypeTagWrapper = styled.section`
   margin: 24px;
 `;
-
 
 const NoticeSlider = styled(Slider)`
   width: 100%;

@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
-import SVGIcon from '@utils/SVGIcon';
 import { textBody3, theme } from '@styles/theme';
 
 export interface ITextAreaProps {
