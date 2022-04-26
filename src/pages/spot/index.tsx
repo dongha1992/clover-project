@@ -150,8 +150,6 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  console.log(trialSpotList);
-
   useEffect(() => {
     const getInfoData = async () => {
       try {
@@ -351,9 +349,14 @@ const SpotPage = () => {
       <TextB2R color={theme.greyScale65} padding="8px 24px 23px 24px">
         {spotRegistraions?.data.subTitle}
       </TextB2R> */}
-      <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-        {trialRes.map((list: any, idx) => {
-          return (
+      <TrialSlider
+        className="swiper-container"
+        slidesPerView={'auto'}
+        spaceBetween={15}
+        speed={500}
+      >
+        {trialSpotList?.spotRegistrations.map((list, idx) => {
+          return(
             <SwiperSlide className="swiper-slide" key={idx}>
               <SpotList list={list} type="trial" />
             </SwiperSlide>
