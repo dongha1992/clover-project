@@ -52,7 +52,7 @@ import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { pluck, pipe, reduce, toArray, map, entries, each, flatMap } from '@fxts/core';
 import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
-import { Retryer } from 'react-query/types/core/retryer';
+import { DELIVERY_FEE_OBJ } from '@constants/cart';
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
@@ -296,9 +296,6 @@ const CartPage = () => {
       },
     }
   );
-
-  const isSpot = destinationObj.delivery === 'spot';
-  const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
 
   const reOrderCartList = (data: IGetCart[]) => {
     setCartItemList(data);
@@ -723,14 +720,21 @@ const CartPage = () => {
     return 0;
   };
 
-  const getDeliveryFee = useCallback(
-    (isSpot?: boolean) => {
-      if (isSpot) return 0;
-      if (getTotalPrice() > 35000) return 0;
-      return 3500;
-    },
-    [checkedMenus]
-  );
+  const getDeliveryFee = useCallback(() => {
+    if (getTotalPrice() > 35000) return 0;
+
+    const isQuick = destinationObj?.delivery === 'QUICK';
+    const isSpotAndQuick = ['MORNING', 'PARCEL'].includes(destinationObj?.delivery!);
+
+    switch (true) {
+      case isQuick: {
+      }
+      case isSpotAndQuick: {
+      }
+      default: {
+      }
+    }
+  }, [checkedMenus]);
 
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
