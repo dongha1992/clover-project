@@ -123,12 +123,15 @@ const CartPage = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-
+  const { isClosed } = router.query;
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const { isLoginSuccess } = useSelector(userForm);
-
   const queryClient = useQueryClient();
+
+  // 스팟 종료 날짜
+  const dt = new Date(userDestination?.closedDate!);
+  const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일`;
 
   const { isLoading } = useQuery(
     'getCartList',
@@ -852,6 +855,17 @@ const CartPage = () => {
   useEffect(() => {
     test();
   }, []);
+
+  useEffect(() => {
+    if (isClosed === 'true') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `해당 프코스팟은\n${openDate}에 운영 종료돼요!`,
+          submitBtnText: '확인',
+        })
+      );
+    }
+  }, [isLoading]);
 
   if (isLoading) {
     return <div>로딩</div>;

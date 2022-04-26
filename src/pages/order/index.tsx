@@ -39,7 +39,7 @@ import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
-import { SubsOrderItem, SubsOrderList, SubsPaymentWay } from '@components/Pages/Subscription/payment';
+import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -747,7 +747,7 @@ const OrderPage = () => {
           </>
         )}
       </OrderMethodWrapper>
-      {/* <SubsPaymentWay
+      {/* <SubsPaymentMethod
         previewOrder={previewOrder}
         goToCardManagemnet={goToCardManagemnet}
         getMainCardHandler={getMainCardHandler}
