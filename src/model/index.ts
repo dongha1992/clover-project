@@ -307,7 +307,9 @@ export interface ILocation {
 export interface ISpotInSpotPickUp {
   canDinnerDelivery: boolean;
   canLunchDelivery: boolean;
-  coordinate: { lat: number; lon: number };
+  coordinate: { 
+    lat: number; lon: number 
+  };
   dinnerDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
   distance: number;
@@ -319,6 +321,25 @@ export interface ISpotInSpotPickUp {
   lunchDeliveryStartTime: string;
   name: string;
   type: string;
+  isOpened: boolean;
+  isClosed: boolean;
+  isTrial: boolean;
+  isEvent: boolean;
+  placeOpenDays: string[];
+  openedAt: string;
+  closedDate: string;
+  canEat: boolean;
+  canParking: boolean;
+  createdAt: string;
+  description: string;
+  discountRate: number;
+  pickupEndTime: string;
+  pickupStartTime: string;
+  placeHoliday: string;
+  placeOpenTime: string;
+  placeTel: string;
+  placeType: string;
+  visiblePlaceTel: boolean;
 }
 export interface ISpotPickupInDestinaion {
   id: number;
@@ -341,6 +362,7 @@ export interface IDestinationsResponse {
   spotPickup?: ISpotPickupInDestinaion;
   spaceType?: string;
   availableTime?: string;
+  closedDate?: string;
 }
 
 export interface IGetDestinationsResponse {
@@ -476,7 +498,15 @@ export interface ISpotsDetail {
     {
       createdAt: string;
       id: number;
-      images: [];
+      images: [
+        {
+          url: string;
+          size: number;
+          main: boolean;
+          width: number;
+          height: number;
+        }
+      ];
       name: string;
       spotId: number;
       type: string;
@@ -512,6 +542,11 @@ export interface ISpotsDetail {
     main: boolean;
     createdAt: string;
   };
+  placeOpenDays: string[];
+  isClosed: boolean;
+  isOpened: boolean;
+  openedAt: string;
+  closedDate: string;
 }
 
 export interface ISpotDetailResponse {
