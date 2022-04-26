@@ -42,7 +42,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
           [주2회 배송] 부담없는 샐러드+간편식 식단
         </TextB3R>
         <FlexWrapWrapper>
-          <TextH5B>900Kcal 집중관리</TextH5B>
+          <TextH5B>72,000원 ~</TextH5B>
           <Like>
             <SVGIcon name="like" />
             <TextB3R padding="3px 0 0">10</TextB3R>
