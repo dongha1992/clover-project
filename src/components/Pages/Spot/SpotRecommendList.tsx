@@ -8,7 +8,7 @@ import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 
 interface IParams {
   item: ISpotsDetail;
