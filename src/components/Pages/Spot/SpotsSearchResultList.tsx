@@ -87,6 +87,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
     };
 
     const handleSubsDeliveryType = () => {
+      dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
