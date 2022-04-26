@@ -20,7 +20,7 @@ const Bottom = () => {
   const renderComponent = useCallback(
     (currentPath: string) => {
       switch (true) {
-        case ['/quickorder', '/', '/spot', '/mypage', '/subscription'].includes(currentPath): {
+        case ['/', '/spot', '/mypage', '/subscription'].includes(currentPath): {
           return <HomeBottom />;
         }
         case ['/menu/[menuId]'].includes(currentPath): {
