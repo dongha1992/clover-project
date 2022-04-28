@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { theme, verticalCenter } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
-import { is } from 'immer/dist/internal';
 
 interface IProps {
   isSold?: boolean;

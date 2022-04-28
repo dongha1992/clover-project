@@ -27,7 +27,6 @@ const TWO_WEKKS = 14;
 const ACTIVE_DAY_OF_WEEK = 2;
 export const LIMIT_DAYS = 6;
 
-/* TODO: 쓰이는 캘린더 3개 -> 분리해야하나 */
 export interface IDateObj {
   years: number;
   month: number;
@@ -130,6 +129,7 @@ const Calendar = ({
 
     const { currentTime } = getCustomDate(new Date());
     const today = new Date().getDate();
+    const nextDay = new Date().getDate() + 1;
 
     const isFinishLunch = currentTime >= 9.29;
     const isFinishDinner = currentTime >= 10.59;
@@ -156,7 +156,12 @@ const Calendar = ({
           {
             tempDisabledDate = pipe(
               dateList,
-              filter(({ dayKor, date }: IDateObj) => parcelAndMorningDisabled.includes(dayKor) || date === today),
+              filter(
+                ({ dayKor, date }: IDateObj) =>
+                  parcelAndMorningDisabled.includes(dayKor) ||
+                  date === today ||
+                  (isFinishParcelAndMorning && date === nextDay)
+              ),
               map(({ value }: IDateObj) => value),
               toArray
             );
@@ -175,10 +180,14 @@ const Calendar = ({
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
+    console.log(mergedDisabledDate, 'mergedDisabledDate');
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
+    console.log(filteredActiveDates);
     const firstActiveDate = filteredActiveDates[0]?.value;
     checkHasSubInActiveDates(dateList, mergedDisabledDate);
+
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
+
     if (!selectedDeliveryDay) {
       changeDeliveryDate(firstActiveDate);
     }
@@ -222,7 +231,7 @@ const Calendar = ({
       </TextB3R>
     );
   };
-
+  console.log(selectedDeliveryDay, 'selectedDeliveryDay');
   const RenderCalendar = React.memo(({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
     const { years, months, dates } = getCustomDate(new Date());
 
@@ -280,6 +289,7 @@ const Calendar = ({
 
   useEffect(() => {
     setDeliveryType(userDeliveryType);
+    console.log(userDeliveryType, 'userDeliveryType');
   }, [userDeliveryType]);
 
   useEffect(() => {
