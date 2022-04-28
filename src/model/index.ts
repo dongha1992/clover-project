@@ -307,8 +307,9 @@ export interface ILocation {
 export interface ISpotInSpotPickUp {
   canDinnerDelivery: boolean;
   canLunchDelivery: boolean;
-  coordinate: { 
-    lat: number; lon: number 
+  coordinate: {
+    lat: number;
+    lon: number;
   };
   dinnerDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
@@ -998,6 +999,20 @@ export interface IGetOrderListRequest {
   type: TOrderType | string;
 }
 
+export interface IGetOrderInfo {
+  canceledCount: number;
+  completedCount: number;
+  deliveringCount: number;
+  preparingCount: number;
+  reservedCount: number;
+}
+
+export interface IGetOrderInfoResponse {
+  data: IGetOrderInfo;
+  message: string;
+  code: number;
+}
+
 export interface IOrderMenus {
   id?: number;
   menuId: number;
@@ -1457,21 +1472,34 @@ export interface IGetMenusResponse {
 }
 export interface ISearchReviews {
   id: number;
+  menuId?: number;
   userNickName: string;
   menuName: string;
   menuDetailName: string;
-  orderCount: number;
+  orderCount?: number;
   rating: number;
   content: string;
   createdAt: string;
+  images: IMenuImageInReivew[];
+  comment?: string;
+  commenter?: string;
+  commentCreatedAt?: string;
 }
 
 export interface ISearchReviewImages {
   id: number;
+  menuReviewId: number;
   url: string;
   width: number;
   height: number;
   size: number;
+}
+
+export interface IMenuImageInReivew {
+  id: number;
+  url: string;
+  width: number;
+  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1489,7 +1517,7 @@ export interface IReviewsDetailResponse {
   message: string;
   data: {
     searchReview: ISearchReviews;
-    searchReviewImages: ISearchReviewImages[];
+    menuImage: IMenuImageInReivew;
   };
 }
 
