@@ -604,8 +604,6 @@ const CartPage = () => {
               menuQuantity: 1,
             },
           ],
-        },
-        {
           orderOptions: [
             {
               optionId: 1,
@@ -834,46 +832,46 @@ const CartPage = () => {
     setIsFirstRender(true);
   }, []);
 
-  const test = async () => {
-    const reqBody = [
-      {
-        menuDetailId: 110,
-        menuQuantity: 1,
-        menuId: 10,
-        main: true,
-      },
-      {
-        menuDetailId: 72,
-        menuQuantity: 1,
-        menuId: 9,
-        main: true,
-      },
-      {
-        menuDetailId: 73,
-        menuQuantity: 1,
-        menuId: 9,
-        main: true,
-      },
-      {
-        menuDetailId: 74,
-        menuQuantity: 1,
-        menuId: 9,
-        main: true,
-      },
-      {
-        menuDetailId: 75,
-        menuQuantity: 1,
-        menuId: 9,
-        main: true,
-      },
-    ];
+  // const test = async () => {
+  //   const reqBody = [
+  //     {
+  //       menuDetailId: 110,
+  //       menuQuantity: 1,
+  //       menuId: 10,
+  //       main: true,
+  //     },
+  //     {
+  //       menuDetailId: 72,
+  //       menuQuantity: 1,
+  //       menuId: 9,
+  //       main: true,
+  //     },
+  //     {
+  //       menuDetailId: 73,
+  //       menuQuantity: 1,
+  //       menuId: 9,
+  //       main: true,
+  //     },
+  //     {
+  //       menuDetailId: 74,
+  //       menuQuantity: 1,
+  //       menuId: 9,
+  //       main: true,
+  //     },
+  //     {
+  //       menuDetailId: 75,
+  //       menuQuantity: 1,
+  //       menuId: 9,
+  //       main: true,
+  //     },
+  //   ];
 
-    const { data } = await postCartsApi(reqBody);
-  };
+  //   const { data } = await postCartsApi(reqBody);
+  // };
 
-  useEffect(() => {
-    test();
-  }, []);
+  // useEffect(() => {
+  //   test();
+  // }, []);
 
   useEffect(() => {
     if (isClosed === 'true') {
@@ -1103,7 +1101,7 @@ const CartPage = () => {
         <TotalPriceWrapper>
           <FlexBetween>
             <TextH5B>총 상품금액</TextH5B>
-            <TextB2R>{getItemsPrice()}</TextB2R>
+            <TextB2R>{getItemsPrice()}원</TextB2R>
           </FlexBetween>
           <BorderLine height={1} margin="16px 0" />
           <FlexBetween>
@@ -1163,7 +1161,7 @@ const CartPage = () => {
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>{totalAmount}</TextH4B>
+            <TextH4B>{totalAmount}원</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -1187,7 +1185,6 @@ const Container = styled.div`
 const EmptyContainer = styled.div`
   height: 100vh;
   width: 100%;
-  ${flexCenter}
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

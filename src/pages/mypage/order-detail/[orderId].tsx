@@ -223,11 +223,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDevlieryDateHandler = () => {
-    if (!canChangeDelivery || isSubOrder) {
-      return;
-    }
-
-    console.log(orderDetail, '@@@@@@');
+    // if (!canChangeDelivery || isSubOrder) {
+    //   return;
+    // }
 
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(

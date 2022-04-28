@@ -37,7 +37,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { orderForm } from '@store/order';
+import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 
@@ -108,12 +108,13 @@ const OrderPage = () => {
     receiverTel: '',
     point: 0,
   });
+  const [card, setCard] = useState<IGetCard>();
   const [loadingState, setLoadingState] = useState(false);
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { tempOrder } = useSelector(orderForm);
+  const { tempOrder, selectedCard } = useSelector(orderForm);
 
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -121,6 +122,9 @@ const OrderPage = () => {
   const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
     'getPreviewOrder',
     async () => {
+      if (!tempOrder) {
+        router.push('/');
+      }
       const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
       const previewBody = {
         delivery,
@@ -131,19 +135,24 @@ const OrderPage = () => {
         type,
       };
 
+      console.log(previewBody, 'previewBody');
+
       const { data } = await createOrderPreviewApi(previewBody);
       if (data.code === 200) {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       const reqBody = {
         payMethod: 'NICE_BILLING',
-        cardId: getMainCardHandler(previewOrder?.cards)?.id!,
+        cardId: card?.id!,
         ...previewOrder?.order!,
       };
 
@@ -158,6 +167,8 @@ const OrderPage = () => {
       onSuccess: async (orderId: number) => {
         router.push({ pathname: '/order/finish', query: { orderId } });
         setLoadingState(false);
+        INIT_ORDER();
+        INIT_CARD();
       },
     }
   );
@@ -393,7 +404,7 @@ const OrderPage = () => {
   };
 
   const goToCardManagemnet = (card: IGetCard) => {
-    router.push('/mypage/card');
+    router.push({ pathname: '/mypage/card', query: { isOrder: true } });
   };
 
   const goToRegisteredCard = () => {
@@ -401,10 +412,6 @@ const OrderPage = () => {
   };
 
   const goToTermInfo = () => {};
-
-  const getMainCardHandler = (cards: IGetCard[] = []) => {
-    return cards.find((c) => c.main);
-  };
 
   const paymentHandler = () => {
     if (loadingState) return;
@@ -436,6 +443,13 @@ const OrderPage = () => {
       setUserInputObj({ ...userInputObj, point: limitPoint });
     }
   }, [checkForm.alwaysPointAll.isSelected]);
+
+  useEffect(() => {
+    const card = selectedCard
+      ? previewOrder?.cards.find((c) => c.id === selectedCard)
+      : previewOrder?.cards.find((c) => c.main);
+    setCard(card!);
+  }, [previewOrder]);
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
@@ -737,7 +751,7 @@ const OrderPage = () => {
             <BorderLine height={1} margin="24px 0" />
             {previewOrder?.cards?.length! > 0 ? (
               <>
-                <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards)} />
+                <CardItem onClick={goToCardManagemnet} card={card} cardCount={previewOrder?.cards?.length} />
               </>
             ) : (
               <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
