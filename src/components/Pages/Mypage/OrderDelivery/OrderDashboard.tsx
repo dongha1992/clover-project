@@ -3,22 +3,16 @@ import { TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
 import { FlexCol, FlexRow, theme, FlexBetween, FlexColCenter } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
-
+import { IGetOrderInfo } from '@model/index';
 import router from 'next/router';
 
-interface IDeliveryList {
-  DELIVERING?: any[];
-  COMPLETED?: any[];
-  PREPARING?: any[];
-  RESERVED?: any[];
-}
-
 interface IProps {
-  deliveryList: IDeliveryList[];
-  total: number;
+  orderList: IGetOrderInfo;
 }
 
-const OrderDashboard = ({ deliveryList, total }: IProps) => {
+const OrderDashboard = ({ orderList }: IProps) => {
+  const { reservedCount, preparingCount, deliveringCount, completedCount, canceledCount } = orderList;
+  const total = reservedCount + preparingCount + deliveringCount + completedCount;
   return (
     <>
       <FlexCol>
@@ -35,28 +29,28 @@ const OrderDashboard = ({ deliveryList, total }: IProps) => {
       <Wrapper>
         <FlexBetween padding="0 24px">
           <FlexColCenter>
-            <TextH3B>{deliveryList['RESERVED']?.length || 0}</TextH3B>
+            <TextH3B>{reservedCount}</TextH3B>
             <TextB4R color={theme.greyScale65}>주문완료</TextB4R>
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{deliveryList['PREPARING']?.length || 0}</TextH3B>
+            <TextH3B>{preparingCount}</TextH3B>
             <TextB4R color={theme.greyScale65}>상품준비중</TextB4R>
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{deliveryList['DELIVERING']?.length || 0}</TextH3B>
+            <TextH3B>{deliveringCount}</TextH3B>
             <TextB4R color={theme.greyScale65}>배송중</TextB4R>
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{deliveryList['COMPLETED']?.length || 0}</TextH3B>
+            <TextH3B>{completedCount}</TextH3B>
             <TextB4R color={theme.greyScale65}>배송완료</TextB4R>
           </FlexColCenter>
         </FlexBetween>

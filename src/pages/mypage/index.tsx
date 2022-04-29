@@ -17,8 +17,7 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
-import { pipe, groupBy } from '@fxts/core';
-import { getOrderListsApi } from '@api/order';
+import { getOrderListsApi, getOrderInfoApi } from '@api/order';
 import { userInvitationApi } from '@api/user';
 interface IMypageMenu {
   title: string;
@@ -29,32 +28,19 @@ interface IMypageMenu {
 
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
-  const [deliveryList, setDeliveryList] = useState<any>([]);
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
       const params = {
-        days: 90,
-        page: 1,
-        size: 100,
-        type: 'GENERAL',
+        orderType: 'GENERAL',
       };
 
-      const { data } = await getOrderListsApi(params);
-      return data.data.orderDeliveries;
+      const { data } = await getOrderInfoApi(params);
+      return data.data;
     },
     {
-      onSuccess: (data) => {
-        const result = pipe(
-          data,
-          groupBy((item: any) => item.status)
-        );
-
-        setDeliveryList(result);
-        return data;
-      },
-
+      onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -122,7 +108,7 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>
-              <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
+              <OrderDashboard orderList={orderList!} />
             </OrderAndDeliveryWrapper>
             <SubsDashboard />
             <ManageWrapper>
