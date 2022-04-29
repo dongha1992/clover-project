@@ -13,6 +13,7 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { postPromotionCodeApi } from '@api/promotion';
+import { userRecommendationApi } from '@api/user';
 import { SET_ALERT } from '@store/alert';
 
 const WelcomeSheet = () => {
@@ -24,18 +25,66 @@ const WelcomeSheet = () => {
       if (codeRef.current) {
         const reqBody = {
           code: codeRef?.current?.value,
-          reward: 'POINT',
+          reward: null,
         };
 
         const { data } = await postPromotionCodeApi(reqBody);
 
-        let alertMessage = '';
-        if (data.code === 2002) {
-          alertMessage = '이미 등록한 프로모션 코드입니다.';
-        } else if (data.code === 1105) {
-          alertMessage = '존재하지 않는 프로모션 코드입니다.';
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '프로모션 코드가 등록되었습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        }
+      }
+    },
+    {
+      onSuccess: async (data) => {},
+      onError: async (error: any) => {
+        if (error.code === 2202) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '이미 프로모션에 참여했습니다.',
+              submitBtnText: '확인',
+            })
+          );
         } else {
-          alertMessage = '프로모션 코드가 등록되었습니다.';
+          return await mutatePostRecommendationCode();
+        }
+      },
+    }
+  );
+
+  const { mutateAsync: mutatePostRecommendationCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const params = {
+          recommendCode: codeRef?.current.value,
+        };
+
+        const { data } = await userRecommendationApi(params);
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '프로모션 코드가 등록되었습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        }
+      }
+    },
+    {
+      onSuccess: async (data) => {
+        console.log(data, 'ON SUCCESS');
+      },
+      onError: async (error: any) => {
+        let alertMessage = '';
+        if (error.code === 2201) {
+          alertMessage = '이미 추천한 친구가 있습니다.';
+        } else if (error.code === 1105) {
+          alertMessage = '존재하지 않은 친구 추천 코드입니다.';
         }
 
         return dispatch(
@@ -44,11 +93,7 @@ const WelcomeSheet = () => {
             submitBtnText: '확인',
           })
         );
-      }
-    },
-    {
-      onSuccess: async (data) => {},
-      onError: async (data) => {},
+      },
     }
   );
 
@@ -95,9 +140,9 @@ const WelcomeSheet = () => {
                 등록하기
               </Button>
             </FlexRow>
-            <TextB3R color={theme.brandColor} padding="2px 0 0 16px">
+            {/* <TextB3R color={theme.brandColor} padding="2px 0 0 16px">
               사용할 수 있는 프로모션 코드입니다.
-            </TextB3R>
+            </TextB3R> */}
           </FlexCol>
         </PromotionWrapper>
       </Body>

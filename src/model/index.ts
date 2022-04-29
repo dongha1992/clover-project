@@ -1729,5 +1729,5 @@ export interface IPointHistoriesRequest {
 type TReward = 'COUPON' | 'POINT' | string;
 export interface IPromotionRequest {
   code: string;
-  reward: TReward;
+  reward: TReward | null;
 }
