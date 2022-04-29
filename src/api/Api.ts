@@ -109,6 +109,5 @@ Api.interceptors.request.use((req) => {
 
 export const onError = (error: AxiosError): Promise<never> => {
   const { status } = (error.response as AxiosResponse) || 500;
-  console.log(error, 'error onError');
-  return Promise.reject(error);
+  return Promise.reject(error.response?.data);
 };

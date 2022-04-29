@@ -23,6 +23,7 @@ interface IProps {
   subsDates: string[];
   setPickupDay?: (value: any[]) => void;
   setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
+  calendarType?: string;
 }
 
 const SubsCalendar = ({
@@ -36,7 +37,8 @@ const SubsCalendar = ({
   sumDeliveryComplete = [], // 배송완료(합배송 포함)
   subsDates, // 초기 구독캘린더 active 날짜리스트
   setPickupDay, // 구독 플랜 단계에서 픽업 날짜
-  setSelectDate,
+  setSelectDate, // 선택한 날짜
+  calendarType, // 캘린더 타입
 }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -53,6 +55,12 @@ const SubsCalendar = ({
     }
   }, [subsDeliveryExpectedDate]);
 
+  useEffect(() => {
+    // 배송일 변경시 변경할려는 날짜에 합배송이 있을경우
+    if (sumDelivery.find((x) => x === subsDates[0])) {
+    }
+  }, []);
+
   // const [sumDeliveryChange, setSumDeliveryChange] = useState(false);
   // useEffect(() => {
   //   // 배송일 변경
@@ -65,9 +73,11 @@ const SubsCalendar = ({
   const titleContent = useCallback(
     ({ date, view }: { date: any; view: any }) => {
       let element = [];
-
+      if (calendarType === 'deliveryChange' && deliveryExpectedDate[0] === dayjs(date).format('YYYY-MM-DD')) {
+        // 배송일변경 시 변경전 날짜
+        element.push(<div className="deliveryChangeBeforeDate" key={`00-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+      }
       if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송 예정일
         element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
       }
       if (today === dayjs(date).format('YYYY-MM-DD')) {
@@ -297,6 +307,7 @@ const CalendarBox = styled.div`
           font-style: normal;
           font-weight: 700;
           font-size: 14px;
+          z-index: 1;
         }
 
         // 날짜 선택 된 상태
@@ -336,6 +347,13 @@ const CalendarBox = styled.div`
     height: 32px;
     border-radius: 50%;
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='15.5' stroke='%2335AD73' stroke-dasharray='2 2'/%3E%3C/svg%3E%0A");
+  }
+  .deliveryChangeBeforeDate {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #daece3;
   }
   .deliveryComplete {
     position: absolute;
