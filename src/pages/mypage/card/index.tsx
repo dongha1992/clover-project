@@ -46,7 +46,7 @@ const CardManagementPage = () => {
   };
 
   const goToCardRegister = (): void => {
-    router.push('/mypage/card/register');
+    router.push({ pathname: '/mypage/card/register', query: { isOrder: isFromOrder } });
   };
 
   if (isLoading || isNil(cards)) {
@@ -70,7 +70,7 @@ const CardManagementPage = () => {
           <TextH4B padding="24px 0">카드 관리</TextH4B>
           {cards.map((card: IGetCard, index: number) => (
             <div key={index}>
-              <CardItem onClick={cardEditHandler} card={card} isOrder={isOrder} />
+              <CardItem onClick={cardEditHandler} card={card} isOrder={isFromOrder} />
               {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}
             </div>
           ))}

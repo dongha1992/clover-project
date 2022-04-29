@@ -10,11 +10,10 @@ interface IProps {
   onClick: (card: IGetCard) => void;
   card?: IGetCard;
   cardCount?: number;
-  isOrder?: string;
+  isOrder?: boolean;
 }
 
 const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
-  const isFromOrder = isOrder === 'true';
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>
@@ -28,7 +27,7 @@ const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
           </FlexCol>
         </FlexRowStart>
 
-        {isFromOrder ? (
+        {isOrder ? (
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
             선택하기
           </TextH6B>

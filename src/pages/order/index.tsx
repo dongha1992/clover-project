@@ -135,8 +135,6 @@ const OrderPage = () => {
         type,
       };
 
-      console.log(previewBody, 'previewBody');
-
       const { data } = await createOrderPreviewApi(previewBody);
       if (data.code === 200) {
         return data.data;
@@ -150,10 +148,14 @@ const OrderPage = () => {
 
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
+      /*TODO: 배송방법에 따라서 메시지나 뭐 그런 거 추가 */
+      const { point, ...rest } = previewOrder?.order!;
+
       const reqBody = {
         payMethod: 'NICE_BILLING',
         cardId: card?.id!,
-        ...previewOrder?.order!,
+        point: userInputObj?.point,
+        ...rest,
       };
 
       setLoadingState(true);
@@ -240,7 +242,15 @@ const OrderPage = () => {
 
   const useAllOfPointHandler = () => {
     const { point: limitPoint } = previewOrder!;
-    setUserInputObj({ ...userInputObj, point: limitPoint });
+    const { payAmount } = previewOrder?.order!;
+    let avaliablePoint = 0;
+    if (limitPoint < payAmount) {
+      avaliablePoint = payAmount - limitPoint;
+    } else {
+      avaliablePoint = payAmount;
+    }
+
+    setUserInputObj({ ...userInputObj, point: avaliablePoint });
   };
 
   const deliveryDateRenderer = ({
@@ -436,7 +446,6 @@ const OrderPage = () => {
 
   useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
-    console.log(previewOrder, 'previewOrder');
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
@@ -718,7 +727,7 @@ const OrderPage = () => {
             전액 사용
           </Button>
         </FlexRow>
-        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point}원</TextB3R>
+        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point - userInputObj.point}원</TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
       <OrderMethodWrapper>
@@ -839,13 +848,13 @@ const OrderPage = () => {
         {userInputObj.point > 0 && (
           <FlexBetween>
             <TextH5B>포인트 사용</TextH5B>
-            <TextB2R>{point}원</TextB2R>
+            <TextB2R>{userInputObj.point}원</TextB2R>
           </FlexBetween>
         )}
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextB2R>{payAmount}원</TextB2R>
+          <TextB2R>{payAmount - userInputObj.point}원</TextB2R>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -874,7 +883,7 @@ const OrderPage = () => {
       </OrderTermWrapper>
       <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%">
-          {payAmount}원 결제하기
+          {payAmount - userInputObj.point}원 결제하기
         </Button>
       </OrderBtn>
     </Container>

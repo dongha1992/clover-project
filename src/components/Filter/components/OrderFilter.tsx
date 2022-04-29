@@ -16,7 +16,6 @@ const OrderFilter = ({ data, changeHandler, selectedRadioValue }: TProps) => {
       <BtnContainer>
         {data &&
           data.map((item: any, index: number) => {
-            console.log(item);
             const isSelected = selectedRadioValue === item.value;
             return (
               <FlexRow key={index}>

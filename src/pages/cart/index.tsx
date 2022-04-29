@@ -134,11 +134,11 @@ const CartPage = () => {
   const dt = new Date(userDestination?.closedDate!);
   const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일`;
 
-  const { isLoading } = useQuery(
+  const { isLoading, isError } = useQuery(
     'getCartList',
     async () => {
       const { data } = await getCartsApi();
-      console.log(data.data);
+
       return data.data;
     },
     {
@@ -848,7 +848,7 @@ const CartPage = () => {
     return <div>로딩</div>;
   }
 
-  if (cartItemList.length === 0) {
+  if (cartItemList?.length === 0) {
     return (
       <EmptyContainer>
         <FlexCol width="100%">

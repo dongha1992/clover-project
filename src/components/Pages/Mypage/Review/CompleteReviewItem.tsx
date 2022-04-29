@@ -19,7 +19,6 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-  console.log(review, '@@');
 
   const isContentHide = review.content.length >= 280;
 
