@@ -19,6 +19,7 @@ import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { pipe, groupBy } from '@fxts/core';
 import { getOrderListsApi } from '@api/order';
+import { userInvitationApi } from '@api/user';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -54,6 +55,20 @@ const MypagePage = () => {
         return data;
       },
 
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: friendInvitation, error } = useQuery(
+    'getInvitationInfo',
+    async () => {
+      const { data } = await userInvitationApi();
+      return data.data;
+    },
+
+    {
+      onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -114,7 +129,7 @@ const MypagePage = () => {
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
               <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
-              <MypageMenu title="친구 초대" link="/mypage/friend" count={1} />
+              <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <MypageMenu title="주소 관리" link="/mypage/address" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
               <MypageMenu title="이벤트" link="/mypage/event" />
@@ -211,12 +226,10 @@ export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypag
       <FlexBetween padding="24px 0">
         <TextH4B>{title}</TextH4B>
         <FlexRow>
-          {count && (
-            <TextB2R padding="0 8px 0 0">
-              {count}
-              {mapper[title]}
-            </TextB2R>
-          )}
+          <TextB2R padding="0 8px 0 0">
+            {count}
+            {mapper[title]}
+          </TextB2R>
           <div>
             <SVGIcon name="arrowRight" />
           </div>
