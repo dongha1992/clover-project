@@ -52,7 +52,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet />,
+          content: <ShareSheet isMenu />,
         })
       );
     }

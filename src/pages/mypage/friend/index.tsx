@@ -7,17 +7,23 @@ import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
-import { userInvitationApi } from '@api/user';
-import { useQuery } from 'react-query';
+import { userInvitationApi, userRecommendationApi } from '@api/user';
+import { useQuery, useMutation } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { SET_ALERT } from '@store/alert';
+import { userForm } from '@store/user';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 
 const textStyle = {
   color: theme.greyScale65,
 };
 
-const code = '!1';
-
 const InviteFriendPaage = () => {
   const { showToast } = useToast();
+  const codeRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch();
+  const { me } = useSelector(userForm);
 
   const {
     data,
@@ -37,12 +43,56 @@ const InviteFriendPaage = () => {
     }
   );
 
+  const { mutateAsync: mutatePostRecommendationCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const params = {
+          recommendCode: codeRef?.current.value,
+        };
+
+        const { data } = await userRecommendationApi(params);
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '친구 초대 코드를 등록하얐습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        }
+      }
+    },
+    {
+      onSuccess: async (data) => {
+        console.log(data, 'ON SUCCESS');
+      },
+      onError: async (error: any) => {
+        let alertMessage = '';
+        if (error.code === 2201) {
+          alertMessage = '이미 추천한 친구가 있습니다.';
+        } else if (error.code === 1105) {
+          alertMessage = '존재하지 않은 친구 추천 코드입니다.';
+        }
+
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
+      },
+    }
+  );
+
   const getCodeCopy = (e: any) => {
     e.preventDefault();
     const { clipboard } = window.navigator;
-    clipboard.writeText(code).then(() => {
+    clipboard.writeText(me?.recommendCode!).then(() => {
       showToast({ message: '초대코드를 복사했어요.' });
     });
+  };
+
+  const goToShare = () => {
+    dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet /> }));
   };
 
   if (isLoading) {
@@ -59,13 +109,15 @@ const InviteFriendPaage = () => {
         <FlexCol>
           <TextH6B>내 초대코드</TextH6B>
           <TextH1B color={theme.brandColor} padding="4px 0 0 0">
-            {code}
+            {me?.recommendCode}
           </TextH1B>
         </FlexCol>
-        <FlexRow width="50%" padding="24px 0 0 0">
-          <Button backgroundColor={theme.black}>공유히기</Button>
+        <FlexRow width="70%" padding="24px 0 0 0">
+          <Button backgroundColor={theme.black} onClick={() => goToShare()}>
+            공유하기
+          </Button>
           <Button backgroundColor={theme.white} color={theme.black} margin="0 0 0 8px" border onClick={getCodeCopy}>
-            복사하기
+            초대코드 복사하기
           </Button>
         </FlexRow>
         <BorderLine height={1} margin="32px 0" />
@@ -83,8 +135,8 @@ const InviteFriendPaage = () => {
         <FlexCol>
           <TextH4B padding="0 0 24px 0">친구의 초대코드 등록</TextH4B>
           <FlexRow margin="0 0 48px 0">
-            <TextInput placeholder="초대코드 등록하고 3,000p 받기" />
-            <Button width="30%" margin="0 0 0 8px">
+            <TextInput placeholder="초대코드 등록하고 3,000p 받기" ref={codeRef} />
+            <Button width="30%" margin="0 0 0 8px" onClick={() => mutatePostRecommendationCode()}>
               등록하기
             </Button>
           </FlexRow>
