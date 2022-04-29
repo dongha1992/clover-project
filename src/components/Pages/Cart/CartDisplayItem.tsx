@@ -19,13 +19,23 @@ interface IProps {
 
 const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
   const isSelected = !isNil(checkedMenus?.find((item) => item.menuId === menu.menuId));
+  const isDisabled = menu.isSold;
 
   return (
     <Container>
       <Wrapper>
         <FlexRowStart width="40%">
           <CheckboxWrapper>
-            <Checkbox onChange={() => handleSelectCartItem(menu)} isSelected={isSelected} />
+            <Checkbox
+              onChange={() => {
+                if (isDisabled) {
+                  return;
+                }
+                handleSelectCartItem(menu);
+              }}
+              isSelected={isSelected}
+              disabled={isDisabled}
+            />
           </CheckboxWrapper>
           <ImageWrapper>
             <Image
@@ -40,10 +50,9 @@ const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplay
         </FlexRowStart>
         <FlexBetween>
           <FlexCol margin="0 0 0 8px">
-            <TextB2R color={menu.isSold ? theme.greyScale25 : ''}>{menu.menuName}</TextB2R>
-            <InfoMessage status={menu.isSold && 'isSold'} />
+            <TextB2R color={isDisabled ? theme.greyScale25 : ''}>{menu.menuName}</TextB2R>
+            <InfoMessage status={isDisabled && 'isSold'} />
           </FlexCol>
-
           <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu)}>
             <SVGIcon name="defaultCancel" />
           </RemoveBtnContainer>

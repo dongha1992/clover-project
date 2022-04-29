@@ -6,12 +6,17 @@ type TProps = {
   isSelected: boolean;
   id?: string;
   onChange: React.MouseEventHandler<HTMLElement>;
+  disabled?: boolean;
 };
 
-const Checkbox = ({ isSelected, onChange, id }: TProps) => {
+const Checkbox = ({ isSelected, onChange, id, disabled }: TProps) => {
   return (
     <CheckboxContainer onClick={onChange} id={id}>
-      <SVGIcon name={isSelected ? 'checkedRectBox' : 'uncheckedRectBox'} />
+      {!disabled ? (
+        <SVGIcon name={isSelected ? 'checkedRectBox' : 'uncheckedRectBox'} />
+      ) : (
+        <SVGIcon name={'uncheckedRectBox'} />
+      )}
     </CheckboxContainer>
   );
 };

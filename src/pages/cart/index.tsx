@@ -356,7 +356,7 @@ const CartPage = () => {
   };
 
   const handleSelectAllCartItem = () => {
-    const canCheckMenus = cartItemList.filter((item) => !checkIsAllSoldout(item.menuDetails));
+    const canCheckMenus = cartItemList.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails));
 
     if (!isAllChecked) {
       setCheckedMenus(canCheckMenus);
@@ -812,7 +812,8 @@ const CartPage = () => {
   useEffect(() => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
-      const canCheckMenus = cartItemList?.filter((item) => !checkIsAllSoldout(item.menuDetails))!;
+      const canCheckMenus = cartItemList?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
+
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
         setIsAllchecked(true);
         setCheckedMenus(cartItemList);
@@ -831,47 +832,6 @@ const CartPage = () => {
   useEffect(() => {
     setIsFirstRender(true);
   }, []);
-
-  // const test = async () => {
-  //   const reqBody = [
-  //     {
-  //       menuDetailId: 110,
-  //       menuQuantity: 1,
-  //       menuId: 10,
-  //       main: true,
-  //     },
-  //     {
-  //       menuDetailId: 72,
-  //       menuQuantity: 1,
-  //       menuId: 9,
-  //       main: true,
-  //     },
-  //     {
-  //       menuDetailId: 73,
-  //       menuQuantity: 1,
-  //       menuId: 9,
-  //       main: true,
-  //     },
-  //     {
-  //       menuDetailId: 74,
-  //       menuQuantity: 1,
-  //       menuId: 9,
-  //       main: true,
-  //     },
-  //     {
-  //       menuDetailId: 75,
-  //       menuQuantity: 1,
-  //       menuId: 9,
-  //       main: true,
-  //     },
-  //   ];
-
-  //   const { data } = await postCartsApi(reqBody);
-  // };
-
-  // useEffect(() => {
-  //   test();
-  // }, []);
 
   useEffect(() => {
     if (isClosed === 'true') {
