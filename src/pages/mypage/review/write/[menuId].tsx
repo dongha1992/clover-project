@@ -61,10 +61,8 @@ const WriteReviewPage = ({ menuId }: any) => {
   } = useQuery(
     'getMenuDetail',
     async () => {
-      // temp
-      // const { data } = await getMenuDetailApi(menuId);
-      // return data.data;
-      return DETAIL.data.data;
+      const { data } = await getMenuDetailApi(menuId);
+      return data.data;
     },
 
     {
@@ -93,7 +91,6 @@ const WriteReviewPage = ({ menuId }: any) => {
             submitBtnText: '확인',
           })
         );
-        await queryClient.refetchQueries('getCardList');
       },
     }
   );
