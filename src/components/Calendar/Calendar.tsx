@@ -23,7 +23,7 @@ let WEEKS: Obj = {
 };
 
 const ONE_WEEK = 7;
-const TWO_WEKKS = 14;
+const TWO_WEEKS = 14;
 const ACTIVE_DAY_OF_WEEK = 2;
 export const LIMIT_DAYS = 6;
 
@@ -61,7 +61,6 @@ const Calendar = ({
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
-  const [deliveryType, setDeliveryType] = useState<string>(userDeliveryType);
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate(new Date());
@@ -69,7 +68,7 @@ const Calendar = ({
     const dateList = [];
     const firstWeek = [];
 
-    for (let i = 0; i < TWO_WEKKS; i++) {
+    for (let i = 0; i < TWO_WEEKS; i++) {
       const isFirstWeek = i < ONE_WEEK;
 
       const _month = new Date(years, months, dates + i).getMonth() + 1;
@@ -98,7 +97,7 @@ const Calendar = ({
   };
 
   const clickDayHandler = (value: string): void => {
-    const isQuickAndSpot = ['spot', 'quick'].includes(deliveryType!);
+    const isQuickAndSpot = ['spot', 'quick'].includes(userDeliveryType!);
 
     const selectedSubDelivery = subOrderDelivery?.find((item) =>
       isQuickAndSpot
@@ -115,8 +114,8 @@ const Calendar = ({
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
     // 배송에 따른 기본 휴무일
-    const isQuickAndSpot = ['spot', 'quick'].includes(deliveryType!);
-    const isParcelAndMorning = ['parcel', 'morning'].includes(deliveryType!);
+    const isQuickAndSpot = ['spot', 'quick'].includes(userDeliveryType!);
+    const isParcelAndMorning = ['parcel', 'morning'].includes(userDeliveryType!);
     const quickAndSpotDisabled = ['토', '일'];
     const parcelAndMorningDisabled = ['일', '월'];
 
@@ -175,22 +174,21 @@ const Calendar = ({
     return tempDisabledDate;
   };
 
-  /* 배송지를 선택 안 하고(최근 주문 이력으로) 주문시 deliveryType이 state에 저장돼서 useCallback 사용 */
+  /* 배송지를 선택 안 하고(최근 주문 이력으로) 주문시 userDeliveryType이 state에 저장돼서 useCallback 사용 */
 
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
-    console.log(mergedDisabledDate, 'mergedDisabledDate');
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    console.log(filteredActiveDates);
     const firstActiveDate = filteredActiveDates[0]?.value;
+
     checkHasSubInActiveDates(dateList, mergedDisabledDate);
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
-
-    if (!selectedDeliveryDay) {
+    if (!isSheet) {
       changeDeliveryDate(firstActiveDate);
     }
+
     setCustomDisabledDate(mergedDisabledDate);
 
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
@@ -231,7 +229,7 @@ const Calendar = ({
       </TextB3R>
     );
   };
-  console.log(selectedDeliveryDay, 'selectedDeliveryDay');
+
   const RenderCalendar = React.memo(({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
     const { years, months, dates } = getCustomDate(new Date());
 
@@ -286,11 +284,6 @@ const Calendar = ({
   });
 
   RenderCalendar.displayName = 'RenderCalendar';
-
-  useEffect(() => {
-    setDeliveryType(userDeliveryType);
-    console.log(userDeliveryType, 'userDeliveryType');
-  }, [userDeliveryType]);
 
   useEffect(() => {
     initCalendar();

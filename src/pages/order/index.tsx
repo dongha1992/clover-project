@@ -163,12 +163,14 @@ const OrderPage = () => {
       return orderId;
     },
     {
-      onError: () => {},
       onSuccess: async (orderId: number) => {
         router.push({ pathname: '/order/finish', query: { orderId } });
         setLoadingState(false);
         INIT_ORDER();
         INIT_CARD();
+      },
+      onError: (error) => {
+        /*TODO: error 팝업 */
       },
     }
   );
