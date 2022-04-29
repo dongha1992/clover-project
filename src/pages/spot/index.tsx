@@ -167,7 +167,7 @@ const SpotPage = () => {
     // dispatch(initBottomSheet());
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <ShareSheet />,
+        content: <ShareSheet isMenu />,
       })
     );
   };
@@ -349,14 +349,9 @@ const SpotPage = () => {
       <TextB2R color={theme.greyScale65} padding="8px 24px 23px 24px">
         {spotRegistraions?.data.subTitle}
       </TextB2R> */}
-      <TrialSlider
-        className="swiper-container"
-        slidesPerView={'auto'}
-        spaceBetween={15}
-        speed={500}
-      >
+      <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
         {trialSpotList?.spotRegistrations.map((list, idx) => {
-          return(
+          return (
             <SwiperSlide className="swiper-slide" key={idx}>
               <SpotList list={list} type="trial" />
             </SwiperSlide>
