@@ -379,7 +379,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={isCanceled || isSubOrder}
+            disabled={!canChangeDelivery || isSubOrder}
             onClick={changeDeliveryInfoHandler}
             margin="0 16px 0 0"
           >

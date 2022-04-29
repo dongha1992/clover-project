@@ -7,7 +7,7 @@ import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
 import { IMenuDetailsInCart } from '@model/index';
-
+import { getDiscountPrice } from '@utils/menu';
 interface IProps {
   menuDetail: IMenuDetailsInCart;
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
@@ -27,6 +27,11 @@ const CartActualItem = ({
   clickRestockNoti,
   menuId,
 }: IProps) => {
+  const { discount, discountedPrice } = getDiscountPrice({
+    discountPrice: menuDetail.discountPrice,
+    price: menuDetail.price,
+  });
+
   return (
     <Container isSold={menuDetail.isSold}>
       <ContentWrapper>
@@ -44,9 +49,9 @@ const CartActualItem = ({
         <FlexCol>
           <PriceWrapper>
             <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
-              {menuDetail.discount}%
+              {discount}%
             </TextH5B>
-            <TextH5B>{menuDetail.price}원</TextH5B>
+            <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
             <InfoMessage status={menuDetail.isSold && 'isSold'} />

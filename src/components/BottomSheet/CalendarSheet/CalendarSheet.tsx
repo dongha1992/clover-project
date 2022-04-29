@@ -34,7 +34,19 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
     },
     {
       onSuccess: async () => {
+        dispatch(INIT_BOTTOM_SHEET());
+        dispatch(INIT_USER_DELIVERY_TYPE());
         await queryClient.refetchQueries('getOrderDetail');
+      },
+      onError: async (error: any) => {
+        if (error.code === 5001) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 배송 상태입니다.',
+              submitBtnText: '확인',
+            })
+          );
+        }
       },
     }
   );
@@ -50,8 +62,6 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
-          dispatch(INIT_BOTTOM_SHEET());
-          dispatch(INIT_USER_DELIVERY_TYPE());
           changeDeliveryDateMutation();
         },
       })
