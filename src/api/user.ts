@@ -76,8 +76,8 @@ export const userUnlock = (): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/unlock');
 };
 
-export const userRecommendationApi = (): Promise<AxiosResponse<IResponse>> => {
-  return Api.post('/user/v1/recommendation');
+export const userRecommendationApi = (params: { recommendCode: string }): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('/user/v1/recommendation', { params });
 };
 
 export const userInvitationApi = (): Promise<AxiosResponse<IInvitationResponse>> => {
