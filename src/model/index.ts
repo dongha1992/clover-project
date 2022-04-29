@@ -307,8 +307,9 @@ export interface ILocation {
 export interface ISpotInSpotPickUp {
   canDinnerDelivery: boolean;
   canLunchDelivery: boolean;
-  coordinate: { 
-    lat: number; lon: number 
+  coordinate: {
+    lat: number;
+    lon: number;
   };
   dinnerDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
@@ -1705,5 +1706,5 @@ export interface IPointHistoriesRequest {
 type TReward = 'COUPON' | 'POINT' | string;
 export interface IPromotionRequest {
   code: string;
-  reward: TReward;
+  reward: TReward | null;
 }

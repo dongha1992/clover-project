@@ -1,5 +1,6 @@
 import SubsCalendar from '@components/Calendar/SubsCalendar';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
+import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
@@ -32,7 +33,16 @@ const SubsDeliveryChangeSheet = () => {
   };
 
   const deliveryChangeHandler = () => {
-    dispatch(INIT_BOTTOM_SHEET());
+    if (subsDeliveryExpectedDate[0] === dayjs(selectDate).format('YYYY-MM-DD')) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `변경 전 날짜로\n배송일을 변경할 수 없어요.`,
+          submitBtnText: '확인',
+        })
+      );
+    } else {
+      dispatch(INIT_BOTTOM_SHEET());
+    }
   };
 
   return (
@@ -66,6 +76,7 @@ const SubsDeliveryChangeSheet = () => {
         deliveryExpectedDate={subsDeliveryExpectedDate}
         sumDelivery={sumDelivery}
         setSelectDate={setSelectDate}
+        calendarType="deliveryChange"
       />
       <FlexRow className="sumEx" padding="8px 24px 0">
         <SVGIcon name="brandColorDot" />

@@ -23,7 +23,7 @@ interface IMe {
   smsDenied: boolean;
   promotionCode: string;
   promotionCount: number;
-  recommendCode: boolean;
+  recommendCode: string;
   joinType: string;
   createdAt: string;
 }
