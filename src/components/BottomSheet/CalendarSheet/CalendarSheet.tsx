@@ -30,7 +30,6 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
   const { mutate: changeDeliveryDateMutation } = useMutation(
     async () => {
       const { data } = await editDeliveryDateApi({ deliveryId, selectedDeliveryDay });
-      console.log(data, 'AFTER CHANGE DELIVERY DATE');
     },
     {
       onSuccess: async () => {
@@ -43,6 +42,13 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
           return dispatch(
             SET_ALERT({
               alertMessage: '잘못된 배송 상태입니다.',
+              submitBtnText: '확인',
+            })
+          );
+        } else if (error.code === 5009) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '배송일 변경 횟수를 초과하였습니다.(일반주문:1회, 정기구독:5회)',
               submitBtnText: '확인',
             })
           );

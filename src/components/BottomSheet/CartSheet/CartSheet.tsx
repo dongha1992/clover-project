@@ -109,7 +109,6 @@ const CartSheet = () => {
 
       const result = checkAlreadyInCart();
       const { data } = await postCartsApi(reqBody);
-      console.log(data, '!!!!');
     },
     {
       onError: () => {},
