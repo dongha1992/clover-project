@@ -16,7 +16,11 @@ const SHARE_ICONS = [
   { value: 'urlIcon', name: '링크 복사' },
 ];
 
-const ShareSheet = () => {
+interface IProps {
+  isMenu?: boolean;
+}
+
+const ShareSheet = ({ isMenu }: IProps) => {
   const { menuItem } = useSelector(menuSelector);
 
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
@@ -83,7 +87,7 @@ const ShareSheet = () => {
         <TextH5B center padding="24px 0 16px 0">
           공유하기
         </TextH5B>
-        <ShareSheetItem menu={menuItem} />
+        {isMenu && <ShareSheetItem menu={menuItem} />}
         <LinkWrapper>
           {SHARE_ICONS.map((item, index) => (
             <LinkGroup key={index} onClick={(e) => shareHandler(e, item.value)}>
