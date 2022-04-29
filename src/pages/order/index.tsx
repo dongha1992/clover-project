@@ -40,7 +40,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
-
+import { SET_ALERT } from '@store/alert';
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -149,12 +149,13 @@ const OrderPage = () => {
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       /*TODO: 배송방법에 따라서 메시지나 뭐 그런 거 추가 */
-      const { point, ...rest } = previewOrder?.order!;
+      const { point, payAmount, ...rest } = previewOrder?.order!;
 
       const reqBody = {
         payMethod: 'NICE_BILLING',
         cardId: card?.id!,
         point: userInputObj?.point,
+        payAmount: payAmount - userInputObj.point,
         ...rest,
       };
 
@@ -173,6 +174,12 @@ const OrderPage = () => {
       },
       onError: (error) => {
         /*TODO: error 팝업 */
+        dispatch(
+          SET_ALERT({
+            alertMessage:
+              '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
+          })
+        );
       },
     }
   );
@@ -427,7 +434,24 @@ const OrderPage = () => {
 
   const paymentHandler = () => {
     if (loadingState) return;
-    mutateCreateOrder();
+
+    if (previewOrder?.order.delivery === 'MORNING') {
+      /* TODO: alert message 마크다운..? */
+      dispatch(
+        SET_ALERT({
+          alertMessage:
+            '주문변경 및 취소는 배송일 전날 오후 3시까지만 가능합니다.[배송지/배송요청사항] 오기입으로 인해 상품 수령이 불가능하게 될 경우, 고객님의 책임으로 간주되어 보상이 불가능합니다. 배송지를 최종 확인 하셨나요?',
+          closeBtnText: '취소',
+          submitBtnText: '확인',
+          onClose: () => {},
+          onSubmit: () => {
+            mutateCreateOrder();
+          },
+        })
+      );
+    } else {
+      mutateCreateOrder();
+    }
   };
 
   useEffect(() => {
