@@ -76,12 +76,12 @@ export const userUnlock = (): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/unlock');
 };
 
-export const userRecommendation = (): Promise<AxiosResponse<IResponse>> => {
-  return Api.post('/user/v1/recommendation');
+export const userRecommendationApi = (params: { recommendCode: string }): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('/user/v1/recommendation', { params });
 };
 
-export const userInvitation = (): Promise<AxiosResponse<IInvitationResponse>> => {
-  return Api.post('/user/v1/invitation');
+export const userInvitationApi = (): Promise<AxiosResponse<IInvitationResponse>> => {
+  return Api.get('/user/v1/invitation');
 };
 
 export const userChangeInfo = (data: IChangeMe): Promise<AxiosResponse<IResponse>> => {
