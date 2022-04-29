@@ -52,6 +52,40 @@ const WelcomeSheet = () => {
     }
   );
 
+  const { mutateAsync: mutatePostRecommendationCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const reqBody = {
+          code: codeRef?.current?.value,
+          reward: 'COUPON',
+        };
+
+        const { data } = await postPromotionCodeApi(reqBody);
+
+        let alertMessage = '';
+        if (data.code === 2002) {
+          alertMessage = '이미 등록한 쿠폰입니다.';
+        } else if (data.code === 1105) {
+          alertMessage = '존재하지 않는 쿠폰번호입니다.';
+        } else {
+          alertMessage = '쿠폰이 등록되었습니다.';
+        }
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
+      }
+    },
+    {
+      onSuccess: async (data) => {
+        /* TODO: 성공 혹 실패시 작업 */
+      },
+      onError: async (data) => {},
+    }
+  );
+
   return (
     <Container>
       <Header>

@@ -1,33 +1,41 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import {
-  TextH1B,
-  TextH2B,
-  TextH6B,
-  TextH4B,
-  TextH5B,
-  TextB3R,
-} from '@components/Shared/Text';
-import {
-  FlexCol,
-  homePadding,
-  theme,
-  FlexRow,
-  FlexBetween,
-} from '@styles/theme';
+import { TextH1B, TextH2B, TextH6B, TextH4B, TextH5B, TextB3R } from '@components/Shared/Text';
+import { FlexCol, homePadding, theme, FlexRow, FlexBetween } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextInput from '@components/Shared/TextInput';
 import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
+import { userInvitationApi } from '@api/user';
+import { useQuery } from 'react-query';
 
-const code = '1234A';
 const textStyle = {
   color: theme.greyScale65,
 };
 
+const code = '!1';
+
 const InviteFriendPaage = () => {
   const { showToast } = useToast();
+
+  const {
+    data,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getInvitationInfo',
+    async () => {
+      const { data } = await userInvitationApi();
+      return data.data;
+    },
+
+    {
+      onSuccess: () => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const getCodeCopy = (e: any) => {
     e.preventDefault();
@@ -36,6 +44,10 @@ const InviteFriendPaage = () => {
       showToast({ message: '초대코드를 복사했어요.' });
     });
   };
+
+  if (isLoading) {
+    <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -52,13 +64,7 @@ const InviteFriendPaage = () => {
         </FlexCol>
         <FlexRow width="50%" padding="24px 0 0 0">
           <Button backgroundColor={theme.black}>공유히기</Button>
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            margin="0 0 0 8px"
-            border
-            onClick={getCodeCopy}
-          >
+          <Button backgroundColor={theme.white} color={theme.black} margin="0 0 0 8px" border onClick={getCodeCopy}>
             복사하기
           </Button>
         </FlexRow>
@@ -66,9 +72,9 @@ const InviteFriendPaage = () => {
         <InvitedFriendWrapper>
           <TextH4B padding="0 0 24px 0">내가 초대한 친구</TextH4B>
           <FlexCol>
-            <InvitedFriend id={1} title="가입한 친구" count={1} />
-            <InvitedFriend id={2} title="구매한 친구" count={2} />
-            <InvitedFriend id={3} title="총 적립 포인트" count={3} />
+            <InvitedFriend id={1} title="가입한 친구" count={data?.joinCount} />
+            <InvitedFriend id={2} title="구매한 친구" count={data?.orderCount} />
+            <InvitedFriend id={3} title="총 적립 포인트" count={data?.totalPoint} />
           </FlexCol>
         </InvitedFriendWrapper>
       </Wrapper>
@@ -87,24 +93,14 @@ const InviteFriendPaage = () => {
       <Info>
         <TextH5B color={theme.greyScale65}>확인해주세요!</TextH5B>
         <BorderLine height={1} />
+        <TextB3R {...textStyle}>지급된 포인트의 유효기간은 지급일로부터 14일입니다.</TextB3R>
+        <TextB3R {...textStyle}>친구가 내 초대코드를 통해 가입하면 3,000P를 친구와 나에게 3,000P가 지급됩니다.</TextB3R>
         <TextB3R {...textStyle}>
-          지급된 포인트의 유효기간은 지급일로부터 14일입니다.
+          내 초대코드를 통해 가입한 친구가 첫 주문완료 시 영업일 기준 2일 이내 3,000P가 나에게 자동 지급됩니다.
         </TextB3R>
+        <TextB3R {...textStyle}>이미 혜택을 받은 친구는 초대코드를 등록해도 포인트 혜택을 받을 수 없습니다.</TextB3R>
         <TextB3R {...textStyle}>
-          친구가 내 초대코드를 통해 가입하면 3,000P를 친구와 나에게 3,000P가
-          지급됩니다.
-        </TextB3R>
-        <TextB3R {...textStyle}>
-          내 초대코드를 통해 가입한 친구가 첫 주문완료 시 영업일 기준 2일 이내
-          3,000P가 나에게 자동 지급됩니다.
-        </TextB3R>
-        <TextB3R {...textStyle}>
-          이미 혜택을 받은 친구는 초대코드를 등록해도 포인트 혜택을 받을 수
-          없습니다.
-        </TextB3R>
-        <TextB3R {...textStyle}>
-          친구 초대 프로모션은 당사 사정에 의해 사전 공지 없이 내용이 변경되거나
-          기간이 조정될 수 있음을 안내드립니다.
+          친구 초대 프로모션은 당사 사정에 의해 사전 공지 없이 내용이 변경되거나 기간이 조정될 수 있음을 안내드립니다.
         </TextB3R>
       </Info>
     </Container>
