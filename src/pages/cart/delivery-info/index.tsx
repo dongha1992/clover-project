@@ -313,7 +313,7 @@ const DeliverInfoPage = () => {
     if (userDeliveryType) {
       if (isSubscription) {
         // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-        subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+        subsDeliveryType === 'SPOT' && setUserSelectDeliveryType('spot');
       } else {
         setUserSelectDeliveryType(userDeliveryType);
       }
@@ -386,7 +386,7 @@ const DeliverInfoPage = () => {
   useEffect(() => {
     if (isSubscription) {
       // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-      subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+      subsDeliveryType === 'SPOT' && setUserSelectDeliveryType('spot');
     }
   }, [isSubscription]);
 
@@ -406,7 +406,7 @@ const DeliverInfoPage = () => {
   }, []);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
-  const subsParcelAndMorning = ['parcel', 'morning'].includes(subsDeliveryType as string);
+  const subsParcelAndMorning = ['PARCEL', 'MORNING'].includes(subsDeliveryType as string);
 
   return (
     <Container>
@@ -455,7 +455,7 @@ const DeliverInfoPage = () => {
             </>
           )}
           {!isSubscription && <BorderLine height={1} margin="24px 0" />}
-          {subsDeliveryType !== 'spot' && (
+          {subsDeliveryType !== 'SPOT' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 배송

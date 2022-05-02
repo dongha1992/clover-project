@@ -9,27 +9,27 @@ interface IProps {
   subsDeliveryType: string;
   deliveryType?: string;
   deliveryDestination?: ILocation | null;
-  mainDestinations?: any;
+  spotMainDestination?: string;
 }
 const SubsDeliveryTypeAndLocation = ({
   goToDeliveryInfo,
   subsDeliveryType,
   deliveryType,
   deliveryDestination,
-  mainDestinations,
+  spotMainDestination,
 }: IProps) => {
   return (
     <Container onClick={goToDeliveryInfo}>
-      {subsDeliveryType === 'spot' && (
+      {subsDeliveryType === 'SPOT' && (
         <Left>
           <TextH4B>스팟배송</TextH4B>
-          <TextH4B>{mainDestinations ? mainDestinations?.location?.dong : '픽업장소를 설정해 주세요'}</TextH4B>
+          <TextH4B>{spotMainDestination ? spotMainDestination : '픽업장소를 설정해 주세요'}</TextH4B>
           <TextB3R color={theme.greyScale65} padding="8px 0 0">
             배송방법이 제한된 상품입니다.
           </TextB3R>
         </Left>
       )}
-      {(subsDeliveryType === 'parcel' || subsDeliveryType === 'morning') && (
+      {(subsDeliveryType === 'PARCEL' || subsDeliveryType === 'MORNING') && (
         <Left>
           <TextH4B>{deliveryType ? DELIVERY_TYPE_MAP[deliveryType.toUpperCase()] : '배송방법'}</TextH4B>
           <TextH4B>{deliveryDestination ? deliveryDestination?.dong : '배송지를 설정해 주세요'}</TextH4B>
