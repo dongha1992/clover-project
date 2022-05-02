@@ -123,6 +123,11 @@ export const getSpotsRegistrationStatus = (
   return Api.get(`/spot/v1/registrations`, { params });
 };
 
+// 스팟 신청 현황 상세
+export const getSpotsRegistrationStatusDetail = ( id: number): Promise<AxiosResponse<IEditRegistration>> => {
+  return Api.get(`/spot/v1/registrations/${id}`, { params: id });
+};
+
 // 찜한 스팟
 export const getSpotsWishList = (params: IParamsSpots): Promise<AxiosResponse<ISpotWishListResponse>> => {
   return Api.get(`/spot/v1/spots/like`, { params });
