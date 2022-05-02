@@ -19,7 +19,7 @@ import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
 
 interface IWriteMenuReviewObj {
-  imgFiles: string[];
+  imgFiles: string[] | undefined;
   deletedImgIds: string[];
   rating: number;
   content: string;
@@ -164,20 +164,20 @@ const EditReviewPage = ({ reviewId }: any) => {
   const getImageFileReader = (imageFile: any) => {
     setWriteMenuReviewObj({
       ...writeMenuReviewObj,
-      imgFiles: [...writeMenuReviewObj.imgFiles, imageFile],
+      imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
     });
 
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj.imgFiles, e.target.result] });
+      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
     };
 
     imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
+    const filterPreviewImg = writeMenuReviewObj?.imgFiles?.filter((img, idx) => idx !== index);
     setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
   };
 
@@ -185,9 +185,9 @@ const EditReviewPage = ({ reviewId }: any) => {
     /* TODO: 리뷰 등록 물어봐야 함 */
     let formData = new FormData();
 
-    if (writeMenuReviewObj.imgFiles.length > 0) {
-      for (let i = 0; i < writeMenuReviewObj.imgFiles.length; i++) {
-        formData.append('files' + '[' + i + ']', writeMenuReviewObj.imgFiles[i]);
+    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
+      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
+        writeMenuReviewObj.imgFiles && formData.append('files' + '[' + i + ']', writeMenuReviewObj?.imgFiles[i]);
       }
     }
 
@@ -206,7 +206,8 @@ const EditReviewPage = ({ reviewId }: any) => {
         ...writeMenuReviewObj,
         content: selectedReviewDetail.searchReview.content,
         rating: selectedReviewDetail.searchReview.rating,
-        imgFiles: selectedReviewDetail.searchReview.images?.map((img) => img.url),
+        imgFiles:
+          selectedReviewDetail?.searchReview && selectedReviewDetail?.searchReview?.images?.map((img) => img.url),
       });
     }
   }, [selectedReviewDetail]);
@@ -287,7 +288,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          {writeMenuReviewObj.imgFiles.length < 2 && (
+          {writeMenuReviewObj?.imgFiles?.length! < 2 && (
             <UploadInputWrapper>
               <TextInput
                 width="100%"
@@ -303,8 +304,8 @@ const EditReviewPage = ({ reviewId }: any) => {
             </UploadInputWrapper>
           )}
 
-          {writeMenuReviewObj.imgFiles.length > 0 &&
-            writeMenuReviewObj.imgFiles.map((img: string, index: number) => {
+          {writeMenuReviewObj?.imgFiles?.length! > 0 &&
+            writeMenuReviewObj?.imgFiles?.map((img: string, index: number) => {
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={img} />

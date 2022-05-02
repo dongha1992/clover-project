@@ -7,7 +7,7 @@ import { Obj } from '@model/index';
 type TDeliveryType = 'SPOT' | 'MORNING' | 'PARCEL' | 'QUICK';
 
 interface ITagProps {
-  deliveryType: TDeliveryType | string;
+  deliveryType?: TDeliveryType | string;
   margin?: string;
 }
 
@@ -20,8 +20,8 @@ const DeliveryTag = ({ deliveryType, margin }: ITagProps) => {
   };
 
   return (
-    <Container deliveryType={deliveryType} margin={margin}>
-      <TextH7B>{deliveryMap[deliveryType]}</TextH7B>
+    <Container deliveryType={deliveryType!} margin={margin}>
+      <TextH7B>{deliveryMap[deliveryType!]}</TextH7B>
     </Container>
   );
 };

@@ -6,7 +6,7 @@ interface IProps {
   orderId: number;
   deliveryStatus: string;
   paidAt: string;
-  paymentMethod: string;
+  paymentMethod?: string;
 }
 const OrderInfo = ({ orderId, deliveryStatus, paidAt, paymentMethod }: IProps) => {
   return (

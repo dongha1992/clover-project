@@ -34,22 +34,22 @@ const OrderDashboard = ({ deliveryList, total }: IProps) => {
       <Wrapper>
         <FlexBetween padding="0 45px">
           <FlexColCenter>
-            <TextH3B>{deliveryList['RESERVED']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>구독예정</TextB4R>
+            {/* <TextH3B>{deliveryList['RESERVED']?.length || 0}</TextH3B>
+            <TextB4R color={theme.greyScale65}>구독예정</TextB4R> */}
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{deliveryList['PREPARING']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>구독중</TextB4R>
+            {/* <TextH3B>{deliveryList['PREPARING']?.length || 0}</TextH3B>
+            <TextB4R color={theme.greyScale65}>구독중</TextB4R> */}
           </FlexColCenter>
           <ArrowWrapper>
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{deliveryList['DELIVERING']?.length || 0}</TextH3B>
-            <TextB4R color={theme.greyScale65}>구독완료</TextB4R>
+            {/* <TextH3B>{deliveryList['DELIVERING']?.length || 0}</TextH3B>
+            <TextB4R color={theme.greyScale65}>구독완료</TextB4R> */}
           </FlexColCenter>
         </FlexBetween>
         <SubscriptipnInfo>
