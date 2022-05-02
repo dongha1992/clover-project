@@ -27,7 +27,7 @@ import router from 'next/router';
 import { getValues } from '@utils/common';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD } from '@constants/order';
 import { IAccessMethod } from '@pages/order';
-import { commonSelector } from '@store/common';
+import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
@@ -78,7 +78,9 @@ const AddressEditPage = ({ id }: IProps) => {
       const { data } = await getDestinationsApi(params);
       if (data.code === 200) {
         const { destinations } = data.data;
+
         const foundItem = destinations.find((item: IDestinationsResponse) => item.id === id);
+
         setSelectedAddress(foundItem);
 
         const isMorning = foundItem?.delivery === 'MORNING';
@@ -133,11 +135,11 @@ const AddressEditPage = ({ id }: IProps) => {
   };
 
   const cheekBeforeEdit = (): boolean => {
-    const noMsg = !deliveryEditObj.deliveryMessage.length;
     const noAccessMethod = !selectedAccessMethod?.value!;
 
     switch (true) {
       case isMorning: {
+        const noMsg = !deliveryEditObj.deliveryMessage.length;
         if (noMsg) {
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
@@ -150,6 +152,7 @@ const AddressEditPage = ({ id }: IProps) => {
       }
 
       case isParcel: {
+        const noMsg = !deliveryEditObj.deliveryMessage.length;
         if (noMsg) {
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
@@ -165,19 +168,17 @@ const AddressEditPage = ({ id }: IProps) => {
   };
 
   const editAddress = async () => {
+    const hasAccessMethod = selectedAccessMethod?.value!;
     const reqBody = {
-      id,
-      address: selectedAddress?.location?.address!,
-      addressDetail: selectedAddress?.location?.addressDetail!,
       delivery: selectedAddress?.delivery!,
-      deliveryMessage: deliveryEditObj.deliveryMessage,
-      deliveryMessageTypeType: selectedAccessMethod?.value!,
-      dong: selectedAddress?.location?.dong!,
+      deliveryMessage: selectedAddress?.deliveryMessage ? selectedAddress?.deliveryMessage : null,
+      deliveryMessageType: hasAccessMethod ? selectedAccessMethod?.value! : null,
       main: isDefaultSpot,
-      name: deliveryEditObj.deliveryName,
       receiverName: deliveryEditObj.receiverName,
       receiverTel: deliveryEditObj.receiverTel,
-      zipCode: selectedAddress?.location?.zipCode!,
+      location: selectedAddress?.location!,
+      name: selectedAddress?.name,
+      spotPickupId: selectedAddress?.spotPickup?.id ? selectedAddress?.spotPickup?.id : null,
     };
 
     const { data } = await editDestinationApi(id, reqBody);
@@ -219,6 +220,12 @@ const AddressEditPage = ({ id }: IProps) => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_ACCESS_METHOD());
+    };
+  });
+
   return (
     <Container>
       <Wrapper>
@@ -259,6 +266,7 @@ const AddressEditPage = ({ id }: IProps) => {
               </TextH6B>
             )}
           </FlexBetween>
+          {/* {isSpot ? } */}
           <FlexCol>
             <FlexBetween padding="0 0 16px 0">
               <TextH5B>배송방법</TextH5B>

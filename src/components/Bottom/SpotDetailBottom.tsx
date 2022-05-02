@@ -29,7 +29,7 @@ const SpotDetailBottom = () => {
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
   // 날짜 커스텀
   const dt = new Date(spotDetail?.openedAt!);
-  const openDate = `${dt?.getMonth()+1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
+  const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
 
   //주문하기 btn
   const goToCart = (e: any): void => {
@@ -88,14 +88,14 @@ const SpotDetailBottom = () => {
       });
     };
 
-    if(!spotDetail?.isOpened) {
+    if (!spotDetail?.isOpened) {
       // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if(spotDetail?.isClosed) {
+    if (spotDetail?.isClosed) {
       // 스팟 종료된 상태 - 주문 불가
       return;
-    } 
+    }
     if (isLoginSuccess) {
       //로그인 o
       if (cartLists.length) {
@@ -229,47 +229,45 @@ const SpotDetailBottom = () => {
 
   return (
     <Container isClosed={spotDetail?.isClosed}>
-      {
-        spotDetail?.isClosed ?(
+      {spotDetail?.isClosed ? (
+        <Wrapper>
+          <BtnWrapper>
+            <TextH5B color={theme.greyScale25}>운영 종료된 프코스팟이에요</TextH5B>
+          </BtnWrapper>
+        </Wrapper>
+      ) : (
+        <>
           <Wrapper>
-            <BtnWrapper>
-              <TextH5B color={theme.greyScale25}>운영 종료된 프코스팟이에요</TextH5B>
+            <LikeWrapper>
+              <LikeBtn onClick={hanlderLike}>
+                <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
+              </LikeBtn>
+              <TextH5B color={theme.white} padding="0 0 0 4px">
+                {spotDetail?.likeCount}
+              </TextH5B>
+            </LikeWrapper>
+            <Col />
+            <BtnWrapper onClick={goToCart}>
+              <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
             </BtnWrapper>
           </Wrapper>
-        ) : (
-          <>
-            <Wrapper>
-              <LikeWrapper>
-                <LikeBtn onClick={hanlderLike}>
-                  <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
-                </LikeBtn>
-                <TextH5B color={theme.white} padding="0 0 0 4px">
-                  {spotDetail?.likeCount}
-                </TextH5B>
-              </LikeWrapper>
-              <Col />
-              <BtnWrapper onClick={goToCart}>
-                <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
-              </BtnWrapper>
-            </Wrapper>
-            { !spotDetail?.isOpened && (spotDetail?.discountRate !== 0) && (
-              <TootipWrapper>
-                <TimerTooltip
-                  message={`${spotDetail?.discountRate}% 할인 중`}
-                  bgColor={theme.brandColor}
-                  color={theme.white}
-                  minWidth="78px"
-                />
-              </TootipWrapper>
-            )}
-          </>
-        )
-      }
+          {!spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
+            <TootipWrapper>
+              <TimerTooltip
+                message={`${spotDetail?.discountRate}% 할인 중`}
+                bgColor={theme.brandColor}
+                color={theme.white}
+                minWidth="78px"
+              />
+            </TootipWrapper>
+          )}
+        </>
+      )}
     </Container>
   );
 };
 
-const Container = styled.section<{isClosed?:boolean}>`
+const Container = styled.section<{ isClosed?: boolean }>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -279,14 +277,14 @@ const Container = styled.section<{isClosed?:boolean}>`
   height: 56px;
   left: calc(50%);
   ${({ isClosed }) => {
-    if(isClosed) {
-      return css `
+    if (isClosed) {
+      return css`
         background-color: ${theme.greyScale6};
-      `
+      `;
     } else {
-      return css `
+      return css`
         background-color: ${theme.black};
-      `
+      `;
     }
   }}
 

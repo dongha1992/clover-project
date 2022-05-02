@@ -19,7 +19,6 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-  console.log(review, '@@');
 
   const isContentHide = review.content.length >= 280;
 
@@ -81,9 +80,13 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
             {review.images && (
               <ImgWrapper>
                 {review.images?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review.images.map((item: any) => item.url);
+                  const imgUrlForViwer = review?.images?.map((item: any) => item.url);
                   return (
-                    <ReviewImageWrapper isFirst onClick={() => clickImgViewHandler(imgUrlForViwer)} key={index}>
+                    <ReviewImageWrapper
+                      isFirst
+                      onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer)}
+                      key={index}
+                    >
                       <Image
                         src={IMAGE_S3_URL + img.url}
                         alt="리뷰이미지"

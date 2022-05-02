@@ -16,7 +16,7 @@ interface IProps {
   name: string;
   url: string;
   payAmount: number;
-  orderId: number;
+  orderId?: number;
 }
 
 const OrderCancelSheet = ({ url, name, payAmount, orderId }: IProps) => {
