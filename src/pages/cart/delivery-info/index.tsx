@@ -342,9 +342,14 @@ const DeliverInfoPage = () => {
     console.log(userDestination?.delivery, 'userDestination');
     try {
       const { data } = await getMainDestinationsApi(params);
+      console.log(data, 'D@@#!@');
       if (data.code === 200) {
-        setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
-        setIsMaindestination(true);
+        if (data.data) {
+          setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
+          setIsMaindestination(true);
+        } else {
+          setTempDestination(null);
+        }
       }
     } catch (error) {
       console.error(error);
