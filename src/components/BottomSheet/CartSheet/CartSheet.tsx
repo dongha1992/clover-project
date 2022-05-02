@@ -18,13 +18,15 @@ import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { Obj } from '@model/index';
-import { UPDATE_CART_LIST } from '@store/cart';
+// import { UPDATE_CART_LIST } from '@store/cart';
 import { postCartsApi } from '@api/cart';
 
 import 'dayjs/locale/ko';
 import { menuSelector } from '@store/menu';
 
 dayjs.locale('ko');
+
+const disabledDates: any = [];
 
 interface IRolling {
   id: number;
@@ -113,12 +115,12 @@ const CartSheet = () => {
     {
       onError: () => {},
       onSuccess: async (message) => {
-        if (message) {
-          // showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-          // dispatch(INIT_BOTTOM_SHEET());
-          // await queryClient.refetchQueries('getCartList');
-          // dispatch(UPDATE_CART_LIST());
-        }
+        // if (message) {
+        // showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        // dispatch(INIT_BOTTOM_SHEET());
+        // await queryClient.refetchQueries('getCartList');
+        // dispatch(UPDATE_CART_LIST());
+        // }
       },
     }
   );

@@ -16,8 +16,8 @@ OrderFilter: 단일 선택 필터
 /* TODO : 전체선택 시  */
 
 const MenuFilter = () => {
-  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(['']);
-  const [selectedRadioId, setSelectedRadioId] = useState<number>(1);
+  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
+  const [selectedRadioId, setSelectedRadioId] = useState<string>('');
   const [isCheckedAll, setIsCheckedAll] = useState(false);
 
   const checkboxHandler = (name: string) => {
@@ -44,8 +44,8 @@ const MenuFilter = () => {
     setSelectedCheckboxIds(tempSelectedCheckboxIds);
   };
 
-  const radioButtonHandler = (id: number) => {
-    setSelectedRadioId(id);
+  const radioButtonHandler = (value: string) => {
+    setSelectedRadioId(value);
   };
 
   const changeToggleHandler = () => {};
@@ -69,7 +69,11 @@ const MenuFilter = () => {
         <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
           정렬
         </TextH5B>
-        <OrderFilter data={RADIO_CHECKBOX_MENU} changeHandler={radioButtonHandler} selectedRadioId={selectedRadioId} />
+        <OrderFilter
+          data={RADIO_CHECKBOX_MENU}
+          changeHandler={radioButtonHandler}
+          selectedRadioValue={selectedRadioId}
+        />
       </Wrapper>
       <ButtonContainer onClick={() => submitHandler()}>
         <Button height="100%" width="100%" borderRadius="0">

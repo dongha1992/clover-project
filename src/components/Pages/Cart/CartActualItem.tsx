@@ -49,7 +49,11 @@ const CartActualItem = ({
         <FlexCol>
           <PriceWrapper>
             <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
+<<<<<<< HEAD
               {discount}%
+=======
+              {/* {menuDetail.discount}% */}
+>>>>>>> 2509028f487cda07391d6dfa4aa245b90b333b39
             </TextH5B>
             <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>

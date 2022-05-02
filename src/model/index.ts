@@ -354,6 +354,7 @@ export interface IDestinationsResponse {
   delivery?: TDeliveryType | string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
+  deliveryTime?: string;
   name?: string;
   receiverTel?: string;
   receiverName?: string;
@@ -386,17 +387,15 @@ export interface IGetDestinationsRequest {
 }
 
 export interface IEditDestinationRequest {
-  address: string | undefined;
-  addressDetail: string | undefined;
-  delivery: TDeliveryType | undefined;
-  deliveryMessage?: string;
-  dong: string | undefined;
+  delivery: TDeliveryType | string;
+  deliveryMessage?: string | null;
+  deliveryMessageType: string | null;
   main: boolean;
   name?: string;
-  id: number;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | undefined;
+  location: ILocation;
+  spotPickupId?: number | null;
 }
 
 export interface IGetMainDestinationsRequest {
@@ -495,45 +494,12 @@ export interface ISpotsDetail {
   ];
   pickupEndTime: string;
   pickupStartTime: string;
-  pickups: [
-    {
-      createdAt: string;
-      id: number;
-      images: [
-        {
-          url: string;
-          size: number;
-          main: boolean;
-          width: number;
-          height: number;
-        }
-      ];
-      name: string;
-      spotId: number;
-      type: string;
-    }
-  ];
+  pickups: ISpotPickupInfo[];
   placeHoliday: string;
   placeOpenTime: string;
   placeTel: string;
   placeType: string;
-  stories: [
-    {
-      id: number;
-      spotId: number;
-      type: string;
-      title: string;
-      content: string;
-      createdAt: string;
-      images: [
-        {
-          url: string;
-        }
-      ];
-      liked: boolean;
-      likeCount: number;
-    }
-  ];
+  stories: ISpotStories[];
   type: string;
   image: {
     url: string;
@@ -548,6 +514,24 @@ export interface ISpotsDetail {
   isOpened: boolean;
   openedAt: string;
   closedDate: string;
+}
+
+export interface ISpotPickupInfo {
+  createdAt: string;
+  id: number;
+  name: string;
+  spotId: number;
+  type: string;
+  images: [
+    {
+      url: string;
+      size: number;
+      main: boolean;
+      width: number;
+      height: number;
+    }
+  ];
+  spot: ISpotsDetail;
 }
 
 export interface ISpotDetailResponse {
@@ -643,25 +627,7 @@ export interface ISpotRegistrationsResponse {
   data: {
     title: string;
     subTitle: string;
-    spotRegistrations: [
-      {
-        id: number;
-        placeName: string;
-        image: {
-          id: number;
-          name: string;
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          createdAt: string;
-        };
-        recruited: boolean;
-        recruitingCount: number;
-        distance: number;
-        distanceUnit: string;
-      }
-    ];
+    spotRegistrations: ISpotsDetail[];
   };
 }
 
@@ -1486,7 +1452,7 @@ export interface ISearchReviews {
   rating: number;
   content: string;
   createdAt: string;
-  images: IMenuImageInReivew[];
+  images?: IMenuImageInReivew[];
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
@@ -1502,10 +1468,13 @@ export interface ISearchReviewImages {
 }
 
 export interface IMenuImageInReivew {
+  createdAt?: string;
   id: number;
+  name?: string;
+  originalName?: string;
+  size: number;
   url: string;
   width: number;
-  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1514,7 +1483,7 @@ export interface IMenuReviews {
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews[];
+  data: IMenuReviews;
   message: string;
 }
 
@@ -1643,7 +1612,7 @@ export interface ICreateCartRequest {
 }
 
 export interface IDeleteCartRequest {
-  menuDetailId: number;
+  menuDetailId?: number;
   menuId: number;
 }
 
