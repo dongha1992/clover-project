@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { theme, homePadding, bottomSheetButton } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
@@ -7,27 +7,19 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { SET_SPOT_PICKUP_ID } from '@store/spot';
 import Checkbox from '@components/Shared/Checkbox';
-
-interface IPickupInfo {
-  createdAt: string;
-  id: number;
-  name: string;
-  spotId: number;
-  type: string;
-};
+import { ISpotPickupInfo } from '@model/index';
 
 type TPrams = {
-  pickupInfo?: IPickupInfo[];
+  pickupInfo?: ISpotPickupInfo[];
   spotType?: string;
   onSubmit?: () => void;
-}
+};
 
 const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
   const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].spotId);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  
   const changeRadioHandler = (id: number) => {
     setSelectedPickupId(id);
   };
@@ -40,17 +32,17 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element =>
 
   const submitHandler = (): void => {
     if (spotType === 'PRIVATE') {
-      if(noticeChecked){
+      if (noticeChecked) {
         onSubmit && onSubmit();
         dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
-        dispatch(INIT_BOTTOM_SHEET());    
-      } else  {
+        dispatch(INIT_BOTTOM_SHEET());
+      } else {
         return;
       }
     } else {
       onSubmit && onSubmit();
       dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
-      dispatch(INIT_BOTTOM_SHEET());    
+      dispatch(INIT_BOTTOM_SHEET());
     }
   };
 
@@ -60,50 +52,41 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element =>
         <TextH5B padding="24px 0 16px 0" center>
           픽업 장소 선택
         </TextH5B>
-        {
-            pickupInfo?.map((i, index) => {
-              return (
-                <PickWrapper key={index}>
-                  <RadioButton
-                    onChange={() => changeRadioHandler(i.spotId)}
-                    isSelected={selectedPickupId === i.spotId}
-                  />
-                  <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
-                </PickWrapper>
-              );
-            })
-        }
+        {pickupInfo?.map((i, index) => {
+          return (
+            <PickWrapper key={index}>
+              <RadioButton onChange={() => changeRadioHandler(i.spotId)} isSelected={selectedPickupId === i.spotId} />
+              <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
+            </PickWrapper>
+          );
+        })}
         {spotType === 'PRIVATE' && (
-        <>
-          <Row /> 
-          <CheckTerm onClick={checkHandler}>
-            <Checkbox isSelected={noticeChecked} onChange={checkHandler} />
-            <span className="h5B">
-              <span className="brandColor">임직원 전용</span>
-              스팟으로, 외부인은 이용이 불가합니다.
-            </span>
-          </CheckTerm>
-        </>
-      )} 
+          <>
+            <Row />
+            <CheckTerm onClick={checkHandler}>
+              <Checkbox isSelected={noticeChecked} onChange={checkHandler} />
+              <span className="h5B">
+                <span className="brandColor">임직원 전용</span>
+                스팟으로, 외부인은 이용이 불가합니다.
+              </span>
+            </CheckTerm>
+          </>
+        )}
       </Wrapper>
       <ButtonContainer onClick={submitHandler}>
-        {
-          spotType !== 'PRIVATE' ? (
-            <Button height="100%" width="100%" borderRadius="0">
-              주문하기
-            </Button>
-          ) : (
-            noticeChecked ? (
-              <Button height="100%" width="100%" borderRadius="0">
-                주문하기
-              </Button>
-            ) : (
-              <Button disabled height="100%" width="100%" borderRadius="0">
-                주문하기
-              </Button>
-            )
-          )
-        }
+        {spotType !== 'PRIVATE' ? (
+          <Button height="100%" width="100%" borderRadius="0">
+            주문하기
+          </Button>
+        ) : noticeChecked ? (
+          <Button height="100%" width="100%" borderRadius="0">
+            주문하기
+          </Button>
+        ) : (
+          <Button disabled height="100%" width="100%" borderRadius="0">
+            주문하기
+          </Button>
+        )}
       </ButtonContainer>
     </Container>
   );
