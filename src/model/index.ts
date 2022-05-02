@@ -248,17 +248,14 @@ export interface ICommon {
 export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 
 export interface IRegisterDestinationRequest {
-  address: string | null;
-  addressDetail: string;
   delivery?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  dong?: string | null;
   main: boolean;
   name: string;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | null;
+  location: ILocation;
 }
 
 export interface IRegisterDestination {
@@ -342,11 +339,21 @@ export interface ISpotInSpotPickUp {
   placeType: string;
   visiblePlaceTel: boolean;
 }
+
+export interface ISpotImageInDestination {
+  height: number;
+  size: number;
+  url: string;
+  width: number;
+}
 export interface ISpotPickupInDestinaion {
   id: number;
   name: string;
   spot: ISpotInSpotPickUp;
   type: string;
+  spotId: number;
+  createdAt: string;
+  images: ISpotImageInDestination[];
 }
 
 export interface IDestinationsResponse {
@@ -381,9 +388,32 @@ export interface IGetDestinationsResponse {
   };
 }
 
+export interface IDestination {
+  createdAt: string;
+  delivery: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  id: number;
+  location: ILocation;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+  spotPickup: ISpotPickupInDestinaion;
+}
+
+export interface IGetDestinationResponse {
+  code: number;
+  message: string;
+  data: IDestination;
+}
+
 export interface IGetDestinationsRequest {
   page: number;
   size: number;
+  deliveries?: string | null;
+  delivery?: string | null;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface IEditDestinationRequest {
