@@ -56,7 +56,7 @@ import { Retryer } from 'react-query/types/core/retryer';
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-const disabledDates = [];
+const disabledDates: any = ['2022-02-22'];
 
 const INITIAL_NUTRITION = {
   protein: 0,
@@ -626,11 +626,12 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getItemsPrice = useCallback((): number => {
-    return (
-      checkedMenus?.reduce((totalPrice, item) => {
-        return totalPrice + item?.price * item?.quantity;
-      }, 0) || 0
-    );
+    // return (
+    //   checkedMenus?.reduce((totalPrice, item) => {
+    //     return totalPrice + item?.price! * item?.quantity!;
+    //   }, 0) || 0
+    // );
+    return 0;
   }, [checkedMenus]);
 
   const buttonRenderer = useCallback(() => {

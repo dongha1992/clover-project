@@ -1464,7 +1464,7 @@ export interface ISearchReviews {
   rating: number;
   content: string;
   createdAt: string;
-  images: IMenuImageInReivew[];
+  images?: IMenuImageInReivew[];
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
@@ -1480,10 +1480,13 @@ export interface ISearchReviewImages {
 }
 
 export interface IMenuImageInReivew {
+  createdAt?: string;
   id: number;
+  name?: string;
+  originalName?: string;
+  size: number;
   url: string;
   width: number;
-  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1492,7 +1495,7 @@ export interface IMenuReviews {
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews[];
+  data: IMenuReviews;
   message: string;
 }
 

@@ -19,9 +19,7 @@ const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
     'getReviewDetail',
     async () => {
       const { data } = await getReviewDetailApi(Number(reviewId));
-      const { searchReview, searchReviewImages } = data.data;
-
-      return assignIn(searchReview, { reviewImg: searchReviewImages });
+      return data.data;
     },
 
     {
