@@ -494,45 +494,12 @@ export interface ISpotsDetail {
   ];
   pickupEndTime: string;
   pickupStartTime: string;
-  pickups: [
-    {
-      createdAt: string;
-      id: number;
-      images: [
-        {
-          url: string;
-          size: number;
-          main: boolean;
-          width: number;
-          height: number;
-        }
-      ];
-      name: string;
-      spotId: number;
-      type: string;
-    }
-  ];
+  pickups: ISpotPickupInfo[];
   placeHoliday: string;
   placeOpenTime: string;
   placeTel: string;
   placeType: string;
-  stories: [
-    {
-      id: number;
-      spotId: number;
-      type: string;
-      title: string;
-      content: string;
-      createdAt: string;
-      images: [
-        {
-          url: string;
-        }
-      ];
-      liked: boolean;
-      likeCount: number;
-    }
-  ];
+  stories: ISpotStories[];
   type: string;
   image: {
     url: string;
@@ -547,6 +514,24 @@ export interface ISpotsDetail {
   isOpened: boolean;
   openedAt: string;
   closedDate: string;
+}
+
+export interface ISpotPickupInfo {
+  createdAt: string;
+  id: number;
+  name: string;
+  spotId: number;
+  type: string;
+  images: [
+    {
+      url: string;
+      size: number;
+      main: boolean;
+      width: number;
+      height: number;
+    }
+  ];
+  spot: ISpotsDetail;
 }
 
 export interface ISpotDetailResponse {
