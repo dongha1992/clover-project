@@ -17,14 +17,14 @@ import BorderLine from '@components/Shared/BorderLine';
 import { ButtonGroup } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import SVGIcon from '@utils/SVGIcon';
+import SVGIcon from '@utils/common/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { getDestinationsApi, editDestinationApi, deleteDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
-import { getValues } from '@utils/getValues';
+import { getValues } from '@utils/common';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD } from '@constants/order';
 import { IAccessMethod } from '@pages/order';
 import { commonSelector } from '@store/common';
@@ -167,17 +167,17 @@ const AddressEditPage = ({ id }: IProps) => {
   const editAddress = async () => {
     const reqBody = {
       id,
-      address: selectedAddress?.location.address,
-      addressDetail: selectedAddress?.location.addressDetail,
-      delivery: selectedAddress?.delivery,
+      address: selectedAddress?.location?.address!,
+      addressDetail: selectedAddress?.location?.addressDetail!,
+      delivery: selectedAddress?.delivery!,
       deliveryMessage: deliveryEditObj.deliveryMessage,
       deliveryMessageTypeType: selectedAccessMethod?.value!,
-      dong: selectedAddress?.location.dong,
+      dong: selectedAddress?.location?.dong!,
       main: isDefaultSpot,
       name: deliveryEditObj.deliveryName,
       receiverName: deliveryEditObj.receiverName,
       receiverTel: deliveryEditObj.receiverTel,
-      zipCode: selectedAddress?.location.zipCode,
+      zipCode: selectedAddress?.location?.zipCode!,
     };
 
     const { data } = await editDestinationApi(id, reqBody);
@@ -267,8 +267,8 @@ const AddressEditPage = ({ id }: IProps) => {
             <FlexBetweenStart>
               <TextH5B>베송지</TextH5B>
               <FlexColEnd>
-                <TextB2R>{selectedAddress?.location.addressDetail}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{selectedAddress?.location.address}</TextB3R>
+                <TextB2R>{selectedAddress?.location?.addressDetail}</TextB2R>
+                <TextB3R color={theme.greyScale65}>{selectedAddress?.location?.address}</TextB3R>
               </FlexColEnd>
             </FlexBetweenStart>
           </FlexCol>

@@ -1,4 +1,4 @@
-import { TLocationType } from '@utils/checkDestinationHelper';
+import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
 export type Obj<T = any> = {
   [k: string]: T;
@@ -307,7 +307,10 @@ export interface ILocation {
 export interface ISpotInSpotPickUp {
   canDinnerDelivery: boolean;
   canLunchDelivery: boolean;
-  coordinate: { lat: number; lon: number };
+  coordinate: {
+    lat: number;
+    lon: number;
+  };
   dinnerDeliveryEndTime: string;
   dinnerDeliveryStartTime: string;
   distance: number;
@@ -319,6 +322,25 @@ export interface ISpotInSpotPickUp {
   lunchDeliveryStartTime: string;
   name: string;
   type: string;
+  isOpened: boolean;
+  isClosed: boolean;
+  isTrial: boolean;
+  isEvent: boolean;
+  placeOpenDays: string[];
+  openedAt: string;
+  closedDate: string;
+  canEat: boolean;
+  canParking: boolean;
+  createdAt: string;
+  description: string;
+  discountRate: number;
+  pickupEndTime: string;
+  pickupStartTime: string;
+  placeHoliday: string;
+  placeOpenTime: string;
+  placeTel: string;
+  placeType: string;
+  visiblePlaceTel: boolean;
 }
 export interface ISpotPickupInDestinaion {
   id: number;
@@ -342,7 +364,7 @@ export interface IDestinationsResponse {
   spotPickup?: ISpotPickupInDestinaion;
   spaceType?: string;
   availableTime?: string;
-  spotPickupId?: number | null;
+  closedDate?: string;
 }
 
 export interface IGetDestinationsResponse {
@@ -478,7 +500,15 @@ export interface ISpotsDetail {
     {
       createdAt: string;
       id: number;
-      images: [];
+      images: [
+        {
+          url: string;
+          size: number;
+          main: boolean;
+          width: number;
+          height: number;
+        }
+      ];
       name: string;
       spotId: number;
       type: string;
@@ -514,6 +544,11 @@ export interface ISpotsDetail {
     main: boolean;
     createdAt: string;
   };
+  placeOpenDays: string[];
+  isClosed: boolean;
+  isOpened: boolean;
+  openedAt: string;
+  closedDate: string;
 }
 
 export interface ISpotDetailResponse {
@@ -965,6 +1000,20 @@ export interface IGetOrderListRequest {
   type: TOrderType | string;
 }
 
+export interface IGetOrderInfo {
+  canceledCount: number;
+  completedCount: number;
+  deliveringCount: number;
+  preparingCount: number;
+  reservedCount: number;
+}
+
+export interface IGetOrderInfoResponse {
+  data: IGetOrderInfo;
+  message: string;
+  code: number;
+}
+
 export interface IOrderMenus {
   id?: number;
   menuId: number;
@@ -1390,6 +1439,8 @@ export interface IMenuDetails {
   price: number;
   discountPrice: number;
   main: boolean;
+  dailyMaximum: number;
+  isSold: number;
 }
 
 export interface IMenus {
@@ -1408,6 +1459,10 @@ export interface IMenus {
   menuSort: string;
   orderCount: number;
   priority: string;
+  closedAt: string;
+  openedAt: string;
+  subscriptionDelivery?: string;
+  subscriptionPeriods?: string;
 }
 
 /* REVIEW */
@@ -1418,21 +1473,34 @@ export interface IGetMenusResponse {
 }
 export interface ISearchReviews {
   id: number;
+  menuId?: number;
   userNickName: string;
   menuName: string;
   menuDetailName: string;
-  orderCount: number;
+  orderCount?: number;
   rating: number;
   content: string;
   createdAt: string;
+  images: IMenuImageInReivew[];
+  comment?: string;
+  commenter?: string;
+  commentCreatedAt?: string;
 }
 
 export interface ISearchReviewImages {
   id: number;
+  menuReviewId: number;
   url: string;
   width: number;
   height: number;
   size: number;
+}
+
+export interface IMenuImageInReivew {
+  id: number;
+  url: string;
+  width: number;
+  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1450,7 +1518,7 @@ export interface IReviewsDetailResponse {
   message: string;
   data: {
     searchReview: ISearchReviews;
-    searchReviewImages: ISearchReviewImages[];
+    menuImage: IMenuImageInReivew;
   };
 }
 
@@ -1558,6 +1626,39 @@ export interface IGetCartResponse {
   message: string;
   data: IGetCart[];
 }
+export interface ICreateCartRequest {
+  main: boolean;
+  menuDetailId: number;
+  menuId: number;
+  menuQuantity?: number | null;
+}
+
+export interface IDeleteCartRequest {
+  menuDetailId: number;
+  menuId: number;
+}
+
+export interface IPatchCartRequest {
+  menuDetailId: number;
+  menuQuantity: number;
+}
+
+export interface ILunchOrDinner {
+  id: number;
+  value: string;
+  text: string;
+  discription: string;
+  isDisabled: boolean;
+  isSelected: boolean;
+  time: string;
+}
+
+export interface IDeliveryObj {
+  destinationId: number | null;
+  delivery: string | null;
+  deliveryDetail: string | null;
+  location: ILocation | null;
+}
 
 /* COUPON */
 
@@ -1629,5 +1730,5 @@ export interface IPointHistoriesRequest {
 type TReward = 'COUPON' | 'POINT' | string;
 export interface IPromotionRequest {
   code: string;
-  reward: TReward;
+  reward: TReward | null;
 }

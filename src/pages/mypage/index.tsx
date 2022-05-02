@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween, FlexColCenter } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
@@ -17,8 +17,8 @@ import Link from 'next/link';
 import { useQuery } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
-import { pipe, groupBy } from '@fxts/core';
-import { getOrderListsApi } from '@api/order';
+import { getOrderListsApi, getOrderInfoApi } from '@api/order';
+import { userInvitationApi } from '@api/user';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -28,32 +28,33 @@ interface IMypageMenu {
 
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
-  const [deliveryList, setDeliveryList] = useState<any>([]);
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
       const params = {
-        days: 90,
-        page: 1,
-        size: 100,
-        type: 'GENERAL',
+        orderType: 'GENERAL',
       };
 
-      const { data } = await getOrderListsApi(params);
-      return data.data.orderDeliveries;
+      const { data } = await getOrderInfoApi(params);
+      return data.data;
     },
     {
-      onSuccess: (data) => {
-        const result = pipe(
-          data,
-          groupBy((item: any) => item.status)
-        );
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
-        setDeliveryList(result);
-        return data;
-      },
+  const { data: friendInvitation, error } = useQuery(
+    'getInvitationInfo',
+    async () => {
+      const { data } = await userInvitationApi();
+      return data.data;
+    },
 
+    {
+      onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -107,14 +108,14 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>
-              <OrderDashboard deliveryList={deliveryList} total={orderList?.length!} />
+              <OrderDashboard orderList={orderList!} />
             </OrderAndDeliveryWrapper>
             <SubsDashboard />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
               <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
-              <MypageMenu title="친구 초대" link="/mypage/friend" count={1} />
+              <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <MypageMenu title="주소 관리" link="/mypage/address" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
               <MypageMenu title="이벤트" link="/mypage/event" />
@@ -211,12 +212,10 @@ export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypag
       <FlexBetween padding="24px 0">
         <TextH4B>{title}</TextH4B>
         <FlexRow>
-          {count && (
-            <TextB2R padding="0 8px 0 0">
-              {count}
-              {mapper[title]}
-            </TextB2R>
-          )}
+          <TextB2R padding="0 8px 0 0">
+            {count}
+            {mapper[title]}
+          </TextB2R>
           <div>
             <SVGIcon name="arrowRight" />
           </div>

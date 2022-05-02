@@ -13,6 +13,7 @@ import { postPromotionCodeApi } from '@api/promotion';
 import { getCouponApi } from '@api/coupon';
 import { ICoupon } from '@model/index';
 import { SET_ALERT } from '@store/alert';
+import { AxiosError } from 'axios';
 
 const CouponManagementPage = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
@@ -20,6 +21,7 @@ const CouponManagementPage = () => {
   const codeRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async () => {
@@ -29,29 +31,37 @@ const CouponManagementPage = () => {
           reward: 'COUPON',
         };
 
-        const { data } = await postPromotionCodeApi(reqBody);
+        try {
+          const { data } = await postPromotionCodeApi(reqBody);
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '쿠폰이 등록되었습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        } catch (error: any) {
+          let alertMessage = '';
+          if (error.code === 2202) {
+            alertMessage = '이미 등록한 쿠폰입니다.';
+          } else if (error.code === 1105) {
+            alertMessage = '존재하지 않는 쿠폰번호입니다.';
+          }
 
-        let alertMessage = '';
-        if (data.code === 2002) {
-          alertMessage = '이미 등록한 쿠폰입니다.';
-        } else if (data.code === 1105) {
-          alertMessage = '존재하지 않는 쿠폰번호입니다.';
-        } else {
-          alertMessage = '쿠폰이 등록되었습니다.';
+          return dispatch(
+            SET_ALERT({
+              alertMessage,
+              submitBtnText: '확인',
+            })
+          );
         }
-        return dispatch(
-          SET_ALERT({
-            alertMessage,
-            submitBtnText: '확인',
-          })
-        );
       }
     },
     {
       onSuccess: async (data) => {
         /* TODO: 성공 혹 실패시 작업 */
+        await queryClient.refetchQueries('getCouponList');
       },
-      onError: async (data) => {},
+      onError: async (data: any) => {},
     }
   );
 

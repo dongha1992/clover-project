@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexBetween, FlexCol, FlexRow, FlexEnd } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextH4B, TextH2B, TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import router from 'next/router';
 import { theme } from '@styles/theme';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import BorderLine from '@components/Shared/BorderLine';
 import { ItemInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
@@ -27,7 +27,7 @@ interface IRefund {
   refundCoupon: number;
 }
 
-const orderCancelPage = ({ orderId }: IProps) => {
+const OrderCancelPage = ({ orderId }: IProps) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
@@ -38,12 +38,19 @@ const orderCancelPage = ({ orderId }: IProps) => {
       return data.data;
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        const isSubOrderCanceled = data?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
+        if (isSubOrderCanceled) {
+          router.replace('/mypage/order-delivery-history');
+        }
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
+  const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
+  console.log(orderDetail, 'orderDetail');
   const { mutate: deleteOrderMutation } = useMutation(
     async (deliveryId: number) => {
       const { data } = await deleteDeliveryApi(deliveryId);
@@ -51,7 +58,13 @@ const orderCancelPage = ({ orderId }: IProps) => {
       if (data.code === 200) {
         dispatch(
           SET_BOTTOM_SHEET({
-            content: <OrderCancelSheet url={url} name={name} payAmount={orderDetail?.payAmount!} />,
+            content: (
+              <OrderCancelSheet
+                url={subOrder?.image.url!}
+                name={subOrder?.order.name!}
+                payAmount={subOrder?.order.amount!}
+              />
+            ),
           })
         );
       } else {
@@ -69,9 +82,6 @@ const orderCancelPage = ({ orderId }: IProps) => {
     }
   );
 
-  console.log(orderDetail);
-  const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
-
   const { dayFormatter: deliverAt } = getCustomDate(new Date(subOrder?.deliveryDate!));
 
   const cancelOrderHandler = () => {
@@ -82,14 +92,6 @@ const orderCancelPage = ({ orderId }: IProps) => {
   const getTotalRefund = ({ refundPayAmount, refundCoupon, refundPoint }: IRefund): number => {
     return refundPoint + refundPayAmount + refundCoupon;
   };
-
-  useEffect(() => {
-    const isSubOrderCanceled = orderDetail?.orderDeliveries[0].subOrderDelivery?.status === 'CANCELED';
-    console.log(orderDetail?.orderDeliveries[0].subOrderDelivery?.status);
-    if (isSubOrderCanceled) {
-      router.replace('/mypage/order-delivery-history');
-    }
-  }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -140,7 +142,7 @@ const orderCancelPage = ({ orderId }: IProps) => {
               color="#757575"
               onClick={() =>
                 router.push({
-                  pathname: `/mypage/order-detail/${orderId}`,
+                  pathname: `/mypage/order-detail/${subOrder?.id}`,
                 })
               }
             >
@@ -195,7 +197,9 @@ const orderCancelPage = ({ orderId }: IProps) => {
         </RefundInfoWrapper>
       </Wrapper>
       <BtnWrapper onClick={cancelOrderHandler}>
-        <Button height="100%">주문 취소하기</Button>
+        <Button height="100%" width="100%">
+          함께배송 주문 취소하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
@@ -228,4 +232,4 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default orderCancelPage;
+export default OrderCancelPage;

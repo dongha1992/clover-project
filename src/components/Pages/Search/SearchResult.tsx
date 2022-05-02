@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Item } from '@components/Item';
 import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +14,8 @@ import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
 
 interface IProps {
-  searchResult: any;
-  onClick?: any;
+  searchResult?: any;
+  onClick?: () => void;
   isSpot?: boolean;
   orderId?: string | string[];
 }

@@ -2,7 +2,7 @@ import { onError } from '@api/Api';
 import { theme } from '@styles/theme';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
@@ -22,6 +22,8 @@ interface IProps {
   sumDeliveryComplete?: string[];
   subsDates: string[];
   setPickupDay?: (value: any[]) => void;
+  setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
+  calendarType?: string;
 }
 
 const SubsCalendar = ({
@@ -34,70 +36,92 @@ const SubsCalendar = ({
   sumDelivery = [], // 배송예정일(합배송 포함)
   sumDeliveryComplete = [], // 배송완료(합배송 포함)
   subsDates, // 초기 구독캘린더 active 날짜리스트
-  setPickupDay,
+  setPickupDay, // 구독 플랜 단계에서 픽업 날짜
+  setSelectDate, // 선택한 날짜
+  calendarType, // 캘린더 타입
 }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { subsDeliveryExpectedDate } = useSelector(subscriptionForm);
+
+  const today = dayjs().format('YYYY-MM-DD');
   const [value, setValue] = useState<Date>();
   const [maxDate, setMaxDate] = useState(new Date(subsDates[subsDates.length - 1]));
 
   useEffect(() => {
     if (subsDeliveryExpectedDate.length !== 0) {
       setValue(new Date(subsDeliveryExpectedDate[0]));
-    }
-  }, [subsDeliveryExpectedDate]);
-
-  useEffect(() => {
-    if (subsDeliveryExpectedDate.length !== 0) {
       setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1]));
     }
   }, [subsDeliveryExpectedDate]);
 
-  const today = dayjs().format('YYYY-MM-DD');
+  useEffect(() => {
+    // 배송일 변경시 변경할려는 날짜에 합배송이 있을경우
+    if (sumDelivery.find((x) => x === subsDates[0])) {
+    }
+  }, []);
+
+  // const [sumDeliveryChange, setSumDeliveryChange] = useState(false);
+  // useEffect(() => {
+  //   // 배송일 변경
+  //   // 배송예정일(합배송 포함)일때
+  //   if (sumDelivery.find((x) => x === dayjs(value).format('YYYY-MM-DD'))) {
+  //     setSumDeliveryChange(true);
+  //   }
+  // }, []);
 
   const titleContent = useCallback(
     ({ date, view }: { date: any; view: any }) => {
       let element = [];
-
+      if (calendarType === 'deliveryChange' && deliveryExpectedDate[0] === dayjs(date).format('YYYY-MM-DD')) {
+        // 배송일변경 시 변경전 날짜
+        element.push(<div className="deliveryChangeBeforeDate" key={`00-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+      }
       if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송 예정일
-        element.push(<div className="deliveryExpectedDate" key={0}></div>);
-      } else if (today === dayjs(date).format('YYYY-MM-DD')) {
+        element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+      }
+      if (today === dayjs(date).format('YYYY-MM-DD')) {
         // 오늘
         element.push(
-          <div className="today" key={0}>
+          <div className="today" key={`02-${dayjs(date).format('YYYY-MM-DD')}`}>
             오늘
           </div>
         );
-      } else if (deliveryHoliday.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      }
+      if (deliveryHoliday.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송 휴무일
         element.push(
-          <div className="deliveryHoliday" key={0}>
+          <div className="deliveryHoliday" key={`03-${dayjs(date).format('YYYY-MM-DD')}`}>
             배송휴무일
           </div>
         );
-      } else if (deliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      }
+      if (deliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송완료 or 주문취소
-        element.push(<div className="deliveryComplete" key={0}></div>);
-      } else if (deliveryChange.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+        element.push(<div className="deliveryComplete" key={`04-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+      }
+      if (deliveryChange.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송일변경
         element.push(
-          <div className="deliveryChange" key={0}>
+          <div className="deliveryChange" key={`05-${dayjs(date).format('YYYY-MM-DD')}`}>
             <span>배송일변경</span>
           </div>
         );
-      } else if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      }
+      if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송예정일(합배송 포함)
+        console.log('sumDelivery', sumDelivery);
+
         element.push(
-          <div className="sumDelivery" key={0}>
+          <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
             <span></span>
           </div>
         );
-      } else if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      }
+      if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송완료(합배송 포함)
         element.push(
-          <div className="sumDeliveryComplete" key={0}>
+          <div className="sumDeliveryComplete" key={`07-${dayjs(date).format('YYYY-MM-DD')}`}>
             <span></span>
           </div>
         );
@@ -158,6 +182,9 @@ const SubsCalendar = ({
     // TODO(young) : 구독 리스트 정보 받는 api
     if (router.pathname === '/subscription/set-info') {
       mutateSelectDate(dayjs(value).format('YYYY-MM-DD'));
+    }
+    if (setSelectDate) {
+      setSelectDate(value);
     }
   };
 
@@ -280,6 +307,7 @@ const CalendarBox = styled.div`
           font-style: normal;
           font-weight: 700;
           font-size: 14px;
+          z-index: 1;
         }
 
         // 날짜 선택 된 상태
@@ -303,7 +331,6 @@ const CalendarBox = styled.div`
           .today,
           .deliveryHoliday,
           .deliveryChange,
-          .sumDelivery,
           .sumDeliveryComplete {
             display: none;
           }
@@ -320,6 +347,13 @@ const CalendarBox = styled.div`
     height: 32px;
     border-radius: 50%;
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='15.5' stroke='%2335AD73' stroke-dasharray='2 2'/%3E%3C/svg%3E%0A");
+  }
+  .deliveryChangeBeforeDate {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #daece3;
   }
   .deliveryComplete {
     position: absolute;

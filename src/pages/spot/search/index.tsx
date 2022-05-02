@@ -8,7 +8,7 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList, SpotRecentPickupList } from '@components/Pages/Spot';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
 import { ISpots, ISpotsDetail } from '@model/index';
 import { useQuery } from 'react-query';
@@ -37,7 +37,6 @@ const SpotSearchPage = (): ReactElement => {
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
-
   // 스팟 검색 - 추천 스팟 api
   const getSearchRecommendList = async () => {
     const params = {
@@ -50,7 +49,7 @@ const SpotSearchPage = (): ReactElement => {
       if (data.code === 200) {
         setIsLoadingRecomand(true);
         const items = data.data;
-        setSpotRecommend(items);  
+        setSpotRecommend(items);
       }
     } catch (err) {
       console.error(err);
@@ -72,7 +71,7 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  // 최근 픽업 이력 조회 api 
+  // 최근 픽업 이력 조회 api
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
     async () => {
@@ -85,7 +84,7 @@ const SpotSearchPage = (): ReactElement => {
       };
       const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
-      return totalList
+      return totalList;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -113,8 +112,8 @@ const SpotSearchPage = (): ReactElement => {
         try {
           const params = {
             keyword,
-            latitude: spotsPosition ? spotsPosition.latitude : Number(37.50101118367814),
-            longitude: spotsPosition ? spotsPosition.longitude : Number(127.03525895821902),
+            latitude: spotsPosition ? spotsPosition.latitude : null,
+            longitude: spotsPosition ? spotsPosition.longitude : null,
           };
           const { data } = await getSpotSearch(params);
           const fetchData = data.data;
@@ -123,8 +122,7 @@ const SpotSearchPage = (): ReactElement => {
           const filtered = fetchData?.spots?.filter((c) => {
             return c.name.replace(/ /g, '').indexOf(value) > -1;
           });
-
-          setSearchResult(filtered);
+          setSearchResult(fetchData?.spots);
           setIsSearched(true);
         } catch (err) {
           console.error(err);
@@ -154,13 +152,13 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(() => {
     if (isDelivery) {
-      if(inputRef.current){
+      if (inputRef.current) {
         inputRef.current.focus();
       }
     } else {
       return;
-    };
-  }, [])
+    }
+  }, []);
 
   if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup) {
     return <div>로딩</div>;

@@ -1,6 +1,6 @@
 import { TextB2R, TextB3R, TextB4R, TextH3B, TextH4B } from '@components/Shared/Text';
 import { FlexBetween, FlexCol, FlexColCenter, FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import router from 'next/router';
 
@@ -12,7 +12,7 @@ const SubsDashboard = () => {
           <TextH4B>구독 관리</TextH4B>
           <FlexRow>
             <TextB2R padding="0 8px 0 0">{1} 건</TextB2R>
-            <div className="rightArrow" onClick={() => router.push('/mypage/subscrition')}>
+            <div className="rightArrow" onClick={() => router.push('/mypage/subscription')}>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>

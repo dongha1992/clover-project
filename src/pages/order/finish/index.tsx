@@ -18,7 +18,7 @@ import { getOrderDetailApi } from '@api/order';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 interface IProps {
   orderId: number;
@@ -217,12 +217,13 @@ const OrderFinishPage = ({ orderId }: IProps) => {
     orderDetail?.orderDeliveries[0]!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
   const isSpot = delivery === 'SPOT';
+  const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
 
   return (
     <Container>
       <PlaceInfoWrapper>
         <div className="title">
-          <TextH2B color={theme.brandColor}>{DELIVERY_TYPE_MAP[delivery]}</TextH2B>
+          <TextH2B color={theme.brandColor}>{isSubOrder ? '함께배송' : DELIVERY_TYPE_MAP[delivery]}</TextH2B>
           {orderDetail ? (
             <TextH2B>{DELIVERY_TIME_MAP[deliveryDetail]}주문이 완료되었습니다.</TextH2B>
           ) : (

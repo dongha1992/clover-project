@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { HomeContainer, FlexRow, FlexRowStart } from '@styles/theme';
 import { TextH6B, TextH5B, TextB3R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';

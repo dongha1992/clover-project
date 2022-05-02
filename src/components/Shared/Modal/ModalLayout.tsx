@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useDispatch } from 'react-redux';
 
 type TProps = {
@@ -15,20 +15,10 @@ type TProps = {
 
 /* TAYLER: bottom sheet 위에 alert 띄우는 것 때문에 Dimmer z-index 변경했는데 혹시 문제 되면 말씀해주세요. */
 
-const ModalLayout = ({
-  children,
-  closeModal,
-  style,
-  width,
-  height,
-  padding,
-}: TProps): JSX.Element => {
+const ModalLayout = ({ children, closeModal, style, width, height, padding }: TProps): JSX.Element => {
   const dispatch = useDispatch();
 
-  const handleClickDimmer = ({
-    target,
-    currentTarget,
-  }: React.MouseEvent<HTMLDivElement>): void => {
+  const handleClickDimmer = ({ target, currentTarget }: React.MouseEvent<HTMLDivElement>): void => {
     if (target !== currentTarget) {
       return;
     }
@@ -84,8 +74,7 @@ const ModalBox = styled.div<{
   padding: ${({ padding }) => (padding ? padding : `10px`)};
   border-radius: 3px;
   background-color: white;
-  box-shadow: -14px -14px 20px rgba(0, 0, 0, 0.02),
-    14px 14px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: -14px -14px 20px rgba(0, 0, 0, 0.02), 14px 14px 20px rgba(0, 0, 0, 0.05);
   z-index: 11;
   box-sizing: border-box;
 

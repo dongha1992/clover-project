@@ -1,7 +1,7 @@
 import { TextB1B, TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import SVGIcon from '@utils/common/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
@@ -10,12 +10,12 @@ interface IProps {
   goToCardManagemnet: any;
   getMainCardHandler: any;
 }
-const SubsPaymentWay = ({ previewOrder, goToCardManagemnet, getMainCardHandler }: IProps) => {
+const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, getMainCardHandler }: IProps) => {
   const goToRegisteredCard = () => {
     router.push('/mypage/card/register');
   };
   return (
-    <SubsPaymentWayContainer>
+    <SubsPaymentMethodContainer>
       <CardBox>
         <TextB1B padding="0 0 8px">결제수단</TextB1B>
         <TextB2R padding="0 0 24px" color={theme.greyScale65}>
@@ -68,10 +68,10 @@ const SubsPaymentWay = ({ previewOrder, goToCardManagemnet, getMainCardHandler }
       <TextH5B padding="10px 0" backgroundColor={theme.brandColor} color="#fff" center>
         1월 20일 (목) 구독 1회차 결제가 진행됩니다.
       </TextH5B>
-    </SubsPaymentWayContainer>
+    </SubsPaymentMethodContainer>
   );
 };
-const SubsPaymentWayContainer = styled.div``;
+const SubsPaymentMethodContainer = styled.div``;
 const CardBox = styled.div`
   padding: 24px;
 `;
@@ -109,4 +109,4 @@ const ExBox = styled.div`
     }
   }
 `;
-export default SubsPaymentWay;
+export default SubsPaymentMethod;

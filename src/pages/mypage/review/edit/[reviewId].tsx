@@ -5,12 +5,11 @@ import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import StarRatingComponent from 'react-star-rating-component';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon, getImageSize } from '@utils/common';
 import debounce from 'lodash-es/debounce';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
-import { getImageSize } from '@utils/getImageSize';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
@@ -18,8 +17,6 @@ import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
-import assignIn from 'lodash-es/assignIn';
-import { DETAIL } from '@constants/menu/index';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
@@ -38,8 +35,6 @@ export const FinishReview = () => {
 
 const EditReviewPage = ({ reviewId }: any) => {
   const [isShow, setIsShow] = useState(false);
-  const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
-  const [previewImg, setPreviewImg] = useState<string[]>([]);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
@@ -64,10 +59,8 @@ const EditReviewPage = ({ reviewId }: any) => {
   } = useQuery(
     'getReviewDetail',
     async () => {
-      // const { data } = await getReviewDetailApi(reviewId);
-      // const { searchReview, searchReviewImages } = data.data;
-      // return assignIn(searchReview, { reviewImg: searchReviewImages });
-      return DETAIL.data.data.searchReview;
+      const { data } = await getReviewDetailApi(reviewId);
+      return data.data;
     },
 
     {
@@ -77,29 +70,27 @@ const EditReviewPage = ({ reviewId }: any) => {
     }
   );
 
-  // const { mutateAsync: mutateCreateMenuReview } = useMutation(
-  //   async (formData: FormData) => {
-  //     console.log(formData, 'formData1');
-  //     const { data } = await createMenuReviewApi(formData);
-  //     console.log(data, 'result from api');
-  //   },
-  //   {
-  //     onSuccess: async () => {
-  //       dispatch(
-  //         SET_ALERT({
-  //           children: (
-  //             <GreyBg>
-  //               <TextH5B>+ 300P 적립</TextH5B>
-  //             </GreyBg>
-  //           ),
-  //           alertMessage: '제이미님의 소중한 후기에 감사드려요!',
-  //           submitBtnText: '확인',
-  //         })
-  //       );
-  //       await queryClient.refetchQueries('getCardList');
-  //     },
-  //   }
-  // );
+  const { mutateAsync: mutateEditMenuReview } = useMutation(
+    async (formData: FormData) => {
+      const { data } = await editMenuReviewApi({ formData, reviewId });
+      console.log(data, 'result from api');
+    },
+    {
+      onSuccess: async () => {
+        dispatch(
+          SET_ALERT({
+            children: (
+              <GreyBg>
+                <TextH5B>+ 300P 적립</TextH5B>
+              </GreyBg>
+            ),
+            alertMessage: '제이미님의 소중한 후기에 감사드려요!',
+            submitBtnText: '확인',
+          })
+        );
+      },
+    }
+  );
 
   const onStarHoverRating = (nextValue: number, prevValue: number, name: string, e?: any) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
@@ -179,15 +170,15 @@ const EditReviewPage = ({ reviewId }: any) => {
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
-      setPreviewImg([...previewImg, e.target.result]);
+      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj.imgFiles, e.target.result] });
     };
 
     imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = previewImg.filter((img, idx) => idx !== index);
-    setPreviewImg(filterPreviewImg);
+    const filterPreviewImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
   };
 
   const finishWriteReview = async () => {
@@ -202,23 +193,20 @@ const EditReviewPage = ({ reviewId }: any) => {
 
     const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef.current?.value!);
-    formData.append('menuDetailId', '1');
-    formData.append('menuId', '1');
+    formData.append('content', writeMenuReviewObj.content);
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    formData.append('orderDeliveryId', '11');
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
-    // mutateCreateMenuReview(formData);
+    mutateEditMenuReview(formData);
   };
 
   useEffect(() => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        content: selectedReviewDetail.content,
-        rating: selectedReviewDetail.rating,
-        imgFiles: selectedReviewDetail.reviewImg?.map((img) => img.url),
+        content: selectedReviewDetail.searchReview.content,
+        rating: selectedReviewDetail.searchReview.rating,
+        imgFiles: selectedReviewDetail.searchReview.images?.map((img) => img.url),
       });
     }
   }, [selectedReviewDetail]);
@@ -238,7 +226,7 @@ const EditReviewPage = ({ reviewId }: any) => {
         <FlexRow>
           <ImgWrapper>
             <NextImage
-              src={IMAGE_S3_URL + selectedReviewDetail?.thumbnail}
+              src={IMAGE_S3_URL + selectedReviewDetail?.menuImage.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
@@ -247,7 +235,7 @@ const EditReviewPage = ({ reviewId }: any) => {
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.name}</TextB2R>
+            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.searchReview.menuName}</TextB2R>
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
@@ -299,7 +287,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          {previewImg.length < 2 && (
+          {writeMenuReviewObj.imgFiles.length < 2 && (
             <UploadInputWrapper>
               <TextInput
                 width="100%"
@@ -315,8 +303,8 @@ const EditReviewPage = ({ reviewId }: any) => {
             </UploadInputWrapper>
           )}
 
-          {previewImg.length > 0 &&
-            previewImg.map((img: string, index: number) => {
+          {writeMenuReviewObj.imgFiles.length > 0 &&
+            writeMenuReviewObj.imgFiles.map((img: string, index: number) => {
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={img} />

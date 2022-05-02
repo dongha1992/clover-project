@@ -17,7 +17,7 @@ import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -32,14 +32,14 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
+import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
-import { SubsOrderItem, SubsOrderList, SubsPaymentWay } from '@components/Pages/Subscription/payment';
+import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -108,6 +108,7 @@ const OrderPage = () => {
     receiverTel: '',
     point: 0,
   });
+  const [loadingState, setLoadingState] = useState(false);
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
@@ -145,6 +146,9 @@ const OrderPage = () => {
         cardId: getMainCardHandler(previewOrder?.cards)?.id!,
         ...previewOrder?.order!,
       };
+
+      setLoadingState(true);
+
       const { data } = await createOrderApi(reqBody);
       const { id: orderId } = data.data;
       return orderId;
@@ -153,6 +157,7 @@ const OrderPage = () => {
       onError: () => {},
       onSuccess: async (orderId: number) => {
         router.push({ pathname: '/order/finish', query: { orderId } });
+        setLoadingState(false);
       },
     }
   );
@@ -401,6 +406,11 @@ const OrderPage = () => {
     return cards.find((c) => c.main);
   };
 
+  const paymentHandler = () => {
+    if (loadingState) return;
+    mutateCreateOrder();
+  };
+
   useEffect(() => {
     const { isSelected } = checkForm.samePerson;
 
@@ -425,11 +435,6 @@ const OrderPage = () => {
       setUserInputObj({ ...userInputObj, point: limitPoint });
     }
   }, [checkForm.alwaysPointAll.isSelected]);
-
-  // if (isNil(userDestination)) {
-  //   router.replace('/cart');
-  //   return <div>장바구니로 이동합니다.</div>;
-  // }
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
@@ -485,8 +490,11 @@ const OrderPage = () => {
             })}
           </OrderListWrapper>
         </SlideToggle>
-        {/* <SubsOrderItem />
-        <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
+        {/* <TextB2R padding="8px 0 16px 0" color={theme.brandColor}>
+          5주간, 주 2회씩 (화·목) 총 9회 배송되는 식단입니다.
+        </TextB2R>
+        <SubsOrderItem /> */}
+        {/* <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
           <SubsOrderList />
         </SlideToggle> */}
       </OrderItemsWrapper>
@@ -729,15 +737,6 @@ const OrderPage = () => {
             {previewOrder?.cards?.length! > 0 ? (
               <>
                 <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards)} />
-                <Button
-                  border
-                  backgroundColor={theme.white}
-                  color={theme.black}
-                  onClick={goToRegisteredCard}
-                  margin="16px 0 0 0"
-                >
-                  카드 등록하기
-                </Button>
               </>
             ) : (
               <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
@@ -747,7 +746,7 @@ const OrderPage = () => {
           </>
         )}
       </OrderMethodWrapper>
-      {/* <SubsPaymentWay
+      {/* <SubsPaymentMethod
         previewOrder={previewOrder}
         goToCardManagemnet={goToCardManagemnet}
         getMainCardHandler={getMainCardHandler}
@@ -766,7 +765,7 @@ const OrderPage = () => {
           <TextB2R>상품 할인</TextB2R>
           <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
-        {eventDiscount && (
+        {eventDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>스팟 이벤트 할인</TextB2R>
             <TextB2R>{eventDiscount}원</TextB2R>
@@ -856,7 +855,7 @@ const OrderPage = () => {
           </TextH6B>
         </FlexRow> */}
       </OrderTermWrapper>
-      <OrderBtn onClick={() => mutateCreateOrder()}>
+      <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%">
           {payAmount}원 결제하기
         </Button>

@@ -1,28 +1,30 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextB3R } from '@components/Shared/Text';
+import { TextB2R } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, theme, FlexRowStart } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import Checkbox from '@components/Shared/Checkbox';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+import { IGetCart } from '@model/index';
+import isNil from 'lodash-es/isNil';
+
 interface IProps {
-  handleSelectCartItem: (id: number) => void;
-  checkedMenuIdList: number[];
-  removeCartDisplayItemHandler: (id: number) => void;
-  menu: any;
+  handleSelectCartItem: (menu: IGetCart) => void;
+  checkedMenus: IGetCart[];
+  removeCartDisplayItemHandler: (menu: IGetCart) => void;
+  menu: IGetCart;
 }
 
-const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
+const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
+  const isSelected = !isNil(checkedMenus?.find((item) => item.menuId === menu.menuId));
+
   return (
     <Container>
       <Wrapper>
         <FlexRowStart width="40%">
           <CheckboxWrapper>
-            <Checkbox
-              onChange={() => handleSelectCartItem(menu.menuId)}
-              isSelected={checkedMenuIdList.includes(menu.id)}
-            />
+            <Checkbox onChange={() => handleSelectCartItem(menu)} isSelected={isSelected} />
           </CheckboxWrapper>
           <ImageWrapper>
             <Image
@@ -36,8 +38,8 @@ const CartDisplayItem = ({ checkedMenuIdList, handleSelectCartItem, removeCartDi
           </ImageWrapper>
         </FlexRowStart>
         <FlexBetween>
-          <TextB3R>{menu.menuName}</TextB3R>
-          <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu.id)}>
+          <TextB2R margin="0 0 0 8px">{menu.menuName}</TextB2R>
+          <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu)}>
             <SVGIcon name="defaultCancel" />
           </RemoveBtnContainer>
         </FlexBetween>
@@ -56,7 +58,7 @@ const Container = styled.div<{
   height: 100%;
   background-color: ${theme.white};
   border-radius: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -73,6 +75,9 @@ const Wrapper = styled.div`
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 const RemoveBtnContainer = styled.div`

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B } from '@components/Shared/Text';

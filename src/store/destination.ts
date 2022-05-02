@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderList, ILocation } from '@model/index';
-import { TLocationType } from '@utils/checkDestinationHelper';
+import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderList } from '@model/index';
+import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
 interface IAvailableDestination {
   morning: boolean;
@@ -11,7 +11,7 @@ interface IAvailableDestination {
 }
 
 interface TProps {
-  userDestination: IDestinationsResponse | IGetOrderList | null;
+  userDestination: IDestinationsResponse | null;
   tempLocation: IJuso;
   userTempDestination: IDestinationsResponse | null;
   tempEditDestination: IDestinationsResponse | null;
@@ -94,7 +94,7 @@ export const destination = createSlice({
     },
 
     // 배송지 검색 후
-    SET_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | IGetOrderList | null>) => {
+    SET_DESTINATION: (state, action: PayloadAction<IDestinationsResponse | null>) => {
       state.userDestination = action.payload;
     },
 
