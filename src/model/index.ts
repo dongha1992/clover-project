@@ -627,25 +627,7 @@ export interface ISpotRegistrationsResponse {
   data: {
     title: string;
     subTitle: string;
-    spotRegistrations: [
-      {
-        id: number;
-        placeName: string;
-        image: {
-          id: number;
-          name: string;
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          createdAt: string;
-        };
-        recruited: boolean;
-        recruitingCount: number;
-        distance: number;
-        distanceUnit: string;
-      }
-    ];
+    spotRegistrations: ISpotsDetail[];
   };
 }
 
