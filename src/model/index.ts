@@ -339,12 +339,21 @@ export interface ISpotInSpotPickUp {
   placeType: string;
   visiblePlaceTel: boolean;
 }
+
+export interface ISpotImageInDestination {
+  height: number;
+  size: number;
+  url: string;
+  width: number;
+}
 export interface ISpotPickupInDestinaion {
   id: number;
   name: string;
   spot: ISpotInSpotPickUp;
   type: string;
   spotId: number;
+  createdAt: string;
+  images: ISpotImageInDestination[];
 }
 
 export interface IDestinationsResponse {
@@ -379,9 +388,32 @@ export interface IGetDestinationsResponse {
   };
 }
 
+export interface IDestination {
+  createdAt: string;
+  delivery: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  id: number;
+  location: ILocation;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+  spotPickup: ISpotPickupInDestinaion;
+}
+
+export interface IGetDestinationResponse {
+  code: number;
+  message: string;
+  data: IDestination;
+}
+
 export interface IGetDestinationsRequest {
   page: number;
   size: number;
+  deliveries?: string | null;
+  delivery?: string | null;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface IEditDestinationRequest {
