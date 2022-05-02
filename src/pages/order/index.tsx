@@ -119,7 +119,12 @@ const OrderPage = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
+  const {
+    data: previewOrder,
+    isLoading: preveiwOrderLoading,
+    isError,
+    error,
+  } = useQuery(
     'getPreviewOrder',
     async () => {
       if (!tempOrder) {
@@ -143,19 +148,27 @@ const OrderPage = () => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      onError: (error: any) => {
+        if (error.code === 5005) {
+        }
+      },
     }
   );
 
+  console.log(isError, 'IS ERRROR', error);
+
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
-      /*TODO: 배송방법에 따라서 메시지나 뭐 그런 거 추가 */
+      /*TODO: 모델 수정해야함 */
+      /*TODO:쿠폰 퍼센테이지 */
       const { point, payAmount, ...rest } = previewOrder?.order!;
-
+      console.log(selectedCoupon, 'selectedCoupon');
       const reqBody = {
         payMethod: 'NICE_BILLING',
         cardId: card?.id!,
         point: userInputObj?.point,
-        payAmount: payAmount - userInputObj.point,
+        payAmount: payAmount - (userInputObj.point + selectedCoupon?.value!),
+        couponId: selectedCoupon?.id,
         ...rest,
       };
 
@@ -172,14 +185,21 @@ const OrderPage = () => {
         INIT_ORDER();
         INIT_CARD();
       },
-      onError: (error) => {
-        /*TODO: error 팝업 */
-        dispatch(
-          SET_ALERT({
-            alertMessage:
-              '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
-          })
-        );
+      onError: (error: any) => {
+        if (error.code === 1122) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 쿠폰입니다.',
+            })
+          );
+        } else if (error.code === 5005) {
+          dispatch(
+            SET_ALERT({
+              alertMessage:
+                '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
+            })
+          );
+        }
       },
     }
   );
@@ -415,7 +435,7 @@ const OrderPage = () => {
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
-    dispatch(SET_BOTTOM_SHEET({ content: <OrderCouponSheet coupons={coupons} /> }));
+    dispatch(SET_BOTTOM_SHEET({ content: <OrderCouponSheet coupons={coupons} isOrder /> }));
   };
 
   const clearPointHandler = () => {
@@ -488,6 +508,16 @@ const OrderPage = () => {
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
+  }
+
+  if (isError) {
+    /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
+    const { code } = error;
+    if (code === 5005) {
+      return <div>선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.</div>;
+    } else {
+      return <div>알수없는 에러발생</div>;
+    }
   }
 
   const {

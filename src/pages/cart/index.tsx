@@ -844,6 +844,21 @@ const CartPage = () => {
     }
   }, [isLoading]);
 
+  const test = async () => {
+    const res = await postCartsApi([
+      {
+        main: true,
+        menuDetailId: 72,
+        menuId: 9,
+        menuQuantity: 1,
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    test();
+  }, []);
+
   if (isLoading) {
     return <div>로딩</div>;
   }

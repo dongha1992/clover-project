@@ -15,8 +15,9 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
   coupons: ICoupon[];
+  isOrder?: boolean;
 }
-const OrderCouponSheet = ({ coupons }: IProps) => {
+const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
   const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
   const router = useRouter();
 
@@ -26,7 +27,7 @@ const OrderCouponSheet = ({ coupons }: IProps) => {
 
   const goToOrder = () => {
     dispatch(SET_USER_SELECT_COUPON(selectedCoupon!));
-    router.back();
+    dispatch(INIT_BOTTOM_SHEET());
   };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
