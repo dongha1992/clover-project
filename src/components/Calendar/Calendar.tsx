@@ -3,15 +3,14 @@ import styled from 'styled-components';
 import Days from './Days';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
-import getCustomDate from '@utils/getCustomDate';
-import { Obj } from '@model/index';
+import { SVGIcon } from '@utils/common';
+import { getCustomDate } from '@utils/destination';
+import { Obj, ILunchOrDinner } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { pipe, filter, map, toArray } from '@fxts/core';
-import { getFormatTime } from '@utils/getFormatTime';
+import { getFormatTime } from '@utils/destination/getFormatTime';
 import { IGetOrderListResponse, ISubOrderDelivery } from '@model/index';
-import { ILunchOrDinner } from '@pages/cart';
 
 let WEEKS: Obj = {
   0: '일',

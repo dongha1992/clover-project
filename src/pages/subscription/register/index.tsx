@@ -1,23 +1,61 @@
-import SbsCalendar from '@components/Calendar/SbsCalendar';
+import SubsCalendar from '@components/Calendar/SubsCalendar';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB1R, TextB2R, TextB3R, TextH4B, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexBetween, FlexCol, FlexEnd, FlexRow, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
+import router from 'next/router';
+import { SET_ORDER } from '@store/order';
+import { SVGIcon } from '@utils/common';
 
-const SbsRegisterPage = () => {
+const SubsRegisterPage = () => {
   const dispatch = useDispatch();
-  const { sbsOrderMenus, sbsDeliveryExpectedDate } = useSelector(subscriptionForm);
+  const { subsOrderMenus, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const [toggleState, setToggleState] = useState(false);
   const [disposable, setDisposable] = useState(false);
   const clickEvent = () => {
     setToggleState((prev) => !prev);
+  };
+
+  const onSubscribe = () => {
+    // TODO(young) : 임시
+    const reqBody = {
+      destinationId: 244,
+      delivery: 'PARCEL',
+      deliveryDetail: '',
+      isSubOrderDelivery: false,
+      orderDeliveries: [
+        {
+          deliveryDate: '2022-04-16',
+          orderMenus: [
+            {
+              menuDetailId: 72,
+              menuQuantity: 1,
+            },
+            {
+              menuDetailId: 511,
+              menuQuantity: 1,
+            },
+          ],
+          orderOptions: [
+            {
+              optionId: 1,
+              optionQuantity: 1,
+            },
+          ],
+        },
+      ],
+      type: 'GENERAL',
+    };
+
+    dispatch(SET_ORDER(reqBody));
+    router.push('/order');
   };
 
   return (
@@ -77,7 +115,7 @@ const SbsRegisterPage = () => {
         <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
           1월, 2월 식단을 모두 확인해 주세요!
         </TextH5B>
-        <SbsCalendar sbsDates={sbsDeliveryExpectedDate} deliveryExpectedDate={sbsDeliveryExpectedDate} />
+        <SubsCalendar subsDates={subsDeliveryExpectedDate} deliveryExpectedDate={subsDeliveryExpectedDate} />
       </CalendarBox>
 
       <SelectDateInfoBox>
@@ -234,7 +272,7 @@ const SbsRegisterPage = () => {
           </TextB3R>
         </FlexEnd>
       </ReceiptBox>
-      <BottomButton>
+      <BottomButton onClick={onSubscribe}>
         <TextH5B>구독하기</TextH5B>
       </BottomButton>
     </Container>
@@ -309,8 +347,8 @@ const DeliveryInfoBox = styled.div`
     }
   }
 `;
-const MenuUl = styled.ul``;
-const MenuLi = styled.li`
+export const MenuUl = styled.ul``;
+export const MenuLi = styled.li`
   display: flex;
   padding: 16px 0;
   border-bottom: 1px solid ${theme.greyScale6};
@@ -327,13 +365,13 @@ const MenuLi = styled.li`
     border-radius: 8px;
   }
 `;
-const MenuImgBox = styled.div`
+export const MenuImgBox = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 8px;
   background-color: #dedede;
 `;
-const MenuTextBox = styled.div`
+export const MenuTextBox = styled.div`
   padding-left: 8px;
   flex: 1;
   .wrap {
@@ -349,7 +387,7 @@ const MenuTextBox = styled.div`
   }
 `;
 
-const ReceiptBox = styled.div`
+export const ReceiptBox = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
   .btB {
@@ -362,10 +400,10 @@ const ReceiptBox = styled.div`
     border-bottom: 1px solid #ececec;
   }
 `;
-const ReceiptUl = styled.ul`
+export const ReceiptUl = styled.ul`
   padding-bottom: 16px;
 `;
-const ReceiptLi = styled.li<{ padding?: string }>`
+export const ReceiptLi = styled.li<{ padding?: string }>`
   display: flex;
   justify-content: space-between;
   padding: ${(props) => props.padding && props.padding};
@@ -406,4 +444,4 @@ const BottomButton = styled.button`
   color: #fff;
 `;
 
-export default SbsRegisterPage;
+export default SubsRegisterPage;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
-import { breakpoints } from '@utils/getMediaQuery';
+import { SVGIcon } from '@utils/common';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useRouter } from 'next/router';
 import { TextH4B } from '@components/Shared/Text';
 

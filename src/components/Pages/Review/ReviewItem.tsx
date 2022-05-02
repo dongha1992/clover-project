@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';

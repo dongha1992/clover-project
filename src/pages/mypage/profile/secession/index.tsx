@@ -27,7 +27,6 @@ const SecessionPage = () => {
   // TODO : 회원 탈퇴가 api가 제대로 작동안함, 스웨거는 통과되는데 로컬에서 안되는 이슈있는 request body에 담아 보내는데 에러남
   const { mutate: mutateUserSecession } = useMutation((data: ISecessionRequest) => userSecession(data), {
     onSuccess: (data) => {
-      console.log(data);
       // TODO : Alet 메세지 padding 시안과 다름
       dispatch(
         SET_ALERT({

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -42,8 +42,8 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
             <ReviewBody>
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
-                {review.reviewImg?.map((img: any, index: number) => {
-                  const imgUrlForViwer: string[] = review.reviewImg.map((item: any) => item.url);
+                {review.searchReview.images?.map((img: any, index: number) => {
+                  const imgUrlForViwer: string[] = review.searchReview.images.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper
                       isFirst

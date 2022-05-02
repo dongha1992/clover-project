@@ -6,7 +6,7 @@ import { RadioButton, Button } from '@components/Shared/Button';
 import { useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import BorderLine from '@components/Shared/BorderLine';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { Obj } from '@model/index';
 
 interface IProps {

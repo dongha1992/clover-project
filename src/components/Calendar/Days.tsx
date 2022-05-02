@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH5B, TextH7B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { LIMIT_DAYS } from './Calendar';
 
 type TProps = {

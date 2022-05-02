@@ -1,5 +1,4 @@
-import { onUnauthorized } from '@api/Api';
-import { SbsCalendarSheet } from '@components/BottomSheet/CalendarSheet';
+import { SubsCalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -8,60 +7,73 @@ import { Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm } from '@store/destination';
-import {
-  SET_SBS_DELIVERY_EXPECTED_DATE,
-  SET_SBS_DELIVERY_TIME,
-  SET_SBS_START_DATE,
-  subscriptionForm,
-} from '@store/subscription';
+import { subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import axios from 'axios';
 import { isNil } from 'lodash-es';
 import router from 'next/router';
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
+import { getMainDestinationsApi } from '@api/destination';
+import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
-const deliveryInfo: any = 'spot';
+const subsDeliveryType: any = 'spot';
 const ment: Obj = {
   spot: '스팟배송',
   parcel: '배송방법',
+  morning: '배송방법',
 };
 
-const SbsSetInfoPage = () => {
+const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
-  const { sbsStartDate } = useSelector(subscriptionForm);
+  const { subsStartDate } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
-  const [sbsDates, setSbsDates] = useState([]);
+  const [subsDates, setSubsDates] = useState([]);
   const [userSelectPeriod, setUserSelectPeriod] = useState('subscription');
 
   const goToDeliveryInfo = () => {
+    dispatch(INIT_DESTINATION());
+    dispatch(INIT_TEMP_DESTINATION());
     router.push({
       pathname: '/cart/delivery-info',
       query: {
-        deliveryInfo: deliveryInfo,
+        subsDeliveryType: subsDeliveryType,
         isSubscription: true,
       },
     });
   };
   const { data, isLoading } = useQuery(
-    'sbsDates',
+    'subsDates',
     async () => {
-      const data = await axios.get('http://localhost:9009/api/sbsDates');
+      const data = await axios.get('http://localhost:9009/api/subsDates');
       return data.data;
     },
     {
       onSuccess: (data) => {
-        setSbsDates(data.data.startDates);
+        setSubsDates(data.data.startDates);
       },
     }
   );
-  if (isLoading) return <div>...로딩중</div>;
+
+  const { data: mainDestinations, isLoading: mainDestinationsLoading } = useQuery(
+    'getMainDestinations',
+    async () => {
+      const params = {
+        delivery: 'SPOT',
+      };
+      const { data } = await getMainDestinationsApi(params);
+      console.log('mainDestinations', data.data);
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const changeRadioHanler = async (value: string) => {
     setUserSelectPeriod(value);
@@ -71,7 +83,7 @@ const SbsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SbsCalendarSheet userSelectPeriod={userSelectPeriod} sbsDates={sbsDates} />,
+          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod} subsDates={subsDates} />,
         })
       );
     } else {
@@ -88,29 +100,16 @@ const SbsSetInfoPage = () => {
     router.push('/subscription/register');
   };
 
+  if (isLoading && mainDestinationsLoading) return <div>...로딩중</div>;
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
   return (
     <Container>
-      <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
-        <Left>
-          <TextH4B>{ment[deliveryInfo]}</TextH4B>
-          <TextH4B>
-            {!isNil(userDestination)
-              ? userDestination?.location.dong
-              : (deliveryInfo === 'spot' && '픽업장소를 설정해주세요') ||
-                (deliveryInfo === 'parcel' && '배송지를 설정해주세요')}
-          </TextH4B>
-          <TextB3R color={theme.greyScale65} padding="8px 0 0">
-            배송방법이 제한된 상품입니다.
-          </TextB3R>
-        </Left>
-        <Right>
-          <SVGIcon name="arrowRight" />
-        </Right>
-      </DeliveryMethodAndPickupLocation>
-
+      <SubsDeliveryTypeAndLocation
+        goToDeliveryInfo={goToDeliveryInfo}
+        subsDeliveryType="spot"
+        mainDestinations={mainDestinations}
+      />
       <BorderLine height={8} />
-
       <PeriodBox>
         <TextH4B padding="0 0 24px">구독 기간</TextH4B>
         <RadioWrapper>
@@ -126,7 +125,7 @@ const SbsSetInfoPage = () => {
             );
           })}
         </RadioWrapper>
-        <SbsInfoBox>
+        <SubsInfoBox>
           <div className="textBox">
             <SVGIcon name="exclamationMark" />
             <TextH6B padding="2.5px 0 0 2px" color={theme.brandColor}>
@@ -138,7 +137,7 @@ const SbsSetInfoPage = () => {
             - 구독 결제 기간에 따라 할인율이 점차 증가합니다. <br />
             (1개월 5% / 2개월 7% / 3개월 10% / 4개월 15%)
           </TextB3R>
-        </SbsInfoBox>
+        </SubsInfoBox>
       </PeriodBox>
 
       <BorderLine height={8} />
@@ -146,10 +145,10 @@ const SbsSetInfoPage = () => {
       <DateSetting>
         <TextH4B padding="0 0 24px">구독 시작/배송일</TextH4B>
         <Button border backgroundColor="#fff" color={theme.black} onClick={calendarSettingHandler}>
-          {sbsStartDate ? `${sbsStartDate}배송` : '설정하기'}
+          {subsStartDate ? `${subsStartDate}배송` : '설정하기'}
         </Button>
       </DateSetting>
-      <BottomButton disabled={sbsStartDate ? false : true} onClick={goToRegisterCheck}>
+      <BottomButton disabled={subsStartDate ? false : true} onClick={goToRegisterCheck}>
         <TextH5B>다음</TextH5B>
       </BottomButton>
     </Container>
@@ -192,7 +191,7 @@ const RadioLi = styled.li`
     font-weight: bold;
   }
 `;
-const SbsInfoBox = styled.div`
+const SubsInfoBox = styled.div`
   padding: 16px;
   background-color: ${theme.greyScale3};
   border-radius: 8px;
@@ -220,4 +219,4 @@ const BottomButton = styled.button`
     color: ${theme.greyScale25};
   }
 `;
-export default SbsSetInfoPage;
+export default SubsSetInfoPage;

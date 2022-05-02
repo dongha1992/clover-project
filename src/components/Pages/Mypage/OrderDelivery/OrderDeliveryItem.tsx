@@ -2,21 +2,23 @@ import { FlexRow, FlexRowStart, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextH5B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Button } from '@components/Shared/Button';
-import getCustomDate from '@utils/getCustomDate';
-import { Obj } from '@model/index';
+import { getCustomDate } from '@utils/destination';
+import { IGetOrderList } from '@model/index';
 import DeliveryStatusInfo from './DeliveryStatusInfo';
 import ItemInfo from './ItemInfo';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP } from '@constants/order';
 interface IProps {
-  orderDeliveryItem: any;
+  orderDeliveryItem: IGetOrderList;
   buttonHandler: ({ id, isDelivering }: { id: number; isDelivering: boolean }) => void;
 }
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   const { deliveryDate, status } = orderDeliveryItem;
+  const { name, payAmount, amount } = orderDeliveryItem.order;
+  const { url } = orderDeliveryItem.image;
 
   const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.order.paidAt));
   const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryDate));
@@ -29,6 +31,14 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   const isDelivering = deliveryStatus === '배송중';
   const hasSubOrder = orderDeliveryItem.subOrderDelivery;
 
+  const subItemObj = {
+    name: orderDeliveryItem?.subOrderDelivery?.order.name!,
+    url: orderDeliveryItem?.subOrderDelivery?.image.url!,
+    amount: orderDeliveryItem?.subOrderDelivery?.order.amount!,
+  };
+
+  console.log(orderDeliveryItem, 'orderDeliveryItem');
+
   return (
     <Container>
       <Wrapper>
@@ -39,7 +49,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
           deliveryDetail={deliveryDetail}
           id={orderDeliveryItem.order.id}
           deliveryType={orderDeliveryItem.delivery}
-          isSubOrder={hasSubOrder ? 'main' : 'false'}
+          type={orderDeliveryItem.type}
         />
         <FlexRow padding="0 0 8px 0">
           {!isCanceled && (
@@ -49,12 +59,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
             </>
           )}
         </FlexRow>
-        <ItemInfo
-          url={orderDeliveryItem.image?.url}
-          name={orderDeliveryItem.order.name}
-          payAmount={orderDeliveryItem.order.payAmount}
-          paidAt={paidAt}
-        />
+        <ItemInfo url={url} name={name} amount={amount} paidAt={paidAt} />
         <FlexRow>
           <Button
             backgroundColor={theme.white}
@@ -72,20 +77,15 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
           <SVGIcon name="otherDeliveryArrow" />
           <OtherDeliveryWrapper>
             <DeliveryStatusInfo
-              isCanceled={DELIVERY_STATUS_MAP[orderDeliveryItem.subOrderDelivery.status] === '주문취소'}
-              isCompleted={DELIVERY_STATUS_MAP[orderDeliveryItem.subOrderDelivery.status] === '배송완료'}
+              isCanceled={DELIVERY_STATUS_MAP[orderDeliveryItem?.subOrderDelivery?.status!] === '주문취소'}
+              isCompleted={DELIVERY_STATUS_MAP[orderDeliveryItem?.subOrderDelivery?.status!] === '배송완료'}
               deliveryDetail={deliveryDetail}
-              deliveryStatus={DELIVERY_STATUS_MAP[orderDeliveryItem.subOrderDelivery.status]}
-              id={orderDeliveryItem.subOrderDelivery.order.id}
-              deliveryType={orderDeliveryItem.subOrderDelivery.delivery}
-              isSubOrder="sub"
+              deliveryStatus={DELIVERY_STATUS_MAP[orderDeliveryItem?.subOrderDelivery?.status!]}
+              id={orderDeliveryItem?.subOrderDelivery?.order?.id!}
+              deliveryType={orderDeliveryItem?.subOrderDelivery?.delivery!}
+              type={orderDeliveryItem?.subOrderDelivery?.type!}
             />
-            <ItemInfo
-              url={orderDeliveryItem.subOrderDelivery?.image?.url}
-              name={orderDeliveryItem.subOrderDelivery?.order.name}
-              payAmount={orderDeliveryItem.subOrderDelivery?.order.payAmount}
-              paidAt={paidAt}
-            />
+            <ItemInfo url={subItemObj.url!} name={subItemObj.name!} amount={subItemObj.amount!} paidAt={paidAt} />
           </OtherDeliveryWrapper>
         </FlexRowStart>
       )}
@@ -103,7 +103,7 @@ const Wrapper = styled.div`
 
 const OtherDeliveryWrapper = styled.div`
   width: 100%;
-  margin-left: 16px;
+  margin-left: 8px;
 `;
 
 export default OrderDeliveryItem;

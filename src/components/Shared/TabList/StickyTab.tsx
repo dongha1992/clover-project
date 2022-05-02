@@ -2,15 +2,9 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import Tab from '@components/Shared/TabList/Tab';
 import { homePadding, theme } from '@styles/theme';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 
-const StickyTab = ({
-  tabList,
-  onClick,
-  selectedTab,
-  isSticky,
-  countObj,
-}: any) => {
+const StickyTab = ({ tabList, onClick, selectedTab, isSticky, countObj }: any) => {
   return (
     <Container isSticky={isSticky}>
       <TabWrapper>

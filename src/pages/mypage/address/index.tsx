@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SPOT_URL } from '@constants/mock';
 import { TabList } from '@components/Shared/TabList';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
 import axios from 'axios';
 // import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
@@ -10,6 +10,7 @@ import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
+import { FixedTab } from '@styles/theme';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -82,26 +83,7 @@ const AddressManagementPage = () => {
 };
 
 const Container = styled.div``;
-const FixedTab = styled.div`
-  position: fixed;
-  width: 100%;
-  left: calc(50%);
-  right: 0;
-  background-color: white;
-  max-width: ${breakpoints.mobile}px;
-  width: 100%;
 
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 0px;
-
-  `};
-
-  ${({ theme }) => theme.mobile`
-    margin: 0 auto;
-    left: 0px;
-  `};
-`;
 const Wrapper = styled.div`
   padding: 74px 0 24px 0px;
 `;

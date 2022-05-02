@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
-import QuickOrderHeader from './QuickOrderHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -68,7 +67,7 @@ const Header = () => {
         '/mypage/point': '포인트',
         '/mypage/address': '주소 관리',
         '/mypage/address/edit/[id]': '편집',
-        '/mypage/coupon': '포인트',
+        '/mypage/coupon': '쿠폰',
         '/mypage/term': '약관 및 정책',
         '/mypage/term/use': '이용약관',
         '/mypage/term/privacy': '개인정보 처리방침',
@@ -76,6 +75,7 @@ const Header = () => {
         '/mypage/setting': '앱설정',
         '/mypage/dib/subscription': '찜 관리',
         '/mypage/order-detail/edit/[orderId]': '배송정보 변경',
+        '/mypage/order-detail/cancel/[orderId]': '주문취소',
         '/order/finish': '결제완료',
         '/signup': '회원가입',
         '/signup/auth': '회원가입',
@@ -94,10 +94,13 @@ const Header = () => {
         '/spot/status': '스팟 관리',
         '/spot/location': '주소 검색',
         '/spot/location/address': '주소 검색',
-        '/spot/regi-list': '프코스팟 안내',
+        '/spot/regi-list': '프코스팟 신청 안내',
+        '/spot/notice': '프코스팟 안내',
         '/subscription/products': '정기구독',
         '/subscription/set-info': '구독하기',
         '/subscription/register': '구독하기',
+        '/mypage/subscription': '구독관리',
+        '/subscription/detail': '구독상세',
       };
 
       const title = headerTitleMap[currentPath];
@@ -155,10 +158,6 @@ const Header = () => {
 
         case ['/spot'].includes(currentPath): {
           return <SpotHeader />;
-        }
-
-        case ['/quickorder', '/quickorder/category'].includes(currentPath): {
-          return <QuickOrderHeader />;
         }
 
         case ['/spot/search', '/spot/search/location'].includes(currentPath): {

@@ -1,3 +1,4 @@
-import SbsDashboard from './SbsDashboard';
+import SubsDashboard from './SubsDashboard';
+import SubsManagementItem from './SubsManagementItem';
 
-export { SbsDashboard };
+export { SubsDashboard, SubsManagementItem };

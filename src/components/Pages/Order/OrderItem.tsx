@@ -4,7 +4,7 @@ import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { getDiscountPrice } from '@utils/getMenuDisplayPrice';
+import { getDiscountPrice } from '@utils/menu/getMenuDisplayPrice';
 interface IProps {
   menu: any;
   isDeliveryComplete?: boolean;

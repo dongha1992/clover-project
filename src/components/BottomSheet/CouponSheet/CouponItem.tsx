@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  TextH3B,
-  TextB3R,
-  TextB2R,
-  TextB4R,
-  TextH7B,
-} from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextB2R, TextB4R, TextH7B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
-import { breakpoints } from '@utils/getMediaQuery';
+import { SVGIcon } from '@utils/common';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { FlexRow } from '@styles/theme';
 
 const CouponItem = ({ coupon, onClick }: any) => {
@@ -22,9 +16,7 @@ const CouponItem = ({ coupon, onClick }: any) => {
     <Container isDownload={coupon.isDownload}>
       <Wrapper>
         <Content>
-          <TextH3B color={theme.brandColor}>
-            {isRateDiscount ? `${coupon.discount}%` : `${coupon.discount}원`}
-          </TextH3B>
+          <TextH3B color={theme.brandColor}>{isRateDiscount ? `${coupon.discount}%` : `${coupon.discount}원`}</TextH3B>
           <TextB2R>{coupon.name}</TextB2R>
           {coupon.deliveryMethod && (
             <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
