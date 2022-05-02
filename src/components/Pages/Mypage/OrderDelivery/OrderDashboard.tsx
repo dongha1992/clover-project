@@ -70,4 +70,4 @@ const ArrowWrapper = styled.div`
   padding-bottom: 16px;
 `;
 
-export default OrderDashboard;
+export default React.memo(OrderDashboard);
