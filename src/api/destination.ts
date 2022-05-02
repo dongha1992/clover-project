@@ -11,6 +11,7 @@ import {
   IGetDestinationsRequest,
   IGetMainDestinationsRequest,
   IGetMainDestinationsResponse,
+  IGetDestinationResponse,
 } from '@model/index';
 
 export const getAvailabilityDestinationApi = (
@@ -48,5 +49,11 @@ export const getMainDestinationsApi = (
 export const patchMainDestinationsApi = (id: number, delivery: string): Promise<AxiosResponse<IResponse>> => {
   return Api.patch(`destination/v1/destinations/${id}/main`, {
     params: { id, delivery },
+  });
+};
+
+export const getDestinationApi = (id: number): Promise<AxiosResponse<IGetDestinationResponse>> => {
+  return Api.get(`destination/v1/destinations/${id}`, {
+    params: { id },
   });
 };
