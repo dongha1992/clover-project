@@ -118,6 +118,11 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
         await queryClient.refetchQueries('getOrderDetail');
         dispatch(INIT_TEMP_EDIT_DESTINATION());
       },
+      onError: async (error: any) => {
+        if (error.code === 5001) {
+          dispatch(SET_ALERT({ alertMessage: '잘못된 배송상태입니다.' }));
+        }
+      },
     }
   );
 
@@ -126,30 +131,30 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   };
 
   const editDeliveryInfoHandler = () => {
-    if (!cheekBeforeEdit()) {
+    if (!checkBeforeEdit()) {
       return;
     }
 
     dispatch(
       SET_ALERT({
-        alertMessage: '내용을 수정했습니다.',
+        alertMessage: '배송정보를 변경하시겠어요?',
         onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
         submitBtnText: '확인',
       })
     );
   };
 
-  const cheekBeforeEdit = (): boolean => {
+  const checkBeforeEdit = (): boolean => {
     // const noMsg = !deliveryEditObj.deliveryMessage.length;
     const noMsg = false;
-    const noAccessMethod = !deliveryEditObj.deliveryMessageType;
 
     switch (true) {
       case isMorning: {
         if (noMsg) {
+          // const noMsg = !deliveryEditObj.deliveryMessage.length;
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
-        } else if (noAccessMethod) {
+        } else if (!deliveryEditObj.deliveryMessageType) {
           dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
           return false;
         } else {
@@ -159,6 +164,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
       case isParcel: {
         if (noMsg) {
+          // const noMsg = !deliveryEditObj.deliveryMessage.length;
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
         } else {
