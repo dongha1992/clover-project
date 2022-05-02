@@ -7,17 +7,10 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { SET_SPOT_PICKUP_ID } from '@store/spot';
 import Checkbox from '@components/Shared/Checkbox';
-
-interface IPickupInfo {
-  createdAt: string;
-  id: number;
-  name: string;
-  spotId: number;
-  type: string;
-};
+import { ISpotPickupInfo } from '@model/index';
 
 type TPrams = {
-  pickupInfo?: IPickupInfo[];
+  pickupInfo?: ISpotPickupInfo[];
   spotType?: string;
   onSubmit?: () => void;
 }
