@@ -214,12 +214,17 @@ const AddressEditPage = ({ id }: IProps) => {
 
   useEffect(() => {
     getAddressItem();
-    return () => dispatch(INIT_ACCESS_METHOD());
   }, []);
 
   useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_ACCESS_METHOD());
+    };
+  });
 
   return (
     <Container>
