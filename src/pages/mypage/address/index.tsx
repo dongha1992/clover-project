@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { SPOT_URL } from '@constants/mock';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
-import axios from 'axios';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
@@ -26,10 +24,12 @@ const AddressManagementPage = () => {
     ['getDestinationList', selectedTab],
     async () => {
       const isSpot = selectedTab === '/pickup';
+
       const params = {
         page: 1,
         size: 100,
-        delivery: isSpot ? 'SPOT' : '',
+        delivery: isSpot ? 'SPOT' : null,
+        deliveries: !isSpot ? ['MORNING', 'QUICK', 'PARCEL'].join(',') : null,
       };
       const { data } = await getDestinationsApi(params);
       return data.data.destinations;

@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import SVGIcon from '@utils/common/SVGIcon';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
-import { getDestinationsApi, editDestinationApi, deleteDestinationsApi } from '@api/destination';
+import { getDestinationApi, editDestinationApi, deleteDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
@@ -70,32 +70,24 @@ const AddressEditPage = ({ id }: IProps) => {
   const isMorning = selectedAddress?.delivery === 'MORNING';
 
   const getAddressItem = async () => {
-    const params = {
-      page: 1,
-      size: 10,
-    };
     try {
-      const { data } = await getDestinationsApi(params);
+      const { data } = await getDestinationApi(id);
       if (data.code === 200) {
-        const { destinations } = data.data;
+        setSelectedAddress(data.data);
 
-        const foundItem = destinations.find((item: IDestinationsResponse) => item.id === id);
-
-        setSelectedAddress(foundItem);
-
-        const isMorning = foundItem?.delivery === 'MORNING';
+        const isMorning = data.data?.delivery === 'MORNING';
 
         if (isMorning) {
-          const userSelectMethod = getValues(foundItem, 'deliveryMessageType');
+          const userSelectMethod = getValues(data.data, 'deliveryMessageType');
           const selectedMethod = ACCESS_METHOD.find((item) => item.value === userSelectMethod);
           setSelectedAccessMethod(selectedMethod);
         }
 
         setDeliveryEditObj({
-          deliveryName: foundItem?.name!,
-          receiverTel: foundItem?.receiverTel!,
-          receiverName: foundItem?.receiverName!,
-          deliveryMessage: foundItem?.deliveryMessage!,
+          deliveryName: data.data?.name!,
+          receiverTel: data.data?.receiverTel!,
+          receiverName: data.data?.receiverName!,
+          deliveryMessage: data.data?.deliveryMessage!,
         });
       }
     } catch (error) {
@@ -214,7 +206,6 @@ const AddressEditPage = ({ id }: IProps) => {
 
   useEffect(() => {
     getAddressItem();
-    return () => dispatch(INIT_ACCESS_METHOD());
   }, []);
 
   useEffect(() => {
