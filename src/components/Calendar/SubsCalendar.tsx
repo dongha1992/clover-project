@@ -212,6 +212,10 @@ const CalendarBox = styled.div`
 
   &.subsCalendar {
     // 캘린더 화살표 <,> + YYYY년 MM월 헤더
+    .react-calendar__tile {
+      margin: 0 !important;
+      border: 0 !important;
+    }
     .react-calendar__navigation {
       display: flex;
       justify-content: space-between;
@@ -233,6 +237,7 @@ const CalendarBox = styled.div`
           font-style: normal;
           font-weight: 700;
           font-size: 16px;
+          color: #242424;
         }
       }
 
@@ -308,6 +313,7 @@ const CalendarBox = styled.div`
           font-weight: 700;
           font-size: 14px;
           z-index: 1;
+          color: #242424;
         }
 
         // 날짜 선택 된 상태
@@ -325,6 +331,7 @@ const CalendarBox = styled.div`
           }
           abbr {
             z-index: 1;
+            color: #fff;
           }
           .deliveryExpectedDate,
           .deliveryComplete,
@@ -334,6 +341,11 @@ const CalendarBox = styled.div`
           .sumDeliveryComplete {
             display: none;
           }
+        }
+      }
+      button:disabled {
+        abbr {
+          color: #c8c8c8;
         }
       }
     }
