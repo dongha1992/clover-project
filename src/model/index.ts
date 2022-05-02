@@ -1632,7 +1632,7 @@ export interface ICreateCartRequest {
 }
 
 export interface IDeleteCartRequest {
-  menuDetailId: number;
+  menuDetailId?: number;
   menuId: number;
 }
 
