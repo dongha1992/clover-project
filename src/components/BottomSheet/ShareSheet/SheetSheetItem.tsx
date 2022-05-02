@@ -38,8 +38,7 @@ const Container = styled.div<{
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: ${({ isCart }) =>
-    !isCart ? theme.greyScale3 : theme.white};
+  background-color: ${({ isCart }) => (!isCart ? theme.greyScale3 : theme.white)};
   border-radius: 8px;
   margin-bottom: 8px;
   color: ${({ isSoldout }) => isSoldout && theme.greyScale25};

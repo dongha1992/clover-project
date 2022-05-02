@@ -354,6 +354,7 @@ export interface IDestinationsResponse {
   delivery?: TDeliveryType | string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
+  deliveryTime?: string;
   name?: string;
   receiverTel?: string;
   receiverName?: string;
@@ -386,17 +387,15 @@ export interface IGetDestinationsRequest {
 }
 
 export interface IEditDestinationRequest {
-  address: string | undefined;
-  addressDetail: string | undefined;
-  delivery: TDeliveryType | undefined;
-  deliveryMessage?: string;
-  dong: string | undefined;
+  delivery: TDeliveryType | string;
+  deliveryMessage?: string | null;
+  deliveryMessageType: string | null;
   main: boolean;
   name?: string;
-  id: number;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | undefined;
+  location: ILocation;
+  spotPickupId?: number | null;
 }
 
 export interface IGetMainDestinationsRequest {
@@ -1447,7 +1446,7 @@ export interface ISearchReviews {
   rating: number;
   content: string;
   createdAt: string;
-  images: IMenuImageInReivew[];
+  images?: IMenuImageInReivew[];
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
@@ -1463,10 +1462,13 @@ export interface ISearchReviewImages {
 }
 
 export interface IMenuImageInReivew {
+  createdAt?: string;
   id: number;
+  name?: string;
+  originalName?: string;
+  size: number;
   url: string;
   width: number;
-  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1475,7 +1477,7 @@ export interface IMenuReviews {
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews[];
+  data: IMenuReviews;
   message: string;
 }
 
@@ -1600,7 +1602,7 @@ export interface ICreateCartRequest {
 }
 
 export interface IDeleteCartRequest {
-  menuDetailId: number;
+  menuDetailId?: number;
   menuId: number;
 }
 

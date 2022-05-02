@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useQuery } from 'react-query';
-import { Obj, ISearchReviews, IMenuReviews } from '@model/index';
+import { Obj, ISearchReviews, IMenuReviews, ISearchReviewImages } from '@model/index';
 import { groupBy, pipe } from '@fxts/core';
 import { getMenuDetailReviewApi } from '@api/menu';
 
@@ -41,10 +41,10 @@ const TotalReviewPage = ({ menuId }: any) => {
   );
 
   const getAverageRate = () => {
-    const totalRating = data?.searchReviews.reduce((rating: number, review: ISearchReviews) => {
-      return rating + review.rating;
-    }, 0);
-    return (totalRating / data?.searchReviews.length).toFixed(1);
+    const totalRating = data?.searchReviews?.reduce((rating: number, review: ISearchReviews) => {
+      return rating + review?.rating;
+    }, 0)!;
+    return (totalRating / data?.searchReviews.length!).toFixed(1);
   };
 
   const goToReviewImages = useCallback(() => {
@@ -62,8 +62,8 @@ const TotalReviewPage = ({ menuId }: any) => {
   /* TODO: 함수화 */
 
   const idByReviewImg: Obj = pipe(
-    data?.searchReviewImages,
-    groupBy((review: any) => review.menuReviewId)
+    data?.searchReviewImages!,
+    groupBy((review: ISearchReviewImages) => review?.menuReviewId!)
   );
 
   const mergedReviews = data?.searchReviews.map((review: ISearchReviews) => {
@@ -74,7 +74,7 @@ const TotalReviewPage = ({ menuId }: any) => {
     return <div>로딩</div>;
   }
 
-  const hasReivew = data?.searchReviews.length > 0;
+  const hasReivew = data?.searchReviews?.length! > 0;
 
   return (
     <Container>
@@ -105,7 +105,7 @@ const TotalReviewPage = ({ menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {mergedReviews.map((review: any, index: number) => {
+        {mergedReviews?.map((review: any, index: number) => {
           return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
       </ReviewWrapper>

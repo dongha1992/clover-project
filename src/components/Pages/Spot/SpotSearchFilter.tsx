@@ -16,36 +16,31 @@ import { SET_SPOTS_FILTERED, spotSelector, INIT_SPOT_FILTERED } from '@store/spo
 
 const SpotSearchFilter = () => {
   const dispatch = useDispatch();
-  const { 
-    spotsSearchResultFiltered
-  } = useSelector(spotSelector);
+  const { spotsSearchResultFiltered } = useSelector(spotSelector);
 
-  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(['']);
-  const [selectedRadioId, setSelectedRadioId] = useState(1);
+  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
+  const [selectedRadioId, setSelectedRadioId] = useState<string>('');
   const [publicToggle, setPublicToggle] = useState(false);
   const [privateToggle, setPrivateToggle] = useState(false);
 
-  const { data: spotsFilter } = useQuery(
-    ['spotList', 'station'],
-    async () => {
-      const response = await getSpotsFilter();
-      return response.data.data;
-    },
-  );
+  const { data: spotsFilter } = useQuery(['spotList', 'station'], async () => {
+    const response = await getSpotsFilter();
+    return response.data.data;
+  });
 
   const checkboxHandler = (id: string) => {
     const findItem = selectedCheckboxIds.find((_id) => _id === id);
     const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
-  
+
     if (id === '') {
       setSelectedCheckboxIds(['']);
       return;
-    };
+    }
 
     if (findItem) {
       tempSelectedCheckboxIds.filter((_id) => _id !== id);
     } else {
-    const allCheckedIdx = tempSelectedCheckboxIds.indexOf('');
+      const allCheckedIdx = tempSelectedCheckboxIds.indexOf('');
       if (allCheckedIdx !== -1) {
         tempSelectedCheckboxIds.splice(allCheckedIdx, 1);
       }
@@ -54,10 +49,10 @@ const SpotSearchFilter = () => {
     setSelectedCheckboxIds(tempSelectedCheckboxIds);
   };
 
-  const radioButtonHandler = (id: number) => {
-    setSelectedRadioId(id);
+  const radioButtonHandler = (value: string) => {
+    setSelectedRadioId(value);
   };
-  
+
   const changePublicToggleHandler = () => {
     setPublicToggle(!publicToggle);
   };
@@ -73,11 +68,13 @@ const SpotSearchFilter = () => {
   };
 
   const clickButtonHandler = () => {
-    dispatch(SET_SPOTS_FILTERED({
-      ...spotsSearchResultFiltered,
-      public: publicToggle,
-      private: privateToggle,
-    }));
+    dispatch(
+      SET_SPOTS_FILTERED({
+        ...spotsSearchResultFiltered,
+        public: publicToggle,
+        private: privateToggle,
+      })
+    );
     dispatch(INIT_BOTTOM_SHEET());
   };
 
@@ -93,15 +90,13 @@ const SpotSearchFilter = () => {
         <OrderFilter
           data={RADIO_CHECKBOX_SPOT}
           changeHandler={radioButtonHandler}
-          selectedRadioId={selectedRadioId}
+          selectedRadioValue={selectedRadioId}
         />
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="0 24px 16px 0">
           <FlexCol>
             <TextH4B color={theme.black}>프코스팟</TextH4B>
-            <TextB3R color={theme.greyScale65}>
-              동네 주민 모두 이용 가능한 스팟
-            </TextB3R>
+            <TextB3R color={theme.greyScale65}>동네 주민 모두 이용 가능한 스팟</TextB3R>
           </FlexCol>
           <ToggleButton onChange={changePublicToggleHandler} status={publicToggle} />
         </FlexBetween>
@@ -114,9 +109,7 @@ const SpotSearchFilter = () => {
         <FlexBetween padding="0 24px 16px 0">
           <FlexCol>
             <TextH4B color={theme.black}>프라이빗 스팟</TextH4B>
-            <TextB3R color={theme.greyScale65}>
-              임직원 등 특정 대상만 이용 가능한 스팟
-            </TextB3R>
+            <TextB3R color={theme.greyScale65}>임직원 등 특정 대상만 이용 가능한 스팟</TextB3R>
           </FlexCol>
           <ToggleButton onChange={changePrivateToggleHandler} status={privateToggle} />
         </FlexBetween>
@@ -132,21 +125,11 @@ const SpotSearchFilter = () => {
         />
       </Wrapper>
       <ButtonContainer>
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={initSpotFilterHandler}
-        >
+        <Button height="100%" width="100%" borderRadius="0" onClick={initSpotFilterHandler}>
           전체 초기화
         </Button>
         <Col />
-        <Button
-          height="100%"
-          width="100%"
-          borderRadius="0"
-          onClick={clickButtonHandler}
-        >
+        <Button height="100%" width="100%" borderRadius="0" onClick={clickButtonHandler}>
           적용하기
         </Button>
       </ButtonContainer>
