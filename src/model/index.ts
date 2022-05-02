@@ -816,6 +816,12 @@ export interface IEditRegistration {
   userName: string;
   userPosition?: string | null;
   userTel: string;
+  id?: number;
+  step?: string;
+  rejected?: boolean;
+  createdAt?: string;
+  recruited?: boolean;
+  recruitingCount?: number;
 }
 
 export interface IPostRegistrations {
@@ -875,7 +881,7 @@ export interface IGetSpotsRegistrationsStatus {
     total: number;
     totalPage: number;
   };
-  spotRegistrations: [IEditRegistration];
+  spotRegistrations: IEditRegistration[];
 }
 
 export interface IGetSpotsRegistrationsStatusResponse {
