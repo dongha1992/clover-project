@@ -56,7 +56,7 @@ import { Retryer } from 'react-query/types/core/retryer';
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
-const disabledDates = [];
+const disabledDates: any = ['2022-02-22'];
 
 const INITIAL_NUTRITION = {
   protein: 0,
@@ -117,7 +117,7 @@ const CartPage = () => {
 
   // 스팟 종료 날짜
   const dt = new Date(userDestination?.closedDate!);
-  const openDate = `${dt?.getMonth()+1}월 ${dt.getDate()}일`;
+  const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일`;
 
   const { isLoading } = useQuery(
     'getCartList',
@@ -132,11 +132,14 @@ const CartPage = () => {
       cacheTime: 0,
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
-        reOrderCartList(data);
-
-        setNutritionObj(getTotalNutrition(data));
-        dispatch(INIT_CART_LISTS());
-        dispatch(SET_CART_LISTS(data));
+        try {
+          reOrderCartList(data);
+          setNutritionObj(getTotalNutrition(data));
+          dispatch(INIT_CART_LISTS());
+          dispatch(SET_CART_LISTS(data));
+        } catch (error) {
+          console.error(error);
+        }
       },
     }
   );
@@ -623,11 +626,12 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getItemsPrice = useCallback((): number => {
-    return (
-      checkedMenus?.reduce((totalPrice, item) => {
-        return totalPrice + item.price * item.quantity;
-      }, 0) || 0
-    );
+    // return (
+    //   checkedMenus?.reduce((totalPrice, item) => {
+    //     return totalPrice + item?.price! * item?.quantity!;
+    //   }, 0) || 0
+    // );
+    return 0;
   }, [checkedMenus]);
 
   const buttonRenderer = useCallback(() => {
@@ -714,8 +718,8 @@ const CartPage = () => {
     setIsFirstRender(true);
   }, []);
 
-  useEffect(()=> {
-    if(isClosed === 'true'){
+  useEffect(() => {
+    if (isClosed === 'true') {
       dispatch(
         SET_ALERT({
           alertMessage: `해당 프코스팟은\n${openDate}에 운영 종료돼요!`,
@@ -723,17 +727,20 @@ const CartPage = () => {
         })
       );
     }
-
-  }, [isLoading])
+  }, [isLoading]);
 
   if (isLoading) {
     return <div>로딩</div>;
   }
 
+  if (!cartItemList) {
+    return <div>알수없는에러</div>;
+  }
+
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
 
-  if (cartItemList.length === 0) {
+  if (cartItemList && cartItemList.length === 0) {
     return (
       <EmptyContainer>
         <FlexColStart>

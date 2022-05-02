@@ -15,8 +15,7 @@ interface IProps {
 }
 
 const TermSheet = ({ title, versions, currentVersion }: IProps) => {
-  const [selectedVersion, setSelectedVersion] =
-    useState<number>(currentVersion);
+  const [selectedVersion, setSelectedVersion] = useState<number>(currentVersion);
 
   const dispatch = useDispatch();
 
@@ -48,10 +47,7 @@ const TermSheet = ({ title, versions, currentVersion }: IProps) => {
 
           return (
             <PickWrapper key={index}>
-              <RadioButton
-                onChange={() => changeRadioHandler(version.version)}
-                isSelected={isSelected}
-              />
+              <RadioButton onChange={() => changeRadioHandler(version.version)} isSelected={isSelected} />
 
               {isSelected ? (
                 <TextH5B padding="0 0 0 8px">{formatDate}</TextH5B>

@@ -171,14 +171,14 @@ const AddressEditPage = ({ id }: IProps) => {
     const hasAccessMethod = selectedAccessMethod?.value!;
     const reqBody = {
       delivery: selectedAddress?.delivery!,
-      deliveryMessage: null,
+      deliveryMessage: selectedAddress?.deliveryMessage ? selectedAddress?.deliveryMessage : null,
       deliveryMessageType: hasAccessMethod ? selectedAccessMethod?.value! : null,
       main: isDefaultSpot,
       receiverName: deliveryEditObj.receiverName,
       receiverTel: deliveryEditObj.receiverTel,
       location: selectedAddress?.location!,
-      name: '',
-      spotPickupId: 1,
+      name: selectedAddress?.name,
+      spotPickupId: selectedAddress?.spotPickup?.id ? selectedAddress?.spotPickup?.id : null,
     };
 
     const { data } = await editDestinationApi(id, reqBody);
@@ -220,6 +220,12 @@ const AddressEditPage = ({ id }: IProps) => {
   useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_ACCESS_METHOD());
+    };
+  });
 
   return (
     <Container>
