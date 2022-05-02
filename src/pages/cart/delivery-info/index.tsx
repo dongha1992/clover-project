@@ -18,12 +18,10 @@ import {
 } from '@store/destination';
 import { destinationForm } from '@store/destination';
 import { postDestinationApi, getMainDestinationsApi } from '@api/destination';
-
 import { CheckTimerByDelivery } from '@components/CheckTimer';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
+import { checkTimerLimitHelper, checkIsValidTimer } from '@utils/destination';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import { useRouter } from 'next/router';
-import checkIsValidTimer from '@utils/checkIsValidTimer';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
 import { IDestinationsResponse } from '@model/index';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
@@ -313,13 +311,11 @@ const DeliverInfoPage = () => {
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
     if (userDeliveryType) {
-      if (!isSubscription) {
-        setUserSelectDeliveryType(userDeliveryType);
-      } else {
-        // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
+      if (isSubscription) {
+        // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
         subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
-        subsDeliveryType === 'parcel' && setUserSelectDeliveryType('parcel');
-        subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
+      } else {
+        setUserSelectDeliveryType(userDeliveryType);
       }
     }
   };
@@ -383,14 +379,16 @@ const DeliverInfoPage = () => {
       if (!isSubscription) {
         setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
         setIsMaindestination(true);
-      } else {
-        // 구독상품으로 들어왔을 때 구독상품 타입에 맞는 배송방법 체크
-        subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
-        subsDeliveryType === 'parcel' && setUserSelectDeliveryType('parcel');
-        subsDeliveryType === 'morning' && setUserSelectDeliveryType('morning');
       }
     }
   }, [userTempDestination, recentOrderDelivery, userDestination]);
+
+  useEffect(() => {
+    if (isSubscription) {
+      // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
+      subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+    }
+  }, [isSubscription]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
@@ -408,13 +406,14 @@ const DeliverInfoPage = () => {
   }, []);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
+  const subsParcelAndMorning = ['parcel', 'morning'].includes(subsDeliveryType as string);
 
   return (
     <Container>
       <Wrapper>
         <TextH3B padding="24px 0">배송방법</TextH3B>
         <DeliveryMethodWrapper>
-          {subsDeliveryType !== 'parcel' && subsDeliveryType !== 'morning' && (
+          {!subsParcelAndMorning && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 픽업

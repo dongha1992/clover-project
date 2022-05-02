@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FlexRow, theme, FlexBetween, FlexEnd, FlexRowStart } from '@styles/theme';
 import { TextH4B, TextB3R, TextB1R, TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
@@ -19,7 +19,7 @@ import { mypageSelector } from '@store/mypage';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { OrderDetailInfo, SubOrderInfo, OrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
+import { AxiosError } from 'axios';
 // temp
 
 const disabledDates = [];
@@ -65,9 +66,26 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     },
     {
       onSuccess: async () => {
+        if (orderDeliveries?.type === 'SUB') {
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: (
+                <OrderCancelSheet
+                  name={orderDetail?.name!}
+                  url={orderDetail?.image.url!}
+                  payAmount={orderDetail?.payAmount!}
+                  orderId={orderDetail?.id!}
+                />
+              ),
+            })
+          );
+        } else {
+          router.push('/mypage/order-delivery-history');
+        }
+
         await queryClient.refetchQueries('getOrderDetail');
-        router.push('/mypage/order-delivery-history');
       },
+      onError: async (error: AxiosError) => {},
     }
   );
 
@@ -86,10 +104,11 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const isDelivering = orderDeliveries?.status === 'DELIVERING';
   const canChangeDelivery = orderDeliveries?.status === 'RESERVED';
   const isSubOrder = orderDeliveries?.type === 'SUB';
+  const hasSubOrder = orderDeliveries?.subOrderDelivery;
+  const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
   const deliveryId = orderDeliveries?.id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
-  const name = orderDetail?.name;
 
   const showSectionHandler = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
@@ -172,11 +191,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       return;
     }
 
-    // dispatch(SET_BOTTOM_SHEET({ content: <OrderCancelSheet name={name!} url={url!} payAmount={payAmount!} /> }));
-
     const deliveryId = orderDeliveries?.id!;
-    const subOrderId = !isSubOrder && orderDeliveries?.subOrderDelivery?.order?.id;
-    const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
 
     let alertMessage = '';
     let submitBtnText = '확인';
@@ -185,10 +200,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     if (isSubOrder) {
       alertMessage = '함께배송 주문은 취소 후 재주문할 수 없어요. 정말 취소하시겠어요?';
       onSubmit = () => deleteOrderMutation(deliveryId);
-    } else if (!isSubOrder && !isSubOrderCanceled) {
+    } else if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       alertMessage = '함께배송 주문을 먼저 취소해야 기존 주문을 취소할 수 있어요. 함께배송 주문을 취소하시겠어요?';
       submitBtnText = '주문 취소하기';
-      onSubmit = () => router.push(`/mypage/order-detail/cancel/${subOrderId}`);
+      onSubmit = () => router.push(`/mypage/order-detail/cancel/${orderId}`);
+    } else if (!hasSubOrder) {
+      alertMessage = '정말 주문을 취소하시겠어요?';
+      onSubmit = () => deleteOrderMutation(deliveryId);
     } else {
       alertMessage = '정말 주문을 취소하시겠어요?';
       onSubmit = () => deleteOrderMutation(deliveryId);
@@ -209,7 +227,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       return;
     }
 
-    if (!isSubOrder) {
+    console.log(orderDetail, '@@@@@@');
+
+    if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송일을 변경하시면 함께배송 주문 배송일도 함께 변경됩니다. 변경하시겠어요?',

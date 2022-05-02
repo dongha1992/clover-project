@@ -1,20 +1,22 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { theme, FlexRow, homePadding, FlexBetweenStart, FlexCol, FlexBetween } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TabList } from '@components/Shared/TabList';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getPointHistoryApi, getPointApi } from '@api/point';
 import { postPromotionCodeApi } from '@api/promotion';
 import { IPointHistories } from '@model/index';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
@@ -40,24 +42,7 @@ const PointPage = () => {
       };
       const { data } = await getPointHistoryApi(params);
       if (data.code === 200) {
-        //  return data.data.pointHistories
-        return [
-          ...data.data.pointHistories.map((item) => {
-            return { ...item, id: 36, createdAt: '2022-02-22 11:11:11' };
-          }),
-          ...data.data.pointHistories.map((item) => {
-            return { ...item, createdAt: '2021-02-22 11:11:11' };
-          }),
-          ...data.data.pointHistories.map((item) => {
-            return { ...item, id: 38, createdAt: '2021-02-21 11:11:11' };
-          }),
-          ...data.data.pointHistories.map((item) => {
-            return { ...item, id: 39, createdAt: '2021-02-20 11:11:11' };
-          }),
-          ...data.data.pointHistories.map((item) => {
-            return { ...item, id: 40, createdAt: '2021-02-19 11:11:11' };
-          }),
-        ];
+        return data.data.pointHistories;
       }
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
@@ -83,18 +68,9 @@ const PointPage = () => {
         };
         const { data } = await postPromotionCodeApi(reqBody);
 
-        let alertMessage = '';
-        if (data.code === 2002) {
-          alertMessage = '이미 등록한 프로모션 코드입니다.';
-        } else if (data.code === 1105) {
-          alertMessage = '존재하지 않는 프로모션 코드입니다.';
-        } else {
-          alertMessage = '프로모션 코드가 등록되었습니다.';
-        }
-
         return dispatch(
           SET_ALERT({
-            alertMessage,
+            alertMessage: '프로모션 코드가 등록되었습니다.',
             submitBtnText: '확인',
           })
         );
@@ -102,7 +78,22 @@ const PointPage = () => {
     },
     {
       onSuccess: async () => {
-        /* TODO: 성공 혹 실패시 작업 */
+        await queryClient.refetchQueries('getPoint');
+        await queryClient.refetchQueries('getPointHistoryList');
+      },
+      onError: async (error: any) => {
+        let alertMessage = '';
+        if (error.code === 2202) {
+          alertMessage = '이미 등록한 프로모션 코드입니다.';
+        } else if (error.code === 1105) {
+          alertMessage = '존재하지 않는 프로모션 코드입니다.';
+        }
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
       },
     }
   );
@@ -114,6 +105,10 @@ const PointPage = () => {
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
+
+  useEffect(() => {
+    dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+  }, []);
 
   if (isLoading || pointLoading) {
     return <div>로딩</div>;

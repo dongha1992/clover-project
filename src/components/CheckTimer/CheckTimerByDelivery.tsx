@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { Obj } from '@model/index';
-import checkTimerLimitHelper from '@utils/checkTimerLimitHelper';
-import checkIsValidTimer from '@utils/checkIsValidTimer';
+import { checkTimerLimitHelper, checkIsValidTimer } from '@utils/destination';
 import useTimer from '@hooks/useTimer';
 import { TextH6B, TextB2R, TextH5B } from '@components/Shared/Text';
 import { theme, FlexRow } from '@styles/theme';
@@ -25,18 +24,11 @@ const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
 
   const { timer } = useTimer();
 
-  let deliveryType = checkIsValidTimer(checkTimerLimitHelper()).replace(
-    '타이머',
-    ''
-  );
+  let deliveryType = checkIsValidTimer(checkTimerLimitHelper()).replace('타이머', '');
 
   const msgHandler = () => {
     /* TODO: state 관리 필요? */
-    setTimerMsg(
-      `${targetDelivery} 마감 ${timer} 전 ${
-        isTooltip ? `(${msgMapper[targetDelivery]})` : ''
-      }`
-    );
+    setTimerMsg(`${targetDelivery} 마감 ${timer} 전 ${isTooltip ? `(${msgMapper[targetDelivery]})` : ''}`);
   };
 
   useEffect(() => {
@@ -54,14 +46,7 @@ const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
   }
 
   if (isTooltip) {
-    return (
-      <TimerTooltip
-        message={timerMsg}
-        bgColor={theme.brandColor}
-        color={theme.white}
-        minWidth="78px"
-      />
-    );
+    return <TimerTooltip message={timerMsg} bgColor={theme.brandColor} color={theme.white} minWidth="78px" />;
   } else if (isCartSheet) {
     return (
       <FlexRow>

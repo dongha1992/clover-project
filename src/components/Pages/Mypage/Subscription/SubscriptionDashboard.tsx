@@ -1,9 +1,8 @@
 import React from 'react';
 import { TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
 import { FlexCol, FlexRow, theme, FlexBetween, FlexColCenter, FlexCenter } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
-
 import router from 'next/router';
 
 interface IDeliveryList {

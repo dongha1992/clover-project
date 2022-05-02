@@ -8,17 +8,13 @@ import Checkbox from '@components/Shared/Checkbox';
 import { Button } from '@components/Shared/Button';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
 import { userForm } from '@store/user';
 
 const RegisterPage = () => {
-  const { 
-    spotLocation, 
-    spotsRegistrationOptions, 
-    spotsRegistrationInfo,
-  } = useSelector(spotSelector);
+  const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;

@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText, FlexBetween } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
+import { ISearchReviews } from '@model/index';
 interface IProps {
-  review: any;
+  review: ISearchReviews;
   clickImgViewHandler: (imgUrlForViwer: string[]) => void;
 }
 
 const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
-  const [isShow, setIsShow] = useState<boolean>(false);
+  const [isShow, setIsShow] = useState<boolean>(true);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
+
+  const isContentHide = review.content.length >= 280;
 
   return (
     <>
@@ -25,7 +28,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
         <Wrapper>
           <ReviewContent>
             <FlexBetween padding="0 0 16px 0">
-              <TextH5B onClick={() => router.push(`/menu/${review.menuDetailId}`)}>{review.menuName}</TextH5B>
+              <TextH5B onClick={() => router.push(`/menu/${review.menuId}`)}>{review.menuName}</TextH5B>
               <TextH6B
                 color={theme.greyScale65}
                 textDecoration="underline"
@@ -49,16 +52,30 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
               </RatingAndUser>
             </ReviewHeader>
             <ReviewBody isShow={isShow}>
-              <TextB3R>{review.content.repeat(10)}</TextB3R>
+              <TextB3R>{review.content}</TextB3R>
             </ReviewBody>
-            {isShow ? (
-              <TextH6B color={theme.greyScale65} textDecoration="underLine" onClick={() => setIsShow(!isShow)}>
-                전체 보기
-              </TextH6B>
+            {isContentHide ? (
+              isShow ? (
+                <TextH6B
+                  padding="0 0 4px 0"
+                  color={theme.greyScale65}
+                  textDecoration="underLine"
+                  onClick={() => setIsShow(!isShow)}
+                >
+                  전체 보기
+                </TextH6B>
+              ) : (
+                <TextH6B
+                  padding="0 0 4px 0"
+                  color={theme.greyScale65}
+                  textDecoration="underLine"
+                  onClick={() => setIsShow(!isShow)}
+                >
+                  접기
+                </TextH6B>
+              )
             ) : (
-              <TextH6B color={theme.greyScale65} textDecoration="underLine" onClick={() => setIsShow(!isShow)}>
-                접기
-              </TextH6B>
+              ''
             )}
             {review.images && (
               <ImgWrapper>

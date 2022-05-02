@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { theme, verticalCenter } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 
 interface IProps {
-  id: number;
+  menuDetailId: number;
   quantity: number;
-  clickPlusButton: (id: number, quantity: number) => void;
-  clickMinusButton: (id: number, quantity: number) => void;
+  clickPlusButton: (menuDetailId: number, quantity: number) => void;
+  clickMinusButton: (menuDetailId: number, quantity: number) => void;
 }
 
-const CountButton = ({ id, quantity, clickPlusButton, clickMinusButton }: IProps) => {
+const CountButton = ({ menuDetailId, quantity, clickPlusButton, clickMinusButton }: IProps) => {
   return (
     <Container>
       <Wrapper>
-        <Minus onClick={() => clickMinusButton(id, quantity < 2 ? 1 : (quantity = quantity - 1))}>
+        <Minus onClick={() => clickMinusButton(menuDetailId, quantity < 2 ? 1 : (quantity = quantity - 1))}>
           <SVGIcon name="minus" />
         </Minus>
         <Count>
           <TextH6B margin="4px 0 0 0">{quantity}</TextH6B>
         </Count>
-        <Plus onClick={() => clickPlusButton(id, (quantity = quantity + 1))}>
+        <Plus onClick={() => clickPlusButton(menuDetailId, (quantity = quantity + 1))}>
           <SVGIcon name="plus" />
         </Plus>
       </Wrapper>

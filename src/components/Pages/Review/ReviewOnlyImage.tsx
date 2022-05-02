@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH5B } from '@components/Shared/Text';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import StarRatingComponent from 'react-star-rating-component';

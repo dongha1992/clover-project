@@ -1,7 +1,7 @@
 import Badge from '@components/Item/Badge';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { FlexWrapWrapper, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import Image from 'next/image';
 import router from 'next/router';
 import styled from 'styled-components';
@@ -42,7 +42,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
           [주2회 배송] 부담없는 샐러드+간편식 식단
         </TextB3R>
         <FlexWrapWrapper>
-          <TextH5B>900Kcal 집중관리</TextH5B>
+          <TextH5B>72,000원 ~</TextH5B>
           <Like>
             <SVGIcon name="like" />
             <TextB3R padding="3px 0 0">10</TextB3R>

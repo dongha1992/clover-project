@@ -1,4 +1,3 @@
-import { onUnauthorized } from '@api/Api';
 import { SubsCalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -8,23 +7,20 @@ import { Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm } from '@store/destination';
-import {
-  SET_SUBS_DELIVERY_EXPECTED_DATE,
-  SET_SUBS_DELIVERY_TIME,
-  SET_SUBS_START_DATE,
-  subscriptionForm,
-} from '@store/subscription';
+import { subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import axios from 'axios';
 import { isNil } from 'lodash-es';
 import router from 'next/router';
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
+import { getMainDestinationsApi } from '@api/destination';
+import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 const subsDeliveryType: any = 'spot';
@@ -65,7 +61,19 @@ const SubsSetInfoPage = () => {
       },
     }
   );
-  if (isLoading) return <div>...로딩중</div>;
+
+  const { data: mainDestinations, isLoading: mainDestinationsLoading } = useQuery(
+    'getMainDestinations',
+    async () => {
+      const params = {
+        delivery: 'SPOT',
+      };
+      const { data } = await getMainDestinationsApi(params);
+      console.log('mainDestinations', data.data);
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const changeRadioHanler = async (value: string) => {
     setUserSelectPeriod(value);
@@ -92,29 +100,16 @@ const SubsSetInfoPage = () => {
     router.push('/subscription/register');
   };
 
+  if (isLoading && mainDestinationsLoading) return <div>...로딩중</div>;
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
   return (
     <Container>
-      <DeliveryMethodAndPickupLocation onClick={goToDeliveryInfo}>
-        <Left>
-          <TextH4B>{ment[subsDeliveryType]}</TextH4B>
-          <TextH4B>
-            {!isNil(userDestination)
-              ? userDestination?.location?.dong
-              : (subsDeliveryType === 'spot' && '픽업장소를 설정해주세요') ||
-                ((subsDeliveryType === 'parcel' || subsDeliveryType === 'morning') && '배송지를 설정해주세요')}
-          </TextH4B>
-          <TextB3R color={theme.greyScale65} padding="8px 0 0">
-            배송방법이 제한된 상품입니다.
-          </TextB3R>
-        </Left>
-        <Right>
-          <SVGIcon name="arrowRight" />
-        </Right>
-      </DeliveryMethodAndPickupLocation>
-
+      <SubsDeliveryTypeAndLocation
+        goToDeliveryInfo={goToDeliveryInfo}
+        subsDeliveryType="spot"
+        mainDestinations={mainDestinations}
+      />
       <BorderLine height={8} />
-
       <PeriodBox>
         <TextH4B padding="0 0 24px">구독 기간</TextH4B>
         <RadioWrapper>
