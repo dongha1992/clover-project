@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { homePadding, theme } from '@styles/theme';
+import { FixedTab, homePadding, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { WillWriteReviewItem, ReviewInfo, CompleteReviewItem } from '@components/Pages/Mypage/Review';
-import { breakpoints } from '@utils/getMediaQuery';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import { useQuery } from 'react-query';
 import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
-import { COMPLETE, WILL_WRITE } from '@constants/menu/index';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -31,10 +30,8 @@ const ReviewPage = () => {
   } = useQuery<IWillWriteReview[]>(
     'getWillWriteReview',
     async () => {
-      // temp
-      // const { data } = await getWillWriteReviews();
-      // return data.data;
-      return WILL_WRITE.data.data;
+      const { data } = await getWillWriteReviews();
+      return data.data;
     },
 
     {
@@ -51,11 +48,8 @@ const ReviewPage = () => {
   } = useQuery<ICompletionReviews[]>(
     'getCompleteWriteReview',
     async () => {
-      // temp
-      // const { data } = await getCompleteReviews();
-
-      // return data.data;
-      return COMPLETE.data.data;
+      const { data } = await getCompleteReviews();
+      return data.data;
     },
 
     {
@@ -74,8 +68,8 @@ const ReviewPage = () => {
   };
 
   const countObj = {
-    '작성 예정': 123,
-    '작성 완료': 55,
+    '작성 예정': willWriteList?.length,
+    '작성 완료': completeWriteList?.length,
   };
 
   if (completeIsLoading || willWriteIsLoading) {
@@ -147,27 +141,6 @@ const Center = styled.div`
   justify-content: center;
   align-items: center;
   height: 70vh;
-`;
-
-const FixedTab = styled.div`
-  position: fixed;
-  width: 100%;
-  left: calc(50%);
-  right: 0;
-  background-color: white;
-  max-width: ${breakpoints.mobile}px;
-  width: 100%;
-
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 0px;
-
-  `};
-
-  ${({ theme }) => theme.mobile`
-    margin: 0 auto;
-    left: 0px;
-  `};
 `;
 
 export default ReviewPage;

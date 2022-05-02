@@ -17,7 +17,7 @@ import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -32,12 +32,14 @@ import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { createOrderPreviewApi, createOrderApi } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard, ILocation, ICoupon } from '@model/index';
+import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
-import getCustomDate from '@utils/getCustomDate';
+import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm } from '@store/order';
+import SlideToggle from '@components/Shared/SlideToggle';
+import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
@@ -106,6 +108,7 @@ const OrderPage = () => {
     receiverTel: '',
     point: 0,
   });
+  const [loadingState, setLoadingState] = useState(false);
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
@@ -140,9 +143,12 @@ const OrderPage = () => {
     async () => {
       const reqBody = {
         payMethod: 'NICE_BILLING',
-        cardId: 81,
+        cardId: getMainCardHandler(previewOrder?.cards)?.id!,
         ...previewOrder?.order!,
       };
+
+      setLoadingState(true);
+
       const { data } = await createOrderApi(reqBody);
       const { id: orderId } = data.data;
       return orderId;
@@ -151,6 +157,7 @@ const OrderPage = () => {
       onError: () => {},
       onSuccess: async (orderId: number) => {
         router.push({ pathname: '/order/finish', query: { orderId } });
+        setLoadingState(false);
       },
     }
   );
@@ -259,7 +266,7 @@ const OrderPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -280,7 +287,7 @@ const OrderPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -303,7 +310,7 @@ const OrderPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -355,10 +362,8 @@ const OrderPage = () => {
       case 'SPOT': {
         return (
           <>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
+            <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!</TextB3R>
+            <TextB3R color={theme.brandColor}>
               단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
               취소할 수 있어요!
             </TextB3R>
@@ -369,10 +374,8 @@ const OrderPage = () => {
       case 'MORNING': {
         return (
           <>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
+            <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!</TextB3R>
+            <TextB3R color={theme.brandColor}>
               단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
             </TextB3R>
           </>
@@ -403,6 +406,11 @@ const OrderPage = () => {
     return cards.find((c) => c.main);
   };
 
+  const paymentHandler = () => {
+    if (loadingState) return;
+    mutateCreateOrder();
+  };
+
   useEffect(() => {
     const { isSelected } = checkForm.samePerson;
 
@@ -419,7 +427,6 @@ const OrderPage = () => {
 
   useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
-    console.log(previewOrder, 'previewOrder');
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
@@ -428,11 +435,6 @@ const OrderPage = () => {
       setUserInputObj({ ...userInputObj, point: limitPoint });
     }
   }, [checkForm.alwaysPointAll.isSelected]);
-
-  // if (isNil(userDestination)) {
-  //   router.replace('/cart');
-  //   return <div>장바구니로 이동합니다.</div>;
-  // }
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
@@ -454,6 +456,7 @@ const OrderPage = () => {
     deliveryFee,
     coupon,
   } = previewOrder?.order!;
+
   const { deliveryDate, spotName, spotPickupName, orderOptions, deliveryStartTime, deliveryEndTime } =
     previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
@@ -480,11 +483,20 @@ const OrderPage = () => {
             <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
-        <OrderListWrapper isShow={showSectionObj.showOrderItemSection}>
-          {orderMenus?.map((menu, index) => {
-            return <OrderItem menu={menu} key={index} />;
-          })}
-        </OrderListWrapper>
+        <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.3}>
+          <OrderListWrapper>
+            {orderMenus?.map((menu, index) => {
+              return <OrderItem menu={menu} key={index} />;
+            })}
+          </OrderListWrapper>
+        </SlideToggle>
+        {/* <TextB2R padding="8px 0 16px 0" color={theme.brandColor}>
+          5주간, 주 2회씩 (화·목) 총 9회 배송되는 식단입니다.
+        </TextB2R>
+        <SubsOrderItem /> */}
+        {/* <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
+          <SubsOrderList />
+        </SlideToggle> */}
       </OrderItemsWrapper>
       <BorderLine height={8} margin="16px 0 0 0" />
       <CustomerInfoWrapper>
@@ -495,20 +507,22 @@ const OrderPage = () => {
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
-        <CustomInfoList isShow={showSectionObj.showCustomerInfoSection}>
-          <FlexBetween>
-            <TextH5B>보내는 사람</TextH5B>
-            <TextB2R>{userName}</TextB2R>
-          </FlexBetween>
-          <FlexBetween margin="16px 0">
-            <TextH5B>휴대폰 전화</TextH5B>
-            <TextB2R>{userTel}</TextB2R>
-          </FlexBetween>
-          <FlexBetween>
-            <TextH5B>이메일</TextH5B>
-            <TextB2R>{userEmail}</TextB2R>
-          </FlexBetween>
-        </CustomInfoList>
+        <SlideToggle state={showSectionObj.showCustomerInfoSection} duration={0.3}>
+          <CustomInfoList>
+            <FlexBetween>
+              <TextH5B>보내는 사람</TextH5B>
+              <TextB2R>{userName}</TextB2R>
+            </FlexBetween>
+            <FlexBetween margin="16px 0">
+              <TextH5B>휴대폰 전화</TextH5B>
+              <TextB2R>{userTel}</TextB2R>
+            </FlexBetween>
+            <FlexBetween>
+              <TextH5B>이메일</TextH5B>
+              <TextB2R>{userEmail}</TextB2R>
+            </FlexBetween>
+          </CustomInfoList>
+        </SlideToggle>
       </CustomerInfoWrapper>
       <BorderLine height={8} margin="24px 0 0 0" />
       <ReceiverInfoWrapper>
@@ -571,7 +585,7 @@ const OrderPage = () => {
             <FlexRow padding="0 0 8px 0">
               <SVGIcon name="exclamationMark" />
               <TextH6B padding="2px 0 0 2px" color={theme.brandColor}>
-                반드시 확인해주세요!
+                주문 변경 및 취소 시 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
             {cancelOrderInfoRenderer(delivery, deliveryDetail)}
@@ -721,7 +735,9 @@ const OrderPage = () => {
           <>
             <BorderLine height={1} margin="24px 0" />
             {previewOrder?.cards?.length! > 0 ? (
-              <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+              <>
+                <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards)} />
+              </>
             ) : (
               <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
                 카드 등록하기
@@ -730,7 +746,11 @@ const OrderPage = () => {
           </>
         )}
       </OrderMethodWrapper>
-      <BorderLine height={8} />
+      {/* <SubsPaymentMethod
+        previewOrder={previewOrder}
+        goToCardManagemnet={goToCardManagemnet}
+        getMainCardHandler={getMainCardHandler}
+      /> */}
       <TotalPriceWrapper>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
@@ -745,7 +765,7 @@ const OrderPage = () => {
           <TextB2R>상품 할인</TextB2R>
           <TextB2R>{menuDiscount}원</TextB2R>
         </FlexBetween>
-        {eventDiscount && (
+        {eventDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>스팟 이벤트 할인</TextB2R>
             <TextB2R>{eventDiscount}원</TextB2R>
@@ -827,8 +847,15 @@ const OrderPage = () => {
             자세히
           </TextH6B>
         </FlexRow>
+        {/* <FlexRow padding="8px 0 0 0">
+          <Checkbox isSelected onChange={checkOrderTermHandler} />
+          <TextB2R padding="0 8px">정기구독 이용약관・주의사항 동의 (필수)</TextB2R>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
+            자세히
+          </TextH6B>
+        </FlexRow> */}
       </OrderTermWrapper>
-      <OrderBtn onClick={() => mutateCreateOrder()}>
+      <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%">
           {payAmount}원 결제하기
         </Button>
@@ -841,8 +868,7 @@ const Container = styled.div``;
 const OrderItemsWrapper = styled.div`
   ${homePadding}
 `;
-const OrderListWrapper = styled.div<{ isShow: boolean }>`
-  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
+const OrderListWrapper = styled.div`
   flex-direction: column;
   padding: 24px 0 0 0;
 `;
@@ -856,9 +882,8 @@ const CustomerInfoWrapper = styled.div`
   flex-direction: column;
 `;
 
-const CustomInfoList = styled.div<{ isShow: boolean }>`
+const CustomInfoList = styled.div`
   padding-top: 24px;
-  display: ${({ isShow }) => (isShow ? 'flex' : 'none')};
   flex-direction: column;
 `;
 const ReceiverInfoWrapper = styled.div`

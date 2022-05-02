@@ -1,17 +1,8 @@
-import DetailBottomStory from './DetailBottomStory';
-import DetailBottomStoreInfo from './DetailBottomStoreInfo';
-import OptionsSheet from './OptionsSheet';
-import SpotsSearchItem from './SpotsSearchItem';
-import SpotList from './SpotList';
-import SpotRecommendList from './SpotRecommendList';
-import SpotSearchFilter from './SpotSearchFilter';
-
-export {
-  DetailBottomStory,
-  DetailBottomStoreInfo,
-  OptionsSheet,
-  SpotsSearchItem,
-  SpotList,
-  SpotRecommendList,
-  SpotSearchFilter,
-};
+export { default as DetailBottomStory } from './DetailBottomStory';
+export { default as DetailBottomStoreInfo } from './DetailBottomStoreInfo';
+export { default as OptionsSheet } from './OptionsSheet';
+export { default as SpotsSearchResultList } from './SpotsSearchResultList';
+export { default as SpotList } from './SpotList';
+export { default as SpotRecommendList } from './SpotRecommendList';
+export { default as SpotSearchFilter } from './SpotSearchFilter';
+export { default as SpotRecentPickupList } from './SpotRecentPickupList';

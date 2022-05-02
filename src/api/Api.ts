@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { getCookie } from '@utils/cookie';
+import { getCookie } from '@utils/common';
 import { userRefreshToken } from './user';
 import router from 'next/router';
 
@@ -109,6 +109,5 @@ Api.interceptors.request.use((req) => {
 
 export const onError = (error: AxiosError): Promise<never> => {
   const { status } = (error.response as AxiosResponse) || 500;
-  console.log(error, 'error onError');
-  return Promise.reject(error);
+  return Promise.reject(error.response?.data);
 };

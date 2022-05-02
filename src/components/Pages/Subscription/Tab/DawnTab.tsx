@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import SbsItem from '../SbsItem';
+import { SubsItem } from '@components/Pages/Subscription';
 
 const DawnTab = () => {
   return (
     <DawnBox>
       {[1, 2, 3, 4].map((item, index) => (
-        <SbsItem key={index} />
+        <SubsItem key={index} item={item} />
       ))}
     </DawnBox>
   );

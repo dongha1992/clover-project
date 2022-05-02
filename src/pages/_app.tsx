@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import GlobalStyle from '@styles/GlobalStyle';
 import Wrapper from '@components/Layout/Wrapper';
 import { theme } from '@styles/theme';
-import { mediaQuery } from '@utils/getMediaQuery';
+import { getMediaQuery } from '@utils/common';
 import { ThemeProvider } from 'styled-components';
 import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -25,7 +25,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
-import { getCookie } from '@utils/cookie';
+import { getCookie } from '@utils/common/cookie';
 
 /*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
@@ -105,7 +105,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <title>프레시코드</title>
       </Head>
       <QueryClientProvider client={queryClient.current}>
-        <ThemeProvider theme={{ ...theme, ...mediaQuery, isWithContentsSection, isMobile }}>
+        <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
           <PersistGate persistor={store.__persistor}>
             <Wrapper>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { TextH6B } from '@components/Shared/Text';
@@ -30,13 +30,13 @@ export const deliveryDetailMap: Obj = {
 
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();
-  const [withInDays, setWithInDays] = useState<number>(90);
+  const [withInDays, setWithInDays] = useState<string>('90');
 
   const { data, isLoading } = useQuery(
     ['getOrderLists', withInDays],
     async () => {
       const params = {
-        days: withInDays,
+        days: Number(withInDays),
         page: 1,
         size: 10,
         type: 'GENERAL',

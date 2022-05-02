@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import Image from 'next/image';
 import router from 'next/router';
@@ -11,9 +11,91 @@ import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { postPromotionCodeApi } from '@api/promotion';
+import { userRecommendationApi } from '@api/user';
+import { SET_ALERT } from '@store/alert';
 
 const WelcomeSheet = () => {
   const dispatch = useDispatch();
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  const { mutateAsync: mutatePostPromotionCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const reqBody = {
+          code: codeRef?.current?.value,
+          reward: null,
+        };
+
+        const { data } = await postPromotionCodeApi(reqBody);
+
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '프로모션 코드가 등록되었습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        }
+      }
+    },
+    {
+      onSuccess: async (data) => {},
+      onError: async (error: any) => {
+        if (error.code === 2202) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '이미 프로모션에 참여했습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        } else {
+          return await mutatePostRecommendationCode();
+        }
+      },
+    }
+  );
+
+  const { mutateAsync: mutatePostRecommendationCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const params = {
+          recommendCode: codeRef?.current.value,
+        };
+
+        const { data } = await userRecommendationApi(params);
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '프로모션 코드가 등록되었습니다.',
+              submitBtnText: '확인',
+            })
+          );
+        }
+      }
+    },
+    {
+      onSuccess: async (data) => {
+        console.log(data, 'ON SUCCESS');
+      },
+      onError: async (error: any) => {
+        let alertMessage = '';
+        if (error.code === 2201) {
+          alertMessage = '이미 추천한 친구가 있습니다.';
+        } else if (error.code === 1105) {
+          alertMessage = '존재하지 않은 친구 추천 코드입니다.';
+        }
+
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
+      },
+    }
+  );
 
   return (
     <Container>
@@ -53,14 +135,14 @@ const WelcomeSheet = () => {
           <TextB2R>(가입 이후에도 마이페이지{'>'}쿠폰조회 에서 등록 가능)</TextB2R>
           <FlexCol padding="24px 0 0 0">
             <FlexRow>
-              <TextInput margin="0 8px 0 0" />
-              <Button width="30%" height="48px">
+              <TextInput margin="0 8px 0 0" ref={codeRef} />
+              <Button width="30%" height="48px" onClick={() => mutatePostPromotionCode()}>
                 등록하기
               </Button>
             </FlexRow>
-            <TextB3R color={theme.brandColor} padding="2px 0 0 16px">
+            {/* <TextB3R color={theme.brandColor} padding="2px 0 0 16px">
               사용할 수 있는 프로모션 코드입니다.
-            </TextB3R>
+            </TextB3R> */}
           </FlexCol>
         </PromotionWrapper>
       </Body>

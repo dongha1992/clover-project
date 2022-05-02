@@ -8,7 +8,7 @@ import { Item } from '@components/Item';
 import { SearchResult, RecentSearch } from '@components/Pages/Search';
 import { homePadding, FlexWrapWrapper } from '@styles/theme';
 import Link from 'next/link';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 /*TODO: 검색 결과는 slug와 static props로? */

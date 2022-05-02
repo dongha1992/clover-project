@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FlexRow, theme, FlexCol, FlexRowStart } from '@styles/theme';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { TextB3R, TextH6B } from '@components/Shared/Text';
 
 interface IProps {
@@ -70,7 +70,6 @@ const SubOrderInfo = ({ isChange, isDestinationChange }: IProps) => {
 const SubOrderInfoWrapper = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
-  margin-top: 16px;
 `;
 
 const SVGWrapper = styled.div`

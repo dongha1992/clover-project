@@ -2,8 +2,8 @@ import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH7B, TextB4R } from '@components/Shared/Text';
-import { breakpoints } from '@utils/getMediaQuery';
-import SVGIcon from '@utils/SVGIcon';
+import { breakpoints } from '@utils/common/getMediaQuery';
+import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 
 const textStyle = {
@@ -11,30 +11,23 @@ const textStyle = {
 };
 
 const BOTTOM_MENU = [
+  { id: 1, text: '홈', link: '/', svg: 'home', activeSvg: 'homeActive' },
   {
-    id: 1,
-    text: '간편주문',
-    link: '/quickorder',
-    svg: 'fastOrder',
-    activeSvg: 'fastOrderActive',
-  },
-  { id: 2, text: '홈', link: '/', svg: 'home', activeSvg: 'homeActive' },
-  {
-    id: 3,
+    id: 2,
     text: '구독',
     link: '/subscription',
     svg: 'subscription',
     activeSvg: 'subscriptionActive',
   },
   {
-    id: 4,
+    id: 3,
     text: '프코스팟',
     link: '/spot',
     svg: 'fcoSpot',
     activeSvg: 'fcoSpotActive',
   },
   {
-    id: 5,
+    id: 4,
     text: '마이',
     link: '/mypage',
     svg: 'mypage',
@@ -62,9 +55,7 @@ const Bottom = () => {
       <MenuWrapper>
         {BOTTOM_MENU.map((menu, index) => (
           <MenuItem onClick={() => goToPage(menu.link)} key={index}>
-            <SVGIcon
-              name={selectedTab === menu.link ? menu.activeSvg : menu.svg}
-            />
+            <SVGIcon name={selectedTab === menu.link ? menu.activeSvg : menu.svg} />
             {selectedTab === menu.link ? (
               <TextH7B {...textStyle}>{menu.text}</TextH7B>
             ) : (

@@ -2,7 +2,7 @@ import React, { useRef, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { textBody2, theme } from '@styles/theme';
 
 export type InputType =

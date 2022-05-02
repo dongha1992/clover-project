@@ -4,7 +4,7 @@ import { theme, FlexBetween } from '@styles/theme';
 import { TextH2B, TextB3R, TextH4B, TextH5B, TextB2R } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import { LocationInfo, OpenInfo, UserInfo } from '@components/Pages/Mypage/Spot';
 
 const SpotStatusDetailPage = () => {

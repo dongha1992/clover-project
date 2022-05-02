@@ -6,7 +6,7 @@ import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextB4R 
 import Image from 'next/image';
 import Loading from '@components/Loading';
 import { Tag } from '@components/Shared/Tag';
-import SVGIcon from '@utils/SVGIcon';
+import { SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewList } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
@@ -22,9 +22,8 @@ import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
-import { BASE_URL, IMAGE_S3_URL } from '@constants/mock';
 import { ALL_REVIEW } from '@constants/menu';
-import { getMenuDisplayPrice } from '@utils/getMenuDisplayPrice';
+import { getMenuDisplayPrice } from '@utils/menu';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 

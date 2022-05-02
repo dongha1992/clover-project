@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import SVGIcon from '@utils/SVGIcon';
-import { breakpoints } from '@utils/getMediaQuery';
+import { SVGIcon } from '@utils/common';
+import { breakpoints } from '@utils/common/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
 import { userForm } from '@store/user';

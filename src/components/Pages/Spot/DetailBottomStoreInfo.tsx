@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextH4B, TextB1R, TextB1B } from '@components/Shared/Text';
 import Map from '@components/Map';
+import { FlexColStart } from '@styles/theme';
 
 interface IProps {
   lat?: number;
@@ -30,7 +31,14 @@ const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday, placeTel}:
         </FlexWrapper>
         <FlexWrapper>
           <TextH4B margin="0 33px 0 0">휴무일</TextH4B>
-          <TextB1R>{placeHoliday}</TextB1R>
+          <FlexColStart>
+            <TextB1R>{placeHoliday}</TextB1R>
+            {
+              placeHoliday === '연중무휴' && (
+                <TextB1R>(갑작스런 휴무일은 공지나 소식을 통해 확인할 수 있어요.)</TextB1R>
+              )
+            }
+          </FlexColStart>
         </FlexWrapper>
       </Wrapper>
       <MapWrapper>
