@@ -63,7 +63,7 @@ const MypagePage = () => {
     }
   );
 
-  if (!isNil(orderList) && isLoginSuccess) {
+  if (isNil(orderList) && isLoginSuccess) {
     return <div>로딩</div>;
   }
 
