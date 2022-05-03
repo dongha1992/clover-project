@@ -9,6 +9,7 @@ import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { FixedTab } from '@styles/theme';
 import { useQuery } from 'react-query';
+import { getCartsApi } from '@api/cart';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -17,8 +18,6 @@ const TAB_LIST = [
 
 const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
-  const [pickupList, setpickupList] = useState([]);
-  const [deliveryList, setDeliveryList] = useState<IDestinationsResponse[]>([]);
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectedTab],
@@ -37,11 +36,27 @@ const AddressManagementPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  const { data: cartList, isError } = useQuery(
+    'getCartList',
+    async () => {
+      const { data } = await getCartsApi();
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      onSuccess: (data) => {},
+    }
+  );
+
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
 
-  const goToCart = () => {};
+  const goToCart = () => {
+    // const hasCartItem = cartList.
+  };
 
   const goToEdit = (id: number) => {
     router.push(`/mypage/address/edit/${id}`);

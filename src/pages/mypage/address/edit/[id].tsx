@@ -25,19 +25,15 @@ import { IDestinationsResponse } from '@model/index';
 import { Obj } from '@model/index';
 import router from 'next/router';
 import { getValues } from '@utils/common';
-import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD } from '@constants/order';
+import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/order';
 import { IAccessMethod } from '@pages/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
+import { DELIVERY_TIME_MAP } from '@constants/order';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { userForm } from '@store/user';
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
-
-const mapper: Obj = {
-  MORNING: '새벽배송',
-  SPOT: '스팟배송',
-  PARCEL: '택배배송',
-  QUICK: '퀵배송',
-};
 
 interface IProps {
   id: number;
@@ -60,40 +56,78 @@ const AddressEditPage = ({ id }: IProps) => {
     receiverTel: '',
     receiverName: '',
     deliveryMessage: '',
+    isAccessReuse: false,
   });
 
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const { userAccessMethod } = useSelector(commonSelector);
-
+  const { me } = useSelector(userForm);
+  console.log(me, 'ME');
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
   const isMorning = selectedAddress?.delivery === 'MORNING';
+  const isQuick = selectedAddress?.delivery === 'QUICK';
 
-  const getAddressItem = async () => {
-    try {
+  const { data, isLoading } = useQuery(
+    ['getAddressDetail'],
+    async () => {
       const { data } = await getDestinationApi(id);
-      if (data.code === 200) {
-        setSelectedAddress(data.data);
+      return data.data;
+    },
+    {
+      onSuccess: (data) => {
+        setSelectedAddress(data);
 
-        const isMorning = data.data?.delivery === 'MORNING';
+        const isMorning = data?.delivery === 'MORNING';
 
         if (isMorning) {
-          const userSelectMethod = getValues(data.data, 'deliveryMessageType');
+          const userSelectMethod = getValues(data, 'deliveryMessageType');
           const selectedMethod = ACCESS_METHOD.find((item) => item.value === userSelectMethod);
           setSelectedAccessMethod(selectedMethod);
         }
-
+        console.log(data);
         setDeliveryEditObj({
-          deliveryName: data.data?.name!,
-          receiverTel: data.data?.receiverTel!,
-          receiverName: data.data?.receiverName!,
-          deliveryMessage: data.data?.deliveryMessage!,
+          ...deliveryEditObj,
+          deliveryName: data?.name!,
+          receiverTel: data?.receiverTel!,
+          receiverName: data?.receiverName!,
+          deliveryMessage: data?.deliveryMessage!,
         });
-      }
-    } catch (error) {
-      console.error(error);
+      },
+      onSettled: async () => {},
+
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
     }
-  };
+  );
+
+  const { mutateAsync: mutationDeleteAddress } = useMutation(
+    async () => {
+      await deleteDestinationsApi(id);
+    },
+    {
+      onSuccess: async () => {
+        dispatch(INIT_ACCESS_METHOD());
+        router.push('/mypage/address');
+        await queryClient.refetchQueries('getDestinationList');
+      },
+      onError: async (error: any) => {},
+    }
+  );
+
+  const { mutateAsync: mutationEditAddress } = useMutation(async (reqBody: any) => {}, {
+    onSuccess: async () => {
+      await queryClient.refetchQueries('getAddressDetail');
+      dispatch(
+        SET_ALERT({
+          alertMessage: '내용을 수정했어요!',
+          submitBtnText: '확인',
+        })
+      );
+    },
+    onError: async (error: any) => {},
+  });
 
   const checkSamePerson = () => {};
 
@@ -102,10 +136,21 @@ const AddressEditPage = ({ id }: IProps) => {
   };
 
   const removeAddressHandler = () => {
+    if (selectedAddress?.main) {
+      return dispatch(
+        SET_ALERT({
+          alertMessage: isSpot
+            ? '기본 프코스팟은 삭제할 수 없어요. 먼저 기본 프코스팟을 변경해 주세요!'
+            : '기본 배송지는 삭제할 수 없어요. 먼저 기본 배송지를 변경해 주세요!',
+          submitBtnText: '확인',
+        })
+      );
+    }
+
     dispatch(
       SET_ALERT({
         alertMessage: isSpot ? '프코스팟을 삭제하시겠어요?' : '배송지를 삭제하시겠어요?',
-        onSubmit: () => removeAddress(),
+        onSubmit: () => mutationDeleteAddress(),
         submitBtnText: '확인',
         closeBtnText: '취소',
       })
@@ -119,9 +164,10 @@ const AddressEditPage = ({ id }: IProps) => {
 
     dispatch(
       SET_ALERT({
-        alertMessage: '내용을 수정했습니다.',
+        alertMessage: '내용을 수정하시겠습니까?',
         onSubmit: () => editAddress(),
         submitBtnText: '확인',
+        closeBtnText: '취소',
       })
     );
   };
@@ -174,22 +220,18 @@ const AddressEditPage = ({ id }: IProps) => {
     };
 
     const { data } = await editDestinationApi(id, reqBody);
-  };
-
-  const removeAddress = async () => {
-    try {
-      const { data } = await deleteDestinationsApi(id);
-      if (data.code === 200) {
-        router.push('/mypage/address');
-      }
-    } catch (error) {
-      console.error(error);
+    if (data.code === 200) {
+      dispatch(INIT_ACCESS_METHOD());
     }
   };
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
+  };
+
+  const checkAccessReuse = () => {
+    setDeliveryEditObj({ ...deliveryEditObj, isAccessReuse: !deliveryEditObj.isAccessReuse });
   };
 
   const selectAccessMethodHandler = () => {
@@ -205,19 +247,12 @@ const AddressEditPage = ({ id }: IProps) => {
   };
 
   useEffect(() => {
-    getAddressItem();
-  }, []);
-
-  useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(INIT_ACCESS_METHOD());
-    };
-  });
-
+  if (isLoading) {
+    return <div>로딩중</div>;
+  }
   return (
     <Container>
       <Wrapper>
@@ -252,32 +287,67 @@ const AddressEditPage = ({ id }: IProps) => {
         <DevlieryInfoWrapper>
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>배송정보</TextH4B>
+
             {isSpot && (
               <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
                 픽업 장소 변경
               </TextH6B>
             )}
           </FlexBetween>
-          {/* {isSpot ? } */}
-          <FlexCol>
-            <FlexBetween padding="0 0 16px 0">
-              <TextH5B>배송방법</TextH5B>
-              <TextB2R>{mapper[selectedAddress?.delivery!]}</TextB2R>
-            </FlexBetween>
-            <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{selectedAddress?.location?.addressDetail}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{selectedAddress?.location?.address}</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          </FlexCol>
+          {isSpot ? (
+            <FlexCol>
+              <FlexBetween padding="0 0 16px 0">
+                <TextH5B>배송방법</TextH5B>
+                <TextB2R>
+                  {DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}-{DELIVERY_TIME_MAP[selectedAddress?.deliveryDetail!]}
+                </TextB2R>
+              </FlexBetween>
+              <FlexBetweenStart>
+                <TextH5B>픽업 장소</TextH5B>
+                <FlexColEnd>
+                  <TextB2R>{selectedAddress?.spotPickup?.name}</TextB2R>
+                  <TextB3R color={theme.greyScale65}>
+                    ({selectedAddress.location?.zipCode}) {selectedAddress?.location?.address}
+                  </TextB3R>
+                </FlexColEnd>
+              </FlexBetweenStart>
+            </FlexCol>
+          ) : (
+            <FlexCol>
+              {isQuick ? (
+                <FlexBetween padding="0 0 16px 0">
+                  <TextH5B>배송방법</TextH5B>
+                  <TextB2R>
+                    {DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}-
+                    {DELIVERY_TIME_MAP[selectedAddress?.deliveryDetail!]}
+                  </TextB2R>
+                </FlexBetween>
+              ) : (
+                <FlexBetween padding="0 0 16px 0">
+                  <TextH5B>배송방법</TextH5B>
+                  <TextB2R>{DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}</TextB2R>
+                </FlexBetween>
+              )}
+
+              <FlexBetweenStart>
+                <TextH5B>베송지</TextH5B>
+                <FlexColEnd>
+                  <TextB2R>{selectedAddress?.location?.address}</TextB2R>
+                  <TextB3R color={theme.greyScale65}> {selectedAddress?.location?.addressDetail}</TextB3R>
+                </FlexColEnd>
+              </FlexBetweenStart>
+            </FlexCol>
+          )}
         </DevlieryInfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (
           <VisitorAccessMethodWrapper>
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
+              <FlexRow>
+                <Checkbox onChange={checkAccessReuse} isSelected={deliveryEditObj.isAccessReuse} />
+                <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
+              </FlexRow>
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>

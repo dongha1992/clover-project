@@ -305,9 +305,9 @@ const CartPage = () => {
 
   const reOrderCartList = (data: IGetCart[]) => {
     const checkMenusId = checkedMenus.map((item) => item.menuId);
-    setCartItemList(data);
-    const updatedQuantity = data.filter((item) => checkMenusId.includes(item.menuId));
+    const updatedQuantity = data?.filter((item) => checkMenusId.includes(item.menuId));
     setCheckedMenus(updatedQuantity);
+    setCartItemList(data);
   };
 
   const getTotalNutrition = (
@@ -316,7 +316,7 @@ const CartPage = () => {
     calorie: number;
     protein: number;
   } => {
-    return menus.reduce(
+    return menus?.reduce(
       (total, menu) => {
         return menu.menuDetails.reduce((total, cur) => {
           return {
@@ -873,14 +873,14 @@ const CartPage = () => {
   if (!cartItemList) {
     return (
       <EmptyContainer>
-        <FlexColStart>
+        <FlexCol width="100%">
           <DeliveryTypeAndLocation
             goToDeliveryInfo={goToDeliveryInfo}
             deliveryType={destinationObj.delivery!}
             deliveryDestination={destinationObj.location}
           />
           <BorderLine height={8} margin="24px 0" />
-        </FlexColStart>
+        </FlexCol>
         <FlexCol width="100%">
           <TextB2R padding="0 0 32px 0" center>
             장바구니가 비었어요 😭
@@ -1191,7 +1191,6 @@ const Container = styled.div`
 
 const EmptyContainer = styled.div`
   height: 100vh;
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
