@@ -50,7 +50,7 @@ const OrderCancelPage = ({ orderId }: IProps) => {
   );
 
   const subOrder = orderDetail?.orderDeliveries[0].subOrderDelivery;
-  console.log(orderDetail, 'orderDetail');
+
   const { mutate: deleteOrderMutation } = useMutation(
     async (deliveryId: number) => {
       const { data } = await deleteDeliveryApi(deliveryId);
