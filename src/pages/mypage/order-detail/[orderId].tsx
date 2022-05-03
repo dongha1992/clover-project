@@ -89,8 +89,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   );
 
-  console.log(orderDetail, 'orderDetail');
-
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
   const orderDeliveries = orderDetail && orderDetail?.orderDeliveries[0]!;
   const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
@@ -223,11 +221,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDevlieryDateHandler = () => {
-    if (!canChangeDelivery || isSubOrder) {
-      return;
-    }
-
-    console.log(orderDetail, '@@@@@@');
+    // if (!canChangeDelivery || isSubOrder) {
+    //   return;
+    // }
 
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
@@ -381,7 +377,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={isCanceled || isSubOrder}
+            disabled={!canChangeDelivery || isSubOrder}
             onClick={changeDeliveryInfoHandler}
             margin="0 16px 0 0"
           >

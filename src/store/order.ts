@@ -8,6 +8,7 @@ interface TProps {
   deliveryDate: string;
   isInitDelay: boolean;
   tempOrder: IOrderPreviewRequest | null;
+  selectedCard: number | null;
 }
 
 const initialState: TProps = {
@@ -16,6 +17,7 @@ const initialState: TProps = {
   isInitDelay: false,
   deliveryDate: '',
   tempOrder: null,
+  selectedCard: null,
 };
 
 export const order = createSlice({
@@ -41,8 +43,16 @@ export const order = createSlice({
     INIT_ORDER: (state, action: PayloadAction) => {
       state.tempOrder = null;
     },
+
+    SET_CARD: (state, action: PayloadAction<number | null>) => {
+      state.selectedCard = action.payload;
+    },
+    INIT_CARD: (state, action: PayloadAction) => {
+      state.selectedCard = null;
+    },
   },
 });
-export const { SET_ORDER_TYPE, SET_TIMER_STATUS, INIT_TIMER, SET_ORDER } = order.actions;
+export const { SET_ORDER_TYPE, SET_TIMER_STATUS, INIT_TIMER, SET_ORDER, SET_CARD, INIT_CARD, INIT_ORDER } =
+  order.actions;
 export const orderForm = (state: AppState): TProps => state.order;
 export default order.reducer;

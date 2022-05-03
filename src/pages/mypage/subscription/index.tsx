@@ -29,7 +29,6 @@ const SubscriptionManagementPage = () => {
     ({ link }: any) => {
       setSelectedTab(link);
     },
-    // console.log(selectedTab);
 
     [selectedTab]
   );
