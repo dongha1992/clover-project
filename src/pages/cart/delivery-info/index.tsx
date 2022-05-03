@@ -175,8 +175,8 @@ const DeliverInfoPage = () => {
           delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
           deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
           main: tempDestination?.main!,
-          receiverName: tempDestination?.receiverName ? tempDestination.receiverName : '테스트',
-          receiverTel: tempDestination?.receiverTel ? tempDestination.receiverTel : '01012341234',
+          receiverName: tempDestination?.receiverName,
+          receiverTel: tempDestination?.receiverTel,
           location: {
             addressDetail: tempDestination?.location?.addressDetail!,
             address: tempDestination?.location?.address!,

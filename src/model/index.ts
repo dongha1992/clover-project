@@ -359,6 +359,7 @@ export interface ISpotPickupInDestinaion {
 export interface IDestinationsResponse {
   id?: number;
   delivery?: TDeliveryType | string;
+  deliveryDetail?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
   deliveryTime?: string;
