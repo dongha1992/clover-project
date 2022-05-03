@@ -168,7 +168,7 @@ const OrderPage = () => {
         cardId: card?.id!,
         point: userInputObj?.point,
         payAmount: payAmount - (userInputObj.point + selectedCoupon?.value!),
-        couponId: selectedCoupon?.id,
+        couponId: selectedCoupon?.id || null,
         ...rest,
       };
 

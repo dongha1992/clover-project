@@ -256,7 +256,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
               isSheet
               title="배송일 변경"
               disabledDates={disabledDates}
-              deliveryAt={orderDeliveries.deliveryDate!}
+              deliveryAt={orderDeliveries?.deliveryDate!}
               deliveryId={deliveryId}
             />
           ),
