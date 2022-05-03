@@ -67,13 +67,14 @@ const PointPage = () => {
           reward: 'POINT',
         };
         const { data } = await postPromotionCodeApi(reqBody);
-
-        return dispatch(
-          SET_ALERT({
-            alertMessage: '프로모션 코드가 등록되었습니다.',
-            submitBtnText: '확인',
-          })
-        );
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '등록을 완료했어요!',
+              submitBtnText: '확인',
+            })
+          );
+        }
       }
     },
     {
@@ -84,9 +85,9 @@ const PointPage = () => {
       onError: async (error: any) => {
         let alertMessage = '';
         if (error.code === 2202) {
-          alertMessage = '이미 등록한 프로모션 코드입니다.';
+          alertMessage = '이미 등록된 프로모션 코드예요.';
         } else if (error.code === 1105) {
-          alertMessage = '존재하지 않는 프로모션 코드입니다.';
+          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         }
         return dispatch(
           SET_ALERT({

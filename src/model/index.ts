@@ -248,17 +248,14 @@ export interface ICommon {
 export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 
 export interface IRegisterDestinationRequest {
-  address: string | null;
-  addressDetail: string;
   delivery?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  dong?: string | null;
   main: boolean;
   name: string;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | null;
+  location: ILocation;
 }
 
 export interface IRegisterDestination {
@@ -342,11 +339,21 @@ export interface ISpotInSpotPickUp {
   placeType: string;
   visiblePlaceTel: boolean;
 }
+
+export interface ISpotImageInDestination {
+  height: number;
+  size: number;
+  url: string;
+  width: number;
+}
 export interface ISpotPickupInDestinaion {
   id: number;
   name: string;
   spot: ISpotInSpotPickUp;
   type: string;
+  spotId: number;
+  createdAt: string;
+  images: ISpotImageInDestination[];
 }
 
 export interface IDestinationsResponse {
@@ -354,6 +361,7 @@ export interface IDestinationsResponse {
   delivery?: TDeliveryType | string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
+  deliveryTime?: string;
   name?: string;
   receiverTel?: string;
   receiverName?: string;
@@ -380,23 +388,44 @@ export interface IGetDestinationsResponse {
   };
 }
 
+export interface IDestination {
+  createdAt: string;
+  delivery: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  id: number;
+  location: ILocation;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+  spotPickup: ISpotPickupInDestinaion;
+}
+
+export interface IGetDestinationResponse {
+  code: number;
+  message: string;
+  data: IDestination;
+}
+
 export interface IGetDestinationsRequest {
   page: number;
   size: number;
+  deliveries?: string | null;
+  delivery?: string | null;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface IEditDestinationRequest {
-  address: string | undefined;
-  addressDetail: string | undefined;
-  delivery: TDeliveryType | undefined;
-  deliveryMessage?: string;
-  dong: string | undefined;
+  delivery: TDeliveryType | string;
+  deliveryMessage?: string | null;
+  deliveryMessageType: string | null;
   main: boolean;
   name?: string;
-  id: number;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | undefined;
+  location: ILocation;
+  spotPickupId?: number | null;
 }
 
 export interface IGetMainDestinationsRequest {
@@ -628,25 +657,7 @@ export interface ISpotRegistrationsResponse {
   data: {
     title: string;
     subTitle: string;
-    spotRegistrations: [
-      {
-        id: number;
-        placeName: string;
-        image: {
-          id: number;
-          name: string;
-          url: string;
-          width: number;
-          height: number;
-          size: number;
-          createdAt: string;
-        };
-        recruited: boolean;
-        recruitingCount: number;
-        distance: number;
-        distanceUnit: string;
-      }
-    ];
+    spotRegistrations: ISpotsDetail[];
   };
 }
 
@@ -940,7 +951,8 @@ export type TPayMethod =
   | 'TOSS_CARD'
   | 'TOSS_MONEY';
 export interface ICreateOrderRequest {
-  coupon: number;
+  /*TODO: 모델 수정해야함 */
+  couponId: number;
   delivery: string;
   deliveryDetail: string;
   deliveryFee: number;
@@ -964,6 +976,11 @@ export interface ICreateOrderRequest {
   payAmount: number;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderRequestInOrderDeliveries[];
+  isReuseDeliveryMessage?: string;
+  subscriptionMenuDetailId?: number;
+  subscriptionRound?: number;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
 }
 
 export interface IOrderRequestInOrderDeliveries {
@@ -1343,7 +1360,7 @@ export interface ICreateOrder {
   deliveryDetail?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   name: string;
   menuQuantity: number;
   refundMenuQuantity: number;
@@ -1465,7 +1482,7 @@ export interface ISearchReviews {
   rating: number;
   content: string;
   createdAt: string;
-  images: IMenuImageInReivew[];
+  images?: IMenuImageInReivew[];
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
@@ -1481,10 +1498,13 @@ export interface ISearchReviewImages {
 }
 
 export interface IMenuImageInReivew {
+  createdAt?: string;
   id: number;
+  name?: string;
+  originalName?: string;
+  size: number;
   url: string;
   width: number;
-  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1493,7 +1513,7 @@ export interface IMenuReviews {
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews[];
+  data: IMenuReviews;
   message: string;
 }
 
@@ -1591,6 +1611,8 @@ export interface IMenuDetailsInCart {
   isSold: boolean;
   main: boolean;
   status: TCartMenuStatus;
+  createdAt: string;
+  discountPrice: number;
 }
 
 export interface IGetCart {
@@ -1603,6 +1625,8 @@ export interface IGetCart {
     height: number;
   };
   menuDetails: IMenuDetailsInCart[];
+  isSold: boolean;
+  createdAt: string;
 }
 
 export interface IGetCartResponse {
@@ -1618,7 +1642,7 @@ export interface ICreateCartRequest {
 }
 
 export interface IDeleteCartRequest {
-  menuDetailId: number;
+  menuDetailId?: number;
   menuId: number;
 }
 

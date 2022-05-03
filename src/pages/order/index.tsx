@@ -37,10 +37,10 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { orderForm } from '@store/order';
+import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
-
+import { SET_ALERT } from '@store/alert';
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -108,19 +108,28 @@ const OrderPage = () => {
     receiverTel: '',
     point: 0,
   });
+  const [card, setCard] = useState<IGetCard>();
   const [loadingState, setLoadingState] = useState(false);
 
   const dispatch = useDispatch();
   const { userAccessMethod } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { tempOrder } = useSelector(orderForm);
+  const { tempOrder, selectedCard } = useSelector(orderForm);
 
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { data: previewOrder, isLoading: preveiwOrderLoading } = useQuery(
+  const {
+    data: previewOrder,
+    isLoading: preveiwOrderLoading,
+    isError,
+    error,
+  } = useQuery(
     'getPreviewOrder',
     async () => {
+      if (!tempOrder) {
+        router.push('/');
+      }
       const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
       const previewBody = {
         delivery,
@@ -136,15 +145,31 @@ const OrderPage = () => {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onError: (error: any) => {
+        if (error.code === 5005) {
+        }
+      },
+    }
   );
+
+  console.log(isError, 'IS ERRROR', error);
 
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
+      /*TODO: 모델 수정해야함 */
+      /*TODO:쿠폰 퍼센테이지 */
+      const { point, payAmount, ...rest } = previewOrder?.order!;
+      console.log(selectedCoupon, 'selectedCoupon');
       const reqBody = {
         payMethod: 'NICE_BILLING',
-        cardId: getMainCardHandler(previewOrder?.cards)?.id!,
-        ...previewOrder?.order!,
+        cardId: card?.id!,
+        point: userInputObj?.point,
+        payAmount: payAmount - (userInputObj.point + selectedCoupon?.value!),
+        couponId: selectedCoupon?.id,
+        ...rest,
       };
 
       setLoadingState(true);
@@ -154,10 +179,27 @@ const OrderPage = () => {
       return orderId;
     },
     {
-      onError: () => {},
       onSuccess: async (orderId: number) => {
         router.push({ pathname: '/order/finish', query: { orderId } });
         setLoadingState(false);
+        INIT_ORDER();
+        INIT_CARD();
+      },
+      onError: (error: any) => {
+        if (error.code === 1122) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 쿠폰입니다.',
+            })
+          );
+        } else if (error.code === 5005) {
+          dispatch(
+            SET_ALERT({
+              alertMessage:
+                '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
+            })
+          );
+        }
       },
     }
   );
@@ -227,7 +269,15 @@ const OrderPage = () => {
 
   const useAllOfPointHandler = () => {
     const { point: limitPoint } = previewOrder!;
-    setUserInputObj({ ...userInputObj, point: limitPoint });
+    const { payAmount } = previewOrder?.order!;
+    let avaliablePoint = 0;
+    if (limitPoint < payAmount) {
+      avaliablePoint = payAmount - limitPoint;
+    } else {
+      avaliablePoint = payAmount;
+    }
+
+    setUserInputObj({ ...userInputObj, point: avaliablePoint });
   };
 
   const deliveryDateRenderer = ({
@@ -385,7 +435,7 @@ const OrderPage = () => {
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
-    dispatch(SET_BOTTOM_SHEET({ content: <OrderCouponSheet coupons={coupons} /> }));
+    dispatch(SET_BOTTOM_SHEET({ content: <OrderCouponSheet coupons={coupons} isOrder /> }));
   };
 
   const clearPointHandler = () => {
@@ -393,7 +443,7 @@ const OrderPage = () => {
   };
 
   const goToCardManagemnet = (card: IGetCard) => {
-    router.push('/mypage/card');
+    router.push({ pathname: '/mypage/card', query: { isOrder: true } });
   };
 
   const goToRegisteredCard = () => {
@@ -402,13 +452,26 @@ const OrderPage = () => {
 
   const goToTermInfo = () => {};
 
-  const getMainCardHandler = (cards: IGetCard[] = []) => {
-    return cards.find((c) => c.main);
-  };
-
   const paymentHandler = () => {
     if (loadingState) return;
-    mutateCreateOrder();
+
+    if (previewOrder?.order.delivery === 'MORNING') {
+      /* TODO: alert message 마크다운..? */
+      dispatch(
+        SET_ALERT({
+          alertMessage:
+            '주문변경 및 취소는 배송일 전날 오후 3시까지만 가능합니다.[배송지/배송요청사항] 오기입으로 인해 상품 수령이 불가능하게 될 경우, 고객님의 책임으로 간주되어 보상이 불가능합니다. 배송지를 최종 확인 하셨나요?',
+          closeBtnText: '취소',
+          submitBtnText: '확인',
+          onClose: () => {},
+          onSubmit: () => {
+            mutateCreateOrder();
+          },
+        })
+      );
+    } else {
+      mutateCreateOrder();
+    }
   };
 
   useEffect(() => {
@@ -427,7 +490,6 @@ const OrderPage = () => {
 
   useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
-    console.log(previewOrder, 'previewOrder');
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
@@ -437,8 +499,25 @@ const OrderPage = () => {
     }
   }, [checkForm.alwaysPointAll.isSelected]);
 
+  useEffect(() => {
+    const card = selectedCard
+      ? previewOrder?.cards.find((c) => c.id === selectedCard)
+      : previewOrder?.cards.find((c) => c.main);
+    setCard(card!);
+  }, [previewOrder]);
+
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
+  }
+
+  if (isError) {
+    /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
+    const { code } = error;
+    if (code === 5005) {
+      return <div>선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.</div>;
+    } else {
+      return <div>알수없는 에러발생</div>;
+    }
   }
 
   const {
@@ -702,7 +781,7 @@ const OrderPage = () => {
             전액 사용
           </Button>
         </FlexRow>
-        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point}원</TextB3R>
+        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point - userInputObj.point}원</TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
       <OrderMethodWrapper>
@@ -737,7 +816,7 @@ const OrderPage = () => {
             <BorderLine height={1} margin="24px 0" />
             {previewOrder?.cards?.length! > 0 ? (
               <>
-                <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards)} />
+                <CardItem onClick={goToCardManagemnet} card={card} cardCount={previewOrder?.cards?.length} />
               </>
             ) : (
               <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
@@ -823,13 +902,13 @@ const OrderPage = () => {
         {userInputObj.point > 0 && (
           <FlexBetween>
             <TextH5B>포인트 사용</TextH5B>
-            <TextB2R>{point}원</TextB2R>
+            <TextB2R>{userInputObj.point}원</TextB2R>
           </FlexBetween>
         )}
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextB2R>{payAmount}원</TextB2R>
+          <TextB2R>{payAmount - userInputObj.point}원</TextB2R>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -858,7 +937,7 @@ const OrderPage = () => {
       </OrderTermWrapper>
       <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%">
-          {payAmount}원 결제하기
+          {payAmount - userInputObj.point}원 결제하기
         </Button>
       </OrderBtn>
     </Container>

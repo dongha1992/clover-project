@@ -9,9 +9,11 @@ import { IGetCard } from '@model/index';
 interface IProps {
   onClick: (card: IGetCard) => void;
   card?: IGetCard;
+  cardCount?: number;
+  isOrder?: boolean;
 }
 
-const CardItem = ({ onClick, card }: IProps) => {
+const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>
@@ -24,9 +26,22 @@ const CardItem = ({ onClick, card }: IProps) => {
             </FlexRow>
           </FlexCol>
         </FlexRowStart>
-        <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
-          변경하기
-        </TextH6B>
+
+        {isOrder ? (
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
+            선택하기
+          </TextH6B>
+        ) : (
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
+            변경하기
+          </TextH6B>
+        )}
+
+        {/* {cardCount && cardCount >= 2 && (
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
+            변경하기
+          </TextH6B>
+        )} */}
       </FlexBetweenStart>
     </RegisteredCardWrapper>
   );

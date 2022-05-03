@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { theme } from '@styles/theme';
 interface TSvg {
   [key: string]: ({ width, height }: IStyle) => React.SVGProps<SVGSVGElement> | any;
 }
@@ -8,11 +8,13 @@ interface TProps {
   name: string;
   width?: string;
   height?: string;
+  color?: string;
 }
 
 interface IStyle {
   height?: string;
   width?: string;
+  color?: string;
 }
 
 const svgMap: TSvg = {
@@ -222,16 +224,16 @@ const svgMap: TSvg = {
       <circle cx="8" cy="8" r="5.5" fill="white" stroke="#35AD73" strokeWidth="5" />
     </svg>
   ),
-  minus: () => (
+  minus: ({ color }: IStyle) => (
     <svg width="4" height="3" viewBox="0 0 4 3" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0.367297 2.192H3.6433V0.932H0.367297V2.192Z" fill="#242424" />
+      <path d="M0.367297 2.192H3.6433V0.932H0.367297V2.192Z" fill={color ? color : '#242424'} />
     </svg>
   ),
-  plus: () => (
+  plus: ({ color }: IStyle) => (
     <svg width="8" height="7" viewBox="0 0 8 7" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.3468 6.68H4.6548V4.136H7.0788V2.876H4.6548V0.319999H3.3468V2.876H0.922797V4.136H3.3468V6.68Z"
-        fill="#242424"
+        fill={color ? color : '#242424'}
       />
     </svg>
   ),
@@ -1304,10 +1306,10 @@ const svgMap: TSvg = {
 
 /* TODO: ref */
 
-const SVGIcon = ({ name, width, height }: TProps) => {
+const SVGIcon = ({ name, width, height, color }: TProps) => {
   const MappedSVG = svgMap[name];
 
-  return <MappedSVG width={width} height={height} />;
+  return <MappedSVG width={width} height={height} color={color} />;
 };
 
 export default SVGIcon;

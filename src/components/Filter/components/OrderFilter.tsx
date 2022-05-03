@@ -6,8 +6,8 @@ import { RadioButton } from '@components/Shared/Button';
 
 type TProps = {
   data: any;
-  changeHandler: (value: number) => void;
-  selectedRadioValue: number;
+  changeHandler: (value: string) => void;
+  selectedRadioValue: string;
 };
 
 const OrderFilter = ({ data, changeHandler, selectedRadioValue }: TProps) => {
@@ -16,7 +16,6 @@ const OrderFilter = ({ data, changeHandler, selectedRadioValue }: TProps) => {
       <BtnContainer>
         {data &&
           data.map((item: any, index: number) => {
-            console.log(item);
             const isSelected = selectedRadioValue === item.value;
             return (
               <FlexRow key={index}>

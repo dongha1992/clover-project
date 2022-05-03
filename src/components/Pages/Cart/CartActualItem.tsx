@@ -7,7 +7,7 @@ import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
 import { IMenuDetailsInCart } from '@model/index';
-
+import { getDiscountPrice } from '@utils/menu';
 interface IProps {
   menuDetail: IMenuDetailsInCart;
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
@@ -17,6 +17,8 @@ interface IProps {
   menuId: number;
 }
 
+/* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
+
 const CartActualItem = ({
   menuDetail,
   removeCartActualItemHandler,
@@ -25,8 +27,13 @@ const CartActualItem = ({
   clickRestockNoti,
   menuId,
 }: IProps) => {
+  const { discount, discountedPrice } = getDiscountPrice({
+    discountPrice: menuDetail.discountPrice,
+    price: menuDetail.price,
+  });
+
   return (
-    <Container isSoldout={menuDetail.isSold}>
+    <Container isSold={menuDetail.isSold}>
       <ContentWrapper>
         <FlexBetween>
           <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : menuDetail.name}</TextB3R>
@@ -42,17 +49,18 @@ const CartActualItem = ({
         <FlexCol>
           <PriceWrapper>
             <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
-              {menuDetail.discount}%
+              {discount}%
             </TextH5B>
-            <TextH5B>{menuDetail.price}원</TextH5B>
+            <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
-            <InfoMessage status={menuDetail.isSold ? 'soldOut' : 'soldSoon'} count={2} />
+            <InfoMessage status={menuDetail.isSold && 'isSold'} />
             <CountButtonContainer>
               {/* <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
                 <TextH6B color={theme.white}>재입고 알림</TextH6B>
               </Tag> */}
               <CountButton
+                isSold={menuDetail.isSold}
                 menuDetailId={menuDetail.menuDetailId}
                 quantity={menuDetail.menuQuantity}
                 clickPlusButton={clickPlusButton}
@@ -66,9 +74,9 @@ const CartActualItem = ({
   );
 };
 
-const Container = styled.div<{ isSoldout?: boolean }>`
+const Container = styled.div<{ isSold?: boolean }>`
   display: flex;
-  color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
+  color: ${({ isSold }) => isSold && theme.greyScale25};
   background-color: ${theme.greyScale3};
   padding: 16px;
   margin-bottom: 8px;
