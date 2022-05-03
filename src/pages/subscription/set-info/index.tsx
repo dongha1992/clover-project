@@ -25,7 +25,12 @@ import { onError } from '@api/Api';
 import { getOrderListsApi } from '@api/order';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
-const subsDeliveryType: any = 'SPOT';
+const subsDeliveryType: any = 'PARCEL';
+
+export interface IDestinationAddress {
+  delivery: string | undefined;
+  address: string | undefined;
+}
 
 const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
@@ -34,17 +39,8 @@ const SubsSetInfoPage = () => {
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const [subsDates, setSubsDates] = useState([]);
   const [userSelectPeriod, setUserSelectPeriod] = useState('subscription');
-  const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
-
-  const goToDeliveryInfo = () => {
-    router.push({
-      pathname: '/cart/delivery-info',
-      query: {
-        subsDeliveryType: subsDeliveryType,
-        isSubscription: true,
-      },
-    });
-  };
+  const [spotMainDestination, setMainDestinationSpot] = useState<string | undefined>();
+  const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
 
   const { data, isLoading } = useQuery(
     'subsDates',
@@ -59,62 +55,51 @@ const SubsSetInfoPage = () => {
     }
   );
 
-  const { data: mainDestinations, isLoading: mainDestinationsLoading } = useQuery(
-    'getMainDestinations',
-    async () => {
-      try {
-        if (subsDeliveryType === 'SPOT') {
-          if (userDestination) {
-            setSpotMainDestination(userDestination.name);
-          } else {
-            const { data } = await getMainDestinationsApi({
-              delivery: 'SPOT',
-            });
+  useEffect(() => {
+    getSpotMainDestination();
+    getRecentOrderDestination();
+  }, []);
 
-            setSpotMainDestination(data.data.name);
+  const getSpotMainDestination = async () => {
+    try {
+      if (subsDeliveryType === 'SPOT') {
+        if (userDestination) {
+          setMainDestinationSpot(userDestination.name);
+        } else {
+          const { data } = await getMainDestinationsApi({
+            delivery: 'SPOT',
+          });
+          setMainDestinationSpot(data.data.name);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getRecentOrderDestination = async () => {
+    const params = {
+      days: 90,
+      page: 1,
+      size: 100,
+      type: 'GENERAL',
+    };
+    try {
+      if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+        if (userDestination) {
+          setMainDestinationAddress({ delivery: userDestination.delivery, address: userDestination.location?.address });
+        } else {
+          const { data } = await getOrderListsApi(params);
+          const filterData = data.data.orderDeliveries.filter((item) => ['PARCEL', 'MORNING'].includes(item.delivery));
+          if (filterData) {
+            setMainDestinationAddress({ delivery: filterData[0].delivery, address: filterData[0].location.address });
           }
         }
-        // else {
-        //   const { data } = await getMainDestinationsApi({
-        //     delivery: 'PARCEL',
-        //   });
-        //   if (!data.data) {
-        //     const { data } = await getMainDestinationsApi({
-        //       delivery: 'MORNING',
-        //     });
-        //     return data.data;
-        //   } else {
-        //     return data.data;
-        //   }
-        // }
-      } catch (err) {
-        console.log(err);
       }
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
-
-  const { data: recentOrderDelivery } = useQuery(
-    'getOrderLists',
-    async () => {
-      const params = {
-        days: 90,
-        page: 1,
-        size: 100,
-        type: 'GENERAL',
-      };
-
-      const { data } = await getOrderListsApi(params);
-      const filterData = data.data.orderDeliveries.filter((item) => ['PARCEL', 'MORNING'].includes(item.delivery));
-      console.log(filterData[0]);
-      if (userDestination) {
-      }
-    },
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
+    } catch (err) {
+      console.log(err);
     }
-  );
+  };
 
   const changeRadioHanler = async (value: string) => {
     setUserSelectPeriod(value);
@@ -141,7 +126,18 @@ const SubsSetInfoPage = () => {
     router.push('/subscription/register');
   };
 
-  if (isLoading && mainDestinationsLoading) return <div>...로딩중</div>;
+  const goToDeliveryInfo = () => {
+    router.push({
+      pathname: '/cart/delivery-info',
+      query: {
+        subsDeliveryType: mainDestinationAddress?.delivery,
+        isSubscription: true,
+      },
+    });
+  };
+
+  if (isLoading) return <div>...로딩중</div>;
+
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
   return (
     <Container>
@@ -149,6 +145,7 @@ const SubsSetInfoPage = () => {
         goToDeliveryInfo={goToDeliveryInfo}
         subsDeliveryType={subsDeliveryType}
         spotMainDestination={spotMainDestination}
+        mainDestinationAddress={mainDestinationAddress}
       />
       <BorderLine height={8} />
       <PeriodBox>
