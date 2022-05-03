@@ -313,7 +313,11 @@ const DeliverInfoPage = () => {
     if (userDeliveryType) {
       if (isSubscription) {
         // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-        subsDeliveryType === 'SPOT' && setUserSelectDeliveryType('spot');
+        if (subsDeliveryType === 'SPOT') {
+          setUserSelectDeliveryType('spot');
+        } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+          setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+        }
       } else {
         setUserSelectDeliveryType(userDeliveryType);
       }
@@ -386,9 +390,13 @@ const DeliverInfoPage = () => {
   useEffect(() => {
     if (isSubscription) {
       // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-      subsDeliveryType === 'SPOT' && setUserSelectDeliveryType('spot');
+      if (subsDeliveryType === 'SPOT') {
+        setUserSelectDeliveryType('spot');
+      } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+        setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+      }
     }
-  }, [isSubscription]);
+  }, [isSubscription, subsDeliveryType]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
