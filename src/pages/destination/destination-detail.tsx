@@ -90,9 +90,9 @@ const DestinationDetailPage = () => {
         name,
         location: {
           addressDetail,
-          address: tempLocation.roadAddrPart1,
-          dong: tempLocation.emdNm,
-          zipCode: tempLocation.zipNo,
+          address: tempLocation.roadAddrPart1!,
+          dong: tempLocation.emdNm!,
+          zipCode: tempLocation.zipNo!,
         },
         main: isDefaultDestination,
       };

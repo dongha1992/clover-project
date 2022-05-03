@@ -171,16 +171,18 @@ const DeliverInfoPage = () => {
       /* TODO spotPickupId 형 체크 */
       if (tempDestination) {
         const reqBody = {
-          addressDetail: tempDestination?.location?.addressDetail!,
           name: tempDestination?.name!,
-          address: tempDestination?.location?.address!,
           delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
           deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
-          dong: tempDestination?.location?.dong!,
           main: tempDestination?.main!,
           receiverName: tempDestination?.receiverName ? tempDestination.receiverName : '테스트',
           receiverTel: tempDestination?.receiverTel ? tempDestination.receiverTel : '01012341234',
-          zipCode: tempDestination?.location?.zipCode!,
+          location: {
+            addressDetail: tempDestination?.location?.addressDetail!,
+            address: tempDestination?.location?.address!,
+            zipCode: tempDestination?.location?.zipCode!,
+            dong: tempDestination?.location?.dong!,
+          },
         };
 
         try {
@@ -341,12 +343,16 @@ const DeliverInfoPage = () => {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
 
-    console.log(userDestination?.delivery, 'userDestination');
     try {
       const { data } = await getMainDestinationsApi(params);
+      console.log(data, 'D@@#!@');
       if (data.code === 200) {
-        setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
-        setIsMaindestination(true);
+        if (data.data) {
+          setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
+          setIsMaindestination(true);
+        } else {
+          setTempDestination(null);
+        }
       }
     } catch (error) {
       console.error(error);

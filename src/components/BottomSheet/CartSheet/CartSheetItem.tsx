@@ -56,7 +56,7 @@ const CartSheetItem = ({
                 </Tag>
               ) : (
                 <CountButton
-                  id={menu.id}
+                  menuDetailId={menu.id}
                   quantity={menu.quantity}
                   clickPlusButton={clickPlusButton}
                   clickMinusButton={clickMinusButton}

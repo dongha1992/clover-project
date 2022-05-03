@@ -19,6 +19,7 @@ import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderListsApi, getOrderInfoApi } from '@api/order';
 import { userInvitationApi } from '@api/user';
+import isNil from 'lodash-es/isNil';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -46,6 +47,7 @@ const MypagePage = () => {
       refetchOnReconnect: true,
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -62,10 +64,11 @@ const MypagePage = () => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
-  if (isLoginSuccess && isLoading) {
+  if (isNil(orderList) && isLoginSuccess) {
     return <div>로딩</div>;
   }
 
