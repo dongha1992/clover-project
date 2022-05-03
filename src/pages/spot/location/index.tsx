@@ -154,7 +154,6 @@ const LocationPage = () => {
 
       // if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
       if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
-        console.log('top!');
         // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
         setPage((prevPage) => prevPage + 1);
       }
