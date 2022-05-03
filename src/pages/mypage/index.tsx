@@ -62,14 +62,14 @@ const MypagePage = () => {
     }
   );
 
-  if (isLoading) {
+  if (isLoginSuccess&&isLoading) {
     return <div>로딩</div>;
   }
 
   return (
     <Container>
       <Wrapper>
-        {isLoginSuccess ? (
+        {isLoginSuccess && (
           // 회원
           <>
             <UserInfoWrapper>
