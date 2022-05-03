@@ -591,31 +591,14 @@ export interface ISpotDetailStoriesResponse {
 
 export interface ISpotsInfo {
   spotCount: number;
-  unsubmitSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  recruitingSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  confirmSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  trialSpotRegistrations: [];
+  canOwnerSpotRegistraion: boolean;
+  canPrivateSpotRegistration: boolean;
+  canPublicSpotRegistraion: boolean;
+  trialSpotRegistration: {
+    placeName: string;
+    trialTargetUserCount: number;
+    trialUserCount: number;
+  }
 }
 
 export interface ISpotsInfoResponse {

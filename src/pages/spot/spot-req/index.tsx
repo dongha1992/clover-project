@@ -7,20 +7,21 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_SPOT_LOCATION, INIT_SPOT_REGISTRATIONS_OPTIONS, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
 import { userForm } from '@store/user';
+import { SET_ALERT } from '@store/alert';
+import { spotSelector } from '@store/spot';
 
 const SpotReqPage = () => {
-  const { me } = useSelector(userForm);
+  const { me, isLoginSuccess } = useSelector(userForm);
+  const { spotInfo } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const text = {
-    publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
-    publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
-    ownerText: '0000번째 프코스팟의\n파트너가 되어보세요.',
-    ownerDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
-    fcospotText: '단골카페를 프코스팟으로',
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
     privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
-    privateBtnText: '프라이빗 스팟 신청하기',
+    publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
+    publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
+    ownerText: `${spotInfo?.spotCount! + 1}번째 프코스팟의\n파트너가 되어보세요.`,
+    ownerDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
     askText: '프코스팟 신청이 어려우신가요?',
     askBtnText: '문의하기',
     registerBtn: '프코스팟 신청하기',
@@ -44,18 +45,29 @@ const SpotReqPage = () => {
   };
 
   const goToRegister = () => {
-    const spotsRegistrationInfoState: any = {
-      userName: me?.name,
-      userEmail: me?.email,
-      userTel: me?.tel,
-    };
-    dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
-    dispatch(INIT_SPOT_LOCATION());
-    dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-    router.push({
-      pathname: '/spot/register',
-      query: { type },
-    });
+    if (isLoginSuccess) {
+      const spotsRegistrationInfoState: any = {
+        userName: me?.name,
+        userEmail: me?.email,
+        userTel: me?.tel,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
+      dispatch(INIT_SPOT_LOCATION());
+      dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
+      router.push({
+        pathname: '/spot/register',
+        query: { type },
+      });  
+    } else {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
+    }
   };
 
   return (

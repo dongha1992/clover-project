@@ -3,30 +3,71 @@ import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextB1B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
     INIT_SPOT_LOCATION, 
     INIT_SPOT_REGISTRATIONS_OPTIONS, 
+    spotSelector,
   } from '@store/spot';  
+import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 
 const RegistrationsListPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { me, isLoginSuccess } = useSelector(userForm);
+  const { spotInfo } = useSelector(spotSelector);
 
   const goToPrivateRegistrations = () => {
-    router.push('/spot/spot-req?type=private');
+    if(isLoginSuccess) {
+      if(spotInfo?.canPrivateSpotRegistration){
+        router.push('/spot/spot-req?type=private');
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
+            submitBtnText: '확인',
+          })
+        );      
+      }
+    } else {
+      router.push('/spot/spot-req?type=private');
+    }
   };
 
   const goToPublicRegistrations = () => {
-    router.push('/spot/spot-req?type=public'); 
+    if(isLoginSuccess){
+      if (spotInfo?.canPublicSpotRegistraion) {
+        router.push('/spot/spot-req?type=public'); 
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
+            submitBtnText: '확인',
+          })
+        );      
+      }
+    }else {
+      router.push('/spot/spot-req?type=public'); 
+    }
   };
 
   const goToOwnerRegistrations = () => {
-    router.push('/spot/spot-req?type=owner'); 
+    if(isLoginSuccess){
+      if (spotInfo?.canOwnerSpotRegistraion) {
+        router.push('/spot/spot-req?type=owner'); 
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
+            submitBtnText: '확인',
+          })
+        );      
+      }
+    } else {
+      router.push('/spot/spot-req?type=owner'); 
+    }
   };
-
-
 
   useEffect(()=> {
     dispatch(INIT_SPOT_LOCATION());
