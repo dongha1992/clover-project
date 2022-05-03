@@ -66,6 +66,9 @@ const CardRegisterPage = () => {
   const nicknameRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
+  const { isOrder } = router.query;
+  const isFromOrder = isOrder === 'true';
+
   const isCorporationCard = selectedCardType === 2;
 
   const queryClient = useQueryClient();
@@ -253,7 +256,9 @@ const CardRegisterPage = () => {
             SET_ALERT({
               alertMessage: successMsg,
               submitBtnText: '확인',
-              onSubmit: () => router.push('/mypage/card'),
+              onSubmit: () => {
+                router.push({ pathname: '/mypage/card', query: { isOrder: isFromOrder } });
+              },
             })
           );
         }

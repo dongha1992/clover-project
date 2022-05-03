@@ -33,7 +33,7 @@ const WelcomeSheet = () => {
         if (data.code === 200) {
           return dispatch(
             SET_ALERT({
-              alertMessage: '프로모션 코드가 등록되었습니다.',
+              alertMessage: '등록을 완료했어요!',
               submitBtnText: '확인',
             })
           );
@@ -46,7 +46,7 @@ const WelcomeSheet = () => {
         if (error.code === 2202) {
           return dispatch(
             SET_ALERT({
-              alertMessage: '이미 프로모션에 참여했습니다.',
+              alertMessage: '이미 등록된 프로모션 코드예요.',
               submitBtnText: '확인',
             })
           );
@@ -68,7 +68,7 @@ const WelcomeSheet = () => {
         if (data.code === 200) {
           return dispatch(
             SET_ALERT({
-              alertMessage: '프로모션 코드가 등록되었습니다.',
+              alertMessage: '등록을 완료했어요!',
               submitBtnText: '확인',
             })
           );
@@ -82,9 +82,9 @@ const WelcomeSheet = () => {
       onError: async (error: any) => {
         let alertMessage = '';
         if (error.code === 2201) {
-          alertMessage = '이미 추천한 친구가 있습니다.';
+          alertMessage = '이미 등록된 초대코드예요.';
         } else if (error.code === 1105) {
-          alertMessage = '존재하지 않은 친구 추천 코드입니다.';
+          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         }
 
         return dispatch(
@@ -130,9 +130,8 @@ const WelcomeSheet = () => {
           </ImageWrapper>
         </FlexCol>
         <PromotionWrapper>
-          <TextH5B padding="0 0 8px 0">프로모션 코드 등록하기</TextH5B>
-          <TextB2R>추천인 코드, 이벤트 할인 프로모션 코드 입력</TextB2R>
-          <TextB2R>(가입 이후에도 마이페이지{'>'}쿠폰조회 에서 등록 가능)</TextB2R>
+          <TextH5B padding="0 0 8px 0">친구 초대 및 쿠폰/프로모션 코드 등록하기</TextH5B>
+          <TextB2R>가입 이후 마이페이지 {'>'} 친구 초대, 쿠폰, 포인트에서 등록할 수 있어요!</TextB2R>
           <FlexCol padding="24px 0 0 0">
             <FlexRow>
               <TextInput margin="0 8px 0 0" ref={codeRef} />
@@ -140,9 +139,6 @@ const WelcomeSheet = () => {
                 등록하기
               </Button>
             </FlexRow>
-            {/* <TextB3R color={theme.brandColor} padding="2px 0 0 16px">
-              사용할 수 있는 프로모션 코드입니다.
-            </TextB3R> */}
           </FlexCol>
         </PromotionWrapper>
       </Body>

@@ -49,10 +49,10 @@ Api.interceptors.response.use(
     console.log(error, 'error');
 
     try {
-      if (response.status === 401) {
+      if (response?.status === 401) {
         console.log('status 401');
 
-        if (response.data.code !== 2003) {
+        if (response?.data.code !== 2003) {
           if (!isTokenRefreshing) {
             console.log('## I response TokenRefreshing');
             isTokenRefreshing = true;
