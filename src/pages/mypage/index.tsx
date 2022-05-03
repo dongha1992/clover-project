@@ -43,6 +43,7 @@ const MypagePage = () => {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -57,10 +58,11 @@ const MypagePage = () => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
-  if (isLoginSuccess && isLoading) {
+  if (isLoading) {
     return <div>로딩</div>;
   }
 
