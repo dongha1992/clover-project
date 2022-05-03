@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail, IPostRegistrations } from '@model/index';
+import { ISpotsDetail, IPostRegistrations, ISpotsInfo } from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
@@ -72,6 +72,7 @@ interface IProps {
   spotsPickupSelected: ISpotsDetail | null;
   spotsSearchResultFiltered: ISpotSearchFilterd;
   spotPickupId: number | null;
+  spotInfo: ISpotsInfo | null;
 };
 
 const spotsSearchResultFilteredState = {
@@ -145,6 +146,7 @@ const initialState: IProps = {
     ...spotsSearchResultFilteredState
   },
   spotPickupId: null,
+  spotInfo: null,
 };
 
 export const spot = createSlice({
@@ -195,6 +197,9 @@ export const spot = createSlice({
     SET_SPOT_PICKUP_ID: (state, action: PayloadAction<number | null>) => {
       state.spotPickupId = action.payload;
     },
+    SET_SPOT_INFO: (state, action: PayloadAction<ISpotsInfo | null>) => {
+      state.spotInfo = action.payload;
+    },
   },
 });
 
@@ -213,6 +218,7 @@ export const {
   SET_SPOTS_FILTERED,
   INIT_SPOT_FILTERED,
   SET_SPOT_PICKUP_ID,
+  SET_SPOT_INFO,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;
