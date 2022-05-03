@@ -46,17 +46,31 @@ import { checkIsAllSoldout } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
-import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi } from '@api/cart';
+import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postCartsApi } from '@api/cart';
 import { getMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { pluck, pipe, reduce, toArray, map } from '@fxts/core';
+import { pluck, pipe, reduce, toArray, map, entries, each, flatMap, intersectionBy } from '@fxts/core';
 import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
-import { Retryer } from 'react-query/types/core/retryer';
+import { DELIVERY_FEE_OBJ } from '@constants/cart';
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
 const disabledDates: any = ['2022-02-22'];
+
+interface IMenuDetailsId {
+  menuDetailId: number;
+  menuQuantity: number;
+}
+
+interface IDisposable {
+  id: number;
+  value: string;
+  quantity: number;
+  text: string;
+  price: number;
+  isSelected: boolean;
+}
 
 const INITIAL_NUTRITION = {
   protein: 0,
@@ -90,7 +104,7 @@ const CartPage = () => {
   ]);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
-  const [disposableList, setDisposableList] = useState([
+  const [disposableList, setDisposableList] = useState<IDisposable[]>([
     { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
     { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
   ]);
@@ -104,6 +118,7 @@ const CartPage = () => {
     deliveryDetail: null,
     location: null,
   });
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -119,7 +134,7 @@ const CartPage = () => {
   const dt = new Date(userDestination?.closedDate!);
   const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일`;
 
-  const { isLoading } = useQuery(
+  const { isLoading, isError } = useQuery(
     'getCartList',
     async () => {
       const { data } = await getCartsApi();
@@ -198,20 +213,18 @@ const CartPage = () => {
     }
   );
 
-  /* TODO : 최근 배송 API 무엇이지? */
-
   /* TODO: 찜한 상품, 이전 구매 상품 리스트 받아오면 변경해야함 */
 
-  const { error: menuError } = useQuery(
-    'getMenus',
-    async () => {
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
-      const { data } = await getMenusApi(params);
+  // const { error: menuError } = useQuery(
+  //   'getMenus',
+  //   async () => {
+  //     const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
+  //     const { data } = await getMenusApi(params);
 
-      setItemList(data.data);
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
+  //     setItemList(data.data);
+  //   },
+  //   { refetchOnMount: true, refetchOnWindowFocus: false }
+  // );
 
   const {} = useQuery(
     'getSubOrderLists',
@@ -287,9 +300,16 @@ const CartPage = () => {
     }
   );
 
+  const isSpot = destinationObj.delivery === 'spot';
+  const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
+
   const reOrderCartList = (data: IGetCart[]) => {
+    const checkMenusId = checkedMenus.map((item) => item.menuId);
     setCartItemList(data);
+    const updatedQuantity = data.filter((item) => checkMenusId.includes(item.menuId));
+    setCheckedMenus(updatedQuantity);
   };
+
   const getTotalNutrition = (
     menus: IGetCart[]
   ): {
@@ -339,7 +359,7 @@ const CartPage = () => {
   };
 
   const handleSelectAllCartItem = () => {
-    const canCheckMenus = cartItemList.filter((item) => !checkIsAllSoldout(item.menuDetails));
+    const canCheckMenus = cartItemList.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails));
 
     if (!isAllChecked) {
       setCheckedMenus(canCheckMenus);
@@ -373,12 +393,25 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
+    const reqBody = pipe(
+      checkedMenus,
+      flatMap((item) =>
+        item.menuDetails.map((detail) => {
+          return {
+            menuId: item.menuId,
+            menuDetailId: detail.menuDetailId,
+          };
+        })
+      ),
+      toArray
+    );
+
     dispatch(
       SET_ALERT({
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(checkedMenus),
+        onSubmit: () => mutateDeleteItem(reqBody),
       })
     );
   };
@@ -545,13 +578,22 @@ const CartPage = () => {
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
-    // userDestination && dispatch(SET_DESTINATION({ ...userDestination, deliveryTime: deliveryDetail }));
+
+    const orderMenus = getMenuDetailsId(checkedMenus);
+    const orderOptions = getOptionsItemId(disposableList);
 
     const reqBody = {
       destinationId: destinationObj.destinationId!,
       delivery: destinationObj.delivery?.toUpperCase()!,
       deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
       isSubOrderDelivery: subDeliveryId ? true : false,
+      // orderDeliveries: [
+      //   {
+      //     orderMenus,
+      //     orderOptions,
+      //     deliveryDate: selectedDeliveryDay,
+      //   },
+      // ],
       orderDeliveries: [
         {
           deliveryDate: selectedDeliveryDay,
@@ -577,6 +619,30 @@ const CartPage = () => {
     };
     dispatch(SET_ORDER(reqBody));
     router.push('/order');
+  };
+
+  const getMenuDetailsId = (list: IGetCart[]): IMenuDetailsId[] => {
+    const tempOrderMenus: IMenuDetailsId[] = [];
+
+    list.forEach((item: IGetCart) =>
+      item.menuDetails.forEach((detail) => {
+        tempOrderMenus.push({
+          menuDetailId: detail.menuDetailId,
+          menuQuantity: detail.menuQuantity,
+        });
+      })
+    );
+
+    return tempOrderMenus;
+  };
+
+  const getOptionsItemId = (list: IDisposable[]): { optionId: number; optionQuantity: number }[] => {
+    return list.map((item: IDisposable) => {
+      return {
+        optionId: item.id,
+        optionQuantity: item.quantity,
+      };
+    });
   };
 
   const goToSubDeliverySheet = (deliveryId: number): void => {
@@ -616,31 +682,78 @@ const CartPage = () => {
     }
   };
 
-  const getTotalPrice = useCallback((): number => {
-    const itemsPrice = getItemsPrice();
-    const disposablePrice =
+  const getDisposableItemPrice = useCallback((): number => {
+    return (
       disposableList.reduce((totalPrice, item) => {
         return totalPrice + item.price * item.quantity;
-      }, 0) || 0;
-    return itemsPrice + disposablePrice;
-  }, [checkedMenus]);
+      }, 0) || 0
+    );
+  }, [disposableList]);
 
   const getItemsPrice = useCallback((): number => {
-    // return (
-    //   checkedMenus?.reduce((totalPrice, item) => {
-    //     return totalPrice + item?.price! * item?.quantity!;
-    //   }, 0) || 0
-    // );
-    return 0;
+    return checkedMenus.reduce((totalPrice, item) => {
+      return item.menuDetails.reduce((totalPrice, detail) => {
+        if (detail.isSold) return totalPrice;
+        return totalPrice + detail.price * detail.menuQuantity;
+      }, totalPrice);
+    }, 0);
   }, [checkedMenus]);
 
-  const buttonRenderer = useCallback(() => {
-    return (
-      <Button borderRadius="0" height="100%" disabled={isNil(destinationObj)}>
-        {getTotalPrice()}원 주문하기
-      </Button>
-    );
-  }, [checkedMenus, destinationObj]);
+  const getTotalPrice = useCallback((): void => {
+    const itemsPrice = getItemsPrice();
+    const disposablePrice = getDisposableItemPrice();
+    const totalDiscountPrice = getTotalDiscountPrice();
+    const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
+    setTotalAmount(tempTotalAmout);
+  }, [checkedMenus]);
+
+  const getTotalDiscountPrice = useCallback(
+    (isSpot?: boolean): number => {
+      return isSpot ? getItemDiscountPrice() + getSpotDiscountPrice() : getItemDiscountPrice();
+    },
+    [checkedMenus]
+  );
+
+  const getItemDiscountPrice = useCallback((): number => {
+    return checkedMenus.reduce((tdp, item) => {
+      return item.menuDetails.reduce((tdp, detail) => {
+        if (detail.isSold) return tdp;
+        return tdp + detail.discountPrice;
+      }, tdp);
+    }, 0);
+  }, [checkedMenus]);
+
+  const getSpotDiscountPrice = (): number => {
+    return 0;
+  };
+
+  const getDeliveryFee = useCallback(() => {
+    if (destinationObj?.delivery) {
+      const { fee, amountForFree, minimum } =
+        destinationObj.delivery && DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!]!;
+      if (!fee || amountForFree < totalAmount) return 0;
+      return fee;
+    }
+  }, [totalAmount, destinationObj?.delivery]);
+
+  const orderButtonRender = useCallback(() => {
+    let buttonMessage = '';
+
+    if (destinationObj.delivery) {
+      const { fee, amountForFree, minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
+      const isUnderMinimum = totalAmount < minimum;
+      if (amountForFree > totalAmount) {
+        buttonMessage = `${amountForFree - totalAmount}원 더 담고 무료배송하기`;
+      } else {
+        buttonMessage = `${totalAmount}원 주문하기`;
+      }
+      return (
+        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj) || isUnderMinimum}>
+          {buttonMessage}
+        </Button>
+      );
+    }
+  }, [checkedMenus, destinationObj.delivery]);
 
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
@@ -702,7 +815,8 @@ const CartPage = () => {
   useEffect(() => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
-      const canCheckMenus = cartItemList?.filter((item) => !checkIsAllSoldout(item.menuDetails))!;
+      const canCheckMenus = cartItemList?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
+
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
         setIsAllchecked(true);
         setCheckedMenus(cartItemList);
@@ -713,6 +827,10 @@ const CartPage = () => {
       setIsFirstRender(false);
     }
   }, [cartItemList]);
+
+  useEffect(() => {
+    getTotalPrice();
+  }, [checkedMenus]);
 
   useEffect(() => {
     setIsFirstRender(true);
@@ -729,6 +847,21 @@ const CartPage = () => {
     }
   }, [isLoading]);
 
+  const test = async () => {
+    const res = await postCartsApi([
+      {
+        main: true,
+        menuDetailId: 72,
+        menuId: 9,
+        menuQuantity: 1,
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    test();
+  }, []);
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -737,20 +870,17 @@ const CartPage = () => {
     return <div>알수없는에러</div>;
   }
 
-  const isSpot = destinationObj.delivery === 'spot';
-  const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
-
   if (cartItemList && cartItemList.length === 0) {
     return (
       <EmptyContainer>
-        <FlexColStart>
+        <FlexCol width="100%">
           <DeliveryTypeAndLocation
             goToDeliveryInfo={goToDeliveryInfo}
             deliveryType={destinationObj.delivery!}
             deliveryDestination={destinationObj.location}
           />
           <BorderLine height={8} margin="24px 0" />
-        </FlexColStart>
+        </FlexCol>
         <FlexCol width="100%">
           <TextB2R padding="0 0 32px 0" center>
             장바구니가 비었어요 😭
@@ -953,34 +1083,67 @@ const CartPage = () => {
         <TotalPriceWrapper>
           <FlexBetween>
             <TextH5B>총 상품금액</TextH5B>
-            <TextB2R>{getItemsPrice()}</TextB2R>
+            <TextB2R>{getItemsPrice()}원</TextB2R>
           </FlexBetween>
           <BorderLine height={1} margin="16px 0" />
           <FlexBetween>
             <TextH5B>총 할인 금액</TextH5B>
-            <TextB2R>-222원</TextB2R>
+            <TextB2R>{getTotalDiscountPrice(isSpot)}원</TextB2R>
           </FlexBetween>
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>상품 할인</TextB2R>
-            <TextB2R>22원</TextB2R>
+            <TextB2R>{getItemDiscountPrice()}원</TextB2R>
           </FlexBetween>
-          <FlexBetween padding="8px 0 0 0">
-            <TextB2R>스팟 이벤트 할인</TextB2R>
-            <TextB2R>22원</TextB2R>
+          {isSpot && (
+            <FlexBetween padding="8px 0 0 0">
+              <TextB2R>스팟 이벤트 할인</TextB2R>
+              <TextB2R>{getSpotDiscountPrice()}원</TextB2R>
+            </FlexBetween>
+          )}
+          <BorderLine height={1} margin="16px 0" />
+          <FlexBetween padding="16px 0 8px">
+            <TextH5B>환경부담금 (일회용품)</TextH5B>
+            <TextB2R>5개 / 500원</TextB2R>
           </FlexBetween>
+          {disposableList.length > 0 &&
+            disposableList.map((disposable, index) => {
+              const { id, quantity, price } = disposable;
+              const hasFork = id === 1;
+              const hasChopsticks = id === 2;
+              return (
+                <div key={index}>
+                  {hasFork && (
+                    <FlexBetween padding="8px 0 0 0">
+                      <TextB2R>포크+물티슈</TextB2R>
+                      <TextB2R>
+                        {quantity}개 / {price * quantity}원
+                      </TextB2R>
+                    </FlexBetween>
+                  )}
+                  {hasChopsticks && (
+                    <FlexBetween padding="8px 0 0 0">
+                      <TextB2R>젓가락+물티슈</TextB2R>
+                      <TextB2R>
+                        {quantity}개 / {price * quantity}원
+                      </TextB2R>
+                    </FlexBetween>
+                  )}
+                </div>
+              );
+            })}
           <BorderLine height={1} margin="16px 0" />
           <FlexBetween>
             <TextH5B>배송비</TextH5B>
-            <TextB2R>22원</TextB2R>
+            <TextB2R>{getDeliveryFee()}원</TextB2R>
           </FlexBetween>
           <FlexBetween>
             <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
-            <TextB2R>22원</TextB2R>
+            <TextB2R>{getDeliveryFee()}원</TextB2R>
           </FlexBetween>
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween padding="8px 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>{getTotalPrice()}</TextH4B>
+            <TextH4B>{totalAmount}원</TextH4B>
           </FlexBetween>
           <FlexEnd padding="11px 0 0 0">
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -991,7 +1154,7 @@ const CartPage = () => {
           </FlexEnd>
         </TotalPriceWrapper>
       </MenuListContainer>
-      <OrderBtn onClick={goToOrder}>{buttonRenderer()}</OrderBtn>
+      <OrderBtn onClick={goToOrder}>{orderButtonRender()}</OrderBtn>
     </Container>
   );
 };
@@ -1004,9 +1167,9 @@ const Container = styled.div`
 const EmptyContainer = styled.div`
   height: 100vh;
   width: 100%;
-  ${flexCenter}
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
 `;
 
 const DeliveryMethodAndPickupLocation = styled.div`

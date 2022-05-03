@@ -73,7 +73,6 @@ const EditReviewPage = ({ reviewId }: any) => {
   const { mutateAsync: mutateEditMenuReview } = useMutation(
     async (formData: FormData) => {
       const { data } = await editMenuReviewApi({ formData, reviewId });
-      console.log(data, 'result from api');
     },
     {
       onSuccess: async () => {

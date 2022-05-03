@@ -69,7 +69,7 @@ const SubsSetInfoPage = () => {
         delivery: 'SPOT',
       };
       const { data } = await getMainDestinationsApi(params);
-      console.log('mainDestinations', data.data);
+
       return data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }

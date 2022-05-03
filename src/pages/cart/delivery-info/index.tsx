@@ -339,7 +339,6 @@ const DeliverInfoPage = () => {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
 
-    console.log(userDestination?.delivery, 'userDestination');
     try {
       const { data } = await getMainDestinationsApi(params);
       console.log(data, 'D@@#!@');
