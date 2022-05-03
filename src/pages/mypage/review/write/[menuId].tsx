@@ -74,9 +74,7 @@ const WriteReviewPage = ({ menuId }: any) => {
 
   const { mutateAsync: mutateCreateMenuReview } = useMutation(
     async (formData: FormData) => {
-      console.log(formData, 'formData1');
       const { data } = await createMenuReviewApi(formData);
-      console.log(data, 'result from api');
     },
     {
       onSuccess: async () => {

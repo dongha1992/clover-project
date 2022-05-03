@@ -110,7 +110,6 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
             spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickupId!,
           },
         });
-        console.log(data, 'after spot');
       }
     },
     {

@@ -951,7 +951,8 @@ export type TPayMethod =
   | 'TOSS_CARD'
   | 'TOSS_MONEY';
 export interface ICreateOrderRequest {
-  coupon: number;
+  /*TODO: 모델 수정해야함 */
+  couponId: number;
   delivery: string;
   deliveryDetail: string;
   deliveryFee: number;
@@ -975,6 +976,11 @@ export interface ICreateOrderRequest {
   payAmount: number;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderRequestInOrderDeliveries[];
+  isReuseDeliveryMessage?: string;
+  subscriptionMenuDetailId?: number;
+  subscriptionRound?: number;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
 }
 
 export interface IOrderRequestInOrderDeliveries {
@@ -1354,7 +1360,7 @@ export interface ICreateOrder {
   deliveryDetail?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   name: string;
   menuQuantity: number;
   refundMenuQuantity: number;
@@ -1605,6 +1611,8 @@ export interface IMenuDetailsInCart {
   isSold: boolean;
   main: boolean;
   status: TCartMenuStatus;
+  createdAt: string;
+  discountPrice: number;
 }
 
 export interface IGetCart {
@@ -1617,6 +1625,8 @@ export interface IGetCart {
     height: number;
   };
   menuDetails: IMenuDetailsInCart[];
+  isSold: boolean;
+  createdAt: string;
 }
 
 export interface IGetCartResponse {

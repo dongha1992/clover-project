@@ -110,7 +110,6 @@ const SubsCalendar = ({
       }
       if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송예정일(합배송 포함)
-        console.log('sumDelivery', sumDelivery);
 
         element.push(
           <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
