@@ -733,12 +733,37 @@ const CartPage = () => {
     return <div>로딩</div>;
   }
 
-  if (!cartItemList) {
-    return <div>알수없는에러</div>;
-  }
+  // if (!cartItemList) {
+  //   return <div>알수없는에러</div>;
+  // }
 
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
+
+  if (!cartItemList) {
+    return (
+      <EmptyContainer>
+        <FlexColStart>
+          <DeliveryTypeAndLocation
+            goToDeliveryInfo={goToDeliveryInfo}
+            deliveryType={destinationObj.delivery!}
+            deliveryDestination={destinationObj.location}
+          />
+          <BorderLine height={8} margin="24px 0" />
+        </FlexColStart>
+        <FlexCol width="100%">
+          <TextB2R padding="0 0 32px 0" center>
+            장바구니가 비었어요 😭
+          </TextB2R>
+          <BtnWrapper onClick={goToSearchPage}>
+            <Button backgroundColor={theme.white} color={theme.black} border>
+              상품 담으러 가기
+            </Button>
+          </BtnWrapper>
+        </FlexCol>
+      </EmptyContainer>
+    );
+  }
 
   if (cartItemList && cartItemList.length === 0) {
     return (
