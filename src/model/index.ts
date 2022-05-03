@@ -952,7 +952,8 @@ export type TPayMethod =
   | 'TOSS_MONEY';
 export interface ICreateOrderRequest {
   /*TODO: 모델 수정해야함 */
-  couponId: number;
+
+  couponId?: number | null;
   delivery: string;
   deliveryDetail: string;
   deliveryFee: number;
