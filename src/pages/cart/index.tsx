@@ -167,7 +167,7 @@ const CartPage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 100,
+        size: 10,
         type: 'GENERAL',
       };
 
@@ -178,7 +178,7 @@ const CartPage = () => {
       onSuccess: async (response) => {
         console.log(userDeliveryType, userDestination, 'userDeliveryType && userDestination');
         if (userDeliveryType && userDestination) {
-          const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickup?.id! : userDestination?.id!;
+          const destinationId = userDeliveryType === 'spot' ? userDestination?.spotPickup?.id! : userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,

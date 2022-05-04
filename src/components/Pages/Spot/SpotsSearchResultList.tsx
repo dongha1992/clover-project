@@ -62,6 +62,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       spaceType: item.type,
       spotPickupId: spotPickupId,
       closedDate: item.closedDate,
+      delivery: 'spot',
     };
 
     const goToCart = () => {
@@ -82,8 +83,8 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
     const goToSelectMenu = () => {
       // 로그인o and 장바구니 x, 메뉴 검색으로 이동
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      // dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      dispatch(SET_DESTINATION(destinationInfo));
+      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({ pathname: '/search', query: { isClosed: !!item.closedDate } });
     };
 
