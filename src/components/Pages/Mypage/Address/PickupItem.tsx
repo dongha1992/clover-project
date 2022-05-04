@@ -10,7 +10,7 @@ import { IDestinationsResponse } from '@model/index';
 interface IProps {
   item: IDestinationsResponse;
   goToCart: () => void;
-  goToEdit: (id: number) => void;
+  goToEdit: ({ id, spotPickupId }: { id: number; spotPickupId: number }) => void;
 }
 
 const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
@@ -24,6 +24,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
     // PUBLIC: { name: '퍼블릭', backgroundColor: theme.greyScale6, color: theme.greyScale45 },
     TRIAL: { name: '트라이얼', backgroundColor: theme.greyScale6, color: theme.greyScale45 },
   };
+
   return (
     <Container>
       <FlexCol>
@@ -35,7 +36,11 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
             </Tag>
             {main && <Tag>기본 프코스팟</Tag>}
           </FlexRow>
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => goToEdit(item?.id!)}>
+          <TextH6B
+            color={theme.greyScale65}
+            textDecoration="underline"
+            onClick={() => goToEdit({ id: item?.id!, spotPickupId: item?.spotPickup?.id! })}
+          >
             편집
           </TextH6B>
         </FlexBetween>

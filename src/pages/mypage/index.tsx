@@ -104,6 +104,7 @@ const MypagePage = () => {
                 <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
                 <TextH5B onClick={() => router.push('/mypage/point')}>{me?.point} P</TextH5B>
               </FlexCol>
+              =
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>
                 <TextH5B onClick={() => router.push('/mypage/coupon')}>0 개</TextH5B>

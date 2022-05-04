@@ -16,6 +16,9 @@ import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
 import { commonSelector } from '@store/common';
+import { getCartsApi } from '@api/cart';
+import { useQuery } from 'react-query';
+import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
 // persist
 import { persistStore } from 'redux-persist';
@@ -60,19 +63,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     });
   }
 
-  useEffect(() => {
-    if (typeof window === undefined) {
-      const md = new MobileDetect(window.navigator.userAgent);
-      let mobile = !!md.mobile();
-      dispatch(SET_IS_MOBILE(mobile));
-    }
-
-    authCheck();
-
-    // temp
-    dispatch(INIT_IMAGE_VIEWER());
-  }, []);
-
   const authCheck = async () => {
     try {
       if (sessionStorage.accessToken) {
@@ -98,6 +88,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    if (typeof window === undefined) {
+      const md = new MobileDetect(window.navigator.userAgent);
+      let mobile = !!md.mobile();
+      dispatch(SET_IS_MOBILE(mobile));
+    }
+
+    authCheck();
+
+    // temp
+    dispatch(INIT_IMAGE_VIEWER());
+  }, []);
 
   return (
     <>

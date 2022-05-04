@@ -167,7 +167,7 @@ const CartPage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 100,
+        size: 10,
         type: 'GENERAL',
       };
 
@@ -176,8 +176,9 @@ const CartPage = () => {
     },
     {
       onSuccess: async (response) => {
+        console.log(userDeliveryType, userDestination, 'userDeliveryType && userDestination');
         if (userDeliveryType && userDestination) {
-          const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickup?.id! : userDestination?.id!;
+          const destinationId = userDeliveryType === 'spot' ? userDestination?.spotPickup?.id! : userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -305,9 +306,9 @@ const CartPage = () => {
 
   const reOrderCartList = (data: IGetCart[]) => {
     const checkMenusId = checkedMenus.map((item) => item.menuId);
-    setCartItemList(data);
-    const updatedQuantity = data.filter((item) => checkMenusId.includes(item.menuId));
+    const updatedQuantity = data?.filter((item) => checkMenusId.includes(item.menuId));
     setCheckedMenus(updatedQuantity);
+    setCartItemList(data);
   };
 
   const getTotalNutrition = (
@@ -316,7 +317,7 @@ const CartPage = () => {
     calorie: number;
     protein: number;
   } => {
-    return menus.reduce(
+    return menus?.reduce(
       (total, menu) => {
         return menu.menuDetails.reduce((total, cur) => {
           return {
@@ -691,7 +692,7 @@ const CartPage = () => {
   }, [disposableList]);
 
   const getItemsPrice = useCallback((): number => {
-    return checkedMenus.reduce((totalPrice, item) => {
+    return checkedMenus?.reduce((totalPrice, item) => {
       return item.menuDetails.reduce((totalPrice, detail) => {
         if (detail.isSold) return totalPrice;
         return totalPrice + detail.price * detail.menuQuantity;
@@ -715,7 +716,7 @@ const CartPage = () => {
   );
 
   const getItemDiscountPrice = useCallback((): number => {
-    return checkedMenus.reduce((tdp, item) => {
+    return checkedMenus?.reduce((tdp, item) => {
       return item.menuDetails.reduce((tdp, detail) => {
         if (detail.isSold) return tdp;
         return tdp + detail.discountPrice;
@@ -866,11 +867,11 @@ const CartPage = () => {
     return <div>로딩</div>;
   }
 
-  if (!cartItemList) {
-    return <div>알수없는에러</div>;
-  }
+  // if (!cartItemList) {
+  //   return <div>알수없는에러</div>;
+  // }
 
-  if (cartItemList && cartItemList.length === 0) {
+  if (!cartItemList) {
     return (
       <EmptyContainer>
         <FlexCol width="100%">
@@ -894,6 +895,31 @@ const CartPage = () => {
       </EmptyContainer>
     );
   }
+
+  // if (cartItemList && cartItemList.length === 0) {
+  //   return (
+  //     <EmptyContainer>
+  //       <FlexCol width="100%">
+  //         <DeliveryTypeAndLocation
+  //           goToDeliveryInfo={goToDeliveryInfo}
+  //           deliveryType={destinationObj.delivery!}
+  //           deliveryDestination={destinationObj.location}
+  //         />
+  //         <BorderLine height={8} margin="24px 0" />
+  //       </FlexCol>
+  //       <FlexCol width="100%">
+  //         <TextB2R padding="0 0 32px 0" center>
+  //           장바구니가 비었어요 😭
+  //         </TextB2R>
+  //         <BtnWrapper onClick={goToSearchPage}>
+  //           <Button backgroundColor={theme.white} color={theme.black} border>
+  //             상품 담으러 가기
+  //           </Button>
+  //         </BtnWrapper>
+  //       </FlexCol>
+  //     </EmptyContainer>
+  //   );
+  // }
 
   return (
     <Container>
@@ -1166,7 +1192,6 @@ const Container = styled.div`
 
 const EmptyContainer = styled.div`
   height: 100vh;
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
