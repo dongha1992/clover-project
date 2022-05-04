@@ -154,10 +154,9 @@ const DeliverInfoPage = () => {
 
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
     if (destinationId || isMainDestination || isSpot) {
-      console.log('DONT GO SERVER');
       dispatch(SET_DESTINATION(tempDestination));
-      dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
+      dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
       dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
@@ -329,7 +328,7 @@ const DeliverInfoPage = () => {
 
     const isSpot = userSelectDeliveryType === 'spot';
 
-    if (userDestination?.delivery === userSelectDeliveryType.toUpperCase()) {
+    if (userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase()) {
       setTempDestination(userDestination);
       setIsMaindestination(true);
       return;
@@ -341,7 +340,7 @@ const DeliverInfoPage = () => {
 
     try {
       const { data } = await getMainDestinationsApi(params);
-      console.log(data, 'D@@#!@');
+
       if (data.code === 200) {
         if (data.data) {
           setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
@@ -373,19 +372,18 @@ const DeliverInfoPage = () => {
   };
 
   useEffect(() => {
-    console.log(userDestination, 'userDestination', userTempDestination);
+    const vaildSelectedDestination = userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase();
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
-      console.log('userTempDestination');
+
       // 설정한 주소가 있는지
-    } else if (!userTempDestination && userDestination) {
+    } else if (!userTempDestination && userDestination && vaildSelectedDestination) {
       setTempDestination(userDestination);
-      console.log('userDestination');
+
       // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
-      console.log('recentOrderDelivery');
       if (!isSubscription) {
         setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
         setIsMaindestination(true);

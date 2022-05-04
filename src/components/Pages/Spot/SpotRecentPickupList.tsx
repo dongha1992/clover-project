@@ -24,7 +24,6 @@ interface IProps {
 
 // 스팟 검색 - 최근픽업이력
 const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
-  console.log(hasCart, 'SpotRecentPickupList');
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
@@ -59,6 +58,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         dong: item?.location?.dong!,
         zipCode: item?.location?.zipCode!,
       },
+      delivery: 'spot',
       main: false,
       availableTime: recentPickupTime!,
       spaceType: item?.spotPickup?.spot.type!,
@@ -153,8 +153,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         } else {
           // 로그인o and 장바구니 x, 메뉴 검색으로 이동
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
-          // dispatch(SET_DESTINATION(destinationInfo));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          dispatch(SET_DESTINATION(destinationInfo));
+          // dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/search', query: { isClosed: !!closedDate } });
         }
       }

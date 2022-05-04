@@ -85,7 +85,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   );
 
-  cartList = ['!1'];
+  // cartList = ['!1'];
 
   // 스팟 검색 - 이벤트 스팟 api
   const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
