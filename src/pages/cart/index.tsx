@@ -26,7 +26,7 @@ import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS 
 import { SET_ORDER } from '@store/order';
 import { HorizontalItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
-import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
   Obj,
   ISubOrderDelivery,
@@ -176,8 +176,9 @@ const CartPage = () => {
     },
     {
       onSuccess: async (response) => {
-        console.log(userDeliveryType, userDestination, 'userDeliveryType && userDestination');
-        if (userDeliveryType && userDestination) {
+        const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
+
+        if (validDestination && userDeliveryType && userDestination) {
           const destinationId = userDeliveryType === 'spot' ? userDestination?.spotPickup?.id! : userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -186,6 +187,7 @@ const CartPage = () => {
             location: userDestination.location!,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
+          dispatch(SET_TEMP_DESTINATION(null));
         } else if (response) {
           const params = {
             delivery: response.delivery,
@@ -202,6 +204,7 @@ const CartPage = () => {
                 location: data.data.location!,
               });
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
+              dispatch(SET_TEMP_DESTINATION(null));
             }
           } catch (error) {
             console.error(error);
