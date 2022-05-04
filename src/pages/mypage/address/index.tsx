@@ -8,7 +8,7 @@ import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { FixedTab } from '@styles/theme';
-import { useQuery } from 'react-query';
+import { Query, useQuery } from 'react-query';
 import { getCartsApi } from '@api/cart';
 
 const TAB_LIST = [
@@ -62,6 +62,10 @@ const AddressManagementPage = () => {
     router.push(`/mypage/address/edit/${id}`);
   };
 
+  const goToSpotEdit = ({ id, spotPickupId }: { id: number; spotPickupId: number }) => {
+    router.push({ pathname: `/mypage/address/edit/${id}`, query: { spotPickupId } });
+  };
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -74,7 +78,7 @@ const AddressManagementPage = () => {
       <Wrapper>
         {selectedTab === '/pickup'
           ? filteredList?.map((item: any, index: number) => (
-              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
+              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToSpotEdit} />
             ))
           : filteredList?.map((item: IDestinationsResponse, index: number) => (
               <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />

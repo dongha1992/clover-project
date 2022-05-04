@@ -450,6 +450,7 @@ export interface IKakaoLatLon {
   y: string;
 }
 
+/* SPOT */
 export interface IParamsSpots {
   latitude: number | null;
   longitude: number | null;
@@ -565,6 +566,14 @@ export interface ISpotPickupInfo {
   spot: ISpotsDetail;
 }
 
+export interface ISpotPickupInfoInDestination {
+  createdAt: string;
+  id: number;
+  name: string;
+  spotId: number;
+  type: string;
+}
+
 export interface ISpotDetailResponse {
   code: number;
   messages: string;
@@ -660,6 +669,12 @@ export interface ISpotRegistrationsResponse {
     subTitle: string;
     spotRegistrations: ISpotsDetail[];
   };
+}
+
+export interface IGetSpotPickupsResponse {
+  code: number;
+  message: string;
+  data: { pagination: number; spotPickups: ISpotPickupInDestinaion[] };
 }
 
 /* CARD */
