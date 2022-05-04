@@ -19,6 +19,7 @@ import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderListsApi, getOrderInfoApi } from '@api/order';
 import { userInvitationApi } from '@api/user';
+import isNil from 'lodash-es/isNil';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -62,7 +63,7 @@ const MypagePage = () => {
     }
   );
 
-  if (isLoginSuccess && isLoading) {
+  if (isNil(orderList) && isLoginSuccess) {
     return <div>로딩</div>;
   }
 
