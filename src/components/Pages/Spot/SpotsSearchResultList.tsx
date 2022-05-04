@@ -21,14 +21,15 @@ import { SVGIcon } from '@utils/common';
 
 interface IProps {
   item: ISpotsDetail | any;
+  hasCart?: boolean;
 }
 // 스팟 검색 - 검색 결과
 
-const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
+const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
+  console.log(hasCart, 'SpotsSearchResultList');
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
-  const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
@@ -61,14 +62,15 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
       spaceType: item.type,
       spotPickupId: spotPickupId,
       closedDate: item.closedDate,
+      delivery: 'spot',
     };
 
     const goToCart = () => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate }});
+      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate } });
     };
 
     const goToDeliveryInfo = () => {
@@ -82,8 +84,8 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
       // 로그인o and 장바구니 x, 메뉴 검색으로 이동
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/search', query: { isClosed: !!item.closedDate }});  
+      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      router.push({ pathname: '/search', query: { isClosed: !!item.closedDate } });
     };
 
     const handleSubsDeliveryType = () => {
@@ -103,15 +105,15 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
         query: { destinationId: item?.id, isSubscription, subsDeliveryType },
       });
     };
-    
-    if(!item.isOpened) {
+
+    if (!item.isOpened) {
       // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if(item.isClosed) {
+    if (item.isClosed) {
       // 스팟 종료된 상태 - 주문 불가
       return;
-    } 
+    }
     if (isLoginSuccess) {
       //로그인 o
       if (orderId) {
@@ -128,13 +130,13 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
         });
         return;
       }
-      if (cartLists.length) {
+      if (hasCart) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
           if (isSubscription) {
             // 구독에서 넘어옴
-            if(!!item.closedDate){
+            if (!!item.closedDate) {
               // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
               dispatch(
                 SET_ALERT({
@@ -142,7 +144,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
                   submitBtnText: '확인',
                   onSubmit: () => {},
                 })
-              );        
+              );
             } else {
               dispatch(
                 SET_BOTTOM_SHEET({
@@ -172,7 +174,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
         // 로그인o and 장바구니 x
         if (isSubscription) {
           // 구독에서 넘어옴
-          if(!!item.closedDate){
+          if (!!item.closedDate) {
             // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
             dispatch(
               SET_ALERT({
@@ -180,7 +182,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
                 submitBtnText: '확인',
                 onSubmit: () => {},
               })
-            );        
+            );
           } else {
             dispatch(
               SET_BOTTOM_SHEET({
@@ -192,7 +194,7 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
                   />
                 ),
               })
-            );  
+            );
           }
         } else {
           // 로그인o and 장바구니 x, 메뉴 검색으로 이동
@@ -217,11 +219,11 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
   };
 
   const goToDetail = (id: number | undefined) => {
-    if(item?.isClosed){
+    if (item?.isClosed) {
       router.push(`/spot/detail/${id}`);
     } else {
       return;
-    };
+    }
   };
 
   return (
@@ -229,53 +231,55 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
-        {
-          item.isClosed ? (
-            <MeterAndTime>
-              <SVGIcon name='exclamationMark' width='14' height='14' />
-              <TextB3R color={theme.brandColor} padding='0 0 0 2px'>운영 종료된 프코스팟이에요</TextB3R>
-            </MeterAndTime>
-          ) : !!item?.closedDate ? (
-            <MeterAndTime>
-              <SVGIcon name='exclamationMark' width='14' height='14' />
-              <TextB3R color={theme.brandColor} padding='0 0 0 2px'>운영 종료 예정인 프코스팟이에요</TextB3R>
-            </MeterAndTime>
+        {item.isClosed ? (
+          <MeterAndTime>
+            <SVGIcon name="exclamationMark" width="14" height="14" />
+            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+              운영 종료된 프코스팟이에요
+            </TextB3R>
+          </MeterAndTime>
+        ) : !!item?.closedDate ? (
+          <MeterAndTime>
+            <SVGIcon name="exclamationMark" width="14" height="14" />
+            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+              운영 종료 예정인 프코스팟이에요
+            </TextB3R>
+          </MeterAndTime>
+        ) : (
+          <MeterAndTime>
+            {userLocationLen && (
+              <>
+                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          </MeterAndTime>
+        )}
+        {item.isOpened ? (
+          !item.isTrial ? (
+            <div>
+              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                {typeTag()}
+              </Tag>
+            </div>
           ) : (
-            <MeterAndTime>
-              {userLocationLen && (
-                <>
-                  <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-                  <Col />
-                </>
-              )}
-              <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-                픽업
-              </TextH6B>
-              <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-            </MeterAndTime>
+            <div>
+              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                트라이얼
+              </Tag>
+            </div>
           )
-        }
-        {item.isOpened ? 
-            !item.isTrial ? (
-              <div>
-                <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                  {typeTag()}
-                </Tag>
-              </div>
-            ) : (
-              <div>
-                <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                  트라이얼
-                </Tag>
-              </div>
-            )
-          :
+        ) : (
           <div>
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
               오픈예정
             </Tag>
           </div>
-      }
+        )}
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
@@ -283,24 +287,29 @@ const SpotsSearchResultList = ({ item }: IProps): ReactElement => {
             return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />;
           })}
         </ImageWrapper>
-        {
-          (item.isOpened && !item.isClosed) ? (
-            // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
-            <Button backgroundColor={theme.white} color={theme.black} width="75px" height="38px" border onClick={orderHandler}>
-              주문하기
-            </Button>
-          ) : (
-            <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
-              주문하기
-            </Button>
-          )
-        }
+        {item.isOpened && !item.isClosed ? (
+          // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            width="75px"
+            height="38px"
+            border
+            onClick={orderHandler}
+          >
+            주문하기
+          </Button>
+        ) : (
+          <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
+            주문하기
+          </Button>
+        )}
       </FlexCol>
     </Container>
   );
 };
 
-const Container = styled.section<{ mapList: boolean, spotClose?: boolean }>`
+const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -318,10 +327,10 @@ const Container = styled.section<{ mapList: boolean, spotClose?: boolean }>`
     }
   }};
   ${({ spotClose }) => {
-    if(spotClose) {
-      return css `
+    if (spotClose) {
+      return css`
         cursor: pointer;
-      `
+      `;
     }
   }};
 `;
