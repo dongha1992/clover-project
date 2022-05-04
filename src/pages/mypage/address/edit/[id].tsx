@@ -29,41 +29,47 @@ import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@co
 import { IAccessMethod } from '@pages/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { DELIVERY_TIME_MAP } from '@constants/order';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { userForm } from '@store/user';
+import { getSpotPickups } from '@api/spot';
+import { spotSelector } from '@store/spot';
 /*TODO: 주문자와 동일 기능 */
 /*TODO: reqBody Type  */
 
 interface IProps {
   id: number;
+  spotPickupId: number;
 }
 
-interface IAddress {
-  address: string;
-  addressDetail: string;
-  zipCode: string;
-  dong: string;
+interface IDeliveryEditObj {
+  deliveryName: string;
+  receiverTel: string;
+  receiverName: string;
+  deliveryMessage: string;
+  spotPickupId: number | null;
+  isAccessInit: boolean;
 }
 
-const AddressEditPage = ({ id }: IProps) => {
+const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
   const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
-  const [deliveryEditObj, setDeliveryEditObj] = useState({
+  const [deliveryEditObj, setDeliveryEditObj] = useState<IDeliveryEditObj>({
     deliveryName: '',
     receiverTel: '',
     receiverName: '',
     deliveryMessage: '',
-    isAccessReuse: false,
+    spotPickupId: null,
+    isAccessInit: false,
   });
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { userAccessMethod } = useSelector(commonSelector);
+  const { spotPickupId: selectedSpotPickupId } = useSelector(spotSelector);
   const { me } = useSelector(userForm);
-  console.log(me, 'ME');
+
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
   const isMorning = selectedAddress?.delivery === 'MORNING';
@@ -86,18 +92,34 @@ const AddressEditPage = ({ id }: IProps) => {
           const selectedMethod = ACCESS_METHOD.find((item) => item.value === userSelectMethod);
           setSelectedAccessMethod(selectedMethod);
         }
-        console.log(data);
+
         setDeliveryEditObj({
           ...deliveryEditObj,
           deliveryName: data?.name!,
           receiverTel: data?.receiverTel!,
           receiverName: data?.receiverName!,
           deliveryMessage: data?.deliveryMessage!,
+          spotPickupId: data?.spotPickup?.id!,
         });
       },
       onSettled: async () => {},
 
       refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: pickups, refetch } = useQuery(
+    'getSpotpicks',
+    async () => {
+      const { data } = await getSpotPickups(spotPickupId);
+      return data.data.spotPickups;
+    },
+    {
+      onSuccess: (data) => {
+        dispatch(SET_BOTTOM_SHEET({ content: <PickupSheet pickupInfo={data!} isMypage /> }));
+      },
+      enabled: false,
       refetchOnWindowFocus: false,
     }
   );
@@ -116,18 +138,36 @@ const AddressEditPage = ({ id }: IProps) => {
     }
   );
 
-  const { mutateAsync: mutationEditAddress } = useMutation(async (reqBody: any) => {}, {
-    onSuccess: async () => {
-      await queryClient.refetchQueries('getAddressDetail');
-      dispatch(
-        SET_ALERT({
-          alertMessage: '내용을 수정했어요!',
-          submitBtnText: '확인',
-        })
-      );
+  const { mutateAsync: mutationEditAddress } = useMutation(
+    async () => {
+      const hasAccessMethod = selectedAccessMethod?.value!;
+      const reqBody = {
+        delivery: selectedAddress?.delivery!,
+        deliveryMessage: deliveryEditObj?.deliveryMessage ? deliveryEditObj?.deliveryMessage : null,
+        deliveryMessageType: hasAccessMethod ? selectedAccessMethod?.value! : null,
+        main: isDefaultSpot,
+        receiverName: deliveryEditObj.receiverName,
+        receiverTel: deliveryEditObj.receiverTel,
+        location: selectedAddress?.location!,
+        name: deliveryEditObj?.deliveryName,
+        spotPickupId: deliveryEditObj?.spotPickupId,
+      };
+      const { data } = await editDestinationApi(id, reqBody);
     },
-    onError: async (error: any) => {},
-  });
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getAddressDetail');
+        dispatch(INIT_ACCESS_METHOD());
+        dispatch(
+          SET_ALERT({
+            alertMessage: '내용을 수정했어요!',
+            submitBtnText: '확인',
+          })
+        );
+      },
+      onError: async (error: any) => {},
+    }
+  );
 
   const checkSamePerson = () => {};
 
@@ -205,33 +245,15 @@ const AddressEditPage = ({ id }: IProps) => {
     }
   };
 
-  const editAddress = async () => {
-    const hasAccessMethod = selectedAccessMethod?.value!;
-    const reqBody = {
-      delivery: selectedAddress?.delivery!,
-      deliveryMessage: selectedAddress?.deliveryMessage ? selectedAddress?.deliveryMessage : null,
-      deliveryMessageType: hasAccessMethod ? selectedAccessMethod?.value! : null,
-      main: isDefaultSpot,
-      receiverName: deliveryEditObj.receiverName,
-      receiverTel: deliveryEditObj.receiverTel,
-      location: selectedAddress?.location!,
-      name: selectedAddress?.name,
-      spotPickupId: selectedAddress?.spotPickup?.id ? selectedAddress?.spotPickup?.id : null,
-    };
-
-    const { data } = await editDestinationApi(id, reqBody);
-    if (data.code === 200) {
-      dispatch(INIT_ACCESS_METHOD());
-    }
-  };
-
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
   };
 
-  const checkAccessReuse = () => {
-    setDeliveryEditObj({ ...deliveryEditObj, isAccessReuse: !deliveryEditObj.isAccessReuse });
+  const checkAccessInit = () => {
+    setDeliveryEditObj({ ...deliveryEditObj, deliveryMessage: '', isAccessInit: !deliveryEditObj.isAccessInit });
+    dispatch(INIT_ACCESS_METHOD());
+    setSelectedAccessMethod(undefined);
   };
 
   const selectAccessMethodHandler = () => {
@@ -243,12 +265,19 @@ const AddressEditPage = ({ id }: IProps) => {
   };
 
   const changePickUpPlace = () => {
-    dispatch(SET_BOTTOM_SHEET({ content: <PickupSheet /> }));
+    refetch();
   };
 
   useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
+
+  useEffect(() => {
+    setDeliveryEditObj({
+      ...deliveryEditObj,
+      spotPickupId: selectedSpotPickupId,
+    });
+  }, [selectedSpotPickupId]);
 
   if (isLoading) {
     return <div>로딩중</div>;
@@ -287,7 +316,6 @@ const AddressEditPage = ({ id }: IProps) => {
         <DevlieryInfoWrapper>
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>배송정보</TextH4B>
-
             {isSpot && (
               <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
                 픽업 장소 변경
@@ -298,9 +326,7 @@ const AddressEditPage = ({ id }: IProps) => {
             <FlexCol>
               <FlexBetween padding="0 0 16px 0">
                 <TextH5B>배송방법</TextH5B>
-                <TextB2R>
-                  {DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}-{DELIVERY_TIME_MAP[selectedAddress?.deliveryDetail!]}
-                </TextB2R>
+                <TextB2R>{DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}</TextB2R>
               </FlexBetween>
               <FlexBetweenStart>
                 <TextH5B>픽업 장소</TextH5B>
@@ -314,21 +340,10 @@ const AddressEditPage = ({ id }: IProps) => {
             </FlexCol>
           ) : (
             <FlexCol>
-              {isQuick ? (
-                <FlexBetween padding="0 0 16px 0">
-                  <TextH5B>배송방법</TextH5B>
-                  <TextB2R>
-                    {DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}-
-                    {DELIVERY_TIME_MAP[selectedAddress?.deliveryDetail!]}
-                  </TextB2R>
-                </FlexBetween>
-              ) : (
-                <FlexBetween padding="0 0 16px 0">
-                  <TextH5B>배송방법</TextH5B>
-                  <TextB2R>{DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}</TextB2R>
-                </FlexBetween>
-              )}
-
+              <FlexBetween padding="0 0 16px 0">
+                <TextH5B>배송방법</TextH5B>
+                <TextB2R>{DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}</TextB2R>
+              </FlexBetween>
               <FlexBetweenStart>
                 <TextH5B>베송지</TextH5B>
                 <FlexColEnd>
@@ -345,8 +360,8 @@ const AddressEditPage = ({ id }: IProps) => {
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
               <FlexRow>
-                <Checkbox onChange={checkAccessReuse} isSelected={deliveryEditObj.isAccessReuse} />
-                <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
+                <Checkbox onChange={checkAccessInit} isSelected={deliveryEditObj.isAccessInit} />
+                <TextB2R padding="0 0 0 8px">입력 초기화</TextB2R>
               </FlexRow>
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
@@ -410,7 +425,7 @@ const AddressEditPage = ({ id }: IProps) => {
         </FlexRow>
       </Wrapper>
       <ButtonGroup
-        rightButtonHandler={editAddressHandler}
+        rightButtonHandler={mutationEditAddress}
         leftButtonHandler={removeAddressHandler}
         leftText="삭제하기"
         rightText="수정하기"
@@ -453,10 +468,10 @@ const MustCheckAboutDelivery = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { id } = context.query;
+  const { id, spotPickupId } = context.query;
 
   return {
-    props: { id: Number(id) },
+    props: { id: Number(id), spotPickupId: Number(spotPickupId) },
   };
 }
 export default AddressEditPage;

@@ -176,6 +176,7 @@ const CartPage = () => {
     },
     {
       onSuccess: async (response) => {
+        console.log(userDeliveryType, userDestination, 'userDeliveryType && userDestination');
         if (userDeliveryType && userDestination) {
           const destinationId = userDeliveryType === 'SPOT' ? userDestination?.spotPickup?.id! : userDestination?.id!;
           setDestinationObj({
