@@ -45,7 +45,7 @@ const AddressManagementPage = () => {
   };
 
   const goToCart = (item: IDestinationsResponse) => {
-    dispatch(SET_DESTINATION(item));
+    dispatch(SET_DESTINATION({ ...item, closedDate: item.spotPickup?.spot.closedDate }));
     dispatch(SET_USER_DELIVERY_TYPE(item?.delivery?.toLowerCase()!));
     router.push('/cart');
   };
