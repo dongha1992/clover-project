@@ -22,9 +22,12 @@ export const alert = createSlice({
     SET_ALERT: (state, action: PayloadAction<TAlert | null>) => {
       return action.payload;
     },
+    INIT_ALERT: (state, action: PayloadAction) => {
+      return null;
+    },
   },
 });
 
-export const { SET_ALERT } = alert.actions;
+export const { SET_ALERT, INIT_ALERT } = alert.actions;
 export const alertForm = (state: AppState): TAlert | null => state.alert;
 export default alert.reducer;

@@ -340,7 +340,6 @@ const DeliverInfoPage = () => {
 
     try {
       const { data } = await getMainDestinationsApi(params);
-
       if (data.code === 200) {
         if (data.data) {
           setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });

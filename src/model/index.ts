@@ -1682,6 +1682,7 @@ export interface IDeliveryObj {
   delivery: string | null;
   deliveryDetail: string | null;
   location: ILocation | null;
+  closedDate?: string;
 }
 
 /* COUPON */
