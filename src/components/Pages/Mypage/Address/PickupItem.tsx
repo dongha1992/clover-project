@@ -9,7 +9,7 @@ import { IDestinationsResponse } from '@model/index';
 
 interface IProps {
   item: IDestinationsResponse;
-  goToCart: () => void;
+  goToCart: (item: IDestinationsResponse) => void;
   goToEdit: ({ id, spotPickupId }: { id: number; spotPickupId: number }) => void;
 }
 
@@ -57,7 +57,13 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           <TextB3R>{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
         </FlexRow>
       </FlexCol>
-      <Button onClick={goToCart} backgroundColor={theme.white} border color={theme.black} margin="16px 0 24px 0">
+      <Button
+        onClick={() => goToCart(item)}
+        backgroundColor={theme.white}
+        border
+        color={theme.black}
+        margin="16px 0 24px 0"
+      >
         주문하기
       </Button>
     </Container>
