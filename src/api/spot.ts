@@ -15,6 +15,7 @@ import {
   IGetSpotsRegistrationsStatusResponse,
   ISpotWishListResponse,
   IGetSpotFilterResponse,
+  IGetSpotsRegistrationsStatusDetailResponse,
 } from '@model/index';
 
 //신규 스팟
@@ -124,7 +125,7 @@ export const getSpotsRegistrationStatus = (
 };
 
 // 스팟 신청 현황 상세
-export const getSpotsRegistrationStatusDetail = ( id: number): Promise<AxiosResponse<IEditRegistration>> => {
+export const getSpotsRegistrationStatusDetail = ( id: number): Promise<AxiosResponse<IGetSpotsRegistrationsStatusDetailResponse>> => {
   return Api.get(`/spot/v1/registrations/${id}`, { params: id });
 };
 
