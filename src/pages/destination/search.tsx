@@ -90,6 +90,12 @@ const DestinationSearchPage = () => {
 
   const beforeSearch = resultAddress && !resultAddress.length;
 
+  useEffect(() => {
+    if (!userDeliveryType) {
+      router.replace('/cart');
+    }
+  }, []);
+
   if (beforeSearch && isLoading) {
     return <div>로딩</div>;
   }
