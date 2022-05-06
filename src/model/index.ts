@@ -421,8 +421,8 @@ export interface IKakaoLatLon {
 }
 
 export interface IParamsSpots {
-  latitude: number | null;
-  longitude: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
   page?: number;
   size?: number;
   keyword?: string;
@@ -871,6 +871,12 @@ export interface IGetSpotsRegistrationsStatusResponse {
   code: number;
   message: string;
   data: IGetSpotsRegistrationsStatus;
+}
+
+export interface IGetSpotsRegistrationsStatusDetailResponse {
+  code: number;
+  message: string;
+  data: IEditRegistration;
 }
 
 export interface IGetSpotFilterResponse {
