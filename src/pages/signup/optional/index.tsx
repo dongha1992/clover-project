@@ -42,9 +42,9 @@ interface IBirthdayObj {
 const SignupOptionalPage = () => {
   const [checkGender, setChcekGender] = useState<string>('');
   const [birthDayObj, setBirdayObj] = useState<IBirthdayObj>({
-    year: 'YYYY',
-    month: 'MM',
-    day: 'DD',
+    year: 0,
+    month: 0,
+    day: 0,
   });
   const nicknameRef = useRef<HTMLInputElement>(null);
 
@@ -99,12 +99,12 @@ const SignupOptionalPage = () => {
     }
   };
 
-  useEffect(() => {
-    // 마지막 페이지에서 새로고침 시 처음으로
-    if (!signupUser.email) {
-      router.replace('/signup');
-    }
-  }, [signupUser]);
+  // useEffect(() => {
+  //   // 마지막 페이지에서 새로고침 시 처음으로
+  //   if (!signupUser.email) {
+  //     router.replace('/signup');
+  //   }
+  // }, [signupUser]);
 
   return (
     <Container>
@@ -124,8 +124,8 @@ const SignupOptionalPage = () => {
             <InputContainer>
               <YearPicker
                 defaultValue="YYYY"
-                start={1920} // default is 1900
-                end={2022} // default is current year
+                start={1922} // default is 1900
+                end={2008} // default is current year
                 reverse // default is ASCENDING
                 required={true} // default is false
                 value={birthDayObj.year} // mandatory
