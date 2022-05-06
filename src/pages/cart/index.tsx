@@ -25,7 +25,7 @@ import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
 import { SET_ORDER } from '@store/order';
 import { HorizontalItem } from '@components/Item';
-import { SET_ALERT } from '@store/alert';
+import { SET_ALERT, INIT_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
   Obj,
@@ -53,6 +53,9 @@ import { onUnauthorized } from '@api/Api';
 import { pluck, pipe, reduce, toArray, map, entries, each, flatMap, intersectionBy } from '@fxts/core';
 import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ } from '@constants/cart';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+dayjs.locale('ko');
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 
@@ -76,6 +79,8 @@ const INITIAL_NUTRITION = {
   protein: 0,
   calorie: 0,
 };
+
+const now = dayjs();
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
@@ -117,6 +122,7 @@ const CartPage = () => {
     delivery: null,
     deliveryDetail: null,
     location: null,
+    closedDate: '',
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
@@ -129,10 +135,6 @@ const CartPage = () => {
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const { isLoginSuccess } = useSelector(userForm);
   const queryClient = useQueryClient();
-
-  // 스팟 종료 날짜
-  const dt = new Date(userDestination?.closedDate!);
-  const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일`;
 
   const { isLoading, isError } = useQuery(
     'getCartList',
@@ -177,7 +179,6 @@ const CartPage = () => {
     {
       onSuccess: async (response) => {
         const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
-
         if (validDestination && userDeliveryType && userDestination) {
           const destinationId = userDeliveryType === 'spot' ? userDestination?.spotPickup?.id! : userDestination?.id!;
           setDestinationObj({
@@ -185,6 +186,7 @@ const CartPage = () => {
             delivery: userDeliveryType,
             destinationId,
             location: userDestination.location!,
+            closedDate: userDestination.closedDate && userDestination.closedDate,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -202,6 +204,7 @@ const CartPage = () => {
                 delivery: response.delivery.toLowerCase(),
                 destinationId,
                 location: data.data.location!,
+                closedDate: data.data.spotPickup?.spot.closedDate && data.data.spotPickup?.spot.closedDate,
               });
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
               dispatch(SET_TEMP_DESTINATION(null));
@@ -841,15 +844,21 @@ const CartPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isClosed === 'true') {
+    // 스팟 종료 날짜
+    const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
+
+    const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
+    const closedSoonOperation = dDay >= -14;
+
+    if (closedSoonOperation) {
       dispatch(
         SET_ALERT({
-          alertMessage: `해당 프코스팟은\n${openDate}에 운영 종료돼요!`,
+          alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
           submitBtnText: '확인',
         })
       );
     }
-  }, [isLoading]);
+  }, [destinationObj]);
 
   const test = async () => {
     const res = await postCartsApi([
@@ -869,10 +878,6 @@ const CartPage = () => {
   if (isLoading) {
     return <div>로딩</div>;
   }
-
-  // if (!cartItemList) {
-  //   return <div>알수없는에러</div>;
-  // }
 
   if (!cartItemList) {
     return (
