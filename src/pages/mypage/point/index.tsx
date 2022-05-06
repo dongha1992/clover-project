@@ -15,8 +15,6 @@ import { IPointHistories } from '@model/index';
 import { getCustomDate } from '@utils/destination';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
@@ -37,7 +35,7 @@ const PointPage = () => {
       const types = formatTanNameHandler(selectedTab);
       const params = {
         page: 1,
-        size: 1,
+        size: 10,
         types,
       };
       const { data } = await getPointHistoryApi(params);
@@ -100,16 +98,12 @@ const PointPage = () => {
   );
 
   const formatTanNameHandler = (tabName: string): string => {
-    return tabName.replace('/', '').toUpperCase();
+    return tabName === '/save' ? 'SAVE' : 'EXPIRATION,USE';
   };
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
-
-  useEffect(() => {
-    dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
-  }, []);
 
   if (isLoading || pointLoading) {
     return <div>로딩</div>;
@@ -214,11 +208,11 @@ const PointItem = React.forwardRef(
       <FlexCol padding="0 0 24px 0" ref={ref}>
         <FlexBetween padding="0 0 6px 0">
           <TextH5B>{content}</TextH5B>
-          <TextH5B>+ {value}</TextH5B>
+          <TextH5B>{value}</TextH5B>
         </FlexBetween>
         <FlexBetween>
           <TextB2R>{formatCreatedAt}</TextB2R>
-          <TextB2R color={theme.greyScale45}>{formatExpiredDate && formatExpiredDate} 소멸예정</TextB2R>
+          {expiredDate && <TextB2R color={theme.greyScale45}> {formatExpiredDate} 소멸예정</TextB2R>}
         </FlexBetween>
       </FlexCol>
     );

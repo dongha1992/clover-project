@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { theme, FlexBetween, FlexCol, FlexRow, homePadding } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -6,12 +6,18 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { IDestinationsResponse } from '@model/index';
+import { SVGIcon } from '@utils/common';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+dayjs.locale('ko');
 
 interface IProps {
   item: IDestinationsResponse;
-  goToCart: () => void;
-  goToEdit: (id: number) => void;
+  goToCart: (item: IDestinationsResponse) => void;
+  goToEdit: ({ id, spotPickupId }: { id: number; spotPickupId: number }) => void;
 }
+
+const now = dayjs();
 
 const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
   const { spotPickup, main, location, name, receiverName, receiverTel } = item;
@@ -23,7 +29,39 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
     },
     // PUBLIC: { name: '퍼블릭', backgroundColor: theme.greyScale6, color: theme.greyScale45 },
     TRIAL: { name: '트라이얼', backgroundColor: theme.greyScale6, color: theme.greyScale45 },
+    CAFE: { name: '카페', backgroundColor: theme.greyScale6, color: theme.greyScale45 },
   };
+
+  // 운영 종료 예정 혹은 종료 구하기
+  const dDay = now.diff(dayjs(item?.spotPickup?.spot.closedDate), 'day');
+  const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
+  const closedSoonOperation = dDay >= -14;
+
+  const renderSpotMsg = useCallback(() => {
+    switch (true) {
+      case closedOperation: {
+        return (
+          <FlexRow margin="8px 0 16px 0">
+            <SVGIcon name="exclamationMark" />
+            <TextB3R margin="0 0 0 4px" color={theme.brandColor}>
+              운영 종료된 프코스팟이에요
+            </TextB3R>
+          </FlexRow>
+        );
+      }
+      case closedSoonOperation: {
+        return (
+          <FlexRow margin="8px 0 16px 0">
+            <SVGIcon name="exclamationMark" />
+            <TextB3R margin="0 0 0 4px" color={theme.brandColor}>
+              운영 종료 예정인 프코스팟이에요
+            </TextB3R>
+          </FlexRow>
+        );
+      }
+    }
+  }, []);
+
   return (
     <Container>
       <FlexCol>
@@ -35,7 +73,11 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
             </Tag>
             {main && <Tag>기본 프코스팟</Tag>}
           </FlexRow>
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => goToEdit(item?.id!)}>
+          <TextH6B
+            color={theme.greyScale65}
+            textDecoration="underline"
+            onClick={() => goToEdit({ id: item?.id!, spotPickupId: item?.spotPickup?.id! })}
+          >
             편집
           </TextH6B>
         </FlexBetween>
@@ -52,7 +94,18 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           <TextB3R>{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
         </FlexRow>
       </FlexCol>
-      <Button onClick={goToCart} backgroundColor={theme.white} border color={theme.black} margin="16px 0 24px 0">
+      {renderSpotMsg()}
+      <Button
+        onClick={() => {
+          if (closedOperation) return;
+          goToCart(item);
+        }}
+        backgroundColor={theme.white}
+        border
+        color={theme.black}
+        margin="16px 0 24px 0"
+        disabled={closedOperation}
+      >
         주문하기
       </Button>
     </Container>
@@ -71,4 +124,4 @@ const Col = styled.div`
   background-color: ${({ theme }) => theme.greyScale6};
 `;
 
-export default PickupItem;
+export default React.memo(PickupItem);

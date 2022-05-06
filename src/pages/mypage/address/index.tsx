@@ -9,6 +9,9 @@ import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { FixedTab } from '@styles/theme';
 import { useQuery } from 'react-query';
+import { getCartsApi } from '@api/cart';
+import { useDispatch } from 'react-redux';
+import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -17,8 +20,8 @@ const TAB_LIST = [
 
 const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
-  const [pickupList, setpickupList] = useState([]);
-  const [deliveryList, setDeliveryList] = useState<IDestinationsResponse[]>([]);
+
+  const dispatch = useDispatch();
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectedTab],
@@ -41,10 +44,18 @@ const AddressManagementPage = () => {
     setSelectedTab(tabItem.link);
   };
 
-  const goToCart = () => {};
+  const goToCart = (item: IDestinationsResponse) => {
+    dispatch(SET_DESTINATION({ ...item, closedDate: item.spotPickup?.spot.closedDate }));
+    dispatch(SET_USER_DELIVERY_TYPE(item?.delivery?.toLowerCase()!));
+    router.push('/cart');
+  };
 
   const goToEdit = (id: number) => {
     router.push(`/mypage/address/edit/${id}`);
+  };
+
+  const goToSpotEdit = ({ id, spotPickupId }: { id: number; spotPickupId: number }) => {
+    router.push({ pathname: `/mypage/address/edit/${id}`, query: { spotPickupId } });
   };
 
   if (isLoading) {
@@ -59,7 +70,7 @@ const AddressManagementPage = () => {
       <Wrapper>
         {selectedTab === '/pickup'
           ? filteredList?.map((item: any, index: number) => (
-              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
+              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToSpotEdit} />
             ))
           : filteredList?.map((item: IDestinationsResponse, index: number) => (
               <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
