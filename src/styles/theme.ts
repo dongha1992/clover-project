@@ -116,7 +116,7 @@ export const FlexCol = styled.div<{
   cursor: ${({ pointer }) => (pointer ? 'pointer' : 'static')};
 `;
 
-export const FlexColEnd = styled.div<{ padding?: string; margin?: string }>`
+export const FlexColEnd = styled.div<{ padding?: string; margin?: string; width?: string }>`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
