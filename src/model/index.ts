@@ -1740,3 +1740,51 @@ export interface IPromotionRequest {
   code: string;
   reward: TReward | null;
 }
+
+/* SUBSCRIPTION */
+export interface IGetSubscription {
+  id: number;
+  destinationId: number;
+  subscriptionPeriod: string;
+  deliveryStartDate?: string;
+}
+
+export interface ISubscriptionResponse {
+  code: number;
+  message: string;
+  data: ISubscription | ISubsActiveDates;
+}
+export interface ISubscription {
+  menuTables: {
+    deliveryDate: string;
+    menuTypes: string[];
+    menuTableItems: {
+      id: number;
+      main: boolean;
+      selected: boolean;
+      menuId: number;
+      menuType: string;
+      menuName: string;
+      menuDetailId: number;
+      menuDetailName: string;
+      menuPrice: number;
+      menuImage: {
+        id: number;
+        url: string;
+        width: number;
+        height: number;
+      };
+      isSold: boolean;
+      changed: boolean;
+    };
+  }[];
+  pagination: IPagination;
+}
+
+export interface ISubsActiveDates {
+  menuTables: ISubsActiveDate[];
+}
+export interface ISubsActiveDate {
+  id: number;
+  deliveryDate: string;
+}
