@@ -10,23 +10,27 @@ import 'dayjs/locale/ko';
 import { SET_SUBS_DELIVERY_EXPECTED_DATE, SET_SUBS_ORDER_MENUS, subscriptionForm } from '@store/subscription';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import { ISubsActiveDate } from '@model/index';
+import { getSubscriptionApi } from '@api/menu';
 dayjs.locale('ko');
 interface IProps {
+  subsActiveDates: ISubsActiveDate[];
   disabledDate?: string[];
   deliveryComplete?: string[];
-  deliveryExpectedDate?: string[];
-  setDeliveryExpectedDate?: (value: string[]) => void;
+  deliveryExpectedDate?: { deliveryDate: string }[];
+  setDeliveryExpectedDate?: Dispatch<SetStateAction<{ deliveryDate: string }[]>>;
   deliveryHoliday?: string[];
   deliveryChange?: string[];
   sumDelivery?: string[];
   sumDeliveryComplete?: string[];
-  subsDates: string[];
   setPickupDay?: (value: any[]) => void;
   setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
   calendarType?: string;
+  subsPeriod?: string;
 }
 
 const SubsCalendar = ({
+  subsActiveDates, // 구독캘린더 active 날짜리스트
   disabledDate = [], // 구독캘린더 inactive 날짜리스트
   deliveryComplete = [], // 배송완료 or 주문취소
   deliveryExpectedDate = [], // 배송예정일
@@ -35,49 +39,46 @@ const SubsCalendar = ({
   deliveryChange = [], // 배송일변경
   sumDelivery = [], // 배송예정일(합배송 포함)
   sumDeliveryComplete = [], // 배송완료(합배송 포함)
-  subsDates, // 초기 구독캘린더 active 날짜리스트
   setPickupDay, // 구독 플랜 단계에서 픽업 날짜
   setSelectDate, // 선택한 날짜
   calendarType, // 캘린더 타입
+  subsPeriod,
 }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { subsDeliveryExpectedDate } = useSelector(subscriptionForm);
 
   const today = dayjs().format('YYYY-MM-DD');
+
   const [value, setValue] = useState<Date>();
-  const [maxDate, setMaxDate] = useState(new Date(subsDates[subsDates.length - 1]));
+
+  const [minDate, setMinDate] = useState<Date>(new Date(subsActiveDates[0]?.deliveryDate));
+  const [maxDate, setMaxDate] = useState<Date>(new Date(subsActiveDates[subsActiveDates.length - 1]?.deliveryDate));
 
   useEffect(() => {
-    if (subsDeliveryExpectedDate.length !== 0) {
-      setValue(new Date(subsDeliveryExpectedDate[0]));
-      setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1]));
+    if (subsDeliveryExpectedDate) {
+      setValue(new Date(subsDeliveryExpectedDate[0].deliveryDate));
+      setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate));
     }
   }, [subsDeliveryExpectedDate]);
 
   useEffect(() => {
     // 배송일 변경시 변경할려는 날짜에 합배송이 있을경우
-    if (sumDelivery.find((x) => x === subsDates[0])) {
+    if (sumDelivery.find((x) => x === subsActiveDates[0].deliveryDate)) {
     }
   }, []);
-
-  // const [sumDeliveryChange, setSumDeliveryChange] = useState(false);
-  // useEffect(() => {
-  //   // 배송일 변경
-  //   // 배송예정일(합배송 포함)일때
-  //   if (sumDelivery.find((x) => x === dayjs(value).format('YYYY-MM-DD'))) {
-  //     setSumDeliveryChange(true);
-  //   }
-  // }, []);
 
   const titleContent = useCallback(
     ({ date, view }: { date: any; view: any }) => {
       let element = [];
-      if (calendarType === 'deliveryChange' && deliveryExpectedDate[0] === dayjs(date).format('YYYY-MM-DD')) {
+      if (
+        calendarType === 'deliveryChange' &&
+        deliveryExpectedDate[0].deliveryDate === dayjs(date).format('YYYY-MM-DD')
+      ) {
         // 배송일변경 시 변경전 날짜
         element.push(<div className="deliveryChangeBeforeDate" key={`00-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
       }
-      if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+      if (deliveryExpectedDate.find((x) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
         element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
       }
       if (today === dayjs(date).format('YYYY-MM-DD')) {
@@ -132,7 +133,7 @@ const SubsCalendar = ({
   );
 
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
-    if (!subsDates.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
+    if (!subsActiveDates.find((x) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
       return true;
     }
     if (date.getDay() === 0) {
@@ -147,23 +148,29 @@ const SubsCalendar = ({
   };
 
   const { mutate: mutateSelectDate } = useMutation(
-    async (id: string) => {
-      const { data } = await axios.get(`http://localhost:9009/api/subsList/${id}`);
+    async (date: string) => {
+      const params = {
+        id: 824,
+        destinationId: 1,
+        subscriptionPeriod: subsPeriod!,
+        deliveryStartDate: date,
+      };
+      const { data } = await getSubscriptionApi(params);
 
-      return data.data;
+      return data.data.menuTables;
     },
     {
       onSuccess: async (data) => {
-        let dates: string[] = [];
+        let dates: { deliveryDate: string }[] = [];
         let pickupDayObj = new Set();
 
-        await data.deliveryDates.map((item: any) => {
-          dates.push(item.deliveryDate);
+        data.map((item: any) => {
+          dates.push({ deliveryDate: item.deliveryDate });
           pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
         });
 
         setDeliveryExpectedDate && setDeliveryExpectedDate(dates);
-        setMaxDate(new Date(dates[dates.length - 1]));
+        setMaxDate(new Date(dates[dates.length - 1].deliveryDate));
 
         // 픽업 요일
         setPickupDay && setPickupDay(Array.from(pickupDayObj));
@@ -193,7 +200,7 @@ const SubsCalendar = ({
         calendarType={'Hebrew'}
         prev2Label={null}
         next2Label={null}
-        minDate={new Date(subsDates[0])}
+        minDate={minDate}
         maxDate={maxDate}
         onChange={onChange}
         value={value}

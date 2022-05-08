@@ -3,7 +3,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { SUBSCRIPTION_PERIOD } from '@constants/subscription';
-import { Obj } from '@model/index';
+import { ISubsActiveDate, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm } from '@store/destination';
@@ -21,6 +21,7 @@ import styled from 'styled-components';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { getMainDestinationsApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
+import { getSubscriptionApi } from '@api/menu';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 const subsDeliveryType: any = 'spot';
@@ -36,7 +37,7 @@ const SubsSetInfoPage = () => {
   const { isLoginSuccess } = useSelector(userForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const [subsDates, setSubsDates] = useState([]);
-  const [userSelectPeriod, setUserSelectPeriod] = useState('subscription');
+  const [userSelectPeriod, setUserSelectPeriod] = useState('UNLIMITED');
 
   const goToDeliveryInfo = () => {
     dispatch(INIT_DESTINATION());
@@ -49,18 +50,6 @@ const SubsSetInfoPage = () => {
       },
     });
   };
-  const { data, isLoading } = useQuery(
-    'subsDates',
-    async () => {
-      const data = await axios.get('http://localhost:9009/api/subsDates');
-      return data.data;
-    },
-    {
-      onSuccess: (data) => {
-        setSubsDates(data.data.startDates);
-      },
-    }
-  );
 
   const { data: mainDestinations, isLoading: mainDestinationsLoading } = useQuery(
     'getMainDestinations',
@@ -83,7 +72,7 @@ const SubsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod} subsDates={subsDates} />,
+          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod} />,
         })
       );
     } else {
@@ -100,7 +89,7 @@ const SubsSetInfoPage = () => {
     router.push('/subscription/register');
   };
 
-  if (isLoading && mainDestinationsLoading) return <div>...로딩중</div>;
+  if (mainDestinationsLoading) return <div>...로딩중</div>;
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
   return (
     <Container>
