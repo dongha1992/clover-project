@@ -5,14 +5,14 @@ interface TProps {
   subsStartDate: string | null;
   subsDeliveryTime: string | null;
   subsOrderMenus: any[] | null;
-  subsDeliveryExpectedDate: string[];
+  subsDeliveryExpectedDate: any;
   subsPickupDay: any[] | null;
 }
 const initialState: TProps = {
   subsStartDate: null,
   subsDeliveryTime: null,
   subsOrderMenus: [],
-  subsDeliveryExpectedDate: [],
+  subsDeliveryExpectedDate: null,
   subsPickupDay: null,
 };
 
@@ -39,7 +39,7 @@ export const subscription = createSlice({
       state.subsStartDate = null;
       state.subsDeliveryTime = null;
       state.subsOrderMenus = [];
-      state.subsDeliveryExpectedDate = [];
+      state.subsDeliveryExpectedDate = null;
       state.subsPickupDay = null;
     },
   },
