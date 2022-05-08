@@ -68,9 +68,14 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
                   <TextH6B margin="0 0 0 6px" color={theme.brandColor}>{`${i?.recruitingCount}/5명 참여 중`}</TextH6B>
                 </FlexStart>
               )}
-              {i?.step === 'TRIAL' && (
+              {i?.type === 'PRIVATE' && i?.step === 'TRIAL' && (
                 <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
                   오픈 참여 공유하고 포인트 받기
+                </Button>
+              )}
+              {i?.type === 'PRIVATE' && i?.step === 'TRIAL' && (
+                <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
+                  오픈 참여 공유하기
                 </Button>
               )}
             </Wrppaer>

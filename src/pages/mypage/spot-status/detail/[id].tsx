@@ -1,6 +1,6 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useRef } from 'react';
 import styled from 'styled-components';
-import { theme, FlexBetween } from '@styles/theme';
+import { theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH2B, TextB3R, TextH4B, TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
@@ -42,6 +42,7 @@ const PLAN_GUIDE = [
 ];
 
 const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
+  const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
   const [openInfo, setOpenInfo] = useState<boolean>(false);
@@ -96,9 +97,13 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
   };
 
   const privateRegistrationBenefit = (): void => {
-    setOpenInfo(true);
-  }
 
+    setOpenInfo(true);
+    currentRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  };
+  
+  // console.log(document.documentElement.clientHeight);
   return (
     <Container>
       <TopStatusWrapper>
@@ -113,7 +118,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
       </TopStatusWrapper>
       <SpotStatusDetailProgressBar item={statusDetail} />
       {
-        statusDetail?.type !== 'PUBLIC' &&
+        statusDetail?.type === 'PRIVATE' && statusDetail?.step !== 'REJECTED' &&
         <BtnWrapper>
           <Button color={theme.black} backgroundColor={theme.white} border onClick={privateRegistrationBenefit}>모집 혜택 확인하기</Button>
         </BtnWrapper>
@@ -143,7 +148,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
           <Row10 />
         </>
       }
-      <ToggleWrapper  onClick={toggleOpenInfo}>
+      <ToggleWrapper  onClick={toggleOpenInfo} ref={currentRef}>
         <FlexBetween padding="24px">
           <TextH4B>{`${tagType()} 프코스팟 오픈방법 알아보기`}</TextH4B>
           <SVGIcon name={openInfo ? 'triangleUp' : 'triangleDown'} />
@@ -178,6 +183,19 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
           채팅 문의
         </Button>
       </PlanGuideWrapper>
+      {
+        statusDetail?.type === 'PRIVATE' && (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') &&
+      <FixedButton onClick={()=> {}}>
+        <Button
+          borderRadius="0"
+          height="100%"
+          padding="10px 0 0 0"
+          backgroundColor={theme.balck}
+        >
+          주문하기
+        </Button>
+      </FixedButton>
+      }
     </Container>
   );
 };
@@ -215,10 +233,16 @@ const PlanGuidContent = styled.div`
 `;
 
 const PlanGuideWrapper = styled.section`
+  height: calc(100% - 56px);
   background: ${theme.greyScale3};
   padding: 24px;
   margin-top: 48px;
 `;
+
+const FixedButton = styled.section`
+  ${fixedBottom}
+`;
+
 
 export async function getServerSideProps(context: any) {
   const { id } = context.query;
