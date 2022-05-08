@@ -1,16 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextH2B, TextB3R, TextH4B, TextH6B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { theme, FlexBetween } from '@styles/theme';
 import { EventTooltip } from '@components/Shared/Tooltip';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useDispatch } from 'react-redux';
+import { SpotStatusRejectedSheet } from '@components/BottomSheet/SpotStatusRejectedSheet';
 
 interface IParams {
   item: any;
 };
 
 const SpotStatusDetailProgressBar = ({ item }: IParams) => {
+  const dispatch = useDispatch();
 
   const progressStepType = () => {
     switch(item?.type) {
@@ -141,13 +145,30 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
     };
   };
 
+  const handleSpotRejectedNotice = () => {
+    dispatch(
+      SET_BOTTOM_SHEET({
+        content: (
+          <SpotStatusRejectedSheet
+            content='test'
+            onSubmit={()=> {}}
+          />
+        )
+      })
+    )
+  };
+
   return (
     <Container>
-      <StatusBoradWrapper>
+      <StatusBoradWrapper step={item?.step}>
         <TextH4B padding="24px 24px 16px 24px">{progressStepType()?.title}</TextH4B>
         {
-          progressStepType()?.subtitle && 
+          item?.step === 'REJECTED' ? (
+            <TextB3R padding="0 24px 0 24px" textDecoration='underline' pointer onClick={handleSpotRejectedNotice}>오픈 미진행 안내 보기</TextB3R>
+          ) : (
+            progressStepType()?.subtitle && 
             <TextB3R padding="0 24px 0 24px">{progressStepType()?.subtitle}</TextB3R>
+          )
         }
         <ProgressWrapper>
           <Row />
@@ -161,7 +182,7 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
                       {
                         item?.step === 'TRIAL' || item?.step === 'RECRUITING' && 
                         selectedStep?.id === idx &&
-                      <TootipWrapper>
+                      <TootipWrapper type={item?.step}>
                         <EventTooltip
                           message={`현재 ${item?.recruitingCount}명 참여 중`}
                           bgColor={theme.black}
@@ -192,10 +213,20 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
 
 const Container = styled.div``;
 
-const StatusBoradWrapper = styled.section`
+const StatusBoradWrapper = styled.section<{step?: string}>`
   width: 100%;
-  background: ${theme.brandColor};
   color: ${theme.white};
+  ${({ step }) => {
+    if (step === 'REJECTED') {
+      return css `
+        background: ${theme.greyScale45};
+      `;
+    } else {
+      return css `  
+        background: ${theme.brandColor};
+      `;
+    };
+  }}
 `;
 
 const ProgressWrapper = styled.div`
@@ -225,10 +256,21 @@ const Text = styled.div<{isSelected?: boolean}>`
   padding-top: 12px;
 `;
 
-const TootipWrapper = styled.div`
+const TootipWrapper = styled.div<{type?: string}>`
   position: relative;
-  bottom: 17px;
-  right: 72px;
+  ${({ type }) => {
+    if(type === 'RECRUITING') {
+      return css `
+        bottom: 17px;
+        right: 72px;
+      `;
+    } else if(type === 'TRIAL') {
+      return css `
+        bottom: 17px;
+        right: 72px;
+      `;
+    }
+  }}
 `;
 
 const BarWrapper = styled.div`
