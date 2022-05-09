@@ -18,7 +18,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderListsApi, getOrderInfoApi } from '@api/order';
-import { userInvitationApi } from '@api/user';
+import { userInvitationApi, getUserInfoApi } from '@api/user';
 import { getPointApi } from '@api/point';
 import isNil from 'lodash-es/isNil';
 interface IMypageMenu {
@@ -38,14 +38,12 @@ const MypagePage = () => {
         orderType: 'GENERAL',
       };
 
-      if (isLoginSuccess) {
-        const { data } = await getOrderInfoApi(params);
-        return data.data;
-      }
+      const { data } = await getOrderInfoApi(params);
+      return data.data;
     },
     {
       onSuccess: (data) => {},
-      refetchOnReconnect: true,
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -56,7 +54,6 @@ const MypagePage = () => {
     'getInvitationInfo',
     async () => {
       const { data } = await userInvitationApi();
-      console.log('friendInvitation');
 
       return data.data;
     },
@@ -69,10 +66,11 @@ const MypagePage = () => {
     }
   );
 
-  const { data: points, isLoading: pointLoading } = useQuery(
-    'getPoint',
+  const { data: userInfo, isLoading: infoLoading } = useQuery(
+    'getUserInfo',
     async () => {
-      const { data } = await getPointApi();
+      const { data } = await getUserInfoApi();
+
       if (data.code === 200) {
         return data.data;
       }
@@ -80,11 +78,17 @@ const MypagePage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  console.log(orderList, isLoginSuccess);
+
   if (isNil(orderList) && isLoginSuccess) {
     return <div>로딩</div>;
   }
 
-  console.log(me, 'ME');
+  // if (isLoginSuccess) {
+  //   return <div>로딩</div>;
+  // }
+
+  console.log(orderList, 'orderList');
 
   return (
     <Container>
@@ -121,11 +125,11 @@ const MypagePage = () => {
             <FlexBetweenStart padding="16px 24px 32px">
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')}>{me?.point} P</TextH5B>
+                <TextH5B onClick={() => router.push('/mypage/point')}>{userInfo?.availablePoint} P</TextH5B>
               </FlexCol>
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/coupon')}>0 개</TextH5B>
+                <TextH5B onClick={() => router.push('/mypage/coupon')}>{userInfo?.availableCoupons.length} 개</TextH5B>
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />

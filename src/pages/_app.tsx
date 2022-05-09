@@ -102,6 +102,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
 
+  useEffect(() => {
+    try {
+      // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
+
+      if (typeof window !== undefined) {
+        window.Kakao?.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
+        console.log(window.Kakao, 'WINODW');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [window.Kakao]);
+
   return (
     <>
       <Head>
