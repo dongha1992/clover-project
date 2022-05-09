@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
-import { homePadding, fixedBottom, FlexCol, FlexRow, theme } from '@styles/theme';
+import { homePadding, fixedBottom, FlexCol, FlexRow, theme, customInput, textBody2 } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -12,6 +12,8 @@ import { userSignup } from '@api/user';
 import { useMutation } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
+import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
+import { SVGIcon } from '@utils/common';
 
 export const GENDER = [
   {
@@ -31,10 +33,20 @@ export const GENDER = [
   },
 ];
 
+interface IBirthdayObj {
+  year: number;
+  month: number;
+  day: number;
+}
+
 const SignupOptionalPage = () => {
-  const [checkGender, setChcekGender] = useState<number>(3);
+  const [checkGender, setChcekGender] = useState<string>('');
+  const [birthDayObj, setBirdayObj] = useState<IBirthdayObj>({
+    year: 0,
+    month: 0,
+    day: 0,
+  });
   const nicknameRef = useRef<HTMLInputElement>(null);
-  const birthDateRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
@@ -52,23 +64,19 @@ const SignupOptionalPage = () => {
     }
   );
 
-  const birthDateInputHandler = (): void => {
-    const birthDate = birthDateRef.current?.value.toString();
-  };
-
-  const checkGenderHandler = (id: number) => {
-    setChcekGender(id);
+  const checkGenderHandler = (value: string) => {
+    setChcekGender(value);
   };
 
   const nicknameInputHandler = () => {};
 
   const registerUser = async () => {
     const nickName = nicknameRef.current?.value;
-    const birthDate = birthDateRef.current?.value;
-    const gender = GENDER.find((item) => item.id === checkGender)?.value;
+    const gender = GENDER.find((item) => item.value === checkGender)?.value;
 
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
 
+    const birthDate = `${birthDayObj.year}-${birthDayObj.month}-${birthDayObj.day}`;
     const optionalForm = {
       birthDate,
       gender: gender ? gender : '',
@@ -91,12 +99,12 @@ const SignupOptionalPage = () => {
     }
   };
 
-  useEffect(() => {
-    // 마지막 페이지에서 새로고침 시 처음으로
-    if (!signupUser.email) {
-      router.replace('/signup');
-    }
-  }, [signupUser]);
+  // useEffect(() => {
+  //   // 마지막 페이지에서 새로고침 시 처음으로
+  //   if (!signupUser.email) {
+  //     router.replace('/signup');
+  //   }
+  // }, [signupUser]);
 
   return (
     <Container>
@@ -112,8 +120,72 @@ const SignupOptionalPage = () => {
               (선택)
             </TextH5B>
           </FlexRow>
-          <TextInput placeholder="생년월일 구현해야함" eventHandler={birthDateInputHandler} ref={birthDateRef} />
+          <BirthdateWrapper>
+            <InputContainer>
+              <YearPicker
+                defaultValue="YYYY"
+                start={1922} // default is 1900
+                end={2008} // default is current year
+                reverse // default is ASCENDING
+                required={true} // default is false
+                value={birthDayObj.year} // mandatory
+                onChange={(year: string) => {
+                  setBirdayObj({ ...birthDayObj, year: Number(year) });
+                }}
+                id="year"
+                name="year"
+                classes="input yearContainer"
+                optionClasses="yearOption"
+              />
+              <SvgWrapper>
+                <SVGIcon name="triangleDown" />
+              </SvgWrapper>
+            </InputContainer>
+            <InputContainer>
+              <MonthPicker
+                defaultValue="MM"
+                numeric // to get months as numbers
+                short // default is full name
+                caps // default is Titlecase
+                endYearGiven // mandatory if end={} is given in YearPicker
+                year={birthDayObj.year} // mandatory
+                required={true} // default is false
+                value={birthDayObj.month} // mandatory
+                onChange={(month: string) => {
+                  setBirdayObj({ ...birthDayObj, month: Number(month) });
+                }}
+                id="month"
+                name="month"
+                classes="input monthContainer"
+                optionClasses="monthOption"
+              />
+              <SvgWrapper>
+                <SVGIcon name="triangleDown" />
+              </SvgWrapper>
+            </InputContainer>
+            <InputContainer>
+              <DayPicker
+                defaultValue="DD"
+                year={birthDayObj.year} // mandatory
+                month={birthDayObj.month} // mandatory
+                endYearGiven // mandatory if end={} is given in YearPicker
+                required={true} // default is false
+                value={birthDayObj.day} // mandatory
+                onChange={(day: string) => {
+                  setBirdayObj({ ...birthDayObj, day: Number(day) });
+                }}
+                id="day"
+                name="day"
+                classes="input dayContainer"
+                optionClasses="dayOption"
+              />
+              <SvgWrapper>
+                <SVGIcon name="triangleDown" />
+              </SvgWrapper>
+            </InputContainer>
+          </BirthdateWrapper>
         </FlexCol>
+
         <FlexCol margin="24px 0 28px 0">
           <FlexRow>
             <TextH5B>성별</TextH5B>
@@ -123,10 +195,15 @@ const SignupOptionalPage = () => {
           </FlexRow>
           <FlexRow padding="17px 0 0 0">
             {GENDER.map((item, index) => {
+              const isSelected = checkGender === item.value;
               return (
                 <FlexRow padding="0 16px 0 0" key={index}>
-                  <RadioButton onChange={() => checkGenderHandler(item.id)} isSelected={checkGender === item.id} />
-                  <TextB2R padding="0 0 0 8px">{item.text}</TextB2R>
+                  <RadioButton onChange={() => checkGenderHandler(item.value)} isSelected={isSelected} />
+                  {isSelected ? (
+                    <TextH5B padding="0 0 0 8px">{item.text}</TextH5B>
+                  ) : (
+                    <TextB2R padding="0 0 0 8px">{item.text}</TextB2R>
+                  )}
                 </FlexRow>
               );
             })}
@@ -163,5 +240,54 @@ const TextWrap = styled.div`
 const NextBtnWrapper = styled.div`
   ${fixedBottom}
 `;
+
+const BirthdateWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .input {
+    ${customInput}
+    border: 1px solid ${theme.greyScale15};
+    background-color: white;
+    ${textBody2}
+    color:black
+  }
+
+  .yearContainer {
+    display: flex;
+
+    .yearOption:first-of-type {
+      color: red;
+    }
+  }
+  .monthContainer {
+    margin-right: 10px;
+
+    .option {
+    }
+  }
+  .dayContainer {
+    .option {
+    }
+  }
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+  margin-right: 10px;
+  width: 100%;
+`;
+const SvgWrapper = styled.div`
+  position: absolute;
+  right: 15%;
+  top: 25%;
+`;
+const Month = styled.div`
+  position: relative;
+  margin-right: 10px;
+  width: 100%;
+`;
+const Day = styled.div``;
 
 export default SignupOptionalPage;
