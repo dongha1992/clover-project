@@ -19,6 +19,7 @@ import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderListsApi, getOrderInfoApi } from '@api/order';
 import { userInvitationApi } from '@api/user';
+import { getPointApi } from '@api/point';
 import isNil from 'lodash-es/isNil';
 interface IMypageMenu {
   title: string;
@@ -63,9 +64,22 @@ const MypagePage = () => {
     }
   );
 
+  const { data: points, isLoading: pointLoading } = useQuery(
+    'getPoint',
+    async () => {
+      const { data } = await getPointApi();
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
   if (isNil(orderList) && isLoginSuccess) {
     return <div>로딩</div>;
   }
+
+  console.log(me, 'ME');
 
   return (
     <Container>
