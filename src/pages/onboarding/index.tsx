@@ -74,10 +74,10 @@ const OnBoarding: NextPage = () => {
     });
   };
 
-  Kakao.Auth.authorize({
-    redirectUri: location.hostname === 'localhost' ? 'http://localhost:3003/oauth' : `${process.env.SERVICE_URL}/oauth`,
-    scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-  });
+  // Kakao.Auth.authorize({
+  //   redirectUri: location.hostname === 'localhost' ? 'http://localhost:3003/oauth' : `${process.env.SERVICE_URL}/oauth`,
+  //   scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+  // });
 
   /* TODO:  apple login 테스트 해야함 */
 
