@@ -19,14 +19,14 @@ import { SVGIcon } from '@utils/common';
 
 interface IProps {
   item: IDestinationsResponse | undefined;
+  hasCart?: boolean;
 }
 
 // 스팟 검색 - 최근픽업이력
-const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
+const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
-  const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
@@ -58,6 +58,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
         dong: item?.location?.dong!,
         zipCode: item?.location?.zipCode!,
       },
+      delivery: 'spot',
       main: false,
       availableTime: recentPickupTime!,
       spaceType: item?.spotPickup?.spot.type!,
@@ -89,7 +90,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
         return;
       }
 
-      if (cartLists.length) {
+      if (hasCart) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
           // 장바구니 o, 배송 정보에서 넘어온 경우
@@ -125,7 +126,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
           // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          // dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });
         }
       } else {
@@ -153,7 +154,7 @@ const SpotRecentPickupList = ({ item }: IProps): ReactElement => {
           // 로그인o and 장바구니 x, 메뉴 검색으로 이동
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
-          dispatch(SET_TEMP_DESTINATION(destinationInfo));
+          // dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/search', query: { isClosed: !!closedDate } });
         }
       }
