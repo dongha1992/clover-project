@@ -109,14 +109,12 @@ const ProfilePage = () => {
   const phoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
-    if (telRef.current) {
-      const tel = telRef.current?.value;
-      if (PHONE_REGX.test(tel)) {
-        setPhoneValidation(true);
-      } else {
-        setPhoneValidation(false);
-      }
+    if (PHONE_REGX.test(value)) {
+      setPhoneValidation(true);
+    } else {
+      setPhoneValidation(false);
     }
+    setUserInfo({ ...userInfo, tel: value });
   };
 
   const getAvailabilityEmail = async () => {
@@ -153,21 +151,20 @@ const ProfilePage = () => {
     }
 
     try {
-      if (telRef.current) {
-        const tel = telRef.current?.value.toString();
+      const { tel } = userInfo;
 
-        const { data } = await userAuthTel({ tel });
+      const { data } = await userAuthTel({ tel });
 
-        if (data.code === 200) {
-          dispatch(
-            SET_ALERT({
-              alertMessage: `인증번호 전송했습니다.`,
-              submitBtnText: '확인',
-            })
-          );
-          setOneMinuteDisabled(true);
-          setDelay(1000);
-        }
+      if (data.code === 200) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `인증번호 전송했습니다.`,
+            submitBtnText: '확인',
+          })
+        );
+        setOneMinuteDisabled(true);
+        setDelay(1000);
+
         /* TODO: 인증번호 요청 실패 시 */
       }
     } catch (error) {
@@ -176,14 +173,15 @@ const ProfilePage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
-    if (authCodeNumberRef.current && telRef.current) {
+    if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
-        const tel = telRef.current.value;
+        const { tel } = userInfo;
 
         try {
           const { data } = await userConfirmTel({ tel, authCode });
           if (data.code === 200) {
+            alert('인증 성공 임시임');
           }
         } catch (error) {
           console.error(error);
@@ -252,6 +250,9 @@ const ProfilePage = () => {
 
     try {
       const { data } = await userChangeInfo(reqBody);
+      if (data.code === 200) {
+        alert('수정 성공');
+      }
     } catch (error) {
       console.error(error);
     }
@@ -317,7 +318,7 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
-              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} ref={telRef} value={me?.tel} />
+              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} value={userInfo.tel || ''} />
               {isAuthTel ? (
                 <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
                   요청하기
