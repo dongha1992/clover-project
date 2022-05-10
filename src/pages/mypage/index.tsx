@@ -14,7 +14,7 @@ import { userForm } from '@store/user';
 import { useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderListsApi, getOrderInfoApi } from '@api/order';
@@ -37,11 +37,14 @@ const MypagePage = () => {
         orderType: 'GENERAL',
       };
 
-      const { data } = await getOrderInfoApi(params);
-      return data.data;
+      if (isLoginSuccess) {
+        const { data } = await getOrderInfoApi(params);
+        return data.data;
+      }
     },
     {
       onSuccess: (data) => {},
+      refetchOnReconnect: true,
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -52,6 +55,8 @@ const MypagePage = () => {
     'getInvitationInfo',
     async () => {
       const { data } = await userInvitationApi();
+      console.log('friendInvitation');
+
       return data.data;
     },
 
@@ -110,9 +115,7 @@ const MypagePage = () => {
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />
-            <OrderAndDeliveryWrapper>
-              <OrderDashboard orderList={orderList!} />
-            </OrderAndDeliveryWrapper>
+            <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList!} />}</OrderAndDeliveryWrapper>
             <SubsDashboard />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
