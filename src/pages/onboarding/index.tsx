@@ -49,25 +49,14 @@ const OnBoarding: NextPage = () => {
   }, []);
 
   const kakaoLoginHandler = async (): Promise<void> => {
-    window.Kakao.Auth.login({
-      success: async (res: any) => {
-        const data = {
-          accessToken: res.access_token,
-          tokenType: res.token_type,
-        };
+    /* 웹뷰 */
+    // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
+    // return;
 
-        const result = await axios.post('https://dev-api.freshcode.me/user/v1/signin-kakao', data);
-
-        if (window.Kakao) {
-          window.Kakao.cleanup();
-        }
-        // TODO : 여기가 카카오 로그인 성공부분인가요??
-        dispatch(SET_LOGIN_TYPE('KAKAO'));
-        dispatch(SET_LOGIN_SUCCESS(true));
-      },
-      fail: async (res: any) => {
-        alert(`${res.error}-${res.error_error_description}`);
-      },
+    window.Kakao.Auth.authorize({
+      redirectUri:
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
     });
   };
 
