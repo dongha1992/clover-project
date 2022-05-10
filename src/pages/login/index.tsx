@@ -88,6 +88,7 @@ const LoginPage = () => {
         if (data.code === 200) {
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {
+            dispatch(SET_USER_AUTH(userTokenObj));
             dispatch(SET_TEMP_PASSWORD(password));
             router.push('/mypage/profile/password');
             return;

@@ -8,12 +8,9 @@ import { PHONE_REGX, NAME_REGX } from '@pages/signup/auth';
 import dynamic from 'next/dynamic';
 import { userHelpEmail } from '@api/user';
 
-const Button = dynamic(
-  () => import('../../../components/Shared/Button/Button'),
-  {
-    ssr: false,
-  }
-);
+const Button = dynamic(() => import('../../../components/Shared/Button/Button'), {
+  ssr: false,
+});
 
 const FindEmailPage = () => {
   const [phoneValid, setPhoneValid] = useState({
@@ -76,16 +73,13 @@ const FindEmailPage = () => {
   };
 
   const isAllValid = nameValid.isValid && phoneValid.isValid;
+
   return (
     <Container>
       <TextB2R>등록된 휴대폰 번호를 입력해 주시면</TextB2R>
       <TextB2R>해당 번호로 이메일 주소를 보내드립니다.</TextB2R>
       <InputWrapper>
-        <TextInput
-          placeholder="이름"
-          ref={nameRef}
-          eventHandler={nameInputHandler}
-        />
+        <TextInput placeholder="이름" ref={nameRef} eventHandler={nameInputHandler} />
         <TextInput
           placeholder="휴대폰 번호 입력 (-제외)"
           margin="8px 0 0 0"
