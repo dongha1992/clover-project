@@ -74,7 +74,6 @@ const OnBoarding: NextPage = () => {
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
-    await loginTest();
     // AppleID.auth.init({
     //   clientId: 'com.freshcode.www',
     //   scope: 'email',
@@ -102,38 +101,6 @@ const OnBoarding: NextPage = () => {
 
   const goToHomeWithoutLogin = () => {
     router.push('/');
-  };
-
-  const loginTest = async () => {
-    const { data } = await userLogin({
-      email: 'david@freshcode.me',
-      password: '12341234',
-      loginType: 'EMAIL',
-    });
-
-    if (data.code === 200) {
-      let userTokenObj = data.data;
-      const accessTokenObj = {
-        accessToken: userTokenObj?.accessToken,
-        expiresIn: userTokenObj?.expiresIn,
-      };
-
-      sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
-
-      const refreshTokenObj = JSON.stringify({
-        refreshToken: userTokenObj?.refreshToken,
-        refreshTokenExpiresIn: userTokenObj?.refreshTokenExpiresIn,
-      });
-
-      setCookie({
-        name: 'refreshTokenObj',
-        value: refreshTokenObj,
-        option: {
-          path: '/',
-          maxAge: userTokenObj?.refreshTokenExpiresIn,
-        },
-      });
-    }
   };
 
   const renderLastLoginTag = (): JSX.Element => {
