@@ -263,7 +263,7 @@ const ProfilePage = () => {
       nickName: me?.nickName ? me?.nickName : me?.name!,
       name: me?.name!,
       email: me?.email!,
-      tel: me?.tel,
+      tel: me?.tel!,
     });
   }, [me]);
 
