@@ -314,7 +314,11 @@ const DeliverInfoPage = () => {
     if (userDeliveryType) {
       if (isSubscription) {
         // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-        subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+        if (subsDeliveryType === 'SPOT') {
+          setUserSelectDeliveryType('spot');
+        } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+          setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+        }
       } else {
         setUserSelectDeliveryType(userDeliveryType);
       }
@@ -393,9 +397,13 @@ const DeliverInfoPage = () => {
   useEffect(() => {
     if (isSubscription) {
       // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-      subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+      if (subsDeliveryType === 'SPOT') {
+        setUserSelectDeliveryType('spot');
+      } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+        setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+      }
     }
-  }, [isSubscription]);
+  }, [isSubscription, subsDeliveryType]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
@@ -413,7 +421,7 @@ const DeliverInfoPage = () => {
   }, []);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
-  const subsParcelAndMorning = ['parcel', 'morning'].includes(subsDeliveryType as string);
+  const subsParcelAndMorning = ['PARCEL', 'MORNING'].includes(subsDeliveryType as string);
 
   return (
     <Container>
@@ -462,7 +470,7 @@ const DeliverInfoPage = () => {
             </>
           )}
           {!isSubscription && <BorderLine height={1} margin="24px 0" />}
-          {subsDeliveryType !== 'spot' && (
+          {subsDeliveryType !== 'SPOT' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 배송

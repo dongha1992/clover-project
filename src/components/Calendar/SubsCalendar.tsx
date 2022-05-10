@@ -78,7 +78,13 @@ const SubsCalendar = ({
         element.push(<div className="deliveryChangeBeforeDate" key={`00-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
       }
       if (deliveryExpectedDate.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+        if (calendarType === 'deliveryChange') {
+          if (dayjs(date).format('YYYY-MM-DD') !== deliveryExpectedDate[0]) {
+            element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+          }
+        } else {
+          element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
+        }
       }
       if (today === dayjs(date).format('YYYY-MM-DD')) {
         // 오늘
@@ -110,12 +116,27 @@ const SubsCalendar = ({
       }
       if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송예정일(합배송 포함)
-
-        element.push(
-          <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
-            <span></span>
-          </div>
-        );
+        if (calendarType === 'deliveryChange') {
+          if (dayjs(date).format('YYYY-MM-DD') !== deliveryExpectedDate[0]) {
+            element.push(
+              <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
+                <span></span>
+              </div>
+            );
+          } else {
+            element.push(
+              <div className="sumDelivery delChange" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
+                <span></span>
+              </div>
+            );
+          }
+        } else {
+          element.push(
+            <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
+              <span></span>
+            </div>
+          );
+        }
       }
       if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송완료(합배송 포함)
@@ -211,6 +232,10 @@ const CalendarBox = styled.div`
 
   &.subsCalendar {
     // 캘린더 화살표 <,> + YYYY년 MM월 헤더
+    .react-calendar__tile {
+      margin: 0 !important;
+      border: 0 !important;
+    }
     .react-calendar__navigation {
       display: flex;
       justify-content: space-between;
@@ -232,6 +257,7 @@ const CalendarBox = styled.div`
           font-style: normal;
           font-weight: 700;
           font-size: 16px;
+          color: #242424;
         }
       }
 
@@ -307,6 +333,7 @@ const CalendarBox = styled.div`
           font-weight: 700;
           font-size: 14px;
           z-index: 1;
+          color: #242424;
         }
 
         // 날짜 선택 된 상태
@@ -324,6 +351,7 @@ const CalendarBox = styled.div`
           }
           abbr {
             z-index: 1;
+            color: #fff;
           }
           .deliveryExpectedDate,
           .deliveryComplete,
@@ -333,6 +361,11 @@ const CalendarBox = styled.div`
           .sumDeliveryComplete {
             display: none;
           }
+        }
+      }
+      button:disabled {
+        abbr {
+          color: #c8c8c8;
         }
       }
     }
@@ -409,6 +442,9 @@ const CalendarBox = styled.div`
     height: 32px;
     border-radius: 50%;
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='15.5' stroke='%2335AD73' stroke-dasharray='2 2'/%3E%3C/svg%3E%0A");
+    &.delChange {
+      background-image: none;
+    }
     span {
       width: 6px;
       height: 6px;
