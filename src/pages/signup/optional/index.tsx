@@ -41,7 +41,7 @@ interface IBirthdayObj {
 
 const SignupOptionalPage = () => {
   const [checkGender, setChcekGender] = useState<string>('');
-  const [birthDayObj, setBirdayObj] = useState<IBirthdayObj>({
+  const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
     year: 0,
     month: 0,
     day: 0,
@@ -130,7 +130,7 @@ const SignupOptionalPage = () => {
                 required={true} // default is false
                 value={birthDayObj.year} // mandatory
                 onChange={(year: string) => {
-                  setBirdayObj({ ...birthDayObj, year: Number(year) });
+                  setBirthdayObj({ ...birthDayObj, year: Number(year) });
                 }}
                 id="year"
                 name="year"
@@ -152,7 +152,7 @@ const SignupOptionalPage = () => {
                 required={true} // default is false
                 value={birthDayObj.month} // mandatory
                 onChange={(month: string) => {
-                  setBirdayObj({ ...birthDayObj, month: Number(month) });
+                  setBirthdayObj({ ...birthDayObj, month: Number(month) });
                 }}
                 id="month"
                 name="month"
@@ -172,7 +172,7 @@ const SignupOptionalPage = () => {
                 required={true} // default is false
                 value={birthDayObj.day} // mandatory
                 onChange={(day: string) => {
-                  setBirdayObj({ ...birthDayObj, day: Number(day) });
+                  setBirthdayObj({ ...birthDayObj, day: Number(day) });
                 }}
                 id="day"
                 name="day"
@@ -283,11 +283,5 @@ const SvgWrapper = styled.div`
   right: 15%;
   top: 25%;
 `;
-const Month = styled.div`
-  position: relative;
-  margin-right: 10px;
-  width: 100%;
-`;
-const Day = styled.div``;
 
 export default SignupOptionalPage;
