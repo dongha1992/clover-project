@@ -189,6 +189,15 @@ export interface IChangeMe {
   primePushReceived: boolean;
   tel: string;
 }
+
+export interface IUserInfoResponse {
+  code: number;
+  message: string;
+  data: {
+    availablePoint: number;
+    availableCoupons: ICoupon[];
+  };
+}
 export interface IJusoRequest {
   query: string;
   page: number;

@@ -38,17 +38,6 @@ const Wrapper: React.FC = ({ children }) => {
     return () => window.removeEventListener('resize', calcBrowserScreenSize);
   }, []);
 
-  // useEffect(() => {
-  //   try {
-  //     if (typeof window !== 'undefined') {
-  //       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-  //       window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }, []);
-
   const alert = useSelector(alertForm);
   const bottomSheet = useSelector(bottomSheetForm);
   const cart = useSelector(cartForm);
