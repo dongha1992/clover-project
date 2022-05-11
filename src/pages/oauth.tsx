@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { SET_LOGIN_SUCCESS } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Obj } from '@model/index';
-
-const nameValidator = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]+$/;
+import { NAME_REGX } from '@constants/regex';
 
 interface IAuthObj {
   access_token: string;
@@ -35,18 +34,47 @@ const Oauth = () => {
         tokenType: authObj.token_type,
       };
 
-      const result = await axios.post(`${process.env.KAKO_API_URL}/user/v1/signin-kakao`, data);
+      // const result = await axios.post(`${process.env.KAKO_API_URL}/user/v1/signin-kakao`, data);
+      const result = await axios.post('https://clover-dev.freshcode.me/user/v1/signin-kakao', data);
       console.log(result, 'AFTER SUCCESS');
-      if (!nameValidator.test(result.data.user.name) || result.data.user.name.length === 0) {
-        alert('[마이페이지 > 회원정보수정]에서 이름을 한글 또는 영문으로 변경해주세요.');
+      let { tel, nickname, newsletterEmail, newsletterPush, newsletterSms, name, isSignup, gender, email, birth } =
+        result.data.user;
+
+      if (!!isSignup && isSignup) {
+        tel = result.data.user.tel.split('');
+        tel.splice(0, 2, '8', '2');
+        tel = tel.join('');
+      }
+
+      const userInfo = {
+        name,
+        tel,
+        email,
+        birthDate: birth,
+        nickName: nickname,
+        marketingEmailReceived: newsletterEmail,
+        marketingSmsReceived: newsletterSms,
+        gender: gender ? gender.toUpperCase() : null,
+      };
+
+      if (!NAME_REGX.test(result.data.user.name) || result.data.user.name.length === 0) {
+        dispatch(
+          SET_SIGNUP_USER({
+            ...userInfo,
+          })
+        );
+        router.push('/signup/change-name');
+        return;
       }
 
       if (window.Kakao) {
         window.Kakao.cleanup();
       }
 
+      dispatch(SET_USER_AUTH({ accessToken: result.data.user.auth }));
       dispatch(SET_LOGIN_SUCCESS(true));
-      console.log(result, 'result');
+      router.push('/mypage');
+
       // 비회원 -> 회원 장바구니 옮기기
 
       // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
