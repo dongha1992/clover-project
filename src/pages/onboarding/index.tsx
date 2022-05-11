@@ -60,6 +60,11 @@ const OnBoarding: NextPage = () => {
     });
   };
 
+  // Kakao.Auth.authorize({
+  //   redirectUri: location.hostname === 'localhost' ? 'http://localhost:3003/oauth' : `${process.env.SERVICE_URL}/oauth`,
+  //   scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+  // });
+
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
@@ -115,7 +120,7 @@ const OnBoarding: NextPage = () => {
           </TextH5B>
         </FlexCol>
         <ButtonWrapper>
-          <KakaoBtn onClick={kakaoLoginHandler}>
+          <KakaoBtn onClick={() => kakaoLoginHandler()}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
             {lastLogin === 'kakao' && renderLastLoginTag()}

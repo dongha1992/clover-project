@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextB2R, TextH2B, TextH5B } from '@components/Shared/Text';
+import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import { homePadding, fixedBottom, FlexCol, FlexRow, theme, customInput, textBody2 } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
@@ -12,6 +12,7 @@ import { userSignup } from '@api/user';
 import { useMutation } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
+import { getFormatTime } from '@utils/destination';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { SVGIcon } from '@utils/common';
 
@@ -39,13 +40,24 @@ interface IBirthdayObj {
   day: number;
 }
 
+const AGES = 14;
+
+const today = new Date();
+const curYear = today.getFullYear();
+const curMonth = today.getMonth() + 1;
+const curDate = today.getDate();
+
+const vaildYear = curYear - AGES;
+
 const SignupOptionalPage = () => {
   const [checkGender, setChcekGender] = useState<string>('');
   const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
     year: 0,
-    month: 0,
+    month: -1,
     day: 0,
   });
+  const [isValidBirthDay, setIsValidBirthDay] = useState<boolean>(true);
+
   const nicknameRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
@@ -75,10 +87,11 @@ const SignupOptionalPage = () => {
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
 
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
+    const hasBirthDate = birthDayObj.year && birthDayObj.month && birthDayObj.day;
+    const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month + 1)}-${getFormatTime(birthDayObj.day)}`;
 
-    const birthDate = `${birthDayObj.year}-${birthDayObj.month}-${birthDayObj.day}`;
     const optionalForm = {
-      birthDate,
+      birthDate: hasBirthDate ? birthDate : '',
       gender: gender ? gender : '',
       nickName: nickName ? nickName : signupUser.name,
     };
@@ -88,6 +101,7 @@ const SignupOptionalPage = () => {
         ...optionalForm,
       })
     );
+
     try {
       let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
       data.code === 200;
@@ -105,6 +119,20 @@ const SignupOptionalPage = () => {
   //     router.replace('/signup');
   //   }
   // }, [signupUser]);
+
+  useEffect(() => {
+    if (birthDayObj.year === vaildYear) {
+      const canRegister =
+        birthDayObj.month >= 0 && birthDayObj.month + 1 <= curMonth && birthDayObj.day > 0 && birthDayObj.day < curDate;
+      if (!canRegister) {
+        setIsValidBirthDay(false);
+      } else {
+        setIsValidBirthDay(true);
+      }
+    } else {
+      setIsValidBirthDay(true);
+    }
+  }, [birthDayObj]);
 
   return (
     <Container>
@@ -125,7 +153,7 @@ const SignupOptionalPage = () => {
               <YearPicker
                 defaultValue="YYYY"
                 start={1922} // default is 1900
-                end={2008} // default is current year
+                end={vaildYear} // default is current year
                 reverse // default is ASCENDING
                 required={true} // default is false
                 value={birthDayObj.year} // mandatory
@@ -184,6 +212,11 @@ const SignupOptionalPage = () => {
               </SvgWrapper>
             </InputContainer>
           </BirthdateWrapper>
+          <TextB3R color={theme.systemRed}>
+            {birthDayObj.year && birthDayObj.month && birthDayObj.day && !isValidBirthDay
+              ? '14세 미만은 가입할 수 없어요.'
+              : null}
+          </TextB3R>
         </FlexCol>
 
         <FlexCol margin="24px 0 28px 0">
@@ -251,14 +284,12 @@ const BirthdateWrapper = styled.div`
     border: 1px solid ${theme.greyScale15};
     background-color: white;
     ${textBody2}
-    color:black
   }
 
   .yearContainer {
     display: flex;
-
-    .yearOption:first-of-type {
-      color: red;
+    .yearOption[value=''][disabled] {
+      display: none;
     }
   }
   .monthContainer {

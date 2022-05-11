@@ -54,7 +54,7 @@ const CartActualItem = ({
             <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
-            <InfoMessage status={menuDetail.isSold && 'isSold'} />
+            {/* <InfoMessage status={menuDetail.isSold && 'isSold'} /> */}
             <CountButtonContainer>
               {/* <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
                 <TextH6B color={theme.white}>재입고 알림</TextH6B>
