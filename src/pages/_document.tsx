@@ -23,6 +23,7 @@ class MyDocument extends Document<IProps> {
             href="https://fonts.googleapis.com/css2?family=Alata&family=Noto+Sans+KR:wght@300;400;500&display=swap"
             rel="stylesheet"
           />
+          <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
         </Head>
         <body>
           <Main />

@@ -30,7 +30,7 @@ export const GENDER = [
   {
     id: 3,
     text: '선택 안 함',
-    value: '',
+    value: null,
   },
 ];
 
@@ -50,7 +50,7 @@ const curDate = today.getDate();
 const vaildYear = curYear - AGES;
 
 const SignupOptionalPage = () => {
-  const [checkGender, setChcekGender] = useState<string>('');
+  const [checkGender, setChcekGender] = useState<string | null>('');
   const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
     year: 0,
     month: -1,
@@ -76,7 +76,7 @@ const SignupOptionalPage = () => {
     }
   );
 
-  const checkGenderHandler = (value: string) => {
+  const checkGenderHandler = (value: string | null) => {
     setChcekGender(value);
   };
 

@@ -230,6 +230,7 @@ const ProfilePage = () => {
     const changedBirthDate = birthDateRef.current?.value;
 
     const reqBody = {
+      authCode: authCodeNumberRef?.current?.value ? authCodeNumberRef?.current?.value : null,
       birthDate: changedBirthDate ? changedBirthDate : me?.birthDate!,
       gender: checkGender,
       email: userInfo.email,
@@ -242,6 +243,7 @@ const ProfilePage = () => {
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
     };
+    console.log(reqBody, 'reqBody');
 
     // temp
     if (birthDateRef.current && birthDateRef.current?.value.length < 10) {
