@@ -75,12 +75,12 @@ const MypagePage = () => {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false, enabled: !!me }
   );
 
   console.log(orderList, isLoginSuccess);
 
-  if (isNil(orderList) && isLoginSuccess) {
+  if (isNil(orderList) && isLoginSuccess && infoLoading) {
     return <div>로딩</div>;
   }
 

@@ -176,7 +176,7 @@ export interface IInvitationResponse {
 }
 
 export interface IChangeMe {
-  authCode?: string;
+  authCode?: string | null;
   birthDate: string;
   gender: string;
   email: string;

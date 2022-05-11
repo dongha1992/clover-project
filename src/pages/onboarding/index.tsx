@@ -19,6 +19,11 @@ import { userLogin } from '@api/user';
 import { setCookie } from '@utils/common';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { userForm } from '@store/user';
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -48,26 +53,27 @@ const OnBoarding: NextPage = () => {
     setReturnPath(onRouter.query.returnPath || '/');
   }, []);
 
-  const kakaoLoginHandler = async (): Promise<void> => {
+  const kakaoLoginHandler = () => {
     /* 웹뷰 */
+
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
-
-    window.Kakao.Auth.authorize({
-      redirectUri:
-        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-    });
+    console.log(window, 'WINDOW');
+    if (typeof window !== undefined) {
+      window.Kakao.Auth.authorize({
+        redirectUri:
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+      });
+    }
   };
-
-  // Kakao.Auth.authorize({
-  //   redirectUri: location.hostname === 'localhost' ? 'http://localhost:3003/oauth' : `${process.env.SERVICE_URL}/oauth`,
-  //   scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-  // });
 
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
+    if (window.Kakao.Auth.getAccessToken()) {
+      window.Kakao.Auth.logout();
+    }
     // AppleID.auth.init({
     //   clientId: 'com.freshcode.www',
     //   scope: 'email',
