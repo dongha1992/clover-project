@@ -270,6 +270,9 @@ const ProfilePage = () => {
     });
   }, [me]);
 
+  const isKakao = me?.joinType === 'KAKAO';
+  const isNotEmail = me?.joinType === 'EMAIL';
+
   return (
     <Container>
       <Wrapper>
@@ -282,13 +285,27 @@ const ProfilePage = () => {
           </FlexBetween>
           <NameInputWrapper>
             <TextH5B padding="0 0 9px 0">이메일</TextH5B>
-            <TextInput
-              name="email"
-              placeholder="이메일"
-              onBlur={getAvailabilityEmail}
-              eventHandler={changeEmailHandler}
-              value={userInfo.email || ''}
-            />
+            {isKakao ? (
+              <KakaoEmailInput>
+                <TextInput
+                  name="email"
+                  placeholder="이메일"
+                  onBlur={getAvailabilityEmail}
+                  eventHandler={changeEmailHandler}
+                  value={userInfo.email || ''}
+                />
+
+                <SVGIcon name="kakaoBuble" />
+              </KakaoEmailInput>
+            ) : (
+              <TextInput
+                name="email"
+                placeholder="이메일"
+                onBlur={getAvailabilityEmail}
+                eventHandler={changeEmailHandler}
+                value={userInfo.email || ''}
+              />
+            )}
             {!emailValidation.isValid ? (
               <Validation>{emailValidation.message}</Validation>
             ) : (
@@ -547,6 +564,14 @@ const SvgWrapper = styled.div`
   position: absolute;
   right: 15%;
   top: 25%;
+`;
+
+const KakaoEmailInput = styled.div`
+  position: relative;
+  .svg {
+    position: absolute;
+    left: 10%;
+  }
 `;
 
 export default ProfilePage;

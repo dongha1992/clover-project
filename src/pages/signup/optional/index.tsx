@@ -30,7 +30,7 @@ export const GENDER = [
   {
     id: 3,
     text: '선택 안 함',
-    value: null,
+    value: 'NONE',
   },
 ];
 
@@ -72,6 +72,10 @@ const SignupOptionalPage = () => {
         const userTokenObj = data.data;
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
+
+        if (window.Kakao) {
+          window.Kakao.cleanup();
+        }
       },
     }
   );
