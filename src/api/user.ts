@@ -17,6 +17,7 @@ import {
   ISecessionResponse,
   IInvitationResponse,
   IChangeMe,
+  IUserInfoResponse,
 } from '@model/index';
 
 export const userLogin = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
@@ -86,4 +87,8 @@ export const userInvitationApi = (): Promise<AxiosResponse<IInvitationResponse>>
 
 export const userChangeInfo = (data: IChangeMe): Promise<AxiosResponse<IResponse>> => {
   return Api.patch('/user/v1/me', data);
+};
+
+export const getUserInfoApi = (): Promise<AxiosResponse<IUserInfoResponse>> => {
+  return Api.get('/user/v1/info');
 };
