@@ -197,7 +197,7 @@ const Container = styled.div<{
     }
 
     input:disabled {
-      background: ${theme.white};
+      background: ${theme.greyScale15};
     }
   }
 `;
