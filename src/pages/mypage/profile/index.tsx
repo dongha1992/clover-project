@@ -239,7 +239,6 @@ const ProfilePage = () => {
 
   const changeMeInfo = async () => {
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
-    console.log(birthDate, 'asdasdasdasd');
 
     const reqBody = {
       authCode: authCodeNumberRef?.current?.value ? authCodeNumberRef?.current?.value : null,
