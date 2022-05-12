@@ -92,9 +92,9 @@ export interface IUser {
 
 export interface ILogin {
   accessToken?: string;
-  email: string;
+  email?: string;
   loginType: string;
-  password: string;
+  password?: string;
 }
 
 export interface IResponse {
