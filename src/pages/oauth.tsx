@@ -25,7 +25,7 @@ const Oauth = () => {
   const dispatch = useDispatch();
 
   const onSuccessKakao = async (authObj: IAuthObj) => {
-    console.log(authObj, 'authObj');
+    console.log(authObj, window.Kakao, 'authObj');
     window.Kakao.Auth.setAccessToken(authObj.access_token);
 
     try {

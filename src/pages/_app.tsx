@@ -35,7 +35,6 @@ declare global {
     Kakao: any;
   }
 }
-
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const dispatch = useDispatch();
   const queryClient = useRef<QueryClient>();
@@ -48,17 +47,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
-
-  useEffect(() => {
-    try {
-      // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-
-      window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
-      console.log(window.Kakao, 'WINODW');
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
@@ -111,11 +99,37 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
 
+  useEffect(() => {
+    try {
+      // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
+
+      window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
+      console.log(window.Kakao, 'WINODW');
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   return (
     <>
       <Head>
         <title>프레시코드</title>
       </Head>
+      <>
+        <Script
+          type="text/javascript"
+          src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+        ></Script>
+        <Script
+          type="text/javascript"
+          src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
+        ></Script>
+        <Script
+          type="text/javascript"
+          src="https://developers.kakao.com/sdk/js/kakao.min.js"
+          strategy="beforeInteractive"
+        ></Script>
+      </>
       <QueryClientProvider client={queryClient.current}>
         <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
@@ -123,14 +137,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <Wrapper>
               <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
-              <Script
-                type="text/javascript"
-                src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
-              ></Script>
-              <Script
-                type="text/javascript"
-                src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
-              ></Script>
             </Wrapper>
           </PersistGate>
         </ThemeProvider>
