@@ -81,7 +81,7 @@ const MypagePage = () => {
   console.log(orderList, isLoginSuccess);
 
   const goToEditUserInfo = () => {
-    if (me?.joinType! === 'KAKAO') {
+    if (me?.joinType! !== 'EMAIL') {
       router.push('/mypage/profile');
     } else {
       router.push('/mypage/profile/confirm');
