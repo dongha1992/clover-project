@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { setCookie, removeCookie } from '@utils/common';
-import { userLogin } from '@api/user';
+import { userLoginApi } from '@api/user';
 
 interface IMe {
   id: string;

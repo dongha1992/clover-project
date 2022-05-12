@@ -26,7 +26,6 @@ interface IProps {
 // 스팟 검색 - 검색 결과
 
 const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
-  console.log(hasCart, 'SpotsSearchResultList');
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;

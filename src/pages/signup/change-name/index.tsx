@@ -29,7 +29,7 @@ const ChangeNamePage = () => {
   const finishChangeName = () => {
     dispatch(
       SET_SIGNUP_USER({
-        loginType: 'kakao',
+        loginType: 'KAKAO',
         name,
       })
     );

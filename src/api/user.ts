@@ -20,7 +20,7 @@ import {
   IUserInfoResponse,
 } from '@model/index';
 
-export const userLogin = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
+export const userLoginApi = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
   return Api.post('/user/v1/login', data);
 };
 
