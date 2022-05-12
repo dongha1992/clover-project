@@ -58,7 +58,7 @@ const OnBoarding: NextPage = () => {
 
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
-    console.log(window, 'WINDOW');
+
     if (typeof window !== undefined) {
       window.Kakao.Auth.authorize({
         redirectUri:
