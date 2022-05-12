@@ -81,6 +81,7 @@ const Header = () => {
         '/signup/auth': '회원가입',
         '/signup/email-password': '회원가입',
         '/signup/optional': '회원가입',
+        '/signup/change-name': '회원가입',
         '/login': '로그인',
         '/login/find-account/email': '아이디/비밀번호 찾기',
         '/login/find-account/password': '아이디/비밀번호 찾기',

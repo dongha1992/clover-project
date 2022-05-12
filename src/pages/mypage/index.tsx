@@ -75,12 +75,20 @@ const MypagePage = () => {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false, enabled: !!me }
   );
 
   console.log(orderList, isLoginSuccess);
 
-  if (isNil(orderList) && isLoginSuccess) {
+  const goToEditUserInfo = () => {
+    if (me?.joinType! !== 'EMAIL') {
+      router.push('/mypage/profile');
+    } else {
+      router.push('/mypage/profile/confirm');
+    }
+  };
+
+  if (isNil(orderList) && isLoginSuccess && infoLoading) {
     return <div>로딩</div>;
   }
 
@@ -99,7 +107,7 @@ const MypagePage = () => {
             <UserInfoWrapper>
               <FlexRow>
                 <TextH2B padding="0 6px 0 0">{me?.nickName}님은</TextH2B>
-                <IconBox onClick={() => router.push('/mypage/profile/confirm')}>
+                <IconBox onClick={() => goToEditUserInfo()}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
               </FlexRow>

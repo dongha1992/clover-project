@@ -28,7 +28,7 @@ interface IMe {
   createdAt: string;
 }
 
-interface IUser {
+export interface IUser {
   tempPasswordLogin: string;
   isLoginSuccess: boolean;
   signupUser: {

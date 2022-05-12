@@ -26,6 +26,12 @@ const Toast = dynamic(() => import('@components/Shared/Toast'), {
 const ImageViewer = dynamic(() => import('@components/ImageViewer'));
 
 const Wrapper: React.FC = ({ children }) => {
+  const alert = useSelector(alertForm);
+  const bottomSheet = useSelector(bottomSheetForm);
+  const cart = useSelector(cartForm);
+  const toast = useSelector(toastSelector);
+  const { imagesForViewer } = useSelector(commonSelector);
+
   // set 1vh for all devices
   useEffect(() => {
     const calcBrowserScreenSize = () => {
@@ -37,12 +43,6 @@ const Wrapper: React.FC = ({ children }) => {
     window.addEventListener('resize', calcBrowserScreenSize);
     return () => window.removeEventListener('resize', calcBrowserScreenSize);
   }, []);
-
-  const alert = useSelector(alertForm);
-  const bottomSheet = useSelector(bottomSheetForm);
-  const cart = useSelector(cartForm);
-  const toast = useSelector(toastSelector);
-  const { imagesForViewer } = useSelector(commonSelector);
 
   const isClickReviewImg = imagesForViewer.length > 0;
 
