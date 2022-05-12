@@ -36,6 +36,7 @@ const PasswordConfirmPage = () => {
       const password = passwordRef.current.value.toString();
       try {
         const { data } = await userConfirmPassword({ password });
+        console.log(data);
         if (data.code === 200) {
           router.push('/mypage/profile');
         }

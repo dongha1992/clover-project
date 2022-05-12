@@ -19,6 +19,11 @@ import { userLogin } from '@api/user';
 import { setCookie } from '@utils/common';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { userForm } from '@store/user';
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -48,40 +53,27 @@ const OnBoarding: NextPage = () => {
     setReturnPath(onRouter.query.returnPath || '/');
   }, []);
 
-  const kakaoLoginHandler = async (): Promise<void> => {
-    window?.Kakao?.Auth.login({
-      success: async (res: any) => {
-        console.log(res, 'RES FROM KAKAO');
-        const data = {
-          accessToken: res.access_token,
-          tokenType: res.token_type,
-        };
+  const kakaoLoginHandler = () => {
+    /* 웹뷰 */
 
-        const result = await axios.post('https://dev-api.freshcode.me/user/v1/signin-kakao', data);
-        console.log(result, 'KAKAO');
+    // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
+    // return;
 
-        if (window.Kakao) {
-          window.Kakao.cleanup();
-        }
-
-        // TODO : 여기가 카카오 로그인 성공부분인가요??
-        dispatch(SET_LOGIN_TYPE('KAKAO'));
-        dispatch(SET_LOGIN_SUCCESS(true));
-      },
-      fail: async (res: any) => {
-        alert(`${res.error}-${res.error_error_description}`);
-      },
-    });
+    if (typeof window !== undefined) {
+      window.Kakao.Auth.authorize({
+        redirectUri:
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+      });
+    }
   };
-
-  // Kakao.Auth.authorize({
-  //   redirectUri: location.hostname === 'localhost' ? 'http://localhost:3003/oauth' : `${process.env.SERVICE_URL}/oauth`,
-  //   scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-  // });
 
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
+    if (window.Kakao.Auth.getAccessToken()) {
+      window.Kakao.Auth.logout();
+    }
     // AppleID.auth.init({
     //   clientId: 'com.freshcode.www',
     //   scope: 'email',

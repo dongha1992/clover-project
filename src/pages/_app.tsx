@@ -30,13 +30,11 @@ import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
 
-/*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
   interface Window {
     Kakao: any;
   }
 }
-
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const dispatch = useDispatch();
   const queryClient = useRef<QueryClient>();
@@ -90,14 +88,13 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   };
 
   useEffect(() => {
-    if (typeof window === undefined) {
+    if (typeof window !== undefined) {
       const md = new MobileDetect(window.navigator.userAgent);
       let mobile = !!md.mobile();
       dispatch(SET_IS_MOBILE(mobile));
     }
 
     authCheck();
-
     // temp
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
@@ -106,20 +103,33 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     try {
       // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
 
-      if (typeof window !== undefined) {
-        window.Kakao?.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
-        console.log(window.Kakao, 'WINODW');
-      }
+      window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
+      console.log(window.Kakao, 'WINODW');
     } catch (error) {
       console.error(error);
     }
-  }, [window.Kakao]);
+  }, []);
 
   return (
     <>
       <Head>
         <title>프레시코드</title>
       </Head>
+      <>
+        <Script
+          type="text/javascript"
+          src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+        ></Script>
+        <Script
+          type="text/javascript"
+          src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
+        ></Script>
+        <Script
+          type="text/javascript"
+          src="https://developers.kakao.com/sdk/js/kakao.min.js"
+          strategy="beforeInteractive"
+        ></Script>
+      </>
       <QueryClientProvider client={queryClient.current}>
         <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
@@ -127,15 +137,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <Wrapper>
               <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
-              <Script src="https://developers.kakao.com/sdk/js/kakao.js"></Script>
-              <Script
-                type="text/javascript"
-                src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
-              ></Script>
-              <Script
-                type="text/javascript"
-                src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
-              ></Script>
             </Wrapper>
           </PersistGate>
         </ThemeProvider>

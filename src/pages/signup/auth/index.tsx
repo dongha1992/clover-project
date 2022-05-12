@@ -12,6 +12,7 @@ import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
 import { userAuthTel, userConfirmTel } from '@api/user';
+import { IUser } from '@store/user';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -25,7 +26,8 @@ const SignupAuthPage = () => {
   const [phoneValidation, setPhoneValidation] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [authCodeConfirm, setAuthCodeConfirm] = useState(false);
-  const nameRef = useRef<HTMLInputElement>(null);
+  const [signUpInfo, setSignUpInfo] = useState<IUser['signupUser']>({});
+
   const phoneNumberRef = useRef<HTMLInputElement>(null);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
@@ -55,26 +57,25 @@ const SignupAuthPage = () => {
     }
   }, [second]);
 
-  const nameInputHandler = (): void => {
-    if (nameRef.current) {
-      const name = nameRef.current?.value;
-      if (NAME_REGX.test(name)) {
-        setNameValidation(true);
-      } else {
-        setNameValidation(false);
-      }
+  const nameInputHandler = (e: any): void => {
+    const { value } = e.target;
+
+    if (NAME_REGX.test(value)) {
+      setNameValidation(true);
+    } else {
+      setNameValidation(false);
     }
+    setSignUpInfo({ ...signUpInfo, name: value });
   };
 
-  const phoneNumberInputHandler = (): void => {
-    if (phoneNumberRef.current) {
-      const tel = phoneNumberRef.current?.value;
-      if (PHONE_REGX.test(tel)) {
-        setPhoneValidation(true);
-      } else {
-        setPhoneValidation(false);
-      }
+  const phoneNumberInputHandler = (e: any): void => {
+    const { value } = e.target;
+    if (PHONE_REGX.test(value)) {
+      setPhoneValidation(true);
+    } else {
+      setPhoneValidation(false);
     }
+    setSignUpInfo({ ...signUpInfo, tel: value });
   };
 
   const getAuthTel = async () => {
@@ -92,24 +93,22 @@ const SignupAuthPage = () => {
       return;
     }
 
-    if (phoneNumberRef.current) {
-      const tel = phoneNumberRef.current?.value.toString();
-      try {
-        const { data } = await userAuthTel({ tel });
+    const { tel } = signUpInfo;
+    try {
+      const { data } = await userAuthTel({ tel: tel! });
 
-        if (data.code === 200) {
-          dispatch(
-            SET_ALERT({
-              alertMessage: `인증번호 전송했습니다.`,
-              submitBtnText: '확인',
-            })
-          );
-          setOneMinuteDisabled(true);
-          setDelay(1000);
-        }
-      } catch (error) {
-        console.error(error);
+      if (data.code === 200) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `인증번호 전송했습니다.`,
+            submitBtnText: '확인',
+          })
+        );
+        setOneMinuteDisabled(true);
+        setDelay(1000);
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -125,12 +124,12 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
-    if (authCodeNumberRef.current && phoneNumberRef.current) {
+    if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
-        const tel = phoneNumberRef.current.value;
+        const { tel } = signUpInfo;
         try {
-          const { data } = await userConfirmTel({ tel, authCode });
+          const { data } = await userConfirmTel({ tel: tel!, authCode });
           if (data.code === 200) {
             setAuthCodeConfirm(true);
             setDelay(null);
@@ -152,9 +151,9 @@ const SignupAuthPage = () => {
 
     dispatch(
       SET_SIGNUP_USER({
-        name: nameRef.current?.value,
-        tel: phoneNumberRef.current?.value,
-        authCode: authCodeNumberRef.current?.value,
+        name: signUpInfo.name,
+        tel: signUpInfo.tel,
+        authCode: signUpInfo.authCode,
       })
     );
     router.push('/signup/email-password');
@@ -167,6 +166,10 @@ const SignupAuthPage = () => {
       setPhoneValidation(true);
       setAuthCodeConfirm(true);
     }
+  }, [signupUser]);
+
+  useEffect(() => {
+    setSignUpInfo({ ...signupUser });
   }, [signupUser]);
 
   const isAllValid = nameValidation && phoneValidation && authCodeConfirm;
@@ -182,26 +185,24 @@ const SignupAuthPage = () => {
           <TextH5B padding="0 0 9px 0">이름</TextH5B>
           <TextInput
             placeholder="이름"
-            ref={nameRef}
             eventHandler={nameInputHandler}
-            value={signupUser.name ? signupUser.name : ''}
+            value={signUpInfo?.name ? signUpInfo?.name : ''}
           />
-          {(nameValidation || signupUser.name) && <SVGIcon name="confirmCheck" />}
+          {(nameValidation || signUpInfo?.name) && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
         <PhoneNumberInputWrapper>
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
           <AuthenficationWrapper>
             <TextInput
               placeholder="휴대폰 번호"
-              ref={phoneNumberRef}
               eventHandler={phoneNumberInputHandler}
               inputType="number"
-              value={signupUser.tel ? signupUser.tel : ''}
+              value={signUpInfo?.tel ? signUpInfo?.tel : ''}
             />
             <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
               인증 요청
             </Button>
-            {(phoneValidation || signupUser.tel) && <SVGIcon name="confirmCheck" />}
+            {(phoneValidation || signUpInfo?.tel) && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>
           <ConfirmWrapper>
             <TextInput
@@ -219,7 +220,7 @@ const SignupAuthPage = () => {
             >
               확인
             </Button>
-            {(authCodeConfirm || signupUser.authCode) && <SVGIcon name="confirmCheck" />}
+            {(authCodeConfirm || signUpInfo.authCode) && <SVGIcon name="confirmCheck" />}
             {delay && (
               <TimerWrapper>
                 <TextB3R color={theme.brandColor}>
