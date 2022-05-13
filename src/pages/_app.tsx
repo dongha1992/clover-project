@@ -101,9 +101,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     try {
-      // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-
-      window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
+      // window.Kakao.init('eea6746462f9b8925defa4f6396aafdd');
       console.log(window.Kakao, 'WINODW');
     } catch (error) {
       console.error(error);

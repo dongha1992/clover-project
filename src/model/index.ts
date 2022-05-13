@@ -991,7 +991,7 @@ export interface ICreateOrderRequest {
   name: string;
   type: string;
   payMethod: TPayMethod | string;
-  cardId: number;
+  cardId: number | null;
   userName: string;
   userTel: string;
   userEmail: string;

@@ -110,7 +110,7 @@ export const postKakaoPaymentApi = ({
   orderId: number;
   data: { cancelUrl: string; failureUrl: string; successUrl: string };
 }): Promise<AxiosResponse<IGetKakaoPaymentResponse>> => {
-  return Api.post(`order/v1/orders/${orderId}/kakaopay-payment`);
+  return Api.post(`order/v1/orders/${orderId}/kakaopay-payment`, data);
 };
 
 export const postNiceApproveApi = ({
