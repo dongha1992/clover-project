@@ -1434,6 +1434,102 @@ export interface ICreateOrderResponse {
   data: ICreateOrder;
 }
 
+export interface IGetKakaoPayment {
+  android_app_scheme: string;
+  created_at: string;
+  ios_app_scheme: string;
+  next_redirect_app_url: string;
+  next_redirect_mobile_url: string;
+  next_redirect_pc_url: string;
+  tid: string;
+  tms_result: boolean;
+}
+export interface IGetKakaoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetKakaoPayment;
+}
+
+export interface IGetNicePayment {
+  Amt: number;
+  BuyerEmail: string;
+  BuyerName: string;
+  BuyerTel: string;
+  CharSet: string;
+  EdiDate: string;
+  EncodeParameters: string;
+  EncryptData: string;
+  GoodsCl: string;
+  GoodsCnt: number;
+  GoodsName: string;
+  MID: string;
+  MallIP: string;
+  Moid: string;
+  PayMethod: string;
+  ReturnURL: string;
+  SocketYN: string;
+  TrKey: string;
+  TransType: string;
+  UserIP: string;
+  VbankExpDate: string;
+}
+
+export interface IGetNicePaymentResponse {
+  code: number;
+  message: string;
+  data: IGetNicePayment;
+}
+
+export interface IGetPaycoRequest {
+  cancelUrl: string;
+  code: string;
+  discountAmt: string;
+  failureUrl: string;
+  mainPgCode: string;
+  message: string;
+  paymentCertifyToken: string;
+  pointAmt: string;
+  reserveOrderNo: string;
+  sellerOrderReferenceKey: string;
+  successUrl: string;
+  totalPaymentAmt: string;
+  totalRemoteAreaDeliveryFeeAmt: string;
+  id: number;
+}
+
+export interface IGetPaycoPayment {
+  code: number;
+  message: string;
+  pgErrorCode: string;
+  result: {
+    orderSheetUrl: string;
+    reserveOrderNo: string;
+  };
+  success: boolean;
+}
+
+export interface IGetPaycoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetPaycoPayment;
+}
+
+export interface IGetTossPayment {
+  android_app_scheme: string;
+  created_at: string;
+  ios_app_scheme: string;
+  next_redirect_app_url: string;
+  next_redirect_mobile_url: string;
+  next_redirect_pc_url: string;
+  tid: string;
+  tms_result: boolean;
+}
+export interface IGetTossPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetTossPayment;
+}
+
 /* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';

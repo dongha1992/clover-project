@@ -133,14 +133,13 @@ const CartPage = () => {
   const { isClosed } = router.query;
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
-  const { isLoginSuccess } = useSelector(userForm);
+  const { isLoginSuccess, me } = useSelector(userForm);
   const queryClient = useQueryClient();
 
   const { isLoading, isError } = useQuery(
     'getCartList',
     async () => {
       const { data } = await getCartsApi();
-
       return data.data;
     },
     {
@@ -158,6 +157,7 @@ const CartPage = () => {
           console.error(error);
         }
       },
+      enabled: !!me,
     }
   );
 
@@ -180,7 +180,7 @@ const CartPage = () => {
       onSuccess: async (response) => {
         const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
         if (validDestination && userDeliveryType && userDestination) {
-          const destinationId = userDeliveryType === 'spot' ? userDestination?.spotPickup?.id! : userDestination?.id!;
+          const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -198,7 +198,7 @@ const CartPage = () => {
           try {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
-              const destinationId = response?.delivery === 'SPOT' ? data?.data?.spotPickup?.id! : data.data?.id!;
+              const destinationId = data.data?.id!;
               setDestinationObj({
                 ...destinationObj,
                 delivery: response.delivery.toLowerCase(),
@@ -217,6 +217,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -246,6 +247,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -850,7 +852,7 @@ const CartPage = () => {
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
     const closedSoonOperation = dDay >= -14;
 
-    if (closedSoonOperation) {
+    if (closedSoonOperation && destinationObj.delivery === 'spot') {
       dispatch(
         SET_ALERT({
           alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
@@ -860,26 +862,26 @@ const CartPage = () => {
     }
   }, [destinationObj]);
 
-  const test = async () => {
-    const res = await postCartsApi([
-      {
-        main: true,
-        menuDetailId: 72,
-        menuId: 9,
-        menuQuantity: 1,
-      },
-    ]);
-  };
+  // const test = async () => {
+  //   const res = await postCartsApi([
+  //     {
+  //       main: true,
+  //       menuDetailId: 72,
+  //       menuId: 9,
+  //       menuQuantity: 1,
+  //     },
+  //   ]);
+  // };
 
-  useEffect(() => {
-    test();
-  }, []);
+  // useEffect(() => {
+  //   test();
+  // }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  if (!cartItemList) {
+  if (cartItemList.length < 0) {
     return (
       <EmptyContainer>
         <FlexCol width="100%">
@@ -903,31 +905,6 @@ const CartPage = () => {
       </EmptyContainer>
     );
   }
-
-  // if (cartItemList && cartItemList.length === 0) {
-  //   return (
-  //     <EmptyContainer>
-  //       <FlexCol width="100%">
-  //         <DeliveryTypeAndLocation
-  //           goToDeliveryInfo={goToDeliveryInfo}
-  //           deliveryType={destinationObj.delivery!}
-  //           deliveryDestination={destinationObj.location}
-  //         />
-  //         <BorderLine height={8} margin="24px 0" />
-  //       </FlexCol>
-  //       <FlexCol width="100%">
-  //         <TextB2R padding="0 0 32px 0" center>
-  //           장바구니가 비었어요 😭
-  //         </TextB2R>
-  //         <BtnWrapper onClick={goToSearchPage}>
-  //           <Button backgroundColor={theme.white} color={theme.black} border>
-  //             상품 담으러 가기
-  //           </Button>
-  //         </BtnWrapper>
-  //       </FlexCol>
-  //     </EmptyContainer>
-  //   );
-  // }
 
   return (
     <Container>
