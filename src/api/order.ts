@@ -13,6 +13,11 @@ import {
   ICreateOrderResponse,
   ICreateOrderRequest,
   IGetOrderInfoResponse,
+  IGetKakaoPaymentResponse,
+  IGetNicePaymentResponse,
+  IGetPaycoRequest,
+  IGetPaycoPaymentResponse,
+  IGetTossPaymentResponse,
 } from '@model/index';
 
 export const getOrderInfoApi = (params: { orderType: string }): Promise<AxiosResponse<IGetOrderInfoResponse>> => {
@@ -84,4 +89,83 @@ export const editDeliveryDateApi = ({
 
 export const getSubOrdersCheckApi = (): Promise<AxiosResponse<IGetSubOrdersResponse>> => {
   return Api.get(`order/v1/deliveries/together`);
+};
+
+/* pg */
+
+export const postKakaoApproveApi = ({
+  orderId,
+  data,
+}: {
+  orderId: number;
+  data: { pgToken: string; tid: string };
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/kakaopay-approve`, data);
+};
+
+export const postKakaoPaymentApi = ({
+  orderId,
+  data,
+}: {
+  orderId: number;
+  data: { cancelUrl: string; failureUrl: string; successUrl: string };
+}): Promise<AxiosResponse<IGetKakaoPaymentResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/kakaopay-payment`);
+};
+
+export const postNiceApproveApi = ({
+  orderId,
+  params,
+}: {
+  orderId: number;
+  params: { failureUrl: string; successUrl: string };
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/nicepay-approve`, { params });
+};
+
+export const postNicePaymnetApi = ({
+  orderId,
+  data,
+}: {
+  orderId: number;
+  data: { failureUrl: string; successUrl: string; payMethod: string };
+}): Promise<AxiosResponse<IGetNicePaymentResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/nicepay-payment`, data);
+};
+
+export const getPaycoApprove = ({ params }: { params: IGetPaycoRequest }): Promise<AxiosResponse<IResponse>> => {
+  /* TODO: test 요망 */
+  const { id } = { ...params };
+
+  return Api.get(`order/v1/orders/${id}/payco-approve`, { params });
+};
+
+export const postPaycoPaymentApi = ({
+  orderId,
+  data,
+}: {
+  orderId: number;
+  data: { cancelUrl: string; failureUrl: string; successUrl: string };
+}): Promise<AxiosResponse<IGetPaycoPaymentResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/payco-payment`, data);
+};
+
+export const postTossApproveApi = ({
+  orderId,
+  payToken,
+}: {
+  orderId: number;
+  payToken: number;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/toss-approve`, payToken);
+};
+
+export const postTossPaymentApi = ({
+  orderId,
+  data,
+}: {
+  orderId: number;
+  data: { failureUrl: string; successUrl: string };
+}): Promise<AxiosResponse<IGetTossPaymentResponse>> => {
+  return Api.post(`order/v1/orders/${orderId}/toss-payment`, data);
 };

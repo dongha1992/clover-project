@@ -149,20 +149,21 @@ const OrderPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       onError: (error: any) => {
-        if (error.code === 5005) {
+        if (error && error?.code === 5005) {
+          return;
+        } else {
+          return;
         }
       },
     }
   );
 
-  console.log(isError, 'IS ERRROR', error);
-
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       /*TODO: 모델 수정해야함 */
-      /*TODO:쿠폰 퍼센테이지 */
+      /*TODO: 쿠폰 퍼센테이지 */
       const { point, payAmount, ...rest } = previewOrder?.order!;
-      console.log(selectedCoupon, 'selectedCoupon');
+
       const reqBody = {
         payMethod: 'NICE_BILLING',
         cardId: card?.id!,
@@ -452,6 +453,23 @@ const OrderPage = () => {
 
   const goToTermInfo = () => {};
 
+  const processOrder = () => {
+    switch (selectedOrderMethod) {
+      case 'fcopay':
+        mutateCreateOrder();
+      case 'creditCard': {
+      }
+      case 'account': {
+      }
+      case 'kakaopay': {
+      }
+      case 'payco': {
+      }
+      case 'toss': {
+      }
+    }
+  };
+
   const paymentHandler = () => {
     if (loadingState) return;
 
@@ -465,7 +483,7 @@ const OrderPage = () => {
           submitBtnText: '확인',
           onClose: () => {},
           onSubmit: () => {
-            mutateCreateOrder();
+            processOrder();
           },
         })
       );
