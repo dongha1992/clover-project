@@ -13,7 +13,7 @@ import {
   getStationSpots,
   getSpotEvent,
   getSpotPopular,
-  getInfo,
+  getSpotInfo,
   getSpotRegistrationsRecruiting,
 } from '@api/spot';
 import { IParamsSpots, ISpotsInfo } from '@model/index';
@@ -118,9 +118,9 @@ const SpotPage = () => {
 
   useEffect(() => {
     // 스팟 정보 조회
-    const getInfoData = async () => {
+    const getSpotInfoData = async () => {
       try {
-        const { data } = await getInfo();
+        const { data } = await getSpotInfo();
         setSpotCount(data.data.spotCount);
         setInfo(data.data);
         dispatch(SET_SPOT_INFO(data.data));
@@ -128,7 +128,7 @@ const SpotPage = () => {
         console.error(err);
       }
     };
-    getInfoData();
+    getSpotInfoData();
   }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
@@ -147,8 +147,8 @@ const SpotPage = () => {
           if(isLoginSuccess) {
             // 로그인 o
             if(info?.canPrivateSpotRegistration){
-              // 프라이빗 스팟 신청 진행중인게 1개 미민안 경우 true (0개)
-              // 프라이빗 신청 제한: 1개
+              // 프라이빗 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
+              // 프라이빗 신청 제한: 1개 - 신청 불가
               router.push({
                 pathname: '/spot/spot-req',
                 query: { type },
@@ -174,8 +174,8 @@ const SpotPage = () => {
           if(isLoginSuccess) {
             // 로그인 o
             if(info?.canPublicSpotRegistraion){
-              // 퍼블릭 스팟 신청 진행중인게 3개 미민안 경우 true (0~2개)
-              // 퍼블릭(단골가게) 스팟 신청 제한: 3개
+              // 퍼블릭 스팟 신청 진행중인게 3개 미민안 경우 true (0~2개) - 신청 가능
+              // 퍼블릭(단골가게) 스팟 신청 제한: 3개 - 신청 불가
               router.push({
                 pathname: '/spot/spot-req',
                 query: { type },
@@ -201,8 +201,8 @@ const SpotPage = () => {
           if(isLoginSuccess) {
             // 로그인 o
             if(info?.canOwnerSpotRegistraion){
-              // 우리가게(owner) 스팟 신청 진행중인게 1개 미민안 경우 true (0개)
-              // 우리가게 스팟 신청 제한: 1개
+              // 우리가게(owner) 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
+              // 우리가게 스팟 신청 제한: 1개 - 신청 불가
               router.push({
                 pathname: '/spot/spot-req',
                 query: { type },

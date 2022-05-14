@@ -7,7 +7,7 @@ import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { postSpotsRegistrationsInfoSubmit } from '@api/spot';
-import { IEditRegistration } from '@model/index';
+import { IGetRegistrationStatus } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_SPOT_REGISTRATIONS_POST_RESULT } from '@store/spot';
 
@@ -18,7 +18,7 @@ const SubmitPage = () => {
   const { type } = router.query;
 
   const registrationsSubmitHandeler = async () => {
-    const params: IEditRegistration = {
+    const params: IGetRegistrationStatus = {
       coordinate: {
         lat: Number(spotLocation.lat),
         lon: Number(spotLocation.lon),

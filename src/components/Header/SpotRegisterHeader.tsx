@@ -9,7 +9,7 @@ import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 // import { putSpotsRegistrationsTemporary } from '@api/spot';
-import { IEditRegistration } from '@model/index';
+import { IGetRegistrationStatus } from '@model/index';
 
 interface IProps {
   title?: string;
@@ -31,7 +31,7 @@ const SpotRegisterHeader = ({ title }: IProps) => {
   };
 
   // const putRegistrationsFetch = async() => {
-  //   const params: IEditRegistration = {
+  //   const params: IGetRegistrationStatus = {
   //     id: null,
   //     coordinate: {
   //       lat: Number(spotLocation.lat),

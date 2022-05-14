@@ -777,7 +777,13 @@ type TDistanceUnit =
   | 'NAUTICALMILES'
   | 'YARD';
 
-export interface IEditRegistration {
+type TSPpotRegistrationsStep = 
+  | 'CONFIRM'
+  | 'RECRUITING'
+  | 'TRIAL'
+  | 'OPEN';
+
+export interface IGetRegistrationStatus {
   coordinate: {
     lat: number;
     lon: number;
@@ -794,17 +800,38 @@ export interface IEditRegistration {
   placeType?: TPlaceType;
   placeTypeDetail?: string | null;
   pickupTypeDetail?: string | null;
-  type?: TSpotRegisterationsOptiosType | string;
+  type?: string;
   userEmail: string;
   userName: string;
   userPosition?: string | null;
   userTel: string;
   id?: number;
-  step?: string;
+  step?: TSPpotRegistrationsStep;
   rejected?: boolean;
   createdAt?: string;
   recruited?: boolean;
   recruitingCount?: number;
+  distanceUnit?: string;
+  image?: {
+    createdAt: string;
+    height: number;
+    id: number;
+    name: string;
+    originalName: string;
+    size: number;
+    url: string;
+    width: number;
+  };
+  rejectedAt?: string;
+  rejectionMessage?: string;
+  rejectionType?: string;
+  spotId?: number;
+  trialEndedAt?: string;
+  trialStartedAt?: string;
+  trialTargetUserCount?: number;
+  trialUserCount?: number;
+  trialCount?: number;
+  canRetrial?: boolean;
 }
 
 export interface IPostRegistrations {
@@ -864,7 +891,7 @@ export interface IGetSpotsRegistrationsStatus {
     total: number;
     totalPage: number;
   };
-  spotRegistrations: IEditRegistration[];
+  spotRegistrations: IGetRegistrationStatus[];
 }
 
 export interface IGetSpotsRegistrationsStatusResponse {
@@ -876,7 +903,7 @@ export interface IGetSpotsRegistrationsStatusResponse {
 export interface IGetSpotsRegistrationsStatusDetailResponse {
   code: number;
   message: string;
-  data: IEditRegistration;
+  data: IGetRegistrationStatus;
 }
 
 export interface IGetSpotFilterResponse {
