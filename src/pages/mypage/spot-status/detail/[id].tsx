@@ -9,6 +9,7 @@ import { LocationInfo, OpenInfo, UserInfo, SpotStatusDetailProgressBar } from '@
 import { useQuery } from 'react-query';
 import { getSpotsRegistrationStatusDetail } from '@api/spot';
 import SlideToggle from '@components/Shared/SlideToggle';
+import { IGetRegistrationStatus } from '@model/index';
 
 interface IParams {
   id: number;
@@ -67,22 +68,40 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
     };
   };
 
-  const stepType = () => {
-    switch(statusDetail?.step){
-      case 'CONFIRM':
-        return '검토 중'
-      case 'RECRUITING':
-        return '모집 중'
-      case 'TRIAL':
-        return '트라이얼 진행 중'
-      case 'OPEN':
-        return '오픈완료'
-      case 'OPEN_CONFIRM': 
+  const spotStatusStep = (i: IGetRegistrationStatus) => {
+    if (i?.rejected) {
+      return '오픈 미진행'
+    };
+    if (i?.type === 'PRIVATE') {
+      if(i?.trialUserCount! >= i?.trialTargetUserCount!) {
         return '오픈 검토 중'
-      case 'REJECTED':
-        return '오픈 미진행'
+      };
+      switch(i?.step) {
+        case 'CONFIRM':
+          return '검토 중'
+        case 'TRIAL':
+          return '트라이얼 진행 중'
+        case 'OPEN':
+          return '오픈완료'
+      };  
+    } else if (i?.type === 'PUBLIC') {
+      switch(i?.step) {
+        case 'RECRUITING':
+          return '모집 중'
+        case 'CONFIRM':
+          return '오픈 검토 중'
+        case 'OPEN':
+          return '오픈완료'
+      };  
+    } else if (i?.type === 'OWNER') {
+      switch(i?.step) {
+        case 'CONFIRM':
+          return '오픈 검토 중'
+        case 'OPEN':
+          return '오픈완료'
+      };  
     }
-  }
+  };
 
   const toggleLocationInfo = (): void => {
     setLocationInfo(!locationInfo);
@@ -97,13 +116,10 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
   };
 
   const privateRegistrationBenefit = (): void => {
-
     setOpenInfo(true);
     currentRef.current?.scrollIntoView({ behavior: 'smooth' });
-
   };
   
-  // console.log(document.documentElement.clientHeight);
   return (
     <Container>
       <TopStatusWrapper>
@@ -111,14 +127,14 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
           <Tag color={theme.brandColor} backgroundColor={theme.brandColor5P} margin="0 4px 0 0">
             {tagType()}
           </Tag>
-          <Tag>{stepType()}</Tag>
+          <Tag>{spotStatusStep(statusDetail!)}</Tag>
         </Flex>
         <TextH2B margin="0 0 4px 0">{statusDetail?.placeName}</TextH2B>
         <TextB3R>{`${statusDetail?.location.address} ${statusDetail?.location.addressDetail}`}</TextB3R>
       </TopStatusWrapper>
-      <SpotStatusDetailProgressBar item={statusDetail} />
+      <SpotStatusDetailProgressBar item={statusDetail!} />
       {
-        statusDetail?.type === 'PRIVATE' && statusDetail?.step !== 'REJECTED' &&
+        statusDetail?.type === 'PRIVATE' && !statusDetail?.rejected &&
         <BtnWrapper>
           <Button color={theme.black} backgroundColor={theme.white} border onClick={privateRegistrationBenefit}>모집 혜택 확인하기</Button>
         </BtnWrapper>
@@ -154,7 +170,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
           <SVGIcon name={openInfo ? 'triangleUp' : 'triangleDown'} />
         </FlexBetween>
         <SlideToggle state={openInfo} duration={0.5}>
-          <OpenInfo />
+          <OpenInfo type={statusDetail?.type!} />
         </SlideToggle>
       </ToggleWrapper>
       <PlanGuideWrapper>
@@ -184,7 +200,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
         </Button>
       </PlanGuideWrapper>
       {
-        statusDetail?.type === 'PRIVATE' && (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') &&
+        statusDetail?.type === 'PRIVATE' && (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') && !statusDetail?.rejected &&
       <FixedButton onClick={()=> {}}>
         <Button
           borderRadius="0"

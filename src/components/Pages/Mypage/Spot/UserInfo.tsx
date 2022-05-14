@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { IEditRegistration } from '@model/index';
+import { IGetRegistrationStatus } from '@model/index';
 
 interface IParams {
-  item: IEditRegistration;
+  item: IGetRegistrationStatus;
 };
 const UserInfo = ({ item }: IParams) => {
 
