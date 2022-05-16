@@ -1515,14 +1515,11 @@ export interface IGetPaycoPaymentResponse {
 }
 
 export interface IGetTossPayment {
-  android_app_scheme: string;
-  created_at: string;
-  ios_app_scheme: string;
-  next_redirect_app_url: string;
-  next_redirect_mobile_url: string;
-  next_redirect_pc_url: string;
-  tid: string;
-  tms_result: boolean;
+  checkoutPage: string;
+  code: number;
+  payToken: string;
+  status: string;
+  success: boolean;
 }
 export interface IGetTossPaymentResponse {
   code: number;
