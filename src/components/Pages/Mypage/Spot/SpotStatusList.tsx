@@ -10,6 +10,7 @@ import { postSpotsRegistrationsRetrial, getSpotInfo } from '@api/spot';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import { SET_SPOT_INFO } from '@store/spot';
 
 interface IProps {
   items: IGetRegistrationStatus[];
@@ -44,7 +45,7 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
         case 'CONFIRM':
           return '검토 중'
         case 'TRIAL':
-          return '트라이얼 진행 중'
+          return '트라이얼 진행 중'
         case 'OPEN':
           return '오픈완료'
       };  
@@ -53,7 +54,7 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
         case 'RECRUITING':
           return '모집 중'
         case 'CONFIRM':
-          return '오픈 검토 중'
+          return '오픈 검토 중'
         case 'OPEN':
           return '오픈완료'
       };  
@@ -104,15 +105,16 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
     const getSpotInfoData = async () => {
       try {
         const { data } = await getSpotInfo();
-        setInfo(data.data);
-        // dispatch(SET_SPOT_INFO(data.data));
+        if (data.code === 200) {
+          setInfo(data.data);
+          dispatch(SET_SPOT_INFO(data.data));  
+        }
       } catch (err) {
         console.error(err);
       }
     };
     getSpotInfoData();
   }, []);
-
 
   return (
     <Container>
@@ -136,7 +138,7 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
               <TextH5B>{i?.placeName}</TextH5B>
               <TextB3R>{`${i?.location.address} ${i?.location.addressDetail}`}</TextB3R>
               {
-                (i.type === 'PRIVATE' && (i.step === 'TRIAL' || i?.trialUserCount! >= i?.trialTargetUserCount!)) &&
+                (i.type === 'PRIVATE' && (i.step === 'TRIAL' || (i?.trialUserCount! >= i?.trialTargetUserCount!))) && !i?.rejected &&
                 // 프라이빗인 경우 '트라이얼' or '오픈 검토중' 노출
                 <FlexStart margin="4px 0 0 0">
                   <SVGIcon name="people" />

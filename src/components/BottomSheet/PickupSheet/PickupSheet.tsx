@@ -17,7 +17,7 @@ type TPrams = {
 
 const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
-  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].spotId);
+  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].id);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   
@@ -58,8 +58,8 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit }: TPrams): JSX.Element =>
               return (
                 <PickWrapper key={index}>
                   <RadioButton
-                    onChange={() => changeRadioHandler(i.spotId)}
-                    isSelected={selectedPickupId === i.spotId}
+                    onChange={() => changeRadioHandler(i.id)}
+                    isSelected={selectedPickupId === i.id}
                   />
                   <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
                 </PickWrapper>
