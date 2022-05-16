@@ -29,7 +29,13 @@ import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/order';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
-import { createOrderPreviewApi, createOrderApi, postKakaoPaymentApi } from '@api/order';
+import {
+  createOrderPreviewApi,
+  createOrderApi,
+  postKakaoPaymentApi,
+  postTossPaymentApi,
+  postTossApproveApi,
+} from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
@@ -90,7 +96,6 @@ export interface IAccessMethod {
 
 export interface IProcessOrder {
   orderId: number;
-  successOrderPath: string;
 }
 
 const OrderPage = () => {
@@ -138,6 +143,7 @@ const OrderPage = () => {
         router.push('/');
       }
       const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
+      console.log(tempOrder, 'TEMP ORDER');
       const previewBody = {
         delivery,
         deliveryDetail: deliveryDetail ? deliveryDetail : null,
@@ -171,6 +177,7 @@ const OrderPage = () => {
       /*TODO: 쿠폰 퍼센테이지 */
       const { point, payAmount, ...rest } = previewOrder?.order!;
       const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
+      console.log(selectedOrderMethod, 'selectedOrderMethod');
       const reqBody = {
         payMethod: selectedOrderMethod,
         cardId: needCard ? card?.id! : null,
@@ -470,24 +477,35 @@ const OrderPage = () => {
       case 'NICE_BANK': {
       }
       case 'KAKAO_CARD':
-        processKakaopay({ orderId, successOrderPath });
+        processKakaoPay({ orderId });
+        break;
       case 'PAYCO_EASY': {
       }
       case 'TOSS_CARD': {
+        processTossPay({ orderId });
       }
     }
   };
 
-  const processKakaopay = async ({ orderId, successOrderPath }: IProcessOrder) => {
-    console.log(router);
-    const data = {
+  const processKakaoPay = async ({ orderId }: IProcessOrder) => {
+    const reqBody = {
       successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
       cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
-    const response = await postKakaoPaymentApi({ orderId, data });
-    console.log(response, 'RESPONSE');
+    const kakaoPayResult = await postKakaoPaymentApi({ orderId, data: reqBody });
+    console.log(kakaoPayResult, 'RESPONSE');
+  };
+
+  const processTossPay = async ({ orderId }: IProcessOrder) => {
+    const reqBody = {
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+    };
+    const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+    window.location.href = data.data.checkoutPage;
+    console.log(data, 'TOSS RESPONSE');
   };
 
   const paymentHandler = () => {
