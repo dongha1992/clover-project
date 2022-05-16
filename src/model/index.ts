@@ -594,7 +594,7 @@ export interface ISpotsInfo {
   canOwnerSpotRegistraion: boolean;
   canPrivateSpotRegistration: boolean;
   canPublicSpotRegistraion: boolean;
-  trialSpotRegistration: ISpotsDetail;
+  trialSpotRegistration: IGetRegistrationStatus;
 }
 
 export interface ISpotsInfoResponse {
