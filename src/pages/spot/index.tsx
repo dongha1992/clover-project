@@ -266,69 +266,39 @@ const SpotPage = () => {
         <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
-            // registrationsLen && (
-            //   <SwiperSlide className="swiper-slide">
-            //     <BoxHandlerWrapper onClick={goToShare}>
-            //       <FlexBetween height="92px" padding="22px">
-            //         <TextH4B>
-            //           {`[${info?.recruitingSpotRegistrations[0].placeName}]\n`}
-            //           <span>{`${5 - info?.recruitingSpotRegistrations[0].recruitingCount}`}</span>
-            //           명만 더 주문 하면 정식오픈 돼요!
-            //         </TextH4B>
-            //         <IconWrapper>
-            //           <SVGIcon name="blackCircleShare" />
-            //         </IconWrapper>
-            //       </FlexBetween>
-            //     </BoxHandlerWrapper>
-            //   </SwiperSlide>
-            // )
+            info?.trialSpotRegistration.trialUserCount! < 5 && (
+              <SwiperSlide className="swiper-slide">
+                <BoxHandlerWrapper onClick={goToShare}>
+                  <FlexBetween height="92px" padding="22px">
+                    <TextH4B>
+                      {`[${info?.trialSpotRegistration.placeName}]\n`}
+                      <span>{`${5 - info?.trialSpotRegistration?.trialUserCount!}`}</span>
+                      명만 더 주문 하면 정식오픈 돼요!
+                    </TextH4B>
+                    <IconWrapper>
+                      <SVGIcon name="blackCircleShare" />
+                    </IconWrapper>
+                  </FlexBetween>
+                </BoxHandlerWrapper>
+              </SwiperSlide>
+            )
           }
           {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-            // registrationsLen && (
-            //   <SwiperSlide className="swiper-slide">
-            //     <BoxHandlerWrapper onClick={goToShare}>
-            //       <FlexBetween height="92px" padding="22px">
-            //         <TextH4B>
-            //           {`[${info?.recruitingSpotRegistrations[0].placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
-            //         </TextH4B>
-            //         <IconWrapper>
-            //           <SVGIcon name="blackCircleShare" />
-            //         </IconWrapper>
-            //       </FlexBetween>
-            //     </BoxHandlerWrapper>
-            //   </SwiperSlide>
-            // )
-          }
-          {
-            /* 작성중인 스팟 신청서가 있는 경우 노출 */
-            // unsubmitSpotRegistrationsLen && (
-            //   <SwiperSlide className="swiper-slide">
-            //     <BoxHandlerWrapper onClick={goToSpotStatus}>
-            //       <FlexBetween height="92px" padding="22px">
-            //         <TextH4B>{'작성중인 프코스팟 신청서 작성을\n완료하고 제출해주세요!'}</TextH4B>
-            //         <IconWrapper>
-            //           <SVGIcon name="blackCirclePencil" />
-            //         </IconWrapper>
-            //       </FlexBetween>
-            //     </BoxHandlerWrapper>
-            //   </SwiperSlide>
-            // )
-          }
-          {
-            /* 내가 참여한 스팟 알림 카드*/
-            // trialRegistrationsLen && (
-            //   <SwiperSlide className="swiper-slide">
-            //     <BoxHandlerWrapper onClick={goToSpotStatus}>
-            //       <FlexBetween height="92px" padding="22px">
-            //         <TextH4B>{'참여한 프코스팟의\n빠른 오픈을 위해 공유해 주세요!'}</TextH4B>
-            //         <IconWrapper>
-            //           <SVGIcon name="blackCircleShare" />
-            //         </IconWrapper>
-            //       </FlexBetween>
-            //     </BoxHandlerWrapper>
-            //   </SwiperSlide>
-            // )
+            info?.trialSpotRegistration.trialUserCount! <= 5 && (
+              <SwiperSlide className="swiper-slide">
+                <BoxHandlerWrapper onClick={goToShare}>
+                  <FlexBetween height="92px" padding="22px">
+                    <TextH4B>
+                      {`[${info?.trialSpotRegistration.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
+                    </TextH4B>
+                    <IconWrapper>
+                      <SVGIcon name="blackCircleShare" />
+                    </IconWrapper>
+                  </FlexBetween>
+                </BoxHandlerWrapper>
+              </SwiperSlide>
+            )
           }
         </TopCTASlider>
       )}
