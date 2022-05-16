@@ -33,10 +33,12 @@ const Oauth = () => {
     try {
       const result = await userLoginApi({
         loginType: 'KAKAO',
-        accessToken: `${authObj.access_token}`,
+        accessToken: `bearer ${authObj.access_token}`,
       });
 
       console.log(result, 'AFTER SUCCESS');
+
+      const isRegister = result?.data?.data?.isJoin;
 
       if (result.data.code === 200) {
         const userTokenObj = result.data.data;

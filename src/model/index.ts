@@ -116,6 +116,7 @@ export interface IUserToken {
   refreshTokenExpiresIn: number;
   tokenType: string;
   tmpPasswordUsed?: boolean;
+  isJoin?: boolean;
 }
 export interface ILoginResponse {
   code: number;
