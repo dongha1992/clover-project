@@ -24,10 +24,6 @@ export const userLoginApi = (data: ILogin): Promise<AxiosResponse<ILoginResponse
   return Api.post('/user/v1/login', data);
 };
 
-export const kakaoLogin = (data: IkakaoLogin): Promise<AxiosResponse<any>> => {
-  return Api.post('/user/v1/signin-kakao', data);
-};
-
 export const userAuthTel = (data: IAuthTel): Promise<AxiosResponse<IResponse>> => {
   return Api.post('/user/v1/auth/tel', data);
 };
