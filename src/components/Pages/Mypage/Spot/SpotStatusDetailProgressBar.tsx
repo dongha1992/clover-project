@@ -229,7 +229,7 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
   );
 };
 
-const Container = styled.div``;
+const Container = styled.section``;
 
 const StatusBoradWrapper = styled.section<{rejected?: boolean}>`
   width: 100%;

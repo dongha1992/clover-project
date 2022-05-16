@@ -594,11 +594,7 @@ export interface ISpotsInfo {
   canOwnerSpotRegistraion: boolean;
   canPrivateSpotRegistration: boolean;
   canPublicSpotRegistraion: boolean;
-  trialSpotRegistration: {
-    placeName: string;
-    trialTargetUserCount: number;
-    trialUserCount: number;
-  }
+  trialSpotRegistration: ISpotsDetail;
 }
 
 export interface ISpotsInfoResponse {
@@ -868,7 +864,7 @@ export interface IPostRegistrations {
   rejectionMessage: string;
   rejectionType: 'ETC' | 'INSUFFICIENCY';
   spotId: number;
-  step: 'CONFIRM' | 'OPEN' | 'RECRUITING' | 'TRIAL' | 'UNSUBMIT';
+  step: string[];
   trialledAt: string;
   type: TSpotRegisterationsOptiosType;
   userEmail: string;
