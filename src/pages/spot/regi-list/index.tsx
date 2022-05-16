@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextB1B } from '@components/Shared/Text';
@@ -6,66 +6,42 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
     INIT_SPOT_LOCATION, 
-    INIT_SPOT_REGISTRATIONS_OPTIONS, 
-    spotSelector,
+    INIT_SPOT_REGISTRATIONS_OPTIONS,
   } from '@store/spot';  
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
+import { getSpotInfo } from '@api/spot';
+import { ISpotsInfo } from '@model/index';
 
 const RegistrationsListPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { me, isLoginSuccess } = useSelector(userForm);
-  const { spotInfo } = useSelector(spotSelector);
+  const { isLoginSuccess } = useSelector(userForm);
+  const [info, setInfo] = useState<ISpotsInfo>();
 
-  const goToPrivateRegistrations = () => {
-    if(isLoginSuccess) {
-      if(spotInfo?.canPrivateSpotRegistration){
-        router.push('/spot/spot-req?type=private');
+  const goToRegistration = (type: string) => {
+    if (isLoginSuccess) {
+      if((type === 'private' && !info?.canPrivateSpotRegistration) || (type === 'public' && !info?.canPublicSpotRegistraion) || (type === 'owner' && !info?.canOwnerSpotRegistraion)) {
+        return (
+          dispatch(
+            SET_ALERT({
+              alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
+              submitBtnText: '확인',
+            })
+          )
+        )   
       } else {
-        dispatch(
-          SET_ALERT({
-            alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
-            submitBtnText: '확인',
-          })
-        );      
+        router.push(`/spot/spot-req?type=${type}`);
       }
     } else {
-      router.push('/spot/spot-req?type=private');
-    }
-  };
-
-  const goToPublicRegistrations = () => {
-    if(isLoginSuccess){
-      if (spotInfo?.canPublicSpotRegistraion) {
-        router.push('/spot/spot-req?type=public'); 
-      } else {
-        dispatch(
-          SET_ALERT({
-            alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
-            submitBtnText: '확인',
-          })
-        );      
-      }
-    }else {
-      router.push('/spot/spot-req?type=public'); 
-    }
-  };
-
-  const goToOwnerRegistrations = () => {
-    if(isLoginSuccess){
-      if (spotInfo?.canOwnerSpotRegistraion) {
-        router.push('/spot/spot-req?type=owner'); 
-      } else {
-        dispatch(
-          SET_ALERT({
-            alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
-            submitBtnText: '확인',
-          })
-        );      
-      }
-    } else {
-      router.push('/spot/spot-req?type=owner'); 
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
     }
   };
 
@@ -74,15 +50,30 @@ const RegistrationsListPage = () => {
     dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
   }, []);
 
+  useEffect(() => {
+    // 스팟 정보 조회
+   const getFetch = async() => {
+     try {
+       const { data } = await getSpotInfo();
+       setInfo(data.data);
+     } catch (err) {
+       console.error(err);
+     }
+   };
+
+   getFetch();
+ }, [])
+
+
   return (
     <Container>
-     <BtnWrapper onClick={goToPrivateRegistrations}>
+     <BtnWrapper onClick={() =>goToRegistration('private')}>
        <TextB1B padding='24px 0'>우리 회사•학교 신청하기</TextB1B>
      </BtnWrapper>
-     <BtnWrapper onClick={goToPublicRegistrations}>
+     <BtnWrapper onClick={() => goToRegistration('public')}>
         <TextB1B padding='24px 0'>단골가게 신청하기</TextB1B>
      </BtnWrapper>
-     <BtnWrapper onClick={goToOwnerRegistrations}>
+     <BtnWrapper onClick={() => goToRegistration('owner')}>
        <TextB1B padding='24px 0'>우리가게 신청하기</TextB1B>
      </BtnWrapper>
     </Container>

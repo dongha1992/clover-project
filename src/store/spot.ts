@@ -15,10 +15,6 @@ interface ISpotAddress {
 };
 
 interface ISpotRegistrationsOpions {
-  pickupLocationTypeOptions?: {
-    name: string;
-    value: string;
-  };
   placeTypeOptions?: {
     name: string;
     value: string;
@@ -29,9 +25,9 @@ interface ISpotRegistrationsOpions {
   };
 };
 
-interface ISpotsRegistrationInfo {
+ export interface ISpotsRegistrationInfo {
   placeName?: string | null;
-  pickupLocationEtc?: string | null;
+  pickupLocation?: string | null;
   placeTypeEtc?: string | null;
   userName: string;
   userEmail: string;
@@ -106,13 +102,12 @@ const spotAddressState = {
 
 const spotRegistrationsOptionsState = {
   lunchTimeOptions: {},
-  pickupLocationTypeOptions: {},
   placeTypeOptions: {},
 };
 
 const spotsRegistrationInfoState = {
   placeName: '',
-  pickupLocationEtc: '',
+  pickupLocation: '',
   placeTypeEtc: '',
   userName: '',
   userEmail: '',
