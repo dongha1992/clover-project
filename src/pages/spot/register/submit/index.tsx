@@ -34,14 +34,13 @@ const SubmitPage = () => {
       userEmail: spotsRegistrationInfo.userEmail,
       userTel: spotsRegistrationInfo.userTel,
       placeName: spotsRegistrationInfo.placeName,
-      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+      pickupType: spotsRegistrationInfo.pickupLocation,
       lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
       placeType: spotsRegistrationOptions.placeTypeOptions.value,
       placeTypeDetail:
         spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
       userPosition: type === 'owner' ? spotsRegistrationInfo.managerInfo : null,
     };
-
     try {
       const { data } = await postSpotsRegistrationsInfoSubmit(params);
       if (data.code === 200) {
@@ -76,10 +75,7 @@ const SubmitPage = () => {
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
               <TextB2R>
-                {spotsRegistrationOptions.pickupLocationTypeOptions.name?.length &&
-                spotsRegistrationOptions.pickupLocationTypeOptions.value !== 'ETC'
-                  ? spotsRegistrationOptions.pickupLocationTypeOptions.name
-                  : `기타 / ${spotsRegistrationInfo.pickupLocationEtc}`}
+                {spotsRegistrationInfo.pickupLocation}
               </TextB2R>
             </Content>
           )}
