@@ -9,12 +9,14 @@ interface TProps {
   width?: string;
   height?: string;
   color?: string;
+  color2?: string;
 }
 
 interface IStyle {
   height?: string;
   width?: string;
   color?: string;
+  color2?: string;
 }
 
 const svgMap: TSvg = {
@@ -901,12 +903,18 @@ const svgMap: TSvg = {
       <path d="M3 9.5H7" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  reviewStarFull: () => (
+  reviewStarFull: ({ color, color2 }) => (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.1252 0.579177C15.5059 -0.108073 16.494 -0.108071 16.8747 0.579178L21.222 8.42703C21.3599 8.67595 21.5973 8.85434 21.8747 8.91751L30.3922 10.8569C31.1242 11.0235 31.4184 11.9074 30.9322 12.4795L25.0739 19.3733C24.8988 19.5793 24.8146 19.8475 24.8405 20.1167L25.7213 29.2633C25.7953 30.0324 25.0065 30.5913 24.3055 30.2665L16.4204 26.613C16.1537 26.4895 15.8462 26.4895 15.5796 26.613L7.69447 30.2665C6.99346 30.5913 6.20461 30.0324 6.27866 29.2633L7.15943 20.1167C7.18535 19.8475 7.10115 19.5793 6.92605 19.3733L1.06775 12.4795C0.581592 11.9074 0.875735 11.0235 1.60776 10.8569L10.1252 8.91751C10.4027 8.85434 10.6401 8.67595 10.778 8.42703L15.1252 0.579177Z"
-        fill="#F4D740"
+        fill={color ? color : '#F4D740'}
       />
+      {color2 && (
+        <path
+          d="M15.1252 1.57918C15.5059 0.891927 16.494 0.891929 16.8747 1.57918L21.222 9.42703C21.3599 9.67595 21.5973 9.85434 21.8747 9.91751L30.3922 11.8569C31.1242 12.0235 31.4184 12.9074 30.9322 13.4795L25.0739 20.3733C24.8988 20.5793 24.8146 20.8475 24.8405 21.1167L25.7213 30.2633C25.7953 31.0324 25.0065 31.5913 24.3055 31.2665L16.4204 27.613C16.1537 27.4895 15.8462 27.4895 15.5796 27.613L7.69447 31.2665C6.99346 31.5913 6.20461 31.0324 6.27866 30.2633L7.15943 21.1167C7.18535 20.8475 7.10115 20.5793 6.92605 20.3733L1.06775 13.4795C0.581592 12.9074 0.875735 12.0235 1.60776 11.8569L10.1252 9.91751C10.4027 9.85434 10.6401 9.67595 10.778 9.42703L15.1252 1.57918Z"
+          fill={color2}
+        />
+      )}
     </svg>
   ),
   reviewStarHalf: () => (
@@ -1306,10 +1314,10 @@ const svgMap: TSvg = {
 
 /* TODO: ref */
 
-const SVGIcon = ({ name, width, height, color }: TProps) => {
+const SVGIcon = ({ name, width, height, color, color2 }: TProps) => {
   const MappedSVG = svgMap[name];
 
-  return <MappedSVG width={width} height={height} color={color} />;
+  return <MappedSVG width={width} height={height} color={color} color2={color2} />;
 };
 
 export default SVGIcon;
