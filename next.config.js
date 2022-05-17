@@ -19,7 +19,6 @@ module.exports = withBundleAnalyzer({
   },
   env: {
     STAGE: process.env.STAGE,
-    KAKO_API_URL: process.env.KAKO_API_URL,
     NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_KEY,
     SERVICE_URL: process.env.SERVICE_URL,
   },
