@@ -12,7 +12,7 @@ import { userSignup } from '@api/user';
 import { useMutation } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
-import { getCustomDate, getFormatTime } from '@utils/destination';
+import { getFormatTime } from '@utils/destination';
 import BirthDate from '@components/BirthDate';
 
 export const GENDER = [
@@ -85,7 +85,6 @@ const SignupOptionalPage = () => {
 
   const changeBirthDateHandler = (e: any) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setBirthdayObj({ ...birthDayObj, [name]: Number(value) });
   };
 
@@ -96,8 +95,8 @@ const SignupOptionalPage = () => {
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
 
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
-    const hasBirthDate = birthDayObj.year && birthDayObj.month && birthDayObj.day;
-    const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month + 1)}-${getFormatTime(birthDayObj.day)}`;
+    const hasBirthDate = birthDayObj.year > 0 && birthDayObj.month > 0 && birthDayObj.day > 0;
+    const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month)}-${getFormatTime(birthDayObj.day)}`;
 
     const optionalForm = {
       birthDate: hasBirthDate ? birthDate : '',
