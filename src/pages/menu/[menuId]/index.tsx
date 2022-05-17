@@ -142,8 +142,9 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
-
+    // const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
+    //temp
+    return { discount: 0, price: 0, discountedPrice: 0 };
     return { discount, price, discountedPrice };
   };
 
