@@ -343,5 +343,6 @@ export const customSelect = css`
   select {
     height: 100%;
     ${customInput}
+    ${textBody2}
   }
 `;

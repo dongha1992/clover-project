@@ -34,7 +34,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
     <Container>
       <YearWrapper>
         <select name="year" value={selected.year} key={selected.year} onChange={onChange}>
-          <option value={selected.year === 0 ? selected.year : 'YYYY'} disabled>
+          <option className="placeholder" value={selected.year === 0 ? selected.year : 'YYYY'} disabled>
             YYYY
           </option>
           {years().map((y, index) => (
@@ -42,6 +42,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
               {y}
             </option>
           ))}
+          <option value={0}>선택 안 함</option>
         </select>
         <SvgWrapper>
           <SVGIcon name="triangleDown" />
@@ -49,7 +50,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
       </YearWrapper>
       <MonthWrapper>
         <select name="month" placeholder="MM" value={selected.month} key={selected.month} onChange={onChange}>
-          <option value={selected.month === 0 ? selected.month : 'MM'} disabled>
+          <option className="placeholder" value={selected.month === 0 ? selected.month : 'MM'} disabled>
             MM
           </option>
           {months().map((m, index) => (
@@ -57,6 +58,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
               {m}
             </option>
           ))}
+          <option value={0}>선택 안 함</option>
         </select>
         <SvgWrapper>
           <SVGIcon name="triangleDown" />
@@ -64,7 +66,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
       </MonthWrapper>
       <DayWrapper>
         <select name="day" placeholder="DD" value={selected.day} key={selected.day} onChange={onChange}>
-          <option value={selected.day === 0 ? selected.month : 'DD'} disabled>
+          <option className="placeholder" value={selected.day === 0 ? selected.month : 'DD'} disabled>
             DD
           </option>
           {days?.map((d, index) => (
@@ -72,6 +74,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
               {d}
             </option>
           ))}
+          <option value={0}>선택 안 함</option>
         </select>
         <SvgWrapper>
           <SVGIcon name="triangleDown" />
