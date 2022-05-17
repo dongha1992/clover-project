@@ -39,7 +39,7 @@ export const userSignup = (data: ISignupUser): Promise<AxiosResponse<ISignupResp
   return Api.post('/user/v1/users', data);
 };
 
-export const userSecession = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
+export const userSecessionApi = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
   return Api.delete('/user/v1/users', { data });
 };
 

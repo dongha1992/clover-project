@@ -22,6 +22,7 @@ import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
+
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -596,9 +597,12 @@ const SvgWrapper = styled.div`
 
 const EmailInput = styled.div`
   position: relative;
-  .svg {
+  display: flex;
+
+  svg {
     position: absolute;
-    left: 10%;
+    right: 5%;
+    top: 32%;
   }
 `;
 
