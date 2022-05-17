@@ -36,25 +36,6 @@ const LocationInfo = ({ item }: IParams) => {
     }
   };
 
-  const pickUpType = () => {
-    switch(item?.pickupType) {
-      case 'COMMUNAL_FRIDGE':
-        return '공용 냉장고'
-      case 'COMMUNAL_TABLE':
-        return '테이블'
-      case 'DELIVERY_LOCATION':
-        return '배달 위치'
-      case 'DOCUMENT_ROOM':
-        return ''
-      case 'ETC':
-        return '기타'
-      case 'FRONT_DESK':
-        return '프론트 데스크'
-      case 'OFFICE_DOOR':
-        return '회사 문 앞'
-    }
-  };
-
   return (
     <Container>
       <InfoWrapper>
@@ -62,7 +43,7 @@ const LocationInfo = ({ item }: IParams) => {
           item?.type === 'PRIVATE' ? (
             <>
               <TextH5B margin='0 0 8px 0'>픽업 정보</TextH5B>
-              <TextB3R margin='0 0 24px 0'>{pickUpType()}</TextB3R>
+              <TextB3R margin='0 0 24px 0'>{item?.pickupType}</TextB3R>
               <TextH5B margin='0 0 8px 0'>장소 종류</TextH5B>
               <TextB3R margin='0 0 24px 0'>{placeType()}</TextB3R>
               <TextH5B margin='0 0 8px 0'>점심시간</TextH5B>

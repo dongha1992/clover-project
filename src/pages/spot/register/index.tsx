@@ -11,7 +11,6 @@ import { OptionsSheet } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
-import { userForm } from '@store/user';
 
 const RegisterPage = () => {
   const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
@@ -27,7 +26,7 @@ const RegisterPage = () => {
   const managerRef = useRef<HTMLInputElement>(null);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const checkedPickupType = !!pickUpRef.current?.value?.length;
+  const checkedPickup = !!pickUpRef.current?.value?.length;
   const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
   const checkedPlaceType = !!spotsRegistrationOptions.placeTypeOptions?.value?.length;
   const checkedAddressInfo = !!spotLocation.address?.length && !!placeRef.current?.value?.length;
@@ -41,7 +40,7 @@ const RegisterPage = () => {
       case 'private':
         return (
           checkedAddressInfo &&
-          checkedPickupType &&
+          checkedPickup &&
           checkedLunchType &&
           checkedPlaceType &&
           checkedUserInfo &&
