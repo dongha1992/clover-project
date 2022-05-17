@@ -11,6 +11,7 @@ import { getSpotsRegistrationStatusDetail } from '@api/spot';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { IGetRegistrationStatus } from '@model/index';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import { useRouter } from 'next/router';
 
 interface IParams {
   id: number;
@@ -44,6 +45,8 @@ const PLAN_GUIDE = [
 ];
 
 const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
+  const router = useRouter();
+  const { tyoe } = router.query;
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
@@ -176,6 +179,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
       <Row10 />
       {
         statusDetail?.type !== 'PUBLIC' &&
+          tyoe !== 'attend' &&
         <>
           <ToggleWrapper  onClick={toggleUserInfo}>
             <FlexBetween padding="24px">
