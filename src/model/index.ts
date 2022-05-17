@@ -741,15 +741,6 @@ export interface ISpotRegisterationsOptiosResponse {
   data: ISpotRegisterationsOpstions;
 }
 
-export type TSpotPickupType =
-  | 'COMMUNAL_FRIDGE'
-  | 'COMMUNAL_TABLE'
-  | 'DELIVERY_LOCATION'
-  | 'DOCUMENT_ROOM'
-  | 'ETC'
-  | 'FRONT_DESK'
-  | 'OFFICE_DOOR';
-
 export type TPlaceType =
   | 'BOOKSTORE'
   | 'CAFE'
@@ -781,8 +772,8 @@ type TSPpotRegistrationsStep =
 
 export interface IGetRegistrationStatus {
   coordinate: {
-    lat: number;
-    lon: number;
+    lat: number | null;
+    lon: number | null;
   };
   location: {
     address?: string | null;
@@ -791,7 +782,7 @@ export interface IGetRegistrationStatus {
     zipCode?: string | null;
   };
   lunchTime?: string;
-  pickupType?: TSpotPickupType;
+  pickupType?: string;
   placeName?: string | null;
   placeType?: TPlaceType;
   placeTypeDetail?: string | null;
@@ -851,7 +842,7 @@ export interface IPostRegistrations {
   };
   location: ILocation;
   lunchTime?: string;
-  pickupType?: TSpotPickupType;
+  pickupType?: string;
   placeName?: string | null;
   placeType?: TPlaceType;
   placeTypeDetail?: string | null;
