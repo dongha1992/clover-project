@@ -8,7 +8,6 @@ import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
-import { SVGIcon } from '@utils/common';
 
 interface IParams {
   item: ISpotsDetail;
@@ -22,15 +21,13 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
-  const typeTag = (): string | null => {
+  const typeTag = (): string | undefined => {
     const type = item?.type;
     switch (type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
         return '퍼블릭';
-      default:
-        return null;
     }
   };
 
@@ -69,30 +66,16 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{`${item.location.address} ${item.location.addressDetail}`}</TextB3R>
-        {
-          item.isClosed ? (
-            <MeterAndTime>
-              <SVGIcon name='exclamationMark' width='14' height='14' />
-              <TextB3R color={theme.brandColor} padding='0 0 0 2px'>운영 종료된 프코스팟이에요</TextB3R>
-            </MeterAndTime>
-          ) : !item?.closedDate ? (
-            <MeterAndTime>
-              {userLocationLen && (
-                <>
-                  <TextH6B color={theme.greyScale65}>{`${Math.round(item.distance)}m`}</TextH6B>
-                  <Col />
-                </>
-              )}
-              <TextH6B color={theme.greyScale65}>픽업&nbsp;</TextH6B>
-              <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-            </MeterAndTime>
-          ) : (
-            <MeterAndTime>
-              <SVGIcon name='exclamationMark' width='14' height='14' />
-              <TextB3R color={theme.brandColor} padding='0 0 0 2px'>운영 종료 예정인 프코스팟이에요</TextB3R>
-            </MeterAndTime>
-          )
-        }
+        <MeterAndTime>
+          {userLocationLen && (
+            <>
+              <TextH6B color={theme.greyScale65}>{`${Math.round(item.distance)}m`}</TextH6B>
+              <Col />
+            </>
+          )}
+          <TextH6B color={theme.greyScale65}>픽업&nbsp;</TextH6B>
+          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+        </MeterAndTime>
         {!item.isTrial ? (
           <div>
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
