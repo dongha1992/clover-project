@@ -45,7 +45,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart }: IProp
   const goToSpotsRegistrations = () => {
     router.push('/spot/regi-list');
   };
-
+  console.log(searchResult, 'searchResult');
   return (
     <>
       {!!searchResult.length && (

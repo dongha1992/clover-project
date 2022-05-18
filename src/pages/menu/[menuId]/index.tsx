@@ -48,34 +48,31 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const dispatch = useDispatch();
 
-  // const {
-  //   data,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   'getMenuDetail',
-  //   async () => {
-  //     const { data } = await getMenuDetailApi(menuId);
+  const {
+    data,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(menuId);
+      return data.data;
+    },
 
-  //     return data.data;
-  //   },
-
-  //   {
-  //     onSuccess: (data) => {
-  //       dispatch(SET_MENU_ITEM(data));
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      // const { data } = await getMenuDetailReviewApi(menuId);
-
-      // return data.data;
-      return ALL_REVIEW.data.data;
+      const { data } = await getMenuDetailReviewApi(menuId);
+      return data.data;
     },
 
     {
@@ -161,6 +158,9 @@ const MenuDetailPage = ({ menuId }: any) => {
     };
   }, []);
 
+  console.log(menuItem, 'menuItem');
+  console.log(reviews, 'reviews');
+
   return (
     <Container>
       <ImgWrapper>
@@ -188,7 +188,7 @@ const MenuDetailPage = ({ menuId }: any) => {
                 </Tag>
               );
             })} */}
-            {menuItem.tag && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
+            {menuItem.tag && menuItem.tag !== 'NONE' && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
             {menuItem.description}

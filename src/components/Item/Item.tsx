@@ -37,14 +37,14 @@ const Item = ({ item, isQuick = false }: TProps) => {
   const checkIsAllSold: boolean = menuDetails.every((item: any) => item.isSoldout === true);
 
   const checkIsSoon = (): string | boolean => {
-    let { launchedAt } = item;
+    let { openedAt } = item;
 
     const today = dayjs();
-    const isBeforeThanLaunchedAt = today.isSameOrBefore(launchedAt, 'day');
+    const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
 
     try {
       if (isBeforeThanLaunchedAt) {
-        const { dayWithTime } = getCustomDate(new Date(launchedAt));
+        const { dayWithTime } = getCustomDate(new Date(openedAt));
         return dayWithTime;
       } else {
         return false;
@@ -80,6 +80,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
   };
 
   const badgeRenderer = () => {
+    /*TODO:재오픈 예정 달아야 함 */
     const badgeMap: Obj = {
       NEW: 'New',
       BEST: 'Best',
@@ -145,7 +146,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
               </Like>
               <TextB3R>리뷰 {item.reviewCount}</TextB3R>
             </LikeAndReview>
-            <TagWrapper>{item.tag && <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>}</TagWrapper>
+            <TagWrapper>{item.tag && item.tag !== 'NONE' && <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>}</TagWrapper>
           </>
         )}
       </FlexCol>
