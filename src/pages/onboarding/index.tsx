@@ -15,7 +15,6 @@ import axios from 'axios';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
-import { userLoginApi } from '@api/user';
 import { setCookie } from '@utils/common';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { userForm } from '@store/user';
