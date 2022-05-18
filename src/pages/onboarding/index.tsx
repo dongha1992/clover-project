@@ -15,10 +15,14 @@ import axios from 'axios';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
-import { userLogin } from '@api/user';
 import { setCookie } from '@utils/common';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { userForm } from '@store/user';
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -48,33 +52,27 @@ const OnBoarding: NextPage = () => {
     setReturnPath(onRouter.query.returnPath || '/');
   }, []);
 
-  const kakaoLoginHandler = async (): Promise<void> => {
-    window.Kakao.Auth.login({
-      success: async (res: any) => {
-        const data = {
-          accessToken: res.access_token,
-          tokenType: res.token_type,
-        };
+  const kakaoLoginHandler = () => {
+    /* 웹뷰 */
 
-        const result = await axios.post('https://dev-api.freshcode.me/user/v1/signin-kakao', data);
+    // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
+    // return;
 
-        if (window.Kakao) {
-          window.Kakao.cleanup();
-        }
-        // TODO : 여기가 카카오 로그인 성공부분인가요??
-        dispatch(SET_LOGIN_TYPE('KAKAO'));
-        dispatch(SET_LOGIN_SUCCESS(true));
-      },
-      fail: async (res: any) => {
-        alert(`${res.error}-${res.error_error_description}`);
-      },
-    });
+    if (typeof window !== undefined) {
+      window.Kakao.Auth.authorize({
+        redirectUri:
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+      });
+    }
   };
 
   /* TODO:  apple login 테스트 해야함 */
 
   const appleLoginHandler = async () => {
-    await loginTest();
+    if (window.Kakao.Auth.getAccessToken()) {
+      window.Kakao.Auth.logout();
+    }
     // AppleID.auth.init({
     //   clientId: 'com.freshcode.www',
     //   scope: 'email',
@@ -104,38 +102,6 @@ const OnBoarding: NextPage = () => {
     router.push('/');
   };
 
-  const loginTest = async () => {
-    const { data } = await userLogin({
-      email: 'david@freshcode.me',
-      password: '12341234',
-      loginType: 'EMAIL',
-    });
-
-    if (data.code === 200) {
-      let userTokenObj = data.data;
-      const accessTokenObj = {
-        accessToken: userTokenObj?.accessToken,
-        expiresIn: userTokenObj?.expiresIn,
-      };
-
-      sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
-
-      const refreshTokenObj = JSON.stringify({
-        refreshToken: userTokenObj?.refreshToken,
-        refreshTokenExpiresIn: userTokenObj?.refreshTokenExpiresIn,
-      });
-
-      setCookie({
-        name: 'refreshTokenObj',
-        value: refreshTokenObj,
-        option: {
-          path: '/',
-          maxAge: userTokenObj?.refreshTokenExpiresIn,
-        },
-      });
-    }
-  };
-
   const renderLastLoginTag = (): JSX.Element => {
     return (
       <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
@@ -159,7 +125,7 @@ const OnBoarding: NextPage = () => {
           </TextH5B>
         </FlexCol>
         <ButtonWrapper>
-          <KakaoBtn onClick={kakaoLoginHandler}>
+          <KakaoBtn onClick={() => kakaoLoginHandler()}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
             {lastLogin === 'kakao' && renderLastLoginTag()}

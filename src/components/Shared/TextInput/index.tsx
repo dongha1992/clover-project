@@ -102,20 +102,37 @@ const TextInput = React.forwardRef(
       >
         <div className="wrapper">
           {svg ? <SVGIcon name={svg} /> : ''}
-          <input
-            style={style}
-            type={inputType ? inputType : 'text'}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            name={name}
-            onKeyPress={keyPressHandler}
-            ref={ref}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            accept={accept}
-            disabled={disabled}
-          />
+          {ref ? (
+            <input
+              style={style}
+              type={inputType ? inputType : 'text'}
+              defaultValue={value}
+              onChange={onChange}
+              placeholder={placeholder}
+              name={name}
+              onKeyPress={keyPressHandler}
+              ref={ref}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              accept={accept}
+              disabled={disabled}
+            />
+          ) : (
+            <input
+              style={style}
+              type={inputType ? inputType : 'text'}
+              value={value}
+              onChange={onChange}
+              placeholder={placeholder}
+              name={name}
+              onKeyPress={keyPressHandler}
+              ref={ref}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              accept={accept}
+              disabled={disabled}
+            />
+          )}
         </div>
       </Container>
     );
@@ -180,7 +197,7 @@ const Container = styled.div<{
     }
 
     input:disabled {
-      background: ${theme.white};
+      background: ${theme.greyScale15};
     }
   }
 `;

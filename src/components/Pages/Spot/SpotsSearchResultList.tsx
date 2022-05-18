@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -18,13 +18,16 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { SVGIcon } from '@utils/common';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 interface IProps {
   item: ISpotsDetail | any;
   hasCart?: boolean;
 }
-// 스팟 검색 - 검색 결과
+const now = dayjs();
 
+// 스팟 검색 - 검색 결과
 const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -37,14 +40,61 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
-  const typeTag = (): string => {
+  // 운영 종료 예정 or 종료 
+  const closedDate = item?.spotPickup?.spot.closedDate;
+  const dDay = now.diff(dayjs(closedDate), 'day');
+  const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
+  const closedSoonOperation = dDay >= -14;
+
+  const renderSpotMsg = useCallback(() => {
+    switch (true) {
+      case closedOperation: {
+        return (
+          <MeterAndTime>
+            <SVGIcon name="exclamationMark" width="14" height="14" />
+            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+              운영 종료된 프코스팟이에요
+            </TextB3R>
+          </MeterAndTime>
+        );
+      }
+      case closedSoonOperation: {
+        if(closedDate) {
+          return (
+            <MeterAndTime>
+              <SVGIcon name="exclamationMark" width="14" height="14" />
+              <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+                운영 종료 예정인 프코스팟이에요
+              </TextB3R>
+            </MeterAndTime>
+          );  
+        }
+      }
+      default: {
+        return (
+          <MeterAndTime>
+          {userLocationLen && (
+            <>
+              <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+              <Col />
+            </>
+          )}
+          <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+            픽업
+          </TextH6B>
+          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+        </MeterAndTime>
+        )
+      }
+    }
+  }, []);
+
+  const typeTag = (): string | undefined => {
     switch (item.type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
         return '퍼블릭';
-      default:
-        return '';
     }
   };
 
@@ -85,7 +135,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
       // dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/search', query: { isClosed: !!item.closedDate } });
+      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate } });
     };
 
     const handleSubsDeliveryType = () => {
@@ -233,34 +283,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
-        {item.isClosed ? (
-          <MeterAndTime>
-            <SVGIcon name="exclamationMark" width="14" height="14" />
-            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
-              운영 종료된 프코스팟이에요
-            </TextB3R>
-          </MeterAndTime>
-        ) : !!item?.closedDate ? (
-          <MeterAndTime>
-            <SVGIcon name="exclamationMark" width="14" height="14" />
-            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
-              운영 종료 예정인 프코스팟이에요
-            </TextB3R>
-          </MeterAndTime>
-        ) : (
-          <MeterAndTime>
-            {userLocationLen && (
-              <>
-                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-                <Col />
-              </>
-            )}
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-              픽업
-            </TextH6B>
-            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-          </MeterAndTime>
-        )}
+        {renderSpotMsg()}
         {item.isOpened ? (
           !item.isTrial ? (
             <div>

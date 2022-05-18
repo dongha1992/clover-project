@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
 import {
@@ -20,13 +20,16 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
+import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
+import { getCookie } from '@utils/common';
 interface IProps {
   orderId: number;
+  pgToken?: number;
 }
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ orderId }: IProps) => {
+const OrderFinishPage = ({ orderId, pgToken }: IProps) => {
   const router = useRouter();
 
   const { data: orderDetail, isLoading } = useQuery(
@@ -41,6 +44,11 @@ const OrderFinishPage = ({ orderId }: IProps) => {
       refetchOnWindowFocus: false,
     }
   );
+
+  const checkPg = async () => {
+    const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+    console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+  };
 
   const goToOrderDetail = () => {
     router.push({ pathname: `/mypage/order-detail/${orderId}` });
@@ -208,6 +216,10 @@ const OrderFinishPage = ({ orderId }: IProps) => {
     }
   };
 
+  useEffect(() => {
+    checkPg();
+  }, []);
+
   if (isLoading) {
     return <div>로딩중</div>;
   }
@@ -295,9 +307,9 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
+  const { orderId, pg_token } = context.query;
   return {
-    props: { orderId: +orderId },
+    props: { orderId: +orderId, pgToken: pg_token },
   };
 }
 

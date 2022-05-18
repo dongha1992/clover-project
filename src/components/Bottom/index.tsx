@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';
+// import HomeBottom from './HomeBottom';
+// import DetailBottom from './DetailBottom';
+// import SpotDetailBottom from './SpotDetailBottom';
+// import SubsBottom from './SubsBottom';
 
 const HomeBottom = dynamic(() => import('./HomeBottom'));
 const DetailBottom = dynamic(() => import('./DetailBottom'));
@@ -18,7 +22,7 @@ const Bottom = () => {
   }, [router.pathname]);
 
   const renderComponent = useCallback(
-    (currentPath: string) => {
+    (currentPath: string): ReactElement => {
       switch (true) {
         case ['/', '/spot', '/mypage', '/subscription'].includes(currentPath): {
           return <HomeBottom />;
@@ -33,7 +37,7 @@ const Bottom = () => {
           return <SubsBottom />;
         }
         default: {
-          return;
+          return <></>;
         }
       }
     },
