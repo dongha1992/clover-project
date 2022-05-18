@@ -12,6 +12,10 @@ import SlideToggle from '@components/Shared/SlideToggle';
 import { IGetRegistrationStatus } from '@model/index';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
+import { userForm } from '@store/user';
+import { SET_ALERT } from '@store/alert';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 
 interface IParams {
   id: number;
@@ -46,7 +50,9 @@ const PLAN_GUIDE = [
 
 const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
   const router = useRouter();
-  const { tyoe } = router.query;
+  const dispatch = useDispatch();
+  const { type } = router.query;
+  const { isLoginSuccess } = useSelector(userForm);
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
@@ -132,20 +138,38 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
     };
   };
 
-  const goToOrder = () => {
-    // const desticationInfo = {
-    //   name: statusDetail?.placeName,
-    //   location: {
-    //     addressDetail: statusDetail?.location.addressDetail!,
-    //     address: statusDetail?.location.address!,
-    //     dong: statusDetail?.placeName!,
-    //     zipCode: statusDetail?.location.zipCode!,
-    //   },
-    //   main: false,
-    //   availableTime: statusDetail?.lunchTime,
-    //   spaceType: statusDetail?.type,
-    //   spotPickupId: 
-    // }
+  const orderHandler = () => {
+    const destinationInfo = {
+      name: statusDetail?.placeName!,
+      location: {
+        addressDetail: statusDetail?.location.addressDetail!,
+        address: statusDetail?.location.address!,
+        dong: statusDetail?.placeName!,
+        zipCode: statusDetail?.location.zipCode!,
+      },
+      main: false,
+      availableTime: statusDetail?.lunchTime,
+      spaceType: statusDetail?.type,
+      // 스팟 픽업 id check!
+      spotPickupId: id,
+    };
+
+    if (isLoginSuccess) {
+      // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+      dispatch(SET_USER_DELIVERY_TYPE('spot'));
+      dispatch(SET_DESTINATION(destinationInfo));
+      router.push('/cart');
+    } else {
+      // 로그인x, 로그인 이동
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
+    }
   };
   
   return (
@@ -179,7 +203,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
       <Row10 />
       {
         statusDetail?.type !== 'PUBLIC' &&
-          tyoe !== 'attend' &&
+          type !== 'attend' &&
         <>
           <ToggleWrapper  onClick={toggleUserInfo}>
             <FlexBetween padding="24px">
@@ -233,7 +257,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
       </PlanGuideWrapper>
       {
         orderCondition() &&
-        <FixedButton onClick={()=> {}}>
+        <FixedButton onClick={orderHandler}>
           <Button
             borderRadius="0"
             height="100%"
