@@ -307,9 +307,9 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, pgToken } = context.query;
+  const { orderId, pg_token } = context.query;
   return {
-    props: { orderId: +orderId, pgToken },
+    props: { orderId: +orderId, pgToken: pg_token },
   };
 }
 
