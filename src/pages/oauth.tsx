@@ -36,8 +36,6 @@ const Oauth = () => {
         accessToken: `bearer ${authObj.access_token}`,
       });
 
-      console.log(result, 'AFTER SUCCESS');
-
       const isRegister = result?.data?.data?.isJoin;
 
       if (result.data.code === 200) {
@@ -47,31 +45,27 @@ const Oauth = () => {
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(SET_LOGIN_TYPE('KAKAO'));
 
-        const userInfo = await userProfile().then((res) => {
+        const { data } = await userProfile().then((res) => {
           return res?.data;
         });
 
-        console.log(userInfo, 'userInfo');
+        dispatch(SET_USER(data));
 
-        if (!NAME_REGX.test(userInfo.name) || userInfo.name.length === 0) {
-          dispatch(
-            SET_SIGNUP_USER({
-              ...userInfo,
-            })
-          );
+        if (window.Kakao) {
+          window.Kakao.cleanup();
+        }
+
+        if (!NAME_REGX.test(data.name) || data.name.length === 0) {
           router.push('/signup/change-name');
           return;
         }
-        dispatch(SET_USER(userInfo.data));
+      } else {
+        /* TODO: 아래 사항들 */
+
+        // 비회원 -> 회원 장바구니 옮기기
+        // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
+        router.push('/');
       }
-
-      if (window.Kakao) {
-        window.Kakao.cleanup();
-      }
-
-      // 비회원 -> 회원 장바구니 옮기기
-
-      // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
     } catch (e) {
       console.log(e);
     }
