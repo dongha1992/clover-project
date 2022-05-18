@@ -199,13 +199,15 @@ const CartPage = () => {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
               const destinationId = data.data?.id!;
+
               setDestinationObj({
                 ...destinationObj,
                 delivery: response.delivery.toLowerCase(),
                 destinationId,
-                location: data.data.location!,
-                closedDate: data.data.spotPickup?.spot.closedDate && data.data.spotPickup?.spot.closedDate,
+                location: data.data?.location ? data.data?.location : null,
+                closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
               });
+
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
               dispatch(SET_TEMP_DESTINATION(null));
             }
