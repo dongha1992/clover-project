@@ -50,7 +50,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
 
   const orderHandler = () => {
     /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
+
     const destinationInfo = {
+      id: item?.id,
       name: item?.name!,
       location: {
         addressDetail: item?.location?.addressDetail!,
