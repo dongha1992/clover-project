@@ -18,7 +18,8 @@ import { useQuery, useQueryClient } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderListsApi, getOrderInfoApi } from '@api/order';
-import { userInvitationApi } from '@api/user';
+import { userInvitationApi, getUserInfoApi } from '@api/user';
+import { getPointApi } from '@api/point';
 import isNil from 'lodash-es/isNil';
 interface IMypageMenu {
   title: string;
@@ -52,7 +53,6 @@ const MypagePage = () => {
     'getInvitationInfo',
     async () => {
       const { data } = await userInvitationApi();
-      console.log('friendInvitation');
 
       return data.data;
     },
@@ -65,9 +65,37 @@ const MypagePage = () => {
     }
   );
 
-  if (isNil(orderList) && isLoginSuccess) {
+  const { data: userInfo, isLoading: infoLoading } = useQuery(
+    'getUserInfo',
+    async () => {
+      const { data } = await getUserInfoApi();
+
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false, enabled: !!me }
+  );
+
+  console.log(orderList, isLoginSuccess);
+
+  const goToEditUserInfo = () => {
+    if (me?.joinType! !== 'EMAIL') {
+      router.push('/mypage/profile');
+    } else {
+      router.push('/mypage/profile/confirm');
+    }
+  };
+
+  if (isNil(orderList) && isLoginSuccess && infoLoading) {
     return <div>로딩</div>;
   }
+
+  // if (isLoginSuccess) {
+  //   return <div>로딩</div>;
+  // }
+
+  console.log(orderList, 'orderList');
 
   return (
     <Container>
@@ -78,7 +106,7 @@ const MypagePage = () => {
             <UserInfoWrapper>
               <FlexRow>
                 <TextH2B padding="0 6px 0 0">{me?.nickName}님은</TextH2B>
-                <IconBox onClick={() => router.push('/mypage/profile/confirm')}>
+                <IconBox onClick={() => goToEditUserInfo()}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
               </FlexRow>
@@ -104,11 +132,11 @@ const MypagePage = () => {
             <FlexBetweenStart padding="16px 24px 32px">
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')}>{me?.point} P</TextH5B>
+                <TextH5B onClick={() => router.push('/mypage/point')}>{userInfo?.availablePoint} P</TextH5B>
               </FlexCol>
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/coupon')}>0 개</TextH5B>
+                <TextH5B onClick={() => router.push('/mypage/coupon')}>{userInfo?.availableCoupons.length} 개</TextH5B>
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />

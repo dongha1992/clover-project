@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH7B, TextB4R } from '@components/Shared/Text';
 import { breakpoints } from '@utils/common/getMediaQuery';
@@ -37,7 +36,7 @@ const BOTTOM_MENU = [
 
 /* TODO: selected tab hook으로 빼고 싶다.. */
 
-const Bottom = () => {
+const Bottom = (): ReactElement => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<string>('/category');
 

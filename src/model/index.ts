@@ -176,7 +176,7 @@ export interface IInvitationResponse {
 }
 
 export interface IChangeMe {
-  authCode?: string;
+  authCode?: string | null;
   birthDate: string;
   gender: string;
   email: string;
@@ -188,6 +188,15 @@ export interface IChangeMe {
   notiPushReceived: boolean;
   primePushReceived: boolean;
   tel: string;
+}
+
+export interface IUserInfoResponse {
+  code: number;
+  message: string;
+  data: {
+    availablePoint: number;
+    availableCoupons: ICoupon[];
+  };
 }
 export interface IJusoRequest {
   query: string;
@@ -968,7 +977,8 @@ export type TPayMethod =
   | 'TOSS_MONEY';
 export interface ICreateOrderRequest {
   /*TODO: 모델 수정해야함 */
-  couponId: number;
+
+  couponId?: number | null;
   delivery: string;
   deliveryDetail: string;
   deliveryFee: number;
@@ -981,7 +991,7 @@ export interface ICreateOrderRequest {
   name: string;
   type: string;
   payMethod: TPayMethod | string;
-  cardId: number;
+  cardId: number | null;
   userName: string;
   userTel: string;
   userEmail: string;
@@ -1424,6 +1434,99 @@ export interface ICreateOrderResponse {
   data: ICreateOrder;
 }
 
+export interface IGetKakaoPayment {
+  android_app_scheme: string;
+  created_at: string;
+  ios_app_scheme: string;
+  next_redirect_app_url: string;
+  next_redirect_mobile_url: string;
+  next_redirect_pc_url: string;
+  tid: string;
+  tms_result: boolean;
+}
+export interface IGetKakaoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetKakaoPayment;
+}
+
+export interface IGetNicePayment {
+  Amt: number;
+  BuyerEmail: string;
+  BuyerName: string;
+  BuyerTel: string;
+  CharSet: string;
+  EdiDate: string;
+  EncodeParameters: string;
+  EncryptData: string;
+  GoodsCl: string;
+  GoodsCnt: number;
+  GoodsName: string;
+  MID: string;
+  MallIP: string;
+  Moid: string;
+  PayMethod: string;
+  ReturnURL: string;
+  SocketYN: string;
+  TrKey: string;
+  TransType: string;
+  UserIP: string;
+  VbankExpDate: string;
+}
+
+export interface IGetNicePaymentResponse {
+  code: number;
+  message: string;
+  data: IGetNicePayment;
+}
+
+export interface IGetPaycoRequest {
+  cancelUrl: string;
+  code: string;
+  discountAmt: string;
+  failureUrl: string;
+  mainPgCode: string;
+  message: string;
+  paymentCertifyToken: string;
+  pointAmt: string;
+  reserveOrderNo: string;
+  sellerOrderReferenceKey: string;
+  successUrl: string;
+  totalPaymentAmt: string;
+  totalRemoteAreaDeliveryFeeAmt: string;
+  id: number;
+}
+
+export interface IGetPaycoPayment {
+  code: number;
+  message: string;
+  pgErrorCode: string;
+  result: {
+    orderSheetUrl: string;
+    reserveOrderNo: string;
+  };
+  success: boolean;
+}
+
+export interface IGetPaycoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetPaycoPayment;
+}
+
+export interface IGetTossPayment {
+  checkoutPage: string;
+  code: number;
+  payToken: string;
+  status: string;
+  success: boolean;
+}
+export interface IGetTossPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetTossPayment;
+}
+
 /* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
@@ -1682,7 +1785,7 @@ export interface IDeliveryObj {
   delivery: string | null;
   deliveryDetail: string | null;
   location: ILocation | null;
-  closedDate?: string;
+  closedDate?: string | null;
 }
 
 /* COUPON */

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -9,18 +9,21 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
-import { cartForm } from '@store/cart';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { SVGIcon } from '@utils/common';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 interface IProps {
   item: IDestinationsResponse | undefined;
   hasCart?: boolean;
 }
+
+const now = dayjs();
 
 // 스팟 검색 - 최근픽업이력
 const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
@@ -35,16 +38,78 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const recentPickupTime = `${item?.spotPickup?.spot.lunchDeliveryStartTime}-${item?.spotPickup?.spot.lunchDeliveryEndTime} / ${item?.spotPickup?.spot.dinnerDeliveryStartTime}-${item?.spotPickup?.spot.dinnerDeliveryEndTime}`;
   const isOpened = item?.spotPickup?.spot.isOpened;
   const isClosed = item?.spotPickup?.spot.isClosed;
-  const closedDate = item?.spotPickup?.spot.closedDate;
 
-  const typeTag = (): string => {
+  // 운영 종료 예정 or 종료 
+  const closedDate = item?.spotPickup?.spot.closedDate;
+  const dDay = now.diff(dayjs(item?.spotPickup?.spot.closedDate), 'day');
+  const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
+  const closedSoonOperation = dDay >= -14;
+
+  const renderSpotMsg = useCallback(() => {
+    switch (true) {
+      case closedOperation: {
+        return (
+          <MeterAndTime>
+            <SVGIcon name="exclamationMark" width="14" height="14" />
+            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+              운영 종료된 프코스팟이에요
+            </TextB3R>
+          </MeterAndTime>
+        );
+      }
+      case closedSoonOperation: {
+        if(closedDate) {
+          return (
+            <MeterAndTime>
+              <SVGIcon name="exclamationMark" width="14" height="14" />
+              <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+                운영 종료 예정인 프코스팟이에요
+              </TextB3R>
+            </MeterAndTime>
+          );  
+        } else {
+          return (
+            <MeterAndTime>
+            {userLocationLen && (
+              <>
+                <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{recentPickupTime}</TextH6B>
+          </MeterAndTime>
+
+          )
+        }
+      }
+      default: {
+        return (
+          <MeterAndTime>
+            {userLocationLen && (
+              <>
+                <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{recentPickupTime}</TextH6B>
+          </MeterAndTime>
+        )
+      }
+    }
+  }, []);
+  
+  const typeTag = (): string | undefined => {
     switch (item?.spotPickup?.spot.type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
         return '퍼블릭';
-      default:
-        return '';
     }
   };
 
@@ -186,34 +251,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       <FlexColStart>
         <TextH5B>{item?.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
-        {isClosed ? (
-          <MeterAndTime>
-            <SVGIcon name="exclamationMark" width="14" height="14" />
-            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
-              운영 종료된 프코스팟이에요
-            </TextB3R>
-          </MeterAndTime>
-        ) : !!closedDate ? (
-          <MeterAndTime>
-            <SVGIcon name="exclamationMark" width="14" height="14" />
-            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
-              운영 종료 예정인 프코스팟이에요
-            </TextB3R>
-          </MeterAndTime>
-        ) : (
-          <MeterAndTime>
-            {userLocationLen && (
-              <>
-                <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
-                <Col />
-              </>
-            )}
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-              픽업
-            </TextH6B>
-            <TextH6B color={theme.greyScale65}>{recentPickupTime}</TextH6B>
-          </MeterAndTime>
-        )}
+        {renderSpotMsg()}
         <div>
           <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
             {typeTag()}

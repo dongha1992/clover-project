@@ -197,21 +197,6 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     );
   };
 
-  const editAddressHandler = () => {
-    if (!cheekBeforeEdit()) {
-      return;
-    }
-
-    dispatch(
-      SET_ALERT({
-        alertMessage: '내용을 수정하시겠습니까?',
-        onSubmit: () => editAddress(),
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
-  };
-
   const cheekBeforeEdit = (): boolean => {
     const noAccessMethod = !selectedAccessMethod?.value!;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Home from '@components/Home';
 import Footer from '@components/Footer';
