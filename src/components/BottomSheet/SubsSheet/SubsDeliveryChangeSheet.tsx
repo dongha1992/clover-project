@@ -95,15 +95,18 @@ const SubsDeliveryChangeSheet = () => {
     </Container>
   );
 };
-const Container = styled.div`
+export const Container = styled.div`
   height: calc(100vh - 56px);
   overflow-y: scroll;
 `;
-const Header = styled.div`
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   height: 56px;
 `;
-const CloseBtn = styled.button`
+export const CloseBtn = styled.button`
   padding: 0;
   position: absolute;
   right: 24px;
@@ -154,8 +157,15 @@ const DateChangeExBox = styled.div`
   }
 `;
 const BottomButton = styled.button`
-  ${fixedBottom}
   cursor: pointer;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
   background-color: ${theme.black};
   color: #fff;
   &:disabled {
