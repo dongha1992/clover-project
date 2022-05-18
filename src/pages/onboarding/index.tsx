@@ -67,6 +67,7 @@ const OnBoarding: NextPage = () => {
     }
   };
 
+  /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
     AppleID.auth.init({
       clientId: 'com.freshcode.www',
@@ -76,7 +77,7 @@ const OnBoarding: NextPage = () => {
     });
     try {
       await AppleID.auth.signIn();
-    } catch (error) {
+    } catch (error: any) {
       console.log(`Error: ${error && error.error}`);
     }
   };
