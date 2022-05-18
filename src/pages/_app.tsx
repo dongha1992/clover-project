@@ -35,7 +35,7 @@ declare global {
     Kakao: any;
   }
 }
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const dispatch = useDispatch();
   const queryClient = useRef<QueryClient>();
 
