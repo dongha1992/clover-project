@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
 import {
@@ -31,6 +31,7 @@ interface IProps {
 
 const OrderFinishPage = ({ orderId, pgToken }: IProps) => {
   const router = useRouter();
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
@@ -42,6 +43,7 @@ const OrderFinishPage = ({ orderId, pgToken }: IProps) => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!isPaymentSuccess,
     }
   );
 
@@ -307,9 +309,9 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, pgToken } = context.query;
+  const { orderId, pg_token } = context.query;
   return {
-    props: { orderId: +orderId, pgToken },
+    props: { orderId: +orderId, pgToken: pg_token },
   };
 }
 
