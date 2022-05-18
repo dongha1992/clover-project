@@ -2,6 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
+// import HomeHeader from './HomeHeader';
+// import DefaultHeader from './DefaultHeader';
+// import CategorySubHeader from './CategorySubHeader';
+// import MenuDetailHeader from './MenuDetailHeader';
+// import TabHeader from './TabHeader';
+// import MyPageHeader from './MyPageHeader';
+// import NotiHeader from './NotiHeader';
+// import SpotHeader from './SpotHeader';
+// import SpotSearchHeader from './SpotSearchHeader';
+// import CloseDefaultHeader from './CloseDefaultHeader';
+// import DefaultHeaderWithCart from './DefaultHeaderWithCart';
+// import SubscriptionHeader from './SubscriptionHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
