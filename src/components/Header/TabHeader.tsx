@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
+// import { TabList } from '@components/Shared/TabList';
 
 const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 
