@@ -7,12 +7,13 @@ import { ISubsActiveDate } from '@model/index';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import {
   SET_SUBS_DELIVERY_EXPECTED_DATE,
-  SET_SUBS_DELIVERY_TIME,
   SET_SUBS_START_DATE,
-  SET_PICKUP_DAY,
   subscriptionForm,
+  SUBS_INIT,
+  SET_SUBS_INFO_STATE,
 } from '@store/subscription';
 import { theme } from '@styles/theme';
+import { getFormatDate } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
@@ -26,9 +27,9 @@ interface IProps {
 }
 const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
   const dispatch = useDispatch();
-  const { subsDeliveryExpectedDate, subsStartDate, subsDeliveryTime, subsPickupDay } = useSelector(subscriptionForm);
+  const { subsDeliveryExpectedDate, subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const [disabledDate, setDisabledDate] = useState<any>([]);
-  const [userSelectTime, setUserSelectTime] = useState(subsDeliveryTime ? subsDeliveryTime : '점심');
+  const [userSelectTime, setUserSelectTime] = useState(subsInfo?.deliveryTime ? subsInfo.deliveryTime : '점심');
   const [deliveryExpectedDate, setDeliveryExpectedDate] = useState<{ deliveryDate: string }[]>([{ deliveryDate: '' }]);
   const [pickupDay, setPickupDay] = useState<any[]>();
   const [subsStartDateText, setSubsStartDateText] = useState('');
@@ -39,7 +40,7 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
     async () => {
       const params = {
         id: 824,
-        destinationId: 1,
+        destinationId: 2,
         subscriptionPeriod: userSelectPeriod,
       };
       const { data } = await getSubscriptionApi(params);
@@ -48,6 +49,8 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
     }
   );
 
@@ -69,17 +72,15 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
 
   useEffect(() => {
     // store에 구독요일이 있으면 구독요일 useState에 저장
-    if (subsPickupDay) setPickupDay(subsPickupDay);
+    if (subsInfo?.pickup) setPickupDay(subsInfo.pickup);
   }, []);
 
   useEffect(() => {
-    setSubsStartDateText(
-      `${dayjs(deliveryExpectedDate[0].deliveryDate).format('M')}월 ${dayjs(
-        deliveryExpectedDate[0].deliveryDate
-      ).format('DD')}일 (${dayjs(deliveryExpectedDate[0].deliveryDate).format('dd')}) / ${pickupDay?.join(
-        '·'
-      )} / ${userSelectTime}`
-    );
+    if (deliveryExpectedDate && pickupDay && userSelectTime) {
+      setSubsStartDateText(
+        `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay?.join('·')} / ${userSelectTime}`
+      );
+    }
   }, [deliveryExpectedDate, pickupDay, userSelectTime]);
 
   const changeRadioHanler = (type: string) => {
@@ -92,9 +93,17 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
         subsStartDate: `${subsStartDateText}`,
       })
     );
-    dispatch(SET_PICKUP_DAY({ subsPickupDay: pickupDay }));
+    dispatch(
+      SET_SUBS_INFO_STATE({
+        startDate: `${dayjs(deliveryExpectedDate[0]?.deliveryDate).format('M')}월 ${dayjs(
+          deliveryExpectedDate[0]?.deliveryDate
+        ).format('DD')}일 (${dayjs(deliveryExpectedDate[0]?.deliveryDate).format('dd')})`,
+        deliveryDay: pickupDay,
+        deliveryTime: userSelectTime,
+      })
+    );
+
     dispatch(SET_SUBS_DELIVERY_EXPECTED_DATE({ subsDeliveryExpectedDate: deliveryExpectedDate }));
-    dispatch(SET_SUBS_DELIVERY_TIME({ subsDeliveryTime: userSelectTime }));
     dispatch(INIT_BOTTOM_SHEET());
   };
 
