@@ -31,21 +31,6 @@ const SearchPage = () => {
     setLocalStorage();
   }, [recentKeywords]);
 
-  const {
-    data: menus,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    'getMenus',
-    async () => {
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
-      const { data } = await getMenusApi(params);
-
-      return data.data.filter((item, index) => index < 4);
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
-
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setKeyword(value);
@@ -56,7 +41,7 @@ const SearchPage = () => {
     }
   };
 
-  const getSearchResult = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+  const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
 
     if (e.key === 'Enter') {
@@ -68,15 +53,18 @@ const SearchPage = () => {
       setIsSearched(true);
       setRecentKeywords([...recentKeywords, value]);
 
-      const filtered = itemList.filter((c) => {
-        return c.name.replace(/ /g, '').indexOf(value) > -1;
-      });
-      if (filtered.length > 0) {
-        setSearchResult(filtered);
-      } else {
-        // 검색 결과 없음
-        setSearchResult('');
-      }
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: keyword, type: '' };
+      try {
+        const { data } = await getMenusApi(params);
+        if (data.code === 200) {
+          if (data.data?.length! > 0) {
+            setSearchResult(data.data);
+          } else {
+            // 검색 결과 없음
+            setSearchResult('');
+          }
+        }
+      } catch (error) {}
     }
   };
 
@@ -121,10 +109,6 @@ const SearchPage = () => {
     localStorage.setItem('recentSearch', JSON.stringify(recentKeywords));
   };
 
-  if (isLoading) {
-    return <div>로딩중</div>;
-  }
-
   return (
     <Container>
       <Wrapper>
@@ -168,11 +152,11 @@ const SearchPage = () => {
               <BorderLine padding="0 24px" />
               <MdRecommendationWrapper>
                 <TextH3B padding="24px">MD 추천</TextH3B>
-                <FlexWrapWrapper>
+                {/* <FlexWrapWrapper>
                   {menus?.map((item, index) => {
                     return <Item item={item} key={index} />;
                   })}
-                </FlexWrapWrapper>
+                </FlexWrapWrapper> */}
               </MdRecommendationWrapper>
             </DefaultSearchContainer>
           ) : (
