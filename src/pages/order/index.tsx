@@ -47,6 +47,7 @@ import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
+import { setCookie } from '@utils/common';
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -499,8 +500,17 @@ const OrderPage = () => {
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
-    const kakaoPayResult = await postKakaoPaymentApi({ orderId, data: reqBody });
-    console.log(kakaoPayResult, 'RESPONSE');
+    try {
+      const { data } = await postKakaoPaymentApi({ orderId, data: reqBody });
+      console.log(data, 'RESPONSE');
+      window.location.href = data.data.next_redirect_pc_url;
+      setCookie({
+        name: 'kakao-tid-clover',
+        value: data.data.tid,
+      });
+    } catch (error) {}
+
+    /* TODO: 모바일, 안드로이드 체크  */
   };
 
   const processTossPay = async ({ orderId }: IProcessOrder) => {
