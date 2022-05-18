@@ -131,6 +131,8 @@ const OrderPage = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
+
   const {
     data: previewOrder,
     isLoading: preveiwOrderLoading,
@@ -176,13 +178,12 @@ const OrderPage = () => {
       /*TODO: 모델 수정해야함 */
       /*TODO: 쿠폰 퍼센테이지 */
       const { point, payAmount, ...rest } = previewOrder?.order!;
-      const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
-      console.log(selectedOrderMethod, 'selectedOrderMethod');
+
       const reqBody = {
         payMethod: selectedOrderMethod,
         cardId: needCard ? card?.id! : null,
         point: userInputObj?.point,
-        payAmount: payAmount - (userInputObj.point + selectedCoupon?.value! || 0),
+        payAmount: payAmount - (userInputObj.point + (selectedCoupon?.value! || 0)),
         couponId: selectedCoupon?.id || null,
         ...rest,
       };
@@ -195,11 +196,14 @@ const OrderPage = () => {
     },
     {
       onSuccess: async (orderId: number) => {
-        // router.push({ pathname: '/order/finish', query: { orderId } });
-        // setLoadingState(false);
-        // INIT_ORDER();
-        // INIT_CARD();
-        processOrder(orderId);
+        if (needCard) {
+          router.push({ pathname: '/order/finish', query: { orderId } });
+          setLoadingState(false);
+          INIT_ORDER();
+          INIT_CARD();
+        } else {
+          processOrder(orderId);
+        }
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -483,6 +487,7 @@ const OrderPage = () => {
       }
       case 'TOSS_CARD': {
         processTossPay({ orderId });
+        break;
       }
     }
   };
