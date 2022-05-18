@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { SubsCalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -7,13 +8,12 @@ import { ISubsActiveDate, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm, SET_DESTINATION } from '@store/destination';
-import { subscriptionForm } from '@store/subscription';
+import { SET_SUBS_INFO_STATE, subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import axios from 'axios';
 import router from 'next/router';
-import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -31,26 +31,12 @@ export interface IDestinationAddress {
 
 const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
-  const { subsStartDate } = useSelector(subscriptionForm);
+  const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDates, setSubsDates] = useState([]);
-  const [userSelectPeriod, setUserSelectPeriod] = useState('UNLIMITED');
+  const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
   const [spotMainDestination, setMainDestinationSpot] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
-
-  const { data, isLoading } = useQuery(
-    'subsDates',
-    async () => {
-      const data = await axios.get('http://localhost:9009/api/subsDates');
-      return data.data;
-    },
-    {
-      onSuccess: (data) => {
-        setSubsDates(data.data.startDates);
-      },
-    }
-  );
 
   useEffect(() => {
     getSpotMainDestination();
@@ -67,7 +53,21 @@ const SubsSetInfoPage = () => {
             delivery: 'SPOT',
           });
 
-          dispatch(SET_DESTINATION(data.data));
+          const pickUpTime = `${data.data.spotPickup?.spot.lunchDeliveryStartTime}-${data.data.spotPickup?.spot.lunchDeliveryEndTime} / ${data.data.spotPickup?.spot.dinnerDeliveryStartTime}-${data.data.spotPickup?.spot.dinnerDeliveryEndTime}`;
+
+          const destinationInfo = {
+            id: data.data.id,
+            name: data.data.name,
+            location: data.data.location,
+            main: false,
+            availableTime: pickUpTime,
+            spaceType: data.data.spaceType,
+            spotPickupId: data.data.spotPickup?.id,
+            closedDate: data.data.spotPickup?.spot.closedDate,
+            delivery: 'spot',
+          };
+
+          dispatch(SET_DESTINATION(destinationInfo));
           setMainDestinationSpot(data.data.name);
         }
       }
@@ -123,6 +123,7 @@ const SubsSetInfoPage = () => {
 
   const goToRegisterCheck = () => {
     router.push('/subscription/register');
+    dispatch(SET_SUBS_INFO_STATE({ period: userSelectPeriod }));
   };
 
   const goToDeliveryInfo = () => {
@@ -134,8 +135,6 @@ const SubsSetInfoPage = () => {
       },
     });
   };
-
-  if (isLoading) return <div>...로딩중</div>;
 
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
   return (
