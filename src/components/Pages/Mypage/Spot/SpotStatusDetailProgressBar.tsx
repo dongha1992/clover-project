@@ -280,6 +280,7 @@ const Text12 = styled.span`
 
 const TooltipWrapper = styled.div<{type?: string}>`
   position: relative;
+  z-index: 0;
   ${({ type }) => {
     if(type === 'RECRUITING') {
       return css `
