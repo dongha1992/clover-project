@@ -240,16 +240,16 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
     checkPg();
   }, []);
 
-  if (isLoading) {
-    return <div>로딩중</div>;
-  }
-
   const { delivery, deliveryDetail } = orderDetail!;
   const { orderMenus, spotName, spotPickupName, location, deliveryDate, deliveryEndTime, deliveryStartTime } =
     orderDetail?.orderDeliveries[0]!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
   const isSpot = delivery === 'SPOT';
   const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
+
+  if (!isPaymentSuccess) {
+    return <div>로딩중</div>;
+  }
 
   return (
     <Container>
