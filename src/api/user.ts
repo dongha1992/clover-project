@@ -20,12 +20,8 @@ import {
   IUserInfoResponse,
 } from '@model/index';
 
-export const userLogin = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
+export const userLoginApi = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
   return Api.post('/user/v1/login', data);
-};
-
-export const kakaoLogin = (data: IkakaoLogin): Promise<AxiosResponse<any>> => {
-  return Api.post('/user/v1/signin-kakao', data);
 };
 
 export const userAuthTel = (data: IAuthTel): Promise<AxiosResponse<IResponse>> => {
@@ -43,7 +39,7 @@ export const userSignup = (data: ISignupUser): Promise<AxiosResponse<ISignupResp
   return Api.post('/user/v1/users', data);
 };
 
-export const userSecession = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
+export const userSecessionApi = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
   return Api.delete('/user/v1/users', { data });
 };
 

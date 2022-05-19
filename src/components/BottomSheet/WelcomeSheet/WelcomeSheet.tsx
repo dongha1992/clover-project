@@ -104,6 +104,7 @@ const WelcomeSheet = () => {
           margin="40px 0 0 0"
           onClick={() => {
             dispatch(INIT_BOTTOM_SHEET());
+            /* TODO: 카카오 회원가입 등 리턴 url 해줘야함 */
             router.push('/');
           }}
         >
