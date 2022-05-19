@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER_AUTH, SET_USER } from '@store/user';
+import { SET_LOGIN_TYPE } from '@store/common';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Obj } from '@model/index';
 import { NAME_REGX } from '@constants/regex';
+import { userLoginApi, userProfile } from '@api/user';
 
 interface IAuthObj {
   access_token: string;
@@ -29,55 +31,40 @@ const Oauth = () => {
     window.Kakao.Auth.setAccessToken(authObj.access_token);
 
     try {
-      const data = {
-        accessToken: authObj.access_token,
-        tokenType: authObj.token_type,
-      };
+      const result = await userLoginApi({
+        loginType: 'KAKAO',
+        accessToken: `bearer ${authObj.access_token}`,
+      });
 
-      // const result = await axios.post(`${process.env.KAKO_API_URL}/user/v1/signin-kakao`, data);
-      const result = await axios.post('https://clover-dev.freshcode.me/user/v1/signin-kakao', data);
-      console.log(result, 'AFTER SUCCESS');
-      let { tel, nickname, newsletterEmail, newsletterPush, newsletterSms, name, isSignup, gender, email, birth } =
-        result.data.user;
+      if (result.data.code === 200) {
+        const userTokenObj = result.data.data;
+        const isRegister = result?.data?.data?.isJoin;
 
-      if (!!isSignup && isSignup) {
-        tel = result.data.user.tel.split('');
-        tel.splice(0, 2, '8', '2');
-        tel = tel.join('');
+        dispatch(SET_USER_AUTH(userTokenObj));
+        dispatch(SET_LOGIN_SUCCESS(true));
+        dispatch(SET_LOGIN_TYPE('KAKAO'));
+
+        const { data } = await userProfile().then((res) => {
+          return res?.data;
+        });
+
+        dispatch(SET_USER(data));
+
+        if (window.Kakao) {
+          window.Kakao.cleanup();
+        }
+
+        if ((isRegister && !NAME_REGX.test(data.name)) || data.name.length === 0) {
+          router.push('/signup/change-name');
+          return;
+        } else {
+          router.push('/');
+        }
+      } else {
+        /* TODO: 아래 사항들 */
+        // 비회원 -> 회원 장바구니 옮기기
+        // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
       }
-
-      const userInfo = {
-        name,
-        tel,
-        email,
-        birthDate: birth,
-        nickName: nickname,
-        marketingEmailReceived: newsletterEmail,
-        marketingSmsReceived: newsletterSms,
-        gender: gender ? gender.toUpperCase() : null,
-      };
-
-      if (!NAME_REGX.test(result.data.user.name) || result.data.user.name.length === 0) {
-        dispatch(
-          SET_SIGNUP_USER({
-            ...userInfo,
-          })
-        );
-        router.push('/signup/change-name');
-        return;
-      }
-
-      if (window.Kakao) {
-        window.Kakao.cleanup();
-      }
-
-      dispatch(SET_USER_AUTH({ accessToken: result.data.user.auth }));
-      dispatch(SET_LOGIN_SUCCESS(true));
-      router.push('/mypage');
-
-      // 비회원 -> 회원 장바구니 옮기기
-
-      // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
     } catch (e) {
       console.log(e);
     }
@@ -101,7 +88,6 @@ const Oauth = () => {
         const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
           headers: kakaoHeader,
         });
-        console.log(data, '@@@@');
         onSuccessKakao(data);
       }
     } catch (error) {

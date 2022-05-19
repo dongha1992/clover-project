@@ -16,11 +16,17 @@ import { SET_LOGIN_SUCCESS } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
 import { setCookie } from '@utils/common';
-import { SET_LOGIN_TYPE } from '@store/common';
+import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { userForm } from '@store/user';
 declare global {
   interface Window {
     Kakao: any;
+  }
+}
+
+declare global {
+  interface Window {
+    AppleID: any;
   }
 }
 
@@ -36,17 +42,16 @@ const OnBoarding: NextPage = () => {
     width: '100%',
   };
 
-  const lastLogin = ['kakao', 'apple', 'email'][Math.floor(Math.random() * 3)];
-
   const lastLoginTagStyleMapper: Obj = {
-    kakao: 40,
-    apple: 40,
-    email: 15,
+    KAKAO: 40,
+    APPLE: 40,
+    EMAIL: 15,
   };
 
   const dispatch = useDispatch();
   const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();
+  const { loginType } = useSelector(commonSelector);
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
@@ -67,23 +72,20 @@ const OnBoarding: NextPage = () => {
     }
   };
 
-  /* TODO:  apple login 테스트 해야함 */
-
+  /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
-    if (window.Kakao.Auth.getAccessToken()) {
-      window.Kakao.Auth.logout();
+    window.AppleID.auth.init({
+      clientId: 'com.freshcode.www',
+      scope: 'email',
+      redirectURI: `${process.env.SERVICE_URL}`,
+      usePopup: true,
+    });
+    try {
+      const data = await window.AppleID.auth.signIn();
+      console.log(data, 'aftter APPLE');
+    } catch (error: any) {
+      console.log(`Error: ${error && error.error}`);
     }
-    // AppleID.auth.init({
-    //   clientId: 'com.freshcode.www',
-    //   scope: 'email',
-    //   redirectURI: 'https://www.freshcode.me',
-    //   usePopup: true,
-    // });
-    // try {
-    //   await AppleID.auth.signIn();
-    // } catch (error) {
-    //   console.log(`Error: ${error && error.error}`);
-    // }
   };
 
   const emailSignUpHandler = (): void => {
@@ -104,7 +106,7 @@ const OnBoarding: NextPage = () => {
 
   const renderLastLoginTag = (): JSX.Element => {
     return (
-      <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
+      <TagWrapper left={lastLoginTagStyleMapper[loginType]}>
         <Tag color={theme.white} backgroundColor={theme.brandColor}>
           최근 로그인
         </Tag>
@@ -128,12 +130,12 @@ const OnBoarding: NextPage = () => {
           <KakaoBtn onClick={() => kakaoLoginHandler()}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
-            {lastLogin === 'kakao' && renderLastLoginTag()}
+            {loginType === 'KAKAO' && renderLastLoginTag()}
           </KakaoBtn>
           <AppleBtn onClick={appleLoginHandler}>
             <Button>Apple로 시작하기</Button>
             <SVGIcon name="appleIcon" />
-            {lastLogin === 'apple' && renderLastLoginTag()}
+            {loginType === 'APPLE' && renderLastLoginTag()}
           </AppleBtn>
           <EmailLoginAndSignUp>
             <Button {...emailButtonStyle} onClick={emailLoginHandler}>
@@ -142,7 +144,7 @@ const OnBoarding: NextPage = () => {
             <Button {...emailButtonStyle} onClick={emailSignUpHandler} margin="0 0 0 8px">
               이메일로 회원가입
             </Button>
-            {lastLogin === 'email' && renderLastLoginTag()}
+            {loginType === 'EMAIL' && renderLastLoginTag()}
           </EmailLoginAndSignUp>
           <TextH6B
             color={theme.white}

@@ -92,9 +92,9 @@ export interface IUser {
 
 export interface ILogin {
   accessToken?: string;
-  email: string;
+  email?: string;
   loginType: string;
-  password: string;
+  password?: string;
 }
 
 export interface IResponse {
@@ -116,6 +116,7 @@ export interface IUserToken {
   refreshTokenExpiresIn: number;
   tokenType: string;
   tmpPasswordUsed?: boolean;
+  isJoin?: boolean;
 }
 export interface ILoginResponse {
   code: number;
