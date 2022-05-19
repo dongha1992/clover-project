@@ -24,16 +24,16 @@ import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie } from '@utils/common';
 interface IProps {
   orderId: number;
-  pgToken?: number;
+  pgToken?: string;
+  payToken?: number;
+  pg: string;
 }
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ query }: any) => {
+const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
   const router = useRouter();
   const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
-
-  const orderId = 1;
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
@@ -50,9 +50,24 @@ const OrderFinishPage = ({ query }: any) => {
   );
 
   const checkPg = async () => {
-    const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
-    // console.log(pgToken, kakaoTid, '!@#!@#!@#!');
-    console.log(query, 'query');
+    if (pg === 'kakao') {
+      const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+      if (pgToken && kakaoTid) {
+        const reqBody = { pgToken, tid: kakaoTid };
+        console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+        const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
+        console.log(data, 'AFTER KAKAO PAY');
+      } else {
+        // 카카오 결제 에러
+      }
+    } else {
+      if (payToken) {
+        const { data } = await postTossApproveApi({ orderId, payToken });
+        console.log(data, 'AFTER TOSS');
+      } else {
+        // 토스 페이 에러
+      }
+    }
   };
 
   const goToOrderDetail = () => {
@@ -312,10 +327,10 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, pg_token } = context.query;
+  const { orderId, pg_token, pg } = context.query;
 
   return {
-    props: context.query,
+    props: { orderId: +orderId, pgToken: pg_token, pg },
   };
 }
 
