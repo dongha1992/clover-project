@@ -49,8 +49,10 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
     }
   );
 
+  console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken');
+
   const checkPg = async () => {
-    console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken');
+    console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
     if (pg === 'kakao') {
       const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
       if (pgToken && kakaoTid) {
@@ -328,10 +330,10 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, pg_token, pg } = context.query;
+  const { orderId, pg_token, pg, payToken } = context.query;
 
   return {
-    props: { orderId: +orderId, pgToken: pg_token, pg },
+    props: { orderId: +orderId, pgToken: pg_token, pg, payToken },
   };
 }
 
