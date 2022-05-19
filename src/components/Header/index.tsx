@@ -2,6 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
+// import HomeHeader from './HomeHeader';
+// import DefaultHeader from './DefaultHeader';
+// import CategorySubHeader from './CategorySubHeader';
+// import MenuDetailHeader from './MenuDetailHeader';
+// import TabHeader from './TabHeader';
+// import MyPageHeader from './MyPageHeader';
+// import NotiHeader from './NotiHeader';
+// import SpotHeader from './SpotHeader';
+// import SpotSearchHeader from './SpotSearchHeader';
+// import CloseDefaultHeader from './CloseDefaultHeader';
+// import DefaultHeaderWithCart from './DefaultHeaderWithCart';
+// import SubscriptionHeader from './SubscriptionHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -100,6 +112,7 @@ const Header = () => {
         '/subscription/products': '정기구독',
         '/subscription/set-info': '구독하기',
         '/subscription/register': '구독하기',
+        '/subscription/register/entire-diet': '전체 식단 정보',
         '/mypage/subscription': '구독관리',
         '/subscription/detail': '구독상세',
       };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {useState, useEffect, useCallback, useRef, ReactElement} from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import { breakpoints } from '@utils/common/getMediaQuery';
@@ -11,7 +11,6 @@ import { SPOT_DETAIL_INFO } from '@constants/spot';
 import { DetailBottomStory, DetailBottomStoreInfo } from '@components/Pages/Spot';
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
 import { IMAGE_S3_URL } from '@constants/mock/index';
-import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
 import { SPOT_ITEM } from '@store/spot';
 import { ISpotsDetail, ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
