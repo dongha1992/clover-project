@@ -74,17 +74,22 @@ const OnBoarding: NextPage = () => {
 
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
-    window.AppleID.auth.init({
-      clientId: 'com.freshcode.www',
-      scope: 'email',
-      redirectURI: `${process.env.SERVICE_URL}`,
-      usePopup: true,
-    });
-    try {
-      const data = await window.AppleID.auth.signIn();
-      console.log(data, 'aftter APPLE');
-    } catch (error: any) {
-      console.log(`Error: ${error && error.error}`);
+    if (typeof window !== undefined) {
+      window.AppleID.auth.init({
+        clientId: 'com.freshcode.www',
+        scope: 'email',
+        redirectURI: `${process.env.SERVICE_URL}`,
+        usePopup: true,
+      });
+      try {
+        const data = await window.AppleID.auth.signIn();
+        console.log(data, 'aftter APPLE');
+        // authorization: {
+        //   code: string, id_token:string
+        // }
+      } catch (error: any) {
+        console.log(`Error: ${error && error.error}`);
+      }
     }
   };
 
