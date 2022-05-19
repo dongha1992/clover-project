@@ -1,7 +1,7 @@
 import { homePadding } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
-// import { MypageMenu } from '../index';
+import { MypageMenu } from '../index';
 import { Button } from '@components/Shared/Button';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { FlexCol, theme, fixedBottom } from '@styles/theme';
@@ -10,8 +10,8 @@ const customServicePage = () => {
   return (
     <Container>
       <PaddingWrapper>
-        {/* <MypageMenu title="공지사항" link="/mypage" />
-        <MypageMenu title="FAQ" link="/mypage" /> */}
+        <MypageMenu title="공지사항" link="/mypage" />
+        <MypageMenu title="FAQ" link="/mypage" />
       </PaddingWrapper>
       <FlexCol margin="0" padding="0 24px">
         <TextH5B>고객센터</TextH5B>
