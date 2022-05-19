@@ -50,6 +50,7 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
   );
 
   const checkPg = async () => {
+    console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken');
     if (pg === 'kakao') {
       const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
       if (pgToken && kakaoTid) {
