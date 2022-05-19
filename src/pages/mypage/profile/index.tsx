@@ -100,6 +100,7 @@ const ProfilePage = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
+    localStorage.removeItem('persist:nextjs');
     router.push('/mypage');
   };
 

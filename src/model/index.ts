@@ -992,7 +992,7 @@ export interface ICreateOrderRequest {
   name: string;
   type: string;
   payMethod: TPayMethod | string;
-  cardId: number;
+  cardId: number | null;
   userName: string;
   userTel: string;
   userEmail: string;
@@ -1435,6 +1435,99 @@ export interface ICreateOrderResponse {
   data: ICreateOrder;
 }
 
+export interface IGetKakaoPayment {
+  android_app_scheme: string;
+  created_at: string;
+  ios_app_scheme: string;
+  next_redirect_app_url: string;
+  next_redirect_mobile_url: string;
+  next_redirect_pc_url: string;
+  tid: string;
+  tms_result: boolean;
+}
+export interface IGetKakaoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetKakaoPayment;
+}
+
+export interface IGetNicePayment {
+  Amt: number;
+  BuyerEmail: string;
+  BuyerName: string;
+  BuyerTel: string;
+  CharSet: string;
+  EdiDate: string;
+  EncodeParameters: string;
+  EncryptData: string;
+  GoodsCl: string;
+  GoodsCnt: number;
+  GoodsName: string;
+  MID: string;
+  MallIP: string;
+  Moid: string;
+  PayMethod: string;
+  ReturnURL: string;
+  SocketYN: string;
+  TrKey: string;
+  TransType: string;
+  UserIP: string;
+  VbankExpDate: string;
+}
+
+export interface IGetNicePaymentResponse {
+  code: number;
+  message: string;
+  data: IGetNicePayment;
+}
+
+export interface IGetPaycoRequest {
+  cancelUrl: string;
+  code: string;
+  discountAmt: string;
+  failureUrl: string;
+  mainPgCode: string;
+  message: string;
+  paymentCertifyToken: string;
+  pointAmt: string;
+  reserveOrderNo: string;
+  sellerOrderReferenceKey: string;
+  successUrl: string;
+  totalPaymentAmt: string;
+  totalRemoteAreaDeliveryFeeAmt: string;
+  id: number;
+}
+
+export interface IGetPaycoPayment {
+  code: number;
+  message: string;
+  pgErrorCode: string;
+  result: {
+    orderSheetUrl: string;
+    reserveOrderNo: string;
+  };
+  success: boolean;
+}
+
+export interface IGetPaycoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetPaycoPayment;
+}
+
+export interface IGetTossPayment {
+  checkoutPage: string;
+  code: number;
+  payToken: string;
+  status: string;
+  success: boolean;
+}
+export interface IGetTossPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetTossPayment;
+}
+
 /* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
@@ -1693,7 +1786,7 @@ export interface IDeliveryObj {
   delivery: string | null;
   deliveryDetail: string | null;
   location: ILocation | null;
-  closedDate?: string;
+  closedDate?: string | null;
 }
 
 /* COUPON */
@@ -1767,4 +1860,73 @@ type TReward = 'COUPON' | 'POINT' | string;
 export interface IPromotionRequest {
   code: string;
   reward: TReward | null;
+}
+
+/* SUBSCRIPTION */
+export interface IGetSubscription {
+  id: number;
+  destinationId: number;
+  subscriptionPeriod: string;
+  deliveryStartDate?: string;
+}
+
+export interface ISubscriptionResponse {
+  code: number;
+  message: string;
+  data: ISubscription | ISubsActiveDates;
+}
+export interface ISubscription {
+  menuTables: IMenuTable[];
+  pagination: IPagination;
+}
+export interface IMenuTable {
+  deliveryDate: string;
+  menuTypes: string[];
+  menuTableItems: IMenuTableItems[];
+}
+
+export interface IMenuTableItems {
+  id: number;
+  main: boolean;
+  selected: boolean;
+  menuId: number;
+  menuType: string;
+  menuName: string;
+  menuDetailId: number;
+  menuDetailName: string;
+  menuDiscount: number;
+  eventDiscount: number;
+  menuPrice: number;
+  menuOptions: {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  menuImage: {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
+  };
+  isSold: boolean;
+  changed: boolean;
+  count?: number;
+}
+
+export interface ISubsActiveDates {
+  menuTables: ISubsActiveDate[];
+}
+export interface ISubsActiveDate {
+  id: number;
+  deliveryDate: string;
+}
+
+export interface ISubscribeInfo {
+  deliveryType: string | null;
+  deliveryTime: string | null;
+  pickup: string[] | null;
+  period: string | null;
+  startDate: string | null;
+  deliveryDay: string[] | null;
 }

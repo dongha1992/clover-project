@@ -9,6 +9,8 @@ import {
   IResponse,
   ICompletionReviewsResponse,
   IWillWriteReviewsResponse,
+  ISubscriptionResponse,
+  IGetSubscription,
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
@@ -51,4 +53,15 @@ export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsRe
 
 export const getWillWriteReviews = (): Promise<AxiosResponse<IWillWriteReviewsResponse>> => {
   return Api.get(`menu/v1/reviews/expectation`);
+};
+
+export const getSubscriptionApi = ({
+  id,
+  destinationId,
+  subscriptionPeriod,
+  deliveryStartDate,
+}: IGetSubscription): Promise<AxiosResponse<ISubscriptionResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/tables`, {
+    params: { id, destinationId, subscriptionPeriod, deliveryStartDate },
+  });
 };

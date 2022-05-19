@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
 import {
@@ -20,14 +20,20 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
+import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
+import { getCookie } from '@utils/common';
 interface IProps {
   orderId: number;
+  pgToken?: string;
+  payToken?: number;
+  pg: string;
 }
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ orderId }: IProps) => {
+const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
   const router = useRouter();
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
@@ -39,8 +45,30 @@ const OrderFinishPage = ({ orderId }: IProps) => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!isPaymentSuccess,
     }
   );
+
+  const checkPg = async () => {
+    if (pg === 'kakao') {
+      const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+      if (pgToken && kakaoTid) {
+        const reqBody = { pgToken, tid: kakaoTid };
+        console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+        const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
+        console.log(data, 'AFTER KAKAO PAY');
+      } else {
+        // 카카오 결제 에러
+      }
+    } else {
+      if (payToken) {
+        const { data } = await postTossApproveApi({ orderId, payToken });
+        console.log(data, 'AFTER TOSS');
+      } else {
+        // 토스 페이 에러
+      }
+    }
+  };
 
   const goToOrderDetail = () => {
     router.push({ pathname: `/mypage/order-detail/${orderId}` });
@@ -208,6 +236,10 @@ const OrderFinishPage = ({ orderId }: IProps) => {
     }
   };
 
+  useEffect(() => {
+    checkPg();
+  }, []);
+
   if (isLoading) {
     return <div>로딩중</div>;
   }
@@ -295,9 +327,10 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
+  const { orderId, pg_token, pg } = context.query;
+
   return {
-    props: { orderId: +orderId },
+    props: { orderId: +orderId, pgToken: pg_token, pg },
   };
 }
 
