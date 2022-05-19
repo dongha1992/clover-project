@@ -6,7 +6,7 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
@@ -35,6 +35,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
+  const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
@@ -138,6 +139,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
     };
 
     const handleSubsDeliveryType = () => {
+      destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
@@ -147,6 +149,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
     };
 
     const handleSubsDeliveryTypeWithSpot = () => {
+      destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({

@@ -23,6 +23,13 @@ const SubscriptiopPage = () => {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
   };
   const goToRegularSpot = () => {
+    // window.navigator.share({
+    //   title: '', // 공유될 제목
+    //   text: '', // 공유될 설명
+    //   url: '', // 공유될 URL
+    //   files: [], // 공유할 파일 배열
+    // });
+
     router.push('/subscription/products?tab=spot');
   };
   const goToRegularDawn = () => {
