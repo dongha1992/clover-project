@@ -22,7 +22,7 @@ import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
-
+import { NAME_REGX } from '@constants/regex';
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -55,7 +55,7 @@ const ProfilePage = () => {
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
-
+  const [isValidName, setIsValidName] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<IUserInfo>({
     nickName: '',
     name: '',
@@ -67,8 +67,6 @@ const ProfilePage = () => {
   });
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-  const telRef = useRef<HTMLInputElement>(null);
-  const birthDateRef = useRef<HTMLInputElement>(null);
 
   const authTimerRef = useRef(300);
 
@@ -240,6 +238,7 @@ const ProfilePage = () => {
   };
 
   const changeMeInfo = async () => {
+    if (!isValidName) return;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
@@ -269,6 +268,14 @@ const ProfilePage = () => {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const checkNameValid = () => {
+    if (!NAME_REGX.test(userInfo.name)) {
+      setIsValidName(false);
+    } else {
+      setIsValidName(true);
     }
   };
 
@@ -358,7 +365,15 @@ const ProfilePage = () => {
           </FlexRow>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
-            <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
+            <TextInput
+              name="name"
+              value={userInfo.name || ''}
+              eventHandler={onChangeUserInfo}
+              onBlur={checkNameValid}
+            />
+            {!isValidName && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
@@ -494,7 +509,9 @@ const ProfilePage = () => {
         </DeleteUser>
       </Wrapper>
       <BtnWrapper onClick={changeMeInfo}>
-        <Button height="100%">수정하기</Button>
+        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName}>
+          수정하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
