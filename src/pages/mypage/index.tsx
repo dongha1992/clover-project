@@ -31,23 +31,23 @@ interface IMypageMenu {
 const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
 
-  const { data: orderList, isLoading } = useQuery(
-    'getOrderLists',
-    async () => {
-      const params = {
-        orderType: 'GENERAL',
-      };
+  // const { data: orderList, isLoading } = useQuery(
+  //   'getOrderLists',
+  //   async () => {
+  //     const params = {
+  //       orderType: 'GENERAL',
+  //     };
 
-      const { data } = await getOrderInfoApi(params);
-      return data.data;
-    },
-    {
-      onSuccess: (data) => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!me,
-    }
-  );
+  //     const { data } = await getOrderInfoApi(params);
+  //     return data.data;
+  //   },
+  //   {
+  //     onSuccess: (data) => {},
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     enabled: !!me,
+  //   }
+  // );
 
   const { data: friendInvitation, error } = useQuery(
     'getInvitationInfo',
@@ -132,7 +132,7 @@ const MypagePage = () => {
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />
-            <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList!} />}</OrderAndDeliveryWrapper>
+            {/* <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList!} />}</OrderAndDeliveryWrapper> */}
             <SubsDashboard />
             <ManageWrapper>
               {/* <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
