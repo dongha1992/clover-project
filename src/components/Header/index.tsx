@@ -112,6 +112,7 @@ const Header = () => {
         '/subscription/products': '정기구독',
         '/subscription/set-info': '구독하기',
         '/subscription/register': '구독하기',
+        '/subscription/register/entire-diet': '전체 식단 정보',
         '/mypage/subscription': '구독관리',
         '/subscription/detail': '구독상세',
       };

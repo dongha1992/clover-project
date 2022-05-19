@@ -43,7 +43,6 @@ const MypagePage = () => {
     },
     {
       onSuccess: (data) => {},
-
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -141,7 +140,9 @@ const MypagePage = () => {
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />
-            <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList!} />}</OrderAndDeliveryWrapper>
+            <OrderAndDeliveryWrapper>
+              <OrderDashboard orderList={orderList!} />
+            </OrderAndDeliveryWrapper>
             <SubsDashboard />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />

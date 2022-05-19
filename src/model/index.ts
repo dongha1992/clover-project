@@ -1860,3 +1860,72 @@ export interface IPromotionRequest {
   code: string;
   reward: TReward | null;
 }
+
+/* SUBSCRIPTION */
+export interface IGetSubscription {
+  id: number;
+  destinationId: number;
+  subscriptionPeriod: string;
+  deliveryStartDate?: string;
+}
+
+export interface ISubscriptionResponse {
+  code: number;
+  message: string;
+  data: ISubscription | ISubsActiveDates;
+}
+export interface ISubscription {
+  menuTables: IMenuTable[];
+  pagination: IPagination;
+}
+export interface IMenuTable {
+  deliveryDate: string;
+  menuTypes: string[];
+  menuTableItems: IMenuTableItems[];
+}
+
+export interface IMenuTableItems {
+  id: number;
+  main: boolean;
+  selected: boolean;
+  menuId: number;
+  menuType: string;
+  menuName: string;
+  menuDetailId: number;
+  menuDetailName: string;
+  menuDiscount: number;
+  eventDiscount: number;
+  menuPrice: number;
+  menuOptions: {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  menuImage: {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
+  };
+  isSold: boolean;
+  changed: boolean;
+  count?: number;
+}
+
+export interface ISubsActiveDates {
+  menuTables: ISubsActiveDate[];
+}
+export interface ISubsActiveDate {
+  id: number;
+  deliveryDate: string;
+}
+
+export interface ISubscribeInfo {
+  deliveryType: string | null;
+  deliveryTime: string | null;
+  pickup: string[] | null;
+  period: string | null;
+  startDate: string | null;
+  deliveryDay: string[] | null;
+}
