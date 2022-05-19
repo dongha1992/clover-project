@@ -58,10 +58,6 @@ const SpotPage = () => {
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
-  // const registrationsLen = info && !!info?.recruitingSpotRegistrations?.length;
-  // const unsubmitSpotRegistrationsLen = info && !!info?.unsubmitSpotRegistrations?.length;
-  // const trialRegistrationsLen = info && !!info?.trialSpotRegistrations?.length;
-
   const params: IParamsSpots = {
     latitude: spotsPosition ? spotsPosition.latitude : null,
     longitude: spotsPosition ? spotsPosition.longitude : null,
@@ -272,7 +268,7 @@ const SpotPage = () => {
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
                       {`[${info?.trialSpotRegistration.placeName}]\n`}
-                      <span>{`${5 - info?.trialSpotRegistration?.trialUserCount!}`}</span>
+                      <span>{`${info?.trialSpotRegistration?.trialTargetUserCount! - info?.trialSpotRegistration?.trialUserCount!}`}</span>
                       명만 더 주문 하면 정식오픈 돼요!
                     </TextH4B>
                     <IconWrapper>
@@ -285,7 +281,7 @@ const SpotPage = () => {
           }
           {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-            info?.trialSpotRegistration.trialUserCount! <= 5 && (
+            info?.trialSpotRegistration.trialUserCount! >= 5 && (
               <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
