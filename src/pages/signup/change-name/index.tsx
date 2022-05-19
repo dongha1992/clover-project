@@ -10,10 +10,14 @@ import { NAME_REGX } from '@constants/regex';
 import { userForm } from '@store/user';
 import { SET_SIGNUP_USER } from '@store/user';
 import router from 'next/router';
+import { userChangeInfo } from '@api/user';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
 const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
-  const { signupUser } = useSelector(userForm);
+  const [isError, setIsError] = useState<boolean>(false);
+  const { me } = useSelector(userForm);
 
   const dispatch = useDispatch();
 
@@ -26,18 +30,38 @@ const ChangeNamePage = () => {
     setName(value);
   };
 
-  const finishChangeName = () => {
-    dispatch(
-      SET_SIGNUP_USER({
-        loginType: 'KAKAO',
-        name,
-      })
-    );
-    router.push('/signup/optional');
+  const finishChangeName = async () => {
+    if (!NAME_REGX.test(name)) {
+      setIsError(true);
+      return;
+    }
+
+    const reqBody = {
+      authCode: null,
+      birthDate: me?.birthDate || '',
+      gender: me?.gender || '',
+      email: me?.email!,
+      marketingEmailReceived: me?.marketingEmailReceived!,
+      marketingPushReceived: me?.marketingPushReceived!,
+      marketingSmsReceived: me?.marketingSmsReceived!,
+      name: name,
+      nickName: me?.nickName || name,
+      notiPushReceived: me?.notiPushReceived!,
+      primePushReceived: me?.primePushReceived!,
+      tel: me?.tel!,
+    };
+    try {
+      const { data } = await userChangeInfo(reqBody);
+
+      console.log(data, 'AFTER CHNAGE NAME');
+      if (data.code === 200) {
+        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+      }
+    } catch (error) {}
   };
 
   useEffect(() => {
-    setName(signupUser?.name!);
+    setName(me?.name!);
   }, []);
 
   return (
@@ -62,12 +86,14 @@ const ChangeNamePage = () => {
               </DeleteName>
             )}
           </TextWrapper>
-          {!NAME_REGX.test(name) && <TextB3R color={theme.systemRed}>한글/영문만 사용 가능합니다.</TextB3R>}
+          {(!NAME_REGX.test(name) || isError) && (
+            <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+          )}
         </FlexCol>
       </Wrapper>
       <NextBtnWrapper onClick={finishChangeName}>
         <Button height="100%" borderRadius="0">
-          다음
+          변경하기
         </Button>
       </NextBtnWrapper>
     </Container>

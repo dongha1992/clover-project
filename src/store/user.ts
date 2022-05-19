@@ -70,11 +70,11 @@ export const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    SET_SIGNUP_USER: (state, { payload }: PayloadAction<IUser['signupUser']>) => {
+    SET_SIGNUP_USER: (state: any, { payload }: PayloadAction<IUser['signupUser']>) => {
       state.signupUser = { ...state.signupUser, ...payload };
     },
 
-    SET_USER_AUTH: (state, { payload }: PayloadAction<any>) => {
+    SET_USER_AUTH: (state: any, { payload }: PayloadAction<any>) => {
       const accessTokenObj = {
         accessToken: payload.accessToken,
         expiresIn: payload.expiresIn,
@@ -97,15 +97,15 @@ export const user = createSlice({
       });
     },
 
-    SET_LOGIN_SUCCESS: (state, { payload }: PayloadAction<boolean>) => {
+    SET_LOGIN_SUCCESS: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isLoginSuccess = payload;
     },
 
-    SET_TEMP_PASSWORD: (state, { payload }: PayloadAction<string>) => {
+    SET_TEMP_PASSWORD: (state: any, { payload }: PayloadAction<string>) => {
       state.tempPasswordLogin = payload;
     },
 
-    SET_USER: (state, { payload }: PayloadAction<IUser['me'] | null>) => {
+    SET_USER: (state: any, { payload }: PayloadAction<IUser['me'] | null>) => {
       state.me = payload;
     },
   },
