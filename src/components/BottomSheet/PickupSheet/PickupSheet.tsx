@@ -21,6 +21,10 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
   const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].id);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
+  useEffect(() => {
+    dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
+  }, [selectedPickupId]);
+
   const changeRadioHandler = (id: number) => {
     setSelectedPickupId(id);
   };
@@ -33,14 +37,12 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
     if (spotType === 'PRIVATE') {
       if (noticeChecked) {
         onSubmit && onSubmit();
-        dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
         dispatch(INIT_BOTTOM_SHEET());
       } else {
         return;
       }
     } else {
       onSubmit && onSubmit();
-      dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
       dispatch(INIT_BOTTOM_SHEET());
     }
   };
