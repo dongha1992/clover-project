@@ -36,10 +36,9 @@ const Oauth = () => {
         accessToken: `bearer ${authObj.access_token}`,
       });
 
-      const isRegister = result?.data?.data?.isJoin;
-
       if (result.data.code === 200) {
         const userTokenObj = result.data.data;
+        const isRegister = result?.data?.data?.isJoin;
 
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
@@ -55,16 +54,16 @@ const Oauth = () => {
           window.Kakao.cleanup();
         }
 
-        if (!NAME_REGX.test(data.name) || data.name.length === 0) {
+        if ((isRegister && !NAME_REGX.test(data.name)) || data.name.length === 0) {
           router.push('/signup/change-name');
           return;
+        } else {
+          router.push('/');
         }
       } else {
         /* TODO: 아래 사항들 */
-
         // 비회원 -> 회원 장바구니 옮기기
         // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
-        router.push('/');
       }
     } catch (e) {
       console.log(e);
