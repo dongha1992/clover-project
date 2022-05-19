@@ -500,6 +500,8 @@ const OrderPage = () => {
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
+    /* TODO: 모바일, 안드로이드 체크  */
+
     try {
       const { data } = await postKakaoPaymentApi({ orderId, data: reqBody });
       console.log(data, 'RESPONSE');
@@ -509,8 +511,6 @@ const OrderPage = () => {
         value: data.data.tid,
       });
     } catch (error) {}
-
-    /* TODO: 모바일, 안드로이드 체크  */
   };
 
   const processTossPay = async ({ orderId }: IProcessOrder) => {
