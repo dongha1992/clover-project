@@ -29,9 +29,11 @@ interface IProps {
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ orderId, pgToken }: IProps) => {
+const OrderFinishPage = ({ query }: any) => {
   const router = useRouter();
   const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+
+  const orderId = 1;
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
@@ -49,7 +51,8 @@ const OrderFinishPage = ({ orderId, pgToken }: IProps) => {
 
   const checkPg = async () => {
     const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
-    console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+    // console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+    console.log(query, 'query');
   };
 
   const goToOrderDetail = () => {
@@ -310,8 +313,9 @@ const DevlieryInfoWrapper = styled.div`
 
 export async function getServerSideProps(context: any) {
   const { orderId, pg_token } = context.query;
+
   return {
-    props: { orderId: +orderId, pgToken: pg_token },
+    props: context.query,
   };
 }
 
