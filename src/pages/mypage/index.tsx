@@ -85,9 +85,9 @@ const MypagePage = () => {
     }
   };
 
-  if (isNil(orderList) && !isLoginSuccess && infoLoading) {
-    return <div>로딩</div>;
-  }
+  // if (isNil(orderList) && !isLoginSuccess && infoLoading) {
+  //   return <div>로딩</div>;
+  // }
 
   return (
     <Container>
@@ -135,14 +135,14 @@ const MypagePage = () => {
             <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList!} />}</OrderAndDeliveryWrapper>
             <SubsDashboard />
             <ManageWrapper>
-              <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
+              {/* <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
               <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <MypageMenu title="주소 관리" link="/mypage/address" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
               <MypageMenu title="이벤트" link="/mypage/event" />
-              <MypageMenu title="배송 안내" link="/mypage/deliver-infomation" hideBorder />
+              <MypageMenu title="배송 안내" link="/mypage/deliver-infomation" hideBorder /> */}
               <ImageWrapper>
                 <Image
                   width={340}
@@ -153,9 +153,9 @@ const MypagePage = () => {
                   alt="Friend invitation banner"
                 />
               </ImageWrapper>
-              <MypageMenu title="고객센터" link="/mypage/customer-service" />
+              {/* <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="앱설정" link="/mypage/setting" />
-              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
+              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder /> */}
             </ManageWrapper>
           </>
         ) : (
@@ -213,9 +213,9 @@ const MypagePage = () => {
                   </a>
                 </Link>
               </ImageWrapper>
-              <MypageMenu title="고객센터" link="/mypage/customer-service" />
+              {/* <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="앱설정" link="/mypage/setting" />
-              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
+              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder /> */}
             </ManageWrapper>
           </>
         )}
@@ -224,30 +224,31 @@ const MypagePage = () => {
   );
 };
 
-export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypageMenu) => {
-  const mapper: Obj = {
-    '구독 관리': '개',
-    '찜 관리': '건',
-    '친구 초대': '명',
-  };
-  return (
-    <MypageItem onClick={() => router.push(link)} className={`${hideBorder && 'hideBorder'}`}>
-      <FlexBetween padding="24px 0">
-        <TextH4B>{title}</TextH4B>
-        <FlexRow>
-          <TextB2R padding="0 8px 0 0">
-            {count}
-            {mapper[title]}
-          </TextB2R>
-          <div>
-            <SVGIcon name="arrowRight" />
-          </div>
-        </FlexRow>
-      </FlexBetween>
-    </MypageItem>
-  );
-});
-MypageMenu.displayName = 'MypageMenu';
+// export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypageMenu) => {
+//   const mapper: Obj = {
+//     '구독 관리': '개',
+//     '찜 관리': '건',
+//     '친구 초대': '명',
+//   };
+//   return (
+//     <MypageItem onClick={() => router.push(link)} className={`${hideBorder && 'hideBorder'}`}>
+//       <FlexBetween padding="24px 0">
+//         <TextH4B>{title}</TextH4B>
+//         <FlexRow>
+//           <TextB2R padding="0 8px 0 0">
+//             {count}
+//             {mapper[title]}
+//           </TextB2R>
+//           <div>
+//             <SVGIcon name="arrowRight" />
+//           </div>
+//         </FlexRow>
+//       </FlexBetween>
+//     </MypageItem>
+//   );
+// });
+
+// MypageMenu.displayName = 'MypageMenu';
 
 const Container = styled.div`
   .hideBorder {
