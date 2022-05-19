@@ -77,8 +77,6 @@ const MypagePage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false, enabled: !!me }
   );
 
-  console.log(orderList, isLoginSuccess);
-
   const goToEditUserInfo = () => {
     if (me?.joinType! !== 'EMAIL') {
       router.push('/mypage/profile');
@@ -90,12 +88,6 @@ const MypagePage = () => {
   if (isNil(orderList) && isLoginSuccess && infoLoading) {
     return <div>로딩</div>;
   }
-
-  // if (isLoginSuccess) {
-  //   return <div>로딩</div>;
-  // }
-
-  console.log(orderList, 'orderList');
 
   return (
     <Container>
@@ -140,9 +132,7 @@ const MypagePage = () => {
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />
-            <OrderAndDeliveryWrapper>
-              <OrderDashboard orderList={orderList!} />
-            </OrderAndDeliveryWrapper>
+            <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList!} />}</OrderAndDeliveryWrapper>
             <SubsDashboard />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
