@@ -243,16 +243,16 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
     checkPg();
   }, []);
 
+  if (!isPaymentSuccess) {
+    return <div>로딩중</div>;
+  }
+
   const { delivery, deliveryDetail } = orderDetail!;
   const { orderMenus, spotName, spotPickupName, location, deliveryDate, deliveryEndTime, deliveryStartTime } =
     orderDetail?.orderDeliveries[0]!;
   const { dayFormatter } = getCustomDate(new Date(deliveryDate));
   const isSpot = delivery === 'SPOT';
   const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
-
-  if (!isPaymentSuccess) {
-    return <div>로딩중</div>;
-  }
 
   return (
     <Container>
@@ -331,9 +331,14 @@ const DevlieryInfoWrapper = styled.div`
 
 export async function getServerSideProps(context: any) {
   const { orderId, pg_token, pg, payToken } = context.query;
-
+  console.log(context.query, 'context.query');
   return {
-    props: { orderId: +orderId, pgToken: pg_token, pg, payToken },
+    props: {
+      orderId: +orderId,
+      pgToken: pg_token ? pg_token : null,
+      pg: pg ? pg : null,
+      payToken: payToken ? payToken : null,
+    },
   };
 }
 
