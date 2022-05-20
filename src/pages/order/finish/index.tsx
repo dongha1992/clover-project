@@ -22,6 +22,7 @@ import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie } from '@utils/common';
+
 interface IProps {
   orderId: number;
   pgToken?: string;
@@ -31,47 +32,60 @@ interface IProps {
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
+const OrderFinishPage = (props: any) => {
   const router = useRouter();
-  const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+  // const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+
+  const { orderId, pg_token } = router.query;
+  console.log(router.query, 'router.query');
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
     async () => {
-      const { data } = await getOrderDetailApi(orderId);
+      console.log(orderId, 'orderId');
+      const { data } = await getOrderDetailApi(Number(orderId));
       return data.data;
     },
     {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      enabled: !!isPaymentSuccess,
     }
   );
 
-  console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken');
-
-  const checkPg = async () => {
-    console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
-    if (pg === 'kakao') {
-      const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
-      if (pgToken && kakaoTid) {
-        const reqBody = { pgToken, tid: kakaoTid };
-        console.log(pgToken, kakaoTid, '!@#!@#!@#!');
-        const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
-        console.log(data, 'AFTER KAKAO PAY');
-      } else {
-        // 카카오 결제 에러
-      }
-    } else {
-      if (payToken) {
-        const { data } = await postTossApproveApi({ orderId, payToken });
-        console.log(data, 'AFTER TOSS');
-      } else {
-        // 토스 페이 에러
-      }
-    }
-  };
+  // const checkPg = async () => {
+  //   try {
+  //     console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
+  //     if (pg === 'kakao') {
+  //       const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+  //       if (pgToken && kakaoTid) {
+  //         const reqBody = { pgToken, tid: kakaoTid };
+  //         console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+  //         const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
+  //         console.log(data, 'AFTER KAKAO PAY');
+  //         if (data.code === 200) {
+  //           setIsPaymentSuccess(true);
+  //         }
+  //       } else {
+  //         // 카카오 결제 에러
+  //       }
+  //     } else if (pg === 'toss') {
+  //       if (payToken) {
+  //         const { data } = await postTossApproveApi({ orderId, payToken });
+  //         console.log(data, 'AFTER TOSS');
+  //         if (data.code === 200) {
+  //           setIsPaymentSuccess(true);
+  //         }
+  //       } else {
+  //         // 토스 페이 에러
+  //       }
+  //     } else {
+  //       setIsPaymentSuccess(true);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const goToOrderDetail = () => {
     router.push({ pathname: `/mypage/order-detail/${orderId}` });
@@ -239,11 +253,12 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
     }
   };
 
-  useEffect(() => {
-    checkPg();
-  }, []);
+  // useEffect(() => {
+  //   console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, useEffect');
+  //   checkPg();
+  // }, [orderId]);
 
-  if (!isPaymentSuccess) {
+  if (isLoading) {
     return <div>로딩중</div>;
   }
 
@@ -329,17 +344,14 @@ const DevlieryInfoWrapper = styled.div`
   padding: 24px;
 `;
 
-export async function getServerSideProps(context: any) {
-  const { orderId, pg_token, pg, payToken } = context.query;
-  console.log(context.query, 'context.query');
-  return {
-    props: {
-      orderId: +orderId,
-      pgToken: pg_token ? pg_token : null,
-      pg: pg ? pg : null,
-      payToken: payToken ? payToken : null,
-    },
-  };
-}
+// export async function getServerSideProps(context: any) {
+//   const { orderId } = context.query;
+//   console.log(context.query, 'context.query');
+//   return {
+//     props: {
+//       orderId: +orderId,
+//     },
+//   };
+// }
 
 export default OrderFinishPage;
