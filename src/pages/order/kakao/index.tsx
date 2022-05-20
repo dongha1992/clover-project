@@ -2,21 +2,24 @@ import router from 'next/router';
 import React, { useEffect } from 'react';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie } from '@utils/common';
+import { useRouter } from 'next/router';
 
 interface IProps {
   orderId: number;
   pgToken: string;
 }
-const KakaoPgPage = ({ orderId, pgToken }: IProps) => {
+const KakaoPgPage = () => {
+  const { pgToken, orderId } = router.query;
+
   const checkKakaoPg = async () => {
     try {
       console.log(orderId, pgToken, 'orderId, pgToken, pg, payToken in fnc');
 
       const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
       if (pgToken && kakaoTid) {
-        const reqBody = { pgToken, tid: kakaoTid };
+        const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
         console.log(pgToken, kakaoTid, '!@#!@#!@#!');
-        const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
+        const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
         console.log(data, 'AFTER KAKAO PAY');
         if (data.code === 200) {
           router.push(`/order/finish?orderId=${orderId}`);
@@ -33,13 +36,5 @@ const KakaoPgPage = ({ orderId, pgToken }: IProps) => {
   }, []);
   return <div></div>;
 };
-
-export async function getServerSideProps(context: any) {
-  const { orderId, pg_token } = context.query;
-
-  return {
-    props: { orderId: +orderId, pgToken: pg_token },
-  };
-}
 
 export default KakaoPgPage;

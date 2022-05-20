@@ -22,6 +22,7 @@ import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie } from '@utils/common';
+
 interface IProps {
   orderId: number;
   pgToken?: string;
@@ -31,14 +32,17 @@ interface IProps {
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
+const OrderFinishPage = (props: any) => {
   const router = useRouter();
   // const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+  console.log(props, 'props');
+  const { orderId } = router.query;
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
     async () => {
-      const { data } = await getOrderDetailApi(orderId);
+      console.log(orderId, 'orderId');
+      const { data } = await getOrderDetailApi(Number(orderId));
       return data.data;
     },
     {
@@ -47,8 +51,6 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
       refetchOnWindowFocus: false,
     }
   );
-
-  console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken');
 
   // const checkPg = async () => {
   //   try {
@@ -341,14 +343,14 @@ const DevlieryInfoWrapper = styled.div`
   padding: 24px;
 `;
 
-export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
-  console.log(context.query, 'context.query');
-  return {
-    props: {
-      orderId: +orderId,
-    },
-  };
-}
+// export async function getServerSideProps(context: any) {
+//   const { orderId } = context.query;
+//   console.log(context.query, 'context.query');
+//   return {
+//     props: {
+//       orderId: +orderId,
+//     },
+//   };
+// }
 
 export default OrderFinishPage;
