@@ -87,7 +87,7 @@ const SignupAuthPage = () => {
 
   const emailInputHandler = (e: any) => {
     const { value } = e.target;
-    console.log(value, 'email value');
+
     setSignUpInfo({ ...signUpInfo, email: value });
   };
 
