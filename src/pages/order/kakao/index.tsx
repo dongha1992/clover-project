@@ -31,7 +31,9 @@ const KakaoPgPage = () => {
     }
   };
   useEffect(() => {
-    checkKakaoPg();
+    if (router.query.pg_token) {
+      checkKakaoPg();
+    }
   }, [router.query.pg_token]);
   return <div></div>;
 };
