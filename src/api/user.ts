@@ -18,6 +18,7 @@ import {
   IInvitationResponse,
   IChangeMe,
   IUserInfoResponse,
+  IAppleTokenResponse,
 } from '@model/index';
 
 export const userLoginApi = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
@@ -87,4 +88,12 @@ export const userChangeInfo = (data: IChangeMe): Promise<AxiosResponse<IResponse
 
 export const getUserInfoApi = (): Promise<AxiosResponse<IUserInfoResponse>> => {
   return Api.get('/user/v1/info');
+};
+
+export const getAppleTokenApi = ({
+  params,
+}: {
+  params: { appleToken: string };
+}): Promise<AxiosResponse<IAppleTokenResponse>> => {
+  return Api.get('/user/v1/availability/apple', { params });
 };

@@ -12,12 +12,13 @@ import router, { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { Obj } from '@model/index';
 import axios from 'axios';
-import { SET_LOGIN_SUCCESS } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
 import { setCookie } from '@utils/common';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
-import { userForm } from '@store/user';
+import { userForm, SET_USER_AUTH, SET_USER } from '@store/user';
+import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
 declare global {
   interface Window {
     Kakao: any;
@@ -82,15 +83,35 @@ const OnBoarding: NextPage = () => {
         usePopup: true,
       });
       try {
-        const data = await window.AppleID.auth.signIn();
-        console.log(data, 'aftter APPLE');
-        // authorization: {
-        //   code: string, id_token:string
-        // }
-        if (data.authorization.id_token) {
+        const appleResponse = await window.AppleID.auth.signIn();
+
+        const appleToken = appleResponse?.authorization.id_token;
+        if (appleToken) {
           // 애플 로그인 / 회원가입 호출?
-          router.replace('/signup?isApple=true');
-          localStorage.setItem('appleToken', '');
+          const params = { appleToken };
+          const { data } = await getAppleTokenApi({ params });
+          if (data.data.availability) {
+            localStorage.setItem('appleToken', appleToken);
+            router.replace('/signup?isApple=true');
+            dispatch(SET_SIGNUP_USER({ email: data.data.email }));
+          } else {
+            const result = await userLoginApi({ accessToken: `bearer ${appleToken}`, loginType: 'APPLE' });
+            if (result.data.code == 200) {
+              const userTokenObj = result.data?.data;
+
+              dispatch(SET_USER_AUTH(userTokenObj));
+              dispatch(SET_LOGIN_SUCCESS(true));
+              dispatch(SET_LOGIN_TYPE('APPLE'));
+
+              const { data } = await userProfile().then((res) => {
+                return res?.data;
+              });
+
+              dispatch(SET_USER(data));
+              // success
+              router.push('/');
+            }
+          }
         }
       } catch (error: any) {
         console.log(`Error: ${error && error.error}`);

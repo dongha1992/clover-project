@@ -54,6 +54,16 @@ export interface IAavilabiltyEmail {
   email: string;
 }
 
+export interface IAppleToken {
+  availability: boolean;
+  email: string;
+}
+export interface IAppleTokenResponse {
+  code: number;
+  data: IAppleToken;
+  message: string;
+}
+
 export interface ISignupUser {
   appleToken?: string;
   authCode: string;
