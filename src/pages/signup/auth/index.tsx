@@ -87,7 +87,7 @@ const SignupAuthPage = () => {
 
   const emailInputHandler = (e: any) => {
     const { value } = e.target;
-    console.log(value, 'email value');
+
     setSignUpInfo({ ...signUpInfo, email: value });
   };
 
@@ -196,7 +196,7 @@ const SignupAuthPage = () => {
       SET_SIGNUP_USER({
         name: signUpInfo.name,
         tel: signUpInfo.tel,
-        authCode: signUpInfo.authCode,
+        authCode: authCodeNumberRef.current?.value,
         email: isApple ? signUpInfo.email : '',
       })
     );
