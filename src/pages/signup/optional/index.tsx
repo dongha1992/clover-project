@@ -72,6 +72,8 @@ const SignupOptionalPage = () => {
         const userTokenObj = data.data;
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
+        dispatch(INIT_SIGNUP_USER());
+        localStorage.removeItem('appleToken');
 
         if (window.Kakao) {
           window.Kakao.cleanup();
@@ -118,8 +120,6 @@ const SignupOptionalPage = () => {
 
       if (data.code === 200) {
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
-        dispatch(INIT_SIGNUP_USER());
-        localStorage.removeItem('appleToken');
       }
     } catch (error) {
       console.error(error);
