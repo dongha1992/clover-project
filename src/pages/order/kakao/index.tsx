@@ -33,7 +33,7 @@ const KakaoPgPage = () => {
   };
   useEffect(() => {
     checkKakaoPg();
-  }, []);
+  }, [router.query]);
   return <div></div>;
 };
 
