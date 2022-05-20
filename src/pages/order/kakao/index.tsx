@@ -9,8 +9,8 @@ interface IProps {
   pgToken: string;
 }
 const KakaoPgPage = () => {
-  const { pgToken, orderId } = router.query;
-
+  const { pg_token: pgToken, orderId } = router.query;
+  console.log(router.query, 'router.query');
   const checkKakaoPg = async () => {
     try {
       console.log(orderId, pgToken, 'orderId, pgToken, pg, payToken in fnc');

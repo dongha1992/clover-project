@@ -35,8 +35,9 @@ interface IProps {
 const OrderFinishPage = (props: any) => {
   const router = useRouter();
   // const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
-  console.log(props, 'props');
-  const { orderId } = router.query;
+
+  const { orderId, pg_token } = router.query;
+  console.log(router.query, 'router.query');
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
