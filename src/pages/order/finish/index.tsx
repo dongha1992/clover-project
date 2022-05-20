@@ -52,24 +52,31 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
   console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken');
 
   const checkPg = async () => {
-    console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
-    if (pg === 'kakao') {
-      const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
-      if (pgToken && kakaoTid) {
-        const reqBody = { pgToken, tid: kakaoTid };
-        console.log(pgToken, kakaoTid, '!@#!@#!@#!');
-        const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
-        console.log(data, 'AFTER KAKAO PAY');
+    try {
+      console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
+      if (pg === 'kakao') {
+        const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+        if (pgToken && kakaoTid) {
+          const reqBody = { pgToken, tid: kakaoTid };
+          console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+          const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
+          console.log(data, 'AFTER KAKAO PAY');
+          if (data.code === 200) {
+            setIsPaymentSuccess(true);
+          }
+        } else {
+          // 카카오 결제 에러
+        }
       } else {
-        // 카카오 결제 에러
+        if (payToken) {
+          const { data } = await postTossApproveApi({ orderId, payToken });
+          console.log(data, 'AFTER TOSS');
+        } else {
+          // 토스 페이 에러
+        }
       }
-    } else {
-      if (payToken) {
-        const { data } = await postTossApproveApi({ orderId, payToken });
-        console.log(data, 'AFTER TOSS');
-      } else {
-        // 토스 페이 에러
-      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -241,7 +248,7 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
 
   useEffect(() => {
     checkPg();
-  }, []);
+  }, [orderId]);
 
   if (!isPaymentSuccess) {
     return <div>로딩중</div>;
