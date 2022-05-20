@@ -601,10 +601,4 @@ const SettingBtnWrapper = styled.div`
   width: 100%;
 `;
 
-export const getServerSideProps = async (context: any) => {
-  return {
-    props: {},
-  };
-};
-
 export default DeliverInfoPage;
