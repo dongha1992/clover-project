@@ -67,13 +67,18 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
         } else {
           // 카카오 결제 에러
         }
-      } else {
+      } else if (pg === 'toss') {
         if (payToken) {
           const { data } = await postTossApproveApi({ orderId, payToken });
           console.log(data, 'AFTER TOSS');
+          if (data.code === 200) {
+            setIsPaymentSuccess(true);
+          }
         } else {
           // 토스 페이 에러
         }
+      } else {
+        setIsPaymentSuccess(true);
       }
     } catch (error) {
       console.error(error);
