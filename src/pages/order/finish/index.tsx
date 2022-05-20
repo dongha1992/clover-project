@@ -250,7 +250,7 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
     checkPg();
   }, [orderId]);
 
-  if (!isPaymentSuccess) {
+  if (!isPaymentSuccess && isLoading) {
     return <div>로딩중</div>;
   }
 
