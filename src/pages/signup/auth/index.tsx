@@ -87,6 +87,7 @@ const SignupAuthPage = () => {
 
   const emailInputHandler = (e: any) => {
     const { value } = e.target;
+    console.log(value, 'email value');
     setSignUpInfo({ ...signUpInfo, email: value });
   };
 
@@ -281,10 +282,9 @@ const SignupAuthPage = () => {
           <EmailInputWrapper>
             <TextH5B padding="0 0 9px 0">이메일</TextH5B>
             <TextInput
-              name="email"
               placeholder="이메일"
               eventHandler={emailInputHandler}
-              value={signupUser.email ? signupUser.email : ''}
+              value={signupUser?.email ? signupUser?.email : ''}
               onBlur={validEmailHandler}
             />
             {!emailValidation.isValid ? (
@@ -361,6 +361,7 @@ const TimerWrapper = styled.div`
 
 const EmailInputWrapper = styled.div`
   position: relative;
+  margin-top: 24px;
 
   > svg {
     position: absolute;
