@@ -47,7 +47,7 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId } = router.query;
+  const { orderId, isSubscription, subsDeliveryType } = router.query;
 
   // 배송 가능 여부
   const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
@@ -109,8 +109,14 @@ const DestinationDetailPage = () => {
         dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
         dispatch(SET_USER_DELIVERY_TYPE(destinationStatusByRule));
         dispatch(INIT_LOCATION_TEMP());
-
-        router.push('/cart/delivery-info');
+        if (isSubscription) {
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { subsDeliveryType: subsDeliveryType, isSubscription: true },
+          });
+        } else {
+          router.push('/cart/delivery-info');
+        }
       }
     }
   };
