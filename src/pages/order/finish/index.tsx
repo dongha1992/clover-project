@@ -247,10 +247,11 @@ const OrderFinishPage = ({ orderId, pgToken, pg, payToken }: IProps) => {
   };
 
   useEffect(() => {
+    console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, useEffect');
     checkPg();
   }, [orderId]);
 
-  if (!isPaymentSuccess) {
+  if (!isPaymentSuccess && isLoading) {
     return <div>로딩중</div>;
   }
 
