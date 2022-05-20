@@ -30,7 +30,7 @@ const SignupPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const isApple = router.query;
+  const isApple = router.query.isApple ? true : false;
   console.log(isApple, 'apppppllee');
 
   const isAllAgreed = checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
