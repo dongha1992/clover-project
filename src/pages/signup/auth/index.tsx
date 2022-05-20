@@ -196,7 +196,7 @@ const SignupAuthPage = () => {
       SET_SIGNUP_USER({
         name: signUpInfo.name,
         tel: signUpInfo.tel,
-        authCode: signUpInfo.authCode,
+        authCode: authCodeNumberRef.current?.value,
         email: isApple ? signUpInfo.email : '',
       })
     );
