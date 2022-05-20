@@ -100,17 +100,26 @@ const SignupOptionalPage = () => {
       nickName: nickName ? nickName : signupUser.name,
     };
 
+    let appleToken = null;
+
+    if (signupUser.loginType === 'APPLE') {
+      appleToken = localStorage.getItem('appleToken');
+    }
+
     dispatch(
       SET_SIGNUP_USER({
         ...optionalForm,
+        appleToken,
       })
     );
 
     try {
       let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
-      data.code === 200;
+
       if (data.code === 200) {
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+        dispatch(INIT_SIGNUP_USER());
+        localStorage.removeItem('appleToken');
       }
     } catch (error) {
       console.error(error);
