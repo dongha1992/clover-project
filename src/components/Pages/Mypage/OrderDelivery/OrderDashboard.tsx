@@ -5,6 +5,7 @@ import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { IGetOrderInfo } from '@model/index';
 import router from 'next/router';
+import { isNil } from 'lodash-es';
 
 interface IProps {
   orderList: IGetOrderInfo;
@@ -13,6 +14,7 @@ interface IProps {
 const OrderDashboard = ({ orderList }: IProps) => {
   const { reservedCount, preparingCount, deliveringCount, completedCount, canceledCount } = orderList;
   const total = reservedCount + preparingCount + deliveringCount + completedCount;
+
   return (
     <>
       <FlexCol>
