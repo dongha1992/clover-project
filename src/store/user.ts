@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { setCookie, removeCookie } from '@utils/common';
 import { userLoginApi } from '@api/user';
+import { isNull } from 'util';
 
 interface IMe {
   id: string;
@@ -32,6 +33,7 @@ export interface IUser {
   tempPasswordLogin: string;
   isLoginSuccess: boolean;
   signupUser: {
+    appleToken?: string | null;
     authCode?: string;
     birthDate?: string;
     email?: string;
@@ -74,6 +76,10 @@ export const user = createSlice({
       state.signupUser = { ...state.signupUser, ...payload };
     },
 
+    INIT_SIGNUP_USER: (state: any, action: PayloadAction) => {
+      state.signupUser = initialState.signupUser;
+    },
+
     SET_USER_AUTH: (state: any, { payload }: PayloadAction<any>) => {
       const accessTokenObj = {
         accessToken: payload.accessToken,
@@ -112,6 +118,7 @@ export const user = createSlice({
   extraReducers: {},
 });
 
-export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD } = user.actions;
+export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, INIT_SIGNUP_USER } =
+  user.actions;
 export const userForm = (state: AppState): IUser => state.user;
 export default user.reducer;
