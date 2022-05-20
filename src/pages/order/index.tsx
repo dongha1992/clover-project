@@ -198,7 +198,7 @@ const OrderPage = () => {
     {
       onSuccess: async (orderId: number) => {
         if (needCard) {
-          router.push({ pathname: '/order/finish', query: { orderId } });
+          router.push(`/order/finish?orderId=${orderId}`);
           setLoadingState(false);
           INIT_ORDER();
           INIT_CARD();
