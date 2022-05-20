@@ -11,8 +11,11 @@ import { SET_ALERT } from '@store/alert';
 import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
-import { userAuthTel, userConfirmTel } from '@api/user';
+import { userAuthTel, userConfirmTel, availabilityEmail } from '@api/user';
 import { IUser } from '@store/user';
+import Validation from '@components/Pages/User/Validation';
+import { IVaildation } from '@pages/signup/email-password';
+import { EMAIL_REGX } from '@pages/signup/email-password';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -28,9 +31,13 @@ const SignupAuthPage = () => {
   const [authCodeConfirm, setAuthCodeConfirm] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState<IUser['signupUser']>({});
 
-  const phoneNumberRef = useRef<HTMLInputElement>(null);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
+
+  const [emailValidation, setEmailValidataion] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
@@ -76,6 +83,40 @@ const SignupAuthPage = () => {
       setPhoneValidation(false);
     }
     setSignUpInfo({ ...signUpInfo, tel: value });
+  };
+
+  const emailInputHandler = (e: any) => {
+    const { value } = e.target;
+    setSignUpInfo({ ...signUpInfo, email: value });
+  };
+
+  const validEmailHandler = () => {
+    getAvailabilityEmail();
+
+    if (EMAIL_REGX.test(signupUser?.email!)) {
+      setEmailValidataion({ message: '', isValid: true });
+    } else {
+      setEmailValidataion({ message: '길이는 100자 이내입니다.', isValid: false });
+    }
+  };
+
+  const getAvailabilityEmail = async () => {
+    const email = signUpInfo.email!;
+    const {
+      data: { data: availability },
+    } = await availabilityEmail({ email });
+
+    if (availability) {
+      setEmailValidataion({
+        isValid: true,
+        message: '',
+      });
+    } else {
+      setEmailValidataion({
+        isValid: false,
+        message: '사용 중인 이메일 주소입니다.',
+      });
+    }
   };
 
   const getAuthTel = async () => {
@@ -148,15 +189,21 @@ const SignupAuthPage = () => {
     if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
+    const isApple = signUpInfo.loginType === 'APPLE';
 
     dispatch(
       SET_SIGNUP_USER({
         name: signUpInfo.name,
         tel: signUpInfo.tel,
         authCode: signUpInfo.authCode,
+        email: isApple ? signUpInfo.email : '',
       })
     );
-    router.push('/signup/email-password');
+    if (isApple) {
+      router.push('/signup/optional');
+    } else {
+      router.push('/signup/email-password');
+    }
   };
 
   useEffect(() => {
@@ -230,6 +277,23 @@ const SignupAuthPage = () => {
             )}
           </ConfirmWrapper>
         </PhoneNumberInputWrapper>
+        {signUpInfo.loginType === 'APPLE' && (
+          <EmailInputWrapper>
+            <TextH5B padding="0 0 9px 0">이메일</TextH5B>
+            <TextInput
+              name="email"
+              placeholder="이메일"
+              eventHandler={emailInputHandler}
+              value={signupUser.email ? signupUser.email : ''}
+              onBlur={validEmailHandler}
+            />
+            {!emailValidation.isValid ? (
+              <Validation>{emailValidation.message}</Validation>
+            ) : (
+              <SVGIcon name="confirmCheck" />
+            )}
+          </EmailInputWrapper>
+        )}
       </Wrapper>
       <NextBtnWrapper onClick={goToEmailAndPassword}>
         <Button disabled={!isAllValid} height="100%" borderRadius="0">
@@ -293,6 +357,16 @@ const NextBtnWrapper = styled.div`
 const TimerWrapper = styled.div`
   position: absolute;
   left: 60%;
+`;
+
+const EmailInputWrapper = styled.div`
+  position: relative;
+
+  > svg {
+    position: absolute;
+    right: 5%;
+    bottom: 25%;
+  }
 `;
 
 export default React.memo(SignupAuthPage);
