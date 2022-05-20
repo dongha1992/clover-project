@@ -88,7 +88,7 @@ const PAYMENT_METHOD = [
 ];
 
 const successOrderPath = '/order/finish';
-
+const kakaoSuccessOrderPath = '/order/kakao';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -198,7 +198,7 @@ const OrderPage = () => {
     {
       onSuccess: async (orderId: number) => {
         if (needCard) {
-          router.push({ pathname: '/order/finish', query: { orderId } });
+          router.push(`/order/finish?orderId=${orderId}`);
           setLoadingState(false);
           INIT_ORDER();
           INIT_CARD();
@@ -495,7 +495,7 @@ const OrderPage = () => {
 
   const processKakaoPay = async ({ orderId }: IProcessOrder) => {
     const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}?pg=kakao`,
+      successUrl: `${process.env.SERVICE_URL}${kakaoSuccessOrderPath}?orderId=${orderId}&pg=kakao`,
       cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
@@ -516,7 +516,7 @@ const OrderPage = () => {
   const processTossPay = async ({ orderId }: IProcessOrder) => {
     const reqBody = {
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}?pg=toss`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
     };
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
     window.location.href = data.data.checkoutPage;
