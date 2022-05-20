@@ -495,7 +495,7 @@ const OrderPage = () => {
 
   const processKakaoPay = async ({ orderId }: IProcessOrder) => {
     const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}${kakaoSuccessOrderPath}?orderId=${orderId}&pg=kakao`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
       cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };

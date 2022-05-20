@@ -32,11 +32,11 @@ interface IProps {
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = (props: any) => {
+const OrderFinishPage = () => {
   const router = useRouter();
-  // const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
 
-  const { orderId, pg_token } = router.query;
+  const { pg_token: pgToken, orderId, pg, payToken } = router.query;
   console.log(router.query, 'router.query');
 
   const { data: orderDetail, isLoading } = useQuery(
@@ -50,42 +50,43 @@ const OrderFinishPage = (props: any) => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!isPaymentSuccess,
     }
   );
 
-  // const checkPg = async () => {
-  //   try {
-  //     console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
-  //     if (pg === 'kakao') {
-  //       const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
-  //       if (pgToken && kakaoTid) {
-  //         const reqBody = { pgToken, tid: kakaoTid };
-  //         console.log(pgToken, kakaoTid, '!@#!@#!@#!');
-  //         const { data } = await postKakaoApproveApi({ orderId, data: reqBody });
-  //         console.log(data, 'AFTER KAKAO PAY');
-  //         if (data.code === 200) {
-  //           setIsPaymentSuccess(true);
-  //         }
-  //       } else {
-  //         // 카카오 결제 에러
-  //       }
-  //     } else if (pg === 'toss') {
-  //       if (payToken) {
-  //         const { data } = await postTossApproveApi({ orderId, payToken });
-  //         console.log(data, 'AFTER TOSS');
-  //         if (data.code === 200) {
-  //           setIsPaymentSuccess(true);
-  //         }
-  //       } else {
-  //         // 토스 페이 에러
-  //       }
-  //     } else {
-  //       setIsPaymentSuccess(true);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  const checkPg = async () => {
+    try {
+      console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
+      if (pg === 'kakao') {
+        const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+        if (pgToken && kakaoTid) {
+          const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
+          console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+          const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
+          console.log(data, 'AFTER KAKAO PAY');
+          if (data.code === 200) {
+            setIsPaymentSuccess(true);
+          }
+        } else {
+          // 카카오 결제 에러
+        }
+      } else if (pg === 'toss') {
+        // if (payToken) {
+        //   const { data } = await postTossApproveApi({ orderId: Number(orderId), payToken });
+        //   console.log(data, 'AFTER TOSS');
+        //   if (data.code === 200) {
+        //     setIsPaymentSuccess(true);
+        //   }
+        // } else {
+        //   // 토스 페이 에러
+        // }
+      } else {
+        setIsPaymentSuccess(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const goToOrderDetail = () => {
     router.push({ pathname: `/mypage/order-detail/${orderId}` });
@@ -253,12 +254,13 @@ const OrderFinishPage = (props: any) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, useEffect');
-  //   checkPg();
-  // }, [orderId]);
+  useEffect(() => {
+    if (router.query.orderId) {
+      checkPg();
+    }
+  }, [router.query]);
 
-  if (isLoading) {
+  if (isLoading && !isPaymentSuccess) {
     return <div>로딩중</div>;
   }
 
