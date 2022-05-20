@@ -5,7 +5,7 @@ import { TextB2R, TextB3R, TextH5B, TextH6B, TextH2B } from '@components/Shared/
 import BorderLine from '@components/Shared/BorderLine';
 import { FlexRow, FlexCol, theme, homePadding, fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -28,6 +28,10 @@ const SignupPage = () => {
   const [isAllMarketinngChecked, setIsAllMarketinngChecked] = useState(false);
 
   const dispatch = useDispatch();
+  const router = useRouter();
+
+  const isApple = router.query;
+  console.log(isApple, 'apppppllee');
 
   const isAllAgreed = checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
 

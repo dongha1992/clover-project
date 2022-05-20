@@ -87,6 +87,10 @@ const OnBoarding: NextPage = () => {
         // authorization: {
         //   code: string, id_token:string
         // }
+        if (data.authorization.id_token) {
+          // 애플 로그인 / 회원가입 호출?
+          router.replace('/signup?isApple=true');
+        }
       } catch (error: any) {
         console.log(`Error: ${error && error.error}`);
       }
