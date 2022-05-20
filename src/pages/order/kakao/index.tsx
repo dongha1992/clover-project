@@ -13,9 +13,8 @@ const KakaoPgPage = () => {
   console.log(router.query, 'router.query');
   const checkKakaoPg = async () => {
     try {
-      console.log(orderId, pgToken, 'orderId, pgToken, pg, payToken in fnc');
-
       const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+
       if (pgToken && kakaoTid) {
         const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
         console.log(pgToken, kakaoTid, '!@#!@#!@#!');
@@ -32,8 +31,10 @@ const KakaoPgPage = () => {
     }
   };
   useEffect(() => {
-    checkKakaoPg();
-  }, [router.query]);
+    if (router.query.pg_token) {
+      checkKakaoPg();
+    }
+  }, [router.query.pg_token]);
   return <div></div>;
 };
 
