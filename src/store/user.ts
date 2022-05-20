@@ -76,7 +76,7 @@ export const user = createSlice({
       state.signupUser = { ...state.signupUser, ...payload };
     },
 
-    INIT_SIGNUP_USER: (state: any, { payload }: any) => {
+    INIT_SIGNUP_USER: (state: any, action: PayloadAction) => {
       state.signupUser = initialState.signupUser;
     },
 
