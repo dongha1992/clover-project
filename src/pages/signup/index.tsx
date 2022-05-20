@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import { TextB2R, TextB3R, TextH5B, TextH6B, TextH2B } from '@components/Shared/Text';
@@ -29,9 +29,6 @@ const SignupPage = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-
-  const isApple = router.query.isApple ? true : false;
-  console.log(isApple, 'apppppllee');
 
   const isAllAgreed = checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
 
@@ -76,10 +73,10 @@ const SignupPage = () => {
       return;
     }
     const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
-
+    const loginType = router.query.isApple ? 'APPLE' : 'EMAIL';
     dispatch(
       SET_SIGNUP_USER({
-        loginType: 'EMAIL',
+        loginType,
         marketingEmailReceived: userAgreeMarketingTerm.includes(3),
         marketingSmsReceived: userAgreeMarketingTerm.includes(4),
       })

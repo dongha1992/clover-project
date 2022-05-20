@@ -90,6 +90,7 @@ const OnBoarding: NextPage = () => {
         if (data.authorization.id_token) {
           // 애플 로그인 / 회원가입 호출?
           router.replace('/signup?isApple=true');
+          localStorage.setItem('appleToken', '');
         }
       } catch (error: any) {
         console.log(`Error: ${error && error.error}`);
