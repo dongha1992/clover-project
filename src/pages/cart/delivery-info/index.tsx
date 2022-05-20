@@ -211,7 +211,11 @@ const DeliverInfoPage = () => {
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
-            router.push('/cart');
+            if (isSubscription) {
+              router.push('/subscription/set-info');
+            } else {
+              router.push('/cart');
+            }
           }
         } catch (error) {
           console.error(error);
@@ -596,5 +600,11 @@ const SettingBtnWrapper = styled.div`
   left: 0;
   width: 100%;
 `;
+
+export const getServerSideProps = async (context: any) => {
+  return {
+    props: {},
+  };
+};
 
 export default DeliverInfoPage;
