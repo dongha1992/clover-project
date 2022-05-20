@@ -7,7 +7,7 @@ import { SUBSCRIPTION_PERIOD } from '@constants/subscription';
 import { ISubsActiveDate, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { destinationForm, SET_DESTINATION } from '@store/destination';
+import { destinationForm, INIT_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { SET_SUBS_INFO_STATE, subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
@@ -22,7 +22,6 @@ import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 import { getOrderListsApi } from '@api/order';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
-const subsDeliveryType: any = 'SPOT';
 
 export interface IDestinationAddress {
   delivery: string | undefined;
@@ -34,6 +33,7 @@ const SubsSetInfoPage = () => {
   const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
+  const [subsDeliveryType, setSubsDeliveryType] = useState('PARCEL');
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
   const [spotMainDestination, setMainDestinationSpot] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
@@ -68,6 +68,7 @@ const SubsSetInfoPage = () => {
           };
 
           dispatch(SET_DESTINATION(destinationInfo));
+          dispatch(INIT_TEMP_DESTINATION());
           setMainDestinationSpot(data.data.name);
         }
       }
@@ -84,13 +85,15 @@ const SubsSetInfoPage = () => {
       type: 'GENERAL',
     };
     try {
-      if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+      if (['PARCEL', 'MORNING'].includes(subsDeliveryType! as string)) {
         if (userDestination) {
+          setSubsDeliveryType(userDestination.delivery!);
           setMainDestinationAddress({ delivery: userDestination.delivery, address: userDestination.location?.address });
         } else {
           const { data } = await getOrderListsApi(params);
           const filterData = data.data.orderDeliveries.filter((item) => ['PARCEL', 'MORNING'].includes(item.delivery));
           if (filterData) {
+            setSubsDeliveryType(filterData[0].delivery);
             setMainDestinationAddress({ delivery: filterData[0].delivery, address: filterData[0].location.address });
           }
         }
@@ -141,7 +144,7 @@ const SubsSetInfoPage = () => {
     <Container>
       <SubsDeliveryTypeAndLocation
         goToDeliveryInfo={goToDeliveryInfo}
-        subsDeliveryType={subsDeliveryType}
+        subsDeliveryType={subsDeliveryType!}
         spotMainDestination={spotMainDestination}
         mainDestinationAddress={mainDestinationAddress}
       />
