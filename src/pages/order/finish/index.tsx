@@ -37,6 +37,7 @@ const OrderFinishPage = () => {
   const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
 
   const { pg_token: pgToken, orderId, pg, payToken } = router.query;
+
   console.log(router.query, 'router.query');
 
   const { data: orderDetail, isLoading } = useQuery(
@@ -53,6 +54,8 @@ const OrderFinishPage = () => {
       enabled: !!isPaymentSuccess,
     }
   );
+
+  console.log(isLoading, isPaymentSuccess);
 
   const checkPg = async () => {
     try {
@@ -255,12 +258,13 @@ const OrderFinishPage = () => {
   };
 
   useEffect(() => {
+    console.log(router.query.orderId, '(router.query.orderId in useEffect');
     if (router.query.orderId) {
       checkPg();
     }
-  }, [router.query]);
+  }, [router.query.orderId]);
 
-  if (isLoading && !isPaymentSuccess) {
+  if (isLoading || !isPaymentSuccess) {
     return <div>로딩중</div>;
   }
 
