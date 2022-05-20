@@ -189,15 +189,21 @@ const SignupAuthPage = () => {
     if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
+    const isApple = signUpInfo.loginType === 'APPLE';
 
     dispatch(
       SET_SIGNUP_USER({
         name: signUpInfo.name,
         tel: signUpInfo.tel,
         authCode: signUpInfo.authCode,
+        email: isApple ? signUpInfo.email : '',
       })
     );
-    router.push('/signup/email-password');
+    if (isApple) {
+      router.push('/signup/optional');
+    } else {
+      router.push('/signup/email-password');
+    }
   };
 
   useEffect(() => {
