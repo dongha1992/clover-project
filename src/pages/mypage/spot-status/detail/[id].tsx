@@ -325,7 +325,7 @@ const FlexWrapper = styled.div`
 const Dot = styled.span`
   padding-top: 1px;
   color: ${theme.greyScale65}
-`
+`;
 
 const FixedButton = styled.section`
   ${fixedBottom};

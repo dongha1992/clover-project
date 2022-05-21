@@ -17,20 +17,25 @@ import { Tag } from '@components/Shared/Tag';
 import { getAvailabilityDestinationApi } from '@api/destination';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
+import { getRegistrationSearch } from '@api/spot';
+import { ISpotsDetail } from '@model/index';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SpotRegisterSheet } from '@components/BottomSheet/SpotRegisterSheet';
 
 /* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { type } = router.query;
   const addressRef = useRef<HTMLInputElement>(null);
-  const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
+  const [resultAddress, setResultAddress] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState(false);
   const [page, setPage] = useState<number>(1);
   const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState('');
-  const { type } = router.query;
+  const [spotRegistration, setSpotRegistration] = useState<ISpotsDetail[]>([]);
 
   const setCurrentLoc = (location: string) => {
     const locationInfoMsg = `${location}(으)로
@@ -141,9 +146,68 @@ const LocationPage = () => {
     }
   };
 
-  const goToMapScreen = (address: IJuso): void => {
-    dispatch(SET_LOCATION_TEMP(address));
-    checkAvailableDeliverySpots(address);
+  const getSpotRegistrationSearch = async (i: IJuso) => {
+    const params  = {
+      address: i?.roadAddrPart1,
+    };
+    try {
+      const { data } = await getRegistrationSearch(params);
+      setSpotRegistration(data.data.spotRegistrations);
+
+      // 스팟 신청서 목록이 존재
+      if (!!data.data.spotRegistrations.length) {
+        // console.log(!!data.data.spotRegistrations.length, data.data.spotRegistrations.length);
+
+        const finderType = (types: string) => {
+            return data.data.spotRegistrations.find(i=> i.type === types);
+        };
+        
+        switch(type) {
+          case 'private':
+            if(!!finderType('PRIVATE')){
+              return (
+                dispatch(
+                  SET_BOTTOM_SHEET({
+                    content: <SpotRegisterSheet items={finderType('PRIVATE')} type={'private'} />,
+                  })
+                )
+              )  
+            } 
+          case 'public':
+            if(!!finderType('PUBLIC')){
+              return (
+                dispatch(
+                  SET_BOTTOM_SHEET({
+                    content: <SpotRegisterSheet items={finderType('PUBLIC')} type={'public'} />,
+                  })
+                )
+              )  
+            }
+          case 'owner':
+            if(!!finderType('OWNER')){
+              return (
+                dispatch(
+                  SET_ALERT({
+                    alertMessage: '해당 주소에 이미 신청 중인\n프코스팟이 있어요!',
+                    submitBtnText: '확인',
+                  })
+                )      
+              )  
+            }
+        }
+      } else {
+        // 스팟 신청 목록이 존재하지 않는 경우
+        checkAvailableDeliverySpots(i)
+      }
+    } catch(e) {
+      console.error(e);
+    };
+  }
+
+  const goToMapScreen = (i: IJuso): void => {
+    dispatch(SET_LOCATION_TEMP(i));
+    getSpotRegistrationSearch(i);
+    // checkAvailableDeliverySpots(address);
   };
 
   useEffect(() => {
