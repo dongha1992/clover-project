@@ -611,6 +611,18 @@ export interface ISpotRegistrationsResponse {
   };
 }
 
+export interface IGetRegistrationSearchResponse {
+  code: number;
+  message: string;
+  data: {
+    pagination: IPagination;
+    spotRegistrations: ISpotsDetail[];
+    subTitle: string;
+    title: string;
+  }
+}
+
+
 /* CARD */
 export interface IRegisterCardResponse {
   code: number;
@@ -772,8 +784,8 @@ type TSPpotRegistrationsStep =
 
 export interface IGetRegistrationStatus {
   coordinate: {
-    lat: number | null;
-    lon: number | null;
+    lat: number;
+    lon: number;
   };
   location: {
     address?: string | null;

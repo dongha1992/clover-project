@@ -26,7 +26,7 @@ const SpotReqPage = () => {
     ownerText: `${spotCount! + 1}번째 프코스팟의\n파트너가 되어보세요.`,
     ownerDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
     askText: '프코스팟 신청이 어려우신가요?',
-    askBtnText: '문의하기',
+    askBtnText: '채팅 문의',
     registerBtn: '프코스팟 신청하기',
   };
   const { type } = router.query;
