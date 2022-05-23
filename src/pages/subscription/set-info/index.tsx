@@ -13,7 +13,7 @@ import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import axios from 'axios';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -30,23 +30,37 @@ export interface IDestinationAddress {
 
 const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDeliveryType, setSubsDeliveryType] = useState('SPOT');
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>();
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
 
+  const mapper: Obj = {
+    MORNING: '새벽배송',
+    PARCEL: '택배배송',
+  };
+
   useEffect(() => {
-    getSpotMainDestination();
-    getRecentOrderDestination();
-  }, []);
+    if (router.isReady) {
+      setSubsDeliveryType(router.query?.subsDeliveryType);
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if (subsDeliveryType) {
+      getSpotMainDestination();
+      getRecentOrderDestination();
+    }
+  }, [, subsDeliveryType]);
 
   const getSpotMainDestination = async () => {
     try {
       if (subsDeliveryType === 'SPOT') {
-        if (userDestination?.delivery === 'SPOT') {
+        if ((userDestination?.delivery === 'spot' || userDestination?.delivery === 'SPOT') && userDestination) {
           setSpotMainDestination(userDestination.name);
         } else {
           const { data } = await getMainDestinationsApi({
@@ -77,6 +91,7 @@ const SubsSetInfoPage = () => {
       }
     } catch (err) {
       console.log(err);
+      setSpotMainDestination('픽업장소를 설정해 주세요');
     }
   };
 
@@ -92,23 +107,27 @@ const SubsSetInfoPage = () => {
         if (['PARCEL', 'MORNING'].includes(userDestination?.delivery! as string)) {
           setSubsDeliveryType(userDestination?.delivery!);
           setMainDestinationAddress({
-            delivery: userDestination?.delivery,
+            delivery: mapper[userDestination?.delivery!],
             address: userDestination?.location?.address,
           });
         } else {
-          const { data } = await getOrderListsApi(params);
-
-          const filterData = data.data.orderDeliveries.filter((item) => ['PARCEL', 'MORNING'].includes(item.delivery));
+          const res = await getOrderListsApi(params);
+          const filterData = res.data.data.orderDeliveries.filter((item) =>
+            ['PARCEL', 'MORNING'].includes(item.delivery)
+          );
           if (filterData) {
             setSubsDeliveryType(filterData[0].delivery);
-            setMainDestinationAddress({ delivery: filterData[0].delivery, address: filterData[0].location.address });
+            setMainDestinationAddress({
+              delivery: mapper[filterData[0].delivery],
+              address: filterData[0].location.address,
+            });
           } else {
             setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
           }
         }
       }
     } catch (err) {
-      console.log(err);
+      setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
     }
   };
 
@@ -267,4 +286,10 @@ const BottomButton = styled.button`
     color: ${theme.greyScale25};
   }
 `;
+
+// export async function getServerSideProps(context: any) {
+//   return {
+//     props: {},
+//   };
+// }
 export default SubsSetInfoPage;
