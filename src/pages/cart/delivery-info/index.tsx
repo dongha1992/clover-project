@@ -162,7 +162,7 @@ const DeliverInfoPage = () => {
       dispatch(INIT_AVAILABLE_DESTINATION());
 
       if (isSubscription) {
-        router.push('/subscription/set-info');
+        router.push({ pathname: '/subscription/set-info', query: { subsDeliveryType: subsDeliveryType } });
       } else {
         router.push('/cart');
       }
@@ -212,7 +212,7 @@ const DeliverInfoPage = () => {
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
             if (isSubscription) {
-              router.push('/subscription/set-info');
+              router.push({ pathname: '/subscription/set-info', query: { subsDeliveryType: subsDeliveryType } });
             } else {
               router.push('/cart');
             }
