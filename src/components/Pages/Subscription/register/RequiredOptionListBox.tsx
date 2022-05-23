@@ -21,7 +21,7 @@ const RequiredOptionListBox = ({ list }: IProps) => {
   const mainMenuChangeHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsMenuSheet type="required" />,
+        content: <SubsMenuSheet type="required" buttonType="change" />,
       })
     );
   };
