@@ -232,7 +232,7 @@ const SubsRegisterPage = () => {
         />
       </CalendarBox>
 
-      <SelectDateInfoBox selectCount={selectCount} selectDate={selectDate} />
+      <SelectDateInfoBox selectCount={selectCount} selectDate={selectDate} disposable={disposable} />
 
       <DisposableAddBox>
         <TextH4B className="title">일회용품 추가</TextH4B>
@@ -302,22 +302,25 @@ const SubsRegisterPage = () => {
             <ReceiptLi className="btB" padding="16px 0 0">
               <TextH5B>환경부담금 (일회용품)</TextH5B>
               <TextB2R>
-                {allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity!}개 /{' '}
-                {getFormatPrice(String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!))}원
+                {disposable ? allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity! : 0}개 /{' '}
+                {disposable
+                  ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!))
+                  : 0}
+                원
               </TextB2R>
             </ReceiptLi>
             <ReceiptLi>
               <TextB2R>물티슈</TextB2R>
               <TextB2R>
-                {allMenuPriceInfo?.menuOption1.quantity}개 /{' '}
-                {getFormatPrice(String(allMenuPriceInfo?.menuOption1.price))}원
+                {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
+                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
               </TextB2R>
             </ReceiptLi>
             <ReceiptLi>
               <TextB2R>수저</TextB2R>
               <TextB2R>
-                {allMenuPriceInfo?.menuOption2.quantity}개 /{' '}
-                {getFormatPrice(String(allMenuPriceInfo?.menuOption2.price))}원
+                {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
+                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
               </TextB2R>
             </ReceiptLi>
           </ReceiptUl>
