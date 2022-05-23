@@ -13,7 +13,7 @@ import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import axios from 'axios';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -30,12 +30,11 @@ export interface IDestinationAddress {
 
 const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>(
-    router.query?.subsDeliveryType
-  );
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>();
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
@@ -46,16 +45,22 @@ const SubsSetInfoPage = () => {
   };
 
   useEffect(() => {
+    if (router.isReady) {
+      setSubsDeliveryType(router.query?.subsDeliveryType);
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
     if (subsDeliveryType) {
       getSpotMainDestination();
       getRecentOrderDestination();
     }
-  }, []);
+  }, [, subsDeliveryType]);
 
   const getSpotMainDestination = async () => {
     try {
       if (subsDeliveryType === 'SPOT') {
-        if (userDestination?.delivery === 'SPOT') {
+        if ((userDestination?.delivery === 'spot' || userDestination?.delivery === 'SPOT') && userDestination) {
           setSpotMainDestination(userDestination.name);
         } else {
           const { data } = await getMainDestinationsApi({
@@ -86,6 +91,7 @@ const SubsSetInfoPage = () => {
       }
     } catch (err) {
       console.log(err);
+      setSpotMainDestination('픽업장소를 설정해 주세요');
     }
   };
 
@@ -281,9 +287,9 @@ const BottomButton = styled.button`
   }
 `;
 
-export async function getServerSideProps(context: any) {
-  return {
-    props: {},
-  };
-}
+// export async function getServerSideProps(context: any) {
+//   return {
+//     props: {},
+//   };
+// }
 export default SubsSetInfoPage;
