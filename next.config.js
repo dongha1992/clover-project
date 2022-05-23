@@ -36,6 +36,6 @@ module.exports = () => {
       NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_KEY,
       SERVICE_URL: process.env.SERVICE_URL,
     },
-    generateBuildId: () => nextBuildId({ dir: __dirname }),
+    generateBuildId: async () => 'constant-build-id',
   };
 };
