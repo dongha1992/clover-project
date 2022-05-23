@@ -16,7 +16,11 @@ import MenuItem from './MenuItem';
 import { OptionContainer } from './RequiredOptionList';
 import SelectOptionItem from './SelectOptionItem';
 
-const SelectOptionList = () => {
+interface IProps {
+  buttonType: string;
+  selectId?: number;
+}
+const SelectOptionList = ({ buttonType, selectId }: IProps) => {
   const dispatch = useDispatch();
   const { subsOrderMenus, subsCalendarSelectMenu } = useSelector(subscriptionForm);
 
@@ -25,13 +29,16 @@ const SelectOptionList = () => {
     const orderMenus = cloneDeep(subsOrderMenus);
 
     selectMenu?.menuTableItems.map((item) => {
+      if (buttonType === 'change' && item.id === selectId) {
+        item.selected = false;
+        item.count = 0;
+      }
       if (item.id === id) {
         item.selected = true;
-        item.count ? (item.count = item.count + 1) : (item.count = 1);
+        item.count = 1;
       }
       return item;
     });
-    console.log('dfdsfdsf', selectMenu);
 
     orderMenus?.map((item) => {
       if (item.deliveryDate === selectMenu?.deliveryDate) {
@@ -51,7 +58,15 @@ const SelectOptionList = () => {
         {subsCalendarSelectMenu &&
           subsCalendarSelectMenu?.menuTableItems?.map(
             (item: IMenuTableItems) =>
-              item.main === false && <MenuItem item={item} key={item.id} menuSelectHandler={menuSelectHandler} />
+              item.main === false && (
+                <MenuItem
+                  item={item}
+                  key={item.id}
+                  menuSelectHandler={menuSelectHandler}
+                  buttonState={item.selected ? false : true}
+                  buttonType={buttonType}
+                />
+              )
           )}
       </MenuUl>
     </OptionContainer>

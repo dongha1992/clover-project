@@ -93,7 +93,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
   const selectOptionAddHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsMenuSheet type="select" />,
+        content: <SubsMenuSheet type="select" buttonType="select" />,
       })
     );
   };

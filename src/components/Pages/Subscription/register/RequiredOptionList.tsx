@@ -48,7 +48,15 @@ const RequiredOptionList = () => {
         {subsCalendarSelectMenu &&
           subsCalendarSelectMenu?.menuTableItems?.map(
             (item: IMenuTableItems) =>
-              item.main && <MenuItem item={item} key={item.id} menuSelectHandler={menuSelectHandler} />
+              item.main && (
+                <MenuItem
+                  item={item}
+                  key={item.id}
+                  menuSelectHandler={menuSelectHandler}
+                  buttonType="change"
+                  buttonState={item.selected ? false : true}
+                />
+              )
           )}
       </MenuUl>
     </OptionContainer>

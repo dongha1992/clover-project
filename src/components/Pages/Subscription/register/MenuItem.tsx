@@ -8,8 +8,10 @@ import styled from 'styled-components';
 interface IProps {
   item: any;
   menuSelectHandler: (id: number) => void;
+  buttonState?: boolean;
+  buttonType?: string;
 }
-const MenuItem = ({ item, menuSelectHandler }: IProps) => {
+const MenuItem = ({ item, menuSelectHandler, buttonState = true, buttonType }: IProps) => {
   return (
     <MenuLi>
       <MenuImgBox>
@@ -31,12 +33,14 @@ const MenuItem = ({ item, menuSelectHandler }: IProps) => {
           <div className="line"></div>
           <TextB2R>{item.count ? item.count : 1}개</TextB2R>
           <button
+            disabled={buttonState ? false : true}
             className="changeBtn"
             onClick={() => {
               menuSelectHandler(item.id);
             }}
           >
-            선택
+            {buttonType === 'select' && '선택'}
+            {buttonType === 'change' && '변경'}
           </button>
         </div>
       </MenuTextBox>
