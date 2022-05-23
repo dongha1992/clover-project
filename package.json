@@ -23,7 +23,6 @@
     "lodash-es": "^4.17.21",
     "mobile-detect": "^1.4.5",
     "next": "12.0.2",
-    "next-build-id": "^3.0.0",
     "next-cookies": "^2.0.3",
     "next-redux-wrapper": "^7.0.5",
     "pm2": "^5.2.0",
