@@ -11,12 +11,14 @@ import { CloseBtn, Container, Header } from './SubsDeliveryChangeSheet';
 
 interface IProps {
   type: string; // required , select
+  buttonType: string;
+  selectId?: number;
 }
 
 const RequiredOptionList = dynamic(() => import('@components/Pages/Subscription/register/RequiredOptionList'));
 const SelectOptionList = dynamic(() => import('@components/Pages/Subscription/register/SelectOptionList'));
 
-const SubsMenuSheet = ({ type }: IProps) => {
+const SubsMenuSheet = ({ type, buttonType, selectId }: IProps) => {
   const mapper: Obj = {
     required: { title: '필수옵션 변경', text: '메뉴를 변경하면 할인금액이 변경될 수 있습니다.' },
     select: { title: '선택옵션 추가', text: '선택옵션 추가 상품은 선택한 날짜에만 추가됩니다.' },
@@ -42,7 +44,7 @@ const SubsMenuSheet = ({ type }: IProps) => {
         </TextB2R>
       </FlexRow>
       {type === 'required' && <RequiredOptionList />}
-      {type === 'select' && <SelectOptionList />}
+      {type === 'select' && <SelectOptionList buttonType={buttonType} selectId={selectId} />}
     </Container>
   );
 };

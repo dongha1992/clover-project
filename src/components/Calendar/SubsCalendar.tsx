@@ -63,7 +63,12 @@ const SubsCalendar = ({
 
   useEffect(() => {
     if (subsDeliveryExpectedDate) {
-      setValue(new Date(subsDeliveryExpectedDate[0].deliveryDate));
+      // 선택한 날짜가 이미 있다면 선택한 날짜로 캘린더 선택
+      if (subsCalendarSelectMenu) {
+        setValue(new Date(subsCalendarSelectMenu.deliveryDate));
+      } else {
+        setValue(new Date(subsDeliveryExpectedDate[0].deliveryDate));
+      }
       setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate));
     }
   }, [subsDeliveryExpectedDate]);
