@@ -33,14 +33,23 @@ const SubsSetInfoPage = () => {
   const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDeliveryType, setSubsDeliveryType] = useState('SPOT');
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>(
+    router.query?.subsDeliveryType
+  );
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
 
+  const mapper: Obj = {
+    MORNING: '새벽배송',
+    PARCEL: '택배배송',
+  };
+
   useEffect(() => {
-    getSpotMainDestination();
-    getRecentOrderDestination();
+    if (subsDeliveryType) {
+      getSpotMainDestination();
+      getRecentOrderDestination();
+    }
   }, []);
 
   const getSpotMainDestination = async () => {
@@ -92,23 +101,27 @@ const SubsSetInfoPage = () => {
         if (['PARCEL', 'MORNING'].includes(userDestination?.delivery! as string)) {
           setSubsDeliveryType(userDestination?.delivery!);
           setMainDestinationAddress({
-            delivery: userDestination?.delivery,
+            delivery: mapper[userDestination?.delivery!],
             address: userDestination?.location?.address,
           });
         } else {
-          const { data } = await getOrderListsApi(params);
-
-          const filterData = data.data.orderDeliveries.filter((item) => ['PARCEL', 'MORNING'].includes(item.delivery));
+          const res = await getOrderListsApi(params);
+          const filterData = res.data.data.orderDeliveries.filter((item) =>
+            ['PARCEL', 'MORNING'].includes(item.delivery)
+          );
           if (filterData) {
             setSubsDeliveryType(filterData[0].delivery);
-            setMainDestinationAddress({ delivery: filterData[0].delivery, address: filterData[0].location.address });
+            setMainDestinationAddress({
+              delivery: mapper[filterData[0].delivery],
+              address: filterData[0].location.address,
+            });
           } else {
             setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
           }
         }
       }
     } catch (err) {
-      console.log(err);
+      setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
     }
   };
 
@@ -267,4 +280,10 @@ const BottomButton = styled.button`
     color: ${theme.greyScale25};
   }
 `;
+
+export async function getServerSideProps(context: any) {
+  return {
+    props: {},
+  };
+}
 export default SubsSetInfoPage;
