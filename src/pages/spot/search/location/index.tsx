@@ -156,7 +156,7 @@ const SpotLocationPage = (): ReactElement => {
         </FlexEnd>
       </Wrapper>
       <MapWrapper>
-        <Map zoom={17} centerLat={area[2].lat} centerLng={area[2].lng} />
+        <Map zoom={17} centerLat={Number(area[2].lat)} centerLng={Number(area[2].lng)} />
         <SpotListWrapper>
           <SpotListSlider {...setting}>
             {RECENT_SPOT.map((item: any, index) => (

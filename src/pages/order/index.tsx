@@ -495,7 +495,7 @@ const OrderPage = () => {
 
   const processKakaoPay = async ({ orderId }: IProcessOrder) => {
     const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}${kakaoSuccessOrderPath}?orderId=${orderId}&pg=kakao`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
       cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
@@ -505,11 +505,11 @@ const OrderPage = () => {
     try {
       const { data } = await postKakaoPaymentApi({ orderId, data: reqBody });
       console.log(data, 'RESPONSE');
-      window.location.href = data.data.next_redirect_pc_url;
       setCookie({
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
+      window.location.href = data.data.next_redirect_pc_url;
     } catch (error) {}
   };
 

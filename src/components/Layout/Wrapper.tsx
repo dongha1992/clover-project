@@ -145,7 +145,7 @@ const Left = styled.div`
 `;
 
 const Main = styled.main`
-  margin: 56px 0;
+  margin: 56px 0 0 0;
 `;
 
 export default Wrapper;
