@@ -33,9 +33,9 @@ const SubsSetInfoPage = () => {
   const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDeliveryType, setSubsDeliveryType] = useState('PARCEL');
+  const [subsDeliveryType, setSubsDeliveryType] = useState('SPOT');
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
-  const [spotMainDestination, setMainDestinationSpot] = useState<string | undefined>();
+  const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
 
   useEffect(() => {
@@ -46,30 +46,33 @@ const SubsSetInfoPage = () => {
   const getSpotMainDestination = async () => {
     try {
       if (subsDeliveryType === 'SPOT') {
-        if (userDestination) {
-          setMainDestinationSpot(userDestination.name);
+        if (userDestination?.delivery === 'SPOT') {
+          setSpotMainDestination(userDestination.name);
         } else {
           const { data } = await getMainDestinationsApi({
             delivery: 'SPOT',
           });
 
-          const pickUpTime = `${data.data.spotPickup?.spot.lunchDeliveryStartTime}-${data.data.spotPickup?.spot.lunchDeliveryEndTime} / ${data.data.spotPickup?.spot.dinnerDeliveryStartTime}-${data.data.spotPickup?.spot.dinnerDeliveryEndTime}`;
+          if (data.data) {
+            const pickUpTime = `${data.data.spotPickup?.spot.lunchDeliveryStartTime}-${data.data.spotPickup?.spot.lunchDeliveryEndTime} / ${data.data.spotPickup?.spot.dinnerDeliveryStartTime}-${data.data.spotPickup?.spot.dinnerDeliveryEndTime}`;
 
-          const destinationInfo = {
-            id: data.data.id,
-            name: data.data.name,
-            location: data.data.location,
-            main: false,
-            availableTime: pickUpTime,
-            spaceType: data.data.spaceType,
-            spotPickupId: data.data.spotPickup?.id,
-            closedDate: data.data.spotPickup?.spot.closedDate,
-            delivery: 'spot',
-          };
-
-          dispatch(SET_DESTINATION(destinationInfo));
-          dispatch(INIT_TEMP_DESTINATION());
-          setMainDestinationSpot(data.data.name);
+            const destinationInfo = {
+              id: data.data.id,
+              name: data.data.name,
+              location: data.data.location,
+              main: false,
+              availableTime: pickUpTime,
+              spaceType: data.data.spaceType,
+              spotPickupId: data.data.spotPickup?.id,
+              closedDate: data.data.spotPickup?.spot.closedDate,
+              delivery: 'spot',
+            };
+            dispatch(SET_DESTINATION(destinationInfo));
+            dispatch(INIT_TEMP_DESTINATION());
+            setSpotMainDestination(data.data.name);
+          } else {
+            setSpotMainDestination('픽업장소를 설정해 주세요');
+          }
         }
       }
     } catch (err) {
@@ -86,15 +89,21 @@ const SubsSetInfoPage = () => {
     };
     try {
       if (['PARCEL', 'MORNING'].includes(subsDeliveryType! as string)) {
-        if (userDestination) {
-          setSubsDeliveryType(userDestination.delivery!);
-          setMainDestinationAddress({ delivery: userDestination.delivery, address: userDestination.location?.address });
+        if (['PARCEL', 'MORNING'].includes(userDestination?.delivery! as string)) {
+          setSubsDeliveryType(userDestination?.delivery!);
+          setMainDestinationAddress({
+            delivery: userDestination?.delivery,
+            address: userDestination?.location?.address,
+          });
         } else {
           const { data } = await getOrderListsApi(params);
+
           const filterData = data.data.orderDeliveries.filter((item) => ['PARCEL', 'MORNING'].includes(item.delivery));
           if (filterData) {
             setSubsDeliveryType(filterData[0].delivery);
             setMainDestinationAddress({ delivery: filterData[0].delivery, address: filterData[0].location.address });
+          } else {
+            setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
           }
         }
       }

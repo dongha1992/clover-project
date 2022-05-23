@@ -23,12 +23,13 @@ const SubsDeliveryTypeAndLocation = ({
     MORNING: '새벽배송',
     PARCEL: '택배배송',
   };
+
   return (
     <Container onClick={goToDeliveryInfo}>
       {subsDeliveryType === 'SPOT' && (
         <Left>
           <TextH4B>스팟배송</TextH4B>
-          <TextH4B>{spotMainDestination ? spotMainDestination : '픽업장소를 설정해 주세요'}</TextH4B>
+          <TextH4B>{spotMainDestination ? spotMainDestination : <SkeletonBox />}</TextH4B>
           <TextB3R color={theme.greyScale65} padding="8px 0 0">
             배송방법이 제한된 상품입니다.
           </TextB3R>
@@ -36,8 +37,8 @@ const SubsDeliveryTypeAndLocation = ({
       )}
       {['PARCEL', 'MORNING'].includes(subsDeliveryType) && (
         <Left>
-          <TextH4B>{mainDestinationAddress ? mapper[mainDestinationAddress.delivery!] : '배송방법'}</TextH4B>
-          <TextH4B>{mainDestinationAddress ? mainDestinationAddress.address : '배송지를 설정해 주세요'}</TextH4B>
+          <TextH4B>{mainDestinationAddress ? mapper[mainDestinationAddress.delivery!] : <SkeletonBox />}</TextH4B>
+          <TextH4B>{mainDestinationAddress ? mainDestinationAddress.address : <SkeletonBox />}</TextH4B>
           <TextB3R color={theme.greyScale65} padding="8px 0 0">
             배송방법이 제한된 상품입니다.
           </TextB3R>
@@ -61,5 +62,10 @@ const Left = styled.div`
 `;
 const Right = styled.div`
   align-self: center;
+`;
+const SkeletonBox = styled.div`
+  height: 24px;
+  width: 100%;
+  background-color: #fff;
 `;
 export default SubsDeliveryTypeAndLocation;
