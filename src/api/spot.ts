@@ -9,14 +9,22 @@ import {
   ISpotRegistrationsResponse,
   IParamsSpotRegisterationsOptios,
   ISpotRegisterationsOptiosResponse,
-  IEditRegistration,
+  IGetRegistrationStatus,
   IPostRegistrationResponse,
   IGetDestinationsRequest,
   IGetSpotsRegistrationsStatusResponse,
   ISpotWishListResponse,
   IGetSpotFilterResponse,
+  IGetSpotsRegistrationsStatusDetailResponse,
+  IResponse,
+  IGetRegistrationSearchResponse,
   IGetSpotPickupsResponse,
 } from '@model/index';
+
+// 스팟 정보 조회
+export const getSpotInfo = (): Promise<AxiosResponse<ISpotsInfoResponse>> => {
+  return Api.get('/spot/v1/info');
+};
 
 //신규 스팟
 export const getNewSpots = (params: IParamsSpots): Promise<AxiosResponse<ISpotsResponse>> => {
@@ -43,6 +51,7 @@ export const getSpotSearchRecommend = (params: IParamsSpots): Promise<AxiosRespo
   return Api.get('/spot/v1/spots/nearby', { params });
 };
 
+// 스팟 검색 결과
 export const getSpotSearch = (params: IParamsSpots): Promise<AxiosResponse<ISpotsResponse>> => {
   return Api.get('/spot/v1/spots/search', { params });
 };
@@ -52,6 +61,7 @@ export const getSpotPopular = (params: IParamsSpots): Promise<AxiosResponse<ISpo
   return Api.get('/spot/v1/spots/popular', { params });
 };
 
+// 스팟 상세 스토리 목록 조회
 export const getSpotsDetailStory = (id: number, page: number): Promise<AxiosResponse<ISpotDetailStoriesResponse>> => {
   return Api.get(`/spot/v1/spots/${id}/stories`, { params: { id, page } });
 };
@@ -86,11 +96,6 @@ export const deleteSpotLike = (id: number): Promise<AxiosResponse<ISpotsResponse
   return Api.delete(`/spot/v1/spots/${id}/like`, { params: id });
 };
 
-// 스팟 정보 조회
-export const getInfo = (): Promise<AxiosResponse<ISpotsInfoResponse>> => {
-  return Api.get('/spot/v1/info');
-};
-
 // 근처 스팟 등록 신청 목록 조회
 export const getSpotRegistrationsRecruiting = (
   params: IParamsSpots
@@ -112,7 +117,7 @@ export const getSpotRegisterationsOption = (
 
 //스팟 신청서 제출
 export const postSpotsRegistrationsInfoSubmit = (
-  data: IEditRegistration
+  data: IGetRegistrationStatus
 ): Promise<AxiosResponse<IPostRegistrationResponse>> => {
   return Api.post(`/spot/v1/registrations`, data);
 };
@@ -122,6 +127,21 @@ export const getSpotsRegistrationStatus = (
   params: IGetDestinationsRequest
 ): Promise<AxiosResponse<IGetSpotsRegistrationsStatusResponse>> => {
   return Api.get(`/spot/v1/registrations`, { params });
+};
+
+// 스팟 신청 현황 상세
+export const getSpotsRegistrationStatusDetail = ( id: number): Promise<AxiosResponse<IGetSpotsRegistrationsStatusDetailResponse>> => {
+  return Api.get(`/spot/v1/registrations/${id}`, { params: id });
+};
+
+// 스팟 등록 재신청
+export const postSpotsRegistrationsRetrial = ( id: number): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`/spot/v1/registrations/${id}/retrial`, { params: id });
+};
+
+// 스팟 등록 신청 목록 조회
+export const getRegistrationSearch = ( address: any ): Promise<AxiosResponse<IGetRegistrationSearchResponse>> => {
+  return Api.get('/spot/v1/registrations/search', {params: address} );
 };
 
 // 찜한 스팟

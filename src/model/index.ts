@@ -472,8 +472,8 @@ export interface IKakaoLatLon {
 
 /* SPOT */
 export interface IParamsSpots {
-  latitude: number | null;
-  longitude: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
   page?: number;
   size?: number;
   keyword?: string;
@@ -650,31 +650,10 @@ export interface ISpotDetailStoriesResponse {
 
 export interface ISpotsInfo {
   spotCount: number;
-  unsubmitSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  recruitingSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  confirmSpotRegistrations: [
-    {
-      id: number;
-      placeName: string;
-      recruitingCount: number;
-      orderUserCount: number;
-    }
-  ];
-  trialSpotRegistrations: [];
+  canOwnerSpotRegistraion: boolean;
+  canPrivateSpotRegistration: boolean;
+  canPublicSpotRegistraion: boolean;
+  trialSpotRegistration: IGetRegistrationStatus;
 }
 
 export interface ISpotsInfoResponse {
@@ -690,6 +669,18 @@ export interface ISpotRegistrationsResponse {
     spotRegistrations: ISpotsDetail[];
   };
 }
+
+export interface IGetRegistrationSearchResponse {
+  code: number;
+  message: string;
+  data: {
+    pagination: IPagination;
+    spotRegistrations: ISpotsDetail[];
+    subTitle: string;
+    title: string;
+  }
+}
+
 
 export interface IGetSpotPickupsResponse {
   code: number;
@@ -827,15 +818,6 @@ export interface ISpotRegisterationsOptiosResponse {
   data: ISpotRegisterationsOpstions;
 }
 
-export type TSpotPickupType =
-  | 'COMMUNAL_FRIDGE'
-  | 'COMMUNAL_TABLE'
-  | 'DELIVERY_LOCATION'
-  | 'DOCUMENT_ROOM'
-  | 'ETC'
-  | 'FRONT_DESK'
-  | 'OFFICE_DOOR';
-
 export type TPlaceType =
   | 'BOOKSTORE'
   | 'CAFE'
@@ -859,7 +841,13 @@ type TDistanceUnit =
   | 'NAUTICALMILES'
   | 'YARD';
 
-export interface IEditRegistration {
+type TSPpotRegistrationsStep = 
+  | 'CONFIRM'
+  | 'RECRUITING'
+  | 'TRIAL'
+  | 'OPEN';
+
+export interface IGetRegistrationStatus {
   coordinate: {
     lat: number;
     lon: number;
@@ -871,16 +859,43 @@ export interface IEditRegistration {
     zipCode?: string | null;
   };
   lunchTime?: string;
-  pickupType?: TSpotPickupType;
+  pickupType?: string;
   placeName?: string | null;
   placeType?: TPlaceType;
   placeTypeDetail?: string | null;
   pickupTypeDetail?: string | null;
-  type?: TSpotRegisterationsOptiosType | string;
+  type?: string;
   userEmail: string;
   userName: string;
   userPosition?: string | null;
   userTel: string;
+  id?: number;
+  step?: TSPpotRegistrationsStep;
+  rejected?: boolean;
+  createdAt?: string;
+  recruited?: boolean;
+  recruitingCount?: number;
+  distanceUnit?: string;
+  image?: {
+    createdAt: string;
+    height: number;
+    id: number;
+    name: string;
+    originalName: string;
+    size: number;
+    url: string;
+    width: number;
+  };
+  rejectedAt?: string;
+  rejectionMessage?: string;
+  rejectionType?: string;
+  spotId?: number;
+  trialEndedAt?: string;
+  trialStartedAt?: string;
+  trialTargetUserCount?: number;
+  trialUserCount?: number;
+  trialCount?: number;
+  canRetrial?: boolean;
 }
 
 export interface IPostRegistrations {
@@ -904,7 +919,7 @@ export interface IPostRegistrations {
   };
   location: ILocation;
   lunchTime?: string;
-  pickupType?: TSpotPickupType;
+  pickupType?: string;
   placeName?: string | null;
   placeType?: TPlaceType;
   placeTypeDetail?: string | null;
@@ -917,7 +932,7 @@ export interface IPostRegistrations {
   rejectionMessage: string;
   rejectionType: 'ETC' | 'INSUFFICIENCY';
   spotId: number;
-  step: 'CONFIRM' | 'OPEN' | 'RECRUITING' | 'TRIAL' | 'UNSUBMIT';
+  step: string[];
   trialledAt: string;
   type: TSpotRegisterationsOptiosType;
   userEmail: string;
@@ -940,13 +955,19 @@ export interface IGetSpotsRegistrationsStatus {
     total: number;
     totalPage: number;
   };
-  spotRegistrations: [IEditRegistration];
+  spotRegistrations: IGetRegistrationStatus[];
 }
 
 export interface IGetSpotsRegistrationsStatusResponse {
   code: number;
   message: string;
   data: IGetSpotsRegistrationsStatus;
+}
+
+export interface IGetSpotsRegistrationsStatusDetailResponse {
+  code: number;
+  message: string;
+  data: IGetRegistrationStatus;
 }
 
 export interface IGetSpotFilterResponse {

@@ -1,4 +1,3 @@
-import Tooltip from './Tooltip';
-import TimerTooltip from './TimerTooltip';
-
-export { Tooltip, TimerTooltip };
+export { default as Tooltip } from './Tooltip';
+export { default as TimerTooltip } from './TimerTooltip';
+export { default as EventTooltip } from './EventTooltip';

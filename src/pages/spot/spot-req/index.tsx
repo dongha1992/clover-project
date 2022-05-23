@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH1B, TextB2R, TextH2B } from '@components/Shared/Text';
 import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { INIT_SPOT_LOCATION, INIT_SPOT_REGISTRATIONS_OPTIONS, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
+import { INIT_SPOT_LOCATION, INIT_SPOT_REGISTRATIONS_OPTIONS, SET_SPOT_REGISTRATIONS_INFO, ISpotsRegistrationInfo } from '@store/spot';
 import { userForm } from '@store/user';
+import { SET_ALERT } from '@store/alert';
+import { spotSelector } from '@store/spot';
+import { ISpotsInfo } from '@model/index';
+import { getSpotInfo } from '@api/spot';
 
 const SpotReqPage = () => {
-  const { me } = useSelector(userForm);
+  const { me, isLoginSuccess } = useSelector(userForm);
   const router = useRouter();
   const dispatch = useDispatch();
+  const [info, setInfo] = useState<ISpotsInfo>();
+  const [spotCount, setSpotCount] = useState<number>(0);
   const text = {
-    publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
-    publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
-    ownerText: '0000번째 프코스팟의\n파트너가 되어보세요.',
-    ownerDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
-    fcospotText: '단골카페를 프코스팟으로',
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
     privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
-    privateBtnText: '프라이빗 스팟 신청하기',
+    publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
+    publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
+    ownerText: `${spotCount! + 1}번째 프코스팟의\n파트너가 되어보세요.`,
+    ownerDesc: '프레시코드와 함께\n내 단골 고객을 늘려보세요!',
     askText: '프코스팟 신청이 어려우신가요?',
-    askBtnText: '문의하기',
+    askBtnText: '채팅 문의',
     registerBtn: '프코스팟 신청하기',
   };
   const { type } = router.query;
@@ -37,26 +41,58 @@ const SpotReqPage = () => {
       case 'owner': {
         return { textTitle: text.ownerText, textDesc: text.ownerDesc };
       }
-      default: {
-        return { textTitle: text.publicText, textDesc: text.publicDesc };
-      }
+    }
+  };
+  const goToRegister = () => {
+    if (isLoginSuccess) {
+      if((type === 'owner' && info?.canOwnerSpotRegistraion) || (type === 'private' && !info?.canPrivateSpotRegistration) || (type === 'public' && !info?.canPublicSpotRegistraion)){
+       return (
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.',
+            submitBtnText: '확인',
+          })
+        )
+       )  
+      };
+      const spotsRegistrationInfoState: ISpotsRegistrationInfo = {
+        userName: me?.name!,
+        userEmail: me?.email!,
+        userTel: me?.tel!,
+      };
+      dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
+      dispatch(INIT_SPOT_LOCATION());
+      dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
+      router.push({
+        pathname: '/spot/register',
+        query: { type },
+      });  
+    } else {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
     }
   };
 
-  const goToRegister = () => {
-    const spotsRegistrationInfoState: any = {
-      userName: me?.name,
-      userEmail: me?.email,
-      userTel: me?.tel,
+  useEffect(() => {
+     // 스팟 정보 조회
+    const getFetch = async() => {
+      try {
+        const { data } = await getSpotInfo();
+        setSpotCount(data.data.spotCount);
+        setInfo(data.data);
+      } catch (err) {
+        console.error(err);
+      }
     };
-    dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
-    dispatch(INIT_SPOT_LOCATION());
-    dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-    router.push({
-      pathname: '/spot/register',
-      query: { type },
-    });
-  };
+
+    getFetch();
+  }, [])
 
   return (
     <Container>
