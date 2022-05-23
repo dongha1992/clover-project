@@ -22,4 +22,5 @@ module.exports = withBundleAnalyzer({
     NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_KEY,
     SERVICE_URL: process.env.SERVICE_URL,
   },
+  generateEtags: false,
 });
