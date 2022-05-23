@@ -48,6 +48,7 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const dispatch = useDispatch();
   // const { menuId } = router.query;
+
   // const {
   //   data,
   //   error: menuError,
