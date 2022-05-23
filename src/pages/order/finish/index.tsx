@@ -74,15 +74,15 @@ const OrderFinishPage = () => {
           // 카카오 결제 에러
         }
       } else if (pg === 'toss') {
-        // if (payToken) {
-        //   const { data } = await postTossApproveApi({ orderId: Number(orderId), payToken });
-        //   console.log(data, 'AFTER TOSS');
-        //   if (data.code === 200) {
-        //     setIsPaymentSuccess(true);
-        //   }
-        // } else {
-        //   // 토스 페이 에러
-        // }
+        if (payToken) {
+          const { data } = await postTossApproveApi({ orderId: Number(orderId), payToken: Number(payToken) });
+          console.log(data, 'AFTER TOSS');
+          if (data.code === 200) {
+            setIsPaymentSuccess(true);
+          }
+        } else {
+          // 토스 페이 에러
+        }
       } else {
         setIsPaymentSuccess(true);
       }
