@@ -35,7 +35,7 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const MenuDetailPage = ({ menuId }: any) => {
+const MenuDetailPage = () => {
   // const [menuItem, setMenuItem] = useState<any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -47,7 +47,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
-
+  const { menuId } = router.query;
   // const {
   //   data,
   //   error: menuError,
@@ -142,9 +142,9 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
-
-    return { discount, price, discountedPrice };
+    // const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
+    // return { discount, price, discountedPrice };
+    return { discount: 0, price: 0, discountedPrice: 0 };
   };
 
   useEffect(() => {
@@ -411,13 +411,13 @@ const DailySaleNumber = styled.div`
 
 /*TODO: 수정해야함 */
 
-export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
+// export async function getServerSideProps(context: any) {
+//   const { menuId } = context.query;
 
-  return {
-    props: { menuId },
-  };
-}
+//   return {
+//     props: { menuId },
+//   };
+// }
 
 // export async function getStaticPaths() {}
 
