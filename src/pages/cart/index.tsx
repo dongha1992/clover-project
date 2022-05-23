@@ -136,31 +136,6 @@ const CartPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
   const queryClient = useQueryClient();
 
-  const { isLoading, isError } = useQuery(
-    'getCartList',
-    async () => {
-      const { data } = await getCartsApi();
-      return data.data;
-    },
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      cacheTime: 0,
-      onSuccess: (data) => {
-        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
-        try {
-          reOrderCartList(data);
-          setNutritionObj(getTotalNutrition(data));
-          dispatch(INIT_CART_LISTS());
-          dispatch(SET_CART_LISTS(data));
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      enabled: !!me,
-    }
-  );
-
   /* TODO: 최근 이력 배송방법 / 기본배송지 api 따로 나옴 */
 
   const { data: recentOrderDelivery } = useQuery(
@@ -308,6 +283,37 @@ const CartPage = () => {
       onSuccess: async () => {
         await queryClient.refetchQueries('getCartList');
       },
+    }
+  );
+
+  const { isLoading, isError } = useQuery(
+    'getCartList',
+    async () => {
+      /* TODO: 스팟아이디 넣어야함 */
+      const params = {
+        delivery: userDeliveryType?.toUpperCase()!,
+        deliveryDate: selectedDeliveryDay!,
+        spotId: userDeliveryType?.toUpperCase() ? 1 : null,
+      };
+      const { data } = await getCartsApi({ params });
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      onSuccess: (data) => {
+        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
+        try {
+          reOrderCartList(data);
+          setNutritionObj(getTotalNutrition(data));
+          dispatch(INIT_CART_LISTS());
+          dispatch(SET_CART_LISTS(data));
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      enabled: !!me,
     }
   );
 
@@ -863,21 +869,6 @@ const CartPage = () => {
       );
     }
   }, [destinationObj]);
-
-  // const test = async () => {
-  //   const res = await postCartsApi([
-  //     {
-  //       main: true,
-  //       menuDetailId: 72,
-  //       menuId: 9,
-  //       menuQuantity: 1,
-  //     },
-  //   ]);
-  // };
-
-  // useEffect(() => {
-  //   test();
-  // }, []);
 
   if (isLoading) {
     return <div>로딩</div>;
