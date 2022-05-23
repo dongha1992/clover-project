@@ -47,7 +47,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
-
+  // const { menuId } = router.query;
   // const {
   //   data,
   //   error: menuError,
@@ -142,9 +142,9 @@ const MenuDetailPage = ({ menuId }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
-
-    return { discount, price, discountedPrice };
+    // const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
+    // return { discount, price, discountedPrice };
+    return { discount: 0, price: 0, discountedPrice: 0 };
   };
 
   useEffect(() => {
