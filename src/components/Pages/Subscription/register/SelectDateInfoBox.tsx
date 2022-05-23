@@ -18,6 +18,7 @@ import SelectOptionListBox from './SelectOptionListBox';
 interface IProps {
   selectCount: number | undefined;
   selectDate: Date | undefined;
+  disposable: boolean;
 }
 
 interface IReceipt {
@@ -37,7 +38,7 @@ interface IReceipt {
   deliveryPrice: number;
 }
 
-const SelectDateInfoBox = ({ selectCount, selectDate }: IProps) => {
+const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
   const dispatch = useDispatch();
   const { subsCalendarSelectMenu, subsOrderMenus } = useSelector(subscriptionForm);
   const [receiptInfo, setReceiptInfo] = useState<IReceipt | null>();
@@ -92,7 +93,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate }: IProps) => {
   const selectOptionAddHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsMenuSheet type="select" />,
+        content: <SubsMenuSheet type="select" buttonType="select" />,
       })
     );
   };
@@ -142,13 +143,15 @@ const SelectDateInfoBox = ({ selectCount, selectDate }: IProps) => {
             <ReceiptLi>
               <TextB2R>물티슈</TextB2R>
               <TextB2R>
-                {receiptInfo.menuOption1.quantity}개 / {getFormatPrice(String(receiptInfo.menuOption1.price))}원
+                {disposable ? receiptInfo.menuOption1.quantity : 0}개 /{' '}
+                {disposable ? getFormatPrice(String(receiptInfo.menuOption1.price)) : 0}원
               </TextB2R>
             </ReceiptLi>
             <ReceiptLi>
               <TextB2R>수저</TextB2R>
               <TextB2R>
-                {receiptInfo.menuOption2.quantity}개 / {getFormatPrice(String(receiptInfo.menuOption2.price))}원
+                {disposable ? receiptInfo.menuOption2.quantity : 0}개 /{' '}
+                {disposable ? getFormatPrice(String(receiptInfo.menuOption2.price)) : 0}원
               </TextB2R>
             </ReceiptLi>
             <ReceiptLi>
