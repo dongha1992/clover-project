@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { theme } from '@styles/theme';
 interface TSvg {
   [key: string]: ({ width, height }: IStyle) => React.SVGProps<SVGSVGElement> | any;
 }
@@ -8,11 +8,13 @@ interface TProps {
   name: string;
   width?: string;
   height?: string;
+  color?: string;
 }
 
 interface IStyle {
   height?: string;
   width?: string;
+  color?: string;
 }
 
 const svgMap: TSvg = {
@@ -222,16 +224,16 @@ const svgMap: TSvg = {
       <circle cx="8" cy="8" r="5.5" fill="white" stroke="#35AD73" strokeWidth="5" />
     </svg>
   ),
-  minus: () => (
+  minus: ({ color }: IStyle) => (
     <svg width="4" height="3" viewBox="0 0 4 3" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0.367297 2.192H3.6433V0.932H0.367297V2.192Z" fill="#242424" />
+      <path d="M0.367297 2.192H3.6433V0.932H0.367297V2.192Z" fill={color ? color : '#242424'} />
     </svg>
   ),
-  plus: () => (
+  plus: ({ color }: IStyle) => (
     <svg width="8" height="7" viewBox="0 0 8 7" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.3468 6.68H4.6548V4.136H7.0788V2.876H4.6548V0.319999H3.3468V2.876H0.922797V4.136H3.3468V6.68Z"
-        fill="#242424"
+        fill={color ? color : '#242424'}
       />
     </svg>
   ),
@@ -605,7 +607,7 @@ const svgMap: TSvg = {
     </svg>
   ),
 
-  kakaoBuble: () => (
+  kakaoBuble: ({ width, height }) => (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M6.995 0.5C3.12277 0.5 0 3.00963 0 6.05636C0 8.03398 1.29907 9.76564 3.24768 10.7544L2.58815 13.229C2.57572 13.2661 2.5738 13.3059 2.58263 13.344C2.59145 13.3821 2.61067 13.417 2.63812 13.4448C2.67814 13.4803 2.72964 13.4999 2.78301 13.5C2.82726 13.4964 2.86925 13.4789 2.90293 13.4498L5.7409 11.5274C6.15982 11.5855 6.58211 11.6157 7.005 11.6178C10.8722 11.6178 14 9.10811 14 6.05636C14 3.00462 10.8622 0.5 6.995 0.5Z"
@@ -1310,10 +1312,10 @@ const svgMap: TSvg = {
 
 /* TODO: ref */
 
-const SVGIcon = ({ name, width, height }: TProps) => {
+const SVGIcon = ({ name, width, height, color }: TProps) => {
   const MappedSVG = svgMap[name];
 
-  return <MappedSVG width={width} height={height} />;
+  return <MappedSVG width={width} height={height} color={color} />;
 };
 
 export default SVGIcon;

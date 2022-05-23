@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { homePadding, fixedBottom, FlexBetween, theme, FlexCol, FlexRow } from '@styles/theme';
+import { homePadding, fixedBottom, FlexBetween, theme, FlexCol, FlexRow, customInput, textBody2 } from '@styles/theme';
 import styled from 'styled-components';
 import { TextH4B, TextH5B, TextH6B, TextB2R, TextB3R } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
@@ -20,12 +20,23 @@ import { userForm } from '@store/user';
 import { availabilityEmail, userChangeInfo } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
+import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
+import { getFormatTime } from '@utils/destination';
+import { NAME_REGX } from '@constants/regex';
 interface IVaildation {
   message: string;
   isValid: boolean;
 }
 
-/* TODO: 서버에서 받은 정보 어떻게 관리할까 */
+interface IUserInfo {
+  nickName: string;
+  name: string;
+  email: string;
+  tel: string;
+  year: number;
+  month: number;
+  day: number;
+}
 
 const ProfilePage = () => {
   const { me } = useSelector(userForm);
@@ -44,13 +55,19 @@ const ProfilePage = () => {
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
+  const [isValidName, setIsValidName] = useState<boolean>(true);
+  const [userInfo, setUserInfo] = useState<IUserInfo>({
+    nickName: '',
+    name: '',
+    email: '',
+    tel: '',
+    year: 0,
+    month: -1,
+    day: 0,
+  });
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-  const telRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const nameRef = useRef<HTMLInputElement>(null);
-  const birthDateRef = useRef<HTMLInputElement>(null);
-  const nicknameRef = useRef<HTMLInputElement>(null);
+
   const authTimerRef = useRef(300);
 
   const dispatch = useDispatch();
@@ -81,6 +98,7 @@ const ProfilePage = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
+    localStorage.removeItem('persist:nextjs');
     router.push('/mypage');
   };
 
@@ -102,35 +120,33 @@ const ProfilePage = () => {
   const phoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
-    if (telRef.current) {
-      const tel = telRef.current?.value;
-      if (PHONE_REGX.test(tel)) {
-        setPhoneValidation(true);
-      } else {
-        setPhoneValidation(false);
-      }
+    if (PHONE_REGX.test(value)) {
+      setPhoneValidation(true);
+    } else {
+      setPhoneValidation(false);
     }
+    setUserInfo({ ...userInfo, tel: value });
   };
 
   const getAvailabilityEmail = async () => {
-    if (emailRef.current) {
-      const email = emailRef.current?.value;
-      const {
-        data: { data: availability },
-      } = await availabilityEmail({ email });
-      /* TODO: 탈퇴 res? */
+    if (userInfo.email === me?.email) return;
+    const {
+      data: {
+        data: { availability },
+      },
+    } = await availabilityEmail({ email: userInfo.email });
+    /* TODO: 탈퇴 res? */
 
-      if (availability) {
-        setEmailValidataion({
-          isValid: true,
-          message: '',
-        });
-      } else {
-        setEmailValidataion({
-          isValid: false,
-          message: '사용 중인 이메일 주소입니다.',
-        });
-      }
+    if (availability) {
+      setEmailValidataion({
+        isValid: true,
+        message: '',
+      });
+    } else {
+      setEmailValidataion({
+        isValid: false,
+        message: '사용 중인 이메일 주소입니다.',
+      });
     }
   };
 
@@ -146,36 +162,37 @@ const ProfilePage = () => {
     }
 
     try {
-      if (telRef.current) {
-        const tel = telRef.current?.value.toString();
+      const { tel } = userInfo;
 
-        const { data } = await userAuthTel({ tel });
+      const { data } = await userAuthTel({ tel });
 
-        if (data.code === 200) {
-          dispatch(
-            SET_ALERT({
-              alertMessage: `인증번호 전송했습니다.`,
-              submitBtnText: '확인',
-            })
-          );
-          setOneMinuteDisabled(true);
-          setDelay(1000);
-        }
+      if (data.code === 200) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `인증번호 전송했습니다.`,
+            submitBtnText: '확인',
+          })
+        );
+        setOneMinuteDisabled(true);
+        setDelay(1000);
+
         /* TODO: 인증번호 요청 실패 시 */
       }
     } catch (error) {
       console.error(error);
     }
   };
+
   const getAuthCodeConfirm = async () => {
-    if (authCodeNumberRef.current && telRef.current) {
+    if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
-        const tel = telRef.current.value;
+        const { tel } = userInfo;
 
         try {
           const { data } = await userConfirmTel({ tel, authCode });
           if (data.code === 200) {
+            alert('인증 성공 임시임');
           }
         } catch (error) {
           console.error(error);
@@ -188,25 +205,27 @@ const ProfilePage = () => {
     setChcekGender(value);
   };
 
-  const changeEmailHandler = (): void => {
-    if (emailRef.current) {
-      const email = emailRef.current?.value;
-      const checkEmailRegx = EMAIL_REGX.test(email);
-      if (checkEmailRegx) {
-        setEmailValidataion({
-          isValid: true,
-          message: '',
-        });
+  const changeEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { value, name } = e.target;
+    const checkEmailRegx = EMAIL_REGX.test(value);
+    setUserInfo({ ...userInfo, [name]: value });
 
-        /* 이메일 중복 검사 */
-        getAvailabilityEmail();
-      } else {
-        setEmailValidataion({
-          isValid: false,
-          message: '이메일 형식이 올바르지 않습니다.',
-        });
-      }
+    if (checkEmailRegx) {
+      setEmailValidataion({
+        isValid: true,
+        message: '',
+      });
+    } else {
+      setEmailValidataion({
+        isValid: false,
+        message: '이메일 형식이 올바르지 않습니다.',
+      });
     }
+  };
+
+  const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setUserInfo({ ...userInfo, [name]: value });
   };
 
   const getDeleteUser = async () => {
@@ -219,41 +238,74 @@ const ProfilePage = () => {
   };
 
   const changeMeInfo = async () => {
-    const changedNickname = nicknameRef.current?.value;
-    const changedName = nameRef.current?.value;
-    const changedBirthDate = birthDateRef.current?.value;
-    const chagnedEmail = emailRef.current?.value;
-    const chagnedTel = telRef.current?.value;
+    if (!isValidName) return;
+    const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
-      birthDate: changedBirthDate ? changedBirthDate : me?.birthDate!,
-      gender: checkGender ? checkGender : me?.gender!,
-      email: chagnedEmail ? chagnedEmail : me?.email!,
+      authCode: authCodeNumberRef?.current?.value ? authCodeNumberRef?.current?.value : null,
+      birthDate: birthDate,
+      gender: checkGender,
+      email: userInfo.email,
       marketingEmailReceived: me?.marketingEmailReceived!,
       marketingPushReceived: me?.marketingPushReceived!,
       marketingSmsReceived: me?.marketingSmsReceived!,
-      name: changedName ? changedName : me?.name!,
-      nickName: changedNickname ? changedNickname : me?.nickName!,
+      name: userInfo.name,
+      nickName: userInfo.nickName,
       notiPushReceived: me?.notiPushReceived!,
       primePushReceived: me?.primePushReceived!,
-      tel: chagnedTel ? chagnedTel : me?.tel!,
+      tel: userInfo.tel,
     };
+    console.log(reqBody, 'reqBody');
 
-    // temp
-    if (birthDateRef.current && birthDateRef.current?.value.length < 10) {
-      return alert('생년월일을 정확하게');
-    }
     try {
       const { data } = await userChangeInfo(reqBody);
+      if (data.code === 200) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '수정을 성공하였습니다.',
+          })
+        );
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  /*TODO: me에서 전달되는 초기값 이렇게 하는 거 좀 거슬림 */
+  const checkNameValid = () => {
+    if (!NAME_REGX.test(userInfo.name)) {
+      setIsValidName(false);
+    } else {
+      setIsValidName(true);
+    }
+  };
+
   useEffect(() => {
+    const toArrayBirthdate = me?.birthDate && me?.birthDate?.split('-');
+    const hasBirthDate = toArrayBirthdate?.length! > 0;
+
+    let year, month, day;
+
+    if (toArrayBirthdate) {
+      year = toArrayBirthdate[0]!;
+      month = toArrayBirthdate[1]!;
+      day = toArrayBirthdate[2]!;
+    }
+
     setChcekGender(me?.gender!);
+    setUserInfo({
+      ...userInfo,
+      nickName: me?.nickName ? me?.nickName : me?.name!,
+      name: me?.name!,
+      email: me?.email!,
+      tel: me?.tel!,
+      year: hasBirthDate ? Number(year) : 0,
+      month: hasBirthDate ? Number(month) - 1 : -1,
+      day: hasBirthDate ? Number(day) : 0,
+    });
   }, [me]);
+
+  const isKakao = me?.joinType === 'KAKAO';
+  const isNotEmail = me?.joinType !== 'EMAIL';
 
   return (
     <Container>
@@ -267,26 +319,44 @@ const ProfilePage = () => {
           </FlexBetween>
           <NameInputWrapper>
             <TextH5B padding="0 0 9px 0">이메일</TextH5B>
-            <TextInput
-              placeholder="이메일"
-              ref={emailRef}
-              eventHandler={changeEmailHandler}
-              value={me?.email ? me?.email : ''}
-            />
+            {isNotEmail ? (
+              <EmailInput>
+                <TextInput
+                  name="email"
+                  placeholder="이메일"
+                  onBlur={getAvailabilityEmail}
+                  eventHandler={changeEmailHandler}
+                  value={userInfo.email || ''}
+                  disabled={me?.emailConfirmed}
+                />
+
+                <SVGIcon name={isKakao ? 'kakaoBuble' : 'appleIcon'} />
+              </EmailInput>
+            ) : (
+              <TextInput
+                name="email"
+                placeholder="이메일"
+                onBlur={getAvailabilityEmail}
+                eventHandler={changeEmailHandler}
+                value={userInfo.email || ''}
+              />
+            )}
             {!emailValidation.isValid ? (
               <Validation>{emailValidation.message}</Validation>
             ) : (
               <SVGIcon name="confirmCheck" />
             )}
           </NameInputWrapper>
-          <FlexCol>
-            <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
-            <FlexRow>
-              <Button width="86px" onClick={goToChangePassword}>
-                변경하기
-              </Button>
-            </FlexRow>
-          </FlexCol>
+          {!isNotEmail && (
+            <FlexCol>
+              <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
+              <FlexRow>
+                <Button width="86px" onClick={goToChangePassword}>
+                  변경하기
+                </Button>
+              </FlexRow>
+            </FlexCol>
+          )}
         </LoginInfoWrapper>
         <BorderLine height={8} margin="32px 0" />
         <UserInfoWrapper>
@@ -295,16 +365,24 @@ const ProfilePage = () => {
           </FlexRow>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
-            <TextInput value={me?.name} ref={nameRef} />
+            <TextInput
+              name="name"
+              value={userInfo.name || ''}
+              eventHandler={onChangeUserInfo}
+              onBlur={checkNameValid}
+            />
+            {!isValidName && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
-            <TextInput value={me?.nickName} ref={nicknameRef} />
+            <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
-              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} ref={telRef} value={me?.tel} />
+              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} value={userInfo.tel || ''} />
               {isAuthTel ? (
                 <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
                   요청하기
@@ -339,7 +417,70 @@ const ProfilePage = () => {
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
-            <TextInput value={me?.birthDate} ref={birthDateRef} placeholder="YYYY-MM-DD" />
+            <BirthdateWrapper>
+              <InputContainer>
+                <YearPicker
+                  defaultValue="YYYY"
+                  start={1922} // default is 1900
+                  end={2008} // default is current year
+                  reverse // default is ASCENDING
+                  required={true} // default is false
+                  value={userInfo.year} // mandatory
+                  onChange={(year: string) => {
+                    setUserInfo({ ...userInfo, year: Number(year) });
+                  }}
+                  id="year"
+                  name="year"
+                  classes="input yearContainer"
+                  optionClasses="yearOption"
+                />
+                <SvgWrapper>
+                  <SVGIcon name="triangleDown" />
+                </SvgWrapper>
+              </InputContainer>
+              <InputContainer>
+                <MonthPicker
+                  defaultValue="MM"
+                  numeric // to get months as numbers
+                  short // default is full name
+                  caps // default is Titlecase
+                  endYearGiven // mandatory if end={} is given in YearPicker
+                  year={userInfo.year} // mandatory
+                  required={true} // default is false
+                  value={userInfo.month} // mandatory
+                  onChange={(month: string) => {
+                    setUserInfo({ ...userInfo, month: Number(month) });
+                  }}
+                  id="month"
+                  name="month"
+                  classes="input monthContainer"
+                  optionClasses="monthOption"
+                />
+                <SvgWrapper>
+                  <SVGIcon name="triangleDown" />
+                </SvgWrapper>
+              </InputContainer>
+              <InputContainer>
+                <DayPicker
+                  defaultValue="DD"
+                  year={userInfo.year} // mandatory
+                  month={userInfo.month} // mandatory
+                  endYearGiven // mandatory if end={} is given in YearPicker
+                  required={true} // default is false
+                  value={userInfo.day} // mandatory
+                  onChange={(day: string) => {
+                    setUserInfo({ ...userInfo, day: Number(day) });
+                  }}
+                  id="day"
+                  name="day"
+                  classes="input dayContainer"
+                  optionClasses="dayOption"
+                />
+                <SvgWrapper>
+                  <SVGIcon name="triangleDown" />
+                </SvgWrapper>
+              </InputContainer>
+            </BirthdateWrapper>
           </FlexCol>
           <FlexCol>
             <TextH5B>성별</TextH5B>
@@ -368,7 +509,9 @@ const ProfilePage = () => {
         </DeleteUser>
       </Wrapper>
       <BtnWrapper onClick={changeMeInfo}>
-        <Button height="100%">수정하기</Button>
+        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName}>
+          수정하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
@@ -424,6 +567,61 @@ const UserInfoWrapper = styled.div`
 const DeleteUser = styled.div`
   ${homePadding}
   margin: 32px 0 104px 0;
+`;
+
+const BirthdateWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .input {
+    ${customInput}
+    border: 1px solid ${theme.greyScale15};
+    background-color: white;
+    ${textBody2}
+    color:black
+  }
+
+  .yearContainer {
+    display: flex;
+
+    .yearOption:first-of-type {
+      color: red;
+    }
+  }
+  .monthContainer {
+    margin-right: 10px;
+
+    .option {
+    }
+  }
+  .dayContainer {
+    .option {
+    }
+  }
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+  margin-right: 10px;
+  width: 100%;
+`;
+
+const SvgWrapper = styled.div`
+  position: absolute;
+  right: 15%;
+  top: 25%;
+`;
+
+const EmailInput = styled.div`
+  position: relative;
+  display: flex;
+
+  svg {
+    position: absolute;
+    right: 5%;
+    top: 32%;
+  }
 `;
 
 export default ProfilePage;

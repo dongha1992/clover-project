@@ -16,7 +16,6 @@ interface IProps {
 }
 
 const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IProps) => {
-  console.log(selectedSubDelivery, 'selectedSubDelivery');
   const [selectedDelivery, setSelectedDelivery] = useState(selectedSubDelivery.id);
   const dispatch = useDispatch();
 

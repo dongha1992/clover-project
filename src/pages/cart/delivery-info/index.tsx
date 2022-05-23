@@ -34,7 +34,6 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
 });
 
 /* TODO: map 리팩토링 */
-/* TODO: 스팟 배송일 경우 추가 */
 
 const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
@@ -156,8 +155,8 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
     if (destinationId || isMainDestination || isSpot) {
       dispatch(SET_DESTINATION(tempDestination));
-      dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
+      dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
       dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
@@ -171,16 +170,18 @@ const DeliverInfoPage = () => {
       /* TODO spotPickupId 형 체크 */
       if (tempDestination) {
         const reqBody = {
-          addressDetail: tempDestination?.location?.addressDetail!,
           name: tempDestination?.name!,
-          address: tempDestination?.location?.address!,
           delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
           deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
-          dong: tempDestination?.location?.dong!,
           main: tempDestination?.main!,
-          receiverName: tempDestination?.receiverName ? tempDestination.receiverName : '테스트',
-          receiverTel: tempDestination?.receiverTel ? tempDestination.receiverTel : '01012341234',
-          zipCode: tempDestination?.location?.zipCode!,
+          receiverName: tempDestination?.receiverName,
+          receiverTel: tempDestination?.receiverTel,
+          location: {
+            addressDetail: tempDestination?.location?.addressDetail!,
+            address: tempDestination?.location?.address!,
+            zipCode: tempDestination?.location?.zipCode!,
+            dong: tempDestination?.location?.dong!,
+          },
         };
 
         try {
@@ -210,7 +211,11 @@ const DeliverInfoPage = () => {
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
-            router.push('/cart');
+            if (isSubscription) {
+              router.push('/subscription/set-info');
+            } else {
+              router.push('/cart');
+            }
           }
         } catch (error) {
           console.error(error);
@@ -313,7 +318,11 @@ const DeliverInfoPage = () => {
     if (userDeliveryType) {
       if (isSubscription) {
         // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-        subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+        if (subsDeliveryType === 'SPOT') {
+          setUserSelectDeliveryType('spot');
+        } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+          setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+        }
       } else {
         setUserSelectDeliveryType(userDeliveryType);
       }
@@ -327,7 +336,7 @@ const DeliverInfoPage = () => {
 
     const isSpot = userSelectDeliveryType === 'spot';
 
-    if (userDestination?.delivery === userSelectDeliveryType.toUpperCase()) {
+    if (userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase()) {
       setTempDestination(userDestination);
       setIsMaindestination(true);
       return;
@@ -337,12 +346,15 @@ const DeliverInfoPage = () => {
       delivery: userSelectDeliveryType.toUpperCase(),
     };
 
-    console.log(userDestination?.delivery, 'userDestination');
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
-        setIsMaindestination(true);
+        if (data.data) {
+          setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
+          setIsMaindestination(true);
+        } else {
+          setTempDestination(null);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -367,13 +379,16 @@ const DeliverInfoPage = () => {
   };
 
   useEffect(() => {
+    const vaildSelectedDestination = userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase();
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
     if (userTempDestination) {
       setTempDestination(userTempDestination);
       setIsMaindestination(false);
+
       // 설정한 주소가 있는지
-    } else if (!userTempDestination && userDestination) {
+    } else if (!userTempDestination && userDestination && vaildSelectedDestination) {
       setTempDestination(userDestination);
+
       // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
       if (!isSubscription) {
@@ -386,9 +401,13 @@ const DeliverInfoPage = () => {
   useEffect(() => {
     if (isSubscription) {
       // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
-      subsDeliveryType === 'spot' && setUserSelectDeliveryType('spot');
+      if (subsDeliveryType === 'SPOT') {
+        setUserSelectDeliveryType('spot');
+      } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
+        setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+      }
     }
-  }, [isSubscription]);
+  }, [isSubscription, subsDeliveryType]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
@@ -406,7 +425,7 @@ const DeliverInfoPage = () => {
   }, []);
 
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
-  const subsParcelAndMorning = ['parcel', 'morning'].includes(subsDeliveryType as string);
+  const subsParcelAndMorning = ['PARCEL', 'MORNING'].includes(subsDeliveryType as string);
 
   return (
     <Container>
@@ -455,7 +474,7 @@ const DeliverInfoPage = () => {
             </>
           )}
           {!isSubscription && <BorderLine height={1} margin="24px 0" />}
-          {subsDeliveryType !== 'spot' && (
+          {subsDeliveryType !== 'SPOT' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
                 배송

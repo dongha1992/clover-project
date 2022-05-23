@@ -11,6 +11,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
 import { CategoryFilter } from '@components/Pages/Category';
+// import { TabList } from '@components/Shared/TabList';
 
 const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 

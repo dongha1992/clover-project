@@ -54,7 +54,7 @@ const InviteFriendPaage = () => {
         if (data.code === 200) {
           return dispatch(
             SET_ALERT({
-              alertMessage: '친구 초대 코드를 등록하얐습니다.',
+              alertMessage: '등록을 완료했어요!',
               submitBtnText: '확인',
             })
           );
@@ -68,9 +68,9 @@ const InviteFriendPaage = () => {
       onError: async (error: any) => {
         let alertMessage = '';
         if (error.code === 2201) {
-          alertMessage = '이미 추천한 친구가 있습니다.';
+          alertMessage = '이미 등록된 초대코드예요.';
         } else if (error.code === 1105) {
-          alertMessage = '존재하지 않은 친구 추천 코드입니다.';
+          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         }
 
         return dispatch(

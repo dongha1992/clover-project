@@ -18,6 +18,7 @@ import {
   IGetSpotsRegistrationsStatusDetailResponse,
   IResponse,
   IGetRegistrationSearchResponse,
+  IGetSpotPickupsResponse,
 } from '@model/index';
 
 // 스팟 정보 조회
@@ -151,4 +152,9 @@ export const getSpotsWishList = (params: IParamsSpots): Promise<AxiosResponse<IS
 // 필터 정렬
 export const getSpotsFilter = (): Promise<AxiosResponse<IGetSpotFilterResponse>> => {
   return Api.get('/spot/v1/spots/filters');
+};
+
+// 픽업지 조회
+export const getSpotPickups = (spotId: number): Promise<AxiosResponse<IGetSpotPickupsResponse>> => {
+  return Api.get(`/spot/v1/spots/${spotId}/pickups`);
 };

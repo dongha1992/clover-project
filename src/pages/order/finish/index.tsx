@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
 import {
@@ -20,27 +20,76 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
+import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
+import { getCookie } from '@utils/common';
+
 interface IProps {
   orderId: number;
+  pgToken?: string;
+  payToken?: number;
+  pg: string;
 }
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
-const OrderFinishPage = ({ orderId }: IProps) => {
+const OrderFinishPage = () => {
   const router = useRouter();
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+
+  const { pg_token: pgToken, orderId, pg, payToken } = router.query;
+
+  console.log(router.query, 'router.query');
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
     async () => {
-      const { data } = await getOrderDetailApi(orderId);
+      console.log(orderId, 'orderId');
+      const { data } = await getOrderDetailApi(Number(orderId));
       return data.data;
     },
     {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!isPaymentSuccess,
     }
   );
+
+  console.log(isLoading, isPaymentSuccess);
+
+  const checkPg = async () => {
+    try {
+      console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
+      if (pg === 'kakao') {
+        const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+        if (pgToken && kakaoTid) {
+          const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
+          console.log(pgToken, kakaoTid, '!@#!@#!@#!');
+          const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
+          console.log(data, 'AFTER KAKAO PAY');
+          if (data.code === 200) {
+            setIsPaymentSuccess(true);
+          }
+        } else {
+          // 카카오 결제 에러
+        }
+      } else if (pg === 'toss') {
+        // if (payToken) {
+        //   const { data } = await postTossApproveApi({ orderId: Number(orderId), payToken });
+        //   console.log(data, 'AFTER TOSS');
+        //   if (data.code === 200) {
+        //     setIsPaymentSuccess(true);
+        //   }
+        // } else {
+        //   // 토스 페이 에러
+        // }
+      } else {
+        setIsPaymentSuccess(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const goToOrderDetail = () => {
     router.push({ pathname: `/mypage/order-detail/${orderId}` });
@@ -208,7 +257,14 @@ const OrderFinishPage = ({ orderId }: IProps) => {
     }
   };
 
-  if (isLoading) {
+  useEffect(() => {
+    console.log(router.query.orderId, '(router.query.orderId in useEffect');
+    if (router.query.orderId) {
+      checkPg();
+    }
+  }, [router.query.orderId]);
+
+  if (isLoading || !isPaymentSuccess) {
     return <div>로딩중</div>;
   }
 
@@ -294,11 +350,14 @@ const DevlieryInfoWrapper = styled.div`
   padding: 24px;
 `;
 
-export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
-  return {
-    props: { orderId: +orderId },
-  };
-}
+// export async function getServerSideProps(context: any) {
+//   const { orderId } = context.query;
+//   console.log(context.query, 'context.query');
+//   return {
+//     props: {
+//       orderId: +orderId,
+//     },
+//   };
+// }
 
 export default OrderFinishPage;

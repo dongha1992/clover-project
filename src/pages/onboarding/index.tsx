@@ -12,13 +12,24 @@ import router, { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { Obj } from '@model/index';
 import axios from 'axios';
-import { SET_LOGIN_SUCCESS } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
-import { userLogin } from '@api/user';
 import { setCookie } from '@utils/common';
-import { SET_LOGIN_TYPE } from '@store/common';
-import { userForm } from '@store/user';
+import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
+import { userForm, SET_USER_AUTH, SET_USER } from '@store/user';
+import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
+
+declare global {
+  interface Window {
+    AppleID: any;
+  }
+}
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -32,60 +43,80 @@ const OnBoarding: NextPage = () => {
     width: '100%',
   };
 
-  const lastLogin = ['kakao', 'apple', 'email'][Math.floor(Math.random() * 3)];
-
   const lastLoginTagStyleMapper: Obj = {
-    kakao: 40,
-    apple: 40,
-    email: 15,
+    KAKAO: 40,
+    APPLE: 40,
+    EMAIL: 15,
   };
 
   const dispatch = useDispatch();
   const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();
+  const { loginType } = useSelector(commonSelector);
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
   }, []);
 
-  const kakaoLoginHandler = async (): Promise<void> => {
-    window.Kakao.Auth.login({
-      success: async (res: any) => {
-        const data = {
-          accessToken: res.access_token,
-          tokenType: res.token_type,
-        };
+  const kakaoLoginHandler = () => {
+    /* 웹뷰 */
 
-        const result = await axios.post('https://dev-api.freshcode.me/user/v1/signin-kakao', data);
+    // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
+    // return;
 
-        if (window.Kakao) {
-          window.Kakao.cleanup();
-        }
-        // TODO : 여기가 카카오 로그인 성공부분인가요??
-        dispatch(SET_LOGIN_TYPE('KAKAO'));
-        dispatch(SET_LOGIN_SUCCESS(true));
-      },
-      fail: async (res: any) => {
-        alert(`${res.error}-${res.error_error_description}`);
-      },
-    });
+    if (typeof window !== undefined) {
+      window.Kakao.Auth.authorize({
+        redirectUri:
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+      });
+    }
   };
 
-  /* TODO:  apple login 테스트 해야함 */
-
+  /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
-    await loginTest();
-    // AppleID.auth.init({
-    //   clientId: 'com.freshcode.www',
-    //   scope: 'email',
-    //   redirectURI: 'https://www.freshcode.me',
-    //   usePopup: true,
-    // });
-    // try {
-    //   await AppleID.auth.signIn();
-    // } catch (error) {
-    //   console.log(`Error: ${error && error.error}`);
-    // }
+    if (typeof window !== undefined) {
+      window.AppleID.auth.init({
+        clientId: 'com.freshcode.www',
+        scope: 'email',
+        redirectURI: `${process.env.SERVICE_URL}`,
+        usePopup: true,
+      });
+      try {
+        const appleResponse = await window.AppleID.auth.signIn();
+
+        const appleToken = appleResponse?.authorization.id_token;
+        if (appleToken) {
+          // 애플 로그인 / 회원가입 호출?
+          const params = { appleToken };
+          const { data } = await getAppleTokenApi({ params });
+          if (data.data.availability) {
+            localStorage.setItem('appleToken', appleToken);
+            router.replace('/signup?isApple=true');
+            dispatch(SET_SIGNUP_USER({ email: data.data.email }));
+          } else {
+            const result = await userLoginApi({ accessToken: `bearer ${appleToken}`, loginType: 'APPLE' });
+            if (result.data.code == 200) {
+              const userTokenObj = result.data?.data;
+
+              dispatch(SET_USER_AUTH(userTokenObj));
+              dispatch(SET_LOGIN_SUCCESS(true));
+              dispatch(SET_LOGIN_TYPE('APPLE'));
+
+              const { data } = await userProfile().then((res) => {
+                return res?.data;
+              });
+
+              dispatch(SET_USER(data));
+              // success
+              router.push('/');
+            }
+          }
+        }
+      } catch (error: any) {
+        console.log(`Error: ${error && error.error}`);
+      }
+    }
   };
 
   const emailSignUpHandler = (): void => {
@@ -104,41 +135,9 @@ const OnBoarding: NextPage = () => {
     router.push('/');
   };
 
-  const loginTest = async () => {
-    const { data } = await userLogin({
-      email: 'david@freshcode.me',
-      password: '12341234',
-      loginType: 'EMAIL',
-    });
-
-    if (data.code === 200) {
-      let userTokenObj = data.data;
-      const accessTokenObj = {
-        accessToken: userTokenObj?.accessToken,
-        expiresIn: userTokenObj?.expiresIn,
-      };
-
-      sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
-
-      const refreshTokenObj = JSON.stringify({
-        refreshToken: userTokenObj?.refreshToken,
-        refreshTokenExpiresIn: userTokenObj?.refreshTokenExpiresIn,
-      });
-
-      setCookie({
-        name: 'refreshTokenObj',
-        value: refreshTokenObj,
-        option: {
-          path: '/',
-          maxAge: userTokenObj?.refreshTokenExpiresIn,
-        },
-      });
-    }
-  };
-
   const renderLastLoginTag = (): JSX.Element => {
     return (
-      <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
+      <TagWrapper left={lastLoginTagStyleMapper[loginType]}>
         <Tag color={theme.white} backgroundColor={theme.brandColor}>
           최근 로그인
         </Tag>
@@ -159,15 +158,15 @@ const OnBoarding: NextPage = () => {
           </TextH5B>
         </FlexCol>
         <ButtonWrapper>
-          <KakaoBtn onClick={kakaoLoginHandler}>
+          <KakaoBtn onClick={() => kakaoLoginHandler()}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
-            {lastLogin === 'kakao' && renderLastLoginTag()}
+            {loginType === 'KAKAO' && renderLastLoginTag()}
           </KakaoBtn>
           <AppleBtn onClick={appleLoginHandler}>
             <Button>Apple로 시작하기</Button>
             <SVGIcon name="appleIcon" />
-            {lastLogin === 'apple' && renderLastLoginTag()}
+            {loginType === 'APPLE' && renderLastLoginTag()}
           </AppleBtn>
           <EmailLoginAndSignUp>
             <Button {...emailButtonStyle} onClick={emailLoginHandler}>
@@ -176,7 +175,7 @@ const OnBoarding: NextPage = () => {
             <Button {...emailButtonStyle} onClick={emailSignUpHandler} margin="0 0 0 8px">
               이메일로 회원가입
             </Button>
-            {lastLogin === 'email' && renderLastLoginTag()}
+            {loginType === 'EMAIL' && renderLastLoginTag()}
           </EmailLoginAndSignUp>
           <TextH6B
             color={theme.white}

@@ -20,7 +20,7 @@ export const EMAIL_REGX =
 
 export const PASSWORD_REGX = /[ \{\}\[\]\/?.,;:|\)~`\-_+┼<>\\'\"\\\(\=]/;
 
-interface IVaildation {
+export interface IVaildation {
   message: string;
   isValid: boolean;
 }
