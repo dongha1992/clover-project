@@ -21,7 +21,7 @@ import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
-import { getCartsApi } from '@api/cart';
+// import { getCartsApi } from '@api/cart';
 import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
 const SpotSearchPage = (): ReactElement => {
@@ -59,31 +59,32 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   // 장바구니 조회
+  /* TODO: 장바구니 params 변경돼서 주석 */
 
-  let {
-    data: cartList,
-    isLoading: isLoadingCart,
-    isError,
-  } = useQuery(
-    'getCartList',
-    async () => {
-      const { data } = await getCartsApi();
-      return data.data;
-    },
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      cacheTime: 0,
-      onSuccess: (data) => {
-        try {
-          dispatch(INIT_CART_LISTS());
-          dispatch(SET_CART_LISTS(data));
-        } catch (error) {
-          console.error(error);
-        }
-      },
-    }
-  );
+  // let {
+  //   data: cartList,
+  //   isLoading: isLoadingCart,
+  //   isError,
+  // } = useQuery(
+  //   'getCartList',
+  //   async () => {
+  //     const { data } = await getCartsApi();
+  //     return data.data;
+  //   },
+  //   {
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     cacheTime: 0,
+  //     onSuccess: (data) => {
+  //       try {
+  //         dispatch(INIT_CART_LISTS());
+  //         dispatch(SET_CART_LISTS(data));
+  //       } catch (error) {
+  //         console.error(error);
+  //       }
+  //     },
+  //   }
+  // );
 
   // cartList = ['!1'];
 
@@ -191,7 +192,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   }, []);
 
-  if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup && isLoadingCart) {
+  if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup) {
     return <div>로딩</div>;
   }
 
@@ -253,7 +254,8 @@ const SpotSearchPage = (): ReactElement => {
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
                   {recentPickedSpotList?.map((item: any, index) => (
                     // 스팟 최근 픽업 이력 리스트
-                    <SpotRecentPickupList item={item} key={index} hasCart={cartList?.length! > 0} />
+                    // <SpotRecentPickupList item={item} key={index} hasCart={cartList?.length! > 0} />
+                    <SpotRecentPickupList item={item} key={index} hasCart={true} />
                   ))}
                 </RecentPickWrapper>
               </DefaultSearchContainer>
@@ -275,13 +277,14 @@ const SpotSearchPage = (): ReactElement => {
           ) : (
             // 검색 결과
             <SearchResultContainer>
-              <SearchResult
+              {/* <SearchResult
                 searchResult={searchResult}
                 isSpot
                 onClick={goToOrder}
                 orderId={orderId}
                 hasCart={cartList?.length! > 0}
-              />
+              /> */}
+              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} orderId={orderId} hasCart={true} />
             </SearchResultContainer>
           )}
         </>
