@@ -10,10 +10,11 @@ interface IProps {
   item: any;
   height?: string;
   width?: string;
+  testType?: string;
 }
-const SubsItem = ({ item, height, width }: IProps) => {
+const SubsItem = ({ item, height, width, testType }: IProps) => {
   const goToDetail = () => {
-    router.push(`/subscription/products/135`);
+    router.push(`/subscription/products/135?subsDeliveryType=${testType}`);
   };
 
   return (
