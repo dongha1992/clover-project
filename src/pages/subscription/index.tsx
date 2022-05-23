@@ -54,7 +54,7 @@ const SubscriptiopPage = () => {
           <ScrollHorizonList>
             <SubsList>
               {[1, 2, 3].map((item, index) => (
-                <SubsItem item={item} key={index} height="168px" width="298px" />
+                <SubsItem item={item} key={index} height="168px" width="298px" testType="SPOT" />
               ))}
             </SubsList>
           </ScrollHorizonList>
@@ -74,7 +74,7 @@ const SubscriptiopPage = () => {
           <ScrollHorizonList>
             <SubsList>
               {[1, 2, 3].map((item, index) => (
-                <SubsItem item={item} key={index} height="168px" width="298px" />
+                <SubsItem item={item} key={index} height="168px" width="298px" testType="PARCEL" />
               ))}
             </SubsList>
           </ScrollHorizonList>
