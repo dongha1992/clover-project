@@ -7,7 +7,7 @@ import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 interface IProps {
   goToDeliveryInfo: () => void;
-  subsDeliveryType: string;
+  subsDeliveryType: string | string[];
   deliveryType?: string;
   deliveryDestination?: ILocation | null;
   spotMainDestination?: string;
@@ -19,11 +19,6 @@ const SubsDeliveryTypeAndLocation = ({
   spotMainDestination,
   mainDestinationAddress,
 }: IProps) => {
-  const mapper: Obj = {
-    MORNING: '새벽배송',
-    PARCEL: '택배배송',
-  };
-
   return (
     <Container onClick={goToDeliveryInfo}>
       {subsDeliveryType === 'SPOT' && (
@@ -35,9 +30,9 @@ const SubsDeliveryTypeAndLocation = ({
           </TextB3R>
         </Left>
       )}
-      {['PARCEL', 'MORNING'].includes(subsDeliveryType) && (
+      {['PARCEL', 'MORNING'].includes(subsDeliveryType as string) && (
         <Left>
-          <TextH4B>{mainDestinationAddress ? mapper[mainDestinationAddress.delivery!] : <SkeletonBox />}</TextH4B>
+          <TextH4B>{mainDestinationAddress ? mainDestinationAddress.delivery : <SkeletonBox />}</TextH4B>
           <TextH4B>{mainDestinationAddress ? mainDestinationAddress.address : <SkeletonBox />}</TextH4B>
           <TextB3R color={theme.greyScale65} padding="8px 0 0">
             배송방법이 제한된 상품입니다.
