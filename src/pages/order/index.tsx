@@ -87,8 +87,8 @@ const PAYMENT_METHOD = [
   },
 ];
 
-const successOrderPath = '/order/finish';
-const kakaoSuccessOrderPath = '/order/kakao';
+const successOrderPath = 'order/finish';
+const kakaoSuccessOrderPath = 'order/kakao';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -494,10 +494,15 @@ const OrderPage = () => {
   };
 
   const processKakaoPay = async ({ orderId }: IProcessOrder) => {
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
     const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
     };
 
     /* TODO: 모바일, 안드로이드 체크  */
@@ -509,7 +514,8 @@ const OrderPage = () => {
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
-      window.location.href = data.data.next_redirect_pc_url;
+      router.push(data.data.next_redirect_pc_url);
+      // window.location.href = data.data.next_redirect_pc_url;
     } catch (error) {}
   };
 
