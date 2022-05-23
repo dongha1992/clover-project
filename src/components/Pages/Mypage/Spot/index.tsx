@@ -1,13 +1,6 @@
-import SpotStatusList from "./SpotStatusList";
-import SpotWishList from "./SpotWishList";
-import LocationInfo from './LocationInfo';
-import OpenInfo from './OpenInfo';
-import UserInfo from './UserInfo';
-
-export {
-  SpotStatusList,
-  SpotWishList,
-  LocationInfo,
-  OpenInfo,
-  UserInfo,
-};
+export { default as SpotStatusList } from './SpotStatusList';
+export { default as SpotWishList } from './SpotWishList';
+export { default as LocationInfo } from './LocationInfo';
+export { default as OpenInfo } from './OpenInfo';
+export { default as UserInfo } from './UserInfo';
+export { default as SpotStatusDetailProgressBar } from './SpotStatusDetailProgressBar';

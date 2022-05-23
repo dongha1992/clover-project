@@ -6,8 +6,8 @@ import { IMAGE_S3_DEV_URL } from '@constants/mock';
 
 interface IProps {
   zoom?: number;
-  centerLat?: string;
-  centerLng?: string;
+  centerLat?: number;
+  centerLng?: number;
 }
 
 const MapAPI = ({
@@ -24,10 +24,10 @@ const MapAPI = ({
   const initMap = () => {
     const map = new naver.maps.Map('map', {
       center: new naver.maps.LatLng(
-        Number(centerLat ? centerLat : '37.413294'),
-        Number(centerLng ? centerLng : '127.269311')
+        Number(centerLat ? centerLat : 37.50101118367814),
+        Number(centerLng ? centerLng : 127.03525895821902)
       ), // 최초 찍히는 마커
-      zoom: zoom ? zoom : 17,
+      zoom: zoom ? zoom : 18,
       zoomControl: true,
       zoomControlOptions: {
         style: naver.maps.ZoomControlStyle.SMALL,
@@ -43,7 +43,7 @@ const MapAPI = ({
           alert('aa')
         }
     },
-      position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
+      position: new naver.maps.LatLng(Number(centerLat ? centerLat : 37.50101118367814), Number(centerLng ? centerLng : 127.03525895821902)), // 최초 찍히는 마커
       map: map,
     });
 

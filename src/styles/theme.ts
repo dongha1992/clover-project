@@ -6,6 +6,7 @@ import { Obj } from '@model/index';
 
 export const theme: Obj = {
   brandColor: '#35AD73',
+  brandColor3p: '#F5FBF8',
   brandColor5: '#EDF3F0',
   brandColor5P: '#EBF7F1',
   fontFamily: "'Noto Sans KR', sans-serif;",
