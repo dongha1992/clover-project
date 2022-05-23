@@ -119,8 +119,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate } });
+      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate }});
     };
 
     const goToDeliveryInfo = () => {
@@ -128,14 +127,6 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!item.closedDate } });
-    };
-
-    const goToSelectMenu = () => {
-      // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate } });
     };
 
     const handleSubsDeliveryType = () => {
@@ -162,8 +153,8 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if (item.isClosed) {
-      // 스팟 종료된 상태 - 주문 불가
+    if(item.isClosed) {
+      // 스팟 종료된 상태 - 주문 불가ㅇ
       return;
     }
     if (isLoginSuccess) {
@@ -215,7 +206,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
             );
           }
         } else {
-          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          // 장바구니 o, 스팟 검색에서 cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
@@ -249,10 +240,10 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
             );
           }
         } else {
-          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+          // 로그인o and 장바구니 x, cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToSelectMenu} />,
+              content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
             })
           );
         }

@@ -116,7 +116,7 @@ const SignupOptionalPage = () => {
     );
 
     try {
-      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
+      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
 
       if (data.code === 200) {
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));

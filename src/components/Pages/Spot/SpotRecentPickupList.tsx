@@ -190,10 +190,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             });
           }
         } else {
-          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          // 장바구니 o, 스팟 검색에서 cart로 이동
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
-          // dispatch(SET_TEMP_DESTINATION(destinationInfo));
           router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });
         }
       } else {
@@ -218,11 +217,10 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             });
           }
         } else {
-          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+          // 로그인o and 장바구니 x, cart로 이동
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
           dispatch(SET_DESTINATION(destinationInfo));
-          // dispatch(SET_TEMP_DESTINATION(destinationInfo));
-          router.push({ pathname: '/search', query: { isClosed: !!closedDate } });
+          router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });
         }
       }
     } else {

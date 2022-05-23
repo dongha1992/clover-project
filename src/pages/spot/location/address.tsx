@@ -90,7 +90,7 @@ const AddressDetailPage = () => {
         </TextB2R>
       </Wrapper>
       <MapWrapper>
-        <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
+        <MapAPI centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
       </MapWrapper>
       <Wrapper>
         <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>
