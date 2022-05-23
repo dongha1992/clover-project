@@ -37,8 +37,6 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
     amount: orderDeliveryItem?.subOrderDelivery?.order.amount!,
   };
 
-  console.log(orderDeliveryItem, 'orderDeliveryItem');
-
   return (
     <Container>
       <Wrapper>

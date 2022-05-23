@@ -5,14 +5,14 @@ import { ISpotsDetail, IPostRegistrations, ISpotsInfo } from '@model/index';
 interface ISpotAddress {
   addressDetail?: string | undefined;
   address?: string | null;
-  bdNm?: string | null; 
-  dong?: string | null,
-  zipCode?: string | null,
+  bdNm?: string | null;
+  dong?: string | null;
+  zipCode?: string | null;
   lat?: string | null;
   lon?: string | null;
   jibunAddress?: string | null;
   roadAddress?: string | null;
-};
+}
 
 interface ISpotRegistrationsOpions {
   placeTypeOptions?: {
@@ -23,7 +23,7 @@ interface ISpotRegistrationsOpions {
     name: string;
     value: string;
   };
-};
+}
 
  export interface ISpotsRegistrationInfo {
   placeName?: string | null;
@@ -33,7 +33,7 @@ interface ISpotRegistrationsOpions {
   userEmail: string;
   userTel: string;
   managerInfo?: string | null;
-};
+}
 
 interface ISpotsPostions {
   latitude: number | null;
@@ -86,7 +86,7 @@ const spotsSearchResultFilteredState = {
   SEVEN_ELEVEN: '',
   FITNESS_CENTER: '',
   DRUGSTORE: '',
-}
+};
 
 const spotAddressState = {
   addressDetail: '',
@@ -97,7 +97,7 @@ const spotAddressState = {
   lat: '',
   lon: '',
   jibunAddress: '',
-  roadAddress: ''
+  roadAddress: '',
 };
 
 const spotRegistrationsOptionsState = {
@@ -138,7 +138,7 @@ const initialState: IProps = {
   },
   spotsPickupSelected: null,
   spotsSearchResultFiltered: {
-    ...spotsSearchResultFilteredState
+    ...spotsSearchResultFilteredState,
   },
   spotPickupId: null,
   spotInfo: null,
@@ -152,10 +152,10 @@ export const spot = createSlice({
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
-    INIT_SPOT_LIKED: (state, action : PayloadAction) => {
+    INIT_SPOT_LIKED: (state, action: PayloadAction) => {
       state.isSpotLiked = false;
     },
-    SET_SPOT_LIKED: (state, action : PayloadAction) => {
+    SET_SPOT_LIKED: (state, action: PayloadAction) => {
       state.isSpotLiked = true;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
@@ -198,12 +198,12 @@ export const spot = createSlice({
   },
 });
 
-export const { 
-  SPOT_ITEM, 
+export const {
+  SPOT_ITEM,
   SET_SPOT_LIKED,
   INIT_SPOT_LIKED,
-  SET_SPOT_LOCATION, 
-  INIT_SPOT_LOCATION, 
+  SET_SPOT_LOCATION,
+  INIT_SPOT_LOCATION,
   SET_SPOT_REGISTRATIONS_OPTIONS,
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,

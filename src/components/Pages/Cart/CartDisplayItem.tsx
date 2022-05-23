@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
-import { FlexBetween, FlexRow, theme, FlexRowStart } from '@styles/theme';
+import { FlexBetween, FlexRow, theme, FlexRowStart, FlexCol } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import Checkbox from '@components/Shared/Checkbox';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { IGetCart } from '@model/index';
 import isNil from 'lodash-es/isNil';
+import InfoMessage from '@components/Shared/Message';
 
 interface IProps {
   handleSelectCartItem: (menu: IGetCart) => void;
@@ -18,13 +19,23 @@ interface IProps {
 
 const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
   const isSelected = !isNil(checkedMenus?.find((item) => item.menuId === menu.menuId));
+  const isDisabled = menu.isSold;
 
   return (
     <Container>
       <Wrapper>
         <FlexRowStart width="40%">
           <CheckboxWrapper>
-            <Checkbox onChange={() => handleSelectCartItem(menu)} isSelected={isSelected} />
+            <Checkbox
+              onChange={() => {
+                if (isDisabled) {
+                  return;
+                }
+                handleSelectCartItem(menu);
+              }}
+              isSelected={isSelected}
+              disabled={isDisabled}
+            />
           </CheckboxWrapper>
           <ImageWrapper>
             <Image
@@ -38,7 +49,10 @@ const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplay
           </ImageWrapper>
         </FlexRowStart>
         <FlexBetween>
-          <TextB2R margin="0 0 0 8px">{menu.menuName}</TextB2R>
+          <FlexCol margin="0 0 0 8px">
+            <TextB2R color={isDisabled ? theme.greyScale25 : ''}>{menu.menuName}</TextB2R>
+            {/* <InfoMessage status={isDisabled && 'isSold'} /> */}
+          </FlexCol>
           <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu)}>
             <SVGIcon name="defaultCancel" />
           </RemoveBtnContainer>
@@ -49,14 +63,12 @@ const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplay
 };
 
 const Container = styled.div<{
-  isSoldout?: boolean;
   isCart?: boolean;
   padding?: string;
 }>`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: ${theme.white};
   border-radius: 8px;
   margin-bottom: 16px;
 `;

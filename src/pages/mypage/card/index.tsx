@@ -12,6 +12,8 @@ import { IGetCard } from '@model/index';
 
 import { useQuery, useQueryClient } from 'react-query';
 import isNil from 'lodash-es/isNil';
+import { SET_CARD } from '@store/order';
+import { useDispatch } from 'react-redux';
 
 const CardManagementPage = () => {
   const {
@@ -29,12 +31,22 @@ const CardManagementPage = () => {
     { refetchOnMount: false, refetchOnWindowFocus: false }
   );
 
+  const dispatch = useDispatch();
+
+  const { isOrder } = router.query;
+  const isFromOrder = isOrder === 'true';
+
   const cardEditHandler = (card: IGetCard) => {
-    router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
+    if (isFromOrder) {
+      dispatch(SET_CARD(card.id));
+      router.push('/order');
+    } else {
+      router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
+    }
   };
 
   const goToCardRegister = (): void => {
-    router.push('/mypage/card/register');
+    router.push({ pathname: '/mypage/card/register', query: { isOrder: isFromOrder } });
   };
 
   if (isLoading || isNil(cards)) {
@@ -58,7 +70,7 @@ const CardManagementPage = () => {
           <TextH4B padding="24px 0">카드 관리</TextH4B>
           {cards.map((card: IGetCard, index: number) => (
             <div key={index}>
-              <CardItem onClick={cardEditHandler} card={card} />
+              <CardItem onClick={cardEditHandler} card={card} isOrder={isFromOrder} />
               {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}
             </div>
           ))}

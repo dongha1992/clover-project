@@ -54,6 +54,16 @@ export interface IAavilabiltyEmail {
   email: string;
 }
 
+export interface IAppleToken {
+  availability: boolean;
+  email: string;
+}
+export interface IAppleTokenResponse {
+  code: number;
+  data: IAppleToken;
+  message: string;
+}
+
 export interface ISignupUser {
   appleToken?: string;
   authCode: string;
@@ -92,9 +102,9 @@ export interface IUser {
 
 export interface ILogin {
   accessToken?: string;
-  email: string;
+  email?: string;
   loginType: string;
-  password: string;
+  password?: string;
 }
 
 export interface IResponse {
@@ -116,6 +126,7 @@ export interface IUserToken {
   refreshTokenExpiresIn: number;
   tokenType: string;
   tmpPasswordUsed?: boolean;
+  isJoin?: boolean;
 }
 export interface ILoginResponse {
   code: number;
@@ -176,7 +187,7 @@ export interface IInvitationResponse {
 }
 
 export interface IChangeMe {
-  authCode?: string;
+  authCode?: string | null;
   birthDate: string;
   gender: string;
   email: string;
@@ -188,6 +199,15 @@ export interface IChangeMe {
   notiPushReceived: boolean;
   primePushReceived: boolean;
   tel: string;
+}
+
+export interface IUserInfoResponse {
+  code: number;
+  message: string;
+  data: {
+    availablePoint: number;
+    availableCoupons: ICoupon[];
+  };
 }
 export interface IJusoRequest {
   query: string;
@@ -248,17 +268,14 @@ export interface ICommon {
 export type TDeliveryType = 'QUICK' | 'MORNING' | 'SPOT' | 'PARCEL';
 
 export interface IRegisterDestinationRequest {
-  address: string | null;
-  addressDetail: string;
   delivery?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  dong?: string | null;
   main: boolean;
   name: string;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | null;
+  location: ILocation;
 }
 
 export interface IRegisterDestination {
@@ -342,18 +359,30 @@ export interface ISpotInSpotPickUp {
   placeType: string;
   visiblePlaceTel: boolean;
 }
+
+export interface ISpotImageInDestination {
+  height: number;
+  size: number;
+  url: string;
+  width: number;
+}
 export interface ISpotPickupInDestinaion {
   id: number;
   name: string;
   spot: ISpotInSpotPickUp;
   type: string;
+  spotId: number;
+  createdAt: string;
+  images: ISpotImageInDestination[];
 }
 
 export interface IDestinationsResponse {
   id?: number;
   delivery?: TDeliveryType | string;
+  deliveryDetail?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
+  deliveryTime?: string;
   name?: string;
   receiverTel?: string;
   receiverName?: string;
@@ -380,23 +409,44 @@ export interface IGetDestinationsResponse {
   };
 }
 
+export interface IDestination {
+  createdAt: string;
+  delivery: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  id: number;
+  location: ILocation;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+  spotPickup: ISpotPickupInDestinaion;
+}
+
+export interface IGetDestinationResponse {
+  code: number;
+  message: string;
+  data: IDestination;
+}
+
 export interface IGetDestinationsRequest {
   page: number;
   size: number;
+  deliveries?: string | null;
+  delivery?: string | null;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface IEditDestinationRequest {
-  address: string | undefined;
-  addressDetail: string | undefined;
-  delivery: TDeliveryType | undefined;
-  deliveryMessage?: string;
-  dong: string | undefined;
+  delivery: TDeliveryType | string;
+  deliveryMessage?: string | null;
+  deliveryMessageType: string | null;
   main: boolean;
   name?: string;
-  id: number;
   receiverName?: string;
   receiverTel?: string;
-  zipCode: string | undefined;
+  location: ILocation;
+  spotPickupId?: number | null;
 }
 
 export interface IGetMainDestinationsRequest {
@@ -420,6 +470,7 @@ export interface IKakaoLatLon {
   y: string;
 }
 
+/* SPOT */
 export interface IParamsSpots {
   latitude?: number | null;
   longitude?: number | null;
@@ -535,6 +586,14 @@ export interface ISpotPickupInfo {
   spot: ISpotsDetail;
 }
 
+export interface ISpotPickupInfoInDestination {
+  createdAt: string;
+  id: number;
+  name: string;
+  spotId: number;
+  type: string;
+}
+
 export interface ISpotDetailResponse {
   code: number;
   messages: string;
@@ -622,6 +681,12 @@ export interface IGetRegistrationSearchResponse {
   }
 }
 
+
+export interface IGetSpotPickupsResponse {
+  code: number;
+  message: string;
+  data: { pagination: number; spotPickups: ISpotPickupInDestinaion[] };
+}
 
 /* CARD */
 export interface IRegisterCardResponse {
@@ -943,7 +1008,9 @@ export type TPayMethod =
   | 'TOSS_CARD'
   | 'TOSS_MONEY';
 export interface ICreateOrderRequest {
-  coupon: number;
+  /*TODO: 모델 수정해야함 */
+
+  couponId?: number | null;
   delivery: string;
   deliveryDetail: string;
   deliveryFee: number;
@@ -956,7 +1023,7 @@ export interface ICreateOrderRequest {
   name: string;
   type: string;
   payMethod: TPayMethod | string;
-  cardId: number;
+  cardId: number | null;
   userName: string;
   userTel: string;
   userEmail: string;
@@ -967,6 +1034,11 @@ export interface ICreateOrderRequest {
   payAmount: number;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderRequestInOrderDeliveries[];
+  isReuseDeliveryMessage?: string;
+  subscriptionMenuDetailId?: number;
+  subscriptionRound?: number;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
 }
 
 export interface IOrderRequestInOrderDeliveries {
@@ -1346,7 +1418,7 @@ export interface ICreateOrder {
   deliveryDetail?: string;
   deliveryMessage?: string;
   deliveryMessageType?: string;
-  isDeliveryTogether: boolean;
+  isSubOrderDelivery: boolean;
   name: string;
   menuQuantity: number;
   refundMenuQuantity: number;
@@ -1392,6 +1464,99 @@ export interface ICreateOrderResponse {
   code: number;
   message: string;
   data: ICreateOrder;
+}
+
+export interface IGetKakaoPayment {
+  android_app_scheme: string;
+  created_at: string;
+  ios_app_scheme: string;
+  next_redirect_app_url: string;
+  next_redirect_mobile_url: string;
+  next_redirect_pc_url: string;
+  tid: string;
+  tms_result: boolean;
+}
+export interface IGetKakaoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetKakaoPayment;
+}
+
+export interface IGetNicePayment {
+  Amt: number;
+  BuyerEmail: string;
+  BuyerName: string;
+  BuyerTel: string;
+  CharSet: string;
+  EdiDate: string;
+  EncodeParameters: string;
+  EncryptData: string;
+  GoodsCl: string;
+  GoodsCnt: number;
+  GoodsName: string;
+  MID: string;
+  MallIP: string;
+  Moid: string;
+  PayMethod: string;
+  ReturnURL: string;
+  SocketYN: string;
+  TrKey: string;
+  TransType: string;
+  UserIP: string;
+  VbankExpDate: string;
+}
+
+export interface IGetNicePaymentResponse {
+  code: number;
+  message: string;
+  data: IGetNicePayment;
+}
+
+export interface IGetPaycoRequest {
+  cancelUrl: string;
+  code: string;
+  discountAmt: string;
+  failureUrl: string;
+  mainPgCode: string;
+  message: string;
+  paymentCertifyToken: string;
+  pointAmt: string;
+  reserveOrderNo: string;
+  sellerOrderReferenceKey: string;
+  successUrl: string;
+  totalPaymentAmt: string;
+  totalRemoteAreaDeliveryFeeAmt: string;
+  id: number;
+}
+
+export interface IGetPaycoPayment {
+  code: number;
+  message: string;
+  pgErrorCode: string;
+  result: {
+    orderSheetUrl: string;
+    reserveOrderNo: string;
+  };
+  success: boolean;
+}
+
+export interface IGetPaycoPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetPaycoPayment;
+}
+
+export interface IGetTossPayment {
+  checkoutPage: string;
+  code: number;
+  payToken: string;
+  status: string;
+  success: boolean;
+}
+export interface IGetTossPaymentResponse {
+  code: number;
+  message: string;
+  data: IGetTossPayment;
 }
 
 /* MENU */
@@ -1468,7 +1633,7 @@ export interface ISearchReviews {
   rating: number;
   content: string;
   createdAt: string;
-  images: IMenuImageInReivew[];
+  images?: IMenuImageInReivew[];
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
@@ -1484,10 +1649,13 @@ export interface ISearchReviewImages {
 }
 
 export interface IMenuImageInReivew {
+  createdAt?: string;
   id: number;
+  name?: string;
+  originalName?: string;
+  size: number;
   url: string;
   width: number;
-  height: number;
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
@@ -1496,7 +1664,7 @@ export interface IMenuReviews {
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews[];
+  data: IMenuReviews;
   message: string;
 }
 
@@ -1594,6 +1762,8 @@ export interface IMenuDetailsInCart {
   isSold: boolean;
   main: boolean;
   status: TCartMenuStatus;
+  createdAt: string;
+  discountPrice: number;
 }
 
 export interface IGetCart {
@@ -1606,6 +1776,8 @@ export interface IGetCart {
     height: number;
   };
   menuDetails: IMenuDetailsInCart[];
+  isSold: boolean;
+  createdAt: string;
 }
 
 export interface IGetCartResponse {
@@ -1621,7 +1793,7 @@ export interface ICreateCartRequest {
 }
 
 export interface IDeleteCartRequest {
-  menuDetailId: number;
+  menuDetailId?: number;
   menuId: number;
 }
 
@@ -1645,6 +1817,7 @@ export interface IDeliveryObj {
   delivery: string | null;
   deliveryDetail: string | null;
   location: ILocation | null;
+  closedDate?: string | null;
 }
 
 /* COUPON */
@@ -1718,4 +1891,73 @@ type TReward = 'COUPON' | 'POINT' | string;
 export interface IPromotionRequest {
   code: string;
   reward: TReward | null;
+}
+
+/* SUBSCRIPTION */
+export interface IGetSubscription {
+  id: number;
+  destinationId: number;
+  subscriptionPeriod: string;
+  deliveryStartDate?: string;
+}
+
+export interface ISubscriptionResponse {
+  code: number;
+  message: string;
+  data: ISubscription | ISubsActiveDates;
+}
+export interface ISubscription {
+  menuTables: IMenuTable[];
+  pagination: IPagination;
+}
+export interface IMenuTable {
+  deliveryDate: string;
+  menuTypes: string[];
+  menuTableItems: IMenuTableItems[];
+}
+
+export interface IMenuTableItems {
+  id: number;
+  main: boolean;
+  selected: boolean;
+  menuId: number;
+  menuType: string;
+  menuName: string;
+  menuDetailId: number;
+  menuDetailName: string;
+  menuDiscount: number;
+  eventDiscount: number;
+  menuPrice: number;
+  menuOptions: {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  }[];
+  menuImage: {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
+  };
+  isSold: boolean;
+  changed: boolean;
+  count?: number;
+}
+
+export interface ISubsActiveDates {
+  menuTables: ISubsActiveDate[];
+}
+export interface ISubsActiveDate {
+  id: number;
+  deliveryDate: string;
+}
+
+export interface ISubscribeInfo {
+  deliveryType: string | null;
+  deliveryTime: string | null;
+  pickup: string[] | null;
+  period: string | null;
+  startDate: string | null;
+  deliveryDay: string[] | null;
 }

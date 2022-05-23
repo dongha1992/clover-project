@@ -18,9 +18,10 @@ interface IProps {
   onClick?: () => void;
   isSpot?: boolean;
   orderId?: string | string[];
+  hasCart?: boolean;
 }
 
-const SearchResult = ({ searchResult, onClick, isSpot, orderId }: IProps) => {
+const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
@@ -63,7 +64,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId }: IProps) => {
               <Item item={item} key={index} />
             ) : (
               // 스팟 검색 결과 리스트
-              <SpotsSearchResultList item={item} key={index} />
+              <SpotsSearchResultList item={item} key={index} hasCart={hasCart} />
             );
           })
         ) : router.pathname === '/spot/search' ? (

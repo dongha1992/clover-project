@@ -31,7 +31,7 @@ import { getTotalPayment } from '@utils/getTotalPayment';
 import { AxiosError } from 'axios';
 // temp
 
-const disabledDates = [];
+const disabledDates: any = [];
 
 /* TODO: delvieryId의 경우 orderDeliveris[0].id 사용 */
 /* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
@@ -88,8 +88,6 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
       onError: async (error: AxiosError) => {},
     }
   );
-
-  console.log(orderDetail, 'orderDetail');
 
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
   const orderDeliveries = orderDetail && orderDetail?.orderDeliveries[0]!;
@@ -223,11 +221,9 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   };
 
   const changeDevlieryDateHandler = () => {
-    if (!canChangeDelivery || isSubOrder) {
-      return;
-    }
-
-    console.log(orderDetail, '@@@@@@');
+    // if (!canChangeDelivery || isSubOrder) {
+    //   return;
+    // }
 
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
@@ -260,7 +256,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
               isSheet
               title="배송일 변경"
               disabledDates={disabledDates}
-              deliveryAt={orderDeliveries.deliveryDate!}
+              deliveryAt={orderDeliveries?.deliveryDate!}
               deliveryId={deliveryId}
             />
           ),
@@ -381,7 +377,7 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
             backgroundColor={theme.white}
             color={theme.black}
             border
-            disabled={isCanceled || isSubOrder}
+            disabled={!canChangeDelivery || isSubOrder}
             onClick={changeDeliveryInfoHandler}
             margin="0 16px 0 0"
           >

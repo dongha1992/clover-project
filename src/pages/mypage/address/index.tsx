@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { SPOT_URL } from '@constants/mock';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
-import axios from 'axios';
-// import { ISpotItem } from '@components/Pages/Spot/SpotRecentSearch';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { FixedTab } from '@styles/theme';
+import { useQuery } from 'react-query';
+import { getCartsApi } from '@api/cart';
+import { useDispatch } from 'react-redux';
+import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -19,48 +20,45 @@ const TAB_LIST = [
 
 const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
-  const [pickupList, setpickupList] = useState([]);
-  const [deliveryList, setDeliveryList] = useState<IDestinationsResponse[]>([]);
-  useEffect(() => {
-    if (selectedTab === '/pickup') {
-      getPickupItem();
-    } else {
-      getDeliveryList();
-    }
-  }, [selectedTab]);
 
-  const getDeliveryList = async () => {
-    const params = {
-      page: 1,
-      size: 10,
-    };
-    try {
+  const dispatch = useDispatch();
+
+  const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
+    ['getDestinationList', selectedTab],
+    async () => {
+      const isSpot = selectedTab === '/pickup';
+
+      const params = {
+        page: 1,
+        size: 100,
+        delivery: isSpot ? 'SPOT' : null,
+        deliveries: !isSpot ? ['MORNING', 'QUICK', 'PARCEL'].join(',') : null,
+      };
       const { data } = await getDestinationsApi(params);
-      if (data.code === 200) {
-        const { destinations } = data.data;
-        setDeliveryList(destinations);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      return data.data.destinations;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
   };
 
-  const getPickupItem = async () => {
-    const { data } = await axios.get(SPOT_URL);
-    setpickupList(data);
+  const goToCart = (item: IDestinationsResponse) => {
+    dispatch(SET_DESTINATION({ ...item, closedDate: item.spotPickup?.spot.closedDate }));
+    dispatch(SET_USER_DELIVERY_TYPE(item?.delivery?.toLowerCase()!));
+    router.push('/cart');
   };
-
-  const goToCart = () => {};
 
   const goToEdit = (id: number) => {
     router.push(`/mypage/address/edit/${id}`);
   };
 
-  if (deliveryList.length < 0 || pickupList.length < 0) {
+  const goToSpotEdit = ({ id, spotPickupId }: { id: number; spotPickupId: number }) => {
+    router.push({ pathname: `/mypage/address/edit/${id}`, query: { spotPickupId } });
+  };
+
+  if (isLoading) {
     return <div>로딩</div>;
   }
 
@@ -71,10 +69,10 @@ const AddressManagementPage = () => {
       </FixedTab>
       <Wrapper>
         {selectedTab === '/pickup'
-          ? pickupList.map((item: any, index: number) => (
-              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
+          ? filteredList?.map((item: any, index: number) => (
+              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToSpotEdit} />
             ))
-          : deliveryList.map((item: IDestinationsResponse, index: number) => (
+          : filteredList?.map((item: IDestinationsResponse, index: number) => (
               <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
             ))}
       </Wrapper>

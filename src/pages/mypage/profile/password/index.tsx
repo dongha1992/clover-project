@@ -10,6 +10,7 @@ import Validation from '@components/Pages/User/Validation';
 import { PASSWORD_REGX } from '@pages/signup/email-password';
 import { SVGIcon } from '@utils/common';
 import { userChangePassword } from '@api/user';
+import router from 'next/router';
 
 interface IVaildation {
   message: string;
@@ -165,6 +166,9 @@ const ChangePasswordPage = () => {
 
       try {
         const { data } = await userChangePassword(reqBody);
+        if (data.code === 200) {
+          router.replace('/');
+        }
       } catch (error) {
         console.error(error);
       }

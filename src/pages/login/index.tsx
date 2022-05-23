@@ -9,7 +9,7 @@ import router, { useRouter } from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
 import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER } from '@store/user';
-import { userLogin, userProfile } from '@api/user';
+import { userLoginApi, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { setCookie } from '@utils/common';
@@ -79,7 +79,7 @@ const LoginPage = () => {
       const password = passwordRef.current?.value.toString();
 
       try {
-        const { data } = await userLogin({
+        const { data } = await userLoginApi({
           email,
           password,
           loginType: 'EMAIL',
@@ -88,6 +88,7 @@ const LoginPage = () => {
         if (data.code === 200) {
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {
+            dispatch(SET_USER_AUTH(userTokenObj));
             dispatch(SET_TEMP_PASSWORD(password));
             router.push('/mypage/profile/password');
             return;

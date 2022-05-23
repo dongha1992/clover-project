@@ -16,7 +16,11 @@ import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
 import { commonSelector } from '@store/common';
-
+import { getCartsApi } from '@api/cart';
+import { useQuery } from 'react-query';
+import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
+import { NAME_REGX } from '@constants/regex';
+import { useRouter } from 'next/router';
 // persist
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -27,15 +31,14 @@ import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
 
-/*TODO : _app에서 getInitialProps 갠춘? */
 declare global {
   interface Window {
     Kakao: any;
   }
 }
-
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const queryClient = useRef<QueryClient>();
 
   /* 스크린 사이즈 체크 전역 처리 */
@@ -60,19 +63,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     });
   }
 
-  useEffect(() => {
-    if (typeof window === undefined) {
-      const md = new MobileDetect(window.navigator.userAgent);
-      let mobile = !!md.mobile();
-      dispatch(SET_IS_MOBILE(mobile));
-    }
-
-    authCheck();
-
-    // temp
-    dispatch(INIT_IMAGE_VIEWER());
-  }, []);
-
   const authCheck = async () => {
     try {
       if (sessionStorage.accessToken) {
@@ -82,6 +72,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           data.data.nickName ||= data.data.name;
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
+          if (!NAME_REGX.test(data.data.name)) {
+            router.push('/signup/change-name');
+            return;
+          }
         }
       } else {
         if (isAutoLogin === 'Y') {
@@ -91,6 +85,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             data.data.nickName ||= data.data.name;
             dispatch(SET_USER(data.data));
             dispatch(SET_LOGIN_SUCCESS(true));
+            if (!NAME_REGX.test(data.data.name)) {
+              router.push('/signup/change-name');
+              return;
+            }
           }
         }
       }
@@ -99,11 +97,48 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     }
   };
 
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const md = new MobileDetect(window.navigator.userAgent);
+      let mobile = !!md.mobile();
+      dispatch(SET_IS_MOBILE(mobile));
+    }
+
+    authCheck();
+    // temp
+    dispatch(INIT_IMAGE_VIEWER());
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
+      // window.Kakao.init('eea6746462f9b8925defa4f6396aafdd');
+      console.log(window.Kakao, 'WINODW');
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   return (
     <>
       <Head>
         <title>프레시코드</title>
       </Head>
+      <>
+        <Script
+          type="text/javascript"
+          src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
+        ></Script>
+        <Script
+          type="text/javascript"
+          src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
+        ></Script>
+        <Script
+          type="text/javascript"
+          src="https://developers.kakao.com/sdk/js/kakao.min.js"
+          strategy="beforeInteractive"
+        ></Script>
+      </>
       <QueryClientProvider client={queryClient.current}>
         <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
@@ -111,15 +146,6 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <Wrapper>
               <ReactQueryDevtools initialIsOpen={false} />
               <Component {...pageProps} />
-              <Script src="https://developers.kakao.com/sdk/js/kakao.js"></Script>
-              <Script
-                type="text/javascript"
-                src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
-              ></Script>
-              <Script
-                type="text/javascript"
-                src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
-              ></Script>
             </Wrapper>
           </PersistGate>
         </ThemeProvider>
