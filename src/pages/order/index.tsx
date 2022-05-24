@@ -520,11 +520,21 @@ const OrderPage = () => {
   };
 
   const processTossPay = async ({ orderId }: IProcessOrder) => {
+    // const reqBody = {
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+    // };
+
     const reqBody = {
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${routersPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=toss`,
     };
+
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+    setCookie({
+      name: 'toss-tid-clover',
+      value: data.data.payToken,
+    });
     window.location.href = data.data.checkoutPage;
     console.log(data, 'TOSS RESPONSE');
   };
@@ -589,7 +599,7 @@ const OrderPage = () => {
 
   if (isError) {
     /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
-    const { code } = error;
+    const { code } = error && error;
     if (code === 5005) {
       return <div>선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.</div>;
     } else {
