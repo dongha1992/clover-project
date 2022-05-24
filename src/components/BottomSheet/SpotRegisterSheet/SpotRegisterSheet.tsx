@@ -22,22 +22,29 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
   const router = useRouter();  
 
   const handlerPublicSpotRecruiting= async(id: number) => {
-    try{
-      const {data} = await postSpotRegistrationsRecruiting(id);
-      if(data.code === 200){
-        router.push(`mypage/spot-status/detail/${id}`);
-      }
-    } catch(e){
-      console.error(e);
-    }
-  }
+    router.push({
+      pathname: `mypage/spot-status/detail/${id}`,
+      query: { recruited: true }
+    });
+    // try{
+    //   const {data} = await postSpotRegistrationsRecruiting(id);
+    //   if(data.code === 200){
+    //     router.push(`mypage/spot-status/detail/${id}`);
+    //   }
+    // } catch(e){
+    //   console.error(e);
+    // };
+  };
+
   const submitHandler = (): void => {
-    if (type === 'PRIVATE') {
+    if (type === 'private') {
+      dispatch(INIT_BOTTOM_SHEET());  
       router.push({
         pathname: '/spot/location/address',
         query: { type },
       });
-  } else if(type === 'PUBLIC') {
+  } else if(type === 'public') {
+    dispatch(INIT_BOTTOM_SHEET());  
     handlerPublicSpotRecruiting(items?.id);
     }
   };
@@ -45,7 +52,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
   const closeBottomSheet = ():void => {
     dispatch(
       INIT_BOTTOM_SHEET()
-    )
+    );
   };
 
   return (
@@ -90,7 +97,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
           )
         }
       </Wrapper>
-      <ButtonContainer onClick={submitHandler}>
+      <ButtonContainer>
         {
           type === 'private' && (
             <ButtonGroup
