@@ -18,8 +18,12 @@ type TPrams = {
 
 const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
-  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].spotId);
+  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].id);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
+
+  useEffect(() => {
+    dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
+  }, [selectedPickupId]);
 
   const changeRadioHandler = (id: number) => {
     setSelectedPickupId(id);
@@ -29,20 +33,16 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
     setNoticeChecked(!noticeChecked);
   };
 
-  // const selectedPickup = pickupInfo?.find((i) => i.id === selectedPickupPlace);
-
   const submitHandler = (): void => {
     if (spotType === 'PRIVATE') {
       if (noticeChecked) {
         onSubmit && onSubmit();
-        dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
         dispatch(INIT_BOTTOM_SHEET());
       } else {
         return;
       }
     } else {
       onSubmit && onSubmit();
-      dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
       dispatch(INIT_BOTTOM_SHEET());
     }
   };
@@ -54,14 +54,19 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
         <TextH5B padding="24px 0 16px 0" center>
           {isMypage ? '픽업 장소 변경' : '픽업 장소 선택'}
         </TextH5B>
-        {pickupInfo?.map((i, index) => {
-          return (
-            <PickWrapper key={index}>
-              <RadioButton onChange={() => changeRadioHandler(i.spotId)} isSelected={selectedPickupId === i.spotId} />
-              <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
-            </PickWrapper>
-          );
-        })}
+        {
+            pickupInfo?.map((i, index) => {
+              return (
+                <PickWrapper key={index}>
+                  <RadioButton
+                    onChange={() => changeRadioHandler(i.id)}
+                    isSelected={selectedPickupId === i.id}
+                  />
+                  <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
+                </PickWrapper>
+              );
+            })
+        }
         {spotType === 'PRIVATE' && (
           <>
             <Row />

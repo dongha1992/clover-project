@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { setCookie, removeCookie } from '@utils/common';
-import { userLogin } from '@api/user';
+import { userLoginApi } from '@api/user';
+import { isNull } from 'util';
 
 interface IMe {
   id: string;
@@ -32,6 +33,7 @@ export interface IUser {
   tempPasswordLogin: string;
   isLoginSuccess: boolean;
   signupUser: {
+    appleToken?: string | null;
     authCode?: string;
     birthDate?: string;
     email?: string;
@@ -70,11 +72,15 @@ export const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    SET_SIGNUP_USER: (state, { payload }: PayloadAction<IUser['signupUser']>) => {
+    SET_SIGNUP_USER: (state: any, { payload }: PayloadAction<IUser['signupUser']>) => {
       state.signupUser = { ...state.signupUser, ...payload };
     },
 
-    SET_USER_AUTH: (state, { payload }: PayloadAction<any>) => {
+    INIT_SIGNUP_USER: (state: any, action: PayloadAction) => {
+      state.signupUser = initialState.signupUser;
+    },
+
+    SET_USER_AUTH: (state: any, { payload }: PayloadAction<any>) => {
       const accessTokenObj = {
         accessToken: payload.accessToken,
         expiresIn: payload.expiresIn,
@@ -97,21 +103,22 @@ export const user = createSlice({
       });
     },
 
-    SET_LOGIN_SUCCESS: (state, { payload }: PayloadAction<boolean>) => {
+    SET_LOGIN_SUCCESS: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isLoginSuccess = payload;
     },
 
-    SET_TEMP_PASSWORD: (state, { payload }: PayloadAction<string>) => {
+    SET_TEMP_PASSWORD: (state: any, { payload }: PayloadAction<string>) => {
       state.tempPasswordLogin = payload;
     },
 
-    SET_USER: (state, { payload }: PayloadAction<IUser['me'] | null>) => {
+    SET_USER: (state: any, { payload }: PayloadAction<IUser['me'] | null>) => {
       state.me = payload;
     },
   },
   extraReducers: {},
 });
 
-export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD } = user.actions;
+export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, INIT_SIGNUP_USER } =
+  user.actions;
 export const userForm = (state: AppState): IUser => state.user;
 export default user.reducer;

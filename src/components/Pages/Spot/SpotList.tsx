@@ -36,7 +36,6 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
   const { showToast, hideToast } = useToast();
-  const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -143,53 +142,66 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const onClickLike = (e: any) => {
     e.stopPropagation();
-    onLike();
+    if(isLoginSuccess) {
+      // 로그인 체크
+      onLike();
+    } else {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
+    }
   };
 
   const onLike = useOnLike(list.id!, list.liked);
 
-  const clickSpotOpen = async (id: number | undefined) => {
+  const clickSpotOpen = async (id: number) => {
     if (list.recruited) {
       return;
     }
-    const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    dispatch(
-      SET_ALERT({
-        alertMessage: TitleMsg,
-        onSubmit: () => {
-          setSpotRegisteration(true);
-          const message = '참여해주셔서 감사해요:)';
-          showToast({ message });
-          /* TODO: warning 왜? */
-          return () => hideToast();
-        },
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
+    // const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+    // dispatch(
+    //   SET_ALERT({
+    //     alertMessage: TitleMsg,
+    //     onSubmit: () => {
+    //       setSpotRegisteration(true);
+    //       const message = '참여해주셔서 감사해요:)';
+    //       showToast({ message });
+    //       /* TODO: warning 왜? */
+    //       return () => hideToast();
+    //     },
+    //     submitBtnText: '확인',
+    //     closeBtnText: '취소',
+    //   })
+    // );
 
-    // try {
-    //   const { data } = await postSpotRegistrationsRecruiting(id);
-    //   if (data.code === 200) {
-    //     setSpotRegisteration(true);
-    //     const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    //     dispatch(
-    //       SET_ALERT({
-    //         alertMessage: TitleMsg,
-    //         onSubmit: () => {
-    //           const message = '참여해주셔서 감사해요:)';
-    //           showToast({ message });
-    //           /* TODO: warning 왜? */
-    //           return () => hideToast();
-    //         },
-    //         submitBtnText: '확인',
-    //         closeBtnText: '취소',
-    //       })
-    //     );
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    // }
+    try {
+      const { data } = await postSpotRegistrationsRecruiting(id);
+      if (data.code === 200) {
+        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+        dispatch(
+          SET_ALERT({
+            alertMessage: TitleMsg,
+            onSubmit: () => {
+              // TODO 스팟 현황 상세 이동
+              // router.push('/onboarding');
+              const message = '참여해주셔서 감사해요:)';
+              showToast({ message });
+              /* TODO: warning 왜? */
+              return () => hideToast();
+            },
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+          })
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const SpotsListTypeRender = () => {
@@ -277,8 +289,8 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name="people" />
                   <TextH6B padding='4px 0 0 2px' color={theme.brandColor}>{`${list.recruitingCount}/100명 참여중`}</TextH6B>
                 </FlexRow>
-                {list.submit ? (
-                  <Button onClick={() => clickSpotOpen(list.id)}>참여하기</Button>
+                {!list.recruited ? (
+                  <Button onClick={() => clickSpotOpen(list.id!)}>참여하기</Button>
                 ) : (
                   <ButtonComplete onClick={() => {}}>참여완료</ButtonComplete>
                 )}

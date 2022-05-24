@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import { SET_ALERT } from '@store/alert';
+import { useDispatch } from 'react-redux';
 
 type TProps = {
   title?: string;
@@ -11,9 +13,22 @@ type TProps = {
 
 const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const goBack = (): void => {
-    router.back();
+    if(router.pathname === '/spot/register'){
+      dispatch(
+        SET_ALERT({
+          alertMessage: `입력한 내용은 저장되지 않아요.\n신청을 취소하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {router.back()},
+        })
+      );
+
+    } else {
+      router.back();
+    }
   };
 
   return (

@@ -19,7 +19,8 @@ import { commonSelector } from '@store/common';
 import { getCartsApi } from '@api/cart';
 import { useQuery } from 'react-query';
 import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
-
+import { NAME_REGX } from '@constants/regex';
+import { useRouter } from 'next/router';
 // persist
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -35,8 +36,9 @@ declare global {
     Kakao: any;
   }
 }
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const queryClient = useRef<QueryClient>();
 
   /* 스크린 사이즈 체크 전역 처리 */
@@ -70,6 +72,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           data.data.nickName ||= data.data.name;
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
+          if (!NAME_REGX.test(data.data.name)) {
+            router.push('/signup/change-name');
+            return;
+          }
         }
       } else {
         if (isAutoLogin === 'Y') {
@@ -79,6 +85,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             data.data.nickName ||= data.data.name;
             dispatch(SET_USER(data.data));
             dispatch(SET_LOGIN_SUCCESS(true));
+            if (!NAME_REGX.test(data.data.name)) {
+              router.push('/signup/change-name');
+              return;
+            }
           }
         }
       }
@@ -101,9 +111,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   useEffect(() => {
     try {
-      // window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-
-      window.Kakao.init('3b920f79f2efe4b9c764ae1ea79f6fa8');
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
+      // window.Kakao.init('eea6746462f9b8925defa4f6396aafdd');
       console.log(window.Kakao, 'WINODW');
     } catch (error) {
       console.error(error);

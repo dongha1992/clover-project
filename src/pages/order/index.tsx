@@ -29,7 +29,13 @@ import { couponForm } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/order';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
-import { createOrderPreviewApi, createOrderApi } from '@api/order';
+import {
+  createOrderPreviewApi,
+  createOrderApi,
+  postKakaoPaymentApi,
+  postTossPaymentApi,
+  postTossApproveApi,
+} from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
 import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
@@ -41,6 +47,7 @@ import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
+import { setCookie } from '@utils/common';
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -51,39 +58,45 @@ const PAYMENT_METHOD = [
   {
     id: 1,
     text: '프코페이',
-    value: 'fcopay',
+    value: 'NICE_BILLING',
   },
   {
     id: 2,
     text: '신용카드',
-    value: 'creditCard',
+    value: 'NICE_CARD',
   },
   {
     id: 3,
     text: '계좌이체',
-    value: 'account',
+    value: 'NICE_BANK',
   },
   {
     id: 4,
     text: '카카오페이',
-    value: 'kakaopay',
+    value: 'KAKAO_CARD',
   },
   {
     id: 5,
     text: '페이코',
-    value: 'payco',
+    value: 'PAYCO_EASY',
   },
   {
     id: 6,
     text: '토스',
-    value: 'toss',
+    value: 'TOSS_CARD',
   },
 ];
 
+const successOrderPath = 'order/finish';
+const kakaoSuccessOrderPath = 'order/kakao';
 export interface IAccessMethod {
   id: number;
   text: string;
   value: string;
+}
+
+export interface IProcessOrder {
+  orderId: number;
 }
 
 const OrderPage = () => {
@@ -91,7 +104,7 @@ const OrderPage = () => {
     showOrderItemSection: false,
     showCustomerInfoSection: false,
   });
-  const [selectedOrderMethod, setSelectedOrderMethod] = useState<string>('fcopay');
+  const [selectedOrderMethod, setSelectedOrderMethod] = useState<string>('NICE_BILLING');
   const [checkForm, setCheckForm] = useState<Obj>({
     samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
@@ -119,6 +132,8 @@ const OrderPage = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
+
   const {
     data: previewOrder,
     isLoading: preveiwOrderLoading,
@@ -131,6 +146,7 @@ const OrderPage = () => {
         router.push('/');
       }
       const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
+      console.log(tempOrder, 'TEMP ORDER');
       const previewBody = {
         delivery,
         deliveryDetail: deliveryDetail ? deliveryDetail : null,
@@ -149,41 +165,46 @@ const OrderPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       onError: (error: any) => {
-        if (error.code === 5005) {
+        if (error && error?.code === 5005) {
+          return;
+        } else {
+          return;
         }
       },
     }
   );
 
-  console.log(isError, 'IS ERRROR', error);
-
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       /*TODO: 모델 수정해야함 */
-      /*TODO:쿠폰 퍼센테이지 */
+      /*TODO: 쿠폰 퍼센테이지 */
       const { point, payAmount, ...rest } = previewOrder?.order!;
-      console.log(selectedCoupon, 'selectedCoupon');
+
       const reqBody = {
-        payMethod: 'NICE_BILLING',
-        cardId: card?.id!,
+        payMethod: selectedOrderMethod,
+        cardId: needCard ? card?.id! : null,
         point: userInputObj?.point,
-        payAmount: payAmount - (userInputObj.point + selectedCoupon?.value!),
+        payAmount: payAmount - (userInputObj.point + (selectedCoupon?.value! || 0)),
         couponId: selectedCoupon?.id || null,
         ...rest,
       };
 
-      setLoadingState(true);
-
       const { data } = await createOrderApi(reqBody);
       const { id: orderId } = data.data;
+
+      setLoadingState(true);
       return orderId;
     },
     {
       onSuccess: async (orderId: number) => {
-        router.push({ pathname: '/order/finish', query: { orderId } });
-        setLoadingState(false);
-        INIT_ORDER();
-        INIT_CARD();
+        if (needCard) {
+          router.push(`/order/finish?orderId=${orderId}`);
+          setLoadingState(false);
+          INIT_ORDER();
+          INIT_CARD();
+        } else {
+          processOrder(orderId);
+        }
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -452,6 +473,62 @@ const OrderPage = () => {
 
   const goToTermInfo = () => {};
 
+  const processOrder = async (orderId: number) => {
+    switch (selectedOrderMethod) {
+      case 'NICE_BILLING': {
+      }
+      case 'NICE_CARD': {
+      }
+      case 'NICE_BANK': {
+      }
+      case 'KAKAO_CARD':
+        processKakaoPay({ orderId });
+        break;
+      case 'PAYCO_EASY': {
+      }
+      case 'TOSS_CARD': {
+        processTossPay({ orderId });
+        break;
+      }
+    }
+  };
+
+  const processKakaoPay = async ({ orderId }: IProcessOrder) => {
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
+    const reqBody = {
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+    };
+
+    /* TODO: 모바일, 안드로이드 체크  */
+
+    try {
+      const { data } = await postKakaoPaymentApi({ orderId, data: reqBody });
+      console.log(data, 'RESPONSE');
+      setCookie({
+        name: 'kakao-tid-clover',
+        value: data.data.tid,
+      });
+      router.push(data.data.next_redirect_pc_url);
+      // window.location.href = data.data.next_redirect_pc_url;
+    } catch (error) {}
+  };
+
+  const processTossPay = async ({ orderId }: IProcessOrder) => {
+    const reqBody = {
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+    };
+    const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+    window.location.href = data.data.checkoutPage;
+    console.log(data, 'TOSS RESPONSE');
+  };
+
   const paymentHandler = () => {
     if (loadingState) return;
 
@@ -545,8 +622,8 @@ const OrderPage = () => {
 
   const isParcel = delivery === 'PARCEL';
   const isMorning = delivery === 'MORNING';
-  const isFcoPay = selectedOrderMethod === 'fcopay';
-  const isKakaoPay = selectedOrderMethod === 'kakaopay';
+  const isFcoPay = selectedOrderMethod === 'NICE_BILLING';
+  const isKakaoPay = selectedOrderMethod === 'KAKAO_CARD';
 
   return (
     <Container>
