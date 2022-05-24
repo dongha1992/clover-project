@@ -87,6 +87,8 @@ const WelcomeSheet = () => {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         }
 
+        /* TODO:에러 메시지 확인 */
+
         return dispatch(
           SET_ALERT({
             alertMessage,
@@ -104,6 +106,7 @@ const WelcomeSheet = () => {
           margin="40px 0 0 0"
           onClick={() => {
             dispatch(INIT_BOTTOM_SHEET());
+            /* TODO: 카카오 회원가입 등 리턴 url 해줘야함 */
             router.push('/');
           }}
         >

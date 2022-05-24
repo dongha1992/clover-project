@@ -6,7 +6,7 @@ import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS } from '@store/user';
+import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS, INIT_SIGNUP_USER } from '@store/user';
 import { ISignupUser } from '@model/index';
 import { userSignup } from '@api/user';
 import { useMutation } from 'react-query';
@@ -71,6 +71,8 @@ const SignupOptionalPage = () => {
         const userTokenObj = data.data;
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
+        dispatch(INIT_SIGNUP_USER());
+        localStorage.removeItem('appleToken');
 
         if (window.Kakao) {
           window.Kakao.cleanup();
@@ -104,15 +106,22 @@ const SignupOptionalPage = () => {
       nickName: nickName ? nickName : signupUser.name,
     };
 
+    let appleToken = null;
+
+    if (signupUser.loginType === 'APPLE') {
+      appleToken = localStorage.getItem('appleToken');
+    }
+
     dispatch(
       SET_SIGNUP_USER({
         ...optionalForm,
+        appleToken,
       })
     );
 
     try {
-      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm } as ISignupUser);
-      data.code === 200;
+      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
+
       if (data.code === 200) {
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
       }

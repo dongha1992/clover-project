@@ -1,24 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail, IPostRegistrations } from '@model/index';
+import { ISpotsDetail, IPostRegistrations, ISpotsInfo } from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
   address?: string | null;
-  bdNm?: string | null; 
-  dong?: string | null,
-  zipCode?: string | null,
+  bdNm?: string | null;
+  dong?: string | null;
+  zipCode?: string | null;
   lat?: string | null;
   lon?: string | null;
   jibunAddress?: string | null;
   roadAddress?: string | null;
-};
+}
 
 interface ISpotRegistrationsOpions {
-  pickupLocationTypeOptions?: {
-    name: string;
-    value: string;
-  };
   placeTypeOptions?: {
     name: string;
     value: string;
@@ -27,17 +23,17 @@ interface ISpotRegistrationsOpions {
     name: string;
     value: string;
   };
-};
+}
 
-interface ISpotsRegistrationInfo {
+ export interface ISpotsRegistrationInfo {
   placeName?: string | null;
-  pickupLocationEtc?: string | null;
+  pickupLocation?: string | null;
   placeTypeEtc?: string | null;
   userName: string;
   userEmail: string;
   userTel: string;
   managerInfo?: string | null;
-};
+}
 
 interface ISpotsPostions {
   latitude: number | null;
@@ -72,6 +68,7 @@ interface IProps {
   spotsPickupSelected: ISpotsDetail | null;
   spotsSearchResultFiltered: ISpotSearchFilterd;
   spotPickupId: number | null;
+  spotInfo: ISpotsInfo | null;
 };
 
 const spotsSearchResultFilteredState = {
@@ -89,7 +86,7 @@ const spotsSearchResultFilteredState = {
   SEVEN_ELEVEN: '',
   FITNESS_CENTER: '',
   DRUGSTORE: '',
-}
+};
 
 const spotAddressState = {
   addressDetail: '',
@@ -100,18 +97,17 @@ const spotAddressState = {
   lat: '',
   lon: '',
   jibunAddress: '',
-  roadAddress: ''
+  roadAddress: '',
 };
 
 const spotRegistrationsOptionsState = {
   lunchTimeOptions: {},
-  pickupLocationTypeOptions: {},
   placeTypeOptions: {},
 };
 
 const spotsRegistrationInfoState = {
   placeName: '',
-  pickupLocationEtc: '',
+  pickupLocation: '',
   placeTypeEtc: '',
   userName: '',
   userEmail: '',
@@ -142,9 +138,10 @@ const initialState: IProps = {
   },
   spotsPickupSelected: null,
   spotsSearchResultFiltered: {
-    ...spotsSearchResultFilteredState
+    ...spotsSearchResultFilteredState,
   },
   spotPickupId: null,
+  spotInfo: null,
 };
 
 export const spot = createSlice({
@@ -155,10 +152,10 @@ export const spot = createSlice({
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
-    INIT_SPOT_LIKED: (state, action : PayloadAction) => {
+    INIT_SPOT_LIKED: (state, action: PayloadAction) => {
       state.isSpotLiked = false;
     },
-    SET_SPOT_LIKED: (state, action : PayloadAction) => {
+    SET_SPOT_LIKED: (state, action: PayloadAction) => {
       state.isSpotLiked = true;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
@@ -195,15 +192,18 @@ export const spot = createSlice({
     SET_SPOT_PICKUP_ID: (state, action: PayloadAction<number | null>) => {
       state.spotPickupId = action.payload;
     },
+    SET_SPOT_INFO: (state, action: PayloadAction<ISpotsInfo | null>) => {
+      state.spotInfo = action.payload;
+    },
   },
 });
 
-export const { 
-  SPOT_ITEM, 
+export const {
+  SPOT_ITEM,
   SET_SPOT_LIKED,
   INIT_SPOT_LIKED,
-  SET_SPOT_LOCATION, 
-  INIT_SPOT_LOCATION, 
+  SET_SPOT_LOCATION,
+  INIT_SPOT_LOCATION,
   SET_SPOT_REGISTRATIONS_OPTIONS,
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
@@ -213,6 +213,7 @@ export const {
   SET_SPOTS_FILTERED,
   INIT_SPOT_FILTERED,
   SET_SPOT_PICKUP_ID,
+  SET_SPOT_INFO,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

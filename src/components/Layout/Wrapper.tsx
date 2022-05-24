@@ -10,6 +10,10 @@ import Header from '@components/Header';
 import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { commonSelector } from '@store/common';
+// import Alert from '@components/Shared/Alert';
+// import BottomSheet from '@components/BottomSheet';
+// import Toast from '@components/Shared/Toast';
+// import ImageViewer from '@components/ImageViewer';
 
 const Alert = dynamic(() => import('@components/Shared/Alert'), {
   ssr: false,
@@ -141,7 +145,7 @@ const Left = styled.div`
 `;
 
 const Main = styled.main`
-  margin: 56px 0;
+  margin: 56px 0 0 0;
 `;
 
 export default Wrapper;

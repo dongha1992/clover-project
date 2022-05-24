@@ -47,27 +47,28 @@ const MenuDetailPage = ({ menuId }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
+  // const { menuId } = router.query;
 
-  // const {
-  //   data,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   'getMenuDetail',
-  //   async () => {
-  //     const { data } = await getMenuDetailApi(menuId);
+  const {
+    data,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(menuId);
 
-  //     return data.data;
-  //   },
+      return data.data;
+    },
 
-  //   {
-  //     onSuccess: (data) => {
-  //       dispatch(SET_MENU_ITEM(data));
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
@@ -143,9 +144,8 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const getMenuDetailPrice = () => {
     // const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
-    //temp
+    // return { discount, price, discountedPrice };
     return { discount: 0, price: 0, discountedPrice: 0 };
-    return { discount, price, discountedPrice };
   };
 
   useEffect(() => {
@@ -414,6 +414,17 @@ const DailySaleNumber = styled.div`
 
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
+
+  // if (!menuId) {
+  //   return {
+  //     props: {
+  //       notFound: true,
+  //       redirect: {
+  //         destinaion: '/',
+  //       },
+  //     },
+  //   };
+  // }
 
   return {
     props: { menuId },

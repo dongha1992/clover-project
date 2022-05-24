@@ -23,6 +23,13 @@ const SubscriptiopPage = () => {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
   };
   const goToRegularSpot = () => {
+    // window.navigator.share({
+    //   title: '', // 공유될 제목
+    //   text: '', // 공유될 설명
+    //   url: '', // 공유될 URL
+    //   files: [], // 공유할 파일 배열
+    // });
+
     router.push('/subscription/products?tab=spot');
   };
   const goToRegularDawn = () => {
@@ -47,7 +54,7 @@ const SubscriptiopPage = () => {
           <ScrollHorizonList>
             <SubsList>
               {[1, 2, 3].map((item, index) => (
-                <SubsItem item={item} key={index} height="168px" width="298px" />
+                <SubsItem item={item} key={index} height="168px" width="298px" testType="SPOT" />
               ))}
             </SubsList>
           </ScrollHorizonList>
@@ -67,7 +74,7 @@ const SubscriptiopPage = () => {
           <ScrollHorizonList>
             <SubsList>
               {[1, 2, 3].map((item, index) => (
-                <SubsItem item={item} key={index} height="168px" width="298px" />
+                <SubsItem item={item} key={index} height="168px" width="298px" testType="PARCEL" />
               ))}
             </SubsList>
           </ScrollHorizonList>
