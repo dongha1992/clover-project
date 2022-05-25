@@ -21,7 +21,7 @@ const RegistrationsListPage = () => {
 
   const goToRegistration = (type: string) => {
     if (isLoginSuccess) {
-      if((type === 'private' && !info?.canPrivateSpotRegistration) || (type === 'public' && !info?.canPublicSpotRegistraion) || (type === 'owner' && !info?.canOwnerSpotRegistraion)) {
+      if((type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion) || (type === 'OWNER' && !info?.canOwnerSpotRegistraion)) {
         return (
           dispatch(
             SET_ALERT({
@@ -67,13 +67,13 @@ const RegistrationsListPage = () => {
 
   return (
     <Container>
-     <BtnWrapper onClick={() =>goToRegistration('private')}>
+     <BtnWrapper onClick={() =>goToRegistration('PRIVATE')}>
        <TextB1B padding='24px 0'>우리 회사•학교 신청하기</TextB1B>
      </BtnWrapper>
-     <BtnWrapper onClick={() => goToRegistration('public')}>
+     <BtnWrapper onClick={() => goToRegistration('PUBLIC')}>
         <TextB1B padding='24px 0'>단골가게 신청하기</TextB1B>
      </BtnWrapper>
-     <BtnWrapper onClick={() => goToRegistration('owner')}>
+     <BtnWrapper onClick={() => goToRegistration('OWNER')}>
        <TextB1B padding='24px 0'>우리가게 신청하기</TextB1B>
      </BtnWrapper>
     </Container>
