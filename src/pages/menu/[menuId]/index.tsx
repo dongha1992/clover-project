@@ -48,26 +48,27 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const dispatch = useDispatch();
   // const { menuId } = router.query;
-  // const {
-  //   data,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   'getMenuDetail',
-  //   async () => {
-  //     const { data } = await getMenuDetailApi(menuId);
 
-  //     return data.data;
-  //   },
+  const {
+    data,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(menuId);
 
-  //   {
-  //     onSuccess: (data) => {
-  //       dispatch(SET_MENU_ITEM(data));
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
@@ -413,6 +414,17 @@ const DailySaleNumber = styled.div`
 
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
+
+  // if (!menuId) {
+  //   return {
+  //     props: {
+  //       notFound: true,
+  //       redirect: {
+  //         destinaion: '/',
+  //       },
+  //     },
+  //   };
+  // }
 
   return {
     props: { menuId },
