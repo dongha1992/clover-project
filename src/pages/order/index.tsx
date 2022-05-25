@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import {
@@ -50,6 +50,13 @@ import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
 import { setCookie } from '@utils/common';
+import { SET_IS_LOADING } from '@store/common';
+
+declare global {
+  interface Window {
+    goPay: any;
+  }
+}
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -89,16 +96,12 @@ const PAYMENT_METHOD = [
   },
 ];
 
-const successOrderPath = 'order/finish';
+const successOrderPath: string = 'order/finish';
 const kakaoSuccessOrderPath = 'order/kakao';
 export interface IAccessMethod {
   id: number;
   text: string;
   value: string;
-}
-
-export interface IProcessOrder {
-  orderId: number;
 }
 
 const OrderPage = () => {
@@ -124,15 +127,15 @@ const OrderPage = () => {
     point: 0,
   });
   const [card, setCard] = useState<IGetCard>();
-  const [loadingState, setLoadingState] = useState(false);
 
   const dispatch = useDispatch();
-  const { userAccessMethod } = useSelector(commonSelector);
+  const { userAccessMethod, isLoading } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard } = useSelector(orderForm);
 
   const queryClient = useQueryClient();
   const router = useRouter();
+  const niceFormRef = useRef<HTMLFormElement>(null);
 
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
 
@@ -182,6 +185,8 @@ const OrderPage = () => {
       /*TODO: 쿠폰 퍼센테이지 */
       const { point, payAmount, ...rest } = previewOrder?.order!;
 
+      dispatch(SET_IS_LOADING(true));
+
       const reqBody = {
         payMethod: selectedOrderMethod,
         cardId: needCard ? card?.id! : null,
@@ -192,14 +197,16 @@ const OrderPage = () => {
       };
 
       const { data } = await createOrderApi(reqBody);
-      const { id: orderId } = data.data;
 
-      setLoadingState(true);
-      return orderId;
+      return data;
     },
     {
-      onSuccess: async (orderId: number) => {
-        processOrder(orderId);
+      onSuccess: async ({ data }) => {
+        if (selectedOrderMethod === 'NICE_BILLING') {
+          router.replace(`/order/finish?orderId=${data.id}`);
+        } else {
+          processOrder(data);
+        }
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -485,28 +492,33 @@ const OrderPage = () => {
 
   const goToTermInfo = () => {};
 
-  const processOrder = async (orderId: number) => {
+  const nicepayStart = () => {
+    window.goPay(document.getElementById('payForm'));
+    window.nicepayClose;
+  };
+
+  const processOrder = async (data: ICreateOrder) => {
     switch (selectedOrderMethod) {
       case 'NICE_BILLING': {
         break;
       }
       case 'NICE_CARD': {
-        progressPayNice({ orderId });
+        progressPayNice(data);
         break;
       }
       case 'NICE_BANK': {
-        progressPayNice({ orderId });
+        progressPayNice(data);
         break;
       }
       case 'KAKAO_CARD':
-        processKakaoPay({ orderId });
+        processKakaoPay(data);
         break;
       case 'PAYCO_EASY': {
-        processPayco({ orderId });
+        processPayco(data);
         break;
       }
       case 'TOSS_CARD': {
-        processTossPay({ orderId });
+        processTossPay(data);
         break;
       }
     }
@@ -516,40 +528,56 @@ const OrderPage = () => {
     // INIT_CARD();
   };
 
+  const checkIsAlreadyPaid = (orderData: ICreateOrder) => {
+    console.log(orderData, 'orderData');
+    const orderId = orderData.id;
+
+    if (orderData.status === 'progress') {
+      router.replace(`/${successOrderPath}?orderId=${orderId}`);
+      return true;
+    }
+    return false;
+  };
+
   // 나이스페이
 
-  const progressPayNice = async ({ orderId }: IProcessOrder) => {
-    console.log(selectedOrderMethod, '@@');
+  const progressPayNice = async (orderData: ICreateOrder) => {
+    const orderId = orderData.id;
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
     //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
     //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
+
+    if (checkIsAlreadyPaid(orderData)) return;
+
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io`,
     };
-    const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
-    console.log(data, 'NICE PAY');
+    try {
+      const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
+      console.log(data, 'NICE PAY');
 
-    // let payForm = document.getElementById('payForm');
-    let payForm = document.createElement('form');
-    payForm!.innerHTML = '';
-    // payForm?.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
-    payForm!.action = `https://f00f-218-235-12-98.jp.ngrok.io/order/v1/orders/${orderId}/nice-callback`;
+      let payForm: any = document.getElementById('payForm');
 
-    for (let formName in data) {
-      let inputHidden = document.createElement('input');
-      inputHidden.setAttribute('type', 'hidden');
-      inputHidden.setAttribute('name', formName);
-      if (formName == 'TrKey') {
-        inputHidden.setAttribute('value', ' ');
-      } else {
-        inputHidden.setAttribute('value', data[formName]);
+      payForm!.innerHTML = '';
+      // payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
+      // payForm!.action! = `https://dev-web.freshcode.me/order/v1/orders/${orderId}/nice-callback`;
+
+      for (let formName in data.data) {
+        let inputHidden = document.createElement('input');
+        inputHidden.setAttribute('type', 'hidden');
+        inputHidden.setAttribute('name', formName);
+        if (formName == 'TrKey') {
+          inputHidden.setAttribute('value', ' ');
+        } else {
+          inputHidden.setAttribute('value', data.data[formName]);
+        }
+
+        payForm.appendChild(inputHidden);
       }
-
-      payForm.appendChild(inputHidden);
 
       let inputHiddenReturn = document.createElement('input');
       inputHiddenReturn.setAttribute('type', 'hidden');
@@ -557,50 +585,63 @@ const OrderPage = () => {
       // inputHiddenReturn.setAttribute('value', `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`);
       inputHiddenReturn.setAttribute(
         'value',
-        `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`
+        `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`
       );
 
       let inputHiddenFail = document.createElement('input');
       inputHiddenFail.setAttribute('type', 'hidden');
       inputHiddenFail.setAttribute('name', 'failUrl');
       // inputHiddenFail.setAttribute('value', `${process.env.SERVICE_URL}/order`);
+      inputHiddenFail.setAttribute('value', `https://f00f-218-235-12-98.jp.ngrok.io`);
       payForm.appendChild(inputHiddenReturn);
       payForm.appendChild(inputHiddenFail);
+      nicepayStart();
+    } catch (error: any) {
+      alert(error.message);
+      dispatch(SET_IS_LOADING(false));
     }
   };
 
   // 페이코
 
-  const processPayco = async ({ orderId }: IProcessOrder) => {
+  const processPayco = async (orderData: ICreateOrder) => {
+    const orderId = orderData.id;
     // const reqBody = {
     //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
     //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
 
+    if (checkIsAlreadyPaid(orderData)) return;
+
     const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
     };
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
-      console.log(data, 'RESPONSE');
-
-      // router.push(data.data.next_redirect_pc_url);
-      // window.location.href = data.data.next_redirect_pc_url;
-    } catch (error) {}
+      console.log(data, 'PAYCO RESPONSE');
+      window.location.href = data.data.result.orderSheetUrl;
+      dispatch(SET_IS_LOADING(false));
+    } catch (error: any) {
+      alert(error.message);
+      dispatch(SET_IS_LOADING(false));
+    }
   };
 
   // 카카오
 
-  const processKakaoPay = async ({ orderId }: IProcessOrder) => {
+  const processKakaoPay = async (orderData: ICreateOrder) => {
+    const orderId = orderData.id;
     // const reqBody = {
     //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
     //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
+
+    if (checkIsAlreadyPaid(orderData)) return;
 
     const reqBody = {
       successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=kakao`,
@@ -619,20 +660,25 @@ const OrderPage = () => {
       });
       router.push(data.data.next_redirect_pc_url);
       // window.location.href = data.data.next_redirect_pc_url;
-    } catch (error) {}
+    } catch (error: any) {
+      alert(error.message);
+      dispatch(SET_IS_LOADING(false));
+    }
   };
 
   // 토스
 
-  const processTossPay = async ({ orderId }: IProcessOrder) => {
+  const processTossPay = async (orderData: ICreateOrder) => {
+    const orderId = orderData.id;
     // const reqBody = {
     //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
     // };
 
+    if (checkIsAlreadyPaid(orderData)) return;
+
     const reqBody = {
       successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=toss`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngㄴrok.io/${router.asPath}`,
       failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
     };
 
@@ -642,7 +688,8 @@ const OrderPage = () => {
   };
 
   const paymentHandler = () => {
-    if (loadingState) return;
+    if (isLoading) return;
+    console.log(isLoading, '@@@@@@@@@@@@@@@@@@@@@@@@');
 
     if (previewOrder?.order.delivery === 'MORNING') {
       /* TODO: alert message 마크다운..? */
@@ -694,6 +741,18 @@ const OrderPage = () => {
       : previewOrder?.cards.find((c) => c.main);
     setCard(card!);
   }, [previewOrder]);
+
+  useEffect(() => {
+    // 새로고침 시 중복 결제 방어 풀림
+    dispatch(SET_IS_LOADING(false));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      console.log(window.nicepayClose, 'window.nicepayClose');
+      console.log(isLoading, 'isLoading');
+    }
+  }, [window.nicepayClose, isLoading]);
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
@@ -1125,7 +1184,7 @@ const OrderPage = () => {
         </FlexRow> */}
       </OrderTermWrapper>
       <OrderBtn onClick={() => paymentHandler()}>
-        <Button borderRadius="0" height="100%">
+        <Button borderRadius="0" height="100%" disabled={isLoading} className="orderBtn">
           {payAmount - userInputObj.point}원 결제하기
         </Button>
       </OrderBtn>

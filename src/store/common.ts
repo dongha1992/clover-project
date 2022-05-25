@@ -25,32 +25,32 @@ export const commonSlice = createSlice({
   name: 'common',
   initialState: INITIAL_STATE,
   reducers: {
-    SET_IMAGE_VIEWER: (state, { payload }: PayloadAction<string[]>) => {
+    SET_IMAGE_VIEWER: (state: any, { payload }: PayloadAction<string[]>) => {
       state.imagesForViewer = payload;
     },
-    INIT_IMAGE_VIEWER: (state, action: PayloadAction) => {
+    INIT_IMAGE_VIEWER: (state: any, action: PayloadAction) => {
       state.imagesForViewer = [];
     },
-    SET_IS_MOBILE: (state, { payload }: PayloadAction<boolean>) => {
+    SET_IS_MOBILE: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isMobile = payload;
     },
-    SET_IS_LOADING: (state, { payload }: PayloadAction<boolean>) => {
+    SET_IS_LOADING: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isLoading = payload;
     },
-    SET_LOGIN_TYPE: (state, { payload }: PayloadAction<string>) => {
+    SET_LOGIN_TYPE: (state: any, { payload }: PayloadAction<string>) => {
       state.loginType = payload;
     },
-    SET_VERSION_OF_TERM: (state, { payload }: PayloadAction<number>) => {
+    SET_VERSION_OF_TERM: (state: any, { payload }: PayloadAction<number>) => {
       state.versionOfTerm = payload;
     },
-    SET_ORDER_LIST_FILTER: (state, { payload }: PayloadAction<number>) => {
+    SET_ORDER_LIST_FILTER: (state: any, { payload }: PayloadAction<number>) => {
       state.withInDays = payload;
     },
-    SET_ACCESS_METHOD: (state, { payload }: PayloadAction<IAccessMethod | undefined>) => {
+    SET_ACCESS_METHOD: (state: any, { payload }: PayloadAction<IAccessMethod | undefined>) => {
       state.userAccessMethod = payload;
     },
 
-    INIT_ACCESS_METHOD: (state, action: PayloadAction) => {
+    INIT_ACCESS_METHOD: (state: any, action: PayloadAction) => {
       state.userAccessMethod = undefined;
     },
   },

@@ -22,7 +22,8 @@ import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie } from '@utils/common';
-
+import { useDispatch } from 'react-redux';
+import { SET_IS_LOADING } from '@store/common';
 interface IProps {
   orderId: number;
   pgToken?: string;
@@ -35,7 +36,7 @@ interface IProps {
 const OrderFinishPage = () => {
   const router = useRouter();
   const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
-
+  const dispatch = useDispatch();
   const { pg_token: pgToken, orderId, pg } = router.query;
 
   const { data: orderDetail, isLoading } = useQuery(
@@ -45,7 +46,9 @@ const OrderFinishPage = () => {
       return data.data;
     },
     {
-      onSuccess: () => {},
+      onSuccess: () => {
+        dispatch(SET_IS_LOADING(false));
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!isPaymentSuccess,

@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import GlobalStyle from '@styles/GlobalStyle';
 import Wrapper from '@components/Layout/Wrapper';
 import { theme } from '@styles/theme';
@@ -15,7 +15,7 @@ import MobileDetect from 'mobile-detect';
 import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
-import { commonSelector } from '@store/common';
+import { commonSelector, SET_IS_LOADING } from '@store/common';
 import { getCartsApi } from '@api/cart';
 import { useQuery } from 'react-query';
 import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
@@ -34,12 +34,16 @@ import { getCookie } from '@utils/common/cookie';
 declare global {
   interface Window {
     Kakao: any;
+    nicepaySubmit: any;
+    nicepayClose: any;
   }
 }
+
 const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useRef<QueryClient>();
+  const payFormRef = useRef<HTMLFormElement>(null);
 
   /* 스크린 사이즈 체크 전역 처리 */
   /*TODO: 이거 말고 다른 걸로..? */
@@ -103,21 +107,50 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
       let mobile = !!md.mobile();
       dispatch(SET_IS_MOBILE(mobile));
     }
-
     authCheck();
     // temp
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
 
   useEffect(() => {
+    console.log(window.alert, 'testtestestt');
+  }, [payFormRef]);
+
+  useEffect(() => {
     try {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
       // window.Kakao.init('eea6746462f9b8925defa4f6396aafdd');
-      console.log(window.Kakao, 'WINODW');
     } catch (error) {
       console.error(error);
     }
   }, []);
+
+  // //가상계좌입금만료일 설정 (today +1)
+
+  // function getTomorrow() {
+  //   var now = new Date();
+  //   var utc = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+  //   var KOR_TIME_DIFF = 9 * 60 * 60 * 1000;
+  //   var CURRENT_KOR_DATE;
+
+  //   var today = new Date(utc + KOR_TIME_DIFF);
+
+  //   var yyyy = today.getFullYear().toString();
+  //   var mm = (today.getMonth() + 1).toString();
+  //   var dd = (today.getDate() + 1).toString();
+  //   if (mm.length < 2) {
+  //     mm = '0' + mm;
+  //   }
+  //   if (dd.length < 2) {
+  //     dd = '0' + dd;
+  //   }
+  //   return yyyy + mm + dd;
+  // }
+
+  // function nicepayMobileStart() {
+  //   // document.charset = "euc-kr";
+  //   document.payFormMobile.submit();
+  // }
 
   return (
     <>
@@ -139,6 +172,20 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           strategy="beforeInteractive"
         ></Script>
         <Script src="https://web.nicepay.co.kr/v3/webstd/js/nicepay-2.0.js" type="text/javascript"></Script>
+        <Script id="test">
+          {`  // 결제 최종 요청시 실행됩니다. <<'nicepaySubmit()' 이름 수정 불가능>>
+            const nicepaySubmit = () => {
+                document.getElementById('payForm').submit()
+            }
+
+            const nicepayClose = () => {
+                let payForm = document.getElementById('payForm');
+                payForm.innerHTML = '';
+                window.location.reload()
+                alert('결제를 취소 하였습니다.');
+                }
+            `}
+        </Script>
       </>
 
       <QueryClientProvider client={queryClient.current}>
@@ -151,7 +198,19 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
             </Wrapper>
           </PersistGate>
         </ThemeProvider>
+        <form
+          ref={payFormRef}
+          name="payForm"
+          id="payForm"
+          method="post"
+          action=""
+          acceptCharset="UTF-8"
+          style={{ display: 'none' }}
+        ></form>
       </QueryClientProvider>
+      <script
+      // eslint-disable-next-line react/no-danger
+      />
     </>
   );
 };
