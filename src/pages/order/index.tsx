@@ -40,7 +40,7 @@ import {
 } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder } from '@model/index';
+import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder, IGetNicePayment } from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
@@ -215,6 +215,22 @@ const OrderPage = () => {
                 '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
             })
           );
+          router.replace('/order');
+          /* TODO: 확인 필요 */
+        } else if (error.code === 4351) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '상품 금액이 변경되었습니다. 주문을 다시 시도해주세요.',
+            })
+          );
+          router.replace('/order');
+        } else if (error.code === 4352) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '상품 할인에 변동이 있습니다. 주문을 다시 시도해주세요.',
+            })
+          );
+          router.replace('/order');
         }
       },
     }
@@ -514,8 +530,43 @@ const OrderPage = () => {
       successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`,
       failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
     };
-    const { data } = await postNicePaymnetApi({ orderId, data: reqBody });
+    const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
     console.log(data, 'NICE PAY');
+
+    // let payForm = document.getElementById('payForm');
+    let payForm = document.createElement('form');
+    payForm!.innerHTML = '';
+    // payForm?.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
+    payForm!.action = `https://f00f-218-235-12-98.jp.ngrok.io/order/v1/orders/${orderId}/nice-callback`;
+
+    for (let formName in data) {
+      let inputHidden = document.createElement('input');
+      inputHidden.setAttribute('type', 'hidden');
+      inputHidden.setAttribute('name', formName);
+      if (formName == 'TrKey') {
+        inputHidden.setAttribute('value', ' ');
+      } else {
+        inputHidden.setAttribute('value', data[formName]);
+      }
+
+      payForm.appendChild(inputHidden);
+
+      let inputHiddenReturn = document.createElement('input');
+      inputHiddenReturn.setAttribute('type', 'hidden');
+      inputHiddenReturn.setAttribute('name', 'returnUrl');
+      // inputHiddenReturn.setAttribute('value', `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`);
+      inputHiddenReturn.setAttribute(
+        'value',
+        `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`
+      );
+
+      let inputHiddenFail = document.createElement('input');
+      inputHiddenFail.setAttribute('type', 'hidden');
+      inputHiddenFail.setAttribute('name', 'failUrl');
+      // inputHiddenFail.setAttribute('value', `${process.env.SERVICE_URL}/order`);
+      payForm.appendChild(inputHiddenReturn);
+      payForm.appendChild(inputHiddenFail);
+    }
   };
 
   // 페이코
@@ -552,9 +603,9 @@ const OrderPage = () => {
     // };
 
     const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngㄴrok.io${router.asPath}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngㄴrok.io/${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
     };
 
     /* TODO: 모바일, 안드로이드 체크  */
@@ -574,10 +625,17 @@ const OrderPage = () => {
   // 토스
 
   const processTossPay = async ({ orderId }: IProcessOrder) => {
+    // const reqBody = {
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+    // };
+
     const reqBody = {
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=toss`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngㄴrok.io/${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
     };
+
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
     window.location.href = data.data.checkoutPage;
     console.log(data, 'TOSS RESPONSE');

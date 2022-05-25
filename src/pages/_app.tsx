@@ -138,7 +138,9 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           src="https://developers.kakao.com/sdk/js/kakao.min.js"
           strategy="beforeInteractive"
         ></Script>
+        <Script src="https://web.nicepay.co.kr/v3/webstd/js/nicepay-2.0.js" type="text/javascript"></Script>
       </>
+
       <QueryClientProvider client={queryClient.current}>
         <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
