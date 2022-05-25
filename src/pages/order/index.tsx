@@ -290,6 +290,7 @@ const OrderPage = () => {
 
   const useAllOfPointHandler = () => {
     const { point: limitPoint } = previewOrder!;
+    코;
     const { payAmount } = previewOrder?.order!;
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
@@ -485,12 +486,28 @@ const OrderPage = () => {
         processKakaoPay({ orderId });
         break;
       case 'PAYCO_EASY': {
+        processPayco({ orderId });
+        break;
       }
       case 'TOSS_CARD': {
         processTossPay({ orderId });
         break;
       }
     }
+  };
+
+  const processPayco = async ({ orderId }: IProcessOrder) => {
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
+
+    const reqBody = {
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+    };
   };
 
   const processKakaoPay = async ({ orderId }: IProcessOrder) => {
