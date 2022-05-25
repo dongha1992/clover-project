@@ -57,10 +57,6 @@ const SpotStatusPage = () => {
     setSelectedTab(tabItem.link);
   };
 
-  const goToSpotStatusDetail = (id: number | undefined) => {
-    router.push(`/mypage/spot-status/detail/${id}`);
-  };
-
   const handlerDislike = async (e: any, id: number) => {
     e.stopPropagation();
     try {
@@ -82,7 +78,7 @@ const SpotStatusPage = () => {
       </FixedTab>
       <ContentWrapper>
         {selectedTab === '/spot/status/list' ? (
-          <SpotStatusList items={spotStatusList?.spotRegistrations!} onClick={goToSpotStatusDetail} />
+          <SpotStatusList items={spotStatusList?.spotRegistrations!} />
         ) : (
           <SpotWishListWrapper>
             {wishList?.spots.map((item, idx) => {

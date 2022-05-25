@@ -14,10 +14,9 @@ import { SET_SPOT_INFO } from '@store/spot';
 
 interface IProps {
   items: IGetRegistrationStatus[];
-  onClick: (id: number | undefined) => void;
 };
 
-const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
+const SpotStatusList = ({ items }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [info, setInfo] = useState<ISpotsInfo>();
@@ -100,6 +99,10 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
     };  
   };
 
+  const goToSpotStatusDetail = (id: number) => {
+    router.push(`/mypage/spot-status/detail/${id}`);
+  };
+
   useEffect(() => {
     // 스팟 정보 조회
     const getSpotInfoData = async () => {
@@ -130,7 +133,7 @@ const SpotStatusList = ({ items, onClick }: IProps): ReactElement => {
                   {spotType(i?.type)}
                 </Tag>
               </Flex>
-              <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={() => onClick(i?.id)}>
+              <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={() => goToSpotStatusDetail(i?.id!)}>
                 신청상세 보기
               </TextH6B>
             </FlexBetween>
