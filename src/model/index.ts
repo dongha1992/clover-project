@@ -566,6 +566,9 @@ export interface ISpotsDetail {
   isOpened: boolean;
   openedAt: string;
   closedDate: string;
+  userId: number;
+  step: string;
+  rejected: boolean;
 }
 
 export interface ISpotPickupInfo {
