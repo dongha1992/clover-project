@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useRef } from 'react';
+import React, { ReactElement, useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH2B, TextB3R, TextH4B, TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
@@ -10,12 +10,12 @@ import { useQuery } from 'react-query';
 import { getSpotsRegistrationStatusDetail } from '@api/spot';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { IGetRegistrationStatus } from '@model/index';
-import { breakpoints } from '@utils/common/getMediaQuery';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
-import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
+import { SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
+import { useToast } from '@hooks/useToast';
 
 interface IParams {
   id: number;
@@ -51,12 +51,13 @@ const PLAN_GUIDE = [
 const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { type } = router.query;
+  const { type, recruited } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
   const [openInfo, setOpenInfo] = useState<boolean>(false);
+  const { showToast, hideToast } = useToast();
 
   const { data: statusDetail } = useQuery(
     ['statusDetail'],
@@ -130,7 +131,7 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
     currentRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const orderCondition = (): boolean => {
+  const orderCondition = (): boolean | undefined => {
     if(statusDetail?.type === 'PRIVATE' && (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') && !statusDetail?.rejected) {
       return true;
     } else {
@@ -171,6 +172,14 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
       );
     }
   };
+
+  useEffect(()=> {
+    if(recruited){
+      const message = '참여해 주셔서 감사해요:)';
+      showToast({ message });
+      return () => hideToast();
+    }
+  }, [])
   
   return (
     <Container order={orderCondition()}>
@@ -256,23 +265,25 @@ const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
         </Button>
       </PlanGuideWrapper>
       {
-        orderCondition() &&
-        <FixedButton onClick={orderHandler}>
-          <Button
-            borderRadius="0"
-            height="100%"
-            padding="10px 0 0 0"
-            backgroundColor={theme.balck}
-          >
-            주문하기
-          </Button>
-        </FixedButton>
+        orderCondition() && (
+          <FixedButton onClick={orderHandler}>
+            <Button
+              borderRadius="0"
+              height="100%"
+              padding="10px 0 0 0"
+              backgroundColor={theme.balck}
+            >
+              주문하기
+            </Button>
+          </FixedButton>
+
+        )
       }
     </Container>
   );
 };
 
-const Container = styled.div<{order: boolean}>`
+const Container = styled.div<{order: boolean | undefined}>`
 ${({order})=> {
   if(order) {
     return css`
