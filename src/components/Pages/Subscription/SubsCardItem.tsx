@@ -64,6 +64,7 @@ export const Label = styled.span`
   border-radius: 4px;
   border: 1px solid ${theme.brandColor};
   color: ${theme.brandColor};
+  background-color: #fff;
   &:last-child {
     margin-right: 0;
   }
@@ -75,6 +76,10 @@ export const Label = styled.span`
   &.dawn {
     border: 1px solid #7922bc;
     color: #7922bc;
+  }
+  &.parcel {
+    border: 1px solid #1e7ff0;
+    color: #1e7ff0;
   }
 `;
 
