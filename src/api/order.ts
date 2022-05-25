@@ -152,12 +152,14 @@ export const postPaycoPaymentApi = ({
 
 export const postTossApproveApi = ({
   orderId,
-  payToken,
+  data,
 }: {
   orderId: number;
-  payToken: number;
+  data: {
+    payToken: number;
+  };
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`order/v1/orders/${orderId}/toss-approve`, payToken);
+  return Api.post(`order/v1/orders/${orderId}/toss-approve`, data);
 };
 
 export const postTossPaymentApi = ({

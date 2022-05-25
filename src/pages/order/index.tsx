@@ -220,6 +220,22 @@ const OrderPage = () => {
                 '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
             })
           );
+          router.replace('/order');
+          /* TODO: 확인 필요 */
+        } else if (error.code === 4351) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '상품 금액이 변경되었습니다. 주문을 다시 시도해주세요.',
+            })
+          );
+          router.replace('/order');
+        } else if (error.code === 4352) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '상품 할인에 변동이 있습니다. 주문을 다시 시도해주세요.',
+            })
+          );
+          router.replace('/order');
         }
       },
     }
@@ -514,17 +530,27 @@ const OrderPage = () => {
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
-      router.push(data.data.next_redirect_pc_url);
-      // window.location.href = data.data.next_redirect_pc_url;
+
+      window.location.href = data.data.next_redirect_pc_url;
     } catch (error) {}
   };
 
   const processTossPay = async ({ orderId }: IProcessOrder) => {
+    // const reqBody = {
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+    // };
+
     const reqBody = {
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=toss`,
     };
+
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+    setCookie({
+      name: 'toss-tid-clover',
+      value: data.data.payToken,
+    });
     window.location.href = data.data.checkoutPage;
     console.log(data, 'TOSS RESPONSE');
   };
@@ -589,7 +615,7 @@ const OrderPage = () => {
 
   if (isError) {
     /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
-    const { code } = error;
+    const { code } = error && error;
     if (code === 5005) {
       return <div>선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.</div>;
     } else {
