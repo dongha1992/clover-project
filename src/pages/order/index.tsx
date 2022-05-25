@@ -35,6 +35,8 @@ import {
   postKakaoPaymentApi,
   postTossPaymentApi,
   postTossApproveApi,
+  postPaycoPaymentApi,
+  postNicePaymnetApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
@@ -197,14 +199,7 @@ const OrderPage = () => {
     },
     {
       onSuccess: async (orderId: number) => {
-        if (needCard) {
-          router.push(`/order/finish?orderId=${orderId}`);
-          setLoadingState(false);
-          INIT_ORDER();
-          INIT_CARD();
-        } else {
-          processOrder(orderId);
-        }
+        processOrder(orderId);
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -290,7 +285,7 @@ const OrderPage = () => {
 
   const useAllOfPointHandler = () => {
     const { point: limitPoint } = previewOrder!;
-    코;
+
     const { payAmount } = previewOrder?.order!;
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
@@ -477,10 +472,15 @@ const OrderPage = () => {
   const processOrder = async (orderId: number) => {
     switch (selectedOrderMethod) {
       case 'NICE_BILLING': {
+        break;
       }
       case 'NICE_CARD': {
+        progressPayNice({ orderId });
+        break;
       }
       case 'NICE_BANK': {
+        progressPayNice({ orderId });
+        break;
       }
       case 'KAKAO_CARD':
         processKakaoPay({ orderId });
@@ -494,7 +494,31 @@ const OrderPage = () => {
         break;
       }
     }
+    // router.push(`/order/finish?orderId=${orderId}`);
+    // setLoadingState(false);
+    // INIT_ORDER();
+    // INIT_CARD();
   };
+
+  // 나이스페이
+
+  const progressPayNice = async ({ orderId }: IProcessOrder) => {
+    console.log(selectedOrderMethod, '@@');
+    // const reqBody = {
+    //   payMethod: selectedOrderMethod,
+    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
+    const reqBody = {
+      payMethod: selectedOrderMethod,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
+    };
+    const { data } = await postNicePaymnetApi({ orderId, data: reqBody });
+    console.log(data, 'NICE PAY');
+  };
+
+  // 페이코
 
   const processPayco = async ({ orderId }: IProcessOrder) => {
     // const reqBody = {
@@ -504,11 +528,21 @@ const OrderPage = () => {
     // };
 
     const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
     };
+
+    try {
+      const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
+      console.log(data, 'RESPONSE');
+
+      // router.push(data.data.next_redirect_pc_url);
+      // window.location.href = data.data.next_redirect_pc_url;
+    } catch (error) {}
   };
+
+  // 카카오
 
   const processKakaoPay = async ({ orderId }: IProcessOrder) => {
     // const reqBody = {
@@ -516,10 +550,11 @@ const OrderPage = () => {
     //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
+
     const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
+      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
+      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io${router.asPath}`,
     };
 
     /* TODO: 모바일, 안드로이드 체크  */
@@ -535,6 +570,8 @@ const OrderPage = () => {
       // window.location.href = data.data.next_redirect_pc_url;
     } catch (error) {}
   };
+
+  // 토스
 
   const processTossPay = async ({ orderId }: IProcessOrder) => {
     const reqBody = {
