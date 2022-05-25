@@ -32,20 +32,20 @@ const SpotReqPage = () => {
   const { type } = router.query;
   const mainText = () => {
     switch (type) {
-      case 'private': {
+      case 'PRIVATE': {
         return { textTitle: text.privateText, textDesc: text.privateDesc };
       }
-      case 'public': {
+      case 'PUBLIC': {
         return { textTitle: text.publicText, textDesc: text.publicDesc };
       }
-      case 'owner': {
+      case 'OWNER': {
         return { textTitle: text.ownerText, textDesc: text.ownerDesc };
       }
     }
   };
   const goToRegister = () => {
     if (isLoginSuccess) {
-      if((type === 'owner' && info?.canOwnerSpotRegistraion) || (type === 'private' && !info?.canPrivateSpotRegistration) || (type === 'public' && !info?.canPublicSpotRegistraion)){
+      if((type === 'OWNER' && info?.canOwnerSpotRegistraion) || (type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion)){
        return (
         dispatch(
           SET_ALERT({

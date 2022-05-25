@@ -11,9 +11,10 @@ import { ISpotPickupInfo } from '@model/index';
 import { ButtonGroup } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { postSpotRegistrationsRecruiting } from '@api/spot';
+import { ISpotsDetail } from '@model/index';
 
 type TPrams = {
-  items: any;
+  items: ISpotsDetail | undefined;
   type: string;
 };
 
@@ -21,31 +22,30 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();  
 
-  const handlerPublicSpotRecruiting= async(id: number) => {
-    router.push({
-      pathname: `mypage/spot-status/detail/${id}`,
-      query: { recruited: true }
-    });
-    // try{
-    //   const {data} = await postSpotRegistrationsRecruiting(id);
-    //   if(data.code === 200){
-    //     router.push(`mypage/spot-status/detail/${id}`);
-    //   }
-    // } catch(e){
-    //   console.error(e);
-    // };
+  const handlerPublicSpotRecruiting = async(id: number) => {
+    try{
+      const {data} = await postSpotRegistrationsRecruiting(id);
+      if(data.code === 200){
+        router.push({
+          pathname: `/mypage/spot-status/detail/${id}`,
+          query: { recruited: true }
+        });
+      }
+    } catch(e){
+      console.error(e);
+    };
   };
 
   const submitHandler = (): void => {
-    if (type === 'private') {
+    if (type === 'PRIVATE') {
       dispatch(INIT_BOTTOM_SHEET());  
       router.push({
         pathname: '/spot/location/address',
         query: { type },
       });
-  } else if(type === 'public') {
+  } else if(type === 'PUBLIC') {
     dispatch(INIT_BOTTOM_SHEET());  
-    handlerPublicSpotRecruiting(items?.id);
+    handlerPublicSpotRecruiting(items?.id!);
     }
   };
 
@@ -62,7 +62,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
           프코스팟 신청
         </TextH5B>
         {
-          type === 'private' && (
+          type === 'PRIVATE' && (
             <>
               <TextB2R>
                 {'해당 주소에 이미 신청 중인 프라이빗 프코스팟이 있어요!'}
@@ -71,7 +71,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
               <FlexWrapper>
                 <Dot>•</Dot>
                 <TextH5B margin="0 0 4px 0">
-                {items.placeName}
+                {items?.placeName}
                 </TextH5B>  
               </FlexWrapper>
               
@@ -80,7 +80,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
           )
         }
         {
-          type === 'public' && (
+          type === 'PUBLIC' && (
             <>
               <TextB2R margin='0 0 16px 0'>
                 {'해당 주소에 이미 신청 중인 프코스팟이 있어요!\n함께 오픈 참여하시겠어요?'}
@@ -91,7 +91,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
                   onChange={() => {}}
                   isSelected={true}
                 />
-                <TextH5B padding="2px 0 0 8px">{items.placeName}</TextH5B>
+                <TextH5B padding="2px 0 0 8px">{items?.placeName}</TextH5B>
               </PickWrapper>
             </>
           )
@@ -99,7 +99,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
       </Wrapper>
       <ButtonContainer>
         {
-          type === 'private' && (
+          type === 'PRIVATE' && (
             <ButtonGroup
               rightButtonHandler={submitHandler}
               leftButtonHandler={closeBottomSheet}
@@ -109,7 +109,7 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
           )
         }
         {
-          type === 'public' && (
+          type === 'PUBLIC' && (
             <ButtonGroup
               rightButtonHandler={submitHandler}
               leftButtonHandler={closeBottomSheet}
