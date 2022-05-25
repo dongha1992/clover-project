@@ -39,7 +39,7 @@ const SubmitPage = () => {
       placeType: spotsRegistrationOptions.placeTypeOptions.value,
       placeTypeDetail:
         spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
-      userPosition: type === 'owner' ? spotsRegistrationInfo.managerInfo : null,
+      userPosition: type === 'OWNER' ? spotsRegistrationInfo.managerInfo : null,
     };
     try {
       const { data } = await postSpotsRegistrationsInfoSubmit(params);
@@ -71,7 +71,7 @@ const SubmitPage = () => {
             <TextH5B margin="0 0 8px 0">장소명</TextH5B>
             <TextB2R>{spotsRegistrationInfo.placeName}</TextB2R>
           </Content>
-          {type === 'private' && (
+          {type === 'PRIVATE' && (
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
               <TextB2R>
@@ -88,7 +88,7 @@ const SubmitPage = () => {
                 : `기타 / ${spotsRegistrationInfo.placeTypeEtc}`}
             </TextB2R>
           </Content>
-          {type === 'private' && (
+          {type === 'PRIVATE' && (
             <Content>
               <TextH5B margin="0 0 8px 0">점심시간</TextH5B>
               <TextB2R>
@@ -101,11 +101,11 @@ const SubmitPage = () => {
       </Wrapper>
       <Row />
       <Wrapper>
-        {type !== 'public' && (
+        {type !== 'PUBLIC' && (
           <>
             <ContentWrapper>
               <FlexBetween margin="0 0 24px 0">
-                <TextB1B>{type === 'private' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
+                <TextB1B>{type === 'PRIVATE' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
@@ -119,7 +119,7 @@ const SubmitPage = () => {
                 <TextH5B margin="0 0 8px 0">휴대폰 번호</TextH5B>
                 <TextB2R>{spotsRegistrationInfo.userTel}</TextB2R>
               </Content>
-              {type === 'owner' && (
+              {type === 'OWNER' && (
                 <Content>
                   <TextH5B margin="0 0 8px 0">직급/호칭</TextH5B>
                   <TextB2R>{spotsRegistrationInfo.managerInfo}</TextB2R>
