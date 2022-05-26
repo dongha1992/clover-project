@@ -412,24 +412,24 @@ const DailySaleNumber = styled.div`
 
 /*TODO: 수정해야함 */
 
-export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
+// export async function getServerSideProps(context: any) {
+//   const { menuId } = context.query;
 
-  if (!menuId) {
-    return {
-      props: {
-        notFound: true,
-        redirect: {
-          destinaion: '/',
-        },
-      },
-    };
-  }
+//   if (!menuId) {
+//     return {
+//       props: {
+//         notFound: true,
+//         redirect: {
+//           destinaion: '/',
+//         },
+//       },
+//     };
+//   }
 
-  return {
-    props: { menuId },
-  };
-}
+//   return {
+//     props: { menuId },
+//   };
+// }
 
 // export async function getStaticPaths() {}
 
