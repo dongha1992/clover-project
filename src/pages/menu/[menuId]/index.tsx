@@ -35,7 +35,7 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const MenuDetailPage = ({ menuId }: any) => {
+const MenuDetailPage = () => {
   // const [menuItem, setMenuItem] = useState<any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
@@ -47,17 +47,16 @@ const MenuDetailPage = ({ menuId }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
-  // const { menuId } = router.query;
+  const { menuId } = router.query;
 
   const {
     data,
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenuDetail',
+    ['getMenuDetail'],
     async () => {
-      const { data } = await getMenuDetailApi(menuId);
-
+      const { data } = await getMenuDetailApi(Number(menuId));
       return data.data;
     },
 
@@ -67,6 +66,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
