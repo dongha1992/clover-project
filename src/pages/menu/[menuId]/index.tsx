@@ -431,8 +431,31 @@ const DailySaleNumber = styled.div`
 //   };
 // }
 
-// export async function getStaticPaths() {}
+export async function getStaticPaths() {}
 
-// export async function getStaticProps() {}
+export async function getStaticProps() {}
+
+// export async function getStaticPaths() {
+//   const res = await fetch(`${config.legacyRestUrl}/new/home/magazine`);
+//   const blogs = await res.json();
+//   const paths = blogs.list.map((blog) => ({
+//     params: { id: blog.id.toString() },
+//   }));
+//   return {
+//     paths,
+//     fallback: 'blocking',
+//   };
+// }
+// export async function getStaticProps({ params }) {
+//   const res = await fetch(`${config.legacyRestUrl}/new/home/magazine/${params.id}`);
+//   const blog = await res.json();
+//   return {
+//     props: {
+//       blog,
+//     },
+//     revalidate: 10,
+//     // revalidate: 60 * 30,
+//   };
+// }
 
 export default React.memo(MenuDetailPage);
