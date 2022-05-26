@@ -21,9 +21,10 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
 import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
+import axios from 'axios';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -35,8 +36,8 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const MenuDetailPage = () => {
-  // const [menuItem, setMenuItem] = useState<any>({});
+const MenuDetailPage = ({ menuDetail }: any) => {
+  // const [menuDetail, setMenuItem] = useState<any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -49,26 +50,26 @@ const MenuDetailPage = () => {
   const dispatch = useDispatch();
   const { menuId } = router.query;
 
-  const {
-    data,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getMenuDetail'],
-    async () => {
-      const { data } = await getMenuDetailApi(Number(menuId));
-      return data.data;
-    },
+  // const {
+  //   data,
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery(
+  //   ['getMenuDetail'],
+  //   async () => {
+  //     const { data } = await getMenuDetailApi(Number(menuId));
+  //     return data.data;
+  //   },
 
-    {
-      onSuccess: (data) => {
-        dispatch(SET_MENU_ITEM(data));
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!menuId,
-    }
-  );
+  //   {
+  //     onSuccess: (data) => {
+  //       dispatch(SET_MENU_ITEM(data));
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     enabled: !!menuId,
+  //   }
+  // );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
@@ -165,11 +166,11 @@ const MenuDetailPage = () => {
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={menuItem?.thumbnail} setCountIndex={setCurrentImg} />
+        <Carousel images={menuDetail?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
-          {menuItem?.badgeMessage && (
+          {menuDetail?.badgeMessage && (
             <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-              {menuItem?.badgeMessage}
+              {menuDetail?.badgeMessage}
             </TextH6B>
           )}
         </DailySaleNumber>
@@ -180,8 +181,8 @@ const MenuDetailPage = () => {
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
-            {/* {menuItem.tag.map((tag: string, index: number) => {
+            <TextH2B padding={'0 0 8px 0'}>{menuDetail.name}</TextH2B>
+            {/* {menuDetail.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
                 <Tag key={index} margin="0 4px 0 0">
@@ -189,10 +190,10 @@ const MenuDetailPage = () => {
                 </Tag>
               );
             })} */}
-            {menuItem.tag && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
+            {menuDetail.tag && <Tag margin="0 4px 0 0">{menuDetail.tag}</Tag>}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {menuItem.description}
+            {menuDetail.description}
           </TextB2R>
           <PriceAndCouponWrapper>
             <PriceWrapper>
@@ -431,31 +432,29 @@ const DailySaleNumber = styled.div`
 //   };
 // }
 
-export async function getStaticPaths() {}
+export async function getStaticPaths() {
+  const params = {
+    menuSort: 'LAUNCHED_DESC',
+  };
 
-export async function getStaticProps() {}
+  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });
+  const paths = data.data.map((menu: any) => ({
+    params: { menuId: menu.id.toString() },
+  }));
 
-// export async function getStaticPaths() {
-//   const res = await fetch(`${config.legacyRestUrl}/new/home/magazine`);
-//   const blogs = await res.json();
-//   const paths = blogs.list.map((blog) => ({
-//     params: { id: blog.id.toString() },
-//   }));
-//   return {
-//     paths,
-//     fallback: 'blocking',
-//   };
-// }
-// export async function getStaticProps({ params }) {
-//   const res = await fetch(`${config.legacyRestUrl}/new/home/magazine/${params.id}`);
-//   const blog = await res.json();
-//   return {
-//     props: {
-//       blog,
-//     },
-//     revalidate: 10,
-//     // revalidate: 60 * 30,
-//   };
-// }
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }: { params: { menuId: string } }) {
+  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
+
+  return {
+    props: { menuDetail: data.data },
+    revalidate: 10,
+  };
+}
 
 export default React.memo(MenuDetailPage);
