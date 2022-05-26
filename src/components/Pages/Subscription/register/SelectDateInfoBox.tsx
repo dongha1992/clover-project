@@ -140,20 +140,22 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
                 {receiptInfo.eventDiscount ? `-${getFormatPrice(String(receiptInfo.eventDiscount))}` : 0}원
               </TextB2R>
             </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>물티슈</TextB2R>
-              <TextB2R>
-                {disposable ? receiptInfo.menuOption1.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(receiptInfo.menuOption1.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>수저</TextB2R>
-              <TextB2R>
-                {disposable ? receiptInfo.menuOption2.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(receiptInfo.menuOption2.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
+            {disposable && (
+              <>
+                <ReceiptLi>
+                  <TextB2R>물티슈</TextB2R>
+                  <TextB2R>
+                    {receiptInfo.menuOption1.quantity}개 / {getFormatPrice(String(receiptInfo.menuOption1.price))}원
+                  </TextB2R>
+                </ReceiptLi>
+                <ReceiptLi>
+                  <TextB2R>수저</TextB2R>
+                  <TextB2R>
+                    {receiptInfo.menuOption2.quantity}개 / {getFormatPrice(String(receiptInfo.menuOption2.price))}원
+                  </TextB2R>
+                </ReceiptLi>
+              </>
+            )}
             <ReceiptLi>
               <TextB2R>배송비</TextB2R>
               <TextB2R>{receiptInfo.deliveryPrice === 0 ? '무료배송' : '3,500'}</TextB2R>
