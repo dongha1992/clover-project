@@ -309,20 +309,24 @@ const SubsRegisterPage = () => {
                 원
               </TextB2R>
             </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>물티슈</TextB2R>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>수저</TextB2R>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
+            {disposable && (
+              <>
+                <ReceiptLi>
+                  <TextB2R>물티슈</TextB2R>
+                  <TextB2R>
+                    {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
+                    {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
+                  </TextB2R>
+                </ReceiptLi>
+                <ReceiptLi>
+                  <TextB2R>수저</TextB2R>
+                  <TextB2R>
+                    {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
+                    {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
+                  </TextB2R>
+                </ReceiptLi>
+              </>
+            )}
           </ReceiptUl>
           <FlexBetween padding="16px 0 0" margin="0 0 16px" className="btN">
             <TextH5B>배송비</TextH5B>
@@ -438,6 +442,7 @@ export const MenuLi = styled.li`
   display: flex;
   padding: 16px 0;
   border-bottom: 1px solid ${theme.greyScale6};
+  position: relative;
   &:last-of-type {
     border-bottom: none;
   }
@@ -449,6 +454,13 @@ export const MenuLi = styled.li`
     padding: 10px 16px;
     border: 1px solid #242424;
     border-radius: 8px;
+  }
+  button.deleteBtn {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 16px;
+    padding: 0;
   }
 `;
 export const MenuImgBox = styled.div`
@@ -470,6 +482,10 @@ export const MenuTextBox = styled.div`
       height: 16px;
       background-color: ${theme.greyScale6};
     }
+  }
+  button:disabled {
+    border: 1px solid #f2f2f2;
+    color: #c8c8c8;
   }
 `;
 
