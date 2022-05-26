@@ -154,7 +154,7 @@ const SubsSetInfoPage = () => {
 
   const goToRegisterCheck = () => {
     router.push('/subscription/register');
-    dispatch(SET_SUBS_INFO_STATE({ period: userSelectPeriod }));
+    dispatch(SET_SUBS_INFO_STATE({ period: userSelectPeriod, deliveryType: subsDeliveryType }));
   };
 
   const goToDeliveryInfo = () => {
@@ -287,9 +287,19 @@ const BottomButton = styled.button`
   }
 `;
 
-// export async function getServerSideProps(context: any) {
-//   return {
-//     props: {},
-//   };
-// }
+export async function getServerSideProps(context: any) {
+  const subsDeliveryType = context.query?.subsDeliveryType as string;
+
+  if (!subsDeliveryType) {
+    return {
+      redirect: {
+        destination: '/subscription',
+        permanent: true,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+}
 export default SubsSetInfoPage;
