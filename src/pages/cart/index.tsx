@@ -287,14 +287,16 @@ const CartPage = () => {
   );
 
   const { isLoading, isError } = useQuery(
-    'getCartList',
+    ['getCartList', selectedDeliveryDay],
     async () => {
+      const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
       /* TODO: 스팟아이디 넣어야함 */
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
-        deliveryDate: selectedDeliveryDay!,
-        spotId: userDeliveryType?.toUpperCase() ? 1 : null,
+        deliveryDate: selectedDeliveryDay,
+        spotId: isSpot ? 1 : null,
       };
+
       const { data } = await getCartsApi({ params });
       return data.data;
     },
@@ -302,7 +304,7 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
-      enabled: !!selectedDeliveryDay || !!me,
+      enabled: !!selectedDeliveryDay && !!me,
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
         try {

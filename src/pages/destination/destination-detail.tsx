@@ -25,6 +25,7 @@ import {
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
+import isNil from 'lodash-es/isNil';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -131,6 +132,10 @@ const DestinationDetailPage = () => {
 
   useEffect(() => {
     getLonLanForMap();
+  }, []);
+
+  useEffect(() => {
+    if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
   }, []);
 
   useEffect(() => {
