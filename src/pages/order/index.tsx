@@ -37,6 +37,7 @@ import {
   postTossApproveApi,
   postPaycoPaymentApi,
   postNicePaymnetApi,
+  postNiceApproveApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
@@ -559,10 +560,13 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
+    const successUrl = `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`;
+    const failureUrl = `${process.env.SERVICE_URL}${router.asPath}`;
+
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      successUrl,
+      failureUrl,
     };
 
     // const reqBody = {
@@ -580,6 +584,7 @@ const OrderPage = () => {
       payForm!.innerHTML = '';
       // payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
       // payForm!.action! = `https://dev-web.freshcode.me/order/v1/orders/${orderId}/nice-callback`;
+      payForm!.action = `https://clover-service-api-dev.freshcode.me/order/v1/orders/${orderId}/nicepay-approve`;
 
       for (let formName in data.data) {
         let inputHidden = document.createElement('input');

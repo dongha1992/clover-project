@@ -33,8 +33,9 @@ module.exports = () => {
       STAGE: process.env.STAGE,
       NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_KEY,
       SERVICE_URL: process.env.SERVICE_URL,
+      API_URL: process.env.API_URL,
     },
     generateBuildId: async () => 'constant-build-id',
-    exportTrailingSlash: true,
+    trailingSlash: true,
   };
 };
