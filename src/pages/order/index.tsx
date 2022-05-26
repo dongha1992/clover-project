@@ -584,6 +584,7 @@ const OrderPage = () => {
       payForm!.innerHTML = '';
       // payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
       // payForm!.action! = `https://dev-web.freshcode.me/order/v1/orders/${orderId}/nice-callback`;
+      payForm!.action = `https://clover-service-api-dev.freshcode.me/order/v1/orders/${orderId}/nicepay-approve`;
 
       for (let formName in data.data) {
         let inputHidden = document.createElement('input');
