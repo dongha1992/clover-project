@@ -557,6 +557,17 @@ const RefundInfoWrapper = styled.div`
 export async function getServerSideProps(context: any) {
   const { orderId } = context.query;
 
+  if (!orderId) {
+    return {
+      props: {
+        notFound: true,
+        redirect: {
+          destinaion: '/',
+        },
+      },
+    };
+  }
+
   return {
     props: { orderId },
   };

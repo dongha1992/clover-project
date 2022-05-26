@@ -24,6 +24,7 @@ import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_IS_LOADING } from '@store/common';
+
 interface IProps {
   orderId: number;
   pgToken?: string;
@@ -348,14 +349,25 @@ const DevlieryInfoWrapper = styled.div`
   padding: 24px;
 `;
 
-// export async function getServerSideProps(context: any) {
-//   const { orderId } = context.query;
-//   console.log(context.query, 'context.query');
-//   return {
-//     props: {
-//       orderId: +orderId,
-//     },
-//   };
-// }
+export async function getServerSideProps(context: any) {
+  const { orderId } = context.query;
+  console.log(context.query, 'context.query');
+
+  if (orderId) {
+    return {
+      props: {
+        notFound: true,
+        redirect: {
+          destinaion: '/',
+        },
+      },
+    };
+  }
+  return {
+    props: {
+      orderId: +orderId,
+    },
+  };
+}
 
 export default OrderFinishPage;
