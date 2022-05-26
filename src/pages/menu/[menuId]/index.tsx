@@ -415,16 +415,16 @@ const DailySaleNumber = styled.div`
 export async function getServerSideProps(context: any) {
   const { menuId } = context.query;
 
-  // if (!menuId) {
-  //   return {
-  //     props: {
-  //       notFound: true,
-  //       redirect: {
-  //         destinaion: '/',
-  //       },
-  //     },
-  //   };
-  // }
+  if (!menuId) {
+    return {
+      props: {
+        notFound: true,
+        redirect: {
+          destinaion: '/',
+        },
+      },
+    };
+  }
 
   return {
     props: { menuId },
