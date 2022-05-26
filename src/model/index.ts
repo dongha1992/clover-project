@@ -1569,10 +1569,10 @@ export type TType =
   | 'SNACK'
   | 'WRAP_SANDWICH';
 export interface IGetMenus {
-  categories: TCategory | string;
+  categories?: TCategory | string;
   menuSort: TMenuSort | string;
-  searchKeyword: string;
-  type: TType | string;
+  searchKeyword?: string;
+  type?: TType | string;
 }
 
 export interface IMenuImage {
