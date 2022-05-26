@@ -76,7 +76,8 @@ const Item = ({ item, isQuick = false }: TProps) => {
     }
 
     dispatch(SET_MENU_ITEM(item));
-    router.push({ pathname: `/menu/[menuId]`, query: { menuId: item.id } });
+    // router.push({ pathname: `/menu/[menuId]`, query: { menuId: item.id } });
+    router.push(`/menu/[menuId]/${item.id}`);
   };
 
   const badgeRenderer = () => {
