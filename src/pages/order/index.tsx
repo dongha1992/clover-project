@@ -17,7 +17,7 @@ import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import { SVGIcon } from '@utils/common';
+import { getCookie, SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -51,6 +51,7 @@ import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pag
 import { SET_ALERT } from '@store/alert';
 import { setCookie } from '@utils/common';
 import { SET_IS_LOADING } from '@store/common';
+import { userForm } from '@store/user';
 
 declare global {
   interface Window {
@@ -98,6 +99,8 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 const kakaoSuccessOrderPath = 'order/kakao';
+
+const ngorkUrl = '27d7-1-228-1-158.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -128,10 +131,13 @@ const OrderPage = () => {
   });
   const [card, setCard] = useState<IGetCard>();
 
+  const auth = getCookie({ name: 'refreshTokenObj' });
+
   const dispatch = useDispatch();
   const { userAccessMethod, isLoading } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard } = useSelector(orderForm);
+  const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -148,7 +154,7 @@ const OrderPage = () => {
     'getPreviewOrder',
     async () => {
       if (!tempOrder) {
-        router.push('/');
+        router.push('/cart');
       }
       const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
       console.log(tempOrder, 'TEMP ORDER');
@@ -494,7 +500,6 @@ const OrderPage = () => {
 
   const nicepayStart = () => {
     window.goPay(document.getElementById('payForm'));
-    window.nicepayClose;
   };
 
   const processOrder = async (data: ICreateOrder) => {
@@ -539,23 +544,33 @@ const OrderPage = () => {
     return false;
   };
 
+  const handleScrollNicePayModal = useCallback(() => {
+    if (document.getElementById('nice_layer')) {
+      document!.querySelector('html')!.style!.overflow! = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [document.getElementById('nice_layer')]);
+
   // 나이스페이
 
   const progressPayNice = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   payMethod: selectedOrderMethod,
-    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
-
     if (checkIsAlreadyPaid(orderData)) return;
 
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
+
+    // const reqBody = {
+    //   payMethod: selectedOrderMethod,
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${ngorkUrl}`,
+    // };
+
     try {
       const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
       console.log(data, 'NICE PAY');
@@ -583,19 +598,17 @@ const OrderPage = () => {
       inputHiddenReturn.setAttribute('type', 'hidden');
       inputHiddenReturn.setAttribute('name', 'returnUrl');
       // inputHiddenReturn.setAttribute('value', `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`);
-      inputHiddenReturn.setAttribute(
-        'value',
-        `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`
-      );
+      inputHiddenReturn.setAttribute('value', `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`);
 
       let inputHiddenFail = document.createElement('input');
       inputHiddenFail.setAttribute('type', 'hidden');
       inputHiddenFail.setAttribute('name', 'failUrl');
       // inputHiddenFail.setAttribute('value', `${process.env.SERVICE_URL}/order`);
-      inputHiddenFail.setAttribute('value', `https://f00f-218-235-12-98.jp.ngrok.io`);
+      inputHiddenFail.setAttribute('value', `${ngorkUrl}`);
       payForm.appendChild(inputHiddenReturn);
       payForm.appendChild(inputHiddenFail);
       nicepayStart();
+      handleScrollNicePayModal();
     } catch (error: any) {
       alert(error.message);
       dispatch(SET_IS_LOADING(false));
@@ -606,19 +619,19 @@ const OrderPage = () => {
 
   const processPayco = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
-    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   cancelUrl: `${ngorkUrl}/${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}/${router.asPath}`,
+    // };
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
@@ -635,19 +648,19 @@ const OrderPage = () => {
 
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `https://f00f-218-235-12-98.jp.ngㄴrok.io/${router.asPath}`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -658,8 +671,8 @@ const OrderPage = () => {
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
-      router.push(data.data.next_redirect_pc_url);
-      // window.location.href = data.data.next_redirect_pc_url;
+
+      window.location.href = data.data.next_redirect_pc_url;
     } catch (error: any) {
       alert(error.message);
       dispatch(SET_IS_LOADING(false));
@@ -670,17 +683,17 @@ const OrderPage = () => {
 
   const processTossPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
-    // };
+    const reqBody = {
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${successOrderPath}?orderId=${orderId}&pg=toss`,
-      failureUrl: `https://f00f-218-235-12-98.jp.ngrok.io/${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=toss`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
     window.location.href = data.data.checkoutPage;
@@ -689,7 +702,6 @@ const OrderPage = () => {
 
   const paymentHandler = () => {
     if (isLoading) return;
-    console.log(isLoading, '@@@@@@@@@@@@@@@@@@@@@@@@');
 
     if (previewOrder?.order.delivery === 'MORNING') {
       /* TODO: alert message 마크다운..? */
@@ -748,11 +760,8 @@ const OrderPage = () => {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== undefined) {
-      console.log(window.nicepayClose, 'window.nicepayClose');
-      console.log(isLoading, 'isLoading');
-    }
-  }, [window.nicepayClose, isLoading]);
+    if (!auth) router.replace('/login');
+  }, []);
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
