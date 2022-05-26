@@ -561,7 +561,7 @@ const OrderPage = () => {
 
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
@@ -620,7 +620,7 @@ const OrderPage = () => {
   const processPayco = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
     const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
       cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
@@ -649,7 +649,7 @@ const OrderPage = () => {
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
     const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
       cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
@@ -684,8 +684,8 @@ const OrderPage = () => {
   const processTossPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
     const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      successUrl: `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}&pg=toss`,
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
