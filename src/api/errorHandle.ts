@@ -7,6 +7,7 @@ export const handleHTTPError = (error: AxiosError): Promise<never> => {
   }
   if (status >= 500) {
     console.log(status, error);
+    alert(`status:${status}, error:${error}`);
   }
   return Promise.reject(error);
 };
