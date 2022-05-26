@@ -6,7 +6,7 @@ import { homePadding } from '@styles/theme';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
-import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList, SpotRecentPickupList } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
@@ -24,6 +24,49 @@ import { IDestinationsResponse } from '@model/index';
 // import { getCartsApi } from '@api/cart';
 import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
+interface IProps {
+  onClick?: any
+}
+export const SpotSearchKeywordComponent = ({onClick}: IProps) => {
+  
+  return (
+    <Slider className="swiper-container" slidesPerView={'auto'} spaceBetween={10} speed={500}>
+      <KeyWorkdWrapper>
+        {
+          SEARCH_KEYWORD.map((i, idx) => {
+            return (
+              <SwiperSlide className="swiper-slide" key={idx}>
+                <KeyWord onClick={()=> onClick(i?.value)}>
+                  <TextB2R padding='8p 16px 8px 16px' color={theme.black}>{i.keyword}</TextB2R>
+                </KeyWord>
+              </SwiperSlide>
+            )
+          })
+        }
+      </KeyWorkdWrapper>
+    </Slider>
+  );
+};
+
+const SEARCH_KEYWORD = [
+  {
+    keyword: '#GS25',
+    value: 'GS25',
+  },
+  {
+    keyword: '#세븐일레븐',
+    value: '세븐일레븐',
+  },
+  {
+    keyword: '#스토리웨이',
+    value: '스토리웨이',
+  },
+  {
+    keyword: '#카페',
+    value: '카페',
+  },
+];
+
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -35,6 +78,7 @@ const SpotSearchPage = (): ReactElement => {
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const [isLoadingRecomand, setIsLoadingRecomand] = useState<boolean>(false);
+  const [selectedKeyword, setSelectedKeyWord] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -56,6 +100,10 @@ const SpotSearchPage = (): ReactElement => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleSelectedKeywordVaule = (value: string) => {
+    setSelectedKeyWord(value);
   };
 
   // 장바구니 조회
@@ -214,12 +262,13 @@ const SpotSearchPage = (): ReactElement => {
       {!inputFocus ? (
         <>
           <SpotRecommendWrapper>
-            <FlexEnd padding="0 0 24px 0">
+            <FlexEnd padding="0 0 16px 0">
               <SVGIcon name="locationBlack" />
               <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
                 현 위치로 설정하기
               </TextH6B>
             </FlexEnd>
+            <SpotSearchKeywordComponent onClick={handleSelectedKeywordVaule} />
             <FlexBetween margin="0 0 24px 0">
               <TextH2B>{spotRecommend?.title}</TextH2B>
               {
@@ -251,6 +300,7 @@ const SpotSearchPage = (): ReactElement => {
             recentPickedSpotList?.length! > 0 ? (
               <DefaultSearchContainer>
                 <RecentPickWrapper>
+                  <SpotSearchKeywordComponent onClick={handleSelectedKeywordVaule} />
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
                   {recentPickedSpotList?.map((item: any, index) => (
                     // 스팟 최근 픽업 이력 리스트
@@ -309,6 +359,28 @@ const RecentPickWrapper = styled.div`
   margin-top: 24px;
   margin-bottom: 16px;
   ${homePadding};
+`;
+
+const Slider= styled(Swiper)`
+  width: auto;
+  padding-right: 24px;
+  margin-bottom: 24px;
+  .swiper-slide {
+    width: auto;
+  }
+`;
+
+const KeyWorkdWrapper = styled.section`
+  display: flex;
+`;
+
+const KeyWord = styled.div`
+  background: ${theme.greyScale3};
+  border-radius: 100px;
+  padding: 8px 16px;
+  overflow: auto; 
+  white-space: nowrap;
+  cursor: pointer;
 `;
 
 const DefaultSearchContainer = styled.section``;
