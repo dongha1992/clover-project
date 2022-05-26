@@ -177,9 +177,14 @@ const OrderPage = () => {
       refetchOnWindowFocus: false,
       onError: (error: any) => {
         if (error && error?.code === 5005) {
-          return;
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 결제 정보입니다.',
+            })
+          );
+          router.replace('/cart');
         } else {
-          return;
+          router.replace('/cart');
         }
       },
     }
@@ -228,7 +233,7 @@ const OrderPage = () => {
                 '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
           /* TODO: 확인 필요 */
         } else if (error.code === 4351) {
           dispatch(
@@ -236,14 +241,14 @@ const OrderPage = () => {
               alertMessage: '상품 금액이 변경되었습니다. 주문을 다시 시도해주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
         } else if (error.code === 4352) {
           dispatch(
             SET_ALERT({
               alertMessage: '상품 할인에 변동이 있습니다. 주문을 다시 시도해주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
         }
       },
     }
@@ -534,7 +539,6 @@ const OrderPage = () => {
   };
 
   const checkIsAlreadyPaid = (orderData: ICreateOrder) => {
-    console.log(orderData, 'orderData');
     const orderId = orderData.id;
 
     if (orderData.status === 'progress') {
@@ -559,17 +563,17 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      payMethod: selectedOrderMethod,
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
-
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}`,
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
+
+    const reqBody = {
+      payMethod: selectedOrderMethod,
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${ngorkUrl}`,
+    };
 
     try {
       const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
@@ -619,19 +623,19 @@ const OrderPage = () => {
 
   const processPayco = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   cancelUrl: `${ngorkUrl}/${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}/${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+      cancelUrl: `${ngorkUrl}${router.asPath}`,
+      failureUrl: `${ngorkUrl}${router.asPath}`,
+    };
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
@@ -648,19 +652,19 @@ const OrderPage = () => {
 
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `${ngorkUrl}${router.asPath}`,
+      failureUrl: `${ngorkUrl}${router.asPath}`,
+    };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -683,17 +687,17 @@ const OrderPage = () => {
 
   const processTossPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-    //   failureUrl: `${ngorkUrl}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=toss`,
+      failureUrl: `${ngorkUrl}${router.asPath}`,
+    };
 
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
     window.location.href = data.data.checkoutPage;
