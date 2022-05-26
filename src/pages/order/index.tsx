@@ -37,6 +37,7 @@ import {
   postTossApproveApi,
   postPaycoPaymentApi,
   postNicePaymnetApi,
+  postNiceApproveApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
