@@ -221,12 +221,21 @@ const SubsSetInfoPage = () => {
         })
       );
     } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '픽업장소를 설정해주세요.',
-          submitBtnText: '확인',
-        })
-      );
+      if (subsDeliveryType === 'SPOT') {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '픽업장소를 설정해주세요.',
+            submitBtnText: '확인',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '배송방법을 설정해주세요.',
+            submitBtnText: '확인',
+          })
+        );
+      }
     }
   };
 
@@ -382,8 +391,9 @@ const BottomButton = styled.button`
 
 export async function getServerSideProps(context: any) {
   const subsDeliveryType = context.query?.subsDeliveryType as string;
+  const menuId = context.query?.menuId as string;
 
-  if (!subsDeliveryType) {
+  if (!subsDeliveryType || !menuId) {
     return {
       redirect: {
         destination: '/subscription',
