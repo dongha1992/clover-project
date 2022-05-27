@@ -164,16 +164,25 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           <FlexBetween padding="16px 0 0" className="btB">
             <TextH4B>배송 상품 금액</TextH4B>
             <TextH4B>
-              {getFormatPrice(
-                String(
-                  receiptInfo.menuPrice +
-                    receiptInfo.menuOption1.price +
-                    receiptInfo.menuOption2.price +
-                    receiptInfo.deliveryPrice -
-                    receiptInfo.menuDiscount -
-                    receiptInfo.eventDiscount
-                )
-              )}
+              {disposable
+                ? getFormatPrice(
+                    String(
+                      receiptInfo.menuPrice +
+                        receiptInfo.menuOption1.price +
+                        receiptInfo.menuOption2.price +
+                        receiptInfo.deliveryPrice -
+                        receiptInfo.menuDiscount -
+                        receiptInfo.eventDiscount
+                    )
+                  )
+                : getFormatPrice(
+                    String(
+                      receiptInfo.menuPrice +
+                        receiptInfo.deliveryPrice -
+                        receiptInfo.menuDiscount -
+                        receiptInfo.eventDiscount
+                    )
+                  )}
               원
             </TextH4B>
           </FlexBetween>
