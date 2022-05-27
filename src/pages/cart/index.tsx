@@ -287,14 +287,16 @@ const CartPage = () => {
   );
 
   const { isLoading, isError } = useQuery(
-    'getCartList',
+    ['getCartList', selectedDeliveryDay],
     async () => {
+      const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
       /* TODO: 스팟아이디 넣어야함 */
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
-        deliveryDate: selectedDeliveryDay!,
-        spotId: userDeliveryType?.toUpperCase() ? 1 : null,
+        deliveryDate: selectedDeliveryDay,
+        spotId: isSpot ? 1 : null,
       };
+
       const { data } = await getCartsApi({ params });
       return data.data;
     },
@@ -302,6 +304,7 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
+      enabled: !!selectedDeliveryDay && !!me,
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
         try {
@@ -313,7 +316,6 @@ const CartPage = () => {
           console.error(error);
         }
       },
-      enabled: !!me,
     }
   );
 
@@ -591,7 +593,7 @@ const CartPage = () => {
   };
 
   const goToOrder = () => {
-    if (isNil(destinationObj)) return;
+    if (isNil(destinationObj) || !me) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
@@ -764,8 +766,16 @@ const CartPage = () => {
       } else {
         buttonMessage = `${totalAmount}원 주문하기`;
       }
+
       return (
         <Button borderRadius="0" height="100%" disabled={isNil(destinationObj) || isUnderMinimum}>
+          {buttonMessage}
+        </Button>
+      );
+    } else if (!me) {
+      buttonMessage = '로그인을 해주세요';
+      return (
+        <Button borderRadius="0" height="100%" disabled={true}>
           {buttonMessage}
         </Button>
       );
@@ -858,6 +868,11 @@ const CartPage = () => {
     const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
 
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
+    // 스팟 운영 종료
+    if (dDay) {
+      return;
+    }
+
     const closedSoonOperation = dDay >= -14;
 
     if (closedSoonOperation && destinationObj.delivery === 'spot') {
