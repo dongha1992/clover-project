@@ -46,6 +46,7 @@ const SubsRegisterPage = () => {
   const [selectDate, setSelectDate] = useState<Date | undefined>(subsDeliveryExpectedDate[0].deliveryDate);
   const [selectCount, setSelectCount] = useState();
   const [allMenuPriceInfo, setAllMenuPriceInfo] = useState<IReceipt | null>();
+  const [subsMonth, setSubsMonth] = useState<unknown[]>();
   const mapper: Obj = {
     ONE_WEEK: '1주',
     TWO_WEEK: '2주',
@@ -58,6 +59,14 @@ const SubsRegisterPage = () => {
     if (!subsDeliveryExpectedDate) {
       router.push('/subscription/set-info');
     }
+  }, []);
+
+  useEffect(() => {
+    let monthObj = new Set();
+    subsDeliveryExpectedDate.forEach((elem: any) => {
+      monthObj.add(dayjs(elem.deliveryDate).format('M'));
+    });
+    setSubsMonth(Array.from(monthObj));
   }, []);
 
   useEffect(() => {
@@ -164,10 +173,12 @@ const SubsRegisterPage = () => {
         <FlexBetween className="box" onClick={clickEvent}>
           <TextH4B>구독정보</TextH4B>
           <div className="wrap">
-            <TextB2R className="infoText">
-              스팟배송 - {subsInfo?.deliveryTime} / {userDestination?.location?.address}{' '}
-              {userDestination?.location?.addressDetail}
-            </TextB2R>
+            {!toggleState && (
+              <TextB2R className="infoText">
+                스팟배송 - {subsInfo?.deliveryTime} / {userDestination?.location?.address}{' '}
+                {userDestination?.location?.addressDetail}
+              </TextB2R>
+            )}
             <div className={`svgBox ${toggleState ? 'down' : ''}`}>
               <SVGIcon name="triangleDown" />
             </div>
@@ -220,9 +231,12 @@ const SubsRegisterPage = () => {
         </TextB2R>
       </DietConfirmBox>
       <CalendarBox>
-        <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
-          1월, 2월 식단을 모두 확인해 주세요!
-        </TextH5B>
+        {subsMonth && subsMonth?.length > 1 && (
+          <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
+            {subsMonth[0]}월, {subsMonth[1]}월 식단을 모두 확인해 주세요!
+          </TextH5B>
+        )}
+
         <SubsCalendar
           subsActiveDates={subsDeliveryExpectedDate}
           deliveryExpectedDate={subsDeliveryExpectedDate}
@@ -244,7 +258,14 @@ const SubsRegisterPage = () => {
             }}
             isSelected={disposable}
           />
-          <TextB2R padding="0 0 0 8px" className="des">
+          <TextB2R
+            padding="0 0 0 8px"
+            className="des"
+            onClick={() => {
+              setDisposable((prev) => !prev);
+            }}
+            pointer
+          >
             일회용품(100원) 총 {allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity!}개 -
             환경부담금{' '}
             <b>
@@ -309,20 +330,24 @@ const SubsRegisterPage = () => {
                 원
               </TextB2R>
             </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>물티슈</TextB2R>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>수저</TextB2R>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
+            {disposable && (
+              <>
+                <ReceiptLi>
+                  <TextB2R>{allMenuPriceInfo?.menuOption1.name}</TextB2R>
+                  <TextB2R>
+                    {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
+                    {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
+                  </TextB2R>
+                </ReceiptLi>
+                <ReceiptLi>
+                  <TextB2R>{allMenuPriceInfo?.menuOption2.name}</TextB2R>
+                  <TextB2R>
+                    {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
+                    {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
+                  </TextB2R>
+                </ReceiptLi>
+              </>
+            )}
           </ReceiptUl>
           <FlexBetween padding="16px 0 0" margin="0 0 16px" className="btN">
             <TextH5B>배송비</TextH5B>
@@ -438,6 +463,7 @@ export const MenuLi = styled.li`
   display: flex;
   padding: 16px 0;
   border-bottom: 1px solid ${theme.greyScale6};
+  position: relative;
   &:last-of-type {
     border-bottom: none;
   }
@@ -449,6 +475,13 @@ export const MenuLi = styled.li`
     padding: 10px 16px;
     border: 1px solid #242424;
     border-radius: 8px;
+  }
+  button.deleteBtn {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 16px;
+    padding: 0;
   }
 `;
 export const MenuImgBox = styled.div`
@@ -470,6 +503,19 @@ export const MenuTextBox = styled.div`
       height: 16px;
       background-color: ${theme.greyScale6};
     }
+  }
+  button:disabled {
+    border: 1px solid #f2f2f2;
+    color: #c8c8c8;
+  }
+  .change {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.4px;
+    color: #35ad73;
+    margin-left: 4px;
   }
 `;
 

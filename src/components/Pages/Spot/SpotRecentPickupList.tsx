@@ -29,7 +29,7 @@ const now = dayjs();
 const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
@@ -39,7 +39,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const isOpened = item?.spotPickup?.spot.isOpened;
   const isClosed = item?.spotPickup?.spot.isClosed;
 
-  // 운영 종료 예정 or 종료 
+  // 운영 종료 예정 or 종료
   const closedDate = item?.spotPickup?.spot.closedDate;
   const dDay = now.diff(dayjs(item?.spotPickup?.spot.closedDate), 'day');
   const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
@@ -58,7 +58,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         );
       }
       case closedSoonOperation: {
-        if(closedDate) {
+        if (closedDate) {
           return (
             <MeterAndTime>
               <SVGIcon name="exclamationMark" width="14" height="14" />
@@ -66,23 +66,22 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
                 운영 종료 예정인 프코스팟이에요
               </TextB3R>
             </MeterAndTime>
-          );  
+          );
         } else {
           return (
             <MeterAndTime>
-            {userLocationLen && (
-              <>
-                <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
-                <Col />
-              </>
-            )}
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-              픽업
-            </TextH6B>
-            <TextH6B color={theme.greyScale65}>{recentPickupTime}</TextH6B>
-          </MeterAndTime>
-
-          )
+              {userLocationLen && (
+                <>
+                  <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
+                  <Col />
+                </>
+              )}
+              <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+                픽업
+              </TextH6B>
+              <TextH6B color={theme.greyScale65}>{recentPickupTime}</TextH6B>
+            </MeterAndTime>
+          );
         }
       }
       default: {
@@ -99,11 +98,11 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             </TextH6B>
             <TextH6B color={theme.greyScale65}>{recentPickupTime}</TextH6B>
           </MeterAndTime>
-        )
+        );
       }
     }
   }, []);
-  
+
   const typeTag = (): string | undefined => {
     switch (item?.spotPickup?.spot.type) {
       case 'PRIVATE':
@@ -177,7 +176,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
               router.push({
                 pathname: '/cart/delivery-info',
-                query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+                query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
               });
             }
           } else {
@@ -213,7 +212,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
             router.push({
               pathname: '/cart/delivery-info',
-              query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+              query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
             });
           }
         } else {

@@ -54,19 +54,14 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
         <TextH5B padding="24px 0 16px 0" center>
           {isMypage ? '픽업 장소 변경' : '픽업 장소 선택'}
         </TextH5B>
-        {
-            pickupInfo?.map((i, index) => {
-              return (
-                <PickWrapper key={index}>
-                  <RadioButton
-                    onChange={() => changeRadioHandler(i.id)}
-                    isSelected={selectedPickupId === i.id}
-                  />
-                  <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
-                </PickWrapper>
-              );
-            })
-        }
+        {pickupInfo?.map((i, index) => {
+          return (
+            <PickWrapper key={index}>
+              <RadioButton onChange={() => changeRadioHandler(i.id)} isSelected={selectedPickupId === i.id} />
+              <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
+            </PickWrapper>
+          );
+        })}
         {spotType === 'PRIVATE' && (
           <>
             <Row />
