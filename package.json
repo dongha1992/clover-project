@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "next dev -p 9009",
-    "build": "next build && next export",
-    "build:dev": "dotenv -e .env.development next build && next export",
+    "build": "next build",
+    "build:dev": "dotenv -e .env.development next build",
     "start": "./node_modules/.bin/pm2 start ecosystem.config.js && ./node_modules/.bin/pm2 logs",
     "lint": "next lint"
   },
