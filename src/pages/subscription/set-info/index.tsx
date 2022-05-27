@@ -50,8 +50,8 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      setSubsDeliveryType(router.query?.subsDeliveryType);
-      // setSubsDeliveryType('SPOT');
+      // setSubsDeliveryType(router.query?.subsDeliveryType);
+      setSubsDeliveryType('PARCEL');
       setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
@@ -217,7 +217,7 @@ const SubsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod!} />,
+          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod!} subsDeliveryType={subsDeliveryType} />,
         })
       );
     } else {
@@ -312,7 +312,7 @@ const SubsSetInfoPage = () => {
       <DateSetting>
         <TextH4B padding="0 0 24px">구독 시작/배송일</TextH4B>
         <Button border backgroundColor="#fff" color={theme.black} onClick={calendarSettingHandler}>
-          {subsStartDate ? `${subsStartDate}배송` : '설정하기'}
+          {subsStartDate ? `${subsDeliveryType === 'SPOT' ? subsStartDate + '배송' : subsStartDate}` : '설정하기'}
         </Button>
       </DateSetting>
       <BottomButton disabled={subsStartDate ? false : true} onClick={goToRegisterCheck}>
