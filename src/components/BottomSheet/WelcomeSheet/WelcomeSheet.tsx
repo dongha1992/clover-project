@@ -81,10 +81,13 @@ const WelcomeSheet = () => {
       },
       onError: async (error: any) => {
         let alertMessage = '';
+
         if (error.code === 2201) {
           alertMessage = '이미 등록된 초대코드예요.';
         } else if (error.code === 1105) {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
+        } else {
+          alertMessage = `${error.message}`;
         }
 
         /* TODO:에러 메시지 확인 */
@@ -154,7 +157,7 @@ const WelcomeSheet = () => {
 
 const Container = styled.div`
   ${homePadding};
-  height: 90vh;
+  height: 91vh;
 `;
 const Header = styled.div`
   height: 80px;
@@ -171,6 +174,7 @@ const Body = styled.div`
 
 const BtnWrapper = styled.div`
   ${fixedBottom}
+  left: 0%;
 `;
 
 const ImageWrapper = styled.div`

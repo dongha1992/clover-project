@@ -29,7 +29,7 @@ const LocationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
-  const { me }  = useSelector(userForm);
+  const { me } = useSelector(userForm);
   const addressRef = useRef<HTMLInputElement>(null);
   const [resultAddress, setResultAddress] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
@@ -152,96 +152,83 @@ const LocationPage = () => {
   };
 
   const getSpotRegistrationSearch = async (i: IJuso) => {
-    const params  = {
+    const params = {
       address: i?.roadAddrPart1,
     };
     try {
       const { data } = await getRegistrationSearch(params);
       setSpotRegistration(data.data.spotRegistrations);
 
-      // query type 으로 각 타입별 스팟 신청 목록 선택 
-      const findRegisterList = data.data.spotRegistrations.find(i=> i.type === type);
+      // query type 으로 각 타입별 스팟 신청 목록 선택
+      const findRegisterList = data.data.spotRegistrations.find((i) => i.type === type);
 
       // 스팟 신청서 목록이 존재 하고, 신청 타입이 신청 목록의 타입과 같은 경우
-      if ((!!data.data.spotRegistrations.length) && (!!findRegisterList)) {
-        switch(type) {
+      if (!!data.data.spotRegistrations.length && !!findRegisterList) {
+        switch (type) {
           case 'PRIVATE':
             if (!!findRegisterList) {
-              if ((findRegisterList?.userId ===  userId) && findRegisterList?.rejected) {
-                return (
-                  dispatch(
-                    SET_ALERT({
-                      alertMessage: '신청했던 주소는 재신청할 수 없어요.',
-                      alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
-                      submitBtnText: '확인',
-                    })
-                  )      
-                )    
+              if (findRegisterList?.userId === userId && findRegisterList?.rejected) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '신청했던 주소는 재신청할 수 없어요.',
+                    alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
+                    submitBtnText: '확인',
+                  })
+                );
               } else {
-                return (
-                  dispatch(
-                    SET_BOTTOM_SHEET({
-                      content: <SpotRegisterSheet items={findRegisterList} type={'PRIVATE'} />,
-                    })
-                  )
-                )  
+                return dispatch(
+                  SET_BOTTOM_SHEET({
+                    content: <SpotRegisterSheet items={findRegisterList} type={'PRIVATE'} />,
+                  })
+                );
               }
-            } 
+            }
           case 'PUBLIC':
             if (!!findRegisterList) {
-              if ((findRegisterList?.userId ===  userId) && findRegisterList?.rejected) {
-                return (
-                  dispatch(
-                    SET_ALERT({
-                      alertMessage: '신청했던 주소는 재신청할 수 없어요.',
-                      alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
-                      submitBtnText: '확인',
-                    })
-                  )
-                )    
-              }
-              else {
-                return (
-                  dispatch(
-                    SET_BOTTOM_SHEET({
-                      content: <SpotRegisterSheet items={findRegisterList} type={'PUBLIC'} />,
-                    })
-                  )
-                ) 
+              if (findRegisterList?.userId === userId && findRegisterList?.rejected) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '신청했던 주소는 재신청할 수 없어요.',
+                    alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
+                    submitBtnText: '확인',
+                  })
+                );
+              } else {
+                return dispatch(
+                  SET_BOTTOM_SHEET({
+                    content: <SpotRegisterSheet items={findRegisterList} type={'PUBLIC'} />,
+                  })
+                );
               }
             }
           case 'OWNER':
             if (!!findRegisterList) {
-              if ((findRegisterList?.userId ===  userId) && findRegisterList.rejected) {
-                return (
-                  dispatch(
-                    SET_ALERT({
-                      alertMessage: '신청했던 주소는 재신청할 수 없어요.',
-                      alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
-                      submitBtnText: '확인',
-                    })
-                  )      
-                )    
-              } else { 
-                return (
-                  dispatch(
-                    SET_ALERT({
-                      alertMessage: '해당 주소에 이미 신청 중인\n프코스팟이 있어요!',
-                      submitBtnText: '확인',
-                    })
-                  )      
-                )
+              if (findRegisterList?.userId === userId && findRegisterList.rejected) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '신청했던 주소는 재신청할 수 없어요.',
+                    alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
+                    submitBtnText: '확인',
+                  })
+                );
+              } else {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '해당 주소에 이미 신청 중인\n프코스팟이 있어요!',
+                    submitBtnText: '확인',
+                  })
+                );
               }
             }
         }
       } else {
         // 스팟 신청 목록이 존재하지 않는 경우
-        checkAvailableDeliverySpots(i)
+        checkAvailableDeliverySpots(i);
       }
-    } catch(e) {
+    } catch (e) {
       console.error(e);
-    };
-  }
+    }
+  };
 
   const goToMapScreen = (i: IJuso): void => {
     dispatch(SET_LOCATION_TEMP(i));

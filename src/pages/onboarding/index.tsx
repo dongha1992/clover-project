@@ -19,6 +19,9 @@ import { setCookie } from '@utils/common';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { userForm, SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
+import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 declare global {
   interface Window {
     Kakao: any;
@@ -56,6 +59,7 @@ const OnBoarding: NextPage = () => {
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
+    dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
   }, []);
 
   const kakaoLoginHandler = () => {
@@ -67,7 +71,10 @@ const OnBoarding: NextPage = () => {
     if (typeof window !== undefined) {
       window.Kakao.Auth.authorize({
         redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+          // location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+          location.hostname === 'localhost'
+            ? 'http://localhost:9009/oauth'
+            : `https://27d7-1-228-1-158.jp.ngrok.io/oauth`,
         scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
       });
     }
@@ -79,7 +86,8 @@ const OnBoarding: NextPage = () => {
       window.AppleID.auth.init({
         clientId: 'com.freshcode.www',
         scope: 'email',
-        redirectURI: `${process.env.SERVICE_URL}`,
+        // redirectURI: `${process.env.SERVICE_URL}`,
+        redirectURI: `https://27d7-1-228-1-158.jp.ngrok.io`,
         usePopup: true,
       });
       try {
@@ -114,7 +122,9 @@ const OnBoarding: NextPage = () => {
           }
         }
       } catch (error: any) {
-        console.log(`Error: ${error && error.error}`);
+        if (error.code === 2103) {
+          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+        }
       }
     }
   };
