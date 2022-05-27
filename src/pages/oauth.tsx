@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { Obj } from '@model/index';
 import { NAME_REGX } from '@constants/regex';
 import { userLoginApi, userProfile } from '@api/user';
-
+import { SET_ALERT } from '@store/alert';
 interface IAuthObj {
   access_token: string;
   expires_in: number;
@@ -65,8 +65,26 @@ const Oauth = () => {
         // 비회원 -> 회원 장바구니 옮기기
         // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error: any) {
+      if (error.code === 2107) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '전화번호가 등록되지 않은 카카오톡 계정입니다. ',
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
+      } else if (error.code === 2007) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 가입되어 있는 애플 회원입니다.',
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
+      }
     }
   };
 
