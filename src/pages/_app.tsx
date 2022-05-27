@@ -175,7 +175,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
         <Script id="test">
           {`  // 결제 최종 요청시 실행됩니다. <<'nicepaySubmit()' 이름 수정 불가능>>
             const nicepaySubmit = () => {
-                document.getElementById('payForm').submit()
+                document.payForm.submit()
             }
 
             const nicepayClose = () => {
