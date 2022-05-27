@@ -102,7 +102,7 @@ const OnBoarding: NextPage = () => {
             router.replace('/signup?isApple=true');
             dispatch(SET_SIGNUP_USER({ email: data.data.email }));
           } else {
-            const result = await userLoginApi({ accessToken: `bearer ${appleToken}`, loginType: 'APPLE' });
+            const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
             if (result.data.code == 200) {
               const userTokenObj = result.data?.data;
 
