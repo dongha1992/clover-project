@@ -31,7 +31,7 @@ const now = dayjs();
 const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
@@ -40,7 +40,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
-  // 운영 종료 예정 or 종료 
+  // 운영 종료 예정 or 종료
   const closedDate = item?.spotPickup?.spot.closedDate;
   const dDay = now.diff(dayjs(closedDate), 'day');
   const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
@@ -59,7 +59,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         );
       }
       case closedSoonOperation: {
-        if(closedDate) {
+        if (closedDate) {
           return (
             <MeterAndTime>
               <SVGIcon name="exclamationMark" width="14" height="14" />
@@ -67,24 +67,24 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
                 운영 종료 예정인 프코스팟이에요
               </TextB3R>
             </MeterAndTime>
-          );  
+          );
         }
       }
       default: {
         return (
           <MeterAndTime>
-          {userLocationLen && (
-            <>
-              <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-              <Col />
-            </>
-          )}
-          <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-            픽업
-          </TextH6B>
-          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-        </MeterAndTime>
-        )
+            {userLocationLen && (
+              <>
+                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          </MeterAndTime>
+        );
       }
     }
   }, []);
@@ -119,7 +119,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate }});
+      router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate } });
     };
 
     const goToDeliveryInfo = () => {
@@ -135,7 +135,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
       });
     };
 
@@ -145,7 +145,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
       });
     };
 
@@ -153,7 +153,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if(item.isClosed) {
+    if (item.isClosed) {
       // 스팟 종료된 상태 - 주문 불가ㅇ
       return;
     }

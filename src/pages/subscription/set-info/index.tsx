@@ -50,8 +50,8 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      // setSubsDeliveryType(router.query?.subsDeliveryType);
-      setSubsDeliveryType('PARCEL');
+      setSubsDeliveryType(router.query?.subsDeliveryType);
+      // setSubsDeliveryType('SPOT');
       setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
@@ -249,6 +249,7 @@ const SubsSetInfoPage = () => {
       pathname: '/cart/delivery-info',
       query: {
         subsDeliveryType: subsDeliveryType,
+        menuId: menuId,
         isSubscription: true,
       },
     });
