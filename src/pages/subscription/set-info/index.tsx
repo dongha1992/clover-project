@@ -5,7 +5,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { SUBSCRIPTION_PERIOD } from '@constants/subscription';
-import { Obj } from '@model/index';
+import { IRegisterDestinationRequest, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm, INIT_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
@@ -14,14 +14,15 @@ import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { getMainDestinationsApi } from '@api/destination';
+import { getMainDestinationsApi, postDestinationApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 import { getOrderListsApi } from '@api/order';
-import { getMenuDetailApi } from '@api/menu';
+import { getMenuDetailApi, getSubscriptionApi } from '@api/menu';
 import { last } from 'lodash-es';
+import { SET_MENU_ITEM } from '@store/menu';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 
@@ -49,7 +50,8 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      setSubsDeliveryType(router.query?.subsDeliveryType);
+      // setSubsDeliveryType(router.query?.subsDeliveryType);
+      setSubsDeliveryType('PARCEL');
       setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
@@ -74,6 +76,7 @@ const SubsSetInfoPage = () => {
     },
     {
       onSuccess: (data) => {
+        // dispatch(SET_MENU_ITEM(data));
         setUserSelectPeriod(
           last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
         );
@@ -122,6 +125,39 @@ const SubsSetInfoPage = () => {
     }
   };
 
+  // 새벽/택배 최근주문리스트가 있을때 배송지 검색
+  const { mutate: postDestination } = useMutation(
+    async (reqBody: IRegisterDestinationRequest) => {
+      const { data } = await postDestinationApi(reqBody);
+      return data.data;
+    },
+    {
+      onSuccess: async (data) => {
+        dispatch(
+          SET_DESTINATION({
+            name: data?.name,
+            location: {
+              addressDetail: data?.location.addressDetail,
+              address: data?.location.address,
+              dong: data?.location.dong,
+              zipCode: data?.location.zipCode,
+            },
+            main: data?.main,
+            deliveryMessage: data?.deliveryMessage,
+            receiverName: data?.receiverName,
+            receiverTel: data?.receiverTel,
+            deliveryMessageType: '',
+            delivery: data?.delivery,
+            id: data?.id,
+          })
+        );
+      },
+      onError: (data) => {
+        console.log('error');
+      },
+    }
+  );
+
   const getRecentOrderDestination = async () => {
     const params = {
       days: 90,
@@ -143,6 +179,21 @@ const SubsSetInfoPage = () => {
             ['PARCEL', 'MORNING'].includes(item.delivery)
           );
           if (filterData) {
+            const reqBody = {
+              name: filterData[0]?.location?.addressDetail!,
+              delivery: filterData[0].delivery.toUpperCase(),
+              deliveryMessage: '',
+              main: filterData[0].type === 'MAIN' ? true : false,
+              receiverName: '',
+              receiverTel: '',
+              location: {
+                addressDetail: filterData[0]?.location?.addressDetail!,
+                address: filterData[0]?.location?.address!,
+                zipCode: filterData[0]?.location?.zipCode!,
+                dong: filterData[0]?.location?.dong!,
+              },
+            };
+            postDestination(reqBody);
             setSubsDeliveryType(filterData[0].delivery);
             setMainDestinationAddress({
               delivery: mapper[filterData[0].delivery],
@@ -331,9 +382,8 @@ const BottomButton = styled.button`
 
 export async function getServerSideProps(context: any) {
   const subsDeliveryType = context.query?.subsDeliveryType as string;
-  const menuId = context.query?.menuId as string;
 
-  if (!subsDeliveryType || !menuId) {
+  if (!subsDeliveryType) {
     return {
       redirect: {
         destination: '/subscription',
