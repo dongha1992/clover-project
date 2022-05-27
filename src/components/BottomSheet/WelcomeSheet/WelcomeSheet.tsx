@@ -10,15 +10,18 @@ import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { postPromotionCodeApi } from '@api/promotion';
 import { userRecommendationApi } from '@api/user';
 import { SET_ALERT } from '@store/alert';
+import { userForm } from '@store/user';
 
 const WelcomeSheet = () => {
   const dispatch = useDispatch();
   const codeRef = useRef<HTMLInputElement>(null);
+
+  const { me } = useSelector(userForm);
 
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async () => {
@@ -108,9 +111,9 @@ const WelcomeSheet = () => {
         <FlexEnd
           margin="40px 0 0 0"
           onClick={() => {
-            dispatch(INIT_BOTTOM_SHEET());
             /* TODO: 카카오 회원가입 등 리턴 url 해줘야함 */
             router.push('/');
+            dispatch(INIT_BOTTOM_SHEET());
           }}
         >
           <SVGIcon name="defaultCancel24" />
@@ -119,7 +122,7 @@ const WelcomeSheet = () => {
       <Body>
         <FlexCol>
           <TextH2B>
-            <span className="brandColor">닉네임</span>님,
+            <span className="brandColor">{me?.name}</span>님,
           </TextH2B>
           <TextH2B>프레시코드 회원이 되신걸</TextH2B>
           <TextH2B>진심으로 축하드려요!</TextH2B>
