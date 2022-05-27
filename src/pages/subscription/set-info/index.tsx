@@ -50,8 +50,11 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      // setSubsDeliveryType(router.query?.subsDeliveryType);
-      setSubsDeliveryType('PARCEL');
+      if (!router.query?.menuId || !router.query.subsDeliveryType) {
+        router.push('/subscription');
+      }
+      // setSubsDeliveryType('PARCEL');
+      setSubsDeliveryType(router.query?.subsDeliveryType);
       setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
@@ -390,20 +393,4 @@ const BottomButton = styled.button`
   }
 `;
 
-export async function getServerSideProps(context: any) {
-  const subsDeliveryType = context.query?.subsDeliveryType as string;
-  const menuId = context.query?.menuId as string;
-
-  if (!subsDeliveryType || !menuId) {
-    return {
-      redirect: {
-        destination: '/subscription',
-        permanent: true,
-      },
-    };
-  }
-  return {
-    props: {},
-  };
-}
 export default SubsSetInfoPage;
