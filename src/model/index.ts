@@ -681,9 +681,8 @@ export interface IGetRegistrationSearchResponse {
     spotRegistrations: ISpotsDetail[];
     subTitle: string;
     title: string;
-  }
+  };
 }
-
 
 export interface IGetSpotPickupsResponse {
   code: number;
@@ -844,11 +843,7 @@ type TDistanceUnit =
   | 'NAUTICALMILES'
   | 'YARD';
 
-type TSPpotRegistrationsStep = 
-  | 'CONFIRM'
-  | 'RECRUITING'
-  | 'TRIAL'
-  | 'OPEN';
+type TSPpotRegistrationsStep = 'CONFIRM' | 'RECRUITING' | 'TRIAL' | 'OPEN';
 
 export interface IGetRegistrationStatus {
   coordinate: {
@@ -1535,7 +1530,6 @@ export interface IGetPaycoRequest {
 export interface IGetPaycoPayment {
   code: number;
   message: string;
-  pgErrorCode: string;
   result: {
     orderSheetUrl: string;
     reserveOrderNo: string;
@@ -1575,10 +1569,10 @@ export type TType =
   | 'SNACK'
   | 'WRAP_SANDWICH';
 export interface IGetMenus {
-  categories: TCategory | string;
+  categories?: TCategory | string;
   menuSort: TMenuSort | string;
-  searchKeyword: string;
-  type: TType | string;
+  searchKeyword?: string;
+  type?: TType | string;
 }
 
 export interface IMenuImage {
