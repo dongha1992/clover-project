@@ -20,7 +20,7 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
-  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupId } = useSelector(spotSelector);
@@ -52,21 +52,24 @@ const SpotDetailBottom = () => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate }});
+      router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });
     };
 
     const goToDeliveryInfo = () => {
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: spotDetail?.id, isClosed: !!spotDetail?.closedDate } });
+      router.push({
+        pathname: '/cart/delivery-info',
+        query: { destinationId: spotDetail?.id, isClosed: !!spotDetail?.closedDate },
+      });
     };
 
     const handleSubsDeliveryType = () => {
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: spotDetail?.id, isSubscription, subsDeliveryType },
+        query: { destinationId: spotDetail?.id, isSubscription, subsDeliveryType, menuId },
       });
     };
 
@@ -75,7 +78,7 @@ const SpotDetailBottom = () => {
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: spotDetail?.id, isSubscription, subsDeliveryType },
+        query: { destinationId: spotDetail?.id, isSubscription, subsDeliveryType, menuId },
       });
     };
 
@@ -145,9 +148,7 @@ const SpotDetailBottom = () => {
           // 로그인o and 장바구니 x, cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: (
-                <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />
-              ),
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
             })
           );
         }
@@ -226,35 +227,34 @@ const SpotDetailBottom = () => {
             <TextH5B color={theme.greyScale25}>운영 종료된 프코스팟이에요</TextH5B>
           </BtnWrapper>
         </Wrapper>
-        ) : (
-          <>
-            <Wrapper>
-              <LikeWrapper>
-                <LikeBtn onClick={hanlderLike}>
-                  <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
-                </LikeBtn>
-                <TextH5B color={theme.white} padding="0 0 0 4px">
-                  {spotDetail?.likeCount}
-                </TextH5B>
-              </LikeWrapper>
-              <Col />
-              <BtnWrapper onClick={orderHandler}>
-                <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
-              </BtnWrapper>
-            </Wrapper>
-            { !spotDetail?.isOpened && (spotDetail?.discountRate !== 0) && (
-              <TootipWrapper>
-                <TimerTooltip
-                  message={`${spotDetail?.discountRate}% 할인 중`}
-                  bgColor={theme.brandColor}
-                  color={theme.white}
-                  minWidth="78px"
-                />
-              </TootipWrapper>
-            )}
-          </>
-        )
-      }
+      ) : (
+        <>
+          <Wrapper>
+            <LikeWrapper>
+              <LikeBtn onClick={hanlderLike}>
+                <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
+              </LikeBtn>
+              <TextH5B color={theme.white} padding="0 0 0 4px">
+                {spotDetail?.likeCount}
+              </TextH5B>
+            </LikeWrapper>
+            <Col />
+            <BtnWrapper onClick={orderHandler}>
+              <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
+            </BtnWrapper>
+          </Wrapper>
+          {!spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
+            <TootipWrapper>
+              <TimerTooltip
+                message={`${spotDetail?.discountRate}% 할인 중`}
+                bgColor={theme.brandColor}
+                color={theme.white}
+                minWidth="78px"
+              />
+            </TootipWrapper>
+          )}
+        </>
+      )}
     </Container>
   );
 };

@@ -98,6 +98,7 @@ const ImageWrapper = styled.div<{ height: string | undefined }>`
   position: relative;
   width: 100%;
   height: ${(props) => (props.height ? props.height : '176px')};
+  max-height: 261px;
   border-radius: 8px;
   overflow: hidden;
 `;

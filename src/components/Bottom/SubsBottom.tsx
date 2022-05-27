@@ -20,7 +20,7 @@ const SubsBottom = () => {
   const clickButtonHandler = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push(`/subscription/set-info?subsDeliveryType=${router.query.subsDeliveryType}`);
+    router.push(`/subscription/set-info?menuId=${router.query.id}&subsDeliveryType=${router.query.subsDeliveryType}`);
   };
 
   return (

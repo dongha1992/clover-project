@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { SubsCalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { SUBSCRIPTION_PERIOD } from '@constants/subscription';
-import { ISubsActiveDate, Obj } from '@model/index';
+import { IRegisterDestinationRequest, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm, INIT_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
@@ -12,14 +13,16 @@ import { SET_SUBS_INFO_STATE, subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import axios from 'axios';
-import router, { useRouter } from 'next/router';
-import { useQuery } from 'react-query';
+import { useRouter } from 'next/router';
+import { useMutation, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { getMainDestinationsApi } from '@api/destination';
+import { getMainDestinationsApi, postDestinationApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 import { getOrderListsApi } from '@api/order';
+import { getMenuDetailApi, getSubscriptionApi } from '@api/menu';
+import { last } from 'lodash-es';
+import { SET_MENU_ITEM } from '@store/menu';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 
@@ -35,7 +38,8 @@ const SubsSetInfoPage = () => {
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
   const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>();
-  const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
+  const [menuId, setMenuId] = useState<number>();
+  const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period && subsInfo.period);
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
 
@@ -46,7 +50,9 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      setSubsDeliveryType(router.query?.subsDeliveryType);
+      // setSubsDeliveryType(router.query?.subsDeliveryType);
+      setSubsDeliveryType('PARCEL');
+      setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
 
@@ -55,7 +61,31 @@ const SubsSetInfoPage = () => {
       getSpotMainDestination();
       getRecentOrderDestination();
     }
-  }, [, subsDeliveryType]);
+  }, [subsDeliveryType]);
+
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(menuId!);
+
+      return data?.data;
+    },
+    {
+      onSuccess: (data) => {
+        // dispatch(SET_MENU_ITEM(data));
+        setUserSelectPeriod(
+          last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
+        );
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
+    }
+  );
 
   const getSpotMainDestination = async () => {
     try {
@@ -95,6 +125,39 @@ const SubsSetInfoPage = () => {
     }
   };
 
+  // 새벽/택배 최근주문리스트가 있을때 배송지 검색
+  const { mutate: postDestination } = useMutation(
+    async (reqBody: IRegisterDestinationRequest) => {
+      const { data } = await postDestinationApi(reqBody);
+      return data.data;
+    },
+    {
+      onSuccess: async (data) => {
+        dispatch(
+          SET_DESTINATION({
+            name: data?.name,
+            location: {
+              addressDetail: data?.location.addressDetail,
+              address: data?.location.address,
+              dong: data?.location.dong,
+              zipCode: data?.location.zipCode,
+            },
+            main: data?.main,
+            deliveryMessage: data?.deliveryMessage,
+            receiverName: data?.receiverName,
+            receiverTel: data?.receiverTel,
+            deliveryMessageType: '',
+            delivery: data?.delivery,
+            id: data?.id,
+          })
+        );
+      },
+      onError: (data) => {
+        console.log('error');
+      },
+    }
+  );
+
   const getRecentOrderDestination = async () => {
     const params = {
       days: 90,
@@ -116,6 +179,21 @@ const SubsSetInfoPage = () => {
             ['PARCEL', 'MORNING'].includes(item.delivery)
           );
           if (filterData) {
+            const reqBody = {
+              name: filterData[0]?.location?.addressDetail!,
+              delivery: filterData[0].delivery.toUpperCase(),
+              deliveryMessage: '',
+              main: filterData[0].type === 'MAIN' ? true : false,
+              receiverName: '',
+              receiverTel: '',
+              location: {
+                addressDetail: filterData[0]?.location?.addressDetail!,
+                address: filterData[0]?.location?.address!,
+                zipCode: filterData[0]?.location?.zipCode!,
+                dong: filterData[0]?.location?.dong!,
+              },
+            };
+            postDestination(reqBody);
             setSubsDeliveryType(filterData[0].delivery);
             setMainDestinationAddress({
               delivery: mapper[filterData[0].delivery],
@@ -139,22 +217,31 @@ const SubsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod} />,
+          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod!} subsDeliveryType={subsDeliveryType} />,
         })
       );
     } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '픽업장소를 설정해주세요.',
-          submitBtnText: '확인',
-        })
-      );
+      if (subsDeliveryType === 'SPOT') {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '픽업장소를 설정해주세요.',
+            submitBtnText: '확인',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '배송방법을 설정해주세요.',
+            submitBtnText: '확인',
+          })
+        );
+      }
     }
   };
 
   const goToRegisterCheck = () => {
     router.push('/subscription/register');
-    dispatch(SET_SUBS_INFO_STATE({ period: userSelectPeriod }));
+    dispatch(SET_SUBS_INFO_STATE({ period: userSelectPeriod, deliveryType: subsDeliveryType }));
   };
 
   const goToDeliveryInfo = () => {
@@ -162,6 +249,7 @@ const SubsSetInfoPage = () => {
       pathname: '/cart/delivery-info',
       query: {
         subsDeliveryType: subsDeliveryType,
+        menuId: menuId,
         isSubscription: true,
       },
     });
@@ -176,16 +264,28 @@ const SubsSetInfoPage = () => {
         spotMainDestination={spotMainDestination}
         mainDestinationAddress={mainDestinationAddress}
       />
+
       <BorderLine height={8} />
+
       <PeriodBox>
         <TextH4B padding="0 0 24px">구독 기간</TextH4B>
         <RadioWrapper>
-          {SUBSCRIPTION_PERIOD.map((item) => {
+          {SUBSCRIPTION_PERIOD.map((item, index) => {
             const isSelected = userSelectPeriod === item.period;
+
+            const disabled = menuDetail?.subscriptionPeriods.includes(item.period);
             return (
-              <RadioLi key={item.id}>
-                <RadioButton isSelected={isSelected} onChange={() => changeRadioHanler(item.period)} />
-                <TextB2R className={`${isSelected && 'fBold'}`} padding="0 0 0 8px">
+              <RadioLi
+                key={item.id}
+                onClick={() => {
+                  disabled ? changeRadioHanler(item.period) : null;
+                }}
+              >
+                <RadioButton
+                  isSelected={disabled ? isSelected : false}
+                  onChange={() => changeRadioHanler(item.period)}
+                />
+                <TextB2R className={`${isSelected && 'fBold'} ${!disabled && 'disabled'}`} padding="0 0 0 8px" pointer>
                   {item.text}
                 </TextB2R>
               </RadioLi>
@@ -212,7 +312,7 @@ const SubsSetInfoPage = () => {
       <DateSetting>
         <TextH4B padding="0 0 24px">구독 시작/배송일</TextH4B>
         <Button border backgroundColor="#fff" color={theme.black} onClick={calendarSettingHandler}>
-          {subsStartDate ? `${subsStartDate}배송` : '설정하기'}
+          {subsStartDate ? `${subsDeliveryType === 'SPOT' ? subsStartDate + '배송' : subsStartDate}` : '설정하기'}
         </Button>
       </DateSetting>
       <BottomButton disabled={subsStartDate ? false : true} onClick={goToRegisterCheck}>
@@ -257,6 +357,9 @@ const RadioLi = styled.li`
   .fBold {
     font-weight: bold;
   }
+  .disabled {
+    color: #dedede;
+  }
 `;
 const SubsInfoBox = styled.div`
   padding: 16px;
@@ -287,9 +390,20 @@ const BottomButton = styled.button`
   }
 `;
 
-// export async function getServerSideProps(context: any) {
-//   return {
-//     props: {},
-//   };
-// }
+export async function getServerSideProps(context: any) {
+  const subsDeliveryType = context.query?.subsDeliveryType as string;
+  const menuId = context.query?.menuId as string;
+
+  if (!subsDeliveryType || !menuId) {
+    return {
+      redirect: {
+        destination: '/subscription',
+        permanent: true,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+}
 export default SubsSetInfoPage;

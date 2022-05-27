@@ -46,6 +46,7 @@ const RequiredOptionListBox = ({ list }: IProps) => {
                 <MenuTextBox>
                   <TextB3R textHideMultiline>
                     {item.menuName} / {item.menuDetailName}
+                    {item.changed && <span className="change">변경</span>}
                   </TextB3R>
                   <div className="wrap">
                     <TextH5B>{getFormatPrice(String(item.menuPrice))}원</TextH5B>
