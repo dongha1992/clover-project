@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { SubsCalendarSheet } from '@components/BottomSheet/CalendarSheet';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { SUBSCRIPTION_PERIOD } from '@constants/subscription';
-import { ISubsActiveDate, Obj } from '@model/index';
+import { Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm, INIT_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
@@ -12,14 +13,15 @@ import { SET_SUBS_INFO_STATE, subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import axios from 'axios';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { getMainDestinationsApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 import { getOrderListsApi } from '@api/order';
+import { getMenuDetailApi } from '@api/menu';
+import { last } from 'lodash-es';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 
@@ -35,7 +37,8 @@ const SubsSetInfoPage = () => {
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
   const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>();
-  const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period ? subsInfo.period : 'UNLIMITED');
+  const [menuId, setMenuId] = useState<number>();
+  const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period && subsInfo.period);
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
   const [mainDestinationAddress, setMainDestinationAddress] = useState<IDestinationAddress | undefined>();
 
@@ -47,6 +50,7 @@ const SubsSetInfoPage = () => {
   useEffect(() => {
     if (router.isReady) {
       setSubsDeliveryType(router.query?.subsDeliveryType);
+      setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
 
@@ -55,7 +59,30 @@ const SubsSetInfoPage = () => {
       getSpotMainDestination();
       getRecentOrderDestination();
     }
-  }, [, subsDeliveryType]);
+  }, [subsDeliveryType]);
+
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(menuId!);
+
+      return data?.data;
+    },
+    {
+      onSuccess: (data) => {
+        setUserSelectPeriod(
+          last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
+        );
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
+    }
+  );
 
   const getSpotMainDestination = async () => {
     try {
@@ -139,7 +166,7 @@ const SubsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod} />,
+          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod!} />,
         })
       );
     } else {
@@ -176,16 +203,28 @@ const SubsSetInfoPage = () => {
         spotMainDestination={spotMainDestination}
         mainDestinationAddress={mainDestinationAddress}
       />
+
       <BorderLine height={8} />
+
       <PeriodBox>
         <TextH4B padding="0 0 24px">구독 기간</TextH4B>
         <RadioWrapper>
-          {SUBSCRIPTION_PERIOD.map((item) => {
+          {SUBSCRIPTION_PERIOD.map((item, index) => {
             const isSelected = userSelectPeriod === item.period;
+
+            const disabled = menuDetail?.subscriptionPeriods.includes(item.period);
             return (
-              <RadioLi key={item.id}>
-                <RadioButton isSelected={isSelected} onChange={() => changeRadioHanler(item.period)} />
-                <TextB2R className={`${isSelected && 'fBold'}`} padding="0 0 0 8px">
+              <RadioLi
+                key={item.id}
+                onClick={() => {
+                  disabled ? changeRadioHanler(item.period) : null;
+                }}
+              >
+                <RadioButton
+                  isSelected={disabled ? isSelected : false}
+                  onChange={() => changeRadioHanler(item.period)}
+                />
+                <TextB2R className={`${isSelected && 'fBold'} ${!disabled && 'disabled'}`} padding="0 0 0 8px" pointer>
                   {item.text}
                 </TextB2R>
               </RadioLi>
@@ -257,6 +296,9 @@ const RadioLi = styled.li`
   .fBold {
     font-weight: bold;
   }
+  .disabled {
+    color: #dedede;
+  }
 `;
 const SubsInfoBox = styled.div`
   padding: 16px;
@@ -289,8 +331,9 @@ const BottomButton = styled.button`
 
 export async function getServerSideProps(context: any) {
   const subsDeliveryType = context.query?.subsDeliveryType as string;
+  const menuId = context.query?.menuId as string;
 
-  if (!subsDeliveryType) {
+  if (!subsDeliveryType || !menuId) {
     return {
       redirect: {
         destination: '/subscription',
