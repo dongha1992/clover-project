@@ -55,7 +55,7 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId, isSubscription, subsDeliveryType } = router.query;
+  const { destinationId, isSubscription, subsDeliveryType, menuId } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
 
   const { data: recentOrderDelivery } = useQuery(
@@ -93,6 +93,7 @@ const DeliverInfoPage = () => {
             subsDeliveryType,
             isSubscription: true,
             isDelivery: true,
+            menuId,
           },
         });
       } else {
@@ -109,6 +110,7 @@ const DeliverInfoPage = () => {
           query: {
             subsDeliveryType,
             isSubscription: true,
+            menuId,
           },
         });
       } else {
@@ -162,7 +164,10 @@ const DeliverInfoPage = () => {
       dispatch(INIT_AVAILABLE_DESTINATION());
 
       if (isSubscription) {
-        router.push({ pathname: '/subscription/set-info', query: { subsDeliveryType: subsDeliveryType } });
+        router.push({
+          pathname: '/subscription/set-info',
+          query: { subsDeliveryType: subsDeliveryType, menuId },
+        });
       } else {
         router.push('/cart');
       }
@@ -212,7 +217,10 @@ const DeliverInfoPage = () => {
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
             if (isSubscription) {
-              router.push({ pathname: '/subscription/set-info', query: { subsDeliveryType: subsDeliveryType } });
+              router.push({
+                pathname: '/subscription/set-info',
+                query: { subsDeliveryType: subsDeliveryType, menuId },
+              });
             } else {
               router.push('/cart');
             }
