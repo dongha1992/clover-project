@@ -14,6 +14,12 @@ import { userChangeInfo } from '@api/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
+// 카카오 회원가입 특문 탈주 루트
+// 카카오 애플 회원정보 수정
+// 회원가입 핸드폰번호 변경
+// 계좌이체, 나이스페이, 페이코 테스트
+// 이미지 가이드 테스트
+
 const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
