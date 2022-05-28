@@ -93,33 +93,33 @@ const SpotSearchFilter = () => {
           selectedRadioValue={selectedRadioId}
         />
         <BorderLine height={1} margin="16px 0" />
-        <FlexBetween padding="0 24px 16px 0">
+        {/* <FlexBetween padding="0 24px 16px 0">
           <FlexCol>
             <TextH4B color={theme.black}>프코스팟</TextH4B>
             <TextB3R color={theme.greyScale65}>동네 주민 모두 이용 가능한 스팟</TextB3R>
           </FlexCol>
           <ToggleButton onChange={changePublicToggleHandler} status={publicToggle} />
-        </FlexBetween>
-        <MultipleFilter
+        </FlexBetween> */}
+        {/* <MultipleFilter
           data={spotsFilter?.publicFilters}
           changeHandler={checkboxHandler}
           selectedCheckboxIds={selectedCheckboxIds}
-        />
-        <BorderLine height={1} margin="16px 0" />
+        /> */}
+        {/* <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="0 24px 16px 0">
           <FlexCol>
             <TextH4B color={theme.black}>프라이빗 스팟</TextH4B>
             <TextB3R color={theme.greyScale65}>임직원 등 특정 대상만 이용 가능한 스팟</TextB3R>
           </FlexCol>
           <ToggleButton onChange={changePrivateToggleHandler} status={privateToggle} />
-        </FlexBetween>
-        <BorderLine height={1} margin="0 0 16px 0" />
+        </FlexBetween> */}
+        {/* <BorderLine height={1} margin="0 0 16px 0" /> */}
         <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>
-          기타
+          필터
         </TextH4B>
         <MultipleFilter
           etcFilter
-          data={spotsFilter?.etcFilters}
+          data={spotsFilter?.filters}
           changeHandler={checkboxHandler}
           selectedCheckboxIds={selectedCheckboxIds}
         />

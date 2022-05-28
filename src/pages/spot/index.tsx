@@ -262,12 +262,12 @@ const SpotPage = () => {
         <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
-            info?.trialSpotRegistration.trialUserCount! < 5 && (
+            info?.trialSpotRegistration?.trialUserCount! < 5 && (
               <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
-                      {`[${info?.trialSpotRegistration.placeName}]\n`}
+                      {`[${info?.trialSpotRegistration?.placeName}]\n`}
                       <span>{`${info?.trialSpotRegistration?.trialTargetUserCount! - info?.trialSpotRegistration?.trialUserCount!}`}</span>
                       명만 더 주문 하면 정식오픈 돼요!
                     </TextH4B>
@@ -281,12 +281,12 @@ const SpotPage = () => {
           }
           {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-            info?.trialSpotRegistration.trialUserCount! >= 5 && (
+            info?.trialSpotRegistration?.trialUserCount! >= 5 && (
               <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
-                      {`[${info?.trialSpotRegistration.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
+                      {`[${info?.trialSpotRegistration?.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
                     </TextH4B>
                     <IconWrapper>
                       <SVGIcon name="blackCircleShare" />
