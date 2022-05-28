@@ -395,7 +395,6 @@ const CalendarBox = styled.div`
           .deliveryExpectedDate,
           .deliveryComplete,
           .today,
-          .menuChange,
           .deliveryHoliday,
           .deliveryChange,
           .sumDeliveryComplete {

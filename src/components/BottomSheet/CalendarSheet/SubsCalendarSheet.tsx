@@ -24,8 +24,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
   userSelectPeriod: string; // 유저가 선택한 구독기간(1주,2주,3주,4주,정기구독)
+  subsDeliveryType: string | undefined | string[];
 }
-const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
+const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType }: IProps) => {
   const dispatch = useDispatch();
   const { subsDeliveryExpectedDate, subsStartDate, subsInfo } = useSelector(subscriptionForm);
   const [disabledDate, setDisabledDate] = useState<any>([]);
@@ -77,9 +78,13 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
 
   useEffect(() => {
     if (deliveryExpectedDate && pickupDay && userSelectTime) {
-      setSubsStartDateText(
-        `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay?.join('·')} / ${userSelectTime}`
-      );
+      if (subsDeliveryType === 'SPOT') {
+        setSubsStartDateText(
+          `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay?.join('·')} / ${userSelectTime}`
+        );
+      } else {
+        setSubsStartDateText(`${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay?.join('·')}`);
+      }
     }
   }, [deliveryExpectedDate, pickupDay, userSelectTime]);
 
@@ -112,8 +117,10 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
   return (
     <Container>
       <TitleBox>
-        <TextH5B padding="24px 0 16px 0">구독 시작/배송일</TextH5B>
-        <TextB2R padding="0 0 16px 0">시작일을 선택하면 배송 플랜이 자동으로 설정됩니다.</TextB2R>
+        <TextH5B padding="24px 0 16px 0" center>
+          구독 시작/배송일
+        </TextH5B>
+        <TextB2R padding="0 24px 16px">시작일을 선택하면 배송 플랜이 자동으로 설정됩니다.</TextB2R>
       </TitleBox>
       <SubsCalendar
         subsActiveDates={subsActiveDates!}
@@ -124,21 +131,28 @@ const SubsCalendarSheet = ({ userSelectPeriod }: IProps) => {
         setPickupDay={setPickupDay}
         subsPeriod={userSelectPeriod}
       />
-      <RadioWrapper>
-        {SUBSCRIBE_TIME_SELECT.map((item) => {
-          // let isSelected;
-          let isSelected = userSelectTime === item.type;
+      {subsDeliveryType === 'SPOT' && (
+        <RadioWrapper>
+          {SUBSCRIBE_TIME_SELECT.map((item) => {
+            let isSelected = userSelectTime === item.type;
 
-          return (
-            <RadioLi key={item.id}>
-              <RadioButton isSelected={isSelected} onChange={() => changeRadioHanler(item.type)} />
-              <TextB2R className="textBox">
-                <span className="fBold">{item.type}</span> {item.text}
-              </TextB2R>
-            </RadioLi>
-          );
-        })}
-      </RadioWrapper>
+            return (
+              <RadioLi key={item.id}>
+                <RadioButton isSelected={isSelected} onChange={() => changeRadioHanler(item.type)} />
+                <TextB2R
+                  className="textBox"
+                  pointer
+                  onClick={() => {
+                    changeRadioHanler(item.type);
+                  }}
+                >
+                  <span className="fBold">{item.type}</span> {item.text}
+                </TextB2R>
+              </RadioLi>
+            );
+          })}
+        </RadioWrapper>
+      )}
       <BottomButton onClick={subscribeClickHandler} disabled={pickupDay ? false : subsStartDate ? false : true}>
         <TextH5B>
           {pickupDay
@@ -155,7 +169,7 @@ const Container = styled.div``;
 const TitleBox = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
 `;
 const RadioWrapper = styled.ul`
   display: flex;
