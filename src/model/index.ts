@@ -656,7 +656,7 @@ export interface ISpotsInfo {
   canOwnerSpotRegistraion: boolean;
   canPrivateSpotRegistration: boolean;
   canPublicSpotRegistraion: boolean;
-  trialSpotRegistration: IGetRegistrationStatus;
+  trialSpotRegistration: IGetRegistrationStatus | null;
 }
 
 export interface ISpotsInfoResponse {
@@ -891,7 +891,7 @@ export interface IGetRegistrationStatus {
   trialEndedAt?: string;
   trialStartedAt?: string;
   trialTargetUserCount?: number;
-  trialUserCount?: number;
+  trialUserCount?: number | undefined;
   trialCount?: number;
   canRetrial?: boolean;
 }
@@ -975,15 +975,7 @@ export interface IGetSpotFilterResponse {
 }
 
 export interface IGetSpotFilter {
-  publicFilters: [
-    {
-      value: string | boolean;
-      filtered: boolean;
-      fieldName: string;
-      name: string;
-    }
-  ];
-  etcFilters: [
+  filters: [
     {
       value: string | boolean;
       filtered: boolean;

@@ -21,51 +21,9 @@ import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
+import { SpotSearchKeyword } from '@components/Pages/Spot';
 // import { getCartsApi } from '@api/cart';
-import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
-
-interface IProps {
-  onClick?: any
-}
-export const SpotSearchKeywordComponent = ({onClick}: IProps) => {
-  
-  return (
-    <Slider className="swiper-container" slidesPerView={'auto'} spaceBetween={10} speed={500}>
-      <KeyWorkdWrapper>
-        {
-          SEARCH_KEYWORD.map((i, idx) => {
-            return (
-              <SwiperSlide className="swiper-slide" key={idx}>
-                <KeyWord onClick={()=> onClick(i?.value)}>
-                  <TextB2R padding='8p 16px 8px 16px' color={theme.black}>{i.keyword}</TextB2R>
-                </KeyWord>
-              </SwiperSlide>
-            )
-          })
-        }
-      </KeyWorkdWrapper>
-    </Slider>
-  );
-};
-
-const SEARCH_KEYWORD = [
-  {
-    keyword: '#GS25',
-    value: 'GS25',
-  },
-  {
-    keyword: '#세븐일레븐',
-    value: '세븐일레븐',
-  },
-  {
-    keyword: '#스토리웨이',
-    value: '스토리웨이',
-  },
-  {
-    keyword: '#카페',
-    value: '카페',
-  },
-];
+// import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -78,7 +36,7 @@ const SpotSearchPage = (): ReactElement => {
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const [isLoadingRecomand, setIsLoadingRecomand] = useState<boolean>(false);
-  const [selectedKeyword, setSelectedKeyWord] = useState<string>('');
+  const [keyword, setKeyWord] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -103,7 +61,7 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   const handleSelectedKeywordVaule = (value: string) => {
-    setSelectedKeyWord(value);
+    setKeyWord(value);
   };
 
   // 장바구니 조회
@@ -171,7 +129,6 @@ const SpotSearchPage = (): ReactElement => {
 
   const changeInputHandler = () => {
     const inputText = inputRef.current?.value.length;
-
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -179,37 +136,51 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   // 스팟 검색 결과 api
-  const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
 
     if (e.key === 'Enter') {
       if (inputRef.current) {
+        // setKeyWord(inputRef.current?.value);
         let keyword = inputRef.current?.value;
         if (!keyword) {
           setSearchResult([]);
           return;
         }
-        try {
-          const params = {
-            keyword,
-            latitude: spotsPosition ? spotsPosition.latitude : null,
-            longitude: spotsPosition ? spotsPosition.longitude : null,
-          };
-          const { data } = await getSpotSearch(params);
-          const fetchData = data.data;
-
-          // setSpotTest(fetchData);
-          const filtered = fetchData?.spots?.filter((c) => {
-            return c.name.replace(/ /g, '').indexOf(value) > -1;
-          });
-          setSearchResult(fetchData?.spots);
-          setIsSearched(true);
-        } catch (err) {
-          console.error(err);
-        }
+        fetchSpotSearchData({keyword});
       }
     }
+  }, []);
+
+  useEffect(()=> {
+    if (keyword.length > 0) {
+      fetchSpotSearchData({keyword});
+      // setInputFocus(true);  
+    }
+  }, [keyword])
+
+  const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
+    try {
+      const params = {
+        keyword,
+        latitude: spotsPosition ? spotsPosition.latitude : null,
+        longitude: spotsPosition ? spotsPosition.longitude : null,
+      };
+      const { data } = await getSpotSearch(params);
+      if (data.code === 200) {
+        const fetchData = data.data;
+        //   // const filtered = fetchData?.spots?.filter((c) => {
+        //   //   return c.name.replace(/ /g, '').indexOf(value) > -1;
+        //   // });
+        setSearchResult(fetchData?.spots);
+        setIsSearched(true); 
+        setInputFocus(true); 
+      };
+    } catch (err) {
+      console.error(err);
+    }
   };
+  
 
   const goToOrder = useCallback(() => {
     dispatch(
@@ -257,6 +228,7 @@ const SpotSearchPage = (): ReactElement => {
             setInputFocus(true);
           }}
           ref={inputRef}
+          value={keyword}
         />
       </Wrapper>
       {!inputFocus ? (
@@ -268,7 +240,7 @@ const SpotSearchPage = (): ReactElement => {
                 현 위치로 설정하기
               </TextH6B>
             </FlexEnd>
-            <SpotSearchKeywordComponent onClick={handleSelectedKeywordVaule} />
+            <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
             <FlexBetween margin="0 0 24px 0">
               <TextH2B>{spotRecommend?.title}</TextH2B>
               {
@@ -300,7 +272,7 @@ const SpotSearchPage = (): ReactElement => {
             recentPickedSpotList?.length! > 0 ? (
               <DefaultSearchContainer>
                 <RecentPickWrapper>
-                  <SpotSearchKeywordComponent onClick={handleSelectedKeywordVaule} />
+                  <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
                   {recentPickedSpotList?.map((item: any, index) => (
                     // 스팟 최근 픽업 이력 리스트
