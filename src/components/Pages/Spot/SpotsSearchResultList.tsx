@@ -89,13 +89,30 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
     }
   }, []);
 
-  const typeTag = (): string | undefined => {
-    switch (item.type) {
-      case 'PRIVATE':
-        return '프라이빗';
-      case 'PUBLIC':
-        return '퍼블릭';
-    }
+  const publicTag = (): string | undefined => {
+    // BOOKSTORE, CAFE, CONVENIENCE_STORE, DRUGSTORE, ETC, FITNESS_CENTER, OFFICE, SCHOOL, SHARED_OFFICE, STORE
+    switch (item.placeType) {
+      case 'CONVENIENCE_STORE':
+        return '편의점';
+      case 'STORE':
+        return '일반상점';
+      case 'FITNESS_CENTER':
+        return '피트니스'
+      case 'BOOKSTORE':
+        return '서점'
+      case 'DRUGSTORE':
+        return '약국'
+      case 'CAFE':
+        return '카페'
+      case 'OFFICE':
+        return '오피스'
+      case 'SCHOOL':
+        return '학교'
+      case 'SHARED_OFFICE':
+        return '공유오피스'
+      case 'ETC':
+        return ''
+    };
   };
 
   const orderHandler = () => {
@@ -275,27 +292,58 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
         {renderSpotMsg()}
-        {item.isOpened ? (
-          !item.isTrial ? (
+        {
+          // isOpened : true - 오픈, false - 오픈예정
+          !item.isOpened && (
             <div>
               <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                {typeTag()}
+                오픈예정
               </Tag>
             </div>
-          ) : (
+          )
+        }
+        {
+          item.type === 'PRIVATE' && !item.isTrial && item.isOpened && (
+            <div>
+              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                프라이빗
+              </Tag>
+              {
+                item.discountRate > 0 && (
+                  <Tag margin='0 0 0 8px' backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                  {`${item.discountRate}% 할인 중`}
+                  </Tag>
+                )
+              }
+            </div>
+          )
+        }
+        {
+          item.type === 'PRIVATE' && item.isTrial && item.isOpened && (
             <div>
               <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
                 트라이얼
               </Tag>
             </div>
+
           )
-        ) : (
-          <div>
-            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-              오픈예정
-            </Tag>
-          </div>
-        )}
+        }
+        {
+          item.type !== 'PRIVATE' && item.isOpened && item.placeType !== 'ETC' && (
+            <div>
+              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                {publicTag()}
+              </Tag>
+              {
+                item.discountRate > 0 && (
+                  <Tag margin='0 0 0 8px' backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                  {`${item.discountRate}% 할인 중`}
+                  </Tag>
+                )
+              }
+            </div>
+          )
+        }
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>

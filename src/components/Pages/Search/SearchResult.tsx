@@ -24,8 +24,8 @@ interface IProps {
 const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
-
+  const { spotsPosition } = useSelector(spotSelector);
+  
   const clickFilterHandler = () => {
     if (!isSpot) {
       dispatch(
