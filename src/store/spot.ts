@@ -41,20 +41,11 @@ interface ISpotsPostions {
 }
 
 interface ISpotSearchFilterd {
-  public: boolean;
-  private: boolean;
   canEat: boolean;
   canParking: boolean;
   canDeliveryDinner: boolean;
   isEvent: boolean;
-  STORE: string;
-  GS25: string;
-  BOOKSTORE: string;
-  STORYWAY: string;
-  CAFE: string;
-  SEVEN_ELEVEN: string;
-  FITNESS_CENTER: string;
-  DRUGSTORE: string;
+  sort: string;
 }
 
 interface IProps {
@@ -72,20 +63,11 @@ interface IProps {
 };
 
 const spotsSearchResultFilteredState = {
-  public: false,
-  private: false,
   canEat: false,
   canParking: false,
   canDeliveryDinner: false,
   isEvent: false,
-  STORE: '',
-  GS25: '',
-  BOOKSTORE: '',
-  STORYWAY: '',
-  CAFE: '',
-  SEVEN_ELEVEN: '',
-  FITNESS_CENTER: '',
-  DRUGSTORE: '',
+  sort: '',
 };
 
 const spotAddressState = {

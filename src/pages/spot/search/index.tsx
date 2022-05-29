@@ -14,11 +14,11 @@ import { ISpots, ISpotsDetail } from '@model/index';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
-import { spotSelector } from '@store/spot';
 import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
+import { spotSelector, INIT_SPOT_FILTERED } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { SpotSearchKeyword } from '@components/Pages/Spot';
@@ -29,7 +29,7 @@ const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { orderId, isDelivery } = router.query;
-  const { spotsPosition } = useSelector(spotSelector);
+  const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [spotRecommend, setSpotRecommend] = useState<ISpots>();
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
@@ -40,6 +40,7 @@ const SpotSearchPage = (): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
+  // console.log('spotsSearchResultFiltered', spotsSearchResultFiltered);
 
   // 스팟 검색 - 추천 스팟 api
   const getSearchRecommendList = async () => {
@@ -148,6 +149,8 @@ const SpotSearchPage = (): ReactElement => {
           return;
         }
         fetchSpotSearchData({keyword});
+        dispatch(INIT_SPOT_FILTERED());
+
       }
     }
   }, []);
@@ -155,9 +158,14 @@ const SpotSearchPage = (): ReactElement => {
   useEffect(()=> {
     if (keyword.length > 0) {
       fetchSpotSearchData({keyword});
+      dispatch(INIT_SPOT_FILTERED());
       // setInputFocus(true);  
     }
   }, [keyword])
+
+  // useEffect(()=> {
+
+  // }, [spotsSearchResultFiltered])
 
   const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
     try {
@@ -180,7 +188,28 @@ const SpotSearchPage = (): ReactElement => {
       console.error(err);
     }
   };
-  
+
+  // console.log(searchResult.forEach(i => console.log('i', i.distance)));
+  // console.log(searchResult.sort(function (a: any, b: any): any  { return a.distance - b.distance }));
+  const filteredItem = () => {
+    const sort = spotsSearchResultFiltered?.sort;
+    switch (sort) {
+      case '':
+        return searchResult;
+      case 'nearest':
+        return (
+          searchResult.sort(function (a: any, b: any): any  { return a.distance - b.distance })
+        )
+      case 'frequency':
+        return (
+          searchResult.sort(function (a: any, b: any): any  { return  b.score - a.score })
+        )
+      case 'user':
+        return searchResult;
+    }
+  }
+
+  // console.log('filteredItem', filteredItem());
 
   const goToOrder = useCallback(() => {
     dispatch(
@@ -193,6 +222,7 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(() => {
     getSearchRecommendList();
+    dispatch(INIT_SPOT_FILTERED());
   }, []);
 
   useEffect(() => {
@@ -306,7 +336,7 @@ const SpotSearchPage = (): ReactElement => {
                 orderId={orderId}
                 hasCart={cartList?.length! > 0}
               /> */}
-              <SearchResult searchResult={searchResult} isSpot onClick={goToOrder} orderId={orderId} hasCart={true} />
+              <SearchResult searchResult={filteredItem()} isSpot onClick={goToOrder} orderId={orderId} hasCart={true} />
             </SearchResultContainer>
           )}
         </>

@@ -8,15 +8,18 @@ type TProps = {
   data: any;
   changeHandler: (value: string) => void;
   selectedRadioValue: string;
+  defaultData?: any;
 };
 
-const OrderFilter = ({ data, changeHandler, selectedRadioValue }: TProps) => {
+const OrderFilter = ({ data, changeHandler, selectedRadioValue, defaultData }: TProps) => {
   return (
     <Container>
       <BtnContainer>
         {data &&
           data.map((item: any, index: number) => {
-            const isSelected = selectedRadioValue === item.value;
+            // const isSelected =  defaultData ? defaultData === item.value : selectedRadioValue === item.value;
+            const isSelected =  selectedRadioValue === item.value;
+
             return (
               <FlexRow key={index}>
                 <RadioButton isSelected={isSelected} onChange={() => changeHandler(item.value)} key={index} />
