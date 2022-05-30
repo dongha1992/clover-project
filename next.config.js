@@ -36,6 +36,6 @@ module.exports = () => {
       API_URL: process.env.API_URL,
     },
     // generateBuildId: async () => 'constant-build-id',
-    trailingSlash: true,
+    // trailingSlash: true,
   };
 };
