@@ -37,7 +37,6 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 const hasAvailableCoupon = true;
 
 const MenuDetailPage = ({ menuDetail }: any) => {
-  // const [menuDetail, setMenuItem] = useState<any>({});
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -48,28 +47,27 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
-  const { menuId } = router.query;
 
-  // const {
-  //   data,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   ['getMenuDetail'],
-  //   async () => {
-  //     const { data } = await getMenuDetailApi(Number(menuId));
-  //     return data.data;
-  //   },
+  const {
+    data,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    ['getMenuDetail'],
+    async () => {
+      const { data } = await getMenuDetailApi(menuDetail.id);
+      return data.data;
+    },
 
-  //   {
-  //     onSuccess: (data) => {
-  //       dispatch(SET_MENU_ITEM(data));
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     enabled: !!menuId,
-  //   }
-  // );
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuDetail,
+    }
+  );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
@@ -115,7 +113,7 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   );
 
   const goToReviewDetail = (review: any) => {
-    router.push(`/menu/${menuId}/review/${review.id}`);
+    router.push(`/menu/${menuDetail.id}/review/${review.id}`);
   };
 
   const goToReviewSection = () => {
@@ -135,7 +133,7 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -410,27 +408,6 @@ const DailySaleNumber = styled.div`
   left: 0;
   top: 0;
 `;
-
-/*TODO: 수정해야함 */
-
-// export async function getServerSideProps(context: any) {
-//   const { menuId } = context.query;
-
-//   if (!menuId) {
-//     return {
-//       props: {
-//         notFound: true,
-//         redirect: {
-//           destinaion: '/',
-//         },
-//       },
-//     };
-//   }
-
-//   return {
-//     props: { menuId },
-//   };
-// }
 
 export async function getStaticPaths() {
   const params = {
