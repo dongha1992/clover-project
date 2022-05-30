@@ -1,6 +1,6 @@
 export const FIND_ACCOUNT = [
   {
-    text: '아이디(이메일)',
+    text: '이메일',
     link: '/login/find-account/email',
     value: 'email',
   },

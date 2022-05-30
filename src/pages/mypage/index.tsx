@@ -72,9 +72,18 @@ const MypagePage = () => {
 
       if (data.code === 200) {
         return data.data;
+      } else {
+        router.replace('/onboarding');
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false, enabled: !!me }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!me,
+      onError: () => {
+        router.replace('/onboarding');
+      },
+    }
   );
 
   const goToEditUserInfo = () => {

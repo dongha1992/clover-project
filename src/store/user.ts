@@ -111,6 +111,10 @@ export const user = createSlice({
       state.tempPasswordLogin = payload;
     },
 
+    INIT_TEMP_PASSWORD: (state: any, { payload }: PayloadAction) => {
+      state.tempPasswordLogin = '';
+    },
+
     SET_USER: (state: any, { payload }: PayloadAction<IUser['me'] | null>) => {
       state.me = payload;
     },
@@ -118,7 +122,14 @@ export const user = createSlice({
   extraReducers: {},
 });
 
-export const { SET_SIGNUP_USER, SET_USER_AUTH, SET_USER, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, INIT_SIGNUP_USER } =
-  user.actions;
+export const {
+  SET_SIGNUP_USER,
+  SET_USER_AUTH,
+  SET_USER,
+  SET_LOGIN_SUCCESS,
+  SET_TEMP_PASSWORD,
+  INIT_SIGNUP_USER,
+  INIT_TEMP_PASSWORD,
+} = user.actions;
 export const userForm = (state: AppState): IUser => state.user;
 export default user.reducer;
