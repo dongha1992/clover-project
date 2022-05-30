@@ -75,8 +75,8 @@ const MenuDetailPage = ({ menuDetail }: any) => {
     'getMenuDetailReview',
     async () => {
       // const { data } = await getMenuDetailReviewApi(menuId);
-
       // return data.data;
+
       return ALL_REVIEW.data.data;
     },
 
@@ -453,7 +453,7 @@ export async function getStaticProps({ params }: { params: { menuId: string } })
 
   return {
     props: { menuDetail: data.data },
-    revalidate: 10,
+    revalidate: 100,
   };
 }
 

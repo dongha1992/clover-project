@@ -41,6 +41,11 @@ const TabHeader = ({ title }: TProps) => {
     [router]
   );
 
+  useEffect(() => {
+    console.log(router.asPath, 'router.asPath');
+    setSelectedTab(router.asPath);
+  }, [router]);
+
   const mapper: Obj = {
     '이메일/비밀번호 찾기': FIND_ACCOUNT,
     '찜 관리': DIB_MENU,
