@@ -99,7 +99,6 @@ const PAYMENT_METHOD = [
 ];
 
 const successOrderPath: string = 'order/finish';
-const kakaoSuccessOrderPath = 'order/kakao';
 
 const ngorkUrl = 'https://27d7-1-228-1-158.jp.ngrok.io';
 export interface IAccessMethod {
@@ -142,7 +141,6 @@ const OrderPage = () => {
 
   const queryClient = useQueryClient();
   const router = useRouter();
-  const niceFormRef = useRef<HTMLFormElement>(null);
 
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
 
@@ -568,17 +566,17 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   payMethod: selectedOrderMethod,
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
-
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${ngorkUrl}/order`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
+
+    // const reqBody = {
+    //   payMethod: selectedOrderMethod,
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${ngorkUrl}/order`,
+    // };
 
     try {
       const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
@@ -586,9 +584,7 @@ const OrderPage = () => {
       let payForm: any = document.getElementById('payForm');
 
       payForm!.innerHTML = '';
-      // payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
-      // payForm!.action! = `https://dev-web.freshcode.me/order/v1/orders/${orderId}/nice-callback`;
-      payForm!.action = `https://clover-service-api-dev.freshcode.me/order/v1/orders/${orderId}/nicepay-approve`;
+      payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nicepay-approve`;
 
       for (let formName in data.data) {
         let inputHidden = document.createElement('input');
@@ -615,19 +611,19 @@ const OrderPage = () => {
 
   const processPayco = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-      cancelUrl: `${ngorkUrl}${router.asPath}`,
-      failureUrl: `${ngorkUrl}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
@@ -644,19 +640,19 @@ const OrderPage = () => {
 
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `${ngorkUrl}${router.asPath}`,
-      failureUrl: `${ngorkUrl}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -679,17 +675,17 @@ const OrderPage = () => {
 
   const processTossPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-      failureUrl: `${ngorkUrl}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=toss`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
     setCookie({
