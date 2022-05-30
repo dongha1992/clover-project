@@ -703,7 +703,7 @@ const OrderPage = () => {
 
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
     window.location.href = data.data.checkoutPage;
-    console.log(data, 'TOSS RESPONSE');
+    console.log(data.data, 'TOSS RESPONSE');
   };
 
   const paymentHandler = () => {
