@@ -108,6 +108,8 @@ const ProfilePage = () => {
 
   const otherAuthTelHandler = () => {
     setIsAuthTel(true);
+    setUserInfo({ ...userInfo, tel: '' });
+    setPhoneValidation(false);
   };
 
   const authCodeInputHandler = () => {
@@ -155,7 +157,7 @@ const ProfilePage = () => {
   };
 
   const getAuthTel = async () => {
-    if (!phoneValidation) {
+    if (userInfo.tel.length > 0 && !phoneValidation) {
       dispatch(
         SET_ALERT({
           alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
@@ -167,6 +169,7 @@ const ProfilePage = () => {
 
     if (oneMinuteDisabled) {
       dispatch(SET_ALERT({ alertMessage: '잠시 후 재요청해 주세요.' }));
+      return;
     }
 
     try {
@@ -288,7 +291,6 @@ const ProfilePage = () => {
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
     };
-    console.log(reqBody, 'reqBody');
 
     try {
       const { data } = await userChangeInfo(reqBody);
@@ -320,6 +322,12 @@ const ProfilePage = () => {
     }
   };
 
+  const telKeyPressHandler = (e: any) => {
+    if (e.key === 'Enter') {
+      getAuthTel();
+    }
+  };
+
   useEffect(() => {
     const toArrayBirthdate = me?.birthDate && me?.birthDate?.split('-');
     const hasBirthDate = toArrayBirthdate?.length! > 0;
@@ -348,8 +356,6 @@ const ProfilePage = () => {
 
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
-
-  console.log(me, 'me');
 
   return (
     <Container>
@@ -430,10 +436,11 @@ const ProfilePage = () => {
                 eventHandler={phoneNumberInputHandler}
                 value={userInfo.tel || ''}
                 disabled={!isAuthTel}
+                keyPressHandler={telKeyPressHandler}
               />
               {isAuthTel ? (
-                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel}>
-                  요청하기
+                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
+                  {delay ? '재전송' : '요청하기'}
                 </Button>
               ) : (
                 <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
@@ -442,7 +449,9 @@ const ProfilePage = () => {
               )}
             </FlexRow>
             <PhoneValidCheck>
-              {isAuthTel && !phoneValidation && <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>}
+              {isAuthTel && !phoneValidation && userInfo.tel.length > 0 && (
+                <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+              )}
               {isAuthTel && phoneValidation && <SVGIcon name="confirmCheck" />}
               {isAuthTel && (
                 <ConfirmWrapper>
