@@ -46,7 +46,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
+import { orderForm, INIT_CARD, INIT_ORDER, SET_RECENT_PAYMENT } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
@@ -99,9 +99,8 @@ const PAYMENT_METHOD = [
 ];
 
 const successOrderPath: string = 'order/finish';
-const kakaoSuccessOrderPath = 'order/kakao';
 
-const ngorkUrl = '27d7-1-228-1-158.jp.ngrok.io';
+const ngorkUrl = 'https://27d7-1-228-1-158.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -137,12 +136,11 @@ const OrderPage = () => {
   const dispatch = useDispatch();
   const { userAccessMethod, isLoading } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { tempOrder, selectedCard } = useSelector(orderForm);
+  const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
   const router = useRouter();
-  const niceFormRef = useRef<HTMLFormElement>(null);
 
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
 
@@ -158,7 +156,7 @@ const OrderPage = () => {
         router.push('/cart');
       }
       const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
-      console.log(tempOrder, 'TEMP ORDER');
+
       const previewBody = {
         delivery,
         deliveryDetail: deliveryDetail ? deliveryDetail : null,
@@ -178,9 +176,14 @@ const OrderPage = () => {
       refetchOnWindowFocus: false,
       onError: (error: any) => {
         if (error && error?.code === 5005) {
-          return;
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 결제 정보입니다.',
+            })
+          );
+          router.replace('/cart');
         } else {
-          return;
+          router.replace('/cart');
         }
       },
     }
@@ -209,6 +212,10 @@ const OrderPage = () => {
     },
     {
       onSuccess: async ({ data }) => {
+        if (checkForm.orderMethodReuse.isSelected) {
+          dispatch(SET_RECENT_PAYMENT(selectedOrderMethod));
+        }
+
         if (selectedOrderMethod === 'NICE_BILLING') {
           router.replace(`/order/finish?orderId=${data.id}`);
         } else {
@@ -229,7 +236,7 @@ const OrderPage = () => {
                 '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
           /* TODO: 확인 필요 */
         } else if (error.code === 4351) {
           dispatch(
@@ -237,14 +244,14 @@ const OrderPage = () => {
               alertMessage: '상품 금액이 변경되었습니다. 주문을 다시 시도해주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
         } else if (error.code === 4352) {
           dispatch(
             SET_ALERT({
               alertMessage: '상품 할인에 변동이 있습니다. 주문을 다시 시도해주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
         }
       },
     }
@@ -535,7 +542,6 @@ const OrderPage = () => {
   };
 
   const checkIsAlreadyPaid = (orderData: ICreateOrder) => {
-    console.log(orderData, 'orderData');
     const orderId = orderData.id;
 
     if (orderData.status === 'progress') {
@@ -560,31 +566,25 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const successUrl = `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`;
-    const failureUrl = `${process.env.SERVICE_URL}${router.asPath}`;
-
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl,
-      failureUrl,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
     //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}`,
+    //   failureUrl: `${ngorkUrl}/order`,
     // };
 
     try {
       const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
-      console.log(data, 'NICE PAY');
 
       let payForm: any = document.getElementById('payForm');
 
       payForm!.innerHTML = '';
-      // payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
-      // payForm!.action! = `https://dev-web.freshcode.me/order/v1/orders/${orderId}/nice-callback`;
-      payForm!.action = `https://clover-service-api-dev.freshcode.me/order/v1/orders/${orderId}/nicepay-approve`;
+      payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nicepay-approve`;
 
       for (let formName in data.data) {
         let inputHidden = document.createElement('input');
@@ -599,19 +599,6 @@ const OrderPage = () => {
         payForm.appendChild(inputHidden);
       }
 
-      let inputHiddenReturn = document.createElement('input');
-      inputHiddenReturn.setAttribute('type', 'hidden');
-      inputHiddenReturn.setAttribute('name', 'successUrl');
-      // inputHiddenReturn.setAttribute('value', `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`);
-      inputHiddenReturn.setAttribute('value', `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`);
-
-      let inputHiddenFail = document.createElement('input');
-      inputHiddenFail.setAttribute('type', 'hidden');
-      inputHiddenFail.setAttribute('name', 'failureUrl');
-      // inputHiddenFail.setAttribute('value', `${process.env.SERVICE_URL}/order`);
-      inputHiddenFail.setAttribute('value', `${ngorkUrl}`);
-      payForm.appendChild(inputHiddenReturn);
-      payForm.appendChild(inputHiddenFail);
       nicepayStart();
       handleScrollNicePayModal();
     } catch (error: any) {
@@ -634,13 +621,13 @@ const OrderPage = () => {
 
     // const reqBody = {
     //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   cancelUrl: `${ngorkUrl}/${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}/${router.asPath}`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
     // };
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
-      console.log(data, 'PAYCO RESPONSE');
+
       window.location.href = data.data.result.orderSheetUrl;
       dispatch(SET_IS_LOADING(false));
     } catch (error: any) {
@@ -671,7 +658,7 @@ const OrderPage = () => {
 
     try {
       const { data } = await postKakaoPaymentApi({ orderId, data: reqBody });
-      console.log(data, 'RESPONSE');
+
       setCookie({
         name: 'kakao-tid-clover',
         value: data.data.tid,
@@ -701,8 +688,12 @@ const OrderPage = () => {
     // };
 
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+    setCookie({
+      name: 'toss-tid-clover',
+      value: data.data.payToken,
+    });
+
     window.location.href = data.data.checkoutPage;
-    console.log(data, 'TOSS RESPONSE');
   };
 
   const paymentHandler = () => {
@@ -742,6 +733,21 @@ const OrderPage = () => {
   }, [checkForm.samePerson.isSelected]);
 
   useEffect(() => {
+    const { message } = router.query;
+
+    if (router.isReady && message) {
+      try {
+        let preDecode = decodeURIComponent(message as string).replace(/ /g, '+');
+        const cancleMsg = decodeURIComponent(escape(window.atob(preDecode)));
+
+        dispatch(SET_ALERT({ alertMessage: cancleMsg }));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
@@ -760,6 +766,12 @@ const OrderPage = () => {
   }, [previewOrder]);
 
   useEffect(() => {
+    if (recentPayment) {
+      setSelectedOrderMethod(recentPayment);
+    }
+  }, []);
+
+  useEffect(() => {
     // 새로고침 시 중복 결제 방어 풀림
     dispatch(SET_IS_LOADING(false));
   }, []);
@@ -776,9 +788,21 @@ const OrderPage = () => {
     /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
     const { code } = error;
     if (code === 5005) {
-      return <div>선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.</div>;
+      dispatch(
+        SET_ALERT({
+          alertMessage: '선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.',
+          onSubmit: () => router.push('/cart'),
+        })
+      );
+      return;
     } else {
-      return <div>알수없는 에러발생</div>;
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알수없는 에러발생',
+          onSubmit: () => router.push('/cart'),
+        })
+      );
+      return;
     }
   }
 
@@ -1185,7 +1209,7 @@ const OrderPage = () => {
         <FlexRow padding="17px 0 0 0">
           <Checkbox isSelected onChange={checkOrderTermHandler} />
           <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo} pointer>
             자세히
           </TextH6B>
         </FlexRow>

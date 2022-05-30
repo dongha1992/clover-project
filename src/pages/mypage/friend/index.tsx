@@ -71,6 +71,10 @@ const InviteFriendPaage = () => {
           alertMessage = '이미 등록된 초대코드예요.';
         } else if (error.code === 1105) {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
+        } else if (1101) {
+          alertMessage = '유저를 찾을 수 없습니다.';
+        } else {
+          alertMessage = error.message;
         }
 
         return dispatch(
