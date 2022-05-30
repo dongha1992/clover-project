@@ -5,7 +5,7 @@ import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/the
 import { SVGIcon } from '@utils/common';
 import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import Image from 'next/image';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
@@ -23,6 +23,7 @@ const WelcomeSheet = () => {
 
   const { me } = useSelector(userForm);
 
+  const router = useRouter();
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async () => {
       if (codeRef.current) {
@@ -111,8 +112,11 @@ const WelcomeSheet = () => {
         <FlexEnd
           margin="40px 0 0 0"
           onClick={() => {
-            /* TODO: 카카오 회원가입 등 리턴 url 해줘야함 */
-            router.push('/');
+            if (router.query.returnPath) {
+              router.push(`/login?returnPath=${encodeURIComponent(String(router.query.returnPath))}`);
+            } else {
+              router.push('/');
+            }
             dispatch(INIT_BOTTOM_SHEET());
           }}
         >
