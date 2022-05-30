@@ -7,7 +7,9 @@ import { useRouter } from 'next/router';
 import { Obj } from '@model/index';
 import { NAME_REGX } from '@constants/regex';
 import { userLoginApi, userProfile } from '@api/user';
-
+import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 interface IAuthObj {
   access_token: string;
   expires_in: number;
@@ -54,19 +56,42 @@ const Oauth = () => {
           window.Kakao.cleanup();
         }
 
-        if ((isRegister && !NAME_REGX.test(data.name)) || data.name.length === 0) {
-          router.push('/signup/change-name');
-          return;
+        if (isRegister) {
+          if (!NAME_REGX.test(data.name) || data.name.length === 0) {
+            router.push('/signup/change-name');
+          } else {
+            dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+          }
         } else {
-          router.push('/');
+          router.replace('/');
         }
       } else {
         /* TODO: 아래 사항들 */
         // 비회원 -> 회원 장바구니 옮기기
         // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error: any) {
+      if (error.code === 2107) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '전화번호가 등록되지 않은 카카오톡 계정입니다. ',
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
+      } else if (error.code === 2007) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 가입되어 있는 회원입니다.',
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
+      } else {
+        router.replace('/onboarding');
+      }
     }
   };
 

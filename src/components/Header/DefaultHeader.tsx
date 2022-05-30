@@ -34,12 +34,16 @@ const DefaultHeader = ({ title }: TProps) => {
     }
   };
 
+  const oauth = router.pathname === '/oauth';
+
   return (
     <Container>
       <Wrapper>
-        <div className="arrow" onClick={goBack}>
-          <SVGIcon name="arrowLeft" />
-        </div>
+        {!oauth && (
+          <div className="arrow" onClick={goBack}>
+            <SVGIcon name="arrowLeft" />
+          </div>
+        )}
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
       </Wrapper>
     </Container>
