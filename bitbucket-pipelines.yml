@@ -31,7 +31,7 @@ pipelines:
                 ZIP_FILE: app-$BITBUCKET_BUILD_NUMBER.zip
                 S3_BUCKET: 'elasticbeanstalk-deployment-clover'
                 # DESCRIPTION: '<string>' # Optional.
-                # WAIT: '<boolean>' # Optional.
+                WAIT: 'true'
                 # WAIT_INTERVAL: '<integer>' # Optional.
                 # WARMUP_INTERVAL: '<integer>' # Optional.
                 # COMMAND: '<string>' # Optional.

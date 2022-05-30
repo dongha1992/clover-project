@@ -97,7 +97,7 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{me?.nickName}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.name}님은</TextH2B>
                 <IconBox onClick={() => goToEditUserInfo()}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>

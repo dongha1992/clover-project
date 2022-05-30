@@ -46,6 +46,12 @@ const PasswordConfirmPage = () => {
     }
   };
 
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      getConfirmPassword();
+    }
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -58,7 +64,7 @@ const PasswordConfirmPage = () => {
         <FlexCol>
           <FlexCol>
             <TextH5B>이메일</TextH5B>
-            <TextInput margin="9px 0 0 0" placeholder="이메일" ref={emailRef} />
+            <TextInput margin="9px 0 0 0" placeholder="이메일" ref={emailRef} keyPressHandler={handleKeyPress} />
           </FlexCol>
           <FlexCol padding="24px 0 0 0">
             <TextH5B>비밀번호</TextH5B>
@@ -68,6 +74,7 @@ const PasswordConfirmPage = () => {
               ref={passwordRef}
               eventHandler={passwordInputHandler}
               margin="9px 0 0 0"
+              keyPressHandler={handleKeyPress}
             />
           </FlexCol>
           {errorMessage && <Validation>{errorMessage}</Validation>}

@@ -17,7 +17,7 @@ interface IParams {
 const SpotRecommendList = ({ item }: IParams): ReactElement => {
   const { userLocation, userDeliveryType } = useSelector(destinationForm);
   const router = useRouter();
-  const { isSubscription, subsDeliveryType } = router.query;
+  const { isSubscription, subsDeliveryType, menuId } = router.query;
 
   const userLocationLen = !!userLocation.emdNm?.length;
 
@@ -32,14 +32,14 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
   };
 
   const goToSpotsDetail = (id: number | undefined): void => {
-    if(item.isClosed) {
+    if (item.isClosed) {
       return;
-    };
+    }
     if (userDeliveryType === 'spot') {
       if (isSubscription) {
         router.push({
           pathname: `/spot/detail/${id}`,
-          query: { isDelivery: true, isSubscription, subsDeliveryType },
+          query: { isDelivery: true, isSubscription, subsDeliveryType, menuId },
         });
       } else {
         router.push({
@@ -51,7 +51,7 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
       if (isSubscription) {
         router.push({
           pathname: `/spot/detail/${id}`,
-          query: { isDelivery: true, isSubscription, subsDeliveryType },
+          query: { isDelivery: true, isSubscription, subsDeliveryType, menuId },
         });
       } else {
         router.push(`/spot/detail/${id}`);

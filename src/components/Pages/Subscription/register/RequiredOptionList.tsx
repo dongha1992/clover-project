@@ -18,13 +18,14 @@ const RequiredOptionList = () => {
     const selectMenu = cloneDeep(subsCalendarSelectMenu);
     const orderMenus = cloneDeep(subsOrderMenus);
     const menuChangeDate = cloneDeep(subsDeliveryExpectedDate);
+    console.log('필수메뉴 체인지', selectMenu, orderMenus);
 
     selectMenu?.menuTableItems.map((item) => {
       if (item.id === id) {
         item.selected = true;
         item.changed = true;
       } else {
-        item.selected = false;
+        if (item.main) item.selected = false;
       }
       return item;
     });

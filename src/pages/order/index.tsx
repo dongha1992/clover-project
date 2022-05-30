@@ -602,13 +602,13 @@ const OrderPage = () => {
 
       let inputHiddenReturn = document.createElement('input');
       inputHiddenReturn.setAttribute('type', 'hidden');
-      inputHiddenReturn.setAttribute('name', 'returnUrl');
+      inputHiddenReturn.setAttribute('name', 'successUrl');
       // inputHiddenReturn.setAttribute('value', `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`);
       inputHiddenReturn.setAttribute('value', `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`);
 
       let inputHiddenFail = document.createElement('input');
       inputHiddenFail.setAttribute('type', 'hidden');
-      inputHiddenFail.setAttribute('name', 'failUrl');
+      inputHiddenFail.setAttribute('name', 'failureUrl');
       // inputHiddenFail.setAttribute('value', `${process.env.SERVICE_URL}/order`);
       inputHiddenFail.setAttribute('value', `${ngorkUrl}`);
       payForm.appendChild(inputHiddenReturn);
