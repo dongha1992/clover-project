@@ -1,36 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme, FlexRow } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
-import { IGetSpotFilter } from '@model/index';
+import { IFilters } from '@model/index';
+import { useSelector } from 'react-redux';
+import { spotSelector } from '@store/spot';
 
-interface IData {
-  value: string | boolean;
-  filtered: boolean | any;
-  fieldName: string;
-  name: string;
-}
 interface IProps {
-  data: IData[] | any;
-  changeHandler: (id: any) => void;
+  data: IFilters[];
+  changeHandler: (id: string, isSelected?: boolean) => void;
   selectedCheckboxIds: string[];
-  etcFilter?: any;
+  spotFilter?: boolean;
 }
 
-const MultipleFilter = ({ data, changeHandler, selectedCheckboxIds, etcFilter }: IProps) => {
+const MultipleFilter = ({ data, changeHandler, selectedCheckboxIds, spotFilter, }: IProps) => {
+  const { spotsSearchResultFiltered } = useSelector(spotSelector);
+
   return (
     <Container>
       <BtnContainer>
         {data &&
-          data?.map((item: any, index: number) => {
-            const isSelected = etcFilter
+          data?.map((item, index) => {
+            const isSelected = spotFilter
               ? selectedCheckboxIds.includes(item.fieldName)
               : selectedCheckboxIds.includes(item.name);
+            const onCheck = (value: string) => {
+              changeHandler(value, isSelected);
+            };
+
             return (
               <FlexRow key={index}>
-                {etcFilter ? (
-                  <Checkbox isSelected={isSelected} onChange={() => changeHandler(item.fieldName)} key={index} />
+                {spotFilter ? (
+                  <Checkbox isSelected={isSelected} onChange={() => onCheck(item.fieldName)} key={index} />
                 ) : (
                   <Checkbox isSelected={isSelected} onChange={() => changeHandler(item.name)} key={index} />
                 )}

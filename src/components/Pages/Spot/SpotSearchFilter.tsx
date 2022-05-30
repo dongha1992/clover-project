@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
-import { TextB3R, TextH4B } from '@components/Shared/Text';
+import { TextH4B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { RADIO_CHECKBOX_SPOT } from '@constants/filter';
-import { theme, FlexCol, FlexBetween, bottomSheetButton } from '@styles/theme';
-import { ToggleButton, Button } from '@components/Shared/Button';
+import { theme, bottomSheetButton } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 import { useQuery } from 'react-query';
 import { getSpotsFilter } from '@api/spot';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,46 +13,35 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_SPOTS_FILTERED, spotSelector, INIT_SPOT_FILTERED } from '@store/spot';
 import { destinationForm } from '@store/destination';
 
-
 const SpotSearchFilter = () => {
   const dispatch = useDispatch();
   const { spotsSearchResultFiltered } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
-
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
   const [selectedRadioId, setSelectedRadioId] = useState<string>('');
 
   const userLocationLen = !!userLocation.emdNm?.length;
-  const { data: spotsFilter } = useQuery(['spotList', 'station'], async () => {
+
+  // 필터 api
+  const { data: spotsFilter } = useQuery(['spotFilter'], async () => {
     const response = await getSpotsFilter();
     return response.data.data;
   });
-// console.log(selectedRadioId, selectedCheckboxIds);
-  const checkboxHandler = (id: string) => {
-    const findItem = selectedCheckboxIds.find((_id) => _id === id);
-    const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
 
-    if (id === '') {
-      setSelectedCheckboxIds(['']);
-      return;
-    }
+  const checkboxHandler = useCallback((name: string, isSelected: boolean | undefined) => {
+    const findItem = selectedCheckboxIds.find((_name) => _name === name);
 
-    if (findItem) {
-      tempSelectedCheckboxIds.filter((_id) => _id !== id);
-    } else {
-      const allCheckedIdx = tempSelectedCheckboxIds.indexOf('');
-      if (allCheckedIdx !== -1) {
-        tempSelectedCheckboxIds.splice(allCheckedIdx, 1);
-      }
-      tempSelectedCheckboxIds.push(id);
-    }
-    setSelectedCheckboxIds(tempSelectedCheckboxIds);
-  };
+    if (!isSelected) {
+      setSelectedCheckboxIds([...selectedCheckboxIds, name]);
+    } else if (isSelected && findItem) {
+      const filters = selectedCheckboxIds.filter(_name => _name !== name);
+      setSelectedCheckboxIds([...filters]);
+    };
+  }, [selectedCheckboxIds]);
 
   const radioButtonHandler = (value: string) => {
     setSelectedRadioId(value);
   };
-
 
   const initSpotFilterHandler = () => {
     setSelectedCheckboxIds(['']);
@@ -63,6 +52,10 @@ const SpotSearchFilter = () => {
     dispatch(
       SET_SPOTS_FILTERED({
         ...spotsSearchResultFiltered,
+        canEat: !!selectedCheckboxIds.find(i => i ==='canEat'),
+        canParking: !!selectedCheckboxIds.find(i => i ==='canParking'),
+        canDeliveryDinner: !!selectedCheckboxIds.find(i => i ==='canDeliveryDinner'),
+        isEvent: !!selectedCheckboxIds.find(i => i ==='isEvent'),
         sort: selectedRadioId,
       })
     );
@@ -89,8 +82,8 @@ const SpotSearchFilter = () => {
           필터
         </TextH4B>
         <MultipleFilter
-          etcFilter
-          data={spotsFilter?.filters}
+          spotFilter
+          data={spotsFilter?.filters!}
           changeHandler={checkboxHandler}
           selectedCheckboxIds={selectedCheckboxIds}
         />

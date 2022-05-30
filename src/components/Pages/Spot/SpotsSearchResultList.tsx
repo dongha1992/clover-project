@@ -46,7 +46,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
   const closedSoonOperation = dDay >= -14;
 
-  const renderSpotMsg = useCallback(() => {
+  const renderSpotMsg = () => {
     switch (true) {
       case closedOperation: {
         return (
@@ -73,21 +73,21 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       default: {
         return (
           <MeterAndTime>
-            {userLocationLen && (
-              <>
-                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-                <Col />
-              </>
-            )}
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-              픽업
-            </TextH6B>
-            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-          </MeterAndTime>
-        );
+          {userLocationLen && (
+            <>
+              <TextH6B>{`${Math.round(item.distance).toLocaleString()}m`}</TextH6B>
+              <Col />
+            </>
+          )}
+          <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+            픽업
+          </TextH6B>
+          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+        </MeterAndTime>
+        )
       }
     }
-  }, []);
+  };
 
   const publicTag = (): string | undefined => {
     // BOOKSTORE, CAFE, CONVENIENCE_STORE, DRUGSTORE, ETC, FITNESS_CENTER, OFFICE, SCHOOL, SHARED_OFFICE, STORE
@@ -378,7 +378,7 @@ const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
         background: ${theme.white};
         max-width: ${breakpoints.desktop}px;
         max-width: ${breakpoints.mobile}px;
-        height: 146px;
+        height: 114;
         border-radius: 8px;
       `;
     }

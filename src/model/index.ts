@@ -433,8 +433,8 @@ export interface IGetDestinationsRequest {
   size: number;
   deliveries?: string | null;
   delivery?: string | null;
-  latitude?: number;
-  longitude?: number;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface IEditDestinationRequest {
@@ -975,14 +975,14 @@ export interface IGetSpotFilterResponse {
 }
 
 export interface IGetSpotFilter {
-  filters: [
-    {
-      value: string | boolean;
-      filtered: boolean;
-      fieldName: string;
-      name: string;
-    }
-  ];
+  filters: IFilters[];
+}
+
+export interface IFilters {
+  value: string | boolean;
+  filtered: boolean;
+  fieldName: string;
+  name: string;
 }
 
 /* ORDER */
