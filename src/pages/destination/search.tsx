@@ -25,7 +25,7 @@ const DestinationSearchPage = () => {
   const dispatch = useDispatch();
   const { userDeliveryType } = useSelector(destinationForm);
 
-  const { orderId, isSubscription, subsDeliveryType } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
@@ -78,7 +78,7 @@ const DestinationSearchPage = () => {
       if (isSubscription) {
         router.push({
           pathname: '/cart/delivery-info',
-          query: { subsDeliveryType: subsDeliveryType, isSubscription: true, destinationId: destination.id },
+          query: { subsDeliveryType, isSubscription: true, destinationId: destination.id, menuId },
         });
       } else {
         router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
@@ -94,7 +94,7 @@ const DestinationSearchPage = () => {
       if (isSubscription) {
         router.push({
           pathname: '/destination/destination-detail',
-          query: { subsDeliveryType: subsDeliveryType, isSubscription: true },
+          query: { subsDeliveryType, isSubscription: true, menuId },
         });
       } else {
         router.push('/destination/destination-detail');

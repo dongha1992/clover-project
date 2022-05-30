@@ -8,6 +8,7 @@ export interface IButtonProps {
   className?: string;
   children?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  onKeyPress?: React.MouseEventHandler<HTMLElement>;
   filled?: boolean;
   disabled?: boolean;
   loading?: boolean;
