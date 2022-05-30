@@ -21,7 +21,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
-import { getCookie } from '@utils/common';
+import { getCookie, removeCookie } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_IS_LOADING } from '@store/common';
 
@@ -66,18 +66,21 @@ const OrderFinishPage = () => {
           console.log(data, 'AFTER KAKAO PAY');
           if (data.code === 200) {
             setIsPaymentSuccess(true);
+            removeCookie({ name: 'kakao-tid-clover' });
           }
         } else {
           // 카카오 결제 에러
         }
       } else if (pg === 'toss') {
         const payToken = getCookie({ name: 'toss-tid-clover' });
+        console.log(payToken);
         if (payToken) {
           const reqBody = { payToken };
           const { data } = await postTossApproveApi({ orderId: Number(orderId), data: reqBody });
 
           if (data.code === 200) {
             setIsPaymentSuccess(true);
+            removeCookie({ name: 'toss-tid-clover' });
           }
         } else {
           // 토스 페이 에러
