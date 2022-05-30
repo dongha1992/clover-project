@@ -64,7 +64,6 @@ const KeyWord = styled.div`
 const Slider= styled(Swiper)`
   width: auto;
   padding-right: 24px;
-  margin-bottom: 24px;
   .swiper-slide {
     width: auto;
   }

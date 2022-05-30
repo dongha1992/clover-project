@@ -329,18 +329,11 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
           )
         }
         {
-          item.type !== 'PRIVATE' && item.isOpened && item.placeType !== 'ETC' && (
+          item.type !== 'PRIVATE' && item.isOpened && item.discountRate > 0 && (
             <div>
-              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                {publicTag()}
+              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                {`${item.discountRate}% 할인 중`}
               </Tag>
-              {
-                item.discountRate > 0 && (
-                  <Tag margin='0 0 0 8px' backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                  {`${item.discountRate}% 할인 중`}
-                  </Tag>
-                )
-              }
             </div>
           )
         }

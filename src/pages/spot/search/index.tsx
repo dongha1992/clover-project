@@ -260,17 +260,28 @@ const SpotSearchPage = (): ReactElement => {
           ref={inputRef}
           value={keyword}
         />
-      </Wrapper>
-      {!inputFocus ? (
-        <>
-          <SpotRecommendWrapper>
-            <FlexEnd padding="0 0 16px 0">
+        {
+          !inputFocus && (
+            <FlexEnd padding="16px 0 0 0">
               <SVGIcon name="locationBlack" />
               <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
                 현 위치로 설정하기
               </TextH6B>
             </FlexEnd>
+          )
+        }
+      </Wrapper>
+      {
+        (!inputFocus || !isSearched) && (
+          <KeyWordWrapper>
             <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
+          </KeyWordWrapper>
+        )
+      }
+
+      {!inputFocus ? (
+        <>
+          <SpotRecommendWrapper>
             <FlexBetween margin="0 0 24px 0">
               <TextH2B>{spotRecommend?.title}</TextH2B>
               {
@@ -302,7 +313,6 @@ const SpotSearchPage = (): ReactElement => {
             recentPickedSpotList?.length! > 0 ? (
               <DefaultSearchContainer>
                 <RecentPickWrapper>
-                  <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
                   {recentPickedSpotList?.map((item: any, index) => (
                     // 스팟 최근 픽업 이력 리스트
@@ -348,11 +358,14 @@ const SpotSearchPage = (): ReactElement => {
 const Container = styled.main``;
 
 const Wrapper = styled.div`
-  padding: 8px 24px;
+  padding: 8px 24px 0 24px;
+`;
+
+const KeyWordWrapper = styled.div`
+  padding: 16px 24px 16px 24px;
 `;
 
 const SpotRecommendWrapper = styled.section`
-  margin-top: 24px;
   margin-bottom: 16px;
   ${homePadding};
 `;
@@ -361,28 +374,6 @@ const RecentPickWrapper = styled.div`
   margin-top: 24px;
   margin-bottom: 16px;
   ${homePadding};
-`;
-
-const Slider= styled(Swiper)`
-  width: auto;
-  padding-right: 24px;
-  margin-bottom: 24px;
-  .swiper-slide {
-    width: auto;
-  }
-`;
-
-const KeyWorkdWrapper = styled.section`
-  display: flex;
-`;
-
-const KeyWord = styled.div`
-  background: ${theme.greyScale3};
-  border-radius: 100px;
-  padding: 8px 16px;
-  overflow: auto; 
-  white-space: nowrap;
-  cursor: pointer;
 `;
 
 const DefaultSearchContainer = styled.section``;
@@ -399,8 +390,6 @@ const EventSlider = styled(Swiper)`
     width: 299px;
   }
 `;
-
-const RecentSearchContainer = styled.div``;
 
 const Row = styled.div`
   width: 100%;
