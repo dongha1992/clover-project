@@ -349,6 +349,8 @@ const ProfilePage = () => {
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
 
+  console.log(me, 'me');
+
   return (
     <Container>
       <Wrapper>

@@ -136,10 +136,8 @@ const CartPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
   const queryClient = useQueryClient();
 
-  /* TODO: 최근 이력 배송방법 / 기본배송지 api 따로 나옴 */
-
   const { data: recentOrderDelivery } = useQuery(
-    'getOrderLists',
+    ['getOrderLists', me],
     async () => {
       const params = {
         days: 90,

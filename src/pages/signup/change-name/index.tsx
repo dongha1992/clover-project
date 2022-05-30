@@ -14,12 +14,6 @@ import { userChangeInfo } from '@api/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
-// 카카오 회원가입 특문 탈주 루트
-// 카카오 애플 회원정보 수정
-// 회원가입 핸드폰번호 변경
-// 계좌이체, 나이스페이, 페이코 테스트
-// 이미지 가이드 테스트
-
 const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
@@ -66,6 +60,12 @@ const ChangeNamePage = () => {
     } catch (error) {}
   };
 
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      finishChangeName();
+    }
+  };
+
   useEffect(() => {
     setName(me?.name!);
   }, []);
@@ -74,8 +74,8 @@ const ChangeNamePage = () => {
     <Container>
       <Wrapper>
         <TextWrap>
-          <TextH2B>마지막으로</TextH2B>
-          <TextH2B>더 알고 싶어요</TextH2B>
+          <TextH2B>서비스 이용을 위해</TextH2B>
+          <TextH2B>이름을 변경해 주세요</TextH2B>
         </TextWrap>
         <FlexCol>
           <TextH5B>이름</TextH5B>
@@ -85,6 +85,7 @@ const ChangeNamePage = () => {
               margin="8px 0 0 0"
               value={name}
               eventHandler={changeNameHandler}
+              keyPressHandler={handleKeyPress}
             />
             {name.length > 0 && (
               <DeleteName onClick={clearNameHandler}>

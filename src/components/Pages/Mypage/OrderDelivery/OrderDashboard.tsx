@@ -52,7 +52,7 @@ const OrderDashboard = ({ orderList }: IProps) => {
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{completedCount}</TextH3B>
+            <TextH3B>{completedCount ?? 0}</TextH3B>
             <TextB4R color={theme.greyScale65}>배송완료</TextB4R>
           </FlexColCenter>
         </FlexBetween>
