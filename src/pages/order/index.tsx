@@ -1213,7 +1213,7 @@ const OrderPage = () => {
         <FlexRow padding="17px 0 0 0">
           <Checkbox isSelected onChange={checkOrderTermHandler} />
           <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo} pointer>
             자세히
           </TextH6B>
         </FlexRow>
