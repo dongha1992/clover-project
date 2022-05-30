@@ -24,6 +24,7 @@ import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie, removeCookie } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_IS_LOADING } from '@store/common';
+import { SET_ALERT } from '@store/alert';
 
 interface IProps {
   orderId: number;
@@ -88,7 +89,10 @@ const OrderFinishPage = () => {
       } else {
         setIsPaymentSuccess(true);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 1206) {
+        dispatch(SET_ALERT({ alertMessage: '토스 결제 중 에러가 발생했습니다.', onSubmit: () => router.back() }));
+      }
       console.error(error);
     }
   };
@@ -261,12 +265,12 @@ const OrderFinishPage = () => {
 
   useEffect(() => {
     console.log(router.query.orderId, '(router.query.orderId in useEffect');
-    if (router.query.orderId) {
+    if (router.isReady) {
       checkPg();
     }
-  }, [router.query.orderId]);
+  }, [router.isReady]);
 
-  if (isLoading || !isPaymentSuccess) {
+  if (!isPaymentSuccess) {
     return <div>로딩중</div>;
   }
 
@@ -352,25 +356,25 @@ const DevlieryInfoWrapper = styled.div`
   padding: 24px;
 `;
 
-export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
-  console.log(context.query, 'context.query');
+// export async function getServerSideProps(context: any) {
+//   const { orderId } = context.query;
+//   console.log(context.query, 'context.query');
 
-  if (orderId) {
-    return {
-      props: {
-        notFound: true,
-        redirect: {
-          destinaion: '/',
-        },
-      },
-    };
-  }
-  return {
-    props: {
-      orderId: +orderId,
-    },
-  };
-}
+//   if (orderId) {
+//     return {
+//       props: {
+//         notFound: true,
+//         redirect: {
+//           destinaion: '/',
+//         },
+//       },
+//     };
+//   }
+//   return {
+//     props: {
+//       orderId: +orderId,
+//     },
+//   };
+// }
 
 export default OrderFinishPage;
