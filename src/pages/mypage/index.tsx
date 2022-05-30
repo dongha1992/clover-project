@@ -132,12 +132,20 @@ const MypagePage = () => {
             </UserInfoWrapper>
             <FlexBetweenStart padding="16px 24px 32px">
               <FlexCol width="50%">
-                <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')}>{userInfo?.availablePoint} P</TextH5B>
+                <TextH6B color={theme.greyScale65} pointer>
+                  사용 가능한 포인트
+                </TextH6B>
+                <TextH5B onClick={() => router.push('/mypage/point')} pointer>
+                  {userInfo?.availablePoint} P
+                </TextH5B>
               </FlexCol>
               <FlexCol width="50%">
-                <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/coupon')}>{userInfo?.availableCoupons.length} 개</TextH5B>
+                <TextH6B color={theme.greyScale65} pointer>
+                  사용 가능한 쿠폰
+                </TextH6B>
+                <TextH5B onClick={() => router.push('/mypage/coupon')} pointer>
+                  {userInfo?.availableCoupons.length} 개
+                </TextH5B>
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />

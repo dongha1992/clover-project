@@ -21,7 +21,9 @@ const OrderDashboard = ({ orderList }: IProps) => {
         <FlexBetween>
           <TextH4B>주문/배송 내역</TextH4B>
           <FlexRow>
-            <TextB2R padding="0 8px 0 0">{total} 건</TextB2R>
+            <TextB2R padding="0 8px 0 0" pointer>
+              {total} 건
+            </TextB2R>
             <div onClick={() => router.push('/mypage/order-delivery-history')}>
               <SVGIcon name="arrowRight" />
             </div>

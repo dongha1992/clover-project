@@ -16,7 +16,7 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
-import { userForm } from '@store/user';
+import { userForm, INIT_USER } from '@store/user';
 import { availabilityEmail, userChangeInfo } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
@@ -100,9 +100,11 @@ const ProfilePage = () => {
 
   const logoutHandler = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
+    dispatch(INIT_USER());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     localStorage.removeItem('persist:nextjs');
+
     router.push('/mypage');
   };
 
