@@ -20,7 +20,6 @@ dayjs.locale('ko');
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-
 import styled from 'styled-components';
 interface IProps {
   userSelectPeriod: string; // 유저가 선택한 구독기간(1주,2주,3주,4주,정기구독)
@@ -41,13 +40,16 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType }: IProps) => {
     async () => {
       const params = {
         id: 824,
-        destinationId: 2,
+        destinationId: 222,
         subscriptionPeriod: userSelectPeriod,
       };
       const { data } = await getSubscriptionApi(params);
       return data.data.menuTables as ISubsActiveDate[];
     },
     {
+      onSuccess: (data) => {
+        console.log('subsActiveDates', data);
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,

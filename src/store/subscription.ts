@@ -22,6 +22,9 @@ const initialState: TProps = {
     period: null,
     startDate: null,
     deliveryDay: null,
+    menuId: null,
+    menuImage: null,
+    datePeriod: null,
   },
 };
 

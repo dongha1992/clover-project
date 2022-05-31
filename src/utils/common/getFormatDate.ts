@@ -1,4 +1,5 @@
 import 'dayjs/locale/ko';
+dayjs.locale('ko');
 import dayjs from 'dayjs';
 
 const getFormatDate = (value: any) => {

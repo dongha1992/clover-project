@@ -47,12 +47,13 @@ export const verticalCenter = css`
   align-self: center;
 `;
 
-export const FlexCenter = styled.div<{ padding?: string; margin?: string }>`
+export const FlexCenter = styled.div<{ padding?: string; margin?: string; pointer?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexBetween = styled.div<{
@@ -60,6 +61,7 @@ export const FlexBetween = styled.div<{
   margin?: string;
   width?: string;
   height?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   width: 100%;
@@ -69,6 +71,7 @@ export const FlexBetween = styled.div<{
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
   height: ${({ height }) => height && height};
+  cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexBetweenStart = styled.div<{
