@@ -54,6 +54,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
 
+  const path = (/#!(\/.*)$/.exec(router.asPath) || [])[1];
+  if (path) {
+    router.replace(path);
+  }
+
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
       defaultOptions: {
