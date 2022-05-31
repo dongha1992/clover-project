@@ -271,7 +271,7 @@ const OrderFinishPage = () => {
     }
   }, [router.isReady]);
 
-  if (!isPaymentSuccess) {
+  if (!orderDetail) {
     return <div>로딩중</div>;
   }
 
