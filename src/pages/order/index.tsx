@@ -100,7 +100,7 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 
-const ngorkUrl = 'https://27d7-1-228-1-158.jp.ngrok.io';
+const ngorkUrl = 'https://4e51-1-228-1-158.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
