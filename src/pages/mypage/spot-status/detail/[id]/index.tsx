@@ -10,16 +10,13 @@ import { useQuery } from 'react-query';
 import { getSpotsRegistrationStatusDetail } from '@api/spot';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { IGetRegistrationStatus } from '@model/index';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
 import { useToast } from '@hooks/useToast';
 
-interface IParams {
-  id: number;
-};
 
 const PLAN_GUIDE = [
   {
@@ -48,24 +45,34 @@ const PLAN_GUIDE = [
   },
 ];
 
-const SpotStatusDetailPage = ({ id }: IParams): ReactElement => {
-  const router = useRouter();
+const SpotStatusDetailPage = (): ReactElement => {
+  const routers = useRouter();
   const dispatch = useDispatch();
-  const { type, recruited } = router.query;
+  const { type, recruited } = routers.query;
   const { isLoginSuccess } = useSelector(userForm);
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
   const [openInfo, setOpenInfo] = useState<boolean>(false);
+  const [id, setId] = useState<number>();
   const { showToast, hideToast } = useToast();
+
+  useEffect(()=> {
+    if(router.isReady) {
+      setId(Number(router.query?.id));
+    }
+  }, [router.isReady]);
 
   const { data: statusDetail } = useQuery(
     ['statusDetail'],
     async () => {
-      const response = await getSpotsRegistrationStatusDetail(id);
+      const response = await getSpotsRegistrationStatusDetail(id!);
       return response.data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { 
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false, 
+      enabled: !!id, }
   );
 
   const tagType = () => {
@@ -343,11 +350,4 @@ const FixedButton = styled.section`
   margin-top: 20px;
 `;
 
-export async function getServerSideProps(context: any) {
-  const { id } = context.query;
-  return {
-    props: { id },
-  }
-}
-
-export default SpotStatusDetailPage;
+export default React.memo(SpotStatusDetailPage);
