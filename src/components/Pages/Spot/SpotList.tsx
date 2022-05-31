@@ -1,9 +1,9 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import { useRouter } from 'next/router';
+import router, { useRouter }  from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
@@ -28,9 +28,12 @@ interface IProps {
 }
 
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
-  const router = useRouter();
+  const {
+    id, 
+  } = list;
+  const routers = useRouter();
   const dispatch = useDispatch();
-  const { isDelivery, orderId } = router.query;
+  const { isDelivery, orderId } = routers.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { userLocation } = useSelector(destinationForm);
@@ -45,7 +48,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     setNoticeChecked(!noticeChecked);
   };
 
-  const goToDetail = (id: number | undefined): void => {
+  const goToDetail = (): void => {
     if (isSearch) {
       return;
     }
@@ -210,7 +213,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       case 'normal':
         return (
           <Container type="normal">
-            <StorImgWrapper onClick={() => goToDetail(list.id)}>
+            <StorImgWrapper onClick={goToDetail}>
               <Tag>
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
@@ -242,7 +245,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       case 'event':
         return (
           <Container type="event">
-            <StorImgWrapper onClick={() => goToDetail(list.id)}>
+            <StorImgWrapper onClick={goToDetail}>
               {!isSearch && (
                 <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />

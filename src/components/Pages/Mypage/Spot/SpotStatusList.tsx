@@ -11,6 +11,7 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SET_SPOT_INFO } from '@store/spot';
+import router from 'next/router';
 
 interface IProps {
   items: IGetRegistrationStatus[];
@@ -18,7 +19,7 @@ interface IProps {
 
 const SpotStatusList = ({ items }: IProps): ReactElement => {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const routers = useRouter();
   const [info, setInfo] = useState<ISpotsInfo>();
 
   const spotType = (type: string | undefined) => {
@@ -100,7 +101,7 @@ const SpotStatusList = ({ items }: IProps): ReactElement => {
   };
 
   const goToSpotStatusDetail = (id: number) => {
-    router.push(`/mypage/spot-status/detail/${id}`);
+      router.push(`/mypage/spot-status/detail/${id}`);
   };
 
   useEffect(() => {
