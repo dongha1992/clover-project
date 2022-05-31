@@ -58,6 +58,7 @@ const OrderFinishPage = () => {
   );
 
   const checkPg = async () => {
+    console.log(pgToken, orderId, pg, 'pgToken, orderId, pg');
     try {
       if (pg === 'kakao') {
         const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
