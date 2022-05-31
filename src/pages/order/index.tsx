@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
@@ -48,11 +49,14 @@ import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
-import { SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
+import { SubsInfoBox, SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
 import { setCookie } from '@utils/common';
 import { SET_IS_LOADING } from '@store/common';
 import { userForm } from '@store/user';
+import { subscriptionForm } from '@store/subscription';
+import { periodMapper } from '@constants/subscription';
+import dayjs from 'dayjs';
 
 declare global {
   interface Window {
@@ -109,6 +113,8 @@ export interface IAccessMethod {
 }
 
 const OrderPage = () => {
+  const dispatch = useDispatch();
+  const { subsOrderMenus, subsInfo } = useSelector(subscriptionForm);
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
     showCustomerInfoSection: false,
@@ -120,7 +126,6 @@ const OrderPage = () => {
     alwaysPointAll: { isSelected: false },
     orderMethodReuse: { isSelected: false },
   });
-
   const [userInputObj, setUserInputObj] = useState<{
     receiverName: string;
     receiverTel: string;
@@ -131,10 +136,10 @@ const OrderPage = () => {
     point: 0,
   });
   const [card, setCard] = useState<IGetCard>();
+  const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
 
   const auth = getCookie({ name: 'refreshTokenObj' });
 
-  const dispatch = useDispatch();
   const { userAccessMethod, isLoading } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard } = useSelector(orderForm);
@@ -145,6 +150,13 @@ const OrderPage = () => {
   const niceFormRef = useRef<HTMLFormElement>(null);
 
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
+
+  const { isSubscription } = router.query;
+
+  useEffect(() => {
+    if (router.isReady) {
+    }
+  }, [router.isReady]);
 
   const {
     data: previewOrder,
@@ -157,7 +169,17 @@ const OrderPage = () => {
       if (!tempOrder) {
         router.push('/cart');
       }
-      const { delivery, deliveryDetail, destinationId, isSubOrderDelivery, orderDeliveries, type } = tempOrder!;
+      const {
+        delivery,
+        deliveryDetail,
+        destinationId,
+        isSubOrderDelivery,
+        orderDeliveries,
+        subscriptionMenuDetailId,
+        subscriptionPeriod,
+        subscriptionRound,
+        type,
+      } = tempOrder!;
       console.log(tempOrder, 'TEMP ORDER');
       const previewBody = {
         delivery,
@@ -165,10 +187,18 @@ const OrderPage = () => {
         destinationId,
         isSubOrderDelivery,
         orderDeliveries,
+        subscriptionMenuDetailId: subscriptionMenuDetailId ? subscriptionMenuDetailId : null,
+        subscriptionPeriod: subscriptionPeriod ? subscriptionPeriod : null,
+        subscriptionRound: subscriptionRound,
         type,
       };
 
       const { data } = await createOrderPreviewApi(previewBody);
+      // orderDeliveries 날짜 순서대로 정렬 서버에서 날짜 순서대로 오지않음
+      data.data.order.orderDeliveries.sort(
+        (a, b) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
+      );
+
       if (data.code === 200) {
         return data.data;
       }
@@ -176,6 +206,18 @@ const OrderPage = () => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        data?.order.orderDeliveries[0].deliveryDate;
+
+        if ([30, 31, 1, 2].includes(Number(dayjs(data?.order.orderDeliveries[0].deliveryDate).format('DD')))) {
+          setRegularPaymentDate(27);
+        } else {
+          setRegularPaymentDate(Number(dayjs(data?.order.orderDeliveries[0].deliveryDate).format('DD')) - 2);
+        }
+        if (data?.order.type === 'SUBSCRIPTION' && data?.order.subscriptionPeriod === 'UNLIMITED') {
+          setSelectedOrderMethod('NICE_BILLING');
+        }
+      },
       onError: (error: any) => {
         if (error && error?.code === 5005) {
           return;
@@ -306,6 +348,8 @@ const OrderPage = () => {
 
   const selectOrderMethodHanlder = (method: any) => {
     const { value } = method;
+    console.log('selectOrderMethodHanlder', value);
+
     setSelectedOrderMethod(value);
   };
 
@@ -797,6 +841,7 @@ const OrderPage = () => {
     deliveryFeeDiscount,
     deliveryFee,
     coupon,
+    type,
   } = previewOrder?.order!;
 
   const { deliveryDate, spotName, spotPickupName, orderOptions, deliveryStartTime, deliveryEndTime } =
@@ -813,39 +858,65 @@ const OrderPage = () => {
   return (
     <Container>
       <OrderItemsWrapper>
-        <FlexBetween padding="24px 0 0 0">
-          <TextH4B>주문상품 ({orderMenus.length})</TextH4B>
-          <FlexRow onClick={() => showSectionHandler('orderItem')}>
-            <TextB2R padding="0 13px 0 0">
-              {orderMenus
-                .map((item) => item.menuName)
-                ?.toString()
-                .slice(0, 10) + '...'}
+        {previewOrder?.order.type === 'GENERAL' && (
+          <>
+            <FlexBetween pointer onClick={() => showSectionHandler('orderItem')}>
+              <TextH4B>주문상품 ({orderMenus.length})</TextH4B>
+              <FlexRow>
+                {!showSectionObj.showOrderItemSection && (
+                  <TextB2R padding="0 13px 0 0">
+                    {orderMenus
+                      .map((item) => item.menuName)
+                      ?.toString()
+                      .slice(0, 10) + '...'}
+                  </TextB2R>
+                )}
+                <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
+              </FlexRow>
+            </FlexBetween>
+            <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.3}>
+              <OrderListWrapper>
+                {orderMenus?.map((menu, index) => {
+                  return <OrderItem menu={menu} key={index} />;
+                })}
+              </OrderListWrapper>
+            </SlideToggle>
+          </>
+        )}
+        {previewOrder?.order.type === 'SUBSCRIPTION' && (
+          <>
+            <FlexBetween pointer onClick={() => showSectionHandler('orderItem')}>
+              <TextH4B>주문상품</TextH4B>
+              <FlexRow>
+                <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
+              </FlexRow>
+            </FlexBetween>
+            <TextB2R padding="8px 0 16px 0" color={theme.brandColor}>
+              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${periodMapper[subsInfo?.period!]}간`}, 주{' '}
+              {subsInfo?.deliveryDay?.length}회씩 ({subsInfo?.deliveryDay?.join('·')}) 총 {subsOrderMenus?.length}회
+              배송되는 식단입니다.
             </TextB2R>
-            <SVGIcon name={showSectionObj.showOrderItemSection ? 'triangleUp' : 'triangleDown'} />
-          </FlexRow>
-        </FlexBetween>
-        <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.3}>
-          <OrderListWrapper>
-            {orderMenus?.map((menu, index) => {
-              return <OrderItem menu={menu} key={index} />;
-            })}
-          </OrderListWrapper>
-        </SlideToggle>
-        {/* <TextB2R padding="8px 0 16px 0" color={theme.brandColor}>
-          5주간, 주 2회씩 (화·목) 총 9회 배송되는 식단입니다.
-        </TextB2R>
-        <SubsOrderItem /> */}
-        {/* <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
-          <SubsOrderList />
-        </SlideToggle> */}
+            <SubsOrderItem
+              name={previewOrder.order.name}
+              deliveryType={'SPOT'}
+              deliveryDetail={previewOrder.order.deliveryDetail}
+              subscriptionPeriod={previewOrder.order.subscriptionPeriod}
+              menuImage={subsInfo?.menuImage!}
+            />
+            <SlideToggle state={showSectionObj.showOrderItemSection} duration={0.5}>
+              <SubsOrderList />
+            </SlideToggle>
+          </>
+        )}
       </OrderItemsWrapper>
-      <BorderLine height={8} margin="16px 0 0 0" />
+      <BorderLine height={8} />
       <CustomerInfoWrapper>
-        <FlexBetween padding="24px 0 0 0">
+        <FlexBetween pointer onClick={() => showSectionHandler('customerInfo')}>
           <TextH4B>주문자 정보</TextH4B>
-          <ShowBtnWrapper onClick={() => showSectionHandler('customerInfo')}>
-            <TextB2R padding="0 13px 0 0">{`${userName},${userTel}`}</TextB2R>
+          <ShowBtnWrapper>
+            {!showSectionObj.showCustomerInfoSection && (
+              <TextB2R padding="0 13px 0 0">{`${userName},${userTel}`}</TextB2R>
+            )}
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
         </FlexBetween>
@@ -866,7 +937,7 @@ const OrderPage = () => {
           </CustomInfoList>
         </SlideToggle>
       </CustomerInfoWrapper>
-      <BorderLine height={8} margin="24px 0 0 0" />
+      <BorderLine height={8} />
       <ReceiverInfoWrapper>
         <FlexBetween padding="0">
           <TextH4B>받는 사람 정보</TextH4B>
@@ -879,7 +950,7 @@ const OrderPage = () => {
           <TextH5B padding="0 0 8px 0">이름</TextH5B>
           <TextInput
             placeholder="이름"
-            value={userInputObj.receiverName}
+            value={checkForm.samePerson.isSelected ? userInputObj.receiverName : ''}
             name="receiverName"
             eventHandler={userInputHandler}
           />
@@ -890,12 +961,18 @@ const OrderPage = () => {
             inputType="number"
             placeholder="휴대폰 번호"
             name="receiverTel"
-            value={userInputObj.receiverTel}
+            value={checkForm.samePerson.isSelected ? userInputObj.receiverTel : ''}
             eventHandler={userInputHandler}
           />
         </FlexCol>
       </ReceiverInfoWrapper>
       <BorderLine height={8} />
+      {previewOrder?.order.type === 'SUBSCRIPTION' && (
+        <>
+          <SubsInfoBox subscriptionRound={previewOrder.order.subscriptionRound} />
+          <BorderLine height={8} />
+        </>
+      )}
       <DevlieryInfoWrapper>
         <FlexBetween>
           <TextH4B>배송정보</TextH4B>
@@ -1026,19 +1103,20 @@ const OrderPage = () => {
           </FlexRow>
         </FlexBetween>
         <FlexRow padding="24px 0 0 0">
-          <TextInput
-            name="point"
-            width="100%"
-            margin="0 8px 0 0"
-            placeholder="0"
-            value={userInputObj.point}
-            eventHandler={(e) => changePointHandler(Number(e.target.value))}
-          />
-          {userInputObj.point > 0 && (
-            <DeletePoint onClick={clearPointHandler}>
-              <SVGIcon name="blackBackgroundCancel" />
-            </DeletePoint>
-          )}
+          <span className="inputBox">
+            <TextInput
+              name="point"
+              width="100%"
+              placeholder="0"
+              value={userInputObj.point}
+              eventHandler={(e) => changePointHandler(Number(e.target.value))}
+            />
+            {userInputObj.point > 0 && (
+              <DeletePoint onClick={clearPointHandler}>
+                <SVGIcon name="blackBackgroundCancel" />
+              </DeletePoint>
+            )}
+          </span>
           <Button width="86px" height="48px" onClick={useAllOfPointHandler}>
             전액 사용
           </Button>
@@ -1046,53 +1124,59 @@ const OrderPage = () => {
         <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point - userInputObj.point}원</TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
-      <OrderMethodWrapper>
-        <FlexBetween padding="0 0 24px 0">
-          <TextH4B>결제수단</TextH4B>
-          <FlexRow>
-            <Checkbox
-              onChange={() => checkFormHanlder('orderMethodReuse')}
-              isSelected={checkForm.orderMethodReuse.isSelected}
-            />
-            <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
-          </FlexRow>
-        </FlexBetween>
-        <GridWrapper gap={16}>
-          {PAYMENT_METHOD.map((method, index) => {
-            const isSelected = selectedOrderMethod === method.value;
-            return (
-              <Button
-                onClick={() => selectOrderMethodHanlder(method)}
-                backgroundColor={isSelected ? theme.black : theme.white}
-                color={isSelected ? theme.white : theme.black}
-                border
-                key={index}
-              >
-                {method.text}
-              </Button>
-            );
-          })}
-        </GridWrapper>
-        {isFcoPay && (
-          <>
-            <BorderLine height={1} margin="24px 0" />
-            {previewOrder?.cards?.length! > 0 ? (
-              <>
-                <CardItem onClick={goToCardManagemnet} card={card} cardCount={previewOrder?.cards?.length} />
-              </>
-            ) : (
-              <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
-                카드 등록하기
-              </Button>
-            )}
-          </>
-        )}
-      </OrderMethodWrapper>
-      {/* <SubsPaymentMethod
-        previewOrder={previewOrder}
-        goToCardManagemnet={goToCardManagemnet}
-        getMainCardHandler={getMainCardHandler}
-      /> */}
+
+      {previewOrder?.order.subscriptionPeriod !== 'UNLIMITED' ? (
+        <OrderMethodWrapper>
+          <FlexBetween padding="0 0 24px 0">
+            <TextH4B>결제수단</TextH4B>
+            <FlexRow>
+              <Checkbox
+                onChange={() => checkFormHanlder('orderMethodReuse')}
+                isSelected={checkForm.orderMethodReuse.isSelected}
+              />
+              <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
+            </FlexRow>
+          </FlexBetween>
+          <GridWrapper gap={16}>
+            {PAYMENT_METHOD.map((method, index) => {
+              const isSelected = selectedOrderMethod === method.value;
+              return (
+                <Button
+                  onClick={() => selectOrderMethodHanlder(method)}
+                  backgroundColor={isSelected ? theme.black : theme.white}
+                  color={isSelected ? theme.white : theme.black}
+                  border
+                  key={index}
+                >
+                  {method.text}
+                </Button>
+              );
+            })}
+          </GridWrapper>
+          {isFcoPay && (
+            <>
+              <BorderLine height={1} margin="24px 0" />
+              {previewOrder?.cards?.length! > 0 ? (
+                <>
+                  <CardItem onClick={goToCardManagemnet} card={card} cardCount={previewOrder?.cards?.length} />
+                </>
+              ) : (
+                <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>
+                  카드 등록하기
+                </Button>
+              )}
+            </>
+          )}
+        </OrderMethodWrapper>
+      ) : (
+        <SubsPaymentMethod
+          previewOrder={previewOrder}
+          goToCardManagemnet={goToCardManagemnet}
+          card={card!}
+          regularPaymentDate={regularPaymentDate!}
+        />
+      )}
+
       <TotalPriceWrapper>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
@@ -1208,7 +1292,7 @@ const OrderPage = () => {
 
 const Container = styled.div``;
 const OrderItemsWrapper = styled.div`
-  ${homePadding}
+  padding: 24px;
 `;
 const OrderListWrapper = styled.div`
   flex-direction: column;
@@ -1219,7 +1303,7 @@ const ShowBtnWrapper = styled.div`
   align-items: center;
 `;
 const CustomerInfoWrapper = styled.div`
-  ${homePadding}
+  padding: 24px;
   display: flex;
   flex-direction: column;
 `;
@@ -1265,6 +1349,11 @@ const RegisteredCardWrapper = styled.div`
 
 const PointWrapper = styled.div`
   padding: 24px;
+  .inputBox {
+    position: relative;
+    width: 100%;
+    margin-right: 8px;
+  }
 `;
 
 const OrderMethodWrapper = styled.div`
@@ -1273,8 +1362,13 @@ const OrderMethodWrapper = styled.div`
 `;
 
 const DeletePoint = styled.div`
+  display: flex;
+  align-items: center;
   position: absolute;
-  right: 28%;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 `;
 
 const TotalPriceWrapper = styled.div`

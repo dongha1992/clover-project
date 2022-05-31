@@ -20,6 +20,7 @@ import { SubsMenuSheet } from '@components/BottomSheet/SubsSheet';
 import SelectDateInfoBox from '@components/Pages/Subscription/register/SelectDateInfoBox';
 import { getFormatPrice } from '@utils/common';
 import { destinationForm } from '@store/destination';
+import { deliveryDetailMapper1, periodMapper } from '@constants/subscription';
 
 interface IReceipt {
   menuPrice: number;
@@ -49,16 +50,10 @@ const SubsRegisterPage = () => {
   const [selectCount, setSelectCount] = useState();
   const [allMenuPriceInfo, setAllMenuPriceInfo] = useState<IReceipt | null>();
   const [subsMonth, setSubsMonth] = useState<unknown[]>();
-  const mapper: Obj = {
-    ONE_WEEK: '1주',
-    TWO_WEEK: '2주',
-    THREE_WEEK: '3주',
-    FOUR_WEEK: '4주',
-    UNLIMITED: '정기구독',
-  };
+  const [orderDeliveries, setOrderDeliveries] = useState();
 
   useEffect(() => {
-    if (!subsDeliveryExpectedDate) {
+    if (!subsDeliveryExpectedDate && !subsOrderMenus && !subsInfo) {
       router.push('/subscription');
     }
   }, []);
@@ -83,36 +78,65 @@ const SubsRegisterPage = () => {
       menuDiscount: 0,
       eventDiscount: 0,
       menuOption1: {
-        name: '물티슈',
+        name: '수저',
         price: 0,
         quantity: 0,
       },
       menuOption2: {
-        name: '수저',
+        name: '물티슈',
         price: 0,
         quantity: 0,
       },
       deliveryPrice: 0,
     };
+    let orderDeliveries: any = [];
+
     subsOrderMenus?.map((data) => {
+      data.deliveryDate;
+      let menus: any = [];
+      let options: any = [];
       data.menuTableItems
         .filter((item: any) => item.selected === true)
         .map((item: any) => {
           if (item.main) {
+            menus.push({
+              menuDetailId: item.menuDetailId,
+              menuQuantity: 1,
+            });
             all.menuPrice = all.menuPrice + item.menuPrice;
             all.menuDiscount = all.menuDiscount + item.menuDiscount;
             all.eventDiscount = all.eventDiscount + item.eventDiscount;
           } else {
+            menus.push({
+              menuDetailId: item.menuDetailId,
+              menuQuantity: item.count ? item.count : 1,
+            });
             all.menuPrice = all.menuPrice + item.menuPrice * item.count;
             all.menuDiscount = all.menuDiscount + item.menuDiscount * item.count;
             all.eventDiscount = all.eventDiscount + item.eventDiscount * item.count;
           }
 
           item.menuOptions.map((option: any) => {
-            if (option.name === '물티슈') {
+            if (option.name === '수저') {
+              if (disposable) {
+                options[0]
+                  ? options[0].optionQuantity + option.quantity
+                  : (options[0] = {
+                      optionId: 1,
+                      optionQuantity: option.quantity,
+                    });
+              }
               all.menuOption1.price = all.menuOption1.price + option.price;
               all.menuOption1.quantity = all.menuOption1.quantity + option.quantity;
-            } else if (option.name === '수저') {
+            } else if (option.name === '물티슈') {
+              if (disposable) {
+                options[1]
+                  ? options[1].optionQuantity + option.quantity
+                  : (options[1] = {
+                      optionId: 2,
+                      optionQuantity: option.quantity,
+                    });
+              }
               all.menuOption2.price = all.menuOption2.price + option.price;
               all.menuOption2.quantity = all.menuOption2.quantity + option.quantity;
             }
@@ -122,47 +146,38 @@ const SubsRegisterPage = () => {
             ? (all.deliveryPrice = all.deliveryPrice + 0)
             : (all.deliveryPrice = all.deliveryPrice + 3500);
         });
+
+      orderDeliveries.push({
+        deliveryDate: data.deliveryDate,
+        orderMenus: menus,
+        orderOptions: options,
+      });
     });
+    setOrderDeliveries(orderDeliveries);
     setAllMenuPriceInfo(all);
-  }, [subsOrderMenus]);
+  }, [subsOrderMenus, disposable]);
 
   const clickEvent = () => {
     setToggleState((prev) => !prev);
   };
 
   const onSubscribe = () => {
-    // TODO(young) : 임시
-    const reqBody = {
-      destinationId: 244,
-      delivery: 'PARCEL',
-      deliveryDetail: '',
+    // console.log('subsOrderMenus', orderDeliveries);
+
+    const reqBody: any = {
+      delivery: subsInfo?.deliveryType!,
+      deliveryDetail: deliveryDetailMapper1[subsInfo?.deliveryTime!],
+      destinationId: 222,
       isSubOrderDelivery: false,
-      orderDeliveries: [
-        {
-          deliveryDate: '2022-04-16',
-          orderMenus: [
-            {
-              menuDetailId: 72,
-              menuQuantity: 1,
-            },
-            {
-              menuDetailId: 511,
-              menuQuantity: 1,
-            },
-          ],
-          orderOptions: [
-            {
-              optionId: 1,
-              optionQuantity: 1,
-            },
-          ],
-        },
-      ],
-      type: 'GENERAL',
+      orderDeliveries: orderDeliveries,
+      subscriptionMenuDetailId: 3375,
+      subscriptionRound: 1,
+      subscriptionPeriod: subsInfo?.period,
+      type: 'SUBSCRIPTION',
     };
 
     dispatch(SET_ORDER(reqBody));
-    router.push('/order');
+    router.push({ pathname: '/order', query: { isSubscription: true } });
   };
 
   const goToEntireDiet = () => {
@@ -203,7 +218,7 @@ const SubsRegisterPage = () => {
                   </li>
                   <li>
                     <TextH5B>구독기간</TextH5B>
-                    <TextB2R>{subsInfo && mapper[subsInfo.period!]}</TextB2R>
+                    <TextB2R>{subsInfo && periodMapper[subsInfo.period!]}</TextB2R>
                   </li>
                   <li>
                     <TextH5B>구독 시작일</TextH5B>
@@ -229,7 +244,7 @@ const SubsRegisterPage = () => {
               </TextH6B>
             </div>
             <TextB2R color={theme.brandColor}>
-              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${mapper[subsInfo?.period!]}간`}, 주{' '}
+              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${periodMapper[subsInfo?.period!]}간`}, 주{' '}
               {subsInfo?.deliveryDay?.length}회씩 ({subsInfo?.deliveryDay?.join('·')}) 총 {subsOrderMenus?.length}회
               배송되는 식단입니다.
             </TextB2R>

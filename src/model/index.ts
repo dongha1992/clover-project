@@ -1299,6 +1299,7 @@ export interface IGetSubOrdersResponse {
 export interface IOrderPayment {}
 
 export interface IOrderDetail {
+  type: string;
   id: number;
   delivery: TDeliveryType | string;
   deliveryDetail: string;
@@ -1332,6 +1333,8 @@ export interface IOrderDetail {
   refundMenuQuantity: number;
   refundOptionAmount: number;
   status: string;
+  subscriptionRound?: number;
+  subscriptionPeriod?: string;
 }
 
 export interface IGetOrderDetailResponse {
@@ -1354,6 +1357,9 @@ export interface IOrderPreviewRequest {
   destinationId: number | undefined;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
+  subscriptionMenuDetailId?: number | null;
+  subscriptionPeriod?: string | null;
+  subscriptionRound?: number | null;
   type: string;
 }
 export interface ICreateOrderPreview {
@@ -1377,6 +1383,9 @@ export interface ICreateOrderPreview {
   point: number;
   coupon: number;
   payAmount: number;
+  subscriptionMenuDetailId: number;
+  subscriptionPeriod: string;
+  subscriptionRound: number;
   orderDeliveries: [
     {
       delivery: string;
@@ -1957,4 +1966,7 @@ export interface ISubscribeInfo {
   period: string | null;
   startDate: string | null;
   deliveryDay: string[] | null;
+  menuId: number | null;
+  menuImage: string | null;
+  datePeriod: string[] | null;
 }

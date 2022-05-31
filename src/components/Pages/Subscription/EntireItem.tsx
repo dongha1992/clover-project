@@ -14,7 +14,7 @@ interface IProps {
   item: any;
 }
 const EntireItem = ({ item }: IProps) => {
-  const { subsOrderMenus, subsDeliveryExpectedDate, subsInfo } = useSelector(subscriptionForm);
+  const { subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const [toggleState, setToggleState] = useState(false);
   const menu = cloneDeep(item);
   return (

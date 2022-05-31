@@ -62,6 +62,10 @@ const SubsCalendar = ({
   }, []);
 
   useEffect(() => {
+    console.log('maxDate', dayjs(maxDate).format('YYYY-MM-DD'));
+  }, [maxDate]);
+
+  useEffect(() => {
     if (subsDeliveryExpectedDate) {
       // 선택한 날짜가 이미 있다면 선택한 날짜로 캘린더 선택
       if (subsCalendarSelectMenu) {
@@ -191,8 +195,10 @@ const SubsCalendar = ({
   const { mutate: mutateSelectDate } = useMutation(
     async (date: string) => {
       const params = {
-        id: 824,
-        destinationId: 222,
+        // id: 824,
+        // destinationId: 222,
+        id: 434,
+        destinationId: 252,
         subscriptionPeriod: subsPeriod!,
         deliveryStartDate: date,
       };
@@ -212,7 +218,13 @@ const SubsCalendar = ({
         });
 
         setDeliveryExpectedDate && setDeliveryExpectedDate(dates);
-        setMaxDate(new Date(dates[dates.length - 1].deliveryDate));
+
+        if (
+          Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <
+          Number(dates[dates.length - 1].deliveryDate.replaceAll('-', ''))
+        ) {
+          setMaxDate(new Date(dates[dates.length - 1].deliveryDate));
+        }
         // 픽업 요일
         setPickupDay && setPickupDay(Array.from(pickupDayObj));
 
