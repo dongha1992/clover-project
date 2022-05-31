@@ -16,16 +16,18 @@ import { ISpotsDetail, ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { SET_IMAGE_VIEWER } from '@store/common';
+import router from 'next/router';
+import { useQuery } from 'react-query';
 
 interface IParams {
   id: number;
 }
 
-const SpotDetailPage = ({ id }: IParams): ReactElement => {
+const SpotDetailPage = (): ReactElement => {
   const dispatch = useDispatch();
   const { isSpotLiked } = useSelector(spotSelector);
   const tabRef = useRef<HTMLDivElement>(null);
-  const [spotItem, getSpotItem] = useState<ISpotsDetail>();
+  // const [spotItem, getSpotItem] = useState<ISpotsDetail>();
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -33,11 +35,65 @@ const SpotDetailPage = ({ id }: IParams): ReactElement => {
   const [page, setPage] = useState<number>(1);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [id, setId] = useState<number>();
   const HEADER_HEIGHT = 56;
+
+  // 스팟 상세 api
+  const {
+    data : spotItem,
+    error: spotError,
+    isLoading : isSpotLoading,
+  } = useQuery(
+    'getSpotDetail',
+    async () => {
+      const { data } = await getSpotDetail(id!);
+      return data?.data;
+    },
+
+    {
+      onSuccess: (data) => {
+        dispatch(SPOT_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+    }
+  );
+
+  // 스팟 상세 스토리 api
+
+  const {
+    data,
+    error: spotStoryError,
+    isLoading : isSpotStoryLoading,
+  } = useQuery(
+    'getSpotDetailStory',
+    async () => {
+      const { data } = await getSpotsDetailStory(id!, page);
+      return data?.data;
+    },
+
+    {
+      onSuccess: (data) => {
+        const lastPage = data.pagination;
+        setStories((prevList) => [...prevList, ...data.spotStories]);
+        setIsLastPage(page === lastPage.totalPage);
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+    }
+  );
+
   const sliceLen = spotItem && spotItem.notices?.length > 1;
   const pickupsLen = spotItem && spotItem.pickups?.length;
   const imgTotalLen = spotItem && spotItem.images?.length;
+
+  useEffect(()=> {
+    if(router.isReady) {
+      setId(Number(router.query?.id));
+    }
+  }, [router.isReady]);
 
   const selectTabHandler = useCallback(({ link }: string) => {
     setSelectedTab(link);
@@ -108,40 +164,6 @@ const SpotDetailPage = ({ id }: IParams): ReactElement => {
     centerPadding: sliceLen ? '30px' : '25px',
   };
 
-  // 스팟 상세 데이터
-  useEffect(() => {
-    const getDetail = async () => {
-      try {
-        const { data } = await getSpotDetail(id);
-        if (data.code === 200) {
-          getSpotItem(data.data);
-          dispatch(SPOT_ITEM(data.data));
-          setIsLoading(true);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getDetail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSpotLiked]);
-
-  // 스팟 상세 스토리 데이터
-  useEffect(() => {
-    const getDetailStory = async () => {
-      try {
-        const { data } = await getSpotsDetailStory(id, page);
-        const list = data?.data.spotStories;
-        const lastPage = data.data.pagination;
-        setStories((prevList) => [...prevList, ...list]);
-        setIsLastPage(page === lastPage.totalPage);
-      } catch (err) {
-        if (err) console.error(err);
-      }
-    };
-    getDetailStory();
-  }, [id, page]);
-
   // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
   useEffect(() => {
     const handleScroll = () => {
@@ -172,7 +194,7 @@ const SpotDetailPage = ({ id }: IParams): ReactElement => {
     };
   }, [tabRef?.current?.offsetTop]);
 
-  if (!isLoading) {
+  if (isSpotLoading) {
     return <div>loading...</div>;
   }
 
@@ -406,11 +428,4 @@ const NonContentWrapper = styled.div`
   align-items: center;
 `;
 
-export async function getServerSideProps(context: any) {
-  const { id } = context.query;
-  return {
-    props: { id },
-  };
-}
-
-export default SpotDetailPage;
+export default React.memo(SpotDetailPage);
