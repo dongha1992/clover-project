@@ -656,7 +656,7 @@ const OrderPage = () => {
       let payForm: any = document.getElementById('payForm');
 
       payForm!.innerHTML = '';
-      payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nicepay-approve`;
+      payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
       for (let formName in data.data) {
         let inputHidden = document.createElement('input');
