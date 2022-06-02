@@ -34,6 +34,7 @@ const SignupAuthPage = () => {
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
 
   const [emailValidation, setEmailValidataion] = useState<IVaildation>({
     message: '',
@@ -58,6 +59,7 @@ const SignupAuthPage = () => {
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
+      setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
     if (authTimerRef.current < 240) {
@@ -192,6 +194,8 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || isOverTime) return;
+
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
@@ -297,7 +301,7 @@ const SignupAuthPage = () => {
               width="30%"
               margin="0 0 0 8px"
               height="48px"
-              disabled={!authCodeValidation}
+              disabled={!authCodeValidation || isOverTime}
               onClick={getAuthCodeConfirm}
             >
               확인
