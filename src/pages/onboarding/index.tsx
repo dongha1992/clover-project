@@ -70,10 +70,7 @@ const OnBoarding: NextPage = () => {
     if (typeof window !== undefined) {
       window.Kakao.Auth.authorize({
         redirectUri:
-          // location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-          location.hostname === 'localhost'
-            ? 'http://localhost:9009/oauth'
-            : `https://27d7-1-228-1-158.jp.ngrok.io/oauth`,
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
         scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
       });
     }
@@ -85,8 +82,7 @@ const OnBoarding: NextPage = () => {
       window.AppleID.auth.init({
         clientId: 'com.freshcode.www',
         scope: 'email',
-        // redirectURI: `${process.env.SERVICE_URL}`,
-        redirectURI: `https://27d7-1-228-1-158.jp.ngrok.io`,
+        redirectURI: `${process.env.SERVICE_URL}`,
         usePopup: true,
       });
       try {

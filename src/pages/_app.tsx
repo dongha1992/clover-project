@@ -30,8 +30,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
-import useBuildId from '@hooks/useBuildId';
-
 declare global {
   interface Window {
     Kakao: any;
@@ -45,8 +43,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const router = useRouter();
   const queryClient = useRef<QueryClient>();
   const payFormRef = useRef<HTMLFormElement>(null);
-
-  const { shouldReload } = useBuildId();
 
   /* 스크린 사이즈 체크 전역 처리 */
   /*TODO: 이거 말고 다른 걸로..? */
@@ -123,19 +119,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
       console.error(error);
     }
   }, []);
-
-  useEffect(() => {
-    const handleRouteChange = (url: string) => {
-      if (shouldReload()) {
-        document.location.href = url;
-      }
-    };
-
-    router.events.on('routeChangeStart', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [shouldReload]);
 
   // //가상계좌입금만료일 설정 (today +1)
 
