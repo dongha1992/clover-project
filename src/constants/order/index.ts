@@ -76,3 +76,8 @@ export const DELIVERY_TIME_MAP: Obj = {
   LUNCH: '점심',
   DINNER: '저녁',
 };
+
+export const DELIVERY_TIME_MAP2: Obj = {
+  저녁: 'DINNER',
+  점심: 'LUNCH',
+};

@@ -43,7 +43,7 @@ const SubsMenuSheet = ({ type, buttonType, selectId }: IProps) => {
           {mapper[type].text}
         </TextB2R>
       </FlexRow>
-      {type === 'required' && <RequiredOptionList />}
+      {type === 'required' && <RequiredOptionList selectId={selectId!} />}
       {type === 'select' && <SelectOptionList buttonType={buttonType} selectId={selectId} />}
     </Container>
   );

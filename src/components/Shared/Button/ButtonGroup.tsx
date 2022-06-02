@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { theme } from '@styles/theme';
+import { fixedBottom, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
 
@@ -35,7 +35,7 @@ const BtnWrapper = styled.div`
   z-index: 10;
   height: 56px;
   background-color: ${({ theme }) => theme.black};
-
+  ${fixedBottom}
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
     left: 0px;
@@ -45,7 +45,6 @@ const BtnWrapper = styled.div`
     margin: 0 auto;
     left: 0
   `};
-
 `;
 
 const Col = styled.div`

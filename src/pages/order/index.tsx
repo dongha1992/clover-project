@@ -18,7 +18,7 @@ import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import { getCookie, SVGIcon } from '@utils/common';
+import { getCookie, getFormatPrice, SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -47,7 +47,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { orderForm, INIT_CARD, INIT_ORDER } from '@store/order';
+import { orderForm, INIT_CARD, INIT_ORDER, SET_RECENT_PAYMENT } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsInfoBox, SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
@@ -57,6 +57,7 @@ import { userForm } from '@store/user';
 import { subscriptionForm } from '@store/subscription';
 import { periodMapper } from '@constants/subscription';
 import dayjs from 'dayjs';
+import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 
 declare global {
   interface Window {
@@ -103,9 +104,8 @@ const PAYMENT_METHOD = [
 ];
 
 const successOrderPath: string = 'order/finish';
-const kakaoSuccessOrderPath = 'order/kakao';
 
-const ngorkUrl = '27d7-1-228-1-158.jp.ngrok.io';
+const ngorkUrl = 'https://4e51-1-228-1-158.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -137,17 +137,21 @@ const OrderPage = () => {
   });
   const [card, setCard] = useState<IGetCard>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
+  const [options, setOptions] = useState<any>();
+  const [checkTermList, setCheckTermList] = useState<Obj>({
+    privacy: false,
+    subscription: false,
+  });
 
   const auth = getCookie({ name: 'refreshTokenObj' });
 
   const { userAccessMethod, isLoading } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { tempOrder, selectedCard } = useSelector(orderForm);
+  const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
   const router = useRouter();
-  const niceFormRef = useRef<HTMLFormElement>(null);
 
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
 
@@ -204,27 +208,53 @@ const OrderPage = () => {
       }
     },
     {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
       onSuccess: (data) => {
-        data?.order.orderDeliveries[0].deliveryDate;
+        let options = {
+          option1: { id: 1, name: '', price: 0, quantity: 0 },
+          option2: { id: 2, name: '', price: 0, quantity: 0 },
+        };
+        data?.order.orderDeliveries.forEach((item) => {
+          item.orderOptions.forEach((option) => {
+            if (option.optionId === 1) {
+              if (options.option1.name === '') options.option1.name = option.optionName;
+              options.option1.price = options.option1.price + option.optionPrice * option.optionQuantity;
+              options.option1.quantity = options.option1.quantity + option.optionQuantity;
+            } else if (option.optionId === 2) {
+              if (options.option2.name === '') options.option2.name = option.optionName;
+              options.option2.price = options.option2.price + option.optionPrice * option.optionQuantity;
+              options.option2.quantity = options.option2.quantity + option.optionQuantity;
+            }
+          });
+        });
+
+        setOptions(options);
 
         if ([30, 31, 1, 2].includes(Number(dayjs(data?.order.orderDeliveries[0].deliveryDate).format('DD')))) {
+          //첫 구독시작일이 [30일, 31일, 1일, 2일]일때 자동결제일: 27일
           setRegularPaymentDate(27);
         } else {
+          //첫 구독시작일이 3일 ~ 29일 이면 자동결제일: D-2
           setRegularPaymentDate(Number(dayjs(data?.order.orderDeliveries[0].deliveryDate).format('DD')) - 2);
         }
         if (data?.order.type === 'SUBSCRIPTION' && data?.order.subscriptionPeriod === 'UNLIMITED') {
+          // 정기구독은 카드결제만 가능
           setSelectedOrderMethod('NICE_BILLING');
         }
       },
       onError: (error: any) => {
         if (error && error?.code === 5005) {
-          return;
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 결제 정보입니다.',
+            })
+          );
+          router.replace('/cart');
         } else {
-          return;
+          router.replace('/cart');
         }
       },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -251,6 +281,10 @@ const OrderPage = () => {
     },
     {
       onSuccess: async ({ data }) => {
+        if (checkForm.orderMethodReuse.isSelected) {
+          dispatch(SET_RECENT_PAYMENT(selectedOrderMethod));
+        }
+
         if (selectedOrderMethod === 'NICE_BILLING') {
           router.replace(`/order/finish?orderId=${data.id}`);
         } else {
@@ -271,7 +305,7 @@ const OrderPage = () => {
                 '선택하신 배송일의 주문이 마감되어 결제를 완료할 수 없어요. 배송일 변경 후 다시 시도해 주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
           /* TODO: 확인 필요 */
         } else if (error.code === 4351) {
           dispatch(
@@ -279,14 +313,14 @@ const OrderPage = () => {
               alertMessage: '상품 금액이 변경되었습니다. 주문을 다시 시도해주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
         } else if (error.code === 4352) {
           dispatch(
             SET_ALERT({
               alertMessage: '상품 할인에 변동이 있습니다. 주문을 다시 시도해주세요.',
             })
           );
-          router.replace('/order');
+          router.replace('/cart');
         }
       },
     }
@@ -306,7 +340,9 @@ const OrderPage = () => {
     }
   };
 
-  const checkOrderTermHandler = () => {};
+  const checkOrderTermHandler = (value: string) => {
+    setCheckTermList({ ...checkTermList, [value]: !checkTermList[value] });
+  };
 
   const userInputHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -348,7 +384,6 @@ const OrderPage = () => {
 
   const selectOrderMethodHanlder = (method: any) => {
     const { value } = method;
-    console.log('selectOrderMethodHanlder', value);
 
     setSelectedOrderMethod(value);
   };
@@ -359,11 +394,11 @@ const OrderPage = () => {
 
   const useAllOfPointHandler = () => {
     const { point: limitPoint } = previewOrder!;
-
     const { payAmount } = previewOrder?.order!;
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
-      avaliablePoint = payAmount - limitPoint;
+      // avaliablePoint = payAmount - limitPoint;
+      avaliablePoint = limitPoint;
     } else {
       avaliablePoint = payAmount;
     }
@@ -579,7 +614,6 @@ const OrderPage = () => {
   };
 
   const checkIsAlreadyPaid = (orderData: ICreateOrder) => {
-    console.log(orderData, 'orderData');
     const orderId = orderData.id;
 
     if (orderData.status === 'progress') {
@@ -604,31 +638,25 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const successUrl = `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`;
-    const failureUrl = `${process.env.SERVICE_URL}${router.asPath}`;
-
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl,
-      failureUrl,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
     //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}`,
+    //   failureUrl: `${ngorkUrl}/order`,
     // };
 
     try {
       const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
-      console.log(data, 'NICE PAY');
 
       let payForm: any = document.getElementById('payForm');
 
       payForm!.innerHTML = '';
-      // payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nice-callback`;
-      // payForm!.action! = `https://dev-web.freshcode.me/order/v1/orders/${orderId}/nice-callback`;
-      payForm!.action = `https://clover-service-api-dev.freshcode.me/order/v1/orders/${orderId}/nicepay-approve`;
+      payForm!.action = `${process.env.API_URL}order/v1/orders/${orderId}/nicepay-approve`;
 
       for (let formName in data.data) {
         let inputHidden = document.createElement('input');
@@ -643,19 +671,6 @@ const OrderPage = () => {
         payForm.appendChild(inputHidden);
       }
 
-      let inputHiddenReturn = document.createElement('input');
-      inputHiddenReturn.setAttribute('type', 'hidden');
-      inputHiddenReturn.setAttribute('name', 'returnUrl');
-      // inputHiddenReturn.setAttribute('value', `${process.env.SERVICE_URL}${successOrderPath}?orderId=${orderId}`);
-      inputHiddenReturn.setAttribute('value', `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`);
-
-      let inputHiddenFail = document.createElement('input');
-      inputHiddenFail.setAttribute('type', 'hidden');
-      inputHiddenFail.setAttribute('name', 'failUrl');
-      // inputHiddenFail.setAttribute('value', `${process.env.SERVICE_URL}/order`);
-      inputHiddenFail.setAttribute('value', `${ngorkUrl}`);
-      payForm.appendChild(inputHiddenReturn);
-      payForm.appendChild(inputHiddenFail);
       nicepayStart();
       handleScrollNicePayModal();
     } catch (error: any) {
@@ -678,13 +693,13 @@ const OrderPage = () => {
 
     // const reqBody = {
     //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   cancelUrl: `${ngorkUrl}/${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}/${router.asPath}`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
     // };
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
-      console.log(data, 'PAYCO RESPONSE');
+
       window.location.href = data.data.result.orderSheetUrl;
       dispatch(SET_IS_LOADING(false));
     } catch (error: any) {
@@ -715,7 +730,7 @@ const OrderPage = () => {
 
     try {
       const { data } = await postKakaoPaymentApi({ orderId, data: reqBody });
-      console.log(data, 'RESPONSE');
+
       setCookie({
         name: 'kakao-tid-clover',
         value: data.data.tid,
@@ -745,12 +760,18 @@ const OrderPage = () => {
     // };
 
     const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+    setCookie({
+      name: 'toss-tid-clover',
+      value: data.data.payToken,
+    });
+
     window.location.href = data.data.checkoutPage;
-    console.log(data, 'TOSS RESPONSE');
   };
 
   const paymentHandler = () => {
     if (isLoading) return;
+    if (!checkTermList.privacy) return;
+    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) return;
 
     if (previewOrder?.order.delivery === 'MORNING') {
       /* TODO: alert message 마크다운..? */
@@ -786,6 +807,21 @@ const OrderPage = () => {
   }, [checkForm.samePerson.isSelected]);
 
   useEffect(() => {
+    const { message } = router.query;
+
+    if (router.isReady && message) {
+      try {
+        let preDecode = decodeURIComponent(message as string).replace(/ /g, '+');
+        const cancleMsg = decodeURIComponent(escape(window.atob(preDecode)));
+
+        dispatch(SET_ALERT({ alertMessage: cancleMsg }));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     /* TODO: 항상 전액 사용 어케? */
 
     const usePointAll = checkForm.alwaysPointAll.isSelected;
@@ -804,6 +840,12 @@ const OrderPage = () => {
   }, [previewOrder]);
 
   useEffect(() => {
+    if (recentPayment) {
+      setSelectedOrderMethod(recentPayment);
+    }
+  }, []);
+
+  useEffect(() => {
     // 새로고침 시 중복 결제 방어 풀림
     dispatch(SET_IS_LOADING(false));
   }, []);
@@ -820,9 +862,21 @@ const OrderPage = () => {
     /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
     const { code } = error;
     if (code === 5005) {
-      return <div>선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.</div>;
+      dispatch(
+        SET_ALERT({
+          alertMessage: '선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.',
+          onSubmit: () => router.push('/cart'),
+        })
+      );
+      return;
     } else {
-      return <div>알수없는 에러발생</div>;
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알수없는 에러발생',
+          onSubmit: () => router.push('/cart'),
+        })
+      );
+      return;
     }
   }
 
@@ -898,7 +952,7 @@ const OrderPage = () => {
             </TextB2R>
             <SubsOrderItem
               name={previewOrder.order.name}
-              deliveryType={'SPOT'}
+              deliveryType={previewOrder.order.delivery}
               deliveryDetail={previewOrder.order.deliveryDetail}
               subscriptionPeriod={previewOrder.order.subscriptionPeriod}
               menuImage={subsInfo?.menuImage!}
@@ -941,8 +995,17 @@ const OrderPage = () => {
       <ReceiverInfoWrapper>
         <FlexBetween padding="0">
           <TextH4B>받는 사람 정보</TextH4B>
-          <FlexRow>
-            <Checkbox onChange={() => checkFormHanlder('samePerson')} isSelected={checkForm.samePerson.isSelected} />
+          <FlexRow
+            pointer
+            onClick={() => {
+              checkFormHanlder('samePerson');
+            }}
+          >
+            <Checkbox
+              className="checkBox"
+              onChange={() => checkFormHanlder('samePerson')}
+              isSelected={checkForm.samePerson.isSelected}
+            />
             <TextB2R padding="0 0 0 8px">주문자와 동일</TextB2R>
           </FlexRow>
         </FlexBetween>
@@ -967,17 +1030,19 @@ const OrderPage = () => {
         </FlexCol>
       </ReceiverInfoWrapper>
       <BorderLine height={8} />
+
       {previewOrder?.order.type === 'SUBSCRIPTION' && (
         <>
           <SubsInfoBox subscriptionRound={previewOrder.order.subscriptionRound} />
           <BorderLine height={8} />
         </>
       )}
+
       <DevlieryInfoWrapper>
         <FlexBetween>
           <TextH4B>배송정보</TextH4B>
         </FlexBetween>
-        <FlexCol padding="24px 0">
+        <FlexCol padding="24px 0 16px">
           <FlexBetween>
             <TextH5B>배송방법</TextH5B>
             {!['PARCEL', 'MORNING'].includes(delivery) ? (
@@ -1017,8 +1082,14 @@ const OrderPage = () => {
           <VisitorAccessMethodWrapper>
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
-              <FlexRow>
+              <FlexRow
+                pointer
+                onClick={() => {
+                  checkFormHanlder('accessMethodReuse');
+                }}
+              >
                 <Checkbox
+                  className="checkBox"
                   onChange={() => checkFormHanlder('accessMethodReuse')}
                   isSelected={checkForm.accessMethodReuse.isSelected}
                 />
@@ -1062,8 +1133,14 @@ const OrderPage = () => {
           <VisitorAccessMethodWrapper>
             <FlexBetween>
               <TextH4B>배송 메모</TextH4B>
-              <FlexRow>
+              <FlexRow
+                pointer
+                onClick={() => {
+                  checkFormHanlder('accessMethodReuse');
+                }}
+              >
                 <Checkbox
+                  className="checkBox"
                   onChange={() => checkFormHanlder('accessMethodReuse')}
                   isSelected={checkForm.accessMethodReuse.isSelected}
                 />
@@ -1077,7 +1154,7 @@ const OrderPage = () => {
       )}
       <CouponWrapper>
         <FlexBetween>
-          <TextH4B>할인 쿠폰</TextH4B>
+          <TextH4B>할인 쿠폰 ({previewOrder?.coupons.length})</TextH4B>
           <FlexRow>
             {selectedCoupon ? (
               <TextB2R padding="0 10px 0 0">{selectedCoupon.value}</TextB2R>
@@ -1094,8 +1171,14 @@ const OrderPage = () => {
       <PointWrapper>
         <FlexBetween>
           <TextH4B>포인트 사용</TextH4B>
-          <FlexRow>
+          <FlexRow
+            pointer
+            onClick={() => {
+              checkFormHanlder('alwaysPointAll');
+            }}
+          >
             <Checkbox
+              className="checkBox"
               onChange={() => checkFormHanlder('alwaysPointAll')}
               isSelected={checkForm.alwaysPointAll.isSelected}
             />
@@ -1108,7 +1191,7 @@ const OrderPage = () => {
               name="point"
               width="100%"
               placeholder="0"
-              value={userInputObj.point}
+              value={getFormatPrice(String(userInputObj.point))}
               eventHandler={(e) => changePointHandler(Number(e.target.value))}
             />
             {userInputObj.point > 0 && (
@@ -1121,7 +1204,9 @@ const OrderPage = () => {
             전액 사용
           </Button>
         </FlexRow>
-        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point - userInputObj.point}원</TextB3R>
+        <TextB3R padding="4px 0 0 16px">
+          사용 가능한 포인트 {getFormatPrice(String(point - userInputObj.point))}원
+        </TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
 
@@ -1177,120 +1262,165 @@ const OrderPage = () => {
         />
       )}
 
-      <TotalPriceWrapper>
-        <FlexBetween>
-          <TextH5B>총 상품 금액</TextH5B>
-          <TextB2R>{menuAmount}원</TextB2R>
-        </FlexBetween>
-        <BorderLine height={1} margin="16px 0" />
-        <FlexBetween padding="8px 0 0 0">
-          <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>{menuDiscount}원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>상품 할인</TextB2R>
-          <TextB2R>{menuDiscount}원</TextB2R>
-        </FlexBetween>
-        {eventDiscount > 0 && (
-          <FlexBetween padding="8px 0 0 0">
-            <TextB2R>스팟 이벤트 할인</TextB2R>
-            <TextB2R>{eventDiscount}원</TextB2R>
-          </FlexBetween>
-        )}
-        {selectedCoupon && (
-          <FlexBetween padding="8px 0 0 0">
-            <TextB2R>쿠폰 사용</TextB2R>
-            <TextB2R>{coupon}원</TextB2R>
-          </FlexBetween>
-        )}
-        <BorderLine height={1} margin="8px 0" />
-        <FlexBetween padding="8px 0 0 0">
-          <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextB2R>{optionAmount}원</TextB2R>
-        </FlexBetween>
-        {orderOptions.length > 0 &&
-          orderOptions.map((optionItem, index) => {
-            const { optionId, optionPrice, optionQuantity, optionName } = optionItem;
-            const hasFork = optionId === 1;
-            const hasChopsticks = optionId === 2;
-            return (
-              <div key={index}>
-                {hasFork && (
-                  <FlexBetween padding="8px 0 0 0">
-                    <TextB2R>포크+물티슈</TextB2R>
-                    <TextB2R>
-                      {optionQuantity}개 / {optionPrice * optionQuantity}원
-                    </TextB2R>
-                  </FlexBetween>
-                )}
-                {hasChopsticks && (
-                  <FlexBetween padding="8px 0 0 0">
-                    <TextB2R>젓가락+물티슈</TextB2R>
-                    <TextB2R>
-                      {optionQuantity}개 / {optionPrice * optionQuantity}원
-                    </TextB2R>
-                  </FlexBetween>
-                )}
-              </div>
-            );
-          })}
-
-        <BorderLine height={1} margin="16px 0" />
-        <FlexBetween>
-          <TextH5B>배송비</TextH5B>
-          <TextB2R>{deliveryFee}원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>배송비 할인</TextB2R>
-          <TextB2R>{deliveryFeeDiscount}원</TextB2R>
-        </FlexBetween>
-        <BorderLine height={1} margin="16px 0" />
-        {userInputObj.point > 0 && (
+      {previewOrder?.order.type === 'GENERAL' && (
+        <TotalPriceWrapper>
           <FlexBetween>
-            <TextH5B>포인트 사용</TextH5B>
-            <TextB2R>{userInputObj.point}원</TextB2R>
+            <TextH5B>총 상품 금액</TextH5B>
+            <TextB2R>{menuAmount}원</TextB2R>
           </FlexBetween>
-        )}
-        <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
-        <FlexBetween>
-          <TextH4B>최종 결제금액</TextH4B>
-          <TextB2R>{payAmount - userInputObj.point}원</TextB2R>
-        </FlexBetween>
-        <FlexEnd padding="11px 0 0 0">
-          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-            프코 회원
-          </Tag>
-          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-          <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
-        </FlexEnd>
-      </TotalPriceWrapper>
+          <BorderLine height={1} margin="16px 0" />
+          <FlexBetween padding="8px 0 0 0">
+            <TextH5B>총 할인 금액</TextH5B>
+            <TextB2R>{menuDiscount}원</TextB2R>
+          </FlexBetween>
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>상품 할인</TextB2R>
+            <TextB2R>{menuDiscount}원</TextB2R>
+          </FlexBetween>
+          {eventDiscount > 0 && (
+            <FlexBetween padding="8px 0 0 0">
+              <TextB2R>스팟 이벤트 할인</TextB2R>
+              <TextB2R>{eventDiscount}원</TextB2R>
+            </FlexBetween>
+          )}
+          {selectedCoupon && (
+            <FlexBetween padding="8px 0 0 0">
+              <TextB2R>쿠폰 사용</TextB2R>
+              <TextB2R>{coupon}원</TextB2R>
+            </FlexBetween>
+          )}
+          <BorderLine height={1} margin="8px 0" />
+          <FlexBetween padding="8px 0 0 0">
+            <TextH5B>환경부담금 (일회용품)</TextH5B>
+            <TextB2R>{optionAmount}원</TextB2R>
+          </FlexBetween>
+          {orderOptions.length > 0 &&
+            orderOptions.map((optionItem, index) => {
+              const { optionId, optionPrice, optionQuantity, optionName } = optionItem;
+              const hasFork = optionId === 1;
+              const hasChopsticks = optionId === 2;
+              return (
+                <div key={index}>
+                  {hasFork && (
+                    <FlexBetween padding="8px 0 0 0">
+                      <TextB2R>포크+물티슈</TextB2R>
+                      <TextB2R>
+                        {optionQuantity}개 / {optionPrice * optionQuantity}원
+                      </TextB2R>
+                    </FlexBetween>
+                  )}
+                  {hasChopsticks && (
+                    <FlexBetween padding="8px 0 0 0">
+                      <TextB2R>젓가락+물티슈</TextB2R>
+                      <TextB2R>
+                        {optionQuantity}개 / {optionPrice * optionQuantity}원
+                      </TextB2R>
+                    </FlexBetween>
+                  )}
+                </div>
+              );
+            })}
+
+          <BorderLine height={1} margin="16px 0" />
+          <FlexBetween>
+            <TextH5B>배송비</TextH5B>
+            <TextB2R>{deliveryFee}원</TextB2R>
+          </FlexBetween>
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>배송비 할인</TextB2R>
+            <TextB2R>{deliveryFeeDiscount}원</TextB2R>
+          </FlexBetween>
+          <BorderLine height={1} margin="16px 0" />
+          {userInputObj.point > 0 && (
+            <FlexBetween>
+              <TextH5B>포인트 사용</TextH5B>
+              <TextB2R>{userInputObj.point}원</TextB2R>
+            </FlexBetween>
+          )}
+          <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+          <FlexBetween>
+            <TextH4B>최종 결제금액</TextH4B>
+            <TextB2R>{payAmount - userInputObj.point}원</TextB2R>
+          </FlexBetween>
+          <FlexEnd padding="11px 0 0 0">
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+              프코 회원
+            </Tag>
+            <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+            <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+          </FlexEnd>
+        </TotalPriceWrapper>
+      )}
+      {previewOrder?.order.type === 'SUBSCRIPTION' && (
+        <MenusPriceBox
+          disposable={true}
+          menuPrice={menuAmount!}
+          menuDiscount={menuDiscount!}
+          eventDiscount={eventDiscount!}
+          menuOption1={options?.option1!}
+          menuOption2={options?.option2!}
+          deliveryPrice={deliveryFee!}
+          deliveryLength={13}
+          point={userInputObj.point}
+        />
+      )}
       <OrderTermWrapper>
         <TextH5B>구매 조건 확인 및 결제 진행 필수 동의</TextH5B>
-        <FlexRow padding="17px 0 0 0">
-          <Checkbox isSelected onChange={checkOrderTermHandler} />
+        <FlexRow
+          padding="17px 0 0 0"
+          pointer
+          onClick={() => {
+            checkOrderTermHandler('privacy');
+          }}
+        >
+          <Checkbox
+            className="checkBox"
+            isSelected={checkTermList.privacy}
+            onChange={() => {
+              checkOrderTermHandler('privacy');
+            }}
+          />
           <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo} pointer>
             자세히
           </TextH6B>
         </FlexRow>
-        {/* <FlexRow padding="8px 0 0 0">
-          <Checkbox isSelected onChange={checkOrderTermHandler} />
-          <TextB2R padding="0 8px">정기구독 이용약관・주의사항 동의 (필수)</TextB2R>
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
-            자세히
-          </TextH6B>
-        </FlexRow> */}
+        {previewOrder?.order.type === 'SUBSCRIPTION' && (
+          <FlexRow
+            padding="8px 0 0 0"
+            pointer
+            onClick={() => {
+              checkOrderTermHandler('subscription');
+            }}
+          >
+            <Checkbox
+              className="checkBox"
+              isSelected={checkTermList.subscription}
+              onChange={() => {
+                checkOrderTermHandler('subscription');
+              }}
+            />
+            <TextB2R padding="0 8px">정기구독 이용약관・주의사항 동의 (필수)</TextB2R>
+            <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
+              자세히
+            </TextH6B>
+          </FlexRow>
+        )}
       </OrderTermWrapper>
       <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%" disabled={isLoading} className="orderBtn">
-          {payAmount - userInputObj.point}원 결제하기
+          {getFormatPrice(String(payAmount - userInputObj.point))}원 결제하기
         </Button>
       </OrderBtn>
     </Container>
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  .checkBox {
+    margin-bottom: 2px;
+  }
+`;
 const OrderItemsWrapper = styled.div`
   padding: 24px;
 `;
@@ -1382,8 +1512,7 @@ const OrderTermWrapper = styled.div`
   ${homePadding}
   display: flex;
   flex-direction: column;
-  margin-top: 32px;
-  margin-bottom: 160px;
+  padding: 32px 24px 34px 24px;
 `;
 
 const OrderBtn = styled.div`

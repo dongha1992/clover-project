@@ -48,13 +48,3 @@ export const periodMapper: Obj = {
   FOUR_WEEK: '4주',
   UNLIMITED: '정기구독',
 };
-
-export const deliveryDetailMapper1: Obj = {
-  저녁: 'DINNER',
-  점심: 'LUNCH',
-};
-
-export const deliveryDetailMapper2: Obj = {
-  DINNER: '저녁',
-  LUNCH: '점심',
-};

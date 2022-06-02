@@ -98,12 +98,14 @@ export const FlexRow = styled.div<{
   margin?: string;
   id?: string;
   width?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   align-items: center;
   width: ${({ width }) => width && width};
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  cursor: ${({ pointer }) => (pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexCol = styled.div<{
@@ -214,12 +216,12 @@ export const fixedBottom = css`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 0px;
+    left: 0%;
   `};
 
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
-    left: 0
+    left: 0px;
   `};
 `;
 

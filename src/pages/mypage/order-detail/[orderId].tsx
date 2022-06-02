@@ -25,6 +25,7 @@ import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
+import isNil from 'lodash-es/isNil';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
@@ -36,9 +37,9 @@ const disabledDates: any = [];
 /* TODO: delvieryId의 경우 orderDeliveris[0].id 사용 */
 /* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
 
-const OrderDetailPage = ({ orderId }: { orderId: number }) => {
+const OrderDetailPage = () => {
   const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
-
+  const [orderId, setOrderId] = useState<number>();
   const { showToast } = useToast();
 
   const dispatch = useDispatch();
@@ -50,13 +51,15 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
   const { data: orderDetail, isLoading } = useQuery(
     'getOrderDetail',
     async () => {
-      const { data } = await getOrderDetailApi(orderId);
-      return data.data;
+      const { data } = await getOrderDetailApi(orderId!);
+
+      return data?.data;
     },
     {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!orderId,
     }
   );
 
@@ -266,7 +269,13 @@ const OrderDetailPage = ({ orderId }: { orderId: number }) => {
     }
   };
 
-  if (isLoading) {
+  useEffect(() => {
+    if (router.isReady) {
+      setOrderId(Number(router.query?.orderId));
+    }
+  }, [router.isReady]);
+
+  if (!orderDetail) {
     return <div>로딩</div>;
   }
 
@@ -554,12 +563,24 @@ const RefundInfoWrapper = styled.div`
 `;
 
 /* TODO: getServerSideProps아니라 static인 거 같은데  */
-export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
 
-  return {
-    props: { orderId },
-  };
-}
+// export async function getServerSideProps(context: any) {
+//   const { orderId } = context.query;
+
+//   if (!orderId) {
+//     return {
+//       props: {
+//         notFound: true,
+//         redirect: {
+//           destinaion: '/',
+//         },
+//       },
+//     };
+//   }
+
+//   return {
+//     props: { orderId },
+//   };
+// }
 
 export default OrderDetailPage;
