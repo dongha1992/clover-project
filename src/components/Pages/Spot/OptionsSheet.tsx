@@ -39,7 +39,7 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
   const selectTab = () => {
     if (tab === 'time') {
       return {options: registrationsOptions?.lunchTimeOptions, value: selectedLunchTime};
-    } else if (tab === 'place' && type === 'private') {
+    } else if (tab === 'place' && type === 'PRIVATE') {
       return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     } else if (tab === 'place') {
       return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};

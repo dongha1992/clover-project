@@ -43,9 +43,12 @@ const SubsRegisterPage = () => {
   const { userDestination } = useSelector(destinationForm);
   const [toggleState, setToggleState] = useState(false);
   const [disposable, setDisposable] = useState(false);
-  const [selectDate, setSelectDate] = useState<Date | undefined>(subsDeliveryExpectedDate[0].deliveryDate);
+  const [selectDate, setSelectDate] = useState<Date | undefined>(
+    subsDeliveryExpectedDate && subsDeliveryExpectedDate[0]?.deliveryDate
+  );
   const [selectCount, setSelectCount] = useState();
   const [allMenuPriceInfo, setAllMenuPriceInfo] = useState<IReceipt | null>();
+  const [subsMonth, setSubsMonth] = useState<unknown[]>();
   const mapper: Obj = {
     ONE_WEEK: '1주',
     TWO_WEEK: '2주',
@@ -56,13 +59,21 @@ const SubsRegisterPage = () => {
 
   useEffect(() => {
     if (!subsDeliveryExpectedDate) {
-      router.push('/subscription/set-info');
+      router.push('/subscription');
     }
   }, []);
 
   useEffect(() => {
+    let monthObj = new Set();
+    subsDeliveryExpectedDate?.forEach((elem: any) => {
+      monthObj.add(dayjs(elem.deliveryDate).format('M'));
+    });
+    setSubsMonth(Array.from(monthObj));
+  }, []);
+
+  useEffect(() => {
     setSelectCount(
-      subsDeliveryExpectedDate.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) + 1
+      subsDeliveryExpectedDate?.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) + 1
     );
   }, [selectDate]);
 
@@ -160,217 +171,244 @@ const SubsRegisterPage = () => {
 
   return (
     <Container>
-      <InfoBox>
-        <FlexBetween className="box" onClick={clickEvent}>
-          <TextH4B>구독정보</TextH4B>
-          <div className="wrap">
-            <TextB2R className="infoText">
-              스팟배송 - {subsInfo?.deliveryTime} / {userDestination?.location?.address}{' '}
-              {userDestination?.location?.addressDetail}
-            </TextB2R>
-            <div className={`svgBox ${toggleState ? 'down' : ''}`}>
-              <SVGIcon name="triangleDown" />
+      {subsDeliveryExpectedDate && (
+        <>
+          <InfoBox>
+            <FlexBetween className="box" onClick={clickEvent}>
+              <TextH4B>구독정보</TextH4B>
+              <div className="wrap">
+                {!toggleState && (
+                  <TextB2R className="infoText">
+                    스팟배송 - {subsInfo?.deliveryTime} / {userDestination?.location?.address}{' '}
+                    {userDestination?.location?.addressDetail}
+                  </TextB2R>
+                )}
+                <div className={`svgBox ${toggleState ? 'down' : ''}`}>
+                  <SVGIcon name="triangleDown" />
+                </div>
+              </div>
+            </FlexBetween>
+            <SlideInfoBox>
+              <SlideToggle state={toggleState} duration={0.5}>
+                <ul>
+                  <li>
+                    <TextH5B>배송방법</TextH5B>
+                    <TextB2R>스팟배송 - {subsInfo?.deliveryTime}</TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>픽업장소</TextH5B>
+                    <TextB2R>
+                      {userDestination?.location?.address} {userDestination?.location?.addressDetail}
+                    </TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>구독기간</TextH5B>
+                    <TextB2R>{subsInfo && mapper[subsInfo.period!]}</TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>구독 시작일</TextH5B>
+                    <TextB2R>{subsInfo?.startDate}</TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>배송주기</TextH5B>
+                    <TextB2R>
+                      주 {subsInfo?.deliveryDay?.length}회 / {subsInfo?.deliveryDay?.join('·')}
+                    </TextB2R>
+                  </li>
+                </ul>
+              </SlideToggle>
+            </SlideInfoBox>
+          </InfoBox>
+          <BorderLine height={8} />
+
+          <DietConfirmBox>
+            <div className="wrap">
+              <TextH4B>식단 확인</TextH4B>
+              <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToEntireDiet}>
+                전체 식단 보기
+              </TextH6B>
             </div>
-          </div>
-        </FlexBetween>
-        <SlideInfoBox>
-          <SlideToggle state={toggleState} duration={0.5}>
-            <ul>
-              <li>
-                <TextH5B>배송방법</TextH5B>
-                <TextB2R>스팟배송 - {subsInfo?.deliveryTime}</TextB2R>
-              </li>
-              <li>
-                <TextH5B>픽업장소</TextH5B>
-                <TextB2R>
-                  {userDestination?.location?.address} {userDestination?.location?.addressDetail}
-                </TextB2R>
-              </li>
-              <li>
-                <TextH5B>구독기간</TextH5B>
-                <TextB2R>{subsInfo && mapper[subsInfo.period!]}</TextB2R>
-              </li>
-              <li>
-                <TextH5B>구독 시작일</TextH5B>
-                <TextB2R>{subsInfo?.startDate}</TextB2R>
-              </li>
-              <li>
-                <TextH5B>배송주기</TextH5B>
-                <TextB2R>
-                  주 {subsInfo?.deliveryDay?.length}회 / {subsInfo?.deliveryDay?.join('·')}
-                </TextB2R>
-              </li>
-            </ul>
-          </SlideToggle>
-        </SlideInfoBox>
-      </InfoBox>
-      <BorderLine height={8} />
-
-      <DietConfirmBox>
-        <div className="wrap">
-          <TextH4B>식단 확인</TextH4B>
-          <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToEntireDiet}>
-            전체 식단 보기
-          </TextH6B>
-        </div>
-        <TextB2R color={theme.brandColor}>
-          {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${mapper[subsInfo?.period!]}간`}, 주{' '}
-          {subsInfo?.deliveryDay?.length}회씩 ({subsInfo?.deliveryDay?.join('·')}) 총 {subsOrderMenus?.length}회
-          배송되는 식단입니다.
-        </TextB2R>
-      </DietConfirmBox>
-      <CalendarBox>
-        <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
-          1월, 2월 식단을 모두 확인해 주세요!
-        </TextH5B>
-        <SubsCalendar
-          subsActiveDates={subsDeliveryExpectedDate}
-          deliveryExpectedDate={subsDeliveryExpectedDate}
-          setSelectDate={setSelectDate}
-          subsPeriod={subsInfo?.period!}
-          menuChangeDate={subsOrderMenus}
-        />
-      </CalendarBox>
-
-      <SelectDateInfoBox selectCount={selectCount} selectDate={selectDate} disposable={disposable} />
-
-      <DisposableAddBox>
-        <TextH4B className="title">일회용품 추가</TextH4B>
-        <TextB2R className="content">샐러드·도시락 상품의 수량만큼 일회용품을 추가합니다.</TextB2R>
-        <FlexRow>
-          <Checkbox
-            onChange={() => {
-              setDisposable((prev) => !prev);
-            }}
-            isSelected={disposable}
-          />
-          <TextB2R padding="0 0 0 8px" className="des">
-            일회용품(100원) 총 {allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity!}개 -
-            환경부담금{' '}
-            <b>
-              {getFormatPrice(String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!))}원
-            </b>
-          </TextB2R>
-        </FlexRow>
-      </DisposableAddBox>
-
-      {allMenuPriceInfo && (
-        <ReceiptBox>
-          <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
-            <TextH5B>총 상품금액</TextH5B>
-            <TextB2R>
-              {disposable
-                ? getFormatPrice(
-                    String(
-                      allMenuPriceInfo.menuPrice +
-                        allMenuPriceInfo.menuOption1.price +
-                        allMenuPriceInfo.menuOption2.price -
-                        allMenuPriceInfo.menuDiscount -
-                        allMenuPriceInfo.eventDiscount
-                    )
-                  )
-                : getFormatPrice(
-                    String(allMenuPriceInfo.menuPrice - allMenuPriceInfo.menuDiscount - allMenuPriceInfo.eventDiscount)
-                  )}
-              원
+            <TextB2R color={theme.brandColor}>
+              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${mapper[subsInfo?.period!]}간`}, 주{' '}
+              {subsInfo?.deliveryDay?.length}회씩 ({subsInfo?.deliveryDay?.join('·')}) 총 {subsOrderMenus?.length}회
+              배송되는 식단입니다.
             </TextB2R>
-          </FlexBetween>
-          <ReceiptUl>
-            <ReceiptLi>
-              <TextB2R>총 할인금액</TextB2R>
-              <TextB2R>
-                -{getFormatPrice(String(allMenuPriceInfo.menuDiscount + allMenuPriceInfo.eventDiscount))}원
+          </DietConfirmBox>
+          <CalendarBox>
+            {subsMonth && subsMonth?.length > 1 && (
+              <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
+                {subsMonth[0]}월, {subsMonth[1]}월 식단을 모두 확인해 주세요!
+              </TextH5B>
+            )}
+
+            <SubsCalendar
+              subsActiveDates={subsDeliveryExpectedDate}
+              deliveryExpectedDate={subsDeliveryExpectedDate}
+              setSelectDate={setSelectDate}
+              subsPeriod={subsInfo?.period!}
+              menuChangeDate={subsOrderMenus}
+            />
+          </CalendarBox>
+
+          <SelectDateInfoBox selectCount={selectCount} selectDate={selectDate} disposable={disposable} />
+
+          <DisposableAddBox>
+            <TextH4B className="title">일회용품 추가</TextH4B>
+            <TextB2R className="content">샐러드·도시락 상품의 수량만큼 일회용품을 추가합니다.</TextB2R>
+            <FlexRow>
+              <Checkbox
+                onChange={() => {
+                  setDisposable((prev) => !prev);
+                }}
+                isSelected={disposable}
+              />
+              <TextB2R
+                padding="0 0 0 8px"
+                className="des"
+                onClick={() => {
+                  setDisposable((prev) => !prev);
+                }}
+                pointer
+              >
+                일회용품(100원) 총 {allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity!}개
+                - 환경부담금{' '}
+                <b>
+                  {getFormatPrice(String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!))}
+                  원
+                </b>
               </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <FlexRow>
-                <TextB2R>구독 할인</TextB2R>
-                <SVGIcon name="questionMark" />
-              </FlexRow>
-              <TextB2R>
-                {allMenuPriceInfo.menuDiscount ? `-${getFormatPrice(String(allMenuPriceInfo.menuDiscount))}` : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>스팟 이벤트 할인</TextB2R>
-              <TextB2R>
-                {allMenuPriceInfo.eventDiscount ? `-${getFormatPrice(String(allMenuPriceInfo.eventDiscount))}` : 0}원
-              </TextB2R>
-            </ReceiptLi>
-          </ReceiptUl>
-          <ReceiptUl>
-            <ReceiptLi className="btB" padding="16px 0 0">
-              <TextH5B>환경부담금 (일회용품)</TextH5B>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity! : 0}개 /{' '}
-                {disposable
-                  ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!))
-                  : 0}
-                원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>물티슈</TextB2R>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>수저</TextB2R>
-              <TextB2R>
-                {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
-                {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
-              </TextB2R>
-            </ReceiptLi>
-          </ReceiptUl>
-          <FlexBetween padding="16px 0 0" margin="0 0 16px" className="btN">
-            <TextH5B>배송비</TextH5B>
-            <TextB2R>
-              {subsOrderMenus?.length}회 /{' '}
-              {allMenuPriceInfo.deliveryPrice === 0
-                ? '무료배송'
-                : `${getFormatPrice(String(allMenuPriceInfo.deliveryPrice))}원`}
-            </TextB2R>
-          </FlexBetween>
-          <FlexBetween padding="16px 0 0" margin="0 0 8px" className="btB">
-            <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>
-              {disposable
-                ? getFormatPrice(
-                    String(
-                      allMenuPriceInfo.menuPrice +
-                        allMenuPriceInfo.menuOption1.price +
-                        allMenuPriceInfo.menuOption2.price +
-                        allMenuPriceInfo.deliveryPrice -
-                        allMenuPriceInfo.menuDiscount -
-                        allMenuPriceInfo.eventDiscount
-                    )
-                  )
-                : getFormatPrice(
-                    String(
-                      allMenuPriceInfo.menuPrice +
-                        allMenuPriceInfo.deliveryPrice -
-                        allMenuPriceInfo.menuDiscount -
-                        allMenuPriceInfo.eventDiscount
-                    )
-                  )}
-              원
-            </TextH4B>
-          </FlexBetween>
-          <FlexEnd>
-            <Badge>
-              <TextH7B>프코회원</TextH7B>
-            </Badge>
-            <TextB3R>
-              구매 시 <b>nP (n%) 적립 예정</b>
-            </TextB3R>
-          </FlexEnd>
-        </ReceiptBox>
+            </FlexRow>
+          </DisposableAddBox>
+
+          {allMenuPriceInfo && (
+            <ReceiptBox>
+              <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
+                <TextH5B>총 상품금액</TextH5B>
+                <TextB2R>
+                  {disposable
+                    ? getFormatPrice(
+                        String(
+                          allMenuPriceInfo.menuPrice +
+                            allMenuPriceInfo.menuOption1.price +
+                            allMenuPriceInfo.menuOption2.price -
+                            allMenuPriceInfo.menuDiscount -
+                            allMenuPriceInfo.eventDiscount
+                        )
+                      )
+                    : getFormatPrice(
+                        String(
+                          allMenuPriceInfo.menuPrice - allMenuPriceInfo.menuDiscount - allMenuPriceInfo.eventDiscount
+                        )
+                      )}
+                  원
+                </TextB2R>
+              </FlexBetween>
+              <ReceiptUl>
+                <ReceiptLi>
+                  <TextB2R>총 할인금액</TextB2R>
+                  <TextB2R>
+                    -{getFormatPrice(String(allMenuPriceInfo.menuDiscount + allMenuPriceInfo.eventDiscount))}원
+                  </TextB2R>
+                </ReceiptLi>
+                <ReceiptLi>
+                  <FlexRow>
+                    <TextB2R>구독 할인</TextB2R>
+                    <SVGIcon name="questionMark" />
+                  </FlexRow>
+                  <TextB2R>
+                    {allMenuPriceInfo.menuDiscount ? `-${getFormatPrice(String(allMenuPriceInfo.menuDiscount))}` : 0}원
+                  </TextB2R>
+                </ReceiptLi>
+                <ReceiptLi>
+                  <TextB2R>스팟 이벤트 할인</TextB2R>
+                  <TextB2R>
+                    {allMenuPriceInfo.eventDiscount ? `-${getFormatPrice(String(allMenuPriceInfo.eventDiscount))}` : 0}
+                    원
+                  </TextB2R>
+                </ReceiptLi>
+              </ReceiptUl>
+              <ReceiptUl>
+                <ReceiptLi className="btB" padding="16px 0 0">
+                  <TextH5B>환경부담금 (일회용품)</TextH5B>
+                  <TextB2R>
+                    {disposable ? allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity! : 0}
+                    개 /{' '}
+                    {disposable
+                      ? getFormatPrice(
+                          String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!)
+                        )
+                      : 0}
+                    원
+                  </TextB2R>
+                </ReceiptLi>
+                {disposable && (
+                  <>
+                    <ReceiptLi>
+                      <TextB2R>{allMenuPriceInfo?.menuOption1.name}</TextB2R>
+                      <TextB2R>
+                        {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
+                        {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
+                      </TextB2R>
+                    </ReceiptLi>
+                    <ReceiptLi>
+                      <TextB2R>{allMenuPriceInfo?.menuOption2.name}</TextB2R>
+                      <TextB2R>
+                        {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
+                        {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
+                      </TextB2R>
+                    </ReceiptLi>
+                  </>
+                )}
+              </ReceiptUl>
+              <FlexBetween padding="16px 0 0" margin="0 0 16px" className="btN">
+                <TextH5B>배송비</TextH5B>
+                <TextB2R>
+                  {subsOrderMenus?.length}회 /{' '}
+                  {allMenuPriceInfo.deliveryPrice === 0
+                    ? '무료배송'
+                    : `${getFormatPrice(String(allMenuPriceInfo.deliveryPrice))}원`}
+                </TextB2R>
+              </FlexBetween>
+              <FlexBetween padding="16px 0 0" margin="0 0 8px" className="btB">
+                <TextH4B>결제예정금액</TextH4B>
+                <TextH4B>
+                  {disposable
+                    ? getFormatPrice(
+                        String(
+                          allMenuPriceInfo.menuPrice +
+                            allMenuPriceInfo.menuOption1.price +
+                            allMenuPriceInfo.menuOption2.price +
+                            allMenuPriceInfo.deliveryPrice -
+                            allMenuPriceInfo.menuDiscount -
+                            allMenuPriceInfo.eventDiscount
+                        )
+                      )
+                    : getFormatPrice(
+                        String(
+                          allMenuPriceInfo.menuPrice +
+                            allMenuPriceInfo.deliveryPrice -
+                            allMenuPriceInfo.menuDiscount -
+                            allMenuPriceInfo.eventDiscount
+                        )
+                      )}
+                  원
+                </TextH4B>
+              </FlexBetween>
+              <FlexEnd>
+                <Badge>
+                  <TextH7B>프코회원</TextH7B>
+                </Badge>
+                <TextB3R>
+                  구매 시 <b>nP (n%) 적립 예정</b>
+                </TextB3R>
+              </FlexEnd>
+            </ReceiptBox>
+          )}
+          <BottomButton onClick={onSubscribe}>
+            <TextH5B>구독하기</TextH5B>
+          </BottomButton>
+        </>
       )}
-      <BottomButton onClick={onSubscribe}>
-        <TextH5B>구독하기</TextH5B>
-      </BottomButton>
     </Container>
   );
 };
@@ -438,6 +476,7 @@ export const MenuLi = styled.li`
   display: flex;
   padding: 16px 0;
   border-bottom: 1px solid ${theme.greyScale6};
+  position: relative;
   &:last-of-type {
     border-bottom: none;
   }
@@ -449,6 +488,13 @@ export const MenuLi = styled.li`
     padding: 10px 16px;
     border: 1px solid #242424;
     border-radius: 8px;
+  }
+  button.deleteBtn {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 16px;
+    padding: 0;
   }
 `;
 export const MenuImgBox = styled.div`
@@ -470,6 +516,19 @@ export const MenuTextBox = styled.div`
       height: 16px;
       background-color: ${theme.greyScale6};
     }
+  }
+  button:disabled {
+    border: 1px solid #f2f2f2;
+    color: #c8c8c8;
+  }
+  .change {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.4px;
+    color: #35ad73;
+    margin-left: 4px;
   }
 `;
 

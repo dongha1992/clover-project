@@ -72,9 +72,18 @@ const MypagePage = () => {
 
       if (data.code === 200) {
         return data.data;
+      } else {
+        router.replace('/onboarding');
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false, enabled: !!me }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!me,
+      onError: () => {
+        router.replace('/onboarding');
+      },
+    }
   );
 
   const goToEditUserInfo = () => {
@@ -97,7 +106,7 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{me?.nickName}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.name}님은</TextH2B>
                 <IconBox onClick={() => goToEditUserInfo()}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
@@ -123,12 +132,20 @@ const MypagePage = () => {
             </UserInfoWrapper>
             <FlexBetweenStart padding="16px 24px 32px">
               <FlexCol width="50%">
-                <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')}>{userInfo?.availablePoint} P</TextH5B>
+                <TextH6B color={theme.greyScale65} pointer>
+                  사용 가능한 포인트
+                </TextH6B>
+                <TextH5B onClick={() => router.push('/mypage/point')} pointer>
+                  {userInfo?.availablePoint} P
+                </TextH5B>
               </FlexCol>
               <FlexCol width="50%">
-                <TextH6B color={theme.greyScale65}>사용 가능한 쿠폰</TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/coupon')}>{userInfo?.availableCoupons.length} 개</TextH5B>
+                <TextH6B color={theme.greyScale65} pointer>
+                  사용 가능한 쿠폰
+                </TextH6B>
+                <TextH5B onClick={() => router.push('/mypage/coupon')} pointer>
+                  {userInfo?.availableCoupons.length} 개
+                </TextH5B>
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />

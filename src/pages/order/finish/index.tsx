@@ -21,7 +21,10 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
-import { getCookie } from '@utils/common';
+import { getCookie, removeCookie } from '@utils/common';
+import { useDispatch } from 'react-redux';
+import { SET_IS_LOADING } from '@store/common';
+import { SET_ALERT } from '@store/alert';
 
 interface IProps {
   orderId: number;
@@ -35,50 +38,51 @@ interface IProps {
 const OrderFinishPage = () => {
   const router = useRouter();
   const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
-
-  const { pg_token: pgToken, orderId, pg, payToken } = router.query;
-
-  console.log(router.query, 'router.query');
+  const dispatch = useDispatch();
+  const { pg_token: pgToken, orderId, pg } = router.query;
 
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
     async () => {
-      console.log(orderId, 'orderId');
       const { data } = await getOrderDetailApi(Number(orderId));
       return data.data;
     },
     {
-      onSuccess: () => {},
+      onSuccess: () => {
+        dispatch(SET_IS_LOADING(false));
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!isPaymentSuccess,
     }
   );
 
-  console.log(isLoading, isPaymentSuccess);
-
   const checkPg = async () => {
+    console.log(pgToken, orderId, pg, 'pgToken, orderId, pg');
     try {
-      console.log(orderId, pgToken, pg, payToken, 'orderId, pgToken, pg, payToken in fnc');
       if (pg === 'kakao') {
         const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
         if (pgToken && kakaoTid) {
           const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
-          console.log(pgToken, kakaoTid, '!@#!@#!@#!');
           const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
           console.log(data, 'AFTER KAKAO PAY');
           if (data.code === 200) {
             setIsPaymentSuccess(true);
+            removeCookie({ name: 'kakao-tid-clover' });
           }
         } else {
           // 카카오 결제 에러
         }
       } else if (pg === 'toss') {
+        const payToken = getCookie({ name: 'toss-tid-clover' });
+        console.log(payToken);
         if (payToken) {
-          const { data } = await postTossApproveApi({ orderId: Number(orderId), payToken: Number(payToken) });
-          console.log(data, 'AFTER TOSS');
+          const reqBody = { payToken };
+          const { data } = await postTossApproveApi({ orderId: Number(orderId), data: reqBody });
+
           if (data.code === 200) {
             setIsPaymentSuccess(true);
+            removeCookie({ name: 'toss-tid-clover' });
           }
         } else {
           // 토스 페이 에러
@@ -86,7 +90,10 @@ const OrderFinishPage = () => {
       } else {
         setIsPaymentSuccess(true);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 1206) {
+        dispatch(SET_ALERT({ alertMessage: '토스 결제 중 에러가 발생했습니다.', onSubmit: () => router.back() }));
+      }
       console.error(error);
     }
   };
@@ -259,12 +266,12 @@ const OrderFinishPage = () => {
 
   useEffect(() => {
     console.log(router.query.orderId, '(router.query.orderId in useEffect');
-    if (router.query.orderId) {
+    if (router.isReady) {
       checkPg();
     }
-  }, [router.query.orderId]);
+  }, [router.isReady]);
 
-  if (isLoading || !isPaymentSuccess) {
+  if (!orderDetail) {
     return <div>로딩중</div>;
   }
 
@@ -353,6 +360,17 @@ const DevlieryInfoWrapper = styled.div`
 // export async function getServerSideProps(context: any) {
 //   const { orderId } = context.query;
 //   console.log(context.query, 'context.query');
+
+//   if (orderId) {
+//     return {
+//       props: {
+//         notFound: true,
+//         redirect: {
+//           destinaion: '/',
+//         },
+//       },
+//     };
+//   }
 //   return {
 //     props: {
 //       orderId: +orderId,

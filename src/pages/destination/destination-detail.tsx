@@ -25,6 +25,7 @@ import {
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
+import isNil from 'lodash-es/isNil';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -47,7 +48,7 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId, isSubscription, subsDeliveryType } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
 
   // 배송 가능 여부
   const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
@@ -112,7 +113,7 @@ const DestinationDetailPage = () => {
         if (isSubscription) {
           router.push({
             pathname: '/cart/delivery-info',
-            query: { subsDeliveryType: subsDeliveryType, isSubscription: true },
+            query: { subsDeliveryType, isSubscription: true, menuId },
           });
         } else {
           router.push('/cart/delivery-info');
@@ -131,6 +132,10 @@ const DestinationDetailPage = () => {
 
   useEffect(() => {
     getLonLanForMap();
+  }, []);
+
+  useEffect(() => {
+    if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
   }, []);
 
   useEffect(() => {

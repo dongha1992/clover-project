@@ -16,27 +16,34 @@ const DefaultHeader = ({ title }: TProps) => {
   const dispatch = useDispatch();
 
   const goBack = (): void => {
-    if(router.pathname === '/spot/register'){
+    if (router.pathname === '/spot/register') {
       dispatch(
         SET_ALERT({
           alertMessage: `입력한 내용은 저장되지 않아요.\n신청을 취소하시겠어요?`,
           submitBtnText: '확인',
           closeBtnText: '취소',
-          onSubmit: () => {router.back()},
+          onSubmit: () => {
+            router.back();
+          },
         })
       );
-
+    } else if (router.pathname === '/order/finish') {
+      router.replace('/');
     } else {
       router.back();
     }
   };
 
+  const oauth = router.pathname === '/oauth';
+
   return (
     <Container>
       <Wrapper>
-        <div className="arrow" onClick={goBack}>
-          <SVGIcon name="arrowLeft" />
-        </div>
+        {!oauth && (
+          <div className="arrow" onClick={goBack}>
+            <SVGIcon name="arrowLeft" />
+          </div>
+        )}
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
       </Wrapper>
     </Container>

@@ -16,7 +16,7 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
-import { userForm } from '@store/user';
+import { userForm, INIT_USER } from '@store/user';
 import { availabilityEmail, userChangeInfo } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
@@ -67,15 +67,19 @@ const ProfilePage = () => {
     day: 0,
   });
 
+  const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
+  const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
 
-  const authTimerRef = useRef(300);
+  let authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
+      setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
     if (authTimerRef.current < 240) {
@@ -97,14 +101,18 @@ const ProfilePage = () => {
 
   const logoutHandler = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
+    dispatch(INIT_USER());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     localStorage.removeItem('persist:nextjs');
+
     router.push('/mypage');
   };
 
   const otherAuthTelHandler = () => {
     setIsAuthTel(true);
+    setUserInfo({ ...userInfo, tel: '' });
+    setPhoneValidation(false);
   };
 
   const authCodeInputHandler = () => {
@@ -152,13 +160,18 @@ const ProfilePage = () => {
   };
 
   const getAuthTel = async () => {
-    if (!phoneValidation) {
+    if (userInfo.tel.length > 0 && !phoneValidation) {
       dispatch(
         SET_ALERT({
           alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
           submitBtnText: '확인',
         })
       );
+      return;
+    }
+
+    if (oneMinuteDisabled) {
+      dispatch(SET_ALERT({ alertMessage: '잠시 후 재요청해 주세요.' }));
       return;
     }
 
@@ -176,15 +189,37 @@ const ProfilePage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
-
-        /* TODO: 인증번호 요청 실패 시 */
+        if (isOverTime) {
+          setIsOverTime(false);
+          authTimerRef.current = 5;
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 2000) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '해당 전화번호로 이미 가입된 계정이 있습니다.',
+          })
+        );
+      } else if (error.code === 2001) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '전화번호 인증 횟수를 초과하였습니다.(하루 5회)',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러 발생',
+          })
+        );
+      }
       console.error(error);
     }
   };
 
   const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || authCodeConfirm || isOverTime) return;
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
@@ -193,9 +228,12 @@ const ProfilePage = () => {
         try {
           const { data } = await userConfirmTel({ tel, authCode });
           if (data.code === 200) {
-            alert('인증 성공 임시임');
+            dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.' }));
+            setAuthCodeConfirm(true);
+            setDelay(null);
           }
-        } catch (error) {
+        } catch (error: any) {
+          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.' }));
           console.error(error);
         }
       }
@@ -258,7 +296,6 @@ const ProfilePage = () => {
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
     };
-    console.log(reqBody, 'reqBody');
 
     try {
       const { data } = await userChangeInfo(reqBody);
@@ -275,10 +312,25 @@ const ProfilePage = () => {
   };
 
   const checkNameValid = () => {
-    if (!NAME_REGX.test(userInfo.name)) {
+    const lengthCheck = userInfo.name.length < 2 || userInfo.name.length > 20;
+    if (!NAME_REGX.test(userInfo.name) || lengthCheck) {
       setIsValidName(false);
     } else {
       setIsValidName(true);
+    }
+  };
+
+  const checkPhontValid = () => {
+    if (PHONE_REGX.test(userInfo.tel)) {
+      setPhoneValidation(true);
+    } else {
+      setPhoneValidation(false);
+    }
+  };
+
+  const telKeyPressHandler = (e: any) => {
+    if (e.key === 'Enter') {
+      getAuthTel();
     }
   };
 
@@ -305,6 +357,7 @@ const ProfilePage = () => {
       month: hasBirthDate ? Number(month) : 0,
       day: hasBirthDate ? Number(day) : 0,
     });
+    checkPhontValid();
   }, [me]);
 
   const isKakao = me?.joinType === 'KAKAO';
@@ -332,8 +385,7 @@ const ProfilePage = () => {
                   value={userInfo.email || ''}
                   disabled={me?.emailConfirmed}
                 />
-
-                <SVGIcon name={isKakao ? 'kakaoBuble' : 'appleIcon'} />
+                <SVGIcon name={isKakao ? 'kakaoBuble' : 'appleIcon'} color={theme.black} />
               </EmailInput>
             ) : (
               <TextInput
@@ -385,10 +437,16 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
-              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} value={userInfo.tel || ''} />
+              <TextInput
+                inputType="number"
+                eventHandler={phoneNumberInputHandler}
+                value={userInfo.tel || ''}
+                disabled={!isAuthTel}
+                keyPressHandler={telKeyPressHandler}
+              />
               {isAuthTel ? (
                 <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-                  요청하기
+                  {delay ? '재전송' : '요청하기'}
                 </Button>
               ) : (
                 <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
@@ -396,27 +454,39 @@ const ProfilePage = () => {
                 </Button>
               )}
             </FlexRow>
-            {isAuthTel && (
-              <ConfirmWrapper>
-                <TextInput
-                  placeholder="인증 번호 입력"
-                  eventHandler={authCodeInputHandler}
-                  ref={authCodeNumberRef}
-                  inputType="number"
-                />
-                <Button width="40%" margin="0 0 0 8px" disabled={!authCodeValidation} onClick={getAuthCodeConfirm}>
-                  확인
-                </Button>
-                {authCodeValidation && <SVGIcon name="confirmCheck" />}
-                {delay && (
-                  <TimerWrapper>
-                    <TextB3R color={theme.brandColor}>
-                      {minute < 10 ? `0${minute}` : minute}:{second < 10 ? `0${second}` : second}
-                    </TextB3R>
-                  </TimerWrapper>
-                )}
-              </ConfirmWrapper>
-            )}
+            <PhoneValidCheck>
+              {isAuthTel && !phoneValidation && userInfo.tel.length > 0 && (
+                <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+              )}
+              {isAuthTel && phoneValidation && <SVGIcon name="confirmCheck" />}
+              {isAuthTel && (
+                <ConfirmWrapper>
+                  <TextInput
+                    placeholder="인증 번호 입력"
+                    eventHandler={authCodeInputHandler}
+                    ref={authCodeNumberRef}
+                    inputType="number"
+                  />
+                  <Button
+                    width="40%"
+                    margin="0 0 0 8px"
+                    disabled={!authCodeValidation || authCodeConfirm || isOverTime}
+                    onClick={getAuthCodeConfirm}
+                  >
+                    확인
+                  </Button>
+                  {authCodeConfirm && <SVGIcon name="confirmCheck" />}
+                  {delay && (
+                    <TimerWrapper>
+                      <TextB3R color={theme.brandColor}>
+                        {minute < 10 ? `0${minute}` : minute}:{second < 10 ? `0${second}` : second}
+                      </TextB3R>
+                    </TimerWrapper>
+                  )}
+                </ConfirmWrapper>
+              )}
+            </PhoneValidCheck>
+            {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
@@ -493,7 +563,7 @@ const ConfirmWrapper = styled.div`
   > svg {
     position: absolute;
     right: 35%;
-    bottom: 40%;
+    top: 35%;
   }
 `;
 
@@ -563,6 +633,17 @@ const EmailInput = styled.div`
     position: absolute;
     right: 5%;
     top: 32%;
+  }
+`;
+
+const PhoneValidCheck = styled.div`
+  position: relative;
+  margin: 4px 0;
+  > svg {
+    position: absolute;
+    right: 35%;
+    top: -60%;
+    z-index: 10;
   }
 `;
 

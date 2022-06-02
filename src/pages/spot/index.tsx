@@ -30,19 +30,19 @@ const FCO_SPOT_BANNER = [
   {
     id: 1,
     text: '나의 회사∙학교를 프코스팟으로\n만들어보세요!',
-    type: 'private',
+    type: 'PRIVATE',
     icon: 'blackCirclePencil',
   },
   {
     id: 2,
     text: '내가 자주가는 장소를 프코스팟으로\n만들어보세요!',
-    type: 'public',
+    type: 'PUBLIC',
     icon: 'blackCirclePencil',
   },
   {
     id: 3,
     text: '우리 가게를 프코스팟으로 만들고\n더 많은 고객들을 만나보세요!',
-    type: 'owner',
+    type: 'OWNER',
     icon: 'blackCirclePencil',
   },
 ];
@@ -138,7 +138,7 @@ const SpotPage = () => {
 
   const goToSpotReq = (type: string): void => {
     switch(type){
-      case 'private':
+      case 'PRIVATE':
         {
           if(isLoginSuccess) {
             // 로그인 o
@@ -165,7 +165,7 @@ const SpotPage = () => {
           }
         }
         break;
-      case 'public':
+      case 'PUBLIC':
         {
           if(isLoginSuccess) {
             // 로그인 o
@@ -192,7 +192,7 @@ const SpotPage = () => {
           }
         }
         break;
-      case 'owner':
+      case 'OWNER':
         {
           if(isLoginSuccess) {
             // 로그인 o
@@ -368,7 +368,7 @@ const SpotPage = () => {
         })}
       </TrialSlider>
       {/* 퍼블릭 스팟 신청 CTA */}
-      <Wrapper type='public'>
+      <Wrapper type='PUBLIC'>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
           <FlexBetween height="92px" padding="22px">
             <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
@@ -471,7 +471,7 @@ const BoxHandlerWrapper = styled.div`
 const Wrapper = styled.div<{type?: string}>`
   padding: 48px 24px;
   ${({type}) => {
-    if(type === 'public'){
+    if(type === 'PUBLIC'){
       return css`
         padding: 24px 24px 48px 24px;
       `
