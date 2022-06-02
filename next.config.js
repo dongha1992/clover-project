@@ -2,6 +2,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const nextBuildId = require('next-build-id');
+
 // module.exports = {
 //   async rewrites() {
 //     return [
@@ -33,7 +35,9 @@ module.exports = () => {
       STAGE: process.env.STAGE,
       NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_KEY,
       SERVICE_URL: process.env.SERVICE_URL,
+      API_URL: process.env.API_URL,
     },
-    generateBuildId: async () => 'constant-build-id',
+    generateEtags: false,
+    generateBuildId: () => nextBuildId({ dir: __dirname }),
   };
 };

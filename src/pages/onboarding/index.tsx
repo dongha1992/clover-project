@@ -19,6 +19,9 @@ import { setCookie } from '@utils/common';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { userForm, SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
+import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 declare global {
   interface Window {
     Kakao: any;
@@ -95,7 +98,7 @@ const OnBoarding: NextPage = () => {
             router.replace('/signup?isApple=true');
             dispatch(SET_SIGNUP_USER({ email: data.data.email }));
           } else {
-            const result = await userLoginApi({ accessToken: `bearer ${appleToken}`, loginType: 'APPLE' });
+            const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
             if (result.data.code == 200) {
               const userTokenObj = result.data?.data;
 
@@ -114,7 +117,9 @@ const OnBoarding: NextPage = () => {
           }
         }
       } catch (error: any) {
-        console.log(`Error: ${error && error.error}`);
+        if (error.code === 2103) {
+          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+        }
       }
     }
   };

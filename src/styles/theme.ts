@@ -211,12 +211,12 @@ export const fixedBottom = css`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 0px;
+    left: 0%;
   `};
 
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
-    left: 0
+    left: 0px;
   `};
 `;
 

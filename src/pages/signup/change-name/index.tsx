@@ -60,6 +60,12 @@ const ChangeNamePage = () => {
     } catch (error) {}
   };
 
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      finishChangeName();
+    }
+  };
+
   useEffect(() => {
     setName(me?.name!);
   }, []);
@@ -68,8 +74,8 @@ const ChangeNamePage = () => {
     <Container>
       <Wrapper>
         <TextWrap>
-          <TextH2B>마지막으로</TextH2B>
-          <TextH2B>더 알고 싶어요</TextH2B>
+          <TextH2B>서비스 이용을 위해</TextH2B>
+          <TextH2B>이름을 변경해 주세요</TextH2B>
         </TextWrap>
         <FlexCol>
           <TextH5B>이름</TextH5B>
@@ -79,6 +85,7 @@ const ChangeNamePage = () => {
               margin="8px 0 0 0"
               value={name}
               eventHandler={changeNameHandler}
+              keyPressHandler={handleKeyPress}
             />
             {name.length > 0 && (
               <DeleteName onClick={clearNameHandler}>

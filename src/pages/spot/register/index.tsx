@@ -37,7 +37,7 @@ const RegisterPage = () => {
 
   const activeButton = () => {
     switch (type) {
-      case 'private':
+      case 'PRIVATE':
         return (
           checkedAddressInfo &&
           checkedPickup &&
@@ -46,9 +46,9 @@ const RegisterPage = () => {
           checkedUserInfo &&
           noticeChecked
         );
-      case 'public':
+      case 'PUBLIC':
         return checkedAddressInfo && checkedPlaceType;
-      case 'owner':
+      case 'OWNER':
         return checkedAddressInfo && checkedPlaceType && checkedUserInfo && noticeChecked;
       default:
         return false;
@@ -57,7 +57,7 @@ const RegisterPage = () => {
 
   const goToSubmit = async () => {
     if (!activeButton()) {
-      if (type === 'private') {
+      if (type === 'PRIVATE') {
         return;
       }
       return;
@@ -188,15 +188,15 @@ const RegisterPage = () => {
           </LocationWrapper>
         </Wrapper>
         <Wrapper>
-          <TextH4B margin="0 0 16px 0">{`${type === 'private' ? '장소명' : '상호명'}`}</TextH4B>
+          <TextH4B margin="0 0 16px 0">{`${type === 'PRIVATE' ? '장소명' : '상호명'}`}</TextH4B>
           <TextInput
             ref={placeRef}
             eventHandler={placeInputHandler}
             value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
-            placeholder={type === 'private' ? '장소명 입력' : '상호명 입력'}
+            placeholder={type === 'PRIVATE' ? '장소명 입력' : '상호명 입력'}
           />
         </Wrapper>
-        {type === 'private' && (
+        {type === 'PRIVATE' && (
           <Wrapper>
             <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
             <TextInput
@@ -237,7 +237,7 @@ const RegisterPage = () => {
             />
           )}
         </Wrapper>
-        {type === 'private' && (
+        {type === 'PRIVATE' && (
           <Wrapper>
             <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
             <Button
@@ -259,7 +259,7 @@ const RegisterPage = () => {
             </Button>
           </Wrapper>
         )}
-        {(type === 'private' || type === 'owner') && (
+        {(type === 'PRIVATE' || type === 'OWNER') && (
           <>
             <Wrapper>
               <TextH4B margin="0 0 16px 0">이름</TextH4B>
@@ -290,7 +290,7 @@ const RegisterPage = () => {
             </Wrapper>
           </>
         )}
-        {type === 'owner' && (
+        {type === 'OWNER' && (
           <>
             <Wrapper>
               <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
@@ -310,7 +310,7 @@ const RegisterPage = () => {
           </>
         )}
       </FormWrapper>
-      {type === 'private' && (
+      {type === 'PRIVATE' && (
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />

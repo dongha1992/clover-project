@@ -28,11 +28,11 @@ const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
         </FlexRowStart>
 
         {isOrder ? (
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
             선택하기
           </TextH6B>
         ) : (
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
             변경하기
           </TextH6B>
         )}

@@ -21,9 +21,10 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
 import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
+import axios from 'axios';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -35,8 +36,7 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const MenuDetailPage = ({ menuId }: any) => {
-  // const [menuItem, setMenuItem] = useState<any>({});
+const MenuDetailPage = ({ menuDetail }: any) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -47,17 +47,15 @@ const MenuDetailPage = ({ menuId }: any) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
-  // const { menuId } = router.query;
 
   const {
     data,
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenuDetail',
+    ['getMenuDetail'],
     async () => {
-      const { data } = await getMenuDetailApi(menuId);
-
+      const { data } = await getMenuDetailApi(menuDetail.id);
       return data.data;
     },
 
@@ -67,6 +65,7 @@ const MenuDetailPage = ({ menuId }: any) => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!menuDetail,
     }
   );
 
@@ -74,8 +73,8 @@ const MenuDetailPage = ({ menuId }: any) => {
     'getMenuDetailReview',
     async () => {
       // const { data } = await getMenuDetailReviewApi(menuId);
-
       // return data.data;
+
       return ALL_REVIEW.data.data;
     },
 
@@ -114,7 +113,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   );
 
   const goToReviewDetail = (review: any) => {
-    router.push(`/menu/${menuId}/review/${review.id}`);
+    router.push(`/menu/${menuDetail.id}/review/${review.id}`);
   };
 
   const goToReviewSection = () => {
@@ -134,7 +133,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -165,11 +164,11 @@ const MenuDetailPage = ({ menuId }: any) => {
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={menuItem?.thumbnail} setCountIndex={setCurrentImg} />
+        <Carousel images={menuDetail?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
-          {menuItem?.badgeMessage && (
+          {menuDetail?.badgeMessage && (
             <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-              {menuItem?.badgeMessage}
+              {menuDetail?.badgeMessage}
             </TextH6B>
           )}
         </DailySaleNumber>
@@ -180,8 +179,8 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
-            {/* {menuItem.tag.map((tag: string, index: number) => {
+            <TextH2B padding={'0 0 8px 0'}>{menuDetail.name}</TextH2B>
+            {/* {menuDetail.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
                 <Tag key={index} margin="0 4px 0 0">
@@ -189,10 +188,10 @@ const MenuDetailPage = ({ menuId }: any) => {
                 </Tag>
               );
             })} */}
-            {menuItem.tag && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
+            {menuDetail.tag && <Tag margin="0 4px 0 0">{menuDetail.tag}</Tag>}
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {menuItem.description}
+            {menuDetail.description}
           </TextB2R>
           <PriceAndCouponWrapper>
             <PriceWrapper>
@@ -410,29 +409,29 @@ const DailySaleNumber = styled.div`
   top: 0;
 `;
 
-/*TODO: 수정해야함 */
+export async function getStaticPaths() {
+  const params = {
+    menuSort: 'LAUNCHED_DESC',
+  };
 
-export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
-
-  // if (!menuId) {
-  //   return {
-  //     props: {
-  //       notFound: true,
-  //       redirect: {
-  //         destinaion: '/',
-  //       },
-  //     },
-  //   };
-  // }
+  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });
+  const paths = data.data.map((menu: any) => ({
+    params: { menuId: menu.id.toString() },
+  }));
 
   return {
-    props: { menuId },
+    paths,
+    fallback: false,
   };
 }
 
-// export async function getStaticPaths() {}
+export async function getStaticProps({ params }: { params: { menuId: string } }) {
+  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
 
-// export async function getStaticProps() {}
+  return {
+    props: { menuDetail: data.data },
+    revalidate: 100,
+  };
+}
 
 export default React.memo(MenuDetailPage);

@@ -24,11 +24,6 @@ const TabHeader = ({ title }: TProps) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const queryString = router.asPath;
-    setSelectedTab(queryString);
-  }, [router]);
-
   const goBack = (): void => {
     /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
     if (router.asPath === '/login/find-account/password' || router.asPath === '/login/find-account/email') {
@@ -40,18 +35,23 @@ const TabHeader = ({ title }: TProps) => {
 
   const clickTabHandler = useCallback(
     (tabItem: any) => {
-      setSelectedTab(tabItem.text);
+      setSelectedTab(tabItem.link);
       router.push(`${tabItem.link}`);
     },
     [router]
   );
 
+  useEffect(() => {
+    console.log(router.asPath, 'router.asPath');
+    setSelectedTab(router.asPath);
+  }, [router]);
+
   const mapper: Obj = {
-    '아이디/비밀번호 찾기': FIND_ACCOUNT,
+    '이메일/비밀번호 찾기': FIND_ACCOUNT,
     '찜 관리': DIB_MENU,
   };
 
-  const data = title && mapper[title];
+  const FIND_ACCOUNT_LIST = title && mapper[title];
 
   return (
     <Container>
@@ -61,7 +61,11 @@ const TabHeader = ({ title }: TProps) => {
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
       </Wrapper>
-      <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={data ? data : MENU_DETAIL_INFORMATION} />
+      <TabList
+        onClick={clickTabHandler}
+        selectedTab={selectedTab}
+        tabList={FIND_ACCOUNT_LIST ? FIND_ACCOUNT_LIST : MENU_DETAIL_INFORMATION}
+      />
     </Container>
   );
 };
