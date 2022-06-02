@@ -45,7 +45,7 @@ const SpotDetailBottom = () => {
       main: false,
       availableTime: pickUpTime,
       spaceType: spotDetail?.type,
-      spotPickupId: spotPickupId,
+      spotPickupId: spotPickupId!,
     };
 
     const goToCart = () => {
