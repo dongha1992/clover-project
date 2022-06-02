@@ -43,8 +43,8 @@ module.exports = () => {
     async rewrites() {
       return [
         {
-          source: `${process.env.SERVICE_URL}/_next/:path*`,
-          destination: '_next/:path*',
+          source: `/_next/:path*`,
+          destination: '/_next/:path*',
         },
       ];
     },
