@@ -62,7 +62,7 @@ const SubscriptiopPage = () => {
             <SubsList>
               {menus?.map(
                 (item, index) =>
-                  item.subscriptionDelivery === 'SPOT' && (
+                  item.subscriptionDeliveries?.includes('SPOT') && (
                     <SubsItem item={item} key={index} height="168px" width="298px" testType="SPOT" />
                   )
               )}
@@ -85,12 +85,15 @@ const SubscriptiopPage = () => {
             <SubsList>
               {menus?.map(
                 (item, index) =>
-                  ['PARCEL', 'MORNING'].includes(item.subscriptionDelivery as string) && (
+                  (item.subscriptionDeliveries?.includes('PARCEL') ||
+                    item.subscriptionDeliveries?.includes('MORNING')) && (
                     <SubsItem item={item} key={index} height="168px" width="298px" testType="PARCEL" />
                   )
               )}
-              {menus?.filter((item) => ['PARCEL', 'MORNING'].includes(item.subscriptionDelivery as string)).length ===
-                0 && <div>새벽/택배 구독 상품이 없습니다.</div>}
+              {menus?.filter(
+                (item) =>
+                  item.subscriptionDeliveries?.includes('PARCEL') || item.subscriptionDeliveries?.includes('MORNING')
+              ).length === 0 && <div>새벽/택배 구독 상품이 없습니다.</div>}
             </SubsList>
           </ScrollHorizonList>
         </ListBox>

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { SET_ORDER } from '@store/order';
 import { getFormatDate, SVGIcon } from '@utils/common';
 import { wrapper } from '@store/index';
@@ -20,17 +20,22 @@ import { SubsMenuSheet } from '@components/BottomSheet/SubsSheet';
 import SelectDateInfoBox from '@components/Pages/Subscription/register/SelectDateInfoBox';
 import { getFormatPrice } from '@utils/common';
 import { destinationForm } from '@store/destination';
+import { periodMapper } from '@constants/subscription';
+import { DELIVERY_TIME_MAP2, DELIVERY_TYPE_MAP } from '@constants/order';
+import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 
 interface IReceipt {
   menuPrice: number;
   menuDiscount: number;
   eventDiscount: number;
   menuOption1: {
+    id: number;
     name: string;
     price: number;
     quantity: number;
   };
   menuOption2: {
+    id: number;
     name: string;
     price: number;
     quantity: number;
@@ -39,6 +44,7 @@ interface IReceipt {
 }
 const SubsRegisterPage = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { subsOrderMenus, subsDeliveryExpectedDate, subsInfo } = useSelector(subscriptionForm);
   const { userDestination } = useSelector(destinationForm);
   const [toggleState, setToggleState] = useState(false);
@@ -49,16 +55,10 @@ const SubsRegisterPage = () => {
   const [selectCount, setSelectCount] = useState();
   const [allMenuPriceInfo, setAllMenuPriceInfo] = useState<IReceipt | null>();
   const [subsMonth, setSubsMonth] = useState<unknown[]>();
-  const mapper: Obj = {
-    ONE_WEEK: '1주',
-    TWO_WEEK: '2주',
-    THREE_WEEK: '3주',
-    FOUR_WEEK: '4주',
-    UNLIMITED: '정기구독',
-  };
+  const [orderDeliveries, setOrderDeliveries] = useState();
 
   useEffect(() => {
-    if (!subsDeliveryExpectedDate) {
+    if (!subsDeliveryExpectedDate && !subsOrderMenus && !subsInfo) {
       router.push('/subscription');
     }
   }, []);
@@ -83,86 +83,108 @@ const SubsRegisterPage = () => {
       menuDiscount: 0,
       eventDiscount: 0,
       menuOption1: {
-        name: '물티슈',
+        id: 1,
+        name: '',
         price: 0,
         quantity: 0,
       },
       menuOption2: {
-        name: '수저',
+        id: 2,
+        name: '',
         price: 0,
         quantity: 0,
       },
       deliveryPrice: 0,
     };
+    let orderDeliveries: any = [];
+
     subsOrderMenus?.map((data) => {
+      data.deliveryDate;
+      let menus: any = [];
+      let options: any = [];
+      let subsDayPrice = 0;
+
       data.menuTableItems
         .filter((item: any) => item.selected === true)
-        .map((item: any) => {
-          if (item.main) {
-            all.menuPrice = all.menuPrice + item.menuPrice;
-            all.menuDiscount = all.menuDiscount + item.menuDiscount;
-            all.eventDiscount = all.eventDiscount + item.eventDiscount;
-          } else {
-            all.menuPrice = all.menuPrice + item.menuPrice * item.count;
-            all.menuDiscount = all.menuDiscount + item.menuDiscount * item.count;
-            all.eventDiscount = all.eventDiscount + item.eventDiscount * item.count;
-          }
+        .forEach((item: any) => {
+          menus.push({
+            menuDetailId: item.menuDetailId,
+            menuQuantity: 1,
+          });
+          // 배송비 계산을 위한 변수
+          subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount - item.eventDiscount);
 
-          item.menuOptions.map((option: any) => {
-            if (option.name === '물티슈') {
+          all.menuPrice = all.menuPrice + item.menuPrice;
+          all.menuDiscount = all.menuDiscount + item.menuDiscount;
+          all.eventDiscount = all.eventDiscount + item.eventDiscount;
+
+          item.menuOptions.forEach((option: any) => {
+            if (option.id === 1) {
+              if (all.menuOption1.name === '') all.menuOption1.name = option.name;
+
+              if (disposable) {
+                options[0]
+                  ? (options[0].optionQuantity = options[0].optionQuantity + option.quantity)
+                  : (options[0] = {
+                      optionId: 1,
+                      optionQuantity: option.quantity,
+                    });
+                subsDayPrice = subsDayPrice + option.price;
+              }
               all.menuOption1.price = all.menuOption1.price + option.price;
               all.menuOption1.quantity = all.menuOption1.quantity + option.quantity;
-            } else if (option.name === '수저') {
+            } else if (option.id === 2) {
+              if (all.menuOption2.name === '') all.menuOption2.name = option.name;
+
+              if (disposable) {
+                options[1]
+                  ? (options[1].optionQuantity = options[1].optionQuantity + option.quantity)
+                  : (options[1] = {
+                      optionId: 2,
+                      optionQuantity: option.quantity,
+                    });
+                subsDayPrice = subsDayPrice + option.price;
+              }
               all.menuOption2.price = all.menuOption2.price + option.price;
               all.menuOption2.quantity = all.menuOption2.quantity + option.quantity;
             }
           });
-
-          all.menuPrice + all.menuOption1.price + all.menuOption2.price - all.menuDiscount - all.eventDiscount > 35000
-            ? (all.deliveryPrice = all.deliveryPrice + 0)
-            : (all.deliveryPrice = all.deliveryPrice + 3500);
         });
+
+      subsDayPrice > 35000
+        ? (all.deliveryPrice = all.deliveryPrice + 0)
+        : (all.deliveryPrice = all.deliveryPrice + 3500);
+
+      orderDeliveries.push({
+        deliveryDate: data.deliveryDate,
+        orderMenus: menus,
+        orderOptions: options,
+      });
     });
+
+    setOrderDeliveries(orderDeliveries);
     setAllMenuPriceInfo(all);
-  }, [subsOrderMenus]);
+  }, [subsOrderMenus, disposable]);
 
   const clickEvent = () => {
     setToggleState((prev) => !prev);
   };
 
   const onSubscribe = () => {
-    // TODO(young) : 임시
-    const reqBody = {
-      destinationId: 244,
-      delivery: 'PARCEL',
-      deliveryDetail: '',
+    const reqBody: any = {
+      delivery: subsInfo?.deliveryType!,
+      deliveryDetail: subsInfo?.deliveryType === 'SPOT' ? DELIVERY_TIME_MAP2[subsInfo?.deliveryTime!] : null,
+      destinationId: userDestination?.id,
       isSubOrderDelivery: false,
-      orderDeliveries: [
-        {
-          deliveryDate: '2022-04-16',
-          orderMenus: [
-            {
-              menuDetailId: 72,
-              menuQuantity: 1,
-            },
-            {
-              menuDetailId: 511,
-              menuQuantity: 1,
-            },
-          ],
-          orderOptions: [
-            {
-              optionId: 1,
-              optionQuantity: 1,
-            },
-          ],
-        },
-      ],
-      type: 'GENERAL',
+      orderDeliveries: orderDeliveries,
+      subscriptionMenuDetailId: subsInfo?.menuDetails![0].id,
+      subscriptionRound: 1,
+      subscriptionPeriod: subsInfo?.period,
+      type: 'SUBSCRIPTION',
     };
 
     dispatch(SET_ORDER(reqBody));
-    router.push('/order');
+    router.push({ pathname: '/order', query: { isSubscription: true } });
   };
 
   const goToEntireDiet = () => {
@@ -179,8 +201,8 @@ const SubsRegisterPage = () => {
               <div className="wrap">
                 {!toggleState && (
                   <TextB2R className="infoText">
-                    스팟배송 - {subsInfo?.deliveryTime} / {userDestination?.location?.address}{' '}
-                    {userDestination?.location?.addressDetail}
+                    {DELIVERY_TYPE_MAP[subsInfo?.deliveryType!]} - {subsInfo?.deliveryTime} /{' '}
+                    {userDestination?.location?.address} {userDestination?.location?.addressDetail}
                   </TextB2R>
                 )}
                 <div className={`svgBox ${toggleState ? 'down' : ''}`}>
@@ -193,7 +215,9 @@ const SubsRegisterPage = () => {
                 <ul>
                   <li>
                     <TextH5B>배송방법</TextH5B>
-                    <TextB2R>스팟배송 - {subsInfo?.deliveryTime}</TextB2R>
+                    <TextB2R>
+                      {DELIVERY_TYPE_MAP[subsInfo?.deliveryType!]} - {subsInfo?.deliveryTime}
+                    </TextB2R>
                   </li>
                   <li>
                     <TextH5B>픽업장소</TextH5B>
@@ -203,7 +227,7 @@ const SubsRegisterPage = () => {
                   </li>
                   <li>
                     <TextH5B>구독기간</TextH5B>
-                    <TextB2R>{subsInfo && mapper[subsInfo.period!]}</TextB2R>
+                    <TextB2R>{subsInfo && periodMapper[subsInfo.period!]}</TextB2R>
                   </li>
                   <li>
                     <TextH5B>구독 시작일</TextH5B>
@@ -229,7 +253,7 @@ const SubsRegisterPage = () => {
               </TextH6B>
             </div>
             <TextB2R color={theme.brandColor}>
-              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${mapper[subsInfo?.period!]}간`}, 주{' '}
+              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${periodMapper[subsInfo?.period!]}간`}, 주{' '}
               {subsInfo?.deliveryDay?.length}회씩 ({subsInfo?.deliveryDay?.join('·')}) 총 {subsOrderMenus?.length}회
               배송되는 식단입니다.
             </TextB2R>
@@ -279,130 +303,17 @@ const SubsRegisterPage = () => {
               </TextB2R>
             </FlexRow>
           </DisposableAddBox>
-
           {allMenuPriceInfo && (
-            <ReceiptBox>
-              <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
-                <TextH5B>총 상품금액</TextH5B>
-                <TextB2R>
-                  {disposable
-                    ? getFormatPrice(
-                        String(
-                          allMenuPriceInfo.menuPrice +
-                            allMenuPriceInfo.menuOption1.price +
-                            allMenuPriceInfo.menuOption2.price -
-                            allMenuPriceInfo.menuDiscount -
-                            allMenuPriceInfo.eventDiscount
-                        )
-                      )
-                    : getFormatPrice(
-                        String(
-                          allMenuPriceInfo.menuPrice - allMenuPriceInfo.menuDiscount - allMenuPriceInfo.eventDiscount
-                        )
-                      )}
-                  원
-                </TextB2R>
-              </FlexBetween>
-              <ReceiptUl>
-                <ReceiptLi>
-                  <TextB2R>총 할인금액</TextB2R>
-                  <TextB2R>
-                    -{getFormatPrice(String(allMenuPriceInfo.menuDiscount + allMenuPriceInfo.eventDiscount))}원
-                  </TextB2R>
-                </ReceiptLi>
-                <ReceiptLi>
-                  <FlexRow>
-                    <TextB2R>구독 할인</TextB2R>
-                    <SVGIcon name="questionMark" />
-                  </FlexRow>
-                  <TextB2R>
-                    {allMenuPriceInfo.menuDiscount ? `-${getFormatPrice(String(allMenuPriceInfo.menuDiscount))}` : 0}원
-                  </TextB2R>
-                </ReceiptLi>
-                <ReceiptLi>
-                  <TextB2R>스팟 이벤트 할인</TextB2R>
-                  <TextB2R>
-                    {allMenuPriceInfo.eventDiscount ? `-${getFormatPrice(String(allMenuPriceInfo.eventDiscount))}` : 0}
-                    원
-                  </TextB2R>
-                </ReceiptLi>
-              </ReceiptUl>
-              <ReceiptUl>
-                <ReceiptLi className="btB" padding="16px 0 0">
-                  <TextH5B>환경부담금 (일회용품)</TextH5B>
-                  <TextB2R>
-                    {disposable ? allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity! : 0}
-                    개 /{' '}
-                    {disposable
-                      ? getFormatPrice(
-                          String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!)
-                        )
-                      : 0}
-                    원
-                  </TextB2R>
-                </ReceiptLi>
-                {disposable && (
-                  <>
-                    <ReceiptLi>
-                      <TextB2R>{allMenuPriceInfo?.menuOption1.name}</TextB2R>
-                      <TextB2R>
-                        {disposable ? allMenuPriceInfo?.menuOption1.quantity : 0}개 /{' '}
-                        {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption1.price)) : 0}원
-                      </TextB2R>
-                    </ReceiptLi>
-                    <ReceiptLi>
-                      <TextB2R>{allMenuPriceInfo?.menuOption2.name}</TextB2R>
-                      <TextB2R>
-                        {disposable ? allMenuPriceInfo?.menuOption2.quantity : 0}개 /{' '}
-                        {disposable ? getFormatPrice(String(allMenuPriceInfo?.menuOption2.price)) : 0}원
-                      </TextB2R>
-                    </ReceiptLi>
-                  </>
-                )}
-              </ReceiptUl>
-              <FlexBetween padding="16px 0 0" margin="0 0 16px" className="btN">
-                <TextH5B>배송비</TextH5B>
-                <TextB2R>
-                  {subsOrderMenus?.length}회 /{' '}
-                  {allMenuPriceInfo.deliveryPrice === 0
-                    ? '무료배송'
-                    : `${getFormatPrice(String(allMenuPriceInfo.deliveryPrice))}원`}
-                </TextB2R>
-              </FlexBetween>
-              <FlexBetween padding="16px 0 0" margin="0 0 8px" className="btB">
-                <TextH4B>결제예정금액</TextH4B>
-                <TextH4B>
-                  {disposable
-                    ? getFormatPrice(
-                        String(
-                          allMenuPriceInfo.menuPrice +
-                            allMenuPriceInfo.menuOption1.price +
-                            allMenuPriceInfo.menuOption2.price +
-                            allMenuPriceInfo.deliveryPrice -
-                            allMenuPriceInfo.menuDiscount -
-                            allMenuPriceInfo.eventDiscount
-                        )
-                      )
-                    : getFormatPrice(
-                        String(
-                          allMenuPriceInfo.menuPrice +
-                            allMenuPriceInfo.deliveryPrice -
-                            allMenuPriceInfo.menuDiscount -
-                            allMenuPriceInfo.eventDiscount
-                        )
-                      )}
-                  원
-                </TextH4B>
-              </FlexBetween>
-              <FlexEnd>
-                <Badge>
-                  <TextH7B>프코회원</TextH7B>
-                </Badge>
-                <TextB3R>
-                  구매 시 <b>nP (n%) 적립 예정</b>
-                </TextB3R>
-              </FlexEnd>
-            </ReceiptBox>
+            <MenusPriceBox
+              disposable={disposable}
+              menuPrice={allMenuPriceInfo.menuPrice}
+              menuDiscount={allMenuPriceInfo.menuDiscount}
+              eventDiscount={allMenuPriceInfo.eventDiscount}
+              menuOption1={allMenuPriceInfo.menuOption1}
+              menuOption2={allMenuPriceInfo.menuOption2}
+              deliveryPrice={allMenuPriceInfo.deliveryPrice}
+              deliveryLength={subsOrderMenus?.length!}
+            />
           )}
           <BottomButton onClick={onSubscribe}>
             <TextH5B>구독하기</TextH5B>
@@ -532,34 +443,6 @@ export const MenuTextBox = styled.div`
   }
 `;
 
-export const ReceiptBox = styled.div`
-  padding: 24px;
-  background-color: ${theme.greyScale3};
-  .btB {
-    border-top: 1px solid #242424;
-  }
-  .btN {
-    border-top: 1px solid #ececec;
-  }
-  .bbN {
-    border-bottom: 1px solid #ececec;
-  }
-`;
-export const ReceiptUl = styled.ul`
-  padding-bottom: 16px;
-`;
-export const ReceiptLi = styled.li<{ padding?: string }>`
-  display: flex;
-  justify-content: space-between;
-  padding: ${(props) => props.padding && props.padding};
-  padding-bottom: 8px;
-  &:last-of-type {
-    padding-bottom: 0;
-  }
-  svg {
-    margin-bottom: 3px;
-  }
-`;
 const DisposableAddBox = styled.div`
   padding: 28px 24px;
   .title {

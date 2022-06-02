@@ -8,6 +8,7 @@ import { TimerTooltip } from '@components/Shared/Tooltip';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
+import { SET_SUBS_INFO_STATE } from '@store/subscription';
 
 const SubsBottom = () => {
   const dispatch = useDispatch();

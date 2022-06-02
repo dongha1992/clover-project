@@ -48,7 +48,7 @@ const Bottom = () => {
 };
 
 const Container = styled.div<{ isShow: React.ReactNode }>`
-  margin-top: ${({ isShow }) => (isShow ? 62 : 0)}px;
+  margin-top: ${({ isShow }) => (isShow ? 56 : 0)}px;
   display: ${({ isShow }) => (isShow ? '' : 'none')};
 `;
 export default React.memo(Bottom);

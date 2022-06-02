@@ -23,6 +23,7 @@ const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
             <FlexRow padding="0 0 8px 0">
               <TextH5B padding="0 4px 0 0">{card?.name || ''}</TextH5B>
               {card?.main ? <Tag>대표카드</Tag> : null}
+              {card?.isUsing && <Tag margin="0 0 0 4px">정기결제 중</Tag>}
             </FlexRow>
           </FlexCol>
         </FlexRowStart>
