@@ -309,7 +309,8 @@ const ProfilePage = () => {
   };
 
   const checkNameValid = () => {
-    if (!NAME_REGX.test(userInfo.name)) {
+    const lengthCheck = userInfo.name.length < 2 || userInfo.name.length > 20;
+    if (!NAME_REGX.test(userInfo.name) || lengthCheck) {
       setIsValidName(false);
     } else {
       setIsValidName(true);
