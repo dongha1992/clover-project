@@ -37,10 +37,6 @@ module.exports = () => {
       SERVICE_URL: process.env.SERVICE_URL,
       API_URL: process.env.API_URL,
     },
-    // generateBuildId: async () => 'constant-build-id',
-    // reactStrictMode: true,
-    // trailingSlash: true,
-    // assetPrefix: '/ssr',
     generateEtags: false,
     generateBuildId: () => nextBuildId({ dir: __dirname }),
   };

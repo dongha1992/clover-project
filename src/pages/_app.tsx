@@ -30,7 +30,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
-
 declare global {
   interface Window {
     Kakao: any;
@@ -53,11 +52,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
-
-  const path = (/#!(\/.*)$/.exec(router.asPath) || [])[1];
-  if (path) {
-    router.replace(path);
-  }
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({

@@ -285,7 +285,7 @@ const CartPage = () => {
   );
 
   const { isLoading, isError } = useQuery(
-    ['getCartList', selectedDeliveryDay],
+    ['getCartList'],
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
       /* TODO: 스팟아이디 넣어야함 */
