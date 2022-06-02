@@ -311,7 +311,7 @@ const SubsRegisterPage = () => {
               eventDiscount={allMenuPriceInfo.eventDiscount}
               menuOption1={allMenuPriceInfo.menuOption1}
               menuOption2={allMenuPriceInfo.menuOption2}
-              deliveryPrice={allMenuPriceInfo.deliveryPrice}
+              deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : allMenuPriceInfo.deliveryPrice}
               deliveryLength={subsOrderMenus?.length!}
             />
           )}
