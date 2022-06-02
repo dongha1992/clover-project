@@ -21,7 +21,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
-import { getCookie, getFormatDate } from '@utils/common';
+import { getCookie, getFormatDate, removeCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_IS_LOADING } from '@store/common';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
@@ -29,6 +29,9 @@ import { subscriptionForm } from '@store/subscription';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
+
+import { SET_ALERT } from '@store/alert';
+
 interface IProps {
   orderId: number;
   pgToken?: string;
@@ -76,6 +79,7 @@ const OrderFinishPage = () => {
   );
 
   const checkPg = async () => {
+    console.log(pgToken, orderId, pg, 'pgToken, orderId, pg');
     try {
       if (pg === 'kakao') {
         const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
@@ -85,18 +89,21 @@ const OrderFinishPage = () => {
           console.log(data, 'AFTER KAKAO PAY');
           if (data.code === 200) {
             setIsPaymentSuccess(true);
+            removeCookie({ name: 'kakao-tid-clover' });
           }
         } else {
           // 카카오 결제 에러
         }
       } else if (pg === 'toss') {
         const payToken = getCookie({ name: 'toss-tid-clover' });
+        console.log(payToken);
         if (payToken) {
           const reqBody = { payToken };
           const { data } = await postTossApproveApi({ orderId: Number(orderId), data: reqBody });
 
           if (data.code === 200) {
             setIsPaymentSuccess(true);
+            removeCookie({ name: 'toss-tid-clover' });
           }
         } else {
           // 토스 페이 에러
@@ -104,7 +111,10 @@ const OrderFinishPage = () => {
       } else {
         setIsPaymentSuccess(true);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 1206) {
+        dispatch(SET_ALERT({ alertMessage: '토스 결제 중 에러가 발생했습니다.', onSubmit: () => router.back() }));
+      }
       console.error(error);
     }
   };
@@ -281,12 +291,12 @@ const OrderFinishPage = () => {
 
   useEffect(() => {
     console.log(router.query.orderId, '(router.query.orderId in useEffect');
-    if (router.query.orderId) {
+    if (router.isReady) {
       checkPg();
     }
-  }, [router.query.orderId]);
+  }, [router.isReady]);
 
-  if (isLoading || !isPaymentSuccess) {
+  if (!orderDetail) {
     return <div>로딩중</div>;
   }
 
@@ -307,6 +317,7 @@ const OrderFinishPage = () => {
     optionQuantity,
     deliveryFee,
     orderDeliveries,
+    payAmount,
   } = orderDetail!;
 
   const { orderMenus, spotName, spotPickupName, location, deliveryDate, deliveryEndTime, deliveryStartTime } =
@@ -336,7 +347,7 @@ const OrderFinishPage = () => {
             <TextH2B color={theme.brandColor}>{isSubOrder ? '함께배송' : DELIVERY_TYPE_MAP[delivery]}</TextH2B>
           )}
 
-          {orderDetail ? (
+          {orderDetail && delivery === 'SPOT' ? (
             <TextH2B>{DELIVERY_TIME_MAP[deliveryDetail]}주문이 완료되었습니다.</TextH2B>
           ) : (
             <TextH2B>주문이 완료되었습니다.</TextH2B>
@@ -354,10 +365,10 @@ const OrderFinishPage = () => {
             <SubsOrderItem
               deliveryType={delivery}
               deliveryDetail={deliveryDetail}
-              subscriptionPeriod={'ONE_WEEK'}
+              subscriptionPeriod={subscriptionPeriod!}
               name={name}
               menuImage={subsInfo?.menuImage!}
-              price={getTotalPrice()}
+              price={menuAmount}
             />
           ) : (
             <FinishOrderItem menu={orderDetail} getTotalPrice={getTotalPrice} />
@@ -474,6 +485,17 @@ const SubsInfoWrapper = styled.div`
 // export async function getServerSideProps(context: any) {
 //   const { orderId } = context.query;
 //   console.log(context.query, 'context.query');
+
+//   if (orderId) {
+//     return {
+//       props: {
+//         notFound: true,
+//         redirect: {
+//           destinaion: '/',
+//         },
+//       },
+//     };
+//   }
 //   return {
 //     props: {
 //       orderId: +orderId,

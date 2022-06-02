@@ -8,12 +8,16 @@ import Validation from '@components/Pages/User/Validation';
 import { Button } from '@components/Shared/Button';
 import { userConfirmPassword } from '@api/user';
 import router from 'next/router';
+import { SET_ALERT } from '@store/alert';
+import { useDispatch } from 'react-redux';
 
 const PasswordConfirmPage = () => {
   const [isValid, setIsValid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useDispatch();
 
   const passwordInputHandler = () => {
     if (emailRef.current && passwordRef.current) {
@@ -36,13 +40,21 @@ const PasswordConfirmPage = () => {
       const password = passwordRef.current.value.toString();
       try {
         const { data } = await userConfirmPassword({ password });
-        console.log(data);
         if (data.code === 200) {
           router.push('/mypage/profile');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        if (error.code === 2109) {
+          dispatch(SET_ALERT({ alertMessage: '비밀번호가 일치하지 않습니다.' }));
+        }
       }
+    }
+  };
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      getConfirmPassword();
     }
   };
 
@@ -58,7 +70,7 @@ const PasswordConfirmPage = () => {
         <FlexCol>
           <FlexCol>
             <TextH5B>이메일</TextH5B>
-            <TextInput margin="9px 0 0 0" placeholder="이메일" ref={emailRef} />
+            <TextInput margin="9px 0 0 0" placeholder="이메일" ref={emailRef} keyPressHandler={handleKeyPress} />
           </FlexCol>
           <FlexCol padding="24px 0 0 0">
             <TextH5B>비밀번호</TextH5B>
@@ -68,6 +80,7 @@ const PasswordConfirmPage = () => {
               ref={passwordRef}
               eventHandler={passwordInputHandler}
               margin="9px 0 0 0"
+              keyPressHandler={handleKeyPress}
             />
           </FlexCol>
           {errorMessage && <Validation>{errorMessage}</Validation>}

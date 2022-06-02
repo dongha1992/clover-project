@@ -54,6 +54,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
 
+  const path = (/#!(\/.*)$/.exec(router.asPath) || [])[1];
+  if (path) {
+    router.replace(path);
+  }
+
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
       defaultOptions: {
@@ -111,10 +116,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     // temp
     dispatch(INIT_IMAGE_VIEWER());
   }, []);
-
-  useEffect(() => {
-    console.log(window.alert, 'testtestestt');
-  }, [payFormRef]);
 
   useEffect(() => {
     try {
@@ -175,7 +176,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
         <Script id="test">
           {`  // 결제 최종 요청시 실행됩니다. <<'nicepaySubmit()' 이름 수정 불가능>>
             const nicepaySubmit = () => {
-                document.getElementById('payForm').submit()
+                document.payForm.submit()
             }
 
             const nicepayClose = () => {

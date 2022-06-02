@@ -220,7 +220,13 @@ const SubsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod!} subsDeliveryType={subsDeliveryType} />,
+          content: (
+            <SubsCalendarSheet
+              userSelectPeriod={userSelectPeriod!}
+              subsDeliveryType={subsDeliveryType}
+              menuId={menuId!}
+            />
+          ),
         })
       );
     } else {
@@ -250,6 +256,7 @@ const SubsSetInfoPage = () => {
         period: userSelectPeriod,
         deliveryType: subsDeliveryType,
         menuId: menuId,
+        menuDetails: menuDetail.menuDetails,
         menuImage: menuDetail.thumbnail,
         datePeriod: [
           subsDeliveryExpectedDate[0].deliveryDate,

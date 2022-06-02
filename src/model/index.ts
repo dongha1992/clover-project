@@ -715,6 +715,7 @@ export interface IGetCard {
   name: string;
   main: boolean;
   createdAt: string;
+  isUsing: boolean;
 }
 export interface IGetCardResponse {
   code: number;
@@ -1619,7 +1620,7 @@ export interface IMenus {
   priority: string;
   closedAt: string;
   openedAt: string;
-  subscriptionDelivery?: string;
+  subscriptionDeliveries?: string[];
   subscriptionPeriods?: string;
 }
 
@@ -1967,6 +1968,15 @@ export interface ISubscribeInfo {
   startDate: string | null;
   deliveryDay: string[] | null;
   menuId: number | null;
+  menuDetails:
+    | {
+        id: number;
+        name: string;
+        price: number;
+        discountPrice: number;
+        main: boolean;
+      }[]
+    | null;
   menuImage: string | null;
   datePeriod: string[] | null;
 }

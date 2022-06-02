@@ -284,7 +284,7 @@ const SignupAuthPage = () => {
             <TextInput
               placeholder="이메일"
               eventHandler={emailInputHandler}
-              value={signupUser?.email ? signupUser?.email : ''}
+              value={signupUser?.email}
               onBlur={validEmailHandler}
             />
             {!emailValidation.isValid ? (

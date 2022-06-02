@@ -1,6 +1,7 @@
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { deliveryDetailMapper2, periodMapper } from '@constants/subscription';
+import { DELIVERY_TIME_MAP } from '@constants/order';
+import { periodMapper } from '@constants/subscription';
 import { FlexRow, FlexRowStart, theme } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
 import Image from 'next/image';
@@ -30,7 +31,7 @@ const SubsOrderItem = ({ deliveryType, deliveryDetail, subscriptionPeriod, name,
               {deliveryType === 'SPOT' && (
                 <>
                   <Label>스팟배송</Label>
-                  <Label>{deliveryDetailMapper2[deliveryDetail!]}</Label>
+                  <Label>{DELIVERY_TIME_MAP[deliveryDetail!]}</Label>
                 </>
               )}
               {deliveryType === 'PARCEL' && <Label className="parcel">택배배송</Label>}

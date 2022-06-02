@@ -2,6 +2,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const nextBuildId = require('next-build-id');
+
 // module.exports = {
 //   async rewrites() {
 //     return [
@@ -35,7 +37,11 @@ module.exports = () => {
       SERVICE_URL: process.env.SERVICE_URL,
       API_URL: process.env.API_URL,
     },
-    generateBuildId: async () => 'constant-build-id',
-    trailingSlash: true,
+    // generateBuildId: async () => 'constant-build-id',
+    // reactStrictMode: true,
+    // trailingSlash: true,
+    // assetPrefix: '/ssr',
+    generateEtags: false,
+    generateBuildId: () => nextBuildId({ dir: __dirname }),
   };
 };

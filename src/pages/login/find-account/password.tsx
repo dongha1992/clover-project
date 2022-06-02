@@ -9,6 +9,8 @@ import { EMAIL_REGX } from '@pages/signup/email-password';
 import Validation from '@components/Pages/User/Validation';
 import { userHelpPassword } from '@api/user';
 import router from 'next/router';
+import { SET_ALERT } from '@store/alert';
+import { useDispatch } from 'react-redux';
 
 const FindPasswordPage = () => {
   const [phoneValid, setPhoneValid] = useState({
@@ -22,6 +24,8 @@ const FindPasswordPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useDispatch();
 
   const emailInputHandler = () => {
     if (emailRef.current) {
@@ -59,11 +63,21 @@ const FindPasswordPage = () => {
       try {
         const { data } = await userHelpPassword({ tel, email });
         if (data.code === 200) {
-          router.push('/login');
+          dispatch(
+            SET_ALERT({
+              alertMessage: '입력하신 휴대폰 번호로 임시비밀번호를 보냈어요.',
+            })
+          );
         }
       } catch (error) {
         console.error(error);
       }
+    }
+  };
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      getHelpPassword();
     }
   };
 
@@ -77,12 +91,15 @@ const FindPasswordPage = () => {
           placeholder="이메일 입력"
           ref={emailRef}
           eventHandler={emailInputHandler}
+          keyPressHandler={handleKeyPress}
         />
         <TextInput
+          inputType="number"
           placeholder="휴대폰 번호 입력 (-제외)"
           margin="8px 0 0 0"
           ref={phoneRef}
           eventHandler={phoneInputHandler}
+          keyPressHandler={handleKeyPress}
         />
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </InputWrapper>
