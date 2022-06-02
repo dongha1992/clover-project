@@ -134,9 +134,9 @@ const DestinationDetailPage = () => {
     getLonLanForMap();
   }, []);
 
-  useEffect(() => {
-    if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
-  }, []);
+  // useEffect(() => {
+  //   if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
+  // }, []);
 
   useEffect(() => {
     /* TODO: 리팩토링 필요 */
