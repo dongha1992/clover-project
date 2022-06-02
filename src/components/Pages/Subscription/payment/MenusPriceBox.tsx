@@ -20,6 +20,7 @@ interface IProps {
   deliveryPrice: number;
   deliveryLength: number;
   point?: number;
+  type?: string | 'progress' | 'last';
 }
 
 const MenusPriceBox = ({
@@ -32,17 +33,13 @@ const MenusPriceBox = ({
   deliveryPrice,
   deliveryLength,
   point,
+  type,
 }: IProps) => {
   return (
     <MenuPriceContainer>
       <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
         <TextH5B>총 상품금액</TextH5B>
-        <TextB2R>
-          {disposable
-            ? getFormatPrice(String(menuPrice + menuOption1?.price + menuOption2?.price - menuDiscount - eventDiscount))
-            : getFormatPrice(String(menuPrice - menuDiscount - eventDiscount))}
-          원
-        </TextB2R>
+        <TextB2R>{getFormatPrice(String(menuPrice))}원</TextB2R>
       </FlexBetween>
       <MenuPriceUl>
         <MenuPriceLi>
@@ -105,7 +102,7 @@ const MenusPriceBox = ({
         </FlexBetween>
       )}
       <FlexBetween padding="16px 0 0" margin="0 0 8px" className="btB">
-        <TextH4B>결제예정금액</TextH4B>
+        <TextH4B>{type === 'last' ? '최종 결제금액' : '결제예정금액'}</TextH4B>
         <TextH4B>
           {disposable
             ? getFormatPrice(

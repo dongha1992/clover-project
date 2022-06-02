@@ -1362,6 +1362,7 @@ const OrderPage = () => {
           deliveryPrice={deliveryFee!}
           deliveryLength={13}
           point={userInputObj.point}
+          type={'last'}
         />
       )}
       <OrderTermWrapper>
