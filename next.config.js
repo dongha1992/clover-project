@@ -39,14 +39,5 @@ module.exports = () => {
     },
     generateEtags: false,
     generateBuildId: () => nextBuildId({ dir: __dirname }),
-    assetPrefix: process.env.SERVICE_URL,
-    async rewrites() {
-      return [
-        {
-          source: `/_next/:path*`,
-          destination: '/_next/:path*',
-        },
-      ];
-    },
   };
 };
