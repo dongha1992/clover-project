@@ -390,6 +390,7 @@ export interface IDestinationsResponse {
   main?: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
+  spotPickupId?: number;
   spaceType?: string;
   availableTime?: string;
   closedDate?: string;
