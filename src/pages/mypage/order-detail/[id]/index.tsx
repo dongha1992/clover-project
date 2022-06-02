@@ -49,10 +49,9 @@ const OrderDetailPage = () => {
   const queryClient = useQueryClient();
 
   const { data: orderDetail, isLoading } = useQuery(
-    'getOrderDetail',
+    ['getOrderDetail', orderId],
     async () => {
       const { data } = await getOrderDetailApi(orderId!);
-
       return data?.data;
     },
     {
@@ -271,7 +270,7 @@ const OrderDetailPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      setOrderId(Number(router.query?.orderId));
+      setOrderId(Number(router.query?.id));
     }
   }, [router.isReady]);
 
