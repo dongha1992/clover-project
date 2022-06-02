@@ -41,7 +41,15 @@ import {
 } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder, IGetNicePayment } from '@model/index';
+import {
+  Obj,
+  IGetCard,
+  ILocation,
+  ICoupon,
+  ICreateOrder,
+  IGetNicePayment,
+  IGetNicePaymentResponse,
+} from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
@@ -100,7 +108,7 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 
-const ngorkUrl = 'https://4e51-1-228-1-158.jp.ngrok.io';
+const ngorkUrl = 'https://f957-221-147-44-88.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -134,7 +142,7 @@ const OrderPage = () => {
   const auth = getCookie({ name: 'refreshTokenObj' });
 
   const dispatch = useDispatch();
-  const { userAccessMethod, isLoading } = useSelector(commonSelector);
+  const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
@@ -510,6 +518,11 @@ const OrderPage = () => {
     window.goPay(document.getElementById('payForm'));
   };
 
+  const nicepayMobileStart = () => {
+    // console.log(document.getElementById('payFormMobile'));
+    document?.getElementById('payFormMobile')?.submit()! as HTMLFormElement;
+  };
+
   const processOrder = async (data: ICreateOrder) => {
     switch (selectedOrderMethod) {
       case 'NICE_BILLING': {
@@ -566,43 +579,64 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      payMethod: selectedOrderMethod,
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
-
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}/order`,
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
 
+    const reqBody = {
+      payMethod: selectedOrderMethod,
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${ngorkUrl}/order`,
+    };
+
     try {
-      const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
-
-      let payForm: any = document.getElementById('payForm');
-
+      const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
+      console.log(data, '@@');
+      let payForm = document.getElementById('payForm')! as HTMLFormElement;
       payForm!.innerHTML = '';
       payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
-      for (let formName in data.data) {
-        let inputHidden = document.createElement('input');
+      let payFormMobile = document.getElementById('payFormMobile')! as HTMLFormElement;
+      payFormMobile.innerHTML = '';
+
+      const response: Obj = data.data;
+
+      for (let formName in response) {
+        let inputHidden: HTMLInputElement = document.createElement('input');
         inputHidden.setAttribute('type', 'hidden');
         inputHidden.setAttribute('name', formName);
-        if (formName == 'TrKey') {
+        if (formName === 'TrKey') {
           inputHidden.setAttribute('value', ' ');
         } else {
-          inputHidden.setAttribute('value', data.data[formName]);
+          inputHidden.setAttribute('value', response[formName]);
         }
 
-        payForm.appendChild(inputHidden);
+        if (isMobile) {
+          if (!(formName === 'EncodeParameters' && formName === 'SocketYN' && formName === 'UserIP')) {
+            payFormMobile.appendChild(inputHidden);
+          } else {
+            payForm.appendChild(inputHidden);
+          }
+        }
       }
 
-      nicepayStart();
-      handleScrollNicePayModal();
+      if (isMobile) {
+        let acsNoIframeInput = document.createElement('input');
+        acsNoIframeInput.setAttribute('type', 'hidden');
+        acsNoIframeInput.setAttribute('name', 'AcsNoIframe');
+        acsNoIframeInput.setAttribute('value', 'Y'); // 변경 불가
+        payFormMobile.appendChild(acsNoIframeInput);
+        nicepayMobileStart();
+        return;
+      } else {
+        nicepayStart();
+        handleScrollNicePayModal();
+        return;
+      }
     } catch (error: any) {
-      alert(error.message);
+      dispatch(SET_ALERT({ alertMessage: error.message }));
       dispatch(SET_IS_LOADING(false));
     }
   };
@@ -663,8 +697,11 @@ const OrderPage = () => {
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
-
-      window.location.href = data.data.next_redirect_pc_url;
+      if (isMobile) {
+        window.location.href = data.data.next_redirect_pc_url;
+      } else {
+        window.location.href = data.data.next_redirect_mobile_url;
+      }
     } catch (error: any) {
       alert(error.message);
       dispatch(SET_IS_LOADING(false));
