@@ -72,6 +72,7 @@ declare global {
     goPay: any;
   }
 }
+
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -121,7 +122,6 @@ export interface IAccessMethod {
 }
 
 const OrderPage = () => {
-  const dispatch = useDispatch();
   const { subsOrderMenus, subsInfo } = useSelector(subscriptionForm);
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
@@ -592,8 +592,8 @@ const OrderPage = () => {
   };
 
   const nicepayMobileStart = () => {
-    // console.log(document.getElementById('payFormMobile'));
-    document?.getElementById('payFormMobile')?.submit()! as HTMLFormElement;
+    const nicepayMobile: any = document.getElementById('payFormMobile');
+    nicepayMobile?.submit();
   };
 
   const processOrder = async (data: ICreateOrder) => {
@@ -652,17 +652,17 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   payMethod: selectedOrderMethod,
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
-
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${ngorkUrl}/order`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
+
+    // const reqBody = {
+    //   payMethod: selectedOrderMethod,
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${ngorkUrl}/order`,
+    // };
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
@@ -671,7 +671,7 @@ const OrderPage = () => {
       payForm!.innerHTML = '';
       payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
-      let payFormMobile = document.getElementById('payFormMobile')! as HTMLFormElement;
+      let payFormMobile: any = document.getElementById('payFormMobile')!;
       payFormMobile.innerHTML = '';
 
       const response: Obj = data.data;
@@ -687,7 +687,7 @@ const OrderPage = () => {
         }
 
         if (isMobile) {
-          if (!(formName === 'EncodeParameters' && formName === 'SocketYN' && formName === 'UserIP')) {
+          if (!['EncodeParameters', 'SocketYN', 'UserIP'].includes(formName)) {
             payFormMobile.appendChild(inputHidden);
           }
         } else {
@@ -738,7 +738,7 @@ const OrderPage = () => {
       window.location.href = data.data.result.orderSheetUrl;
       dispatch(SET_IS_LOADING(false));
     } catch (error: any) {
-      alert(error.message);
+      dispatch(SET_ALERT({ alertMessage: error.message }));
       dispatch(SET_IS_LOADING(false));
     }
   };
@@ -747,19 +747,19 @@ const OrderPage = () => {
 
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    const reqBody = {
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    // };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `${ngorkUrl}${router.asPath}`,
+      failureUrl: `${ngorkUrl}${router.asPath}`,
+    };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -776,7 +776,12 @@ const OrderPage = () => {
         window.location.href = data.data.next_redirect_mobile_url;
       }
     } catch (error: any) {
-      alert(error.message);
+      if (error.code === 1207) {
+        dispatch(SET_ALERT({ alertMessage: '잘못된 카카오페이 URL입니다.' }));
+      } else {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      }
+
       dispatch(SET_IS_LOADING(false));
     }
   };
@@ -808,7 +813,10 @@ const OrderPage = () => {
 
   const paymentHandler = () => {
     if (isLoading) return;
-    if (!checkTermList.privacy) return;
+    if (!checkTermList.privacy) {
+      dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
+      return;
+    }
     if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) return;
 
     if (previewOrder?.order.delivery === 'MORNING') {

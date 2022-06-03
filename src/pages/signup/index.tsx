@@ -110,11 +110,12 @@ const SignupPage = () => {
         <FlexCol>
           <FlexRow>
             <Checkbox onChange={allCheckMarketingTermHandler} isSelected={isAllMarketinngChecked} />
-            <TextB2R {...textPaddingStyle}>[선택] 마케팅 알림 수신에 동의합니다.</TextB2R>
+            <TextB2R {...textPaddingStyle}>[선택] 마케팅 정보 수신에 동의합니다.</TextB2R>
           </FlexRow>
           <PaddingWrapper>
             <TextB3R color={theme.brandColor} padding="8px 0 16px 0">
-              푸시 알림, 이메일, SMS 수신 등 모두 동의시 2,000원 할인 쿠폰 지급! (1인 최대 1회 지급)
+              마케팅 정보 수신 동의 시 2,000원 할인 쿠폰 지급!
+              <br /> (1인 최대 1회 지급)
             </TextB3R>
             <FlexRow>
               <FlexRow>

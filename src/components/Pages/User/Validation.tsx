@@ -7,7 +7,7 @@ interface IProps {
 }
 const Validation = ({ children }: IProps) => {
   return (
-    <TextB3R padding="2px 0 0 16px" color={theme.systemRed}>
+    <TextB3R padding="4px 0 4px 16px" color={theme.systemRed}>
       {children}
     </TextB3R>
   );

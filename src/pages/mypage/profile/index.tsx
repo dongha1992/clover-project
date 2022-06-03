@@ -70,8 +70,8 @@ const ProfilePage = () => {
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
 
-  // let authTimerRef = useRef(300);
-  let authTimerRef = useRef(5);
+  let authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
 
   const dispatch = useDispatch();
 
@@ -104,6 +104,11 @@ const ProfilePage = () => {
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     localStorage.removeItem('persist:nextjs');
+    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+      console.log('LOGOUT KAKAKAKAKO');
+      window.Kakao.Auth.logout();
+      // window.Kakao.cleanup();
+    }
 
     router.push('/mypage');
   };
@@ -401,7 +406,7 @@ const ProfilePage = () => {
             {!emailValidation.isValid ? (
               <Validation>{emailValidation.message}</Validation>
             ) : (
-              <SVGIcon name="confirmCheck" />
+              <>{!isNotEmail && <SVGIcon name="confirmCheck" />}</>
             )}
           </NameInputWrapper>
           {!isNotEmail && (

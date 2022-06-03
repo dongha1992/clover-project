@@ -271,10 +271,10 @@ const SignupAuthPage = () => {
             eventHandler={nameInputHandler}
             value={signUpInfo?.name ? signUpInfo?.name : ''}
           />
-          {(nameValidation || signUpInfo?.name) && <SVGIcon name="confirmCheck" />}
+          {nameValidation && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
         {signUpInfo?.name?.length! > 0 && !nameValidation && (
-          <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+          <Validation>2~20자 이내 / 한글, 영문만 입력 가능해요.</Validation>
         )}
         <PhoneNumberInputWrapper>
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
@@ -290,11 +290,9 @@ const SignupAuthPage = () => {
             </Button>
             {phoneValidation && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>
-          <TelHelper>
-            {!phoneValidation && signUpInfo?.tel?.length! > 0 && (
-              <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
-            )}
-          </TelHelper>
+          {!phoneValidation && signUpInfo?.tel?.length! > 0 && (
+            <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+          )}
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
@@ -375,7 +373,7 @@ const AuthenficationWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 8px;
+
   > svg {
     position: absolute;
     right: 30%;
@@ -387,6 +385,7 @@ const ConfirmWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  margin-top: 8px;
   > svg {
     position: absolute;
     right: 30%;
@@ -403,9 +402,7 @@ const TimerWrapper = styled.div`
   left: 60%;
 `;
 
-const TelHelper = styled.div`
-  margin-bottom: 6px;
-`;
+const TelHelper = styled.div``;
 
 const EmailInputWrapper = styled.div`
   position: relative;
