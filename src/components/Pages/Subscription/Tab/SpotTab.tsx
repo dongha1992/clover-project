@@ -20,7 +20,8 @@ const SpotTab = () => {
   return (
     <SpotBox>
       {menus?.map(
-        (item, index) => item.subscriptionDelivery === 'SPOT' && <SubsItem item={item} key={index} height="50.7937vw" />
+        (item, index) =>
+          item.subscriptionDeliveries?.includes('SPOT') && <SubsItem item={item} key={index} height="50.7937vw" />
       )}
     </SpotBox>
   );

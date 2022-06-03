@@ -34,10 +34,10 @@ export interface IDestinationAddress {
 const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { subsStartDate, subsInfo } = useSelector(subscriptionForm);
+  const { subsStartDate, subsInfo, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>();
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string | string[]>();
   const [menuId, setMenuId] = useState<number>();
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period && subsInfo.period);
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
@@ -50,7 +50,7 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      if (!router.query?.menuId || !router.query.subsDeliveryType) {
+      if (!router.query.menuId || !router.query.subsDeliveryType) {
         router.push('/subscription');
       }
       // setSubsDeliveryType('PARCEL');
@@ -220,7 +220,13 @@ const SubsSetInfoPage = () => {
     if (userDestination) {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsCalendarSheet userSelectPeriod={userSelectPeriod!} subsDeliveryType={subsDeliveryType} />,
+          content: (
+            <SubsCalendarSheet
+              userSelectPeriod={userSelectPeriod!}
+              subsDeliveryType={subsDeliveryType}
+              menuId={menuId!}
+            />
+          ),
         })
       );
     } else {
@@ -244,7 +250,20 @@ const SubsSetInfoPage = () => {
 
   const goToRegisterCheck = () => {
     router.push('/subscription/register');
-    dispatch(SET_SUBS_INFO_STATE({ period: userSelectPeriod, deliveryType: subsDeliveryType }));
+
+    dispatch(
+      SET_SUBS_INFO_STATE({
+        period: userSelectPeriod,
+        deliveryType: subsDeliveryType,
+        menuId: menuId,
+        menuDetails: menuDetail.menuDetails,
+        menuImage: menuDetail.thumbnail,
+        datePeriod: [
+          subsDeliveryExpectedDate[0].deliveryDate,
+          subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate,
+        ],
+      })
+    );
   };
 
   const goToDeliveryInfo = () => {

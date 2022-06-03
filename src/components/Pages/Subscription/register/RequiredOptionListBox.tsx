@@ -18,10 +18,10 @@ interface IProps {
 
 const RequiredOptionListBox = ({ list }: IProps) => {
   const dispatch = useDispatch();
-  const mainMenuChangeHandler = () => {
+  const mainMenuChangeHandler = (id: number) => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsMenuSheet type="required" buttonType="change" />,
+        content: <SubsMenuSheet type="required" buttonType="change" selectId={id} />,
       })
     );
   };
@@ -52,7 +52,12 @@ const RequiredOptionListBox = ({ list }: IProps) => {
                     <TextH5B>{getFormatPrice(String(item.menuPrice))}원</TextH5B>
                     <div className="line"></div>
                     <TextB2R>1개</TextB2R>
-                    <button className="changeBtn" onClick={mainMenuChangeHandler}>
+                    <button
+                      className="changeBtn"
+                      onClick={() => {
+                        mainMenuChangeHandler(item.id);
+                      }}
+                    >
                       변경
                     </button>
                   </div>
