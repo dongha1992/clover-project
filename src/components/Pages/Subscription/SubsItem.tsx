@@ -41,7 +41,8 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
   }, [subscriptionPeriods, tagList]);
 
   const goToDetail = () => {
-    router.push(`/subscription/products/${id}?subsDeliveryType=${subscriptionDeliveries[0]}`);
+    router.push(`/menu/${id}`);
+    // router.push(`/subscription/products/${id}?subsDeliveryType=${subscriptionDeliveries[0]}`);
   };
   return (
     <ItemBox onClick={goToDetail} width={width}>
@@ -52,9 +53,6 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
           width={'100%'}
           height={'100%'}
           layout="responsive"
-          // layout="fill"
-          // objectFit="cover"
-          // objectPosition="center"
         />
 
         <LabelArea>
