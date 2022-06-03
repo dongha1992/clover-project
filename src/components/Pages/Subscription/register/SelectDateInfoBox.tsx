@@ -39,7 +39,7 @@ interface IReceipt {
 
 const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
   const dispatch = useDispatch();
-  const { subsCalendarSelectMenu, subsOrderMenus } = useSelector(subscriptionForm);
+  const { subsCalendarSelectMenu, subsOrderMenus, subsInfo } = useSelector(subscriptionForm);
   const [receiptInfo, setReceiptInfo] = useState<IReceipt | null>();
 
   useEffect(() => {
@@ -134,7 +134,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           eventDiscount={receiptInfo.eventDiscount}
           menuOption1={receiptInfo.menuOption1}
           menuOption2={receiptInfo.menuOption2}
-          deliveryPrice={receiptInfo.deliveryPrice}
+          deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : receiptInfo.deliveryPrice}
         />
       )}
     </Container>
