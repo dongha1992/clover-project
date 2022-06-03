@@ -1,6 +1,7 @@
 import Badge from '@components/Item/Badge';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { DELIVERY_TYPE_MAP } from '@constants/order';
 import { FlexWrapWrapper, theme } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import { getMenuDisplayPrice } from '@utils/menu';
@@ -27,18 +28,21 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
     liked,
     likeCount,
     subscriptionPeriods,
-    subscriptionDelivery,
+    subscriptionDeliveries,
   } = item;
   const { discountedPrice } = getMenuDisplayPrice(menuDetails);
 
   useEffect(() => {
+    // TODO(young): 단기구독전용, 쿠폰 등이 태그로 들어가는데 현재 쿠폰태그가 추가될지 모르는 상황 추후 배열로 처리할지 string으로 처리할지 수정필요
+
     if (!subscriptionPeriods.includes('UNLIMITED') && !tagList?.includes('단기구독전용')) {
       setTagList([...tagList, '단기구독전용']);
     }
   }, [subscriptionPeriods, tagList]);
 
   const goToDetail = () => {
-    router.push(`/subscription/products/${id}?subsDeliveryType=${subscriptionDelivery}`);
+    router.push(`/menu/${id}`);
+    // router.push(`/subscription/products/${id}?subsDeliveryType=${subscriptionDeliveries[0]}`);
   };
   return (
     <ItemBox onClick={goToDetail} width={width}>
@@ -49,22 +53,17 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
           width={'100%'}
           height={'100%'}
           layout="responsive"
-          // layout="fill"
-          // objectFit="cover"
-          // objectPosition="center"
         />
 
         <LabelArea>
           {badgeMessage && <Badge message={badgeMessage} />}
 
           <TagBox className={`${badgeMessage ? 'marginL8' : 'marginL16'}`}>
-            {subscriptionDelivery === 'SPOT' && <Label>스팟배송</Label>}
-            {['PARCEL', 'MORNING'].includes(subscriptionDelivery) && (
-              <>
-                <Label className="dawn">새벽배송</Label>
-                <Label className="parcel">택배배송</Label>
-              </>
-            )}
+            {subscriptionDeliveries.map((item: string, index: number) => (
+              <Label className={item} key={index}>
+                {DELIVERY_TYPE_MAP[item]}
+              </Label>
+            ))}
             {tagList && tagList?.map((tag: string, index: number) => <Tag key={index}>{tag}</Tag>)}
           </TagBox>
         </LabelArea>

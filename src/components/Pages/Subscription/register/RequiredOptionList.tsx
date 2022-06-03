@@ -10,14 +10,18 @@ import styled from 'styled-components';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import MenuItem from './MenuItem';
 
-const RequiredOptionList = () => {
+interface IProps {
+  selectId: number;
+}
+
+const RequiredOptionList = ({ selectId }: IProps) => {
   const dispatch = useDispatch();
   const { subsOrderMenus, subsCalendarSelectMenu, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
 
   const menuSelectHandler = (id: number) => {
     const selectMenu = cloneDeep(subsCalendarSelectMenu);
     const orderMenus = cloneDeep(subsOrderMenus);
-    const menuChangeDate = cloneDeep(subsDeliveryExpectedDate);
+
     console.log('필수메뉴 체인지', selectMenu, orderMenus);
 
     selectMenu?.menuTableItems.map((item) => {
@@ -25,7 +29,7 @@ const RequiredOptionList = () => {
         item.selected = true;
         item.changed = true;
       } else {
-        if (item.main) item.selected = false;
+        if (item.main && selectId === item.id) item.selected = false;
       }
       return item;
     });

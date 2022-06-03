@@ -1,3 +1,5 @@
+import { Obj } from '@model/index';
+
 export const SUBSCRIPTION_PERIOD = [
   {
     id: 1,
@@ -38,3 +40,11 @@ export const SUBSCRIBE_TIME_SELECT = [
     text: '(8시까지 주문 시 17시 전 도착)',
   },
 ];
+
+export const periodMapper: Obj = {
+  ONE_WEEK: '1주',
+  TWO_WEEK: '2주',
+  THREE_WEEK: '3주',
+  FOUR_WEEK: '4주',
+  UNLIMITED: '정기구독',
+};

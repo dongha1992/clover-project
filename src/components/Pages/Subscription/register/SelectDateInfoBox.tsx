@@ -1,17 +1,14 @@
 import { SubsMenuSheet } from '@components/BottomSheet/SubsSheet';
 import { Button } from '@components/Shared/Button';
-import { TextB1R, TextB2R, TextH4B, TextH5B } from '@components/Shared/Text';
-import { IMenuTable } from '@model/index';
-import { ReceiptBox, ReceiptLi, ReceiptUl } from '@pages/subscription/register';
+import { TextB1R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
-import { FlexBetween, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
 import { getFormatDate } from '@utils/common';
-import { getFormatPrice } from '@utils/common';
-import { cloneDeep } from 'lodash-es';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import MenuPriceBox from '../payment/MenuPriceBox';
 import RequiredOptionListBox from './RequiredOptionListBox';
 import SelectOptionListBox from './SelectOptionListBox';
 
@@ -26,11 +23,13 @@ interface IReceipt {
   menuDiscount: number;
   eventDiscount: number;
   menuOption1: {
+    id: number;
     name: string;
     price: number;
     quantity: number;
   };
   menuOption2: {
+    id: number;
     name: string;
     price: number;
     quantity: number;
@@ -40,7 +39,7 @@ interface IReceipt {
 
 const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
   const dispatch = useDispatch();
-  const { subsCalendarSelectMenu, subsOrderMenus } = useSelector(subscriptionForm);
+  const { subsCalendarSelectMenu, subsOrderMenus, subsInfo } = useSelector(subscriptionForm);
   const [receiptInfo, setReceiptInfo] = useState<IReceipt | null>();
 
   useEffect(() => {
@@ -49,12 +48,14 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
       menuDiscount: 0,
       eventDiscount: 0,
       menuOption1: {
-        name: '물티슈',
+        id: 1,
+        name: '',
         price: 0,
         quantity: 0,
       },
       menuOption2: {
-        name: '수저',
+        id: 2,
+        name: '',
         price: 0,
         quantity: 0,
       },
@@ -62,7 +63,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
     };
     subsCalendarSelectMenu?.menuTableItems
       .filter((item) => item.selected === true)
-      .map((item) => {
+      .forEach((item) => {
         if (item.main) {
           data.menuPrice = data.menuPrice + item.menuPrice;
           data.menuDiscount = data.menuDiscount + item.menuDiscount;
@@ -73,11 +74,15 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           data.eventDiscount = data.eventDiscount + item.eventDiscount * item.count!;
         }
 
-        item.menuOptions.map((option) => {
-          if (option.name === '물티슈') {
+        item.menuOptions.forEach((option) => {
+          if (option.id === 1) {
+            if (data.menuOption1.name === '') data.menuOption1.name = option.name;
+
             data.menuOption1.price = data.menuOption1.price + option.price;
             data.menuOption1.quantity = data.menuOption1.quantity + option.quantity;
-          } else if (option.name === '수저') {
+          } else if (option.id === 2) {
+            if (data.menuOption2.name === '') data.menuOption2.name = option.name;
+
             data.menuOption2.price = data.menuOption2.price + option.price;
             data.menuOption2.quantity = data.menuOption2.quantity + option.quantity;
           }
@@ -97,6 +102,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
       })
     );
   };
+
   return (
     <Container>
       <OptionBox>
@@ -120,73 +126,16 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           + 선택옵션 추가하기
         </Button>
       </OptionBox>
-
       {receiptInfo && (
-        <ReceiptBox>
-          <ReceiptUl>
-            <ReceiptLi>
-              <TextB2R>상품금액</TextB2R>
-              <TextB2R>{getFormatPrice(String(receiptInfo.menuPrice))}원</TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>구독 할인</TextB2R>
-              <TextB2R>
-                {receiptInfo.menuDiscount ? `-${getFormatPrice(String(receiptInfo.menuDiscount))}` : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
-              <TextB2R>스팟 이벤트 할인</TextB2R>
-              <TextB2R>
-                {receiptInfo.eventDiscount ? `-${getFormatPrice(String(receiptInfo.eventDiscount))}` : 0}원
-              </TextB2R>
-            </ReceiptLi>
-            {disposable && (
-              <>
-                <ReceiptLi>
-                  <TextB2R>물티슈</TextB2R>
-                  <TextB2R>
-                    {receiptInfo.menuOption1.quantity}개 / {getFormatPrice(String(receiptInfo.menuOption1.price))}원
-                  </TextB2R>
-                </ReceiptLi>
-                <ReceiptLi>
-                  <TextB2R>수저</TextB2R>
-                  <TextB2R>
-                    {receiptInfo.menuOption2.quantity}개 / {getFormatPrice(String(receiptInfo.menuOption2.price))}원
-                  </TextB2R>
-                </ReceiptLi>
-              </>
-            )}
-            <ReceiptLi>
-              <TextB2R>배송비</TextB2R>
-              <TextB2R>{receiptInfo.deliveryPrice === 0 ? '무료배송' : '3,500'}</TextB2R>
-            </ReceiptLi>
-          </ReceiptUl>
-          <FlexBetween padding="16px 0 0" className="btB">
-            <TextH4B>배송 상품 금액</TextH4B>
-            <TextH4B>
-              {disposable
-                ? getFormatPrice(
-                    String(
-                      receiptInfo.menuPrice +
-                        receiptInfo.menuOption1.price +
-                        receiptInfo.menuOption2.price +
-                        receiptInfo.deliveryPrice -
-                        receiptInfo.menuDiscount -
-                        receiptInfo.eventDiscount
-                    )
-                  )
-                : getFormatPrice(
-                    String(
-                      receiptInfo.menuPrice +
-                        receiptInfo.deliveryPrice -
-                        receiptInfo.menuDiscount -
-                        receiptInfo.eventDiscount
-                    )
-                  )}
-              원
-            </TextH4B>
-          </FlexBetween>
-        </ReceiptBox>
+        <MenuPriceBox
+          disposable={disposable}
+          menuPrice={receiptInfo.menuPrice}
+          menuDiscount={receiptInfo.menuDiscount}
+          eventDiscount={receiptInfo.eventDiscount}
+          menuOption1={receiptInfo.menuOption1}
+          menuOption2={receiptInfo.menuOption2}
+          deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : receiptInfo.deliveryPrice}
+        />
       )}
     </Container>
   );
