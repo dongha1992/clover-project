@@ -15,6 +15,7 @@ import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 import { getFormatTime } from '@utils/destination';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { SVGIcon } from '@utils/common';
+import Validation from '@components/Pages/User/Validation';
 
 export const GENDER = [
   {
@@ -225,11 +226,11 @@ const SignupOptionalPage = () => {
               </SvgWrapper>
             </InputContainer>
           </BirthdateWrapper>
-          <TextB3R color={theme.systemRed}>
+          <Validation>
             {birthDayObj.year && birthDayObj.month && birthDayObj.day && !isValidBirthDay
               ? '14세 미만은 가입할 수 없어요.'
               : null}
-          </TextB3R>
+          </Validation>
         </FlexCol>
 
         <FlexCol margin="24px 0 28px 0">
