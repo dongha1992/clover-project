@@ -59,6 +59,7 @@ const OnBoarding: NextPage = () => {
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
+    // dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
   }, []);
 
   const kakaoLoginHandler = () => {
@@ -120,7 +121,7 @@ const OnBoarding: NextPage = () => {
         if (error.code === 2103) {
           dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
         } else {
-          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+          dispatch(SET_ALERT({ alertMessage: `알 수 없는 에러가 발생했습니다.` }));
         }
       }
     }
@@ -211,11 +212,12 @@ const Container = styled.main`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left:0px;
+    left: 0px;
   `};
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
     left: 0px;
+
   `};
 
   :after {
@@ -248,6 +250,9 @@ const ButtonWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  ${({ theme }) => theme.mobile`
+    top: -7%;
+  `};
 `;
 
 const EmailLoginAndSignUp = styled.div`

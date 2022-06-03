@@ -212,9 +212,14 @@ const SignupAuthPage = () => {
             setDelay(null);
             dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
           }
-        } catch (error) {
-          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+        } catch (error: any) {
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
+          }
           setAuthCodeConfirm(false);
+
           console.error(error);
         }
       }
