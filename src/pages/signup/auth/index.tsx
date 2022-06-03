@@ -124,6 +124,10 @@ const SignupAuthPage = () => {
     }
   };
 
+  const resetTimer = () => {
+    authTimerRef.current = 300;
+  };
+
   const getAuthTel = async () => {
     if (!phoneValidation) {
       dispatch(
@@ -153,9 +157,10 @@ const SignupAuthPage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
+        resetTimer();
         if (isOverTime) {
           setIsOverTime(false);
-          authTimerRef.current = 5;
+          resetTimer();
         }
       }
     } catch (error: any) {
@@ -275,13 +280,13 @@ const SignupAuthPage = () => {
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
           <AuthenficationWrapper>
             <TextInput
-              placeholder="휴대폰 번호"
+              placeholder="휴대폰 번호 (-제외)"
               eventHandler={phoneNumberInputHandler}
               inputType="number"
               value={signUpInfo?.tel ? signUpInfo?.tel : ''}
             />
-            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-              인증 요청
+            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel}>
+              {delay ? '재요청' : '인증요청'}
             </Button>
             {phoneValidation && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>

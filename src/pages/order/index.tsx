@@ -593,7 +593,7 @@ const OrderPage = () => {
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
-      console.log(data, '@@');
+
       let payForm = document.getElementById('payForm')! as HTMLFormElement;
       payForm!.innerHTML = '';
       payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
@@ -616,9 +616,9 @@ const OrderPage = () => {
         if (isMobile) {
           if (!(formName === 'EncodeParameters' && formName === 'SocketYN' && formName === 'UserIP')) {
             payFormMobile.appendChild(inputHidden);
-          } else {
-            payForm.appendChild(inputHidden);
           }
+        } else {
+          payForm.appendChild(inputHidden);
         }
       }
 
