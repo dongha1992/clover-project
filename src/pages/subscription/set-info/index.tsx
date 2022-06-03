@@ -37,7 +37,7 @@ const SubsSetInfoPage = () => {
   const { subsStartDate, subsInfo, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userDestination, userTempDestination } = useSelector(destinationForm);
-  const [subsDeliveryType, setSubsDeliveryType] = useState<string | undefined | string[]>();
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string | string[]>();
   const [menuId, setMenuId] = useState<number>();
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period && subsInfo.period);
   const [spotMainDestination, setSpotMainDestination] = useState<string | undefined>();
@@ -50,7 +50,7 @@ const SubsSetInfoPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      if (!router.query?.menuId || !router.query.subsDeliveryType) {
+      if (!router.query.menuId || !router.query.subsDeliveryType) {
         router.push('/subscription');
       }
       // setSubsDeliveryType('PARCEL');

@@ -1362,6 +1362,7 @@ const OrderPage = () => {
           deliveryPrice={deliveryFee!}
           deliveryLength={13}
           point={userInputObj.point}
+          type={'last'}
         />
       )}
       <OrderTermWrapper>
@@ -1512,7 +1513,7 @@ const OrderTermWrapper = styled.div`
   ${homePadding}
   display: flex;
   flex-direction: column;
-  padding: 32px 24px 34px 24px;
+  padding: 32px 24px 32px 24px;
 `;
 
 const OrderBtn = styled.div`
