@@ -21,13 +21,13 @@ const DawnTab = () => {
     <DawnBox>
       {menus?.map(
         (item, index) =>
-          ['PARCEL', 'MORNING'].includes(item.subscriptionDelivery as string) && (
+          (item.subscriptionDeliveries?.includes('PARCEL') || item.subscriptionDeliveries?.includes('MORNING')) && (
             <SubsItem item={item} key={index} height="50.7937vw" />
           )
       )}
-      {menus?.filter((item) => ['PARCEL', 'MORNING'].includes(item.subscriptionDelivery as string)).length === 0 && (
-        <div>새벽/택배 구독 상품이 없습니다.</div>
-      )}
+      {menus?.filter(
+        (item) => item.subscriptionDeliveries?.includes('PARCEL') || item.subscriptionDeliveries?.includes('MORNING')
+      ).length === 0 && <div>새벽/택배 구독 상품이 없습니다.</div>}
     </DawnBox>
   );
 };
