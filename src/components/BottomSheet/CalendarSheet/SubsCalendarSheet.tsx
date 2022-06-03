@@ -5,6 +5,7 @@ import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { SUBSCRIBE_TIME_SELECT } from '@constants/subscription';
 import { ISubsActiveDate } from '@model/index';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { destinationForm } from '@store/destination';
 import {
   SET_SUBS_DELIVERY_EXPECTED_DATE,
   SET_SUBS_START_DATE,
@@ -20,15 +21,16 @@ dayjs.locale('ko');
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-
 import styled from 'styled-components';
 interface IProps {
+  menuId: number;
   userSelectPeriod: string; // 유저가 선택한 구독기간(1주,2주,3주,4주,정기구독)
   subsDeliveryType: string | undefined | string[];
 }
-const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType }: IProps) => {
+const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProps) => {
   const dispatch = useDispatch();
   const { subsDeliveryExpectedDate, subsStartDate, subsInfo } = useSelector(subscriptionForm);
+  const { userDestination } = useSelector(destinationForm);
   const [disabledDate, setDisabledDate] = useState<any>([]);
   const [userSelectTime, setUserSelectTime] = useState(subsInfo?.deliveryTime ? subsInfo.deliveryTime : '점심');
   const [deliveryExpectedDate, setDeliveryExpectedDate] = useState<{ deliveryDate: string }[]>([{ deliveryDate: '' }]);
@@ -40,18 +42,22 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType }: IProps) => {
     'subsActiveDates',
     async () => {
       const params = {
-        id: 824,
-        destinationId: 2,
+        id: menuId,
+        destinationId: userDestination?.id!,
         subscriptionPeriod: userSelectPeriod,
       };
       const { data } = await getSubscriptionApi(params);
       return data.data.menuTables as ISubsActiveDate[];
     },
     {
+      onSuccess: (data) => {
+        console.log('subsActiveDates', data);
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
       staleTime: 0,
+      enabled: !!menuId,
     }
   );
 
@@ -130,6 +136,8 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType }: IProps) => {
         deliveryHoliday={deliveryHoliday}
         setPickupDay={setPickupDay}
         subsPeriod={userSelectPeriod}
+        menuId={menuId!}
+        destinationId={userDestination?.id}
       />
       {subsDeliveryType === 'SPOT' && (
         <RadioWrapper>

@@ -17,7 +17,7 @@ const SubsDetailPage = () => {
     <Container>
       <InfoBox>
         <TextH4B padding="0 0 24px 0">구독 중 - 1회차</TextH4B>
-        <SubsOrderItem />
+        {/* <SubsOrderItem /> */}
       </InfoBox>
       <BorderLine height={8} />
       <DietConfirmBox>
@@ -26,7 +26,7 @@ const SubsDetailPage = () => {
           전체 식단 보기
         </TextH6B>
       </DietConfirmBox>
-      <SubsCalendar subsActiveDates={subsDeliveryExpectedDate} deliveryExpectedDate={subsDeliveryExpectedDate} />
+      {/* <SubsCalendar subsActiveDates={subsDeliveryExpectedDate} deliveryExpectedDate={subsDeliveryExpectedDate} /> */}
       <TextH4B padding="24px 24px 0">주문완료 (1)</TextH4B>
       <ul className="SubsDetailOrderWrapper">
         {[1, 2].map((item, index) => (

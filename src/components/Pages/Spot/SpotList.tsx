@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import router, { useRouter }  from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
@@ -28,9 +28,7 @@ interface IProps {
 }
 
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
-  const {
-    id, 
-  } = list;
+  const { id } = list;
   const routers = useRouter();
   const dispatch = useDispatch();
   const { isDelivery, orderId } = routers.query;
@@ -68,7 +66,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       main: false,
       availableTime: pickUpTime,
       spaceType: list.type,
-      spotPickupId: spotPickupId,
+      spotPickupId: spotPickupId!,
     };
 
     const goToCart = () => {
@@ -145,7 +143,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const onClickLike = (e: any) => {
     e.stopPropagation();
-    if(isLoginSuccess) {
+    if (isLoginSuccess) {
       // 로그인 체크
       onLike();
     } else {
@@ -282,15 +280,20 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
           <Container type="trial">
             <LocationInfoWrapper type="trial">
               <FlexCol>
-                <TextH5B margin='0 0 4px 0'>{list.placeName}</TextH5B>
-                <TextB3R margin='0 0 4px 0'>{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
+                <TextH5B margin="0 0 4px 0">{list.placeName}</TextH5B>
+                <TextB3R margin="0 0 4px 0">{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
                 {
                   // 유저 위치정보 있을때 노출
-                  userLocationLen && <TextH6B margin='0 0 8px 0' color={theme.greyScale65}>{`${Math.round(list.distance)}m`}</TextH6B> 
+                  userLocationLen && (
+                    <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>{`${Math.round(list.distance)}m`}</TextH6B>
+                  )
                 }
-                <FlexRow margin='0 0 16px 0'>
+                <FlexRow margin="0 0 16px 0">
                   <SVGIcon name="people" />
-                  <TextH6B padding='4px 0 0 2px' color={theme.brandColor}>{`${list.recruitingCount}/100명 참여중`}</TextH6B>
+                  <TextH6B
+                    padding="4px 0 0 2px"
+                    color={theme.brandColor}
+                  >{`${list.recruitingCount}/100명 참여중`}</TextH6B>
                 </FlexRow>
                 {!list.recruited ? (
                   <Button onClick={() => clickSpotOpen(list.id!)}>참여하기</Button>

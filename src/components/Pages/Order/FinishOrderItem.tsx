@@ -6,30 +6,11 @@ import { IMAGE_S3_URL } from '@constants/mock';
 
 interface IProps {
   menu: any;
+  getTotalPrice: () => void;
 }
 
-const FinishOrderItem = ({ menu }: IProps) => {
+const FinishOrderItem = ({ menu, getTotalPrice }: IProps) => {
   const menuImg = menu.orderDeliveries[0].orderMenus[0].image.url;
-
-  const {
-    menuAmount,
-    menuDiscount,
-    optionAmount,
-    eventDiscount,
-    deliveryFee,
-    deliveryFeeDiscount,
-    optionQuantity,
-    coupon,
-    point,
-  } = menu;
-  const getTotalPrice = () => {
-    return (
-      menuAmount -
-      (menuDiscount + eventDiscount + deliveryFeeDiscount + coupon + point) +
-      optionAmount * optionQuantity +
-      deliveryFee
-    );
-  };
 
   return (
     <Container>
@@ -55,7 +36,6 @@ const Container = styled.div<{ isCanceled?: boolean }>`
   width: 100%;
   background-color: ${theme.white};
   border-radius: 8px;
-  margin-bottom: 16px;
   color: ${({ isCanceled }) => isCanceled && theme.greyScale25};
 `;
 
@@ -77,7 +57,7 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 70px;
+  /* height: 70px; */
   margin-left: 8px;
 `;
 
