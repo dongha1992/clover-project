@@ -91,7 +91,6 @@ const TootipWrapper = styled.article`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 25%;
 `;
 
 const Col = styled.div`
@@ -112,6 +111,9 @@ const BtnWrapper = styled.div`
 const LikeBtn = styled.div`
   display: flex;
   cursor: pointer;
+  svg {
+    margin-bottom: 3px;
+  }
 `;
 
 export default SubsBottom;
