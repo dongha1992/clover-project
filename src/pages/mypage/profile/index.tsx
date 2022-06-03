@@ -104,6 +104,11 @@ const ProfilePage = () => {
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     localStorage.removeItem('persist:nextjs');
+    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+      console.log('LOGOUT KAKAKAKAKO');
+      window.Kakao.Auth.logout();
+      // window.Kakao.cleanup();
+    }
 
     router.push('/mypage');
   };
@@ -186,18 +191,19 @@ const ProfilePage = () => {
             submitBtnText: '확인',
           })
         );
+        resetTimer;
         setOneMinuteDisabled(true);
         setDelay(1000);
         if (isOverTime) {
           setIsOverTime(false);
-          authTimerRef.current = 5;
+          resetTimer;
         }
       }
     } catch (error: any) {
       if (error.code === 2000) {
         dispatch(
           SET_ALERT({
-            alertMessage: '해당 전화번호로 이미 가입된 계정이 있습니다.',
+            alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
           })
         );
       } else if (error.code === 2001) {
@@ -241,6 +247,10 @@ const ProfilePage = () => {
 
   const checkGenderHandler = (value: string) => {
     setChcekGender(value);
+  };
+
+  const resetTimer = () => {
+    authTimerRef.current = 300;
   };
 
   const changeEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -396,7 +406,7 @@ const ProfilePage = () => {
             {!emailValidation.isValid ? (
               <Validation>{emailValidation.message}</Validation>
             ) : (
-              <SVGIcon name="confirmCheck" />
+              <>{!isNotEmail && <SVGIcon name="confirmCheck" />}</>
             )}
           </NameInputWrapper>
           {!isNotEmail && (
@@ -435,6 +445,7 @@ const ProfilePage = () => {
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
               <TextInput
+                placeholder="휴대폰 번호 (-제외)"
                 inputType="number"
                 eventHandler={phoneNumberInputHandler}
                 value={userInfo.tel || ''}
@@ -442,8 +453,8 @@ const ProfilePage = () => {
                 keyPressHandler={telKeyPressHandler}
               />
               {isAuthTel ? (
-                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-                  {delay ? '재전송' : '요청하기'}
+                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel}>
+                  {delay ? '재요청' : '인증요청'}
                 </Button>
               ) : (
                 <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
