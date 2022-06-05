@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import { theme, FlexRow } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
 import { IFilters } from '@model/index';
-import { useSelector } from 'react-redux';
-import { spotSelector } from '@store/spot';
 
 interface IProps {
   data: IFilters[];
@@ -15,7 +13,6 @@ interface IProps {
 }
 
 const MultipleFilter = ({ data, changeHandler, selectedCheckboxIds, spotFilter, }: IProps) => {
-  const { spotsSearchResultFiltered } = useSelector(spotSelector);
 
   return (
     <Container>
@@ -34,12 +31,12 @@ const MultipleFilter = ({ data, changeHandler, selectedCheckboxIds, spotFilter, 
                 {spotFilter ? (
                   <Checkbox isSelected={isSelected} onChange={() => onCheck(item.fieldName)} key={index} />
                 ) : (
-                  <Checkbox isSelected={isSelected} onChange={() => changeHandler(item.name)} key={index} />
+                  <Checkbox isSelected={isSelected} onChange={() => onCheck(item.name)} key={index} />
                 )}
                 {isSelected ? (
-                  <TextH5B padding="4px 0 0 8px">{item.name}</TextH5B>
+                  <TextH5B padding="4px 0 0 8px" onClick={() => onCheck(spotFilter ? item.fieldName : item.name)}>{item.name}</TextH5B>
                 ) : (
-                  <TextB2R padding="4px 0 0 8px">{item.name}</TextB2R>
+                  <TextB2R padding="4px 0 0 8px" onClick={() => onCheck(spotFilter ? item.fieldName : item.name)}>{item.name}</TextB2R>
                 )}
               </FlexRow>
             );
