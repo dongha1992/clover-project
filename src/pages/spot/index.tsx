@@ -58,8 +58,8 @@ const SpotPage = () => {
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
-  const latLen = spotsPosition.latitude.length > 0;
-  const lonLen = spotsPosition.longitude.length > 0;
+  const latLen = spotsPosition.latitude !== null;
+  const lonLen = spotsPosition.longitude !== null;
 
   const params: IParamsSpots = {
     latitude: latLen  ? Number(spotsPosition.latitude) : null,

@@ -34,10 +34,11 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
-  const { spotPickupId } = useSelector(spotSelector);
+  const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
+  const positionLen = spotsPosition?.latitude !== null;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   // 운영 종료 예정 or 종료
@@ -73,46 +74,29 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       default: {
         return (
           <MeterAndTime>
-          {userLocationLen && (
-            <>
-              <TextH6B>{`${Math.round(item.distance).toLocaleString()}m`}</TextH6B>
-              <Col />
-            </>
-          )}
-          <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-            픽업
-          </TextH6B>
-          <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-        </MeterAndTime>
-        )
+            {(userLocationLen || positionLen) && (
+              <>
+                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          </MeterAndTime>
+        );
       }
     }
   };
 
-  const publicTag = (): string | undefined => {
-    // BOOKSTORE, CAFE, CONVENIENCE_STORE, DRUGSTORE, ETC, FITNESS_CENTER, OFFICE, SCHOOL, SHARED_OFFICE, STORE
-    switch (item.placeType) {
-      case 'CONVENIENCE_STORE':
-        return '편의점';
-      case 'STORE':
-        return '일반상점';
-      case 'FITNESS_CENTER':
-        return '피트니스'
-      case 'BOOKSTORE':
-        return '서점'
-      case 'DRUGSTORE':
-        return '약국'
-      case 'CAFE':
-        return '카페'
-      case 'OFFICE':
-        return '오피스'
-      case 'SCHOOL':
-        return '학교'
-      case 'SHARED_OFFICE':
-        return '공유오피스'
-      case 'ETC':
-        return ''
-    };
+  const typeTag = (): string | undefined => {
+    switch (item.type) {
+      case 'PRIVATE':
+        return '프라이빗';
+      case 'PUBLIC':
+        return '퍼블릭';
+    }
   };
 
   const orderHandler = () => {
@@ -292,51 +276,27 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
         {renderSpotMsg()}
-        {
-          // isOpened : true - 오픈, false - 오픈예정
-          !item.isOpened && (
+        {item.isOpened ? (
+          !item.isTrial ? (
             <div>
               <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                오픈예정
+                {typeTag()}
               </Tag>
             </div>
-          )
-        }
-        {
-          item.type === 'PRIVATE' && !item.isTrial && item.isOpened && (
-            <div>
-              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                프라이빗
-              </Tag>
-              {
-                item.discountRate > 0 && (
-                  <Tag margin='0 0 0 8px' backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                  {`${item.discountRate}% 할인 중`}
-                  </Tag>
-                )
-              }
-            </div>
-          )
-        }
-        {
-          item.type === 'PRIVATE' && item.isTrial && item.isOpened && (
+          ) : (
             <div>
               <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
                 트라이얼
               </Tag>
             </div>
-
           )
-        }
-        {
-          item.type !== 'PRIVATE' && item.isOpened && item.discountRate > 0 && (
-            <div>
-              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                {`${item.discountRate}% 할인 중`}
-              </Tag>
-            </div>
-          )
-        }
+        ) : (
+          <div>
+            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              오픈예정
+            </Tag>
+          </div>
+        )}
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
@@ -378,7 +338,7 @@ const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
         background: ${theme.white};
         max-width: ${breakpoints.desktop}px;
         max-width: ${breakpoints.mobile}px;
-        height: 114;
+        height: 146px;
         border-radius: 8px;
       `;
     }

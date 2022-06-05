@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { MultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH4B } from '@components/Shared/Text';
@@ -10,17 +10,34 @@ import { useQuery } from 'react-query';
 import { getSpotsFilter } from '@api/spot';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_SPOTS_FILTERED, spotSelector, INIT_SPOT_FILTERED } from '@store/spot';
+import { 
+  spotSelector,
+  SET_SPOTS_FILTERED, 
+  INIT_SPOT_FILTERED, 
+  SET_SPOT_SEARCH_SELECTED_FILTERS,
+  INIT_SEARCH_SELECTED_FILTERS,
+  SET_SPOT_SEARCH_SORT,
+} from '@store/spot';
 import { destinationForm } from '@store/destination';
 
-const SpotSearchFilter = () => {
-  const dispatch = useDispatch();
-  const { spotsSearchResultFiltered } = useSelector(spotSelector);
-  const { userLocation } = useSelector(destinationForm);
-  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
-  const [selectedRadioId, setSelectedRadioId] = useState<string>('');
+interface IProps {
+  getLocation?: any;
+};
 
-  const userLocationLen = !!userLocation.emdNm?.length;
+const SpotSearchFilter = ({getLocation}: IProps) => {
+  const dispatch = useDispatch();
+  const { spotsSearchResultFiltered, spotSearchSelectedFilters, spotSearchSort, spotsPosition } = useSelector(spotSelector);
+  const { userLocation } = useSelector(destinationForm);
+  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(spotSearchSelectedFilters);
+  const defaultRedioId = () => {
+    if (userLocationLen) {
+      return setSelectedRadioId('nearest')
+    } else if (!userLocationLen) {
+      return setSelectedRadioId('frequency')
+    } 
+  };
+  const [selectedRadioId, setSelectedRadioId] = useState<string>(spotSearchSort);
+  const userLocationLen = userLocation.emdNm?.length! > 0;
 
   // 필터 api
   const { data: spotsFilter } = useQuery(['spotFilter'], async () => {
@@ -44,22 +61,34 @@ const SpotSearchFilter = () => {
   };
 
   const initSpotFilterHandler = () => {
-    setSelectedCheckboxIds(['']);
+    setSelectedCheckboxIds([]);
+    defaultRedioId();
     dispatch(INIT_SPOT_FILTERED());
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
+  };
+
+  const onClick = () => {
+    if ((selectedRadioId === 'nearest') && (!userLocationLen)) {
+        getLocation();
+        clickButtonHandler();  
+    } else {
+      clickButtonHandler();
+    }
   };
 
   const clickButtonHandler = () => {
+    dispatch(SET_SPOT_SEARCH_SELECTED_FILTERS(selectedCheckboxIds))
     dispatch(
       SET_SPOTS_FILTERED({
         ...spotsSearchResultFiltered,
         canEat: !!selectedCheckboxIds.find(i => i ==='canEat'),
         canParking: !!selectedCheckboxIds.find(i => i ==='canParking'),
-        canDeliveryDinner: !!selectedCheckboxIds.find(i => i ==='canDeliveryDinner'),
+        canDeliveryDinner: !!selectedCheckboxIds.find(i => i ==='canDinnerDelivery'),
         isEvent: !!selectedCheckboxIds.find(i => i ==='isEvent'),
-        sort: selectedRadioId,
       })
     );
-    dispatch(INIT_BOTTOM_SHEET());
+    dispatch(SET_SPOT_SEARCH_SORT(selectedRadioId));
+    dispatch(INIT_BOTTOM_SHEET());  
   };
 
   return (
@@ -93,7 +122,7 @@ const SpotSearchFilter = () => {
           전체 초기화
         </Button>
         <Col />
-        <Button height="100%" width="100%" borderRadius="0" onClick={clickButtonHandler}>
+        <Button height="100%" width="100%" borderRadius="0" onClick={onClick}>
           적용하기
         </Button>
       </ButtonContainer>

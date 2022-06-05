@@ -569,6 +569,7 @@ export interface ISpotsDetail {
   userId: number;
   step: string;
   rejected: boolean;
+  [propsName:string]: any;
 }
 
 export interface ISpotPickupInfo {

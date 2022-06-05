@@ -9,7 +9,7 @@ import { theme, FlexBetween, FlexEnd } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList, SpotRecentPickupList } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
-import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
+import { getSpotSearchRecommend, getSpotEvent, getSpotSearch, getSpotsFilter } from '@api/spot';
 import { ISpots, ISpotsDetail } from '@model/index';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
@@ -18,10 +18,20 @@ import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
-import { spotSelector, INIT_SPOT_FILTERED } from '@store/spot';
+import { 
+  spotSelector, 
+  INIT_SPOT_FILTERED, 
+  INIT_SEARCH_SELECTED_FILTERS, 
+  INIT_SPOT_SEARCH_SORT,
+  SET_SPOT_SEARCH_SORT,
+  INIT_SPOT_POSITIONS,
+  SET_SPOT_POSITIONS,
+} from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { SpotSearchKeyword } from '@components/Pages/Spot';
+import { MenuFilter } from '@components/Filter';
+import { SpotSearchFilter } from '@components/Pages/Spot';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -29,16 +39,18 @@ const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { orderId, isDelivery } = router.query;
-  const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
+  const { 
+    spotsPosition, 
+    spotsSearchResultFiltered, 
+    spotSearchSelectedFilters, 
+    spotSearchSort 
+  } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
-
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
-  const [filteredResult, setFilteredResult] = useState<ISpotsDetail[]>(searchResult);
-
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const [keyword, setKeyWord] = useState<string>('');
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -73,13 +85,16 @@ const SpotSearchPage = (): ReactElement => {
 
   // cartList = ['!1'];
 
+  const latLen = spotsPosition?.latitude !== null;
+  const lonLen = spotsPosition?.longitude !== null;
+
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(
     ['spotRecommendList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: spotsPosition ? Number(spotsPosition.latitude) : null,
-        longitude: spotsPosition ? Number(spotsPosition.longitude) : null,
+        latitude: latLen ? Number(spotsPosition?.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition?.longitude) : null,
         size: 3,
       };
       const response = await getSpotSearchRecommend(params);
@@ -93,8 +108,8 @@ const SpotSearchPage = (): ReactElement => {
     ['spotEvetnList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: spotsPosition ? Number(spotsPosition.latitude) : null,
-        longitude: spotsPosition ? Number(spotsPosition.longitude) : null,
+        latitude: latLen ? Number(spotsPosition?.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition.longitude) : null,
         size: 6,
       };
       const response = await getSpotEvent(params);
@@ -111,8 +126,8 @@ const SpotSearchPage = (): ReactElement => {
         page: 1,
         size: 10,
         delivery: 'SPOT',
-        latitude: spotsPosition ? Number(spotsPosition.latitude) : null,
-        longitude: spotsPosition ? Number(spotsPosition.longitude) : null,
+        latitude: latLen ? Number(spotsPosition.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition.longitude) : null,
       };
       const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
@@ -128,17 +143,39 @@ const SpotSearchPage = (): ReactElement => {
     if (e.key === 'Enter') {
       if (inputRef.current) {
         // setKeyWord(inputRef.current?.value);
-        let keyword = inputRef.current?.value;
-        if (!keyword) {
+        setKeyWord(inputRef.current?.value);
+        let word = inputRef.current?.value;
+        if (!word) {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData({keyword});
+        fetchSpotSearchData();
         dispatch(INIT_SPOT_FILTERED());
 
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchSpotSearchData = async() => {
+    try {
+      const params = {
+        keyword: keyword,
+        latitude: latLen ? Number(spotsPosition.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition.longitude) : null,
+      };
+      const { data } = await getSpotSearch(params);
+      if (data.code === 200) {
+        const fetchData = data.data;
+        setSearchResult(fetchData?.spots);
+        setIsSearched(true); 
+        setInputFocus(true); 
+        setIsLoading(true);
+      };
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleSelectedKeywordVaule = (value: string) => {
     setKeyWord(value);
@@ -152,65 +189,23 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
-  // useEffect(()=> {
 
-  // }, [spotsSearchResultFiltered])
-
-  const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
-    try {
-      const params = {
-        keyword,
-        latitude: spotsPosition ? Number(spotsPosition.latitude) : null,
-        longitude: spotsPosition ? Number(spotsPosition.longitude) : null,
-      };
-      const { data } = await getSpotSearch(params);
-      if (data.code === 200) {
-        const fetchData = data.data;
-        //   // const filtered = fetchData?.spots?.filter((c) => {
-        //   //   return c.name.replace(/ /g, '').indexOf(value) > -1;
-        //   // });
-        setSearchResult(fetchData?.spots);
-        setIsSearched(true); 
-        setInputFocus(true); 
-      };
-    } catch (err) {
-      console.error(err);
-    }
+  const defaultRedioId = () => {
+    if (userLocationLen) {
+      return dispatch(SET_SPOT_SEARCH_SORT('nearest'))
+    } else if (!userLocationLen) {
+      return dispatch(SET_SPOT_SEARCH_SORT('frequency'))
+    } 
   };
 
-  // const { data: spotSearchData, isLoading } = useQuery(
-  //   ['spotSearch'],
-  //   async () => {
-  //     const params = {
-  //       keyword,
-  //       latitude: spotsPosition ? Number(spotsPosition.latitude) : null,
-  //       longitude: spotsPosition ? Number(spotsPosition.longitude) : null,
-  //     };
-  //     const response = await getSpotSearch(params);
-  //     return response.data.data;
-  //   },
-  //   { 
-  //     onSuccess: () => {
-
-  //     }, 
-  //     refetchOnMount: true, 
-  //     refetchOnWindowFocus: false 
-  // }
-  // );
-
   const filteredItem = () => {
-    const sort = spotsSearchResultFiltered?.sort;
-
+    const sort = spotSearchSort;
     switch (sort) {
-      case '':
+      case undefined:
         return searchResult;
       case 'nearest':
         return (
           searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  a.distance - b.distance })
-          // .filter(i=> i.canEat === spotsSearchResultFiltered['canEat'])
-          // .filter(i=> i.canParking === spotsSearchResultFiltered['canParking'])
-          // .filter(i=> i.canDinnerDelivery === spotsSearchResultFiltered['canDeliveryDinner'])
-          // .filter(i=> i.isEvent === spotsSearchResultFiltered['isEvent'])
           );
       case 'frequency':
         return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.score - a.score });
@@ -218,40 +213,87 @@ const SpotSearchPage = (): ReactElement => {
         return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.userCount - a.userCount });
     }
   };
-  console.log('filteredItem', filteredItem());
+  
 
-//   const filteredData = () => {
-//     const filteredList = searchResult.reduce((acc, cur) => {
-//       const checkCanEat = cur.canEat === !!spotsSearchResultFiltered.canEat;
-//       const checkCanParking = cur.canParking === !!spotsSearchResultFiltered.canParking;
-//       const checkCanDelivery = cur.canDinnerDelivery === !!spotsSearchResultFiltered.canDeliveryDinner;
-//       const checkIsEvent = cur.isEvent === !!spotsSearchResultFiltered.isEvent;
+// const { data: spotsFilter } = useQuery(['spotFilter'], async () => {
+//   const response = await getSpotsFilter();
+//   return response.data.data;
+// });
 
-//       if (
-//         checkCanEat && checkCanParking && checkCanDelivery && checkIsEvent
-//         ) {
-//         acc.push(cur);
-//       }
-//       return acc;
-//     }, [])
-//     setTestResult(filteredList);
-//   };
-// console.log('testResult', testResult);
-//   useEffect(()=> {
-//     filteredData();
-//   }, [searchResult, spotsSearchResultFiltered]);
+// const filterKeys = Object.keys(spotsSearchResultFiltered);
+// filterKeys.forEach(f => 
+//  console.log(f)
+//  )
+// const findFiletr = filterKeys.filter(i => 
+//  spotSearchSelectedFilters.forEach(a => 
+//    i === a
+//    )
+//    )
+
+  // const testFilter = searchResult.filter(spot => {
+  //     if(spotSearchSelectedFilters.length === 0) {
+  //       return spot
+  //       } else {
+  //         for(let i =0; i<spotSearchSelectedFilters.length; i++){
+  //        return spot[spotSearchSelectedFilters[i]] === true
+  //         }
+  //       }
+
+  //   }
+  
+  // )
+  
+  // const filterOption = ['canEat', 'canParking','canDeliveryDinner', 'isEvent'];
+
+// const test =  searchResult.filter(spot => {
+//   if(spot.type === 'PUBLIC'){
+//     spotsFilter?.filters.filter(f => !f.filtered).forEach(f => {
+//           spot[f.fieldName] === f.value;
+//       })
+//   }
+//   console.log(spot)
+// })
+
+// console.log(searchResult, 'test', test(),
+
+// // searchResult.filter(spot => (spot['canEat'] === true) && (spot['isEvent'] === true)),
 
 
-  // console.log(spotsSearchResultFiltered, searchResult
-  //   .filter(i=> i.canEat === !!spotsSearchResultFiltered.canEat)
-  // .filter(i=> i.canParking === !!spotsSearchResultFiltered.canParking)
-  // .filter(i=> i.canDinnerDelivery === !!spotsSearchResultFiltered.canDeliveryDinner)
-  // .filter(i=> i.isEvent === !!spotsSearchResultFiltered.isEvent)
-  // );
+//   //   spotSearchSelectedFilters.filter(f => f).forEach(i => {
+//   //     if(spotSearchSelectedFilters?.length > 0) {
+//   //       searchResult[i] === true
+//   //     }
+//   //   }
+//   // )
+  
+// );
 
+  // GPS - 현재위치 가져오기
+  const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+
+  const getLocation = async () => {
+      try {
+        const position: any = await getCurrentPosition();
+        if(position) {
+          // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
+          dispatch(
+            SET_SPOT_POSITIONS({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            })
+          );  
+        }
+       return { Status: true, position, };
+     } catch (error) {
+       console.log("getCurrentLatLong::catcherror =>", error);
+       return { Status: false, };
+     }
+  };
+  
 
   const clearInputHandler = () => {
     initInputHandler();
+    setIsSearched(false);
   };
 
   const initInputHandler = () => {
@@ -270,21 +312,37 @@ const SpotSearchPage = (): ReactElement => {
   }, []);
 
   useEffect(()=> {
+    defaultRedioId();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(()=> {
     if (keyword.length > 0) {
-      fetchSpotSearchData({keyword});
+        fetchSpotSearchData();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spotsPosition.latitude, spotsPosition.longitude]);
+
+  useEffect(()=> {
+    if (keyword.length > 0) {
+      fetchSpotSearchData();
       dispatch(INIT_SPOT_FILTERED());
-      // setInputFocus(true);  
-    }
-  }, [keyword])
+      dispatch(INIT_SEARCH_SELECTED_FILTERS());
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword]);
 
   useEffect(()=> {
     filteredItem();
-  }, [spotsSearchResultFiltered, searchResult]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResult, spotSearchSort]);
 
   useEffect(() => {
-    // getSearchRecommendList();
+    defaultRedioId();
     dispatch(INIT_SPOT_FILTERED());
-  }, []);
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSearched]);
 
   useEffect(() => {
     if (orderId) {
@@ -300,7 +358,7 @@ const SpotSearchPage = (): ReactElement => {
     } else {
       return;
     }
-  }, []);
+  }, [isDelivery]);
 
   if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup) {
     return <div>로딩</div>;
@@ -412,7 +470,7 @@ const SpotSearchPage = (): ReactElement => {
                 orderId={orderId}
                 hasCart={cartList?.length! > 0}
               /> */}
-              <SearchResult searchResult={filteredItem()} isSpot onClick={goToOrder} orderId={orderId} hasCart={true} />
+              <SearchResult searchResult={filteredItem()} isSpot orderId={orderId} hasCart={true} getLocation={getLocation} />
             </SearchResultContainer>
           )}
         </>
