@@ -73,11 +73,13 @@ export const Label = styled.span`
     color: ${theme.brandColor};
     border: none;
   }
-  &.dawn {
+  &.dawn,
+  &.MORNING {
     border: 1px solid #7922bc;
     color: #7922bc;
   }
-  &.parcel {
+  &.parcel,
+  &.PARCEL {
     border: 1px solid #1e7ff0;
     color: #1e7ff0;
   }

@@ -5,12 +5,15 @@ import SVGIcon from '@utils/common/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
+import { IGetCard } from '@model/index';
+import { getFormatDate } from '@utils/common';
 interface IProps {
   previewOrder: any;
   goToCardManagemnet: any;
-  getMainCardHandler: any;
+  card: IGetCard;
+  regularPaymentDate: number;
 }
-const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, getMainCardHandler }: IProps) => {
+const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, card, regularPaymentDate }: IProps) => {
   const goToRegisteredCard = () => {
     router.push('/mypage/card/register');
   };
@@ -23,7 +26,7 @@ const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, getMainCardHandle
         </TextB2R>
         {previewOrder?.cards?.length! > 0 ? (
           <>
-            <CardItem onClick={goToCardManagemnet} card={getMainCardHandler(previewOrder?.cards!)} />
+            <CardItem onClick={goToCardManagemnet} card={card} />
             <Button
               border
               backgroundColor={theme.white}
@@ -44,7 +47,7 @@ const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, getMainCardHandle
         <FlexRow className="titleBox">
           <SVGIcon name="calendar" />
           <TextH5B className="title">
-            정기결제일은 <span>매달 20일</span> 입니다.
+            정기결제일은 <span>매달 {regularPaymentDate}일</span> 입니다.
           </TextH5B>
         </FlexRow>
         <ul className="exList">
@@ -66,7 +69,8 @@ const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, getMainCardHandle
         </ul>
       </ExBox>
       <TextH5B padding="10px 0" backgroundColor={theme.brandColor} color="#fff" center>
-        1월 20일 (목) 구독 1회차 결제가 진행됩니다.
+        {getFormatDate(previewOrder.order.orderDeliveries[0].deliveryDate)} 구독 {previewOrder.order.subscriptionRound}
+        회차 결제가 진행됩니다.
       </TextH5B>
     </SubsPaymentMethodContainer>
   );

@@ -9,12 +9,11 @@
     "dev": "next dev -p 9009",
     "build": "next build",
     "build:dev": "dotenv -e .env.development next build",
-    "start": "./node_modules/.bin/pm2 start ecosystem.config.js && ./node_modules/.bin/pm2 logs",
+    "start": "./node_modules/.bin/pm2 startOrRestart ecosystem.config.js && ./node_modules/.bin/pm2 logs",
     "lint": "next lint"
   },
   "dependencies": {
     "@fxts/core": "^0.6.2",
-    "@next/bundle-analyzer": "^12.1.6",
     "@reduxjs/toolkit": "^1.6.2",
     "axios": "^0.24.0",
     "babel-plugin-styled-components": "^1.13.3",

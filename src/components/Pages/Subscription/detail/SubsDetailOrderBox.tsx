@@ -1,23 +1,15 @@
 import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
-import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 import { Button } from '@components/Shared/Button';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
-import {
-  MenuImgBox,
-  MenuLi,
-  MenuTextBox,
-  MenuUl,
-  ReceiptBox,
-  ReceiptLi,
-  ReceiptUl,
-} from '@pages/subscription/register';
+import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexBetweenStart, FlexColEnd } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { MenuPriceContainer, MenuPriceLi, MenuPriceUl } from '../payment/MenusPriceBox';
 
 const SubsDetailOrderBox = () => {
   const [toggleState, setToggleState] = useState(false);
@@ -63,30 +55,30 @@ const SubsDetailOrderBox = () => {
             </MenuLi>
           ))}
         </MenuUl>
-        <ReceiptBox>
-          <ReceiptUl>
-            <ReceiptLi>
+        <MenuPriceContainer>
+          <MenuPriceUl>
+            <MenuPriceLi>
               <TextB2R>상품금액</TextB2R>
               <TextB2R>9,700원</TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
+            </MenuPriceLi>
+            <MenuPriceLi>
               <TextB2R>배송비</TextB2R>
               <TextB2R>0원</TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
+            </MenuPriceLi>
+            <MenuPriceLi>
               <TextB2R>포크+물티슈</TextB2R>
               <TextB2R>1개 / 100원</TextB2R>
-            </ReceiptLi>
-            <ReceiptLi>
+            </MenuPriceLi>
+            <MenuPriceLi>
               <TextB2R>젓가락+물티슈</TextB2R>
               <TextB2R>1개 / 100원</TextB2R>
-            </ReceiptLi>
-          </ReceiptUl>
+            </MenuPriceLi>
+          </MenuPriceUl>
           <FlexBetween padding="16px 0 0" className="btB">
             <TextH4B>배송상품금액</TextH4B>
             <TextH4B>13,200원</TextH4B>
           </FlexBetween>
-        </ReceiptBox>
+        </MenuPriceContainer>
         <DeliveryInfoBox>
           <TextH4B padding="0 0 24px 0">배송정보</TextH4B>
           <FlexBetween padding="0 0 16px">
