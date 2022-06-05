@@ -111,7 +111,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       main: false,
       availableTime: pickUpTime,
       spaceType: item.type,
-      spotPickupId: spotPickupId,
+      spotPickupId: spotPickupId!,
       closedDate: item.closedDate,
       delivery: 'spot',
     };

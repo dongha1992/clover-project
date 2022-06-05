@@ -70,10 +70,7 @@ const OnBoarding: NextPage = () => {
     if (typeof window !== undefined) {
       window.Kakao.Auth.authorize({
         redirectUri:
-          // location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-          location.hostname === 'localhost'
-            ? 'http://localhost:9009/oauth'
-            : `https://27d7-1-228-1-158.jp.ngrok.io/oauth`,
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
         scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
       });
     }
@@ -85,8 +82,7 @@ const OnBoarding: NextPage = () => {
       window.AppleID.auth.init({
         clientId: 'com.freshcode.www',
         scope: 'email',
-        // redirectURI: `${process.env.SERVICE_URL}`,
-        redirectURI: `https://27d7-1-228-1-158.jp.ngrok.io`,
+        redirectURI: `${process.env.SERVICE_URL}`,
         usePopup: true,
       });
       try {
@@ -122,6 +118,8 @@ const OnBoarding: NextPage = () => {
         }
       } catch (error: any) {
         if (error.code === 2103) {
+          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+        } else {
           dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
         }
       }
@@ -298,7 +296,7 @@ const AppleBtn = styled.div`
 
 const TagWrapper = styled.div<{ left?: number }>`
   position: absolute;
-  top: -20%;
+  top: -30%;
   left: ${({ left }) => left && left + 3}%;
   filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 

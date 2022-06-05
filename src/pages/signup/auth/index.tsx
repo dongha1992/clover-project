@@ -30,9 +30,11 @@ const SignupAuthPage = () => {
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [authCodeConfirm, setAuthCodeConfirm] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState<IUser['signupUser']>({});
+  const [isOverTime, setIsOverTime] = useState<boolean>(false);
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
 
   const [emailValidation, setEmailValidataion] = useState<IVaildation>({
     message: '',
@@ -57,6 +59,7 @@ const SignupAuthPage = () => {
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
+      setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
     if (authTimerRef.current < 240) {
@@ -66,11 +69,12 @@ const SignupAuthPage = () => {
 
   const nameInputHandler = (e: any): void => {
     const { value } = e.target;
+    const lengthCheck = value.length < 2 || value.length > 20;
 
-    if (NAME_REGX.test(value)) {
-      setNameValidation(true);
-    } else {
+    if (!NAME_REGX.test(value) || lengthCheck) {
       setNameValidation(false);
+    } else {
+      setNameValidation(true);
     }
     setSignUpInfo({ ...signUpInfo, name: value });
   };
@@ -120,6 +124,10 @@ const SignupAuthPage = () => {
     }
   };
 
+  const resetTimer = () => {
+    authTimerRef.current = 300;
+  };
+
   const getAuthTel = async () => {
     if (!phoneValidation) {
       dispatch(
@@ -132,6 +140,7 @@ const SignupAuthPage = () => {
     }
 
     if (oneMinuteDisabled) {
+      dispatch(SET_ALERT({ alertMessage: '잠시 후 재요청해 주세요.' }));
       return;
     }
 
@@ -148,8 +157,32 @@ const SignupAuthPage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
+        resetTimer();
+        if (isOverTime) {
+          setIsOverTime(false);
+          resetTimer();
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 2000) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `이메일로 가입된 계정이 있습니다.`,
+          })
+        );
+      } else if (error.code === 2001) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '전화번호 인증 횟수를 초과하였습니다.(하루 5회)',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러 발생',
+          })
+        );
+      }
       console.error(error);
     }
   };
@@ -166,6 +199,8 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || isOverTime) return;
+
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
@@ -236,22 +271,28 @@ const SignupAuthPage = () => {
             eventHandler={nameInputHandler}
             value={signUpInfo?.name ? signUpInfo?.name : ''}
           />
-          {(nameValidation || signUpInfo?.name) && <SVGIcon name="confirmCheck" />}
+          {nameValidation && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
+        {signUpInfo?.name?.length! > 0 && !nameValidation && (
+          <Validation>2~20자 이내 / 한글, 영문만 입력 가능해요.</Validation>
+        )}
         <PhoneNumberInputWrapper>
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
           <AuthenficationWrapper>
             <TextInput
-              placeholder="휴대폰 번호"
+              placeholder="휴대폰 번호 (-제외)"
               eventHandler={phoneNumberInputHandler}
               inputType="number"
               value={signUpInfo?.tel ? signUpInfo?.tel : ''}
             />
-            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-              인증 요청
+            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel}>
+              {delay ? '재요청' : '인증요청'}
             </Button>
-            {(phoneValidation || signUpInfo?.tel) && <SVGIcon name="confirmCheck" />}
+            {phoneValidation && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>
+          {!phoneValidation && signUpInfo?.tel?.length! > 0 && (
+            <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+          )}
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
@@ -263,7 +304,7 @@ const SignupAuthPage = () => {
               width="30%"
               margin="0 0 0 8px"
               height="48px"
-              disabled={!authCodeValidation}
+              disabled={!authCodeValidation || isOverTime}
               onClick={getAuthCodeConfirm}
             >
               확인
@@ -278,6 +319,7 @@ const SignupAuthPage = () => {
             )}
           </ConfirmWrapper>
         </PhoneNumberInputWrapper>
+        {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
         {signUpInfo.loginType === 'APPLE' && (
           <EmailInputWrapper>
             <TextH5B padding="0 0 9px 0">이메일</TextH5B>
@@ -331,7 +373,7 @@ const AuthenficationWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 8px;
+
   > svg {
     position: absolute;
     right: 30%;
@@ -343,6 +385,7 @@ const ConfirmWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  margin-top: 8px;
   > svg {
     position: absolute;
     right: 30%;
@@ -358,6 +401,8 @@ const TimerWrapper = styled.div`
   position: absolute;
   left: 60%;
 `;
+
+const TelHelper = styled.div``;
 
 const EmailInputWrapper = styled.div`
   position: relative;

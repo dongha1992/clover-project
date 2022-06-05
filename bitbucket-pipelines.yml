@@ -9,13 +9,13 @@ pipelines:
             - node
           script:
             - npm install
-            - npm run build
+            - npm run build:dev
             - npm run lint
             - apt update && apt install zip
             # Exclude files to be ignored
             - zip -r app-$BITBUCKET_BUILD_NUMBER.zip . -x *.git* bitbucket-pipelines.yml node_modules\*
           artifacts:
-            - "*.zip"
+            - '*.zip'
 
       - step:
           name: Deploy to Development

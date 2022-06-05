@@ -42,7 +42,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
             <ReviewBody>
               <TextB3R>{review.content}</TextB3R>
               <ImgWrapper>
-                {review.searchReview.images?.map((img: any, index: number) => {
+                {review.searchReview?.images?.map((img: any, index: number) => {
                   const imgUrlForViwer: string[] = review.searchReview.images.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper

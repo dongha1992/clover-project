@@ -42,9 +42,8 @@ const TabHeader = ({ title }: TProps) => {
   );
 
   useEffect(() => {
-    console.log(router.asPath, 'router.asPath');
-    setSelectedTab(router.asPath);
-  }, [router]);
+    if (router.isReady) setSelectedTab(router.asPath);
+  }, [router.isReady]);
 
   const mapper: Obj = {
     '이메일/비밀번호 찾기': FIND_ACCOUNT,

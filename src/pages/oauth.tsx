@@ -89,7 +89,14 @@ const Oauth = () => {
           })
         );
       } else {
-        router.replace('/onboarding');
+        dispatch(
+          SET_ALERT({
+            alertMessage: error.message,
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
       }
     }
   };
@@ -120,8 +127,10 @@ const Oauth = () => {
   };
 
   useEffect(() => {
-    initKakaoAuth();
-  }, [code]);
+    if (router.isReady) {
+      initKakaoAuth();
+    }
+  }, [router.isReady]);
 
   return <div></div>;
 };

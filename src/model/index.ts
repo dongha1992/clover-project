@@ -390,6 +390,7 @@ export interface IDestinationsResponse {
   main?: boolean;
   createdAt?: string;
   spotPickup?: ISpotPickupInDestinaion;
+  spotPickupId?: number;
   spaceType?: string;
   availableTime?: string;
   closedDate?: string;
@@ -716,6 +717,7 @@ export interface IGetCard {
   name: string;
   main: boolean;
   createdAt: string;
+  isUsing: boolean;
 }
 export interface IGetCardResponse {
   code: number;
@@ -1292,6 +1294,7 @@ export interface IGetSubOrdersResponse {
 export interface IOrderPayment {}
 
 export interface IOrderDetail {
+  type: string;
   id: number;
   delivery: TDeliveryType | string;
   deliveryDetail: string;
@@ -1325,6 +1328,8 @@ export interface IOrderDetail {
   refundMenuQuantity: number;
   refundOptionAmount: number;
   status: string;
+  subscriptionRound?: number;
+  subscriptionPeriod?: string;
 }
 
 export interface IGetOrderDetailResponse {
@@ -1347,6 +1352,9 @@ export interface IOrderPreviewRequest {
   destinationId: number | undefined;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderDeliveriesInOrderPreviewRequest[];
+  subscriptionMenuDetailId?: number | null;
+  subscriptionPeriod?: string | null;
+  subscriptionRound?: number | null;
   type: string;
 }
 export interface ICreateOrderPreview {
@@ -1370,6 +1378,9 @@ export interface ICreateOrderPreview {
   point: number;
   coupon: number;
   payAmount: number;
+  subscriptionMenuDetailId: number;
+  subscriptionPeriod: string;
+  subscriptionRound: number;
   orderDeliveries: [
     {
       delivery: string;
@@ -1603,7 +1614,7 @@ export interface IMenus {
   priority: string;
   closedAt: string;
   openedAt: string;
-  subscriptionDelivery?: string;
+  subscriptionDeliveries?: string[];
   subscriptionPeriods?: string;
 }
 
@@ -1950,4 +1961,16 @@ export interface ISubscribeInfo {
   period: string | null;
   startDate: string | null;
   deliveryDay: string[] | null;
+  menuId: number | null;
+  menuDetails:
+    | {
+        id: number;
+        name: string;
+        price: number;
+        discountPrice: number;
+        main: boolean;
+      }[]
+    | null;
+  menuImage: string | null;
+  datePeriod: string[] | null;
 }
