@@ -322,6 +322,7 @@ const Container = styled.section<{ type: string }>`
         width: 299px;
         margin-bottom: 48px;
         border-radius: 8px;
+        justify-content: space-between;
       `;
     } else if (type === 'normal') {
       return css`
