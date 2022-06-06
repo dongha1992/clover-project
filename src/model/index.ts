@@ -551,7 +551,7 @@ export interface ISpotsDetail {
   placeHoliday: string;
   placeOpenTime: string;
   placeTel: string;
-  placeType: string;
+  placeType: TPlaceType;
   stories: ISpotStories[];
   type: string;
   image: {
