@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
-import { IMAGE_S3_URL } from '@constants/mock';
+import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
 import { ISpotsDetail } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
@@ -216,13 +216,21 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {list.images.map((i, idx) => {
-                return (
-                  <div key={idx}>
-                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                  </div>
-                );
-              })}
+              {
+                list.isTrial ? (
+                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                ) : (
+                  <>
+                  {list.images.map((i, idx) => {
+                    return (
+                      <div key={idx}>
+                        <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
+                      </div>
+                    );
+                  })}
+                  </>
+                )
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
