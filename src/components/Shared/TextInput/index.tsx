@@ -106,7 +106,7 @@ const TextInput = React.forwardRef(
             <input
               style={style}
               type={inputType ? inputType : 'text'}
-              value={value}
+              defaultValue={value}
               onChange={onChange}
               placeholder={placeholder}
               name={name}
