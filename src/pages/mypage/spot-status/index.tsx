@@ -23,13 +23,16 @@ const SpotStatusPage = () => {
   // const [page, setPage] = useState(1);
   const [items, setItems] = useState(false);
 
+  const latLen = spotsPosition.latitude.length > 0;
+  const lonLen = spotsPosition.longitude.length > 0;
+
   // 찜한 스팟 api
   const { data: wishList } = useQuery(
     ['spotList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition ? spotsPosition.longitude : null,
+        latitude: latLen ? Number(spotsPosition.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition.longitude) : null,
         size: 10,
         page: 1,
       };

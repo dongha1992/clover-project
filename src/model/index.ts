@@ -434,8 +434,8 @@ export interface IGetDestinationsRequest {
   size: number;
   deliveries?: string | null;
   delivery?: string | null;
-  latitude?: number;
-  longitude?: number;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface IEditDestinationRequest {
@@ -570,6 +570,7 @@ export interface ISpotsDetail {
   userId: number;
   step: string;
   rejected: boolean;
+  [propsName:string]: any;
 }
 
 export interface ISpotPickupInfo {
@@ -657,7 +658,7 @@ export interface ISpotsInfo {
   canOwnerSpotRegistraion: boolean;
   canPrivateSpotRegistration: boolean;
   canPublicSpotRegistraion: boolean;
-  trialSpotRegistration: IGetRegistrationStatus;
+  trialSpotRegistration: IGetRegistrationStatus | null;
 }
 
 export interface ISpotsInfoResponse {
@@ -893,7 +894,7 @@ export interface IGetRegistrationStatus {
   trialEndedAt?: string;
   trialStartedAt?: string;
   trialTargetUserCount?: number;
-  trialUserCount?: number;
+  trialUserCount?: number | undefined;
   trialCount?: number;
   canRetrial?: boolean;
 }
@@ -977,22 +978,14 @@ export interface IGetSpotFilterResponse {
 }
 
 export interface IGetSpotFilter {
-  publicFilters: [
-    {
-      value: string | boolean;
-      filtered: boolean;
-      fieldName: string;
-      name: string;
-    }
-  ];
-  etcFilters: [
-    {
-      value: string | boolean;
-      filtered: boolean;
-      fieldName: string;
-      name: string;
-    }
-  ];
+  filters: IFilters[];
+}
+
+export interface IFilters {
+  value: string | boolean;
+  filtered: boolean;
+  fieldName: string;
+  name: string;
 }
 
 /* ORDER */

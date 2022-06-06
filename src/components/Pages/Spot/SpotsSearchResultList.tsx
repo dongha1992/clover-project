@@ -34,10 +34,11 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
-  const { spotPickupId } = useSelector(spotSelector);
+  const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
+  const positionLen = spotsPosition?.latitude !== null;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   // 운영 종료 예정 or 종료
@@ -46,7 +47,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
   const closedSoonOperation = dDay >= -14;
 
-  const renderSpotMsg = useCallback(() => {
+  const renderSpotMsg = () => {
     switch (true) {
       case closedOperation: {
         return (
@@ -73,7 +74,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       default: {
         return (
           <MeterAndTime>
-            {userLocationLen && (
+            {(userLocationLen || positionLen) && (
               <>
                 <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
                 <Col />
@@ -87,7 +88,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         );
       }
     }
-  }, []);
+  };
 
   const typeTag = (): string | undefined => {
     switch (item.type) {
