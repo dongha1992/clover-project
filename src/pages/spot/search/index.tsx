@@ -138,29 +138,24 @@ const SpotSearchPage = (): ReactElement => {
 
   // 스팟 검색 결과 api
   const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    const { value } = e.target as HTMLInputElement;
-
+    let { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
-      if (inputRef.current) {
-        // setKeyWord(inputRef.current?.value);
-        setKeyWord(inputRef.current?.value);
-        let word = inputRef.current?.value;
-        if (!word) {
+      if (value) {
+        if (!value) {
           setSearchResult([]);
           return;
         }
         fetchSpotSearchData();
         dispatch(INIT_SPOT_FILTERED());
-
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchSpotSearchData = async() => {
+  const fetchSpotSearchData = useCallback(async() => {
     try {
       const params = {
-        keyword: keyword,
+        keyword,
         latitude: latLen ? Number(spotsPosition.latitude) : null,
         longitude: lonLen ? Number(spotsPosition.longitude) : null,
       };
@@ -175,18 +170,19 @@ const SpotSearchPage = (): ReactElement => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [keyword]);
 
   const handleSelectedKeywordVaule = (value: string) => {
     setKeyWord(value);
   };
 
-  const changeInputHandler = () => {
-    const inputText = inputRef.current?.value.length;
+  const changeInputHandler = (e: any) => {
+    const inputText = e.target.value;
+      setKeyWord(inputText);
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
-    }
+    };
   };
 
 
@@ -297,9 +293,7 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   const initInputHandler = () => {
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    };
+    setKeyWord('');
   };
 
   const goToOrder = useCallback(() => {
@@ -368,6 +362,7 @@ const SpotSearchPage = (): ReactElement => {
     <Container>
       <Wrapper>
         <TextInput
+          name="input"
           inputType="text"
           placeholder="도로명, 건물명 또는 지번으로 검색"
           svg="searchIcon"
@@ -376,10 +371,11 @@ const SpotSearchPage = (): ReactElement => {
           onFocus={() => {
             setInputFocus(true);
           }}
-          ref={inputRef}
           value={keyword}
         />
-        {inputRef.current && inputRef.current?.value.length > 0 && (
+        {
+          keyword.length > 0 &&
+        (
           <div className="removeSvg" onClick={clearInputHandler}>
             <SVGIcon name="removeItem" />
           </div>
