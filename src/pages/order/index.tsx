@@ -114,7 +114,7 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 
-const ngorkUrl = 'https://f957-221-147-44-88.jp.ngrok.io';
+const ngorkUrl = 'https://b14a-59-6-1-115.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -330,6 +330,12 @@ const OrderPage = () => {
             })
           );
           router.replace('/cart');
+        } else if (error.code === 1104) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '카드를 등록해주세요.',
+            })
+          );
         }
       },
     }
@@ -652,17 +658,17 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      payMethod: selectedOrderMethod,
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
-
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}/order`,
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
+
+    const reqBody = {
+      payMethod: selectedOrderMethod,
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${ngorkUrl}/order`,
+    };
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
