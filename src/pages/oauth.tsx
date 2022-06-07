@@ -51,10 +51,6 @@ const Oauth = () => {
 
         dispatch(SET_USER(data));
 
-        if (window.Kakao) {
-          window.Kakao.cleanup();
-        }
-
         if (isRegister) {
           if (!NAME_REGX.test(data.name) || data.name.length === 0) {
             router.push('/signup/change-name');
@@ -102,6 +98,7 @@ const Oauth = () => {
   };
 
   const initKakaoAuth = async () => {
+    console.log('work 105');
     try {
       const qs: Obj = {
         grant_type: 'authorization_code',
@@ -110,17 +107,16 @@ const Oauth = () => {
           location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
         code,
       };
+      console.log(qs, 'qs');
 
       const queryString = Object.keys(qs)
         .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(qs[k]))
         .join('&');
 
-      if (code) {
-        const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
-          headers: kakaoHeader,
-        });
-        onSuccessKakao(data);
-      }
+      const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
+        headers: kakaoHeader,
+      });
+      onSuccessKakao(data);
     } catch (error) {
       router.replace('/login');
     }

@@ -114,7 +114,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   useEffect(() => {
     try {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-      // window.Kakao.init('eea6746462f9b8925defa4f6396aafdd');
     } catch (error) {
       console.error(error);
     }
