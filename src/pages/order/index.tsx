@@ -658,17 +658,17 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   payMethod: selectedOrderMethod,
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
-
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${ngorkUrl}/order`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
+
+    // const reqBody = {
+    //   payMethod: selectedOrderMethod,
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${ngorkUrl}/order`,
+    // };
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
