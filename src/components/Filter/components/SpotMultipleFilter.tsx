@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextB2R } from '@components/Shared/Text';
+import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { FlexRow } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
@@ -11,21 +11,21 @@ interface IProps {
   selectedCheckboxIds: string[];
 }
 
-const MultipleFilter = ({ data, changeHandler, selectedCheckboxIds }: IProps) => {
+const SpotMultipleFilter = ({ data, changeHandler, selectedCheckboxIds, }: IProps) => {
 
   return (
     <Container>
       <BtnContainer>
         {data &&
           data?.map((item, index) => {
-            const isSelected = selectedCheckboxIds.includes(item.name);
+            const isSelected =selectedCheckboxIds.includes(item.fieldName)
             const onCheck = (value: string) => {
               changeHandler(value, isSelected);
             };
             return (
               <FlexRow key={index}>
-                <Checkbox isSelected={isSelected} onChange={() => onCheck(item.name)} key={index} />
-                <TextB2R padding="4px 0 0 8px" onClick={() => onCheck(item.name)} pointer>{item.name}</TextB2R>
+                  <Checkbox isSelected={isSelected} onChange={() => onCheck(item.fieldName)} key={index} />
+                  <TextH5B padding="4px 0 0 8px" onClick={() => onCheck(item.fieldName)} pointer>{item.name}</TextH5B>
               </FlexRow>
             );
           })}
@@ -47,4 +47,4 @@ const BtnContainer = styled.div`
   grid-gap: 16px;
 `;
 
-export default React.memo(MultipleFilter);
+export default React.memo(SpotMultipleFilter);
