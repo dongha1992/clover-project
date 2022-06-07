@@ -658,24 +658,24 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      payMethod: selectedOrderMethod,
-      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    };
-
     // const reqBody = {
     //   payMethod: selectedOrderMethod,
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}/order`,
+    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     // };
+
+    const reqBody = {
+      payMethod: selectedOrderMethod,
+      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${ngorkUrl}/order`,
+    };
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
 
       let payForm = document.getElementById('payForm')! as HTMLFormElement;
       payForm!.innerHTML = '';
-      payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
+      // payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
       let payFormMobile: any = document.getElementById('payFormMobile')!;
       payFormMobile.innerHTML = '';
@@ -778,9 +778,9 @@ const OrderPage = () => {
       });
 
       if (isMobile) {
-        window.location.href = data.data.next_redirect_pc_url;
-      } else {
         window.location.href = data.data.next_redirect_mobile_url;
+      } else {
+        window.location.href = data.data.next_redirect_pc_url;
       }
     } catch (error: any) {
       if (error.code === 1207) {
