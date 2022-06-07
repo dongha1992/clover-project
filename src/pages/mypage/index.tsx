@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween, FlexColCenter } from '@styles/theme';
-import { SVGIcon } from '@utils/common';
+import { getCookie, SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
@@ -10,8 +10,8 @@ import Image from 'next/image';
 import newUserImg from '@public/images/img2.png';
 import friendPushEventImg from '@public/images/img3.png';
 import { Obj } from '@model/index';
-import { userForm } from '@store/user';
-import { useSelector } from 'react-redux';
+import { INIT_USER, userForm } from '@store/user';
+import { useDispatch, useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
 import { useQuery, useQueryClient } from 'react-query';
@@ -28,8 +28,18 @@ interface IMypageMenu {
   hideBorder?: boolean;
 }
 
+const token = getCookie({ name: 'acstk' });
+
 const MypagePage = () => {
+  const dispatch = useDispatch();
   const { me, isLoginSuccess } = useSelector(userForm);
+
+  useEffect(() => {
+    // 쿠키에서 토큰이 지워지면 user도 초기화
+    if (!token) {
+      dispatch(INIT_USER());
+    }
+  }, []);
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
