@@ -675,7 +675,7 @@ const OrderPage = () => {
 
       let payForm = document.getElementById('payForm')! as HTMLFormElement;
       payForm!.innerHTML = '';
-      // payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
+      payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
       let payFormMobile: any = document.getElementById('payFormMobile')!;
       payFormMobile.innerHTML = '';
