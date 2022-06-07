@@ -68,13 +68,13 @@ const OnBoarding: NextPage = () => {
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
 
-    if (typeof window !== undefined) {
-      window.Kakao.Auth.authorize({
-        redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-      });
-    }
+    // window.Kakao.Auth.setClient = 'afb3a1413cc8d2c864a74358105771a9';
+    window.Kakao.Auth.authorize({
+      redirectUri:
+        // location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `https://b14a-59-6-1-115.jp.ngrok.io/oauth`,
+      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+    });
   };
 
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
@@ -88,10 +88,8 @@ const OnBoarding: NextPage = () => {
       });
       try {
         const appleResponse = await window.AppleID.auth.signIn();
-
         const appleToken = appleResponse?.authorization.id_token;
         if (appleToken) {
-          // 애플 로그인 / 회원가입 호출?
           const params = { appleToken };
           const { data } = await getAppleTokenApi({ params });
           if (data.data.availability) {
