@@ -42,7 +42,7 @@ const InfoCard = () => {
   return (
     <Container>
       {isLoginSuccess &&
-        (subsList?.length !== 0 ? (
+        (subsList?.length === 0 ? (
           <TextH2B>
             <span>{me?.nickName}</span>님 <br />
             건강한 식단을 구독해 보세요!

@@ -41,21 +41,24 @@ const MySubsList = () => {
     return <div>로딩중</div>;
   }
   return (
-    <MySubsBox>
-      <Head>
-        <TextH3B>내 구독 ({subsList.length})</TextH3B>
-        <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
-          구독 관리
-        </TextH6B>
-      </Head>
-      <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
-        <ListContainer>
-          {subsList.map((item: any, index: number) => (
-            <SubsCardItem key={index} item={item} />
-          ))}
-        </ListContainer>
-      </ScrollHorizonList>
-    </MySubsBox>
+    subsList &&
+    subsList.length > 0 && (
+      <MySubsBox>
+        <Head>
+          <TextH3B>내 구독 ({subsList.length})</TextH3B>
+          <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
+            구독 관리
+          </TextH6B>
+        </Head>
+        <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
+          <ListContainer>
+            {subsList.map((item: any, index: number) => (
+              <SubsCardItem key={index} item={item} />
+            ))}
+          </ListContainer>
+        </ScrollHorizonList>
+      </MySubsBox>
+    )
   );
 };
 const MySubsBox = styled.div`
