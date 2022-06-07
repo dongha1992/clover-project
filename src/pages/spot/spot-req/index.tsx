@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextH1B, TextB2R, TextH2B } from '@components/Shared/Text';
+import { TextB3R, TextH2B, TextH3B } from '@components/Shared/Text';
 import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
@@ -45,7 +45,7 @@ const SpotReqPage = () => {
   };
   const goToRegister = () => {
     if (isLoginSuccess) {
-      if((type === 'OWNER' && info?.canOwnerSpotRegistraion) || (type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion)){
+      if((type === 'OWNER' && !info?.canOwnerSpotRegistraion) || (type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion)){
        return (
         dispatch(
           SET_ALERT({
@@ -97,10 +97,10 @@ const SpotReqPage = () => {
   return (
     <Container>
       <TopWrapper>
-        <TextH1B>{mainText()?.textTitle}</TextH1B>
-        <TextB2R margin="33px 0 48px 0" color={theme.greyScale65}>
+        <TextH2B padding='24px 0 24px 0'>{mainText()?.textTitle}</TextH2B>
+        <TextB3R padding="0 0 48px 0" color={theme.greyScale65}>
           {mainText()?.textDesc}
-        </TextB2R>
+        </TextB3R>
       </TopWrapper>
       <GuideWrapper>
         <Guide></Guide>
@@ -108,7 +108,7 @@ const SpotReqPage = () => {
       <BottomWrapper>
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
-          <TextH2B margin="0 0 24px 0">{text.askText}</TextH2B>
+          <TextH3B padding="48px 0 24px 0">{text.askText}</TextH3B>
           <Button pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
             {text.askBtnText}
           </Button>
@@ -123,9 +123,7 @@ const SpotReqPage = () => {
   );
 };
 
-const Container = styled.main`
-  padding: 24px 0;
-`;
+const Container = styled.div``;
 const TopWrapper = styled.section`
   ${homePadding};
 `;
@@ -134,7 +132,6 @@ const GuideWrapper = styled.section`
   width: 100%;
   height: 412px;
   background: ${theme.greyScale25};
-  margin-bottom: 48px;
 `;
 
 const Guide = styled.div``;

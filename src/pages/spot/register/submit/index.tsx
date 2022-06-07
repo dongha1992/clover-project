@@ -58,7 +58,7 @@ const SubmitPage = () => {
   return (
     <Container>
       <Wrapper>
-        <TextH2B margin="0 0 45px 0">{'신청 완료 전\n내용을 확인해요'}</TextH2B>
+        <TextH2B padding='24px 0 48px 0'>{'신청 완료 전\n내용을 확인해요'}</TextH2B>
         <ContentWrapper>
           <FlexBetween margin="0 0 24px 0">
             <TextB1B>장소 정보</TextB1B>
