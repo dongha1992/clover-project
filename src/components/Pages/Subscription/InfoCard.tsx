@@ -1,16 +1,43 @@
+import { getOrdersApi } from '@api/order';
 import { TextH2B } from '@components/Shared/Text';
 import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
 import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-interface IProps {
-  subsList: any;
-}
-
-const InfoCard = ({ subsList }: IProps) => {
+const InfoCard = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
+  const {
+    data: subsList,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getSubscriptionOrders',
+    async () => {
+      const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
+      const { data } = await getOrdersApi(params);
+
+      let filterData = await data.data.orders
+        .map((item: any) => {
+          item.orderDeliveries.sort(
+            (a: any, b: any) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
+          );
+
+          return item;
+        })
+        .filter((item: any) => item?.status !== 'COMPLETED');
+
+      return filterData;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
+      cacheTime: 0,
+    }
+  );
 
   return (
     <Container>

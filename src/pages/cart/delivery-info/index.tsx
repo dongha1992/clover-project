@@ -181,41 +181,44 @@ const DeliverInfoPage = () => {
             },
             spotPickupId: tempDestination?.spotPickupId,
           };
-
-          const { data } = await postDestinationApi(reqBody);
-          if (data.code === 200) {
-            const response = data.data;
-            dispatch(
-              SET_DESTINATION({
-                name: response.name,
-                location: {
-                  addressDetail: response.location.addressDetail,
-                  address: response.location.address,
-                  dong: response.location.dong,
-                  zipCode: response.location.zipCode,
-                },
-                main: response.main,
-                deliveryMessage: response.deliveryMessage,
-                receiverName: response.receiverName,
-                receiverTel: response.receiverTel,
-                deliveryMessageType: '',
-                delivery: response.delivery,
-                id: response.id,
-              })
-            );
-            dispatch(SET_AFTER_SETTING_DELIVERY());
-            dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
-            dispatch(INIT_TEMP_DESTINATION());
-            dispatch(INIT_DESTINATION_TYPE());
-            dispatch(INIT_AVAILABLE_DESTINATION());
-            if (isSubscription) {
-              router.push({
-                pathname: '/subscription/set-info',
-                query: { subsDeliveryType: subsDeliveryType, menuId },
-              });
-            } else {
-              router.push('/cart');
+          try {
+            const { data } = await postDestinationApi(reqBody);
+            if (data.code === 200) {
+              const response = data.data;
+              dispatch(
+                SET_DESTINATION({
+                  name: response.name,
+                  location: {
+                    addressDetail: response.location.addressDetail,
+                    address: response.location.address,
+                    dong: response.location.dong,
+                    zipCode: response.location.zipCode,
+                  },
+                  main: response.main,
+                  deliveryMessage: response.deliveryMessage,
+                  receiverName: response.receiverName,
+                  receiverTel: response.receiverTel,
+                  deliveryMessageType: '',
+                  delivery: response.delivery,
+                  id: response.id,
+                })
+              );
+              dispatch(SET_AFTER_SETTING_DELIVERY());
+              dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
+              dispatch(INIT_TEMP_DESTINATION());
+              dispatch(INIT_DESTINATION_TYPE());
+              dispatch(INIT_AVAILABLE_DESTINATION());
+              if (isSubscription) {
+                router.push({
+                  pathname: '/subscription/set-info',
+                  query: { subsDeliveryType: subsDeliveryType, menuId },
+                });
+              } else {
+                router.push('/cart');
+              }
             }
+          } catch (error) {
+            console.log('error', error);
           }
         }
         router.push({
