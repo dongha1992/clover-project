@@ -25,7 +25,7 @@ const DestinationSearchPage = () => {
   const dispatch = useDispatch();
   const { userDeliveryType } = useSelector(destinationForm);
 
-  const { orderId } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
@@ -74,8 +74,15 @@ const DestinationSearchPage = () => {
       });
       dispatch(SET_TEMP_EDIT_DESTINATION(destination));
     } else {
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
       dispatch(SET_TEMP_DESTINATION(destination));
+      if (isSubscription) {
+        router.push({
+          pathname: '/cart/delivery-info',
+          query: { subsDeliveryType, isSubscription: true, destinationId: destination.id, menuId },
+        });
+      } else {
+        router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
+      }
     }
   };
 
@@ -83,8 +90,15 @@ const DestinationSearchPage = () => {
     if (orderId) {
       router.push({ pathname: '/destination/destination-detail', query: { orderId } });
     } else {
-      router.push('/destination/destination-detail');
       dispatch(SET_LOCATION_TEMP(address));
+      if (isSubscription) {
+        router.push({
+          pathname: '/destination/destination-detail',
+          query: { subsDeliveryType, isSubscription: true, menuId },
+        });
+      } else {
+        router.push('/destination/destination-detail');
+      }
     }
   };
 

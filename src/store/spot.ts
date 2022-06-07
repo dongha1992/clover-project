@@ -1,24 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail, IPostRegistrations } from '@model/index';
+import { ISpotsDetail, IPostRegistrations, ISpotsInfo } from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
   address?: string | null;
-  bdNm?: string | null; 
-  dong?: string | null,
-  zipCode?: string | null,
+  bdNm?: string | null;
+  dong?: string | null;
+  zipCode?: string | null;
   lat?: string | null;
   lon?: string | null;
   jibunAddress?: string | null;
   roadAddress?: string | null;
-};
+}
 
 interface ISpotRegistrationsOpions {
-  pickupLocationTypeOptions?: {
-    name: string;
-    value: string;
-  };
   placeTypeOptions?: {
     name: string;
     value: string;
@@ -27,38 +23,21 @@ interface ISpotRegistrationsOpions {
     name: string;
     value: string;
   };
-};
+}
 
-interface ISpotsRegistrationInfo {
+ export interface ISpotsRegistrationInfo {
   placeName?: string | null;
-  pickupLocationEtc?: string | null;
+  pickupLocation?: string | null;
   placeTypeEtc?: string | null;
   userName: string;
   userEmail: string;
   userTel: string;
   managerInfo?: string | null;
-};
-
-interface ISpotsPostions {
-  latitude: number | null;
-  longitude: number | null;
 }
 
-interface ISpotSearchFilterd {
-  public: boolean;
-  private: boolean;
-  canEat: boolean;
-  canParking: boolean;
-  canDeliveryDinner: boolean;
-  isEvent: boolean;
-  STORE: string;
-  GS25: string;
-  BOOKSTORE: string;
-  STORYWAY: string;
-  CAFE: string;
-  SEVEN_ELEVEN: string;
-  FITNESS_CENTER: string;
-  DRUGSTORE: string;
+interface ISpotsPostions {
+  latitude: number | string | null;
+  longitude: number | string | null;
 }
 
 interface IProps {
@@ -70,26 +49,11 @@ interface IProps {
   spotRegistrationsPostResult: IPostRegistrations | any;
   spotsPosition: ISpotsPostions | any;
   spotsPickupSelected: ISpotsDetail | null;
-  spotsSearchResultFiltered: ISpotSearchFilterd;
+  spotSearchSelectedFilters: string[];
   spotPickupId: number | null;
+  spotInfo: ISpotsInfo | null;
+  spotSearchSort: string;
 };
-
-const spotsSearchResultFilteredState = {
-  public: false,
-  private: false,
-  canEat: false,
-  canParking: false,
-  canDeliveryDinner: false,
-  isEvent: false,
-  STORE: '',
-  GS25: '',
-  BOOKSTORE: '',
-  STORYWAY: '',
-  CAFE: '',
-  SEVEN_ELEVEN: '',
-  FITNESS_CENTER: '',
-  DRUGSTORE: '',
-}
 
 const spotAddressState = {
   addressDetail: '',
@@ -100,18 +64,17 @@ const spotAddressState = {
   lat: '',
   lon: '',
   jibunAddress: '',
-  roadAddress: ''
+  roadAddress: '',
 };
 
 const spotRegistrationsOptionsState = {
   lunchTimeOptions: {},
-  pickupLocationTypeOptions: {},
   placeTypeOptions: {},
 };
 
 const spotsRegistrationInfoState = {
   placeName: '',
-  pickupLocationEtc: '',
+  pickupLocation: '',
   placeTypeEtc: '',
   userName: '',
   userEmail: '',
@@ -120,8 +83,8 @@ const spotsRegistrationInfoState = {
 };
 
 const spotsPostionsState = {
-  latitude: '',
-  longitude: '',
+  latitude: null,
+  longitude: null,
 };
 
 const initialState: IProps = {
@@ -141,10 +104,10 @@ const initialState: IProps = {
     ...spotsPostionsState,
   },
   spotsPickupSelected: null,
-  spotsSearchResultFiltered: {
-    ...spotsSearchResultFilteredState
-  },
   spotPickupId: null,
+  spotInfo: null,
+  spotSearchSelectedFilters: [],
+  spotSearchSort: '',
 };
 
 export const spot = createSlice({
@@ -155,10 +118,10 @@ export const spot = createSlice({
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
     },
-    INIT_SPOT_LIKED: (state, action : PayloadAction) => {
+    INIT_SPOT_LIKED: (state, action: PayloadAction) => {
       state.isSpotLiked = false;
     },
-    SET_SPOT_LIKED: (state, action : PayloadAction) => {
+    SET_SPOT_LIKED: (state, action: PayloadAction) => {
       state.isSpotLiked = true;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
@@ -182,37 +145,53 @@ export const spot = createSlice({
     SET_SPOT_POSITIONS: (state, action: PayloadAction<ISpotsPostions>) => {
       state.spotsPosition = action.payload;
     },
+    INIT_SPOT_POSITIONS: (state, action: PayloadAction) => {
+      state.spotsPosition = spotsPostionsState;
+    },
     // 스팟 검색, 주문하기->스팟 픽업장소
     SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotsPickupSelected = action.payload;
     },
-    SET_SPOTS_FILTERED: (state, action: PayloadAction<ISpotSearchFilterd>) => {
-      state.spotsSearchResultFiltered = action.payload;
-    },
-    INIT_SPOT_FILTERED: (state, action: PayloadAction) => {
-      state.spotsSearchResultFiltered = spotsSearchResultFilteredState;
-    },
     SET_SPOT_PICKUP_ID: (state, action: PayloadAction<number | null>) => {
       state.spotPickupId = action.payload;
+    },
+    SET_SPOT_INFO: (state, action: PayloadAction<ISpotsInfo | null>) => {
+      state.spotInfo = action.payload;
+    },
+    SET_SPOT_SEARCH_SELECTED_FILTERS: (state, action: PayloadAction<string[]>) => {
+      state.spotSearchSelectedFilters = action.payload;
+    },
+    INIT_SEARCH_SELECTED_FILTERS : (state, action: PayloadAction) => {
+      state.spotSearchSelectedFilters = [];
+    },
+    SET_SPOT_SEARCH_SORT : (state, action: PayloadAction<string>) => {
+      state.spotSearchSort = action.payload;
+    },
+    INIT_SPOT_SEARCH_SORT : (state, action: PayloadAction) => {
+      state.spotSearchSort = '';
     },
   },
 });
 
-export const { 
-  SPOT_ITEM, 
+export const {
+  SPOT_ITEM,
   SET_SPOT_LIKED,
   INIT_SPOT_LIKED,
-  SET_SPOT_LOCATION, 
-  INIT_SPOT_LOCATION, 
+  SET_SPOT_LOCATION,
+  INIT_SPOT_LOCATION,
   SET_SPOT_REGISTRATIONS_OPTIONS,
   INIT_SPOT_REGISTRATIONS_OPTIONS,
   SET_SPOT_REGISTRATIONS_INFO,
   SET_SPOT_REGISTRATIONS_POST_RESULT,
   SET_SPOT_POSITIONS,
+  INIT_SPOT_POSITIONS,
   SET_SPOT_PICKUP_SELECTED,
-  SET_SPOTS_FILTERED,
-  INIT_SPOT_FILTERED,
   SET_SPOT_PICKUP_ID,
+  SET_SPOT_INFO,
+  SET_SPOT_SEARCH_SELECTED_FILTERS,
+  INIT_SEARCH_SELECTED_FILTERS,
+  SET_SPOT_SEARCH_SORT,
+  INIT_SPOT_SEARCH_SORT,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

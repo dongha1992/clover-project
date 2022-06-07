@@ -1,81 +1,82 @@
-import React, { useState } from 'react';
-import { MultipleFilter, OrderFilter } from '@components/Filter/components';
+import React, { useState, useCallback, useEffect } from 'react';
+import { SpotMultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
-import { TextB3R, TextH4B } from '@components/Shared/Text';
+import { TextH4B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { RADIO_CHECKBOX_SPOT } from '@constants/filter';
-import { theme, FlexCol, FlexBetween, bottomSheetButton } from '@styles/theme';
-import { ToggleButton, Button } from '@components/Shared/Button';
+import { theme, bottomSheetButton } from '@styles/theme';
+import { Button } from '@components/Shared/Button';
 import { useQuery } from 'react-query';
 import { getSpotsFilter } from '@api/spot';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_SPOTS_FILTERED, spotSelector, INIT_SPOT_FILTERED } from '@store/spot';
+import { 
+  spotSelector,
+  SET_SPOT_SEARCH_SELECTED_FILTERS,
+  INIT_SEARCH_SELECTED_FILTERS,
+  SET_SPOT_SEARCH_SORT,
+} from '@store/spot';
+import { destinationForm } from '@store/destination';
 
-/* TODO : 다른 필터에서 전체 선택 시 해제되는 거 spot은 없음 이거 로직 변경, toggle시 전체 선택 해제로 */
+interface IProps {
+  getLocation?: any;
+};
 
-const SpotSearchFilter = () => {
+const SpotSearchFilter = ({getLocation}: IProps) => {
   const dispatch = useDispatch();
-  const { spotsSearchResultFiltered } = useSelector(spotSelector);
+  const { spotSearchSelectedFilters, spotSearchSort, spotsPosition } = useSelector(spotSelector);
+  const { userLocation } = useSelector(destinationForm);
+  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(spotSearchSelectedFilters);
+  const defaultRedioId = () => {
+    if (userLocationLen) {
+      return setSelectedRadioId('nearest')
+    } else if (!userLocationLen) {
+      return setSelectedRadioId('frequency')
+    } 
+  };
+  const [selectedRadioId, setSelectedRadioId] = useState<string>(spotSearchSort);
+  const userLocationLen = userLocation.emdNm?.length! > 0;
 
-  const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
-  const [selectedRadioId, setSelectedRadioId] = useState<string>('');
-  const [publicToggle, setPublicToggle] = useState(false);
-  const [privateToggle, setPrivateToggle] = useState(false);
-
-  const { data: spotsFilter } = useQuery(['spotList', 'station'], async () => {
+  // 필터 api
+  const { data: spotsFilter } = useQuery(['spotFilter'], async () => {
     const response = await getSpotsFilter();
     return response.data.data;
   });
 
-  const checkboxHandler = (id: string) => {
-    const findItem = selectedCheckboxIds.find((_id) => _id === id);
-    const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
+  const checkboxHandler = useCallback((name: string, isSelected: boolean | undefined) => {
+    const findItem = selectedCheckboxIds.find((_name) => _name === name);
 
-    if (id === '') {
-      setSelectedCheckboxIds(['']);
-      return;
-    }
-
-    if (findItem) {
-      tempSelectedCheckboxIds.filter((_id) => _id !== id);
-    } else {
-      const allCheckedIdx = tempSelectedCheckboxIds.indexOf('');
-      if (allCheckedIdx !== -1) {
-        tempSelectedCheckboxIds.splice(allCheckedIdx, 1);
-      }
-      tempSelectedCheckboxIds.push(id);
-    }
-    setSelectedCheckboxIds(tempSelectedCheckboxIds);
-  };
+    if (!isSelected) {
+      setSelectedCheckboxIds([...selectedCheckboxIds, name]);
+    } else if (isSelected && findItem) {
+      const filters = selectedCheckboxIds.filter(_name => _name !== name);
+      setSelectedCheckboxIds([...filters]);
+    };
+  }, [selectedCheckboxIds]);
 
   const radioButtonHandler = (value: string) => {
     setSelectedRadioId(value);
   };
 
-  const changePublicToggleHandler = () => {
-    setPublicToggle(!publicToggle);
-  };
-  const changePrivateToggleHandler = () => {
-    setPrivateToggle(!privateToggle);
+  const initSpotFilterHandler = () => {
+    setSelectedCheckboxIds([]);
+    defaultRedioId();
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
   };
 
-  const initSpotFilterHandler = () => {
-    setSelectedCheckboxIds(['']);
-    setPublicToggle(false);
-    setPrivateToggle(false);
-    dispatch(INIT_SPOT_FILTERED());
+  const onClick = () => {
+    if ((selectedRadioId === 'nearest') && (!userLocationLen)) {
+        getLocation();
+        clickButtonHandler();  
+    } else {
+      clickButtonHandler();
+    }
   };
 
   const clickButtonHandler = () => {
-    dispatch(
-      SET_SPOTS_FILTERED({
-        ...spotsSearchResultFiltered,
-        public: publicToggle,
-        private: privateToggle,
-      })
-    );
-    dispatch(INIT_BOTTOM_SHEET());
+    dispatch(SET_SPOT_SEARCH_SELECTED_FILTERS(selectedCheckboxIds))
+    dispatch(SET_SPOT_SEARCH_SORT(selectedRadioId));
+    dispatch(INIT_BOTTOM_SHEET());  
   };
 
   return (
@@ -91,35 +92,14 @@ const SpotSearchFilter = () => {
           data={RADIO_CHECKBOX_SPOT}
           changeHandler={radioButtonHandler}
           selectedRadioValue={selectedRadioId}
+          defaultData={userLocationLen? 'nearest': 'frequency'}
         />
         <BorderLine height={1} margin="16px 0" />
-        <FlexBetween padding="0 24px 16px 0">
-          <FlexCol>
-            <TextH4B color={theme.black}>프코스팟</TextH4B>
-            <TextB3R color={theme.greyScale65}>동네 주민 모두 이용 가능한 스팟</TextB3R>
-          </FlexCol>
-          <ToggleButton onChange={changePublicToggleHandler} status={publicToggle} />
-        </FlexBetween>
-        <MultipleFilter
-          data={spotsFilter?.publicFilters}
-          changeHandler={checkboxHandler}
-          selectedCheckboxIds={selectedCheckboxIds}
-        />
-        <BorderLine height={1} margin="16px 0" />
-        <FlexBetween padding="0 24px 16px 0">
-          <FlexCol>
-            <TextH4B color={theme.black}>프라이빗 스팟</TextH4B>
-            <TextB3R color={theme.greyScale65}>임직원 등 특정 대상만 이용 가능한 스팟</TextB3R>
-          </FlexCol>
-          <ToggleButton onChange={changePrivateToggleHandler} status={privateToggle} />
-        </FlexBetween>
-        <BorderLine height={1} margin="0 0 16px 0" />
         <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>
-          기타
+          필터
         </TextH4B>
-        <MultipleFilter
-          etcFilter
-          data={spotsFilter?.etcFilters}
+        <SpotMultipleFilter
+          data={spotsFilter?.filters!}
           changeHandler={checkboxHandler}
           selectedCheckboxIds={selectedCheckboxIds}
         />
@@ -129,7 +109,7 @@ const SpotSearchFilter = () => {
           전체 초기화
         </Button>
         <Col />
-        <Button height="100%" width="100%" borderRadius="0" onClick={clickButtonHandler}>
+        <Button height="100%" width="100%" borderRadius="0" onClick={onClick}>
           적용하기
         </Button>
       </ButtonContainer>

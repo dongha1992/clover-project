@@ -37,18 +37,15 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
   );
  
   const selectTab = () => {
-    if (tab === 'pickUp') {
-      return {options: registrationsOptions?.pickupLocationTypeOptions, value: selectedPickupPlace};
-    } else if (tab === 'time') {
+    if (tab === 'time') {
       return {options: registrationsOptions?.lunchTimeOptions, value: selectedLunchTime};
-    } else if (tab === 'place' && type === 'private') {
+    } else if (tab === 'place' && type === 'PRIVATE') {
       return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     } else if (tab === 'place') {
       return {options: registrationsOptions?.placeTypeOptions, value: selectedPlaceType};
     }
   };
 
-  const pickupTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedPickupPlace);
   const placeTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedPlaceType);
   const lunchTimeTypeObj = selectTab()?.options?.find((i: any) => i.value === selectedLunchTime);
 
@@ -77,16 +74,8 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
 
   const selectedHandler = () => {
     dispatch(INIT_BOTTOM_SHEET());
-    // 픽업장소
-    if(tab === 'pickUp'){
-      const selectedOptions = {
-        ...spotsRegistrationOptions,
-        pickupLocationTypeOptions: pickupTypeObj,
-      };
-      dispatch(SET_SPOT_REGISTRATIONS_OPTIONS(selectedOptions));
-    }
     // 점심시간
-    else if(tab === 'time'){
+    if(tab === 'time'){
       const selectedOptions = {
         ...spotsRegistrationOptions,
         lunchTimeOptions: lunchTimeTypeObj,

@@ -2,11 +2,21 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import router from 'next/router';
 import styled from 'styled-components';
 import { homePadding, theme } from '@styles/theme';
-import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextB4R } from '@components/Shared/Text';
+import {
+  TextH2B,
+  TextB2R,
+  TextH6B,
+  TextH3B,
+  TextH7B,
+  TextB3R,
+  TextH4B,
+  TextB4R,
+  TextH5B,
+} from '@components/Shared/Text';
 import Image from 'next/image';
 import Loading from '@components/Loading';
 import { Tag } from '@components/Shared/Tag';
-import { SVGIcon } from '@utils/common';
+import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewList } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
@@ -21,9 +31,12 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
 import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
+import axios from 'axios';
+import { Label } from '@components/Pages/Subscription/SubsCardItem';
+import { DELIVERY_TYPE_MAP } from '@constants/order';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -35,8 +48,7 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const MenuDetailPage = ({ menuId }: any) => {
-  // const [menuItem, setMenuItem] = useState<any>({});
+const MenuDetailPage = ({ menuDetail }: any) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -53,9 +65,9 @@ const MenuDetailPage = ({ menuId }: any) => {
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenuDetail',
+    ['getMenuDetail'],
     async () => {
-      const { data } = await getMenuDetailApi(menuId);
+      const { data } = await getMenuDetailApi(menuDetail.id);
       return data.data;
     },
 
@@ -65,13 +77,14 @@ const MenuDetailPage = ({ menuId }: any) => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!menuDetail,
     }
   );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(menuId);
+      const { data } = await getMenuDetailReviewApi(menuDetail.id);
       return data.data;
     },
 
@@ -110,7 +123,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   );
 
   const goToReviewDetail = (review: any) => {
-    router.push(`/menu/${menuId}/review/${review.id}`);
+    router.push(`/menu/${menuDetail.id}/review/${review.id}`);
   };
 
   const goToReviewSection = () => {
@@ -130,7 +143,7 @@ const MenuDetailPage = ({ menuId }: any) => {
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -140,8 +153,8 @@ const MenuDetailPage = ({ menuId }: any) => {
 
   const getMenuDetailPrice = () => {
     const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
-
     return { discount, price, discountedPrice };
+    // return { discount: 0, price: 0, discountedPrice: 0 };
   };
 
   useEffect(() => {
@@ -164,11 +177,11 @@ const MenuDetailPage = ({ menuId }: any) => {
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={menuItem?.thumbnail} setCountIndex={setCurrentImg} />
+        <Carousel images={menuDetail?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>
-          {menuItem?.badgeMessage && (
+          {menuDetail?.badgeMessage && (
             <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-              {menuItem?.badgeMessage}
+              {menuDetail?.badgeMessage}
             </TextH6B>
           )}
         </DailySaleNumber>
@@ -179,8 +192,8 @@ const MenuDetailPage = ({ menuId }: any) => {
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{menuItem.name}</TextH2B>
-            {/* {menuItem.tag.map((tag: string, index: number) => {
+            <TextH2B padding={'0 0 8px 0'}>{menuDetail.name}</TextH2B>
+            {/* {menuDetail.tag.map((tag: string, index: number) => {
               if (index > 1) return;
               return (
                 <Tag key={index} margin="0 4px 0 0">
@@ -189,20 +202,32 @@ const MenuDetailPage = ({ menuId }: any) => {
               );
             })} */}
             {menuItem.tag && menuItem.tag !== 'NONE' && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
+            <div className="tagBox">
+              {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
+                <Label className={item} key={index}>
+                  {DELIVERY_TYPE_MAP[item]}
+                </Label>
+              ))}
+              {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
+              {menuDetail.tag && <Tag margin="0 4px 0 0">{menuDetail.tag}</Tag>}
+            </div>
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {menuItem.description}
+            {menuDetail.description}
           </TextB2R>
           <PriceAndCouponWrapper>
             <PriceWrapper>
               <OriginPrice>
                 <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                  {getMenuDetailPrice().price}원
+                  {getFormatPrice(String(getMenuDetailPrice().price))}원
                 </TextH6B>
               </OriginPrice>
               <DiscountedPrice>
                 <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
-                <TextH3B padding={'0 0 0 4px'}>{getMenuDetailPrice().discountedPrice}원</TextH3B>
+                <TextH3B padding={'0 0 0 4px'}>
+                  {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원{' '}
+                  {menuDetail.type === 'SUBSCRIPTION' && '~'}
+                </TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
             {hasAvailableCoupon ? (
@@ -217,33 +242,49 @@ const MenuDetailPage = ({ menuId }: any) => {
               </CouponWrapper>
             )}
           </PriceAndCouponWrapper>
-          <BorderLine height={1} margin="16px 0" />
-          <NutritionInfo>
-            <NutritionInfoWrapper>
-              <TextH7B color={theme.greyScale65}>영양정보</TextH7B>
-              <NutritionInfoBox>
-                <TextH4B>123,233</TextH4B>
-                <TextB3R padding="0 0 0 2px">kcal</TextB3R>
-              </NutritionInfoBox>
-              <MLWrapper>
-                (<TextH7B padding="0 2px 0 0">M</TextH7B>
-                <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
-                <TextB4R>324g</TextB4R>)
-              </MLWrapper>
-            </NutritionInfoWrapper>
-            <ProteinWrapper>
-              <TextH7B color={theme.greyScale65}>단백질 함량</TextH7B>
-              <NutritionInfoBox>
-                <TextH4B>123,233</TextH4B>
-                <TextB3R padding="0 0 0 2px">kcal</TextB3R>
-              </NutritionInfoBox>
-              <MLWrapper>
-                (<TextH7B padding="0 2px 0 0">M</TextH7B>
-                <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
-                <TextB4R>324g</TextB4R>)
-              </MLWrapper>
-            </ProteinWrapper>
-          </NutritionInfo>
+          {menuDetail.type !== 'SUBSCRIPTION' && (
+            <NutritionInfo>
+              <NutritionInfoWrapper>
+                <TextH7B color={theme.greyScale65}>영양정보</TextH7B>
+                <NutritionInfoBox>
+                  <TextH4B>123,233</TextH4B>
+                  <TextB3R padding="0 0 0 2px">kcal</TextB3R>
+                </NutritionInfoBox>
+                <MLWrapper>
+                  (<TextH7B padding="0 2px 0 0">M</TextH7B>
+                  <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
+                  <TextB4R>324g</TextB4R>)
+                </MLWrapper>
+              </NutritionInfoWrapper>
+              <ProteinWrapper>
+                <TextH7B color={theme.greyScale65}>단백질 함량</TextH7B>
+                <NutritionInfoBox>
+                  <TextH4B>123,233</TextH4B>
+                  <TextB3R padding="0 0 0 2px">kcal</TextB3R>
+                </NutritionInfoBox>
+                <MLWrapper>
+                  (<TextH7B padding="0 2px 0 0">M</TextH7B>
+                  <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
+                  <TextB4R>324g</TextB4R>)
+                </MLWrapper>
+              </ProteinWrapper>
+            </NutritionInfo>
+          )}
+          {menuDetail.type === 'SUBSCRIPTION' && (
+            <DeliveryInfoBox>
+              <TextH5B padding="16px 0">배송 안내</TextH5B>
+              <DeliveryUl>
+                <DeliveryLi>
+                  <TextB2R>배송 정보</TextB2R>
+                  <TextB2R>스팟배송 / 주 2회 배송</TextB2R>
+                </DeliveryLi>
+                <DeliveryLi>
+                  <TextB2R>상품 구성</TextB2R>
+                  <TextB2R>단백질 위주의 식단 교차 배송</TextB2R>
+                </DeliveryLi>
+              </DeliveryUl>
+            </DeliveryInfoBox>
+          )}
         </MenuDetailWrapper>
         <ReviewContainer>
           <ReviewWrapper>
@@ -254,6 +295,7 @@ const MenuDetailPage = ({ menuId }: any) => {
                 color={theme.greyScale65}
                 padding="0 24px 0 0"
                 onClick={goToReviewSection}
+                pointer
               >
                 더보기
               </TextH6B>
@@ -304,16 +346,21 @@ const ImgWrapper = styled.div`
 const Top = styled.div``;
 
 const MenuDetailWrapper = styled.div`
-  ${homePadding}
+  padding: 24px;
 `;
 
 const MenuNameWrapper = styled.div`
-  margin: 24px 0 16px 0;
+  padding: 0 0 16px 0;
+  .tagBox {
+    display: flex;
+  }
 `;
 
 const PriceAndCouponWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid ${theme.greyScale6};
 `;
 
 const PriceWrapper = styled.div`
@@ -338,6 +385,7 @@ const DiscountedPrice = styled.div`
 `;
 
 const NutritionInfo = styled.div`
+  padding-top: 16px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 `;
@@ -346,6 +394,19 @@ const NutritionInfoWrapper = styled.div``;
 const NutritionInfoBox = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const DeliveryInfoBox = styled.div`
+  border-top: 1px solid ${theme.greyScale6};
+`;
+const DeliveryUl = styled.ul``;
+const DeliveryLi = styled.li`
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  &:last-of-type {
+    padding-bottom: 0;
+  }
 `;
 
 const MLWrapper = styled.div`
@@ -371,14 +432,13 @@ const CountWrapper = styled.div`
 `;
 
 const ReviewContainer = styled.div`
-  margin-top: 24px;
   background-color: ${theme.greyScale3};
 `;
 
 const AdWrapper = styled.div`
   width: 100%;
   height: 96px;
-  background-color: grey;
+  background-color: #dedede;
 `;
 
 const ReviewWrapper = styled.div`
@@ -409,18 +469,29 @@ const DailySaleNumber = styled.div`
   top: 0;
 `;
 
-/*TODO: 수정해야함 */
+export async function getStaticPaths() {
+  const params = {
+    menuSort: 'LAUNCHED_DESC',
+  };
 
-export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
+  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });
+  const paths = data.data.map((menu: any) => ({
+    params: { menuId: menu.id.toString() },
+  }));
 
   return {
-    props: { menuId },
+    paths,
+    fallback: false,
   };
 }
 
-// export async function getStaticPaths() {}
+export async function getStaticProps({ params }: { params: { menuId: string } }) {
+  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
 
-// export async function getStaticProps() {}
+  return {
+    props: { menuDetail: data.data },
+    revalidate: 100,
+  };
+}
 
 export default React.memo(MenuDetailPage);

@@ -1,14 +1,14 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
-import { IMAGE_S3_URL } from '@constants/mock';
+import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
 import { ISpotsDetail } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
@@ -28,15 +28,15 @@ interface IProps {
 }
 
 const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
-  const router = useRouter();
+  const { id } = list;
+  const routers = useRouter();
   const dispatch = useDispatch();
-  const { isDelivery, orderId } = router.query;
+  const { isDelivery, orderId } = routers.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
   const { showToast, hideToast } = useToast();
-  const [spotRegisteration, setSpotRegisteration] = useState(list?.recruited);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -46,7 +46,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     setNoticeChecked(!noticeChecked);
   };
 
-  const goToDetail = (id: number | undefined): void => {
+  const goToDetail = (): void => {
     if (isSearch) {
       return;
     }
@@ -66,7 +66,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       main: false,
       availableTime: pickUpTime,
       spaceType: list.type,
-      spotPickupId: spotPickupId,
+      spotPickupId: spotPickupId!,
     };
 
     const goToCart = () => {
@@ -143,53 +143,66 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const onClickLike = (e: any) => {
     e.stopPropagation();
-    onLike();
+    if (isLoginSuccess) {
+      // 로그인 체크
+      onLike();
+    } else {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
+    }
   };
 
   const onLike = useOnLike(list.id!, list.liked);
 
-  const clickSpotOpen = async (id: number | undefined) => {
+  const clickSpotOpen = async (id: number) => {
     if (list.recruited) {
       return;
     }
-    const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    dispatch(
-      SET_ALERT({
-        alertMessage: TitleMsg,
-        onSubmit: () => {
-          setSpotRegisteration(true);
-          const message = '참여해주셔서 감사해요:)';
-          showToast({ message });
-          /* TODO: warning 왜? */
-          return () => hideToast();
-        },
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
+    // const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+    // dispatch(
+    //   SET_ALERT({
+    //     alertMessage: TitleMsg,
+    //     onSubmit: () => {
+    //       setSpotRegisteration(true);
+    //       const message = '참여해주셔서 감사해요:)';
+    //       showToast({ message });
+    //       /* TODO: warning 왜? */
+    //       return () => hideToast();
+    //     },
+    //     submitBtnText: '확인',
+    //     closeBtnText: '취소',
+    //   })
+    // );
 
-    // try {
-    //   const { data } = await postSpotRegistrationsRecruiting(id);
-    //   if (data.code === 200) {
-    //     setSpotRegisteration(true);
-    //     const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    //     dispatch(
-    //       SET_ALERT({
-    //         alertMessage: TitleMsg,
-    //         onSubmit: () => {
-    //           const message = '참여해주셔서 감사해요:)';
-    //           showToast({ message });
-    //           /* TODO: warning 왜? */
-    //           return () => hideToast();
-    //         },
-    //         submitBtnText: '확인',
-    //         closeBtnText: '취소',
-    //       })
-    //     );
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    // }
+    try {
+      const { data } = await postSpotRegistrationsRecruiting(id);
+      if (data.code === 200) {
+        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+        dispatch(
+          SET_ALERT({
+            alertMessage: TitleMsg,
+            onSubmit: () => {
+              // TODO 스팟 현황 상세 이동
+              // router.push('/onboarding');
+              const message = '참여해주셔서 감사해요:)';
+              showToast({ message });
+              /* TODO: warning 왜? */
+              return () => hideToast();
+            },
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+          })
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const SpotsListTypeRender = () => {
@@ -198,18 +211,21 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       case 'normal':
         return (
           <Container type="normal">
-            <StorImgWrapper onClick={() => goToDetail(list.id)}>
+            <StorImgWrapper onClick={goToDetail}>
               <Tag>
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {list.images.map((i, idx) => {
-                return (
-                  <div key={idx}>
-                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                  </div>
-                );
-              })}
+              {
+                list.isTrial ? (
+                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                ) : 
+                  list.images.length > 0 ? (
+                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  ) : (
+                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                  )
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
@@ -230,19 +246,22 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       case 'event':
         return (
           <Container type="event">
-            <StorImgWrapper onClick={() => goToDetail(list.id)}>
+            <StorImgWrapper onClick={goToDetail}>
               {!isSearch && (
                 <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              {list.images.map((i, idx) => {
-                return (
-                  <div key={idx}>
-                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                  </div>
-                );
-              })}
+              {
+                list.isTrial ? (
+                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                ) : 
+                  list.images.length > 0 ? (
+                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  ) : (
+                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                  )
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
@@ -267,18 +286,23 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
           <Container type="trial">
             <LocationInfoWrapper type="trial">
               <FlexCol>
-                <TextH5B margin='0 0 4px 0'>{list.placeName}</TextH5B>
-                <TextB3R margin='0 0 4px 0'>{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
+                <TextH5B margin="0 0 4px 0">{list.placeName}</TextH5B>
+                <TextB3R margin="0 0 4px 0">{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
                 {
                   // 유저 위치정보 있을때 노출
-                  userLocationLen && <TextH6B margin='0 0 8px 0' color={theme.greyScale65}>{`${Math.round(list.distance)}m`}</TextH6B> 
+                  userLocationLen && (
+                    <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>{`${Math.round(list.distance)}m`}</TextH6B>
+                  )
                 }
-                <FlexRow margin='0 0 16px 0'>
+                <FlexRow margin="0 0 16px 0">
                   <SVGIcon name="people" />
-                  <TextH6B padding='4px 0 0 2px' color={theme.brandColor}>{`${list.recruitingCount}/100명 참여중`}</TextH6B>
+                  <TextH6B
+                    padding="4px 0 0 2px"
+                    color={theme.brandColor}
+                  >{`${list.recruitingCount}/100명 참여중`}</TextH6B>
                 </FlexRow>
-                {list.submit ? (
-                  <Button onClick={() => clickSpotOpen(list.id)}>참여하기</Button>
+                {!list.recruited ? (
+                  <Button onClick={() => clickSpotOpen(list.id!)}>참여하기</Button>
                 ) : (
                   <ButtonComplete onClick={() => {}}>참여완료</ButtonComplete>
                 )}
@@ -304,6 +328,7 @@ const Container = styled.section<{ type: string }>`
         width: 299px;
         margin-bottom: 48px;
         border-radius: 8px;
+        justify-content: space-between;
       `;
     } else if (type === 'normal') {
       return css`

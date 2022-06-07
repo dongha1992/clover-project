@@ -1,4 +1,4 @@
-import { userSecession } from '@api/user';
+import { userSecessionApi } from '@api/user';
 import Alert from '@components/Shared/Alert';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
@@ -25,7 +25,7 @@ const SecessionPage = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // TODO : 회원 탈퇴가 api가 제대로 작동안함, 스웨거는 통과되는데 로컬에서 안되는 이슈있는 request body에 담아 보내는데 에러남
-  const { mutate: mutateUserSecession } = useMutation((data: ISecessionRequest) => userSecession(data), {
+  const { mutate: mutateUserSecession } = useMutation((data: ISecessionRequest) => userSecessionApi(data), {
     onSuccess: (data) => {
       // TODO : Alet 메세지 padding 시안과 다름
       dispatch(

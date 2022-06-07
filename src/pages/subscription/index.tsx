@@ -8,30 +8,42 @@ import { useSelector } from 'react-redux';
 import router from 'next/router';
 import styled from 'styled-components';
 import SubsCalendar from '@components/Calendar/SubsCalendar';
+import { useQuery } from 'react-query';
+import { getMenusApi } from '@api/menu';
 
 const SubscriptiopPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
-  // TODO : 구독 리스트 api 추후 리액트 쿼리로 변경
-  const [subsList, setSubsList] = useState([{}]);
-  const onClick = () => {
-    let message = {
-      cmd: 'webview-route-onBoarding',
-      data: {
-        msg: '온보딩 페이지로 이동',
-      },
-    };
-    window.ReactNativeWebView.postMessage(JSON.stringify(message));
-  };
+
   const goToRegularSpot = () => {
     router.push('/subscription/products?tab=spot');
   };
+
   const goToRegularDawn = () => {
     router.push('/subscription/products?tab=dawn');
   };
+
+  const {
+    data: menus,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getSubscriptionMenus',
+    async () => {
+      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SUBSCRIPTION' };
+      const { data } = await getMenusApi(params);
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  if (isLoading) {
+    return <div>...로딩중</div>;
+  }
+
   return (
     <Container>
-      <InfoCard subsList={subsList} />
-      {subsList && <MySubsList />}
+      <InfoCard />
+      <MySubsList />
 
       <SubsListContainer>
         <TitleBox>
@@ -46,9 +58,12 @@ const SubscriptiopPage = () => {
         <ListBox>
           <ScrollHorizonList>
             <SubsList>
-              {[1, 2, 3].map((item, index) => (
-                <SubsItem item={item} key={index} height="168px" width="298px" />
-              ))}
+              {menus?.map(
+                (item, index) =>
+                  item.subscriptionDeliveries?.includes('SPOT') && (
+                    <SubsItem item={item} key={index} height="168px" width="298px" testType="SPOT" />
+                  )
+              )}
             </SubsList>
           </ScrollHorizonList>
         </ListBox>
@@ -61,14 +76,22 @@ const SubscriptiopPage = () => {
               더보기
             </TextH6B>
           </div>
-          <TextB2R color={theme.greyScale65}>매주 무료배송으로 스팟에서 픽업해보세요</TextB2R>
+          <TextB2R color={theme.greyScale65}>매주 신선한 샐러드를 집으로 배송시켜보세요</TextB2R>
         </TitleBox>
         <ListBox>
           <ScrollHorizonList>
             <SubsList>
-              {[1, 2, 3].map((item, index) => (
-                <SubsItem item={item} key={index} height="168px" width="298px" />
-              ))}
+              {menus?.map(
+                (item, index) =>
+                  (item.subscriptionDeliveries?.includes('PARCEL') ||
+                    item.subscriptionDeliveries?.includes('MORNING')) && (
+                    <SubsItem item={item} key={index} height="168px" width="298px" testType="PARCEL" />
+                  )
+              )}
+              {menus?.filter(
+                (item) =>
+                  item.subscriptionDeliveries?.includes('PARCEL') || item.subscriptionDeliveries?.includes('MORNING')
+              ).length === 0 && <div>새벽/택배 구독 상품이 없습니다.</div>}
             </SubsList>
           </ScrollHorizonList>
         </ListBox>
@@ -102,9 +125,6 @@ const SubsList = styled.div`
   > div {
     margin-right: 16px;
     margin-bottom: 0;
-  }
-  > div:last-of-type {
-    margin-right: 0;
   }
 `;
 const Banner = styled.div`

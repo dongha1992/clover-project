@@ -33,7 +33,7 @@ const SubsDeliveryChangeSheet = () => {
   };
 
   const deliveryChangeHandler = () => {
-    if (subsDeliveryExpectedDate[0] === dayjs(selectDate).format('YYYY-MM-DD')) {
+    if (subsDeliveryExpectedDate[0].deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) {
       dispatch(
         SET_ALERT({
           alertMessage: `변경 전 날짜로\n배송일을 변경할 수 없어요.`,
@@ -64,7 +64,7 @@ const SubsDeliveryChangeSheet = () => {
       <DateChangeDayBox>
         <li>
           <TextB3R padding="0 0 4px">배송 1회차 - 변경 전</TextB3R>
-          <TextH4B>{dateFormat(subsDeliveryExpectedDate[0])}</TextH4B>
+          <TextH4B>{dateFormat(subsDeliveryExpectedDate[0].deliveryDate)}</TextH4B>
         </li>
         <li>
           <TextB3R padding="0 0 4px">배송 1회차 - 변경 후</TextB3R>
@@ -72,7 +72,7 @@ const SubsDeliveryChangeSheet = () => {
         </li>
       </DateChangeDayBox>
       <SubsCalendar
-        subsDates={subsDeliveryExpectedDate}
+        subsActiveDates={subsDeliveryExpectedDate}
         deliveryExpectedDate={subsDeliveryExpectedDate}
         sumDelivery={sumDelivery}
         setSelectDate={setSelectDate}
@@ -95,15 +95,18 @@ const SubsDeliveryChangeSheet = () => {
     </Container>
   );
 };
-const Container = styled.div`
+export const Container = styled.div`
   height: calc(100vh - 56px);
   overflow-y: scroll;
 `;
-const Header = styled.div`
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   height: 56px;
 `;
-const CloseBtn = styled.button`
+export const CloseBtn = styled.button`
   padding: 0;
   position: absolute;
   right: 24px;
@@ -154,8 +157,15 @@ const DateChangeExBox = styled.div`
   }
 `;
 const BottomButton = styled.button`
-  ${fixedBottom}
   cursor: pointer;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
   background-color: ${theme.black};
   color: #fff;
   &:disabled {

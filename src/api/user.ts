@@ -18,14 +18,11 @@ import {
   IInvitationResponse,
   IChangeMe,
   IUserInfoResponse,
+  IAppleTokenResponse,
 } from '@model/index';
 
-export const userLogin = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
+export const userLoginApi = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
   return Api.post('/user/v1/login', data);
-};
-
-export const kakaoLogin = (data: IkakaoLogin): Promise<AxiosResponse<any>> => {
-  return Api.post('/user/v1/signin-kakao', data);
 };
 
 export const userAuthTel = (data: IAuthTel): Promise<AxiosResponse<IResponse>> => {
@@ -43,7 +40,7 @@ export const userSignup = (data: ISignupUser): Promise<AxiosResponse<ISignupResp
   return Api.post('/user/v1/users', data);
 };
 
-export const userSecession = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
+export const userSecessionApi = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
   return Api.delete('/user/v1/users', { data });
 };
 
@@ -77,8 +74,10 @@ export const userUnlock = (): Promise<AxiosResponse<any>> => {
   return Api.post('/user/v1/unlock');
 };
 
-export const userRecommendationApi = (params: { recommendCode: string }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post('/user/v1/recommendation', { params });
+/* TODO: body 수정 */
+
+export const userRecommendationApi = (data: { recommendCode: string }): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('/user/v1/recommendation', data);
 };
 
 export const userInvitationApi = (): Promise<AxiosResponse<IInvitationResponse>> => {
@@ -91,4 +90,12 @@ export const userChangeInfo = (data: IChangeMe): Promise<AxiosResponse<IResponse
 
 export const getUserInfoApi = (): Promise<AxiosResponse<IUserInfoResponse>> => {
   return Api.get('/user/v1/info');
+};
+
+export const getAppleTokenApi = ({
+  params,
+}: {
+  params: { appleToken: string };
+}): Promise<AxiosResponse<IAppleTokenResponse>> => {
+  return Api.get('/user/v1/availability/apple', { params });
 };

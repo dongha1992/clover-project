@@ -16,12 +16,15 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
-import { userForm } from '@store/user';
-import { availabilityEmail, userChangeInfo } from '@api/user';
+import { userForm, INIT_USER, SET_USER } from '@store/user';
+import { availabilityEmail, userChangeInfo, userProfile } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
+import { NAME_REGX } from '@constants/regex';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { IChangeMe } from '@model/index';
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -38,7 +41,7 @@ interface IUserInfo {
 }
 
 const ProfilePage = () => {
-  const { me } = useSelector(userForm);
+  // const { me } = useSelector(userForm);
 
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
@@ -54,7 +57,7 @@ const ProfilePage = () => {
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
-
+  const [isValidName, setIsValidName] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<IUserInfo>({
     nickName: '',
     name: '',
@@ -65,20 +68,69 @@ const ProfilePage = () => {
     day: 0,
   });
 
+  const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
+  const [isOverTime, setIsOverTime] = useState<boolean>(false);
+  const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-  const telRef = useRef<HTMLInputElement>(null);
-  const birthDateRef = useRef<HTMLInputElement>(null);
 
-  const authTimerRef = useRef(300);
+  const LIMIT = 240;
+  const FIVE_MINUTE = 300;
+
+  let authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
 
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const { data: me, isLoading: infoLoading } = useQuery(
+    'getUserProfile',
+    async () => {
+      const { data } = await userProfile();
+
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        dispatch(SET_USER(data));
+      },
+      onError: () => {
+        router.replace('/onboarding');
+      },
+    }
+  );
+
+  const { mutateAsync: mutationEditProfile } = useMutation(
+    async (reqBody: IChangeMe) => {
+      const { data } = await userChangeInfo(reqBody);
+      return data;
+    },
+    {
+      onSuccess: async () => {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '수정을 성공하였습니다.',
+          })
+        );
+        await queryClient.refetchQueries('getUserProfile');
+      },
+      onError: async (error: any) => {
+        console.error(error);
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+    }
+  );
 
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
+      setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 240) {
+    if (authTimerRef.current < LIMIT) {
       setOneMinuteDisabled(false);
     }
   }, [second]);
@@ -97,13 +149,21 @@ const ProfilePage = () => {
 
   const logoutHandler = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
+    dispatch(INIT_USER());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
+    removeCookie({ name: 'autoL' });
+    localStorage.removeItem('persist:nextjs');
+    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+      window.Kakao.Auth.logout();
+    }
     router.push('/mypage');
   };
 
   const otherAuthTelHandler = () => {
     setIsAuthTel(true);
+    setUserInfo({ ...userInfo, tel: '' });
+    setPhoneValidation(false);
   };
 
   const authCodeInputHandler = () => {
@@ -151,13 +211,18 @@ const ProfilePage = () => {
   };
 
   const getAuthTel = async () => {
-    if (!phoneValidation) {
+    if (userInfo.tel.length > 0 && !phoneValidation) {
       dispatch(
         SET_ALERT({
           alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
           submitBtnText: '확인',
         })
       );
+      return;
+    }
+
+    if (oneMinuteDisabled) {
+      dispatch(SET_ALERT({ alertMessage: '잠시 후 재요청해 주세요.' }));
       return;
     }
 
@@ -173,17 +238,40 @@ const ProfilePage = () => {
             submitBtnText: '확인',
           })
         );
+        resetTimer();
         setOneMinuteDisabled(true);
         setDelay(1000);
-
-        /* TODO: 인증번호 요청 실패 시 */
+        if (isOverTime) {
+          setIsOverTime(false);
+          resetTimer();
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 2000) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
+          })
+        );
+      } else if (error.code === 2001) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '하루 인증 요청 제한 횟수 10회를 초과했습니다.',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러 발생',
+          })
+        );
+      }
       console.error(error);
     }
   };
 
   const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || authCodeConfirm || isOverTime) return;
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
@@ -192,9 +280,16 @@ const ProfilePage = () => {
         try {
           const { data } = await userConfirmTel({ tel, authCode });
           if (data.code === 200) {
-            alert('인증 성공 임시임');
+            dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.' }));
+            setAuthCodeConfirm(true);
+            setDelay(null);
           }
-        } catch (error) {
+        } catch (error: any) {
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
+          }
           console.error(error);
         }
       }
@@ -203,6 +298,11 @@ const ProfilePage = () => {
 
   const checkGenderHandler = (value: string) => {
     setChcekGender(value);
+  };
+
+  const resetTimer = () => {
+    authTimerRef.current = FIVE_MINUTE;
+    // authTimerRef.current = 5;
   };
 
   const changeEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -225,6 +325,13 @@ const ProfilePage = () => {
 
   const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
+
+    if (name === 'name') {
+      checkNameValid(value);
+    } else if (name === 'nickName') {
+      checkNickNameValid(value);
+    }
+
     setUserInfo({ ...userInfo, [name]: value });
   };
 
@@ -238,6 +345,7 @@ const ProfilePage = () => {
   };
 
   const changeMeInfo = async () => {
+    if (!isValidName || !isValidNickname) return;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
@@ -254,19 +362,38 @@ const ProfilePage = () => {
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
     };
-    console.log(reqBody, 'reqBody');
+    mutationEditProfile(reqBody);
+  };
 
-    try {
-      const { data } = await userChangeInfo(reqBody);
-      if (data.code === 200) {
-        dispatch(
-          SET_ALERT({
-            alertMessage: '수정을 성공하였습니다.',
-          })
-        );
-      }
-    } catch (error) {
-      console.error(error);
+  const checkNameValid = (value: string) => {
+    const lengthCheck = value.length < 2 || value.length > 20;
+    if (!NAME_REGX.test(value) || lengthCheck) {
+      setIsValidName(false);
+    } else {
+      setIsValidName(true);
+    }
+  };
+
+  const checkNickNameValid = (value: string) => {
+    const lengthCheck = value.length < 2 || value.length > 20;
+    if (!NAME_REGX.test(value) || lengthCheck) {
+      setIsValidNickname(false);
+    } else {
+      setIsValidNickname(true);
+    }
+  };
+
+  const checkPhontValid = () => {
+    if (PHONE_REGX.test(userInfo.tel)) {
+      setPhoneValidation(true);
+    } else {
+      setPhoneValidation(false);
+    }
+  };
+
+  const telKeyPressHandler = (e: any) => {
+    if (e.key === 'Enter') {
+      getAuthTel();
     }
   };
 
@@ -293,6 +420,7 @@ const ProfilePage = () => {
       month: hasBirthDate ? Number(month) - 1 : -1,
       day: hasBirthDate ? Number(day) : 0,
     });
+    checkPhontValid();
   }, [me]);
 
   const isKakao = me?.joinType === 'KAKAO';
@@ -320,8 +448,7 @@ const ProfilePage = () => {
                   value={userInfo.email || ''}
                   disabled={me?.emailConfirmed}
                 />
-
-                <SVGIcon name={isKakao ? 'kakaoBuble' : 'appleIcon'} />
+                <SVGIcon name={isKakao ? 'kakaoBuble' : 'appleIcon'} color={theme.black} />
               </EmailInput>
             ) : (
               <TextInput
@@ -335,7 +462,7 @@ const ProfilePage = () => {
             {!emailValidation.isValid ? (
               <Validation>{emailValidation.message}</Validation>
             ) : (
-              <SVGIcon name="confirmCheck" />
+              <>{!isNotEmail && <SVGIcon name="confirmCheck" />}</>
             )}
           </NameInputWrapper>
           {!isNotEmail && (
@@ -357,18 +484,31 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
             <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
+            {!isValidName && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
             <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
+            {!isValidNickname && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
-              <TextInput inputType="number" eventHandler={phoneNumberInputHandler} value={userInfo.tel || ''} />
+              <TextInput
+                placeholder="휴대폰 번호 (-제외)"
+                inputType="number"
+                eventHandler={phoneNumberInputHandler}
+                value={userInfo.tel || ''}
+                disabled={!isAuthTel}
+                keyPressHandler={telKeyPressHandler}
+              />
               {isAuthTel ? (
-                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-                  요청하기
+                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel}>
+                  {delay ? '재요청' : '인증요청'}
                 </Button>
               ) : (
                 <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
@@ -376,27 +516,39 @@ const ProfilePage = () => {
                 </Button>
               )}
             </FlexRow>
-            {isAuthTel && (
-              <ConfirmWrapper>
-                <TextInput
-                  placeholder="인증 번호 입력"
-                  eventHandler={authCodeInputHandler}
-                  ref={authCodeNumberRef}
-                  inputType="number"
-                />
-                <Button width="40%" margin="0 0 0 8px" disabled={!authCodeValidation} onClick={getAuthCodeConfirm}>
-                  확인
-                </Button>
-                {authCodeValidation && <SVGIcon name="confirmCheck" />}
-                {delay && (
-                  <TimerWrapper>
-                    <TextB3R color={theme.brandColor}>
-                      {minute < 10 ? `0${minute}` : minute}:{second < 10 ? `0${second}` : second}
-                    </TextB3R>
-                  </TimerWrapper>
-                )}
-              </ConfirmWrapper>
-            )}
+            <PhoneValidCheck>
+              {isAuthTel && !phoneValidation && userInfo.tel.length > 0 && (
+                <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+              )}
+              {isAuthTel && phoneValidation && <SVGIcon name="confirmCheck" />}
+              {isAuthTel && (
+                <ConfirmWrapper>
+                  <TextInput
+                    placeholder="인증 번호 입력"
+                    eventHandler={authCodeInputHandler}
+                    ref={authCodeNumberRef}
+                    inputType="number"
+                  />
+                  <Button
+                    width="40%"
+                    margin="0 0 0 8px"
+                    disabled={!authCodeValidation || authCodeConfirm || isOverTime}
+                    onClick={getAuthCodeConfirm}
+                  >
+                    확인
+                  </Button>
+                  {authCodeConfirm && <SVGIcon name="confirmCheck" />}
+                  {delay && (
+                    <TimerWrapper>
+                      <TextB3R color={theme.brandColor}>
+                        {minute < 10 ? `0${minute}` : minute}:{second < 10 ? `0${second}` : second}
+                      </TextB3R>
+                    </TimerWrapper>
+                  )}
+                </ConfirmWrapper>
+              )}
+            </PhoneValidCheck>
+            {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
@@ -492,7 +644,9 @@ const ProfilePage = () => {
         </DeleteUser>
       </Wrapper>
       <BtnWrapper onClick={changeMeInfo}>
-        <Button height="100%">수정하기</Button>
+        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName || !isValidNickname}>
+          수정하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
@@ -532,7 +686,7 @@ const ConfirmWrapper = styled.div`
   > svg {
     position: absolute;
     right: 35%;
-    bottom: 40%;
+    top: 35%;
   }
 `;
 
@@ -596,9 +750,23 @@ const SvgWrapper = styled.div`
 
 const EmailInput = styled.div`
   position: relative;
-  .svg {
+  display: flex;
+
+  svg {
     position: absolute;
-    left: 10%;
+    right: 5%;
+    top: 32%;
+  }
+`;
+
+const PhoneValidCheck = styled.div`
+  position: relative;
+  margin: 4px 0;
+  > svg {
+    position: absolute;
+    right: 35%;
+    top: -60%;
+    z-index: 10;
   }
 `;
 

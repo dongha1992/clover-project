@@ -11,8 +11,11 @@ import { SET_ALERT } from '@store/alert';
 import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER } from '@store/user';
-import { userAuthTel, userConfirmTel } from '@api/user';
+import { userAuthTel, userConfirmTel, availabilityEmail } from '@api/user';
 import { IUser } from '@store/user';
+import Validation from '@components/Pages/User/Validation';
+import { IVaildation } from '@pages/signup/email-password';
+import { EMAIL_REGX } from '@pages/signup/email-password';
 
 export const PHONE_REGX = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
 export const NAME_REGX = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]{2,20}$/;
@@ -27,10 +30,16 @@ const SignupAuthPage = () => {
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [authCodeConfirm, setAuthCodeConfirm] = useState(false);
   const [signUpInfo, setSignUpInfo] = useState<IUser['signupUser']>({});
+  const [isOverTime, setIsOverTime] = useState<boolean>(false);
 
-  const phoneNumberRef = useRef<HTMLInputElement>(null);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
+
+  const [emailValidation, setEmailValidataion] = useState<IVaildation>({
+    message: '',
+    isValid: false,
+  });
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
@@ -50,6 +59,7 @@ const SignupAuthPage = () => {
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
+      setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
     if (authTimerRef.current < 240) {
@@ -59,11 +69,12 @@ const SignupAuthPage = () => {
 
   const nameInputHandler = (e: any): void => {
     const { value } = e.target;
+    const lengthCheck = value.length < 2 || value.length > 20;
 
-    if (NAME_REGX.test(value)) {
-      setNameValidation(true);
-    } else {
+    if (!NAME_REGX.test(value) || lengthCheck) {
       setNameValidation(false);
+    } else {
+      setNameValidation(true);
     }
     setSignUpInfo({ ...signUpInfo, name: value });
   };
@@ -78,6 +89,45 @@ const SignupAuthPage = () => {
     setSignUpInfo({ ...signUpInfo, tel: value });
   };
 
+  const emailInputHandler = (e: any) => {
+    const { value } = e.target;
+
+    setSignUpInfo({ ...signUpInfo, email: value });
+  };
+
+  const validEmailHandler = () => {
+    getAvailabilityEmail();
+
+    if (EMAIL_REGX.test(signupUser?.email!)) {
+      setEmailValidataion({ message: '', isValid: true });
+    } else {
+      setEmailValidataion({ message: '길이는 100자 이내입니다.', isValid: false });
+    }
+  };
+
+  const getAvailabilityEmail = async () => {
+    const email = signUpInfo.email!;
+    const {
+      data: { data: availability },
+    } = await availabilityEmail({ email });
+
+    if (availability) {
+      setEmailValidataion({
+        isValid: true,
+        message: '',
+      });
+    } else {
+      setEmailValidataion({
+        isValid: false,
+        message: '사용 중인 이메일 주소입니다.',
+      });
+    }
+  };
+
+  const resetTimer = () => {
+    authTimerRef.current = 300;
+  };
+
   const getAuthTel = async () => {
     if (!phoneValidation) {
       dispatch(
@@ -90,6 +140,7 @@ const SignupAuthPage = () => {
     }
 
     if (oneMinuteDisabled) {
+      dispatch(SET_ALERT({ alertMessage: '잠시 후 재요청해 주세요.' }));
       return;
     }
 
@@ -106,8 +157,32 @@ const SignupAuthPage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
+        resetTimer();
+        if (isOverTime) {
+          setIsOverTime(false);
+          resetTimer();
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === 2000) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `이메일로 가입된 계정이 있습니다.`,
+          })
+        );
+      } else if (error.code === 2001) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '하루 인증 요청 제한 횟수 10회를 초과했습니다.',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러 발생',
+          })
+        );
+      }
       console.error(error);
     }
   };
@@ -124,6 +199,8 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || isOverTime) return;
+
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
@@ -135,9 +212,14 @@ const SignupAuthPage = () => {
             setDelay(null);
             dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
           }
-        } catch (error) {
-          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+        } catch (error: any) {
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
+          }
           setAuthCodeConfirm(false);
+
           console.error(error);
         }
       }
@@ -148,15 +230,21 @@ const SignupAuthPage = () => {
     if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
+    const isApple = signUpInfo.loginType === 'APPLE';
 
     dispatch(
       SET_SIGNUP_USER({
         name: signUpInfo.name,
         tel: signUpInfo.tel,
-        authCode: signUpInfo.authCode,
+        authCode: authCodeNumberRef.current?.value,
+        email: isApple ? signUpInfo.email : '',
       })
     );
-    router.push('/signup/email-password');
+    if (isApple) {
+      router.push('/signup/optional');
+    } else {
+      router.push('/signup/email-password');
+    }
   };
 
   useEffect(() => {
@@ -188,22 +276,28 @@ const SignupAuthPage = () => {
             eventHandler={nameInputHandler}
             value={signUpInfo?.name ? signUpInfo?.name : ''}
           />
-          {(nameValidation || signUpInfo?.name) && <SVGIcon name="confirmCheck" />}
+          {nameValidation && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
+        {signUpInfo?.name?.length! > 0 && !nameValidation && (
+          <Validation>2~20자 이내 / 한글, 영문만 입력 가능해요.</Validation>
+        )}
         <PhoneNumberInputWrapper>
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
           <AuthenficationWrapper>
             <TextInput
-              placeholder="휴대폰 번호"
+              placeholder="휴대폰 번호 (-제외)"
               eventHandler={phoneNumberInputHandler}
               inputType="number"
               value={signUpInfo?.tel ? signUpInfo?.tel : ''}
             />
-            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-              인증 요청
+            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel}>
+              {delay ? '재요청' : '인증요청'}
             </Button>
-            {(phoneValidation || signUpInfo?.tel) && <SVGIcon name="confirmCheck" />}
+            {phoneValidation && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>
+          {!phoneValidation && signUpInfo?.tel?.length! > 0 && (
+            <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+          )}
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
@@ -215,7 +309,7 @@ const SignupAuthPage = () => {
               width="30%"
               margin="0 0 0 8px"
               height="48px"
-              disabled={!authCodeValidation}
+              disabled={!authCodeValidation || isOverTime}
               onClick={getAuthCodeConfirm}
             >
               확인
@@ -230,6 +324,23 @@ const SignupAuthPage = () => {
             )}
           </ConfirmWrapper>
         </PhoneNumberInputWrapper>
+        {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
+        {signUpInfo.loginType === 'APPLE' && (
+          <EmailInputWrapper>
+            <TextH5B padding="0 0 9px 0">이메일</TextH5B>
+            <TextInput
+              placeholder="이메일"
+              eventHandler={emailInputHandler}
+              value={signupUser?.email}
+              onBlur={validEmailHandler}
+            />
+            {!emailValidation.isValid ? (
+              <Validation>{emailValidation.message}</Validation>
+            ) : (
+              <SVGIcon name="confirmCheck" />
+            )}
+          </EmailInputWrapper>
+        )}
       </Wrapper>
       <NextBtnWrapper onClick={goToEmailAndPassword}>
         <Button disabled={!isAllValid} height="100%" borderRadius="0">
@@ -267,7 +378,7 @@ const AuthenficationWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 8px;
+
   > svg {
     position: absolute;
     right: 30%;
@@ -279,6 +390,7 @@ const ConfirmWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  margin-top: 8px;
   > svg {
     position: absolute;
     right: 30%;
@@ -293,6 +405,19 @@ const NextBtnWrapper = styled.div`
 const TimerWrapper = styled.div`
   position: absolute;
   left: 60%;
+`;
+
+const TelHelper = styled.div``;
+
+const EmailInputWrapper = styled.div`
+  position: relative;
+  margin-top: 24px;
+
+  > svg {
+    position: absolute;
+    right: 5%;
+    bottom: 25%;
+  }
 `;
 
 export default React.memo(SignupAuthPage);

@@ -3,278 +3,323 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB1R, TextB2R, TextB3R, TextH4B, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { subscriptionForm } from '@store/subscription';
-import { fixedBottom, FlexBetween, FlexCol, FlexEnd, FlexRow, theme } from '@styles/theme';
-
-import { useState } from 'react';
+import { fixedBottom, FlexBetween, FlexEnd, FlexRow, theme } from '@styles/theme';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import SlideToggle from '@components/Shared/SlideToggle';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { SET_ORDER } from '@store/order';
-import { SVGIcon } from '@utils/common';
+import { getFormatDate, SVGIcon } from '@utils/common';
+import { wrapper } from '@store/index';
+import { Obj } from '@model/index';
+import dayjs from 'dayjs';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SubsMenuSheet } from '@components/BottomSheet/SubsSheet';
+import SelectDateInfoBox from '@components/Pages/Subscription/register/SelectDateInfoBox';
+import { getFormatPrice } from '@utils/common';
+import { destinationForm } from '@store/destination';
+import { periodMapper } from '@constants/subscription';
+import { DELIVERY_TIME_MAP2, DELIVERY_TYPE_MAP } from '@constants/order';
+import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 
+interface IReceipt {
+  menuPrice: number;
+  menuDiscount: number;
+  eventDiscount: number;
+  menuOption1: {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  };
+  menuOption2: {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  };
+  deliveryPrice: number;
+}
 const SubsRegisterPage = () => {
   const dispatch = useDispatch();
-  const { subsOrderMenus, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
+  const router = useRouter();
+  const { subsOrderMenus, subsDeliveryExpectedDate, subsInfo } = useSelector(subscriptionForm);
+  const { userDestination } = useSelector(destinationForm);
   const [toggleState, setToggleState] = useState(false);
   const [disposable, setDisposable] = useState(false);
+  const [selectDate, setSelectDate] = useState<Date | undefined>(
+    subsDeliveryExpectedDate && subsDeliveryExpectedDate[0]?.deliveryDate
+  );
+  const [selectCount, setSelectCount] = useState();
+  const [allMenuPriceInfo, setAllMenuPriceInfo] = useState<IReceipt | null>();
+  const [subsMonth, setSubsMonth] = useState<unknown[]>();
+  const [orderDeliveries, setOrderDeliveries] = useState();
+
+  useEffect(() => {
+    if (!subsDeliveryExpectedDate && !subsOrderMenus && !subsInfo) {
+      router.push('/subscription');
+    }
+  }, []);
+
+  useEffect(() => {
+    let monthObj = new Set();
+    subsDeliveryExpectedDate?.forEach((elem: any) => {
+      monthObj.add(dayjs(elem.deliveryDate).format('M'));
+    });
+    setSubsMonth(Array.from(monthObj));
+  }, []);
+
+  useEffect(() => {
+    setSelectCount(
+      subsDeliveryExpectedDate?.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) + 1
+    );
+  }, [selectDate]);
+
+  useEffect(() => {
+    const all = {
+      menuPrice: 0,
+      menuDiscount: 0,
+      eventDiscount: 0,
+      menuOption1: {
+        id: 1,
+        name: '',
+        price: 0,
+        quantity: 0,
+      },
+      menuOption2: {
+        id: 2,
+        name: '',
+        price: 0,
+        quantity: 0,
+      },
+      deliveryPrice: 0,
+    };
+    let orderDeliveries: any = [];
+
+    subsOrderMenus?.map((data) => {
+      data.deliveryDate;
+      let menus: any = [];
+      let options: any = [];
+      let subsDayPrice = 0;
+
+      data.menuTableItems
+        .filter((item: any) => item.selected === true)
+        .forEach((item: any) => {
+          menus.push({
+            menuDetailId: item.menuDetailId,
+            menuQuantity: 1,
+          });
+          // 배송비 계산을 위한 변수
+          subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount - item.eventDiscount);
+
+          all.menuPrice = all.menuPrice + item.menuPrice;
+          all.menuDiscount = all.menuDiscount + item.menuDiscount;
+          all.eventDiscount = all.eventDiscount + item.eventDiscount;
+
+          item.menuOptions.forEach((option: any) => {
+            if (option.id === 1) {
+              if (all.menuOption1.name === '') all.menuOption1.name = option.name;
+
+              if (disposable) {
+                options[0]
+                  ? (options[0].optionQuantity = options[0].optionQuantity + option.quantity)
+                  : (options[0] = {
+                      optionId: 1,
+                      optionQuantity: option.quantity,
+                    });
+                subsDayPrice = subsDayPrice + option.price;
+              }
+              all.menuOption1.price = all.menuOption1.price + option.price;
+              all.menuOption1.quantity = all.menuOption1.quantity + option.quantity;
+            } else if (option.id === 2) {
+              if (all.menuOption2.name === '') all.menuOption2.name = option.name;
+
+              if (disposable) {
+                options[1]
+                  ? (options[1].optionQuantity = options[1].optionQuantity + option.quantity)
+                  : (options[1] = {
+                      optionId: 2,
+                      optionQuantity: option.quantity,
+                    });
+                subsDayPrice = subsDayPrice + option.price;
+              }
+              all.menuOption2.price = all.menuOption2.price + option.price;
+              all.menuOption2.quantity = all.menuOption2.quantity + option.quantity;
+            }
+          });
+        });
+
+      subsDayPrice > 35000
+        ? (all.deliveryPrice = all.deliveryPrice + 0)
+        : (all.deliveryPrice = all.deliveryPrice + 3500);
+
+      orderDeliveries.push({
+        deliveryDate: data.deliveryDate,
+        orderMenus: menus,
+        orderOptions: options,
+      });
+    });
+
+    setOrderDeliveries(orderDeliveries);
+    setAllMenuPriceInfo(all);
+  }, [subsOrderMenus, disposable]);
+
   const clickEvent = () => {
     setToggleState((prev) => !prev);
   };
 
   const onSubscribe = () => {
-    // TODO(young) : 임시
-    const reqBody = {
-      destinationId: 244,
-      delivery: 'PARCEL',
-      deliveryDetail: '',
+    const reqBody: any = {
+      delivery: subsInfo?.deliveryType!,
+      deliveryDetail: subsInfo?.deliveryType === 'SPOT' ? DELIVERY_TIME_MAP2[subsInfo?.deliveryTime!] : null,
+      destinationId: userDestination?.id,
       isSubOrderDelivery: false,
-      orderDeliveries: [
-        {
-          deliveryDate: '2022-04-16',
-          orderMenus: [
-            {
-              menuDetailId: 72,
-              menuQuantity: 1,
-            },
-            {
-              menuDetailId: 511,
-              menuQuantity: 1,
-            },
-          ],
-          orderOptions: [
-            {
-              optionId: 1,
-              optionQuantity: 1,
-            },
-          ],
-        },
-      ],
-      type: 'GENERAL',
+      orderDeliveries: orderDeliveries,
+      subscriptionMenuDetailId: subsInfo?.menuDetails![0].id,
+      subscriptionRound: 1,
+      subscriptionPeriod: subsInfo?.period,
+      type: 'SUBSCRIPTION',
     };
 
     dispatch(SET_ORDER(reqBody));
-    router.push('/order');
+    router.push({ pathname: '/order', query: { isSubscription: true } });
+  };
+
+  const goToEntireDiet = () => {
+    router.push('/subscription/register/entire-diet');
   };
 
   return (
     <Container>
-      <InfoBox onClick={clickEvent}>
-        <FlexBetween className="box">
-          <TextH4B>구독정보</TextH4B>
-          <div className="wrap">
-            <TextB2R className="infoText">
-              스팟배송 - 점심 / 헤이그라운드
-              서sasdasdasdasdsadasdsadasdasdasdasdasdasdasdsadfsdfdsfsdfsdfsasdasdasdasdsadasdsadasdasdasdasdasdasdasdsadfsdfdsfsdfsdf서sasdasdasdasdsadasdsadasdasdasdasdasdasdasdsadfsdfdsfsdfsdf
-            </TextB2R>
-            <div className={`svgBox ${toggleState ? 'down' : ''}`}>
-              <SVGIcon name="triangleDown" />
+      {subsDeliveryExpectedDate && (
+        <>
+          <InfoBox>
+            <FlexBetween className="box" onClick={clickEvent}>
+              <TextH4B>구독정보</TextH4B>
+              <div className="wrap">
+                {!toggleState && (
+                  <TextB2R className="infoText">
+                    {DELIVERY_TYPE_MAP[subsInfo?.deliveryType!]} - {subsInfo?.deliveryTime} /{' '}
+                    {userDestination?.location?.address} {userDestination?.location?.addressDetail}
+                  </TextB2R>
+                )}
+                <div className={`svgBox ${toggleState ? 'down' : ''}`}>
+                  <SVGIcon name="triangleDown" />
+                </div>
+              </div>
+            </FlexBetween>
+            <SlideInfoBox>
+              <SlideToggle state={toggleState} duration={0.5}>
+                <ul>
+                  <li>
+                    <TextH5B>배송방법</TextH5B>
+                    <TextB2R>
+                      {DELIVERY_TYPE_MAP[subsInfo?.deliveryType!]} - {subsInfo?.deliveryTime}
+                    </TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>픽업장소</TextH5B>
+                    <TextB2R>
+                      {userDestination?.location?.address} {userDestination?.location?.addressDetail}
+                    </TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>구독기간</TextH5B>
+                    <TextB2R>{subsInfo && periodMapper[subsInfo.period!]}</TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>구독 시작일</TextH5B>
+                    <TextB2R>{subsInfo?.startDate}</TextB2R>
+                  </li>
+                  <li>
+                    <TextH5B>배송주기</TextH5B>
+                    <TextB2R>
+                      주 {subsInfo?.deliveryDay?.length}회 / {subsInfo?.deliveryDay?.join('·')}
+                    </TextB2R>
+                  </li>
+                </ul>
+              </SlideToggle>
+            </SlideInfoBox>
+          </InfoBox>
+          <BorderLine height={8} />
+
+          <DietConfirmBox>
+            <div className="wrap">
+              <TextH4B>식단 확인</TextH4B>
+              <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToEntireDiet}>
+                전체 식단 보기
+              </TextH6B>
             </div>
-          </div>
-        </FlexBetween>
-        <SlideInfoBox>
-          <SlideToggle state={toggleState} duration={0.5}>
-            <ul>
-              <li>
-                <TextH5B>배송방법</TextH5B>
-                <TextB2R>스팟배송 - 점심</TextB2R>
-              </li>
-              <li>
-                <TextH5B>픽업장소</TextH5B>
-                <TextB2R>헤이그라운드 서울숲점 10층</TextB2R>
-              </li>
-              <li>
-                <TextH5B>구독기간</TextH5B>
-                <TextB2R>정기구독</TextB2R>
-              </li>
-              <li>
-                <TextH5B>구독 시작일</TextH5B>
-                <TextB2R>1월 20일 (목)</TextB2R>
-              </li>
-              <li>
-                <TextH5B>배송주기</TextH5B>
-                <TextB2R>주 2회 / 화·목</TextB2R>
-              </li>
-            </ul>
-          </SlideToggle>
-        </SlideInfoBox>
-      </InfoBox>
-      <BorderLine height={8} />
+            <TextB2R color={theme.brandColor}>
+              {subsInfo?.period === 'UNLIMITED' ? '5주간' : `${periodMapper[subsInfo?.period!]}간`}, 주{' '}
+              {subsInfo?.deliveryDay?.length}회씩 ({subsInfo?.deliveryDay?.join('·')}) 총 {subsOrderMenus?.length}회
+              배송되는 식단입니다.
+            </TextB2R>
+          </DietConfirmBox>
+          <CalendarBox>
+            {subsMonth && subsMonth?.length > 1 && (
+              <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
+                {subsMonth[0]}월, {subsMonth[1]}월 식단을 모두 확인해 주세요!
+              </TextH5B>
+            )}
 
-      <DietConfirmBox>
-        <div className="wrap">
-          <TextH4B>식단 확인</TextH4B>
-          <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
-            전체 식단 보기
-          </TextH6B>
-        </div>
-        <TextB2R color={theme.brandColor}>5주간, 주 2회씩 (화·목) 총 9회 배송되는 식단입니다.</TextB2R>
-      </DietConfirmBox>
-      <CalendarBox>
-        <TextH5B padding="10px 0" color="#fff" backgroundColor={theme.brandColor} center>
-          1월, 2월 식단을 모두 확인해 주세요!
-        </TextH5B>
-        <SubsCalendar subsDates={subsDeliveryExpectedDate} deliveryExpectedDate={subsDeliveryExpectedDate} />
-      </CalendarBox>
+            <SubsCalendar
+              subsActiveDates={subsDeliveryExpectedDate}
+              deliveryExpectedDate={subsDeliveryExpectedDate}
+              setSelectDate={setSelectDate}
+              subsPeriod={subsInfo?.period!}
+              menuChangeDate={subsOrderMenus}
+            />
+          </CalendarBox>
 
-      <SelectDateInfoBox>
-        <DeliveryInfoBox>
-          <TextB1R padding="0 0 8px">
-            <b>배송 1회차</b> - 1월 20일 (목)
-          </TextB1R>
-          <TextB2R color={theme.greyScale65}>상품이 품절되면 대체상품이 발송됩니다.</TextB2R>
-        </DeliveryInfoBox>
-        <TextH5B>필수옵션</TextH5B>
-        <MenuUl>
-          <MenuLi>
-            <MenuImgBox></MenuImgBox>
-            <MenuTextBox>
-              <TextB3R textHideMultiline>훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드</TextB3R>
-              <div className="wrap">
-                <TextH5B>2,610원</TextH5B>
-                <div className="line"></div>
-                <TextB2R>1개</TextB2R>
-                <button className="changeBtn">변경</button>
-              </div>
-            </MenuTextBox>
-          </MenuLi>
-          <MenuLi>
-            <MenuImgBox></MenuImgBox>
-            <MenuTextBox>
-              <TextB3R textHideMultiline>
-                훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드
-                / 미디움 (M)훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드 / 미디움 (M)
-              </TextB3R>
-              <div className="wrap">
-                <TextH5B>2,610원</TextH5B>
-                <div className="line"></div>
-                <TextB2R>1개</TextB2R>
-                <button className="changeBtn">변경</button>
-              </div>
-            </MenuTextBox>
-          </MenuLi>
-        </MenuUl>
-        <TextH5B>선택옵션</TextH5B>
-        <MenuUl>
-          <MenuLi>
-            <MenuImgBox></MenuImgBox>
-            <MenuTextBox>
-              <TextB3R textHideMultiline>
-                훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드
-                / 미디움 (M)훈제오리 애플시나몬 샐러드 / 미디움 (M)훈제오리 애플시나몬 샐러드 / 미디움 (M)
-              </TextB3R>
-              <div className="wrap">
-                <TextH5B>2,610원</TextH5B>
-                <div className="line"></div>
-                <TextB2R>1개</TextB2R>
-                <button className="changeBtn">변경</button>
-              </div>
-            </MenuTextBox>
-          </MenuLi>
-        </MenuUl>
-        <Button margin="16px 0 0 0" backgroundColor="transparent" color={theme.black} border>
-          + 선택옵션 추가하기
-        </Button>
-      </SelectDateInfoBox>
+          <SelectDateInfoBox selectCount={selectCount} selectDate={selectDate} disposable={disposable} />
 
-      <ReceiptBox>
-        <ReceiptUl>
-          <ReceiptLi>
-            <TextB2R>상품금액</TextB2R>
-            <TextB2R>9,700원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
-            <TextB2R>배송비</TextB2R>
-            <TextB2R>0원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
-            <TextB2R>포크+물티슈</TextB2R>
-            <TextB2R>1개 / 100원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
-            <TextB2R>젓가락+물티슈</TextB2R>
-            <TextB2R>1개 / 100원</TextB2R>
-          </ReceiptLi>
-        </ReceiptUl>
-        <FlexBetween padding="16px 0 0" className="btB">
-          <TextH4B>배송상품금액</TextH4B>
-          <TextH4B>13,200원</TextH4B>
-        </FlexBetween>
-      </ReceiptBox>
-
-      <DisposableAddBox>
-        <TextH4B className="title">일회용품 추가</TextH4B>
-        <TextB2R className="content">샐러드·도시락 상품의 수량만큼 일회용품을 추가합니다.</TextB2R>
-        <FlexRow>
-          <Checkbox
-            onChange={() => {
-              setDisposable((prev) => !prev);
-            }}
-            isSelected={disposable}
-          />
-          <TextB2R padding="0 0 0 8px" className="des">
-            일회용품(100원) 총 18개 - 환경부담금 <b>1,800원</b>
-          </TextB2R>
-        </FlexRow>
-      </DisposableAddBox>
-
-      <ReceiptBox>
-        <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
-          <TextH5B>총 상품금액</TextH5B>
-          <TextB2R>13,200원</TextB2R>
-        </FlexBetween>
-        <ReceiptUl>
-          <ReceiptLi>
-            <TextB2R>총 할인금액</TextB2R>
-            <TextB2R>13,200원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
+          <DisposableAddBox>
+            <TextH4B className="title">일회용품 추가</TextH4B>
+            <TextB2R className="content">샐러드·도시락 상품의 수량만큼 일회용품을 추가합니다.</TextB2R>
             <FlexRow>
-              <TextB2R>구독 할인</TextB2R>
-              <SVGIcon name="questionMark" />
+              <Checkbox
+                onChange={() => {
+                  setDisposable((prev) => !prev);
+                }}
+                isSelected={disposable}
+              />
+              <TextB2R
+                padding="0 0 0 8px"
+                className="des"
+                onClick={() => {
+                  setDisposable((prev) => !prev);
+                }}
+                pointer
+              >
+                일회용품(100원) 총 {allMenuPriceInfo?.menuOption1.quantity! + allMenuPriceInfo?.menuOption2.quantity!}개
+                - 환경부담금{' '}
+                <b>
+                  {getFormatPrice(String(allMenuPriceInfo?.menuOption1.price! + allMenuPriceInfo?.menuOption2.price!))}
+                  원
+                </b>
+              </TextB2R>
             </FlexRow>
-            <TextB2R>13,200원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
-            <TextB2R>스팟 이벤트 할인</TextB2R>
-            <TextB2R>13,200원</TextB2R>
-          </ReceiptLi>
-        </ReceiptUl>
-        <ReceiptUl>
-          <ReceiptLi className="btB" padding="16px 0 0">
-            <TextH5B>환경부담금 (일회용품)</TextH5B>
-            <TextB2R>5개 / 500원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
-            <TextB2R>포크+물티슈</TextB2R>
-            <TextB2R>5개 / 500원</TextB2R>
-          </ReceiptLi>
-          <ReceiptLi>
-            <TextB2R>젓가락+물티슈</TextB2R>
-            <TextB2R>4개 / 400원</TextB2R>
-          </ReceiptLi>
-        </ReceiptUl>
-        <FlexBetween padding="16px 0 0" margin="0 0 16px" className="btN">
-          <TextH5B>배송비</TextH5B>
-          <TextB2R>9회 / 0원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="16px 0 0" margin="0 0 8px" className="btB">
-          <TextH4B>결제예정금액</TextH4B>
-          <TextH4B>327,200원</TextH4B>
-        </FlexBetween>
-        <FlexEnd>
-          <Badge>
-            <TextH7B>프코회원</TextH7B>
-          </Badge>
-          <TextB3R>
-            구매 시 <b>nP (n%) 적립 예정</b>
-          </TextB3R>
-        </FlexEnd>
-      </ReceiptBox>
-      <BottomButton onClick={onSubscribe}>
-        <TextH5B>구독하기</TextH5B>
-      </BottomButton>
+          </DisposableAddBox>
+          {allMenuPriceInfo && (
+            <MenusPriceBox
+              disposable={disposable}
+              menuPrice={allMenuPriceInfo.menuPrice}
+              menuDiscount={allMenuPriceInfo.menuDiscount}
+              eventDiscount={allMenuPriceInfo.eventDiscount}
+              menuOption1={allMenuPriceInfo.menuOption1}
+              menuOption2={allMenuPriceInfo.menuOption2}
+              deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : allMenuPriceInfo.deliveryPrice}
+              deliveryLength={subsOrderMenus?.length!}
+            />
+          )}
+          <BottomButton onClick={onSubscribe}>
+            <TextH5B>구독하기</TextH5B>
+          </BottomButton>
+        </>
+      )}
     </Container>
   );
 };
@@ -336,22 +381,13 @@ const DietConfirmBox = styled.div`
   }
 `;
 const CalendarBox = styled.div``;
-const SelectDateInfoBox = styled.div`
-  padding: 24px;
-`;
-const DeliveryInfoBox = styled.div`
-  padding-bottom: 24px;
-  > div {
-    b {
-      font-weight: bold;
-    }
-  }
-`;
+
 export const MenuUl = styled.ul``;
 export const MenuLi = styled.li`
   display: flex;
   padding: 16px 0;
   border-bottom: 1px solid ${theme.greyScale6};
+  position: relative;
   &:last-of-type {
     border-bottom: none;
   }
@@ -364,12 +400,19 @@ export const MenuLi = styled.li`
     border: 1px solid #242424;
     border-radius: 8px;
   }
+  button.deleteBtn {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 16px;
+    padding: 0;
+  }
 `;
 export const MenuImgBox = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 8px;
-  background-color: #dedede;
+  overflow: hidden;
 `;
 export const MenuTextBox = styled.div`
   padding-left: 8px;
@@ -385,36 +428,21 @@ export const MenuTextBox = styled.div`
       background-color: ${theme.greyScale6};
     }
   }
+  button:disabled {
+    border: 1px solid #f2f2f2;
+    color: #c8c8c8;
+  }
+  .change {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.4px;
+    color: #35ad73;
+    margin-left: 4px;
+  }
 `;
 
-export const ReceiptBox = styled.div`
-  padding: 24px;
-  background-color: ${theme.greyScale3};
-  .btB {
-    border-top: 1px solid #242424;
-  }
-  .btN {
-    border-top: 1px solid #ececec;
-  }
-  .bbN {
-    border-bottom: 1px solid #ececec;
-  }
-`;
-export const ReceiptUl = styled.ul`
-  padding-bottom: 16px;
-`;
-export const ReceiptLi = styled.li<{ padding?: string }>`
-  display: flex;
-  justify-content: space-between;
-  padding: ${(props) => props.padding && props.padding};
-  padding-bottom: 8px;
-  &:last-of-type {
-    padding-bottom: 0;
-  }
-  svg {
-    margin-bottom: 3px;
-  }
-`;
 const DisposableAddBox = styled.div`
   padding: 28px 24px;
   .title {

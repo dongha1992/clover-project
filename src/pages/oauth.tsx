@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER_AUTH } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER_AUTH, SET_USER } from '@store/user';
+import { SET_LOGIN_TYPE } from '@store/common';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { Obj } from '@model/index';
 import { NAME_REGX } from '@constants/regex';
-
+import { userLoginApi, userProfile } from '@api/user';
+import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 interface IAuthObj {
   access_token: string;
   expires_in: number;
@@ -25,61 +29,71 @@ const Oauth = () => {
   const dispatch = useDispatch();
 
   const onSuccessKakao = async (authObj: IAuthObj) => {
-    console.log(authObj, window.Kakao, 'authObj');
     window.Kakao.Auth.setAccessToken(authObj.access_token);
 
     try {
-      const data = {
-        accessToken: authObj.access_token,
-        tokenType: authObj.token_type,
-      };
+      const result = await userLoginApi({
+        loginType: 'KAKAO',
+        accessToken: `bearer ${authObj.access_token}`,
+      });
 
-      // const result = await axios.post(`${process.env.KAKO_API_URL}/user/v1/signin-kakao`, data);
-      const result = await axios.post('https://clover-dev.freshcode.me/user/v1/signin-kakao', data);
-      console.log(result, 'AFTER SUCCESS');
-      let { tel, nickname, newsletterEmail, newsletterPush, newsletterSms, name, isSignup, gender, email, birth } =
-        result.data.user;
+      if (result.data.code === 200) {
+        const userTokenObj = result.data.data;
+        const isRegister = result?.data?.data?.isJoin;
 
-      if (!!isSignup && isSignup) {
-        tel = result.data.user.tel.split('');
-        tel.splice(0, 2, '8', '2');
-        tel = tel.join('');
+        dispatch(SET_USER_AUTH(userTokenObj));
+        dispatch(SET_LOGIN_SUCCESS(true));
+        dispatch(SET_LOGIN_TYPE('KAKAO'));
+
+        const { data } = await userProfile().then((res) => {
+          return res?.data;
+        });
+
+        dispatch(SET_USER(data));
+
+        if (isRegister) {
+          if (!NAME_REGX.test(data.name) || data.name.length === 0) {
+            router.push('/signup/change-name');
+          } else {
+            dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+          }
+        } else {
+          router.replace('/');
+        }
+      } else {
+        /* TODO: 아래 사항들 */
+        // 비회원 -> 회원 장바구니 옮기기
+        // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
       }
-
-      const userInfo = {
-        name,
-        tel,
-        email,
-        birthDate: birth,
-        nickName: nickname,
-        marketingEmailReceived: newsletterEmail,
-        marketingSmsReceived: newsletterSms,
-        gender: gender ? gender.toUpperCase() : null,
-      };
-
-      if (!NAME_REGX.test(result.data.user.name) || result.data.user.name.length === 0) {
+    } catch (error: any) {
+      if (error.code === 2107) {
         dispatch(
-          SET_SIGNUP_USER({
-            ...userInfo,
+          SET_ALERT({
+            alertMessage: '전화번호가 등록되지 않은 카카오톡 계정입니다. ',
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
           })
         );
-        router.push('/signup/change-name');
-        return;
+      } else if (error.code === 2007) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 가입되어 있는 회원입니다.',
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: error.message,
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
       }
-
-      if (window.Kakao) {
-        window.Kakao.cleanup();
-      }
-
-      dispatch(SET_USER_AUTH({ accessToken: result.data.user.auth }));
-      dispatch(SET_LOGIN_SUCCESS(true));
-      router.push('/mypage');
-
-      // 비회원 -> 회원 장바구니 옮기기
-
-      // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
-    } catch (e) {
-      console.log(e);
     }
   };
 
@@ -97,21 +111,20 @@ const Oauth = () => {
         .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(qs[k]))
         .join('&');
 
-      if (code) {
-        const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
-          headers: kakaoHeader,
-        });
-        console.log(data, '@@@@');
-        onSuccessKakao(data);
-      }
+      const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
+        headers: kakaoHeader,
+      });
+      onSuccessKakao(data);
     } catch (error) {
       router.replace('/login');
     }
   };
 
   useEffect(() => {
-    initKakaoAuth();
-  }, [code]);
+    if (router.isReady) {
+      initKakaoAuth();
+    }
+  }, [router.isReady]);
 
   return <div></div>;
 };

@@ -2,6 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
+// import HomeHeader from './HomeHeader';
+// import DefaultHeader from './DefaultHeader';
+// import CategorySubHeader from './CategorySubHeader';
+// import MenuDetailHeader from './MenuDetailHeader';
+// import TabHeader from './TabHeader';
+// import MyPageHeader from './MyPageHeader';
+// import NotiHeader from './NotiHeader';
+// import SpotHeader from './SpotHeader';
+// import SpotSearchHeader from './SpotSearchHeader';
+// import CloseDefaultHeader from './CloseDefaultHeader';
+// import DefaultHeaderWithCart from './DefaultHeaderWithCart';
+// import SubscriptionHeader from './SubscriptionHeader';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -51,7 +63,7 @@ const Header = () => {
         '/mypage/card/register': '카드등록',
         '/mypage/card/edit': '카드 편집',
         '/mypage/card/register/term': '이용약관',
-        '/mypage/order-detail/[orderId]': '주문 상세',
+        '/mypage/order-detail/[id]': '주문 상세',
         '/mypage/order-delivery-history': '주문/배송 내역',
         '/mypage/profile/password': '비밀번호 변경',
         '/mypage/profile/confirm': '회원정보 수정',
@@ -83,8 +95,8 @@ const Header = () => {
         '/signup/optional': '회원가입',
         '/signup/change-name': '회원가입',
         '/login': '로그인',
-        '/login/find-account/email': '아이디/비밀번호 찾기',
-        '/login/find-account/password': '아이디/비밀번호 찾기',
+        '/login/find-account/email': '이메일/비밀번호 찾기',
+        '/login/find-account/password': '이메일/비밀번호 찾기',
         '/spot/spot-req': '신청하기',
         '/spot/register': '신청하기',
         '/spot/register/submit': '신청하기',
@@ -100,6 +112,7 @@ const Header = () => {
         '/subscription/products': '정기구독',
         '/subscription/set-info': '구독하기',
         '/subscription/register': '구독하기',
+        '/subscription/register/entire-diet': '전체 식단 정보',
         '/mypage/subscription': '구독관리',
         '/subscription/detail': '구독상세',
       };
@@ -165,7 +178,7 @@ const Header = () => {
           return <SpotSearchHeader title={title} />;
         }
 
-        case ['/spot/register/submit/finish'].includes(currentPath): {
+        case ['/spot/register/submit/finish', '/spot/open'].includes(currentPath): {
           return <CloseDefaultHeader title={title} />;
         }
 

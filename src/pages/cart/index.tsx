@@ -133,38 +133,11 @@ const CartPage = () => {
   const { isClosed } = router.query;
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
-  const { isLoginSuccess } = useSelector(userForm);
+  const { isLoginSuccess, me } = useSelector(userForm);
   const queryClient = useQueryClient();
 
-  const { isLoading, isError } = useQuery(
-    'getCartList',
-    async () => {
-      const { data } = await getCartsApi();
-
-      return data.data;
-    },
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      cacheTime: 0,
-      onSuccess: (data) => {
-        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
-        try {
-          reOrderCartList(data);
-          setNutritionObj(getTotalNutrition(data));
-          dispatch(INIT_CART_LISTS());
-          dispatch(SET_CART_LISTS(data));
-        } catch (error) {
-          console.error(error);
-        }
-      },
-    }
-  );
-
-  /* TODO: 최근 이력 배송방법 / 기본배송지 api 따로 나옴 */
-
   const { data: recentOrderDelivery } = useQuery(
-    'getOrderLists',
+    ['getOrderLists', me],
     async () => {
       const params = {
         days: 90,
@@ -180,7 +153,7 @@ const CartPage = () => {
       onSuccess: async (response) => {
         const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
         if (validDestination && userDeliveryType && userDestination) {
-          const destinationId = userDeliveryType === 'spot' ? userDestination?.spotPickup?.id! : userDestination?.id!;
+          const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -198,14 +171,16 @@ const CartPage = () => {
           try {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
-              const destinationId = response?.delivery === 'SPOT' ? data?.data?.spotPickup?.id! : data.data?.id!;
+              const destinationId = data.data?.id!;
+
               setDestinationObj({
                 ...destinationObj,
                 delivery: response.delivery.toLowerCase(),
                 destinationId,
-                location: data.data.location!,
-                closedDate: data.data.spotPickup?.spot.closedDate && data.data.spotPickup?.spot.closedDate,
+                location: data.data?.location ? data.data?.location : null,
+                closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
               });
+
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
               dispatch(SET_TEMP_DESTINATION(null));
             }
@@ -217,6 +192,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -246,6 +222,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -303,6 +280,42 @@ const CartPage = () => {
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getCartList');
+      },
+    }
+  );
+
+  const { isLoading, isError } = useQuery(
+    ['getCartList'],
+    async () => {
+      const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
+      /* TODO: 스팟아이디 넣어야함 */
+      const params = {
+        delivery: userDeliveryType?.toUpperCase()!,
+        deliveryDate: selectedDeliveryDay,
+        spotId: isSpot ? 1 : null,
+      };
+
+      const { data } = await getCartsApi({ params });
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: !!selectedDeliveryDay && !!me,
+      onSuccess: (data) => {
+        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
+        try {
+          reOrderCartList(data);
+          setNutritionObj(getTotalNutrition(data));
+          dispatch(INIT_CART_LISTS());
+          dispatch(SET_CART_LISTS(data));
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      onError: (error: any) => {
+        alert(error.message);
       },
     }
   );
@@ -581,7 +594,7 @@ const CartPage = () => {
   };
 
   const goToOrder = () => {
-    if (isNil(destinationObj)) return;
+    if (isNil(destinationObj) || !me) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
@@ -754,8 +767,16 @@ const CartPage = () => {
       } else {
         buttonMessage = `${totalAmount}원 주문하기`;
       }
+
       return (
         <Button borderRadius="0" height="100%" disabled={isNil(destinationObj) || isUnderMinimum}>
+          {buttonMessage}
+        </Button>
+      );
+    } else if (!me) {
+      buttonMessage = '로그인을 해주세요';
+      return (
+        <Button borderRadius="0" height="100%" disabled={true}>
           {buttonMessage}
         </Button>
       );
@@ -848,9 +869,14 @@ const CartPage = () => {
     const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
 
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
+    // 스팟 운영 종료
+    if (dDay) {
+      return;
+    }
+
     const closedSoonOperation = dDay >= -14;
 
-    if (closedSoonOperation) {
+    if (closedSoonOperation && destinationObj.delivery === 'spot') {
       dispatch(
         SET_ALERT({
           alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
@@ -860,51 +886,11 @@ const CartPage = () => {
     }
   }, [destinationObj]);
 
-  const test = async () => {
-    const res = await postCartsApi([
-      {
-        main: true,
-        menuDetailId: 72,
-        menuId: 9,
-        menuQuantity: 1,
-      },
-    ]);
-  };
-
-  useEffect(() => {
-    test();
-  }, []);
-
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  if (!cartItemList) {
-    return (
-      <EmptyContainer>
-        <FlexCol width="100%">
-          <DeliveryTypeAndLocation
-            goToDeliveryInfo={goToDeliveryInfo}
-            deliveryType={destinationObj.delivery!}
-            deliveryDestination={destinationObj.location}
-          />
-          <BorderLine height={8} margin="24px 0" />
-        </FlexCol>
-        <FlexCol width="100%">
-          <TextB2R padding="0 0 32px 0" center>
-            장바구니가 비었어요 😭
-          </TextB2R>
-          <BtnWrapper onClick={goToSearchPage}>
-            <Button backgroundColor={theme.white} color={theme.black} border>
-              상품 담으러 가기
-            </Button>
-          </BtnWrapper>
-        </FlexCol>
-      </EmptyContainer>
-    );
-  }
-
-  // if (cartItemList && cartItemList.length === 0) {
+  // if (cartItemList.length < 0) {
   //   return (
   //     <EmptyContainer>
   //       <FlexCol width="100%">
@@ -949,102 +935,117 @@ const CartPage = () => {
         </DeliveryMethodAndPickupLocation>
       )}
       <BorderLine height={8} margin="24px 0" />
-      <CartInfoContainer>
-        <CartListWrapper>
-          <ListHeader>
-            <div className="itemCheckbox">
-              <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
-              <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus?.length}/${cartItemList?.length}`})</TextB2R>
-            </div>
-            <Right>
-              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeSelectedItemHandler}>
-                선택삭제
-              </TextH6B>
-            </Right>
-          </ListHeader>
-          <BorderLine height={1} margin="16px 0" />
-          <VerticalCartList>
-            {cartItemList?.map((menu: any, index) => (
-              <CartItem
-                menu={menu}
-                handleSelectCartItem={handleSelectCartItem}
-                checkedMenus={checkedMenus}
-                clickPlusButton={clickPlusButton}
-                clickMinusButton={clickMinusButton}
-                clickRestockNoti={clickRestockNoti}
-                removeCartDisplayItemHandler={removeCartDisplayItemHandler}
-                removeCartActualItemHandler={removeCartActualItemHandler}
-                key={index}
-              />
-            ))}
-          </VerticalCartList>
-        </CartListWrapper>
-        <DisposableSelectWrapper>
-          <WrapperTitle>
-            <SVGIcon name="fcoIcon" />
-            <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
-          </WrapperTitle>
-          <CheckBoxWrapper>
-            {disposableList?.map((item, index) => (
-              <DisposableItem key={index}>
-                <div className="disposableLeft">
-                  <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected} />
-                  <div className="disposableText">
-                    <TextB2R padding="0 4px 0 8px">{item.text}</TextB2R>
-                    <TextH5B>+{item.price}원</TextH5B>
+      {checkedMenus.length === 0 ? (
+        <EmptyContainer>
+          <FlexCol width="100%">
+            <TextB2R padding="0 0 32px 0" center>
+              장바구니가 비었어요 😭
+            </TextB2R>
+            <BtnWrapper onClick={goToSearchPage}>
+              <Button backgroundColor={theme.white} color={theme.black} border>
+                상품 담으러 가기
+              </Button>
+            </BtnWrapper>
+          </FlexCol>
+        </EmptyContainer>
+      ) : (
+        <CartInfoContainer>
+          <CartListWrapper>
+            <ListHeader>
+              <div className="itemCheckbox">
+                <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
+                <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus?.length}/${cartItemList?.length}`})</TextB2R>
+              </div>
+              <Right>
+                <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeSelectedItemHandler}>
+                  선택삭제
+                </TextH6B>
+              </Right>
+            </ListHeader>
+            <BorderLine height={1} margin="16px 0" />
+            <VerticalCartList>
+              {cartItemList?.map((menu: any, index) => (
+                <CartItem
+                  menu={menu}
+                  handleSelectCartItem={handleSelectCartItem}
+                  checkedMenus={checkedMenus}
+                  clickPlusButton={clickPlusButton}
+                  clickMinusButton={clickMinusButton}
+                  clickRestockNoti={clickRestockNoti}
+                  removeCartDisplayItemHandler={removeCartDisplayItemHandler}
+                  removeCartActualItemHandler={removeCartActualItemHandler}
+                  key={index}
+                />
+              ))}
+            </VerticalCartList>
+          </CartListWrapper>
+          <DisposableSelectWrapper>
+            <WrapperTitle>
+              <SVGIcon name="fcoIcon" />
+              <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
+            </WrapperTitle>
+            <CheckBoxWrapper>
+              {disposableList?.map((item, index) => (
+                <DisposableItem key={index}>
+                  <div className="disposableLeft">
+                    <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected} />
+                    <div className="disposableText">
+                      <TextB2R padding="0 4px 0 8px">{item.text}</TextB2R>
+                      <TextH5B>+{item.price}원</TextH5B>
+                    </div>
                   </div>
-                </div>
-                <Right>
-                  <CountButton
-                    menuDetailId={item.id}
-                    quantity={item.quantity}
-                    clickPlusButton={clickDisposableItemCount}
-                    clickMinusButton={clickDisposableItemCount}
-                  />
-                </Right>
-              </DisposableItem>
-            ))}
-          </CheckBoxWrapper>
-        </DisposableSelectWrapper>
-        <NutritionInfoWrapper>
-          <FlexBetween>
-            <span className="h5B">
-              💪 내 장바구니 체크! 현재
-              <span className="brandColor"> 관리중</span>
-              이신가요?
-            </span>
-            <div onClick={() => setIsShow(!isShow)}>
-              <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
-            </div>
-          </FlexBetween>
-          {isShow && (
-            <InfoWrapper>
-              <BorderLine height={1} margin="16px 0" />
-              <FlexStart>
-                <Calorie>
-                  <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
-                    총 열량
-                  </TextH7B>
-                  <TextH4B padding="0 2px 0 0">{nutritionObj.calorie}</TextH4B>
-                  <TextB3R>Kcal</TextB3R>
-                </Calorie>
-                <Protein>
-                  <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
-                    총 단백질
-                  </TextH7B>
-                  <TextH4B padding="0 2px 0 0">{nutritionObj.protein}</TextH4B>
-                  <TextB3R>g</TextB3R>
-                </Protein>
-              </FlexStart>
-            </InfoWrapper>
-          )}
-        </NutritionInfoWrapper>
-        <GetMoreBtn ref={calendarRef} onClick={goToSearchPage}>
-          <Button backgroundColor={theme.white} color={theme.black} border>
-            + 더 담으러 가기
-          </Button>
-        </GetMoreBtn>
-      </CartInfoContainer>
+                  <Right>
+                    <CountButton
+                      menuDetailId={item.id}
+                      quantity={item.quantity}
+                      clickPlusButton={clickDisposableItemCount}
+                      clickMinusButton={clickDisposableItemCount}
+                    />
+                  </Right>
+                </DisposableItem>
+              ))}
+            </CheckBoxWrapper>
+          </DisposableSelectWrapper>
+          <NutritionInfoWrapper>
+            <FlexBetween>
+              <span className="h5B">
+                💪 내 장바구니 체크! 현재
+                <span className="brandColor"> 관리중</span>
+                이신가요?
+              </span>
+              <div onClick={() => setIsShow(!isShow)}>
+                <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
+              </div>
+            </FlexBetween>
+            {isShow && (
+              <InfoWrapper>
+                <BorderLine height={1} margin="16px 0" />
+                <FlexStart>
+                  <Calorie>
+                    <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
+                      총 열량
+                    </TextH7B>
+                    <TextH4B padding="0 2px 0 0">{nutritionObj.calorie}</TextH4B>
+                    <TextB3R>Kcal</TextB3R>
+                  </Calorie>
+                  <Protein>
+                    <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
+                      총 단백질
+                    </TextH7B>
+                    <TextH4B padding="0 2px 0 0">{nutritionObj.protein}</TextH4B>
+                    <TextB3R>g</TextB3R>
+                  </Protein>
+                </FlexStart>
+              </InfoWrapper>
+            )}
+          </NutritionInfoWrapper>
+          <GetMoreBtn ref={calendarRef} onClick={goToSearchPage}>
+            <Button backgroundColor={theme.white} color={theme.black} border>
+              + 더 담으러 가기
+            </Button>
+          </GetMoreBtn>
+        </CartInfoContainer>
+      )}
       {destinationObj.delivery && (
         <>
           <BorderLine height={8} margin="32px 0" />
@@ -1114,79 +1115,81 @@ const CartPage = () => {
             </ScrollHorizonList>
           </MenuListHeader>
         </MenuListWarpper>
-        <TotalPriceWrapper>
-          <FlexBetween>
-            <TextH5B>총 상품금액</TextH5B>
-            <TextB2R>{getItemsPrice()}원</TextB2R>
-          </FlexBetween>
-          <BorderLine height={1} margin="16px 0" />
-          <FlexBetween>
-            <TextH5B>총 할인 금액</TextH5B>
-            <TextB2R>{getTotalDiscountPrice(isSpot)}원</TextB2R>
-          </FlexBetween>
-          <FlexBetween padding="8px 0 0 0">
-            <TextB2R>상품 할인</TextB2R>
-            <TextB2R>{getItemDiscountPrice()}원</TextB2R>
-          </FlexBetween>
-          {isSpot && (
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>스팟 이벤트 할인</TextB2R>
-              <TextB2R>{getSpotDiscountPrice()}원</TextB2R>
+        {checkedMenus.length > 0 && (
+          <TotalPriceWrapper>
+            <FlexBetween>
+              <TextH5B>총 상품금액</TextH5B>
+              <TextB2R>{getItemsPrice()}원</TextB2R>
             </FlexBetween>
-          )}
-          <BorderLine height={1} margin="16px 0" />
-          <FlexBetween padding="16px 0 8px">
-            <TextH5B>환경부담금 (일회용품)</TextH5B>
-            <TextB2R>5개 / 500원</TextB2R>
-          </FlexBetween>
-          {disposableList.length > 0 &&
-            disposableList.map((disposable, index) => {
-              const { id, quantity, price } = disposable;
-              const hasFork = id === 1;
-              const hasChopsticks = id === 2;
-              return (
-                <div key={index}>
-                  {hasFork && (
-                    <FlexBetween padding="8px 0 0 0">
-                      <TextB2R>포크+물티슈</TextB2R>
-                      <TextB2R>
-                        {quantity}개 / {price * quantity}원
-                      </TextB2R>
-                    </FlexBetween>
-                  )}
-                  {hasChopsticks && (
-                    <FlexBetween padding="8px 0 0 0">
-                      <TextB2R>젓가락+물티슈</TextB2R>
-                      <TextB2R>
-                        {quantity}개 / {price * quantity}원
-                      </TextB2R>
-                    </FlexBetween>
-                  )}
-                </div>
-              );
-            })}
-          <BorderLine height={1} margin="16px 0" />
-          <FlexBetween>
-            <TextH5B>배송비</TextH5B>
-            <TextB2R>{getDeliveryFee()}원</TextB2R>
-          </FlexBetween>
-          <FlexBetween>
-            <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
-            <TextB2R>{getDeliveryFee()}원</TextB2R>
-          </FlexBetween>
-          <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
-          <FlexBetween padding="8px 0 0 0">
-            <TextH4B>결제예정금액</TextH4B>
-            <TextH4B>{totalAmount}원</TextH4B>
-          </FlexBetween>
-          <FlexEnd padding="11px 0 0 0">
-            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-              프코 회원
-            </Tag>
-            <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-            <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
-          </FlexEnd>
-        </TotalPriceWrapper>
+            <BorderLine height={1} margin="16px 0" />
+            <FlexBetween>
+              <TextH5B>총 할인 금액</TextH5B>
+              <TextB2R>{getTotalDiscountPrice(isSpot)}원</TextB2R>
+            </FlexBetween>
+            <FlexBetween padding="8px 0 0 0">
+              <TextB2R>상품 할인</TextB2R>
+              <TextB2R>{getItemDiscountPrice()}원</TextB2R>
+            </FlexBetween>
+            {isSpot && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>스팟 이벤트 할인</TextB2R>
+                <TextB2R>{getSpotDiscountPrice()}원</TextB2R>
+              </FlexBetween>
+            )}
+            <BorderLine height={1} margin="16px 0" />
+            <FlexBetween padding="16px 0 8px">
+              <TextH5B>환경부담금 (일회용품)</TextH5B>
+              <TextB2R>5개 / 500원</TextB2R>
+            </FlexBetween>
+            {disposableList.length > 0 &&
+              disposableList.map((disposable, index) => {
+                const { id, quantity, price } = disposable;
+                const hasFork = id === 1;
+                const hasChopsticks = id === 2;
+                return (
+                  <div key={index}>
+                    {hasFork && (
+                      <FlexBetween padding="8px 0 0 0">
+                        <TextB2R>포크+물티슈</TextB2R>
+                        <TextB2R>
+                          {quantity}개 / {price * quantity}원
+                        </TextB2R>
+                      </FlexBetween>
+                    )}
+                    {hasChopsticks && (
+                      <FlexBetween padding="8px 0 0 0">
+                        <TextB2R>젓가락+물티슈</TextB2R>
+                        <TextB2R>
+                          {quantity}개 / {price * quantity}원
+                        </TextB2R>
+                      </FlexBetween>
+                    )}
+                  </div>
+                );
+              })}
+            <BorderLine height={1} margin="16px 0" />
+            <FlexBetween>
+              <TextH5B>배송비</TextH5B>
+              <TextB2R>{getDeliveryFee()}원</TextB2R>
+            </FlexBetween>
+            <FlexBetween>
+              <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
+              <TextB2R>{getDeliveryFee()}원</TextB2R>
+            </FlexBetween>
+            <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+            <FlexBetween padding="8px 0 0 0">
+              <TextH4B>결제예정금액</TextH4B>
+              <TextH4B>{totalAmount}원</TextH4B>
+            </FlexBetween>
+            <FlexEnd padding="11px 0 0 0">
+              <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+                프코 회원
+              </Tag>
+              <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
+              <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+            </FlexEnd>
+          </TotalPriceWrapper>
+        )}
       </MenuListContainer>
       <OrderBtn onClick={goToOrder}>{orderButtonRender()}</OrderBtn>
     </Container>
@@ -1199,7 +1202,6 @@ const Container = styled.div`
 `;
 
 const EmptyContainer = styled.div`
-  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

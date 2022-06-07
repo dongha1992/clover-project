@@ -1,25 +1,31 @@
 import React, { useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { TextB2R, TextH2B, TextH5B, TextB3R } from '@components/Shared/Text';
 import Image from 'next/image';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import welcomeImg from '@public/images/welcome.png';
 import { theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { postPromotionCodeApi } from '@api/promotion';
 import { userRecommendationApi } from '@api/user';
 import { SET_ALERT } from '@store/alert';
+import { userForm } from '@store/user';
+import { commonSelector } from '@store/common';
 
 const WelcomeSheet = () => {
   const dispatch = useDispatch();
   const codeRef = useRef<HTMLInputElement>(null);
 
+  const { me } = useSelector(userForm);
+  const { isMobile } = useSelector(commonSelector);
+
+  const router = useRouter();
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async () => {
       if (codeRef.current) {
@@ -81,11 +87,16 @@ const WelcomeSheet = () => {
       },
       onError: async (error: any) => {
         let alertMessage = '';
+
         if (error.code === 2201) {
           alertMessage = '이미 등록된 초대코드예요.';
         } else if (error.code === 1105) {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
+        } else {
+          alertMessage = `${error.message}`;
         }
+
+        /* TODO:에러 메시지 확인 */
 
         return dispatch(
           SET_ALERT({
@@ -98,13 +109,17 @@ const WelcomeSheet = () => {
   );
 
   return (
-    <Container>
+    <Container isMobile={isMobile}>
       <Header>
         <FlexEnd
           margin="40px 0 0 0"
           onClick={() => {
+            if (router.query.returnPath) {
+              router.push(`/login?returnPath=${encodeURIComponent(String(router.query.returnPath))}`);
+            } else {
+              router.push('/');
+            }
             dispatch(INIT_BOTTOM_SHEET());
-            router.push('/');
           }}
         >
           <SVGIcon name="defaultCancel24" />
@@ -113,7 +128,7 @@ const WelcomeSheet = () => {
       <Body>
         <FlexCol>
           <TextH2B>
-            <span className="brandColor">닉네임</span>님,
+            <span className="brandColor">{me?.name}</span>님,
           </TextH2B>
           <TextH2B>프레시코드 회원이 되신걸</TextH2B>
           <TextH2B>진심으로 축하드려요!</TextH2B>
@@ -149,9 +164,20 @@ const WelcomeSheet = () => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isMobile: boolean }>`
   ${homePadding};
-  height: 90vh;
+
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        height: 100%;
+      `;
+    } else {
+      return css`
+        height: 91vh;
+      `;
+    }
+  }}
 `;
 const Header = styled.div`
   height: 80px;
@@ -168,6 +194,7 @@ const Body = styled.div`
 
 const BtnWrapper = styled.div`
   ${fixedBottom}
+  left: 0%;
 `;
 
 const ImageWrapper = styled.div`
