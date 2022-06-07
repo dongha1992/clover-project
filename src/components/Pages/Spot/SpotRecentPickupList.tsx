@@ -262,12 +262,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             item?.spotPickup?.spot.isTrial ? (
               <SpotImg  src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
             ) : 
-              !!item?.spotPickup?.spot.images ? (
-              <>
-                {item?.spotPickup?.spot.images?.map((i: { url: string }, idx: number) => {
-                  return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />
-                })}
-              </>
+              item?.spotPickup?.spot?.images?.length! > 0 ? (
+                <SpotImg src={`${IMAGE_S3_URL}${item?.spotPickup?.spot.images[0].url}`} />
             ) : (
               <SpotImg  src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
             )
