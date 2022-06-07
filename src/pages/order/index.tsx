@@ -658,17 +658,17 @@ const OrderPage = () => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   payMethod: selectedOrderMethod,
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
-
     const reqBody = {
       payMethod: selectedOrderMethod,
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-      failureUrl: `${ngorkUrl}/order`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
+
+    // const reqBody = {
+    //   payMethod: selectedOrderMethod,
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
+    //   failureUrl: `${ngorkUrl}/order`,
+    // };
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
@@ -753,19 +753,19 @@ const OrderPage = () => {
 
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `${ngorkUrl}${router.asPath}`,
-      failureUrl: `${ngorkUrl}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -776,6 +776,7 @@ const OrderPage = () => {
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
+
       if (isMobile) {
         window.location.href = data.data.next_redirect_pc_url;
       } else {

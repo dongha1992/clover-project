@@ -104,10 +104,7 @@ const Oauth = () => {
         grant_type: 'authorization_code',
         client_id: 'afb3a1413cc8d2c864a74358105771a9',
         redirectUri:
-          // location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-          location.hostname === 'localhost'
-            ? 'http://localhost:9009/oauth'
-            : `https://b14a-59-6-1-115.jp.ngrok.io/oauth`,
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
         code,
       };
       console.log(qs, 'qs');
