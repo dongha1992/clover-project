@@ -36,6 +36,8 @@ const Wrapper: React.FC = ({ children }) => {
   const toast = useSelector(toastSelector);
   const { imagesForViewer } = useSelector(commonSelector);
 
+  const isClickReviewImg = imagesForViewer.length > 0;
+
   // set 1vh for all devices
   useEffect(() => {
     const calcBrowserScreenSize = () => {
@@ -47,8 +49,6 @@ const Wrapper: React.FC = ({ children }) => {
     window.addEventListener('resize', calcBrowserScreenSize);
     return () => window.removeEventListener('resize', calcBrowserScreenSize);
   }, []);
-
-  const isClickReviewImg = imagesForViewer.length > 0;
 
   return (
     <>
@@ -100,6 +100,10 @@ const Container = styled.div`
   width: 100%;
   box-sizing: border-box;
   background-color: grey;
+  /* width: 100vw;
+  height: 100vh;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch; */
 `;
 
 const Center = styled.div`

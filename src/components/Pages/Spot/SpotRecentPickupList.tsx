@@ -5,7 +5,7 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL } from '@constants/mock';
+import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
@@ -102,15 +102,6 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       }
     }
   }, []);
-
-  const typeTag = (): string | undefined => {
-    switch (item?.spotPickup?.spot.type) {
-      case 'PRIVATE':
-        return '프라이빗';
-      case 'PUBLIC':
-        return '퍼블릭';
-    }
-  };
 
   const orderHandler = () => {
     /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
@@ -249,17 +240,34 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         <TextH5B>{item?.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
         {renderSpotMsg()}
-        <div>
-          <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-            {typeTag()}
-          </Tag>
-        </div>
+        <TagWrapper>
+          { item?.spotPickup?.spot?.isTrial ? (
+                <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
+              ) : 
+              item?.spotPickup?.spot?.type === 'PRIVATE' ? (
+                <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+              ) : (
+                null
+              )
+            }
+          {
+            item?.spotPickup?.spot?.discountRate! > 0 &&
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.spotPickup?.spot?.discountRate}% 할인 중`}</Tag>
+          }
+        </TagWrapper>
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          {item?.spotPickup?.spot.images?.map((i: { url: string }, idx: number) => {
-            return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />;
-          })}
+          {
+            item?.spotPickup?.spot.isTrial ? (
+              <SpotImg  src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            ) : 
+              item?.spotPickup?.spot?.images?.length! > 0 ? (
+                <SpotImg src={`${IMAGE_S3_URL}${item?.spotPickup?.spot.images[0].url}`} />
+            ) : (
+              <SpotImg  src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            )
+          }
         </ImageWrapper>
         {isClosed ? (
           <Button backgroundColor={theme.white} color={theme.black} width="75px" height="38px" disabled>
@@ -331,6 +339,8 @@ const SpotImg = styled.img`
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
 `;
+
+const TagWrapper = styled.div``;
 
 const Col = styled.div`
   height: 16px;

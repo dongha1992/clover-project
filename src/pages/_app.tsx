@@ -35,6 +35,7 @@ declare global {
     Kakao: any;
     nicepaySubmit: any;
     nicepayClose: any;
+    nicepayMobileStart: any;
   }
 }
 
@@ -42,7 +43,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useRef<QueryClient>();
-  const payFormRef = useRef<HTMLFormElement>(null);
 
   /* 스크린 사이즈 체크 전역 처리 */
   /*TODO: 이거 말고 다른 걸로..? */
@@ -114,7 +114,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   useEffect(() => {
     try {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_KEY);
-      // window.Kakao.init('eea6746462f9b8925defa4f6396aafdd');
     } catch (error) {
       console.error(error);
     }
@@ -140,11 +139,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   //     dd = '0' + dd;
   //   }
   //   return yyyy + mm + dd;
-  // }
-
-  // function nicepayMobileStart() {
-  //   // document.charset = "euc-kr";
-  //   document.payFormMobile.submit();
   // }
 
   return (
@@ -179,6 +173,10 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
                 window.location.reload()
                 alert('결제를 취소 하였습니다.');
                 }
+
+            const nicepayMobileStart = () => {
+                document.payFormMobile.submit();
+                }   
             `}
         </Script>
       </>
@@ -194,12 +192,20 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           </PersistGate>
         </ThemeProvider>
         <form
-          ref={payFormRef}
           name="payForm"
           id="payForm"
           method="post"
           action=""
           acceptCharset="UTF-8"
+          style={{ display: 'none' }}
+        ></form>
+        <form
+          name="payFormMobile"
+          id="payFormMobile"
+          target="_self"
+          method="post"
+          action="https://web.nicepay.co.kr/v3/smart/smartPayment.jsp"
+          acceptCharset="euc-kr"
           style={{ display: 'none' }}
         ></form>
       </QueryClientProvider>

@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { SPOT_DETAIL_INFO } from '@constants/spot';
 import { DetailBottomStory, DetailBottomStoreInfo } from '@components/Pages/Spot';
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
-import { IMAGE_S3_URL } from '@constants/mock/index';
+import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
 import { SPOT_ITEM } from '@store/spot';
 import { ISpotsDetail, ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
@@ -61,7 +61,6 @@ const SpotDetailPage = (): ReactElement => {
   );
 
   // 스팟 상세 스토리 api
-
   const {
     data,
     error: spotStoryError,
@@ -118,22 +117,22 @@ const SpotDetailPage = (): ReactElement => {
         return '카페';
       case 'CONVENIENCE_STORE':
         return '편의점';
-      case 'ETC':
-        return '기타';
       case 'BOOKSTORE':
         return '서점';
       case 'DRUGSTORE':
         return '약국';
       case 'FITNESS_CENTER':
         return '휘트니스센터';
-      case 'OFFICE':
-        return '오피스';
-      case 'SHARED_OFFICE':
-        return '공유오피스';
       case 'STORE':
-        return '스토어';
+        return '일반상점';
+      case 'ETC':
+        return null;
+      case 'OFFICE':
+        return null;
+      case 'SHARED_OFFICE':
+        return null;
       case 'SCHOOL':
-        return '학교';
+        return null;
       default:
         return null;
     }
@@ -204,23 +203,52 @@ const SpotDetailPage = (): ReactElement => {
 
   return (
     <Container>
+      {
+        spotItem?.isTrial &&
+        <TopNoticeWrapper>
+          <TextH5B  color={theme.white}>n월 n일까지 임시 사용 가능한 프코스팟이에요!</TextH5B>
+        </TopNoticeWrapper>
+      }
       <SliderWrapper>
         <TopBannerSlider {...settingsTop}>
-          {spotItem?.images?.map((item, idx: number) => {
-            return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
-          })}
+          {
+            spotItem?.isTrial ? (
+              <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
+            ) : 
+            spotItem?.images?.length! > 0 ? (
+                <>
+                  {spotItem?.images?.map((item, idx: number) => {
+                    return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
+                  })}
+                </> 
+              ) : (
+                <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
+              )
+          }
         </TopBannerSlider>
-        <SlideCount>
-          <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
-        </SlideCount>
+        {
+          (!spotItem?.isTrial || spotItem?.images?.length! < 0) &&
+          <SlideCount>
+            <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
+          </SlideCount>
+        }
       </SliderWrapper>
       {/* 스팟 상세 상단 태그 리스트 */}
       <PlaceTypeTagWrapper>
         <>
-          { spotItem?.type === 'PRIVATE' && 
-            <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+          { spotItem?.isTrial ? (
+              <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
+            ) : 
+            spotItem?.type === 'PRIVATE' ? (
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+            ) : (
+              null
+            )
           }
-          <Tag margin='0 5px 0 0'>{placeType()}</Tag>
+          {
+            spotItem?.type !== 'PRIVATE' && placeType() !== null && 
+              <Tag margin='0 5px 0 0'>{placeType()}</Tag>
+          }
           {
             spotItem?.canEat &&
               <Tag margin='0 5px 0 0'>취식가능</Tag>
@@ -306,9 +334,9 @@ const SpotDetailPage = (): ReactElement => {
             </div>
           </FlexStart>
           {spotItem?.description && (
-            <FlexStart margin="0 0 16px 0">
-              <TextH5B margin="0 20px 0 0">기타정보</TextH5B>
-              <TextB2R>{spotItem?.description}</TextB2R>
+            <FlexStart margin="0 0 16px 0" alignItems="flex-start">
+              <TextH5B width='54px' margin='0 13px 0 0'>기타정보</TextH5B>
+              <TextB2R width='226px'>{spotItem?.description}</TextB2R>
             </FlexStart>
           )}
         </PickupInfo>
@@ -351,6 +379,17 @@ const SpotDetailPage = (): ReactElement => {
 };
 
 const Container = styled.main``;
+
+const TopNoticeWrapper= styled.div`
+  width: 100%;
+  height: 45px;
+  position: fiex;
+  top: 0px;
+  z-index: 50;
+  background: ${theme.brandColor};
+  padding: 12px 48px;
+  text-align: center;
+`;
 
 const SliderWrapper = styled.section`
   position: relative;

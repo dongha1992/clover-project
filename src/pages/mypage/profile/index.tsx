@@ -68,6 +68,7 @@ const ProfilePage = () => {
 
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
+  const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
 
   let authTimerRef = useRef(300);
@@ -103,8 +104,11 @@ const ProfilePage = () => {
     dispatch(INIT_USER());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
+    removeCookie({ name: 'autoL' });
     localStorage.removeItem('persist:nextjs');
-
+    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+      window.Kakao.Auth.logout();
+    }
     router.push('/mypage');
   };
 
@@ -186,18 +190,19 @@ const ProfilePage = () => {
             submitBtnText: '확인',
           })
         );
+        resetTimer;
         setOneMinuteDisabled(true);
         setDelay(1000);
         if (isOverTime) {
           setIsOverTime(false);
-          authTimerRef.current = 5;
+          resetTimer;
         }
       }
     } catch (error: any) {
       if (error.code === 2000) {
         dispatch(
           SET_ALERT({
-            alertMessage: '해당 전화번호로 이미 가입된 계정이 있습니다.',
+            alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
           })
         );
       } else if (error.code === 2001) {
@@ -243,6 +248,10 @@ const ProfilePage = () => {
     setChcekGender(value);
   };
 
+  const resetTimer = () => {
+    authTimerRef.current = 300;
+  };
+
   const changeEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value, name } = e.target;
     const checkEmailRegx = EMAIL_REGX.test(value);
@@ -263,6 +272,13 @@ const ProfilePage = () => {
 
   const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
+
+    if (name === 'name') {
+      checkNameValid();
+    } else if (name === 'nickName') {
+      checkNickNameValid();
+    }
+    console.log(name);
     setUserInfo({ ...userInfo, [name]: value });
   };
 
@@ -276,7 +292,7 @@ const ProfilePage = () => {
   };
 
   const changeMeInfo = async () => {
-    if (!isValidName) return;
+    if (!isValidName || !isValidNickname) return;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
@@ -314,6 +330,15 @@ const ProfilePage = () => {
       setIsValidName(false);
     } else {
       setIsValidName(true);
+    }
+  };
+
+  const checkNickNameValid = () => {
+    const lengthCheck = userInfo.nickName.length < 2 || userInfo.nickName.length > 20;
+    if (!NAME_REGX.test(userInfo.nickName) || lengthCheck) {
+      setIsValidNickname(false);
+    } else {
+      setIsValidNickname(true);
     }
   };
 
@@ -396,7 +421,7 @@ const ProfilePage = () => {
             {!emailValidation.isValid ? (
               <Validation>{emailValidation.message}</Validation>
             ) : (
-              <SVGIcon name="confirmCheck" />
+              <>{!isNotEmail && <SVGIcon name="confirmCheck" />}</>
             )}
           </NameInputWrapper>
           {!isNotEmail && (
@@ -417,24 +442,23 @@ const ProfilePage = () => {
           </FlexRow>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
-            <TextInput
-              name="name"
-              value={userInfo.name || ''}
-              eventHandler={onChangeUserInfo}
-              onBlur={checkNameValid}
-            />
-            {!isValidName && (
+            <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
+            {userInfo.name.length > 0 && !isValidName && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
             <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
+            {userInfo.nickName.length > 0 && !isValidNickname && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
             <FlexRow>
               <TextInput
+                placeholder="휴대폰 번호 (-제외)"
                 inputType="number"
                 eventHandler={phoneNumberInputHandler}
                 value={userInfo.tel || ''}
@@ -442,8 +466,8 @@ const ProfilePage = () => {
                 keyPressHandler={telKeyPressHandler}
               />
               {isAuthTel ? (
-                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-                  {delay ? '재전송' : '요청하기'}
+                <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel}>
+                  {delay ? '재요청' : '인증요청'}
                 </Button>
               ) : (
                 <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
@@ -579,7 +603,7 @@ const ProfilePage = () => {
         </DeleteUser>
       </Wrapper>
       <BtnWrapper onClick={changeMeInfo}>
-        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName}>
+        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName || !isValidNickname}>
           수정하기
         </Button>
       </BtnWrapper>

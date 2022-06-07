@@ -5,7 +5,7 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL } from '@constants/mock';
+import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
@@ -34,10 +34,11 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
-  const { spotPickupId } = useSelector(spotSelector);
+  const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
+  const positionLen = spotsPosition?.latitude !== null;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   // 운영 종료 예정 or 종료
@@ -46,7 +47,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
   const closedSoonOperation = dDay >= -14;
 
-  const renderSpotMsg = useCallback(() => {
+  const renderSpotMsg = () => {
     switch (true) {
       case closedOperation: {
         return (
@@ -73,7 +74,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       default: {
         return (
           <MeterAndTime>
-            {userLocationLen && (
+            {(userLocationLen || positionLen) && (
               <>
                 <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
                 <Col />
@@ -87,7 +88,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         );
       }
     }
-  }, []);
+  };
 
   const typeTag = (): string | undefined => {
     switch (item.type) {
@@ -275,33 +276,40 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
         {renderSpotMsg()}
-        {item.isOpened ? (
-          !item.isTrial ? (
-            <div>
-              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                {typeTag()}
-              </Tag>
-            </div>
-          ) : (
-            <div>
-              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                트라이얼
-              </Tag>
-            </div>
-          )
-        ) : (
-          <div>
+        <TagWrapper>
+          {
+            item?.isTrial ? (
+              <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
+            ) : 
+            item?.type === 'PRIVATE' ? (
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+            ) : (
+              null
+            )
+          }
+          {
+            item?.discountRate! > 0 &&
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.discountRate}% 할인 중`}</Tag>
+          }
+          {!item.isOpened && 
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
               오픈예정
             </Tag>
-          </div>
-        )}
+          }
+        </TagWrapper>
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          {item?.images?.map((i: { url: string }, idx: number) => {
-            return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />;
-          })}
+        {
+            item.isTrial ? (
+              <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            ) : 
+              item.images?.length! > 0 ? (
+                <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+              ) : (
+                <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+              )
+          }
         </ImageWrapper>
         {item.isOpened && !item.isClosed ? (
           // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
@@ -330,7 +338,6 @@ const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
   justify-content: space-between;
   width: 100%;
   height: 114px;
-  margin-bottom: 24px;
   ${({ mapList }) => {
     if (mapList) {
       return css`
@@ -355,6 +362,8 @@ const MeterAndTime = styled.div`
   display: flex;
   padding: 8px 0 10px 0;
 `;
+
+const TagWrapper = styled.div``;
 
 const ImageWrapper = styled.div<{ mapList: boolean }>`
   width: 60px;
