@@ -52,7 +52,7 @@ const curDate = today.getDate();
 const vaildYear = curYear - AGES;
 
 const SignupOptionalPage = () => {
-  const [checkGender, setChcekGender] = useState<string | null>('');
+  const [checkGender, setChcekGender] = useState<string | null>('NONE');
   const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
     year: 0,
     month: -1,
