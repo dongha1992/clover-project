@@ -59,6 +59,7 @@ const OnBoarding: NextPage = () => {
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
+    // dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
   }, []);
 
   const kakaoLoginHandler = () => {
@@ -67,13 +68,12 @@ const OnBoarding: NextPage = () => {
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
 
-    if (typeof window !== undefined) {
-      window.Kakao.Auth.authorize({
-        redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-      });
-    }
+    // window.Kakao.Auth.setClient = 'afb3a1413cc8d2c864a74358105771a9';
+    window.Kakao.Auth.authorize({
+      redirectUri:
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+    });
   };
 
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
@@ -87,10 +87,8 @@ const OnBoarding: NextPage = () => {
       });
       try {
         const appleResponse = await window.AppleID.auth.signIn();
-
         const appleToken = appleResponse?.authorization.id_token;
         if (appleToken) {
-          // 애플 로그인 / 회원가입 호출?
           const params = { appleToken };
           const { data } = await getAppleTokenApi({ params });
           if (data.data.availability) {
@@ -120,7 +118,7 @@ const OnBoarding: NextPage = () => {
         if (error.code === 2103) {
           dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
         } else {
-          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+          dispatch(SET_ALERT({ alertMessage: `알 수 없는 에러가 발생했습니다.` }));
         }
       }
     }
@@ -211,11 +209,12 @@ const Container = styled.main`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left:0px;
+    left: 0px;
   `};
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
     left: 0px;
+
   `};
 
   :after {
@@ -248,6 +247,9 @@ const ButtonWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  ${({ theme }) => theme.mobile`
+    top: -7%;
+  `};
 `;
 
 const EmailLoginAndSignUp = styled.div`

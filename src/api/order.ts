@@ -49,6 +49,21 @@ export const getOrderListsApi = ({
   return Api.get(`order/v1/deliveries/`, { params });
 };
 
+export const getOrdersApi = ({
+  days = 90,
+  page = 1,
+  size = 1,
+  type,
+}: IGetOrderListRequest): Promise<AxiosResponse<any>> => {
+  const params = {
+    days,
+    page,
+    size,
+    type,
+  };
+  return Api.get('order/v1/orders', { params });
+};
+
 export const getOrderDetailApi = (id: number): Promise<AxiosResponse<IGetOrderDetailResponse>> => {
   return Api.get(`order/v1/orders/${id}`);
 };
