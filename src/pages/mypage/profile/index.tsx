@@ -73,6 +73,9 @@ const ProfilePage = () => {
   const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
 
+  const LIMIT = 240;
+  const FIVE_MINUTE = 300;
+
   let authTimerRef = useRef(300);
   // let authTimerRef = useRef(5);
 
@@ -127,7 +130,7 @@ const ProfilePage = () => {
       setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 240) {
+    if (authTimerRef.current < LIMIT) {
       setOneMinuteDisabled(false);
     }
   }, [second]);
@@ -235,12 +238,12 @@ const ProfilePage = () => {
             submitBtnText: '확인',
           })
         );
-        resetTimer;
+        resetTimer();
         setOneMinuteDisabled(true);
         setDelay(1000);
         if (isOverTime) {
           setIsOverTime(false);
-          resetTimer;
+          resetTimer();
         }
       }
     } catch (error: any) {
@@ -253,7 +256,7 @@ const ProfilePage = () => {
       } else if (error.code === 2001) {
         dispatch(
           SET_ALERT({
-            alertMessage: '전화번호 인증 횟수를 초과하였습니다.(하루 5회)',
+            alertMessage: '하루 인증 요청 제한 횟수 10회를 초과했습니다.',
           })
         );
       } else {
@@ -282,7 +285,12 @@ const ProfilePage = () => {
             setDelay(null);
           }
         } catch (error: any) {
-          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.' }));
+          if (error.code === 1) {
+            dispatch(SET_ALERT({ alertMessage: '24시간 동안 해당 번호로 인증 요청이 불가합니다.' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.' }));
+          }
+
           console.error(error);
         }
       }
@@ -294,7 +302,8 @@ const ProfilePage = () => {
   };
 
   const resetTimer = () => {
-    authTimerRef.current = 300;
+    authTimerRef.current = FIVE_MINUTE;
+    // authTimerRef.current = 5;
   };
 
   const changeEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
