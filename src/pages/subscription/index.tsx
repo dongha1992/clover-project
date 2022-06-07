@@ -13,8 +13,6 @@ import { getMenusApi } from '@api/menu';
 
 const SubscriptiopPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
-  // TODO : 구독 리스트 api 추후 리액트 쿼리로 변경
-  const [subsList, setSubsList] = useState([{}]);
 
   const goToRegularSpot = () => {
     router.push('/subscription/products?tab=spot');
@@ -29,7 +27,7 @@ const SubscriptiopPage = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenus',
+    'getSubscriptionMenus',
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SUBSCRIPTION' };
       const { data } = await getMenusApi(params);
@@ -44,8 +42,8 @@ const SubscriptiopPage = () => {
 
   return (
     <Container>
-      <InfoCard subsList={subsList} />
-      {subsList && <MySubsList />}
+      <InfoCard />
+      <MySubsList />
 
       <SubsListContainer>
         <TitleBox>

@@ -48,3 +48,18 @@ export const periodMapper: Obj = {
   FOUR_WEEK: '4주',
   UNLIMITED: '정기구독',
 };
+
+export const SUBSCRIPTION_STATUS: Obj = {
+  RESERVED: '배송예정',
+  PREPARING: '상품준비 중',
+  DELIVERING: '배송 중',
+  COMPLETED: '배송완료',
+  CANCELED: '배송취소',
+};
+export const SUBSCRIPTION_UNPAID_STATUS: Obj = {
+  RESERVED: '구독예정',
+  PREPARING: '상품준비 중',
+  DELIVERING: '배송 중',
+  COMPLETED: '배송완료',
+  CANCELED: '배송취소',
+};
