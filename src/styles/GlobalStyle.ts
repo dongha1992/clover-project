@@ -26,11 +26,18 @@ const GlobalStyle = createGlobalStyle`
     footer, header, hgroup, menu, nav, section {
         display: block;
     }
+
+    html{
+        overscroll-behavior-y: none;
+    }
+    
     body {
         line-height: 1;
         margin: 0 auto;
         background-color: #232323;
         width: 100%;
+        overscroll-behavior-y: none;
+
     }
     input[type="color"],
     input[type="date"],

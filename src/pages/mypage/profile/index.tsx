@@ -103,13 +103,11 @@ const ProfilePage = () => {
     dispatch(INIT_USER());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
+    removeCookie({ name: 'autoL' });
     localStorage.removeItem('persist:nextjs');
     if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
-      console.log('LOGOUT KAKAKAKAKO');
       window.Kakao.Auth.logout();
-      // window.Kakao.cleanup();
     }
-
     router.push('/mypage');
   };
 
