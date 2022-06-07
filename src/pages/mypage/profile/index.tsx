@@ -68,6 +68,7 @@ const ProfilePage = () => {
 
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
+  const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
 
   let authTimerRef = useRef(300);
@@ -271,6 +272,13 @@ const ProfilePage = () => {
 
   const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
+
+    if (name === 'name') {
+      checkNameValid();
+    } else if (name === 'nickName') {
+      checkNickNameValid();
+    }
+    console.log(name);
     setUserInfo({ ...userInfo, [name]: value });
   };
 
@@ -284,7 +292,7 @@ const ProfilePage = () => {
   };
 
   const changeMeInfo = async () => {
-    if (!isValidName) return;
+    if (!isValidName || !isValidNickname) return;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
@@ -322,6 +330,15 @@ const ProfilePage = () => {
       setIsValidName(false);
     } else {
       setIsValidName(true);
+    }
+  };
+
+  const checkNickNameValid = () => {
+    const lengthCheck = userInfo.nickName.length < 2 || userInfo.nickName.length > 20;
+    if (!NAME_REGX.test(userInfo.nickName) || lengthCheck) {
+      setIsValidNickname(false);
+    } else {
+      setIsValidNickname(true);
     }
   };
 
@@ -425,19 +442,17 @@ const ProfilePage = () => {
           </FlexRow>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
-            <TextInput
-              name="name"
-              value={userInfo.name || ''}
-              eventHandler={onChangeUserInfo}
-              onBlur={checkNameValid}
-            />
-            {!isValidName && (
+            <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
+            {userInfo.name.length > 0 && !isValidName && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
             <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
+            {userInfo.nickName.length > 0 && !isValidNickname && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
@@ -588,7 +603,7 @@ const ProfilePage = () => {
         </DeleteUser>
       </Wrapper>
       <BtnWrapper onClick={changeMeInfo}>
-        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName}>
+        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName || !isValidNickname}>
           수정하기
         </Button>
       </BtnWrapper>
