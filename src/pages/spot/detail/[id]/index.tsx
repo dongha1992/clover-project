@@ -213,20 +213,21 @@ const SpotDetailPage = (): ReactElement => {
         <TopBannerSlider {...settingsTop}>
           {
             spotItem?.isTrial ? (
-              <>
-                 <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />;
-              </>
-            ) : (
-              <>
-              {spotItem?.images?.map((item, idx: number) => {
-                return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
-              })}
-              </> 
-            )
+              <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
+            ) : 
+            spotItem?.images?.length! > 0 ? (
+                <>
+                  {spotItem?.images?.map((item, idx: number) => {
+                    return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
+                  })}
+                </> 
+              ) : (
+                <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
+              )
           }
         </TopBannerSlider>
         {
-          !spotItem?.isTrial &&
+          (!spotItem?.isTrial || spotItem?.images?.length! < 0) &&
           <SlideCount>
             <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
           </SlideCount>

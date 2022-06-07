@@ -219,17 +219,12 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               {
                 list.isTrial ? (
                   <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                ) : (
-                  <>
-                  {list.images.map((i, idx) => {
-                    return (
-                      <div key={idx}>
-                        <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                      </div>
-                    );
-                  })}
-                  </>
-                )
+                ) : 
+                  list.images.length > 0 ? (
+                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  ) : (
+                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                  )
               }
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
@@ -257,13 +252,16 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              {list.images.map((i, idx) => {
-                return (
-                  <div key={idx}>
-                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                  </div>
-                );
-              })}
+              {
+                list.isTrial ? (
+                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                ) : 
+                  list.images.length > 0 ? (
+                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  ) : (
+                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                  )
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
