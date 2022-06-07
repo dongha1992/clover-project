@@ -34,6 +34,7 @@ const SignupAuthPage = () => {
 
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const authTimerRef = useRef(300);
+  // let authTimerRef = useRef(5);
 
   const [emailValidation, setEmailValidataion] = useState<IVaildation>({
     message: '',
@@ -58,6 +59,7 @@ const SignupAuthPage = () => {
   useEffect(() => {
     if (authTimerRef.current < 0) {
       setDelay(null);
+      setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
     if (authTimerRef.current < 240) {
@@ -122,6 +124,10 @@ const SignupAuthPage = () => {
     }
   };
 
+  const resetTimer = () => {
+    authTimerRef.current = 300;
+  };
+
   const getAuthTel = async () => {
     if (!phoneValidation) {
       dispatch(
@@ -151,9 +157,10 @@ const SignupAuthPage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
+        resetTimer();
         if (isOverTime) {
           setIsOverTime(false);
-          authTimerRef.current = 5;
+          resetTimer();
         }
       }
     } catch (error: any) {
@@ -192,6 +199,8 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || isOverTime) return;
+
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
         const authCode = authCodeNumberRef.current.value;
@@ -203,9 +212,14 @@ const SignupAuthPage = () => {
             setDelay(null);
             dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
           }
-        } catch (error) {
-          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+        } catch (error: any) {
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
+          }
           setAuthCodeConfirm(false);
+
           console.error(error);
         }
       }
@@ -262,30 +276,28 @@ const SignupAuthPage = () => {
             eventHandler={nameInputHandler}
             value={signUpInfo?.name ? signUpInfo?.name : ''}
           />
-          {(nameValidation || signUpInfo?.name) && <SVGIcon name="confirmCheck" />}
+          {nameValidation && <SVGIcon name="confirmCheck" />}
         </NameInputWrapper>
         {signUpInfo?.name?.length! > 0 && !nameValidation && (
-          <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+          <Validation>2~20자 이내 / 한글, 영문만 입력 가능해요.</Validation>
         )}
         <PhoneNumberInputWrapper>
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
           <AuthenficationWrapper>
             <TextInput
-              placeholder="휴대폰 번호"
+              placeholder="휴대폰 번호 (-제외)"
               eventHandler={phoneNumberInputHandler}
               inputType="number"
               value={signUpInfo?.tel ? signUpInfo?.tel : ''}
             />
-            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel} disabled={oneMinuteDisabled}>
-              인증 요청
+            <Button width="30%" margin="0 0 0 8px" height="48px" onClick={getAuthTel}>
+              {delay ? '재요청' : '인증요청'}
             </Button>
             {phoneValidation && <SVGIcon name="confirmCheck" />}
           </AuthenficationWrapper>
-          <TelHelper>
-            {!phoneValidation && signUpInfo?.tel?.length! > 0 && (
-              <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
-            )}
-          </TelHelper>
+          {!phoneValidation && signUpInfo?.tel?.length! > 0 && (
+            <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+          )}
           <ConfirmWrapper>
             <TextInput
               placeholder="인증 번호 입력"
@@ -297,7 +309,7 @@ const SignupAuthPage = () => {
               width="30%"
               margin="0 0 0 8px"
               height="48px"
-              disabled={!authCodeValidation}
+              disabled={!authCodeValidation || isOverTime}
               onClick={getAuthCodeConfirm}
             >
               확인
@@ -366,7 +378,7 @@ const AuthenficationWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 8px;
+
   > svg {
     position: absolute;
     right: 30%;
@@ -378,6 +390,7 @@ const ConfirmWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  margin-top: 8px;
   > svg {
     position: absolute;
     right: 30%;
@@ -394,9 +407,7 @@ const TimerWrapper = styled.div`
   left: 60%;
 `;
 
-const TelHelper = styled.div`
-  margin-bottom: 6px;
-`;
+const TelHelper = styled.div``;
 
 const EmailInputWrapper = styled.div`
   position: relative;

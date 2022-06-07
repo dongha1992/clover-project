@@ -50,5 +50,6 @@ const Bottom = () => {
 const Container = styled.div<{ isShow: React.ReactNode }>`
   margin-top: ${({ isShow }) => (isShow ? 56 : 0)}px;
   display: ${({ isShow }) => (isShow ? '' : 'none')};
+  background-color: white;
 `;
 export default React.memo(Bottom);

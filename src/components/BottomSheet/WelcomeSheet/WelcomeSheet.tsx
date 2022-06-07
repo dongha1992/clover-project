@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
@@ -16,12 +16,14 @@ import { postPromotionCodeApi } from '@api/promotion';
 import { userRecommendationApi } from '@api/user';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
+import { commonSelector } from '@store/common';
 
 const WelcomeSheet = () => {
   const dispatch = useDispatch();
   const codeRef = useRef<HTMLInputElement>(null);
 
   const { me } = useSelector(userForm);
+  const { isMobile } = useSelector(commonSelector);
 
   const router = useRouter();
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
@@ -107,7 +109,7 @@ const WelcomeSheet = () => {
   );
 
   return (
-    <Container>
+    <Container isMobile={isMobile}>
       <Header>
         <FlexEnd
           margin="40px 0 0 0"
@@ -162,9 +164,20 @@ const WelcomeSheet = () => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isMobile: boolean }>`
   ${homePadding};
-  height: 91vh;
+
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        height: 100%;
+      `;
+    } else {
+      return css`
+        height: 91vh;
+      `;
+    }
+  }}
 `;
 const Header = styled.div`
   height: 80px;
