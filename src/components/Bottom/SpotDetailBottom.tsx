@@ -230,20 +230,23 @@ const SpotDetailBottom = () => {
       ) : (
         <>
           <Wrapper>
-            <LikeWrapper>
-              <LikeBtn onClick={hanlderLike}>
-                <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
-              </LikeBtn>
-              <TextH5B color={theme.white} padding="0 0 0 4px">
-                {spotDetail?.likeCount}
-              </TextH5B>
-            </LikeWrapper>
-            <Col />
+            {
+              !spotDetail?.isTrial &&
+              <LikeWrapper>
+                <LikeBtn onClick={hanlderLike}>
+                  <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
+                </LikeBtn>
+                <TextH5B color={theme.white} padding="0 0 0 4px">
+                  {spotDetail?.likeCount}
+                </TextH5B>
+                <Col />
+              </LikeWrapper>
+            }
             <BtnWrapper onClick={orderHandler}>
               <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
             </BtnWrapper>
           </Wrapper>
-          {!spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
+          {spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
             <TootipWrapper>
               <TimerTooltip
                 message={`${spotDetail?.discountRate}% 할인 중`}
@@ -314,7 +317,7 @@ const Col = styled.div`
   height: 24px;
   margin-left: 16px;
   margin-right: 16px;
-  background-color: ${({ theme }) => theme.white};
+  background-color: ${theme.white};
 `;
 
 const BtnWrapper = styled.div`
