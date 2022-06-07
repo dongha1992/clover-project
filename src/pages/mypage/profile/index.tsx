@@ -285,12 +285,11 @@ const ProfilePage = () => {
             setDelay(null);
           }
         } catch (error: any) {
-          if (error.code === 1) {
-            dispatch(SET_ALERT({ alertMessage: '24시간 동안 해당 번호로 인증 요청이 불가합니다.' }));
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
           } else {
-            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.' }));
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
           }
-
           console.error(error);
         }
       }
