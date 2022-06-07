@@ -68,7 +68,6 @@ const OnBoarding: NextPage = () => {
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
 
-    // window.Kakao.Auth.setClient = 'afb3a1413cc8d2c864a74358105771a9';
     window.Kakao.Auth.authorize({
       redirectUri:
         location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
@@ -117,8 +116,6 @@ const OnBoarding: NextPage = () => {
       } catch (error: any) {
         if (error.code === 2103) {
           dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
-        } else {
-          dispatch(SET_ALERT({ alertMessage: `알 수 없는 에러가 발생했습니다.` }));
         }
       }
     }
