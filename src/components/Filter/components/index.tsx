@@ -1,4 +1,3 @@
-import MultipleFilter from './MultipleFilter';
-import OrderFilter from './OrderFilter';
-
-export { MultipleFilter, OrderFilter };
+export { default as OrderFilter } from './OrderFilter';
+export { default as MultipleFilter } from './MultipleFilter';
+export { default as SpotMultipleFilter } from './SpotMultipleFilter';
