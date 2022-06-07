@@ -43,7 +43,7 @@ const FinishPage = () => {
   return (
     <Container>
       <TopWrapper>
-        <TextH2B margin="0 0 20px 0">{msgMapper()?.title}</TextH2B>
+        <TextH2B padding='24px 0 24px 0'>{msgMapper()?.title}</TextH2B>
         <TextB3R color={theme.greyScale65}>{msgMapper()?.subTitle}</TextB3R>
       </TopWrapper>
       <ImgContent />
