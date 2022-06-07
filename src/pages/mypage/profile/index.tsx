@@ -105,6 +105,7 @@ const ProfilePage = () => {
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     removeCookie({ name: 'autoL' });
+    removeCookie({ name: 'acstk' });
     localStorage.removeItem('persist:nextjs');
     if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
       window.Kakao.Auth.logout();
@@ -443,14 +444,14 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
             <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
-            {userInfo.name.length > 0 && !isValidName && (
+            {userInfo.name?.length > 0 && !isValidName && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
             <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
-            {userInfo.nickName.length > 0 && !isValidNickname && (
+            {userInfo.nickName?.length > 0 && !isValidNickname && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
           </FlexCol>
