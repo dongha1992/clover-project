@@ -114,7 +114,7 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 
-const ngorkUrl = 'https://f957-221-147-44-88.jp.ngrok.io';
+const ngorkUrl = 'https://b14a-59-6-1-115.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -330,6 +330,12 @@ const OrderPage = () => {
             })
           );
           router.replace('/cart');
+        } else if (error.code === 1104) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '카드를 등록해주세요.',
+            })
+          );
         }
       },
     }
@@ -747,19 +753,19 @@ const OrderPage = () => {
 
   const processKakaoPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
+    const reqBody = {
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+      cancelUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+    };
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    const reqBody = {
-      successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-      cancelUrl: `${ngorkUrl}${router.asPath}`,
-      failureUrl: `${ngorkUrl}${router.asPath}`,
-    };
+    // const reqBody = {
+    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
+    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
+    //   failureUrl: `${ngorkUrl}${router.asPath}`,
+    // };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -770,10 +776,11 @@ const OrderPage = () => {
         name: 'kakao-tid-clover',
         value: data.data.tid,
       });
+
       if (isMobile) {
-        window.location.href = data.data.next_redirect_pc_url;
-      } else {
         window.location.href = data.data.next_redirect_mobile_url;
+      } else {
+        window.location.href = data.data.next_redirect_pc_url;
       }
     } catch (error: any) {
       if (error.code === 1207) {
