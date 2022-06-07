@@ -16,13 +16,15 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
-import { userForm, INIT_USER } from '@store/user';
-import { availabilityEmail, userChangeInfo } from '@api/user';
+import { userForm, INIT_USER, SET_USER } from '@store/user';
+import { availabilityEmail, userChangeInfo, userProfile } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
 import { NAME_REGX } from '@constants/regex';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { IChangeMe } from '@model/index';
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -39,7 +41,7 @@ interface IUserInfo {
 }
 
 const ProfilePage = () => {
-  const { me } = useSelector(userForm);
+  // const { me } = useSelector(userForm);
 
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
@@ -75,6 +77,49 @@ const ProfilePage = () => {
   // let authTimerRef = useRef(5);
 
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const { data: me, isLoading: infoLoading } = useQuery(
+    'getUserProfile',
+    async () => {
+      const { data } = await userProfile();
+
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        dispatch(SET_USER(data));
+      },
+      onError: () => {
+        router.replace('/onboarding');
+      },
+    }
+  );
+
+  const { mutateAsync: mutationEditProfile } = useMutation(
+    async (reqBody: IChangeMe) => {
+      const { data } = await userChangeInfo(reqBody);
+      return data;
+    },
+    {
+      onSuccess: async () => {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '수정을 성공하였습니다.',
+          })
+        );
+        await queryClient.refetchQueries('getUserProfile');
+      },
+      onError: async (error: any) => {
+        console.error(error);
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+    }
+  );
 
   useEffect(() => {
     if (authTimerRef.current < 0) {
@@ -274,11 +319,11 @@ const ProfilePage = () => {
     const { name, value } = e.target;
 
     if (name === 'name') {
-      checkNameValid();
+      checkNameValid(value);
     } else if (name === 'nickName') {
-      checkNickNameValid();
+      checkNickNameValid(value);
     }
-    console.log(name);
+
     setUserInfo({ ...userInfo, [name]: value });
   };
 
@@ -309,33 +354,21 @@ const ProfilePage = () => {
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
     };
-
-    try {
-      const { data } = await userChangeInfo(reqBody);
-      if (data.code === 200) {
-        dispatch(
-          SET_ALERT({
-            alertMessage: '수정을 성공하였습니다.',
-          })
-        );
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    mutationEditProfile(reqBody);
   };
 
-  const checkNameValid = () => {
-    const lengthCheck = userInfo.name.length < 2 || userInfo.name.length > 20;
-    if (!NAME_REGX.test(userInfo.name) || lengthCheck) {
+  const checkNameValid = (value: string) => {
+    const lengthCheck = value.length < 2 || value.length > 20;
+    if (!NAME_REGX.test(value) || lengthCheck) {
       setIsValidName(false);
     } else {
       setIsValidName(true);
     }
   };
 
-  const checkNickNameValid = () => {
-    const lengthCheck = userInfo.nickName.length < 2 || userInfo.nickName.length > 20;
-    if (!NAME_REGX.test(userInfo.nickName) || lengthCheck) {
+  const checkNickNameValid = (value: string) => {
+    const lengthCheck = value.length < 2 || value.length > 20;
+    if (!NAME_REGX.test(value) || lengthCheck) {
       setIsValidNickname(false);
     } else {
       setIsValidNickname(true);
@@ -443,14 +476,14 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
             <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
-            {userInfo.name.length > 0 && !isValidName && (
+            {!isValidName && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
             <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
-            {userInfo.nickName.length > 0 && !isValidNickname && (
+            {!isValidNickname && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
           </FlexCol>
