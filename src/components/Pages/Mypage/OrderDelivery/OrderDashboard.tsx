@@ -5,6 +5,7 @@ import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { IGetOrderInfo } from '@model/index';
 import router from 'next/router';
+import { isNil } from 'lodash-es';
 
 interface IProps {
   orderList: IGetOrderInfo;
@@ -13,13 +14,16 @@ interface IProps {
 const OrderDashboard = ({ orderList }: IProps) => {
   const { reservedCount, preparingCount, deliveringCount, completedCount, canceledCount } = orderList;
   const total = reservedCount + preparingCount + deliveringCount + completedCount;
+
   return (
     <>
       <FlexCol>
         <FlexBetween>
           <TextH4B>주문/배송 내역</TextH4B>
           <FlexRow>
-            <TextB2R padding="0 8px 0 0">{total} 건</TextB2R>
+            <TextB2R padding="0 8px 0 0" pointer>
+              {total} 건
+            </TextB2R>
             <div onClick={() => router.push('/mypage/order-delivery-history')}>
               <SVGIcon name="arrowRight" />
             </div>
@@ -50,7 +54,7 @@ const OrderDashboard = ({ orderList }: IProps) => {
             <SVGIcon name="arrowRightGrey" />
           </ArrowWrapper>
           <FlexColCenter>
-            <TextH3B>{completedCount}</TextH3B>
+            <TextH3B>{completedCount ?? 0}</TextH3B>
             <TextB4R color={theme.greyScale65}>배송완료</TextB4R>
           </FlexColCenter>
         </FlexBetween>

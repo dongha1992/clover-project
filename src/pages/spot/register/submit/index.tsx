@@ -7,7 +7,7 @@ import { Button } from '@components/Shared/Button';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { postSpotsRegistrationsInfoSubmit } from '@api/spot';
-import { IEditRegistration } from '@model/index';
+import { IGetRegistrationStatus } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_SPOT_REGISTRATIONS_POST_RESULT } from '@store/spot';
 
@@ -18,7 +18,7 @@ const SubmitPage = () => {
   const { type } = router.query;
 
   const registrationsSubmitHandeler = async () => {
-    const params: IEditRegistration = {
+    const params: IGetRegistrationStatus = {
       coordinate: {
         lat: Number(spotLocation.lat),
         lon: Number(spotLocation.lon),
@@ -34,14 +34,13 @@ const SubmitPage = () => {
       userEmail: spotsRegistrationInfo.userEmail,
       userTel: spotsRegistrationInfo.userTel,
       placeName: spotsRegistrationInfo.placeName,
-      pickupType: spotsRegistrationOptions.pickupLocationTypeOptions.value,
+      pickupType: spotsRegistrationInfo.pickupLocation,
       lunchTime: spotsRegistrationOptions.lunchTimeOptions.value,
       placeType: spotsRegistrationOptions.placeTypeOptions.value,
       placeTypeDetail:
         spotsRegistrationOptions.placeTypeOptions?.value === 'ETC' ? spotsRegistrationInfo.placeTypeEtc : null,
-      userPosition: type === 'owner' ? spotsRegistrationInfo.managerInfo : null,
+      userPosition: type === 'OWNER' ? spotsRegistrationInfo.managerInfo : null,
     };
-
     try {
       const { data } = await postSpotsRegistrationsInfoSubmit(params);
       if (data.code === 200) {
@@ -72,14 +71,11 @@ const SubmitPage = () => {
             <TextH5B margin="0 0 8px 0">장소명</TextH5B>
             <TextB2R>{spotsRegistrationInfo.placeName}</TextB2R>
           </Content>
-          {type === 'private' && (
+          {type === 'PRIVATE' && (
             <Content>
               <TextH5B margin="0 0 8px 0">픽업 장소</TextH5B>
               <TextB2R>
-                {spotsRegistrationOptions.pickupLocationTypeOptions.name?.length &&
-                spotsRegistrationOptions.pickupLocationTypeOptions.value !== 'ETC'
-                  ? spotsRegistrationOptions.pickupLocationTypeOptions.name
-                  : `기타 / ${spotsRegistrationInfo.pickupLocationEtc}`}
+                {spotsRegistrationInfo.pickupLocation}
               </TextB2R>
             </Content>
           )}
@@ -92,7 +88,7 @@ const SubmitPage = () => {
                 : `기타 / ${spotsRegistrationInfo.placeTypeEtc}`}
             </TextB2R>
           </Content>
-          {type === 'private' && (
+          {type === 'PRIVATE' && (
             <Content>
               <TextH5B margin="0 0 8px 0">점심시간</TextH5B>
               <TextB2R>
@@ -105,11 +101,11 @@ const SubmitPage = () => {
       </Wrapper>
       <Row />
       <Wrapper>
-        {type !== 'public' && (
+        {type !== 'PUBLIC' && (
           <>
             <ContentWrapper>
               <FlexBetween margin="0 0 24px 0">
-                <TextB1B>{type === 'private' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
+                <TextB1B>{type === 'PRIVATE' ? '신청자 정보' : '장소 관리자 정보'}</TextB1B>
               </FlexBetween>
               <Content>
                 <TextH5B margin="0 0 8px 0">이름</TextH5B>
@@ -123,7 +119,7 @@ const SubmitPage = () => {
                 <TextH5B margin="0 0 8px 0">휴대폰 번호</TextH5B>
                 <TextB2R>{spotsRegistrationInfo.userTel}</TextB2R>
               </Content>
-              {type === 'owner' && (
+              {type === 'OWNER' && (
                 <Content>
                   <TextH5B margin="0 0 8px 0">직급/호칭</TextH5B>
                   <TextB2R>{spotsRegistrationInfo.managerInfo}</TextB2R>

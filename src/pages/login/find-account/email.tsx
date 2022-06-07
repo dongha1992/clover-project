@@ -7,6 +7,8 @@ import Validation from '@components/Pages/User/Validation';
 import { PHONE_REGX, NAME_REGX } from '@pages/signup/auth';
 import dynamic from 'next/dynamic';
 import { userHelpEmail } from '@api/user';
+import { useDispatch } from 'react-redux';
+import { SET_ALERT } from '@store/alert';
 
 const Button = dynamic(() => import('../../../components/Shared/Button/Button'), {
   ssr: false,
@@ -25,7 +27,7 @@ const FindEmailPage = () => {
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {}, [nameRef, phoneRef]);
+  const dispatch = useDispatch();
 
   const nameInputHandler = () => {
     if (nameRef.current) {
@@ -56,6 +58,7 @@ const FindEmailPage = () => {
   };
 
   const getHelpEmail = async () => {
+    setErrorMessage('');
     if (phoneRef.current && nameRef.current) {
       const name = nameRef.current?.value;
       const tel = phoneRef.current?.value.toString();
@@ -64,6 +67,7 @@ const FindEmailPage = () => {
         const { data } = await userHelpEmail({ name, tel });
 
         if (data.code === 200) {
+          dispatch(SET_ALERT({ alertMessage: '입력하신 휴대폰 번호로 이메일 주소를 보냈어요.' }));
         }
       } catch (error) {
         console.error(error);
@@ -72,6 +76,14 @@ const FindEmailPage = () => {
     }
   };
 
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      getHelpEmail();
+    }
+  };
+
+  useEffect(() => {}, [nameRef, phoneRef]);
+
   const isAllValid = nameValid.isValid && phoneValid.isValid;
 
   return (
@@ -79,13 +91,14 @@ const FindEmailPage = () => {
       <TextB2R>등록된 휴대폰 번호를 입력해 주시면</TextB2R>
       <TextB2R>해당 번호로 이메일 주소를 보내드립니다.</TextB2R>
       <InputWrapper>
-        <TextInput placeholder="이름" ref={nameRef} eventHandler={nameInputHandler} />
+        <TextInput placeholder="이름" ref={nameRef} eventHandler={nameInputHandler} keyPressHandler={handleKeyPress} />
         <TextInput
           placeholder="휴대폰 번호 입력 (-제외)"
           margin="8px 0 0 0"
           ref={phoneRef}
           inputType="number"
           eventHandler={phoneInputHandler}
+          keyPressHandler={handleKeyPress}
         />
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </InputWrapper>

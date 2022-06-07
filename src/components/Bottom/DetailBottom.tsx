@@ -14,18 +14,76 @@ import { useToast } from '@hooks/useToast';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { menuSelector, SET_MENU_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useQuery } from 'react-query';
+import { getMenuDetailApi } from '@api/menu';
+import { useRouter } from 'next/router';
+import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
+import { TimerTooltip } from '@components/Shared/Tooltip';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
 const DetailBottom = () => {
+  const router = useRouter();
+  const [menuDetailId, setMenuDetailId] = useState<number>();
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
+  const [subsDiscount, setSubsDiscount] = useState<string>();
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { showToast } = useToast();
-
   const { isTimerTooltip } = useSelector(orderForm);
   const { menuItem } = useSelector(menuSelector);
-
   const deliveryType = checkTimerLimitHelper();
+
+  useEffect(() => {
+    if (router.isReady) {
+      setMenuDetailId(Number(router.query.menuId));
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
+    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
+
+    if (!isNotTimer) {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+    } else {
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
+    }
+  }, []);
+
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    ['getMenuDetail'],
+    async () => {
+      const { data } = await getMenuDetailApi(menuDetailId!);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuDetailId,
+    }
+  );
+
+  useEffect(() => {
+    if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
+      setSubsDiscount('정기구독 최대 15% 할인');
+    } else {
+      setSubsDiscount('최대 9% 할인');
+    }
+    if (menuDetail?.subscriptionDeliveries?.includes('SPOT')) {
+      setSubsDeliveryType('SPOT');
+    } else if (
+      menuDetail?.subscriptionDeliveries?.includes('PARCEL') ||
+      menuDetail?.subscriptionDeliveries?.includes('MORNING')
+    ) {
+      setSubsDeliveryType('PARCEL');
+    }
+  }, [menuDetail]);
 
   // const tempStatus = 'isSoldout';
   const tempStatus = '';
@@ -49,7 +107,7 @@ const DetailBottom = () => {
 
   const goToRestockSetting = () => {};
 
-  const clickButtonHandler = () => {
+  const cartClickButtonHandler = () => {
     if (!tempNotiOff) {
       /* TODO: 이거 뭔지 확인 */
       dispatch(SET_MENU_ITEM(menuItem));
@@ -79,15 +137,11 @@ const DetailBottom = () => {
     }
   };
 
-  useEffect(() => {
-    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
-
-    if (!isNotTimer) {
-      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
-    } else {
-      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
-    }
-  }, []);
+  const subscriptionButtonHandler = () => {
+    dispatch(INIT_DESTINATION());
+    dispatch(INIT_TEMP_DESTINATION());
+    router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+  };
 
   return (
     <Container>
@@ -97,15 +151,28 @@ const DetailBottom = () => {
             <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {menuItem.likeCount}
+            {menuItem.likeCount ? menuItem.likeCount : 0}
           </TextH5B>
         </LikeWrapper>
         <Col />
-        <BtnWrapper onClick={clickButtonHandler}>
-          <TextH5B color={theme.white}>{buttonStatusRender(tempStatus)}</TextH5B>
-        </BtnWrapper>
+        {menuDetail?.type === 'SUBSCRIPTION' ? (
+          <BtnWrapper onClick={subscriptionButtonHandler}>
+            <TextH5B color={theme.white} pointer>
+              <TootipWrapper>
+                <TimerTooltip message={subsDiscount} bgColor={theme.brandColor} color={theme.white} minWidth="0" />
+              </TootipWrapper>
+              구독하기
+            </TextH5B>
+          </BtnWrapper>
+        ) : (
+          <BtnWrapper onClick={cartClickButtonHandler}>
+            <TextH5B color={theme.white} pointer>
+              {buttonStatusRender(tempStatus)}
+            </TextH5B>
+          </BtnWrapper>
+        )}
       </Wrapper>
-      {isTimerTooltip && (
+      {menuDetail?.type !== 'SUBSCRIPTION' && isTimerTooltip && (
         <TimerTooltipWrapper>
           <CheckTimerByDelivery isTooltip />
         </TimerTooltipWrapper>
@@ -121,7 +188,6 @@ const Container = styled.div`
   bottom: 0px;
   right: 0px;
   z-index: 10;
-  /* height: 56px; */
   left: calc(50%);
   background-color: ${({ theme }) => theme.black};
 
@@ -137,17 +203,16 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  position: relative;
-  padding: 16px 24px;
+  padding: 0 24px;
+  height: 56px;
+  align-items: center;
   display: flex;
   width: 100%;
-  align-items: center;
 `;
 
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 25%;
 `;
 
 const Col = styled.div`
@@ -159,11 +224,18 @@ const Col = styled.div`
 `;
 
 const BtnWrapper = styled.div`
+  position: relative;
   width: 100%;
   text-align: center;
 `;
 
-const LikeBtn = styled.div``;
+const LikeBtn = styled.div`
+  display: flex;
+  cursor: pointer;
+  svg {
+    margin-bottom: 3px;
+  }
+`;
 const TimerTooltipWrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -173,6 +245,18 @@ const TimerTooltipWrapper = styled.div`
   ${({ theme }) => theme.mobile`
     left: 25%;
   `};
+`;
+
+const TootipWrapper = styled.article`
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  > div {
+    position: relative;
+    left: auto;
+    top: auto;
+  }
 `;
 
 export default DetailBottom;

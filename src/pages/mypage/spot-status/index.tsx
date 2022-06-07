@@ -4,96 +4,38 @@ import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SPOT_STATUS } from '@constants/spot';
 import { SpotStatusList, SpotWishList } from '@components/Pages/Mypage/Spot';
-import { FixedTab, homePadding } from '@styles/theme';
+import { FixedTab, homePadding, theme } from '@styles/theme';
 import router from 'next/router';
-import { IParamsSpots } from '@model/index';
+import { IParamsSpots, IGetDestinationsRequest } from '@model/index';
 import { useQuery } from 'react-query';
 import { getSpotsWishList } from '@api/spot';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { deleteSpotLike } from '@api/spot';
-
-const STATUS_LIST = [
-  {
-    id: 1,
-    status: '작성중',
-    tag: '프라이빗',
-    storeName: '유니트아이엔씨',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: '이어서 작성하기',
-    number: null,
-  },
-  {
-    id: 2,
-    status: '검토중',
-    tag: '프라이빗',
-    storeName: '헤이그라운드 서울숲',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: null,
-    number: null,
-  },
-  {
-    id: 3,
-    status: '트라이얼 진행 중',
-    tag: '프라이빗',
-    storeName: '라이언게임즈',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: '오픈 참여 공유하고 포인트 받기',
-    number: 2,
-  },
-  {
-    id: 4,
-    status: '트라이얼 진행 중',
-    tag: '프라이빗',
-    storeName: '제이엔케이 (전자조합회관빌딩)',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: '오픈 참여 공유하기',
-    number: 2,
-  },
-  {
-    id: 5,
-    status: '모집중',
-    tag: '단골가게',
-    storeName: '파니모들카페',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: null,
-    number: null,
-  },
-  {
-    id: 6,
-    status: '오픈완료',
-    tag: '프라이빗',
-    storeName: '아이엔티부동산중걔법인',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: null,
-    number: null,
-  },
-  {
-    id: 7,
-    status: '오픈 미진행',
-    tag: '프라이빗',
-    storeName: '유니트아이엔씨',
-    address: '서울 성동구 왕십리로 115 10층',
-    btn: null,
-    number: null,
-  },
-];
+import { deleteSpotLike, getSpotsRegistrationStatus } from '@api/spot';
+import { TextB2R } from '@components/Shared/Text';
+import { Button } from '@components/Shared/Button';
+import { useRouter } from 'next/router';
 
 const SpotStatusPage = () => {
   // TODO
   // 필요하다면 무한스크롤 페이지네이션 작업
   // 좋아요 버튼 활성화 작업
+  const router = useRouter();
   const { spotsPosition } = useSelector(spotSelector);
   const [selectedTab, setSelectedTab] = useState('/spot/status/list');
   // const [page, setPage] = useState(1);
   const [items, setItems] = useState(false);
 
+  const latLen = spotsPosition.latitude.length > 0;
+  const lonLen = spotsPosition.longitude.length > 0;
+
+  // 찜한 스팟 api
   const { data: wishList } = useQuery(
     ['spotList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: spotsPosition ? spotsPosition.latitude : null,
-        longitude: spotsPosition ? spotsPosition.longitude : null,
+        latitude: latLen ? Number(spotsPosition.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition.longitude) : null,
         size: 10,
         page: 1,
       };
@@ -103,12 +45,22 @@ const SpotStatusPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  // 스팟 현황 api 
+  const { data: spotStatusList } = useQuery(
+    ['statusList'],
+    async () => {
+      const params: IGetDestinationsRequest = {
+        page: 1,
+        size: 10,
+      };
+      const response = await getSpotsRegistrationStatus(params);
+      return response.data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
-  };
-
-  const goToSpotStatusDetail = () => {
-    router.push('/mypage/spot-status/detail');
   };
 
   const handlerDislike = async (e: any, id: number) => {
@@ -123,7 +75,13 @@ const SpotStatusPage = () => {
     }
   };
 
-  useEffect(() => {}, [items]);
+  const goToSpotRegister = () => {
+    router.push('/spot/regi-list');
+  };
+
+  const goToSpotMain = () => {
+    router.push('/spot');
+  };
 
   return (
     <Container>
@@ -132,13 +90,44 @@ const SpotStatusPage = () => {
       </FixedTab>
       <ContentWrapper>
         {selectedTab === '/spot/status/list' ? (
-          <SpotStatusList items={STATUS_LIST} onClick={goToSpotStatusDetail} />
+          <>
+          {
+            spotStatusList?.spotRegistrations.length! > 0 ? (
+              <SpotStatusList items={spotStatusList?.spotRegistrations!} />
+            ) : (
+              <SpotListEmptyScreen>
+                <EmptyWrapper>
+                  <TextB2R margin="0 0 24px 0" color={theme.greyScale65}>신청 중인 프코스팟이 없어요 😭 </TextB2R>
+                  <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSpotRegister}>
+                    프코스팟 신청하기
+                  </Button>
+                </EmptyWrapper>
+              </SpotListEmptyScreen>
+            )
+          }
+          </>
         ) : (
-          <SpotWishListWrapper>
-            {wishList?.spots.map((item, idx) => {
-              return <SpotWishList key={idx} items={item} onClick={handlerDislike} />;
-            })}
-          </SpotWishListWrapper>
+          <>
+          {
+            wishList?.spots.length! > 0 ? (
+              <SpotWishListWrapper>
+                {wishList?.spots.map((item, idx) => {
+                  return <SpotWishList key={idx} items={item} onClick={handlerDislike} />;
+                })}
+              </SpotWishListWrapper>
+  
+            ) : (
+              <SpotListEmptyScreen>
+                <EmptyWrapper>
+                  <TextB2R margin="0 0 24px 0" color={theme.greyScale65}>찜한 프코스팟이 없어요 😭 </TextB2R>
+                  <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSpotMain}>
+                    내 주변 프코스팟 보러가기
+                  </Button>
+                </EmptyWrapper>
+              </SpotListEmptyScreen>
+            )
+          }
+          </>
         )}
       </ContentWrapper>
     </Container>
@@ -147,15 +136,30 @@ const SpotStatusPage = () => {
 
 const Container = styled.div``;
 
-const ContentWrapper = styled.section`
+const ContentWrapper = styled.div`
   ${homePadding};
 `;
 
-const SpotWishListWrapper = styled.div`
+const SpotWishListWrapper = styled.section`
   width: 100%;
   padding-top: 72px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 `;
+
+const SpotListEmptyScreen = styled.section`
+  width: 100%;
+  height: 50vh;
+  padding-top: 56px;
+  position: relative;
+`;
+
+const EmptyWrapper = styled.div`
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+`;
+
 export default SpotStatusPage;

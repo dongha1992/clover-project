@@ -10,10 +10,15 @@ import { NAME_REGX } from '@constants/regex';
 import { userForm } from '@store/user';
 import { SET_SIGNUP_USER } from '@store/user';
 import router from 'next/router';
+import { userChangeInfo } from '@api/user';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
+import Validation from '@components/Pages/User/Validation';
 
 const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
-  const { signupUser } = useSelector(userForm);
+  const [isError, setIsError] = useState<boolean>(false);
+  const { me } = useSelector(userForm);
 
   const dispatch = useDispatch();
 
@@ -26,26 +31,51 @@ const ChangeNamePage = () => {
     setName(value);
   };
 
-  const finishChangeName = () => {
-    dispatch(
-      SET_SIGNUP_USER({
-        loginType: 'kakao',
-        name,
-      })
-    );
-    router.push('/signup/optional');
+  const finishChangeName = async () => {
+    if (!NAME_REGX.test(name)) {
+      setIsError(true);
+      return;
+    }
+
+    const reqBody = {
+      authCode: null,
+      birthDate: me?.birthDate || '',
+      gender: me?.gender || '',
+      email: me?.email!,
+      marketingEmailReceived: me?.marketingEmailReceived!,
+      marketingPushReceived: me?.marketingPushReceived!,
+      marketingSmsReceived: me?.marketingSmsReceived!,
+      name: name,
+      nickName: me?.nickName || name,
+      notiPushReceived: me?.notiPushReceived!,
+      primePushReceived: me?.primePushReceived!,
+      tel: me?.tel!,
+    };
+    try {
+      const { data } = await userChangeInfo(reqBody);
+
+      if (data.code === 200) {
+        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+      }
+    } catch (error) {}
+  };
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      finishChangeName();
+    }
   };
 
   useEffect(() => {
-    setName(signupUser?.name!);
+    setName(me?.name!);
   }, []);
 
   return (
     <Container>
       <Wrapper>
         <TextWrap>
-          <TextH2B>마지막으로</TextH2B>
-          <TextH2B>더 알고 싶어요</TextH2B>
+          <TextH2B>서비스 이용을 위해</TextH2B>
+          <TextH2B>이름을 변경해 주세요</TextH2B>
         </TextWrap>
         <FlexCol>
           <TextH5B>이름</TextH5B>
@@ -55,6 +85,7 @@ const ChangeNamePage = () => {
               margin="8px 0 0 0"
               value={name}
               eventHandler={changeNameHandler}
+              keyPressHandler={handleKeyPress}
             />
             {name.length > 0 && (
               <DeleteName onClick={clearNameHandler}>
@@ -62,12 +93,14 @@ const ChangeNamePage = () => {
               </DeleteName>
             )}
           </TextWrapper>
-          {!NAME_REGX.test(name) && <TextB3R color={theme.systemRed}>한글/영문만 사용 가능합니다.</TextB3R>}
+          {(!NAME_REGX.test(name) || isError) && (
+            <Validation>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</Validation>
+          )}
         </FlexCol>
       </Wrapper>
       <NextBtnWrapper onClick={finishChangeName}>
         <Button height="100%" borderRadius="0">
-          다음
+          변경하기
         </Button>
       </NextBtnWrapper>
     </Container>

@@ -1,12 +1,12 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL } from '@constants/mock';
-import { useDispatch, useSelector } from 'react-redux';
+import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { cartForm } from '@store/cart';
@@ -18,33 +18,84 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { SVGIcon } from '@utils/common';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 interface IProps {
   item: ISpotsDetail | any;
   hasCart?: boolean;
 }
-// 스팟 검색 - 검색 결과
+const now = dayjs();
 
+// 스팟 검색 - 검색 결과
 const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
-  console.log(hasCart, 'SpotsSearchResultList');
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, subsDeliveryType }: any = router.query;
+  const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
-  const { spotPickupId } = useSelector(spotSelector);
+  const { spotPickupId, spotsPosition } = useSelector(spotSelector);
+  const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
+  const positionLen = spotsPosition?.latitude !== null;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
-  const typeTag = (): string => {
+  // 운영 종료 예정 or 종료
+  const closedDate = item?.spotPickup?.spot.closedDate;
+  const dDay = now.diff(dayjs(closedDate), 'day');
+  const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
+  const closedSoonOperation = dDay >= -14;
+
+  const renderSpotMsg = () => {
+    switch (true) {
+      case closedOperation: {
+        return (
+          <MeterAndTime>
+            <SVGIcon name="exclamationMark" width="14" height="14" />
+            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+              운영 종료된 프코스팟이에요
+            </TextB3R>
+          </MeterAndTime>
+        );
+      }
+      case closedSoonOperation: {
+        if (closedDate) {
+          return (
+            <MeterAndTime>
+              <SVGIcon name="exclamationMark" width="14" height="14" />
+              <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+                운영 종료 예정인 프코스팟이에요
+              </TextB3R>
+            </MeterAndTime>
+          );
+        }
+      }
+      default: {
+        return (
+          <MeterAndTime>
+            {(userLocationLen || positionLen) && (
+              <>
+                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          </MeterAndTime>
+        );
+      }
+    }
+  };
+
+  const typeTag = (): string | undefined => {
     switch (item.type) {
       case 'PRIVATE':
         return '프라이빗';
       case 'PUBLIC':
         return '퍼블릭';
-      default:
-        return '';
     }
   };
 
@@ -60,7 +111,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       main: false,
       availableTime: pickUpTime,
       spaceType: item.type,
-      spotPickupId: spotPickupId,
+      spotPickupId: spotPickupId!,
       closedDate: item.closedDate,
       delivery: 'spot',
     };
@@ -69,7 +120,6 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({ pathname: '/cart', query: { isClosed: !!item.closedDate } });
     };
 
@@ -80,29 +130,23 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!item.closedDate } });
     };
 
-    const goToSelectMenu = () => {
-      // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      // dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/search', query: { isClosed: !!item.closedDate } });
-    };
-
     const handleSubsDeliveryType = () => {
+      destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
       });
     };
 
     const handleSubsDeliveryTypeWithSpot = () => {
+      destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType },
+        query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
       });
     };
 
@@ -111,7 +155,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       return;
     }
     if (item.isClosed) {
-      // 스팟 종료된 상태 - 주문 불가
+      // 스팟 종료된 상태 - 주문 불가ㅇ
       return;
     }
     if (isLoginSuccess) {
@@ -163,7 +207,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
             );
           }
         } else {
-          // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+          // 장바구니 o, 스팟 검색에서 cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
@@ -197,10 +241,10 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
             );
           }
         } else {
-          // 로그인o and 장바구니 x, 메뉴 검색으로 이동
+          // 로그인o and 장바구니 x, cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToSelectMenu} />,
+              content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
             })
           );
         }
@@ -231,61 +275,41 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
-        {item.isClosed ? (
-          <MeterAndTime>
-            <SVGIcon name="exclamationMark" width="14" height="14" />
-            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
-              운영 종료된 프코스팟이에요
-            </TextB3R>
-          </MeterAndTime>
-        ) : !!item?.closedDate ? (
-          <MeterAndTime>
-            <SVGIcon name="exclamationMark" width="14" height="14" />
-            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
-              운영 종료 예정인 프코스팟이에요
-            </TextB3R>
-          </MeterAndTime>
-        ) : (
-          <MeterAndTime>
-            {userLocationLen && (
-              <>
-                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-                <Col />
-              </>
-            )}
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-              픽업
-            </TextH6B>
-            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-          </MeterAndTime>
-        )}
-        {item.isOpened ? (
-          !item.isTrial ? (
-            <div>
-              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                {typeTag()}
-              </Tag>
-            </div>
-          ) : (
-            <div>
-              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                트라이얼
-              </Tag>
-            </div>
-          )
-        ) : (
-          <div>
+        {renderSpotMsg()}
+        <TagWrapper>
+          {
+            item?.isTrial ? (
+              <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
+            ) : 
+            item?.type === 'PRIVATE' ? (
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+            ) : (
+              null
+            )
+          }
+          {
+            item?.discountRate! > 0 &&
+              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.discountRate}% 할인 중`}</Tag>
+          }
+          {!item.isOpened && 
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
               오픈예정
             </Tag>
-          </div>
-        )}
+          }
+        </TagWrapper>
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          {item?.images?.map((i: { url: string }, idx: number) => {
-            return <SpotImg key={idx} src={`${IMAGE_S3_URL}${i.url}`} />;
-          })}
+        {
+            item.isTrial ? (
+              <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            ) : 
+              item.images?.length! > 0 ? (
+                <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+              ) : (
+                <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+              )
+          }
         </ImageWrapper>
         {item.isOpened && !item.isClosed ? (
           // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
@@ -314,7 +338,6 @@ const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
   justify-content: space-between;
   width: 100%;
   height: 114px;
-  margin-bottom: 24px;
   ${({ mapList }) => {
     if (mapList) {
       return css`
@@ -339,6 +362,8 @@ const MeterAndTime = styled.div`
   display: flex;
   padding: 8px 0 10px 0;
 `;
+
+const TagWrapper = styled.div``;
 
 const ImageWrapper = styled.div<{ mapList: boolean }>`
   width: 60px;

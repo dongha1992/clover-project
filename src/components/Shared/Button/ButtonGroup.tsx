@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { fixedBottom, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
+import { breakpoints } from '@utils/common/getMediaQuery';
 
 interface IProps {
   leftButtonHandler: () => void;
@@ -25,8 +26,25 @@ const ButtonGroup = React.memo(({ leftButtonHandler, rightButtonHandler, leftTex
 });
 
 const BtnWrapper = styled.div`
-  ${fixedBottom}
   display: flex;
+  width: 100%;
+  max-width: ${breakpoints.mobile}px;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 10;
+  height: 56px;
+  background-color: ${({ theme }) => theme.black};
+  ${fixedBottom}
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 0px;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0
+  `};
 `;
 
 const Col = styled.div`

@@ -55,7 +55,7 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId, isSubscription, subsDeliveryType } = router.query;
+  const { destinationId, isSubscription, subsDeliveryType, menuId } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
 
   const { data: recentOrderDelivery } = useQuery(
@@ -90,9 +90,10 @@ const DeliverInfoPage = () => {
         router.push({
           pathname: '/spot/search',
           query: {
-            subsDeliveryType,
+            subsDeliveryType: userSelectDeliveryType.toUpperCase(),
             isSubscription: true,
             isDelivery: true,
+            menuId,
           },
         });
       } else {
@@ -107,8 +108,9 @@ const DeliverInfoPage = () => {
         router.push({
           pathname: '/destination/search',
           query: {
-            subsDeliveryType,
+            subsDeliveryType: userSelectDeliveryType.toUpperCase(),
             isSubscription: true,
+            menuId,
           },
         });
       } else {
@@ -162,7 +164,67 @@ const DeliverInfoPage = () => {
       dispatch(INIT_AVAILABLE_DESTINATION());
 
       if (isSubscription) {
-        router.push('/subscription/set-info');
+        if (isSpot) {
+          //TODO(young) 임시로 구독일때만 spotPickupId로 배송지 등록 다른 spot 검색 부분들도 담당다분들과 대화후 변경
+          const reqBody = {
+            name: tempDestination?.name!,
+            delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
+            deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
+            main: tempDestination?.main!,
+            receiverName: tempDestination?.receiverName,
+            receiverTel: tempDestination?.receiverTel,
+            location: {
+              addressDetail: tempDestination?.location?.addressDetail!,
+              address: tempDestination?.location?.address!,
+              zipCode: tempDestination?.location?.zipCode!,
+              dong: tempDestination?.location?.dong!,
+            },
+            spotPickupId: tempDestination?.spotPickupId,
+          };
+          try {
+            const { data } = await postDestinationApi(reqBody);
+            if (data.code === 200) {
+              const response = data.data;
+              dispatch(
+                SET_DESTINATION({
+                  name: response.name,
+                  location: {
+                    addressDetail: response.location.addressDetail,
+                    address: response.location.address,
+                    dong: response.location.dong,
+                    zipCode: response.location.zipCode,
+                  },
+                  main: response.main,
+                  deliveryMessage: response.deliveryMessage,
+                  receiverName: response.receiverName,
+                  receiverTel: response.receiverTel,
+                  deliveryMessageType: '',
+                  delivery: response.delivery,
+                  id: response.id,
+                })
+              );
+              dispatch(SET_AFTER_SETTING_DELIVERY());
+              dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
+              dispatch(INIT_TEMP_DESTINATION());
+              dispatch(INIT_DESTINATION_TYPE());
+              dispatch(INIT_AVAILABLE_DESTINATION());
+              if (isSubscription) {
+                router.push({
+                  pathname: '/subscription/set-info',
+                  query: { subsDeliveryType: subsDeliveryType, menuId },
+                });
+              } else {
+                router.push('/cart');
+              }
+            }
+          } catch (error) {
+            console.log('error', error);
+          }
+        }
+        router.push({
+          pathname: '/subscription/set-info',
+          query: { subsDeliveryType: subsDeliveryType, menuId },
+        });
       } else {
         router.push('/cart');
       }
@@ -211,7 +273,14 @@ const DeliverInfoPage = () => {
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
-            router.push('/cart');
+            if (isSubscription) {
+              router.push({
+                pathname: '/subscription/set-info',
+                query: { subsDeliveryType: subsDeliveryType, menuId },
+              });
+            } else {
+              router.push('/cart');
+            }
           }
         } catch (error) {
           console.error(error);

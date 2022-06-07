@@ -6,6 +6,7 @@ import { Obj } from '@model/index';
 
 export const theme: Obj = {
   brandColor: '#35AD73',
+  brandColor3p: '#F5FBF8',
   brandColor5: '#EDF3F0',
   brandColor5P: '#EBF7F1',
   fontFamily: "'Noto Sans KR', sans-serif;",
@@ -46,12 +47,13 @@ export const verticalCenter = css`
   align-self: center;
 `;
 
-export const FlexCenter = styled.div<{ padding?: string; margin?: string }>`
+export const FlexCenter = styled.div<{ padding?: string; margin?: string; pointer?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexBetween = styled.div<{
@@ -59,6 +61,7 @@ export const FlexBetween = styled.div<{
   margin?: string;
   width?: string;
   height?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   width: 100%;
@@ -68,6 +71,7 @@ export const FlexBetween = styled.div<{
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
   height: ${({ height }) => height && height};
+  cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexBetweenStart = styled.div<{
@@ -94,12 +98,14 @@ export const FlexRow = styled.div<{
   margin?: string;
   id?: string;
   width?: string;
+  pointer?: boolean;
 }>`
   display: flex;
   align-items: center;
   width: ${({ width }) => width && width};
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  cursor: ${({ pointer }) => (pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexCol = styled.div<{
@@ -210,12 +216,12 @@ export const fixedBottom = css`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left: 0px;
+    left: 0%;
   `};
 
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
-    left: 0
+    left: 0px;
   `};
 `;
 

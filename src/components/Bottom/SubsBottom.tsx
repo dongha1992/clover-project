@@ -8,6 +8,7 @@ import { TimerTooltip } from '@components/Shared/Tooltip';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
+import { SET_SUBS_INFO_STATE } from '@store/subscription';
 
 const SubsBottom = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const SubsBottom = () => {
   const clickButtonHandler = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push('/subscription/set-info');
+    router.push(`/subscription/set-info?menuId=${router.query.id}&subsDeliveryType=${router.query.subsDeliveryType}`);
   };
 
   return (
@@ -90,7 +91,6 @@ const TootipWrapper = styled.article`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 25%;
 `;
 
 const Col = styled.div`
@@ -111,6 +111,9 @@ const BtnWrapper = styled.div`
 const LikeBtn = styled.div`
   display: flex;
   cursor: pointer;
+  svg {
+    margin-bottom: 3px;
+  }
 `;
 
 export default SubsBottom;

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Checkbox from '@components/Shared/Checkbox';
 import { TextB2R, TextB3R, TextH5B, TextH6B, TextH2B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { FlexRow, FlexCol, theme, homePadding, fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -28,6 +28,7 @@ const SignupPage = () => {
   const [isAllMarketinngChecked, setIsAllMarketinngChecked] = useState(false);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const isAllAgreed = checkTermList.indexOf(1) !== -1 && checkTermList.indexOf(2) !== -1;
 
@@ -72,10 +73,10 @@ const SignupPage = () => {
       return;
     }
     const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
-
+    const loginType = router.query.isApple ? 'APPLE' : 'EMAIL';
     dispatch(
       SET_SIGNUP_USER({
-        loginType: 'EMAIL',
+        loginType,
         marketingEmailReceived: userAgreeMarketingTerm.includes(3),
         marketingSmsReceived: userAgreeMarketingTerm.includes(4),
       })
@@ -109,11 +110,12 @@ const SignupPage = () => {
         <FlexCol>
           <FlexRow>
             <Checkbox onChange={allCheckMarketingTermHandler} isSelected={isAllMarketinngChecked} />
-            <TextB2R {...textPaddingStyle}>[선택] 마케팅 알림 수신에 동의합니다.</TextB2R>
+            <TextB2R {...textPaddingStyle}>[선택] 마케팅 정보 수신에 동의합니다.</TextB2R>
           </FlexRow>
           <PaddingWrapper>
             <TextB3R color={theme.brandColor} padding="8px 0 16px 0">
-              푸시 알림, 이메일, SMS 수신 등 모두 동의시 2,000원 할인 쿠폰 지급! (1인 최대 1회 지급)
+              마케팅 정보 수신 동의 시 2,000원 할인 쿠폰 지급!
+              <br /> (1인 최대 1회 지급)
             </TextB3R>
             <FlexRow>
               <FlexRow>

@@ -11,7 +11,6 @@ import { OptionsSheet } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
-import { userForm } from '@store/user';
 
 const RegisterPage = () => {
   const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
@@ -19,7 +18,7 @@ const RegisterPage = () => {
   const dispatch = useDispatch();
   const { type } = router.query;
   const placeRef = useRef<HTMLInputElement>(null);
-  const pickUpEtcRef = useRef<HTMLInputElement>(null);
+  const pickUpRef = useRef<HTMLInputElement>(null);
   const placeEtcRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -27,7 +26,7 @@ const RegisterPage = () => {
   const managerRef = useRef<HTMLInputElement>(null);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
-  const checkedPickupType = !!spotsRegistrationOptions.pickupLocationTypeOptions?.value?.length;
+  const checkedPickup = !!pickUpRef.current?.value?.length;
   const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
   const checkedPlaceType = !!spotsRegistrationOptions.placeTypeOptions?.value?.length;
   const checkedAddressInfo = !!spotLocation.address?.length && !!placeRef.current?.value?.length;
@@ -38,18 +37,18 @@ const RegisterPage = () => {
 
   const activeButton = () => {
     switch (type) {
-      case 'private':
+      case 'PRIVATE':
         return (
           checkedAddressInfo &&
-          checkedPickupType &&
+          checkedPickup &&
           checkedLunchType &&
           checkedPlaceType &&
           checkedUserInfo &&
           noticeChecked
         );
-      case 'public':
+      case 'PUBLIC':
         return checkedAddressInfo && checkedPlaceType;
-      case 'owner':
+      case 'OWNER':
         return checkedAddressInfo && checkedPlaceType && checkedUserInfo && noticeChecked;
       default:
         return false;
@@ -58,7 +57,7 @@ const RegisterPage = () => {
 
   const goToSubmit = async () => {
     if (!activeButton()) {
-      if (type === 'private') {
+      if (type === 'PRIVATE') {
         return;
       }
       return;
@@ -95,12 +94,12 @@ const RegisterPage = () => {
     }
   };
 
-  // 픽업장소 기타 선택시 입력값
-  const pickUpEtcInputHandler = () => {
-    if (pickUpEtcRef.current) {
+  // 픽업장소
+  const pickUpInputHandler = () => {
+    if (pickUpRef.current) {
       const selectedOptions = {
         ...spotsRegistrationInfo,
-        pickupLocationEtc: pickUpEtcRef.current?.value,
+        pickupLocation: pickUpRef.current?.value,
       };
       dispatch(SET_SPOT_REGISTRATIONS_INFO(selectedOptions));
     }
@@ -189,43 +188,24 @@ const RegisterPage = () => {
           </LocationWrapper>
         </Wrapper>
         <Wrapper>
-          <TextH4B margin="0 0 16px 0">장소명</TextH4B>
+          <TextH4B margin="0 0 16px 0">{`${type === 'PRIVATE' ? '장소명' : '상호명'}`}</TextH4B>
           <TextInput
             ref={placeRef}
             eventHandler={placeInputHandler}
             value={spotsRegistrationInfo.placeName?.length ? spotsRegistrationInfo.placeName : null}
-            placeholder={type === 'private' ? '회사 및 학교 상호입력' : '상호명'}
+            placeholder={type === 'PRIVATE' ? '장소명 입력' : '상호명 입력'}
           />
         </Wrapper>
-        {type === 'private' && (
+        {type === 'PRIVATE' && (
           <Wrapper>
             <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
-            <Button
-              justifyContent="space-between"
-              backgroundColor={theme.white}
-              padding="12px 16px"
-              color={theme.greyScale45}
-              fontWeight={400}
-              borderGrey15
-              pointer
-              onClick={() => selectOptions('pickUp')}
-            >
-              {spotsRegistrationOptions.pickupLocationTypeOptions?.name?.length ? (
-                <TextB2R color={theme.black}>{spotsRegistrationOptions.pickupLocationTypeOptions?.name} </TextB2R>
-              ) : (
-                '픽업 장소 선택'
-              )}
-              <SVGIcon name="triangleDown" />
-            </Button>
-            {spotsRegistrationOptions.pickupLocationTypeOptions?.value === 'ETC' && (
-              <TextInput
-                margin="8px 0 0 0"
-                placeholder="기타 픽업 장소 입력"
-                ref={pickUpEtcRef}
-                eventHandler={pickUpEtcInputHandler}
-                value={spotsRegistrationInfo.pickupLocationEtc?.length ? spotsRegistrationInfo.pickupLocationEtc : null}
-              />
-            )}
+            <TextInput
+              margin="8px 0 0 0"
+              placeholder="ex. 8층 공용 냉장고, 2층 안내 데스크"
+              ref={pickUpRef}
+              eventHandler={pickUpInputHandler}
+              value={spotsRegistrationInfo.pickupLocation?.length ? spotsRegistrationInfo.pickupLocation : null}
+            />
           </Wrapper>
         )}
         <Wrapper>
@@ -257,7 +237,7 @@ const RegisterPage = () => {
             />
           )}
         </Wrapper>
-        {type === 'private' && (
+        {type === 'PRIVATE' && (
           <Wrapper>
             <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
             <Button
@@ -279,7 +259,7 @@ const RegisterPage = () => {
             </Button>
           </Wrapper>
         )}
-        {(type === 'private' || type === 'owner') && (
+        {(type === 'PRIVATE' || type === 'OWNER') && (
           <>
             <Wrapper>
               <TextH4B margin="0 0 16px 0">이름</TextH4B>
@@ -310,7 +290,7 @@ const RegisterPage = () => {
             </Wrapper>
           </>
         )}
-        {type === 'owner' && (
+        {type === 'OWNER' && (
           <>
             <Wrapper>
               <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
@@ -330,7 +310,7 @@ const RegisterPage = () => {
           </>
         )}
       </FormWrapper>
-      {type === 'private' && (
+      {type === 'PRIVATE' && (
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />

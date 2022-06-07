@@ -12,16 +12,25 @@ import router, { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { Obj } from '@model/index';
 import axios from 'axios';
-import { SET_LOGIN_SUCCESS } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
-import { userLogin } from '@api/user';
 import { setCookie } from '@utils/common';
-import { SET_LOGIN_TYPE } from '@store/common';
-import { userForm } from '@store/user';
+import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
+import { userForm, SET_USER_AUTH, SET_USER } from '@store/user';
+import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
+import { SET_ALERT } from '@store/alert';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 declare global {
   interface Window {
     Kakao: any;
+  }
+}
+
+declare global {
+  interface Window {
+    AppleID: any;
   }
 }
 
@@ -37,20 +46,20 @@ const OnBoarding: NextPage = () => {
     width: '100%',
   };
 
-  const lastLogin = ['kakao', 'apple', 'email'][Math.floor(Math.random() * 3)];
-
   const lastLoginTagStyleMapper: Obj = {
-    kakao: 40,
-    apple: 40,
-    email: 15,
+    KAKAO: 40,
+    APPLE: 40,
+    EMAIL: 15,
   };
 
   const dispatch = useDispatch();
   const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();
+  const { loginType } = useSelector(commonSelector);
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
+    // dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
   }, []);
 
   const kakaoLoginHandler = () => {
@@ -59,32 +68,57 @@ const OnBoarding: NextPage = () => {
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
 
-    if (typeof window !== undefined) {
-      window.Kakao.Auth.authorize({
-        redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-      });
-    }
+    window.Kakao.Auth.authorize({
+      redirectUri:
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+    });
   };
 
-  /* TODO:  apple login 테스트 해야함 */
-
+  /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
-    if (window.Kakao.Auth.getAccessToken()) {
-      window.Kakao.Auth.logout();
+    if (typeof window !== undefined) {
+      window.AppleID.auth.init({
+        clientId: 'com.freshcode.www',
+        scope: 'email',
+        redirectURI: `${process.env.SERVICE_URL}`,
+        usePopup: true,
+      });
+      try {
+        const appleResponse = await window.AppleID.auth.signIn();
+        const appleToken = appleResponse?.authorization.id_token;
+        if (appleToken) {
+          const params = { appleToken };
+          const { data } = await getAppleTokenApi({ params });
+          if (data.data.availability) {
+            localStorage.setItem('appleToken', appleToken);
+            router.replace('/signup?isApple=true');
+            dispatch(SET_SIGNUP_USER({ email: data.data.email }));
+          } else {
+            const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
+            if (result.data.code == 200) {
+              const userTokenObj = result.data?.data;
+
+              dispatch(SET_USER_AUTH(userTokenObj));
+              dispatch(SET_LOGIN_SUCCESS(true));
+              dispatch(SET_LOGIN_TYPE('APPLE'));
+
+              const { data } = await userProfile().then((res) => {
+                return res?.data;
+              });
+
+              dispatch(SET_USER(data));
+              // success
+              router.push('/');
+            }
+          }
+        }
+      } catch (error: any) {
+        if (error.code === 2103) {
+          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+        }
+      }
     }
-    // AppleID.auth.init({
-    //   clientId: 'com.freshcode.www',
-    //   scope: 'email',
-    //   redirectURI: 'https://www.freshcode.me',
-    //   usePopup: true,
-    // });
-    // try {
-    //   await AppleID.auth.signIn();
-    // } catch (error) {
-    //   console.log(`Error: ${error && error.error}`);
-    // }
   };
 
   const emailSignUpHandler = (): void => {
@@ -105,7 +139,7 @@ const OnBoarding: NextPage = () => {
 
   const renderLastLoginTag = (): JSX.Element => {
     return (
-      <TagWrapper left={lastLoginTagStyleMapper[lastLogin]}>
+      <TagWrapper left={lastLoginTagStyleMapper[loginType]}>
         <Tag color={theme.white} backgroundColor={theme.brandColor}>
           최근 로그인
         </Tag>
@@ -129,12 +163,12 @@ const OnBoarding: NextPage = () => {
           <KakaoBtn onClick={() => kakaoLoginHandler()}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
-            {lastLogin === 'kakao' && renderLastLoginTag()}
+            {loginType === 'KAKAO' && renderLastLoginTag()}
           </KakaoBtn>
           <AppleBtn onClick={appleLoginHandler}>
             <Button>Apple로 시작하기</Button>
             <SVGIcon name="appleIcon" />
-            {lastLogin === 'apple' && renderLastLoginTag()}
+            {loginType === 'APPLE' && renderLastLoginTag()}
           </AppleBtn>
           <EmailLoginAndSignUp>
             <Button {...emailButtonStyle} onClick={emailLoginHandler}>
@@ -143,7 +177,7 @@ const OnBoarding: NextPage = () => {
             <Button {...emailButtonStyle} onClick={emailSignUpHandler} margin="0 0 0 8px">
               이메일로 회원가입
             </Button>
-            {lastLogin === 'email' && renderLastLoginTag()}
+            {loginType === 'EMAIL' && renderLastLoginTag()}
           </EmailLoginAndSignUp>
           <TextH6B
             color={theme.white}
@@ -172,11 +206,12 @@ const Container = styled.main`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left:0px;
+    left: 0px;
   `};
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
     left: 0px;
+
   `};
 
   :after {
@@ -209,6 +244,9 @@ const ButtonWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  ${({ theme }) => theme.mobile`
+    top: -7%;
+  `};
 `;
 
 const EmailLoginAndSignUp = styled.div`
@@ -257,7 +295,7 @@ const AppleBtn = styled.div`
 
 const TagWrapper = styled.div<{ left?: number }>`
   position: absolute;
-  top: -20%;
+  top: -30%;
   left: ${({ left }) => left && left + 3}%;
   filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 

@@ -17,20 +17,29 @@ import { Tag } from '@components/Shared/Tag';
 import { getAvailabilityDestinationApi } from '@api/destination';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
+import { getRegistrationSearch } from '@api/spot';
+import { ISpotsDetail } from '@model/index';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SpotRegisterSheet } from '@components/BottomSheet/SpotRegisterSheet';
+import { userForm } from '@store/user';
 
 /* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { type } = router.query;
+  const { me } = useSelector(userForm);
   const addressRef = useRef<HTMLInputElement>(null);
-  const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
+  const [resultAddress, setResultAddress] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState(false);
   const [page, setPage] = useState<number>(1);
   const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState('');
-  const { type } = router.query;
+  const [spotRegistration, setSpotRegistration] = useState<ISpotsDetail[]>([]);
+
+  const userId = Number(me?.id);
 
   const setCurrentLoc = (location: string) => {
     const locationInfoMsg = `${location}(으)로
@@ -96,6 +105,7 @@ const LocationPage = () => {
 
   const getSearchAddress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      setResultAddress([]);
       getSearchAddressResult();
     }
   };
@@ -141,9 +151,89 @@ const LocationPage = () => {
     }
   };
 
-  const goToMapScreen = (address: IJuso): void => {
-    dispatch(SET_LOCATION_TEMP(address));
-    checkAvailableDeliverySpots(address);
+  const getSpotRegistrationSearch = async (i: IJuso) => {
+    const params = {
+      address: i?.roadAddrPart1,
+    };
+    try {
+      const { data } = await getRegistrationSearch(params);
+      setSpotRegistration(data.data.spotRegistrations);
+
+      // query type 으로 각 타입별 스팟 신청 목록 선택
+      const findRegisterList = data.data.spotRegistrations.find((i) => i.type === type);
+
+      // 스팟 신청서 목록이 존재 하고, 신청 타입이 신청 목록의 타입과 같은 경우
+      if (!!data.data.spotRegistrations.length && !!findRegisterList) {
+        switch (type) {
+          case 'PRIVATE':
+            if (!!findRegisterList) {
+              if (findRegisterList?.userId === userId && findRegisterList?.rejected) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '신청했던 주소는 재신청할 수 없어요.',
+                    alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
+                    submitBtnText: '확인',
+                  })
+                );
+              } else {
+                return dispatch(
+                  SET_BOTTOM_SHEET({
+                    content: <SpotRegisterSheet items={findRegisterList} type={'PRIVATE'} />,
+                  })
+                );
+              }
+            }
+          case 'PUBLIC':
+            if (!!findRegisterList) {
+              if (findRegisterList?.userId === userId && findRegisterList?.rejected) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '신청했던 주소는 재신청할 수 없어요.',
+                    alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
+                    submitBtnText: '확인',
+                  })
+                );
+              } else {
+                return dispatch(
+                  SET_BOTTOM_SHEET({
+                    content: <SpotRegisterSheet items={findRegisterList} type={'PUBLIC'} />,
+                  })
+                );
+              }
+            }
+          case 'OWNER':
+            if (!!findRegisterList) {
+              if (findRegisterList?.userId === userId && findRegisterList.rejected) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '신청했던 주소는 재신청할 수 없어요.',
+                    alertSubMessage: '(트라이얼 재신청은 프코스팟 관리 >\n신청 현황에서 할 수 있어요.)',
+                    submitBtnText: '확인',
+                  })
+                );
+              } else {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: '해당 주소에 이미 신청 중인\n프코스팟이 있어요!',
+                    submitBtnText: '확인',
+                  })
+                );
+              }
+            }
+        }
+      } else {
+        // 스팟 신청 목록이 존재하지 않는 경우
+        checkAvailableDeliverySpots(i);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const goToMapScreen = (i: IJuso): void => {
+    dispatch(SET_LOCATION_TEMP(i));
+    getSpotRegistrationSearch(i);
+    // checkAvailableDeliverySpots(address);
   };
 
   useEffect(() => {
@@ -154,7 +244,6 @@ const LocationPage = () => {
 
       // if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
       if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
-        console.log('top!');
         // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
         setPage((prevPage) => prevPage + 1);
       }

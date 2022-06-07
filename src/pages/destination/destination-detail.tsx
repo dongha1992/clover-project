@@ -25,6 +25,7 @@ import {
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
+import isNil from 'lodash-es/isNil';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -47,7 +48,7 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
 
   // 배송 가능 여부
   const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
@@ -109,8 +110,14 @@ const DestinationDetailPage = () => {
         dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
         dispatch(SET_USER_DELIVERY_TYPE(destinationStatusByRule));
         dispatch(INIT_LOCATION_TEMP());
-
-        router.push('/cart/delivery-info');
+        if (isSubscription) {
+          router.push({
+            pathname: '/cart/delivery-info',
+            query: { subsDeliveryType, isSubscription: true, menuId },
+          });
+        } else {
+          router.push('/cart/delivery-info');
+        }
       }
     }
   };
@@ -126,6 +133,10 @@ const DestinationDetailPage = () => {
   useEffect(() => {
     getLonLanForMap();
   }, []);
+
+  // useEffect(() => {
+  //   if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
+  // }, []);
 
   useEffect(() => {
     /* TODO: 리팩토링 필요 */
@@ -183,7 +194,7 @@ const DestinationDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <MapAPI centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
+        <MapAPI centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>

@@ -9,10 +9,11 @@ import router, { useRouter } from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
 import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER } from '@store/user';
-import { userLogin, userProfile } from '@api/user';
+import { userLoginApi, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { setCookie } from '@utils/common';
+import { NAME_REGX } from '@constants/regex';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
@@ -25,22 +26,6 @@ const LoginPage = () => {
   const { isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
   const onRouter = useRouter();
-
-  useEffect(() => {
-    setReturnPath(onRouter.query.returnPath || '/');
-  }, []);
-
-  useEffect(() => {
-    if (isLoginSuccess) {
-      const isDormantAccount = false;
-      if (isDormantAccount) {
-        router.push('/mypage/profile/dormant');
-      } else {
-        router.push(`${returnPath}`);
-      }
-    }
-    return () => {};
-  }, [isLoginSuccess]);
 
   const passwordInputHandler = () => {
     if (emailRef.current && passwordRef.current) {
@@ -79,7 +64,7 @@ const LoginPage = () => {
       const password = passwordRef.current?.value.toString();
 
       try {
-        const { data } = await userLogin({
+        const { data } = await userLoginApi({
           email,
           password,
           loginType: 'EMAIL',
@@ -120,11 +105,39 @@ const LoginPage = () => {
     }
   };
 
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      finishLogin();
+    }
+  };
+
+  useEffect(() => {
+    setReturnPath(onRouter.query.returnPath || '/');
+  }, []);
+
+  useEffect(() => {
+    if (isLoginSuccess) {
+      const isDormantAccount = false;
+      if (isDormantAccount) {
+        router.push('/mypage/profile/dormant');
+      } else {
+        router.push(`${returnPath}`);
+      }
+    }
+    return () => {};
+  }, [isLoginSuccess]);
+
   return (
     <Container>
       <FlexCol padding="32px 0 0 0">
-        <TextInput margin="0 0 8px 0" placeholder="이메일" ref={emailRef} />
-        <TextInput placeholder="비밀번호" inputType="password" ref={passwordRef} eventHandler={passwordInputHandler} />
+        <TextInput margin="0 0 8px 0" placeholder="이메일" ref={emailRef} keyPressHandler={handleKeyPress} />
+        <TextInput
+          placeholder="비밀번호"
+          inputType="password"
+          ref={passwordRef}
+          eventHandler={passwordInputHandler}
+          keyPressHandler={handleKeyPress}
+        />
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </FlexCol>
       <FlexRow padding="16px 0 24px 0">

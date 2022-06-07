@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH2B, TextB2R, TextH6B, TextH3B, TextH4B, TextH5B } from '@components/Shared/Text';
@@ -36,7 +36,9 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 
 const hasAvailableCoupon = true;
 
-const SubsProductIdPage = ({ menuId = 135 }: any) => {
+const SubsProductIdPage = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -45,7 +47,12 @@ const SubsProductIdPage = ({ menuId = 135 }: any) => {
   const HEADER_HEIGHT = 56;
   let timer: any = null;
 
-  const dispatch = useDispatch();
+  const [menuId, setMenuId] = useState<number>();
+  useEffect(() => {
+    if (router.isReady) {
+      setMenuId(Number(router.query?.id));
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     dispatch(SUBS_INIT());
@@ -58,9 +65,9 @@ const SubsProductIdPage = ({ menuId = 135 }: any) => {
   } = useQuery(
     'getMenuDetail',
     async () => {
-      const { data } = await getMenuDetailApi(menuId);
+      const { data } = await getMenuDetailApi(menuId!);
 
-      return data.data;
+      return data?.data;
     },
 
     {
@@ -69,6 +76,7 @@ const SubsProductIdPage = ({ menuId = 135 }: any) => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
@@ -78,7 +86,7 @@ const SubsProductIdPage = ({ menuId = 135 }: any) => {
       // const { data } = await getMenuDetailReviewApi(menuId);
       const { data } = await axios.get(`${BASE_URL}/review`);
 
-      return data.data;
+      return data?.data;
     },
 
     {
@@ -165,109 +173,113 @@ const SubsProductIdPage = ({ menuId = 135 }: any) => {
 
   return (
     <Container>
-      <ImgWrapper>
-        <Carousel images={data?.thumbnail} setCountIndex={setCurrentImg} />
-        <DailySaleNumber>
-          {data?.badgeMessage && (
-            <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-              {data?.badgeMessage}
-            </TextH6B>
-          )}
-        </DailySaleNumber>
-      </ImgWrapper>
-      <Top>
-        <MenuDetailWrapper>
-          <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{data.name}</TextH2B>
-            {data.tag && <Tag margin="0 4px 0 0">{data.tag}</Tag>}
-          </MenuNameWrapper>
-          <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {data.description}
-          </TextB2R>
-          <PriceAndCouponWrapper>
-            <PriceWrapper>
-              <OriginPrice>
-                <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                  {getMenuDetailPrice().price}원
+      {data && (
+        <>
+          <ImgWrapper>
+            <Carousel images={data?.thumbnail} setCountIndex={setCurrentImg} />
+            <DailySaleNumber>
+              {data?.badgeMessage && (
+                <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
+                  {data?.badgeMessage}
                 </TextH6B>
-              </OriginPrice>
-              <DiscountedPrice>
-                <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
-                <TextH3B padding={'0 0 0 4px'}>{getMenuDetailPrice().discountedPrice}원</TextH3B>
-              </DiscountedPrice>
-            </PriceWrapper>
-            {hasAvailableCoupon ? (
-              <CouponWrapper onClick={couponDownloadHandler}>
-                <TextH6B padding="4px 4px 0 0">쿠폰 받기</TextH6B>
-                <SVGIcon name="download" />
-              </CouponWrapper>
-            ) : (
-              <CouponWrapper>
-                <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
-                <SVGIcon name="checkBlack18" />
-              </CouponWrapper>
-            )}
-          </PriceAndCouponWrapper>
-          <DeliveryInfoBox>
-            <TextH5B padding="16px 0">배송 안내</TextH5B>
-            <DeliveryUl>
-              <DeliveryLi>
-                <TextB2R>배송 정보</TextB2R>
-                <TextB2R>스팟배송 / 주 2회 배송</TextB2R>
-              </DeliveryLi>
-              <DeliveryLi>
-                <TextB2R>상품 구성</TextB2R>
-                <TextB2R>단백질 위주의 식단 교차 배송</TextB2R>
-              </DeliveryLi>
-            </DeliveryUl>
-          </DeliveryInfoBox>
-        </MenuDetailWrapper>
-        <ReviewContainer>
-          <ReviewWrapper>
-            <ReviewHeader>
-              <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
-              <TextH6B
-                textDecoration="underline"
-                color={theme.greyScale65}
-                padding="0 24px 0 0"
-                onClick={goToReviewSection}
-              >
-                더보기
-              </TextH6B>
-            </ReviewHeader>
-            {reviews && <ReviewList reviews={reviews} onClick={goToReviewDetail} />}
-          </ReviewWrapper>
-        </ReviewContainer>
-        <DetailInfoContainer>
-          {MENU_DETAIL_INFORMATION.map((info, index) => (
-            <div key={index}>
-              <DetailInfoWrapper>
-                <TextH4B>{info.text}</TextH4B>
-                <Link href={`${info.link}`} passHref>
-                  <a>
-                    <TextH6B textDecoration="underLine" color={theme.greyScale65}>
-                      자세히
+              )}
+            </DailySaleNumber>
+          </ImgWrapper>
+          <Top>
+            <MenuDetailWrapper>
+              <MenuNameWrapper>
+                <TextH2B padding={'0 0 8px 0'}>{data.name}</TextH2B>
+                {data.tag && <Tag margin="0 4px 0 0">{data.tag}</Tag>}
+              </MenuNameWrapper>
+              <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
+                {data.description}
+              </TextB2R>
+              <PriceAndCouponWrapper>
+                <PriceWrapper>
+                  <OriginPrice>
+                    <TextH6B color={theme.greyScale25} textDecoration=" line-through">
+                      {getMenuDetailPrice().price}원
                     </TextH6B>
-                  </a>
-                </Link>
-              </DetailInfoWrapper>
-              {index !== MENU_DETAIL_INFORMATION.length - 1 ? <BorderLine height={1} margin="16px 0" /> : null}
-            </div>
-          ))}
-        </DetailInfoContainer>
-      </Top>
-      <AdWrapper></AdWrapper>
-      <div ref={tabRef} />
-      <Bottom>
-        <StickyTab
-          tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: reviews?.searchReviews.length }}
-          isSticky={isSticky}
-          selectedTab={selectedTab}
-          onClick={selectTabHandler}
-        />
-        <BottomContent>{renderBottomContent()}</BottomContent>
-      </Bottom>
+                  </OriginPrice>
+                  <DiscountedPrice>
+                    <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
+                    <TextH3B padding={'0 0 0 4px'}>{getMenuDetailPrice().discountedPrice}원</TextH3B>
+                  </DiscountedPrice>
+                </PriceWrapper>
+                {hasAvailableCoupon ? (
+                  <CouponWrapper onClick={couponDownloadHandler}>
+                    <TextH6B padding="4px 4px 0 0">쿠폰 받기</TextH6B>
+                    <SVGIcon name="download" />
+                  </CouponWrapper>
+                ) : (
+                  <CouponWrapper>
+                    <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
+                    <SVGIcon name="checkBlack18" />
+                  </CouponWrapper>
+                )}
+              </PriceAndCouponWrapper>
+              <DeliveryInfoBox>
+                <TextH5B padding="16px 0">배송 안내</TextH5B>
+                <DeliveryUl>
+                  <DeliveryLi>
+                    <TextB2R>배송 정보</TextB2R>
+                    <TextB2R>스팟배송 / 주 2회 배송</TextB2R>
+                  </DeliveryLi>
+                  <DeliveryLi>
+                    <TextB2R>상품 구성</TextB2R>
+                    <TextB2R>단백질 위주의 식단 교차 배송</TextB2R>
+                  </DeliveryLi>
+                </DeliveryUl>
+              </DeliveryInfoBox>
+            </MenuDetailWrapper>
+            <ReviewContainer>
+              <ReviewWrapper>
+                <ReviewHeader>
+                  <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
+                  <TextH6B
+                    textDecoration="underline"
+                    color={theme.greyScale65}
+                    padding="0 24px 0 0"
+                    onClick={goToReviewSection}
+                  >
+                    더보기
+                  </TextH6B>
+                </ReviewHeader>
+                {reviews && <ReviewList reviews={reviews} onClick={goToReviewDetail} />}
+              </ReviewWrapper>
+            </ReviewContainer>
+            <DetailInfoContainer>
+              {MENU_DETAIL_INFORMATION.map((info, index) => (
+                <div key={index}>
+                  <DetailInfoWrapper>
+                    <TextH4B>{info.text}</TextH4B>
+                    <Link href={`${info.link}`} passHref>
+                      <a>
+                        <TextH6B textDecoration="underLine" color={theme.greyScale65}>
+                          자세히
+                        </TextH6B>
+                      </a>
+                    </Link>
+                  </DetailInfoWrapper>
+                  {index !== MENU_DETAIL_INFORMATION.length - 1 ? <BorderLine height={1} margin="16px 0" /> : null}
+                </div>
+              ))}
+            </DetailInfoContainer>
+          </Top>
+          <AdWrapper></AdWrapper>
+          <div ref={tabRef} />
+          <Bottom>
+            <StickyTab
+              tabList={MENU_REVIEW_AND_FAQ}
+              countObj={{ 후기: reviews?.searchReviews.length }}
+              isSticky={isSticky}
+              selectedTab={selectedTab}
+              onClick={selectTabHandler}
+            />
+            <BottomContent>{renderBottomContent()}</BottomContent>
+          </Bottom>
+        </>
+      )}
     </Container>
   );
 };
