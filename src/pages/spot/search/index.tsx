@@ -138,24 +138,28 @@ const SpotSearchPage = (): ReactElement => {
 
   // 스팟 검색 결과 api
   const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    let { value } = e.target as HTMLInputElement;
+    const { value } = e.target as HTMLInputElement;
+
     if (e.key === 'Enter') {
-      if (value) {
-        if (!value) {
+      if (inputRef.current) {
+        // setKeyWord(inputRef.current?.value);
+        let keyword = inputRef.current?.value;
+        if (!keyword) {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData();
+        fetchSpotSearchData({keyword});
         dispatch(INIT_SPOT_FILTERED());
+
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchSpotSearchData = useCallback(async() => {
+  const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
     try {
       const params = {
-        keyword,
+        keyword: keyword,
         latitude: latLen ? Number(spotsPosition.latitude) : null,
         longitude: lonLen ? Number(spotsPosition.longitude) : null,
       };
@@ -170,15 +174,14 @@ const SpotSearchPage = (): ReactElement => {
     } catch (err) {
       console.error(err);
     }
-  }, [keyword]);
+  };
 
   const handleSelectedKeywordVaule = (value: string) => {
     setKeyWord(value);
   };
 
   const changeInputHandler = (e: any) => {
-    const inputText = e.target.value;
-      setKeyWord(inputText);
+    const inputText = inputRef.current?.value.length;
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -293,7 +296,9 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   const initInputHandler = () => {
-    setKeyWord('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    };
   };
 
   const goToOrder = useCallback(() => {
@@ -312,14 +317,14 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(()=> {
     if (keyword.length > 0) {
-        fetchSpotSearchData();
+        fetchSpotSearchData({keyword});
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
   useEffect(()=> {
     if (keyword.length > 0) {
-      fetchSpotSearchData();
+      fetchSpotSearchData({keyword});
       dispatch(INIT_SPOT_FILTERED());
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
     };
@@ -372,9 +377,10 @@ const SpotSearchPage = (): ReactElement => {
             setInputFocus(true);
           }}
           value={keyword}
+          ref={inputRef}
         />
         {
-          keyword.length > 0 &&
+          inputRef.current && inputRef.current?.value.length > 0 && 
         (
           <div className="removeSvg" onClick={clearInputHandler}>
             <SVGIcon name="removeItem" />
