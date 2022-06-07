@@ -201,12 +201,12 @@ const MenuDetailPage = ({ menuDetail }: any) => {
               );
             })} */}
             <div className="tagBox">
-              {menuDetail?.subscriptionDeliveries.map((item: string, index: number) => (
+              {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
                 <Label className={item} key={index}>
                   {DELIVERY_TYPE_MAP[item]}
                 </Label>
               ))}
-              {!menuDetail?.subscriptionPeriods.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
+              {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
               {menuDetail.tag && <Tag margin="0 4px 0 0">{menuDetail.tag}</Tag>}
             </div>
           </MenuNameWrapper>
