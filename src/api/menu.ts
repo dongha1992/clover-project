@@ -75,5 +75,5 @@ export const postNotificationApi = ({
     type: string;
   };
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post('menu/v1/reviews', data);
+  return Api.post('menu/v1/notification', data);
 };
