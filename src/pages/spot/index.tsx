@@ -149,7 +149,7 @@ const SpotPage = () => {
               // 프라이빗 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 프라이빗 신청 제한: 1개 - 신청 불가
               router.push({
-                pathname: '/spot/spot-req',
+                pathname: '/spot/join/main',
                 query: { type },
               });        
             } else {
@@ -162,7 +162,7 @@ const SpotPage = () => {
             }
           } else{
             router.push({
-              pathname: '/spot/spot-req',
+              pathname: '/spot/join/main',
               query: { type },
             });        
           }
@@ -176,7 +176,7 @@ const SpotPage = () => {
               // 퍼블릭 스팟 신청 진행중인게 3개 미민안 경우 true (0~2개) - 신청 가능
               // 퍼블릭(단골가게) 스팟 신청 제한: 3개 - 신청 불가
               router.push({
-                pathname: '/spot/spot-req',
+                pathname: '/spot/join/main',
                 query: { type },
               });        
             } else {
@@ -189,7 +189,7 @@ const SpotPage = () => {
             }
           } else {
             router.push({
-              pathname: '/spot/spot-req',
+              pathname: '/spot/join/main',
               query: { type },
             });        
           }
@@ -203,7 +203,7 @@ const SpotPage = () => {
               // 우리가게(owner) 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 우리가게 스팟 신청 제한: 1개 - 신청 불가
               router.push({
-                pathname: '/spot/spot-req',
+                pathname: '/spot/join/main',
                 query: { type },
               });        
             } else {
@@ -216,7 +216,7 @@ const SpotPage = () => {
             }
           } else {
             router.push({
-              pathname: '/spot/spot-req',
+              pathname: '/spot/join/main',
               query: { type },
             });        
           }
@@ -230,7 +230,7 @@ const SpotPage = () => {
   };
 
   const goToRegiList = (): void => {
-    router.push('/spot/regi-list');
+    router.push('/spot/join');
   };
 
   const goToSpotNotice = (): void => {
