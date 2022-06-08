@@ -67,13 +67,13 @@ export const getSubscriptionApi = ({
 };
 
 export const postNotificationApi = ({
-  data,
+  menuId,
+  tel,
+  type,
 }: {
-  data: {
-    menuId: number;
-    tel: string;
-    type: string;
-  };
+  menuId: number;
+  tel: string;
+  type: string;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post('menu/v1/notification', data);
+  return Api.post(`menu/v1/notification?menuId=${menuId}&tel=${tel}&type=${type}`);
 };

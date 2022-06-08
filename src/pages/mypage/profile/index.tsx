@@ -56,7 +56,7 @@ const ProfilePage = () => {
     isValid: false,
   });
 
-  const [checkGender, setChcekGender] = useState<string>('');
+  const [checkGender, setChcekGender] = useState<string>('NONE');
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
