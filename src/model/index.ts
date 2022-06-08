@@ -570,7 +570,7 @@ export interface ISpotsDetail {
   userId: number;
   step: string;
   rejected: boolean;
-  [propsName:string]: any;
+  [propsName: string]: any;
 }
 
 export interface ISpotPickupInfo {
@@ -1592,8 +1592,8 @@ export interface IMenuDetails {
   price: number;
   discountPrice: number;
   main: boolean;
-  dailyMaximum: number;
-  isSold: number;
+  dailyMaximum?: number;
+  isSold?: number;
 }
 
 export interface IMenus {
@@ -1616,6 +1616,8 @@ export interface IMenus {
   openedAt: string;
   subscriptionDeliveries?: string[];
   subscriptionPeriods?: string;
+  constitutionTag: string;
+  isReopen?: boolean;
 }
 
 /* REVIEW */

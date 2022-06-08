@@ -65,3 +65,15 @@ export const getSubscriptionApi = ({
     params: { id, destinationId, subscriptionPeriod, deliveryStartDate },
   });
 };
+
+export const postNotificationApi = ({
+  data,
+}: {
+  data: {
+    menuId: number;
+    tel: string;
+    type: string;
+  };
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('menu/v1/reviews', data);
+};

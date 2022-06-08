@@ -14,27 +14,30 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
 import getCustomDate from '@utils/destination/getCustomDate';
-import { Obj } from '@model/index';
+import { Obj, IMenuDetails, IMenus } from '@model/index';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import 'dayjs/locale/ko';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
 type TProps = {
-  item: any;
+  item: IMenus;
   isQuick?: boolean;
 };
 
-const Item = ({ item, isQuick = false }: TProps) => {
+const Item = ({ item, isQuick }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const { menuDetails } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
 
-  const checkIsAllSold: boolean = menuDetails.every((item: any) => item.isSoldout === true);
+  const checkIsAllSold: boolean = menuDetails
+    .filter((details) => details.main)
+    .every((item: IMenuDetails) => item.isSold);
 
   const checkIsSoon = (): string | boolean => {
     let { openedAt } = item;
@@ -70,13 +73,12 @@ const Item = ({ item, isQuick = false }: TProps) => {
     );
   };
 
-  const goToDetail = (item: any) => {
+  const goToDetail = (item: IMenus) => {
     if (checkIsAllSold || checkIsSoon()) {
       return;
     }
 
     dispatch(SET_MENU_ITEM(item));
-    // router.push({ pathname: `/menu/[menuId]`, query: { menuId: item.id } });
     router.push(`/menu/${item.id}`);
   };
 
@@ -88,7 +90,7 @@ const Item = ({ item, isQuick = false }: TProps) => {
     };
 
     const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
-    const { badgeMessage } = item;
+    const { badgeMessage, isReopen } = item;
 
     if (checkIsAllSold) {
       return <Badge message="일시품절" />;
@@ -99,6 +101,11 @@ const Item = ({ item, isQuick = false }: TProps) => {
     } else {
       return;
     }
+  };
+
+  const goToReopen = (e: any) => {
+    e.stopPropagation();
+    dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet /> }));
   };
 
   return (
@@ -112,15 +119,21 @@ const Item = ({ item, isQuick = false }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {item.reopen && (
+        {!item.isReopen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
+        {!item.isReopen ? (
+          <ReopenBtn onClick={goToReopen}>
+            <SVGIcon name="reopen" />
+          </ReopenBtn>
+        ) : (
+          <CartBtn onClick={goToCartSheet}>
+            <SVGIcon name="cartBtn" />
+          </CartBtn>
+        )}
 
-        <CartBtn onClick={goToCartSheet}>
-          <SVGIcon name="cart" />
-        </CartBtn>
         {badgeRenderer()}
       </ImageWrapper>
       <FlexCol>
@@ -138,18 +151,18 @@ const Item = ({ item, isQuick = false }: TProps) => {
         <DesWrapper>
           <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
         </DesWrapper>
-        {!isQuick && (
-          <>
-            <LikeAndReview>
-              <Like>
-                <SVGIcon name="like" />
-                <TextB3R>{item.likeCount}</TextB3R>
-              </Like>
-              <TextB3R>리뷰 {item.reviewCount}</TextB3R>
-            </LikeAndReview>
-            <TagWrapper>{item.tag && item.tag !== 'NONE' && <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>}</TagWrapper>
-          </>
-        )}
+        <LikeAndReview>
+          <Like>
+            <SVGIcon name="like" />
+            <TextB3R>{item.likeCount}</TextB3R>
+          </Like>
+          <TextB3R>리뷰 {item.reviewCount}</TextB3R>
+        </LikeAndReview>
+        <TagWrapper>
+          {item.constitutionTag && item.constitutionTag !== 'NONE' && (
+            <Tag margin="0px 8px 8px 0px">{item.constitutionTag}</Tag>
+          )}
+        </TagWrapper>
       </FlexCol>
     </Container>
   );
@@ -191,21 +204,23 @@ const DesWrapper = styled.div`
 
 const CartBtn = styled.div`
   position: absolute;
-  right: 8px;
-  bottom: 12px;
+  right: 16px;
+  bottom: 14px;
   border-radius: 50%;
-  background-color: white;
   width: 32px;
   height: 32px;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
-  > svg {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 100%;
-    width: 16px;
-    height: 16px;
-  }
+`;
+
+const ReopenBtn = styled.div`
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 `;
 
 const ImageWrapper = styled.div`
