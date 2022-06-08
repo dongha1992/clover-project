@@ -39,6 +39,8 @@ const Item = ({ item, isQuick }: TProps) => {
     .filter((details) => details.main)
     .every((item: IMenuDetails) => item.isSold);
 
+  const isItemSold = checkIsAllSold || item.isSold;
+
   const checkIsSoon = (): string | boolean => {
     let { openedAt } = item;
 
@@ -83,20 +85,19 @@ const Item = ({ item, isQuick }: TProps) => {
   };
 
   const badgeRenderer = () => {
-    /*TODO:재오픈 예정 달아야 함 */
     const badgeMap: Obj = {
       NEW: 'New',
       BEST: 'Best',
     };
 
     const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
-    const { badgeMessage, isReopen } = item;
+    const { badgeMessage, isReopen, isSold } = item;
 
-    if (checkIsAllSold) {
+    if (isItemSold) {
       return <Badge message="일시품절" />;
-    } else if (checkIsBeforeThanLaunchAt) {
+    } else if (isSold && isReopen && checkIsBeforeThanLaunchAt) {
       return <Badge message={`${checkIsSoon()}시 오픈`} />;
-    } else if (badgeMessage) {
+    } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
     } else {
       return;
@@ -119,21 +120,23 @@ const Item = ({ item, isQuick }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {!item.isReopen && (
+        {isItemSold && !item.isReopen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {!item.isReopen ? (
+        {/* {isItemSold && !item.isReopen ? (
           <ReopenBtn onClick={goToReopen}>
-            <SVGIcon name="reopen" />
+            <SVGIcon name={item.reopenNotificationRequested ? 'reponed' : 'reopen'} />
           </ReopenBtn>
         ) : (
           <CartBtn onClick={goToCartSheet}>
             <SVGIcon name="cartBtn" />
           </CartBtn>
-        )}
-
+        )} */}
+        <ReopenBtn onClick={goToReopen}>
+          <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
+        </ReopenBtn>
         {badgeRenderer()}
       </ImageWrapper>
       <FlexCol>
@@ -219,7 +222,7 @@ const ReopenBtn = styled.div`
   border-radius: 50%;
   width: 32px;
   height: 32px;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
+
   z-index: 10;
 `;
 

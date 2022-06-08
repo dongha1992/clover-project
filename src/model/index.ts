@@ -1618,6 +1618,8 @@ export interface IMenus {
   subscriptionPeriods?: string;
   constitutionTag: string;
   isReopen?: boolean;
+  isSold?: boolean;
+  reopenNotificationRequested: boolean;
 }
 
 /* REVIEW */

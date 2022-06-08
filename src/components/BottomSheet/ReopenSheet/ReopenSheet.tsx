@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { Button } from '@components/Shared/Button';
 import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
@@ -10,7 +10,7 @@ import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { userAuthTel, userConfirmTel } from '@api/user';
+import { userAuthTel, userConfirmTel, userChangeInfo } from '@api/user';
 import { postNotificationApi } from '@api/menu';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
@@ -19,6 +19,8 @@ import { PHONE_REGX } from '@pages/signup/auth';
 import Validation from '@components/Pages/User/Validation';
 import Checkbox from '@components/Shared/Checkbox';
 import { useToast } from '@hooks/useToast';
+import { IChangeMe } from '@model/index';
+import { useInterval } from '@hooks/useInterval';
 
 const LIMIT = 240;
 const FIVE_MINUTE = 300;
@@ -48,8 +50,11 @@ const ReopenSheet = ({ menuId }: IProps) => {
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isMarketinngChecked, setIsMarketinngChecked] = useState<boolean>(false);
+  const [isChangedTel, setIsChangedTel] = useState<boolean>(true);
 
   const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
@@ -59,7 +64,7 @@ const ReopenSheet = ({ menuId }: IProps) => {
         type: 'REOPEN',
       };
 
-      const { data } = await postNotificationApi({ data: reqBody });
+      const { data } = await postNotificationApi({ ...reqBody });
     },
     {
       onSuccess: async (data) => {
@@ -85,6 +90,35 @@ const ReopenSheet = ({ menuId }: IProps) => {
       },
     }
   );
+
+  const { mutateAsync: mutationEditProfile } = useMutation(
+    async (reqBody: IChangeMe) => {
+      const { data } = await userChangeInfo(reqBody);
+      return data;
+    },
+    {
+      onSuccess: async () => {
+        setIsChangedTel(true);
+        await queryClient.refetchQueries('getUserProfile');
+      },
+      onError: async (error: any) => {
+        console.error(error);
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+    }
+  );
+
+  const timerHandler = useCallback((): void => {
+    const _minute = Math.floor(authTimerRef.current / 60);
+    const _second = Math.floor(authTimerRef.current % 60);
+
+    authTimerRef.current -= 1;
+
+    setMinute(_minute);
+    setSecond(_second);
+  }, [second, minute]);
+
+  useInterval(timerHandler, delay);
 
   const phoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -159,6 +193,7 @@ const ReopenSheet = ({ menuId }: IProps) => {
     setIsAuthTel(true);
     setUserTel('');
     setPhoneValidation(false);
+    setIsChangedTel(false);
   };
 
   const getAuthCodeConfirm = async () => {
@@ -173,6 +208,22 @@ const ReopenSheet = ({ menuId }: IProps) => {
             dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.' }));
             setAuthCodeConfirm(true);
             setDelay(null);
+
+            const reqBody = {
+              authCode: authCodeNumberRef?.current?.value!,
+              birthDate: me?.birthDate || '',
+              gender: me?.gender || 'NONE',
+              email: me?.email!,
+              marketingEmailReceived: me?.marketingEmailReceived!,
+              marketingPushReceived: me?.marketingPushReceived!,
+              marketingSmsReceived: me?.marketingSmsReceived!,
+              name: me?.name!,
+              nickName: me?.nickName!,
+              notiPushReceived: me?.notiPushReceived!,
+              primePushReceived: me?.primePushReceived!,
+              tel: userTel,
+            };
+            mutationEditProfile(reqBody);
           }
         } catch (error: any) {
           if (error.code === 2002) {
@@ -214,6 +265,9 @@ const ReopenSheet = ({ menuId }: IProps) => {
 
   const goToNoti = () => {
     if (!isMarketinngChecked) return;
+    if (!isChangedTel) {
+      return dispatch(SET_ALERT({ alertMessage: '휴대폰 인증을 다시 해주세요.' }));
+    }
     mutatePostNoti();
   };
 
