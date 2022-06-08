@@ -1,0 +1,349 @@
+import React, { useRef, useState, useEffect } from 'react';
+import styled, { css } from 'styled-components';
+import { Button } from '@components/Shared/Button';
+import { fixedBottom, homePadding, FlexEnd, FlexCol, FlexRow } from '@styles/theme';
+import { SVGIcon } from '@utils/common';
+import { TextB2R, TextH2B, TextH5B, TextH4B, TextB3R } from '@components/Shared/Text';
+import router, { useRouter } from 'next/router';
+import { theme } from '@styles/theme';
+import TextInput from '@components/Shared/TextInput';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useDispatch, useSelector } from 'react-redux';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { userAuthTel, userConfirmTel } from '@api/user';
+import { SET_ALERT } from '@store/alert';
+import { userForm } from '@store/user';
+import { commonSelector } from '@store/common';
+import { PHONE_REGX } from '@pages/signup/auth';
+import Validation from '@components/Pages/User/Validation';
+
+const LIMIT = 240;
+const FIVE_MINUTE = 300;
+
+const ReopenSheet = () => {
+  const dispatch = useDispatch();
+
+  const [minute, setMinute] = useState<number>(0);
+  const [second, setSecond] = useState<number>(0);
+
+  const [phoneValidation, setPhoneValidation] = useState(false);
+  let authTimerRef = useRef(300);
+  const authCodeNumberRef = useRef<HTMLInputElement>(null);
+
+  const { me } = useSelector(userForm);
+  const { isMobile } = useSelector(commonSelector);
+  const [userTel, setUserTel] = useState<string>('');
+  const [isAuthTel, setIsAuthTel] = useState(false);
+  const [delay, setDelay] = useState<number | null>(null);
+  const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
+  const [isOverTime, setIsOverTime] = useState<boolean>(false);
+  const [authCodeValidation, setAuthCodeValidation] = useState(false);
+  const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
+
+  const router = useRouter();
+  const { mutateAsync: mutatePostPromotionCode } = useMutation(
+    async () => {
+      if (codeRef.current) {
+        const reqBody = {
+          code: codeRef?.current?.value,
+          reward: null,
+        };
+
+        const { data } = await postPromotionCodeApi(reqBody);
+
+        if (data.code === 200) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '등록을 완료했어요!',
+              submitBtnText: '확인',
+            })
+          );
+        }
+      }
+    },
+    {
+      onSuccess: async (data) => {},
+      onError: async (error: any) => {
+        if (error.code === 2202) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '이미 등록된 프로모션 코드예요.',
+              submitBtnText: '확인',
+            })
+          );
+        } else {
+        }
+      },
+    }
+  );
+
+  const phoneNumberInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    if (PHONE_REGX.test(value)) {
+      setPhoneValidation(true);
+    } else {
+      setPhoneValidation(false);
+    }
+    setUserTel(value);
+  };
+
+  const getAuthTel = async () => {
+    if (userTel.length > 0 && !phoneValidation) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
+          submitBtnText: '확인',
+        })
+      );
+      return;
+    }
+
+    if (oneMinuteDisabled) {
+      dispatch(SET_ALERT({ alertMessage: '잠시 후 재요청해 주세요.' }));
+      return;
+    }
+
+    try {
+      const { data } = await userAuthTel({ tel: userTel });
+
+      if (data.code === 200) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `인증번호 전송했습니다.`,
+            submitBtnText: '확인',
+          })
+        );
+        resetTimer();
+        setOneMinuteDisabled(true);
+        setDelay(1000);
+        if (isOverTime) {
+          setIsOverTime(false);
+          resetTimer();
+        }
+      }
+    } catch (error: any) {
+      if (error.code === 2000) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
+          })
+        );
+      } else if (error.code === 2001) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '하루 인증 요청 제한 횟수 10회를 초과했습니다.',
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러 발생',
+          })
+        );
+      }
+      console.error(error);
+    }
+  };
+
+  const otherAuthTelHandler = () => {
+    setIsAuthTel(true);
+    setUserTel('');
+    setPhoneValidation(false);
+  };
+
+  const getAuthCodeConfirm = async () => {
+    if (!authCodeValidation || authCodeConfirm || isOverTime) return;
+    if (authCodeNumberRef.current) {
+      if (phoneValidation && authCodeValidation) {
+        const authCode = authCodeNumberRef.current.value;
+
+        try {
+          const { data } = await userConfirmTel({ tel: userTel, authCode });
+          if (data.code === 200) {
+            dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.' }));
+            setAuthCodeConfirm(true);
+            setDelay(null);
+          }
+        } catch (error: any) {
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
+          }
+          console.error(error);
+        }
+      }
+    }
+  };
+
+  const resetTimer = () => {
+    authTimerRef.current = FIVE_MINUTE;
+    // authTimerRef.current = 5;
+  };
+
+  const telKeyPressHandler = (e: any) => {
+    if (e.key === 'Enter') {
+      getAuthTel();
+    }
+  };
+
+  const authCodeInputHandler = () => {
+    if (authCodeNumberRef.current) {
+      const authCode = authCodeNumberRef.current?.value;
+      if (authCode.length > 5) {
+        setAuthCodeValidation(true);
+      } else {
+        setAuthCodeValidation(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    setUserTel(me?.tel);
+  }, []);
+
+  return (
+    <Container isMobile={isMobile}>
+      <Header>
+        <div />
+        <TextH4B>알림신청</TextH4B>
+        <div
+          onClick={() => {
+            dispatch(INIT_BOTTOM_SHEET());
+          }}
+        >
+          <SVGIcon name="defaultCancel24" />
+        </div>
+      </Header>
+      <Body>
+        <FlexCol>
+          <TextH2B>오픈 알림을</TextH2B>
+          <TextH2B>신청하시겠어요?</TextH2B>
+        </FlexCol>
+        <FlexCol padding="0 0 24px 0">
+          <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
+          <FlexRow>
+            <TextInput
+              placeholder="휴대폰 번호 (-제외)"
+              inputType="number"
+              eventHandler={phoneNumberInputHandler}
+              value={userTel || ''}
+              disabled={!isAuthTel}
+              keyPressHandler={telKeyPressHandler}
+            />
+            {isAuthTel ? (
+              <Button width="40%" margin="0 0 0 8px" onClick={getAuthTel}>
+                {delay ? '재요청' : '인증요청'}
+              </Button>
+            ) : (
+              <Button width="40%" margin="0 0 0 8px" onClick={otherAuthTelHandler}>
+                다른번호 인증
+              </Button>
+            )}
+          </FlexRow>
+          <PhoneValidCheck>
+            {isAuthTel && !phoneValidation && userTel.length > 0 && (
+              <Validation>휴대폰 번호를 정확히 입력해주세요.</Validation>
+            )}
+            {isAuthTel && phoneValidation && <SVGIcon name="confirmCheck" />}
+            {isAuthTel && (
+              <ConfirmWrapper>
+                <TextInput
+                  placeholder="인증 번호 입력"
+                  eventHandler={authCodeInputHandler}
+                  ref={authCodeNumberRef}
+                  inputType="number"
+                />
+                <Button
+                  width="40%"
+                  margin="0 0 0 8px"
+                  disabled={!authCodeValidation || authCodeConfirm || isOverTime}
+                  onClick={getAuthCodeConfirm}
+                >
+                  확인
+                </Button>
+                {authCodeConfirm && <SVGIcon name="confirmCheck" />}
+                {delay && (
+                  <TimerWrapper>
+                    <TextB3R color={theme.brandColor}>
+                      {minute < 10 ? `0${minute}` : minute}:{second < 10 ? `0${second}` : second}
+                    </TextB3R>
+                  </TimerWrapper>
+                )}
+              </ConfirmWrapper>
+            )}
+          </PhoneValidCheck>
+          {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
+        </FlexCol>
+      </Body>
+      <BtnWrapper onClick={() => router.push('/event')}>
+        <Button height="100%">신규회원 혜택받기</Button>
+      </BtnWrapper>
+    </Container>
+  );
+};
+
+const Container = styled.div<{ isMobile: boolean }>`
+  ${homePadding};
+
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        height: 100%;
+      `;
+    } else {
+      return css`
+        height: 95vh;
+      `;
+    }
+  }}
+`;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 56px;
+  width: 100%;
+`;
+
+const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TimerWrapper = styled.div`
+  position: absolute;
+  left: 55%;
+`;
+
+const PhoneValidCheck = styled.div`
+  position: relative;
+  margin: 4px 0;
+  > svg {
+    position: absolute;
+    right: 35%;
+    top: -60%;
+    z-index: 10;
+  }
+`;
+
+const BtnWrapper = styled.div`
+  ${fixedBottom};
+  left: 0%;
+`;
+
+const ConfirmWrapper = styled.div`
+  margin-top: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  > svg {
+    position: absolute;
+    right: 35%;
+    top: 35%;
+  }
+`;
+
+export default ReopenSheet;

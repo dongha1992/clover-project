@@ -154,7 +154,6 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   const getMenuDetailPrice = () => {
     const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
     return { discount, price, discountedPrice };
-    // return { discount: 0, price: 0, discountedPrice: 0 };
   };
 
   useEffect(() => {
@@ -166,9 +165,7 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   }, [tabRef?.current?.offsetTop]);
 
   useEffect(() => {
-    return () => {
-      // dispatch(SET_MENU_ITEM({}));
-    };
+    return () => {};
   }, []);
 
   console.log(menuItem, 'menuItem');
@@ -225,7 +222,7 @@ const MenuDetailPage = ({ menuDetail }: any) => {
               <DiscountedPrice>
                 <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
                 <TextH3B padding={'0 0 0 4px'}>
-                  {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원{' '}
+                  {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
                   {menuDetail.type === 'SUBSCRIPTION' && '~'}
                 </TextH3B>
               </DiscountedPrice>
@@ -287,21 +284,23 @@ const MenuDetailPage = ({ menuDetail }: any) => {
           )}
         </MenuDetailWrapper>
         <ReviewContainer>
-          <ReviewWrapper>
-            <ReviewHeader>
-              <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
-              <TextH6B
-                textDecoration="underline"
-                color={theme.greyScale65}
-                padding="0 24px 0 0"
-                onClick={goToReviewSection}
-                pointer
-              >
-                더보기
-              </TextH6B>
-            </ReviewHeader>
-            {reviews && <ReviewList reviews={reviews} onClick={goToReviewDetail} />}
-          </ReviewWrapper>
+          {reviews?.searchReviewImages?.length! > 0 && (
+            <ReviewWrapper>
+              <ReviewHeader>
+                <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
+                <TextH6B
+                  textDecoration="underline"
+                  color={theme.greyScale65}
+                  padding="0 24px 0 0"
+                  onClick={goToReviewSection}
+                  pointer
+                >
+                  더보기
+                </TextH6B>
+              </ReviewHeader>
+              <ReviewList reviews={reviews} onClick={goToReviewDetail} />
+            </ReviewWrapper>
+          )}
         </ReviewContainer>
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
