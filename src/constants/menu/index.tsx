@@ -1,3 +1,5 @@
+import { Obj } from '@model/index';
+
 export const MENU_DETAIL_INFORMATION = [
   {
     text: '상품 정보',
@@ -428,4 +430,16 @@ export const WILL_WRITE = {
       },
     ],
   },
+};
+
+export const CATEGROY_TITLE_MAP: Obj = {
+  all: '전체메뉴',
+  salad: '샐러드',
+  wrap: '랩·샌드위치',
+  meal: '도시락·간편식',
+  package: '죽·스프',
+  snack: '간식',
+  soup: '죽',
+  drink: '음료',
+  soon: '오픈예정',
 };

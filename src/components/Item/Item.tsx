@@ -57,9 +57,10 @@ const Item = ({ item, isQuick }: TProps) => {
     } catch (error) {
       console.error(error);
     }
-
     return false;
   };
+
+  const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
@@ -90,7 +91,6 @@ const Item = ({ item, isQuick }: TProps) => {
       BEST: 'Best',
     };
 
-    const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
     const { badgeMessage, isReopen, isSold } = item;
 
     if (isItemSold) {
@@ -106,6 +106,7 @@ const Item = ({ item, isQuick }: TProps) => {
 
   const goToReopen = (e: any) => {
     e.stopPropagation();
+    if (item.reopenNotificationRequested) return;
     dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
   };
 
@@ -127,16 +128,13 @@ const Item = ({ item, isQuick }: TProps) => {
         )}
         {/* {isItemSold && !item.isReopen ? (
           <ReopenBtn onClick={goToReopen}>
-            <SVGIcon name={item.reopenNotificationRequested ? 'reponed' : 'reopen'} />
+            <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
         ) : (
           <CartBtn onClick={goToCartSheet}>
             <SVGIcon name="cartBtn" />
           </CartBtn>
         )} */}
-        <ReopenBtn onClick={goToReopen}>
-          <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
-        </ReopenBtn>
         {badgeRenderer()}
       </ImageWrapper>
       <FlexCol>
@@ -145,12 +143,14 @@ const Item = ({ item, isQuick }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        <PriceWrapper>
-          <TextH5B color={theme.brandColor} padding="0 4px 0 0">
-            {discount}%
-          </TextH5B>
-          <TextH5B>{discountedPrice}원</TextH5B>
-        </PriceWrapper>
+        {isItemSold && item.isReopen && (
+          <PriceWrapper>
+            <TextH5B color={theme.brandColor} padding="0 4px 0 0">
+              {discount}%
+            </TextH5B>
+            <TextH5B>{discountedPrice}원</TextH5B>
+          </PriceWrapper>
+        )}
         <DesWrapper>
           <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
         </DesWrapper>

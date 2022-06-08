@@ -7,27 +7,28 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { IMenus } from '@model/index';
 
-const SingleMenu = ({ title }: any) => {
-  const {
-    data = [],
-    error: menuError,
-    isLoading,
-  } = useQuery<IMenus[]>(
-    'getMenus',
-    async () => {
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SALAD' };
-      const { data } = await getMenusApi(params);
-      return data.data;
-    },
+const SingleMenu = ({ menuList, title }: any) => {
+  // const {
+  //   data = [],
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery<IMenus[]>(
+  //   'getMenus',
+  //   async () => {
+  //     const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SALAD' };
+  //     const { data } = await getMenusApi(params);
+  //     return data.data;
+  //   },
 
-    {
-      onSuccess: () => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
-  );
+  //   {
+  //     onSuccess: () => {},
+  //     enabled: !!title,
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
 
-  if (data.length < 0) {
+  if (menuList.length < 0) {
     return <div>로딩중</div>;
   }
 
@@ -35,7 +36,7 @@ const SingleMenu = ({ title }: any) => {
     <Container>
       <TextH3B padding="0 0 17px 0">{title || '전체'}</TextH3B>
       <FlexWrapWrapper>
-        {data?.map((item: any, index: number) => {
+        {menuList?.map((item: any, index: number) => {
           return <Item item={item} key={index} />;
         })}
       </FlexWrapWrapper>
