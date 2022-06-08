@@ -76,7 +76,7 @@ const SpotStatusPage = () => {
   };
 
   const goToSpotRegister = () => {
-    router.push('/spot/regi-list');
+    router.push('/spot/join');
   };
 
   const goToSpotMain = () => {

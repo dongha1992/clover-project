@@ -5,7 +5,13 @@ import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { INIT_SPOT_LOCATION, INIT_SPOT_REGISTRATIONS_OPTIONS, SET_SPOT_REGISTRATIONS_INFO, ISpotsRegistrationInfo } from '@store/spot';
+import { 
+  INIT_SPOT_LOCATION, 
+  INIT_SPOT_REGISTRATIONS_OPTIONS, 
+  SET_SPOT_REGISTRATIONS_INFO, 
+  ISpotsRegistrationInfo,
+  INIT_SPOT_JOIN_FORM_CHECKED,
+} from '@store/spot';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
@@ -13,8 +19,9 @@ import { ISpotsInfo } from '@model/index';
 import { getSpotInfo } from '@api/spot';
 
 const SpotReqPage = () => {
-  const { me, isLoginSuccess } = useSelector(userForm);
   const router = useRouter();
+  const { join } = router.query;
+  const { me, isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
@@ -45,7 +52,8 @@ const SpotReqPage = () => {
   };
   const goToRegister = () => {
     if (isLoginSuccess) {
-      if((type === 'OWNER' && !info?.canOwnerSpotRegistraion) || (type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion)){
+      // join 링크등 다른 경로로 들어온 경우 ture
+      if(join &&((type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion) || (type === 'OWNER' && !info?.canOwnerSpotRegistraion))){
        return (
         dispatch(
           SET_ALERT({
@@ -63,8 +71,9 @@ const SpotReqPage = () => {
       dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
       dispatch(INIT_SPOT_LOCATION());
       dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
+      dispatch(INIT_SPOT_JOIN_FORM_CHECKED());
       router.push({
-        pathname: '/spot/register',
+        pathname: '/spot/join/main/form',
         query: { type },
       });  
     } else {

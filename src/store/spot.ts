@@ -61,6 +61,7 @@ interface IProps {
   spotPickupId: number | null;
   spotInfo: ISpotsInfo | null;
   spotSearchSort: string;
+  spotJoinFormChecked: boolean;
 };
 
 const spotsSearchResultFilteredState = {
@@ -126,6 +127,7 @@ const initialState: IProps = {
   spotInfo: null,
   spotSearchSelectedFilters: [],
   spotSearchSort: '',
+  spotJoinFormChecked: false,
 };
 
 export const spot = createSlice({
@@ -194,6 +196,12 @@ export const spot = createSlice({
     INIT_SPOT_SEARCH_SORT : (state, action: PayloadAction) => {
       state.spotSearchSort = '';
     },
+    SET_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction<boolean>) => {
+      state.spotJoinFormChecked = action.payload;
+    },
+    INIT_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction) => {
+      state.spotJoinFormChecked = false;
+    },
   },
 });
 
@@ -218,6 +226,8 @@ export const {
   INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
   INIT_SPOT_SEARCH_SORT,
+  SET_SPOT_JOIN_FORM_CHECKED,
+  INIT_SPOT_JOIN_FORM_CHECKED,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

@@ -16,7 +16,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const dispatch = useDispatch();
 
   const goBack = (): void => {
-    if (router.pathname === '/spot/register') {
+    if (router.pathname === '/spot/join/main/form') {
       dispatch(
         SET_ALERT({
           alertMessage: `입력한 내용은 저장되지 않아요.\n신청을 취소하시겠어요?`,

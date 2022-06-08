@@ -46,7 +46,7 @@ const SubmitPage = () => {
       if (data.code === 200) {
         dispatch(SET_SPOT_REGISTRATIONS_POST_RESULT(data?.data));
         router.push({
-          pathname: '/spot/register/submit/finish',
+          pathname: '/spot/join/main/form/submit/finish',
           query: { type },
         });
       }
@@ -68,7 +68,7 @@ const SubmitPage = () => {
             <TextB2R>{`${spotLocation.address} ${spotLocation.bdNm} ${spotLocation.addressDetail}`}</TextB2R>
           </Content>
           <Content>
-            <TextH5B margin="0 0 8px 0">장소명</TextH5B>
+            <TextH5B margin="0 0 8px 0">{`${type === 'PRIVATE' ? '장소명' : '상호명'}`}</TextH5B>
             <TextB2R>{spotsRegistrationInfo.placeName}</TextB2R>
           </Content>
           {type === 'PRIVATE' && (
@@ -99,7 +99,9 @@ const SubmitPage = () => {
           )}
         </ContentWrapper>
       </Wrapper>
-      <Row />
+      {
+        (type === 'PRIVATE') ||(type === 'OWNER') && <Row />
+      }
       <Wrapper>
         {type !== 'PUBLIC' && (
           <>

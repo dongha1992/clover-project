@@ -46,7 +46,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
   };
 
   const goToSpotsRegistrations = () => {
-    router.push('/spot/regi-list');
+    router.push('/spot/join');
   };
 
   return (

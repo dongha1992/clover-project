@@ -10,10 +10,15 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { useSelector, useDispatch } from 'react-redux';
-import { spotSelector, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
+import { spotSelector, SET_SPOT_REGISTRATIONS_INFO, SET_SPOT_JOIN_FORM_CHECKED } from '@store/spot';
 
 const RegisterPage = () => {
-  const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
+  const { 
+    spotLocation, 
+    spotsRegistrationOptions, 
+    spotsRegistrationInfo,
+    spotJoinFormChecked,
+  } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
@@ -24,7 +29,7 @@ const RegisterPage = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const telRef = useRef<HTMLInputElement>(null);
   const managerRef = useRef<HTMLInputElement>(null);
-  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
+  const [noticeChecked, setNoticeChecked] = useState<boolean>(spotJoinFormChecked);
 
   const checkedPickup = !!pickUpRef.current?.value?.length;
   const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
@@ -46,27 +51,27 @@ const RegisterPage = () => {
     switch (type) {
       case 'PRIVATE':
         return (
-          checkedAddressInfo &&
+          (checkedAddressInfo &&
           checkedPickup &&
           checkedLunchType &&
           checkedPlaceType &&
           checkedPlaceTypeEtc() &&
           checkedUserInfo &&
-          noticeChecked
+          noticeChecked) || spotJoinFormChecked
         );
       case 'PUBLIC':
         return (
-          checkedAddressInfo && 
+          (checkedAddressInfo && 
           checkedPlaceType && 
-          checkedPlaceTypeEtc()
+          checkedPlaceTypeEtc()) || spotJoinFormChecked
         );
       case 'OWNER':
         return (
-          checkedAddressInfo && 
+          (checkedAddressInfo && 
           checkedPlaceType && 
           checkedPlaceTypeEtc() && 
           checkedUserInfo && 
-          noticeChecked
+          noticeChecked) || spotJoinFormChecked
         );
       default:
         return false;
@@ -80,9 +85,10 @@ const RegisterPage = () => {
       }
       return;
     }
+    dispatch(SET_SPOT_JOIN_FORM_CHECKED(true));
     router.push({
-      pathname: '/spot/register/submit',
-      query: { type },
+      pathname: '/spot/join/main/form/submit',
+      query: { type, checked: true },
     });
   };
 
@@ -319,7 +325,7 @@ const RegisterPage = () => {
             </Wrapper>
             <FlexRow padding="0 0 64px 0">
               <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
-              <TextB2R margin="0 0 0 8px" padding="3px 0 0 0">
+              <TextB2R margin="0 0 0 8px" padding="3px 0 0 0" onClick={noticeHandler}>
                 신청자가 장소관리자임을 확인했습니다.
               </TextB2R>
             </FlexRow>
@@ -330,7 +336,7 @@ const RegisterPage = () => {
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
-            <TextH5B margin="0 0 0 8px" padding="3px 0 0 0">
+            <TextH5B margin="0 0 0 8px" padding="3px 0 0 0" onClick={noticeHandler}>
               픽업 장소 선정 유의사항을 확인했습니다.
             </TextH5B>
           </FlexRow>
