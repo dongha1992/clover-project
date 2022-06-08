@@ -105,7 +105,7 @@ const Item = ({ item, isQuick }: TProps) => {
 
   const goToReopen = (e: any) => {
     e.stopPropagation();
-    dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet /> }));
+    dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
   };
 
   return (

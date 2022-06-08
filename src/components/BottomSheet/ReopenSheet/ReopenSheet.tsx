@@ -18,22 +18,28 @@ import { commonSelector } from '@store/common';
 import { PHONE_REGX } from '@pages/signup/auth';
 import Validation from '@components/Pages/User/Validation';
 import Checkbox from '@components/Shared/Checkbox';
+import { useToast } from '@hooks/useToast';
 
 const LIMIT = 240;
 const FIVE_MINUTE = 300;
 
-const ReopenSheet = () => {
+interface IProps {
+  menuId: number;
+}
+
+const ReopenSheet = ({ menuId }: IProps) => {
   const dispatch = useDispatch();
+
+  let authTimerRef = useRef(300);
+  const authCodeNumberRef = useRef<HTMLInputElement>(null);
+  const { me } = useSelector(userForm);
+  const { isMobile } = useSelector(commonSelector);
+
+  const { showToast } = useToast();
 
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
-
   const [phoneValidation, setPhoneValidation] = useState(false);
-  let authTimerRef = useRef(300);
-  const authCodeNumberRef = useRef<HTMLInputElement>(null);
-
-  const { me } = useSelector(userForm);
-  const { isMobile } = useSelector(commonSelector);
   const [userTel, setUserTel] = useState<string>('');
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [delay, setDelay] = useState<number | null>(null);
@@ -48,33 +54,33 @@ const ReopenSheet = () => {
   const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
       const reqBody = {
-        menuId: 1,
+        menuId,
         tel: userTel,
-        type: 'string',
+        type: 'REOPEN',
       };
 
       const { data } = await postNotificationApi({ data: reqBody });
-
-      if (data.code === 200) {
-        return dispatch(
-          SET_ALERT({
-            alertMessage: '등록을 완료했어요!',
-            submitBtnText: '확인',
-          })
-        );
-      }
     },
     {
-      onSuccess: async (data) => {},
+      onSuccess: async (data) => {
+        showToast({ message: '알림 신청을 완료했어요!' });
+        dispatch(INIT_BOTTOM_SHEET());
+      },
       onError: async (error: any) => {
-        if (error.code === 2202) {
+        if (error.code === 1000) {
           return dispatch(
             SET_ALERT({
-              alertMessage: '이미 등록된 프로모션 코드예요.',
+              alertMessage: '알 수 없는 에러가 발생했습니다.',
               submitBtnText: '확인',
             })
           );
         } else {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: error.message,
+              submitBtnText: '확인',
+            })
+          );
         }
       },
     }
@@ -202,7 +208,9 @@ const ReopenSheet = () => {
     }
   };
 
-  const checkMarketingTermHandler = () => {};
+  const checkMarketingTermHandler = () => {
+    setIsMarketinngChecked(!isMarketinngChecked);
+  };
 
   const goToNoti = () => {
     if (!isMarketinngChecked) return;
@@ -303,11 +311,13 @@ const ReopenSheet = () => {
         </TextB3R>
         <FlexRow margin="17px 0 0 0">
           <Checkbox onChange={checkMarketingTermHandler} isSelected={isMarketinngChecked} />
-          <TextB2R>[선택] 마케팅 정보 수신에 동의합니다.</TextB2R>
+          <TextB2R padding="2px 0 0 8px">[필수] 마케팅 정보 수신에 동의합니다.</TextB2R>
         </FlexRow>
       </Body>
       <BtnWrapper onClick={goToNoti}>
-        <Button height="100%">확인</Button>
+        <Button height="100%" borderRadius="0" disabled={!isMarketinngChecked}>
+          확인
+        </Button>
       </BtnWrapper>
     </Container>
   );
@@ -319,7 +329,7 @@ const Container = styled.div<{ isMobile: boolean }>`
   ${({ isMobile }) => {
     if (isMobile) {
       return css`
-        height: 100%;
+        height: 80vh;
       `;
     } else {
       return css`
