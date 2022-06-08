@@ -1321,23 +1321,23 @@ const svgMap: TSvg = {
       <path
         d="M24.5071 15.0148L23.4763 15.0127C21.1251 15.007 19.084 16.9429 19.0678 19.2877V21.9881C19.0678 22.551 18.9975 23.1003 18.6945 23.5684L18.4927 23.8805C18.1854 24.3536 18.5159 24.9877 19.0678 24.9877H28.9325C29.4844 24.9877 29.8142 24.3536 29.5076 23.8805L29.3058 23.5684C29.0035 23.1003 28.9325 22.5502 28.9325 21.9874V19.2884C28.9044 16.9429 26.8583 15.0205 24.5071 15.0148V15.0148Z"
         stroke="#242424"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M26.1093 24.9873C26.1093 25.5542 25.8871 26.0979 25.4915 26.4987C25.0959 26.8996 24.5594 27.1248 24 27.1248C23.4405 27.1248 22.904 26.8996 22.5084 26.4987C22.1129 26.0979 21.8906 25.5542 21.8906 24.9873"
         stroke="#242424"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M24 12.875C24.3729 12.875 24.7306 13.0251 24.9943 13.2924C25.258 13.5596 25.4062 13.9221 25.4062 14.3V15.0125H22.5938V14.3C22.5938 13.9221 22.7419 13.5596 23.0056 13.2924C23.2693 13.0251 23.627 12.875 24 12.875Z"
         stroke="#242424"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <defs>
         <filter
@@ -1347,9 +1347,9 @@ const svgMap: TSvg = {
           width="48"
           height="48"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
