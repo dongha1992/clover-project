@@ -25,7 +25,7 @@ interface IProps {
   setPickupDay?: (value: any[]) => void;
   setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
   menuChangeDate?: any[] | null;
-  calendarType?: string;
+  calendarType?: string | 'deliverySetting' | 'deliveryChange';
   subsPeriod?: string;
   menuId?: number;
   destinationId?: number;
@@ -66,13 +66,9 @@ const SubsCalendar = ({
   }, []);
 
   useEffect(() => {
-    console.log('maxDate', dayjs(maxDate).format('YYYY-MM-DD'));
-  }, [maxDate]);
-
-  useEffect(() => {
     if (subsDeliveryExpectedDate) {
       // 선택한 날짜가 이미 있다면 선택한 날짜로 캘린더 선택
-      if (subsCalendarSelectMenu) {
+      if (calendarType !== 'deliverySetting' && subsCalendarSelectMenu) {
         setValue(new Date(subsCalendarSelectMenu.deliveryDate));
       } else {
         setValue(new Date(subsDeliveryExpectedDate[0].deliveryDate));
@@ -235,6 +231,7 @@ const SubsCalendar = ({
         }
         // 픽업 요일
         setPickupDay && setPickupDay(Array.from(pickupDayObj));
+        console.log('subsCalendar', data[0]);
 
         dispatch(SET_SUBS_CALENDAR_SELECT_MENU(data[0]));
         dispatch(SET_SUBS_ORDER_MENUS(data));
