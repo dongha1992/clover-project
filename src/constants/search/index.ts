@@ -1,5 +1,5 @@
 export const CATEGORY = [
-  { text: '전체', link: '/category', value: 'all' },
+  { text: '전체', link: '/category/all', value: 'all' },
   { text: '샐러드', link: '/category/salad', value: 'salad' },
   { text: '랩·샌드위치', link: '/category/wrap', value: 'wrap' },
   { text: '도시락·간편식', link: '/category/meal', value: 'meal' },
