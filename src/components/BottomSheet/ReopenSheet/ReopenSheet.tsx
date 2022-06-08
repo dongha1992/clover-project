@@ -11,11 +11,13 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { userAuthTel, userConfirmTel } from '@api/user';
+import { postNotificationApi } from '@api/menu';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { commonSelector } from '@store/common';
 import { PHONE_REGX } from '@pages/signup/auth';
 import Validation from '@components/Pages/User/Validation';
+import Checkbox from '@components/Shared/Checkbox';
 
 const LIMIT = 240;
 const FIVE_MINUTE = 300;
@@ -39,26 +41,27 @@ const ReopenSheet = () => {
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
+  const [isMarketinngChecked, setIsMarketinngChecked] = useState<boolean>(false);
 
   const router = useRouter();
-  const { mutateAsync: mutatePostPromotionCode } = useMutation(
+
+  const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
-      if (codeRef.current) {
-        const reqBody = {
-          code: codeRef?.current?.value,
-          reward: null,
-        };
+      const reqBody = {
+        menuId: 1,
+        tel: userTel,
+        type: 'string',
+      };
 
-        const { data } = await postPromotionCodeApi(reqBody);
+      const { data } = await postNotificationApi({ data: reqBody });
 
-        if (data.code === 200) {
-          return dispatch(
-            SET_ALERT({
-              alertMessage: '등록을 완료했어요!',
-              submitBtnText: '확인',
-            })
-          );
-        }
+      if (data.code === 200) {
+        return dispatch(
+          SET_ALERT({
+            alertMessage: '등록을 완료했어요!',
+            submitBtnText: '확인',
+          })
+        );
       }
     },
     {
@@ -199,9 +202,27 @@ const ReopenSheet = () => {
     }
   };
 
+  const checkMarketingTermHandler = () => {};
+
+  const goToNoti = () => {
+    if (!isMarketinngChecked) return;
+    mutatePostNoti();
+  };
+
   useEffect(() => {
-    setUserTel(me?.tel);
-  }, []);
+    setUserTel(me?.tel!);
+  }, [me]);
+
+  useEffect(() => {
+    if (authTimerRef.current < 0) {
+      setDelay(null);
+      setIsOverTime(true);
+    }
+    // 1분 지나면 인증 요청 다시 활성
+    if (authTimerRef.current < LIMIT) {
+      setOneMinuteDisabled(false);
+    }
+  }, [second]);
 
   return (
     <Container isMobile={isMobile}>
@@ -217,11 +238,11 @@ const ReopenSheet = () => {
         </div>
       </Header>
       <Body>
-        <FlexCol>
+        <FlexCol margin="24px 0 56px 0">
           <TextH2B>오픈 알림을</TextH2B>
           <TextH2B>신청하시겠어요?</TextH2B>
         </FlexCol>
-        <FlexCol padding="0 0 24px 0">
+        <FlexCol padding="0 0 32px 0">
           <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
           <FlexRow>
             <TextInput
@@ -276,9 +297,17 @@ const ReopenSheet = () => {
           </PhoneValidCheck>
           {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
         </FlexCol>
+        <TextB3R color={theme.greyScale65}>
+          알림 신청 시 인증된 번호는 회원정보에도 업데이트 됩니다. '확인'을 누르시면 마케팅 및 광고 문자, 알림톡 수신을
+          위한 개인정보 제공에 동의하신 것으로 간주되니 참고해주세요.
+        </TextB3R>
+        <FlexRow margin="17px 0 0 0">
+          <Checkbox onChange={checkMarketingTermHandler} isSelected={isMarketinngChecked} />
+          <TextB2R>[선택] 마케팅 정보 수신에 동의합니다.</TextB2R>
+        </FlexRow>
       </Body>
-      <BtnWrapper onClick={() => router.push('/event')}>
-        <Button height="100%">신규회원 혜택받기</Button>
+      <BtnWrapper onClick={goToNoti}>
+        <Button height="100%">확인</Button>
       </BtnWrapper>
     </Container>
   );
@@ -286,7 +315,7 @@ const ReopenSheet = () => {
 
 const Container = styled.div<{ isMobile: boolean }>`
   ${homePadding};
-
+  padding-top: 24px;
   ${({ isMobile }) => {
     if (isMobile) {
       return css`
