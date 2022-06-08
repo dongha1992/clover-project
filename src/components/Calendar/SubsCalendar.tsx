@@ -32,7 +32,7 @@ interface IProps {
 }
 
 const SubsCalendar = ({
-  subsActiveDates, // 구독캘린더 active 날짜리스트
+  subsActiveDates, // 구독캘린더 active 날짜리스트(getSubscriptionApi로 가져온 선택가능한 날짜)
   disabledDate = [], // 구독캘린더 inactive 날짜리스트
   deliveryComplete = [], // 배송완료 or 주문취소
   deliveryExpectedDate = [], // 배송예정일
@@ -79,7 +79,7 @@ const SubsCalendar = ({
       }
 
       if (
-        Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <
+        Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <=
         Number(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate.replaceAll('-', ''))
       ) {
         setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate));
@@ -207,8 +207,6 @@ const SubsCalendar = ({
       const params = {
         id: menuId!,
         destinationId: destinationId!,
-        // id: 434,
-        // destinationId: 252,
         subscriptionPeriod: subsPeriod!,
         deliveryStartDate: date,
       };
@@ -230,7 +228,7 @@ const SubsCalendar = ({
         setDeliveryExpectedDate && setDeliveryExpectedDate(dates);
 
         if (
-          Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <
+          Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <=
           Number(dates[dates.length - 1].deliveryDate.replaceAll('-', ''))
         ) {
           setMaxDate(new Date(dates[dates.length - 1].deliveryDate));
