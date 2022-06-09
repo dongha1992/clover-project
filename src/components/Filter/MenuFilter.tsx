@@ -6,6 +6,11 @@ import styled from 'styled-components';
 import { MUTILPLE_CHECKBOX_MENU, RADIO_CHECKBOX_MENU } from '@constants/filter';
 import { theme, bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
+import { Obj } from '@model/index';
+import { SET_CATEGOYR_FILTER } from '@store/menu';
+import { useDispatch } from 'react-redux';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+
 /* 
 
 DefaultFilter : 다중 선택 필터
@@ -18,11 +23,10 @@ OrderFilter: 단일 선택 필터
 const MenuFilter = () => {
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
   const [selectedRadioId, setSelectedRadioId] = useState<string>('');
-  const [isCheckedAll, setIsCheckedAll] = useState(false);
+
+  const dispatch = useDispatch();
 
   const checkboxHandler = (name: string) => {
-    /* TODO filter 왜 그래.. */
-    /* TODO 로직 넘 복잡 */
     const findItem = selectedCheckboxIds.find((_name) => _name === name);
     const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
 
@@ -48,8 +52,21 @@ const MenuFilter = () => {
     setSelectedRadioId(value);
   };
 
-  const changeToggleHandler = () => {};
-  const submitHandler = () => {};
+  const submitHandler = () => {
+    const menufilterMap: Obj = {
+      전체: '',
+      비건: 'VEGAN',
+      해산물: 'SEAFOOD',
+      육류: 'MEAT',
+      유제품: 'DAIRY_PRODUCTS',
+    };
+    const getValueByMultipleFilter = selectedCheckboxIds.map((item) => {
+      return menufilterMap[item];
+    });
+
+    dispatch(SET_CATEGOYR_FILTER({ filter: getValueByMultipleFilter, order: selectedRadioId }));
+    dispatch(INIT_BOTTOM_SHEET());
+  };
 
   return (
     <Container>

@@ -121,20 +121,24 @@ const Item = ({ item, isQuick }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {isItemSold && !item.isReopen && (
+        {isItemSold && item.isReopen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {/* {isItemSold && !item.isReopen ? (
+        {isItemSold && item.isReopen ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
         ) : (
-          <CartBtn onClick={goToCartSheet}>
-            <SVGIcon name="cartBtn" />
-          </CartBtn>
-        )} */}
+          <>
+            {!isItemSold && (
+              <CartBtn onClick={goToCartSheet}>
+                <SVGIcon name="cartBtn" />
+              </CartBtn>
+            )}
+          </>
+        )}
         {badgeRenderer()}
       </ImageWrapper>
       <FlexCol>
@@ -143,7 +147,7 @@ const Item = ({ item, isQuick }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        {isItemSold && item.isReopen && (
+        {!isItemSold && !item.isReopen && (
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%
