@@ -9,7 +9,9 @@ export const useSubsStatusMsg = (item: any) => {
         setMsg('결제 전 다음 회차 구독 식단을 확인해 주세요.');
         break;
       case 'CANCELED':
-        setMsg(`${getFormatDate(item.lastDeliveryDate)} 정기구독이 해지될 예정이에요.`);
+        if (item?.isSubscribing === false) {
+          setMsg(`${getFormatDate(item.lastDeliveryDate)} 정기구독이 해지될 예정이에요.`);
+        }
         break;
       default:
         break;

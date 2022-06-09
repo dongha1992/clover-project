@@ -50,7 +50,7 @@ export const periodMapper: Obj = {
 };
 
 export const SUBSCRIPTION_STATUS: Obj = {
-  RESERVED: '배송예정',
+  RESERVED: '주문완료',
   PREPARING: '상품준비 중',
   DELIVERING: '배송 중',
   COMPLETED: '배송완료',

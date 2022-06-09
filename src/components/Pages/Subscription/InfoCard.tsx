@@ -30,7 +30,6 @@ const InfoCard = () => {
           return item;
         })
         .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
-      console.log('filterData', filterData);
 
       return filterData;
     },
