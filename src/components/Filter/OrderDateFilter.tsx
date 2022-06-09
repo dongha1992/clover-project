@@ -22,7 +22,6 @@ const OrderDateFilter = ({ handler }: IProps) => {
   };
 
   const changeWithInDays = () => {
-    // dispatch(SET_ORDER_LIST_FILTER(selectedRadioValue));
     handler(selectedRadioValue);
     dispatch(INIT_BOTTOM_SHEET());
   };

@@ -264,4 +264,4 @@ const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default React.memo(Item);
+export default Item;
