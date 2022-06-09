@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { SingleMenu } from '@components/Pages/Category';
 import { categoryPageSet } from '@styles/theme';
 import axios from 'axios';
-import { Obj } from '@model/index';
+import { Obj, IMenus } from '@model/index';
 import { CATEGORY } from '@constants/search';
 import { CATEGORY_TITLE_MAP } from '@constants/menu';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,63 +13,63 @@ import { getMenusApi } from '@api/menu';
 import { isNil } from 'lodash-es';
 import { useRouter } from 'next/router';
 
-const CategoryPage = () => {
-  const [menus, setMenus] = useState();
+const categoryTypeMap: Obj = {
+  meal: 'CONVENIENCE_FOOD',
+  drink: 'DRINK',
+  soup: 'KOREAN_SOUP',
+  // meal: 'LUNCH_BOX',
+  salad: 'SALAD',
+  wrap: 'SANDWICH',
+  package: 'SET',
+  snack: 'SNACK',
+  // soup: 'SOUP',
+  subscription: 'SUBSCRIPTION',
+  // wrap: 'WRAP',
+};
+
+/* TODO: 로그인 체크 알림신청 */
+/* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
+
+interface IProps {
+  title: string;
+  type: string | string[];
+}
+
+const CategoryPage = ({ title, type }: IProps) => {
+  const [menus, setMenus] = useState<IMenus[]>();
   const router = useRouter();
-  const { category }: { category: string } = router.query;
+
   const dispatch = useDispatch();
   const {
     categoryFilters: { filter, order },
   } = useSelector(filterSelector);
 
-  const hasCategoryFilter = filter.length > 0 || order;
+  const isAll = type === 'all';
+  const types = typeof type === 'string' ? type : type.join(',');
 
-  const {
-    data,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getMenus', hasCategoryFilter],
-    async () => {
-      const categoryTypeMap: Obj = {
-        meal: 'CONVENIENCE_FOOD',
-        drink: 'DRINK',
-        soup: 'KOREAN_SOUP',
-        // meal: 'LUNCH_BOX',
-        salad: 'SALAD',
-        wrap: 'SANDWICH',
-        package: 'SET',
-        snack: 'SNACK',
-        // soup: 'SOUP',
-        subscription: 'SUBSCRIPTION',
-        // wrap: 'WRAP',
-      };
+  const getMenuList = async () => {
+    const params = {
+      categories: filter.join(','),
+      menuSort: order,
+      type: isAll ? '' : types,
+    };
+    const { data } = await getMenusApi(params);
+    reorderMenuList(data.data);
+  };
 
-      const isAll = category === 'all';
-      const types = categoryTypeMap[category] as string;
-
-      const params = {
-        categories: filter.join(','),
-        menuSort: order,
-        type: isAll ? '' : types,
-      };
-      const { data } = await getMenusApi(params);
-      return data.data;
-    },
-    {
-      onSuccess: () => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!category,
-    }
-  );
-
-  console.log(category, '2');
-  useEffect(() => {}, []);
+  const reorderMenuList = (menuList: IMenus[]) => {
+    const reordered = menuList.sort((a: any, b: any) => {
+      return a.isSold - b.isSold;
+    });
+    setMenus(reordered);
+  };
+  useEffect(() => {
+    getMenuList();
+  }, [type, filter, order]);
 
   return (
     <Container>
-      <SingleMenu menuList={menus} title={1} />
+      <SingleMenu menuList={menus || []} title={CATEGORY_TITLE_MAP[title as string]} />
     </Container>
   );
 };
@@ -78,45 +78,35 @@ const Container = styled.div`
   ${categoryPageSet}
 `;
 
-// export async function getStaticPaths() {
-//   const paths = CATEGORY.map((menu: any) => ({
-//     params: { category: menu.value },
-//   }));
+export async function getStaticPaths() {
+  const paths = CATEGORY.map((menu: any) => ({
+    params: { category: menu.value },
+  }));
 
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// }
+  return {
+    paths,
+    fallback: false,
+  };
+}
 
-// export async function getStaticProps({ params }: { params: { category: string } }) {
-//   const categoryTypeMap: Obj = {
-//     meal: 'CONVENIENCE_FOOD',
-//     drink: 'DRINK',
-//     soup: 'KOREAN_SOUP',
-//     // meal: 'LUNCH_BOX',
-//     salad: 'SALAD',
-//     wrap: 'SANDWICH',
-//     package: 'SET',
-//     snack: 'SNACK',
-//     // soup: 'SOUP',
-//     subscription: 'SUBSCRIPTION',
-//     // wrap: 'WRAP',
-//   };
+export async function getStaticProps({ params }: { params: { category: string } }) {
+  const categoryTypeMap: Obj = {
+    meal: ['CONVENIENCE_FOOD', 'LUNCH_BOX'],
+    drink: 'DRINK',
+    soup: ['KOREAN_SOUP', 'SOUP'],
+    salad: 'SALAD',
+    wrap: ['SANDWICH', 'WRAP'],
+    package: 'SET',
+    snack: 'SNACK',
+    subscription: 'SUBSCRIPTION',
+  };
 
-//   const isAll = params.category === 'all';
-//   const types = categoryTypeMap[params.category];
-//   const query = {
-//     menuSort: 'ORDER_COUNT_DESC',
-//     type: isAll ? '' : types,
-//   };
+  const types = categoryTypeMap[params.category];
 
-//   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params: query });
-
-//   return {
-//     props: { menuList: data.data, title: params.category, type: types ? types : null },
-//     revalidate: 100,
-//   };
-// }
+  return {
+    props: { title: params.category, type: types ? types : null },
+    revalidate: 100,
+  };
+}
 
 export default CategoryPage;

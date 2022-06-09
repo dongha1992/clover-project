@@ -20,9 +20,9 @@ const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
     menuDetails,
     map((item: any) => {
       return {
-        discount: Math.floor((item.discountPrice / item.price) * 100),
-        discountedPrice: item.price - item.discountPrice,
-        price: item.price,
+        discount: Math.floor((item.discountPrice / item.price) * 100) || 0,
+        discountedPrice: item.price - item.discountPrice || 0,
+        price: item.price || 0,
       };
     }),
     sortBy((item) => item.price),
