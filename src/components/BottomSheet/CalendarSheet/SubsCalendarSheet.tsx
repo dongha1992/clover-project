@@ -138,6 +138,7 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
         subsPeriod={userSelectPeriod}
         menuId={menuId!}
         destinationId={userDestination?.id}
+        calendarType="deliverySetting"
       />
       {subsDeliveryType === 'SPOT' && (
         <RadioWrapper>

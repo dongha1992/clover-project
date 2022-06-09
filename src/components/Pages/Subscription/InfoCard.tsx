@@ -2,6 +2,7 @@ import { getOrdersApi } from '@api/order';
 import { TextH2B } from '@components/Shared/Text';
 import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
+import { cloneDeep } from 'lodash-es';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -9,6 +10,7 @@ import styled from 'styled-components';
 
 const InfoCard = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
+  const [round, setRound] = useState();
   const {
     data: subsList,
     error: menuError,
@@ -27,22 +29,37 @@ const InfoCard = () => {
 
           return item;
         })
-        .filter((item: any) => item?.status !== 'COMPLETED');
+        .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
 
       return filterData;
     },
     {
+      onSuccess: (data) => {
+        // 구독의 시작이 가장 빠른 구독을 기준으로 round 표기
+        const arr: any = [...data].reverse();
+        for (let i = 0; i < arr.length; i++) {
+          if (
+            arr[i].status !== 'COMPLETED' &&
+            arr[i].status !== 'CANCELED' &&
+            arr[i].subscriptionPeriod === 'UNLIMITED'
+          ) {
+            setRound(arr[i].subscriptionRound);
+            break;
+          }
+        }
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       staleTime: 0,
       cacheTime: 0,
     }
   );
+  if (isLoading) return <div>로딩중</div>;
 
   return (
     <Container>
       {isLoginSuccess &&
-        (subsList?.length !== 0 ? (
+        (subsList?.length === 0 || !round ? (
           <TextH2B>
             <span>{me?.nickName}</span>님 <br />
             건강한 식단을 구독해 보세요!
@@ -50,7 +67,7 @@ const InfoCard = () => {
         ) : (
           <TextH2B>
             건강한 식단 <br />
-            136일째 진행 중 🥗
+            <span>{round}회</span> 구독 중이에요
           </TextH2B>
         ))}
       {isLoginSuccess === false && (

@@ -154,9 +154,9 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
-    return { discount, price, discountedPrice };
-    // return { discount: 0, price: 0, discountedPrice: 0 };
+    // const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
+    // return { discount, price, discountedPrice };
+    return { discount: 0, price: 0, discountedPrice: 0 };
   };
 
   useEffect(() => {

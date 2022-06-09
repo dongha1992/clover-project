@@ -55,6 +55,19 @@ export const subscription = createSlice({
       state.subsStartDate = null;
       state.subsOrderMenus = [];
       state.subsDeliveryExpectedDate = null;
+      state.subsCalendarSelectMenu = null;
+      state.subsInfo = {
+        deliveryType: null,
+        deliveryTime: null,
+        pickup: null,
+        period: null,
+        startDate: null,
+        deliveryDay: null,
+        menuId: null,
+        menuDetails: null,
+        menuImage: null,
+        datePeriod: null,
+      };
     },
   },
 });

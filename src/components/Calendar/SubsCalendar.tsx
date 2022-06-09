@@ -25,14 +25,14 @@ interface IProps {
   setPickupDay?: (value: any[]) => void;
   setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
   menuChangeDate?: any[] | null;
-  calendarType?: string;
+  calendarType?: string | 'deliverySetting' | 'deliveryChange';
   subsPeriod?: string;
   menuId?: number;
   destinationId?: number;
 }
 
 const SubsCalendar = ({
-  subsActiveDates, // 구독캘린더 active 날짜리스트
+  subsActiveDates, // 구독캘린더 active 날짜리스트(getSubscriptionApi로 가져온 선택가능한 날짜)
   disabledDate = [], // 구독캘린더 inactive 날짜리스트
   deliveryComplete = [], // 배송완료 or 주문취소
   deliveryExpectedDate = [], // 배송예정일
@@ -66,20 +66,16 @@ const SubsCalendar = ({
   }, []);
 
   useEffect(() => {
-    console.log('maxDate', dayjs(maxDate).format('YYYY-MM-DD'));
-  }, [maxDate]);
-
-  useEffect(() => {
     if (subsDeliveryExpectedDate) {
       // 선택한 날짜가 이미 있다면 선택한 날짜로 캘린더 선택
-      if (subsCalendarSelectMenu) {
+      if (calendarType !== 'deliverySetting' && subsCalendarSelectMenu) {
         setValue(new Date(subsCalendarSelectMenu.deliveryDate));
       } else {
         setValue(new Date(subsDeliveryExpectedDate[0].deliveryDate));
       }
 
       if (
-        Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <
+        Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <=
         Number(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate.replaceAll('-', ''))
       ) {
         setMaxDate(new Date(subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate));
@@ -207,8 +203,6 @@ const SubsCalendar = ({
       const params = {
         id: menuId!,
         destinationId: destinationId!,
-        // id: 434,
-        // destinationId: 252,
         subscriptionPeriod: subsPeriod!,
         deliveryStartDate: date,
       };
@@ -230,13 +224,14 @@ const SubsCalendar = ({
         setDeliveryExpectedDate && setDeliveryExpectedDate(dates);
 
         if (
-          Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <
+          Number(subsActiveDates[subsActiveDates.length - 1].deliveryDate.replaceAll('-', '')) <=
           Number(dates[dates.length - 1].deliveryDate.replaceAll('-', ''))
         ) {
           setMaxDate(new Date(dates[dates.length - 1].deliveryDate));
         }
         // 픽업 요일
         setPickupDay && setPickupDay(Array.from(pickupDayObj));
+        console.log('subsCalendar', data[0]);
 
         dispatch(SET_SUBS_CALENDAR_SELECT_MENU(data[0]));
         dispatch(SET_SUBS_ORDER_MENUS(data));
