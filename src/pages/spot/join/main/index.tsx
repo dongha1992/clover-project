@@ -50,42 +50,52 @@ const SpotReqPage = () => {
       }
     }
   };
-  const goToRegister = () => {
-    if (isLoginSuccess) {
-      // join 링크등 다른 경로로 들어온 경우 ture
-      if(join &&((type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion) || (type === 'OWNER' && !info?.canOwnerSpotRegistraion))){
-       return (
+
+  const handleRegisterForm = () => {
+    const spotsRegistrationInfoState: ISpotsRegistrationInfo = {
+      userName: me?.name!,
+      userEmail: me?.email!,
+      userTel: me?.tel!,
+    };
+    dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
+    dispatch(INIT_SPOT_LOCATION());
+    dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
+    dispatch(INIT_SPOT_JOIN_FORM_CHECKED());
+    router.push({
+      pathname: '/spot/join/main/form',
+      query: { type },
+    });  
+  };
+
+  const goToRegistration = () => {
+      if (isLoginSuccess) {
+        // join 링크등 다른 경로로 들어온 경우 ture
+        if (join) {
+          if((type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion) || (type === 'OWNER' && !info?.canOwnerSpotRegistraion)){
+            return (
+            dispatch(
+              SET_ALERT({
+                alertMessage: '이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.',
+                submitBtnText: '확인',
+              })
+            )
+            )  
+          } else {
+            handleRegisterForm();
+          }
+        } else {
+          handleRegisterForm();
+        }
+      } else {
         dispatch(
           SET_ALERT({
-            alertMessage: '이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.',
+            alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
             submitBtnText: '확인',
+            closeBtnText: '취소',
+            onSubmit: () => router.push('/onboarding'),
           })
-        )
-       )  
-      };
-      const spotsRegistrationInfoState: ISpotsRegistrationInfo = {
-        userName: me?.name!,
-        userEmail: me?.email!,
-        userTel: me?.tel!,
-      };
-      dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
-      dispatch(INIT_SPOT_LOCATION());
-      dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-      dispatch(INIT_SPOT_JOIN_FORM_CHECKED());
-      router.push({
-        pathname: '/spot/join/main/form',
-        query: { type },
-      });  
-    } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-          submitBtnText: '확인',
-          closeBtnText: '취소',
-          onSubmit: () => router.push('/onboarding'),
-        })
-      );
-    }
+        );
+      }
   };
 
   useEffect(() => {
@@ -123,7 +133,7 @@ const SpotReqPage = () => {
           </Button>
         </BtnWrapper>
       </BottomWrapper>
-      <FixedButton onClick={goToRegister}>
+      <FixedButton onClick={goToRegistration}>
         <Button borderRadius="0" padding="10px 0 0 0">
           {text.registerBtn}
         </Button>
