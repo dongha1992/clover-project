@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { theme, FlexRow, fixedBottom } from '@styles/theme';
-import { TextH1B, TextH4B, TextB3R, TextH5B, TextB2R } from '@components/Shared/Text';
+import { TextH2B, TextH4B, TextB3R, TextH5B, TextB2R } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import Checkbox from '@components/Shared/Checkbox';
@@ -10,10 +10,15 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OptionsSheet } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { useSelector, useDispatch } from 'react-redux';
-import { spotSelector, SET_SPOT_REGISTRATIONS_INFO } from '@store/spot';
+import { spotSelector, SET_SPOT_REGISTRATIONS_INFO, SET_SPOT_JOIN_FORM_CHECKED } from '@store/spot';
 
 const RegisterPage = () => {
-  const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
+  const { 
+    spotLocation, 
+    spotsRegistrationOptions, 
+    spotsRegistrationInfo,
+    spotJoinFormChecked,
+  } = useSelector(spotSelector);
   const router = useRouter();
   const dispatch = useDispatch();
   const { type } = router.query;
@@ -24,7 +29,7 @@ const RegisterPage = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const telRef = useRef<HTMLInputElement>(null);
   const managerRef = useRef<HTMLInputElement>(null);
-  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
+  const [noticeChecked, setNoticeChecked] = useState<boolean>(spotJoinFormChecked);
 
   const checkedPickup = !!pickUpRef.current?.value?.length;
   const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
@@ -34,22 +39,40 @@ const RegisterPage = () => {
     !!spotsRegistrationInfo?.userName?.length &&
     !!spotsRegistrationInfo.userEmail?.length &&
     !!spotsRegistrationInfo.userTel?.length;
+  const checkedPlaceTypeEtc = () => {
+    if(spotsRegistrationOptions.placeTypeOptions?.value === 'ETC'){
+      return placeEtcRef.current?.value?.length! > 0;
+    } else {
+      return true;
+    }
+  };
 
   const activeButton = () => {
     switch (type) {
       case 'PRIVATE':
         return (
-          checkedAddressInfo &&
+          (checkedAddressInfo &&
           checkedPickup &&
           checkedLunchType &&
           checkedPlaceType &&
+          checkedPlaceTypeEtc() &&
           checkedUserInfo &&
-          noticeChecked
+          noticeChecked) || spotJoinFormChecked
         );
       case 'PUBLIC':
-        return checkedAddressInfo && checkedPlaceType;
+        return (
+          (checkedAddressInfo && 
+          checkedPlaceType && 
+          checkedPlaceTypeEtc()) || spotJoinFormChecked
+        );
       case 'OWNER':
-        return checkedAddressInfo && checkedPlaceType && checkedUserInfo && noticeChecked;
+        return (
+          (checkedAddressInfo && 
+          checkedPlaceType && 
+          checkedPlaceTypeEtc() && 
+          checkedUserInfo && 
+          noticeChecked) || spotJoinFormChecked
+        );
       default:
         return false;
     }
@@ -62,9 +85,10 @@ const RegisterPage = () => {
       }
       return;
     }
+    dispatch(SET_SPOT_JOIN_FORM_CHECKED(true));
     router.push({
-      pathname: '/spot/register/submit',
-      query: { type },
+      pathname: '/spot/join/main/form/submit',
+      query: { type, checked: true },
     });
   };
 
@@ -166,14 +190,12 @@ const RegisterPage = () => {
 
   return (
     <Container>
-      <TextH1B margin="24px 24px 56px 24px">
-        신청하실 장소가
-        <br />
-        어디신가요?
-      </TextH1B>
+      <TextH2B padding='24px 24px 48px 24px'>
+        {'신청서 내용을\n입력해 주세요.'}
+      </TextH2B>
       <FormWrapper>
         <Wrapper>
-          <TextH4B margin="0 0 16px 0">주소</TextH4B>
+          <TextH5B margin="0 0 16px 0">주소</TextH5B>
           <LocationWrapper onClick={goToLocation}>
             {!spotLocation.address?.length ? (
               <TextH4B center color={theme.black}>
@@ -188,7 +210,7 @@ const RegisterPage = () => {
           </LocationWrapper>
         </Wrapper>
         <Wrapper>
-          <TextH4B margin="0 0 16px 0">{`${type === 'PRIVATE' ? '장소명' : '상호명'}`}</TextH4B>
+          <TextH5B margin="0 0 16px 0">{`${type === 'PRIVATE' ? '장소명' : '상호명'}`}</TextH5B>
           <TextInput
             ref={placeRef}
             eventHandler={placeInputHandler}
@@ -198,7 +220,7 @@ const RegisterPage = () => {
         </Wrapper>
         {type === 'PRIVATE' && (
           <Wrapper>
-            <TextH4B margin="0 0 16px 0">픽업장소</TextH4B>
+            <TextH5B margin="0 0 16px 0">픽업 장소</TextH5B>
             <TextInput
               margin="8px 0 0 0"
               placeholder="ex. 8층 공용 냉장고, 2층 안내 데스크"
@@ -209,7 +231,7 @@ const RegisterPage = () => {
           </Wrapper>
         )}
         <Wrapper>
-          <TextH4B margin="0 0 16px 0">장소 종류</TextH4B>
+          <TextH5B margin="0 0 16px 0">장소 종류</TextH5B>
           <Button
             justifyContent="space-between"
             padding="12px 16px"
@@ -239,7 +261,7 @@ const RegisterPage = () => {
         </Wrapper>
         {type === 'PRIVATE' && (
           <Wrapper>
-            <TextH4B margin="0 0 16px 0">점심시간</TextH4B>
+            <TextH5B margin="0 0 16px 0">점심시간</TextH5B>
             <Button
               justifyContent="space-between"
               backgroundColor={theme.white}
@@ -262,7 +284,7 @@ const RegisterPage = () => {
         {(type === 'PRIVATE' || type === 'OWNER') && (
           <>
             <Wrapper>
-              <TextH4B margin="0 0 16px 0">이름</TextH4B>
+              <TextH5B margin="0 0 16px 0">이름</TextH5B>
               <TextInput
                 ref={nameRef}
                 eventHandler={userNameInputHandler}
@@ -271,7 +293,7 @@ const RegisterPage = () => {
               />
             </Wrapper>
             <Wrapper>
-              <TextH4B margin="0 0 16px 0">이메일</TextH4B>
+              <TextH5B margin="0 0 16px 0">이메일</TextH5B>
               <TextInput
                 ref={emailRef}
                 eventHandler={userEmailInputHandler}
@@ -280,7 +302,7 @@ const RegisterPage = () => {
               />
             </Wrapper>
             <Wrapper>
-              <TextH4B margin="0 0 16px 0">휴대폰 번호</TextH4B>
+              <TextH5B margin="0 0 16px 0">휴대폰 번호</TextH5B>
               <TextInput
                 ref={telRef}
                 eventHandler={userTelInputHandler}
@@ -293,7 +315,7 @@ const RegisterPage = () => {
         {type === 'OWNER' && (
           <>
             <Wrapper>
-              <TextH4B margin="0 0 16px 0">직급/호칭</TextH4B>
+              <TextH5B margin="0 0 16px 0">직급/호칭</TextH5B>
               <TextInput
                 ref={managerRef}
                 eventHandler={managerInfoInputHandler}
@@ -303,7 +325,7 @@ const RegisterPage = () => {
             </Wrapper>
             <FlexRow padding="0 0 64px 0">
               <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
-              <TextB2R margin="0 0 0 8px" padding="3px 0 0 0">
+              <TextB2R margin="0 0 0 8px" padding="3px 0 0 0" onClick={noticeHandler}>
                 신청자가 장소관리자임을 확인했습니다.
               </TextB2R>
             </FlexRow>
@@ -314,7 +336,7 @@ const RegisterPage = () => {
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
-            <TextH5B margin="0 0 0 8px" padding="3px 0 0 0">
+            <TextH5B margin="0 0 0 8px" padding="3px 0 0 0" onClick={noticeHandler}>
               픽업 장소 선정 유의사항을 확인했습니다.
             </TextH5B>
           </FlexRow>

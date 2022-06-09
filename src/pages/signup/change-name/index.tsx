@@ -54,7 +54,6 @@ const ChangeNamePage = () => {
     try {
       const { data } = await userChangeInfo(reqBody);
 
-      console.log(data, 'AFTER CHNAGE NAME');
       if (data.code === 200) {
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
       }

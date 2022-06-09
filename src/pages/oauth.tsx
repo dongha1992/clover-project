@@ -98,7 +98,6 @@ const Oauth = () => {
   };
 
   const initKakaoAuth = async () => {
-    console.log('work 105');
     try {
       const qs: Obj = {
         grant_type: 'authorization_code',
@@ -107,7 +106,6 @@ const Oauth = () => {
           location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
         code,
       };
-      console.log(qs, 'qs');
 
       const queryString = Object.keys(qs)
         .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(qs[k]))
