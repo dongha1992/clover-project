@@ -8,26 +8,6 @@ import { getMenusApi } from '@api/menu';
 import { IMenus } from '@model/index';
 
 const SingleMenu = ({ menuList, title }: any) => {
-  // const {
-  //   data = [],
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery<IMenus[]>(
-  //   'getMenus',
-  //   async () => {
-  //     const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SALAD' };
-  //     const { data } = await getMenusApi(params);
-  //     return data.data;
-  //   },
-
-  //   {
-  //     onSuccess: () => {},
-  //     enabled: !!title,
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
   if (menuList.length < 0) {
     return <div>로딩중</div>;
   }

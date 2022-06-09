@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH5B } from '@components/Shared/Text';
@@ -7,8 +7,9 @@ import { MUTILPLE_CHECKBOX_MENU, RADIO_CHECKBOX_MENU } from '@constants/filter';
 import { theme, bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
-import { SET_CATEGOYR_FILTER } from '@store/menu';
-import { useDispatch } from 'react-redux';
+import { menuSelector } from '@store/menu';
+import { filterSelector, SET_CATEGORY_FILTER } from '@store/filter';
+import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 /* 
@@ -25,6 +26,9 @@ const MenuFilter = () => {
   const [selectedRadioId, setSelectedRadioId] = useState<string>('');
 
   const dispatch = useDispatch();
+  const {
+    categoryFilters: { order, filter },
+  } = useSelector(filterSelector);
 
   const checkboxHandler = (name: string) => {
     const findItem = selectedCheckboxIds.find((_name) => _name === name);
@@ -52,6 +56,15 @@ const MenuFilter = () => {
     setSelectedRadioId(value);
   };
 
+  useEffect(() => {
+    const selectedCheckBox = MUTILPLE_CHECKBOX_MENU.filter((item) => filter.includes(item.value)).map(
+      (item) => item.name
+    );
+
+    setSelectedRadioId(order);
+    setSelectedCheckboxIds(selectedCheckBox);
+  }, [order, filter]);
+
   const submitHandler = () => {
     const menufilterMap: Obj = {
       전체: '',
@@ -64,7 +77,7 @@ const MenuFilter = () => {
       return menufilterMap[item];
     });
 
-    dispatch(SET_CATEGOYR_FILTER({ filter: getValueByMultipleFilter, order: selectedRadioId }));
+    dispatch(SET_CATEGORY_FILTER({ filter: getValueByMultipleFilter, order: selectedRadioId }));
     dispatch(INIT_BOTTOM_SHEET());
   };
 

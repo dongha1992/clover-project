@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
-import { CATEGROY_TITLE_MAP } from '@constants/menu';
+import { CATEGORY_TITLE_MAP } from '@constants/menu';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -33,7 +33,7 @@ const Header = () => {
       '/search': '검색',
       '/location': '내 위치 설정하기',
       '/location/address-detail': '내 위치 설정하기',
-      '/category/[category]': CATEGROY_TITLE_MAP[category?.toString()!],
+      '/category/[category]': CATEGORY_TITLE_MAP[category?.toString()!],
       '/menu/[menuId]/review/photo': '사진 후기',
       '/menu/[menuId]/review/total': '전체 후기',
       '/menu/[menuId]/review/[id]': '후기 상세',

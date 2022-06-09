@@ -216,7 +216,6 @@ const CartBtn = styled.div`
   border-radius: 50%;
   width: 32px;
   height: 32px;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 const ReopenBtn = styled.div`

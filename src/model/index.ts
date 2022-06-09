@@ -1562,8 +1562,14 @@ export interface IGetTossPaymentResponse {
 
 /* MENU */
 
-export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
-export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
+export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN' | string;
+export type TMenuSort =
+  | 'LAUNCHED_DESC'
+  | 'ORDER_COUNT_DESC'
+  | 'PRICE_ASC'
+  | 'PRICE_DESC'
+  | 'REVIEW_COUNT_DESC'
+  | string;
 export type TType =
   | 'DRINK'
   | 'KOREAN_SOUP_SOUP'
@@ -1571,9 +1577,10 @@ export type TType =
   | 'SALAD'
   | 'SET'
   | 'SNACK'
-  | 'WRAP_SANDWICH';
+  | 'WRAP_SANDWICH'
+  | string;
 export interface IGetMenus {
-  categories?: TCategory | string;
+  categories?: TCategory;
   menuSort: TMenuSort | string;
   searchKeyword?: string;
   type?: TType | string;
