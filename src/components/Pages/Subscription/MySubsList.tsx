@@ -26,7 +26,7 @@ const MySubsList = () => {
 
           return item;
         })
-        .filter((item: any) => item?.status !== 'COMPLETED');
+        .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
 
       return filterData;
     },
