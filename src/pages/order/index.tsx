@@ -828,7 +828,10 @@ const OrderPage = () => {
       dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
       return;
     }
-    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) return;
+    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) {
+      dispatch(SET_ALERT({ alertMessage: '정기구독 이용약관·주의사항 동의를 체크해주세요.' }));
+      return;
+    }
 
     if (previewOrder?.order.delivery === 'MORNING') {
       /* TODO: alert message 마크다운..? */
