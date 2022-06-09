@@ -6,7 +6,6 @@ import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import dynamic from 'next/dynamic';
-// import MenuFilter from '@components/Filter/MenuFilter';
 
 const MenuFilter = dynamic(() => import('@components/Filter/MenuFilter'));
 
