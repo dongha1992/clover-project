@@ -65,7 +65,7 @@ const AddressDetailPage = () => {
     } else {
       dispatch(SET_SPOT_LOCATION(spotAddress));
       router.replace({
-        pathname: '/spot/register',
+        pathname: '/spot/join/main/form',
         query: { type },
       });
     }

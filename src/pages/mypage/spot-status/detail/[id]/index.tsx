@@ -46,9 +46,9 @@ const PLAN_GUIDE = [
 ];
 
 const SpotStatusDetailPage = (): ReactElement => {
-  const routers = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { type, recruited } = routers.query;
+  const { join, recruited } = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
@@ -218,8 +218,8 @@ const SpotStatusDetailPage = (): ReactElement => {
       </ToggleWrapper>
       <Row10 />
       {
-        statusDetail?.type !== 'PUBLIC' &&
-          type !== 'attend' &&
+        statusDetail?.type !== 'PUBLIC' && !join &&
+        // join 링크등 다른 경로로 들어온 경우 ture
         <>
           <ToggleWrapper  onClick={toggleUserInfo}>
             <FlexBetween padding="24px">
