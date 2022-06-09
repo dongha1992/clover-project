@@ -139,10 +139,12 @@ const OrderPage = () => {
     receiverName: string;
     receiverTel: string;
     point: number;
+    deliveryMessage: string;
   }>({
     receiverName: '',
     receiverTel: '',
     point: 0,
+    deliveryMessage: '',
   });
   const [card, setCard] = useState<IGetCard>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
@@ -273,7 +275,7 @@ const OrderPage = () => {
     async () => {
       /*TODO: 모델 수정해야함 */
       /*TODO: 쿠폰 퍼센테이지 */
-      const { point, payAmount, ...rest } = previewOrder?.order!;
+      const { point, payAmount, deliveryMessage, ...rest } = previewOrder?.order!;
 
       dispatch(SET_IS_LOADING(true));
 
@@ -283,6 +285,8 @@ const OrderPage = () => {
         point: userInputObj?.point,
         payAmount: payAmount - (userInputObj.point + (selectedCoupon?.value! || 0)),
         couponId: selectedCoupon?.id || null,
+        deliveryMessage: userInputObj?.deliveryMessage,
+        deliveryMessageType: userAccessMethod?.value.toString(),
         ...rest,
       };
 
@@ -409,6 +413,8 @@ const OrderPage = () => {
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
+    console.log(name, value);
+    setUserInputObj({ ...userInputObj, [name]: value });
   };
 
   const useAllOfPointHandler = () => {
@@ -1162,6 +1168,7 @@ const OrderPage = () => {
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
+                name="deliveryMessage"
                 margin="8px 0 0 0"
                 placeholder={
                   ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
@@ -1207,7 +1214,12 @@ const OrderPage = () => {
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
-            <TextInput margin="24px 0 0 0" placeholder="요청사항 입력" eventHandler={changeInputHandler} />
+            <TextInput
+              name="deliveryMessage"
+              margin="24px 0 0 0"
+              placeholder="요청사항 입력"
+              eventHandler={changeInputHandler}
+            />
           </VisitorAccessMethodWrapper>
           <BorderLine height={8} />
         </>

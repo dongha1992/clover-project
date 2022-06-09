@@ -245,8 +245,7 @@ const SpotDetailBottom = () => {
             <BtnWrapper onClick={orderHandler}>
               <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
             </BtnWrapper>
-          </Wrapper>
-          {spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
+            {spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
             <TootipWrapper>
               <TimerTooltip
                 message={`${spotDetail?.discountRate}% 할인 중`}
@@ -256,6 +255,7 @@ const SpotDetailBottom = () => {
               />
             </TootipWrapper>
           )}
+          </Wrapper>
         </>
       )}
     </Container>
@@ -295,6 +295,7 @@ const Container = styled.section<{ isClosed?: boolean }>`
 `;
 
 const Wrapper = styled.div`
+  position: relative;
   padding: 16px 24px;
   display: flex;
   width: 100%;
@@ -302,8 +303,15 @@ const Wrapper = styled.div`
 
 const TootipWrapper = styled.article`
   position: absolute;
-  top: -18%;
-  right: 51%;
+  ${({ theme }) => theme.desktop`
+    top: -11px;
+    left: 47%;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    top: -11px;
+    left: 43%;
+  `};
 `;
 
 const LikeWrapper = styled.div`

@@ -12,6 +12,7 @@ import { SVGIcon } from '@utils/common';
 import { userChangePassword } from '@api/user';
 import router from 'next/router';
 import { INIT_TEMP_PASSWORD } from '@store/user';
+import { SET_ALERT } from '@store/alert';
 
 interface IVaildation {
   message: string;
@@ -101,9 +102,14 @@ const ChangePasswordPage = () => {
           isValid: false,
           message: '8~20자 이내 / 영문, 숫자, 특수문자 일부만 입력 가능해요',
         });
-      } else {
+      } else if (passwordLengthCheck) {
         setNewPasswordValidation({
           isValid: true,
+          message: '',
+        });
+      } else {
+        setNewPasswordValidation({
+          isValid: false,
           message: '',
         });
       }
@@ -170,11 +176,16 @@ const ChangePasswordPage = () => {
       try {
         const { data } = await userChangePassword(reqBody);
         if (data.code === 200) {
-          router.replace('/');
+          router.replace('/mypage/profile');
           dispatch(INIT_TEMP_PASSWORD());
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        if (error.code === 2109) {
+          dispatch(SET_ALERT({ alertMessage: '기존 비밀번호를 다시 입력해주세요.' }));
+        } else {
+          dispatch(SET_ALERT({ alertMessage: error.message }));
+        }
       }
     }
   };

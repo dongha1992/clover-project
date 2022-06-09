@@ -19,14 +19,13 @@ const OrderFilter = ({ data, changeHandler, selectedRadioValue, defaultData }: T
           data.map((item: any, index: number) => {
             // const isSelected =  defaultData ? defaultData === item.value : selectedRadioValue === item.value;
             const isSelected =  selectedRadioValue === item.value;
-
             return (
               <FlexRow key={index}>
                 <RadioButton isSelected={isSelected} onChange={() => changeHandler(item.value)} key={index} />
                 {isSelected ? (
-                  <TextH5B padding="0px 0 0 8px">{item.text}</TextH5B>
+                  <TextH5B padding="0px 0 0 8px" onClick={() => changeHandler(item.value)} pointer>{item.text}</TextH5B>
                 ) : (
-                  <TextB2R padding="0px 0 0 8px">{item.text}</TextB2R>
+                  <TextB2R padding="0px 0 0 8px" onClick={() => changeHandler(item.value)} pointer>{item.text}</TextB2R>
                 )}
               </FlexRow>
             );

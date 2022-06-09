@@ -570,7 +570,7 @@ export interface ISpotsDetail {
   userId: number;
   step: string;
   rejected: boolean;
-  [propsName:string]: any;
+  [propsName: string]: any;
 }
 
 export interface ISpotPickupInfo {
@@ -897,6 +897,7 @@ export interface IGetRegistrationStatus {
   trialUserCount?: number | undefined;
   trialCount?: number;
   canRetrial?: boolean;
+  userId?: number;
 }
 
 export interface IPostRegistrations {
@@ -1367,6 +1368,7 @@ export interface ICreateOrderPreview {
   receiverTel: string;
   delivery: string;
   deliveryDetail: string;
+  deliveryMessage?: string;
   location: ILocation;
   destinationId: number;
   menuAmount: number;
