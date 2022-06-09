@@ -26,7 +26,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
-import { couponForm } from '@store/coupon';
+import { couponForm, INIT_COUPON } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/order';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
@@ -122,6 +122,7 @@ export interface IAccessMethod {
 }
 
 const OrderPage = () => {
+  const dispatch = useDispatch();
   const { subsOrderMenus, subsInfo } = useSelector(subscriptionForm);
   const [showSectionObj, setShowSectionObj] = useState({
     showOrderItemSection: false,
@@ -155,7 +156,6 @@ const OrderPage = () => {
 
   const auth = getCookie({ name: 'refreshTokenObj' });
 
-  const dispatch = useDispatch();
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
@@ -169,9 +169,11 @@ const OrderPage = () => {
   const { isSubscription } = router.query;
 
   useEffect(() => {
-    if (router.isReady) {
-    }
-  }, [router.isReady]);
+    return () => {
+      // 컴포넌트 마운트 해제될때 선택된쿠폰 초기화
+      dispatch(INIT_COUPON());
+    };
+  }, []);
 
   const {
     data: previewOrder,
@@ -303,6 +305,8 @@ const OrderPage = () => {
         } else {
           processOrder(data);
         }
+        // 완료되면 쿠폰 초기화
+        dispatch(INIT_COUPON());
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -830,7 +834,10 @@ const OrderPage = () => {
       dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
       return;
     }
-    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) return;
+    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) {
+      dispatch(SET_ALERT({ alertMessage: '정기구독 이용약관·주의사항 동의를 체크해주세요.' }));
+      return;
+    }
 
     if (previewOrder?.order.delivery === 'MORNING') {
       /* TODO: alert message 마크다운..? */
