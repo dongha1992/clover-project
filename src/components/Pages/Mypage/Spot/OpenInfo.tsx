@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextB3R, TextH5B } from '@components/Shared/Text';
-import { FlexStart, theme } from '@styles/theme';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
+import { theme } from '@styles/theme';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
 
@@ -126,7 +126,7 @@ const OpenInfo = ({type}: IParams) => {
                 }
                 <TextH5B margin='0 0 0 4px'>{i.title}</TextH5B>
               </Wrapper>
-              <TextB3R color={theme.greyScale65}>{i.desc}</TextB3R>
+              <TextB2R color={theme.greyScale65}>{i.desc}</TextB2R>
               {
                 i?.notice && (
                   <NoticeWrapper>
@@ -143,7 +143,7 @@ const OpenInfo = ({type}: IParams) => {
                         return (
                           <FlexWrapper key={idx}>
                             <Dot>•</Dot>
-                            <TextB3R  color={theme.brandColor}>{j}</TextB3R>
+                            <TextB2R  color={theme.brandColor}>{j}</TextB2R>
                           </FlexWrapper>
                         )
                       })
