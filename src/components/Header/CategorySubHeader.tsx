@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { CATEGORY } from '@constants/search';
-import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -12,8 +11,8 @@ import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
 import { CategoryFilter } from '@components/Pages/Category';
 import TabList from '@components/Shared/TabList/TabList';
-
-// const TabList = dynamic(() => import('../Shared/TabList/TabList'), { ssr: false });
+import { useSelector } from 'react-redux';
+import { INIT_CATEGORY_FILTER, filterSelector } from '@store/filter';
 
 type TProps = {
   title?: string;
@@ -24,6 +23,9 @@ const CategorySubHeader = ({ title }: TProps) => {
   const categoryRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
+  const {
+    categoryFilters: { order, filter },
+  } = useSelector(filterSelector);
   const router = useRouter();
 
   useEffect(() => {
@@ -46,11 +48,13 @@ const CategorySubHeader = ({ title }: TProps) => {
   const clickTabHandler = useCallback(
     (tabItem: any, e: any) => {
       const targetOffset = e.target.offsetLeft;
-      setSelectedTab(tabItem.link);
-      router.push(`/category/${tabItem.value}`);
       scrollToAllMenusItemOffsetLeft(targetOffset);
+      setSelectedTab(tabItem.link);
+      new Promise((res, err) => res(dispatch(INIT_CATEGORY_FILTER()))).then(() =>
+        router.push(`/category/${tabItem.value}`)
+      );
     },
-    [router]
+    [router.pathname]
   );
 
   const goToCart = () => {
