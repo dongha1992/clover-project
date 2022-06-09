@@ -31,7 +31,7 @@ const RegistrationsListPage = () => {
           )
         )   
       } else {
-        router.push(`/spot/spot-req?type=${type}`);
+        router.push(`/spot/join/main?type=${type}`);
       }
     } else {
       dispatch(
