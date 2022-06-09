@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail, IPostRegistrations, ISpotsInfo } from '@model/index';
+import { 
+  ISpotsDetail, 
+  IPostRegistrations, 
+  ISpotsInfo, 
+  IGetRegistrationStatus 
+} from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
@@ -54,6 +59,7 @@ interface IProps {
   spotInfo: ISpotsInfo | null;
   spotSearchSort: string;
   spotJoinFormChecked: boolean;
+  spotStatusDetail: IGetRegistrationStatus | null;
 };
 
 const spotAddressState = {
@@ -90,6 +96,7 @@ const spotsPostionsState = {
 
 const initialState: IProps = {
   spotDetail: null,
+  spotStatusDetail: null,
   isSpotLiked: false,
   spotLocation: {
     ...spotAddressState,
@@ -178,11 +185,15 @@ export const spot = createSlice({
     INIT_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction) => {
       state.spotJoinFormChecked = false;
     },
+    SET_SPOT_STATUS_DETAIL_ITEMS: (state, action: PayloadAction<IGetRegistrationStatus | null>) => {
+      state.spotStatusDetail = action.payload;
+    },
   },
 });
 
 export const {
   SPOT_ITEM,
+  SET_SPOT_STATUS_DETAIL_ITEMS,
   SET_SPOT_LIKED,
   INIT_SPOT_LIKED,
   SET_SPOT_LOCATION,

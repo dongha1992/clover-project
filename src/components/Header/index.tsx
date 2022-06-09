@@ -16,6 +16,7 @@ const SpotSearchHeader = dynamic(() => import('./SpotSearchHeader'));
 const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
 const SubscriptionHeader = dynamic(() => import('./SubscriptionHeader'));
+const SpotStatusDetailHeader = dynamic(() => import('./SpotStatusDetailHeader'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Header = () => {

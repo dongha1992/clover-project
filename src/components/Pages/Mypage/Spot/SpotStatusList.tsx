@@ -8,10 +8,11 @@ import { SVGIcon } from '@utils/common';
 import { IGetRegistrationStatus, ISpotsInfo } from '@model/index';
 import { postSpotsRegistrationsRetrial, getSpotInfo } from '@api/spot';
 import { SET_ALERT } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SET_SPOT_INFO } from '@store/spot';
 import router from 'next/router';
+import { userForm } from '@store/user';
 
 interface IProps {
   items: IGetRegistrationStatus[];
@@ -20,7 +21,10 @@ interface IProps {
 const SpotStatusList = ({ items }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const routers = useRouter();
+  const { me } = useSelector(userForm);
   const [info, setInfo] = useState<ISpotsInfo>();
+
+  const loginUserId = me?.id!;
 
   const spotType = (type: string | undefined) => {
     switch(type){
@@ -100,7 +104,10 @@ const SpotStatusList = ({ items }: IProps): ReactElement => {
     };  
   };
 
-  const goToSpotStatusDetail = (id: number) => {
+  const goToSpotStatusDetail = (id: number, type: string, userId: number) => {
+    if(type === 'OWNER' && (Number(loginUserId) !== userId)) {
+      return;
+    }
       router.push(`/mypage/spot-status/detail/${id}`);
   };
 
@@ -134,7 +141,7 @@ const SpotStatusList = ({ items }: IProps): ReactElement => {
                   {spotType(i?.type)}
                 </Tag>
               </Flex>
-              <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={() => goToSpotStatusDetail(i?.id!)}>
+              <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={() => goToSpotStatusDetail(i?.id!, i?.type!, i?.userId!)}>
                 신청상세 보기
               </TextH6B>
             </FlexBetween>
