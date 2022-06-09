@@ -897,6 +897,7 @@ export interface IGetRegistrationStatus {
   trialUserCount?: number | undefined;
   trialCount?: number;
   canRetrial?: boolean;
+  userId?: number;
 }
 
 export interface IPostRegistrations {

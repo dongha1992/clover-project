@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { commonSelector } from '@store/common';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import router from 'next/router';
+import { spotSelector } from '@store/spot';
+import { userForm } from '@store/user';
 
 type TProps = {
   isMobile?: boolean;
@@ -17,8 +19,9 @@ type TProps = {
 const SpotStatusDetailHeader = ({}: TProps) => {
   const dispatch = useDispatch();
   const { isMobile } = useSelector(commonSelector);
-
-  const router = useRouter();
+  const { spotStatusDetail } = useSelector(spotSelector);
+  const { me } = useSelector(userForm);
+  const loginUserId = me?.id;
 
   useEffect(() => {
     return () => {
@@ -55,10 +58,6 @@ const SpotStatusDetailHeader = ({}: TProps) => {
     }
   };
 
-  const goToCart = () => {
-    router.push('/cart');
-  };
-
   return (
     <Container>
       <Wrapper>
@@ -66,9 +65,13 @@ const SpotStatusDetailHeader = ({}: TProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <BtnWrapper>
-          <div className="share" onClick={goToShare}>
-            <SVGIcon name="share" />
-          </div>
+          {
+            spotStatusDetail?.type === 'PRIVATE' && (loginUserId === spotStatusDetail?.userId) && (
+              <div className="share" onClick={goToShare}>
+                <SVGIcon name="share" />
+              </div>  
+            )
+          }
         </BtnWrapper>
       </Wrapper>
     </Container>
