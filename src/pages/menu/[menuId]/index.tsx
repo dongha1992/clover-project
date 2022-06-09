@@ -470,7 +470,7 @@ const DailySaleNumber = styled.div`
 
 export async function getStaticPaths() {
   const params = {
-    menuSort: 'LAUNCHED_DESC',
+    menuSort: '',
   };
 
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });

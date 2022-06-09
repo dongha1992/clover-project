@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { isNil } from 'lodash-es';
 import { useRouter } from 'next/router';
+import { IAllMenus } from '@components/Pages/Category/SingleMenu';
 
 const categoryTypeMap: Obj = {
   meal: 'CONVENIENCE_FOOD',
@@ -37,6 +38,7 @@ interface IProps {
 
 const CategoryPage = ({ title, type }: IProps) => {
   const [menus, setMenus] = useState<IMenus[]>();
+  const [allMenus, setAllMenus] = useState<IAllMenus>();
   const router = useRouter();
 
   const dispatch = useDispatch();
@@ -44,32 +46,60 @@ const CategoryPage = ({ title, type }: IProps) => {
     categoryFilters: { filter, order },
   } = useSelector(filterSelector);
 
-  const isAll = type === 'all';
   const types = typeof type === 'string' ? type : type.join(',');
+  const isAllMenu = title === 'all';
 
   const getMenuList = async () => {
     const params = {
       categories: filter.join(','),
       menuSort: order,
-      type: isAll ? '' : types,
+      type: types,
     };
-    const { data } = await getMenusApi(params);
-    reorderMenuList(data.data);
+    try {
+      const { data } = await getMenusApi(params);
+      reorderMenuList(data.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const reorderMenuList = (menuList: IMenus[]) => {
     const reordered = menuList.sort((a: any, b: any) => {
       return a.isSold - b.isSold;
     });
-    setMenus(reordered);
+    if (isAllMenu) {
+      const grouped = groupByMenu(reordered, 'type');
+      setAllMenus(grouped);
+    } else {
+      setMenus(reordered);
+    }
   };
+
+  const groupByMenu = (list: IMenus[], key: string) => {
+    return list.reduce((obj: Obj, menu: IMenus) => {
+      console.log(obj, menu, '@@@');
+      let group: string = menu[key] as string;
+
+      if (obj[group] === undefined) {
+        obj[group] = [];
+      }
+      obj[group].push(menu);
+      return obj;
+    }, {});
+  };
+
   useEffect(() => {
     getMenuList();
   }, [type, filter, order]);
 
   return (
     <Container>
-      <SingleMenu menuList={menus || []} title={CATEGORY_TITLE_MAP[title as string]} />
+      <SingleMenu
+        menuList={menus || []}
+        title={CATEGORY_TITLE_MAP[title as string]}
+        isAllMenu={isAllMenu}
+        allMenus={allMenus}
+      />
     </Container>
   );
 };
@@ -100,11 +130,10 @@ export async function getStaticProps({ params }: { params: { category: string } 
     snack: 'SNACK',
     subscription: 'SUBSCRIPTION',
   };
-
-  const types = categoryTypeMap[params.category];
+  const formatType = categoryTypeMap[params.category] ? categoryTypeMap[params.category] : '';
 
   return {
-    props: { title: params.category, type: types ? types : null },
+    props: { title: params.category, type: formatType },
     revalidate: 100,
   };
 }

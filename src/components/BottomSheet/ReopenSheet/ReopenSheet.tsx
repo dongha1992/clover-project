@@ -360,12 +360,13 @@ const ReopenSheet = ({ menuId }: IProps) => {
           {isOverTime && <Validation>인증 유효시간이 지났습니다.</Validation>}
         </FlexCol>
         <TextB3R color={theme.greyScale65}>
-          알림 신청 시 인증된 번호는 회원정보에도 업데이트 됩니다. '확인'을 누르시면 마케팅 및 광고 문자, 알림톡 수신을
-          위한 개인정보 제공에 동의하신 것으로 간주되니 참고해주세요.
+          {
+            " 알림 신청 시 인증된 번호는 회원정보에도 업데이트 됩니다. '확인'을 누르시면 마케팅 및 광고 문자, 알림톡 수신을 위한 개인정보 제공에 동의하신 것으로 간주되니 참고해주세요."
+          }
         </TextB3R>
         <FlexRow margin="17px 0 0 0">
           <Checkbox onChange={checkMarketingTermHandler} isSelected={isMarketinngChecked} />
-          <TextB2R padding="2px 0 0 8px">[필수] 마케팅 정보 수신에 동의합니다.</TextB2R>
+          <TextB2R padding="2px 0 0 8px">{'[필수] 마케팅 정보 수신에 동의합니다.'}</TextB2R>
         </FlexRow>
       </Body>
       <BtnWrapper onClick={goToNoti}>
