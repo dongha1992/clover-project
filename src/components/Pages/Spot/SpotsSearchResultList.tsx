@@ -338,7 +338,6 @@ const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
   justify-content: space-between;
   width: 100%;
   height: 114px;
-  margin-bottom: 24px;
   ${({ mapList }) => {
     if (mapList) {
       return css`

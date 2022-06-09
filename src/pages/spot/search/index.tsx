@@ -20,7 +20,6 @@ import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import { 
   spotSelector, 
-  INIT_SPOT_FILTERED, 
   INIT_SEARCH_SELECTED_FILTERS, 
   INIT_SPOT_SEARCH_SORT,
   SET_SPOT_SEARCH_SORT,
@@ -41,7 +40,6 @@ const SpotSearchPage = (): ReactElement => {
   const { orderId, isDelivery } = router.query;
   const { 
     spotsPosition, 
-    spotsSearchResultFiltered, 
     spotSearchSelectedFilters, 
     spotSearchSort 
   } = useSelector(spotSelector);
@@ -52,7 +50,6 @@ const SpotSearchPage = (): ReactElement => {
   const [keyword, setKeyWord] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
   const userLocationLen = !!userLocation.emdNm?.length;
 
   // 장바구니 조회
@@ -138,24 +135,26 @@ const SpotSearchPage = (): ReactElement => {
 
   // 스팟 검색 결과 api
   const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    let { value } = e.target as HTMLInputElement;
+    const { value } = e.target as HTMLInputElement;
+
     if (e.key === 'Enter') {
-      if (value) {
-        if (!value) {
+      if (inputRef.current) {
+        // setKeyWord(inputRef.current?.value);
+        let keyword = inputRef.current?.value;
+        if (!keyword) {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData();
-        dispatch(INIT_SPOT_FILTERED());
+        fetchSpotSearchData({keyword});
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchSpotSearchData = useCallback(async() => {
+  const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
     try {
       const params = {
-        keyword,
+        keyword: keyword,
         latitude: latLen ? Number(spotsPosition.latitude) : null,
         longitude: lonLen ? Number(spotsPosition.longitude) : null,
       };
@@ -170,15 +169,14 @@ const SpotSearchPage = (): ReactElement => {
     } catch (err) {
       console.error(err);
     }
-  }, [keyword]);
+  };
 
   const handleSelectedKeywordVaule = (value: string) => {
     setKeyWord(value);
   };
 
   const changeInputHandler = (e: any) => {
-    const inputText = e.target.value;
-      setKeyWord(inputText);
+    const inputText = inputRef.current?.value.length;
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
@@ -209,60 +207,12 @@ const SpotSearchPage = (): ReactElement => {
         return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.userCount - a.userCount });
     }
   };
-  
 
-// const { data: spotsFilter } = useQuery(['spotFilter'], async () => {
-//   const response = await getSpotsFilter();
-//   return response.data.data;
-// });
+  let filterResult = filteredItem();
 
-// const filterKeys = Object.keys(spotsSearchResultFiltered);
-// filterKeys.forEach(f => 
-//  console.log(f)
-//  )
-// const findFiletr = filterKeys.filter(i => 
-//  spotSearchSelectedFilters.forEach(a => 
-//    i === a
-//    )
-//    )
-
-  // const testFilter = searchResult.filter(spot => {
-  //     if(spotSearchSelectedFilters.length === 0) {
-  //       return spot
-  //       } else {
-  //         for(let i =0; i<spotSearchSelectedFilters.length; i++){
-  //        return spot[spotSearchSelectedFilters[i]] === true
-  //         }
-  //       }
-
-  //   }
-  
-  // )
-  
-  // const filterOption = ['canEat', 'canParking','canDeliveryDinner', 'isEvent'];
-
-// const test =  searchResult.filter(spot => {
-//   if(spot.type === 'PUBLIC'){
-//     spotsFilter?.filters.filter(f => !f.filtered).forEach(f => {
-//           spot[f.fieldName] === f.value;
-//       })
-//   }
-//   console.log(spot)
-// })
-
-// console.log(searchResult, 'test', test(),
-
-// // searchResult.filter(spot => (spot['canEat'] === true) && (spot['isEvent'] === true)),
-
-
-//   //   spotSearchSelectedFilters.filter(f => f).forEach(i => {
-//   //     if(spotSearchSelectedFilters?.length > 0) {
-//   //       searchResult[i] === true
-//   //     }
-//   //   }
-//   // )
-  
-// );
+  spotSearchSelectedFilters.forEach((elem) => {
+    filterResult = filterResult?.filter((item) => item[elem]);
+  });
 
   // GPS - 현재위치 가져오기
   const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
@@ -293,7 +243,9 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   const initInputHandler = () => {
-    setKeyWord('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    };
   };
 
   const goToOrder = useCallback(() => {
@@ -312,15 +264,14 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(()=> {
     if (keyword.length > 0) {
-        fetchSpotSearchData();
+        fetchSpotSearchData({keyword});
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
   useEffect(()=> {
     if (keyword.length > 0) {
-      fetchSpotSearchData();
-      dispatch(INIT_SPOT_FILTERED());
+      fetchSpotSearchData({keyword});
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -333,7 +284,6 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(() => {
     defaultRedioId();
-    dispatch(INIT_SPOT_FILTERED());
     dispatch(INIT_SEARCH_SELECTED_FILTERS());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSearched]);
@@ -372,9 +322,10 @@ const SpotSearchPage = (): ReactElement => {
             setInputFocus(true);
           }}
           value={keyword}
+          ref={inputRef}
         />
         {
-          keyword.length > 0 &&
+          inputRef.current && inputRef.current?.value.length > 0 && 
         (
           <div className="removeSvg" onClick={clearInputHandler}>
             <SVGIcon name="removeItem" />
@@ -466,7 +417,7 @@ const SpotSearchPage = (): ReactElement => {
                 orderId={orderId}
                 hasCart={cartList?.length! > 0}
               /> */}
-              <SearchResult searchResult={filteredItem()} isSpot orderId={orderId} hasCart={true} getLocation={getLocation} />
+              <SearchResult searchResult={filterResult} isSpot orderId={orderId} hasCart={true} getLocation={getLocation} />
             </SearchResultContainer>
           )}
         </>
