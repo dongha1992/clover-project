@@ -16,13 +16,15 @@ import { userAuthTel, userConfirmTel } from '@api/user';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { commonSelector } from '@store/common';
-import { userForm, INIT_USER } from '@store/user';
-import { availabilityEmail, userChangeInfo } from '@api/user';
+import { userForm, INIT_USER, SET_USER } from '@store/user';
+import { availabilityEmail, userChangeInfo, userProfile } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
 import { NAME_REGX } from '@constants/regex';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { IChangeMe } from '@model/index';
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -39,7 +41,7 @@ interface IUserInfo {
 }
 
 const ProfilePage = () => {
-  const { me } = useSelector(userForm);
+  // const { me } = useSelector(userForm);
 
   const [minute, setMinute] = useState<number>(0);
   const [second, setSecond] = useState<number>(0);
@@ -68,12 +70,59 @@ const ProfilePage = () => {
 
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
+  const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
+
+  const LIMIT = 240;
+  const FIVE_MINUTE = 300;
 
   let authTimerRef = useRef(300);
   // let authTimerRef = useRef(5);
 
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
+  const { data: me, isLoading: infoLoading } = useQuery(
+    'getUserProfile',
+    async () => {
+      const { data } = await userProfile();
+
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        dispatch(SET_USER(data));
+      },
+      onError: () => {
+        router.replace('/onboarding');
+      },
+    }
+  );
+
+  const { mutateAsync: mutationEditProfile } = useMutation(
+    async (reqBody: IChangeMe) => {
+      const { data } = await userChangeInfo(reqBody);
+      return data;
+    },
+    {
+      onSuccess: async () => {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '수정을 성공하였습니다.',
+          })
+        );
+        await queryClient.refetchQueries('getUserProfile');
+      },
+      onError: async (error: any) => {
+        console.error(error);
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+    }
+  );
 
   useEffect(() => {
     if (authTimerRef.current < 0) {
@@ -81,7 +130,7 @@ const ProfilePage = () => {
       setIsOverTime(true);
     }
     // 1분 지나면 인증 요청 다시 활성
-    if (authTimerRef.current < 240) {
+    if (authTimerRef.current < LIMIT) {
       setOneMinuteDisabled(false);
     }
   }, [second]);
@@ -189,12 +238,12 @@ const ProfilePage = () => {
             submitBtnText: '확인',
           })
         );
-        resetTimer;
+        resetTimer();
         setOneMinuteDisabled(true);
         setDelay(1000);
         if (isOverTime) {
           setIsOverTime(false);
-          resetTimer;
+          resetTimer();
         }
       }
     } catch (error: any) {
@@ -207,7 +256,7 @@ const ProfilePage = () => {
       } else if (error.code === 2001) {
         dispatch(
           SET_ALERT({
-            alertMessage: '전화번호 인증 횟수를 초과하였습니다.(하루 5회)',
+            alertMessage: '하루 인증 요청 제한 횟수 10회를 초과했습니다.',
           })
         );
       } else {
@@ -236,7 +285,11 @@ const ProfilePage = () => {
             setDelay(null);
           }
         } catch (error: any) {
-          dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.' }));
+          if (error.code === 2002) {
+            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
+          }
           console.error(error);
         }
       }
@@ -248,7 +301,8 @@ const ProfilePage = () => {
   };
 
   const resetTimer = () => {
-    authTimerRef.current = 300;
+    authTimerRef.current = FIVE_MINUTE;
+    // authTimerRef.current = 5;
   };
 
   const changeEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -271,6 +325,13 @@ const ProfilePage = () => {
 
   const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
+
+    if (name === 'name') {
+      checkNameValid(value);
+    } else if (name === 'nickName') {
+      checkNickNameValid(value);
+    }
+
     setUserInfo({ ...userInfo, [name]: value });
   };
 
@@ -284,7 +345,7 @@ const ProfilePage = () => {
   };
 
   const changeMeInfo = async () => {
-    if (!isValidName) return;
+    if (!isValidName || !isValidNickname) return;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
@@ -301,27 +362,24 @@ const ProfilePage = () => {
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
     };
-
-    try {
-      const { data } = await userChangeInfo(reqBody);
-      if (data.code === 200) {
-        dispatch(
-          SET_ALERT({
-            alertMessage: '수정을 성공하였습니다.',
-          })
-        );
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    mutationEditProfile(reqBody);
   };
 
-  const checkNameValid = () => {
-    const lengthCheck = userInfo.name.length < 2 || userInfo.name.length > 20;
-    if (!NAME_REGX.test(userInfo.name) || lengthCheck) {
+  const checkNameValid = (value: string) => {
+    const lengthCheck = value.length < 2 || value.length > 20;
+    if (!NAME_REGX.test(value) || lengthCheck) {
       setIsValidName(false);
     } else {
       setIsValidName(true);
+    }
+  };
+
+  const checkNickNameValid = (value: string) => {
+    const lengthCheck = value.length < 2 || value.length > 20;
+    if (!NAME_REGX.test(value) || lengthCheck) {
+      setIsValidNickname(false);
+    } else {
+      setIsValidNickname(true);
     }
   };
 
@@ -425,12 +483,7 @@ const ProfilePage = () => {
           </FlexRow>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">이름</TextH5B>
-            <TextInput
-              name="name"
-              value={userInfo.name || ''}
-              eventHandler={onChangeUserInfo}
-              onBlur={checkNameValid}
-            />
+            <TextInput name="name" value={userInfo.name || ''} eventHandler={onChangeUserInfo} />
             {!isValidName && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}
@@ -438,6 +491,9 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
             <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
+            {!isValidNickname && (
+              <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            )}
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">휴대폰 번호</TextH5B>
@@ -588,7 +644,7 @@ const ProfilePage = () => {
         </DeleteUser>
       </Wrapper>
       <BtnWrapper onClick={changeMeInfo}>
-        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName}>
+        <Button height="100%" width="100%" borderRadius="0" disabled={!isValidName || !isValidNickname}>
           수정하기
         </Button>
       </BtnWrapper>

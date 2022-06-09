@@ -778,9 +778,9 @@ const OrderPage = () => {
       });
 
       if (isMobile) {
-        window.location.href = data.data.next_redirect_pc_url;
-      } else {
         window.location.href = data.data.next_redirect_mobile_url;
+      } else {
+        window.location.href = data.data.next_redirect_pc_url;
       }
     } catch (error: any) {
       if (error.code === 1207) {

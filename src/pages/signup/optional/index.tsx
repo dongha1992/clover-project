@@ -16,6 +16,7 @@ import { getFormatTime } from '@utils/destination';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { SVGIcon } from '@utils/common';
 import Validation from '@components/Pages/User/Validation';
+import { NAME_REGX } from '@constants/regex';
 
 export const GENDER = [
   {
@@ -51,15 +52,15 @@ const curDate = today.getDate();
 const vaildYear = curYear - AGES;
 
 const SignupOptionalPage = () => {
-  const [checkGender, setChcekGender] = useState<string | null>('');
+  const [checkGender, setChcekGender] = useState<string | null>('NONE');
   const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
     year: 0,
     month: -1,
     day: 0,
   });
   const [isValidBirthDay, setIsValidBirthDay] = useState<boolean>(true);
-
-  const nicknameRef = useRef<HTMLInputElement>(null);
+  const [nickname, setNickname] = useState('');
+  const [nameValidation, setNameValidation] = useState(false);
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
@@ -87,10 +88,19 @@ const SignupOptionalPage = () => {
     setChcekGender(value);
   };
 
-  const nicknameInputHandler = () => {};
+  const nicknameInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const lengthCheck = value.length < 2 || value.length > 20;
+
+    if (!NAME_REGX.test(value) || lengthCheck) {
+      setNameValidation(false);
+    } else {
+      setNameValidation(true);
+    }
+    setNickname(value);
+  };
 
   const registerUser = async () => {
-    const nickName = nicknameRef.current?.value;
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
 
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
@@ -100,7 +110,7 @@ const SignupOptionalPage = () => {
     const optionalForm = {
       birthDate: hasBirthDate ? birthDate : '',
       gender: gender ? gender : '',
-      nickName: nickName ? nickName : signupUser.name,
+      nickName: nickname ? nickname : signupUser.name,
     };
 
     let appleToken = null;
@@ -265,6 +275,7 @@ const SignupOptionalPage = () => {
           </FlexRow>
           <TextInput placeholder="닉네임 (미입력시 이름이 자동 입력됩니다)" eventHandler={nicknameInputHandler} />
         </FlexCol>
+        {nickname.length > 0 && !nameValidation && <Validation>2~20자 이내 / 한글, 영문만 입력 가능해요.</Validation>}
       </Wrapper>
       <NextBtnWrapper onClick={registerUser}>
         <Button height="100%" borderRadius="0">

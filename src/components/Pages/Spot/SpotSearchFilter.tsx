@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { MultipleFilter, OrderFilter } from '@components/Filter/components';
+import { SpotMultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH4B } from '@components/Shared/Text';
 import styled from 'styled-components';
@@ -12,8 +12,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { 
   spotSelector,
-  SET_SPOTS_FILTERED, 
-  INIT_SPOT_FILTERED, 
   SET_SPOT_SEARCH_SELECTED_FILTERS,
   INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
@@ -26,7 +24,7 @@ interface IProps {
 
 const SpotSearchFilter = ({getLocation}: IProps) => {
   const dispatch = useDispatch();
-  const { spotsSearchResultFiltered, spotSearchSelectedFilters, spotSearchSort, spotsPosition } = useSelector(spotSelector);
+  const { spotSearchSelectedFilters, spotSearchSort, spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(spotSearchSelectedFilters);
   const defaultRedioId = () => {
@@ -63,7 +61,6 @@ const SpotSearchFilter = ({getLocation}: IProps) => {
   const initSpotFilterHandler = () => {
     setSelectedCheckboxIds([]);
     defaultRedioId();
-    dispatch(INIT_SPOT_FILTERED());
     dispatch(INIT_SEARCH_SELECTED_FILTERS());
   };
 
@@ -78,15 +75,6 @@ const SpotSearchFilter = ({getLocation}: IProps) => {
 
   const clickButtonHandler = () => {
     dispatch(SET_SPOT_SEARCH_SELECTED_FILTERS(selectedCheckboxIds))
-    dispatch(
-      SET_SPOTS_FILTERED({
-        ...spotsSearchResultFiltered,
-        canEat: !!selectedCheckboxIds.find(i => i ==='canEat'),
-        canParking: !!selectedCheckboxIds.find(i => i ==='canParking'),
-        canDeliveryDinner: !!selectedCheckboxIds.find(i => i ==='canDinnerDelivery'),
-        isEvent: !!selectedCheckboxIds.find(i => i ==='isEvent'),
-      })
-    );
     dispatch(SET_SPOT_SEARCH_SORT(selectedRadioId));
     dispatch(INIT_BOTTOM_SHEET());  
   };
@@ -110,8 +98,7 @@ const SpotSearchFilter = ({getLocation}: IProps) => {
         <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>
           필터
         </TextH4B>
-        <MultipleFilter
-          spotFilter
+        <SpotMultipleFilter
           data={spotsFilter?.filters!}
           changeHandler={checkboxHandler}
           selectedCheckboxIds={selectedCheckboxIds}

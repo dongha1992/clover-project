@@ -173,7 +173,7 @@ const SignupAuthPage = () => {
       } else if (error.code === 2001) {
         dispatch(
           SET_ALERT({
-            alertMessage: '전화번호 인증 횟수를 초과하였습니다.(하루 5회)',
+            alertMessage: '하루 인증 요청 제한 횟수 10회를 초과했습니다.',
           })
         );
       } else {
