@@ -7,11 +7,17 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { IMenus } from '@model/index';
 
-const SingleMenu = ({ menuList, title }: any) => {
+interface IProps {
+  menuList: IMenus[];
+  title: string;
+}
+
+const SingleMenu = ({ menuList, title }: IProps) => {
   console.log(menuList, 'menuList');
-  // if (menuList && menuList.length < 0) {
-  //   return <div>로딩중</div>;
-  // }
+
+  if (menuList.length < 0) {
+    return <div>로딩중</div>;
+  }
 
   return (
     <Container>

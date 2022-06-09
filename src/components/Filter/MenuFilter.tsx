@@ -78,7 +78,7 @@ const MenuFilter = () => {
     );
     const hasSelectCheckBox = selectedCheckBox.length > 0;
 
-    setSelectedRadioId(order || 'ORDER_COUNT_DESC');
+    setSelectedRadioId(order || '');
     setSelectedCheckboxIds(hasSelectCheckBox ? selectedCheckBox : ['전체']);
   }, []);
 
