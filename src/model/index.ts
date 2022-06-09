@@ -1367,6 +1367,7 @@ export interface ICreateOrderPreview {
   receiverTel: string;
   delivery: string;
   deliveryDetail: string;
+  deliveryMessage?: string;
   location: ILocation;
   destinationId: number;
   menuAmount: number;
