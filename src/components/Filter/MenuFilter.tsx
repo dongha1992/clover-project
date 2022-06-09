@@ -32,7 +32,7 @@ const MenuFilter = () => {
 
   const checkboxHandler = (name: string) => {
     const findItem = selectedCheckboxIds.find((_name) => _name === name);
-    const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
+    let tempSelectedCheckboxIds = selectedCheckboxIds.slice();
 
     if (name === '전체') {
       setSelectedCheckboxIds(['전체']);
@@ -40,7 +40,7 @@ const MenuFilter = () => {
     }
 
     if (findItem) {
-      tempSelectedCheckboxIds.filter((_name) => _name !== name);
+      tempSelectedCheckboxIds = tempSelectedCheckboxIds.filter((_name) => _name !== name);
     } else {
       const allCheckedIdx = tempSelectedCheckboxIds.indexOf('전체');
 
@@ -55,15 +55,6 @@ const MenuFilter = () => {
   const radioButtonHandler = (value: string) => {
     setSelectedRadioId(value);
   };
-
-  useEffect(() => {
-    const selectedCheckBox = MUTILPLE_CHECKBOX_MENU.filter((item) => filter.includes(item.value)).map(
-      (item) => item.name
-    );
-
-    setSelectedRadioId(order);
-    setSelectedCheckboxIds(selectedCheckBox);
-  }, [order, filter]);
 
   const submitHandler = () => {
     const menufilterMap: Obj = {
@@ -80,6 +71,16 @@ const MenuFilter = () => {
     dispatch(SET_CATEGORY_FILTER({ filter: getValueByMultipleFilter, order: selectedRadioId }));
     dispatch(INIT_BOTTOM_SHEET());
   };
+
+  useEffect(() => {
+    const selectedCheckBox = MUTILPLE_CHECKBOX_MENU.filter((item) => filter.includes(item.value)).map(
+      (item) => item.name
+    );
+    const hasSelectCheckBox = selectedCheckBox.length > 0;
+
+    setSelectedRadioId(order || 'ORDER_COUNT_DESC');
+    setSelectedCheckboxIds(hasSelectCheckBox ? selectedCheckBox : ['전체']);
+  }, []);
 
   return (
     <Container>

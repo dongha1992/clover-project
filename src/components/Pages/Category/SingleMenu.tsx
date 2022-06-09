@@ -8,9 +8,10 @@ import { getMenusApi } from '@api/menu';
 import { IMenus } from '@model/index';
 
 const SingleMenu = ({ menuList, title }: any) => {
-  if (menuList.length < 0) {
-    return <div>로딩중</div>;
-  }
+  console.log(menuList, 'menuList');
+  // if (menuList && menuList.length < 0) {
+  //   return <div>로딩중</div>;
+  // }
 
   return (
     <Container>
@@ -29,4 +30,4 @@ const Container = styled.div`
   margin-top: 42px;
 `;
 
-export default React.memo(SingleMenu);
+export default SingleMenu;

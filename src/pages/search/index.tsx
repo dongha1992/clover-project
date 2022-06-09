@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
-/*TODO: 검색 결과는 slug와 static props로? */
 
 const SearchPage = () => {
   const [itemList, setItemList] = useState<any[]>([]);
