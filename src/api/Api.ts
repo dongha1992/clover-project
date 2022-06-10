@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { getCookie } from '@utils/common';
+import { getCookie, setCookie } from '@utils/common';
 import { userRefreshToken } from './user';
 import router from 'next/router';
 
@@ -69,7 +69,11 @@ Api.interceptors.response.use(
                 expiresIn: userTokenObj.expiresIn,
               };
 
-              sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+              // sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+              setCookie({
+                name: 'acstk',
+                value: JSON.stringify(accessTokenObj),
+              });
 
               isTokenRefreshing = false;
               onTokenRefreshed(userTokenObj.accessToken);
@@ -96,7 +100,8 @@ Api.interceptors.response.use(
 Api.interceptors.request.use((req) => {
   const request = cloneDeep(req);
 
-  const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
+  // const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
+  const accessTokenObj = getCookie({ name: 'acstk' }) ?? {};
 
   request.headers = {
     ...req.headers,

@@ -68,7 +68,8 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 
   const authCheck = async () => {
     try {
-      if (sessionStorage.accessToken) {
+      // accesstoken이 있을때 로그인
+      if (getCookie({ name: 'acstk' })) {
         const { data } = await userProfile();
         if (data.code === 200) {
           data.data.nickName ??= data.data.name;
@@ -81,6 +82,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           }
         }
       } else {
+        // accesstoken이 없고 자동로그인을 체크했을때 로그인
         if (isAutoLogin === 'Y') {
           const { data } = await userProfile();
           if (data.code === 200) {

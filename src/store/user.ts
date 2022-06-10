@@ -87,6 +87,10 @@ export const user = createSlice({
       };
 
       sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+      setCookie({
+        name: 'acstk',
+        value: JSON.stringify(accessTokenObj),
+      });
 
       const refreshTokenObj = JSON.stringify({
         refreshToken: payload.refreshToken,
@@ -120,6 +124,7 @@ export const user = createSlice({
     },
     INIT_USER: (state: any, { payload }: PayloadAction) => {
       state.me = null;
+      state.isLoginSuccess = false;
     },
   },
   extraReducers: {},

@@ -152,7 +152,7 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
+    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuDetail.menuDetails ?? [{}]);
     return { discount, price, discountedPrice };
   };
 
