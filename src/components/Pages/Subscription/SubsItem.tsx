@@ -30,12 +30,13 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
     subscriptionPeriods,
     subscriptionDeliveries,
   } = item;
-  const { discountedPrice } = getMenuDisplayPrice(menuDetails);
+
+  const { discountedPrice } = getMenuDisplayPrice(menuDetails ?? [{}]);
 
   useEffect(() => {
     // TODO(young): 단기구독전용, 쿠폰 등이 태그로 들어가는데 현재 쿠폰태그가 추가될지 모르는 상황 추후 배열로 처리할지 string으로 처리할지 수정필요
 
-    if (!subscriptionPeriods.includes('UNLIMITED') && !tagList?.includes('단기구독전용')) {
+    if (!subscriptionPeriods?.includes('UNLIMITED') && !tagList?.includes('단기구독전용')) {
       setTagList([...tagList, '단기구독전용']);
     }
   }, [subscriptionPeriods, tagList]);
@@ -59,7 +60,7 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
           {badgeMessage && <Badge message={badgeMessage} />}
 
           <TagBox className={`${badgeMessage ? 'marginL8' : 'marginL16'}`}>
-            {subscriptionDeliveries.map((item: string, index: number) => (
+            {subscriptionDeliveries?.map((item: string, index: number) => (
               <Label className={item} key={index}>
                 {DELIVERY_TYPE_MAP[item]}
               </Label>
@@ -69,9 +70,9 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
         </LabelArea>
       </ImageWrapper>
       <TextBox>
-        <TextH5B>{name.trim()}</TextH5B>
+        <TextH5B>{name?.trim()}</TextH5B>
         <TextB3R color={theme.greyScale65} margin="8px 0 4px" className="description">
-          {description.trim()}
+          {description?.trim()}
         </TextB3R>
         <FlexWrapWrapper>
           <TextH5B>{getFormatPrice(String(discountedPrice))}원 ~</TextH5B>
