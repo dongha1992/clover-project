@@ -70,6 +70,7 @@ const ReopenSheet = ({ menuId }: IProps) => {
       onSuccess: async (data) => {
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
+        await queryClient.refetchQueries('getMenus');
       },
       onError: async (error: any) => {
         if (error.code === 1000) {

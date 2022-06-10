@@ -21,6 +21,8 @@ import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import 'dayjs/locale/ko';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
+import { deleteNotificationApi } from '@api/menu';
+import { useMutation, useQueryClient } from 'react-query';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -33,6 +35,22 @@ type TProps = {
 const Item = ({ item, isQuick }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { mutate: mutateDeleteNotification } = useMutation(
+    async () => {
+      const { data } = await deleteNotificationApi({ menuId: item.id });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getMenus');
+      },
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
 
   const { me } = useSelector(userForm);
   const { menuDetails } = item;
@@ -120,7 +138,10 @@ const Item = ({ item, isQuick }: TProps) => {
       return;
     }
 
-    if (item.reopenNotificationRequested) return;
+    if (item.reopenNotificationRequested) {
+      mutateDeleteNotification();
+      return;
+    }
     dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
   };
 
@@ -278,4 +299,4 @@ const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default Item;
+export default React.memo(Item);
