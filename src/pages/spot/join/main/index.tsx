@@ -27,7 +27,7 @@ const SpotReqPage = () => {
   const [spotCount, setSpotCount] = useState<number>(0);
   const text = {
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
-    privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
+    privateDesc: '나만의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
     publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
     publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
     ownerText: `${spotCount! + 1}번째 프코스팟의\n파트너가 되어보세요.`,
