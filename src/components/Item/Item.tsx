@@ -195,7 +195,7 @@ const Item = ({ item, isQuick }: TProps) => {
         </DesWrapper>
         <LikeAndReview>
           <Like>
-            <SVGIcon name="like" />
+            <SVGIcon name={item.liked ? 'like' : 'unlike'} />
             <TextB3R>{item.likeCount}</TextB3R>
           </Like>
           <TextB3R>리뷰 {item.reviewCount}</TextB3R>
