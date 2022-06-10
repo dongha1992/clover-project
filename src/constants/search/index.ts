@@ -7,5 +7,5 @@ export const CATEGORY = [
   { text: '세트상품', link: '/category/package', value: 'package' },
   { text: '간식', link: '/category/snack', value: 'snack' },
   { text: '음료', link: '/category/drink', value: 'drink' },
-  { text: '오픈예정', link: '/category/soon', value: 'soon' },
+  // { text: '오픈예정', link: '/category/soon', value: 'soon' },
 ];

@@ -10,10 +10,12 @@ interface ICategoryFilter {
 
 type TProps = {
   categoryFilters: ICategoryFilter;
+  isFilter: boolean;
 };
 
 const initialState: TProps = {
   categoryFilters: { filter: [], order: '' },
+  isFilter: false,
 };
 
 export const filter = createSlice({
@@ -26,9 +28,15 @@ export const filter = createSlice({
     INIT_CATEGORY_FILTER: (state: any, action: PayloadAction) => {
       state.categoryFilters = { filter: [], order: '' };
     },
+    SET_FILTER: (state: any, action: PayloadAction) => {
+      state.isFilter = true;
+    },
+    INIT_FILTER: (state: any, action: PayloadAction) => {
+      state.isFilter = false;
+    },
   },
 });
 
-export const { SET_CATEGORY_FILTER, INIT_CATEGORY_FILTER } = filter.actions;
+export const { SET_CATEGORY_FILTER, INIT_CATEGORY_FILTER, SET_FILTER, INIT_FILTER } = filter.actions;
 export const filterSelector = (state: AppState): TProps => state.filter;
 export default filter.reducer;

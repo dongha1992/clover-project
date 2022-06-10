@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { SingleMenu } from '@components/Pages/Category';
 import { categoryPageSet } from '@styles/theme';
@@ -10,23 +10,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { INIT_CATEGORY_FILTER, filterSelector } from '@store/filter';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
-import { isNil } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { IAllMenus } from '@components/Pages/Category/SingleMenu';
-
-const categoryTypeMap: Obj = {
-  meal: 'CONVENIENCE_FOOD',
-  drink: 'DRINK',
-  soup: 'KOREAN_SOUP',
-  // meal: 'LUNCH_BOX',
-  salad: 'SALAD',
-  wrap: 'SANDWICH',
-  package: 'SET',
-  snack: 'SNACK',
-  // soup: 'SOUP',
-  subscription: 'SUBSCRIPTION',
-  // wrap: 'WRAP',
-};
 
 /* TODO: 로그인 체크 알림신청 */
 /* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
@@ -36,9 +21,21 @@ interface IProps {
   type: string | string[];
 }
 
-const CategoryPage = ({ title, type }: IProps) => {
+const CategoryPage = ({ type, title }: IProps) => {
   const [menus, setMenus] = useState<IMenus[]>();
-  const [allMenus, setAllMenus] = useState<IAllMenus>();
+  const [allMenus, setAllMenus] = useState<IAllMenus>({
+    DRINK: [],
+    KOREAN_SOUP: [],
+    SOUP: [],
+    LUNCH_BOX: [],
+    CONVENIENCE_FOOD: [],
+    SALAD: [],
+    SET: [],
+    SNACK: [],
+    WRAP: [],
+    SANDWICH: [],
+  });
+
   const router = useRouter();
 
   const dispatch = useDispatch();
@@ -47,9 +44,25 @@ const CategoryPage = ({ title, type }: IProps) => {
   } = useSelector(filterSelector);
 
   const types = typeof type === 'string' ? type : type.join(',');
-  const isAllMenu = title === 'all';
+  const isAllMenu = type === '';
+
+  const hasFilter = filter.filter((item) => item).length !== 0 || order.length > 0;
 
   const getMenuList = async () => {
+    const params = {
+      categories: '',
+      menuSort: '',
+      type: types,
+    };
+    try {
+      const { data } = await getMenusApi(params);
+      reorderMenuList(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getfilteredMenuList = async () => {
     const params = {
       categories: filter.join(','),
       menuSort: order,
@@ -69,16 +82,21 @@ const CategoryPage = ({ title, type }: IProps) => {
     });
     if (isAllMenu) {
       const grouped = groupByMenu(reordered, 'type');
-      setAllMenus(grouped);
+      setAllMenus({ ...allMenus, ...grouped });
+      setMenus([]);
     } else {
       setMenus(reordered);
+      setAllMenus({});
     }
   };
 
   const groupByMenu = (list: IMenus[], key: string) => {
-    return list.reduce((obj: Obj, menu: IMenus) => {
-      console.log(obj, menu, '@@@');
-      let group: string = menu[key] as string;
+    return list.reduce((obj: Obj, menu: any) => {
+      let group = menu[key];
+
+      if (group === 'SUBSCRIPTION') {
+        return obj;
+      }
 
       if (obj[group] === undefined) {
         obj[group] = [];
@@ -89,8 +107,12 @@ const CategoryPage = ({ title, type }: IProps) => {
   };
 
   useEffect(() => {
-    getMenuList();
-  }, [type, filter, order]);
+    if (hasFilter) {
+      getfilteredMenuList();
+    } else {
+      getMenuList();
+    }
+  }, [types, order, filter]);
 
   return (
     <Container>

@@ -441,5 +441,4 @@ export const CATEGORY_TITLE_MAP: Obj = {
   snack: '간식',
   soup: '죽·스프',
   drink: '음료',
-  soon: '오픈예정',
 };

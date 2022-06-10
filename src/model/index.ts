@@ -1574,12 +1574,15 @@ export type TMenuSort =
   | string;
 export type TType =
   | 'DRINK'
-  | 'KOREAN_SOUP_SOUP'
-  | 'LUNCH_BOX_CONVENIENCE_FOOD'
+  | 'KOREAN_SOUP'
+  | 'SOUP'
+  | 'LUNCH_BOX'
+  | 'CONVENIENCE_FOOD'
   | 'SALAD'
   | 'SET'
   | 'SNACK'
-  | 'WRAP_SANDWICH'
+  | 'WRAP'
+  | 'SANDWICH'
   | string;
 export interface IGetMenus {
   categories?: TCategory;
