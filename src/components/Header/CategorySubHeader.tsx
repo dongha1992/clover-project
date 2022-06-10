@@ -12,7 +12,7 @@ import CartIcon from '@components/Header/Cart';
 import { CategoryFilter } from '@components/Pages/Category';
 import TabList from '@components/Shared/TabList/TabList';
 import { useSelector } from 'react-redux';
-import { INIT_CATEGORY_FILTER, filterSelector } from '@store/filter';
+import { INIT_CATEGORY_FILTER, filterSelector, INIT_FILTER } from '@store/filter';
 
 type TProps = {
   title?: string;
@@ -50,12 +50,15 @@ const CategorySubHeader = ({ title }: TProps) => {
       const targetOffset = e.target.offsetLeft;
       scrollToAllMenusItemOffsetLeft(targetOffset);
       setSelectedTab(tabItem.link);
-      new Promise((res, err) => res(dispatch(INIT_CATEGORY_FILTER()))).then(() =>
-        router.push(`/category/${tabItem.value}`)
-      );
+      new Promise((res, err) => res(initFilters())).then(() => router.push(`/category/${tabItem.value}`));
     },
     [router.pathname]
   );
+
+  const initFilters = () => {
+    dispatch(INIT_CATEGORY_FILTER());
+    dispatch(INIT_FILTER());
+  };
 
   const goToCart = () => {
     dispatch(

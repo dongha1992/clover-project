@@ -27,9 +27,6 @@ interface IProps {
 }
 
 const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
-  console.log(menuList, 'menuList');
-  console.log(allMenus, 'allMenus');
-
   if (menuList.length < 0) {
     return <div>로딩중</div>;
   }
@@ -51,9 +48,39 @@ const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
               return <Item item={item} key={index} />;
             })}
           </FlexWrapWrapper>
-          <TextH3B padding="0 0 17px 0">샐러드</TextH3B>
+          <TextH3B padding="0 0 17px 0">랩·샌드위치</TextH3B>
           <FlexWrapWrapper>
-            {allMenus?.SALAD?.map((item, index) => {
+            {[...(allMenus?.SANDWICH ?? []), ...(allMenus?.WRAP ?? [])]?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">도시락·간편식</TextH3B>
+          <FlexWrapWrapper>
+            {[...(allMenus?.LUNCH_BOX ?? []), ...(allMenus?.CONVENIENCE_FOOD ?? [])]?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">죽·스프</TextH3B>
+          <FlexWrapWrapper>
+            {[...(allMenus?.KOREAN_SOUP ?? []), ...(allMenus?.SOUP ?? [])]?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">세트상품</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.SET?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">간식</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.SNACK?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">음료</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.DRINK?.map((item, index) => {
               return <Item item={item} key={index} />;
             })}
           </FlexWrapWrapper>
@@ -74,4 +101,4 @@ const Section = styled.div`
   width: 100%;
 `;
 
-export default SingleMenu;
+export default React.memo(SingleMenu);

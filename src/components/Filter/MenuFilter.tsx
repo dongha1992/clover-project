@@ -8,7 +8,7 @@ import { theme, bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { Obj } from '@model/index';
 import { menuSelector } from '@store/menu';
-import { filterSelector, SET_CATEGORY_FILTER } from '@store/filter';
+import { filterSelector, SET_CATEGORY_FILTER, SET_FILTER } from '@store/filter';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
@@ -69,6 +69,7 @@ const MenuFilter = () => {
     });
 
     dispatch(SET_CATEGORY_FILTER({ filter: getValueByMultipleFilter, order: selectedRadioId }));
+    dispatch(SET_FILTER());
     dispatch(INIT_BOTTOM_SHEET());
   };
 
