@@ -4,6 +4,7 @@ import { FixedTab } from '@styles/theme';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 
 const SpotTab = dynamic(() => import('@components/Pages/Subscription/Tab/SpotTab'));
@@ -22,9 +23,13 @@ const MENU = [
 
 const SubsProductPage = () => {
   const router = useRouter();
-
+  const queryClient = useQueryClient();
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState(`${router.route}?tab=${router.query.tab ? router.query.tab : 'spot'}`);
+
+  useEffect(() => {
+    queryClient.invalidateQueries('getMenus');
+  }, []);
 
   const selectTabHandler = useCallback(
     ({ link }: any) => {

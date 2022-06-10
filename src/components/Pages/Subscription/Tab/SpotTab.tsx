@@ -15,7 +15,7 @@ const SpotTab = () => {
       const { data } = await getMenusApi(params);
       return data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { refetchOnMount: false, refetchOnWindowFocus: false }
   );
   return (
     <SpotBox>
