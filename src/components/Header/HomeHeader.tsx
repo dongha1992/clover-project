@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { textH5 } from '@styles/theme';
 import Link from 'next/link';
@@ -10,6 +10,7 @@ import { Tooltip } from '@components/Shared/Tooltip';
 import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
+import { bottomSheetForm } from '@store/bottomSheet';
 
 const mapper: Obj = {
   morning: { text: '새벽배송이 가능해요!', width: '150px' },
@@ -18,9 +19,11 @@ const mapper: Obj = {
 };
 
 const HomeHeader = () => {
+  const [formatAvailableDestination, setFormatAvailableDestination] = useState('');
+  const [isBottomSheet, setIsBottomSheet] = useState(false);
   const { userLocation, locationStatus } = useSelector(destinationForm);
 
-  const [formatAvailableDestination, setFormatAvailableDestination] = useState('');
+  const { content }: any = useSelector(bottomSheetForm);
 
   useEffect(() => {
     setFormatAvailableDestination(locationStatus);
@@ -30,8 +33,12 @@ const HomeHeader = () => {
     router.push('/cart');
   };
 
+  useEffect(() => {
+    setIsBottomSheet(content ? true : false);
+  }, [content]);
+
   return (
-    <Container>
+    <Container isBottomSheet={isBottomSheet}>
       <Wrapper>
         <Left>
           <SVGIcon name="location" />
@@ -60,7 +67,7 @@ const HomeHeader = () => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isBottomSheet?: boolean }>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -81,7 +88,16 @@ const Container = styled.div`
     margin: 0 auto;
     left: 0px;
   `};
-  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+
+  ${({ isBottomSheet }) => {
+    if (!isBottomSheet) {
+      return css`
+        filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+      `;
+    } else {
+      return css``;
+    }
+  }}
 `;
 
 const Wrapper = styled.div`

@@ -7,38 +7,85 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { IMenus } from '@model/index';
 
-const SingleMenu = ({ title }: any) => {
-  const {
-    data = [],
-    error: menuError,
-    isLoading,
-  } = useQuery<IMenus[]>(
-    'getMenus',
-    async () => {
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SALAD' };
-      const { data } = await getMenusApi(params);
-      return data.data;
-    },
+export interface IAllMenus {
+  DRINK?: IMenus[];
+  KOREAN_SOUP?: IMenus[];
+  SOUP?: IMenus[];
+  LUNCH_BOX?: IMenus[];
+  CONVENIENCE_FOOD?: IMenus[];
+  SALAD?: IMenus[];
+  SET?: IMenus[];
+  SNACK?: IMenus[];
+  WRAP?: IMenus[];
+  SANDWICH?: IMenus[];
+}
+interface IProps {
+  menuList: IMenus[];
+  title: string;
+  isAllMenu?: boolean;
+  allMenus?: IAllMenus;
+}
 
-    {
-      onSuccess: () => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  if (data.length < 0) {
+const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
+  if (menuList.length < 0) {
     return <div>로딩중</div>;
   }
 
   return (
     <Container>
-      <TextH3B padding="0 0 17px 0">{title || '전체'}</TextH3B>
-      <FlexWrapWrapper>
-        {data?.map((item: any, index: number) => {
-          return <Item item={item} key={index} />;
-        })}
-      </FlexWrapWrapper>
+      {!isAllMenu ? <TextH3B padding="0 0 17px 0">{title}</TextH3B> : ''}
+      {!isAllMenu ? (
+        <FlexWrapWrapper>
+          {menuList?.map((item: any, index: number) => {
+            return <Item item={item} key={index} />;
+          })}
+        </FlexWrapWrapper>
+      ) : (
+        <>
+          <TextH3B padding="0 0 17px 0">샐러드</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.SALAD?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">랩·샌드위치</TextH3B>
+          <FlexWrapWrapper>
+            {[...(allMenus?.SANDWICH ?? []), ...(allMenus?.WRAP ?? [])]?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">도시락·간편식</TextH3B>
+          <FlexWrapWrapper>
+            {[...(allMenus?.LUNCH_BOX ?? []), ...(allMenus?.CONVENIENCE_FOOD ?? [])]?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">죽·스프</TextH3B>
+          <FlexWrapWrapper>
+            {[...(allMenus?.KOREAN_SOUP ?? []), ...(allMenus?.SOUP ?? [])]?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">세트상품</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.SET?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">간식</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.SNACK?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+          <TextH3B padding="0 0 17px 0">음료</TextH3B>
+          <FlexWrapWrapper>
+            {allMenus?.DRINK?.map((item, index) => {
+              return <Item item={item} key={index} />;
+            })}
+          </FlexWrapWrapper>
+        </>
+      )}
     </Container>
   );
 };
@@ -46,6 +93,12 @@ const SingleMenu = ({ title }: any) => {
 const Container = styled.div`
   width: 100%;
   margin-top: 42px;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
 `;
 
 export default React.memo(SingleMenu);
