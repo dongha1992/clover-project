@@ -98,7 +98,7 @@ const Item = ({ item, isQuick }: TProps) => {
   };
 
   const goToDetail = (item: IMenus) => {
-    if (checkIsAllSold || checkIsSoon()) {
+    if (checkIsAllSold || checkIsSoon() || item.isReopen) {
       return;
     }
 
@@ -161,7 +161,7 @@ const Item = ({ item, isQuick }: TProps) => {
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {!isItemSold && !item.isReopen ? (
+        {isItemSold && item.isReopen ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
@@ -231,7 +231,7 @@ const ForReopen = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(36, 36, 36, 0.5);
-  z-index: 9;
+  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -260,8 +260,7 @@ const ReopenBtn = styled.div`
   border-radius: 50%;
   width: 32px;
   height: 32px;
-
-  z-index: 10;
+  z-index: 2;
 `;
 
 const ImageWrapper = styled.div`
