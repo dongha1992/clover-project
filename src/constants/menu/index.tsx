@@ -437,7 +437,7 @@ export const CATEGORY_TITLE_MAP: Obj = {
   salad: '샐러드',
   wrap: '랩·샌드위치',
   meal: '도시락·간편식',
-  package: '세트상품',
+  set: '세트상품',
   snack: '간식',
   soup: '죽·스프',
   drink: '음료',

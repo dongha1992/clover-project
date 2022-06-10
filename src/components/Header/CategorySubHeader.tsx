@@ -12,7 +12,7 @@ import CartIcon from '@components/Header/Cart';
 import { CategoryFilter } from '@components/Pages/Category';
 import TabList from '@components/Shared/TabList/TabList';
 import { useSelector } from 'react-redux';
-import { INIT_CATEGORY_FILTER, filterSelector, INIT_FILTER } from '@store/filter';
+import { INIT_CATEGORY_FILTER, filterSelector, SET_MENU_TAB } from '@store/filter';
 
 type TProps = {
   title?: string;
@@ -23,15 +23,7 @@ const CategorySubHeader = ({ title }: TProps) => {
   const categoryRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
-  const {
-    categoryFilters: { order, filter },
-  } = useSelector(filterSelector);
   const router = useRouter();
-
-  useEffect(() => {
-    const queryString = router.asPath;
-    setSelectedTab(queryString);
-  }, [router]);
 
   const goBack = (): void => {
     if (router.pathname.indexOf('category') > -1) {
@@ -45,19 +37,16 @@ const CategorySubHeader = ({ title }: TProps) => {
     categoryRef?.current?.scrollTo(targetOffset - 10, 0);
   };
 
-  const clickTabHandler = useCallback(
-    (tabItem: any, e: any) => {
-      const targetOffset = e.target.offsetLeft;
-      scrollToAllMenusItemOffsetLeft(targetOffset);
-      setSelectedTab(tabItem.link);
-      new Promise((res, err) => res(initFilters())).then(() => router.push(`/category/${tabItem.value}`));
-    },
-    [router.pathname]
-  );
+  const clickTabHandler = (tabItem: any, e: any) => {
+    const targetOffset = e.target.offsetLeft;
+    scrollToAllMenusItemOffsetLeft(targetOffset);
+    setSelectedTab(tabItem.link);
+    dispatch(SET_MENU_TAB(tabItem.value));
+    new Promise((res, err) => res(initFilters())).then(() => router.push(`/category/${tabItem.value}`));
+  };
 
   const initFilters = () => {
     dispatch(INIT_CATEGORY_FILTER());
-    dispatch(INIT_FILTER());
   };
 
   const goToCart = () => {
@@ -67,6 +56,13 @@ const CategorySubHeader = ({ title }: TProps) => {
       })
     );
   };
+
+  useEffect(() => {
+    const { category }: any = router.query;
+    const queryString = router.asPath;
+    setSelectedTab(queryString);
+    dispatch(SET_MENU_TAB(category));
+  }, [router.query]);
 
   return (
     <>
