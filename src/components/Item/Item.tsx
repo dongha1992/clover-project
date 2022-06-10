@@ -23,16 +23,16 @@ import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { deleteNotificationApi } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
+import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
 type TProps = {
   item: IMenus;
-  isQuick?: boolean;
 };
 
-const Item = ({ item, isQuick }: TProps) => {
+const Item = ({ item }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -55,37 +55,11 @@ const Item = ({ item, isQuick }: TProps) => {
   const { me } = useSelector(userForm);
   const { menuDetails } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
-
-  const checkIsAllSold: boolean = menuDetails
-    .filter((details) => details.main)
-    .every((item: IMenuDetails) => item.isSold);
-
-  const isItemSold = checkIsAllSold || item.isSold;
-
-  const checkIsSoon = (): string | boolean => {
-    let { openedAt } = item;
-
-    const today = dayjs();
-    const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
-
-    try {
-      if (isBeforeThanLaunchedAt) {
-        const { dayWithTime } = getCustomDate(new Date(openedAt));
-        return dayWithTime;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    return false;
-  };
-
-  const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
+  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    if (checkIsAllSold || checkIsSoon()) {
+    if (isItemSold || checkIsBeforeThanLaunchAt) {
       return;
     }
 
@@ -98,10 +72,9 @@ const Item = ({ item, isQuick }: TProps) => {
   };
 
   const goToDetail = (item: IMenus) => {
-    if (checkIsAllSold || checkIsSoon() || item.isReopen) {
+    if (isItemSold || checkIsBeforeThanLaunchAt || item.isReopen) {
       return;
     }
-
     dispatch(SET_MENU_ITEM(item));
     router.push(`/menu/${item.id}`);
   };
@@ -117,7 +90,7 @@ const Item = ({ item, isQuick }: TProps) => {
     if (isItemSold) {
       return <Badge message="일시품절" />;
     } else if (isSold && isReopen && checkIsBeforeThanLaunchAt) {
-      return <Badge message={`${checkIsSoon()}시 오픈`} />;
+      return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
     } else {

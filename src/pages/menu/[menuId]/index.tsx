@@ -14,7 +14,6 @@ import {
   TextH5B,
 } from '@components/Shared/Text';
 import Image from 'next/image';
-import Loading from '@components/Loading';
 import { Tag } from '@components/Shared/Tag';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
@@ -32,14 +31,21 @@ import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
-import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
+import { IMenus, Obj, IMenuDetails } from '@model/index';
+import dayjs from 'dayjs';
+import getCustomDate from '@utils/destination/getCustomDate';
+import Badge from '@components/Item/Badge';
+import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
+
+dayjs.extend(isSameOrBefore);
+dayjs.locale('ko');
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
-
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
 /* TODO: 영양 정보 리팩토링 */
@@ -47,39 +53,29 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 /* TODO: 베스트후기 없으면 안 보여줌  */
 
 const hasAvailableCoupon = true;
+interface IProps {
+  menuDetail: IMenus;
+}
 
-const MenuDetailPage = ({ menuDetail }: any) => {
+const MenuDetailPage = ({ menuDetail }: IProps) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
   const [currentImg, setCurrentImg] = useState(0);
 
-  const { menuItem } = useSelector(menuSelector);
   const HEADER_HEIGHT = 56;
+
+  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
+
+  // const checkIsAllSold: boolean = menuDetail.menuDetails
+  //   .filter((details) => details.main)
+  //   .every((item: IMenuDetails) => item.isSold);
+
+  // const isItemSold = checkIsAllSold || menuDetail.isSold;
+
   let timer: any = null;
 
   const dispatch = useDispatch();
-
-  const {
-    data,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getMenuDetail'],
-    async () => {
-      const { data } = await getMenuDetailApi(menuDetail.id);
-      return data.data;
-    },
-
-    {
-      onSuccess: (data) => {
-        dispatch(SET_MENU_ITEM(data));
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!menuDetail,
-    }
-  );
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
@@ -94,6 +90,25 @@ const MenuDetailPage = ({ menuDetail }: any) => {
       refetchOnWindowFocus: false,
     }
   );
+
+  // const checkIsSoon = (): string | boolean => {
+  //   let { openedAt } = menuDetail;
+
+  //   const today = dayjs();
+  //   const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
+
+  //   try {
+  //     if (isBeforeThanLaunchedAt) {
+  //       const { dayWithTime } = getCustomDate(new Date(openedAt));
+  //       return dayWithTime;
+  //     } else {
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  //   return false;
+  // };
 
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
@@ -156,6 +171,27 @@ const MenuDetailPage = ({ menuDetail }: any) => {
     return { discount, price, discountedPrice };
   };
 
+  // const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
+
+  const badgeRenderer = () => {
+    const badgeMap: Obj = {
+      NEW: 'New',
+      BEST: 'Best',
+    };
+
+    const { badgeMessage, isReopen, isSold } = menuDetail;
+
+    if (isItemSold) {
+      return <Badge message="일시품절" />;
+    } else if (isSold && isReopen && checkIsBeforeThanLaunchAt) {
+      return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
+    } else if (!isReopen && badgeMessage) {
+      return <Badge message={badgeMap[badgeMessage]} />;
+    } else {
+      return;
+    }
+  };
+
   useEffect(() => {
     window.addEventListener('scroll', onScrollHandler);
     return () => {
@@ -168,20 +204,14 @@ const MenuDetailPage = ({ menuDetail }: any) => {
     return () => {};
   }, []);
 
-  console.log(menuItem, 'menuItem');
+  console.log(menuDetail, 'menuItem');
   console.log(reviews, 'reviews');
 
   return (
     <Container>
       <ImgWrapper>
         <Carousel images={menuDetail?.thumbnail} setCountIndex={setCurrentImg} />
-        <DailySaleNumber>
-          {menuDetail?.badgeMessage && (
-            <TextH6B padding="4px" color={theme.white} backgroundColor={theme.brandColor}>
-              {menuDetail?.badgeMessage}
-            </TextH6B>
-          )}
-        </DailySaleNumber>
+        <DailySaleNumber>{badgeRenderer()}</DailySaleNumber>
         {/* <CountWrapper>
           <TextH6B color={theme.white}>{`${currentImg + 1} / ${data?.url.length}`}</TextH6B>
         </CountWrapper> */}
@@ -190,15 +220,9 @@ const MenuDetailPage = ({ menuDetail }: any) => {
         <MenuDetailWrapper>
           <MenuNameWrapper>
             <TextH2B padding={'0 0 8px 0'}>{menuDetail.name}</TextH2B>
-            {/* {menuDetail.tag.map((tag: string, index: number) => {
-              if (index > 1) return;
-              return (
-                <Tag key={index} margin="0 4px 0 0">
-                  {tag}
-                </Tag>
-              );
-            })} */}
-            {menuItem.tag && menuItem.tag !== 'NONE' && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
+            {menuDetail.constitutionTag && menuDetail.constitutionTag !== 'NONE' && (
+              <Tag margin="0 4px 0 0">{menuDetail.constitutionTag}</Tag>
+            )}
             <div className="tagBox">
               {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
                 <Label className={item} key={index}>
@@ -206,7 +230,9 @@ const MenuDetailPage = ({ menuDetail }: any) => {
                 </Label>
               ))}
               {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
-              {menuDetail.tag && <Tag margin="0 4px 0 0">{menuDetail.tag}</Tag>}
+              {menuDetail.constitutionTag && menuDetail.constitutionTag !== 'NONE' && (
+                <Tag margin="0 4px 0 0">{menuDetail.constitutionTag}</Tag>
+              )}
             </div>
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
@@ -229,7 +255,9 @@ const MenuDetailPage = ({ menuDetail }: any) => {
             </PriceWrapper>
             {hasAvailableCoupon ? (
               <CouponWrapper onClick={couponDownloadHandler}>
-                <TextH6B padding="4px 4px 0 0">쿠폰 받기</TextH6B>
+                <TextH6B padding="4px 4px 0 0" pointer>
+                  쿠폰 받기
+                </TextH6B>
                 <SVGIcon name="download" />
               </CouponWrapper>
             ) : (

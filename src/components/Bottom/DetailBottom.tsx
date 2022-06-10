@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
+import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
+
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
@@ -34,6 +36,8 @@ const DetailBottom = () => {
   const { isTimerTooltip } = useSelector(orderForm);
   const { menuItem } = useSelector(menuSelector);
   const deliveryType = checkTimerLimitHelper();
+
+  let isItemSold: any, checkIsBeforeThanLaunchAt: boolean;
 
   useEffect(() => {
     if (router.isReady) {
@@ -63,7 +67,11 @@ const DetailBottom = () => {
     },
 
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(data);
+        isItemSold = isItemSold;
+        checkIsBeforeThanLaunchAt = checkIsBeforeThanLaunchAt;
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuDetailId,
@@ -86,18 +94,13 @@ const DetailBottom = () => {
     }
   }, [menuDetail]);
 
-  // const tempStatus = 'isSoldout';
-  const tempStatus = '';
-  const tempNotiOff = false;
-  const isAlreadyStockNoti = false;
-
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
 
-  const buttonStatusRender = useCallback((status: string) => {
-    switch (status) {
-      case 'isSoldout': {
+  const buttonStatusRender = useCallback(() => {
+    switch (true) {
+      case isItemSold: {
         return '일시품절·재입고 알림받기';
       }
       default: {
@@ -109,7 +112,7 @@ const DetailBottom = () => {
   const goToRestockSetting = () => {};
 
   const cartClickButtonHandler = () => {
-    if (!tempNotiOff) {
+    if (!isItemSold) {
       /* TODO: 이거 뭔지 확인 */
       dispatch(SET_MENU_ITEM(menuItem));
       dispatch(
@@ -120,7 +123,7 @@ const DetailBottom = () => {
       return;
     }
 
-    if (tempNotiOff) {
+    if (isItemSold) {
       const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
       dispatch(
         SET_ALERT({
@@ -133,7 +136,9 @@ const DetailBottom = () => {
         })
       );
     } else {
-      const message = isAlreadyStockNoti ? '이미 재입고 알림 신청한 상품이에요!' : '재입고 알림 신청을 완료했어요!';
+      const message = menuDetail.reopenNotificationRequested
+        ? '이미 재입고 알림 신청한 상품이에요!'
+        : '재입고 알림 신청을 완료했어요!';
       showToast({ message });
     }
   };
@@ -153,7 +158,7 @@ const DetailBottom = () => {
             <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {menuItem.likeCount ? menuItem.likeCount : 0}
+            {menuDetail?.likeCount || 0}
           </TextH5B>
         </LikeWrapper>
         <Col />
@@ -169,7 +174,7 @@ const DetailBottom = () => {
         ) : (
           <BtnWrapper onClick={cartClickButtonHandler}>
             <TextH5B color={theme.white} pointer>
-              {buttonStatusRender(tempStatus)}
+              {buttonStatusRender()}
             </TextH5B>
           </BtnWrapper>
         )}
