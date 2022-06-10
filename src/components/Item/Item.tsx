@@ -4,7 +4,7 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
@@ -19,6 +19,8 @@ import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import 'dayjs/locale/ko';
+import { userForm } from '@store/user';
+import { SET_ALERT } from '@store/alert';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -32,6 +34,7 @@ const Item = ({ item, isQuick }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const { me } = useSelector(userForm);
   const { menuDetails } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
 
@@ -106,6 +109,17 @@ const Item = ({ item, isQuick }: TProps) => {
 
   const goToReopen = (e: any) => {
     e.stopPropagation();
+    if (!me) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
+          onSubmit: () => router.push('/onboarding'),
+          closeBtnText: '취소',
+        })
+      );
+      return;
+    }
+
     if (item.reopenNotificationRequested) return;
     dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
   };
@@ -126,7 +140,7 @@ const Item = ({ item, isQuick }: TProps) => {
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {isItemSold && item.isReopen ? (
+        {!isItemSold && !item.isReopen ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
