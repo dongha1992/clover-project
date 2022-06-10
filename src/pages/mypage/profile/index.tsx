@@ -40,6 +40,9 @@ interface IUserInfo {
   day: number;
 }
 
+const LIMIT = 240;
+const FIVE_MINUTE = 300;
+
 const ProfilePage = () => {
   // const { me } = useSelector(userForm);
 
@@ -53,7 +56,7 @@ const ProfilePage = () => {
     isValid: false,
   });
 
-  const [checkGender, setChcekGender] = useState<string>('');
+  const [checkGender, setChcekGender] = useState<string>('NONE');
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
@@ -72,9 +75,6 @@ const ProfilePage = () => {
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-
-  const LIMIT = 240;
-  const FIVE_MINUTE = 300;
 
   let authTimerRef = useRef(300);
   // let authTimerRef = useRef(5);

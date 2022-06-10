@@ -15,12 +15,11 @@ export const style = createSlice({
   name: 'bottomSheet',
   initialState,
   reducers: {
-    SET_BOTTOM_SHEET: (state, action: PayloadAction<TProps> | null) => {
+    SET_BOTTOM_SHEET: (state: any, action: PayloadAction<TProps> | null) => {
       return action?.payload;
     },
-    INIT_BOTTOM_SHEET: (state, action: PayloadAction) => {
+    INIT_BOTTOM_SHEET: (state: any, action: PayloadAction) => {
       state.content = null;
-      // document.body.style.overflow = 'unset';
     },
   },
 });

@@ -53,7 +53,7 @@ const Background = styled.div`
   bottom: 0px;
   max-width: ${breakpoints.mobile}px;
   height: 100%;
-  z-index: 999;
+  z-index: 1000;
   background-color: rgba(0, 0, 0, 0.3);
 
   ${({ theme }) => theme.desktop`

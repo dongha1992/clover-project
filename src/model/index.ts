@@ -1564,18 +1564,28 @@ export interface IGetTossPaymentResponse {
 
 /* MENU */
 
-export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
-export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
+export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN' | string;
+export type TMenuSort =
+  | 'LAUNCHED_DESC'
+  | 'ORDER_COUNT_DESC'
+  | 'PRICE_ASC'
+  | 'PRICE_DESC'
+  | 'REVIEW_COUNT_DESC'
+  | string;
 export type TType =
   | 'DRINK'
-  | 'KOREAN_SOUP_SOUP'
-  | 'LUNCH_BOX_CONVENIENCE_FOOD'
+  | 'KOREAN_SOUP'
+  | 'SOUP'
+  | 'LUNCH_BOX'
+  | 'CONVENIENCE_FOOD'
   | 'SALAD'
   | 'SET'
   | 'SNACK'
-  | 'WRAP_SANDWICH';
+  | 'WRAP'
+  | 'SANDWICH'
+  | string;
 export interface IGetMenus {
-  categories?: TCategory | string;
+  categories?: TCategory;
   menuSort: TMenuSort | string;
   searchKeyword?: string;
   type?: TType | string;
@@ -1594,8 +1604,8 @@ export interface IMenuDetails {
   price: number;
   discountPrice: number;
   main: boolean;
-  dailyMaximum: number;
-  isSold: number;
+  dailyMaximum?: number;
+  isSold?: number;
 }
 
 export interface IMenus {
@@ -1618,6 +1628,10 @@ export interface IMenus {
   openedAt: string;
   subscriptionDeliveries?: string[];
   subscriptionPeriods?: string;
+  constitutionTag: string;
+  isReopen?: boolean;
+  isSold?: boolean;
+  reopenNotificationRequested: boolean;
 }
 
 /* REVIEW */
