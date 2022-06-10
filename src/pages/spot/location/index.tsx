@@ -22,6 +22,7 @@ import { ISpotsDetail } from '@model/index';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SpotRegisterSheet } from '@components/BottomSheet/SpotRegisterSheet';
 import { userForm } from '@store/user';
+import { SpotAddressSearchSheet } from '@components/BottomSheet/SpotAddressSearchSheet';
 
 /* TODO: geolocation 에러케이스 추가 */
 
@@ -35,6 +36,7 @@ const LocationPage = () => {
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState(false);
   const [page, setPage] = useState<number>(1);
+  const [keyword, setKeyword] = useState<string>();
   const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState('');
   const [spotRegistration, setSpotRegistration] = useState<ISpotsDetail[]>([]);
@@ -68,6 +70,7 @@ const LocationPage = () => {
   };
 
   const addressInputHandler = () => {
+    setKeyword(addressRef.current?.value);
     const keyword = addressRef.current?.value.length;
     setIsTyping(true);
     if (addressRef.current) {
@@ -82,10 +85,7 @@ const LocationPage = () => {
   const getSearchAddressResult = async () => {
     if (addressRef.current) {
       let query = addressRef.current?.value;
-      if (SPECIAL_REGX.test(query) || ADDRESS_KEYWORD_REGX.includes(query)) {
-        alert('포함할 수 없는 문자입니다.');
-        return;
-      }
+      
       const params = {
         query,
         page: page,
@@ -135,16 +135,26 @@ const LocationPage = () => {
         if (result === false) {
           dispatch(
             SET_ALERT({
-              alertMessage: '서울 및 분당구(일부 지역 해당)만\n프코스팟 오픈 신청이 가능해요!',
+              alertMessage: '서울 및 경기도(일부 지역 해당)만\n프코스팟 오픈 신청이 가능해요!',
               submitBtnText: '확인',
             })
           );
           return;
         }
-        router.push({
-          pathname: '/spot/location/address',
-          query: { type },
-        });
+        dispatch(
+          SET_BOTTOM_SHEET({
+            content: (
+              <SpotAddressSearchSheet
+                title="주소 검색"
+              />
+            ),
+          })
+        );
+    
+        // router.push({
+        //   pathname: '/spot/location/address',
+        //   query: { type },
+        // });
       }
     } catch (err) {
       console.error(err);
