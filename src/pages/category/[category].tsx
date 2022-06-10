@@ -79,34 +79,6 @@ const CategoryPage = () => {
     }
   );
 
-  // const getMenuList = async (types: string) => {
-  //   const params = {
-  //     categories: '',
-  //     menuSort: '',
-  //     type: types,
-  //   };
-  //   try {
-  //     const { data } = await getMenusApi(params);
-  //     reorderMenuList(data.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // const getfilteredMenuList = async (types: string) => {
-  //   const params = {
-  //     categories: filter.join(','),
-  //     menuSort: order,
-  //     type: types,
-  //   };
-  //   try {
-  //     const { data } = await getMenusApi(params);
-  //     reorderMenuList(data.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const reorderMenuList = (menuList: IMenus[]) => {
     const reordered = menuList.sort((a: any, b: any) => {
       return a.isSold - b.isSold;
@@ -137,16 +109,9 @@ const CategoryPage = () => {
     }, {});
   };
 
-  // useEffect(() => {
-  //   if (router.isReady) {
-  //     if (hasFilter) {
-  //       getfilteredMenuList(types);
-  //     } else {
-  //       getMenuList(types);
-  //     }
-  //   }
-  // }, [type, order, filter]);
-
+  if (isLoading) {
+    return <div>로딩 중</div>;
+  }
   return (
     <Container>
       <SingleMenu
@@ -162,35 +127,5 @@ const CategoryPage = () => {
 const Container = styled.div`
   ${categoryPageSet}
 `;
-
-// export async function getStaticPaths() {
-//   const paths = CATEGORY.map((menu: any) => ({
-//     params: { category: menu.value },
-//   }));
-
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// }
-
-// export async function getStaticProps({ params }: { params: { category: string } }) {
-//   const categoryTypeMap: Obj = {
-//     meal: ['CONVENIENCE_FOOD', 'LUNCH_BOX'],
-//     drink: 'DRINK',
-//     soup: ['KOREAN_SOUP', 'SOUP'],
-//     salad: 'SALAD',
-//     wrap: ['SANDWICH', 'WRAP'],
-//     set: 'SET',
-//     snack: 'SNACK',
-//     subscription: 'SUBSCRIPTION',
-//   };
-//   const formatType = categoryTypeMap[params.category] ? categoryTypeMap[params.category] : '';
-
-//   return {
-//     props: { title: params.category, type: formatType },
-//     revalidate: 100,
-//   };
-// }
 
 export default CategoryPage;
