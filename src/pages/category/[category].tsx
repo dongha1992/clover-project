@@ -53,33 +53,59 @@ const CategoryPage = () => {
 
   const hasFilter = filter.filter((item) => item).length !== 0 || order.length > 0;
 
-  const getMenuList = async (types: string) => {
-    const params = {
-      categories: '',
-      menuSort: '',
-      type: types,
-    };
-    try {
-      const { data } = await getMenusApi(params);
-      reorderMenuList(data.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { error: menuError, isLoading } = useQuery(
+    ['getMenus', type, order, filter],
+    async () => {
+      const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
+      const types = typeof formatType === 'string' ? formatType : formatType.join(',');
 
-  const getfilteredMenuList = async (types: string) => {
-    const params = {
-      categories: filter.join(','),
-      menuSort: order,
-      type: types,
-    };
-    try {
+      const params = {
+        categories: filter.join(','),
+        menuSort: order,
+        type: types,
+      };
+
       const { data } = await getMenusApi(params);
-      reorderMenuList(data.data);
-    } catch (error) {
-      console.error(error);
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!hasFilter || !!type,
+      onError: () => {},
+      onSuccess: (data) => {
+        reorderMenuList(data);
+      },
     }
-  };
+  );
+
+  // const getMenuList = async (types: string) => {
+  //   const params = {
+  //     categories: '',
+  //     menuSort: '',
+  //     type: types,
+  //   };
+  //   try {
+  //     const { data } = await getMenusApi(params);
+  //     reorderMenuList(data.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // const getfilteredMenuList = async (types: string) => {
+  //   const params = {
+  //     categories: filter.join(','),
+  //     menuSort: order,
+  //     type: types,
+  //   };
+  //   try {
+  //     const { data } = await getMenusApi(params);
+  //     reorderMenuList(data.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const reorderMenuList = (menuList: IMenus[]) => {
     const reordered = menuList.sort((a: any, b: any) => {
@@ -111,18 +137,15 @@ const CategoryPage = () => {
     }, {});
   };
 
-  useEffect(() => {
-    const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
-    const types = typeof formatType === 'string' ? formatType : formatType.join(',');
-
-    if (router.isReady) {
-      if (hasFilter) {
-        getfilteredMenuList(types);
-      } else {
-        getMenuList(types);
-      }
-    }
-  }, [type, order, filter]);
+  // useEffect(() => {
+  //   if (router.isReady) {
+  //     if (hasFilter) {
+  //       getfilteredMenuList(types);
+  //     } else {
+  //       getMenuList(types);
+  //     }
+  //   }
+  // }, [type, order, filter]);
 
   return (
     <Container>
