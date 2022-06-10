@@ -8,7 +8,7 @@ import { SVGIcon } from '@utils/common';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
   // images: IBanners[];
-  images: any[];
+  images: any[] | string;
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -51,6 +51,7 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
   }
 
   /*TODO: menu에 reviews 어떻게 들어오는지 아직 모름, */
+
   return (
     <Container
       onMouseEnter={() => {
