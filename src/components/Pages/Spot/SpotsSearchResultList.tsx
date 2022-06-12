@@ -20,6 +20,7 @@ import { spotSelector } from '@store/spot';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { getSpotDistanceUnit } from '@utils/spot';
 
 interface IProps {
   item: ISpotsDetail | any;
@@ -76,7 +77,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
           <MeterAndTime>
             {(userLocationLen || positionLen) && (
               <>
-                <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
+                <TextH6B>{`${getSpotDistanceUnit(item.distance).distance}${getSpotDistanceUnit(item.distance).unit}`}</TextH6B>
                 <Col />
               </>
             )}
