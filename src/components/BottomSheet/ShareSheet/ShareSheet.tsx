@@ -27,7 +27,13 @@ const ShareSheet = () => {
         url = `http://www.facebook.com/sharer/sharer.php?u=${url}`;
         windowOpen(url);
       },
-      band: () => {},
+      band: () => {
+        const encodeUrl = encodeURIComponent(url);
+        const encodeTitle = encodeURIComponent('1');
+
+        const link = `http://band.us/plugin/share?body=${encodeTitle}&route=${encodeUrl}`;
+        window.open(link, 'share', 'width=500, height=500');
+      },
       urlIcon: () => {
         getUrlLink(e);
       },
