@@ -167,10 +167,6 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
     let { badgeMessage, isReopen, isSold } = menuDetail;
 
-    // isReopen = true;
-    // isItemSold = true;
-    // checkIsBeforeThanLaunchAt = '12/12';
-
     if (isItemSold && !isReopen) {
       return <Badge message="일시품절" />;
     } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {

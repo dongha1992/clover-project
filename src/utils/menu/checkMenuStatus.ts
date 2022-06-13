@@ -7,8 +7,10 @@ import 'dayjs/locale/ko';
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
+const ONE_WEEK = 7;
+
 export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
-  const { openedAt } = menu;
+  let { openedAt } = menu;
 
   // menu 품절 or menu details 모두 품절
   const checkIsAllSold: boolean = menu.menuDetails
@@ -20,10 +22,14 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
   // 오픈 하는지
   const checkIsSoon = (): string => {
     const today = dayjs();
+    openedAt = '2022-06-20 00:00:00 ';
+    const diff = dayjs(openedAt).diff(today, 'day', true);
+
+    const isDisplayBadge = diff <= ONE_WEEK;
     const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
 
     try {
-      if (isBeforeThanLaunchedAt) {
+      if (isBeforeThanLaunchedAt && isDisplayBadge) {
         const { dayWithTime } = getCustomDate(new Date(openedAt));
         return dayWithTime;
       } else {

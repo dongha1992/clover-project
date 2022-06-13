@@ -34,6 +34,8 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
     groupBy((review: any) => review.menuReviewId)
   );
 
+  console.log(reviews, 'reviews');
+
   const mergedReviews = searchReviews.map((review: ISearchReviews) => {
     return { ...review, reviewImg: idByReviewImg[review.id] || [] };
   });
