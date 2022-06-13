@@ -4,11 +4,13 @@ import { AppState } from '.';
 type TProps = {
   content: JSX.Element | null;
   submitHandler?: () => void | null;
+  height?: string | null;
 };
 
 const initialState: TProps = {
   content: null,
   submitHandler: () => {},
+  height: null
 };
 
 export const style = createSlice({

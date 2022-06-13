@@ -19,7 +19,8 @@ interface IProps {
   title: string;
 }
 
-const SpotAddressSearchSheet = ({title}: IProps) => {
+const SpotAddressDetailFormSheet = ({title}: IProps) => {
+  const { type } = router.query;
   const { tempLocation } = useSelector(destinationForm);
   const dispatch = useDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +30,9 @@ const SpotAddressSearchSheet = ({title}: IProps) => {
   });
   const [keywordLen, setKeywordLen] = useState<number>(0);
 
-  const { type } = router.query;
+  useEffect(() => {
+    getLonLanForMap();
+  }, []);
 
   const getLonLanForMap = async () => {
     const params = {
@@ -48,7 +51,7 @@ const SpotAddressSearchSheet = ({title}: IProps) => {
           longitude,
         });
       } else {
-        // 검색 결과가 없는 경우?
+        return;
       }
     } catch (error) {}
   };
@@ -87,12 +90,7 @@ const SpotAddressSearchSheet = ({title}: IProps) => {
 
   const InitBottomSheet = () => {
     dispatch(INIT_BOTTOM_SHEET());
-  }
-
-  useEffect(() => {
-    getLonLanForMap();
-  }, []);
-
+  };
 
   return (
     <Container>
@@ -144,10 +142,7 @@ const SpotAddressSearchSheet = ({title}: IProps) => {
   );
 };
 
-const Container = styled.div`
-  // margin-bottom: 20px;
-  //height: 100vh;
-`;
+const Container = styled.div``;
 const Wrapper = styled.div`
   padding: 80px 24px 24px 24px;
 `;
@@ -218,4 +213,4 @@ const ContentWrapper = styled.div`
   padding: 24px;
 `;
 
-export default React.memo(SpotAddressSearchSheet);
+export default React.memo(SpotAddressDetailFormSheet);
