@@ -123,6 +123,8 @@ const DetailBottom = () => {
   };
 
   const cartClickButtonHandler = () => {
+    if (isItemSold) return;
+
     if (!me) {
       goToLogin();
     }
