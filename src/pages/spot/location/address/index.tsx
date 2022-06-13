@@ -13,16 +13,19 @@ import { Tag } from '@components/Shared/Tag';
 import { SET_SPOT_LOCATION } from '@store/spot';
 
 const AddressDetailPage = () => {
-  const { tempLocation } = useSelector(destinationForm);
+  const { type } = router.query;
   const dispatch = useDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { tempLocation } = useSelector(destinationForm);
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
   });
   const [keywordLen, setKeywordLen] = useState<number>(0);
 
-  const { type } = router.query;
+  useEffect(() => {
+    getLonLanForMap();
+  }, []);
 
   const getLonLanForMap = async () => {
     const params = {
@@ -76,10 +79,6 @@ const AddressDetailPage = () => {
       setKeywordLen(inputRef.current?.value.length);
     }
   };
-
-  useEffect(() => {
-    getLonLanForMap();
-  }, []);
 
   return (
     <Container>

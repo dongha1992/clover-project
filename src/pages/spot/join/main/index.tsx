@@ -20,7 +20,7 @@ import { getSpotInfo } from '@api/spot';
 
 const SpotReqPage = () => {
   const router = useRouter();
-  const { join } = router.query;
+  const { join, type } = router.query;
   const { me, isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
   const [info, setInfo] = useState<ISpotsInfo>();
@@ -36,7 +36,22 @@ const SpotReqPage = () => {
     askBtnText: '채팅 문의',
     registerBtn: '프코스팟 신청하기',
   };
-  const { type } = router.query;
+
+  useEffect(() => {
+    // 스팟 정보 조회
+   const getFetch = async() => {
+     try {
+       const { data } = await getSpotInfo();
+       setSpotCount(data.data.spotCount);
+       setInfo(data.data);
+     } catch (err) {
+       console.error(err);
+     }
+   };
+
+   getFetch();
+ }, []);
+
   const mainText = () => {
     switch (type) {
       case 'PRIVATE': {
@@ -97,21 +112,6 @@ const SpotReqPage = () => {
         );
       }
   };
-
-  useEffect(() => {
-     // 스팟 정보 조회
-    const getFetch = async() => {
-      try {
-        const { data } = await getSpotInfo();
-        setSpotCount(data.data.spotCount);
-        setInfo(data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getFetch();
-  }, [])
 
   return (
     <Container>
