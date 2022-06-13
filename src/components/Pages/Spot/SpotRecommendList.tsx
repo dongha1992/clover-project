@@ -8,6 +8,7 @@ import { ISpotsDetail } from '@model/index';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
+import { getSpotDistanceUnit } from '@utils/spot';
 
 interface IParams {
   item: ISpotsDetail;
@@ -59,7 +60,7 @@ const SpotRecommendList = ({ item }: IParams): ReactElement => {
         <MeterAndTime>
           {userLocationLen && (
             <>
-              <TextH6B color={theme.greyScale65}>{`${Math.round(item.distance)}m`}</TextH6B>
+              <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item.distance).distance}${getSpotDistanceUnit(item.distance).unit}`}</TextH6B>
               <Col />
             </>
           )}
