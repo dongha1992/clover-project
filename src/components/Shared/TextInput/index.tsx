@@ -43,6 +43,7 @@ export interface ITextFieldProps {
   width?: string;
   height?: string;
   size?: string;
+  fontSize?: string;
   style?: Obj;
   search?: boolean;
   padding?: string;
@@ -75,6 +76,7 @@ const TextInput = React.forwardRef(
       width,
       height,
       size,
+      fontSize,
       style,
       search,
       padding,
@@ -94,6 +96,7 @@ const TextInput = React.forwardRef(
         width={width}
         height={height}
         size={size}
+        fontSize={fontSize}
         search={search ?? false}
         style={style}
         padding={padding}
@@ -145,6 +148,7 @@ const Container = styled.div<{
   width?: string;
   height?: string;
   size?: string;
+  fontSize?: string;
   search?: boolean;
   style?: Obj;
   padding?: string;
@@ -172,6 +176,7 @@ const Container = styled.div<{
       width: ${({ width }) => width};
       height: ${({ height }) => height};
       size: ${({ size }) => size};
+      font-size: ${({ fontSize }) => fontSize};
       padding: ${({ padding }) => padding};
       padding-left: ${({ svg }) => (svg ? 48 : 16)}px;
       ${({ size, search }) => search && `size: calc(${size} + 1rem)`};
