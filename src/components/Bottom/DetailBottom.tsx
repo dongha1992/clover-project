@@ -21,13 +21,19 @@ import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
+import { Item } from '@components/Item';
 
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
+interface IMenuStatus {
+  isItemSold: boolean | undefined;
+  checkIsBeforeThanLaunchAt: string | boolean;
+}
+
 const DetailBottom = () => {
   const router = useRouter();
-  const [menuDetailId, setMenuDetailId] = useState<number>();
+  const [menuItemId, setMenuDetailId] = useState<number>();
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
@@ -37,13 +43,7 @@ const DetailBottom = () => {
   const { menuItem } = useSelector(menuSelector);
   const deliveryType = checkTimerLimitHelper();
 
-  let isItemSold: any, checkIsBeforeThanLaunchAt: boolean;
-
-  useEffect(() => {
-    if (router.isReady) {
-      setMenuDetailId(Number(router.query.menuId));
-    }
-  }, [router.isReady]);
+  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuItem);
 
   useEffect(() => {
     const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
@@ -55,64 +55,46 @@ const DetailBottom = () => {
     }
   }, []);
 
-  const {
-    data: menuDetail,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getMenuDetail'],
-    async () => {
-      const { data } = await getMenuDetailApi(menuDetailId!);
-      return data.data;
-    },
-
-    {
-      onSuccess: (data) => {
-        let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(data);
-        isItemSold = isItemSold;
-        checkIsBeforeThanLaunchAt = checkIsBeforeThanLaunchAt;
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!menuDetailId,
-    }
-  );
-
   useEffect(() => {
-    if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
+    if (menuItem?.subscriptionPeriods?.includes('UNLIMITED')) {
       setSubsDiscount('정기구독 최대 15% 할인');
     } else {
       setSubsDiscount('최대 9% 할인');
     }
-    if (menuDetail?.subscriptionDeliveries?.includes('SPOT')) {
+    if (menuItem?.subscriptionDeliveries?.includes('SPOT')) {
       setSubsDeliveryType('SPOT');
     } else if (
-      menuDetail?.subscriptionDeliveries?.includes('PARCEL') ||
-      menuDetail?.subscriptionDeliveries?.includes('MORNING')
+      menuItem?.subscriptionDeliveries?.includes('PARCEL') ||
+      menuItem?.subscriptionDeliveries?.includes('MORNING')
     ) {
       setSubsDeliveryType('PARCEL');
     }
-  }, [menuDetail]);
+  }, [menuItem]);
 
   const goToDib = useCallback(() => {
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
 
-  const buttonStatusRender = useCallback(() => {
+  const buttonStatusRender = () => {
+    const { isReopen } = menuItem;
+
     switch (true) {
-      case isItemSold: {
-        return '일시품절·재입고 알림받기';
+      case isItemSold && !isReopen: {
+        return '재입고 예정이에요';
+      }
+      case isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0: {
+        return `오픈 알림 신청 받기`;
       }
       default: {
         return `장바구니 담기`;
       }
     }
-  }, []);
+  };
 
   const goToRestockSetting = () => {};
 
   const cartClickButtonHandler = () => {
-    if (!isItemSold) {
+    if (isItemSold) {
       /* TODO: 이거 뭔지 확인 */
       dispatch(SET_MENU_ITEM(menuItem));
       dispatch(
@@ -136,7 +118,7 @@ const DetailBottom = () => {
         })
       );
     } else {
-      const message = menuDetail.reopenNotificationRequested
+      const message = menuItem?.reopenNotificationRequested
         ? '이미 재입고 알림 신청한 상품이에요!'
         : '재입고 알림 신청을 완료했어요!';
       showToast({ message });
@@ -147,8 +129,12 @@ const DetailBottom = () => {
     dispatch(SUBS_INIT());
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+    router.push(`/subscription/set-info?menuId=${menuItemId}&subsDeliveryType=${subsDeliveryType}`);
   };
+
+  if (!menuItem) {
+    return <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -158,11 +144,11 @@ const DetailBottom = () => {
             <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {menuDetail?.likeCount || 0}
+            {menuItem?.likeCount || 0}
           </TextH5B>
         </LikeWrapper>
         <Col />
-        {menuDetail?.type === 'SUBSCRIPTION' ? (
+        {menuItem?.type === 'SUBSCRIPTION' ? (
           <BtnWrapper onClick={subscriptionButtonHandler}>
             <TextH5B color={theme.white} pointer>
               <TootipWrapper>
@@ -179,7 +165,7 @@ const DetailBottom = () => {
           </BtnWrapper>
         )}
       </Wrapper>
-      {menuDetail?.type !== 'SUBSCRIPTION' && isTimerTooltip && (
+      {menuItem?.type !== 'SUBSCRIPTION' && isTimerTooltip && (
         <TimerTooltipWrapper>
           <CheckTimerByDelivery isTooltip />
         </TimerTooltipWrapper>

@@ -6,6 +6,7 @@ import {
   IMenuReviewsResponse,
   IReviewsDetailResponse,
   IPostMenuReview,
+  IMenuDetailsResponse,
   IResponse,
   ICompletionReviewsResponse,
   IWillWriteReviewsResponse,
@@ -17,7 +18,7 @@ export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusR
   return Api.get(`menu/v1/menus/`, { params });
 };
 
-export const getMenuDetailApi = (id: number): Promise<AxiosResponse<any>> => {
+export const getMenuDetailApi = (id: number): Promise<AxiosResponse<IMenuDetailsResponse>> => {
   return Api.get(`menu/v1/menus/${id}`);
 };
 

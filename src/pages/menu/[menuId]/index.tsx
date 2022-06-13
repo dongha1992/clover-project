@@ -65,13 +65,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const HEADER_HEIGHT = 56;
 
-  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
-
-  // const checkIsAllSold: boolean = menuDetail.menuDetails
-  //   .filter((details) => details.main)
-  //   .every((item: IMenuDetails) => item.isSold);
-
-  // const isItemSold = checkIsAllSold || menuDetail.isSold;
+  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
 
   let timer: any = null;
 
@@ -90,25 +84,6 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       refetchOnWindowFocus: false,
     }
   );
-
-  // const checkIsSoon = (): string | boolean => {
-  //   let { openedAt } = menuDetail;
-
-  //   const today = dayjs();
-  //   const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
-
-  //   try {
-  //     if (isBeforeThanLaunchedAt) {
-  //       const { dayWithTime } = getCustomDate(new Date(openedAt));
-  //       return dayWithTime;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  //   return false;
-  // };
 
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
@@ -171,19 +146,21 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     return { discount, price, discountedPrice };
   };
 
-  // const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
-
   const badgeRenderer = () => {
     const badgeMap: Obj = {
       NEW: 'New',
       BEST: 'Best',
     };
 
-    const { badgeMessage, isReopen, isSold } = menuDetail;
+    let { badgeMessage, isReopen, isSold } = menuDetail;
 
-    if (isItemSold) {
+    // isReopen = true;
+    // isItemSold = true;
+    // checkIsBeforeThanLaunchAt = '12/12';
+
+    if (isItemSold && !isReopen) {
       return <Badge message="일시품절" />;
-    } else if (isSold && isReopen && checkIsBeforeThanLaunchAt) {
+    } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
@@ -205,7 +182,6 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   }, []);
 
   console.log(menuDetail, 'menuItem');
-  console.log(reviews, 'reviews');
 
   return (
     <Container>
@@ -492,8 +468,9 @@ const BottomContent = styled.div``;
 
 const DailySaleNumber = styled.div`
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 0px;
+  top: 10px;
+  width: 100%;
 `;
 
 export async function getStaticPaths() {

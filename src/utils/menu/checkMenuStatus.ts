@@ -1,5 +1,5 @@
 import getCustomDate from '@utils/destination/getCustomDate';
-import { IMenus, IMenuDetails } from '@model/index';
+import { IMenus, IMenuDetails, IMenuDetail } from '@model/index';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import 'dayjs/locale/ko';
@@ -7,9 +7,8 @@ import 'dayjs/locale/ko';
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
-export const checkMenuStatus = (menu: IMenus) => {
+export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
   const { openedAt } = menu;
-  console.log(menu);
 
   // menu 품절 or menu details 모두 품절
   const checkIsAllSold: boolean = menu.menuDetails
@@ -19,7 +18,7 @@ export const checkMenuStatus = (menu: IMenus) => {
   const isItemSold = checkIsAllSold || menu.isSold;
 
   // 오픈 하는지
-  const checkIsSoon = (): string | boolean => {
+  const checkIsSoon = (): string => {
     const today = dayjs();
     const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
 
@@ -28,14 +27,14 @@ export const checkMenuStatus = (menu: IMenus) => {
         const { dayWithTime } = getCustomDate(new Date(openedAt));
         return dayWithTime;
       } else {
-        return false;
+        return '';
       }
     } catch (error) {
       console.error(error);
     }
-    return false;
+    return '';
   };
 
-  const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
+  const checkIsBeforeThanLaunchAt: string = checkIsSoon();
   return { isItemSold, checkIsBeforeThanLaunchAt };
 };
