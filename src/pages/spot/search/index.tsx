@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { SearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
@@ -310,12 +310,13 @@ const SpotSearchPage = (): ReactElement => {
 
   return (
     <Container>
-      <Wrapper>
+      <SearchBarWrapper>
         <TextInput
           name="input"
           inputType="text"
           placeholder="도로명, 건물명 또는 지번으로 검색"
           svg="searchIcon"
+          fontSize='14px'
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
           onFocus={() => {
@@ -325,13 +326,13 @@ const SpotSearchPage = (): ReactElement => {
           ref={inputRef}
         />
         {
-          inputRef.current && inputRef.current?.value.length > 0 && 
-        (
-          <div className="removeSvg" onClick={clearInputHandler}>
-            <SVGIcon name="removeItem" />
-          </div>
-        )}
-      </Wrapper>
+          inputRef.current && inputRef.current?.value.length > 0 && (
+            <div className="removeSvg" onClick={clearInputHandler}>
+              <SVGIcon name="removeItem" />
+            </div>
+          )
+        }
+      </SearchBarWrapper>
       {
         !inputFocus && (
           <FlexEnd padding="16px 24px 0 0">
@@ -351,75 +352,117 @@ const SpotSearchPage = (): ReactElement => {
       }
 
       {!inputFocus ? (
+        // 스팟 검색 메인 - 검색바 포커싱 x
         <>
-          <SpotRecommendWrapper>
-            <FlexBetween margin="0 0 24px 0">
-              <TextH2B>{spotRecommend?.title}</TextH2B>
-              {
-                // 사용자 위치 설정 했을 경우 노출
-                userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
-              }
-            </FlexBetween>
-            {spotRecommend?.spots.map((item: any, index: number) => {
-              return <SpotRecommendList item={item} key={index} />;
-            })}
-          </SpotRecommendWrapper>
-          <BottomContentWrapper>
-            <Row />
-            <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
-            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-              {eventSpotList?.spots.map((list, idx) => {
-                return (
-                  <SwiperSlide className="swiper-slide" key={idx}>
-                    <SpotList list={list} type="event" isSearch />
-                  </SwiperSlide>
-                );
+        {
+          (spotRecommend?.spots.length! > 0 || eventSpotList?.spots.length! < 0) ? (
+            // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
+            <>
+              <SpotRecommendWrapper>
+              <FlexBetween margin="0 0 24px 0">
+                <TextH2B>{spotRecommend?.title}</TextH2B>
+                {
+                  // 사용자 위치 설정 했을 경우 노출
+                  userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                }
+              </FlexBetween>
+              {spotRecommend?.spots.map((item: any, index: number) => {
+                return <SpotRecommendList item={item} key={index} />;
               })}
-            </EventSlider>
-          </BottomContentWrapper>
+            </SpotRecommendWrapper>
+            <BottomContentWrapper>
+              <Row />
+              <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
+              <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
+                {eventSpotList?.spots.map((list, idx) => {
+                  return (
+                    <SwiperSlide className="swiper-slide" key={idx}>
+                      <SpotList list={list} type="event" isSearch />
+                    </SwiperSlide>
+                  );
+                })}
+              </EventSlider>
+            </BottomContentWrapper>
+          </>
+          ) : (
+            // 스팟 검색 메인 - 추천, 이벤트 스팟 둘다 없는 경우, 최근 픽업 이력 노출
+            <>
+            {
+              recentPickedSpotList?.length! > 0 ? (
+                // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+                <DefaultSearchContainer>
+                  <RecentPickWrapper>
+                    <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                    {recentPickedSpotList?.map((item: any, index) => (
+                      // 스팟 최근 픽업 이력 리스트
+                      <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                    ))}
+                  </RecentPickWrapper>
+                </DefaultSearchContainer>
+              ) : (
+                // 최근 픽업 이력이 없는 경우, 안내 문구 노출
+                <DefaultSearchContainer empty>
+                  <TextB2R color={theme.greyScale65} center>{'500m 내 프코스팟이 없어요.\n찾으시는 프코스팟을 검색해 보세요. 😭 '}</TextB2R>
+                </DefaultSearchContainer>
+              )
+            }
+            </>
+          )
+        }
+        {
+
+        }
         </>
       ) : (
+        // 스팟 검색 메인 - 검색바 포커싱 o 
         <>
-          {!isSearched ? (
+          {!isSearched && (
             recentPickedSpotList?.length! > 0 ? (
+              // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
               <DefaultSearchContainer>
                 <RecentPickWrapper>
                   <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
                   {recentPickedSpotList?.map((item: any, index) => (
                     // 스팟 최근 픽업 이력 리스트
-                    // <SpotRecentPickupList item={item} key={index} hasCart={cartList?.length! > 0} />
                     <SpotRecentPickupList item={item} key={index} hasCart={true} />
                   ))}
                 </RecentPickWrapper>
               </DefaultSearchContainer>
-            ) : (
-              // 픽업 이력 없는 경우, 추천 스팟 노출
-              <SpotRecommendWrapper>
-                <FlexBetween margin="0 0 24px 0">
-                  <TextH2B>{spotRecommend?.title}</TextH2B>
-                  {
-                    // 사용자 위치 설정 했을 경우 노출
-                    userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
-                  }
-                </FlexBetween>
-                {spotRecommend?.spots.map((item: any, index: number) => {
-                  return <SpotRecommendList item={item} key={index} />;
-                })}
-              </SpotRecommendWrapper>
+              ) : (
+              <>
+              {
+                // 픽업 이력 없는 경우, 추천 스팟 노출
+                spotRecommend?.spots.length! > 0 && (
+                  <SpotRecommendWrapper>
+                  <FlexBetween margin="0 0 24px 0">
+                    <TextH2B>{spotRecommend?.title}</TextH2B>
+                    {
+                      // 사용자 위치 설정 했을 경우 노출
+                      userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                    }
+                  </FlexBetween>
+                  {spotRecommend?.spots.map((item: any, index: number) => {
+                    return <SpotRecommendList item={item} key={index} />;
+                  })}
+                </SpotRecommendWrapper>
+                )  
+              }
+              {
+                // 픽업 이력 없고, 추천 스팟도 없는 경우
+                spotRecommend?.spots.length! < 0 && null
+              }
+              </>
+              )
             )
-          ) : (
+          }
+          {
+            isSearched && (
             // 검색 결과
             <SearchResultContainer>
-              {/* <SearchResult
-                searchResult={searchResult}
-                isSpot
-                onClick={goToOrder}
-                orderId={orderId}
-                hasCart={cartList?.length! > 0}
-              /> */}
               <SearchResult searchResult={filterResult} isSpot orderId={orderId} hasCart={true} getLocation={getLocation} />
             </SearchResultContainer>
-          )}
+            )
+          }
         </>
       )}
     </Container>
@@ -428,19 +471,19 @@ const SpotSearchPage = (): ReactElement => {
 
 const Container = styled.main``;
 
-const Wrapper = styled.div`
-  padding: 8px 24px 0 24px;
+const SearchBarWrapper = styled.div`
+  margin: 8px 24px 0 24px;
   position: relative;
-
   .removeSvg {
     position: absolute;
-    right: 8%;
-    top: 43%;
+    right: 0;
+    top: 0;
+    margin: 15px 14px 0 0;
   }
 `;
 
 const KeyWordWrapper = styled.div`
-  padding: 16px 24px;
+  padding: 16px 24px 24px 24px;
 `;
 
 const SpotRecommendWrapper = styled.section`
@@ -454,7 +497,18 @@ const RecentPickWrapper = styled.div`
   ${homePadding};
 `;
 
-const DefaultSearchContainer = styled.section``;
+const DefaultSearchContainer = styled.section<{empty?: boolean}>`
+  ${({empty}) => {
+    if(empty){
+      return css`
+        height: 32vh;
+        display: flex;
+        justify-content: center;
+        align-items: end;
+      `
+    }
+  }}
+`;
 
 const SearchResultContainer = styled.section`
   display: flex;
