@@ -20,14 +20,14 @@ import { getSpotInfo } from '@api/spot';
 
 const SpotReqPage = () => {
   const router = useRouter();
-  const { join } = router.query;
+  const { join, type } = router.query;
   const { me, isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
   const text = {
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
-    privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
+    privateDesc: '나만의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
     publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
     publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
     ownerText: `${spotCount! + 1}번째 프코스팟의\n파트너가 되어보세요.`,
@@ -36,7 +36,22 @@ const SpotReqPage = () => {
     askBtnText: '채팅 문의',
     registerBtn: '프코스팟 신청하기',
   };
-  const { type } = router.query;
+
+  useEffect(() => {
+    // 스팟 정보 조회
+   const getFetch = async() => {
+     try {
+       const { data } = await getSpotInfo();
+       setSpotCount(data.data.spotCount);
+       setInfo(data.data);
+     } catch (err) {
+       console.error(err);
+     }
+   };
+
+   getFetch();
+ }, []);
+
   const mainText = () => {
     switch (type) {
       case 'PRIVATE': {
@@ -97,21 +112,6 @@ const SpotReqPage = () => {
         );
       }
   };
-
-  useEffect(() => {
-     // 스팟 정보 조회
-    const getFetch = async() => {
-      try {
-        const { data } = await getSpotInfo();
-        setSpotCount(data.data.spotCount);
-        setInfo(data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getFetch();
-  }, [])
 
   return (
     <Container>
