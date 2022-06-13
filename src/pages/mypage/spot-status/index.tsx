@@ -93,7 +93,13 @@ const SpotStatusPage = () => {
           <>
           {
             spotStatusList?.spotRegistrations.length! > 0 ? (
-              <SpotStatusList items={spotStatusList?.spotRegistrations!} />
+              <SpotStatusListWrapper >
+                {spotStatusList?.spotRegistrations.map((item, idx) => {
+                  return (
+                      <SpotStatusList item={item} key={idx} />
+                  )
+                })}
+              </SpotStatusListWrapper>
             ) : (
               <SpotListEmptyScreen>
                 <EmptyWrapper>
@@ -140,6 +146,11 @@ const ContentWrapper = styled.div`
   ${homePadding};
 `;
 
+const SpotStatusListWrapper = styled.section`
+  width: 100%;
+  padding-top: 50px;
+`
+
 const SpotWishListWrapper = styled.section`
   width: 100%;
   padding-top: 72px;
@@ -162,4 +173,4 @@ const EmptyWrapper = styled.div`
   bottom: 0;
 `;
 
-export default SpotStatusPage;
+export default React.memo(SpotStatusPage);

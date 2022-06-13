@@ -10,14 +10,14 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 /* TODO: height bottom 버튼 크기 만큼 위로 + translateY 비율로, 상수 X */
 
 const BottomSheet = () => {
-  const { sheetRef, contentRef, size, height } = useBottomSheet();
+  const { sheetRef, contentRef, size } = useBottomSheet();
   const dispatch = useDispatch();
-  const { content }: any = useSelector(bottomSheetForm);
+  const { content, height }: any = useSelector(bottomSheetForm);
   document.body.style.overflow = 'hidden';
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
-      sheetRef.current.style.setProperty('transform', `translateY(${-95}px)`);
+      sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
     }
     return () => {
       document.body.style.overflow = 'unset';
@@ -82,7 +82,7 @@ const Container = styled.div<{ height: number | null }>`
   bottom: -98px;
   background-color: #fff;
   /* top: ${({ height }) => height}px; */
-  /* height: 100%; */
+  height: ${({height}) => height ? height : null};
   transition: transform 150ms ease-out;
 
   ${({ theme }) => theme.desktop`
