@@ -22,9 +22,11 @@ import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { Item } from '@components/Item';
+import { userForm } from '@store/user';
+import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
+import { useMutation, useQueryClient } from 'react-query';
 
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
-/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
 interface IMenuStatus {
   isItemSold: boolean | undefined;
@@ -33,17 +35,36 @@ interface IMenuStatus {
 
 const DetailBottom = () => {
   const router = useRouter();
-  const [menuItemId, setMenuDetailId] = useState<number>();
+  const queryClient = useQueryClient();
+
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { showToast } = useToast();
+
   const { isTimerTooltip } = useSelector(orderForm);
   const { menuItem } = useSelector(menuSelector);
+  const { me } = useSelector(userForm);
+
   const deliveryType = checkTimerLimitHelper();
 
   let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuItem);
+
+  const { mutate: mutateDeleteNotification } = useMutation(
+    async () => {
+      const { data } = await deleteNotificationApi({ menuId: menuItem?.id });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getMenus');
+      },
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
 
   useEffect(() => {
     const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
@@ -72,6 +93,9 @@ const DetailBottom = () => {
   }, [menuItem]);
 
   const goToDib = useCallback(() => {
+    if (!me) {
+      goToLogin();
+    }
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
 
@@ -94,8 +118,9 @@ const DetailBottom = () => {
   const goToRestockSetting = () => {};
 
   const cartClickButtonHandler = () => {
-    if (isItemSold) {
-      /* TODO: 이거 뭔지 확인 */
+    const { isReopen } = menuItem;
+
+    if (!isItemSold) {
       dispatch(SET_MENU_ITEM(menuItem));
       dispatch(
         SET_BOTTOM_SHEET({
@@ -105,18 +130,16 @@ const DetailBottom = () => {
       return;
     }
 
-    if (isItemSold) {
-      const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
-      dispatch(
-        SET_ALERT({
-          alertMessage: restockMgs,
-          onSubmit: () => {
-            goToRestockSetting();
-          },
-          submitBtnText: '설정 앱 이동',
-          closeBtnText: '취소',
-        })
-      );
+    if (isItemSold && isReopen) {
+      if (!me) {
+        goToLogin();
+      } else {
+        if (menuItem?.reopenNotificationRequested) {
+          mutateDeleteNotification();
+          return;
+        }
+        dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
+      }
     } else {
       const message = menuItem?.reopenNotificationRequested
         ? '이미 재입고 알림 신청한 상품이에요!'
@@ -125,11 +148,22 @@ const DetailBottom = () => {
     }
   };
 
+  const goToLogin = () => {
+    return dispatch(
+      SET_ALERT({
+        alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => router.push('/onboarding'),
+      })
+    );
+  };
+
   const subscriptionButtonHandler = () => {
     dispatch(SUBS_INIT());
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push(`/subscription/set-info?menuId=${menuItemId}&subsDeliveryType=${subsDeliveryType}`);
+    router.push(`/subscription/set-info?menuId=${menuItem?.id}&subsDeliveryType=${subsDeliveryType}`);
   };
 
   if (!menuItem) {
