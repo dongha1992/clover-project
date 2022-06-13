@@ -102,8 +102,6 @@ const ChangePasswordPage = () => {
           isValid: false,
           message: '8~20자 이내 / 영문, 숫자, 특수문자 일부만 입력 가능해요',
         });
-        // 신규
-        // 8~20자 이내 / 영문, 숫자, 특수문자 일부만 입력 가능해요.
       } else if (passwordLengthCheck) {
         setNewPasswordValidation({
           isValid: true,
@@ -242,13 +240,15 @@ const ChangePasswordPage = () => {
             {newPasswordValidation.isValid &&
               newPasswordLengthValidation.isValid &&
               oldAndNewPasswordSameValidation.isValid && <SVGIcon name="confirmCheck" />}
-            <FlexCol>
-              {!newPasswordValidation.isValid && <Validation>{newPasswordValidation.message}</Validation>}
-              {!newPasswordLengthValidation.isValid && <Validation>{newPasswordLengthValidation.message}</Validation>}
-              {!oldAndNewPasswordSameValidation.isValid && (
-                <Validation>{oldAndNewPasswordSameValidation.message}</Validation>
-              )}
-            </FlexCol>
+            {newPasswordRef?.current?.value?.length! > 0 && (
+              <FlexCol>
+                {!newPasswordValidation.isValid && <Validation>{newPasswordValidation.message}</Validation>}
+                {!newPasswordLengthValidation.isValid && <Validation>{newPasswordLengthValidation.message}</Validation>}
+                {!oldAndNewPasswordSameValidation.isValid && (
+                  <Validation>{oldAndNewPasswordSameValidation.message}</Validation>
+                )}
+              </FlexCol>
+            )}
           </NewPasswordWrapper>
           <NewAgainPasswordWrapper>
             <TextInput
