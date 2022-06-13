@@ -218,7 +218,7 @@ const WriteReviewPage = ({ menuId }: any) => {
         <FlexRow>
           <ImgWrapper>
             <NextImage
-              src={IMAGE_S3_URL + data.thumbnail}
+              src={IMAGE_S3_URL + data?.thumbnail}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
@@ -227,7 +227,7 @@ const WriteReviewPage = ({ menuId }: any) => {
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{data.name}</TextB2R>
+            <TextB2R padding="0 0 0 16px">{data?.name}</TextB2R>
           </TextWrapper>
         </FlexRow>
         <RateWrapper>

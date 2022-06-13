@@ -1608,6 +1608,35 @@ export interface IMenuDetails {
   isSold?: number;
 }
 
+export interface IMenuDetail {
+  badgeMessage: string;
+  category: string;
+  constitutionTag: string;
+  description: string;
+  id: number;
+  isReopen: boolean;
+  isSold: boolean;
+  menuDetails: IMenuDetails[];
+  menuSort: number;
+  likeCount: number;
+  name: string;
+  openedAt: string;
+  orderCount: number;
+  priority: number;
+  thumbnail: string;
+  type: string;
+  subscriptionDeliveries: string[];
+  subscriptionPeriods: string[];
+  subscriptionDeliveryCycle: string;
+  reopenNotificationRequested: boolean;
+  reopenMessage: string;
+}
+
+export interface IMenuDetailsResponse {
+  data: IMenuDetail;
+  message: string;
+  code: number;
+}
 export interface IMenus {
   id: number;
   name: string;

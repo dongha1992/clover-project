@@ -16,8 +16,6 @@ const SHARE_ICONS = [
   { value: 'urlIcon', name: '링크 복사' },
 ];
 
-interface IProps {}
-
 const ShareSheet = () => {
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
     let url = window.location.href;
@@ -54,26 +52,11 @@ const ShareSheet = () => {
         imageWidth: 800,
         imageHeight: 420,
         link: {
-          webUrl: '',
-          mobileWebUrl: '',
+          webUrl: url,
+          mobileWebUrl: url,
         },
       },
-      buttons: [
-        {
-          title: '결과 보기',
-          link: {
-            webUrl: '',
-            mobileWebUrl: '',
-          },
-        },
-        {
-          title: '테스트하기',
-          link: {
-            webUrl: '',
-            mobileWebUrl: '',
-          },
-        },
-      ],
+      buttons: [],
     });
   };
 
