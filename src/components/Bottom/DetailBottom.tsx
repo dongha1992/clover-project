@@ -25,6 +25,7 @@ import { Item } from '@components/Item';
 import { userForm } from '@store/user';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import { useMutation, useQueryClient } from 'react-query';
+import { deleteNotificationApi } from '@api/menu';
 
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 
@@ -57,6 +58,7 @@ const DetailBottom = () => {
     },
     {
       onSuccess: async () => {
+        showToast({ message: '알림을 취소했어요!' });
         await queryClient.refetchQueries('getMenus');
       },
       onError: async (error: any) => {
@@ -100,14 +102,19 @@ const DetailBottom = () => {
   }, [tempIsLike]);
 
   const buttonStatusRender = () => {
-    const { isReopen } = menuItem;
+    const { isReopen, reopenNotificationRequested } = menuItem;
+
+    const reOpenCondition = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
 
     switch (true) {
       case isItemSold && !isReopen: {
         return '재입고 예정이에요';
       }
-      case isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0: {
-        return `오픈 알림 신청 받기`;
+      case reOpenCondition && !reopenNotificationRequested: {
+        return '오픈 알림 신청 받기';
+      }
+      case reOpenCondition && reopenNotificationRequested: {
+        return '오픈 알림 취소하기';
       }
       default: {
         return `장바구니 담기`;
@@ -115,10 +122,10 @@ const DetailBottom = () => {
     }
   };
 
-  const goToRestockSetting = () => {};
-
   const cartClickButtonHandler = () => {
-    const { isReopen } = menuItem;
+    if (!me) {
+      goToLogin();
+    }
 
     if (!isItemSold) {
       dispatch(SET_MENU_ITEM(menuItem));
@@ -130,22 +137,12 @@ const DetailBottom = () => {
       return;
     }
 
-    if (isItemSold && isReopen) {
-      if (!me) {
-        goToLogin();
-      } else {
-        if (menuItem?.reopenNotificationRequested) {
-          mutateDeleteNotification();
-          return;
-        }
-        dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
-      }
-    } else {
-      const message = menuItem?.reopenNotificationRequested
-        ? '이미 재입고 알림 신청한 상품이에요!'
-        : '재입고 알림 신청을 완료했어요!';
-      showToast({ message });
+    if (menuItem?.reopenNotificationRequested) {
+      mutateDeleteNotification();
+      return;
     }
+
+    dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={menuItem?.id} /> }));
   };
 
   const goToLogin = () => {
