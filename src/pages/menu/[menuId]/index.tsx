@@ -41,6 +41,8 @@ import dayjs from 'dayjs';
 import getCustomDate from '@utils/destination/getCustomDate';
 import Badge from '@components/Item/Badge';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
+import { userForm } from '@store/user';
+import { SET_ALERT } from '@store/alert';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -65,6 +67,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const HEADER_HEIGHT = 56;
 
+  const { me } = useSelector(userForm);
   let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
 
   let timer: any = null;
@@ -98,6 +101,16 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   };
 
   const couponDownloadHandler = () => {
+    if (!me) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '로그인 후 쿠폰 다운로드 가능합니다.',
+          submitBtnText: '로그인 하기',
+          closeBtnText: '취소',
+          onSubmit: () => router.push('/onboarding'),
+        })
+      );
+    }
     dispatch(
       SET_BOTTOM_SHEET({
         content: <CouponSheet />,
