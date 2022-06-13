@@ -1,12 +1,10 @@
-import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { DELIVERY_TIME_MAP } from '@constants/order';
-import { periodMapper } from '@constants/subscription';
-import { FlexRow, FlexRowStart, theme } from '@styles/theme';
+import { FlexRow, FlexRowStart } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
 import Image from 'next/image';
 import styled from 'styled-components';
-import { Label } from '../SubsCardItem';
+import SubsLabel from '../SubsLabel';
 
 interface IProps {
   deliveryType: string; // 새벽, 택배, 스팟
@@ -27,15 +25,7 @@ const SubsOrderItem = ({ deliveryType, deliveryDetail, subscriptionPeriod, name,
         <InfoBox>
           <div className="labelBox">
             <FlexRow padding="0 0 4px 0">
-              <Label className="subs">{periodMapper[subscriptionPeriod]}</Label>
-              {deliveryType === 'SPOT' && (
-                <>
-                  <Label>스팟배송</Label>
-                  <Label>{DELIVERY_TIME_MAP[deliveryDetail!]}</Label>
-                </>
-              )}
-              {deliveryType === 'PARCEL' && <Label className="parcel">택배배송</Label>}
-              {deliveryType === 'MORNING' && <Label className="dawn">새벽배송</Label>}
+              <SubsLabel subsPeriod={subscriptionPeriod} delivery={deliveryType} deliveryDetail={deliveryDetail!} />
             </FlexRow>
           </div>
           <TextB3R>{name}</TextB3R>
