@@ -17,6 +17,7 @@ import { spotSelector } from '@store/spot';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { getSpotDistanceUnit } from '@utils/spot';
 
 interface IProps {
   item: IDestinationsResponse | undefined;
@@ -72,7 +73,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             <MeterAndTime>
               {userLocationLen && (
                 <>
-                  <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
+                  <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit}`}</TextH6B>
                   <Col />
                 </>
               )}
@@ -89,7 +90,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           <MeterAndTime>
             {userLocationLen && (
               <>
-                <TextH6B>{`${Math.round(item?.spotPickup?.spot.distance!)}m`}</TextH6B>
+                <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit}`}</TextH6B>
                 <Col />
               </>
             )}
