@@ -86,7 +86,7 @@ export const user = createSlice({
         expiresIn: payload.expiresIn,
       };
 
-      sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
+      // sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
       setCookie({
         name: 'acstk',
         value: JSON.stringify(accessTokenObj),

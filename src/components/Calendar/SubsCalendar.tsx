@@ -231,7 +231,6 @@ const SubsCalendar = ({
         }
         // 픽업 요일
         setPickupDay && setPickupDay(Array.from(pickupDayObj));
-        console.log('subsCalendar', data[0]);
 
         dispatch(SET_SUBS_CALENDAR_SELECT_MENU(data[0]));
         dispatch(SET_SUBS_ORDER_MENUS(data));
