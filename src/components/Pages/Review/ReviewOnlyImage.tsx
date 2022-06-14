@@ -4,9 +4,9 @@ import { TextH2B, TextH5B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import StarRatingComponent from 'react-star-rating-component';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+import { StarRating } from '@components/StarRating';
 
 const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail, averageRating, totalReviews }: any) => {
   return (
@@ -18,18 +18,7 @@ const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail, averageR
             <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
-            <StarRatingComponent
-              name="rate"
-              editing={false}
-              starCount={5}
-              value={averageRating}
-              renderStarIcon={(index, value) => {
-                return <SVGIcon name={index <= value ? 'singleStar' : 'singleStarEmpty'} />;
-              }}
-              renderStarIconHalf={(index, value) => {
-                return <SVGIcon name="singleStarHalf" />;
-              }}
-            />
+            <StarRating rating={averageRating} />
           </Star>
         </Header>
         <ReviewSwipe>
@@ -93,7 +82,8 @@ const Count = styled.div`
   align-items: center;
 `;
 
-const Star = styled.div``;
+const Star = styled.div`
+di`;
 
 const ReviewSwipe = styled.div`
   display: flex;
