@@ -9,8 +9,9 @@ interface IProps {
   onChange: any;
 }
 
+/* TODO: 렌더  */
+
 const BirthDate = ({ selected, onChange }: IProps) => {
-  console.log(selected, 'selected');
   const [days, setDays] = useState<number[]>([]);
 
   const { CURRENT_KOR_DATE } = getCustomDate(new Date());
@@ -109,4 +110,4 @@ const SvgWrapper = styled.div`
   top: 25%;
 `;
 
-export default BirthDate;
+export default React.memo(BirthDate);
