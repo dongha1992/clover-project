@@ -65,3 +65,23 @@ export const getSubscriptionApi = ({
     params: { id, destinationId, subscriptionPeriod, deliveryStartDate },
   });
 };
+
+export const postNotificationApi = ({
+  menuId,
+  tel,
+  type,
+}: {
+  menuId: number;
+  tel: string;
+  type: string;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`menu/v1/notification?menuId=${menuId}&tel=${tel}&type=${type}`);
+};
+
+export const deleteNotificationApi = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`menu/v1/notification/${menuId}`);
+};
+
+export const getLikeMenus = (menuPattern: string): Promise<AxiosResponse<any>> => {
+  return Api.get(`menu/v1/menus/like`, { params: { menuPattern } });
+};

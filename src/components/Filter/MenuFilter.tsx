@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextH5B } from '@components/Shared/Text';
@@ -6,6 +6,12 @@ import styled from 'styled-components';
 import { MUTILPLE_CHECKBOX_MENU, RADIO_CHECKBOX_MENU } from '@constants/filter';
 import { theme, bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
+import { Obj } from '@model/index';
+import { menuSelector } from '@store/menu';
+import { filterSelector, SET_CATEGORY_FILTER } from '@store/filter';
+import { useDispatch, useSelector } from 'react-redux';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+
 /* 
 
 DefaultFilter : 다중 선택 필터
@@ -18,13 +24,15 @@ OrderFilter: 단일 선택 필터
 const MenuFilter = () => {
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
   const [selectedRadioId, setSelectedRadioId] = useState<string>('');
-  const [isCheckedAll, setIsCheckedAll] = useState(false);
+
+  const dispatch = useDispatch();
+  const {
+    categoryFilters: { order, filter },
+  } = useSelector(filterSelector);
 
   const checkboxHandler = (name: string) => {
-    /* TODO filter 왜 그래.. */
-    /* TODO 로직 넘 복잡 */
     const findItem = selectedCheckboxIds.find((_name) => _name === name);
-    const tempSelectedCheckboxIds = selectedCheckboxIds.slice();
+    let tempSelectedCheckboxIds = selectedCheckboxIds.slice();
 
     if (name === '전체') {
       setSelectedCheckboxIds(['전체']);
@@ -32,7 +40,7 @@ const MenuFilter = () => {
     }
 
     if (findItem) {
-      tempSelectedCheckboxIds.filter((_name) => _name !== name);
+      tempSelectedCheckboxIds = tempSelectedCheckboxIds.filter((_name) => _name !== name);
     } else {
       const allCheckedIdx = tempSelectedCheckboxIds.indexOf('전체');
 
@@ -48,12 +56,35 @@ const MenuFilter = () => {
     setSelectedRadioId(value);
   };
 
-  const changeToggleHandler = () => {};
-  const submitHandler = () => {};
+  const submitHandler = () => {
+    const menufilterMap: Obj = {
+      전체: '',
+      비건: 'VEGAN',
+      해산물: 'SEAFOOD',
+      육류: 'MEAT',
+      유제품: 'DAIRY_PRODUCTS',
+    };
+    const getValueByMultipleFilter = selectedCheckboxIds.map((item) => {
+      return menufilterMap[item];
+    });
+
+    dispatch(SET_CATEGORY_FILTER({ filter: getValueByMultipleFilter, order: selectedRadioId }));
+    dispatch(INIT_BOTTOM_SHEET());
+  };
+
+  useEffect(() => {
+    const selectedCheckBox = MUTILPLE_CHECKBOX_MENU.filter((item) => filter.includes(item.value)).map(
+      (item) => item.name
+    );
+    const hasSelectCheckBox = selectedCheckBox.length > 0;
+
+    setSelectedRadioId(order || '');
+    setSelectedCheckboxIds(hasSelectCheckBox ? selectedCheckBox : ['전체']);
+  }, []);
 
   return (
     <Container>
-      <TextH5B padding="24px 0 16px 0" center>
+      <TextH5B padding="24px 0 16px 0" center pointer>
         필터 및 정렬
       </TextH5B>
       <Wrapper>

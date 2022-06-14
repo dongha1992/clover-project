@@ -59,6 +59,7 @@ const OnBoarding: NextPage = () => {
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
+    // dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
   }, []);
 
   const kakaoLoginHandler = () => {
@@ -67,13 +68,11 @@ const OnBoarding: NextPage = () => {
     // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     // return;
 
-    if (typeof window !== undefined) {
-      window.Kakao.Auth.authorize({
-        redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-      });
-    }
+    window.Kakao.Auth.authorize({
+      redirectUri:
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+    });
   };
 
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
@@ -87,10 +86,8 @@ const OnBoarding: NextPage = () => {
       });
       try {
         const appleResponse = await window.AppleID.auth.signIn();
-
         const appleToken = appleResponse?.authorization.id_token;
         if (appleToken) {
-          // 애플 로그인 / 회원가입 호출?
           const params = { appleToken };
           const { data } = await getAppleTokenApi({ params });
           if (data.data.availability) {
@@ -209,11 +206,12 @@ const Container = styled.main`
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
-    left:0px;
+    left: 0px;
   `};
   ${({ theme }) => theme.mobile`
     margin: 0 auto;
     left: 0px;
+
   `};
 
   :after {
@@ -246,6 +244,9 @@ const ButtonWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  ${({ theme }) => theme.mobile`
+    top: -7%;
+  `};
 `;
 
 const EmailLoginAndSignUp = styled.div`
@@ -294,7 +295,7 @@ const AppleBtn = styled.div`
 
 const TagWrapper = styled.div<{ left?: number }>`
   position: absolute;
-  top: -20%;
+  top: -30%;
   left: ${({ left }) => left && left + 3}%;
   filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
 

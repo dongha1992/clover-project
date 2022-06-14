@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { TextH4B } from '@components/Shared/Text';
 const TABS = [
-  { title: '전체메뉴', link: '/category' },
+  { title: '전체메뉴', link: '/category/all' },
   { title: '프코추천', link: '/recommendation' },
   { title: '이벤트', link: '/' },
   { title: '기획전', link: '/' },

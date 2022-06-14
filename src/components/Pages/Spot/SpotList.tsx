@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
-import { IMAGE_S3_URL } from '@constants/mock';
+import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
 import { ISpotsDetail } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
@@ -17,7 +17,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { useOnLike } from 'src/query';
 import { spotSelector } from '@store/spot';
-
+import { getSpotDistanceUnit } from '@utils/spot';
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
@@ -216,13 +216,16 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {list.images.map((i, idx) => {
-                return (
-                  <div key={idx}>
-                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                  </div>
-                );
-              })}
+              {
+                list.isTrial ? (
+                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                ) : 
+                  list.images.length > 0 ? (
+                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  ) : (
+                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                  )
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
@@ -230,7 +233,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               </TextB3R>
               {
                 // 유저 위치정보 있을때 노출
-                userLocationLen && <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+                userLocationLen && <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}</TextH6B>
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
@@ -249,13 +252,16 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              {list.images.map((i, idx) => {
-                return (
-                  <div key={idx}>
-                    <Img src={`${IMAGE_S3_URL}${i.url}`} alt="매장이미지" />
-                  </div>
-                );
-              })}
+              {
+                list.isTrial ? (
+                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                ) : 
+                  list.images.length > 0 ? (
+                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+                  ) : (
+                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+                  )
+              }
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
@@ -322,6 +328,7 @@ const Container = styled.section<{ type: string }>`
         width: 299px;
         margin-bottom: 48px;
         border-radius: 8px;
+        justify-content: space-between;
       `;
     } else if (type === 'normal') {
       return css`

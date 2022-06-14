@@ -8,19 +8,39 @@ import { SVGIcon } from '@utils/common';
 import { IGetRegistrationStatus, ISpotsInfo } from '@model/index';
 import { postSpotsRegistrationsRetrial, getSpotInfo } from '@api/spot';
 import { SET_ALERT } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SET_SPOT_INFO } from '@store/spot';
 import router from 'next/router';
+import { userForm } from '@store/user';
 
 interface IProps {
-  items: IGetRegistrationStatus[];
+  item: IGetRegistrationStatus;
 };
 
-const SpotStatusList = ({ items }: IProps): ReactElement => {
+const SpotStatusList = ({ item }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const routers = useRouter();
+  const { me } = useSelector(userForm);
   const [info, setInfo] = useState<ISpotsInfo>();
+
+  const loginUserId = me?.id!;
+
+  useEffect(() => {
+    // 스팟 정보 조회
+    const getSpotInfoData = async () => {
+      try {
+        const { data } = await getSpotInfo();
+        if (data.code === 200) {
+          setInfo(data.data);
+          dispatch(SET_SPOT_INFO(data.data));  
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getSpotInfoData();
+  }, []);
 
   const spotType = (type: string | undefined) => {
     switch(type){
@@ -100,83 +120,64 @@ const SpotStatusList = ({ items }: IProps): ReactElement => {
     };  
   };
 
-  const goToSpotStatusDetail = (id: number) => {
+  const goToSpotStatusDetail = (id: number, type: string, userId: number) => {
+    if(type === 'OWNER' && (Number(loginUserId) !== userId)) {
+      return;
+    }
       router.push(`/mypage/spot-status/detail/${id}`);
   };
 
-  useEffect(() => {
-    // 스팟 정보 조회
-    const getSpotInfoData = async () => {
-      try {
-        const { data } = await getSpotInfo();
-        if (data.code === 200) {
-          setInfo(data.data);
-          dispatch(SET_SPOT_INFO(data.data));  
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getSpotInfoData();
-  }, []);
-
   return (
     <Container>
-      {items?.map((i, idx) => {
-        return (
-          <Wrppaer key={idx}>
-            <FlexBetween margin="0 0 6px 0">
-              <Flex>
-                <TextH4B color={`${i?.rejected ? theme.greyScale65 : theme.black}`} margin="0 8px 0 0">
-                  {spotStatusStep(i)}
-                </TextH4B>
-                <Tag color={theme.brandColor} backgroundColor={theme.brandColor5P}>
-                  {spotType(i?.type)}
-                </Tag>
-              </Flex>
-              <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={() => goToSpotStatusDetail(i?.id!)}>
-                신청상세 보기
-              </TextH6B>
-            </FlexBetween>
-            <TextH5B>{i?.placeName}</TextH5B>
-            <TextB3R>{`${i?.location.address} ${i?.location.addressDetail}`}</TextB3R>
-            {
-              (i.type === 'PRIVATE' && (i.step === 'TRIAL' || (i?.trialUserCount! >= i?.trialTargetUserCount!))) && !i?.rejected &&
-              // 프라이빗인 경우 '트라이얼' or '오픈 검토중' 노출
-              <FlexStart margin="4px 0 0 0">
-                <SVGIcon name="people" />
-                <TextH6B padding='4px 0 0 0' margin="0 0 0 6px" color={theme.brandColor}>{`${i?.trialUserCount}/5명 참여 중`}</TextH6B>
-              </FlexStart>
-            }
-            {
-              (i.type === 'PUBLIC' && i.step === 'RECRUITING') &&
-              // 단골가게(퍼블릭)인 경우 '모집 중' 노출
-              <FlexStart margin="4px 0 0 0">
-                <SVGIcon name="people" />
-                <TextH6B padding='4px 0 0 0' margin="0 0 0 6px" color={theme.brandColor}>{`${i?.recruitingCount}/100명 참여 중`}</TextH6B>
-              </FlexStart>
-            }
-            {i?.type === 'PRIVATE' && i?.step === 'TRIAL' && !i?.rejected && !i?.canRetrial && (
-              <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
-                오픈 참여 공유하고 포인트 받기
-              </Button>
-            )}
-            {
-              i?.type === 'PRIVATE' && i?.step === 'TRIAL' && i?.canRetrial &&
-              <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0" onClick={() => handleSpotRetrial(i?.id!)}>
-                오픈 재신청하기
-              </Button>
-            }
-          </Wrppaer>
-        );
-      })}
+      <Wrppaer>
+        <FlexBetween margin="0 0 6px 0">
+          <Flex>
+            <TextH4B color={`${item?.rejected ? theme.greyScale65 : theme.black}`} margin="0 8px 0 0">
+              {spotStatusStep(item)}
+            </TextH4B>
+            <Tag color={theme.brandColor} backgroundColor={theme.brandColor5P}>
+              {spotType(item?.type)}
+            </Tag>
+          </Flex>
+          <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={() => goToSpotStatusDetail(item?.id!, item?.type!, item?.userId!)}>
+            신청상세 보기
+          </TextH6B>
+        </FlexBetween>
+        <TextH5B>{item?.placeName}</TextH5B>
+        <TextB3R>{`${item?.location.address} ${item?.location.addressDetail}`}</TextB3R>
+        {
+          (item.type === 'PRIVATE' && (item.step === 'TRIAL' || (item?.trialUserCount! >= item?.trialTargetUserCount!))) && !item?.rejected &&
+          // 프라이빗인 경우 '트라이얼' or '오픈 검토중' 노출
+          <FlexStart margin="4px 0 0 0">
+            <SVGIcon name="people" />
+            <TextH6B padding='4px 0 0 0' margin="0 0 0 6px" color={theme.brandColor}>{`${item?.trialUserCount}/5명 참여 중`}</TextH6B>
+          </FlexStart>
+        }
+        {
+          (item.type === 'PUBLIC' && item.step === 'RECRUITING') &&
+          // 단골가게(퍼블릭)인 경우 '모집 중' 노출
+          <FlexStart margin="4px 0 0 0">
+            <SVGIcon name="people" />
+            <TextH6B padding='4px 0 0 0' margin="0 0 0 6px" color={theme.brandColor}>{`${item?.recruitingCount}/100명 참여 중`}</TextH6B>
+          </FlexStart>
+        }
+        {item?.type === 'PRIVATE' && item?.step === 'TRIAL' && !item?.rejected && !item?.canRetrial && (
+          <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
+            오픈 참여 공유하고 포인트 받기
+          </Button>
+        )}
+        {
+          item?.type === 'PRIVATE' && item?.step === 'TRIAL' && item?.canRetrial &&
+          <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0" onClick={() => handleSpotRetrial(item?.id!)}>
+            오픈 재신청하기
+          </Button>
+        }
+      </Wrppaer>
     </Container>
   );
 };
 
-const Container = styled.div`
-  padding-top: 70px;
-`;
+const Container = styled.div``;
 
 const Wrppaer = styled.div`
   padding: 24px 0;

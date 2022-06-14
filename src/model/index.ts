@@ -434,8 +434,8 @@ export interface IGetDestinationsRequest {
   size: number;
   deliveries?: string | null;
   delivery?: string | null;
-  latitude?: number;
-  longitude?: number;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface IEditDestinationRequest {
@@ -551,7 +551,7 @@ export interface ISpotsDetail {
   placeHoliday: string;
   placeOpenTime: string;
   placeTel: string;
-  placeType: string;
+  placeType: TPlaceType;
   stories: ISpotStories[];
   type: string;
   image: {
@@ -570,6 +570,7 @@ export interface ISpotsDetail {
   userId: number;
   step: string;
   rejected: boolean;
+  [propsName: string]: any;
 }
 
 export interface ISpotPickupInfo {
@@ -654,10 +655,10 @@ export interface ISpotDetailStoriesResponse {
 
 export interface ISpotsInfo {
   spotCount: number;
-  canOwnerSpotRegistraion: boolean;
-  canPrivateSpotRegistration: boolean;
-  canPublicSpotRegistraion: boolean;
-  trialSpotRegistration: IGetRegistrationStatus;
+  canOwnerSpotRegistraion: boolean | null;
+  canPrivateSpotRegistration: boolean | null;
+  canPublicSpotRegistraion: boolean | null;
+  trialSpotRegistration: IGetRegistrationStatus | null;
 }
 
 export interface ISpotsInfoResponse {
@@ -893,9 +894,10 @@ export interface IGetRegistrationStatus {
   trialEndedAt?: string;
   trialStartedAt?: string;
   trialTargetUserCount?: number;
-  trialUserCount?: number;
+  trialUserCount?: number | undefined;
   trialCount?: number;
   canRetrial?: boolean;
+  userId?: number;
 }
 
 export interface IPostRegistrations {
@@ -977,22 +979,14 @@ export interface IGetSpotFilterResponse {
 }
 
 export interface IGetSpotFilter {
-  publicFilters: [
-    {
-      value: string | boolean;
-      filtered: boolean;
-      fieldName: string;
-      name: string;
-    }
-  ];
-  etcFilters: [
-    {
-      value: string | boolean;
-      filtered: boolean;
-      fieldName: string;
-      name: string;
-    }
-  ];
+  filters: IFilters[];
+}
+
+export interface IFilters {
+  value: string | boolean;
+  filtered: boolean;
+  fieldName: string;
+  name: string;
 }
 
 /* ORDER */
@@ -1374,6 +1368,7 @@ export interface ICreateOrderPreview {
   receiverTel: string;
   delivery: string;
   deliveryDetail: string;
+  deliveryMessage?: string;
   location: ILocation;
   destinationId: number;
   menuAmount: number;
@@ -1569,18 +1564,28 @@ export interface IGetTossPaymentResponse {
 
 /* MENU */
 
-export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN';
-export type TMenuSort = 'LAUNCHED_DESC' | 'ORDER_COUNT_DESC' | 'PRICE_ASC' | 'PRICE_DESC' | 'REVIEW_COUNT_DESC';
+export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN' | string;
+export type TMenuSort =
+  | 'LAUNCHED_DESC'
+  | 'ORDER_COUNT_DESC'
+  | 'PRICE_ASC'
+  | 'PRICE_DESC'
+  | 'REVIEW_COUNT_DESC'
+  | string;
 export type TType =
   | 'DRINK'
-  | 'KOREAN_SOUP_SOUP'
-  | 'LUNCH_BOX_CONVENIENCE_FOOD'
+  | 'KOREAN_SOUP'
+  | 'SOUP'
+  | 'LUNCH_BOX'
+  | 'CONVENIENCE_FOOD'
   | 'SALAD'
   | 'SET'
   | 'SNACK'
-  | 'WRAP_SANDWICH';
+  | 'WRAP'
+  | 'SANDWICH'
+  | string;
 export interface IGetMenus {
-  categories?: TCategory | string;
+  categories?: TCategory;
   menuSort: TMenuSort | string;
   searchKeyword?: string;
   type?: TType | string;
@@ -1599,8 +1604,8 @@ export interface IMenuDetails {
   price: number;
   discountPrice: number;
   main: boolean;
-  dailyMaximum: number;
-  isSold: number;
+  dailyMaximum?: number;
+  isSold?: number;
 }
 
 export interface IMenus {
@@ -1623,6 +1628,10 @@ export interface IMenus {
   openedAt: string;
   subscriptionDeliveries?: string[];
   subscriptionPeriods?: string;
+  constitutionTag: string;
+  isReopen?: boolean;
+  isSold?: boolean;
+  reopenNotificationRequested: boolean;
 }
 
 /* REVIEW */

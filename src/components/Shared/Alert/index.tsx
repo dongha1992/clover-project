@@ -88,6 +88,7 @@ const AlertBox = styled.div`
   align-items: center;
   height: 100%;
   padding: 24px;
+  z-index: 10001;
 `;
 
 const AlertText = styled.div`

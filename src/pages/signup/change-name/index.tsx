@@ -13,6 +13,7 @@ import router from 'next/router';
 import { userChangeInfo } from '@api/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
+import Validation from '@components/Pages/User/Validation';
 
 const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
@@ -39,7 +40,7 @@ const ChangeNamePage = () => {
     const reqBody = {
       authCode: null,
       birthDate: me?.birthDate || '',
-      gender: me?.gender || '',
+      gender: me?.gender || 'NONE',
       email: me?.email!,
       marketingEmailReceived: me?.marketingEmailReceived!,
       marketingPushReceived: me?.marketingPushReceived!,
@@ -53,7 +54,6 @@ const ChangeNamePage = () => {
     try {
       const { data } = await userChangeInfo(reqBody);
 
-      console.log(data, 'AFTER CHNAGE NAME');
       if (data.code === 200) {
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
       }
@@ -94,7 +94,7 @@ const ChangeNamePage = () => {
             )}
           </TextWrapper>
           {(!NAME_REGX.test(name) || isError) && (
-            <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
+            <Validation>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</Validation>
           )}
         </FlexCol>
       </Wrapper>

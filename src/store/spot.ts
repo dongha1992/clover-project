@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { ISpotsDetail, IPostRegistrations, ISpotsInfo } from '@model/index';
+import { 
+  ISpotsDetail, 
+  IPostRegistrations, 
+  ISpotsInfo, 
+  IGetRegistrationStatus 
+} from '@model/index';
 
 interface ISpotAddress {
   addressDetail?: string | undefined;
@@ -36,25 +41,8 @@ interface ISpotRegistrationsOpions {
 }
 
 interface ISpotsPostions {
-  latitude: number | null;
-  longitude: number | null;
-}
-
-interface ISpotSearchFilterd {
-  public: boolean;
-  private: boolean;
-  canEat: boolean;
-  canParking: boolean;
-  canDeliveryDinner: boolean;
-  isEvent: boolean;
-  STORE: string;
-  GS25: string;
-  BOOKSTORE: string;
-  STORYWAY: string;
-  CAFE: string;
-  SEVEN_ELEVEN: string;
-  FITNESS_CENTER: string;
-  DRUGSTORE: string;
+  latitude: number | string | null;
+  longitude: number | string | null;
 }
 
 interface IProps {
@@ -66,26 +54,12 @@ interface IProps {
   spotRegistrationsPostResult: IPostRegistrations | any;
   spotsPosition: ISpotsPostions | any;
   spotsPickupSelected: ISpotsDetail | null;
-  spotsSearchResultFiltered: ISpotSearchFilterd;
+  spotSearchSelectedFilters: string[];
   spotPickupId: number | null;
   spotInfo: ISpotsInfo | null;
-};
-
-const spotsSearchResultFilteredState = {
-  public: false,
-  private: false,
-  canEat: false,
-  canParking: false,
-  canDeliveryDinner: false,
-  isEvent: false,
-  STORE: '',
-  GS25: '',
-  BOOKSTORE: '',
-  STORYWAY: '',
-  CAFE: '',
-  SEVEN_ELEVEN: '',
-  FITNESS_CENTER: '',
-  DRUGSTORE: '',
+  spotSearchSort: string;
+  spotJoinFormChecked: boolean;
+  spotStatusDetail: IGetRegistrationStatus | null;
 };
 
 const spotAddressState = {
@@ -116,12 +90,13 @@ const spotsRegistrationInfoState = {
 };
 
 const spotsPostionsState = {
-  latitude: '',
-  longitude: '',
+  latitude: null,
+  longitude: null,
 };
 
 const initialState: IProps = {
   spotDetail: null,
+  spotStatusDetail: null,
   isSpotLiked: false,
   spotLocation: {
     ...spotAddressState,
@@ -137,11 +112,11 @@ const initialState: IProps = {
     ...spotsPostionsState,
   },
   spotsPickupSelected: null,
-  spotsSearchResultFiltered: {
-    ...spotsSearchResultFilteredState,
-  },
   spotPickupId: null,
   spotInfo: null,
+  spotSearchSelectedFilters: [],
+  spotSearchSort: '',
+  spotJoinFormChecked: false,
 };
 
 export const spot = createSlice({
@@ -179,15 +154,12 @@ export const spot = createSlice({
     SET_SPOT_POSITIONS: (state, action: PayloadAction<ISpotsPostions>) => {
       state.spotsPosition = action.payload;
     },
+    INIT_SPOT_POSITIONS: (state, action: PayloadAction) => {
+      state.spotsPosition = spotsPostionsState;
+    },
     // 스팟 검색, 주문하기->스팟 픽업장소
     SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotsPickupSelected = action.payload;
-    },
-    SET_SPOTS_FILTERED: (state, action: PayloadAction<ISpotSearchFilterd>) => {
-      state.spotsSearchResultFiltered = action.payload;
-    },
-    INIT_SPOT_FILTERED: (state, action: PayloadAction) => {
-      state.spotsSearchResultFiltered = spotsSearchResultFilteredState;
     },
     SET_SPOT_PICKUP_ID: (state, action: PayloadAction<number | null>) => {
       state.spotPickupId = action.payload;
@@ -195,11 +167,33 @@ export const spot = createSlice({
     SET_SPOT_INFO: (state, action: PayloadAction<ISpotsInfo | null>) => {
       state.spotInfo = action.payload;
     },
+    SET_SPOT_SEARCH_SELECTED_FILTERS: (state, action: PayloadAction<string[]>) => {
+      state.spotSearchSelectedFilters = action.payload;
+    },
+    INIT_SEARCH_SELECTED_FILTERS : (state, action: PayloadAction) => {
+      state.spotSearchSelectedFilters = [];
+    },
+    SET_SPOT_SEARCH_SORT : (state, action: PayloadAction<string>) => {
+      state.spotSearchSort = action.payload;
+    },
+    INIT_SPOT_SEARCH_SORT : (state, action: PayloadAction) => {
+      state.spotSearchSort = '';
+    },
+    SET_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction<boolean>) => {
+      state.spotJoinFormChecked = action.payload;
+    },
+    INIT_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction) => {
+      state.spotJoinFormChecked = false;
+    },
+    SET_SPOT_STATUS_DETAIL_ITEMS: (state, action: PayloadAction<IGetRegistrationStatus | null>) => {
+      state.spotStatusDetail = action.payload;
+    },
   },
 });
 
 export const {
   SPOT_ITEM,
+  SET_SPOT_STATUS_DETAIL_ITEMS,
   SET_SPOT_LIKED,
   INIT_SPOT_LIKED,
   SET_SPOT_LOCATION,
@@ -209,11 +203,16 @@ export const {
   SET_SPOT_REGISTRATIONS_INFO,
   SET_SPOT_REGISTRATIONS_POST_RESULT,
   SET_SPOT_POSITIONS,
+  INIT_SPOT_POSITIONS,
   SET_SPOT_PICKUP_SELECTED,
-  SET_SPOTS_FILTERED,
-  INIT_SPOT_FILTERED,
   SET_SPOT_PICKUP_ID,
   SET_SPOT_INFO,
+  SET_SPOT_SEARCH_SELECTED_FILTERS,
+  INIT_SEARCH_SELECTED_FILTERS,
+  SET_SPOT_SEARCH_SORT,
+  INIT_SPOT_SEARCH_SORT,
+  SET_SPOT_JOIN_FORM_CHECKED,
+  INIT_SPOT_JOIN_FORM_CHECKED,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

@@ -6,7 +6,6 @@ import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import dynamic from 'next/dynamic';
-// import MenuFilter from '@components/Filter/MenuFilter';
 
 const MenuFilter = dynamic(() => import('@components/Filter/MenuFilter'));
 
@@ -24,7 +23,7 @@ const CategoryFilter = () => {
     <PageTitleWrapper>
       <CategroyTabWrapper>
         <SVGIcon name="filter" />
-        <TextH6B padding="0 0 0 4px" onClick={clickFilterHandler}>
+        <TextH6B padding="0 0 0 4px" onClick={clickFilterHandler} pointer>
           필터 및 정렬
         </TextH6B>
       </CategroyTabWrapper>
