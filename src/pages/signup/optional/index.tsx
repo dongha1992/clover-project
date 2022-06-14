@@ -18,6 +18,7 @@ import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { SVGIcon } from '@utils/common';
 import Validation from '@components/Pages/User/Validation';
 import { NAME_REGX } from '@constants/regex';
+import { getValidBirthday } from '@utils/common';
 
 export const GENDER = [
   {
@@ -37,20 +38,11 @@ export const GENDER = [
   },
 ];
 
-interface IBirthdayObj {
+export interface IBirthdayObj {
   year: number;
   month: number;
   day: number;
 }
-
-const AGES = 14;
-
-const today = new Date();
-const curYear = today.getFullYear();
-const curMonth = today.getMonth() + 1;
-const curDate = today.getDate();
-
-const vaildYear = curYear - AGES;
 
 const SignupOptionalPage = () => {
   const [checkGender, setChcekGender] = useState<string | null>('NONE');
@@ -107,6 +99,8 @@ const SignupOptionalPage = () => {
   };
 
   const registerUser = async () => {
+    if (!isValidBirthDay) return;
+
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
 
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
@@ -151,17 +145,7 @@ const SignupOptionalPage = () => {
   // }, [signupUser]);
 
   useEffect(() => {
-    if (birthDayObj.year === vaildYear) {
-      const canRegister =
-        birthDayObj.month >= 0 && birthDayObj.month + 1 <= curMonth && birthDayObj.day > 0 && birthDayObj.day < curDate;
-      if (!canRegister) {
-        setIsValidBirthDay(false);
-      } else {
-        setIsValidBirthDay(true);
-      }
-    } else {
-      setIsValidBirthDay(true);
-    }
+    setIsValidBirthDay(getValidBirthday(birthDayObj));
   }, [birthDayObj]);
 
   return (
