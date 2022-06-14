@@ -334,3 +334,21 @@ export const customInput = css`
   outline: none;
   border-radius: 8px;
 `;
+
+export const customInputWrapper = css`
+  width: 100%;
+  border: 1px solid ${theme.greyScale15};
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+`;
+
+export const customSelect = css`
+  width: 100%;
+  ${customInputWrapper}
+  select {
+    height: 100%;
+    ${customInput}
+    ${textBody2}
+  }
+`;

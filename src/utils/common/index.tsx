@@ -6,6 +6,7 @@ import getImageSize from './getImageSize';
 import getFormatDate from './getFormatDate';
 import getFormatPrice from './getFormatPrice';
 import { setCookie, getCookie, removeCookie } from './cookie';
+import getValidBirthday from './getValidBirthday';
 
 export {
   SVGIcon,
@@ -18,4 +19,5 @@ export {
   removeCookie,
   getFormatDate,
   getFormatPrice,
+  getValidBirthday,
 };
