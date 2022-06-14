@@ -188,7 +188,7 @@ export interface IInvitationResponse {
 
 export interface IChangeMe {
   authCode?: string | null;
-  birthDate: string;
+  birthDate: string | null;
   gender: string;
   email: string;
   marketingEmailReceived: boolean;
@@ -655,9 +655,9 @@ export interface ISpotDetailStoriesResponse {
 
 export interface ISpotsInfo {
   spotCount: number;
-  canOwnerSpotRegistraion: boolean;
-  canPrivateSpotRegistration: boolean;
-  canPublicSpotRegistraion: boolean;
+  canOwnerSpotRegistraion: boolean | null;
+  canPrivateSpotRegistration: boolean | null;
+  canPublicSpotRegistraion: boolean | null;
   trialSpotRegistration: IGetRegistrationStatus | null;
 }
 

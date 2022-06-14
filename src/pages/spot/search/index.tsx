@@ -52,6 +52,53 @@ const SpotSearchPage = (): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
   const userLocationLen = !!userLocation.emdNm?.length;
 
+  useEffect(()=> {
+    defaultRedioId();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(()=> {
+    if (keyword.length > 0) {
+        fetchSpotSearchData({keyword});
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spotsPosition.latitude, spotsPosition.longitude]);
+
+  useEffect(()=> {
+    if (keyword.length > 0) {
+      fetchSpotSearchData({keyword});
+      dispatch(INIT_SEARCH_SELECTED_FILTERS());
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword]);
+
+  useEffect(()=> {
+    filteredItem();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResult, spotSearchSort]);
+
+  useEffect(() => {
+    defaultRedioId();
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSearched]);
+
+  useEffect(() => {
+    if (orderId) {
+      setInputFocus(true);
+    }
+  }, [orderId]);
+
+  useEffect(() => {
+    if (isDelivery) {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    } else {
+      return;
+    }
+  }, [isDelivery]);
+
   // 장바구니 조회
   /* TODO: 장바구니 params 변경돼서 주석 */
 
@@ -208,11 +255,9 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
+  // 스팟 필터
   let filterResult = filteredItem();
-
-  spotSearchSelectedFilters.forEach((elem) => {
-    filterResult = filterResult?.filter((item) => item[elem]);
-  });
+  filterResult = filterResult?.filter(spot => spotSearchSelectedFilters.every(filterItem => spot[filterItem]))
 
   // GPS - 현재위치 가져오기
   const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
@@ -257,56 +302,9 @@ const SpotSearchPage = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(()=> {
-    defaultRedioId();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(()=> {
-    if (keyword.length > 0) {
-        fetchSpotSearchData({keyword});
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spotsPosition.latitude, spotsPosition.longitude]);
-
-  useEffect(()=> {
-    if (keyword.length > 0) {
-      fetchSpotSearchData({keyword});
-      dispatch(INIT_SEARCH_SELECTED_FILTERS());
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyword]);
-
-  useEffect(()=> {
-    filteredItem();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchResult, spotSearchSort]);
-
-  useEffect(() => {
-    defaultRedioId();
-    dispatch(INIT_SEARCH_SELECTED_FILTERS());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSearched]);
-
-  useEffect(() => {
-    if (orderId) {
-      setInputFocus(true);
-    }
-  }, [orderId]);
-
-  useEffect(() => {
-    if (isDelivery) {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    } else {
-      return;
-    }
-  }, [isDelivery]);
-
   if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup) {
     return <div>로딩</div>;
-  }
+  };
 
   return (
     <Container>
