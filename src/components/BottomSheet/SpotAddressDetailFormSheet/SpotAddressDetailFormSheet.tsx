@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import { fixedBottom, theme, FlexRow } from '@styles/theme';
-import { TextH1B, TextB2R, TextB3R, TextH4B } from '@components/Shared/Text';
+import { homePadding, bottomSheetButton, fixedBottom, theme, FlexRow } from '@styles/theme';
+import { TextB2R, TextH1B, TextH4B, TextH6B, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import MapAPI from '@components/Map';
 import { destinationForm } from '@store/destination';
@@ -11,12 +11,19 @@ import { getLonLatFromAddress } from '@api/location';
 import TextInput from '@components/Shared/TextInput';
 import { Tag } from '@components/Shared/Tag';
 import { SET_SPOT_LOCATION } from '@store/spot';
+import { SVGIcon } from '@utils/common';
+import { breakpoints } from '@utils/common/getMediaQuery';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
-const AddressDetailPage = () => {
+interface IProps {
+  title: string;
+}
+
+const SpotAddressDetailFormSheet = ({title}: IProps) => {
   const { type } = router.query;
+  const { tempLocation } = useSelector(destinationForm);
   const dispatch = useDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { tempLocation } = useSelector(destinationForm);
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
@@ -44,7 +51,7 @@ const AddressDetailPage = () => {
           longitude,
         });
       } else {
-        // 검색 결과가 없는 경우?
+        return;
       }
     } catch (error) {}
   };
@@ -71,6 +78,7 @@ const AddressDetailPage = () => {
         pathname: '/spot/join/main/form',
         query: { type },
       });
+      InitBottomSheet();
     }
   };
 
@@ -80,8 +88,22 @@ const AddressDetailPage = () => {
     }
   };
 
+  const InitBottomSheet = () => {
+    dispatch(INIT_BOTTOM_SHEET());
+  };
+
   return (
     <Container>
+      <HeaderWrapper>
+        <Header>
+          <div className="arrow" onClick={InitBottomSheet}>
+            <SVGIcon name="arrowLeft" />
+          </div>
+          <TextH5B padding="2px 0 0 0">
+            {title}
+          </TextH5B>
+        </Header>
+      </HeaderWrapper>
       <Wrapper>
         <TextH1B padding="0 0 16px 0">프코스팟 신청이 가능해요</TextH1B>
         <TextB2R color={theme.greyScale65}>
@@ -91,7 +113,7 @@ const AddressDetailPage = () => {
       <MapWrapper>
         <MapAPI centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
       </MapWrapper>
-      <Wrapper>
+      <ContentWrapper>
         <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>
         <FlexRow>
           <Tag padding="2px" width="8%" center>
@@ -105,7 +127,7 @@ const AddressDetailPage = () => {
           ref={inputRef}
           eventHandler={detailAddressInputHandler}
         />
-      </Wrapper>
+      </ContentWrapper>
       <ButtonWrapper>
         <Button
           height="100%"
@@ -120,20 +142,75 @@ const AddressDetailPage = () => {
   );
 };
 
-const Container = styled.div`
-  position: relative;
+const Container = styled.div``;
+const Wrapper = styled.div`
+  padding: 80px 24px 24px 24px;
 `;
 
-const Wrapper = styled.section`
-  padding: 24px;
+const HeaderWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: ${breakpoints.mobile}px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  height: 56px;
+  background-color: white;
+  ${({ theme }) => theme.desktop`
+  margin: 0 auto;
+  left: 0;
+`};
+
+${({ theme }) => theme.mobile`
+  margin: 0 auto;
+  left: 0px;
+`};
+
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  .arrow {
+    cursor: pointer;
+    > svg {
+      position: absolute;
+      left: 24px;
+      bottom: 16px;
+    }
+  }
 `;
 
 const ButtonWrapper = styled.div`
-  ${fixedBottom}
+  width: 100%;
+  max-width: ${breakpoints.mobile}px;
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 10;
+  height: 56px;
+  background-color: ${({ theme }) => theme.black};
+
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 0%;
+  `};
+
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0px;
+  `};
 `;
 
 const MapWrapper = styled.div`
   height: 370px;
 `;
 
-export default AddressDetailPage;
+const ContentWrapper = styled.div`
+  padding: 24px;
+`;
+
+export default React.memo(SpotAddressDetailFormSheet);

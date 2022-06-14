@@ -19,32 +19,6 @@ const RegistrationsListPage = () => {
   const { isLoginSuccess } = useSelector(userForm);
   const [info, setInfo] = useState<ISpotsInfo>();
 
-  const goToRegistration = (type: string) => {
-    if (isLoginSuccess) {
-      if((type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion) || (type === 'OWNER' && !info?.canOwnerSpotRegistraion)) {
-        return (
-          dispatch(
-            SET_ALERT({
-              alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
-              submitBtnText: '확인',
-            })
-          )
-        )   
-      } else {
-        router.push(`/spot/join/main?type=${type}`);
-      }
-    } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-          submitBtnText: '확인',
-          closeBtnText: '취소',
-          onSubmit: () => router.push('/onboarding'),
-        })
-      );
-    }
-  };
-
   useEffect(()=> {
     dispatch(INIT_SPOT_LOCATION());
     dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
@@ -64,6 +38,48 @@ const RegistrationsListPage = () => {
    getFetch();
  }, [])
 
+  const spotJoinPopUp = () => {
+    dispatch(
+      SET_ALERT({
+        alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
+        submitBtnText: '확인',
+      })
+    );
+  };
+  const goToRegistration = (type: string) => {
+    switch(type) {
+      case 'PRIVATE':
+        if (!info?.canPrivateSpotRegistration || (info?.canPrivateSpotRegistration === null)) {
+          return (
+            router.push(`/spot/join/main?type=${type}`)
+          );
+        } else {
+          return (
+            spotJoinPopUp()
+          );
+        };
+      case 'PUBLIC': 
+      if (!info?.canPublicSpotRegistraion || (info?.canPublicSpotRegistraion === null)) {
+        return (
+          router.push(`/spot/join/main?type=${type}`)
+        );
+      } else {
+        return (
+          spotJoinPopUp()
+        );
+      };
+      case 'OWNER':
+        if (!info?.canOwnerSpotRegistraion || (info?.canOwnerSpotRegistraion === null)) {
+          return (
+            router.push(`/spot/join/main?type=${type}`)
+          );
+        } else {
+          return (
+            spotJoinPopUp()
+          );
+      };
+    };
+  };
 
   return (
     <Container>

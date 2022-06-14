@@ -61,6 +61,21 @@ const SpotPage = () => {
   const latLen = spotsPosition.latitude !== null;
   const lonLen = spotsPosition.longitude !== null;
 
+  useEffect(() => {
+    // 스팟 정보 조회
+    const getSpotInfoData = async () => {
+      try {
+        const { data } = await getSpotInfo();
+        setSpotCount(data.data.spotCount);
+        setInfo(data.data);
+        dispatch(SET_SPOT_INFO(data.data));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getSpotInfoData();
+  }, [spotsPosition]);
+
   const params: IParamsSpots = {
     latitude: latLen  ? Number(spotsPosition.latitude) : null,
     longitude: lonLen ? Number(spotsPosition.longitude) : null,
@@ -114,21 +129,6 @@ const SpotPage = () => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
-
-  useEffect(() => {
-    // 스팟 정보 조회
-    const getSpotInfoData = async () => {
-      try {
-        const { data } = await getSpotInfo();
-        setSpotCount(data.data.spotCount);
-        setInfo(data.data);
-        dispatch(SET_SPOT_INFO(data.data));
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getSpotInfoData();
-  }, [spotsPosition]);
 
   const goToShare = (e: any): void => {
     // dispatch(initBottomSheet());
@@ -223,10 +223,6 @@ const SpotPage = () => {
         }
         break;
     }
-  };
-
-  const goToSpotStatus = (): void => {
-    router.push('/mypage/spot-status');
   };
 
   const goToRegiList = (): void => {
