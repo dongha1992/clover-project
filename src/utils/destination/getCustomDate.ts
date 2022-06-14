@@ -15,6 +15,7 @@ interface IResult {
   dayWithTime: string;
   currentDate: string;
   currentTime: number;
+  CURRENT_KOR_DATE: Date;
 }
 
 const getCustomDate = (inputDate: Date): IResult => {
@@ -55,6 +56,7 @@ const getCustomDate = (inputDate: Date): IResult => {
     dayWithTime: `${strMonths}/${strDates} ${hours}`,
     currentDate: `${strYears}-${getFormatTime(months + 1)}-${getFormatTime(dates)}`,
     currentTime: Number(`${getFormatTime(hours)}.${getFormatTime(minutes)}`),
+    CURRENT_KOR_DATE,
   };
 };
 

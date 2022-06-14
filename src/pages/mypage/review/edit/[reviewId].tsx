@@ -4,7 +4,6 @@ import { ReviewInfo } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
-import StarRatingComponent from 'react-star-rating-component';
 import { SVGIcon, getImageSize } from '@utils/common';
 import debounce from 'lodash-es/debounce';
 import BorderLine from '@components/Shared/BorderLine';
@@ -16,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
+import { StarRating } from '@components/StarRating';
 import NextImage from 'next/image';
 
 interface IWriteMenuReviewObj {
@@ -41,6 +41,7 @@ const EditReviewPage = ({ reviewId }: any) => {
     rating: 5,
     content: '',
   });
+  const [hoverRating, setHoverRating] = useState<number>(0);
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -91,14 +92,16 @@ const EditReviewPage = ({ reviewId }: any) => {
     }
   );
 
-  const onStarHoverRating = (nextValue: number, prevValue: number, name: string, e?: any) => {
+  const onStarHoverRating = (e: React.MouseEvent<HTMLDivElement>, idx: number) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
 
+    setHoverRating(idx);
+
     if (xPos <= 0.5) {
-      nextValue -= 0.5;
+      idx -= 0.5;
     }
 
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: nextValue });
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
   };
 
   const writeReviewHandler = debounce(() => {
@@ -239,19 +242,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRatingComponent
-            name="rate"
-            editing
-            starCount={5}
-            value={writeMenuReviewObj.rating}
-            onStarHover={onStarHoverRating}
-            renderStarIcon={(index, value) => {
-              return <SVGIcon name={index <= value ? 'reviewStarFull' : 'reviewStarEmpty'} />;
-            }}
-            renderStarIconHalf={(index, value) => {
-              return <SVGIcon name="reviewStarHalf" />;
-            }}
-          />
+          <StarRating rating={writeMenuReviewObj.rating} onRating={onStarHoverRating} hoverRating={hoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>

@@ -188,7 +188,7 @@ export interface IInvitationResponse {
 
 export interface IChangeMe {
   authCode?: string | null;
-  birthDate: string;
+  birthDate: string | null;
   gender: string;
   email: string;
   marketingEmailReceived: boolean;
