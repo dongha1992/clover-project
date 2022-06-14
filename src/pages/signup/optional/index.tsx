@@ -14,7 +14,6 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 import { getFormatTime } from '@utils/destination';
 import BirthDate from '@components/BirthDate';
-import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { SVGIcon } from '@utils/common';
 import Validation from '@components/Pages/User/Validation';
 import { NAME_REGX } from '@constants/regex';

@@ -234,19 +234,6 @@ const WriteReviewPage = ({ menuId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          {/* <StarRatingComponent
-            name="rate"
-            editing
-            starCount={5}
-            value={rating}
-            onStarHover={onStarHoverRating}
-            renderStarIcon={(index, value) => {
-              return <SVGIcon name={index <= value ? 'reviewStarFull' : 'reviewStarEmpty'} />;
-            }}
-            renderStarIconHalf={(index, value) => {
-              return <SVGIcon name="reviewStarHalf" />;
-            }}
-          /> */}
           <StarRating rating={rating} onRating={onStarHoverRating} hoverRating={hoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.

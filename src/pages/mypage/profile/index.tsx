@@ -26,6 +26,8 @@ import BirthDate from '@components/BirthDate';
 import { NAME_REGX } from '@constants/regex';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { IChangeMe } from '@model/index';
+import { getValidBirthday } from '@utils/common';
+
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -72,6 +74,7 @@ const ProfilePage = () => {
     day: 0,
   });
 
+  const [isValidBirthDay, setIsValidBirthDay] = useState<boolean>(true);
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const [isValidNickname, setIsValidNickname] = useState(true);
@@ -325,17 +328,20 @@ const ProfilePage = () => {
     }
   };
 
-  const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
-    const isBirthDate = ['year', 'month', 'day'].includes(value);
+  const onChangeUserInfo = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const { name, value } = e.target;
+      const isBirthDate = ['year', 'month', 'day'].includes(name);
 
-    if (name === 'name') {
-      checkNameValid(value);
-    } else if (name === 'nickName') {
-      checkNickNameValid(value);
-    }
-    setUserInfo({ ...userInfo, [name]: isBirthDate ? Number(value) : value });
-  };
+      if (name === 'name') {
+        checkNameValid(value);
+      } else if (name === 'nickName') {
+        checkNickNameValid(value);
+      }
+      setUserInfo({ ...userInfo, [name]: isBirthDate ? Number(value) : value });
+    },
+    [userInfo]
+  );
 
   const getDeleteUser = async () => {
     // TODO : 정기배송, 주문, 후불결제 등 서비스이용이 남은 경우 탈퇴불가처리 해야됨
@@ -348,7 +354,10 @@ const ProfilePage = () => {
 
   const changeMeInfo = async () => {
     if (!isValidName || !isValidNickname) return;
-
+    if (!isValidBirthDay) {
+      dispatch(SET_ALERT({ alertMessage: '14세 미만은 가입할 수 없어요.' }));
+      return;
+    }
     const hasBirthDate = userInfo.year > 0 && userInfo.month > 0 && userInfo.day > 0;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month)}-${getFormatTime(userInfo.day)}`;
 
@@ -426,6 +435,11 @@ const ProfilePage = () => {
     });
     checkPhontValid();
   }, [me]);
+
+  useEffect(() => {
+    const birthObj = { year: userInfo.year, month: userInfo.month, day: userInfo.day };
+    setIsValidBirthDay(getValidBirthday(birthObj));
+  }, [userInfo.day, userInfo.month, userInfo.year]);
 
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
@@ -557,7 +571,10 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
             <BirthdateWrapper>
-              <BirthDate onChange={onChangeUserInfo} selected={userInfo} />
+              <BirthDate
+                onChange={onChangeUserInfo}
+                selected={{ year: userInfo.year, month: userInfo.month, day: userInfo.day }}
+              />
             </BirthdateWrapper>
           </FlexCol>
           <FlexCol>
