@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import { customSelect } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { getCustomDate, getFormatTime } from '@utils/destination';
-import Days from '@components/Calendar/Days';
+
 interface IProps {
   selected: { year: number; month: number; day: number };
-
   onChange: any;
 }
 
@@ -17,7 +16,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
   const { CURRENT_KOR_DATE } = getCustomDate(new Date());
 
   const years = () => {
-    let year = CURRENT_KOR_DATE.getFullYear() - 14;
+    let year = CURRENT_KOR_DATE.getFullYear() - 13;
     return Array.from({ length: year - 1930 }, (v, i) => year - i);
   };
 
