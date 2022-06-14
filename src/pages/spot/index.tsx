@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
@@ -24,6 +25,8 @@ import { userForm } from '@store/user';
 import { spotSelector, SET_SPOT_INFO } from '@store/spot';
 import { destinationForm } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
+import { getAddressFromLonLat } from '@api/location';
+import { getComputeDistance } from '@utils/spot';
 
 const FCO_SPOT_BANNER = [
   {
@@ -74,7 +77,7 @@ const SpotPage = () => {
     };
     getSpotInfoData();
   }, [spotsPosition]);
-
+  
   const params: IParamsSpots = {
     latitude: latLen  ? Number(spotsPosition.latitude) : null,
     longitude: lonLen ? Number(spotsPosition.longitude) : null,

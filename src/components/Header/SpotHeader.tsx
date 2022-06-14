@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { textH5 } from '@styles/theme';
@@ -8,10 +8,65 @@ import router from 'next/router';
 import { destinationForm, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
+import { getComputeDistance } from '@utils/spot';
+import { spotSelector } from '@store/spot';
+import { searchAddressJuso } from '@api/search';
 
 const SpotHeader = () => {
   const dispatch = useDispatch();
+  const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
+  const [distance, setDistance] = useState<number>(0);
+  const [cureentPosition, setCurrentPosition] = useState<{latitude: number,longitude: number}> ({
+    latitude: 0,
+    longitude: 0,
+  });
+  
+  useEffect(()=> {
+    if(userLocation?.emdNm){
+      getLocation();
+    };
+  }, []);
+
+  // GPS - 현재위치 가져오기
+  const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+
+  const getLocation = async () => {
+      try {
+        const position: any = await getCurrentPosition();
+        if(position) {
+          // console.log('현재 위치', position.coords.latitude + ' ' + position.coords.longitude);
+          const distance = getComputeDistance(spotsPosition.latitude, spotsPosition.longitude, position.coords.latitude, position.coords.longitude);
+          setDistance(distance);
+          setCurrentPosition({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,          
+          });
+        }
+        return { Status: true, position, };
+      } catch (error) {
+        console.error("getCurrentLatLong::catcherror =>", error);
+        return { Status: false, };
+      }
+  };
+
+      // const getGeoLocation = () => {
+    //   if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(async (position) => {
+    //       // console.log('position', position);
+    //       const { data } = await getAddressFromLonLat({
+    //         y: position.coords.latitude?.toString(),
+    //         x: position.coords.longitude?.toString(),
+    //       });
+    //       // console.log('현재위치', data)
+    //       // setUserLocation(data.documents[0].address_name);
+    //       // setCurrentLoc(data.documents[0].address_name);
+    //     });
+    //   }
+    // };
+    // getGeoLocation();
+
+
   const goToCart = () => {
     router.push('/cart');
   };
@@ -37,7 +92,8 @@ const SpotHeader = () => {
             <div onClick={goToLocation}>
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
-            {userLocation?.emdNm && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />}
+            {/* {userLocation?.emdNm && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />} */}
+            { distance > 3 && <Tooltip message="3km 내 프코스팟이 없어 위치를 변경했어요!" width='248px' left="-16px" top="29px" /> }
           </AddressWrapper>
         </Left>
         <Right>
