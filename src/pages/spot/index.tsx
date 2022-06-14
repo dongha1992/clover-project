@@ -58,9 +58,27 @@ const SpotPage = () => {
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
 
+  const latLen = spotsPosition.latitude !== null;
+  const lonLen = spotsPosition.longitude !== null;
+
+  useEffect(() => {
+    // 스팟 정보 조회
+    const getSpotInfoData = async () => {
+      try {
+        const { data } = await getSpotInfo();
+        setSpotCount(data.data.spotCount);
+        setInfo(data.data);
+        dispatch(SET_SPOT_INFO(data.data));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getSpotInfoData();
+  }, [spotsPosition]);
+
   const params: IParamsSpots = {
-    latitude: spotsPosition ? spotsPosition.latitude : null,
-    longitude: spotsPosition ? spotsPosition.longitude : null,
+    latitude: latLen  ? Number(spotsPosition.latitude) : null,
+    longitude: lonLen ? Number(spotsPosition.longitude) : null,
     size: 6,
   };
 
@@ -112,21 +130,6 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  useEffect(() => {
-    // 스팟 정보 조회
-    const getSpotInfoData = async () => {
-      try {
-        const { data } = await getSpotInfo();
-        setSpotCount(data.data.spotCount);
-        setInfo(data.data);
-        dispatch(SET_SPOT_INFO(data.data));
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getSpotInfoData();
-  }, [spotsPosition]);
-
   const goToShare = (e: any): void => {
     // dispatch(initBottomSheet());
     dispatch(
@@ -146,7 +149,7 @@ const SpotPage = () => {
               // 프라이빗 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 프라이빗 신청 제한: 1개 - 신청 불가
               router.push({
-                pathname: '/spot/spot-req',
+                pathname: '/spot/join/main',
                 query: { type },
               });        
             } else {
@@ -159,7 +162,7 @@ const SpotPage = () => {
             }
           } else{
             router.push({
-              pathname: '/spot/spot-req',
+              pathname: '/spot/join/main',
               query: { type },
             });        
           }
@@ -173,7 +176,7 @@ const SpotPage = () => {
               // 퍼블릭 스팟 신청 진행중인게 3개 미민안 경우 true (0~2개) - 신청 가능
               // 퍼블릭(단골가게) 스팟 신청 제한: 3개 - 신청 불가
               router.push({
-                pathname: '/spot/spot-req',
+                pathname: '/spot/join/main',
                 query: { type },
               });        
             } else {
@@ -186,7 +189,7 @@ const SpotPage = () => {
             }
           } else {
             router.push({
-              pathname: '/spot/spot-req',
+              pathname: '/spot/join/main',
               query: { type },
             });        
           }
@@ -200,7 +203,7 @@ const SpotPage = () => {
               // 우리가게(owner) 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 우리가게 스팟 신청 제한: 1개 - 신청 불가
               router.push({
-                pathname: '/spot/spot-req',
+                pathname: '/spot/join/main',
                 query: { type },
               });        
             } else {
@@ -213,7 +216,7 @@ const SpotPage = () => {
             }
           } else {
             router.push({
-              pathname: '/spot/spot-req',
+              pathname: '/spot/join/main',
               query: { type },
             });        
           }
@@ -222,12 +225,8 @@ const SpotPage = () => {
     }
   };
 
-  const goToSpotStatus = (): void => {
-    router.push('/mypage/spot-status');
-  };
-
   const goToRegiList = (): void => {
-    router.push('/spot/regi-list');
+    router.push('/spot/join');
   };
 
   const goToSpotNotice = (): void => {
@@ -262,12 +261,12 @@ const SpotPage = () => {
         <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
-            info?.trialSpotRegistration.trialUserCount! < 5 && (
+            info?.trialSpotRegistration?.trialUserCount! < 5 && (
               <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
-                      {`[${info?.trialSpotRegistration.placeName}]\n`}
+                      {`[${info?.trialSpotRegistration?.placeName}]\n`}
                       <span>{`${info?.trialSpotRegistration?.trialTargetUserCount! - info?.trialSpotRegistration?.trialUserCount!}`}</span>
                       명만 더 주문 하면 정식오픈 돼요!
                     </TextH4B>
@@ -281,12 +280,12 @@ const SpotPage = () => {
           }
           {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
-            info?.trialSpotRegistration.trialUserCount! >= 5 && (
+            info?.trialSpotRegistration?.trialUserCount! >= 5 && (
               <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
-                      {`[${info?.trialSpotRegistration.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
+                      {`[${info?.trialSpotRegistration?.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
                     </TextH4B>
                     <IconWrapper>
                       <SVGIcon name="blackCircleShare" />
@@ -298,39 +297,58 @@ const SpotPage = () => {
           }
         </TopCTASlider>
       )}
-      {/* 근처 인기있는 스팟 */}
-      <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
-      <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={700}>
-        {popularSpotList?.spots.map((list, idx) => {
-          return (
-            <SwiperSlide className="swiper-slide" key={idx}>
-              <SpotList list={list} type="normal" />
-            </SwiperSlide>
-          );
-        })}
-      </SpotsSlider>
-      {/* 신규 스팟 */}
-      <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
-      <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-        {newSpotList?.spots.map((list, idx) => {
-          return (
-            <SwiperSlide className="swiper-slide" key={idx}>
-              <SpotList list={list} type="normal" />
-            </SwiperSlide>
-          );
-        })}
-      </SpotsSlider>
-      {/* 역세권 스팟 */}
-      <TextH2B padding="49px 24px 24px 24px">{stationSpotList?.title}</TextH2B>
-      <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-        {stationSpotList?.spots.map((list, idx) => {
-          return (
-            <SwiperSlide className="swiper-slide" key={idx}>
-              <SpotList list={list} type="normal" />
-            </SwiperSlide>
-          );
-        })}
-      </SpotsSlider>
+      {
+      // 근처 인기있는 스팟
+      // 오늘 점심 함께 주문해요.
+        popularSpotList?.spots.length! > 0 && (
+          <>
+            <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={700}>
+              {popularSpotList?.spots.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="normal" />
+                  </SwiperSlide>
+                );
+              })}
+            </SpotsSlider>
+          </>
+        )
+      }
+      {
+      // 신규 스팟
+        newSpotList?.spots.length! > 0 && (
+          <>
+            <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+              {newSpotList?.spots.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="normal" />
+                  </SwiperSlide>
+                );
+              })}
+            </SpotsSlider>
+          </>
+        )
+      }
+      {
+      // 역세권 스팟
+        stationSpotList?.spots.length! > 0 && (
+          <>
+            <TextH2B padding="49px 24px 24px 24px">{stationSpotList?.title}</TextH2B>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+              {stationSpotList?.spots.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="normal" />
+                  </SwiperSlide>
+                );
+              })}
+            </SpotsSlider>
+          </>
+        )
+      }
       {/* 프라이빗 스팟 신청 CTA */}
       <Wrapper>
         <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
@@ -342,17 +360,23 @@ const SpotPage = () => {
           </FlexBetween>
         </SpotRegistration>
       </Wrapper>
-      {/* 이벤트 중인 스팟 */}
-      <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
-      <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-        {eventSpotList?.spots.map((list, idx) => {
-          return (
-            <SwiperSlide className="swiper-slide" key={idx}>
-              <SpotList list={list} type="event" />
-            </SwiperSlide>
-          );
-        })}
-      </EventSlider>
+      {
+      // 이벤트 중인 스팟
+        eventSpotList?.spots.length! > 0 && (
+          <>
+            <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
+            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+              {eventSpotList?.spots.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="event" />
+                  </SwiperSlide>
+                );
+              })}
+            </EventSlider>    
+          </>
+        )
+      }
       {/* 단골가게 스팟 */}
       <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
       <SpotOpenBannerWrapper>

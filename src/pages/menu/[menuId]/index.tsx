@@ -84,10 +84,8 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      // const { data } = await getMenuDetailReviewApi(menuId);
-      // return data.data;
-
-      return ALL_REVIEW.data.data;
+      const { data } = await getMenuDetailReviewApi(menuDetail.id);
+      return data.data;
     },
 
     {
@@ -154,9 +152,8 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuItem?.menuDetails);
+    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuDetail.menuDetails ?? [{}]);
     return { discount, price, discountedPrice };
-    // return { discount: 0, price: 0, discountedPrice: 0 };
   };
 
   useEffect(() => {
@@ -168,10 +165,11 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   }, [tabRef?.current?.offsetTop]);
 
   useEffect(() => {
-    return () => {
-      // dispatch(SET_MENU_ITEM({}));
-    };
+    return () => {};
   }, []);
+
+  console.log(menuItem, 'menuItem');
+  console.log(reviews, 'reviews');
 
   return (
     <Container>
@@ -200,13 +198,14 @@ const MenuDetailPage = ({ menuDetail }: any) => {
                 </Tag>
               );
             })} */}
+            {menuItem.tag && menuItem.tag !== 'NONE' && <Tag margin="0 4px 0 0">{menuItem.tag}</Tag>}
             <div className="tagBox">
-              {menuDetail?.subscriptionDeliveries.map((item: string, index: number) => (
+              {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
                 <Label className={item} key={index}>
                   {DELIVERY_TYPE_MAP[item]}
                 </Label>
               ))}
-              {!menuDetail?.subscriptionPeriods.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
+              {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
               {menuDetail.tag && <Tag margin="0 4px 0 0">{menuDetail.tag}</Tag>}
             </div>
           </MenuNameWrapper>
@@ -223,7 +222,7 @@ const MenuDetailPage = ({ menuDetail }: any) => {
               <DiscountedPrice>
                 <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
                 <TextH3B padding={'0 0 0 4px'}>
-                  {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원{' '}
+                  {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
                   {menuDetail.type === 'SUBSCRIPTION' && '~'}
                 </TextH3B>
               </DiscountedPrice>
@@ -285,21 +284,23 @@ const MenuDetailPage = ({ menuDetail }: any) => {
           )}
         </MenuDetailWrapper>
         <ReviewContainer>
-          <ReviewWrapper>
-            <ReviewHeader>
-              <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
-              <TextH6B
-                textDecoration="underline"
-                color={theme.greyScale65}
-                padding="0 24px 0 0"
-                onClick={goToReviewSection}
-                pointer
-              >
-                더보기
-              </TextH6B>
-            </ReviewHeader>
-            {reviews && <ReviewList reviews={reviews} onClick={goToReviewDetail} />}
-          </ReviewWrapper>
+          {reviews?.searchReviewImages?.length! > 0 && (
+            <ReviewWrapper>
+              <ReviewHeader>
+                <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
+                <TextH6B
+                  textDecoration="underline"
+                  color={theme.greyScale65}
+                  padding="0 24px 0 0"
+                  onClick={goToReviewSection}
+                  pointer
+                >
+                  더보기
+                </TextH6B>
+              </ReviewHeader>
+              <ReviewList reviews={reviews} onClick={goToReviewDetail} />
+            </ReviewWrapper>
+          )}
         </ReviewContainer>
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
@@ -469,7 +470,7 @@ const DailySaleNumber = styled.div`
 
 export async function getStaticPaths() {
   const params = {
-    menuSort: 'LAUNCHED_DESC',
+    menuSort: '',
   };
 
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });

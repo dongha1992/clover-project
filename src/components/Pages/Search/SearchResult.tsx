@@ -12,19 +12,22 @@ import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
+import { ISpotsDetail } from '@model/index';
 
 interface IProps {
-  searchResult?: any;
+  searchResult?: ISpotsDetail[] | any | undefined;
   onClick?: () => void;
   isSpot?: boolean;
   orderId?: string | string[];
   hasCart?: boolean;
+  getLocation?: any;
+  isLoading?: boolean;
 }
 
-const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart }: IProps) => {
+const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLocation }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { spotsPosition, spotsSearchResultFiltered } = useSelector(spotSelector);
+  const { spotsPosition } = useSelector(spotSelector);
 
   const clickFilterHandler = () => {
     if (!isSpot) {
@@ -36,30 +39,32 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart }: IProp
     } else {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SpotSearchFilter />,
+          content: <SpotSearchFilter getLocation={getLocation} />,
         })
       );
     }
   };
 
   const goToSpotsRegistrations = () => {
-    router.push('/spot/regi-list');
+    router.push('/spot/join');
   };
-
+  console.log(searchResult, 'searchResult');
   return (
     <>
-      {!!searchResult.length && (
+      {searchResult?.length! > 0 && (
         <FilterRow>
-          <TextH5B>검색결과 {searchResult.length}개</TextH5B>
+          <TextH5B>검색결과 {searchResult?.length}개</TextH5B>
           <FilterWrapper onClick={clickFilterHandler}>
             <SVGIcon name="filter" />
-            <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
+            <TextH6B padding="0 0 0 4px" pointer>
+              필터 및 정렬
+            </TextH6B>
           </FilterWrapper>
         </FilterRow>
       )}
       <ItemListWrapper isSpot={isSpot}>
-        {searchResult.length ? (
-          searchResult.map((item: any, index: number) => {
+        {searchResult?.length! > 0 ? (
+          searchResult?.map((item: any, index: number) => {
             return !isSpot ? (
               <Item item={item} key={index} />
             ) : (

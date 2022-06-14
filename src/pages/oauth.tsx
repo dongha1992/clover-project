@@ -51,10 +51,6 @@ const Oauth = () => {
 
         dispatch(SET_USER(data));
 
-        if (window.Kakao) {
-          window.Kakao.cleanup();
-        }
-
         if (isRegister) {
           if (!NAME_REGX.test(data.name) || data.name.length === 0) {
             router.push('/signup/change-name');
@@ -89,7 +85,14 @@ const Oauth = () => {
           })
         );
       } else {
-        router.replace('/onboarding');
+        dispatch(
+          SET_ALERT({
+            alertMessage: error.message,
+            onSubmit: () => {
+              router.replace('/onboarding');
+            },
+          })
+        );
       }
     }
   };
@@ -108,20 +111,20 @@ const Oauth = () => {
         .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(qs[k]))
         .join('&');
 
-      if (code) {
-        const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
-          headers: kakaoHeader,
-        });
-        onSuccessKakao(data);
-      }
+      const { data } = await axios.post('https://kauth.kakao.com/oauth/token', queryString, {
+        headers: kakaoHeader,
+      });
+      onSuccessKakao(data);
     } catch (error) {
       router.replace('/login');
     }
   };
 
   useEffect(() => {
-    initKakaoAuth();
-  }, [code]);
+    if (router.isReady) {
+      initKakaoAuth();
+    }
+  }, [router.isReady]);
 
   return <div></div>;
 };

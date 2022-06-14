@@ -26,7 +26,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector } from '@store/common';
-import { couponForm } from '@store/coupon';
+import { couponForm, INIT_COUPON } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER } from '@constants/order';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
@@ -42,7 +42,15 @@ import {
 } from '@api/order';
 import { useQuery } from 'react-query';
 import { isNil } from 'lodash-es';
-import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder, IGetNicePayment } from '@model/index';
+import {
+  Obj,
+  IGetCard,
+  ILocation,
+  ICoupon,
+  ICreateOrder,
+  IGetNicePayment,
+  IGetNicePaymentResponse,
+} from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
@@ -64,6 +72,7 @@ declare global {
     goPay: any;
   }
 }
+
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
@@ -105,7 +114,7 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 
-const ngorkUrl = 'https://4e51-1-228-1-158.jp.ngrok.io';
+const ngorkUrl = 'https://b14a-59-6-1-115.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -130,10 +139,12 @@ const OrderPage = () => {
     receiverName: string;
     receiverTel: string;
     point: number;
+    deliveryMessage: string;
   }>({
     receiverName: '',
     receiverTel: '',
     point: 0,
+    deliveryMessage: '',
   });
   const [card, setCard] = useState<IGetCard>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
@@ -145,7 +156,7 @@ const OrderPage = () => {
 
   const auth = getCookie({ name: 'refreshTokenObj' });
 
-  const { userAccessMethod, isLoading } = useSelector(commonSelector);
+  const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
@@ -158,9 +169,11 @@ const OrderPage = () => {
   const { isSubscription } = router.query;
 
   useEffect(() => {
-    if (router.isReady) {
-    }
-  }, [router.isReady]);
+    return () => {
+      // 컴포넌트 마운트 해제될때 선택된쿠폰 초기화
+      dispatch(INIT_COUPON());
+    };
+  }, []);
 
   const {
     data: previewOrder,
@@ -262,7 +275,7 @@ const OrderPage = () => {
     async () => {
       /*TODO: 모델 수정해야함 */
       /*TODO: 쿠폰 퍼센테이지 */
-      const { point, payAmount, ...rest } = previewOrder?.order!;
+      const { point, payAmount, deliveryMessage, ...rest } = previewOrder?.order!;
 
       dispatch(SET_IS_LOADING(true));
 
@@ -272,6 +285,8 @@ const OrderPage = () => {
         point: userInputObj?.point,
         payAmount: payAmount - (userInputObj.point + (selectedCoupon?.value! || 0)),
         couponId: selectedCoupon?.id || null,
+        deliveryMessage: userInputObj?.deliveryMessage,
+        deliveryMessageType: userAccessMethod?.value.toString(),
         ...rest,
       };
 
@@ -290,6 +305,8 @@ const OrderPage = () => {
         } else {
           processOrder(data);
         }
+        // 완료되면 쿠폰 초기화
+        dispatch(INIT_COUPON());
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -321,6 +338,12 @@ const OrderPage = () => {
             })
           );
           router.replace('/cart');
+        } else if (error.code === 1104) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '카드를 등록해주세요.',
+            })
+          );
         }
       },
     }
@@ -390,6 +413,8 @@ const OrderPage = () => {
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
+    console.log(name, value);
+    setUserInputObj({ ...userInputObj, [name]: value });
   };
 
   const useAllOfPointHandler = () => {
@@ -582,6 +607,11 @@ const OrderPage = () => {
     window.goPay(document.getElementById('payForm'));
   };
 
+  const nicepayMobileStart = () => {
+    const nicepayMobile: any = document.getElementById('payFormMobile');
+    nicepayMobile?.submit();
+  };
+
   const processOrder = async (data: ICreateOrder) => {
     switch (selectedOrderMethod) {
       case 'NICE_BILLING': {
@@ -651,30 +681,51 @@ const OrderPage = () => {
     // };
 
     try {
-      const { data }: any = await postNicePaymnetApi({ orderId, data: reqBody });
+      const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
 
-      let payForm: any = document.getElementById('payForm');
-
+      let payForm = document.getElementById('payForm')! as HTMLFormElement;
       payForm!.innerHTML = '';
       payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
-      for (let formName in data.data) {
-        let inputHidden = document.createElement('input');
+      let payFormMobile: any = document.getElementById('payFormMobile')!;
+      payFormMobile.innerHTML = '';
+
+      const response: Obj = data.data;
+
+      for (let formName in response) {
+        let inputHidden: HTMLInputElement = document.createElement('input');
         inputHidden.setAttribute('type', 'hidden');
         inputHidden.setAttribute('name', formName);
-        if (formName == 'TrKey') {
+        if (formName === 'TrKey') {
           inputHidden.setAttribute('value', ' ');
         } else {
-          inputHidden.setAttribute('value', data.data[formName]);
+          inputHidden.setAttribute('value', response[formName]);
         }
 
-        payForm.appendChild(inputHidden);
+        if (isMobile) {
+          if (!['EncodeParameters', 'SocketYN', 'UserIP'].includes(formName)) {
+            payFormMobile.appendChild(inputHidden);
+          }
+        } else {
+          payForm.appendChild(inputHidden);
+        }
       }
 
-      nicepayStart();
-      handleScrollNicePayModal();
+      if (isMobile) {
+        let acsNoIframeInput = document.createElement('input');
+        acsNoIframeInput.setAttribute('type', 'hidden');
+        acsNoIframeInput.setAttribute('name', 'AcsNoIframe');
+        acsNoIframeInput.setAttribute('value', 'Y'); // 변경 불가
+        payFormMobile.appendChild(acsNoIframeInput);
+        nicepayMobileStart();
+        return;
+      } else {
+        nicepayStart();
+        handleScrollNicePayModal();
+        return;
+      }
     } catch (error: any) {
-      alert(error.message);
+      dispatch(SET_ALERT({ alertMessage: error.message }));
       dispatch(SET_IS_LOADING(false));
     }
   };
@@ -703,7 +754,7 @@ const OrderPage = () => {
       window.location.href = data.data.result.orderSheetUrl;
       dispatch(SET_IS_LOADING(false));
     } catch (error: any) {
-      alert(error.message);
+      dispatch(SET_ALERT({ alertMessage: error.message }));
       dispatch(SET_IS_LOADING(false));
     }
   };
@@ -736,9 +787,18 @@ const OrderPage = () => {
         value: data.data.tid,
       });
 
-      window.location.href = data.data.next_redirect_pc_url;
+      if (isMobile) {
+        window.location.href = data.data.next_redirect_mobile_url;
+      } else {
+        window.location.href = data.data.next_redirect_pc_url;
+      }
     } catch (error: any) {
-      alert(error.message);
+      if (error.code === 1207) {
+        dispatch(SET_ALERT({ alertMessage: '잘못된 카카오페이 URL입니다.' }));
+      } else {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      }
+
       dispatch(SET_IS_LOADING(false));
     }
   };
@@ -770,8 +830,14 @@ const OrderPage = () => {
 
   const paymentHandler = () => {
     if (isLoading) return;
-    if (!checkTermList.privacy) return;
-    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) return;
+    if (!checkTermList.privacy) {
+      dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
+      return;
+    }
+    if (previewOrder?.order.type === 'SUBSCRIPTION' && !checkTermList.subscription) {
+      dispatch(SET_ALERT({ alertMessage: '정기구독 이용약관·주의사항 동의를 체크해주세요.' }));
+      return;
+    }
 
     if (previewOrder?.order.delivery === 'MORNING') {
       /* TODO: alert message 마크다운..? */
@@ -1102,6 +1168,7 @@ const OrderPage = () => {
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
+                name="deliveryMessage"
                 margin="8px 0 0 0"
                 placeholder={
                   ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
@@ -1147,7 +1214,12 @@ const OrderPage = () => {
                 <TextB2R padding="0 0 0 8px">다음에도 사용</TextB2R>
               </FlexRow>
             </FlexBetween>
-            <TextInput margin="24px 0 0 0" placeholder="요청사항 입력" eventHandler={changeInputHandler} />
+            <TextInput
+              name="deliveryMessage"
+              margin="24px 0 0 0"
+              placeholder="요청사항 입력"
+              eventHandler={changeInputHandler}
+            />
           </VisitorAccessMethodWrapper>
           <BorderLine height={8} />
         </>

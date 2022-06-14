@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
+import { useQueryClient } from 'react-query';
 // import { TabList } from '@components/Shared/TabList';
 
 const TabList = dynamic(() => import('../Shared/TabList/TabList'));
@@ -20,9 +21,13 @@ type TProps = {
 /* TODO: 뒤로가기 시 replace로 교체 */
 
 const TabHeader = ({ title }: TProps) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState<string>('/login/find-account/email');
 
-  const router = useRouter();
+  useEffect(() => {
+    queryClient.invalidateQueries('getLikeMenus');
+  }, []);
 
   const goBack = (): void => {
     /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
@@ -42,9 +47,8 @@ const TabHeader = ({ title }: TProps) => {
   );
 
   useEffect(() => {
-    console.log(router.asPath, 'router.asPath');
-    setSelectedTab(router.asPath);
-  }, [router]);
+    if (router.isReady) setSelectedTab(router.asPath);
+  }, [router.isReady]);
 
   const mapper: Obj = {
     '이메일/비밀번호 찾기': FIND_ACCOUNT,

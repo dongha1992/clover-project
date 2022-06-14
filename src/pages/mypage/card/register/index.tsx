@@ -183,6 +183,7 @@ const CardRegisterPage = () => {
           closeBtnText: '취소',
         })
       );
+      setIsMainCard(true);
       return;
     }
 

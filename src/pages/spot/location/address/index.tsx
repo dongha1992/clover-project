@@ -13,16 +13,19 @@ import { Tag } from '@components/Shared/Tag';
 import { SET_SPOT_LOCATION } from '@store/spot';
 
 const AddressDetailPage = () => {
-  const { tempLocation } = useSelector(destinationForm);
+  const { type } = router.query;
   const dispatch = useDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { tempLocation } = useSelector(destinationForm);
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: '',
     longitude: '',
   });
   const [keywordLen, setKeywordLen] = useState<number>(0);
 
-  const { type } = router.query;
+  useEffect(() => {
+    getLonLanForMap();
+  }, []);
 
   const getLonLanForMap = async () => {
     const params = {
@@ -65,7 +68,7 @@ const AddressDetailPage = () => {
     } else {
       dispatch(SET_SPOT_LOCATION(spotAddress));
       router.replace({
-        pathname: '/spot/register',
+        pathname: '/spot/join/main/form',
         query: { type },
       });
     }
@@ -77,16 +80,12 @@ const AddressDetailPage = () => {
     }
   };
 
-  useEffect(() => {
-    getLonLanForMap();
-  }, []);
-
   return (
     <Container>
       <Wrapper>
         <TextH1B padding="0 0 16px 0">프코스팟 신청이 가능해요</TextH1B>
         <TextB2R color={theme.greyScale65}>
-          {'서울 및 분당구 지역만 프코스팟 신청이 가능해요!\n(분당구 일부 지역은 담당자 확인 후, 오픈 진행됩니다.)'}
+          {'서울 및 경기도만 프코스팟 신청이 가능해요!\n(분당구 일부 지역은 담당자 확인 후, 오픈 진행됩니다.)'}
         </TextB2R>
       </Wrapper>
       <MapWrapper>

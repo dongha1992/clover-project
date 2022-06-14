@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextH1B, TextB2R, TextH2B } from '@components/Shared/Text';
+import { TextB3R, TextH2B, TextH3B } from '@components/Shared/Text';
 import { theme, fixedBottom, homePadding } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { INIT_SPOT_LOCATION, INIT_SPOT_REGISTRATIONS_OPTIONS, SET_SPOT_REGISTRATIONS_INFO, ISpotsRegistrationInfo } from '@store/spot';
+import { 
+  INIT_SPOT_LOCATION, 
+  INIT_SPOT_REGISTRATIONS_OPTIONS, 
+  SET_SPOT_REGISTRATIONS_INFO, 
+  ISpotsRegistrationInfo,
+  INIT_SPOT_JOIN_FORM_CHECKED,
+} from '@store/spot';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
@@ -13,14 +19,15 @@ import { ISpotsInfo } from '@model/index';
 import { getSpotInfo } from '@api/spot';
 
 const SpotReqPage = () => {
-  const { me, isLoginSuccess } = useSelector(userForm);
   const router = useRouter();
+  const { join, type } = router.query;
+  const { me, isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
   const text = {
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
-    privateDesc: '나의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
+    privateDesc: '나만의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
     publicText: '내가 자주 가는 장소를\n프코스팟으로 만들어보세요!',
     publicDesc: '매일 가는 카페, 피트니스, 서점 등\n그 어떤 곳이든 프코스팟이 될 수 있어요!',
     ownerText: `${spotCount! + 1}번째 프코스팟의\n파트너가 되어보세요.`,
@@ -29,7 +36,22 @@ const SpotReqPage = () => {
     askBtnText: '채팅 문의',
     registerBtn: '프코스팟 신청하기',
   };
-  const { type } = router.query;
+
+  useEffect(() => {
+    // 스팟 정보 조회
+   const getFetch = async() => {
+     try {
+       const { data } = await getSpotInfo();
+       setSpotCount(data.data.spotCount);
+       setInfo(data.data);
+     } catch (err) {
+       console.error(err);
+     }
+   };
+
+   getFetch();
+ }, []);
+
   const mainText = () => {
     switch (type) {
       case 'PRIVATE': {
@@ -43,64 +65,61 @@ const SpotReqPage = () => {
       }
     }
   };
-  const goToRegister = () => {
-    if (isLoginSuccess) {
-      if((type === 'OWNER' && info?.canOwnerSpotRegistraion) || (type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion)){
-       return (
-        dispatch(
-          SET_ALERT({
-            alertMessage: '이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.',
-            submitBtnText: '확인',
-          })
-        )
-       )  
-      };
-      const spotsRegistrationInfoState: ISpotsRegistrationInfo = {
-        userName: me?.name!,
-        userEmail: me?.email!,
-        userTel: me?.tel!,
-      };
-      dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
-      dispatch(INIT_SPOT_LOCATION());
-      dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-      router.push({
-        pathname: '/spot/register',
-        query: { type },
-      });  
-    } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
-          submitBtnText: '확인',
-          closeBtnText: '취소',
-          onSubmit: () => router.push('/onboarding'),
-        })
-      );
-    }
+
+  const handleRegisterForm = () => {
+    const spotsRegistrationInfoState: ISpotsRegistrationInfo = {
+      userName: me?.name!,
+      userEmail: me?.email!,
+      userTel: me?.tel!,
+    };
+    dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
+    dispatch(INIT_SPOT_LOCATION());
+    dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
+    dispatch(INIT_SPOT_JOIN_FORM_CHECKED());
+    router.push({
+      pathname: '/spot/join/main/form',
+      query: { type },
+    });  
   };
 
-  useEffect(() => {
-     // 스팟 정보 조회
-    const getFetch = async() => {
-      try {
-        const { data } = await getSpotInfo();
-        setSpotCount(data.data.spotCount);
-        setInfo(data.data);
-      } catch (err) {
-        console.error(err);
+  const goToRegistration = () => {
+      if (isLoginSuccess) {
+        // join 링크등 다른 경로로 들어온 경우 ture
+        if (join) {
+          if((type === 'PRIVATE' && !info?.canPrivateSpotRegistration) || (type === 'PUBLIC' && !info?.canPublicSpotRegistraion) || (type === 'OWNER' && !info?.canOwnerSpotRegistraion)){
+            return (
+            dispatch(
+              SET_ALERT({
+                alertMessage: '이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.',
+                submitBtnText: '확인',
+              })
+            )
+            )  
+          } else {
+            handleRegisterForm();
+          }
+        } else {
+          handleRegisterForm();
+        }
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+            submitBtnText: '확인',
+            closeBtnText: '취소',
+            onSubmit: () => router.push('/onboarding'),
+          })
+        );
       }
-    };
-
-    getFetch();
-  }, [])
+  };
 
   return (
     <Container>
       <TopWrapper>
-        <TextH1B>{mainText()?.textTitle}</TextH1B>
-        <TextB2R margin="33px 0 48px 0" color={theme.greyScale65}>
+        <TextH2B padding='24px 0 24px 0'>{mainText()?.textTitle}</TextH2B>
+        <TextB3R padding="0 0 48px 0" color={theme.greyScale65}>
           {mainText()?.textDesc}
-        </TextB2R>
+        </TextB3R>
       </TopWrapper>
       <GuideWrapper>
         <Guide></Guide>
@@ -108,13 +127,13 @@ const SpotReqPage = () => {
       <BottomWrapper>
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
-          <TextH2B margin="0 0 24px 0">{text.askText}</TextH2B>
+          <TextH3B padding="48px 0 24px 0">{text.askText}</TextH3B>
           <Button pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
             {text.askBtnText}
           </Button>
         </BtnWrapper>
       </BottomWrapper>
-      <FixedButton onClick={goToRegister}>
+      <FixedButton onClick={goToRegistration}>
         <Button borderRadius="0" padding="10px 0 0 0">
           {text.registerBtn}
         </Button>
@@ -123,9 +142,7 @@ const SpotReqPage = () => {
   );
 };
 
-const Container = styled.main`
-  padding: 24px 0;
-`;
+const Container = styled.div``;
 const TopWrapper = styled.section`
   ${homePadding};
 `;
@@ -134,7 +151,6 @@ const GuideWrapper = styled.section`
   width: 100%;
   height: 412px;
   background: ${theme.greyScale25};
-  margin-bottom: 48px;
 `;
 
 const Guide = styled.div``;

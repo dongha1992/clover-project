@@ -16,7 +16,7 @@ import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
 import { useToast } from '@hooks/useToast';
-
+import { SET_SPOT_STATUS_DETAIL_ITEMS } from '@store/spot';
 
 const PLAN_GUIDE = [
   {
@@ -46,10 +46,10 @@ const PLAN_GUIDE = [
 ];
 
 const SpotStatusDetailPage = (): ReactElement => {
-  const routers = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { type, recruited } = routers.query;
-  const { isLoginSuccess } = useSelector(userForm);
+  const { join, recruited } = router.query;
+  const { isLoginSuccess, me } = useSelector(userForm);
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
@@ -57,6 +57,8 @@ const SpotStatusDetailPage = (): ReactElement => {
   const [id, setId] = useState<number>();
   const { showToast, hideToast } = useToast();
 
+  const loginUserId = me?.id;
+  
   useEffect(()=> {
     if(router.isReady) {
       setId(Number(router.query?.id));
@@ -70,6 +72,9 @@ const SpotStatusDetailPage = (): ReactElement => {
       return response.data.data;
     },
     { 
+      onSuccess: (response) => {
+        dispatch(SET_SPOT_STATUS_DETAIL_ITEMS(response));
+      },
       refetchOnMount: true, 
       refetchOnWindowFocus: false, 
       enabled: !!id, }
@@ -207,8 +212,8 @@ const SpotStatusDetailPage = (): ReactElement => {
           <Button color={theme.black} backgroundColor={theme.white} border onClick={privateRegistrationBenefit}>모집 혜택 확인하기</Button>
         </BtnWrapper>
       }
-      <ToggleWrapper  onClick={toggleLocationInfo}>
-        <FlexBetween padding="24px">
+      <ToggleWrapper>
+        <FlexBetween padding="24px" onClick={toggleLocationInfo} pointer>
           <TextH4B>장소 정보</TextH4B>
           <SVGIcon name={locationInfo ? 'triangleUp' : 'triangleDown'} />
         </FlexBetween>
@@ -218,11 +223,13 @@ const SpotStatusDetailPage = (): ReactElement => {
       </ToggleWrapper>
       <Row10 />
       {
-        statusDetail?.type !== 'PUBLIC' &&
-          type !== 'attend' &&
+        statusDetail?.type !== 'PUBLIC' && 
+          loginUserId === statusDetail?.userId &&
+            !join &&
+            // join 링크등 다른 경로로 들어온 경우 ture
         <>
-          <ToggleWrapper  onClick={toggleUserInfo}>
-            <FlexBetween padding="24px">
+          <ToggleWrapper>
+            <FlexBetween padding="24px" onClick={toggleUserInfo} pointer>
               <TextH4B>{statusDetail?.type === 'PRIVATE' ? '신청자 정보' : '장소관리자 정보'}</TextH4B>
               <SVGIcon name={userInfo ? 'triangleUp' : 'triangleDown'} />
             </FlexBetween>
@@ -233,9 +240,9 @@ const SpotStatusDetailPage = (): ReactElement => {
           <Row10 />
         </>
       }
-      <ToggleWrapper  onClick={toggleOpenInfo} ref={currentRef}>
-        <FlexBetween padding="24px">
-          <TextH4B>{`${tagType()} 프코스팟 오픈방법 알아보기`}</TextH4B>
+      <ToggleWrapper  ref={currentRef}>
+        <FlexBetween padding="24px" onClick={toggleOpenInfo} pointer>
+          <TextH4B >{`${tagType()} 프코스팟 오픈방법 알아보기`}</TextH4B>
           <SVGIcon name={openInfo ? 'triangleUp' : 'triangleDown'} />
         </FlexBetween>
         <SlideToggle state={openInfo} duration={0.5}>
@@ -314,9 +321,7 @@ const BtnWrapper =styled.div`
   padding: 24px;
 `;
 
-const ToggleWrapper = styled.section`
-  cursor: pointer;
-`;
+const ToggleWrapper = styled.section``;
 
 const Row10 = styled.div`
   border-bottom: 10px solid ${theme.greyScale6};

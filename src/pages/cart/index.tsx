@@ -314,6 +314,9 @@ const CartPage = () => {
           console.error(error);
         }
       },
+      onError: (error: any) => {
+        alert(error.message);
+      },
     }
   );
 
