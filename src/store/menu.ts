@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IMenus } from '@model/index';
-/* TODO: type 지정 엉망임 */
 
 type TProps = {
   menu: any;
@@ -17,10 +16,10 @@ export const menu = createSlice({
   name: 'menu',
   initialState,
   reducers: {
-    SET_MENU: (state, action: PayloadAction<TProps>) => {
+    SET_MENU: (state: any, action: PayloadAction<TProps>) => {
       state.menu = action.payload;
     },
-    SET_MENU_ITEM: (state, action: PayloadAction<IMenus> | any) => {
+    SET_MENU_ITEM: (state: any, action: PayloadAction<IMenus> | any) => {
       state.menuItem = action.payload;
     },
   },

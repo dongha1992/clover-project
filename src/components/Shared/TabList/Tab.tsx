@@ -11,7 +11,7 @@ interface ITabProps {
 
 /* Tab에 Count 붙는 경우 countObj={ tabItem.title : count } props 받아서 맵핑으로 렌더*/
 
-const Tab = ({ tabItem, onClick, selectedTab, countObj }: ITabProps) => {
+const Tab = ({ tabItem, onClick, selectedTab, countObj }: ITabProps, ref: React.ForwardedRef<HTMLDivElement>) => {
   const style = {
     padding: '12px 8px',
     whiteSpace: 'nowrap',
@@ -24,7 +24,7 @@ const Tab = ({ tabItem, onClick, selectedTab, countObj }: ITabProps) => {
   const tabNameWithCount = hasCount && `${tabItem.text} (${countObj[tabItem.text]})`;
 
   return (
-    <Wrapper onClick={() => onClick(tabItem)} selectedTab={selectedTab}>
+    <Wrapper onClick={(e) => onClick(tabItem, e)} selectedTab={selectedTab}>
       <Border>
         <TextB1R className="tab" {...style}>
           {hasCount ? tabNameWithCount : tabItem.text}
@@ -54,4 +54,4 @@ const Wrapper = styled.div<{ selectedTab: boolean }>`
 
 const Border = styled.div``;
 
-export default React.memo(Tab);
+export default React.memo(React.forwardRef(Tab));

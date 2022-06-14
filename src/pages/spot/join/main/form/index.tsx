@@ -101,7 +101,7 @@ const RegisterPage = () => {
   };
 
   const goToLocation = () => {
-    router.push({
+    router.replace({
       pathname: '/spot/location',
       query: { type },
     });

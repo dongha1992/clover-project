@@ -8,21 +8,24 @@ import { useDispatch } from 'react-redux';
 import { SET_SPOT_PICKUP_ID } from '@store/spot';
 import Checkbox from '@components/Shared/Checkbox';
 import { ISpotPickupInfo } from '@model/index';
-import { ButtonGroup } from '@components/Shared/Button';
+import { ButtonGroup, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { postSpotRegistrationsRecruiting } from '@api/spot';
 import { ISpotsDetail } from '@model/index';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SpotAddressDetailFormSheet } from '@components/BottomSheet/SpotAddressDetailFormSheet';
 
 type TPrams = {
   items: ISpotsDetail | undefined;
   type: string;
+  recruited?: boolean;
 };
 
-const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
+const SpotRegisterSheet = ({ items, type, recruited }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();  
 
-  const handlerPublicSpotRecruiting = async(id: number) => {
+  const joinPublicSpotRecruiting = async(id: number) => {
     try{
       const {data} = await postSpotRegistrationsRecruiting(id);
       if(data.code === 200){
@@ -39,13 +42,19 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
   const submitHandler = (): void => {
     if (type === 'PRIVATE') {
       dispatch(INIT_BOTTOM_SHEET());  
-      router.push({
-        pathname: '/spot/location/address',
-        query: { type },
-      });
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: (
+            <SpotAddressDetailFormSheet
+              title="주소 검색"
+            />
+          ),
+          height: '100vh'
+        })
+      );
   } else if(type === 'PUBLIC') {
-    dispatch(INIT_BOTTOM_SHEET());  
-    handlerPublicSpotRecruiting(items?.id!);
+      dispatch(INIT_BOTTOM_SHEET());  
+      joinPublicSpotRecruiting(items?.id!);
     }
   };
 
@@ -81,19 +90,35 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
         }
         {
           type === 'PUBLIC' && (
-            <>
-              <TextB2R margin='0 0 16px 0'>
-                {'해당 주소에 이미 신청 중인 프코스팟이 있어요!\n함께 오픈 참여하시겠어요?'}
-              </TextB2R> 
-              <Row /> 
-              <PickWrapper>
-                <RadioButton
-                  onChange={() => {}}
-                  isSelected={true}
-                />
-                <TextH5B padding="2px 0 0 8px">{items?.placeName}</TextH5B>
-              </PickWrapper>
-            </>
+            recruited ? (
+              <>
+                <TextB2R margin='0 0 16px 0'>
+                  {'이미 참여한 프코스팟 이에요.'}
+                </TextB2R> 
+                <Row /> 
+                <PickWrapper>
+                  <RadioButton
+                    onChange={() => {}}
+                    isSelected={true}
+                  />
+                  <TextH5B padding="2px 0 0 8px">{items?.placeName}</TextH5B>
+                </PickWrapper>
+              </>
+            ) : (
+              <>
+                <TextB2R margin='0 0 16px 0'>
+                  {'해당 주소에 이미 신청 중인 프코스팟이 있어요!\n함께 오픈 참여하시겠어요?'}
+                </TextB2R> 
+                <Row /> 
+                <PickWrapper>
+                  <RadioButton
+                    onChange={() => {}}
+                    isSelected={true}
+                  />
+                  <TextH5B padding="2px 0 0 8px">{items?.placeName}</TextH5B>
+                </PickWrapper>
+              </>
+            )
           )
         }
       </Wrapper>
@@ -109,13 +134,24 @@ const SpotRegisterSheet = ({ items, type }: TPrams): JSX.Element => {
           )
         }
         {
-          type === 'PUBLIC' && (
-            <ButtonGroup
-              rightButtonHandler={submitHandler}
-              leftButtonHandler={closeBottomSheet}
-              leftText="닫기"
-              rightText="참여하기"
-            />
+          type === 'PUBLIC' &&  (
+            recruited ? (
+              <Button
+                height="100%"
+                borderRadius="0"
+                onClick={closeBottomSheet}
+                backgroundColor={theme.balck}
+              >
+                설정하기
+              </Button>
+            ): (
+              <ButtonGroup
+                rightButtonHandler={submitHandler}
+                leftButtonHandler={closeBottomSheet}
+                leftText="닫기"
+                rightText="참여하기"
+              />
+            )
           )
         }
       </ButtonContainer>
