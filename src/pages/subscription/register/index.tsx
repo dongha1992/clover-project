@@ -1,4 +1,4 @@
-import SubsCalendar from '@components/Calendar/SubsCalendar';
+import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB1R, TextB2R, TextB3R, TextH4B, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
