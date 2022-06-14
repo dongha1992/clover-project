@@ -1,4 +1,4 @@
-import SubsCalendar from '@components/Calendar/SubsCalendar';
+import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
