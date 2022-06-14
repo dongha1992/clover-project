@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import router from 'next/router';
 import styled from 'styled-components';
-import SubsCalendar from '@components/Calendar/SubsCalendar';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 

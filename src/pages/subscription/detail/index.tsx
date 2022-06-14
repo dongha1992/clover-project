@@ -1,4 +1,4 @@
-import SubsCalendar from '@components/Calendar/SubsCalendar';
+import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import { SubsDetailOrderBox } from '@components/Pages/Subscription/detail';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
