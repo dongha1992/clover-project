@@ -17,7 +17,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { useOnLike } from 'src/query';
 import { spotSelector } from '@store/spot';
-
+import { getSpotDistanceUnit } from '@utils/spot';
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
@@ -233,7 +233,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               </TextB3R>
               {
                 // 유저 위치정보 있을때 노출
-                userLocationLen && <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+                userLocationLen && <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}</TextH6B>
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />

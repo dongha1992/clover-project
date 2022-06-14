@@ -9,12 +9,14 @@ interface TProps {
   width?: string;
   height?: string;
   color?: string;
+  color2?: string;
 }
 
 interface IStyle {
   height?: string;
   width?: string;
   color?: string;
+  color2?: string;
 }
 
 const svgMap: TSvg = {
@@ -901,12 +903,18 @@ const svgMap: TSvg = {
       <path d="M3 9.5H7" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  reviewStarFull: () => (
+  reviewStarFull: ({ color, color2 }) => (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.1252 0.579177C15.5059 -0.108073 16.494 -0.108071 16.8747 0.579178L21.222 8.42703C21.3599 8.67595 21.5973 8.85434 21.8747 8.91751L30.3922 10.8569C31.1242 11.0235 31.4184 11.9074 30.9322 12.4795L25.0739 19.3733C24.8988 19.5793 24.8146 19.8475 24.8405 20.1167L25.7213 29.2633C25.7953 30.0324 25.0065 30.5913 24.3055 30.2665L16.4204 26.613C16.1537 26.4895 15.8462 26.4895 15.5796 26.613L7.69447 30.2665C6.99346 30.5913 6.20461 30.0324 6.27866 29.2633L7.15943 20.1167C7.18535 19.8475 7.10115 19.5793 6.92605 19.3733L1.06775 12.4795C0.581592 11.9074 0.875735 11.0235 1.60776 10.8569L10.1252 8.91751C10.4027 8.85434 10.6401 8.67595 10.778 8.42703L15.1252 0.579177Z"
-        fill="#F4D740"
+        fill={color ? color : '#F4D740'}
       />
+      {color2 && (
+        <path
+          d="M15.1252 1.57918C15.5059 0.891927 16.494 0.891929 16.8747 1.57918L21.222 9.42703C21.3599 9.67595 21.5973 9.85434 21.8747 9.91751L30.3922 11.8569C31.1242 12.0235 31.4184 12.9074 30.9322 13.4795L25.0739 20.3733C24.8988 20.5793 24.8146 20.8475 24.8405 21.1167L25.7213 30.2633C25.7953 31.0324 25.0065 31.5913 24.3055 31.2665L16.4204 27.613C16.1537 27.4895 15.8462 27.4895 15.5796 27.613L7.69447 31.2665C6.99346 31.5913 6.20461 31.0324 6.27866 30.2633L7.15943 21.1167C7.18535 20.8475 7.10115 20.5793 6.92605 20.3733L1.06775 13.4795C0.581592 12.9074 0.875735 12.0235 1.60776 11.8569L10.1252 9.91751C10.4027 9.85434 10.6401 9.67595 10.778 9.42703L15.1252 1.57918Z"
+          fill={color2}
+        />
+      )}
     </svg>
   ),
   reviewStarHalf: () => (
@@ -1313,14 +1321,199 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+  reopen: () => (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_dd_10908_87312)">
+        <circle cx="24" cy="20" r="16" fill="white" />
+      </g>
+      <path
+        d="M24.5071 15.0148L23.4763 15.0127C21.1251 15.007 19.084 16.9429 19.0678 19.2877V21.9881C19.0678 22.551 18.9975 23.1003 18.6945 23.5684L18.4927 23.8805C18.1854 24.3536 18.5159 24.9877 19.0678 24.9877H28.9325C29.4844 24.9877 29.8142 24.3536 29.5076 23.8805L29.3058 23.5684C29.0035 23.1003 28.9325 22.5502 28.9325 21.9874V19.2884C28.9044 16.9429 26.8583 15.0205 24.5071 15.0148V15.0148Z"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M26.1093 24.9873C26.1093 25.5542 25.8871 26.0979 25.4915 26.4987C25.0959 26.8996 24.5594 27.1248 24 27.1248C23.4405 27.1248 22.904 26.8996 22.5084 26.4987C22.1129 26.0979 21.8906 25.5542 21.8906 24.9873"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M24 12.875C24.3729 12.875 24.7306 13.0251 24.9943 13.2924C25.258 13.5596 25.4062 13.9221 25.4062 14.3V15.0125H22.5938V14.3C22.5938 13.9221 22.7419 13.5596 23.0056 13.2924C23.2693 13.0251 23.627 12.875 24 12.875Z"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <defs>
+        <filter
+          id="filter0_dd_10908_87312"
+          x="0"
+          y="0"
+          width="48"
+          height="48"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="4" />
+          <feGaussianBlur stdDeviation="4" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_10908_87312" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="1" />
+          <feGaussianBlur stdDeviation="0.5" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="effect1_dropShadow_10908_87312" result="effect2_dropShadow_10908_87312" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_10908_87312" result="shape" />
+        </filter>
+      </defs>
+    </svg>
+  ),
+  cartBtn: () => (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_dd_10908_87383)">
+        <circle cx="24" cy="20" r="16" fill="white" />
+      </g>
+      <path
+        d="M19.0757 16.6665H28.6164C28.8098 16.6665 29.0009 16.7056 29.1776 16.7811C29.3543 16.8567 29.5126 16.9671 29.6424 17.1052C29.7721 17.2433 29.8703 17.4061 29.9308 17.583C29.9912 17.76 30.0125 17.9471 29.9932 18.1325L29.5781 22.1325C29.544 22.4615 29.3842 22.7666 29.1298 22.9884C28.8754 23.2103 28.5445 23.3332 28.2013 23.3332H21.5941C21.2741 23.3333 20.9639 23.2265 20.7164 23.0311C20.4689 22.8356 20.2993 22.5635 20.2366 22.2612L19.0757 16.6665Z"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19.0756 16.6667L18.5152 14.5047C18.4777 14.3605 18.3913 14.2325 18.2697 14.1411C18.1481 14.0497 17.9983 14 17.8441 14H17"
+        stroke="#242424"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M21.1509 26H22.5346" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M26.686 26H28.0698" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <defs>
+        <filter
+          id="filter0_dd_10908_87383"
+          x="0"
+          y="0"
+          width="48"
+          height="48"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="4" />
+          <feGaussianBlur stdDeviation="4" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_10908_87383" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="1" />
+          <feGaussianBlur stdDeviation="0.5" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="effect1_dropShadow_10908_87383" result="effect2_dropShadow_10908_87383" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_10908_87383" result="shape" />
+        </filter>
+      </defs>
+    </svg>
+  ),
+  reopened: () => (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_dd_10908_87434)">
+        <circle cx="24" cy="20" r="16" fill="#35AD73" />
+      </g>
+      <path
+        d="M24.5071 15.0148L23.4763 15.0127C21.1251 15.007 19.084 16.9429 19.0678 19.2877V21.9881C19.0678 22.551 18.9975 23.1003 18.6945 23.5684L18.4927 23.8805C18.1854 24.3536 18.5159 24.9877 19.0678 24.9877H28.9325C29.4844 24.9877 29.8142 24.3536 29.5076 23.8805L29.3058 23.5684C29.0035 23.1003 28.9325 22.5502 28.9325 21.9874V19.2884C28.9044 16.9429 26.8583 15.0205 24.5071 15.0148V15.0148Z"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M26.1093 24.9873C26.1093 25.5542 25.8871 26.0979 25.4915 26.4987C25.0959 26.8996 24.5594 27.1248 24 27.1248C23.4405 27.1248 22.904 26.8996 22.5084 26.4987C22.1129 26.0979 21.8906 25.5542 21.8906 24.9873"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M24 12.875C24.3729 12.875 24.7306 13.0251 24.9943 13.2924C25.258 13.5596 25.4062 13.9221 25.4062 14.3V15.0125H22.5938V14.3C22.5938 13.9221 22.7419 13.5596 23.0056 13.2924C23.2693 13.0251 23.627 12.875 24 12.875Z"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <defs>
+        <filter
+          id="filter0_dd_10908_87434"
+          x="0"
+          y="0"
+          width="48"
+          height="48"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="4" />
+          <feGaussianBlur stdDeviation="4" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_10908_87434" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="1" />
+          <feGaussianBlur stdDeviation="0.5" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0" />
+          <feBlend mode="normal" in2="effect1_dropShadow_10908_87434" result="effect2_dropShadow_10908_87434" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_10908_87434" result="shape" />
+        </filter>
+      </defs>
+    </svg>
+  ),
 };
+/*TODO: name이 없으면 에러남 */
 
-/* TODO: ref */
-
-const SVGIcon = ({ name, width, height, color }: TProps) => {
+const SVGIcon = ({ name, width, height, color, color2 }: TProps) => {
   const MappedSVG = svgMap[name];
 
-  return <MappedSVG width={width} height={height} color={color} />;
+  return <MappedSVG width={width} height={height} color={color} color2={color2} />;
 };
 
 export default SVGIcon;

@@ -28,7 +28,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
   const dispatch = useDispatch();
   const router = useRouter();
   const { spotsPosition } = useSelector(spotSelector);
-  
+
   const clickFilterHandler = () => {
     if (!isSpot) {
       dispatch(
@@ -48,7 +48,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
   const goToSpotsRegistrations = () => {
     router.push('/spot/join');
   };
-
+  console.log(searchResult, 'searchResult');
   return (
     <>
       {searchResult?.length! > 0 && (
@@ -56,7 +56,9 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
           <TextH5B>검색결과 {searchResult?.length}개</TextH5B>
           <FilterWrapper onClick={clickFilterHandler}>
             <SVGIcon name="filter" />
-            <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
+            <TextH6B padding="0 0 0 4px" pointer>
+              필터 및 정렬
+            </TextH6B>
           </FilterWrapper>
         </FilterRow>
       )}

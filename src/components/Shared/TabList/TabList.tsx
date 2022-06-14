@@ -3,19 +3,21 @@ import styled from 'styled-components';
 import Tab from '@components/Shared/TabList/Tab';
 import { theme } from '@styles/theme';
 
-const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: React.ForwardedRef<HTMLDivElement>) => {
+const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: any) => {
   return (
-    <Container ref={ref}>
-      <TabWrapper>
-        {tabList.map((tabItem: any, index: number) => (
-          <Tab
-            tabItem={tabItem}
-            key={index}
-            onClick={onClick}
-            selectedTab={selectedTab === tabItem.link ? true : false}
-            countObj={countObj}
-          />
-        ))}
+    <Container>
+      <TabWrapper ref={ref}>
+        {tabList.map((tabItem: any, index: number) => {
+          return (
+            <Tab
+              tabItem={tabItem}
+              key={index}
+              onClick={onClick}
+              selectedTab={selectedTab === tabItem.link ? true : false}
+              countObj={countObj}
+            />
+          );
+        })}
       </TabWrapper>
     </Container>
   );

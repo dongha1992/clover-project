@@ -22,9 +22,12 @@ import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
+import BirthDate from '@components/BirthDate';
 import { NAME_REGX } from '@constants/regex';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { IChangeMe } from '@model/index';
+import { getValidBirthday } from '@utils/common';
+
 interface IVaildation {
   message: string;
   isValid: boolean;
@@ -40,6 +43,9 @@ interface IUserInfo {
   day: number;
 }
 
+const LIMIT = 240;
+const FIVE_MINUTE = 300;
+
 const ProfilePage = () => {
   // const { me } = useSelector(userForm);
 
@@ -53,7 +59,7 @@ const ProfilePage = () => {
     isValid: false,
   });
 
-  const [checkGender, setChcekGender] = useState<string>('');
+  const [checkGender, setChcekGender] = useState<string>('NONE');
   const [isAuthTel, setIsAuthTel] = useState(false);
   const [authCodeValidation, setAuthCodeValidation] = useState(false);
   const [phoneValidation, setPhoneValidation] = useState(false);
@@ -68,13 +74,11 @@ const ProfilePage = () => {
     day: 0,
   });
 
+  const [isValidBirthDay, setIsValidBirthDay] = useState<boolean>(true);
   const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isOverTime, setIsOverTime] = useState<boolean>(false);
   const [isValidNickname, setIsValidNickname] = useState(true);
   const authCodeNumberRef = useRef<HTMLInputElement>(null);
-
-  const LIMIT = 240;
-  const FIVE_MINUTE = 300;
 
   let authTimerRef = useRef(300);
   // let authTimerRef = useRef(5);
@@ -324,17 +328,20 @@ const ProfilePage = () => {
     }
   };
 
-  const onChangeUserInfo = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
+  const onChangeUserInfo = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const { name, value } = e.target;
+      const isBirthDate = ['year', 'month', 'day'].includes(name);
 
-    if (name === 'name') {
-      checkNameValid(value);
-    } else if (name === 'nickName') {
-      checkNickNameValid(value);
-    }
-
-    setUserInfo({ ...userInfo, [name]: value });
-  };
+      if (name === 'name') {
+        checkNameValid(value);
+      } else if (name === 'nickName') {
+        checkNickNameValid(value);
+      }
+      setUserInfo({ ...userInfo, [name]: isBirthDate ? Number(value) : value });
+    },
+    [userInfo]
+  );
 
   const getDeleteUser = async () => {
     // TODO : 정기배송, 주문, 후불결제 등 서비스이용이 남은 경우 탈퇴불가처리 해야됨
@@ -347,11 +354,16 @@ const ProfilePage = () => {
 
   const changeMeInfo = async () => {
     if (!isValidName || !isValidNickname) return;
-    const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month + 1)}-${getFormatTime(userInfo.day)}`;
+    if (!isValidBirthDay) {
+      dispatch(SET_ALERT({ alertMessage: '14세 미만은 가입할 수 없어요.' }));
+      return;
+    }
+    const hasBirthDate = userInfo.year > 0 && userInfo.month > 0 && userInfo.day > 0;
+    const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month)}-${getFormatTime(userInfo.day)}`;
 
     const reqBody = {
       authCode: authCodeNumberRef?.current?.value ? authCodeNumberRef?.current?.value : null,
-      birthDate: birthDate,
+      birthDate: hasBirthDate ? birthDate : null,
       gender: checkGender,
       email: userInfo.email,
       marketingEmailReceived: me?.marketingEmailReceived!,
@@ -418,11 +430,16 @@ const ProfilePage = () => {
       email: me?.email!,
       tel: me?.tel!,
       year: hasBirthDate ? Number(year) : 0,
-      month: hasBirthDate ? Number(month) - 1 : -1,
+      month: hasBirthDate ? Number(month) : 0,
       day: hasBirthDate ? Number(day) : 0,
     });
     checkPhontValid();
   }, [me]);
+
+  useEffect(() => {
+    const birthObj = { year: userInfo.year, month: userInfo.month, day: userInfo.day };
+    setIsValidBirthDay(getValidBirthday(birthObj));
+  }, [userInfo.day, userInfo.month, userInfo.year]);
 
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
@@ -554,68 +571,10 @@ const ProfilePage = () => {
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
             <BirthdateWrapper>
-              <InputContainer>
-                <YearPicker
-                  defaultValue="YYYY"
-                  start={1922} // default is 1900
-                  end={2008} // default is current year
-                  reverse // default is ASCENDING
-                  required={true} // default is false
-                  value={userInfo.year} // mandatory
-                  onChange={(year: string) => {
-                    setUserInfo({ ...userInfo, year: Number(year) });
-                  }}
-                  id="year"
-                  name="year"
-                  classes="input yearContainer"
-                  optionClasses="yearOption"
-                />
-                <SvgWrapper>
-                  <SVGIcon name="triangleDown" />
-                </SvgWrapper>
-              </InputContainer>
-              <InputContainer>
-                <MonthPicker
-                  defaultValue="MM"
-                  numeric // to get months as numbers
-                  short // default is full name
-                  caps // default is Titlecase
-                  endYearGiven // mandatory if end={} is given in YearPicker
-                  year={userInfo.year} // mandatory
-                  required={true} // default is false
-                  value={userInfo.month} // mandatory
-                  onChange={(month: string) => {
-                    setUserInfo({ ...userInfo, month: Number(month) });
-                  }}
-                  id="month"
-                  name="month"
-                  classes="input monthContainer"
-                  optionClasses="monthOption"
-                />
-                <SvgWrapper>
-                  <SVGIcon name="triangleDown" />
-                </SvgWrapper>
-              </InputContainer>
-              <InputContainer>
-                <DayPicker
-                  defaultValue="DD"
-                  year={userInfo.year} // mandatory
-                  month={userInfo.month} // mandatory
-                  endYearGiven // mandatory if end={} is given in YearPicker
-                  required={true} // default is false
-                  value={userInfo.day} // mandatory
-                  onChange={(day: string) => {
-                    setUserInfo({ ...userInfo, day: Number(day) });
-                  }}
-                  id="day"
-                  name="day"
-                  classes="input dayContainer"
-                  optionClasses="dayOption"
-                />
-                <SvgWrapper>
-                  <SVGIcon name="triangleDown" />
-                </SvgWrapper>
-              </InputContainer>
+              <BirthDate
+                onChange={onChangeUserInfo}
+                selected={{ year: userInfo.year, month: userInfo.month, day: userInfo.day }}
+              />
             </BirthdateWrapper>
           </FlexCol>
           <FlexCol>

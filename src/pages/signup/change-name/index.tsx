@@ -40,7 +40,7 @@ const ChangeNamePage = () => {
     const reqBody = {
       authCode: null,
       birthDate: me?.birthDate || '',
-      gender: me?.gender || '',
+      gender: me?.gender || 'NONE',
       email: me?.email!,
       marketingEmailReceived: me?.marketingEmailReceived!,
       marketingPushReceived: me?.marketingPushReceived!,

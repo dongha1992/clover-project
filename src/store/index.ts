@@ -13,6 +13,7 @@ import destination from './destination';
 import coupon from './coupon';
 import mypage from './mypage';
 import subscription from './subscription';
+import filter from './filter';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
@@ -37,6 +38,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     coupon,
     mypage,
     subscription,
+    filter,
   })(state, action);
 };
 

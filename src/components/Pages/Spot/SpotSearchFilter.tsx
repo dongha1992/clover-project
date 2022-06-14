@@ -10,7 +10,7 @@ import { useQuery } from 'react-query';
 import { getSpotsFilter } from '@api/spot';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { 
+import {
   spotSelector,
   SET_SPOT_SEARCH_SELECTED_FILTERS,
   INIT_SEARCH_SELECTED_FILTERS,
@@ -20,19 +20,19 @@ import { destinationForm } from '@store/destination';
 
 interface IProps {
   getLocation?: any;
-};
+}
 
-const SpotSearchFilter = ({getLocation}: IProps) => {
+const SpotSearchFilter = ({ getLocation }: IProps) => {
   const dispatch = useDispatch();
   const { spotSearchSelectedFilters, spotSearchSort, spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(spotSearchSelectedFilters);
   const defaultRedioId = () => {
     if (userLocationLen) {
-      return setSelectedRadioId('nearest')
+      return setSelectedRadioId('nearest');
     } else if (!userLocationLen) {
-      return setSelectedRadioId('frequency')
-    } 
+      return setSelectedRadioId('frequency');
+    }
   };
   const [selectedRadioId, setSelectedRadioId] = useState<string>(spotSearchSort);
   const userLocationLen = userLocation.emdNm?.length! > 0;
@@ -43,16 +43,19 @@ const SpotSearchFilter = ({getLocation}: IProps) => {
     return response.data.data;
   });
 
-  const checkboxHandler = useCallback((name: string, isSelected: boolean | undefined) => {
-    const findItem = selectedCheckboxIds.find((_name) => _name === name);
+  const checkboxHandler = useCallback(
+    (name: string, isSelected: boolean | undefined) => {
+      const findItem = selectedCheckboxIds.find((_name) => _name === name);
 
-    if (!isSelected) {
-      setSelectedCheckboxIds([...selectedCheckboxIds, name]);
-    } else if (isSelected && findItem) {
-      const filters = selectedCheckboxIds.filter(_name => _name !== name);
-      setSelectedCheckboxIds([...filters]);
-    };
-  }, [selectedCheckboxIds]);
+      if (!isSelected) {
+        setSelectedCheckboxIds([...selectedCheckboxIds, name]);
+      } else if (isSelected && findItem) {
+        const filters = selectedCheckboxIds.filter((_name) => _name !== name);
+        setSelectedCheckboxIds([...filters]);
+      }
+    },
+    [selectedCheckboxIds]
+  );
 
   const radioButtonHandler = (value: string) => {
     setSelectedRadioId(value);
@@ -65,23 +68,23 @@ const SpotSearchFilter = ({getLocation}: IProps) => {
   };
 
   const onClick = () => {
-    if ((selectedRadioId === 'nearest') && (!userLocationLen)) {
-        getLocation();
-        clickButtonHandler();  
+    if (selectedRadioId === 'nearest' && !userLocationLen) {
+      getLocation();
+      clickButtonHandler();
     } else {
       clickButtonHandler();
     }
   };
 
   const clickButtonHandler = () => {
-    dispatch(SET_SPOT_SEARCH_SELECTED_FILTERS(selectedCheckboxIds))
+    dispatch(SET_SPOT_SEARCH_SELECTED_FILTERS(selectedCheckboxIds));
     dispatch(SET_SPOT_SEARCH_SORT(selectedRadioId));
-    dispatch(INIT_BOTTOM_SHEET());  
+    dispatch(INIT_BOTTOM_SHEET());
   };
 
   return (
     <Container>
-      <TextH4B padding="24px 0 16px 0" center>
+      <TextH4B padding="24px 0 16px 0" center pointer>
         필터 및 정렬
       </TextH4B>
       <Wrapper>
@@ -92,7 +95,7 @@ const SpotSearchFilter = ({getLocation}: IProps) => {
           data={RADIO_CHECKBOX_SPOT}
           changeHandler={radioButtonHandler}
           selectedRadioValue={selectedRadioId}
-          defaultData={userLocationLen? 'nearest': 'frequency'}
+          defaultData={userLocationLen ? 'nearest' : 'frequency'}
         />
         <BorderLine height={1} margin="16px 0" />
         <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>

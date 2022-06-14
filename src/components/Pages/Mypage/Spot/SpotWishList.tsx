@@ -9,6 +9,7 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { destinationForm } from '@store/destination';
 import { useRouter } from 'next/router';
 import { useOnLike } from 'src/query';
+import { getSpotDistanceUnit } from '@utils/spot';
 
 interface IParams {
   items: ISpotsDetail;
@@ -63,7 +64,7 @@ const SpotWishList = ({ items, onClick }: IParams) => {
           </TextB2R>
           {
             // 유저 위치정보 있을때 노출
-            userLocationLen && <TextH5B color={theme.greyScale65}>{`${Math.round(items?.distance)}m`}</TextH5B>
+            userLocationLen && <TextH5B color={theme.greyScale65}>{`${getSpotDistanceUnit(items?.distance).distance}${getSpotDistanceUnit(items?.distance).unit}`}</TextH5B>
           }
           <LikeWrapper onClick={(e) => onClickLike(e)}>
             <SVGIcon name={!like ? 'likeRed18' : 'likeBorderGray'} />
