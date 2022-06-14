@@ -17,7 +17,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
   const { CURRENT_KOR_DATE } = getCustomDate(new Date());
 
   const years = () => {
-    let year = CURRENT_KOR_DATE.getFullYear() - 13;
+    let year = CURRENT_KOR_DATE.getFullYear() - 14;
     return Array.from({ length: year - 1930 }, (v, i) => year - i);
   };
 
