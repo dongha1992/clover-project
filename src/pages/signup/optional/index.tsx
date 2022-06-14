@@ -13,10 +13,11 @@ import { useMutation } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 import { getFormatTime } from '@utils/destination';
-import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
+import BirthDate from '@components/BirthDate';
 import { SVGIcon } from '@utils/common';
 import Validation from '@components/Pages/User/Validation';
 import { NAME_REGX } from '@constants/regex';
+import { getValidBirthday } from '@utils/common';
 
 export const GENDER = [
   {
@@ -36,26 +37,17 @@ export const GENDER = [
   },
 ];
 
-interface IBirthdayObj {
+export interface IBirthdayObj {
   year: number;
   month: number;
   day: number;
 }
 
-const AGES = 14;
-
-const today = new Date();
-const curYear = today.getFullYear();
-const curMonth = today.getMonth() + 1;
-const curDate = today.getDate();
-
-const vaildYear = curYear - AGES;
-
 const SignupOptionalPage = () => {
   const [checkGender, setChcekGender] = useState<string | null>('NONE');
   const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
     year: 0,
-    month: -1,
+    month: 0,
     day: 0,
   });
   const [isValidBirthDay, setIsValidBirthDay] = useState<boolean>(true);
@@ -88,6 +80,11 @@ const SignupOptionalPage = () => {
     setChcekGender(value);
   };
 
+  const changeBirthDateHandler = (e: any) => {
+    const { name, value } = e.target;
+    setBirthdayObj({ ...birthDayObj, [name]: Number(value) });
+  };
+
   const nicknameInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const lengthCheck = value.length < 2 || value.length > 20;
@@ -101,11 +98,13 @@ const SignupOptionalPage = () => {
   };
 
   const registerUser = async () => {
+    if (!isValidBirthDay) return;
+
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
 
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
-    const hasBirthDate = birthDayObj.year && birthDayObj.month && birthDayObj.day;
-    const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month + 1)}-${getFormatTime(birthDayObj.day)}`;
+    const hasBirthDate = birthDayObj.year > 0 && birthDayObj.month > 0 && birthDayObj.day > 0;
+    const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month)}-${getFormatTime(birthDayObj.day)}`;
 
     const optionalForm = {
       birthDate: hasBirthDate ? birthDate : '',
@@ -145,17 +144,7 @@ const SignupOptionalPage = () => {
   // }, [signupUser]);
 
   useEffect(() => {
-    if (birthDayObj.year === vaildYear) {
-      const canRegister =
-        birthDayObj.month >= 0 && birthDayObj.month + 1 <= curMonth && birthDayObj.day > 0 && birthDayObj.day < curDate;
-      if (!canRegister) {
-        setIsValidBirthDay(false);
-      } else {
-        setIsValidBirthDay(true);
-      }
-    } else {
-      setIsValidBirthDay(true);
-    }
+    setIsValidBirthDay(getValidBirthday(birthDayObj));
   }, [birthDayObj]);
 
   return (
@@ -173,68 +162,7 @@ const SignupOptionalPage = () => {
             </TextH5B>
           </FlexRow>
           <BirthdateWrapper>
-            <InputContainer>
-              <YearPicker
-                defaultValue="YYYY"
-                start={1922} // default is 1900
-                end={vaildYear} // default is current year
-                reverse // default is ASCENDING
-                required={true} // default is false
-                value={birthDayObj.year} // mandatory
-                onChange={(year: string) => {
-                  setBirthdayObj({ ...birthDayObj, year: Number(year) });
-                }}
-                id="year"
-                name="year"
-                classes="input yearContainer"
-                optionClasses="yearOption"
-              />
-              <SvgWrapper>
-                <SVGIcon name="triangleDown" />
-              </SvgWrapper>
-            </InputContainer>
-            <InputContainer>
-              <MonthPicker
-                defaultValue="MM"
-                numeric // to get months as numbers
-                short // default is full name
-                caps // default is Titlecase
-                endYearGiven // mandatory if end={} is given in YearPicker
-                year={birthDayObj.year} // mandatory
-                required={true} // default is false
-                value={birthDayObj.month} // mandatory
-                onChange={(month: string) => {
-                  setBirthdayObj({ ...birthDayObj, month: Number(month) });
-                }}
-                id="month"
-                name="month"
-                classes="input monthContainer"
-                optionClasses="monthOption"
-              />
-              <SvgWrapper>
-                <SVGIcon name="triangleDown" />
-              </SvgWrapper>
-            </InputContainer>
-            <InputContainer>
-              <DayPicker
-                defaultValue="DD"
-                year={birthDayObj.year} // mandatory
-                month={birthDayObj.month} // mandatory
-                endYearGiven // mandatory if end={} is given in YearPicker
-                required={true} // default is false
-                value={birthDayObj.day} // mandatory
-                onChange={(day: string) => {
-                  setBirthdayObj({ ...birthDayObj, day: Number(day) });
-                }}
-                id="day"
-                name="day"
-                classes="input dayContainer"
-                optionClasses="dayOption"
-              />
-              <SvgWrapper>
-                <SVGIcon name="triangleDown" />
-              </SvgWrapper>
-            </InputContainer>
+            <BirthDate onChange={changeBirthDateHandler} selected={birthDayObj} />
           </BirthdateWrapper>
           <Validation>
             {birthDayObj.year && birthDayObj.month && birthDayObj.day && !isValidBirthDay
@@ -303,41 +231,10 @@ const BirthdateWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-
-  .input {
-    ${customInput}
-    border: 1px solid ${theme.greyScale15};
-    background-color: white;
-    ${textBody2}
-  }
-
-  .yearContainer {
-    display: flex;
-    .yearOption[value=''][disabled] {
-      display: none;
-    }
-  }
-  .monthContainer {
-    margin-right: 10px;
-
-    .option {
-    }
-  }
-  .dayContainer {
-    .option {
-    }
-  }
 `;
 
-const InputContainer = styled.div`
-  position: relative;
-  margin-right: 10px;
-  width: 100%;
-`;
-const SvgWrapper = styled.div`
-  position: absolute;
-  right: 15%;
-  top: 25%;
+const YearInput = styled.div`
+  width: 30%;
 `;
 
 export default SignupOptionalPage;
