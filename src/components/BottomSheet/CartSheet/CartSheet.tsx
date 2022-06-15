@@ -353,7 +353,7 @@ const CartSheet = () => {
             필수옵션
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
-            {menuItem?.menuDetails.map((option: any, index: number) => {
+            {menuItem?.menuDetails?.map((option: any, index: number) => {
               if (option.main) {
                 return (
                   <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
@@ -367,7 +367,7 @@ const CartSheet = () => {
             선택옵션
           </TextH5B>
           <Select placeholder="선택옵션" type={'optional'}>
-            {menuItem?.menuDetails.map((option: any, index: number) => {
+            {menuItem?.menuDetails?.map((option: any, index: number) => {
               if (!option.main) {
                 return (
                   <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />

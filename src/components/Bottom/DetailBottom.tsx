@@ -121,7 +121,7 @@ const DetailBottom = () => {
       }
     }
   };
-
+  console.log(menuItem, 'detail bottom');
   const cartClickButtonHandler = () => {
     if (isItemSold) return;
 
@@ -130,7 +130,7 @@ const DetailBottom = () => {
     }
 
     if (!isItemSold) {
-      dispatch(SET_MENU_ITEM(menuItem));
+      // dispatch(SET_MENU_ITEM(menuItem));
       dispatch(
         SET_BOTTOM_SHEET({
           content: <CartSheet />,
