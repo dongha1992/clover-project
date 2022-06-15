@@ -43,6 +43,7 @@ import Badge from '@components/Item/Badge';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
+import { PERIOD_NUMBER } from '@constants/subscription';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -286,7 +287,10 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               <DeliveryUl>
                 <DeliveryLi>
                   <TextB2R>배송 정보</TextB2R>
-                  <TextB2R>스팟배송 / 주 2회 배송</TextB2R>
+                  <TextB2R>
+                    {menuDetail.subscriptionDeliveries.map((item: any) => DELIVERY_TYPE_MAP[item]).join('·')} / 주{' '}
+                    {PERIOD_NUMBER[menuDetail.subscriptionDeliveryCycle]}회 배송
+                  </TextB2R>
                 </DeliveryLi>
                 <DeliveryLi>
                   <TextB2R>상품 구성</TextB2R>

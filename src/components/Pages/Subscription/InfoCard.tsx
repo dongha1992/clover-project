@@ -1,5 +1,6 @@
 import { getOrdersApi } from '@api/order';
 import { TextH2B } from '@components/Shared/Text';
+import { IGetOrders, IOrderDeliverie } from '@model/index';
 import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
 import { cloneDeep } from 'lodash-es';
@@ -16,15 +17,16 @@ const InfoCard = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    'getSubscriptionOrders',
+    ['getSubscriptionOrders', 'progress'],
     async () => {
       const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
       const { data } = await getOrdersApi(params);
 
       let filterData = await data.data.orders
-        .map((item: any) => {
+        .map((item: IGetOrders) => {
           item.orderDeliveries.sort(
-            (a: any, b: any) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
+            (a: IOrderDeliverie, b: IOrderDeliverie) =>
+              Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
           );
 
           return item;

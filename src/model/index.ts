@@ -1275,11 +1275,50 @@ export interface IGetOrderList {
   name?: string;
 }
 
+export interface IGetOrders {
+  id: number;
+  type: string;
+  delivery: string;
+  name: string;
+  amount: number;
+  payAmount: number;
+  subscriptionPeriod?: string;
+  subscriptionRound?: number;
+  subscriptionDiscountRate?: number;
+  isSubscribing?: boolean;
+  deliveryDetail?: string;
+  status: string;
+  paidAt: string;
+  orderDeliveries: IOrderDeliverie[];
+  image: IMenuImage;
+  firstDeliveryDate?: string;
+  lastDeliveryDate?: string;
+  currentDeliveryDate?: string;
+}
+export interface IOrderDeliverie {
+  id: number;
+  delivery: string;
+  deliveryDate: string;
+  deliveryDetail?: string;
+  deliveryRound: number;
+  status?: string;
+  orderMenus: { menuDetailId: number; menuQuantity: number }[];
+}
+
 export interface IGetOrderListResponse {
   message: string;
   code: number;
   data: {
     orderDeliveries: IGetOrderList[];
+    pagination: IPagination;
+  };
+}
+
+export interface IGetOrdersResponse {
+  message: string;
+  code: number;
+  data: {
+    orders: IGetOrders[];
     pagination: IPagination;
   };
 }

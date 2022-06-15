@@ -88,6 +88,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+  color: black;
 `;
 const YearWrapper = styled.div`
   position: relative;
