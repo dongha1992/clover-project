@@ -407,9 +407,6 @@ const SpotSearchPage = (): ReactElement => {
             </>
           )
         }
-        {
-
-        }
         </>
       ) : (
         // 스팟 검색 메인 - 검색바 포커싱 o 

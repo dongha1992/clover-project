@@ -70,8 +70,7 @@ const LocationPage = () => {
 
 
   const setCurrentLoc = (location: string) => {
-    const locationInfoMsg = `${location}(으)로
-    설정되었습니다.`;
+    const locationInfoMsg = `${location}(으)로\n설정되었습니다.`;
     dispatch(
       SET_ALERT({
         alertMessage: locationInfoMsg,
