@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { HomeContainer, FlexRow, FlexRowStart } from '@styles/theme';
-import { TextH6B, TextH5B, TextB3R } from '@components/Shared/Text';
+import { HomeContainer, FlexRow, FlexRowStart, theme } from '@styles/theme';
+import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
@@ -330,7 +330,16 @@ const LocationPage = () => {
               })}
             </>
           )}
-          {!resultAddress.length && isSearched && <div>검색 결과가 없습니다.</div>}
+          {
+          !resultAddress.length && 
+            isSearched && (
+              <NoResultWrapper>
+                <TextB2R center color={theme.greyScale65}>
+                {'검색 결과가 없어요. 😭\n입력한 주소를 다시 한 번 확인해 주세요.'}
+                </TextB2R>
+              </NoResultWrapper>
+            )
+          }
         </ResultList>
       </Wrapper>
     </HomeContainer>
@@ -362,6 +371,13 @@ const CaseWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;
+`;
+
+const NoResultWrapper = styled.div`
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default LocationPage;
