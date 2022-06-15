@@ -13,9 +13,9 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
   let { openedAt } = menu;
 
   // menu 품절 or menu details 모두 품절
-  const checkIsAllSold: boolean = menu.menuDetails
-    .filter((details) => details.main)
-    .every((item: IMenuDetails) => item.isSold);
+  const checkIsAllSold: boolean = menu?.menuDetails
+    ?.filter((details) => details.main)
+    ?.every((item: IMenuDetails) => item.isSold);
 
   const isItemSold = checkIsAllSold || menu.isSold;
 
