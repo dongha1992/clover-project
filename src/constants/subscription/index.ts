@@ -49,17 +49,35 @@ export const periodMapper: Obj = {
   UNLIMITED: '정기구독',
 };
 
-export const SUBSCRIPTION_STATUS: Obj = {
+export const PERIOD_NUMBER: Obj = {
+  ONE_WEEK: '1',
+  TWO_WEEK: '2',
+  THREE_WEEK: '3',
+  FOUR_WEEK: '4',
+  FIVE_WEEK: '5',
+  SIX_WEEK: '6',
+  SEVEN_WEEK: '7',
+};
+
+export const SUBS_STATUS: Obj = {
+  UNPAID: '구독예정',
+  RESERVED: '구독예정',
+  PROGRESS: '구독 중',
+  COMPLETED: '구독완료',
+  CANCELED: '구독취소',
+};
+
+export const SUBS_DELIVERY_STATUS: Obj = {
   RESERVED: '주문완료',
   PREPARING: '상품준비 중',
   DELIVERING: '배송 중',
   COMPLETED: '배송완료',
-  CANCELED: '배송취소',
+  CANCELED: '구독취소',
 };
-export const SUBSCRIPTION_UNPAID_STATUS: Obj = {
+export const SUBS_DELIVERY_UNPAID_STATUS: Obj = {
   RESERVED: '구독예정',
   PREPARING: '상품준비 중',
   DELIVERING: '배송 중',
   COMPLETED: '배송완료',
-  CANCELED: '배송취소',
+  CANCELED: '구독취소',
 };
