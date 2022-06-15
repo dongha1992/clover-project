@@ -14,7 +14,9 @@ const SubsOrderList = () => {
       <ul>
         {menus?.map((item: any, index: number) => (
           <li key={index}>
-            <TextH5B padding="0 0 16px">{getFormatDate(item.deliveryDate)}</TextH5B>
+            <TextH5B padding="0 0 16px">
+              배송 {index + 1}회차 - {getFormatDate(item.deliveryDate)}
+            </TextH5B>
             {item.menuTableItems
               ?.sort((a: any, b: any) => b.main - a.main)
               .map(
