@@ -1,5 +1,5 @@
 import { getSubscriptionApi } from '@api/menu';
-import SubsCalendar from '@components/Calendar/SubsCalendar';
+import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import { RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { SUBSCRIBE_TIME_SELECT } from '@constants/subscription';

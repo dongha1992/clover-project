@@ -28,18 +28,24 @@ interface IMypageMenu {
   hideBorder?: boolean;
 }
 
-const token = getCookie({ name: 'acstk' });
-
 const MypagePage = () => {
   const dispatch = useDispatch();
   const { me, isLoginSuccess } = useSelector(userForm);
 
   useEffect(() => {
     // 쿠키에서 토큰이 지워지면 user도 초기화
+    setTimeout(() => {
+      cookieCheck();
+    }, 1000);
+  }, []);
+
+  const cookieCheck = async () => {
+    const token = await getCookie({ name: 'acstk' });
+
     if (!token) {
       dispatch(INIT_USER());
     }
-  }, []);
+  };
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
@@ -104,7 +110,7 @@ const MypagePage = () => {
     }
   };
 
-  if (isNil(orderList) && isLoginSuccess && infoLoading) {
+  if (isNil(orderList) && infoLoading) {
     return <div>로딩</div>;
   }
 

@@ -190,6 +190,7 @@ const ReplyContent = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
   border-radius: 8px;
+  margin-top: 20px;
 `;
 const ReplyHeader = styled.div`
   display: flex;

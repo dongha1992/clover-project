@@ -345,7 +345,7 @@ const TextWrapper = styled.div`
 `;
 
 const RateWrapper = styled.div`
-  padding: 16px 0 24px 0;
+  padding: 24px 0 24px 0;
   > div {
     display: flex;
   }
