@@ -13,14 +13,16 @@ const BottomSheet = () => {
   const { sheetRef, contentRef, size } = useBottomSheet();
   const dispatch = useDispatch();
   const { content, height }: any = useSelector(bottomSheetForm);
-  document.body.style.overflow = 'hidden';
 
   useEffect(() => {
     if (sheetRef.current && size.maxY) {
       sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
     }
+    document!.querySelector('html')!.style!.overflow! = 'hidden';
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'auto';
+      document!.querySelector('html')!.style!.overflow! = 'auto';
     };
   }, []);
 
@@ -82,7 +84,7 @@ const Container = styled.div<{ height: number | null }>`
   bottom: -98px;
   background-color: #fff;
   /* top: ${({ height }) => height}px; */
-  height: ${({height}) => height ? height : null};
+  height: ${({ height }) => (height ? height : null)};
   transition: transform 150ms ease-out;
 
   ${({ theme }) => theme.desktop`
