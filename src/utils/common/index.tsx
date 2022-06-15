@@ -7,6 +7,7 @@ import getFormatDate from './getFormatDate';
 import getFormatPrice from './getFormatPrice';
 import { setCookie, getCookie, removeCookie } from './cookie';
 import getValidBirthday from './getValidBirthday';
+import getUnCommaPrice from './getUnCommaPrice';
 
 export {
   SVGIcon,
@@ -20,4 +21,5 @@ export {
   getFormatDate,
   getFormatPrice,
   getValidBirthday,
+  getUnCommaPrice,
 };
