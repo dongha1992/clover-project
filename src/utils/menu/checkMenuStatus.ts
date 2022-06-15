@@ -22,7 +22,7 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
   // 오픈 하는지
   const checkIsSoon = (): string => {
     const today = dayjs();
-    openedAt = '2022-06-20 00:00:00 ';
+    // openedAt = '2022-06-20 00:00:00 ';
     const diff = dayjs(openedAt).diff(today, 'day', true);
 
     const isDisplayBadge = diff <= ONE_WEEK;

@@ -23,6 +23,7 @@ import { postCartsApi } from '@api/cart';
 
 import 'dayjs/locale/ko';
 import { menuSelector } from '@store/menu';
+import { SET_ALERT } from '@store/alert';
 
 dayjs.locale('ko');
 
@@ -112,14 +113,14 @@ const CartSheet = () => {
       console.log(data, 'data after cart');
     },
     {
-      onError: () => {},
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+      },
       onSuccess: async (message) => {
-        // if (message) {
-        // showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-        // dispatch(INIT_BOTTOM_SHEET());
-        // await queryClient.refetchQueries('getCartList');
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        dispatch(INIT_BOTTOM_SHEET());
+        await queryClient.refetchQueries('getCartList');
         // dispatch(UPDATE_CART_LIST());
-        // }
       },
     }
   );

@@ -97,14 +97,18 @@ const DetailBottom = () => {
   const goToDib = useCallback(() => {
     if (!me) {
       goToLogin();
+      return;
     }
     setTempIsLike((prev) => !prev);
   }, [tempIsLike]);
 
   const buttonStatusRender = () => {
-    const { isReopen, reopenNotificationRequested } = menuItem;
+    let { isReopen, reopenNotificationRequested } = menuItem;
 
-    const reOpenCondition = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+    isItemSold = true;
+    isReopen = true;
+    checkIsBeforeThanLaunchAt = '1231-123';
+    let reOpenCondition = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
 
     switch (true) {
       case isItemSold && !isReopen: {
@@ -122,29 +126,45 @@ const DetailBottom = () => {
     }
   };
   console.log(menuItem, 'detail bottom');
-  const cartClickButtonHandler = () => {
-    if (isItemSold) return;
 
-    if (!me) {
-      goToLogin();
+  const cartClickButtonHandler = (e: React.MouseEvent<HTMLElement>) => {
+    const { innerHTML } = e.target as HTMLDivElement;
+
+    switch (innerHTML) {
+      case '재입고 예정이에요': {
+        return;
+      }
+      case '오픈 알림 신청 받기': {
+        if (!me) {
+          goToLogin();
+          return;
+        }
+        dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={menuItem?.id} /> }));
+        return;
+      }
+      case '오픈 알림 취소하기': {
+        if (!me) {
+          goToLogin();
+          return;
+        }
+        mutateDeleteNotification();
+        return;
+      }
+      case '장바구니 담기': {
+        if (!isItemSold) {
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <CartSheet />,
+            })
+          );
+        }
+
+        return;
+      }
+      default: {
+        return;
+      }
     }
-
-    if (!isItemSold) {
-      // dispatch(SET_MENU_ITEM(menuItem));
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <CartSheet />,
-        })
-      );
-      return;
-    }
-
-    if (menuItem?.reopenNotificationRequested) {
-      mutateDeleteNotification();
-      return;
-    }
-
-    dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={menuItem?.id} /> }));
   };
 
   const goToLogin = () => {
@@ -153,7 +173,7 @@ const DetailBottom = () => {
         alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
         submitBtnText: '확인',
         closeBtnText: '취소',
-        onSubmit: () => router.push('/onboarding'),
+        onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
       })
     );
   };
