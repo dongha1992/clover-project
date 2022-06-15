@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
@@ -30,10 +30,10 @@ dayjs.locale('ko');
 
 type TProps = {
   item: IMenus;
-  isQuick?: boolean;
+  isHorizontal?: boolean;
 };
 
-const Item = ({ item, isQuick }: TProps) => {
+const Item = ({ item, isHorizontal }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -161,7 +161,7 @@ const Item = ({ item, isQuick }: TProps) => {
   };
 
   return (
-    <Container onClick={() => goToDetail(item)}>
+    <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper>
         <Image
           src={IMAGE_S3_URL + item.thumbnail}
@@ -205,16 +205,20 @@ const Item = ({ item, isQuick }: TProps) => {
             <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
         )}
-        <DesWrapper>
-          <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
-        </DesWrapper>
-        <LikeAndReview>
-          <Like>
-            <SVGIcon name="like" />
-            <TextB3R>{item.likeCount}</TextB3R>
-          </Like>
-          <TextB3R>리뷰 {item.reviewCount}</TextB3R>
-        </LikeAndReview>
+        {!isHorizontal && (
+          <>
+            <DesWrapper>
+              <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
+            </DesWrapper>
+            <LikeAndReview>
+              <Like>
+                <SVGIcon name={item.liked ? 'like' : 'unlike'} />
+                <TextB3R>{item.likeCount}</TextB3R>
+              </Like>
+              <TextB3R>리뷰 {item.reviewCount}</TextB3R>
+            </LikeAndReview>
+          </>
+        )}
         <TagWrapper>
           {item.constitutionTag && item.constitutionTag !== 'NONE' && (
             <Tag margin="0px 8px 8px 0px">{item.constitutionTag}</Tag>
@@ -225,18 +229,27 @@ const Item = ({ item, isQuick }: TProps) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isHorizontal?: boolean }>`
   max-width: 220px;
-  width: 48%;
-  height: auto;
-  background-color: #fff;
-  margin-bottom: 16px;
-  display: inline-block;
   flex-direction: column;
   align-items: flex-start;
-  position: relative;
+  display: inline-block;
   height: auto;
-  max-height: 380px;
+  background-color: #fff;
+  ${({ isHorizontal }) => {
+    if (isHorizontal) {
+      return css`
+        margin-bottom: 10px;
+      `;
+    } else {
+      return css`
+        width: 48%;
+        margin-bottom: 16px;
+        position: relative;
+        max-height: 380px;
+      `;
+    }
+  }}
 `;
 
 const ForReopen = styled.div`

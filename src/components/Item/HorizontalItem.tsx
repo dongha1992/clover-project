@@ -15,10 +15,9 @@ import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
 
 type TProps = {
   item: any;
-  isQuick?: boolean;
 };
 
-const HorizontalItem = ({ item, isQuick = false }: TProps) => {
+const HorizontalItem = ({ item }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -27,7 +26,6 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    /* TODO: thunk로? */
     dispatch(SET_MENU_ITEM(item));
     dispatch(
       SET_BOTTOM_SHEET({
@@ -72,19 +70,11 @@ const HorizontalItem = ({ item, isQuick = false }: TProps) => {
           </TextH5B>
           <TextH5B>{price}원</TextH5B>
         </PriceWrapper>
-        {!isQuick && (
-          <TagWrapper>
-            <Tag margin="0px 8px 8px 0px">{item.tag}</Tag>
-            {/* {item.tag.map((tag: string, index: number) => {
-              if (index > 1) return;
-              return (
-                <Tag key={index} margin="0px 8px 8px 0px">
-                  {tag}
-                </Tag>
-              );
-            })} */}
-          </TagWrapper>
-        )}
+        <TagWrapper>
+          {item.constitutionTag && item.constitutionTag !== 'NONE' && (
+            <Tag margin="0px 8px 8px 0px">{item.constitutionTag}</Tag>
+          )}
+        </TagWrapper>
       </FlexCol>
     </Container>
   );

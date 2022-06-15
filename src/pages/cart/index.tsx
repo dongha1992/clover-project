@@ -24,7 +24,7 @@ import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
 import { SET_ORDER } from '@store/order';
-import { HorizontalItem } from '@components/Item';
+import { HorizontalItem, Item } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
@@ -1099,7 +1099,7 @@ const CartPage = () => {
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
                 {itemList?.map((item, index) => {
-                  return <HorizontalItem item={item} key={index} />;
+                  return <Item item={item} key={index} isHorizontal />;
                 })}
               </ScrollHorizonListGroup>
             </ScrollHorizonList>
@@ -1111,7 +1111,7 @@ const CartPage = () => {
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
                 {itemList?.map((item, index) => {
-                  return <HorizontalItem item={item} key={index} />;
+                  return <Item item={item} key={index} isHorizontal />;
                 })}
               </ScrollHorizonListGroup>
             </ScrollHorizonList>
