@@ -4,17 +4,17 @@ import styled from 'styled-components';
 
 interface IProps {
   length: number;
-  count: number;
+  round: number;
 }
 
-const SubsProgressBar = ({ length, count }: IProps) => {
+const SubsProgressBar = ({ length, round }: IProps) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     setTimeout(() => {
-      setProgress((count / length) * 100);
+      setProgress((round / length) * 100);
     }, 100);
-  }, [count, length]);
+  }, [round, length]);
 
   return (
     <Outter>
