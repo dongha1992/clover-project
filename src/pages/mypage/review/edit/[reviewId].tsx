@@ -104,10 +104,9 @@ const EditReviewPage = ({ reviewId }: any) => {
     setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
   };
 
-  const writeReviewHandler = debounce(() => {
-    if (textAreaRef.current) {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, content: textAreaRef.current?.value });
-    }
+  const writeReviewHandler = debounce((e) => {
+    const { value } = e.target;
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, content: value });
   }, 80);
 
   const onChangeFileHandler = (e: any) => {
@@ -242,7 +241,12 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRating rating={writeMenuReviewObj.rating} onRating={onStarHoverRating} hoverRating={hoverRating} />
+          <StarRating
+            rating={writeMenuReviewObj.rating}
+            // onRating={onStarHoverRating}
+            hoverRating={hoverRating}
+            onClick={onStarHoverRating}
+          />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>
@@ -254,7 +258,6 @@ const EditReviewPage = ({ reviewId }: any) => {
           maxLength={1000}
           rows={20}
           eventHandler={writeReviewHandler}
-          ref={textAreaRef}
           value={writeMenuReviewObj?.content}
         />
         <FlexBetween margin="8px 0 0 0">
@@ -357,7 +360,7 @@ const TextWrapper = styled.div`
 `;
 
 const RateWrapper = styled.div`
-  padding: 16px 0 24px 0;
+  padding: 24px 0 24px 0;
   > div {
     display: flex;
   }
