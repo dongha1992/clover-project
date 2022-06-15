@@ -29,8 +29,15 @@ const CartSheetItem = ({
   clickMinusButton,
   clickRestockNoti,
 }: IProps) => {
+  const getMenuOptionPrice = () => {
+    const price = menu.price;
+    const discount = Math.floor((menu.discountPrice / menu.price) * 100);
+    const discountedPrice = menu.price - menu.discountPrice;
+    return { price, discount, discountedPrice };
+  };
+
   return (
-    <Container isSoldout={isSoldout} padding={padding} isCart={isCart}>
+    <Container isSold={menu.isSold} padding={padding} isCart={isCart}>
       <Wrapper>
         <ImageWrapper>
           <ItemImage src={menu.url} alt="상품이미지" />
@@ -40,9 +47,9 @@ const CartSheetItem = ({
           <FlexBetween>
             <PriceWrapper>
               <TextH5B color={isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
-                {menu.discount}%
+                {getMenuOptionPrice().discount}%
               </TextH5B>
-              <TextH5B>{menu.price}원</TextH5B>
+              <TextH5B>{getMenuOptionPrice().discountedPrice}원</TextH5B>
             </PriceWrapper>
             {!isCart && (
               <RemoveBtnContainer onClick={() => removeCartItemHandler && removeCartItemHandler(menu.id)}>
@@ -71,7 +78,7 @@ const CartSheetItem = ({
 };
 
 const Container = styled.div<{
-  isSoldout?: boolean;
+  isSold?: boolean;
   isCart?: boolean;
   padding?: string;
 }>`
@@ -81,7 +88,7 @@ const Container = styled.div<{
   background-color: ${({ isCart }) => (isCart ? theme.white : theme.greyScale3)};
   border-radius: 8px;
   margin-bottom: 8px;
-  color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
+  color: ${({ isSold }) => isSold && theme.greyScale25};
   padding: ${({ padding }) => padding && padding};
 `;
 
