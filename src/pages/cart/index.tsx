@@ -892,7 +892,7 @@ const CartPage = () => {
     return <div>로딩</div>;
   }
 
-  // if (cartItemList.length < 0) {
+  // if (cartItemList.length === 0) {
   //   return (
   //     <EmptyContainer>
   //       <FlexCol width="100%">

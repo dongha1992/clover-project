@@ -289,7 +289,7 @@ const Calendar = ({
     initCalendar();
   }, [subOrderDelivery]);
 
-  if (dateList.length < 0) {
+  if (dateList.length === 0) {
     return <div>로딩</div>;
   }
 

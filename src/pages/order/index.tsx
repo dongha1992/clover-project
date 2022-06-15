@@ -346,7 +346,10 @@ const OrderPage = () => {
               alertMessage: '카드를 등록해주세요.',
             })
           );
+        } else {
+          dispatch(SET_ALERT({ alertMessage: '결제에 실패했습니다. 다시 시도해주세요.' }));
         }
+        dispatch(SET_IS_LOADING(false));
       },
     }
   );
@@ -797,14 +800,18 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
+    try {
+      const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+      setCookie({
+        name: 'toss-tid-clover',
+        value: data.data.payToken,
+      });
 
-    const { data } = await postTossPaymentApi({ orderId, data: reqBody });
-    setCookie({
-      name: 'toss-tid-clover',
-      value: data.data.payToken,
-    });
-
-    window.location.href = data.data.checkoutPage;
+      window.location.href = data.data.checkoutPage;
+    } catch (error: any) {
+      dispatch(SET_ALERT({ alertMessage: error.message }));
+      dispatch(SET_IS_LOADING(false));
+    }
   };
 
   const paymentHandler = () => {
@@ -835,7 +842,7 @@ const OrderPage = () => {
       }
     }
 
-    if (userInputObj.receiverName.length < 0 || userInputObj.receiverTel.length < 0) {
+    if (userInputObj.receiverName.length === 0 || userInputObj.receiverTel.length === 0) {
       dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));
       return;
     }
