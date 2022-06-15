@@ -449,6 +449,7 @@ const OrderPage = () => {
     const { point: limitPoint } = previewOrder!;
 
     const regex = /^[0-9]/g;
+    console.log(val, 'val');
     if (!regex.test(val.toString())) return;
 
     if (val >= limitPoint) {
