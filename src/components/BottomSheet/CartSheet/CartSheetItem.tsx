@@ -49,7 +49,7 @@ const CartSheetItem = ({
               <TextH5B color={isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
                 {getMenuOptionPrice().discount}%
               </TextH5B>
-              <TextH5B>{getMenuOptionPrice().discountedPrice}원</TextH5B>
+              <TextH5B>{getMenuOptionPrice().discountedPrice.toLocaleString()}원</TextH5B>
             </PriceWrapper>
             {!isCart && (
               <RemoveBtnContainer onClick={() => removeCartItemHandler && removeCartItemHandler(menu.id)}>

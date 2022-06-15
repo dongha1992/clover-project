@@ -37,6 +37,7 @@ import axios from 'axios';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
 import { IMenus, Obj, IMenuDetails } from '@model/index';
+import isEmpty from 'lodash-es/isEmpty';
 import dayjs from 'dayjs';
 import getCustomDate from '@utils/destination/getCustomDate';
 import Badge from '@components/Item/Badge';
@@ -44,6 +45,7 @@ import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { PERIOD_NUMBER } from '@constants/subscription';
+import MenuItem from '@components/Pages/Subscription/register/MenuItem';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -69,6 +71,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   const HEADER_HEIGHT = 56;
 
   const { me } = useSelector(userForm);
+  const { menuItem } = useSelector(menuSelector);
   let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
 
   let timer: any = null;
@@ -188,10 +191,16 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   }, [tabRef?.current?.offsetTop]);
 
   useEffect(() => {
+    if (isEmpty(menuItem)) {
+      dispatch(SET_MENU_ITEM(menuDetail));
+    }
+  }, [menuDetail]);
+
+  useEffect(() => {
     return () => {};
   }, []);
 
-  console.log(menuDetail, 'menuItem');
+  console.log(menuDetail, 'menuDetail');
 
   return (
     <Container>
