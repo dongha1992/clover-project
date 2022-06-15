@@ -36,6 +36,7 @@ import { getMenuDisplayPrice } from '@utils/menu';
 import axios from 'axios';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
+import { PERIOD_NUMBER } from '@constants/subscription';
 
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 
@@ -274,7 +275,10 @@ const MenuDetailPage = ({ menuDetail }: any) => {
               <DeliveryUl>
                 <DeliveryLi>
                   <TextB2R>배송 정보</TextB2R>
-                  <TextB2R>스팟배송 / 주 2회 배송</TextB2R>
+                  <TextB2R>
+                    {menuDetail.subscriptionDeliveries.map((item: any) => DELIVERY_TYPE_MAP[item]).join('·')} / 주{' '}
+                    {PERIOD_NUMBER[menuDetail.subscriptionDeliveryCycle]}회 배송
+                  </TextB2R>
                 </DeliveryLi>
                 <DeliveryLi>
                   <TextB2R>상품 구성</TextB2R>

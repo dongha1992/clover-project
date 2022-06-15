@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { SubsCardItem } from '@components/Pages/Subscription';
 import { getOrdersApi } from '@api/order';
 import { useQuery } from 'react-query';
+import { IGetOrders, IOrderDeliverie } from '@model/index';
 
 const MySubsList = () => {
   // TODO : 구독 리스트 api 추후 리액트 쿼리로 변경
@@ -14,14 +15,15 @@ const MySubsList = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    'getSubscriptionOrders',
+    ['getSubscriptionOrders', 'progress'],
     async () => {
       const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
       const { data } = await getOrdersApi(params);
       let filterData = await data.data.orders
-        .map((item: any) => {
+        .map((item: IGetOrders) => {
           item.orderDeliveries.sort(
-            (a: any, b: any) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
+            (a: IOrderDeliverie, b: IOrderDeliverie) =>
+              Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
           );
 
           return item;
@@ -52,7 +54,7 @@ const MySubsList = () => {
         </Head>
         <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
           <ListContainer>
-            {subsList.map((item: any, index: number) => (
+            {subsList.map((item: IGetOrders, index: number) => (
               <SubsCardItem key={index} item={item} />
             ))}
           </ListContainer>
