@@ -55,6 +55,7 @@ import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ } from '@constants/cart';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { INIT_ACCESS_METHOD } from '@store/common';
 dayjs.locale('ko');
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
@@ -862,6 +863,7 @@ const CartPage = () => {
 
   useEffect(() => {
     setIsFirstRender(true);
+    dispatch(INIT_ACCESS_METHOD());
   }, []);
 
   useEffect(() => {

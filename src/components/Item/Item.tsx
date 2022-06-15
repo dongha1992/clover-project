@@ -6,7 +6,7 @@ import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SET_MENU_ITEM } from '@store/menu';
+import { menuSelector, SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
@@ -23,7 +23,8 @@ import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { deleteNotificationApi } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
-
+import cloneDeep from 'lodash-es/cloneDeep';
+import { filterSelector } from '@store/filter';
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
@@ -36,6 +37,12 @@ const Item = ({ item, isQuick }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { categoryMenus } = useSelector(menuSelector);
+  const test: any = [];
+  const {
+    categoryFilters: { filter, order },
+    type,
+  } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
@@ -43,8 +50,16 @@ const Item = ({ item, isQuick }: TProps) => {
     },
     {
       onSuccess: async () => {
-        await queryClient.refetchQueries('getMenus');
+        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+          return previous.map((_item: IMenus) => {
+            if (_item.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
       },
+      onMutate: async () => {},
       onError: async (error: any) => {
         dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
         console.error(error);
@@ -161,7 +176,7 @@ const Item = ({ item, isQuick }: TProps) => {
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {isItemSold && item.isReopen ? (
+        {!isItemSold && !item.isReopen ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>

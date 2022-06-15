@@ -50,11 +50,7 @@ const CategorySubHeader = ({ title }: TProps) => {
   };
 
   const goToCart = () => {
-    dispatch(
-      SET_BOTTOM_SHEET({
-        content: <CartSheet />,
-      })
-    );
+    router.push('/cart');
   };
 
   useEffect(() => {
