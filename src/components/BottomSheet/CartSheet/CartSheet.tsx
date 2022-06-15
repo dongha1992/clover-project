@@ -340,6 +340,8 @@ const CartSheet = () => {
     return <div>로딩</div>;
   }
 
+  console.log(menuItem, 'menuItem');
+
   return (
     <Container>
       <TextH5B padding="24px 0 16px 0" center>

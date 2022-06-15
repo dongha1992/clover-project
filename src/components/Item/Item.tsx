@@ -172,7 +172,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             <LikeAndReview>
               <Like>
                 <SVGIcon name={item.liked ? 'like' : 'unlike'} />
-                <TextB3R>{item.likeCount}</TextB3R>
+                <TextB3R padding="2px 0 0 0">{item.likeCount}</TextB3R>
               </Like>
               <TextB3R>리뷰 {item.reviewCount}</TextB3R>
             </LikeAndReview>
