@@ -2,7 +2,8 @@ import { getOrderDetailApi } from '@api/order';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SubsStatusTooltip from '@components/Shared/Tooltip/SubsStatusTooltip';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
-import { SUBSCRIPTION_STATUS, SUBSCRIPTION_UNPAID_STATUS } from '@constants/subscription';
+import { periodMapper, SUBS_DELIVERY_STATUS, SUBS_DELIVERY_UNPAID_STATUS } from '@constants/subscription';
+import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import { useSubsStatusMsg } from '@hooks/subscription/useSubsStatusMsg';
 import { theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
@@ -12,10 +13,9 @@ import router from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import SubsLabel from './SubsLabel';
 
 const SubsCardItem = ({ item }: any) => {
-  const today = Number(dayjs().format('YYYYMMDD'));
-  const [cards, setCards] = useState<any>([]);
   const [subsType, setSubsType] = useState<'UNLIMITED' | 'LIMITED'>();
   const [limitedCompleted, setLimitedCompleted] = useState<boolean>();
 
@@ -30,17 +30,7 @@ const SubsCardItem = ({ item }: any) => {
     }
   }, [item?.subscriptionPeriod]);
 
-  useEffect(() => {
-    let arr = [];
-    for (let i = 0; i < item.orderDeliveries.length; i++) {
-      if (item.currentDeliveryDate === item.orderDeliveries[i].deliveryDate || !item.currentDeliveryDate) {
-        arr.push(item.orderDeliveries[i]);
-      }
-
-      setCards(arr);
-    }
-  }, []);
-
+  const cards = useSubsNowDeliveryInfo(item);
   const msg = useSubsStatusMsg(item);
 
   const cardClickHandler = () => {
@@ -58,20 +48,23 @@ const SubsCardItem = ({ item }: any) => {
       )}
       <Content>
         <LabelList>
-          <Label className="subs">{subsType === 'UNLIMITED' ? '정기구독' : '단기구독'}</Label>
-          <Label className={item?.delivery}>{DELIVERY_TYPE_MAP[item?.delivery!]}</Label>
-          {item?.delivery === 'SPOT' && <Label>{DELIVERY_TIME_MAP[item?.deliveryDetail]}</Label>}
+          <SubsLabel
+            subsPeriod={item.subscriptionPeriod}
+            delivery={item.delivery}
+            deliveryDetail={item.deliveryDetail}
+          />
         </LabelList>
         <TextH5B className="name">{item?.name}</TextH5B>
         {subsType === 'UNLIMITED' ? (
           <TextB3R className="deliveryInfo">
             <b>
-              {item.status === 'UNPAID' &&
-                `${SUBSCRIPTION_UNPAID_STATUS[cards[0]?.status]} ${item?.subscriptionRound}회차`}
-              {item.status === 'PROGRESS' &&
-                `${SUBSCRIPTION_STATUS[cards[0]?.status]} (배송 ${cards
-                  .map((item: any) => item.deliveryRound)
-                  .sort()}회차)`}
+              {item.status === 'UNPAID'
+                ? `${SUBS_DELIVERY_UNPAID_STATUS[cards[0]?.status]} ${item?.subscriptionRound}회차`
+                : cards.length > 1
+                ? `${SUBS_DELIVERY_STATUS[cards[0]?.status]} (배송 ${cards[0].deliveryRound}회차 외 ${
+                    cards.length - 1
+                  }건)`
+                : `${SUBS_DELIVERY_STATUS[cards[0]?.status]} (배송 ${cards[0].deliveryRound}회차)`}
             </b>{' '}
             - {getFormatDate(cards[0]?.deliveryDate)} 도착예정
           </TextB3R>
@@ -80,7 +73,7 @@ const SubsCardItem = ({ item }: any) => {
         ) : (
           <TextB3R className="deliveryInfo">
             <b>
-              {SUBSCRIPTION_STATUS[cards[0]?.status]} (배송 {cards[0]?.deliveryRound}회차)
+              {SUBS_DELIVERY_STATUS[cards[0]?.status]} (배송 {cards[0]?.deliveryRound}회차)
             </b>{' '}
             - {getFormatDate(cards[0]?.deliveryDate)} 도착예정
           </TextB3R>
@@ -126,7 +119,7 @@ const Content = styled.div`
   }
 `;
 const SvgBox = styled.div`
-  padding-left: 16px;
+  padding-left: 0px;
 `;
 const LabelList = styled.div`
   display: flex;

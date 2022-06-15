@@ -894,7 +894,15 @@ const OrderPage = () => {
 
     if (usePointAll && previewOrder) {
       const { point: limitPoint } = previewOrder!;
-      setUserInputObj({ ...userInputObj, point: limitPoint });
+      const { payAmount } = previewOrder?.order!;
+      let avaliablePoint = 0;
+      if (limitPoint < payAmount) {
+        // avaliablePoint = payAmount - limitPoint;
+        avaliablePoint = limitPoint;
+      } else {
+        avaliablePoint = payAmount;
+      }
+      setUserInputObj({ ...userInputObj, point: avaliablePoint });
     }
   }, [checkForm.alwaysPointAll.isSelected]);
 
