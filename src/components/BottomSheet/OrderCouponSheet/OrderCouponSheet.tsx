@@ -89,6 +89,8 @@ const Wrapper = styled.div``;
 
 const ButtonWrapper = styled.div`
   ${fixedBottom}
+  left: 0%;
+  bottom: -2px;
 `;
 
 export default OrderCouponSheet;
