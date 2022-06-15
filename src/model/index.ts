@@ -1445,6 +1445,19 @@ export interface ICreateOrderPreview {
   ];
   isSubOrderDelivery: boolean;
 }
+
+export interface IDestinationInPreview {
+  createdAt: string;
+  delivery: string;
+  deliveryMessage?: string;
+  deliveryMessageType?: string;
+  id: number;
+  location: ILocation;
+  main: boolean;
+  name: string;
+  receiverName: string;
+  receiverTel: string;
+}
 export interface ICreateOrderPreviewResponse {
   code: number;
   message: string;
@@ -1453,6 +1466,7 @@ export interface ICreateOrderPreviewResponse {
     coupons: ICoupon[];
     point: number;
     cards: IGetCard[];
+    destination: IDestinationInPreview;
     isSubOrderDelivery: boolean;
   };
 }

@@ -862,6 +862,7 @@ const OrderPage = () => {
     if (previewOrder) {
       const isParcelAndMorning = ['MORNING', 'PARCEL'].includes(previewOrder?.order?.delivery!);
       const { userName, userTel } = previewOrder?.order!;
+      const { deliveryMessage, deliveryMessageType } = previewOrder?.destination;
 
       if (recentPayment) {
         setSelectedOrderMethod(recentPayment);
@@ -871,10 +872,8 @@ const OrderPage = () => {
         if (previewOrder?.order?.deliveryMessageReused! && !userAccessMethod?.value!) {
           setUserInputObj({
             ...userInputObj,
-            deliveryMessage: previewOrder?.order?.deliveryMessage!,
-            deliveryMessageType: previewOrder?.order?.deliveryMessageType!
-              ? previewOrder?.order?.deliveryMessageType!
-              : '',
+            deliveryMessage: deliveryMessage!,
+            deliveryMessageType: deliveryMessageType! ? deliveryMessageType! : '',
             receiverName: userName,
             receiverTel: userTel,
           });
@@ -1225,7 +1224,10 @@ const OrderPage = () => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>
+                {}
+                <TextB2R
+                  color={ACCESS_METHOD_VALUE[userInputObj.deliveryMessageType] ? theme.greyScale100 : theme.greyScale45}
+                >
                   {ACCESS_METHOD_VALUE[userInputObj.deliveryMessageType] || '출입방법 선택'}
                 </TextB2R>
                 <SVGIcon name="triangleDown" />
@@ -1294,7 +1296,7 @@ const OrderPage = () => {
           <TextH4B>할인 쿠폰 ({previewOrder?.coupons.length})</TextH4B>
           <FlexRow>
             {userInputObj.coupon ? (
-              <TextB2R padding="0 10px 0 0">{userInputObj.coupon.toLocaleString()}</TextB2R>
+              <TextB2R padding="0 10px 0 0">{userInputObj.coupon.toLocaleString()}원</TextB2R>
             ) : (
               <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
