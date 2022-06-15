@@ -23,14 +23,16 @@ import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie, getFormatDate, removeCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
-import { SET_IS_LOADING } from '@store/common';
+import { INIT_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
 import { subscriptionForm } from '@store/subscription';
+import { INIT_ORDER, INIT_CARD } from '@store/order';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
 
 import { SET_ALERT } from '@store/alert';
+import { INIT_COUPON } from '@store/coupon';
 
 interface IProps {
   orderId: number;
@@ -69,8 +71,6 @@ const OrderFinishPage = () => {
           pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
         });
         setPickupDay(Array.from(pickupDayObj));
-
-        dispatch(SET_IS_LOADING(false));
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -79,14 +79,12 @@ const OrderFinishPage = () => {
   );
 
   const checkPg = async () => {
-    console.log(pgToken, orderId, pg, 'pgToken, orderId, pg');
     try {
       if (pg === 'kakao') {
         const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
         if (pgToken && kakaoTid) {
           const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
           const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
-          console.log(data, 'AFTER KAKAO PAY');
           if (data.code === 200) {
             setIsPaymentSuccess(true);
             removeCookie({ name: 'kakao-tid-clover' });
@@ -96,7 +94,6 @@ const OrderFinishPage = () => {
         }
       } else if (pg === 'toss') {
         const payToken = getCookie({ name: 'toss-tid-clover' });
-        console.log(payToken);
         if (payToken) {
           const reqBody = { payToken };
           const { data } = await postTossApproveApi({ orderId: Number(orderId), data: reqBody });
@@ -116,6 +113,11 @@ const OrderFinishPage = () => {
         dispatch(SET_ALERT({ alertMessage: '토스 결제 중 에러가 발생했습니다.', onSubmit: () => router.back() }));
       }
       console.error(error);
+    } finally {
+      dispatch(SET_IS_LOADING(false));
+      dispatch(INIT_ORDER());
+      dispatch(INIT_CARD());
+      dispatch(INIT_ACCESS_METHOD());
     }
   };
 
@@ -290,7 +292,6 @@ const OrderFinishPage = () => {
   };
 
   useEffect(() => {
-    console.log(router.query.orderId, '(router.query.orderId in useEffect');
     if (router.isReady) {
       checkPg();
     }

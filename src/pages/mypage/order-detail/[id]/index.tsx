@@ -85,7 +85,7 @@ const OrderDetailPage = () => {
           router.push('/mypage/order-delivery-history');
         }
 
-        await queryClient.refetchQueries('getOrderDetail');
+        await queryClient.refetchQueries('getOrderLists');
       },
       onError: async (error: AxiosError) => {},
     }

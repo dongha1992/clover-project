@@ -1028,7 +1028,7 @@ export interface ICreateOrderRequest {
   payAmount: number;
   isSubOrderDelivery: boolean;
   orderDeliveries: IOrderRequestInOrderDeliveries[];
-  isReuseDeliveryMessage?: string;
+  deliveryMessageReused?: boolean;
   subscriptionMenuDetailId?: number;
   subscriptionRound?: number;
   deliveryMessage?: string;
@@ -1368,7 +1368,8 @@ export interface ICreateOrderPreview {
   receiverTel: string;
   delivery: string;
   deliveryDetail: string;
-  deliveryMessage?: string;
+  deliveryMessage?: string | undefined;
+  deliveryMessageType?: string;
   location: ILocation;
   destinationId: number;
   menuAmount: number;
@@ -1383,6 +1384,7 @@ export interface ICreateOrderPreview {
   subscriptionMenuDetailId: number;
   subscriptionPeriod: string;
   subscriptionRound: number;
+  deliveryMessageReused?: boolean;
   orderDeliveries: [
     {
       delivery: string;
