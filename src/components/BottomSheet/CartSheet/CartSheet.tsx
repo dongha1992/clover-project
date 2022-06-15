@@ -17,7 +17,7 @@ import { calculateArrival, getCustomDate, checkTimerLimitHelper } from '@utils/d
 import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { Obj } from '@model/index';
+import { Obj, IMenus, IMenuDetails } from '@model/index';
 // import { UPDATE_CART_LIST } from '@store/cart';
 import { postCartsApi } from '@api/cart';
 
@@ -38,10 +38,10 @@ interface ISelectedMenu {
   discountPrice: number;
   id: number;
   main: boolean;
-  menuId: number;
+  menuId?: number;
   name: string;
   price: number;
-  menuQuantity?: number;
+  quantity?: number;
 }
 
 const CartSheet = () => {
@@ -77,40 +77,39 @@ const CartSheet = () => {
   /* TODO: axios 여러번 */
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
-      selectedMenus = [...selectedMenus, ...selectedMenus];
+      const reqBody = selectedMenus.map((item) => {
+        return {
+          menuId: menuItem.id,
+          menuDetailId: item.id,
+          quantity: item.quantity,
+          main: item.main,
+        };
+      });
 
-      // const reqBody = selectedMenus.map((item) => {
-      //   return {
-      //     menuId: item.menuId,
-      //     menuDetailId: item.id,
-      //     menuQuantity: item.menuQuantity || null,
-      //     main: item.main,
-      //   };
-      // });
-
-      const reqBody = [
-        {
-          menuDetailId: 110,
-          menuQuantity: 1,
-          menuId: 10,
-          main: true,
-        },
-        {
-          menuDetailId: 72,
-          menuQuantity: 1,
-          menuId: 9,
-          main: true,
-        },
-        {
-          menuDetailId: 73,
-          menuQuantity: 1,
-          menuId: 9,
-          main: true,
-        },
-      ];
+      // const reqBody = [
+      //   {
+      //     menuDetailId: 110,
+      //     menuQuantity: 1,
+      //     menuId: 10,
+      //     main: true,
+      //   },
+      //   {
+      //     menuDetailId: 72,
+      //     menuQuantity: 1,
+      //     menuId: 9,
+      //     main: true,
+      //   },
+      //   {
+      //     menuDetailId: 73,
+      //     menuQuantity: 1,
+      //     menuId: 9,
+      //     main: true,
+      //   },
+      // ];
 
       const result = checkAlreadyInCart();
       const { data } = await postCartsApi(reqBody);
+      console.log(data, 'data after cart');
     },
     {
       onError: () => {},
@@ -245,19 +244,19 @@ const CartSheet = () => {
     setRollingData(newRollingData);
   };
 
-  const selectMenuHandler = (menu: any) => {
+  const selectMenuHandler = (menu: IMenuDetails) => {
     if (!checkAlreadySelect(menu.id)) {
-      setSelectedMenus([...selectedMenus, menu]);
+      setSelectedMenus([...selectedMenus, { ...menu, quantity: 1 }]);
     } else {
       clickPlusButton(menu.id);
     }
   };
 
-  const getCalculateTotalPrice = useCallback(() => {
+  const getCalculateTotalPrice = () => {
     return selectedMenus.reduce((acc: number, cur: any) => {
-      return acc + cur.price;
+      return acc + (cur.price - cur.discountPrice) * cur.quantity;
     }, 0);
-  }, [selectedMenus]);
+  };
 
   const removeCartItemHandler = (id: number): void => {
     const newSelectedMenus = selectedMenus.filter((item: any) => item.id !== id);
@@ -336,6 +335,10 @@ const CartSheet = () => {
     }
   }, []);
 
+  useEffect(() => {
+    getCalculateTotalPrice();
+  }, [selectedMenus]);
+
   if (menuItem.length === 0) {
     return <div>로딩</div>;
   }
@@ -394,7 +397,7 @@ const CartSheet = () => {
       <OrderInfoContainer>
         <TotalSumContainer>
           <TextH5B>총 {selectedMenus.length}개</TextH5B>
-          <TextH5B>{getCalculateTotalPrice()}원</TextH5B>
+          <TextH5B>{getCalculateTotalPrice().toLocaleString()}원</TextH5B>
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>

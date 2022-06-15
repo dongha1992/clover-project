@@ -36,9 +36,9 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
         <TextH6B color={!option.isSold ? theme.brandColor : theme.greyScale25}>
           {getMenuOptionPrice().discount}%
         </TextH6B>
-        <TextH6B padding="0 4px">{getMenuOptionPrice().discountedPrice}원</TextH6B>
+        <TextH6B padding="0 4px">{getMenuOptionPrice().discountedPrice.toLocaleString()}원</TextH6B>
         <TextH6B color={theme.greyScale25} textDecoration="line-through">
-          {getMenuOptionPrice().price}원
+          {getMenuOptionPrice().price.toLocaleString()}원
         </TextH6B>
       </FlexRow>
     </OptionList>
@@ -55,7 +55,6 @@ const OptionList = styled.li<{ isSold?: boolean }>`
   cursor: pointer;
 
   ${({ isSold }) => {
-    console.log(isSold);
     if (isSold) {
       return css`
         color: ${theme.greyScale25};
