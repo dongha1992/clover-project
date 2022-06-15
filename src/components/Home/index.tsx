@@ -76,12 +76,12 @@ const Home = () => {
         <SectionTitle>이벤트 / 기획전 타이틀</SectionTitle>
         <TextB3R color={theme.greyScale65}>더보기</TextB3R>
       </FlexSpace>
-      <Banner bannerList={eventbannerList} />
+      {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
       <ItemListRowWrapper>
         <ItemListRow>
           {menus?.map((item, index) => {
             if (index > 3) return;
-            return <HorizontalItem item={item} key={index} />;
+            return <Item item={item} key={index} isHorizontal />;
           })}
         </ItemListRow>
       </ItemListRowWrapper>
