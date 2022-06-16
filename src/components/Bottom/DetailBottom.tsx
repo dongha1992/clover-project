@@ -26,6 +26,8 @@ import { userForm } from '@store/user';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteNotificationApi } from '@api/menu';
+import { filterSelector } from '@store/filter';
+import { IMenus } from '@model/index';
 
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 
@@ -47,6 +49,10 @@ const DetailBottom = () => {
   const { isTimerTooltip } = useSelector(orderForm);
   const { menuItem } = useSelector(menuSelector);
   const { me } = useSelector(userForm);
+  const {
+    categoryFilters: { filter, order },
+    type,
+  } = useSelector(filterSelector);
 
   const deliveryType = checkTimerLimitHelper();
   const { isLoginSuccess } = useSelector(userForm);
@@ -60,7 +66,14 @@ const DetailBottom = () => {
     {
       onSuccess: async () => {
         showToast({ message: '알림을 취소했어요!' });
-        await queryClient.refetchQueries('getMenus');
+        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            if (_item.id === menuItem.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
       },
       onError: async (error: any) => {
         dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
@@ -104,12 +117,9 @@ const DetailBottom = () => {
   }, [tempIsLike]);
 
   const buttonStatusRender = () => {
-    let { isReopen, reopenNotificationRequested } = menuItem;
+    const { isReopen, reopenNotificationRequested } = menuItem;
 
-    isItemSold = true;
-    isReopen = true;
-    checkIsBeforeThanLaunchAt = '1231-123';
-    let reOpenCondition = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+    const reOpenCondition = !isItemSold && isReopen;
 
     switch (true) {
       case isItemSold && !isReopen: {
@@ -184,7 +194,7 @@ const DetailBottom = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
     if (isLoginSuccess) {
-      router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+      router.push(`/subscription/set-info?menuId=${menuItem.id}&subsDeliveryType=${subsDeliveryType}`);
     } else {
       router.push('/onboarding');
     }

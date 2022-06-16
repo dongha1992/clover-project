@@ -21,7 +21,7 @@ import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import 'dayjs/locale/ko';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
-import { deleteNotificationApi } from '@api/menu';
+import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 
@@ -39,7 +39,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
-  const test: any = [];
+
   const {
     categoryFilters: { filter, order },
     type,
@@ -52,7 +52,6 @@ const Item = ({ item, isHorizontal }: TProps) => {
     {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          console.log(previous, 'previous');
           return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
@@ -64,6 +63,64 @@ const Item = ({ item, isHorizontal }: TProps) => {
       onMutate: async () => {},
       onError: async (error: any) => {
         dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+
+  const { mutate: mutatePostMenuLike } = useMutation(
+    async () => {
+      const { data } = await postLikeMenus({ menuId: item.id });
+    },
+    {
+      onSuccess: async () => {
+        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            if (_item.id === item.id) {
+              return { ..._item, liked: true };
+            }
+            return _item;
+          });
+        });
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+
+  const { mutate: mutateDeleteMenuLike } = useMutation(
+    async () => {
+      const { data } = await deleteLikeMenus({ menuId: item.id });
+    },
+    {
+      onSuccess: async () => {
+        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
+        });
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
         console.error(error);
       },
     }
@@ -88,10 +145,27 @@ const Item = ({ item, isHorizontal }: TProps) => {
     );
   };
 
-  const goToDetail = (item: IMenus) => {
-    if (isItemSold || checkIsBeforeThanLaunchAt.length > 0 || item.isReopen) {
+  const menuLikeHandler = (e: any) => {
+    e.stopPropagation();
+    if (!me) {
+      goToLogin();
       return;
     }
+
+    console.log();
+    if (item.liked) {
+      mutateDeleteMenuLike();
+    } else {
+      mutatePostMenuLike();
+    }
+
+    console.log('work');
+  };
+
+  const goToDetail = (item: IMenus) => {
+    // if (isItemSold || checkIsBeforeThanLaunchAt.length > 0 || item.isReopen) {
+    //   return;
+    // }
     dispatch(SET_MENU_ITEM(item));
     router.push(`/menu/${item.id}`);
   };
@@ -115,16 +189,20 @@ const Item = ({ item, isHorizontal }: TProps) => {
     }
   };
 
+  const goToLogin = () => {
+    return dispatch(
+      SET_ALERT({
+        alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
+        onSubmit: () => router.push('/onboarding'),
+        closeBtnText: '취소',
+      })
+    );
+  };
+
   const goToReopen = (e: any) => {
     e.stopPropagation();
     if (!me) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
-          onSubmit: () => router.push('/onboarding'),
-          closeBtnText: '취소',
-        })
-      );
+      goToLogin();
       return;
     }
 
@@ -146,12 +224,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {isItemSold && item.isReopen && (
+        {!isItemSold && item.isReopen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {!isItemSold && !item.isReopen ? (
+        {(!isItemSold && item.isReopen) || (isItemSold && item.isReopen && checkIsBeforeThanLaunchAt.length > 0) ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
@@ -186,7 +264,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
               <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
             </DesWrapper>
             <LikeAndReview>
-              <Like>
+              <Like onClick={menuLikeHandler}>
                 <SVGIcon name={item.liked ? 'like' : 'unlike'} />
                 <TextB3R padding="2px 0 0 0">{item.likeCount}</TextB3R>
               </Like>
