@@ -79,7 +79,7 @@ export const postNotificationApi = ({
   return Api.post(`menu/v1/notification?menuId=${menuId}&tel=${tel}&type=${type}`);
 };
 
-export const deleteNotificationApi = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+export const deleteNotificationApi = (menuId: number): Promise<AxiosResponse<IResponse>> => {
   return Api.delete(`menu/v1/notification/${menuId}`);
 };
 
