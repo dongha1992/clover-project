@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextH5B } from '@components/Shared/Text';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { FlexRow } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
@@ -25,7 +25,13 @@ const SpotMultipleFilter = ({ data, changeHandler, selectedCheckboxIds, }: IProp
             return (
               <FlexRow key={index}>
                   <Checkbox isSelected={isSelected} onChange={() => onCheck(item.fieldName)} key={index} />
-                  <TextH5B padding="4px 0 0 8px" onClick={() => onCheck(item.fieldName)} pointer>{item.name}</TextH5B>
+                  {
+                    isSelected ? (
+                      <TextH5B padding="4px 0 0 8px" onClick={() => onCheck(item.fieldName)} pointer>{item.name}</TextH5B>
+                    ) : (
+                      <TextB2R padding="4px 0 0 8px" onClick={() => onCheck(item.fieldName)} pointer>{item.name}</TextB2R>
+                    )
+                  }
               </FlexRow>
             );
           })}
