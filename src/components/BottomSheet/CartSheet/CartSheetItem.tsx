@@ -5,7 +5,9 @@ import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-
+import { menuSelector } from '@store/menu';
+import { useSelector, useDispatch } from 'react-redux';
+import { IMAGE_S3_URL } from '@constants/mock';
 interface IProps {
   menu: any;
   isCart?: boolean;
@@ -35,12 +37,18 @@ const CartSheetItem = ({
     const discountedPrice = menu.price - menu.discountPrice;
     return { price, discount, discountedPrice };
   };
+  // 임시
+  const { menuItem } = useSelector(menuSelector);
 
+  // console.log(IMAGE_S3_URL + menuItem.thumbnail[0], IMAGE_S3_URL + menu.thumbnail);
   return (
     <Container isSold={menu.isSold} padding={padding} isCart={isCart}>
       <Wrapper>
         <ImageWrapper>
-          <ItemImage src={menu.url} alt="상품이미지" />
+          <ItemImage
+            src={`${IMAGE_S3_URL}${menu.thumbnail ? menu.thumbnail : menuItem?.thumbnail[0]}`}
+            alt="상품이미지"
+          />
         </ImageWrapper>
         <ContentWrapper>
           <TextB3R>{menu.name}</TextB3R>

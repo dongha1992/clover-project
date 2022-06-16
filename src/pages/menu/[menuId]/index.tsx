@@ -209,16 +209,14 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     };
   }, []);
 
-  // console.log(menuDetail, 'menuDetail');
-
   return (
     <Container>
       <ImgWrapper>
         <Carousel images={menuDetail?.thumbnail} setCountIndex={setCurrentImg} />
         <DailySaleNumber>{badgeRenderer()}</DailySaleNumber>
-        {/* <CountWrapper>
-          <TextH6B color={theme.white}>{`${currentImg + 1} / ${data?.url.length}`}</TextH6B>
-        </CountWrapper> */}
+        <CountWrapper>
+          <TextH6B color={theme.white}>{`${currentImg + 1} / ${menuDetail?.thumbnail.length}`}</TextH6B>
+        </CountWrapper>
       </ImgWrapper>
       <Top>
         <MenuDetailWrapper>
@@ -465,7 +463,7 @@ const CountWrapper = styled.div`
   bottom: 10px;
   padding: 4px 8px;
   border-radius: 50%;
-  background: rgba(36, 36, 36, 0.5);
+  background: ${theme.greyScale65};
   border-radius: 24px;
 `;
 
