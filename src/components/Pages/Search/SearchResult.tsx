@@ -72,7 +72,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
               <SpotsSearchResultList item={item} key={index} hasCart={hasCart} />
             );
           })
-        ) : router.pathname === '/spot/search' ? (
+        ) : router.pathname === '/spot/search/main' ? (
           <NoResultWrapper>
             <NoResult>
               <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>

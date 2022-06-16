@@ -60,6 +60,7 @@ interface IProps {
   spotSearchSort: string;
   spotJoinFormChecked: boolean;
   spotStatusDetail: IGetRegistrationStatus | null;
+  spotKeyword: string;
 };
 
 const spotAddressState = {
@@ -117,6 +118,7 @@ const initialState: IProps = {
   spotSearchSelectedFilters: [],
   spotSearchSort: '',
   spotJoinFormChecked: false,
+  spotKeyword: '',
 };
 
 export const spot = createSlice({
@@ -188,6 +190,9 @@ export const spot = createSlice({
     SET_SPOT_STATUS_DETAIL_ITEMS: (state, action: PayloadAction<IGetRegistrationStatus | null>) => {
       state.spotStatusDetail = action.payload;
     },
+    SET_SEARCH_KEYWORD: (state, action: PayloadAction<string>) => {
+      state.spotKeyword = action.payload;
+    },
   },
 });
 
@@ -213,6 +218,7 @@ export const {
   INIT_SPOT_SEARCH_SORT,
   SET_SPOT_JOIN_FORM_CHECKED,
   INIT_SPOT_JOIN_FORM_CHECKED,
+  SET_SEARCH_KEYWORD,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;
