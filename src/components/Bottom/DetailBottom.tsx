@@ -27,6 +27,7 @@ import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteNotificationApi } from '@api/menu';
 
+import { userForm } from '@store/user';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 
 interface IMenuStatus {
@@ -49,6 +50,7 @@ const DetailBottom = () => {
   const { me } = useSelector(userForm);
 
   const deliveryType = checkTimerLimitHelper();
+  const { isLoginSuccess } = useSelector(userForm);
 
   let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuItem);
 
@@ -182,7 +184,11 @@ const DetailBottom = () => {
     dispatch(SUBS_INIT());
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push(`/subscription/set-info?menuId=${menuItem?.id}&subsDeliveryType=${subsDeliveryType}`);
+    if (isLoginSuccess) {
+      router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+    } else {
+      router.push('/onboarding');
+    }
   };
 
   if (!menuItem) {

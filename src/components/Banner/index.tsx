@@ -14,7 +14,7 @@ const Banner = ({ bannerList }: IProps) => {
 
   const totalLength = bannerList.length;
 
-  if (bannerList.length < 0) {
+  if (bannerList.length === 0) {
     return <div>로딩중</div>;
   }
 

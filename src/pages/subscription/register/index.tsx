@@ -48,7 +48,7 @@ const SubsRegisterPage = () => {
   const { subsOrderMenus, subsDeliveryExpectedDate, subsInfo } = useSelector(subscriptionForm);
   const { userDestination } = useSelector(destinationForm);
   const [toggleState, setToggleState] = useState(false);
-  const [disposable, setDisposable] = useState(false);
+  const [disposable, setDisposable] = useState(true);
   const [selectDate, setSelectDate] = useState<Date | undefined>(
     subsDeliveryExpectedDate && subsDeliveryExpectedDate[0]?.deliveryDate
   );
@@ -313,6 +313,7 @@ const SubsRegisterPage = () => {
               menuOption2={allMenuPriceInfo.menuOption2}
               deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : allMenuPriceInfo.deliveryPrice}
               deliveryLength={subsOrderMenus?.length!}
+              deliveryType={subsInfo?.deliveryType!}
             />
           )}
           <BottomButton onClick={onSubscribe}>

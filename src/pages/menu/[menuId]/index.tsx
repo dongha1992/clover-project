@@ -23,7 +23,7 @@ import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
-import { menuSelector, SET_MENU_ITEM } from '@store/menu';
+import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
@@ -197,7 +197,9 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   }, [menuDetail]);
 
   useEffect(() => {
-    return () => {};
+    return () => {
+      dispatch(INIT_MENU_ITEM());
+    };
   }, []);
 
   console.log(menuDetail, 'menuDetail');

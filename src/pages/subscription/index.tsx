@@ -9,6 +9,8 @@ import router from 'next/router';
 import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
+import { getOrdersApi } from '@api/order';
+import { IGetOrders, IOrderDeliverie } from '@model/index';
 
 const SubscriptiopPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
@@ -29,10 +31,44 @@ const SubscriptiopPage = () => {
     'getSubscriptionMenus',
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SUBSCRIPTION' };
+
       const { data } = await getMenusApi(params);
       return data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const {
+    data: subsList,
+    error,
+    isLoading: isSubsLoading,
+  } = useQuery(
+    ['getSubscriptionOrders', 'progress'],
+    async () => {
+      if (me) {
+        const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
+        const { data } = await getOrdersApi(params);
+        let filterData = await data.data.orders
+          .map((item: IGetOrders) => {
+            item.orderDeliveries.sort(
+              (a: IOrderDeliverie, b: IOrderDeliverie) =>
+                Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
+            );
+
+            return item;
+          })
+          .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
+
+        return filterData;
+      }
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
+      cacheTime: 0,
+      enabled: !!me,
+    }
   );
 
   if (isLoading) {
@@ -42,7 +78,7 @@ const SubscriptiopPage = () => {
   return (
     <Container>
       <InfoCard />
-      <MySubsList />
+      {subsList?.length > 0 && <MySubsList />}
 
       <SubsListContainer>
         <TitleBox>
