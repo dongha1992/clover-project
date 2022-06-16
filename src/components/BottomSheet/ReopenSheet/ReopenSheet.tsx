@@ -29,9 +29,10 @@ const FIVE_MINUTE = 300;
 
 interface IProps {
   menuId: number;
+  isDetailBottom?: boolean;
 }
 
-const ReopenSheet = ({ menuId }: IProps) => {
+const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
   const dispatch = useDispatch();
 
   let authTimerRef = useRef(300);
@@ -77,14 +78,18 @@ const ReopenSheet = ({ menuId }: IProps) => {
       onSuccess: async (data) => {
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          return previous.map((_item: IMenus) => {
-            if (_item.id === menuId) {
-              return { ..._item, reopenNotificationRequested: true };
-            }
-            return _item;
+        if (isDetailBottom) {
+          await queryClient.refetchQueries('getMenuDetail');
+        } else {
+          queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+            return previous.map((_item: IMenus) => {
+              if (_item.id === menuId) {
+                return { ..._item, reopenNotificationRequested: true };
+              }
+              return _item;
+            });
           });
-        });
+        }
       },
       onError: async (error: any) => {
         if (error.code === 1000) {

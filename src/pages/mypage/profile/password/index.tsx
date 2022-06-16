@@ -88,7 +88,7 @@ const ChangePasswordPage = () => {
       if (password && !passwordLengthCheck) {
         setNewPasswordLengthValidation({
           isValid: false,
-          message: '비밀번호를 8자 이상 입력해주세요.',
+          message: '8~20자 이내 / 영문, 숫자, 특수문자 일부만 입력 가능해요',
         });
       } else {
         setNewPasswordLengthValidation({
@@ -216,7 +216,7 @@ const ChangePasswordPage = () => {
               <TextH5B>기존 비밀번호</TextH5B>
               <TextInput
                 inputType="password"
-                placeholder="비밀번호를 8자 이상 입력해주세요."
+                placeholder="기존 비밀번호 입력"
                 margin="8px 0 0 0"
                 eventHandler={oldPasswordInputHandler}
                 ref={oldPasswordRef}
@@ -232,7 +232,7 @@ const ChangePasswordPage = () => {
             <TextH5B padding="0 0 9px 0">신규 비밀번호</TextH5B>
             <TextInput
               inputType="password"
-              placeholder="8~20자 이내 / 영문, 숫자, 특수문자 일부만 입력 가능해요."
+              placeholder="8~20자 이내 / 영문, 숫자, 특수문자 일부만 입력."
               eventHandler={newPasswordInputHandler}
               ref={newPasswordRef}
               keyPressHandler={handleKeyPress}
@@ -240,13 +240,15 @@ const ChangePasswordPage = () => {
             {newPasswordValidation.isValid &&
               newPasswordLengthValidation.isValid &&
               oldAndNewPasswordSameValidation.isValid && <SVGIcon name="confirmCheck" />}
-            <FlexCol>
-              {!newPasswordValidation.isValid && <Validation>{newPasswordValidation.message}</Validation>}
-              {!newPasswordLengthValidation.isValid && <Validation>{newPasswordLengthValidation.message}</Validation>}
-              {!oldAndNewPasswordSameValidation.isValid && (
-                <Validation>{oldAndNewPasswordSameValidation.message}</Validation>
-              )}
-            </FlexCol>
+            {newPasswordRef?.current?.value?.length! > 0 && (
+              <FlexCol>
+                {!newPasswordValidation.isValid && <Validation>{newPasswordValidation.message}</Validation>}
+                {!newPasswordLengthValidation.isValid && <Validation>{newPasswordLengthValidation.message}</Validation>}
+                {!oldAndNewPasswordSameValidation.isValid && (
+                  <Validation>{oldAndNewPasswordSameValidation.message}</Validation>
+                )}
+              </FlexCol>
+            )}
           </NewPasswordWrapper>
           <NewAgainPasswordWrapper>
             <TextInput

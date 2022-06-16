@@ -34,6 +34,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
   };
 
   const goToShare = () => {
+    console.log('work');
     if (isMobile) {
       if (navigator.share) {
         navigator
@@ -52,7 +53,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet isMenu />,
+          content: <ShareSheet />,
         })
       );
     }
@@ -122,6 +123,7 @@ const BtnWrapper = styled.div`
   align-items: center;
   .share {
     padding-right: 27px;
+    cursor: pointer;
   }
 `;
 

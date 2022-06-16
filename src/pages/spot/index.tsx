@@ -9,13 +9,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
-import {
-  getNewSpots,
-  getSpotEvent,
-  getSpotPopular,
-  getSpotInfo,
-  getSpotRegistrationsRecruiting,
-} from '@api/spot';
+import { getNewSpots, getSpotEvent, getSpotPopular, getSpotInfo, getSpotRegistrationsRecruiting } from '@api/spot';
 import { IParamsSpots, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -77,9 +71,9 @@ const SpotPage = () => {
     };
     getSpotInfoData();
   }, [spotsPosition]);
-  
+
   const params: IParamsSpots = {
-    latitude: latLen  ? Number(spotsPosition.latitude) : null,
+    latitude: latLen ? Number(spotsPosition.latitude) : null,
     longitude: lonLen ? Number(spotsPosition.longitude) : null,
     size: 6,
   };
@@ -127,91 +121,91 @@ const SpotPage = () => {
     // dispatch(initBottomSheet());
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <ShareSheet isMenu />,
+        content: <ShareSheet />,
       })
     );
   };
 
   const goToSpotReq = (type: string): void => {
-    switch(type){
+    switch (type) {
       case 'PRIVATE':
         {
-          if(isLoginSuccess) {
+          if (isLoginSuccess) {
             // 로그인 o
-            if(info?.canPrivateSpotRegistration){
+            if (info?.canPrivateSpotRegistration) {
               // 프라이빗 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 프라이빗 신청 제한: 1개 - 신청 불가
               router.push({
                 pathname: '/spot/join/main',
                 query: { type },
-              });        
+              });
             } else {
               dispatch(
                 SET_ALERT({
                   alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
                   submitBtnText: '확인',
                 })
-              );      
+              );
             }
-          } else{
+          } else {
             router.push({
               pathname: '/spot/join/main',
               query: { type },
-            });        
+            });
           }
         }
         break;
       case 'PUBLIC':
         {
-          if(isLoginSuccess) {
+          if (isLoginSuccess) {
             // 로그인 o
-            if(info?.canPublicSpotRegistraion){
+            if (info?.canPublicSpotRegistraion) {
               // 퍼블릭 스팟 신청 진행중인게 3개 미민안 경우 true (0~2개) - 신청 가능
               // 퍼블릭(단골가게) 스팟 신청 제한: 3개 - 신청 불가
               router.push({
                 pathname: '/spot/join/main',
                 query: { type },
-              });        
+              });
             } else {
               dispatch(
                 SET_ALERT({
                   alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
                   submitBtnText: '확인',
                 })
-              );      
+              );
             }
           } else {
             router.push({
               pathname: '/spot/join/main',
               query: { type },
-            });        
+            });
           }
         }
         break;
       case 'OWNER':
         {
-          if(isLoginSuccess) {
+          if (isLoginSuccess) {
             // 로그인 o
-            if(info?.canOwnerSpotRegistraion){
+            if (info?.canOwnerSpotRegistraion) {
               // 우리가게(owner) 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 우리가게 스팟 신청 제한: 1개 - 신청 불가
               router.push({
                 pathname: '/spot/join/main',
                 query: { type },
-              });        
+              });
             } else {
               dispatch(
                 SET_ALERT({
                   alertMessage: `이미 진행 중인 신청이 있어요!\n완료 후 새롭게 신청해 주세요.`,
                   submitBtnText: '확인',
                 })
-              );      
+              );
             }
           } else {
             router.push({
               pathname: '/spot/join/main',
               query: { type },
-            });        
+            });
           }
         }
         break;
@@ -267,7 +261,10 @@ const SpotPage = () => {
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
                       {`[${info?.trialSpotRegistration?.placeName}]\n`}
-                      <span>{`${info?.trialSpotRegistration?.trialTargetUserCount! - info?.trialSpotRegistration?.trialUserCount!}`}</span>
+                      <span>{`${
+                        info?.trialSpotRegistration?.trialTargetUserCount! -
+                        info?.trialSpotRegistration?.trialUserCount!
+                      }`}</span>
                       명만 더 주문 하면 정식오픈 돼요!
                     </TextH4B>
                     <IconWrapper>
@@ -284,9 +281,7 @@ const SpotPage = () => {
               <SwiperSlide className="swiper-slide">
                 <BoxHandlerWrapper onClick={goToShare}>
                   <FlexBetween height="92px" padding="22px">
-                    <TextH4B>
-                      {`[${info?.trialSpotRegistration?.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}
-                    </TextH4B>
+                    <TextH4B>{`[${info?.trialSpotRegistration?.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}</TextH4B>
                     <IconWrapper>
                       <SVGIcon name="blackCircleShare" />
                     </IconWrapper>
@@ -298,8 +293,8 @@ const SpotPage = () => {
         </TopCTASlider>
       )}
       {
-      // 근처 인기있는 스팟 & 신규 스팟
-      // 오늘 점심 함께 주문해요.
+        // 근처 인기있는 스팟 & 신규 스팟
+        // 오늘 점심 함께 주문해요.
         popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
           <>
             <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
@@ -327,30 +322,32 @@ const SpotPage = () => {
           <EmptyySpotListWrapper>
             <FlexCenter>
               <TextB2R center color={theme.greyScale65}>
-              {'주변에 사용 가능한 프코스팟이 없어요. 😭\n(이용 가능 지역: 서울 및 경기도 일부)'}
+                {'주변에 사용 가능한 프코스팟이 없어요. 😭\n(이용 가능 지역: 서울 및 경기도 일부)'}
               </TextB2R>
             </FlexCenter>
             <ButtonWrapper>
-                <Button onClick={goToLocation}>위치 변경하기</Button>
+              <Button onClick={goToLocation}>위치 변경하기</Button>
             </ButtonWrapper>
           </EmptyySpotListWrapper>
         )
       }
-      {//프라이빗 스팟 신청 CTA
-      popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 &&
-        <Wrapper>
-          <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
-            <FlexBetween height="92px" padding="22px">
-              <TextH4B color={theme.black}>{FCO_SPOT_BANNER[0].text}</TextH4B>
-              <IconWrapper>
-                <SVGIcon name="blackCirclePencil" />
-              </IconWrapper>
-            </FlexBetween>
-          </SpotRegistration>
-        </Wrapper>
+      {
+        //프라이빗 스팟 신청 CTA
+        popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 && (
+          <Wrapper>
+            <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
+              <FlexBetween height="92px" padding="22px">
+                <TextH4B color={theme.black}>{FCO_SPOT_BANNER[0].text}</TextH4B>
+                <IconWrapper>
+                  <SVGIcon name="blackCirclePencil" />
+                </IconWrapper>
+              </FlexBetween>
+            </SpotRegistration>
+          </Wrapper>
+        )
       }
       {
-      // 이벤트 중인 스팟
+        // 이벤트 중인 스팟
         eventSpotList?.spots.length! > 0 && popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 && (
           <>
             <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
@@ -362,7 +359,7 @@ const SpotPage = () => {
                   </SwiperSlide>
                 );
               })}
-            </EventSlider>    
+            </EventSlider>
           </>
         )
       }
@@ -380,10 +377,11 @@ const SpotPage = () => {
           );
         })}
       </TrialSlider>
-      { //퍼블릭 스팟 신청 CTA 
-      popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
+      {
+        //퍼블릭 스팟 신청 CTA
+        popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
           <>
-            <Wrapper type='PUBLIC'>
+            <Wrapper type="PUBLIC">
               <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
                 <FlexBetween height="92px" padding="22px">
                   <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
@@ -463,8 +461,7 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-
-const EmptySpotImg =  styled.div`
+const EmptySpotImg = styled.div`
   width: 100%;
   height: 210px;
   background: ${theme.greyScale6};
@@ -519,13 +516,13 @@ const BoxHandlerWrapper = styled.div`
   }
 `;
 
-const Wrapper = styled.div<{type?: string}>`
+const Wrapper = styled.div<{ type?: string }>`
   padding: 48px 24px;
-  ${({type}) => {
-    if(type === 'PUBLIC'){
+  ${({ type }) => {
+    if (type === 'PUBLIC') {
       return css`
         padding: 24px 24px 48px 24px;
-      `
+      `;
     }
   }}
 `;

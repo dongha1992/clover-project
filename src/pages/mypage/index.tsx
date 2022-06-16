@@ -117,7 +117,7 @@ const MypagePage = () => {
   return (
     <Container>
       <Wrapper>
-        {isLoginSuccess ? (
+        {me ? (
           // 회원
           <>
             <UserInfoWrapper>
