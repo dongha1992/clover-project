@@ -20,6 +20,7 @@ const InfoCard = () => {
     ['getSubscriptionOrders', 'progress'],
     async () => {
       const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
+
       const { data } = await getOrdersApi(params);
 
       let filterData = await data.data.orders
@@ -54,6 +55,7 @@ const InfoCard = () => {
       refetchOnWindowFocus: false,
       staleTime: 0,
       cacheTime: 0,
+      enabled: !!me,
     }
   );
   if (isLoading) return <div>로딩중</div>;

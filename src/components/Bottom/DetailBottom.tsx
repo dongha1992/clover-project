@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
+import { userForm } from '@store/user';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 /*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
 
@@ -34,6 +35,7 @@ const DetailBottom = () => {
   const { isTimerTooltip } = useSelector(orderForm);
   const { menuItem } = useSelector(menuSelector);
   const deliveryType = checkTimerLimitHelper();
+  const { isLoginSuccess } = useSelector(userForm);
 
   useEffect(() => {
     if (router.isReady) {
@@ -142,7 +144,11 @@ const DetailBottom = () => {
     dispatch(SUBS_INIT());
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+    if (isLoginSuccess) {
+      router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+    } else {
+      router.push('/onboarding');
+    }
   };
 
   return (

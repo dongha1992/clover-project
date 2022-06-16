@@ -1,6 +1,9 @@
+import SubsDiscountSheet from '@components/BottomSheet/SubsSheet/SubsDiscountSheet';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 export interface option {
@@ -21,6 +24,7 @@ interface IProps {
   deliveryLength: number;
   point?: number;
   type?: string | 'progress' | 'last';
+  deliveryType: string;
 }
 
 const MenusPriceBox = ({
@@ -34,7 +38,18 @@ const MenusPriceBox = ({
   deliveryLength,
   point,
   type,
+  deliveryType,
 }: IProps) => {
+  const dispatch = useDispatch();
+
+  const subsDiscountInfoHandler = () => {
+    dispatch(
+      SET_BOTTOM_SHEET({
+        content: <SubsDiscountSheet />,
+      })
+    );
+  };
+
   return (
     <MenuPriceContainer>
       <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
@@ -43,23 +58,27 @@ const MenusPriceBox = ({
       </FlexBetween>
       <MenuPriceUl>
         <MenuPriceLi>
-          <TextB2R>총 할인금액</TextB2R>
+          <TextH5B>총 할인금액</TextH5B>
           <TextB2R>-{getFormatPrice(String(menuDiscount + eventDiscount))}원</TextB2R>
         </MenuPriceLi>
-        <MenuPriceLi>
-          <FlexRow>
-            <TextB2R>구독 할인</TextB2R>
-            <SVGIcon name="questionMark" />
-          </FlexRow>
-          <TextB2R>{menuDiscount ? `-${getFormatPrice(String(menuDiscount))}` : 0}원</TextB2R>
-        </MenuPriceLi>
-        <MenuPriceLi>
-          <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
-        </MenuPriceLi>
+        {menuDiscount !== 0 && (
+          <MenuPriceLi>
+            <FlexRow onClick={subsDiscountInfoHandler} pointer>
+              <TextB2R>구독 할인</TextB2R>
+              <SVGIcon name="questionMark" />
+            </FlexRow>
+            <TextB2R>{menuDiscount ? `-${getFormatPrice(String(menuDiscount))}` : 0}원</TextB2R>
+          </MenuPriceLi>
+        )}
+        {deliveryType === 'SPOT' && eventDiscount !== 0 && (
+          <MenuPriceLi>
+            <TextB2R>스팟 이벤트 할인</TextB2R>
+            <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
+          </MenuPriceLi>
+        )}
       </MenuPriceUl>
       <MenuPriceUl>
-        <MenuPriceLi className="btB" padding="16px 0 0">
+        <MenuPriceLi className="btN" padding="16px 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
           <TextB2R>
             {disposable ? menuOption1?.quantity! + menuOption2?.quantity! : 0}개 /{' '}
