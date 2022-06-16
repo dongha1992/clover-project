@@ -51,6 +51,7 @@ export interface ITextFieldProps {
   margin?: string;
   accept?: string;
   disabled?: boolean;
+  pattern?: string;
 }
 
 const defaultProps = {
@@ -84,6 +85,7 @@ const TextInput = React.forwardRef(
       margin,
       accept,
       disabled,
+      pattern,
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
@@ -119,6 +121,7 @@ const TextInput = React.forwardRef(
               onBlur={onBlur}
               accept={accept}
               disabled={disabled}
+              pattern={pattern}
             />
           ) : (
             <input
@@ -134,6 +137,7 @@ const TextInput = React.forwardRef(
               onBlur={onBlur}
               accept={accept}
               disabled={disabled}
+              pattern={pattern}
             />
           )}
         </div>
