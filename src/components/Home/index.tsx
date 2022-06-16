@@ -45,7 +45,7 @@ const Home = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    'getMenus',
+    ['getMenus', '', '', []],
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);

@@ -83,9 +83,12 @@ const CategoryPage = () => {
     const reordered = menuList?.sort((a: any, b: any) => {
       return a.isSold - b.isSold;
     });
+
     if (isAllMenu) {
       const grouped = groupByMenu(reordered, 'type');
+
       setAllMenus({ ...allMenus, ...grouped });
+
       setMenus([]);
     } else {
       setMenus(reordered);
