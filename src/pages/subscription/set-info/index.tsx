@@ -80,9 +80,10 @@ const SubsSetInfoPage = () => {
     {
       onSuccess: (data) => {
         // dispatch(SET_MENU_ITEM(data));
-        setUserSelectPeriod(
-          last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
-        );
+        !subsInfo?.period &&
+          setUserSelectPeriod(
+            last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
+          );
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -273,6 +274,7 @@ const SubsSetInfoPage = () => {
         subsDeliveryType: subsDeliveryType,
         menuId: menuId,
         isSubscription: true,
+        selected: userDestination ? 'Y' : 'N',
       },
     });
   };
