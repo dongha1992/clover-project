@@ -81,7 +81,7 @@ const Container = styled.div<{ height: number | null }>`
 
   left: calc(50%);
   right: 0;
-  bottom: -98px;
+  bottom: -100px;
   background-color: #fff;
   /* top: ${({ height }) => height}px; */
   height: ${({ height }) => (height ? height : null)};
@@ -103,7 +103,7 @@ const BottomSheetContent = styled.div`
   height: 100%;
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
-  margin-bottom: 60px;
+  margin-bottom: 56px;
 `;
 
 export default React.memo(BottomSheet);

@@ -3,7 +3,7 @@ import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import { RadioButton } from '@components/Shared/Button';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { SUBSCRIBE_TIME_SELECT } from '@constants/subscription';
-import { ISubsActiveDate } from '@model/index';
+import { ISubsActiveDate, Obj } from '@model/index';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm } from '@store/destination';
 import {
@@ -37,6 +37,16 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
   const [pickupDay, setPickupDay] = useState<any[]>();
   const [subsStartDateText, setSubsStartDateText] = useState('');
   const deliveryHoliday = ['']; // 배송휴무일
+
+  const weeks: Obj = {
+    월: 1,
+    화: 2,
+    수: 3,
+    목: 4,
+    금: 5,
+    토: 6,
+    일: 7,
+  };
 
   const { data: subsActiveDates, isLoading } = useQuery(
     'subsActiveDates',
@@ -86,10 +96,16 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
     if (deliveryExpectedDate && pickupDay && userSelectTime) {
       if (subsDeliveryType === 'SPOT') {
         setSubsStartDateText(
-          `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay?.join('·')} / ${userSelectTime}`
+          `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay
+            .sort((a, b) => weeks[a] - weeks[b])
+            ?.join('·')} / ${userSelectTime}`
         );
       } else {
-        setSubsStartDateText(`${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay?.join('·')}`);
+        setSubsStartDateText(
+          `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay
+            ?.sort((a, b) => weeks[a] - weeks[b])
+            .join('·')}`
+        );
       }
     }
   }, [deliveryExpectedDate, pickupDay, userSelectTime]);
@@ -109,7 +125,7 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
         startDate: `${dayjs(deliveryExpectedDate[0]?.deliveryDate).format('M')}월 ${dayjs(
           deliveryExpectedDate[0]?.deliveryDate
         ).format('DD')}일 (${dayjs(deliveryExpectedDate[0]?.deliveryDate).format('dd')})`,
-        deliveryDay: pickupDay,
+        deliveryDay: pickupDay?.sort((a, b) => weeks[a] - weeks[b]),
         deliveryTime: userSelectTime,
       })
     );
@@ -211,7 +227,7 @@ const BottomButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 60px;
+  height: 56px;
   background-color: ${theme.black};
   color: #fff;
   &:disabled {
