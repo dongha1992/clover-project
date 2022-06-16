@@ -41,7 +41,6 @@ const DetailBottom = () => {
 
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
-  const [menuStatus, setMenuStatus] = useState<IMenuStatus>();
   const dispatch = useDispatch();
   const { showToast } = useToast();
 
@@ -69,8 +68,6 @@ const DetailBottom = () => {
     {
       onSuccess: (data) => {
         dispatch(SET_MENU_ITEM(data));
-        const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(data);
-        setMenuStatus({ isItemSold, checkIsBeforeThanLaunchAt });
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -188,7 +185,7 @@ const DetailBottom = () => {
 
   const cartClickButtonHandler = (e: React.MouseEvent<HTMLElement>) => {
     const { innerHTML } = e.target as HTMLDivElement;
-    const { isItemSold } = menuStatus!;
+    const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail!);
 
     switch (innerHTML) {
       case '재입고 예정이에요': {
