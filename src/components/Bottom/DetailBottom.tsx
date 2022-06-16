@@ -27,7 +27,6 @@ import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteNotificationApi } from '@api/menu';
 
-import { userForm } from '@store/user';
 /*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
 
 interface IMenuStatus {
