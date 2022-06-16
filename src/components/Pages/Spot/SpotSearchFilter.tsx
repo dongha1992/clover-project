@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { SpotMultipleFilter, OrderFilter } from '@components/Filter/components';
 import BorderLine from '@components/Shared/BorderLine';
-import { TextH4B } from '@components/Shared/Text';
+import { TextH4B, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { RADIO_CHECKBOX_SPOT } from '@constants/filter';
 import { theme, bottomSheetButton } from '@styles/theme';
@@ -84,13 +84,13 @@ const SpotSearchFilter = ({ getLocation }: IProps) => {
 
   return (
     <Container>
-      <TextH4B padding="24px 0 16px 0" center pointer>
-        필터 및 정렬
-      </TextH4B>
+      <TextH5B padding="24px 0 16px 0" center pointer>
+        정렬 및 필터
+      </TextH5B>
       <Wrapper>
-        <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>
+        <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
           정렬
-        </TextH4B>
+        </TextH5B>
         <OrderFilter
           data={RADIO_CHECKBOX_SPOT}
           changeHandler={radioButtonHandler}
@@ -98,9 +98,9 @@ const SpotSearchFilter = ({ getLocation }: IProps) => {
           defaultData={userLocationLen ? 'nearest' : 'frequency'}
         />
         <BorderLine height={1} margin="16px 0" />
-        <TextH4B padding={'0 0 8px 0'} color={theme.greyScale65}>
+        <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
           필터
-        </TextH4B>
+        </TextH5B>
         <SpotMultipleFilter
           data={spotsFilter?.filters!}
           changeHandler={checkboxHandler}
