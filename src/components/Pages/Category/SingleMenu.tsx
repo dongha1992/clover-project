@@ -27,10 +27,6 @@ interface IProps {
 }
 
 const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
-  // if (menuList.length === 0) {
-  //   return <div>로딩중</div>;
-  // }
-
   return (
     <Container>
       {!isAllMenu ? <TextH3B padding="0 0 17px 0">{title}</TextH3B> : ''}
