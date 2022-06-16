@@ -424,7 +424,7 @@ const OrderPage = () => {
     setUserInputObj({ ...userInputObj, [name]: value });
   };
 
-  const useAllOfPointHandler = () => {
+  const getAllOfPointHandler = () => {
     const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
 
@@ -966,7 +966,7 @@ const OrderPage = () => {
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
     if (usePointAll && previewOrder) {
-      useAllOfPointHandler();
+      getAllOfPointHandler();
     }
   }, [checkForm.alwaysPointAll.isSelected]);
 
@@ -1346,7 +1346,7 @@ const OrderPage = () => {
               </DeletePoint>
             )}
           </span>
-          <Button width="86px" height="48px" onClick={useAllOfPointHandler}>
+          <Button width="86px" height="48px" onClick={getAllOfPointHandler}>
             전액 사용
           </Button>
         </FlexRow>
