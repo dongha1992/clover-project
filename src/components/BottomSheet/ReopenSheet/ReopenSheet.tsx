@@ -21,6 +21,8 @@ import Checkbox from '@components/Shared/Checkbox';
 import { useToast } from '@hooks/useToast';
 import { IChangeMe } from '@model/index';
 import { useInterval } from '@hooks/useInterval';
+import { INIT_CATEGORY_FILTER, filterSelector } from '@store/filter';
+import { Obj, IMenus } from '@model/index';
 
 const LIMIT = 240;
 const FIVE_MINUTE = 300;
@@ -56,6 +58,11 @@ const ReopenSheet = ({ menuId }: IProps) => {
 
   const queryClient = useQueryClient();
 
+  const {
+    categoryFilters: { filter, order },
+    type,
+  } = useSelector(filterSelector);
+
   const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
       const reqBody = {
@@ -70,7 +77,14 @@ const ReopenSheet = ({ menuId }: IProps) => {
       onSuccess: async (data) => {
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
-        await queryClient.refetchQueries('getMenus');
+        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+          return previous.map((_item: IMenus) => {
+            if (_item.id === menuId) {
+              return { ..._item, reopenNotificationRequested: true };
+            }
+            return _item;
+          });
+        });
       },
       onError: async (error: any) => {
         if (error.code === 1000) {

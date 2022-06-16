@@ -81,7 +81,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
 
 const Container = styled.div`
   ${homePadding}
-  height: 95vh;
+  height:100%;
   overflow-y: scroll;
 `;
 
@@ -89,6 +89,8 @@ const Wrapper = styled.div``;
 
 const ButtonWrapper = styled.div`
   ${fixedBottom}
+  left: 0%;
+  bottom: -2px;
 `;
 
 export default OrderCouponSheet;

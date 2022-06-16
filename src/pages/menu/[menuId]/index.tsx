@@ -24,7 +24,7 @@ import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
-import { menuSelector, SET_MENU_ITEM } from '@store/menu';
+import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
@@ -32,7 +32,6 @@ import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
-import { ALL_REVIEW } from '@constants/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import axios from 'axios';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
@@ -166,7 +165,9 @@ const MenuDetailPage = ({ menuDetail }: any) => {
   }, [tabRef?.current?.offsetTop]);
 
   useEffect(() => {
-    return () => {};
+    return () => {
+      dispatch(INIT_MENU_ITEM());
+    };
   }, []);
 
   console.log(menuItem, 'menuItem');

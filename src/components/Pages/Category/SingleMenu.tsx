@@ -27,7 +27,7 @@ interface IProps {
 }
 
 const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
-  if (menuList.length < 0) {
+  if (menuList.length === 0) {
     return <div>로딩중</div>;
   }
 

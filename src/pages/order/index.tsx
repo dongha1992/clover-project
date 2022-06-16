@@ -25,9 +25,9 @@ import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { commonSelector } from '@store/common';
+import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { couponForm, INIT_COUPON } from '@store/coupon';
-import { ACCESS_METHOD_PLACEHOLDER } from '@constants/order';
+import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD_VALUE } from '@constants/order';
 import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import {
@@ -59,7 +59,7 @@ import { orderForm, INIT_CARD, INIT_ORDER, SET_RECENT_PAYMENT } from '@store/ord
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsInfoBox, SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
-import { setCookie } from '@utils/common';
+import { setCookie, getUnCommaPrice } from '@utils/common';
 import { SET_IS_LOADING } from '@store/common';
 import { userForm } from '@store/user';
 import { subscriptionForm } from '@store/subscription';
@@ -77,7 +77,6 @@ declare global {
 /* TODO: 배송 출입 부분 함수로 */
 /* TODO: 결제 금액 부분 함수로 */
 /* TODO: 배송예정 어떻게? */
-/* TODO: 출입 방법 input userDestination에 담아서 서버 콜 */
 
 const PAYMENT_METHOD = [
   {
@@ -114,7 +113,6 @@ const PAYMENT_METHOD = [
 
 const successOrderPath: string = 'order/finish';
 
-const ngorkUrl = 'https://b14a-59-6-1-115.jp.ngrok.io';
 export interface IAccessMethod {
   id: number;
   text: string;
@@ -130,7 +128,7 @@ const OrderPage = () => {
   });
   const [selectedOrderMethod, setSelectedOrderMethod] = useState<string>('NICE_BILLING');
   const [checkForm, setCheckForm] = useState<Obj>({
-    samePerson: { isSelected: false },
+    samePerson: { isSelected: true },
     accessMethodReuse: { isSelected: false },
     alwaysPointAll: { isSelected: false },
     orderMethodReuse: { isSelected: false },
@@ -140,11 +138,15 @@ const OrderPage = () => {
     receiverTel: string;
     point: number;
     deliveryMessage: string;
+    deliveryMessageType: string;
+    coupon: number;
   }>({
     receiverName: '',
     receiverTel: '',
     point: 0,
     deliveryMessage: '',
+    deliveryMessageType: '',
+    coupon: 0,
   });
   const [card, setCard] = useState<IGetCard>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
@@ -165,15 +167,6 @@ const OrderPage = () => {
   const router = useRouter();
 
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
-
-  const { isSubscription } = router.query;
-
-  useEffect(() => {
-    return () => {
-      // 컴포넌트 마운트 해제될때 선택된쿠폰 초기화
-      dispatch(INIT_COUPON());
-    };
-  }, []);
 
   const {
     data: previewOrder,
@@ -268,6 +261,9 @@ const OrderPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      // keepPreviousData: false,
+      staleTime: 0,
+      cacheTime: 0,
     }
   );
 
@@ -275,7 +271,8 @@ const OrderPage = () => {
     async () => {
       /*TODO: 모델 수정해야함 */
       /*TODO: 쿠폰 퍼센테이지 */
-      const { point, payAmount, deliveryMessage, ...rest } = previewOrder?.order!;
+      const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
+        previewOrder?.order!;
 
       dispatch(SET_IS_LOADING(true));
 
@@ -283,10 +280,15 @@ const OrderPage = () => {
         payMethod: selectedOrderMethod,
         cardId: needCard ? card?.id! : null,
         point: userInputObj?.point,
-        payAmount: payAmount - (userInputObj.point + (selectedCoupon?.value! || 0)),
+        payAmount: payAmount - (userInputObj.point + (userInputObj.coupon! || 0)),
         couponId: selectedCoupon?.id || null,
         deliveryMessage: userInputObj?.deliveryMessage,
         deliveryMessageType: userAccessMethod?.value.toString(),
+        receiverName: userInputObj?.receiverName!,
+        receiverTel: userInputObj?.receiverTel!,
+        deliveryMessageReused: checkForm?.accessMethodReuse.isSelected
+          ? checkForm?.accessMethodReuse.isSelected
+          : false,
         ...rest,
       };
 
@@ -344,7 +346,10 @@ const OrderPage = () => {
               alertMessage: '카드를 등록해주세요.',
             })
           );
+        } else {
+          dispatch(SET_ALERT({ alertMessage: '결제에 실패했습니다. 다시 시도해주세요.' }));
         }
+        dispatch(SET_IS_LOADING(false));
       },
     }
   );
@@ -367,34 +372,36 @@ const OrderPage = () => {
     setCheckTermList({ ...checkTermList, [value]: !checkTermList[value] });
   };
 
-  const userInputHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>): void => {
-      const { name, value } = e.target;
+  const userInputHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
 
-      if (checkForm.samePerson.isSelected) {
-        setCheckForm({ ...checkForm, samePerson: { isSelected: false } });
-      }
+    if (checkForm.samePerson.isSelected) {
+      setCheckForm({ ...checkForm, samePerson: { isSelected: false } });
+    }
 
-      setUserInputObj({ ...userInputObj, [name]: value });
-    },
-    [userInputObj]
-  );
+    setUserInputObj({ ...userInputObj, [name]: value });
+  };
 
   const checkFormHanlder = (name: string) => {
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
   };
 
-  const changePointHandler = (val: number): void => {
-    const { point: limitPoint } = previewOrder!;
+  const changePointHandler = (val: string): void => {
+    const { point } = previewOrder!;
+    const { payAmount } = previewOrder?.order!;
 
-    const regex = /^[0-9]/g;
-    if (!regex.test(val.toString())) return;
+    let uncommaValue = Number(getUnCommaPrice(val));
+    const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon! || 0);
 
-    if (val >= limitPoint) {
-      val = limitPoint;
+    if (uncommaValue >= limitPoint) {
+      uncommaValue = limitPoint;
     }
 
-    setUserInputObj({ ...userInputObj, point: val });
+    // if (uncommaValue < 0) {
+    //   uncommaValue = 0;
+    // }
+
+    setUserInputObj({ ...userInputObj, point: uncommaValue });
   };
 
   const selectAccessMethodHandler = () => {
@@ -413,16 +420,18 @@ const OrderPage = () => {
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
-    console.log(name, value);
+
     setUserInputObj({ ...userInputObj, [name]: value });
   };
 
   const useAllOfPointHandler = () => {
-    const { point: limitPoint } = previewOrder!;
+    const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
+
+    const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon || 0);
+
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
-      // avaliablePoint = payAmount - limitPoint;
       avaliablePoint = limitPoint;
     } else {
       avaliablePoint = payAmount;
@@ -637,10 +646,6 @@ const OrderPage = () => {
         break;
       }
     }
-    // router.push(`/order/finish?orderId=${orderId}`);
-    // setLoadingState(false);
-    // INIT_ORDER();
-    // INIT_CARD();
   };
 
   const checkIsAlreadyPaid = (orderData: ICreateOrder) => {
@@ -673,12 +678,6 @@ const OrderPage = () => {
       successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}`,
       failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
-
-    // const reqBody = {
-    //   payMethod: selectedOrderMethod,
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   failureUrl: `${ngorkUrl}/order`,
-    // };
 
     try {
       const { data }: { data: IGetNicePaymentResponse } = await postNicePaymnetApi({ orderId, data: reqBody });
@@ -742,12 +741,6 @@ const OrderPage = () => {
 
     if (checkIsAlreadyPaid(orderData)) return;
 
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}`,
-    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}${router.asPath}`,
-    // };
-
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
 
@@ -770,12 +763,6 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
-
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=kakao`,
-    //   cancelUrl: `${ngorkUrl}${router.asPath}`,
-    //   failureUrl: `${ngorkUrl}${router.asPath}`,
-    // };
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -813,22 +800,24 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
+    try {
+      const { data } = await postTossPaymentApi({ orderId, data: reqBody });
+      setCookie({
+        name: 'toss-tid-clover',
+        value: data.data.payToken,
+      });
 
-    // const reqBody = {
-    //   successUrl: `${ngorkUrl}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-    //   failureUrl: `${ngorkUrl}${router.asPath}`,
-    // };
-
-    const { data } = await postTossPaymentApi({ orderId, data: reqBody });
-    setCookie({
-      name: 'toss-tid-clover',
-      value: data.data.payToken,
-    });
-
-    window.location.href = data.data.checkoutPage;
+      window.location.href = data.data.checkoutPage;
+    } catch (error: any) {
+      dispatch(SET_ALERT({ alertMessage: error.message }));
+      dispatch(SET_IS_LOADING(false));
+    }
   };
 
   const paymentHandler = () => {
+    const isMorning = previewOrder?.order?.delivery === 'MORNING';
+    const isParcel = previewOrder?.order?.delivery === 'PARCEL';
+
     if (isLoading) return;
     if (!checkTermList.privacy) {
       dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
@@ -839,12 +828,30 @@ const OrderPage = () => {
       return;
     }
 
+    if (isMorning) {
+      if (!userInputObj?.deliveryMessage && !userInputObj.deliveryMessageType) {
+        dispatch(SET_ALERT({ alertMessage: '출입 방법과 메시지를 입력해주세요.' }));
+        return;
+      }
+    }
+
+    if (isParcel) {
+      if (!userInputObj?.deliveryMessage) {
+        dispatch(SET_ALERT({ alertMessage: '출입 메시지를 입력해주세요.' }));
+        return;
+      }
+    }
+
+    if (userInputObj.receiverName.length === 0 || userInputObj.receiverTel.length === 0) {
+      dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));
+      return;
+    }
+
     if (previewOrder?.order.delivery === 'MORNING') {
-      /* TODO: alert message 마크다운..? */
       dispatch(
         SET_ALERT({
           alertMessage:
-            '주문변경 및 취소는 배송일 전날 오후 3시까지만 가능합니다.[배송지/배송요청사항] 오기입으로 인해 상품 수령이 불가능하게 될 경우, 고객님의 책임으로 간주되어 보상이 불가능합니다. 배송지를 최종 확인 하셨나요?',
+            '주문변경 및 취소는 배송일 전날 오후 3시까지만 가능합니다.\n[배송지/배송요청사항] 오기입으로 인해 상품 수령이 불가능하게 될 경우, 고객님의 책임으로 간주되어 보상이 불가능합니다.\n 배송지를 최종 확인 하셨나요?',
           closeBtnText: '취소',
           submitBtnText: '확인',
           onClose: () => {},
@@ -859,11 +866,77 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
+    if (previewOrder) {
+      const isParcelAndMorning = ['MORNING', 'PARCEL'].includes(previewOrder?.order?.delivery!);
+      const { userName, userTel } = previewOrder?.order!;
+      const { deliveryMessage, deliveryMessageType } = previewOrder?.destination;
+
+      if (recentPayment) {
+        setSelectedOrderMethod(recentPayment);
+      }
+
+      if (isParcelAndMorning) {
+        if (previewOrder?.order?.deliveryMessageReused! && !userAccessMethod?.value!) {
+          setUserInputObj({
+            ...userInputObj,
+            deliveryMessage: deliveryMessage!,
+            deliveryMessageType: deliveryMessageType! ? deliveryMessageType! : '',
+            receiverName: userName,
+            receiverTel: userTel,
+          });
+        } else if (userAccessMethod?.value!) {
+          setUserInputObj({
+            ...userInputObj,
+            deliveryMessageType: userAccessMethod?.value!,
+            deliveryMessage: '',
+            receiverName: userName,
+            receiverTel: userTel,
+          });
+        } else {
+          setUserInputObj({
+            ...userInputObj,
+            receiverName: userName,
+            receiverTel: userTel,
+          });
+        }
+      } else {
+        setUserInputObj({
+          ...userInputObj,
+          receiverName: userName,
+          receiverTel: userTel,
+          deliveryMessage: '',
+          deliveryMessageType: '',
+        });
+      }
+    }
+  }, [previewOrder, userAccessMethod?.value]);
+
+  useEffect(() => {
+    const card = selectedCard
+      ? previewOrder?.cards.find((c) => c.id === selectedCard)
+      : previewOrder?.cards.find((c) => c.main);
+    setCard(card!);
+
+    setCheckForm({
+      ...checkForm,
+      accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
+    });
+  }, [previewOrder]);
+
+  useEffect(() => {
+    const value = userInputObj.point > 0 ? userInputObj.point - userInputObj?.coupon : 0;
+    setUserInputObj({ ...userInputObj, point: value });
+  }, [userInputObj.coupon]);
+
+  useEffect(() => {
+    setUserInputObj({ ...userInputObj, coupon: selectedCoupon?.value! });
+  }, [selectedCoupon]);
+
+  useEffect(() => {
     const { isSelected } = checkForm.samePerson;
 
     if (previewOrder?.order && isSelected) {
       const { userName, userTel } = previewOrder?.order;
-
       setUserInputObj({
         ...userInputObj,
         receiverName: userName,
@@ -893,31 +966,9 @@ const OrderPage = () => {
     const usePointAll = checkForm.alwaysPointAll.isSelected;
 
     if (usePointAll && previewOrder) {
-      const { point: limitPoint } = previewOrder!;
-      const { payAmount } = previewOrder?.order!;
-      let avaliablePoint = 0;
-      if (limitPoint < payAmount) {
-        // avaliablePoint = payAmount - limitPoint;
-        avaliablePoint = limitPoint;
-      } else {
-        avaliablePoint = payAmount;
-      }
-      setUserInputObj({ ...userInputObj, point: avaliablePoint });
+      useAllOfPointHandler();
     }
   }, [checkForm.alwaysPointAll.isSelected]);
-
-  useEffect(() => {
-    const card = selectedCard
-      ? previewOrder?.cards.find((c) => c.id === selectedCard)
-      : previewOrder?.cards.find((c) => c.main);
-    setCard(card!);
-  }, [previewOrder]);
-
-  useEffect(() => {
-    if (recentPayment) {
-      setSelectedOrderMethod(recentPayment);
-    }
-  }, []);
 
   useEffect(() => {
     // 새로고침 시 중복 결제 방어 풀림
@@ -926,6 +977,14 @@ const OrderPage = () => {
 
   useEffect(() => {
     if (!auth) router.replace('/login');
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      // 컴포넌트 마운트 해제될때 선택된쿠폰 초기화
+      dispatch(INIT_COUPON());
+      dispatch(INIT_ACCESS_METHOD());
+    };
   }, []);
 
   if (preveiwOrderLoading) {
@@ -953,7 +1012,7 @@ const OrderPage = () => {
       return;
     }
   }
-
+  console.log(previewOrder, 'PREVIEW');
   const {
     userName,
     userTel,
@@ -1087,7 +1146,7 @@ const OrderPage = () => {
           <TextH5B padding="0 0 8px 0">이름</TextH5B>
           <TextInput
             placeholder="이름"
-            value={checkForm.samePerson.isSelected ? userInputObj.receiverName : ''}
+            value={checkForm.samePerson.isSelected ? previewOrder?.order.userName : userInputObj.receiverName}
             name="receiverName"
             eventHandler={userInputHandler}
           />
@@ -1098,7 +1157,7 @@ const OrderPage = () => {
             inputType="number"
             placeholder="휴대폰 번호"
             name="receiverTel"
-            value={checkForm.samePerson.isSelected ? userInputObj.receiverTel : ''}
+            value={checkForm.samePerson.isSelected ? previewOrder?.order.userTel : userInputObj.receiverTel}
             eventHandler={userInputHandler}
           />
         </FlexCol>
@@ -1172,17 +1231,23 @@ const OrderPage = () => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>{userAccessMethod?.text || '출입방법 선택'}</TextB2R>
+                {}
+                <TextB2R
+                  color={ACCESS_METHOD_VALUE[userInputObj.deliveryMessageType] ? theme.greyScale100 : theme.greyScale45}
+                >
+                  {ACCESS_METHOD_VALUE[userInputObj.deliveryMessageType] || '출입방법 선택'}
+                </TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
                 name="deliveryMessage"
                 margin="8px 0 0 0"
                 placeholder={
-                  ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
-                    ? ACCESS_METHOD_PLACEHOLDER[userAccessMethod?.value!]
+                  ACCESS_METHOD_PLACEHOLDER[userInputObj.deliveryMessageType]
+                    ? ACCESS_METHOD_PLACEHOLDER[userInputObj.deliveryMessageType]
                     : '요청사항 입력 (선택)'
                 }
+                value={userInputObj?.deliveryMessage ? userInputObj?.deliveryMessage : ''}
                 eventHandler={changeInputHandler}
               />
             </FlexCol>
@@ -1226,6 +1291,7 @@ const OrderPage = () => {
               name="deliveryMessage"
               margin="24px 0 0 0"
               placeholder="요청사항 입력"
+              value={userInputObj?.deliveryMessage ? userInputObj?.deliveryMessage : ''}
               eventHandler={changeInputHandler}
             />
           </VisitorAccessMethodWrapper>
@@ -1236,8 +1302,8 @@ const OrderPage = () => {
         <FlexBetween>
           <TextH4B>할인 쿠폰 ({previewOrder?.coupons.length})</TextH4B>
           <FlexRow>
-            {selectedCoupon ? (
-              <TextB2R padding="0 10px 0 0">{selectedCoupon.value}</TextB2R>
+            {userInputObj.coupon ? (
+              <TextB2R padding="0 10px 0 0">{userInputObj.coupon.toLocaleString()}원</TextB2R>
             ) : (
               <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
@@ -1271,8 +1337,8 @@ const OrderPage = () => {
               name="point"
               width="100%"
               placeholder="0"
-              value={getFormatPrice(String(userInputObj.point))}
-              eventHandler={(e) => changePointHandler(Number(e.target.value))}
+              value={userInputObj.point.toLocaleString()}
+              eventHandler={(e) => changePointHandler(String(e.target.value))}
             />
             {userInputObj.point > 0 && (
               <DeletePoint onClick={clearPointHandler}>
@@ -1284,9 +1350,7 @@ const OrderPage = () => {
             전액 사용
           </Button>
         </FlexRow>
-        <TextB3R padding="4px 0 0 16px">
-          사용 가능한 포인트 {getFormatPrice(String(point - userInputObj.point))}원
-        </TextB3R>
+        <TextB3R padding="4px 0 0 16px">사용 가능한 포인트 {point.toLocaleString()}원</TextB3R>
       </PointWrapper>
       <BorderLine height={8} />
 
@@ -1363,7 +1427,7 @@ const OrderPage = () => {
               <TextB2R>{eventDiscount}원</TextB2R>
             </FlexBetween>
           )}
-          {selectedCoupon && (
+          {userInputObj.coupon && (
             <FlexBetween padding="8px 0 0 0">
               <TextB2R>쿠폰 사용</TextB2R>
               <TextB2R>{coupon}원</TextB2R>
@@ -1491,7 +1555,7 @@ const OrderPage = () => {
       </OrderTermWrapper>
       <OrderBtn onClick={() => paymentHandler()}>
         <Button borderRadius="0" height="100%" disabled={isLoading} className="orderBtn">
-          {getFormatPrice(String(payAmount - userInputObj.point))}원 결제하기
+          {getFormatPrice(String(payAmount - (userInputObj.point + (userInputObj.coupon! || 0))))}원 결제하기
         </Button>
       </OrderBtn>
     </Container>
