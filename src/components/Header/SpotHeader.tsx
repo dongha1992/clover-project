@@ -9,22 +9,13 @@ import { destinationForm, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { getComputeDistance } from '@utils/spot';
-import { spotSelector, SET_SPOT_POSITIONS } from '@store/spot';
-import { searchAddressJuso } from '@api/search';
-import { getAddressFromLonLat } from '@api/location';
-import { IJuso } from '@model/index';
+import { spotSelector } from '@store/spot';
 
 const SpotHeader = () => {
   const dispatch = useDispatch();
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [distance, setDistance] = useState<number>(0);
-  // const [cureentPosition, setCurrentPosition] = useState<{latitude: number,longitude: number}> ({
-  //   latitude: 0,
-  //   longitude: 0,
-  // });
-  const [currentLocation, setCurrentLocation] = useState('');
-  // const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
 
   useEffect(()=> {
     if(userLocation?.emdNm){
@@ -41,24 +32,7 @@ const SpotHeader = () => {
       if(position) {
         // console.log('현재 위치', position.coords.latitude + ' ' + position.coords.longitude);
         const distance = getComputeDistance(spotsPosition.latitude, spotsPosition.longitude, position.coords.latitude, position.coords.longitude);
-        if (distance > 3) {
-          const { data } = await getAddressFromLonLat({
-            y: position.coords.latitude?.toString(),
-            x: position.coords.longitude?.toString(),
-          });
-          setCurrentLocation(data.documents[0].address_name);
-          // dispatch(
-          //   SET_SPOT_POSITIONS({
-          //     latitude: position.coords.latitude,
-          //     longitude: position.coords.longitude,
-          //   })
-          // );  
-        };
         setDistance(distance);
-        // setCurrentPosition({
-        //   latitude: position.coords.latitude,
-        //   longitude: position.coords.longitude,          
-        // });
       }
       return { Status: true, position, };
     } catch (error) {
@@ -66,8 +40,6 @@ const SpotHeader = () => {
       return { Status: false, };
     }
   };
-
-  console.log(distance, currentLocation);
 
   const goToCart = () => {
     router.push('/cart');
@@ -95,7 +67,6 @@ const SpotHeader = () => {
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
             { distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />}
-            {/* { distance > 3 && <Tooltip message="3km 내 프코스팟이 없어 위치를 변경했어요!" width='248px' left="-16px" top="29px" /> } */}
           </AddressWrapper>
         </Left>
         <Right>
