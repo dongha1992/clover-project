@@ -86,9 +86,7 @@ const CategoryPage = () => {
 
     if (isAllMenu) {
       const grouped = groupByMenu(reordered, 'type');
-
-      setAllMenus({ ...allMenus, ...grouped });
-
+      setAllMenus({ ...grouped });
       setMenus([]);
     } else {
       setMenus(reordered);
@@ -115,6 +113,7 @@ const CategoryPage = () => {
   if (isLoading) {
     return <div>로딩 중</div>;
   }
+
   return (
     <Container>
       <SingleMenu

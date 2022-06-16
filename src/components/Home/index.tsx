@@ -49,7 +49,7 @@ const Home = () => {
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);
-      return data.data;
+      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );

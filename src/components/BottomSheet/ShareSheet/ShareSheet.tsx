@@ -16,13 +16,7 @@ const SHARE_ICONS = [
   { value: 'urlIcon', name: '링크 복사' },
 ];
 
-interface IProps {
-  isMenu?: boolean;
-}
-
-const ShareSheet = ({ isMenu }: IProps) => {
-  const { menuItem } = useSelector(menuSelector);
-
+const ShareSheet = () => {
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
     let url = window.location.href;
     const shareMapper: { [index: string]: () => void } = {
@@ -33,7 +27,13 @@ const ShareSheet = ({ isMenu }: IProps) => {
         url = `http://www.facebook.com/sharer/sharer.php?u=${url}`;
         windowOpen(url);
       },
-      band: () => {},
+      band: () => {
+        const encodeUrl = encodeURIComponent(url);
+        const encodeTitle = encodeURIComponent('1');
+
+        const link = `http://band.us/plugin/share?body=${encodeTitle}&route=${encodeUrl}`;
+        window.open(link, 'share', 'width=500, height=500');
+      },
       urlIcon: () => {
         getUrlLink(e);
       },
@@ -58,26 +58,11 @@ const ShareSheet = ({ isMenu }: IProps) => {
         imageWidth: 800,
         imageHeight: 420,
         link: {
-          webUrl: '',
-          mobileWebUrl: '',
+          webUrl: url,
+          mobileWebUrl: url,
         },
       },
-      buttons: [
-        {
-          title: '결과 보기',
-          link: {
-            webUrl: '',
-            mobileWebUrl: '',
-          },
-        },
-        {
-          title: '테스트하기',
-          link: {
-            webUrl: '',
-            mobileWebUrl: '',
-          },
-        },
-      ],
+      buttons: [],
     });
   };
 
@@ -87,7 +72,6 @@ const ShareSheet = ({ isMenu }: IProps) => {
         <TextH5B center padding="24px 0 16px 0">
           공유하기
         </TextH5B>
-        {isMenu && <ShareSheetItem menu={menuItem} />}
         <LinkWrapper>
           {SHARE_ICONS.map((item, index) => (
             <LinkGroup key={index} onClick={(e) => shareHandler(e, item.value)}>

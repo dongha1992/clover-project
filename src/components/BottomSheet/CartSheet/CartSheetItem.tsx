@@ -5,7 +5,9 @@ import { FlexBetween, theme } from '@styles/theme';
 import CountButton from '@components/Shared/Button/CountButton';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-
+import { menuSelector } from '@store/menu';
+import { useSelector, useDispatch } from 'react-redux';
+import { IMAGE_S3_URL } from '@constants/mock';
 interface IProps {
   menu: any;
   isCart?: boolean;
@@ -29,20 +31,33 @@ const CartSheetItem = ({
   clickMinusButton,
   clickRestockNoti,
 }: IProps) => {
+  const getMenuOptionPrice = () => {
+    const price = menu.price;
+    const discount = Math.floor((menu.discountPrice / menu.price) * 100);
+    const discountedPrice = menu.price - menu.discountPrice;
+    return { price, discount, discountedPrice };
+  };
+  // 임시
+  const { menuItem } = useSelector(menuSelector);
+
+  // console.log(IMAGE_S3_URL + menuItem.thumbnail[0], IMAGE_S3_URL + menu.thumbnail);
   return (
-    <Container isSoldout={isSoldout} padding={padding} isCart={isCart}>
+    <Container isSold={menu.isSold} padding={padding} isCart={isCart}>
       <Wrapper>
         <ImageWrapper>
-          <ItemImage src={menu.url} alt="상품이미지" />
+          <ItemImage
+            src={`${IMAGE_S3_URL}${menu.thumbnail ? menu.thumbnail : menuItem?.thumbnail[0]}`}
+            alt="상품이미지"
+          />
         </ImageWrapper>
         <ContentWrapper>
           <TextB3R>{menu.name}</TextB3R>
           <FlexBetween>
             <PriceWrapper>
               <TextH5B color={isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
-                {menu.discount}%
+                {getMenuOptionPrice().discount}%
               </TextH5B>
-              <TextH5B>{menu.price}원</TextH5B>
+              <TextH5B>{getMenuOptionPrice().discountedPrice.toLocaleString()}원</TextH5B>
             </PriceWrapper>
             {!isCart && (
               <RemoveBtnContainer onClick={() => removeCartItemHandler && removeCartItemHandler(menu.id)}>
@@ -71,7 +86,7 @@ const CartSheetItem = ({
 };
 
 const Container = styled.div<{
-  isSoldout?: boolean;
+  isSold?: boolean;
   isCart?: boolean;
   padding?: string;
 }>`
@@ -81,7 +96,7 @@ const Container = styled.div<{
   background-color: ${({ isCart }) => (isCart ? theme.white : theme.greyScale3)};
   border-radius: 8px;
   margin-bottom: 8px;
-  color: ${({ isSoldout }) => isSoldout && theme.greyScale25};
+  color: ${({ isSold }) => isSold && theme.greyScale25};
   padding: ${({ padding }) => padding && padding};
 `;
 

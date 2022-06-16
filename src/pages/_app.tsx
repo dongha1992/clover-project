@@ -149,6 +149,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
         <title>프레시코드</title>
       </Head>
       <>
+        <Script type="text/javascript" src="//developers.band.us/js/share/band-button.js?v=13062022"></Script>
         <Script
           type="text/javascript"
           src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"

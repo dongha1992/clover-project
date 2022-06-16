@@ -189,7 +189,7 @@ const SubsProductIdPage = () => {
             <MenuDetailWrapper>
               <MenuNameWrapper>
                 <TextH2B padding={'0 0 8px 0'}>{data.name}</TextH2B>
-                {data.tag && <Tag margin="0 4px 0 0">{data.tag}</Tag>}
+                {data.constitutionTag && <Tag margin="0 4px 0 0">{data.constitutionTag}</Tag>}
               </MenuNameWrapper>
               <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
                 {data.description}

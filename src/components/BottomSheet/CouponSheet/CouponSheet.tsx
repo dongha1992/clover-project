@@ -10,8 +10,6 @@ import router from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
-const isLogin = false;
-
 const CouponSheet = () => {
   const dispatch = useDispatch();
 
@@ -24,22 +22,11 @@ const CouponSheet = () => {
   };
 
   const downloadCouponHandler = () => {
-    if (isLogin) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '쿠폰을 다운받았습니다.',
-        })
-      );
-    } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '로그인 후 쿠폰 다운로드 가능합니다.',
-          submitBtnText: '로그인 하기',
-          closeBtnText: '취소',
-          onSubmit: () => router.push('/login'),
-        })
-      );
-    }
+    dispatch(
+      SET_ALERT({
+        alertMessage: '쿠폰을 다운받았습니다.',
+      })
+    );
   };
 
   const submitHandler = () => {
