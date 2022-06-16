@@ -76,8 +76,20 @@ const Item = ({ item, isHorizontal }: TProps) => {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
           return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
             if (_item.id === item.id) {
-              return { ..._item, liked: true };
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
             }
             return _item;
           });
@@ -152,14 +164,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
       return;
     }
 
-    console.log();
     if (item.liked) {
       mutateDeleteMenuLike();
     } else {
+      console.log('post');
       mutatePostMenuLike();
     }
-
-    console.log('work');
   };
 
   const goToDetail = (item: IMenus) => {
