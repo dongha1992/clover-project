@@ -40,7 +40,6 @@ const Header = () => {
       '/menu/[menuId]/review/[id]': '후기 상세',
       '/cart': '장바구니',
       '/cart/delivery-info': '배송정보',
-      '/spot/search': '프코스팟 검색',
       '/order': '결제',
       '/mypage/card': '결제관리',
       '/mypage/card/register': '카드등록',
@@ -80,17 +79,19 @@ const Header = () => {
       '/login': '로그인',
       '/login/find-account/email': '이메일/비밀번호 찾기',
       '/login/find-account/password': '이메일/비밀번호 찾기',
-      '/spot/spot-req': '신청하기',
-      '/spot/register': '신청하기',
-      '/spot/register/submit': '신청하기',
-      '/spot/register/submit/finish': '신청하기',
+      '/spot/search': '프코스팟 검색',
+      '/spot/search/main': '프코스팟 검색',
+      '/spot/join': '프코스팟 신청 안내',
+      '/spot/join/main': '신청하기',
+      '/spot/join/main/form' : '신청하기',
+      '/spot/join/main/form/submit': '신청하기',
+      '/spot/join/main/form/submit/finish': '신청하기',
       '/destination/search': '배송지 검색',
       '/destination/destination-detail': '배송지 검색',
       '/spot/search/location': '프코스팟 검색',
       '/spot/status': '스팟 관리',
       '/spot/location': '주소 검색',
       '/spot/location/address': '주소 검색',
-      '/spot/regi-list': '프코스팟 신청 안내',
       '/spot/notice': '프코스팟 안내',
       '/subscription/products': '정기구독',
       '/subscription/set-info': '구독하기',
@@ -147,7 +148,7 @@ const Header = () => {
         return <SpotHeader />;
       }
 
-      case ['/spot/search', '/spot/search/location'].includes(currentPath): {
+      case ['/spot/search', '/spot/search/main', '/spot/search/location'].includes(currentPath): {
         return <SpotSearchHeader title={title} />;
       }
 

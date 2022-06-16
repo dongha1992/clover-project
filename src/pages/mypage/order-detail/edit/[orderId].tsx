@@ -200,7 +200,7 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
 
   const changeDeliveryPlace = () => {
     if (isSpot) {
-      router.push({ pathname: '/spot/search', query: { orderId } });
+      router.push({ pathname: '/spot/search/main', query: { orderId } });
     } else {
       router.push({ pathname: '/destination/search', query: { orderId } });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
