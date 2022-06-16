@@ -88,7 +88,7 @@ export const getLikeMenus = (menuPattern: string): Promise<AxiosResponse<any>> =
 };
 
 export const postLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`menu/v1/like/${menuId}`);
+  return Api.post(`menu/v1/like${menuId}`);
 };
 
 export const deleteLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {

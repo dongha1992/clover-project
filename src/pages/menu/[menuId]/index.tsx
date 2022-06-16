@@ -57,7 +57,6 @@ const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/Detail
 /* TODO: 영양 정보 샐러드만 보여줌 */
 /* TODO: 베스트후기 없으면 안 보여줌  */
 
-const hasAvailableCoupon = true;
 interface IProps {
   menuDetail: IMenus;
 }
@@ -73,7 +72,12 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const { me } = useSelector(userForm);
   const { menuItem } = useSelector(menuSelector);
-  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
+  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
+  const { badgeMessage, isReopen, isSold } = menuDetail;
+
+  const isTempSold = isItemSold && !isReopen;
+  const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+  const isOpenSoon = !isItemSold && isReopen;
 
   let timer: any = null;
 
@@ -173,11 +177,11 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
     const { badgeMessage, isReopen, isSold } = menuDetail;
 
-    if (isItemSold && !isReopen) {
+    if (isTempSold) {
       return <Badge message="일시품절" />;
-    } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {
+    } else if (isReOpen) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
-    } else if (!isItemSold && isReopen) {
+    } else if (isOpenSoon) {
       return <Badge message="재오픈예정" />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
@@ -254,18 +258,22 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                 </TextH3B>
               </DiscountedPrice>
             </PriceWrapper>
-            {hasAvailableCoupon ? (
-              <CouponWrapper onClick={couponDownloadHandler}>
-                <TextH6B padding="4px 4px 0 0" pointer>
-                  쿠폰 받기
-                </TextH6B>
-                <SVGIcon name="download" />
-              </CouponWrapper>
-            ) : (
-              <CouponWrapper>
-                <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
-                <SVGIcon name="checkBlack18" />
-              </CouponWrapper>
+            {!isTempSold && (
+              <>
+                {menuItem?.coupon ? (
+                  <CouponWrapper onClick={couponDownloadHandler}>
+                    <TextH6B padding="4px 4px 0 0" pointer>
+                      쿠폰 받기
+                    </TextH6B>
+                    <SVGIcon name="download" />
+                  </CouponWrapper>
+                ) : (
+                  <CouponWrapper>
+                    <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
+                    <SVGIcon name="checkBlack18" />
+                  </CouponWrapper>
+                )}
+              </>
             )}
           </PriceAndCouponWrapper>
           {menuDetail.type !== 'SUBSCRIPTION' && menuDetail.type === 'SALAD' && (
