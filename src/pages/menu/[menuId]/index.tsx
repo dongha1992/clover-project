@@ -311,7 +311,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                   <TextB2R>배송 정보</TextB2R>
                   <TextB2R>
                     {menuDetail?.subscriptionDeliveries?.map((item: any) => DELIVERY_TYPE_MAP[item]).join('·')} / 주{' '}
-                    {PERIOD_NUMBER[menuDetail?.subscriptionDeliveryCycle]}회 배송
+                    {PERIOD_NUMBER[menuDetail?.subscriptionDeliveryCycle!]}회 배송
                   </TextB2R>
                 </DeliveryLi>
                 <DeliveryLi>

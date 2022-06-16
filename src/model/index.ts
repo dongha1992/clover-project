@@ -1717,6 +1717,7 @@ export interface IMenus {
   isReopen?: boolean;
   isSold?: boolean;
   reopenNotificationRequested: boolean;
+  subscriptionDeliveryCycle?: string;
 }
 
 /* REVIEW */
