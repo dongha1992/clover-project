@@ -1102,7 +1102,7 @@ const OrderPage = () => {
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper>
             {!showSectionObj.showCustomerInfoSection && (
-              <TextB2R padding="0 13px 0 0">{`${userName},${userTel}`}</TextB2R>
+              <TextB2R padding="0 13px 0 0">{`${userName}, ${userTel}`}</TextB2R>
             )}
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
@@ -1504,9 +1504,10 @@ const OrderPage = () => {
           menuOption1={options?.option1!}
           menuOption2={options?.option2!}
           deliveryPrice={deliveryFee!}
-          deliveryLength={13}
+          deliveryLength={previewOrder?.order.orderDeliveries.length}
           point={userInputObj.point}
           type={'last'}
+          deliveryType={previewOrder?.order.delivery}
         />
       )}
       <OrderTermWrapper>

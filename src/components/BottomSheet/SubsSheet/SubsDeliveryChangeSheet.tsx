@@ -165,7 +165,7 @@ const BottomButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 60px;
+  height: 56px;
   background-color: ${theme.black};
   color: #fff;
   &:disabled {

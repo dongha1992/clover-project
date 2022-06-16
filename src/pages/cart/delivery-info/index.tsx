@@ -55,7 +55,7 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId, isSubscription, subsDeliveryType, menuId } = router.query;
+  const { destinationId, isSubscription, subsDeliveryType, menuId, selected } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
 
   const { data: recentOrderDelivery } = useQuery(
@@ -386,7 +386,9 @@ const DeliverInfoPage = () => {
         if (subsDeliveryType === 'SPOT') {
           setUserSelectDeliveryType('spot');
         } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
-          setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+          if (selected === 'Y' || !selected) {
+            setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+          }
         }
       } else {
         setUserSelectDeliveryType(userDeliveryType);
@@ -469,7 +471,9 @@ const DeliverInfoPage = () => {
       if (subsDeliveryType === 'SPOT') {
         setUserSelectDeliveryType('spot');
       } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
-        setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+        if (selected === 'Y') {
+          setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
+        }
       }
     }
   }, [isSubscription, subsDeliveryType]);
