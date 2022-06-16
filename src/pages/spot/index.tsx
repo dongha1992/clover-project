@@ -56,6 +56,7 @@ const SpotPage = () => {
 
   const latLen = spotsPosition.latitude !== null;
   const lonLen = spotsPosition.longitude !== null;
+  const uerLocationInfo = !!userLocation.emdNm?.length;
 
   useEffect(() => {
     // 스팟 정보 조회
@@ -363,20 +364,27 @@ const SpotPage = () => {
           </>
         )
       }
-      {/* 단골가게 스팟 */}
-      <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
-      <SpotOpenBannerWrapper>
-        <SpotOpenBanner>스팟 오픈 베너 이미지 제작 예정</SpotOpenBanner>
-      </SpotOpenBannerWrapper>
-      <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-        {trialSpotList?.spotRegistrations.map((list, idx) => {
-          return (
-            <SwiperSlide className="swiper-slide" key={idx}>
-              <SpotList list={list} type="trial" />
-            </SwiperSlide>
-          );
-        })}
-      </TrialSlider>
+      {
+      // 트라이얼 스팟
+      uerLocationInfo &&
+      trialSpotList?.spotRegistrations?.length! > 0 && (
+        <>
+          <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
+          <SpotOpenBannerWrapper>
+            <SpotOpenBanner>스팟 오픈 베너 이미지 제작 예정</SpotOpenBanner>
+          </SpotOpenBannerWrapper>
+          <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+            {trialSpotList?.spotRegistrations.map((list, idx) => {
+              return (
+                <SwiperSlide className="swiper-slide" key={idx}>
+                  <SpotList list={list} type="trial" />
+                </SwiperSlide>
+              );
+            })}
+          </TrialSlider>
+        </>
+      )
+      }
       {
         //퍼블릭 스팟 신청 CTA
         popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
