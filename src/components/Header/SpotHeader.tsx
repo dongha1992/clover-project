@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { textH5 } from '@styles/theme';
@@ -8,10 +8,39 @@ import router from 'next/router';
 import { destinationForm, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
+import { getComputeDistance } from '@utils/spot';
+import { spotSelector } from '@store/spot';
 
 const SpotHeader = () => {
   const dispatch = useDispatch();
+  const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
+  const [distance, setDistance] = useState<number>(0);
+
+  useEffect(()=> {
+    if(userLocation?.emdNm){
+      getLocation();
+    };
+  }, []);
+
+  //GPS - 현재위치 가져오기
+  const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+
+  const getLocation = async () => {
+    try {
+      const position: any = await getCurrentPosition();
+      if(position) {
+        // console.log('현재 위치', position.coords.latitude + ' ' + position.coords.longitude);
+        const distance = getComputeDistance(spotsPosition.latitude, spotsPosition.longitude, position.coords.latitude, position.coords.longitude);
+        setDistance(distance);
+      }
+      return { Status: true, position, };
+    } catch (error) {
+      console.error("getCurrentLatLong::catcherror =>", error);
+      return { Status: false, };
+    }
+  };
+
   const goToCart = () => {
     router.push('/cart');
   };
@@ -37,7 +66,7 @@ const SpotHeader = () => {
             <div onClick={goToLocation}>
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
-            {userLocation?.emdNm && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />}
+            { distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />}
           </AddressWrapper>
         </Left>
         <Right>
