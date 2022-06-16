@@ -62,7 +62,6 @@ interface IProps {
 }
 
 const MenuDetailPage = ({ menuDetail }: IProps) => {
-  console.log(menuDetail.likeCount, 'menuDetail');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -210,7 +209,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     };
   }, []);
 
-  console.log(menuDetail, 'menuDetail');
+  // console.log(menuDetail, 'menuDetail');
 
   return (
     <Container>

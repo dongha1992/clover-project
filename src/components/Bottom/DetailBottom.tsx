@@ -25,11 +25,10 @@ import { Item } from '@components/Item';
 import { userForm } from '@store/user';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { deleteNotificationApi } from '@api/menu';
+import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
 import { filterSelector } from '@store/filter';
-import { IMenus } from '@model/index';
-
-/*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
+import { IMenuDetails, IMenuDetail, IMenus } from '@model/index';
+import { isEmpty } from 'lodash-es';
 
 interface IMenuStatus {
   isItemSold: boolean | undefined;
@@ -42,38 +41,82 @@ const DetailBottom = () => {
 
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
-  const [tempIsLike, setTempIsLike] = useState<boolean>(false);
+  const [menuStatus, setMenuStatus] = useState<IMenuStatus>();
   const dispatch = useDispatch();
   const { showToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
-  const { menuItem } = useSelector(menuSelector);
-  const { me } = useSelector(userForm);
   const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+    menuItem: { id },
+  } = useSelector(menuSelector);
+  const { me } = useSelector(userForm);
 
   const deliveryType = checkTimerLimitHelper();
   const { isLoginSuccess } = useSelector(userForm);
 
-  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuItem);
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(id!);
 
+      return data?.data;
+    },
+
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+        const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(data);
+        setMenuStatus({ isItemSold, checkIsBeforeThanLaunchAt });
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+    }
+  );
+
+  const { mutate: mutatePostMenuLike } = useMutation(
+    async () => {
+      const { data } = await postLikeMenus({ menuId: menuDetail?.id! });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getMenuDetail');
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+
+  const { mutate: mutateDeleteMenuLike } = useMutation(
+    async () => {
+      const { data } = await deleteLikeMenus({ menuId: menuDetail?.id! });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getMenuDetail');
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
-      const { data } = await deleteNotificationApi({ menuId: menuItem?.id });
+      const { data } = await deleteNotificationApi(menuDetail?.id!);
     },
     {
       onSuccess: async () => {
         showToast({ message: '알림을 취소했어요!' });
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          return previous?.map((_item: IMenus) => {
-            if (_item.id === menuItem.id) {
-              return { ..._item, reopenNotificationRequested: false };
-            }
-            return _item;
-          });
-        });
+        await queryClient.refetchQueries('getMenuDetail');
       },
       onError: async (error: any) => {
         dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
@@ -93,33 +136,39 @@ const DetailBottom = () => {
   }, []);
 
   useEffect(() => {
-    if (menuItem?.subscriptionPeriods?.includes('UNLIMITED')) {
+    if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
       setSubsDiscount('정기구독 최대 15% 할인');
     } else {
       setSubsDiscount('최대 9% 할인');
     }
-    if (menuItem?.subscriptionDeliveries?.includes('SPOT')) {
+    if (menuDetail?.subscriptionDeliveries?.includes('SPOT')) {
       setSubsDeliveryType('SPOT');
     } else if (
-      menuItem?.subscriptionDeliveries?.includes('PARCEL') ||
-      menuItem?.subscriptionDeliveries?.includes('MORNING')
+      menuDetail?.subscriptionDeliveries?.includes('PARCEL') ||
+      menuDetail?.subscriptionDeliveries?.includes('MORNING')
     ) {
       setSubsDeliveryType('PARCEL');
     }
-  }, [menuItem]);
+  }, [menuDetail]);
 
-  const goToDib = useCallback(() => {
+  const goToLike = () => {
     if (!me) {
       goToLogin();
       return;
     }
-    setTempIsLike((prev) => !prev);
-  }, [tempIsLike]);
+    if (menuDetail?.liked) {
+      mutateDeleteMenuLike();
+    } else {
+      mutatePostMenuLike();
+    }
+  };
 
-  const buttonStatusRender = () => {
-    const { isReopen, reopenNotificationRequested } = menuItem;
+  const buttonStatusRender = (menuDetail: IMenuDetail) => {
+    const { isReopen, reopenNotificationRequested } = menuDetail!;
+    const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail || {});
 
-    const reOpenCondition = !isItemSold && isReopen;
+    const reOpenCondition =
+      (!isItemSold && isReopen) || (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0);
 
     switch (true) {
       case isItemSold && !isReopen: {
@@ -136,10 +185,10 @@ const DetailBottom = () => {
       }
     }
   };
-  console.log(menuItem, 'detail bottom');
 
   const cartClickButtonHandler = (e: React.MouseEvent<HTMLElement>) => {
     const { innerHTML } = e.target as HTMLDivElement;
+    const { isItemSold } = menuStatus!;
 
     switch (innerHTML) {
       case '재입고 예정이에요': {
@@ -150,7 +199,7 @@ const DetailBottom = () => {
           goToLogin();
           return;
         }
-        dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={menuItem?.id} /> }));
+        dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={menuDetail?.id!} isDetailBottom /> }));
         return;
       }
       case '오픈 알림 취소하기': {
@@ -194,13 +243,13 @@ const DetailBottom = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
     if (isLoginSuccess) {
-      router.push(`/subscription/set-info?menuId=${menuItem.id}&subsDeliveryType=${subsDeliveryType}`);
+      router.push(`/subscription/set-info?menuId=${menuDetail?.id}&subsDeliveryType=${subsDeliveryType}`);
     } else {
       router.push('/onboarding');
     }
   };
 
-  if (!menuItem) {
+  if (isLoading) {
     return <div>로딩</div>;
   }
 
@@ -208,15 +257,15 @@ const DetailBottom = () => {
     <Container>
       <Wrapper>
         <LikeWrapper>
-          <LikeBtn onClick={goToDib}>
-            <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
+          <LikeBtn onClick={goToLike}>
+            <SVGIcon name={menuDetail?.liked ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {menuItem?.likeCount || 0}
+            {menuDetail?.likeCount || 0}
           </TextH5B>
         </LikeWrapper>
         <Col />
-        {menuItem?.type === 'SUBSCRIPTION' ? (
+        {menuDetail?.type === 'SUBSCRIPTION' ? (
           <BtnWrapper onClick={subscriptionButtonHandler}>
             <TextH5B color={theme.white} pointer>
               <TootipWrapper>
@@ -228,12 +277,12 @@ const DetailBottom = () => {
         ) : (
           <BtnWrapper onClick={cartClickButtonHandler}>
             <TextH5B color={theme.white} pointer>
-              {buttonStatusRender()}
+              {menuDetail && buttonStatusRender(menuDetail)}
             </TextH5B>
           </BtnWrapper>
         )}
       </Wrapper>
-      {menuItem?.type !== 'SUBSCRIPTION' && isTimerTooltip && (
+      {menuDetail?.type !== 'SUBSCRIPTION' && isTimerTooltip && (
         <TimerTooltipWrapper>
           <CheckTimerByDelivery isTooltip />
         </TimerTooltipWrapper>
@@ -274,6 +323,7 @@ const Wrapper = styled.div`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
+  width: 40px;
 `;
 
 const Col = styled.div`
@@ -287,11 +337,13 @@ const Col = styled.div`
 const BtnWrapper = styled.div`
   position: relative;
   width: 100%;
+  width: 400px;
   text-align: center;
 `;
 
 const LikeBtn = styled.div`
   display: flex;
+
   cursor: pointer;
   svg {
     margin-bottom: 3px;

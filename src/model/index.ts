@@ -1679,6 +1679,7 @@ export interface IMenuDetail {
   orderCount: number;
   priority: number;
   thumbnail: string;
+  liked: boolean;
   type: string;
   subscriptionDeliveries: string[];
   subscriptionPeriods: string[];

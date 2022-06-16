@@ -47,7 +47,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
-      const { data } = await deleteNotificationApi({ menuId: item.id });
+      const { data } = await deleteNotificationApi(item.id);
     },
     {
       onSuccess: async () => {
@@ -67,6 +67,8 @@ const Item = ({ item, isHorizontal }: TProps) => {
       },
     }
   );
+
+  /* TODO: 리팩토링 해야함, hook */
 
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {

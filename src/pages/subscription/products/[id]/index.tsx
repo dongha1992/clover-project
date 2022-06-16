@@ -47,13 +47,6 @@ const SubsProductIdPage = () => {
   const HEADER_HEIGHT = 56;
   let timer: any = null;
 
-  const [menuId, setMenuId] = useState<number>();
-  useEffect(() => {
-    if (router.isReady) {
-      setMenuId(Number(router.query?.id));
-    }
-  }, [router.isReady]);
-
   useEffect(() => {
     dispatch(SUBS_INIT());
   }, []);
