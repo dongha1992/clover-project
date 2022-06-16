@@ -48,7 +48,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
   const goToSpotsRegistrations = () => {
     router.push('/spot/join');
   };
-  console.log(searchResult, 'searchResult');
+
   return (
     <>
       {searchResult?.length! > 0 && (
