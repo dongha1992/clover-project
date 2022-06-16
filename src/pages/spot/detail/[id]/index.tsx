@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import Slider from 'react-slick';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
-import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R } from '@components/Shared/Text';
-import { theme, FlexBetween, FlexStart } from '@styles/theme';
+import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R} from '@components/Shared/Text';
+import { theme, FlexBetween, FlexStart, textH5 } from '@styles/theme';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
 import { SPOT_DETAIL_INFO } from '@constants/spot';
@@ -267,9 +267,9 @@ const SpotDetailPage = (): ReactElement => {
           }
         </>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>
-        <TextB3R display="inline" margin="0 8px 0 0">
+        <TextB2R display="inline" margin="0 8px 0 0">
           {`${spotItem?.location?.address} ${spotItem?.location?.addressDetail}`}
-        </TextB3R>
+        </TextB2R>
       </PlaceTypeTagWrapper>
       {spotItem && spotItem.notices?.length > 0 && (
         <NoticeSlider {...settingNotice}>
@@ -290,56 +290,76 @@ const SpotDetailPage = (): ReactElement => {
         <TextH5B color={theme.greyScale65} margin="0 0 16px 0">
           픽업정보
         </TextH5B>
-        <PickupInfo>
-          <FlexStart margin="0 0 16px 0" alignItems="flex-start">
-            <TextH5B margin="0 20px 0 0">도착예정</TextH5B>
-            <div>
-              <TextB2R>
-                {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
-                {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
-              </TextB2R>
-              <TextB2R>
-                {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
-                {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
-              </TextB2R>
-            </div>
-          </FlexStart>
-          <FlexStart margin="0 0 16px 0">
-            <TextH5B margin="0 20px 0 0">픽업가능</TextH5B>
-            <TextB2R>{`${spotItem?.pickupStartTime}~${spotItem?.pickupEndTime}`}</TextB2R>
-          </FlexStart>
-          <FlexStart margin="0 0 16px 0" alignItems="flex-start">
-            <TextH5B margin="0 20px 0 0">픽업장소</TextH5B>
-            <div>
-              {spotItem?.pickups.map((i, idx) => {
-                return (
-                  <FlexStart key={idx}>
-                    <TextB2R margin="0 8px 0 0">{i.name}</TextB2R>
-                    {i?.images?.map((j: { url: string }, idx) => {
-                      return (
-                        <TextH6B
-                          key={idx}
-                          color={theme.greyScale65}
-                          textDecoration="underline"
-                          pointer
-                          onClick={() => openImgViewer(j?.url)}
-                        >
-                          이미지로 보기
-                        </TextH6B>
-                      );
-                    })}
-                  </FlexStart>
-                );
-              })}
-            </div>
-          </FlexStart>
+        <PickUpInfoWrapper>
+          <PickUpInfoContent>
+            <th>
+              <TextTitle>도착예정</TextTitle>
+            </th>
+            <td>
+              <div>
+                <TextB2R>
+                  {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
+                  {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
+                </TextB2R>
+                <TextB2R>
+                  {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
+                  {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
+                </TextB2R>
+              </div>
+            </td>
+          </PickUpInfoContent>
+          {
+            spotItem?.type !== 'PRIVATE' && (
+              <PickUpInfoContent>
+                <th>
+                      <TextTitle>픽업가능</TextTitle>
+                </th>
+                <td>
+                      <TextB2R>{`${spotItem?.pickupStartTime}~${spotItem?.pickupEndTime}`}</TextB2R>
+                </td>
+              </PickUpInfoContent>
+            )
+          }
+          <PickUpInfoContent>
+            <th>
+              <TextTitle>픽업장소</TextTitle>
+            </th>
+            <td>
+              <div>
+                {spotItem?.pickups.map((i, idx) => {
+                  return (
+                    <FlexStart key={idx}>
+                      <TextB2R margin="0 8px 0 0">{i.name}</TextB2R>
+                      {i?.images?.map((j: { url: string }, idx) => {
+                        return (
+                          <TextH6B
+                            key={idx}
+                            color={theme.greyScale65}
+                            textDecoration="underline"
+                            pointer
+                            onClick={() => openImgViewer(j?.url)}
+                          >
+                            이미지로 보기
+                          </TextH6B>
+                        );
+                      })}
+                    </FlexStart>
+                  );
+                })}
+              </div>
+            </td>
+          </PickUpInfoContent>
           {spotItem?.description && (
-            <FlexStart margin="0 0 16px 0" alignItems="flex-start">
-              <TextH5B width='54px' margin='0 13px 0 0'>기타정보</TextH5B>
-              <TextB2R width='226px'>{spotItem?.description}</TextB2R>
-            </FlexStart>
+            <PickUpInfoContent>
+              <th>
+                <TextTitle>기타정보</TextTitle>
+              </th>
+              <td>
+                <TextB2R>{spotItem?.description}</TextB2R>
+              </td>
+            </PickUpInfoContent>
           )}
-        </PickupInfo>
+        </PickUpInfoWrapper>
       </PickupWrapper>
       <SpotEventBannerWrapper>
         <TextH4B>해당 스팟 이벤트 영역</TextH4B>
@@ -441,7 +461,24 @@ const PickupWrapper = styled.section`
   margin: 24px;
 `;
 
-const PickupInfo = styled.div``;
+const TextTitle = styled.div`
+  width: 70px;
+  ${textH5};
+`;
+
+const PickUpInfoWrapper = styled.table`
+  display: flex;
+  flex-direction: column;
+`;
+
+const PickUpInfoContent = styled.tr`
+  display: flex;
+  flex-direction: row;
+  margin: 0 0 16px 0;
+  th {
+    text-align: left;
+  }
+`;
 
 const SpotEventBannerWrapper = styled.section`
   width: 100%;
