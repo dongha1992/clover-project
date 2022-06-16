@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
 import {
   getNewSpots,
-  getStationSpots,
   getSpotEvent,
   getSpotPopular,
   getSpotInfo,
@@ -83,15 +82,6 @@ const SpotPage = () => {
   };
 
   // react-query
-
-  const { data: stationSpotList, isLoading: isLoadingStation } = useQuery(
-    ['spotList', 'STATION'],
-    async () => {
-      const response = await getStationSpots(params);
-      return response.data.data;
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
 
   const { data: newSpotList, isLoading: isLoadingNew } = useQuery(
     ['spotList', 'NEW'],
@@ -233,7 +223,14 @@ const SpotPage = () => {
     router.push('/spot/notice');
   };
 
-  const isLoading = isLoadingStation && isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
+  const goToLocation = (): void => {
+    router.push({
+      pathname: '/location',
+      query: { isSpot: true },
+    });
+  };
+
+  const isLoading = isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
 
   if (isLoading) {
     return <div>loading...</div>;
@@ -298,9 +295,9 @@ const SpotPage = () => {
         </TopCTASlider>
       )}
       {
-      // 근처 인기있는 스팟
+      // 근처 인기있는 스팟 & 신규 스팟
       // 오늘 점심 함께 주문해요.
-        popularSpotList?.spots.length! > 0 && (
+        popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
           <>
             <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
             <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={700}>
@@ -312,13 +309,6 @@ const SpotPage = () => {
                 );
               })}
             </SpotsSlider>
-          </>
-        )
-      }
-      {
-      // 신규 스팟
-        newSpotList?.spots.length! > 0 && (
-          <>
             <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
             <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
               {newSpotList?.spots.map((list, idx) => {
@@ -330,39 +320,35 @@ const SpotPage = () => {
               })}
             </SpotsSlider>
           </>
+        ) : (
+          <EmptyySpotListWrapper>
+            <FlexCenter>
+              <TextB2R center color={theme.greyScale65}>
+              {'주변에 사용 가능한 프코스팟이 없어요. 😭\n(이용 가능 지역: 서울 및 경기도 일부)'}
+              </TextB2R>
+            </FlexCenter>
+            <ButtonWrapper>
+                <Button onClick={goToLocation}>위치 변경하기</Button>
+            </ButtonWrapper>
+          </EmptyySpotListWrapper>
         )
       }
-      {
-      // 역세권 스팟
-        stationSpotList?.spots.length! > 0 && (
-          <>
-            <TextH2B padding="49px 24px 24px 24px">{stationSpotList?.title}</TextH2B>
-            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-              {stationSpotList?.spots.map((list, idx) => {
-                return (
-                  <SwiperSlide className="swiper-slide" key={idx}>
-                    <SpotList list={list} type="normal" />
-                  </SwiperSlide>
-                );
-              })}
-            </SpotsSlider>
-          </>
-        )
+      {//프라이빗 스팟 신청 CTA
+      popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 &&
+        <Wrapper>
+          <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
+            <FlexBetween height="92px" padding="22px">
+              <TextH4B color={theme.black}>{FCO_SPOT_BANNER[0].text}</TextH4B>
+              <IconWrapper>
+                <SVGIcon name="blackCirclePencil" />
+              </IconWrapper>
+            </FlexBetween>
+          </SpotRegistration>
+        </Wrapper>
       }
-      {/* 프라이빗 스팟 신청 CTA */}
-      <Wrapper>
-        <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
-          <FlexBetween height="92px" padding="22px">
-            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[0].text}</TextH4B>
-            <IconWrapper>
-              <SVGIcon name="blackCirclePencil" />
-            </IconWrapper>
-          </FlexBetween>
-        </SpotRegistration>
-      </Wrapper>
       {
       // 이벤트 중인 스팟
-        eventSpotList?.spots.length! > 0 && (
+        eventSpotList?.spots.length! > 0 && popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 && (
           <>
             <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
             <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
@@ -391,29 +377,36 @@ const SpotPage = () => {
           );
         })}
       </TrialSlider>
-      {/* 퍼블릭 스팟 신청 CTA */}
-      <Wrapper type='PUBLIC'>
-        <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
-          <FlexBetween height="92px" padding="22px">
-            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
-            <IconWrapper>
-              <SVGIcon name="blackCirclePencil" />
-            </IconWrapper>
-          </FlexBetween>
-        </SpotRegistration>
-      </Wrapper>
-      <BottomStory onClick={goToSpotNotice}>프코스팟 브랜딩 베너영역 + 링크</BottomStory>
-      {/* 우리가게 스팟 신청 CTA */}
-      <Wrapper>
-        <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
-          <FlexBetween height="92px" padding="22px">
-            <TextH4B color={theme.black}>{FCO_SPOT_BANNER[2].text}</TextH4B>
-            <IconWrapper>
-              <SVGIcon name="blackCirclePencil" />
-            </IconWrapper>
-          </FlexBetween>
-        </SpotRegistration>
-      </Wrapper>
+      { //퍼블릭 스팟 신청 CTA 
+      popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
+          <>
+            <Wrapper type='PUBLIC'>
+              <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>
+                <FlexBetween height="92px" padding="22px">
+                  <TextH4B color={theme.black}>{FCO_SPOT_BANNER[1].text}</TextH4B>
+                  <IconWrapper>
+                    <SVGIcon name="blackCirclePencil" />
+                  </IconWrapper>
+                </FlexBetween>
+              </SpotRegistration>
+            </Wrapper>
+            <BottomStory onClick={goToSpotNotice}>프코스팟 브랜딩 베너영역 + 링크</BottomStory>
+            {/* 우리가게 스팟 신청 CTA */}
+            <Wrapper>
+              <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
+                <FlexBetween height="92px" padding="22px">
+                  <TextH4B color={theme.black}>{FCO_SPOT_BANNER[2].text}</TextH4B>
+                  <IconWrapper>
+                    <SVGIcon name="blackCirclePencil" />
+                  </IconWrapper>
+                </FlexBetween>
+              </SpotRegistration>
+            </Wrapper>
+          </>
+        ) : (
+          <EmptySpotImg />
+        )
+      }
     </Container>
   );
 };
@@ -442,6 +435,37 @@ const EventSlider = styled(Swiper)`
   .swiper-slide {
     width: 299px;
   }
+`;
+
+const EmptyySpotListWrapper = styled.section`
+  padding: 64px 0;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+`;
+
+const Button = styled.button`
+  height: 38px;
+  padding: 10px 16px;
+  border: 1px solid ${theme.black};
+  border-radius: 8px;
+  background: ${theme.white};
+  font-weight: bold;
+  color: ${theme.black};
+  cursor: pointer;
+`;
+
+
+const EmptySpotImg =  styled.div`
+  width: 100%;
+  height: 210px;
+  background: ${theme.greyScale6};
+  margin: 64px 0 10px 0;
 `;
 
 const TrialSlider = styled(Swiper)`

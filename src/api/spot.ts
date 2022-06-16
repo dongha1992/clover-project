@@ -31,11 +31,6 @@ export const getNewSpots = (params: IParamsSpots): Promise<AxiosResponse<ISpotsR
   return Api.get('/spot/v1/spots/new', { params });
 };
 
-// 역세권 스팟
-export const getStationSpots = (params: IParamsSpots): Promise<AxiosResponse<ISpotsResponse>> => {
-  return Api.get('/spot/v1/spots/station', { params });
-};
-
 // 스팟 상세
 export const getSpotDetail = (id: number): Promise<AxiosResponse<ISpotDetailResponse>> => {
   return Api.get(`/spot/v1/spots/${id}`, { params: id });
