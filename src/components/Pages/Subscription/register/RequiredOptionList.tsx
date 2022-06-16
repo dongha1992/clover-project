@@ -58,7 +58,7 @@ const RequiredOptionList = ({ selectId }: IProps) => {
                   item={item}
                   key={item.id}
                   menuSelectHandler={menuSelectHandler}
-                  buttonType="change"
+                  buttonType="select"
                   buttonState={item.selected ? false : true}
                 />
               )

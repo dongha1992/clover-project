@@ -11,6 +11,7 @@ interface IProps {
   menuOption1: option;
   menuOption2: option;
   deliveryPrice: number;
+  deliveryType: string;
 }
 
 const MenuPriceBox = ({
@@ -21,6 +22,7 @@ const MenuPriceBox = ({
   menuOption1,
   menuOption2,
   deliveryPrice,
+  deliveryType,
 }: IProps) => {
   return (
     <MenuPriceContainer>
@@ -29,14 +31,18 @@ const MenuPriceBox = ({
           <TextB2R>상품금액</TextB2R>
           <TextB2R>{getFormatPrice(String(menuPrice))}원</TextB2R>
         </MenuPriceLi>
-        <MenuPriceLi>
-          <TextB2R>구독 할인</TextB2R>
-          <TextB2R>{menuDiscount ? `-${getFormatPrice(String(menuDiscount))}` : 0}원</TextB2R>
-        </MenuPriceLi>
-        <MenuPriceLi>
-          <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
-        </MenuPriceLi>
+        {menuDiscount !== 0 && (
+          <MenuPriceLi>
+            <TextB2R>구독 할인</TextB2R>
+            <TextB2R>{menuDiscount ? `-${getFormatPrice(String(menuDiscount))}` : 0}원</TextB2R>
+          </MenuPriceLi>
+        )}
+        {deliveryType === 'SPOT' && eventDiscount !== 0 && (
+          <MenuPriceLi>
+            <TextB2R>스팟 이벤트 할인</TextB2R>
+            <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
+          </MenuPriceLi>
+        )}
         {disposable && (
           <>
             {menuOption1.quantity !== 0 && (

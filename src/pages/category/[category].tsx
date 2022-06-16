@@ -8,6 +8,7 @@ import { CATEGORY } from '@constants/search';
 import { CATEGORY_TITLE_MAP } from '@constants/menu';
 import { useSelector, useDispatch } from 'react-redux';
 import { INIT_CATEGORY_FILTER, filterSelector } from '@store/filter';
+import { SET_CATEGORY_MENU } from '@store/menu';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { useRouter } from 'next/router';
@@ -52,13 +53,12 @@ const CategoryPage = () => {
   const isAllMenu = type === 'all';
 
   const hasFilter = filter.filter((item) => item).length !== 0 || order.length > 0;
+  const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
+  const types = typeof formatType === 'string' ? formatType : formatType.join(',');
 
   const { error: menuError, isLoading } = useQuery(
     ['getMenus', type, order, filter],
-    async () => {
-      const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
-      const types = typeof formatType === 'string' ? formatType : formatType.join(',');
-
+    async ({ queryKey }) => {
       const params = {
         categories: filter.join(','),
         menuSort: order,
@@ -80,7 +80,7 @@ const CategoryPage = () => {
   );
 
   const reorderMenuList = (menuList: IMenus[]) => {
-    const reordered = menuList.sort((a: any, b: any) => {
+    const reordered = menuList?.sort((a: any, b: any) => {
       return a.isSold - b.isSold;
     });
     if (isAllMenu) {

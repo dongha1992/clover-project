@@ -14,10 +14,10 @@ export const coupon = createSlice({
   name: 'coupon',
   initialState,
   reducers: {
-    SET_USER_SELECT_COUPON: (state, action: PayloadAction<ICoupon>) => {
+    SET_USER_SELECT_COUPON: (state: any, action: PayloadAction<ICoupon>) => {
       state.selectedCoupon = action.payload;
     },
-    INIT_COUPON: (state) => {
+    INIT_COUPON: (state: any) => {
       state.selectedCoupon = null;
     },
   },

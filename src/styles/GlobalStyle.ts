@@ -37,7 +37,6 @@ const GlobalStyle = createGlobalStyle`
         background-color: #232323;
         width: 100%;
         overscroll-behavior-y: none;
-
     }
     input[type="color"],
     input[type="date"],

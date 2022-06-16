@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
-import { theme, bottomSheetButton } from '@styles/theme';
+import { theme, bottomSheetButton, fixedBottom } from '@styles/theme';
 import { COUPON_LIST } from '@constants/menu';
 import CouponItem from './CouponItem';
 import { SET_ALERT } from '@store/alert';
@@ -82,7 +82,8 @@ const CouponListWrapper = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-  ${bottomSheetButton}
+  ${fixedBottom};
+  left: 0%;
 `;
 
 export default CouponSheet;

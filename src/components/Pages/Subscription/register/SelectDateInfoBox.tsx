@@ -135,6 +135,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           menuOption1={receiptInfo.menuOption1}
           menuOption2={receiptInfo.menuOption2}
           deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : receiptInfo.deliveryPrice}
+          deliveryType={subsInfo?.deliveryType!}
         />
       )}
     </Container>

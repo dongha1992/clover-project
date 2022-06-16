@@ -6,12 +6,14 @@ import { theme } from '@styles/theme';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import router from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { SET_SUBS_INFO_STATE } from '@store/subscription';
+import { userForm } from '@store/user';
 
 const SubsBottom = () => {
   const dispatch = useDispatch();
+  const { isLoginSuccess } = useSelector(userForm);
   const [tempIsLike, setTempIsLike] = useState<boolean>(false);
 
   const goToDib = useCallback(() => {
@@ -21,7 +23,12 @@ const SubsBottom = () => {
   const clickButtonHandler = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    router.push(`/subscription/set-info?menuId=${router.query.id}&subsDeliveryType=${router.query.subsDeliveryType}`);
+
+    if (isLoginSuccess) {
+      router.push(`/subscription/set-info?menuId=${router.query.id}&subsDeliveryType=${router.query.subsDeliveryType}`);
+    } else {
+      router.push('/onboarding');
+    }
   };
 
   return (
