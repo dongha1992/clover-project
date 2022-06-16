@@ -86,3 +86,11 @@ export const deleteNotificationApi = ({ menuId }: { menuId: number }): Promise<A
 export const getLikeMenus = (menuPattern: string): Promise<AxiosResponse<any>> => {
   return Api.get(`menu/v1/menus/like`, { params: { menuPattern } });
 };
+
+export const postLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`menu/v1/like/${menuId}`);
+};
+
+export const deleteLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`menu/v1/like/${menuId}`);
+};

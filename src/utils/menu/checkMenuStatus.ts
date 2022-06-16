@@ -22,10 +22,11 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
   // 오픈 하는지
   const checkIsSoon = (): string => {
     const today = dayjs();
-    // openedAt = '2022-06-20 00:00:00 ';
     const diff = dayjs(openedAt).diff(today, 'day', true);
 
-    const isDisplayBadge = diff <= ONE_WEEK;
+    // const isDisplayBadge = diff > 0 && diff <= ONE_WEEK;
+    /* TODO: 임시 */
+    const isDisplayBadge = diff > 0;
     const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
 
     try {

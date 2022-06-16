@@ -63,6 +63,7 @@ interface IProps {
 }
 
 const MenuDetailPage = ({ menuDetail }: IProps) => {
+  console.log(menuDetail.likeCount, 'menuDetail');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -111,15 +112,16 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
           alertMessage: '로그인 후 쿠폰 다운로드 가능합니다.',
           submitBtnText: '로그인 하기',
           closeBtnText: '취소',
-          onSubmit: () => router.push('/onboarding'),
+          onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
+        })
+      );
+    } else {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <CouponSheet />,
         })
       );
     }
-    dispatch(
-      SET_BOTTOM_SHEET({
-        content: <CouponSheet />,
-      })
-    );
   };
 
   const selectTabHandler = useCallback(
@@ -169,12 +171,14 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       BEST: 'Best',
     };
 
-    let { badgeMessage, isReopen, isSold } = menuDetail;
+    const { badgeMessage, isReopen, isSold } = menuDetail;
 
     if (isItemSold && !isReopen) {
       return <Badge message="일시품절" />;
     } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
+    } else if (!isItemSold && isReopen) {
+      return <Badge message="재오픈예정" />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
     } else {
@@ -264,7 +268,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               </CouponWrapper>
             )}
           </PriceAndCouponWrapper>
-          {menuDetail.type !== 'SUBSCRIPTION' && (
+          {menuDetail.type !== 'SUBSCRIPTION' && menuDetail.type === 'SALAD' && (
             <NutritionInfo>
               <NutritionInfoWrapper>
                 <TextH7B color={theme.greyScale65}>영양정보</TextH7B>

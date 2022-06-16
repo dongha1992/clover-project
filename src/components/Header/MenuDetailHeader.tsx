@@ -34,6 +34,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
   };
 
   const goToShare = () => {
+    console.log('work');
     if (isMobile) {
       if (navigator.share) {
         navigator

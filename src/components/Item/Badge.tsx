@@ -20,7 +20,8 @@ const BadgeWrapper = styled.div<{ message?: string | boolean }>`
   display: flex;
   left: 0;
   top: 10%;
-  background-color: ${({ message }) => (message === '일시품절' ? theme.black : theme.brandColor)};
+  background-color: ${({ message }) =>
+    message === '일시품절' || message === '재오픈예정' ? theme.black : theme.brandColor};
   padding: 4px 8px;
   border-radius: 0px 4px 4px 0px;
 `;
