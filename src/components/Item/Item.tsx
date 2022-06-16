@@ -52,7 +52,8 @@ const Item = ({ item, isHorizontal }: TProps) => {
     {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          return previous.map((_item: IMenus) => {
+          console.log(previous, 'previous');
+          return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
             }
