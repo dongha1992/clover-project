@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ProductInfoPage = () => {
-  return <div></div>;
+  return <div>로딩</div>;
 };
 
 export default ProductInfoPage;
