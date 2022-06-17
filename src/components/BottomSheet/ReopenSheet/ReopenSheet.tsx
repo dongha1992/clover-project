@@ -405,7 +405,7 @@ const Container = styled.div<{ isMobile: boolean }>`
   ${({ isMobile }) => {
     if (isMobile) {
       return css`
-        height: 94vh;
+        height: 85vh;
       `;
     } else {
       return css`
