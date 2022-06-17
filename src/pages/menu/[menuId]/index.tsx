@@ -180,7 +180,6 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     if (isTempSold) {
       return <Badge message="일시품절" />;
     } else if (isReOpen) {
-      if (typeof checkIsBeforeThanLaunchAt !== 'string') return;
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (isOpenSoon) {
       return <Badge message="재오픈예정" />;

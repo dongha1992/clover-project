@@ -26,12 +26,13 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
 
     // const isDisplayBadge = diff > 0 && diff <= ONE_WEEK;
     /* TODO: 임시 */
+    const customOpenedAt = openedAt.replace(/-/g, '/');
     const isDisplayBadge = diff > 0;
-    const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
+    const isBeforeThanLaunchedAt = today.isSameOrBefore(customOpenedAt, 'day');
 
     try {
       if (isBeforeThanLaunchedAt && isDisplayBadge) {
-        const { dayWithTime } = getCustomDate(new Date(openedAt));
+        const { dayWithTime } = getCustomDate(new Date(customOpenedAt));
         return dayWithTime;
       } else {
         return '';
