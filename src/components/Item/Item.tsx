@@ -229,7 +229,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail}
+          src={IMAGE_S3_URL + item.thumbnail[0]?.url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
@@ -267,7 +267,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%
             </TextH5B>
-            <TextH5B>{discountedPrice}원</TextH5B>
+            <TextH5B>{discountedPrice.toLocaleString()}원</TextH5B>
           </PriceWrapper>
         )}
         {!isHorizontal && (
