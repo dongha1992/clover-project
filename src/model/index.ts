@@ -1652,6 +1652,16 @@ export interface IMenuImage {
   url: string;
   width: number;
 }
+export interface IDetailImage {
+  createdAt: string;
+  height: number;
+  id: number;
+  name: string;
+  originalName: string;
+  size: number;
+  url: string;
+  width: number;
+}
 
 export interface IMenuDetails {
   id: number;
@@ -1661,6 +1671,10 @@ export interface IMenuDetails {
   main: boolean;
   dailyMaximum?: number;
   isSold?: number;
+  calorie: number;
+  thumbnail?: IDetailImage;
+  protein: number;
+  personalMaximum?: number;
 }
 
 export interface IMenuDetail {
@@ -1699,7 +1713,7 @@ export interface IMenus {
   type: string;
   category: string;
   description: string;
-  thumbnail: string;
+  thumbnail: IMenuImage[];
   badgeMessage: string;
   launchedAt: string;
   liked: boolean;

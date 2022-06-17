@@ -29,6 +29,7 @@ import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu
 import { filterSelector } from '@store/filter';
 import { IMenuDetails, IMenuDetail, IMenus } from '@model/index';
 import { isEmpty } from 'lodash-es';
+import { getCookie } from '@utils/common';
 
 interface IMenuStatus {
   isItemSold: boolean | undefined;
@@ -38,6 +39,7 @@ interface IMenuStatus {
 const DetailBottom = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const auth = getCookie({ name: 'accessToken' });
 
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
@@ -149,10 +151,12 @@ const DetailBottom = () => {
   }, [menuDetail]);
 
   const goToLike = () => {
-    if (!me) {
+    console.log(me, auth);
+    if (!me || !isLoginSuccess) {
       goToLogin();
       return;
     }
+
     if (menuDetail?.liked) {
       mutateDeleteMenuLike();
     } else {
@@ -192,7 +196,7 @@ const DetailBottom = () => {
         return;
       }
       case '오픈 알림 신청 받기': {
-        if (!me) {
+        if (!me || !isLoginSuccess) {
           goToLogin();
           return;
         }
