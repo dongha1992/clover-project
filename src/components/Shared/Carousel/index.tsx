@@ -8,7 +8,7 @@ import { SVGIcon } from '@utils/common';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
   // images: IBanners[];
-  images: any[];
+  images: any[] | any;
 }
 
 const NextArrow = ({ onClick }: any) => {
