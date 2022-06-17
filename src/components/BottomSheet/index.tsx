@@ -104,6 +104,7 @@ const BottomSheetContent = styled.div`
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
   margin-bottom: 56px;
+  overflow-y: scroll;
 `;
 
 export default React.memo(BottomSheet);

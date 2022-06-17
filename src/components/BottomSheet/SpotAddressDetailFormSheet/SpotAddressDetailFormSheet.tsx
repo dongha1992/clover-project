@@ -113,21 +113,21 @@ const SpotAddressDetailFormSheet = ({title}: IProps) => {
       <MapWrapper>
         <MapAPI centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
       </MapWrapper>
-      <ContentWrapper>
+      <AddressWrapper>
         <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>
-        <FlexRow>
-          <Tag padding="2px" width="8%" center>
+        <AddressDetail>
+          <Tag padding="2px" width="28px" center>
             지번
           </Tag>
           <TextB2R>&nbsp;{`(${tempLocation.zipNo})${tempLocation.jibunAddr}`}</TextB2R>
-        </FlexRow>
+        </AddressDetail>
         <TextInput
           placeholder="상세주소 입력(필수)"
           margin="16px 0 0 0"
           ref={inputRef}
           eventHandler={detailAddressInputHandler}
         />
-      </ContentWrapper>
+      </AddressWrapper>
       <ButtonWrapper>
         <Button
           height="100%"
@@ -143,6 +143,7 @@ const SpotAddressDetailFormSheet = ({title}: IProps) => {
 };
 
 const Container = styled.div``;
+
 const Wrapper = styled.div`
   padding: 80px 24px 24px 24px;
 `;
@@ -209,8 +210,15 @@ const MapWrapper = styled.div`
   height: 370px;
 `;
 
-const ContentWrapper = styled.div`
-  padding: 24px;
+const AddressWrapper = styled.div`
+  padding: 24px 24px 40px 24px;
 `;
+
+const AddressDetail= styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+`;
+
 
 export default React.memo(SpotAddressDetailFormSheet);
