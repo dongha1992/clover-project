@@ -100,7 +100,7 @@ const SubmitPage = () => {
         </ContentWrapper>
       </Wrapper>
       {
-        (type === 'PRIVATE') ||(type === 'OWNER') && <Row />
+        type !== 'PUBLIC' && <Row />
       }
       <Wrapper>
         {type !== 'PUBLIC' && (
