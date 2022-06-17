@@ -1,4 +1,5 @@
 import { pipe, map, sortBy, take, toArray } from '@fxts/core';
+import { IMenuDetails } from '@model/index';
 
 interface IResult {
   discount: number;
@@ -32,6 +33,13 @@ const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
   return result;
 };
 
+const getMenuOptionPrice = (item: IMenuDetails) => {
+  const price = item.price;
+  const discount = Math.floor((item.discountPrice / item.price) * 100);
+  const discountedPrice = item.price - item.discountPrice;
+  return { price, discount, discountedPrice };
+};
+
 const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; price: number }): IResult => {
   return {
     discount: Math.floor((discountPrice / price) * 100),
@@ -40,4 +48,4 @@ const getDiscountPrice = ({ discountPrice, price }: { discountPrice: number; pri
   };
 };
 
-export { getMenuDisplayPrice, getDiscountPrice };
+export { getMenuDisplayPrice, getDiscountPrice, getMenuOptionPrice };

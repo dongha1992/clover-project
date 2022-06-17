@@ -43,6 +43,7 @@ interface ISelectedMenu {
   name: string;
   price: number;
   quantity?: number;
+  personalMaximum?: number;
 }
 
 const CartSheet = () => {
@@ -289,6 +290,13 @@ const CartSheet = () => {
 
   const clickPlusButton = async (id: number, quantity?: number) => {
     /*TODO: 중복코드 */
+
+    const foundItem = selectedMenus.find((item) => item.id === id);
+
+    if (foundItem?.personalMaximum) {
+      if (foundItem?.personalMaximum < quantity!) return;
+    }
+
     const newSelectedMenus = selectedMenus.map((item: any) => {
       if (item.id === id) {
         if (item.limitQuantity && item.quantity > item.limitQuantity - 1) {
