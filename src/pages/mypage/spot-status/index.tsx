@@ -26,8 +26,8 @@ const SpotStatusPage = () => {
   // const [page, setPage] = useState(1);
   const [items, setItems] = useState(false);
 
-  const latLen = spotsPosition.latitude.length > 0;
-  const lonLen = spotsPosition.longitude.length > 0;
+  const latLen = spotsPosition.latitude?.length > 0;
+  const lonLen = spotsPosition.longitude?.length > 0;
 
   // 찜한 스팟 api
   const { data: wishList } = useQuery(
