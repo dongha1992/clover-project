@@ -46,10 +46,13 @@ const RegistrationsListPage = () => {
       })
     );
   };
+
   const goToRegistration = (type: string) => {
     switch(type) {
       case 'PRIVATE':
-        if (!info?.canPrivateSpotRegistration || (info?.canPrivateSpotRegistration === null)) {
+        //canPrivateSpotRegistration 진행중이 1개 미만인경우(0개) true - 신청 가능한 상태, fasle 신청 불가능
+        //비회원인 경우 null - 신청 불가능
+        if ((info?.canPrivateSpotRegistration === null) || info?.canPrivateSpotRegistration) {
           return (
             router.push(`/spot/join/main?type=${type}`)
           );
@@ -59,7 +62,8 @@ const RegistrationsListPage = () => {
           );
         };
       case 'PUBLIC': 
-      if (!info?.canPublicSpotRegistraion || (info?.canPublicSpotRegistraion === null)) {
+      //canPublicSpotRegistraion 진행중이 3개 미만인경우 true (0~2개)
+      if ((info?.canPublicSpotRegistraion === null) || info?.canPublicSpotRegistraion) {
         return (
           router.push(`/spot/join/main?type=${type}`)
         );
@@ -69,7 +73,8 @@ const RegistrationsListPage = () => {
         );
       };
       case 'OWNER':
-        if (!info?.canOwnerSpotRegistraion || (info?.canOwnerSpotRegistraion === null)) {
+        // canOwnerSpotRegistraion 진행중이 1개 미만인경우 true (0개)
+        if ((info?.canOwnerSpotRegistraion === null) || info?.canOwnerSpotRegistraion) {
           return (
             router.push(`/spot/join/main?type=${type}`)
           );

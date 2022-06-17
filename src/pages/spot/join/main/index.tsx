@@ -124,7 +124,7 @@ const SpotReqPage = () => {
       <GuideWrapper>
         <Guide></Guide>
       </GuideWrapper>
-      <BottomWrapper>
+      <ChannelIoBottomWrapper>
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
           <TextH3B padding="48px 0 24px 0">{text.askText}</TextH3B>
@@ -132,7 +132,7 @@ const SpotReqPage = () => {
             {text.askBtnText}
           </Button>
         </BtnWrapper>
-      </BottomWrapper>
+      </ChannelIoBottomWrapper>
       <FixedButton onClick={goToRegistration}>
         <Button borderRadius="0" padding="10px 0 0 0">
           {text.registerBtn}
@@ -155,9 +155,9 @@ const GuideWrapper = styled.section`
 
 const Guide = styled.div``;
 
-const BottomWrapper = styled.section`
-  margin: 0 auto;
+const ChannelIoBottomWrapper = styled.section`
   ${homePadding};
+  padding-bottom: 24px;
 `;
 
 const BtnWrapper = styled.div``;
@@ -168,7 +168,7 @@ const Row = styled.div`
   margin: 32px 0;
 `;
 const FixedButton = styled.section`
-  ${fixedBottom}
+  ${fixedBottom};
 `;
 
 export default SpotReqPage;
