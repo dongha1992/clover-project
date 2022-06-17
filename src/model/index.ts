@@ -98,6 +98,11 @@ export interface IUser {
   recommendCode: boolean;
   joinType: string;
   createdAt: string;
+  marketingEmailReceived?: boolean;
+  marketingPushReceived?: boolean;
+  marketingSmsReceived?: boolean;
+  notiPushReceived?: boolean;
+  primePushReceived?: boolean;
 }
 
 export interface ILogin {

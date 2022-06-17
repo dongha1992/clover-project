@@ -48,7 +48,7 @@ const Dimmer = styled.div`
   bottom: 0px;
   max-width: ${breakpoints.mobile}px;
   height: 100%;
-  z-index: 1001;
+  z-index: 1000002;
   background-color: rgba(0, 0, 0, 0.3);
 
   ${({ theme }) => theme.desktop`
