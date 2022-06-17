@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
@@ -24,8 +24,9 @@ import { SET_ALERT } from '@store/alert';
 import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
-
+import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
+
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
@@ -229,7 +230,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail[0]?.url}
+          src={item.thumbnail[0]?.url ? IMAGE_S3_URL + item.thumbnail[0]?.url : IMAGE_ERROR}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}

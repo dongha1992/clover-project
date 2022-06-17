@@ -44,7 +44,7 @@ const HomeHeader = () => {
           <SVGIcon name="location" />
           <AddressWrapper>
             <Link href="/location">{userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 찾기</a>}</Link>
-            {userLocation?.emdNm && (
+            {userLocation?.emdNm && formatAvailableDestination && (
               <Tooltip
                 message={mapper[formatAvailableDestination]?.text}
                 width={mapper[formatAvailableDestination]?.width}

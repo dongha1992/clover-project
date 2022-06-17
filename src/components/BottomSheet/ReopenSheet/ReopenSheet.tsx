@@ -293,6 +293,7 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
 
   useEffect(() => {
     setUserTel(me?.tel!);
+    setIsMarketinngChecked(me?.marketingSmsReceived!);
   }, [me]);
 
   useEffect(() => {
@@ -404,11 +405,11 @@ const Container = styled.div<{ isMobile: boolean }>`
   ${({ isMobile }) => {
     if (isMobile) {
       return css`
-        height: 80vh;
+        height: 94vh;
       `;
     } else {
       return css`
-        height: 95vh;
+        height: 96vh;
       `;
     }
   }}
