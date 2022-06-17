@@ -46,6 +46,7 @@ import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { PERIOD_NUMBER } from '@constants/subscription';
 import MenuItem from '@components/Pages/Subscription/register/MenuItem';
+import cloneDeep from 'lodash-es/cloneDeep';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -189,6 +190,13 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     }
   };
 
+  const getNutiritionInfo = () => {
+    const copied = cloneDeep(menuDetail);
+    const sorted = copied?.menuDetails?.sort((a, b) => a.price - b.price);
+    const lowerPriceDetail = sorted[0];
+    return { kcal: lowerPriceDetail.calorie || 0, protein: lowerPriceDetail.protein || 0 };
+  };
+
   useEffect(() => {
     window.addEventListener('scroll', onScrollHandler);
     return () => {
@@ -266,7 +274,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                   </CouponWrapper>
                 ) : (
                   <CouponWrapper>
-                    <TextH6B padding="4px 4px 0 0">발급 완료</TextH6B>
+                    <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
                     <SVGIcon name="checkBlack18" />
                   </CouponWrapper>
                 )}
@@ -278,26 +286,18 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               <NutritionInfoWrapper>
                 <TextH7B color={theme.greyScale65}>영양정보</TextH7B>
                 <NutritionInfoBox>
-                  <TextH4B>123,233</TextH4B>
+                  <TextH4B>{getNutiritionInfo().kcal}</TextH4B>
                   <TextB3R padding="0 0 0 2px">kcal</TextB3R>
                 </NutritionInfoBox>
-                <MLWrapper>
-                  (<TextH7B padding="0 2px 0 0">M</TextH7B>
-                  <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
-                  <TextB4R>324g</TextB4R>)
-                </MLWrapper>
+                <MLWrapper></MLWrapper>
               </NutritionInfoWrapper>
               <ProteinWrapper>
                 <TextH7B color={theme.greyScale65}>단백질 함량</TextH7B>
                 <NutritionInfoBox>
-                  <TextH4B>123,233</TextH4B>
+                  <TextH4B>{getNutiritionInfo().protein}</TextH4B>
                   <TextB3R padding="0 0 0 2px">kcal</TextB3R>
                 </NutritionInfoBox>
-                <MLWrapper>
-                  (<TextH7B padding="0 2px 0 0">M</TextH7B>
-                  <TextB4R padding="0 2px 0 0">228g</TextB4R>/<TextH7B padding="0 2px 0 2px">L</TextH7B>
-                  <TextB4R>324g</TextB4R>)
-                </MLWrapper>
+                <MLWrapper></MLWrapper>
               </ProteinWrapper>
             </NutritionInfo>
           )}
