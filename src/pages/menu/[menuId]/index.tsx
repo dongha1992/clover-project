@@ -158,7 +158,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       case '/menu/detail/review':
         return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
       case '/menu/detail/faq':
-        return <DetailBottomFAQ />;
+        return <DetailBottomFAQ menuFaq={menuDetail?.menuFaq!} />;
       default:
         return <DetailBottomInfo />;
     }

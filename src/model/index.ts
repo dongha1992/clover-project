@@ -1737,8 +1737,37 @@ export interface IMenus {
   isSold?: boolean;
   reopenNotificationRequested: boolean;
   subscriptionDeliveryCycle?: string;
+  menuFaq: IMenuFaq;
+  productInfoNotis: IProductInfo[];
 }
 
+interface IProductInfo {
+  allergens: string;
+  businessName: any;
+  foodType: string;
+  name: string;
+  packingMaterial: string;
+  precautions: string;
+  rawMaterial: string;
+  returnExchangePlace: string;
+  serviceCenterTel: string;
+  shelfLife: string;
+  storage: any;
+  weight: string;
+}
+
+interface IContents {
+  description: string;
+  title: string;
+}
+
+interface IMenuFaq {
+  menuFaq: {
+    contents: IContents;
+    id: number;
+    priority: number;
+  };
+}
 /* REVIEW */
 export interface IGetMenusResponse {
   code: number;
