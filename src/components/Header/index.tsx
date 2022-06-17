@@ -93,6 +93,7 @@ const Header = () => {
       '/spot/location': '주소 검색',
       '/spot/location/address': '주소 검색',
       '/spot/notice': '프코스팟 안내',
+      '/mypage/spot-status': '프코스팟 관리',
       '/subscription/products': '정기구독',
       '/subscription/set-info': '구독하기',
       '/subscription/register': '구독하기',
@@ -154,6 +155,10 @@ const Header = () => {
 
       case ['/spot/register/submit/finish', '/spot/open'].includes(currentPath): {
         return <CloseDefaultHeader title={title} />;
+      }
+
+      case ['/mypage/spot-status/detail/[id]'].includes(currentPath): {
+        return <SpotStatusDetailHeader />;
       }
 
       default: {

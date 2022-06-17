@@ -203,7 +203,7 @@ const SpotStatusDetailPage = (): ReactElement => {
           <Tag>{spotStatusStep(statusDetail!)}</Tag>
         </Flex>
         <TextH2B margin="0 0 4px 0">{statusDetail?.placeName}</TextH2B>
-        <TextB3R>{`${statusDetail?.location.address} ${statusDetail?.location.addressDetail}`}</TextB3R>
+        <TextB2R>{`${statusDetail?.location.address} ${statusDetail?.location.addressDetail}`}</TextB2R>
       </TopStatusWrapper>
       <SpotStatusDetailProgressBar item={statusDetail!} />
       {
