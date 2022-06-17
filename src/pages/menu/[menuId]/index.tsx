@@ -344,7 +344,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             <div key={index}>
               <DetailInfoWrapper>
                 <TextH4B>{info.text}</TextH4B>
-                <Link href={`${info.link}`} passHref>
+                <Link href={`${menuDetail.id}/detail/${info.value}`} passHref>
                   <a>
                     <TextH6B textDecoration="underLine" color={theme.greyScale65}>
                       자세히
