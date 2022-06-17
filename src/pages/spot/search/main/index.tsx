@@ -44,6 +44,7 @@ const SpotSearchMainPage = (): ReactElement => {
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(true);
+  const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const userLocationLen = !!userLocation.emdNm?.length;
 
@@ -163,6 +164,9 @@ const SpotSearchMainPage = (): ReactElement => {
   // 스팟 검색 결과 api
   const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
+    if(value.length > 0){
+      setCurrentValurLen(true);
+    };
 
     if (e.key === 'Enter') {
       if (inputRef.current) {
@@ -261,8 +265,11 @@ const SpotSearchMainPage = (): ReactElement => {
   
 
   const clearInputHandler = () => {
-    initInputHandler();
-    setIsSearched(false);
+    if (inputRef.current?.value.length! > 0) {
+      initInputHandler();
+      setIsSearched(false);
+      setCurrentValurLen(false);
+    };
   };
 
   const initInputHandler = () => {
@@ -293,7 +300,7 @@ const SpotSearchMainPage = (): ReactElement => {
           ref={inputRef}
         />
         {
-          inputRef.current && inputRef.current?.value.length > 0 && (
+          currentValueLen && (
             <div className="removeSvg" onClick={clearInputHandler}>
               <SVGIcon name="removeItem" />
             </div>
