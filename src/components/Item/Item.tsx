@@ -194,6 +194,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     if (isItemSold && !isReopen) {
       return <Badge message="일시품절" />;
     } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {
+      if (typeof checkIsBeforeThanLaunchAt !== 'string') return;
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
