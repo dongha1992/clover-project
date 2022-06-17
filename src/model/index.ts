@@ -1739,9 +1739,25 @@ export interface IMenus {
   subscriptionDeliveryCycle?: string;
   menuFaq: IMenuFaq;
   productInfoNotis: IProductInfo[];
+  nutritionInfoNotis: INutitionInfo[];
 }
 
-interface IProductInfo {
+export interface INutitionInfo {
+  carbohydrates: string;
+  cholesterol: string;
+  etc: string;
+  fat: string;
+  name: string;
+  nutritionInfo: string;
+  protein: string;
+  saturatedFat: string;
+  sodium: string;
+  sugars: string;
+  totalSugarsRatio: string;
+  transFat: string;
+}
+
+export interface IProductInfo {
   allergens: string;
   businessName: any;
   foodType: string;
@@ -1761,12 +1777,10 @@ interface IContents {
   title: string;
 }
 
-interface IMenuFaq {
-  menuFaq: {
-    contents: IContents;
-    id: number;
-    priority: number;
-  };
+export interface IMenuFaq {
+  contents: IContents[];
+  id: number;
+  priority: number;
 }
 /* REVIEW */
 export interface IGetMenusResponse {

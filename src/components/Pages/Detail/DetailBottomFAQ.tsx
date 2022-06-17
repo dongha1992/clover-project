@@ -4,23 +4,18 @@ import { TextB2R } from '@components/Shared/Text';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { textBody2, theme } from '@styles/theme';
 import ToggleHeader from '@components/Shared/ToggleHeader';
-
+import { IMenuFaq } from '@model/index';
 interface IContents {
   description: string;
   title: string;
 }
 
 interface IProps {
-  menuFaq: {
-    contents: IContents[];
-    id: number;
-    priority: number;
-  };
+  menuFaq?: IMenuFaq;
 }
 
 const DetailBottomFAQ = ({ menuFaq }: IProps) => {
   const [toggleObj, setToggleObj] = useState({ title: '', isToggle: false });
-  const { contents } = menuFaq;
 
   const setToggleHandler = (title: string) => {
     setToggleObj({ title, isToggle: !toggleObj.isToggle });
@@ -28,7 +23,7 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
 
   return (
     <Container>
-      {contents?.map((content, index) => {
+      {menuFaq?.contents?.map((content: IContents, index: number) => {
         const isToggle = toggleObj.title === content.title && toggleObj.isToggle;
         return (
           <Contents key={index}>

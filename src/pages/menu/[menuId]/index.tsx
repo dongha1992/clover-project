@@ -44,6 +44,7 @@ import Badge from '@components/Item/Badge';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
+import { SET_INFO } from '@store/menu';
 import { PERIOD_NUMBER } from '@constants/subscription';
 import MenuItem from '@components/Pages/Subscription/register/MenuItem';
 import cloneDeep from 'lodash-es/cloneDeep';
@@ -206,6 +207,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   }, [tabRef?.current?.offsetTop]);
 
   useEffect(() => {
+    dispatch(SET_INFO(menuDetail));
     if (isEmpty(menuItem)) {
       dispatch(SET_MENU_ITEM(menuDetail));
     }
