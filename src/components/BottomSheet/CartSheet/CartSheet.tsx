@@ -326,7 +326,7 @@ const CartSheet = () => {
     if (checkHasMainMenu()) {
       await mutateAddCartItem();
     } else {
-      showToast({ message: '필수옵션을 선택해주세요.' });
+      dispatch(SET_ALERT({ alertMessage: '필수옵션을 선택해주세요.' }));
     }
   };
 
@@ -351,8 +351,6 @@ const CartSheet = () => {
   if (menuItem.length === 0) {
     return <div>로딩</div>;
   }
-
-  console.log(menuItem, 'menuItem');
 
   return (
     <Container>
