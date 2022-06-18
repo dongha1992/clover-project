@@ -118,6 +118,7 @@ const RemoveBtnContainer = styled.div`
   position: absolute;
   right: 12px;
   top: 12px;
+  cursor: pointer;
 `;
 
 const CountButtonContainer = styled.div`
