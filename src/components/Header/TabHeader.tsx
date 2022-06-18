@@ -31,12 +31,10 @@ const TabHeader = ({ title }: TProps) => {
 
   const goBack = (): void => {
     /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
-    if (
-      router.asPath === '/login/find-account/password' ||
-      router.asPath === '/login/find-account/email' ||
-      ['menu'].includes(router.pathname)
-    ) {
+    if (router.asPath === '/login/find-account/password' || router.asPath === '/login/find-account/email') {
       router.push('/login');
+    } else if (router.pathname.split('/').includes('detail')) {
+      router.push(`/menu/${router.query.menuId}`);
     } else {
       router.back();
     }
