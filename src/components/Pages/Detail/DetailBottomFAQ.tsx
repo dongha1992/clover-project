@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { TextB2R } from '@components/Shared/Text';
+import { TextB2R, TextH4B, TextB3R, TextH6B } from '@components/Shared/Text';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { textBody2, theme } from '@styles/theme';
 import ToggleHeader from '@components/Shared/ToggleHeader';
@@ -29,7 +29,10 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
           <Contents key={index}>
             <ToggleHeader setIsToggle={setToggleHandler} text={content.title} isToggle={isToggle} />
             <SlideToggle state={isToggle} duration={0.5}>
-              <Content>{content.description} </Content>
+              <Content>
+                <TextH6B padding="0 0 12px 0">{content.title}</TextH6B>
+                <TextB3R>{content.description}</TextB3R>
+              </Content>
             </SlideToggle>
           </Contents>
         );
@@ -47,6 +50,8 @@ const Content = styled.div`
   padding: 24px;
   ${textBody2};
   color: ${theme.greyScale65};
+  display: flex;
+  flex-direction: column;
 `;
 
 const Contents = styled.div`
