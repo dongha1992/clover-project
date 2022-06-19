@@ -9,12 +9,12 @@ interface ICategoryFilter {
 }
 
 type TProps = {
-  categoryFilters: ICategoryFilter;
+  categoryFilters: ICategoryFilter | null;
   type: string;
 };
 
 const initialState: TProps = {
-  categoryFilters: { filter: [], order: '' },
+  categoryFilters: null,
   type: '',
 };
 
@@ -26,7 +26,7 @@ export const filter = createSlice({
       state.categoryFilters = action.payload;
     },
     INIT_CATEGORY_FILTER: (state: any, action: PayloadAction) => {
-      state.categoryFilters = { filter: [], order: '' };
+      state.categoryFilters = null;
     },
     SET_MENU_TAB: (state: any, action: PayloadAction<string>) => {
       state.type = action.payload;

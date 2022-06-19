@@ -74,12 +74,12 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const { me } = useSelector(userForm);
   const { menuItem } = useSelector(menuSelector);
-  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
+  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
   const { badgeMessage, isReopen, isSold } = menuDetail;
 
   const isTempSold = isItemSold && !isReopen;
-  const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
-  const isOpenSoon = !isItemSold && isReopen;
+  const isOpenSoon = !isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+  const isReOpen = isItemSold && isReopen;
 
   let timer: any = null;
 
@@ -179,7 +179,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review': {
-        if (isReOpen) {
+        if (isOpenSoon) {
           return;
         }
         return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
@@ -207,9 +207,9 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
     if (isTempSold) {
       return <Badge message="일시품절" />;
-    } else if (isReOpen) {
-      return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (isOpenSoon) {
+      return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
+    } else if (isReOpen) {
       return <Badge message="재오픈예정" />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
@@ -281,7 +281,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             {menuDetail.summary}
           </TextB2R>
           <PriceAndCouponWrapper>
-            {!isTempSold && !isReOpen && (
+            {!isOpenSoon && !isReOpen && (
               <PriceWrapper>
                 <OriginPrice>
                   <TextH6B color={theme.greyScale25} textDecoration=" line-through">
@@ -297,7 +297,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                 </DiscountedPrice>
               </PriceWrapper>
             )}
-            {!isTempSold && !isReOpen && (
+            {!isTempSold && !isReOpen && !isOpenSoon && (
               <>
                 {coupons?.length! > 0 ? (
                   <CouponWrapper onClick={couponDownloadHandler}>

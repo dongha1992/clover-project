@@ -41,10 +41,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
 
-  const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+  // const {
+  //   categoryFilters: { filter, order },
+  //   type,
+  // } = useSelector(filterSelector);
+
+  const { categoryFilters, type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
@@ -52,14 +54,17 @@ const Item = ({ item, isHorizontal }: TProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          return previous?.map((_item: IMenus) => {
-            if (_item.id === item.id) {
-              return { ..._item, reopenNotificationRequested: false };
-            }
-            return _item;
-          });
-        });
+        queryClient.setQueryData(
+          ['getMenus', type, categoryFilters?.order, categoryFilters?.filter],
+          (previous: any) => {
+            return previous?.map((_item: IMenus) => {
+              if (_item.id === item.id) {
+                return { ..._item, reopenNotificationRequested: false };
+              }
+              return _item;
+            });
+          }
+        );
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -144,11 +149,11 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const { me } = useSelector(userForm);
   const { menuDetails, isReopen } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
-  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
+  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
 
   const isTempSold = isItemSold && !isReopen;
-  const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
-  const isOpenSoon = !isItemSold && isReopen;
+  const isOpenSoon = !isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+  const isReOpen = isItemSold && isReopen;
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
@@ -197,7 +202,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
     if (isTempSold) {
       return <Badge message="일시품절" />;
-    } else if (isReOpen) {
+    } else if (isOpenSoon) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
@@ -241,12 +246,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {isOpenSoon && (
+        {isReOpen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {isOpenSoon || isReOpen ? (
+        {isReOpen || isOpenSoon ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
@@ -267,7 +272,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        {!isItemSold && !isReOpen && (
+        {!isOpenSoon && !isReOpen && (
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%
