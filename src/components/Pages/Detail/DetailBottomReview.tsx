@@ -27,7 +27,7 @@ export interface IMergedReview {
 const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   const dispatch = useDispatch();
   const { searchReviews, searchReviewImages } = reviews;
-  const hasReivew = searchReviewImages.length > 0;
+  const hasReivew = searchReviewImages.length !== 0;
 
   const idByReviewImg: Obj = pipe(
     searchReviewImages,
@@ -65,10 +65,6 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
-  if (mergedReviews.length === 0) {
-    return <div>로딩</div>;
-  }
-
   return (
     <Container isSticky={isSticky}>
       <Wrapper hasReivew={hasReivew}>
@@ -96,21 +92,32 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
-      <BorderLine height={8} />
-      <ReviewWrapper>
-        {mergedReviews.map((review: any, index: number) => {
-          return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
-        })}
-        <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-          {mergedReviews?.length}개 후기 전체보기
-        </Button>
-      </ReviewWrapper>
+      {hasReivew && (
+        <>
+          <BorderLine height={8} />
+          <ReviewWrapper>
+            {mergedReviews.map((review: any, index: number) => {
+              return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
+            })}
+            <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
+              {mergedReviews?.length}개 후기 전체보기
+            </Button>
+          </ReviewWrapper>
+        </>
+      )}
     </Container>
   );
 };
 
 const Container = styled.div<{ isSticky: boolean }>`
   margin-top: ${({ isSticky }) => (isSticky ? 82 : 32)}px;
+`;
+
+const Center = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
 `;
 
 const Wrapper = styled.div<{ hasReivew?: boolean }>`
