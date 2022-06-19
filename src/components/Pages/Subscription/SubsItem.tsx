@@ -49,7 +49,7 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
     <ItemBox onClick={goToDetail} width={width}>
       <ImageWrapper height={height}>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail}
+          src={IMAGE_S3_URL + item.thumbnail[0].url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}

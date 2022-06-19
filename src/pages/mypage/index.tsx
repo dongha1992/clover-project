@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R, TextH3B, TextB4R } from '@components/Shared/Text';
-import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween, FlexColCenter } from '@styles/theme';
+import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R } from '@components/Shared/Text';
+import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween } from '@styles/theme';
 import { getCookie, SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
@@ -14,12 +14,11 @@ import { INIT_USER, userForm } from '@store/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
 import Link from 'next/link';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { OrderDashboard } from '@components/Pages/Mypage/OrderDelivery';
 import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
-import { getOrderListsApi, getOrderInfoApi } from '@api/order';
+import { getOrderInfoApi } from '@api/order';
 import { userInvitationApi, getUserInfoApi } from '@api/user';
-import { getPointApi } from '@api/point';
 import isNil from 'lodash-es/isNil';
 interface IMypageMenu {
   title: string;
@@ -31,21 +30,6 @@ interface IMypageMenu {
 const MypagePage = () => {
   const dispatch = useDispatch();
   const { me, isLoginSuccess } = useSelector(userForm);
-
-  useEffect(() => {
-    // 쿠키에서 토큰이 지워지면 user도 초기화
-    setTimeout(() => {
-      cookieCheck();
-    }, 1000);
-  }, []);
-
-  const cookieCheck = async () => {
-    const token = await getCookie({ name: 'acstk' });
-
-    if (!token) {
-      dispatch(INIT_USER());
-    }
-  };
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
