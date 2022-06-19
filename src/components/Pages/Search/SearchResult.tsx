@@ -57,7 +57,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
           <FilterWrapper onClick={clickFilterHandler}>
             <SVGIcon name="filter" />
             <TextH6B padding="0 0 0 4px" pointer>
-              필터 및 정렬
+              정렬 및 필터
             </TextH6B>
           </FilterWrapper>
         </FilterRow>

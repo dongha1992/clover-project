@@ -233,7 +233,10 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               </TextB3R>
               {
                 // 유저 위치정보 있을때 노출
-                userLocationLen && <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}</TextH6B>
+                userLocationLen && 
+                  <TextH6B color={theme.greyScale65}>
+                    {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
+                  </TextH6B>
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
@@ -273,7 +276,10 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               <ButtonWrapper>
                 {
                   // 유저 위치정보 있을때 노출
-                  userLocationLen && <TextH6B color={theme.greyScale65}>{`${Math.round(list?.distance)}m`}</TextH6B>
+                  userLocationLen && 
+                    <TextH6B color={theme.greyScale65}>
+                      {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
+                    </TextH6B>
                 }
                 <Button onClick={orderHandler}>주문하기</Button>
               </ButtonWrapper>
@@ -291,7 +297,9 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 {
                   // 유저 위치정보 있을때 노출
                   userLocationLen && (
-                    <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>{`${Math.round(list.distance)}m`}</TextH6B>
+                    <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>
+                      {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
+                    </TextH6B>
                   )
                 }
                 <FlexRow margin="0 0 16px 0">

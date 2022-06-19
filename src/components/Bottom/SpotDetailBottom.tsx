@@ -7,7 +7,7 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import router from 'next/router';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { TimerTooltip } from '@components/Shared/Tooltip';
+import { SpotDetailEventTooltip } from '@components/Shared/Tooltip';
 import { postSpotLike, deleteSpotLike, getSpotLike } from '@api/spot';
 import { SET_SPOT_LIKED, INIT_SPOT_LIKED } from '@store/spot';
 import { userForm } from '@store/user';
@@ -182,6 +182,7 @@ const SpotDetailBottom = () => {
     };
 
     spotLikeData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotDetail, spotDetail?.id, spotLike]);
 
   // 좋아요 버튼
@@ -228,7 +229,6 @@ const SpotDetailBottom = () => {
           </BtnWrapper>
         </Wrapper>
       ) : (
-        <>
           <Wrapper>
             {
               !spotDetail?.isTrial &&
@@ -246,17 +246,14 @@ const SpotDetailBottom = () => {
               <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
             </BtnWrapper>
             {spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
-            <TootipWrapper>
-              <TimerTooltip
+              <SpotDetailEventTooltip
                 message={`${spotDetail?.discountRate}% 할인 중`}
                 bgColor={theme.brandColor}
                 color={theme.white}
                 minWidth="78px"
               />
-            </TootipWrapper>
-          )}
+            )}
           </Wrapper>
-        </>
       )}
     </Container>
   );
@@ -299,19 +296,6 @@ const Wrapper = styled.div`
   padding: 16px 24px;
   display: flex;
   width: 100%;
-`;
-
-const TootipWrapper = styled.article`
-  position: absolute;
-  ${({ theme }) => theme.desktop`
-    top: -11px;
-    left: 47%;
-  `};
-
-  ${({ theme }) => theme.mobile`
-    top: -11px;
-    left: 43%;
-  `};
 `;
 
 const LikeWrapper = styled.div`
