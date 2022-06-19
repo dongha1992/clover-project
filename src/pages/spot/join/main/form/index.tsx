@@ -11,6 +11,7 @@ import { OptionsSheet } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector, SET_SPOT_REGISTRATIONS_INFO, SET_SPOT_JOIN_FORM_CHECKED } from '@store/spot';
+import { PHONE_REGX } from '@pages/signup/auth';
 
 const RegisterPage = () => {
   const { 
@@ -31,14 +32,15 @@ const RegisterPage = () => {
   const managerRef = useRef<HTMLInputElement>(null);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(spotJoinFormChecked);
 
-  const checkedPickup = !!pickUpRef.current?.value?.length;
-  const checkedLunchType = !!spotsRegistrationOptions.lunchTimeOptions?.value?.length;
-  const checkedPlaceType = !!spotsRegistrationOptions.placeTypeOptions?.value?.length;
-  const checkedAddressInfo = !!spotLocation.address?.length && !!placeRef.current?.value?.length;
+  const checkedPickup = pickUpRef.current?.value?.length! > 0;
+  const checkedLunchType = spotsRegistrationOptions.lunchTimeOptions?.value?.length > 0;
+  const checkedPlaceType = spotsRegistrationOptions.placeTypeOptions?.value?.length > 0;
+  const checkedAddressInfo = spotLocation.address?.length! > 0 && placeRef.current?.value?.length! > 0;
   const checkedUserInfo =
-    !!spotsRegistrationInfo?.userName?.length &&
-    !!spotsRegistrationInfo.userEmail?.length &&
-    !!spotsRegistrationInfo.userTel?.length;
+    spotsRegistrationInfo?.userName?.length > 0 &&
+    spotsRegistrationInfo.userEmail?.length > 0 &&
+    spotsRegistrationInfo.userTel?.length > 0;
+  const checkedManagerLevelInfo = spotsRegistrationInfo.managerInfo?.length > 0;
   const checkedPlaceTypeEtc = () => {
     if(spotsRegistrationOptions.placeTypeOptions?.value === 'ETC'){
       return placeEtcRef.current?.value?.length! > 0;
@@ -71,7 +73,8 @@ const RegisterPage = () => {
           checkedPlaceType && 
           checkedPlaceTypeEtc() && 
           checkedUserInfo && 
-          noticeChecked) || spotJoinFormChecked
+          noticeChecked &&
+          checkedManagerLevelInfo) || spotJoinFormChecked
         );
       default:
         return false;
@@ -198,9 +201,9 @@ const RegisterPage = () => {
           <TextH5B margin="0 0 16px 0">주소</TextH5B>
           <LocationWrapper onClick={goToLocation}>
             {!spotLocation.address?.length ? (
-              <TextH4B center color={theme.black}>
+              <TextH5B center color={theme.black}>
                 주소 검색하기
-              </TextH4B>
+              </TextH5B>
             ) : (
               <>
                 <TextH4B>{`${spotLocation.address} ${spotLocation.bdNm}`}</TextH4B>
@@ -305,9 +308,10 @@ const RegisterPage = () => {
               <TextH5B margin="0 0 16px 0">휴대폰 번호</TextH5B>
               <TextInput
                 ref={telRef}
+                inputType='number'
                 eventHandler={userTelInputHandler}
                 value={spotsRegistrationInfo.userTel?.length ? spotsRegistrationInfo.userTel : null}
-                placeholder="휴대폰 번호 (-제외)"
+                placeholder="휴대폰 번호 입력 (-제외)"
               />
             </Wrapper>
           </>
