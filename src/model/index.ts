@@ -1740,7 +1740,7 @@ export interface IMenus {
   menuFaq: IMenuFaq;
   productInfoNotis: IProductInfo[];
   nutritionInfoNotis: INutitionInfo[];
-  deliveryMethod: IMenuImage[];
+  deliveryMethods: IMenuImage[];
   description: string;
 }
 
