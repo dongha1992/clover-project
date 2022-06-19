@@ -274,7 +274,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
         {!isHorizontal && (
           <>
             <DesWrapper>
-              <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
+              <TextB3R color={theme.greyScale65}>{item.summary.trim().slice(0, 30)}</TextB3R>
             </DesWrapper>
             <LikeAndReview>
               <Like onClick={menuLikeHandler}>
