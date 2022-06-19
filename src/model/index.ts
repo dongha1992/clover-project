@@ -1741,6 +1741,7 @@ export interface IMenus {
   productInfoNotis: IProductInfo[];
   nutritionInfoNotis: INutitionInfo[];
   deliveryMethod: IMenuImage[];
+  description: string;
 }
 
 export interface INutitionInfo {
