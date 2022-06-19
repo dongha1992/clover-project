@@ -274,7 +274,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             </div>
           </MenuNameWrapper>
           <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
-            {menuDetail.description}
+            {menuDetail.summary}
           </TextB2R>
           <PriceAndCouponWrapper>
             <PriceWrapper>

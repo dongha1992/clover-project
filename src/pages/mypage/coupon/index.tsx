@@ -31,37 +31,38 @@ const CouponManagementPage = () => {
           reward: 'COUPON',
         };
 
-        try {
-          const { data } = await postPromotionCodeApi(reqBody);
-          return dispatch(
-            SET_ALERT({
-              alertMessage: '등록을 완료했어요!',
-              submitBtnText: '확인',
-            })
-          );
-        } catch (error: any) {
-          let alertMessage = '';
-          if (error.code === 2202) {
-            alertMessage = '이미 등록된 쿠폰 코드예요.';
-          } else if (error.code === 1105) {
-            alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
-          }
-
-          return dispatch(
-            SET_ALERT({
-              alertMessage,
-              submitBtnText: '확인',
-            })
-          );
-        }
+        const { data } = await postPromotionCodeApi(reqBody);
+        return data;
       }
     },
     {
       onSuccess: async (data) => {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '등록을 완료했어요!',
+            submitBtnText: '확인',
+          })
+        );
         /* TODO: 성공 혹 실패시 작업 */
         await queryClient.refetchQueries('getCouponList');
       },
-      onError: async (data: any) => {},
+      onError: async (error: any) => {
+        let alertMessage = '';
+        if (error.code === 2202) {
+          alertMessage = '이미 등록된 쿠폰 코드예요.';
+        } else if (error.code === 1105) {
+          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
+        } else {
+          alertMessage = '알 수 없는 에러 입니다.';
+        }
+
+        return dispatch(
+          SET_ALERT({
+            alertMessage,
+            submitBtnText: '확인',
+          })
+        );
+      },
     }
   );
 

@@ -1717,7 +1717,7 @@ export interface IMenus {
   name: string;
   type: string;
   category: string;
-  description: string;
+  summary: string;
   thumbnail: IMenuImage[];
   badgeMessage: string;
   launchedAt: string;
@@ -1740,6 +1740,7 @@ export interface IMenus {
   menuFaq: IMenuFaq;
   productInfoNotis: IProductInfo[];
   nutritionInfoNotis: INutitionInfo[];
+  deliveryMethod: IMenuImage[];
 }
 
 export interface INutitionInfo {
