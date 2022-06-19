@@ -2058,6 +2058,36 @@ export interface IPromotionRequest {
   reward: TReward | null;
 }
 
+export interface IGetPromotionRequest {
+  type: string;
+}
+
+export interface IPromotion {
+  id: number;
+  type: string;
+  reward: string;
+  name: string;
+  comment: string;
+  code: string;
+  maximum: number;
+  coupon: {
+    name: string;
+    descriptions: string[];
+    criteria: string;
+    value: number;
+    expiredDate: string;
+    isApp: false;
+    createdAt: string;
+  };
+  participationCount: number;
+  userParticipationCount: number;
+}
+
+export interface IMenuPromotionResponse {
+  code: number;
+  message: string;
+  data: IPromotion[];
+}
 /* SUBSCRIPTION */
 export interface IGetSubscription {
   id: number;
