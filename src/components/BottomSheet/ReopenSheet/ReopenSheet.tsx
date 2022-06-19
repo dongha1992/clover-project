@@ -73,6 +73,7 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
     },
     {
       onSuccess: async (data) => {
+        console.log(type, 'type');
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
         if (isDetailBottom) {
