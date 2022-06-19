@@ -15,13 +15,12 @@ interface IProps {
   item: IGetOrders;
 }
 
-const goToSubsDetail = () => {
-  router.push('/subscription/detail');
-};
-
 const SubsMngCompleteItem = ({ item }: IProps) => {
   const cards = useSubsNowDeliveryInfo(item);
 
+  const goToSubsDetail = () => {
+    router.push({ pathname: `/subscription/${item.id}`, query: { menuId: item.subscriptionMenuId } });
+  };
   return (
     <Container>
       <FlexBetween>
