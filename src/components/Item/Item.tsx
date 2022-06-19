@@ -41,12 +41,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
 
-  // const {
-  //   categoryFilters: { filter, order },
-  //   type,
-  // } = useSelector(filterSelector);
-
-  const { categoryFilters, type } = useSelector(filterSelector);
+  const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
@@ -54,17 +49,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(
-          ['getMenus', type, categoryFilters?.order, categoryFilters?.filter],
-          (previous: any) => {
-            return previous?.map((_item: IMenus) => {
-              if (_item.id === item.id) {
-                return { ..._item, reopenNotificationRequested: false };
-              }
-              return _item;
-            });
-          }
-        );
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            if (_item.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -82,7 +74,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             let liked, likeCount;
             if (_item.id === item.id) {
@@ -117,7 +109,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             let liked, likeCount;
             if (_item.id === item.id) {

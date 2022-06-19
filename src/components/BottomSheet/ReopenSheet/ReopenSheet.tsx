@@ -59,10 +59,7 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
 
   const queryClient = useQueryClient();
 
-  const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+  const { type } = useSelector(filterSelector);
 
   const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
@@ -81,7 +78,7 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
         if (isDetailBottom) {
           await queryClient.refetchQueries('getMenuDetail');
         } else {
-          queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+          queryClient.setQueryData(['getMenus', type], (previous: any) => {
             return previous.map((_item: IMenus) => {
               if (_item.id === menuId) {
                 return { ..._item, reopenNotificationRequested: true };
