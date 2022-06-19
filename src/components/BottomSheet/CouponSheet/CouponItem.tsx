@@ -23,9 +23,10 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
 
   const isRateDiscount = coupon.coupon.criteria === 'RATIO';
   const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon?.coupon.expiredDate));
-
+  // 임시
+  const isDownload = true;
   return (
-    <Container isDownload={coupon?.isDownload}>
+    <Container isDownload={isDownload}>
       <Wrapper>
         <Content>
           <TextH3B color={theme.brandColor}>
@@ -70,7 +71,7 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
         </Content>
         <BtnGroup>
           <SVGIcon name="dotColumn" />
-          {coupon?.isDownload ? (
+          {isDownload ? (
             <Complete>
               <SVGIcon name="couponDownloadComplete" />
             </Complete>
