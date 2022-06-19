@@ -21,6 +21,7 @@ import { useQuery } from 'react-query';
 import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 import { NAME_REGX } from '@constants/regex';
 import { useRouter } from 'next/router';
+
 // persist
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -30,6 +31,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
+import { useToast } from '@hooks/useToast';
 declare global {
   interface Window {
     Kakao: any;
@@ -49,6 +51,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const isWithContentsSection = useMediaQuery('(min-width:1024px)');
   const isMobile = useMediaQuery('(max-width:512px)');
 
+  // const { showToast, hideToast } = useToast();
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });

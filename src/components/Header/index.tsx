@@ -83,7 +83,7 @@ const Header = () => {
       '/spot/search/main': '프코스팟 검색',
       '/spot/join': '프코스팟 신청 안내',
       '/spot/join/main': '신청하기',
-      '/spot/join/main/form' : '신청하기',
+      '/spot/join/main/form': '신청하기',
       '/spot/join/main/form/submit': '신청하기',
       '/spot/join/main/form/submit/finish': '신청하기',
       '/destination/search': '배송지 검색',
@@ -121,9 +121,9 @@ const Header = () => {
       }
 
       case [
-        '/menu/detail/product',
-        '/menu/detail/nutrition',
-        '/menu/detail/delivery',
+        '/menu/[menuId]/detail/product',
+        '/menu/[menuId]/detail/nutrition',
+        '/menu/[menuId]/detail/delivery',
         '/login/find-account/email',
         '/login/find-account/password',
         '/mypage/dib/general',

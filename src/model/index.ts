@@ -1717,7 +1717,7 @@ export interface IMenus {
   name: string;
   type: string;
   category: string;
-  description: string;
+  summary: string;
   thumbnail: IMenuImage[];
   badgeMessage: string;
   launchedAt: string;
@@ -1737,8 +1737,53 @@ export interface IMenus {
   isSold?: boolean;
   reopenNotificationRequested: boolean;
   subscriptionDeliveryCycle?: string;
+  menuFaq: IMenuFaq;
+  productInfoNotis: IProductInfo[];
+  nutritionInfoNotis: INutitionInfo[];
+  deliveryMethods: IMenuImage[];
+  description: string;
 }
 
+export interface INutitionInfo {
+  carbohydrates: string;
+  cholesterol: string;
+  etc: string;
+  fat: string;
+  name: string;
+  nutritionInfo: string;
+  protein: string;
+  saturatedFat: string;
+  sodium: string;
+  sugars: string;
+  totalSugarsRatio: string;
+  transFat: string;
+}
+
+export interface IProductInfo {
+  allergens: string;
+  businessName: any;
+  foodType: string;
+  name: string;
+  packingMaterial: string;
+  precautions: string;
+  rawMaterial: string;
+  returnExchangePlace: string;
+  serviceCenterTel: string;
+  shelfLife: string;
+  storage: any;
+  weight: string;
+}
+
+interface IContents {
+  description: string;
+  title: string;
+}
+
+export interface IMenuFaq {
+  contents: IContents[];
+  id: number;
+  priority: number;
+}
 /* REVIEW */
 export interface IGetMenusResponse {
   code: number;
@@ -2015,6 +2060,36 @@ export interface IPromotionRequest {
   reward: TReward | null;
 }
 
+export interface IGetPromotionRequest {
+  type: string;
+}
+
+export interface IPromotion {
+  id: number;
+  type: string;
+  reward: string;
+  name: string;
+  comment: string;
+  code: string;
+  maximum: number;
+  coupon: {
+    name: string;
+    descriptions: string[];
+    criteria: string;
+    value: number;
+    expiredDate: string;
+    isApp: false;
+    createdAt: string;
+  };
+  participationCount: number;
+  userParticipationCount: number;
+}
+
+export interface IMenuPromotionResponse {
+  code: number;
+  message: string;
+  data: { promotions: IPromotion[] };
+}
 /* SUBSCRIPTION */
 export interface IGetSubscription {
   id: number;
