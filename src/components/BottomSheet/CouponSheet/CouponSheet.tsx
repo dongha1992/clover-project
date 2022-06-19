@@ -9,8 +9,11 @@ import { useDispatch } from 'react-redux';
 import router from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-
-const CouponSheet = () => {
+import { IPromotion } from '@model/index';
+interface IProps {
+  coupons: IPromotion[];
+}
+const CouponSheet = ({ coupons }: IProps) => {
   const dispatch = useDispatch();
 
   const downloadAllCoupon = () => {
@@ -46,7 +49,7 @@ const CouponSheet = () => {
           </TextH6B>
         </InfoWrapper>
         <CouponListWrapper>
-          {COUPON_LIST.map((coupon, index) => (
+          {coupons?.map((coupon, index) => (
             <CouponItem coupon={coupon} key={index} onClick={downloadCouponHandler} />
           ))}
         </CouponListWrapper>

@@ -2086,7 +2086,7 @@ export interface IPromotion {
 export interface IMenuPromotionResponse {
   code: number;
   message: string;
-  data: IPromotion[];
+  data: { promotions: IPromotion[] };
 }
 /* SUBSCRIPTION */
 export interface IGetSubscription {
