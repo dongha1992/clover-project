@@ -6,6 +6,6 @@ export const postPromotionCodeApi = (data: IPromotionRequest): Promise<AxiosResp
   return Api.post('promotion/v1/participation', data);
 };
 
-export const getPromotionCodeApi = (type: string): Promise<AxiosResponse<IMenuPromotionResponse>> => {
-  return Api.get('promotion/v1/participation', { params: type });
+export const getPromotionCodeApi = (params: { type: string }): Promise<AxiosResponse<IMenuPromotionResponse>> => {
+  return Api.get('promotion/v1/promotions', { params });
 };

@@ -48,6 +48,7 @@ import { SET_INFO } from '@store/menu';
 import { PERIOD_NUMBER } from '@constants/subscription';
 import MenuItem from '@components/Pages/Subscription/register/MenuItem';
 import cloneDeep from 'lodash-es/cloneDeep';
+import { getPromotionCodeApi } from '@api/promotion';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -98,6 +99,28 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     }
   );
 
+  const {
+    data: coupons,
+    isLoading: couponsLoading,
+    error: couponError,
+  } = useQuery(
+    'getPromotion',
+    async () => {
+      const params = {
+        type: 'MENU',
+      };
+      const { data } = await getPromotionCodeApi(params);
+      return data.data.promotions;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  console.log(coupons, 'coupons');
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
     const scrollTop = e?.srcElement.scrollingElement.scrollTop;
@@ -123,7 +146,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     } else {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <CouponSheet />,
+          content: <CouponSheet coupons={coupons && coupons} />,
         })
       );
     }
@@ -219,6 +242,9 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     };
   }, []);
 
+  if (couponsLoading) {
+    return <div>로딩중</div>;
+  }
   return (
     <Container>
       <ImgWrapper>
@@ -267,7 +293,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             </PriceWrapper>
             {!isTempSold && (
               <>
-                {menuItem?.coupon ? (
+                {coupons?.length! > 0 ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
                     <TextH6B padding="4px 4px 0 0" pointer>
                       쿠폰 받기
