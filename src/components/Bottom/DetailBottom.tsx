@@ -42,7 +42,7 @@ const DetailBottom = () => {
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
   const dispatch = useDispatch();
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
   const {
@@ -147,6 +147,10 @@ const DetailBottom = () => {
       setSubsDeliveryType('PARCEL');
     }
   }, [menuDetail]);
+
+  useEffect(() => {
+    return () => hideToast();
+  }, []);
 
   const goToLike = () => {
     if (!me) {

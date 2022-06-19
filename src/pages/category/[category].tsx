@@ -124,43 +124,47 @@ const CategoryPage = () => {
   };
 
   const filteredMenus = (menuList: IMenus[]) => {
-    let copiedMenuList = cloneDeep(menuList);
-    const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
+    try {
+      let copiedMenuList = cloneDeep(menuList);
+      const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
 
-    if (hasCategory) {
-      copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
-    }
-
-    if (!categoryFilters?.order) {
-      return copiedMenuList;
-    } else {
-      switch (categoryFilters?.order) {
-        case '': {
-          return menuList;
-        }
-        case 'ORDER_COUNT_DESC': {
-          return copiedMenuList.sort((a, b) => b.orderCount - a.orderCount);
-        }
-        case 'LAUNCHED_DESC': {
-          return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
-        }
-        case 'PRICE_DESC': {
-          return getPriceOrder(copiedMenuList, 'max');
-        }
-        case 'PRICE_ASC': {
-          return getPriceOrder(copiedMenuList, 'min');
-        }
-        case 'REVIEW_COUNT_DESC': {
-          return copiedMenuList.sort((a, b) => b.reviewCount - a.reviewCount);
-        }
-        default:
-          return menuList;
+      if (hasCategory) {
+        copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
       }
+
+      if (!categoryFilters?.order) {
+        return copiedMenuList;
+      } else {
+        switch (categoryFilters?.order) {
+          case '': {
+            return menuList;
+          }
+          case 'ORDER_COUNT_DESC': {
+            return copiedMenuList.sort((a, b) => b.orderCount - a.orderCount);
+          }
+          case 'LAUNCHED_DESC': {
+            return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
+          }
+          case 'PRICE_DESC': {
+            return getPriceOrder(copiedMenuList, 'max');
+          }
+          case 'PRICE_ASC': {
+            return getPriceOrder(copiedMenuList, 'min');
+          }
+          case 'REVIEW_COUNT_DESC': {
+            return copiedMenuList.sort((a, b) => b.reviewCount - a.reviewCount);
+          }
+          default:
+            return menuList;
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
-    const mapped = list.map((menu: IMenus) => {
+    const mapped = list?.map((menu: IMenus) => {
       const prices = menu?.menuDetails?.map((item) => item.price);
       return { ...menu, [order]: Math[order](...prices) };
     });
@@ -173,7 +177,6 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (categoryFilters?.order || categoryFilters?.filter) {
-      // setIsFilter(true);
       checkIsFiltered(defaultMenus!);
     }
   }, [categoryFilters]);

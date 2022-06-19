@@ -47,6 +47,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     async () => {
       const { data } = await deleteNotificationApi(item.id);
     },
+
     {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type], (previous: any) => {
@@ -71,6 +72,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {
       const { data } = await postLikeMenus({ menuId: item.id });
+      if (data.code === 1032) {
+        alert(data.message);
+      }
     },
     {
       onSuccess: async () => {
