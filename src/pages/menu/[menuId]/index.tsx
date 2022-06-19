@@ -120,7 +120,6 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     }
   );
 
-  console.log(coupons, 'coupons');
   const onScrollHandler = (e: any) => {
     const offset = tabRef?.current?.offsetTop;
     const scrollTop = e?.srcElement.scrollingElement.scrollTop;
@@ -184,7 +183,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       case '/menu/detail/faq':
         return <DetailBottomFAQ menuFaq={menuDetail?.menuFaq!} />;
       default:
-        return <DetailBottomInfo />;
+        return <DetailBottomInfo menuDescription={menuDetail?.description!} />;
     }
   };
 

@@ -48,7 +48,7 @@ const CouponSheet = ({ coupons }: IProps) => {
       onError: async (error: any) => {
         let alertMessage = '';
         if (error.code === 2202) {
-          alertMessage = '이미 등록된 쿠폰 코드예요.';
+          alertMessage = '이미 쿠폰을 다운받았습니다.';
         } else if (error.code === 1105) {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         } else {
@@ -108,7 +108,11 @@ const CouponSheet = ({ coupons }: IProps) => {
             }
           }
         } catch (error: any) {
-          dispatch(SET_ALERT({ alertMessage: error.message }));
+          let alertMessage = '알 수 없는 에러 입니다.';
+          if (error.code === 2202) {
+            alertMessage = '이미 쿠폰을 다운받았습니다.';
+          }
+          dispatch(SET_ALERT({ alertMessage }));
         }
       }
     }
