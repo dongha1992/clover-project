@@ -30,7 +30,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    router.back();
+    router.push('/');
   };
 
   const goToShare = () => {

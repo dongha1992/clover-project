@@ -41,18 +41,16 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
 
-  const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+  const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
       const { data } = await deleteNotificationApi(item.id);
     },
+
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
@@ -74,10 +72,13 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {
       const { data } = await postLikeMenus({ menuId: item.id });
+      if (data.code === 1032) {
+        alert(data.message);
+      }
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             let liked, likeCount;
             if (_item.id === item.id) {
@@ -112,7 +113,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             let liked, likeCount;
             if (_item.id === item.id) {
@@ -142,9 +143,13 @@ const Item = ({ item, isHorizontal }: TProps) => {
   );
 
   const { me } = useSelector(userForm);
-  const { menuDetails } = item;
+  const { menuDetails, isReopen } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
-  const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
+  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
+
+  const isTempSold = isItemSold && !isReopen;
+  const isOpenSoon = !isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+  const isReOpen = isItemSold && isReopen;
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
@@ -191,9 +196,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
     const { badgeMessage, isReopen, isSold } = item;
 
-    if (isItemSold && !isReopen) {
+    if (isTempSold) {
       return <Badge message="일시품절" />;
-    } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {
+    } else if (isOpenSoon) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
@@ -237,18 +242,18 @@ const Item = ({ item, isHorizontal }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {!isItemSold && item.isReopen && (
+        {isReOpen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {(!isItemSold && item.isReopen) || (isItemSold && item.isReopen && checkIsBeforeThanLaunchAt.length > 0) ? (
+        {isReOpen || isOpenSoon ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
         ) : (
           <>
-            {!isItemSold && (
+            {!isTempSold && (
               <CartBtn onClick={goToCartSheet}>
                 <SVGIcon name="cartBtn" />
               </CartBtn>
@@ -263,7 +268,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        {!isItemSold && !item.isReopen && (
+        {!isOpenSoon && !isReOpen && (
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%
@@ -274,7 +279,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
         {!isHorizontal && (
           <>
             <DesWrapper>
-              <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
+              <TextB3R color={theme.greyScale65}>{item.summary.trim().slice(0, 30)}</TextB3R>
             </DesWrapper>
             <LikeAndReview>
               <Like onClick={menuLikeHandler}>

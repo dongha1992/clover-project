@@ -36,9 +36,11 @@ const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
       {!isAllMenu ? <TextH3B padding="0 0 17px 0">{title}</TextH3B> : ''}
       {!isAllMenu ? (
         <FlexWrapWrapper>
-          {menuList?.map((item: any, index: number) => {
-            return <Item item={item} key={index} />;
-          })}
+          {menuList?.length! > 0
+            ? menuList?.map((item: any, index: number) => {
+                return <Item item={item} key={index} />;
+              })
+            : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>
       ) : (
         <>

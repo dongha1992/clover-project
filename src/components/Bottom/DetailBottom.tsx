@@ -29,7 +29,6 @@ import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu
 import { filterSelector } from '@store/filter';
 import { IMenuDetails, IMenuDetail, IMenus } from '@model/index';
 import { isEmpty } from 'lodash-es';
-import { getCookie } from '@utils/common';
 
 interface IMenuStatus {
   isItemSold: boolean | undefined;
@@ -39,12 +38,11 @@ interface IMenuStatus {
 const DetailBottom = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const auth = getCookie({ name: 'accessToken' });
 
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
   const dispatch = useDispatch();
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
   const {
@@ -150,13 +148,15 @@ const DetailBottom = () => {
     }
   }, [menuDetail]);
 
+  useEffect(() => {
+    return () => hideToast();
+  }, []);
+
   const goToLike = () => {
-    console.log(me, auth);
-    if (!me || !isLoginSuccess) {
+    if (!me) {
       goToLogin();
       return;
     }
-
     if (menuDetail?.liked) {
       mutateDeleteMenuLike();
     } else {
@@ -167,9 +167,9 @@ const DetailBottom = () => {
   const buttonStatusRender = (menuDetail: IMenuDetail) => {
     const { isReopen, reopenNotificationRequested } = menuDetail!;
     const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail || {});
-
-    const reOpenCondition =
-      (!isItemSold && isReopen) || (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0);
+    const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+    const isOpenSoon = !isItemSold && isReopen;
+    const reOpenCondition = isOpenSoon || isReOpen;
 
     switch (true) {
       case isItemSold && !isReopen: {
@@ -196,7 +196,7 @@ const DetailBottom = () => {
         return;
       }
       case '오픈 알림 신청 받기': {
-        if (!me || !isLoginSuccess) {
+        if (!me) {
           goToLogin();
           return;
         }

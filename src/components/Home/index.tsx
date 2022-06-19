@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import { getMenusApi } from '@api/menu';
+import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
@@ -45,7 +45,7 @@ const Home = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    ['getMenus', '', '', []],
+    ['getMenus', ''],
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);
@@ -53,6 +53,19 @@ const Home = () => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
+
+  // const {
+  //   data: menus,
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery(
+  //   ['getRecommendMenus'],
+  //   async () => {
+  //     const { data } = await getRecommendMenusApi();
+  //     return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+  //   },
+  //   { refetchOnMount: true, refetchOnWindowFocus: false }
+  // );
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -65,10 +78,12 @@ const Home = () => {
         <MainTab />
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
-          {menus?.map((item, index) => {
-            if (index > 3) return;
-            return <Item item={item} key={index} />;
-          })}
+          {menus?.length! > 0
+            ? menus?.map((item, index) => {
+                if (index > 3) return;
+                return <Item item={item} key={index} />;
+              })
+            : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>
       </SectionWrapper>
       <LineBanner />
@@ -79,10 +94,12 @@ const Home = () => {
       {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
       <ItemListRowWrapper>
         <ItemListRow>
-          {menus?.map((item, index) => {
-            if (index > 3) return;
-            return <Item item={item} key={index} isHorizontal />;
-          })}
+          {menus?.length! > 0
+            ? menus?.map((item, index) => {
+                if (index > 3) return;
+                return <Item item={item} key={index} isHorizontal />;
+              })
+            : '상품을 준비 중입니다.'}
         </ItemListRow>
       </ItemListRowWrapper>
     </Container>
