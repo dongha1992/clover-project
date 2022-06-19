@@ -8,12 +8,14 @@ interface TProps {
   subsDeliveryExpectedDate: any;
   subsCalendarSelectMenu: IMenuTable | null;
   subsInfo: ISubscribeInfo | null;
+  subsCalendarSelectOrders: any | null;
 }
 
 const initialState: TProps = {
   subsStartDate: null,
   subsOrderMenus: [],
   subsCalendarSelectMenu: null,
+  subsCalendarSelectOrders: null,
   subsDeliveryExpectedDate: null,
   subsInfo: {
     deliveryType: null,
@@ -41,6 +43,9 @@ export const subscription = createSlice({
     },
     SET_SUBS_CALENDAR_SELECT_MENU: (state, action) => {
       state.subsCalendarSelectMenu = action.payload;
+    },
+    SET_SUBS_CALENDAR_SELECT_ORDERS: (state, action) => {
+      state.subsCalendarSelectOrders = action.payload;
     },
     SET_SUBS_DELIVERY_EXPECTED_DATE: (state, action) => {
       state.subsDeliveryExpectedDate = action.payload.subsDeliveryExpectedDate;
@@ -76,6 +81,7 @@ export const {
   SET_SUBS_ORDER_MENUS,
   SET_SUBS_DELIVERY_EXPECTED_DATE,
   SET_SUBS_CALENDAR_SELECT_MENU,
+  SET_SUBS_CALENDAR_SELECT_ORDERS,
   SET_SUBS_INFO_STATE,
   SUBS_INIT,
 } = subscription.actions;
