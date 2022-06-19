@@ -35,9 +35,6 @@ const MapAPI = ({ zoom, centerLat, centerLng }: IProps): ReactElement => {
           url: `${IMAGE_S3_DEV_URL}/ic_map_pin.png`,
           size: new naver.maps.Size(50, 52),
           anchor: new naver.maps.Point(25, 26),
-          onClick: () => {
-            alert('aa');
-          },
         },
         position: new naver.maps.LatLng(
           Number(centerLat ? centerLat : 37.50101118367814),
