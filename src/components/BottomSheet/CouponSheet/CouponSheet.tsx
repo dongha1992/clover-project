@@ -130,7 +130,9 @@ const CouponSheet = ({ coupons }: IProps) => {
     await mutatePostPromotionCode(coupon);
   };
 
-  const closeHandler = () => {};
+  const closeHandler = () => {
+    dispatch(INIT_BOTTOM_SHEET());
+  };
 
   return (
     <Container>
