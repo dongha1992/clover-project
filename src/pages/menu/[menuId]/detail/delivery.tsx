@@ -2,28 +2,22 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { IMenuImage } from '@model/index';
 import { TextB2R } from '@components/Shared/Text';
 
 const DeliveryInfoPage = () => {
   const { info } = useSelector(menuSelector);
+
   return (
     <Container>
       <Wrapper>
-        {info?.delieryMethod?.length > 0 ? (
-          info?.delieryMethod?.map((item: IMenuImage) => {
+        {info?.deliveryMethods?.length > 0 ? (
+          info?.deliveryMethods?.map((item: IMenuImage, index: number) => {
             return (
-              <ImageWrapper>
-                <Image
-                  src={IMAGE_S3_URL + item?.url}
-                  alt="배송방법이미지"
-                  width={'100%'}
-                  height={'100%'}
-                  layout="responsive"
-                  className="rounded"
-                />
+              <ImageWrapper key={index}>
+                <Image src={IMAGE_S3_URL + item?.url} alt="배송방법이미지" width={'100%'} height={'100%'} />
               </ImageWrapper>
             );
           })
@@ -39,6 +33,7 @@ const Container = styled.div``;
 const Wrapper = styled.div`
   margin-top: 120px;
 `;
-const ImageWrapper = styled.div``;
 
+const ImageWrapper = styled.div``;
+const Image = styled.img``;
 export default DeliveryInfoPage;

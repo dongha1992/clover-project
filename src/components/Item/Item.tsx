@@ -142,9 +142,13 @@ const Item = ({ item, isHorizontal }: TProps) => {
   );
 
   const { me } = useSelector(userForm);
-  const { menuDetails } = item;
+  const { menuDetails, isReopen } = item;
   const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
   const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
+
+  const isTempSold = isItemSold && !isReopen;
+  const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+  const isOpenSoon = !isItemSold && isReopen;
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
@@ -191,9 +195,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
     const { badgeMessage, isReopen, isSold } = item;
 
-    if (isItemSold && !isReopen) {
+    if (isTempSold) {
       return <Badge message="일시품절" />;
-    } else if (isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0) {
+    } else if (isReOpen) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
@@ -237,18 +241,18 @@ const Item = ({ item, isHorizontal }: TProps) => {
           layout="responsive"
           className="rounded"
         />
-        {!isItemSold && item.isReopen && (
+        {isOpenSoon && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {(!isItemSold && item.isReopen) || (isItemSold && item.isReopen && checkIsBeforeThanLaunchAt.length > 0) ? (
+        {isOpenSoon || isReOpen ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
         ) : (
           <>
-            {!isItemSold && (
+            {!isTempSold && (
               <CartBtn onClick={goToCartSheet}>
                 <SVGIcon name="cartBtn" />
               </CartBtn>
@@ -263,7 +267,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        {!isItemSold && !item.isReopen && (
+        {(!isItemSold || !isReOpen) && (
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%

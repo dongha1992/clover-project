@@ -11,6 +11,9 @@ import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { pipe, groupBy } from '@fxts/core';
 import { Obj, ISearchReviews } from '@model/index';
+import { SET_ALERT } from '@store/alert';
+import { useSelector } from 'react-redux';
+import { userForm } from '@store/user';
 
 export interface IMergedReview {
   id: number;
@@ -28,6 +31,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   const dispatch = useDispatch();
   const { searchReviews, searchReviewImages } = reviews;
   const hasReivew = searchReviewImages.length !== 0;
+  const { me } = useSelector(userForm);
 
   const idByReviewImg: Obj = pipe(
     searchReviewImages,
@@ -58,6 +62,16 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   };
 
   const goToWriteReview = () => {
+    if (!me) {
+      return dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
+        })
+      );
+    }
     router.push(`/mypage/review/write/${menuId}`);
   };
 

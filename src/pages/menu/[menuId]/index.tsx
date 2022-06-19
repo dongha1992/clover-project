@@ -178,8 +178,13 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const renderBottomContent = () => {
     switch (selectedTab) {
-      case '/menu/detail/review':
+      case '/menu/detail/review': {
+        if (isReOpen) {
+          return;
+        }
         return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
+      }
+
       case '/menu/detail/faq':
         return <DetailBottomFAQ menuFaq={menuDetail?.menuFaq!} />;
       default:
@@ -272,25 +277,27 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               )}
             </div>
           </MenuNameWrapper>
-          <TextB2R padding="0 0 16px 0" color={theme.greyScale65}>
+          <TextB2R padding="0 16px 0" color={theme.greyScale65}>
             {menuDetail.summary}
           </TextB2R>
           <PriceAndCouponWrapper>
-            <PriceWrapper>
-              <OriginPrice>
-                <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                  {getFormatPrice(String(getMenuDetailPrice().price))}원
-                </TextH6B>
-              </OriginPrice>
-              <DiscountedPrice>
-                <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
-                <TextH3B padding={'0 0 0 4px'}>
-                  {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
-                  {menuDetail.type === 'SUBSCRIPTION' && '~'}
-                </TextH3B>
-              </DiscountedPrice>
-            </PriceWrapper>
-            {!isTempSold && (
+            {(!isTempSold || !isReOpen) && (
+              <PriceWrapper>
+                <OriginPrice>
+                  <TextH6B color={theme.greyScale25} textDecoration=" line-through">
+                    {getFormatPrice(String(getMenuDetailPrice().price))}원
+                  </TextH6B>
+                </OriginPrice>
+                <DiscountedPrice>
+                  <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
+                  <TextH3B padding={'0 0 0 4px'}>
+                    {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
+                    {menuDetail.type === 'SUBSCRIPTION' && '~'}
+                  </TextH3B>
+                </DiscountedPrice>
+              </PriceWrapper>
+            )}
+            {(!isTempSold || !isReOpen) && (
               <>
                 {coupons?.length! > 0 ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
@@ -308,6 +315,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               </>
             )}
           </PriceAndCouponWrapper>
+          <BorderLine height={1} margin="16px 0 0 0" />
           {menuDetail.type !== 'SUBSCRIPTION' && menuDetail.type === 'SALAD' && (
             <NutritionInfo>
               <NutritionInfoWrapper>
@@ -348,7 +356,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
           )}
         </MenuDetailWrapper>
         <ReviewContainer>
-          {reviews?.searchReviewImages?.length! > 0 && (
+          {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen && (
             <ReviewWrapper>
               <ReviewHeader>
                 <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
@@ -422,8 +430,6 @@ const MenuNameWrapper = styled.div`
 const PriceAndCouponWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  padding-bottom: 16px;
-  border-bottom: 1px solid ${theme.greyScale6};
 `;
 
 const PriceWrapper = styled.div`
