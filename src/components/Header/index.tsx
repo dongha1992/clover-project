@@ -97,7 +97,7 @@ const Header = () => {
       '/subscription/register': '구독하기',
       '/subscription/register/entire-diet': '전체 식단 정보',
       '/mypage/subscription': '구독관리',
-      '/subscription/detail': '구독상세',
+      '/subscription/[detailId]': '구독상세',
     };
 
     const title = headerTitleMap[currentPath];

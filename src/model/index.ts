@@ -1294,6 +1294,7 @@ export interface IGetOrders {
   firstDeliveryDate?: string;
   lastDeliveryDate?: string;
   currentDeliveryDate?: string;
+  subscriptionMenuId?: number;
 }
 export interface IOrderDeliverie {
   id: number;

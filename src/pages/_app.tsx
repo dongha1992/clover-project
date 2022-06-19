@@ -27,7 +27,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
+import { INIT_USER, SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
 declare global {
@@ -68,8 +68,9 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 
   const authCheck = async () => {
     try {
+      const token = await getCookie({ name: 'acstk' });
       // accesstoken이 있을때 로그인
-      if (getCookie({ name: 'acstk' })) {
+      if (token) {
         const { data } = await userProfile();
         if (data.code === 200) {
           data.data.nickName ??= data.data.name;
@@ -82,6 +83,8 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           }
         }
       } else {
+        // 토큰이 없으면 먼저 유저 정보 초기화
+        dispatch(INIT_USER());
         // accesstoken이 없고 자동로그인을 체크했을때 로그인
         if (isAutoLogin === 'Y') {
           const { data } = await userProfile();

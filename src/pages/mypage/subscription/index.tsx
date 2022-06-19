@@ -1,6 +1,5 @@
 import { getOrdersApi } from '@api/order';
 import { StickyTab } from '@components/Shared/TabList';
-import { IGetOrders } from '@model/index';
 import { FixedTab } from '@styles/theme';
 import { cloneDeep } from 'lodash-es';
 import dynamic from 'next/dynamic';
@@ -43,10 +42,14 @@ const SubscriptionManagementPage = () => {
         setSubscribingLength(ing.length);
         setSubsCompleteLength(complete.length);
       },
+      onError: () => {
+        router.replace('/onboarding');
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       staleTime: 0,
       cacheTime: 0,
+      retry: false,
     }
   );
 
