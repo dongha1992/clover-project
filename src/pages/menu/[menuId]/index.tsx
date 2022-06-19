@@ -115,6 +115,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
     {
       onSuccess: (data) => {},
+      enabled: !!me,
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -246,9 +247,6 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     };
   }, []);
 
-  if (couponsLoading) {
-    return <div>로딩중</div>;
-  }
   return (
     <Container>
       <ImgWrapper>
