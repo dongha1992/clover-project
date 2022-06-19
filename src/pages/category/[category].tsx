@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { useRouter } from 'next/router';
 import { IAllMenus } from '@components/Pages/Category/SingleMenu';
+import { cloneDeep } from 'lodash-es';
 
 /* TODO: 로그인 체크 알림신청 */
 /* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
@@ -42,7 +43,7 @@ const CategoryPage = () => {
     SANDWICH: [],
   });
   const [isFilter, setIsFilter] = useState<boolean>(false);
-
+  const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
   const router = useRouter();
 
   const dispatch = useDispatch();
@@ -50,7 +51,8 @@ const CategoryPage = () => {
 
   const isAllMenu = type === 'all';
 
-  // const hasFilter = filter.filter((item) => item).length !== 0 || order.length > 0;
+  const hasFilter = categoryFilters?.filter?.filter((item) => item).length !== 0 || categoryFilters?.order.length > 0;
+
   const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
   const types = typeof formatType === 'string' ? formatType : formatType.join(',');
 
@@ -95,22 +97,30 @@ const CategoryPage = () => {
       enabled: !!type,
       onError: () => {},
       onSuccess: (data) => {
-        reorderMenuList(data);
+        const reOrdered = data?.sort((a: any, b: any) => {
+          return a.isSold - b.isSold;
+        });
+        checkIsFiltered(reOrdered);
+        setDefaultMenus(reOrdered);
       },
     }
   );
-  const reorderMenuList = (menuList: IMenus[]) => {
-    const reordered = menuList?.sort((a: any, b: any) => {
-      return a.isSold - b.isSold;
-    });
+  const checkIsFiltered = (menuList: IMenus[]) => {
+    if (isFilter) {
+      const filered = filteredMenus(menuList);
+      checkIsAllMenus(filered!);
+    } else {
+      checkIsAllMenus(menuList);
+    }
+  };
 
+  const checkIsAllMenus = (menuList: IMenus[]) => {
     if (isAllMenu) {
-      const grouped = groupByMenu(reordered, 'type');
-
+      const grouped = groupByMenu(menuList, 'type');
       setAllMenus({ ...grouped });
       setMenus([]);
     } else {
-      setMenus(reordered);
+      setMenus(menuList);
       setAllMenus({});
     }
   };
@@ -131,12 +141,53 @@ const CategoryPage = () => {
     }, {});
   };
 
-  useEffect(() => {
-    setIsFilter(true);
-    console.log(categoryFilters?.order, categoryFilters?.filter, 'order, filter');
-  }, [categoryFilters?.order, categoryFilters?.filter]);
+  const filteredMenus = (menuList: IMenus[]) => {
+    let copiedMenuList = cloneDeep(menuList);
+    const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
+    if (hasCategory) {
+      copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
+    }
 
-  console.log(isFilter);
+    switch (categoryFilters?.order) {
+      case '': {
+        return menuList;
+      }
+      case 'ORDER_COUNT_DESC': {
+        return copiedMenuList.sort((a, b) => a.orderCount - b.orderCount);
+      }
+      case 'LAUNCHED_DESC': {
+        return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
+      }
+      case 'PRICE_DESC': {
+        return getPriceOrder(copiedMenuList, 'max');
+      }
+      case 'PRICE_ASC': {
+        return getPriceOrder(copiedMenuList, 'min');
+      }
+      case 'REVIEW_COUNT_DESC': {
+        return copiedMenuList.sort((a, b) => a.reviewCount - b.reviewCount);
+      }
+    }
+  };
+
+  const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
+    const mapped = list.map((menu: IMenus) => {
+      const prices = menu?.menuDetails?.map((item) => item.price);
+      return { ...menu, [order]: Math[order](...prices) };
+    });
+
+    return mapped.sort((a: any, b: any) => {
+      const isMin = order === 'min';
+      return isMin ? a[order] - b[order] : b[order] - a[order];
+    });
+  };
+
+  useEffect(() => {
+    if (categoryFilters?.order || categoryFilters?.filter) {
+      setIsFilter(true);
+      checkIsFiltered(defaultMenus!);
+    }
+  }, [categoryFilters, isFilter]);
 
   if (isLoading) {
     return <div>로딩 중</div>;
