@@ -46,23 +46,43 @@ const CategoryPage = () => {
   const router = useRouter();
 
   const dispatch = useDispatch();
-  const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+  const { categoryFilters, type } = useSelector(filterSelector);
 
   const isAllMenu = type === 'all';
 
-  const hasFilter = filter.filter((item) => item).length !== 0 || order.length > 0;
+  // const hasFilter = filter.filter((item) => item).length !== 0 || order.length > 0;
   const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
   const types = typeof formatType === 'string' ? formatType : formatType.join(',');
 
+  // const { error: menuError, isLoading } = useQuery(
+  //   ['getMenus', type, order, filter],
+  //   async ({ queryKey }) => {
+  //     const params = {
+  //       categories: filter.join(','),
+  //       menuSort: order,
+  //       type: types,
+  //     };
+
+  //     const { data } = await getMenusApi(params);
+  //     return data.data;
+  //   },
+  //   {
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     enabled: !!hasFilter || !!type,
+  //     onError: () => {},
+  //     onSuccess: (data) => {
+  //       reorderMenuList(data);
+  //     },
+  //   }
+  // );
+
   const { error: menuError, isLoading } = useQuery(
-    ['getMenus', type, order, filter],
+    ['getMenus', type],
     async ({ queryKey }) => {
       const params = {
-        categories: filter.join(','),
-        menuSort: order,
+        categories: '',
+        menuSort: '',
         type: types,
       };
 
@@ -72,14 +92,13 @@ const CategoryPage = () => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      enabled: !!hasFilter || !!type,
+      enabled: !!type,
       onError: () => {},
       onSuccess: (data) => {
         reorderMenuList(data);
       },
     }
   );
-
   const reorderMenuList = (menuList: IMenus[]) => {
     const reordered = menuList?.sort((a: any, b: any) => {
       return a.isSold - b.isSold;
@@ -114,8 +133,8 @@ const CategoryPage = () => {
 
   useEffect(() => {
     setIsFilter(true);
-    console.log(order, filter, 'order, filter');
-  }, [order, filter]);
+    console.log(categoryFilters?.order, categoryFilters?.filter, 'order, filter');
+  }, [categoryFilters?.order, categoryFilters?.filter]);
 
   console.log(isFilter);
 
