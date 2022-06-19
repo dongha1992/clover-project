@@ -8,8 +8,8 @@ import router from 'next/router';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { SpotDetailEventTooltip } from '@components/Shared/Tooltip';
-import { postSpotLike, deleteSpotLike, getSpotLike } from '@api/spot';
-import { SET_SPOT_LIKED, INIT_SPOT_LIKED } from '@store/spot';
+import { postSpotLike, deleteSpotLike, getSpotLike, getSpotDetail } from '@api/spot';
+import { SET_SPOT_LIKED, INIT_SPOT_LIKED, SPOT_ITEM } from '@store/spot';
 import { userForm } from '@store/user';
 import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
@@ -17,11 +17,14 @@ import { SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
+import { useQuery } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
-  const { isLoginSuccess } = useSelector(userForm);
+  const { isLoginSuccess, me } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupId } = useSelector(spotSelector);
   const [spotLike, setSpotLike] = useState(spotDetail?.liked);
@@ -166,45 +169,68 @@ const SpotDetailBottom = () => {
     }
   };
 
-  useEffect(() => {
-    const spotLikeData = async () => {
-      try {
-        const { data } = await getSpotLike(spotDetail?.id!);
-        setSpotLike(data.data.liked);
-        if (data.data.liked) {
-          dispatch(SET_SPOT_LIKED());
-        } else {
-          dispatch(INIT_SPOT_LIKED());
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  const {
+    data,
+    error: spotError,
+    isLoading,
+  } = useQuery(
+    'getSpotDetail',
+    async () => {
+      const { data } = await getSpotDetail(spotDetail?.id!);
 
-    spotLikeData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spotDetail, spotDetail?.id, spotLike]);
+      return data?.data;
+    },
+    {
+      onSuccess: (data) => {
+        dispatch(SPOT_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!spotDetail?.id,
+    }
+  );
+
+  const { mutate: mutatePostSpotLike } = useMutation(
+    async () => {
+      const { data } = await postSpotLike(spotDetail?.id!);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getSpotDetail');
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+
+  const { mutate: mutateDeleteSpotLike } = useMutation(
+    async () => {
+      const { data } = await deleteSpotLike(spotDetail?.id!);
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getSpotDetail');
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
 
   // 좋아요 버튼
   const hanlderLike = async () => {
-    if (isLoginSuccess) {
-      try {
-        if (!spotLike) {
-          const { data } = await postSpotLike(spotDetail?.id!);
-          if (data.code === 200) {
-            dispatch(SET_SPOT_LIKED());
-            setSpotLike(true);
-          }
-        } else {
-          const { data } = await deleteSpotLike(spotDetail?.id!);
-          if (data.code === 200) {
-            dispatch(INIT_SPOT_LIKED());
-            setSpotLike(false);
-          }
-        }
-      } catch (e) {
-        console.error(e);
+    if (me) {
+      if (spotDetail?.liked) {
+        mutateDeleteSpotLike();
+      } else {
+        mutatePostSpotLike();
       }
+  
     } else {
       const TitleMsg = `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`;
       dispatch(
