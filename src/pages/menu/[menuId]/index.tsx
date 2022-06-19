@@ -281,7 +281,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             {menuDetail.summary}
           </TextB2R>
           <PriceAndCouponWrapper>
-            {(!isTempSold || !isReOpen) && (
+            {!isTempSold && !isReOpen && (
               <PriceWrapper>
                 <OriginPrice>
                   <TextH6B color={theme.greyScale25} textDecoration=" line-through">
@@ -297,7 +297,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                 </DiscountedPrice>
               </PriceWrapper>
             )}
-            {(!isTempSold || !isReOpen) && (
+            {!isTempSold && !isReOpen && (
               <>
                 {coupons?.length! > 0 ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
