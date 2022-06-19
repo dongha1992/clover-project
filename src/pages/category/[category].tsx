@@ -42,7 +42,7 @@ const CategoryPage = () => {
     WRAP: [],
     SANDWICH: [],
   });
-  const [isFilter, setIsFilter] = useState<boolean>(false);
+  // const [isFilter, setIsFilter] = useState<boolean>(false);
   const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
   const router = useRouter();
 
@@ -51,33 +51,10 @@ const CategoryPage = () => {
 
   const isAllMenu = type === 'all';
 
-  const hasFilter = categoryFilters?.filter?.filter((item) => item).length !== 0 || categoryFilters?.order.length > 0;
+  const isFilter = categoryFilters?.order || categoryFilters?.filter;
 
   const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
   const types = typeof formatType === 'string' ? formatType : formatType.join(',');
-
-  // const { error: menuError, isLoading } = useQuery(
-  //   ['getMenus', type, order, filter],
-  //   async ({ queryKey }) => {
-  //     const params = {
-  //       categories: filter.join(','),
-  //       menuSort: order,
-  //       type: types,
-  //     };
-
-  //     const { data } = await getMenusApi(params);
-  //     return data.data;
-  //   },
-  //   {
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     enabled: !!hasFilter || !!type,
-  //     onError: () => {},
-  //     onSuccess: (data) => {
-  //       reorderMenuList(data);
-  //     },
-  //   }
-  // );
 
   const { error: menuError, isLoading } = useQuery(
     ['getMenus', type],
@@ -97,14 +74,19 @@ const CategoryPage = () => {
       enabled: !!type,
       onError: () => {},
       onSuccess: (data) => {
-        const reOrdered = data?.sort((a: any, b: any) => {
-          return a.isSold - b.isSold;
-        });
+        const reOrdered = checkIsSold(data);
         checkIsFiltered(reOrdered);
         setDefaultMenus(reOrdered);
       },
     }
   );
+
+  const checkIsSold = (menuList: IMenus[]) => {
+    return menuList?.sort((a: any, b: any) => {
+      return a.isSold - b.isSold;
+    });
+  };
+
   const checkIsFiltered = (menuList: IMenus[]) => {
     if (isFilter) {
       const filered = filteredMenus(menuList);
@@ -144,28 +126,35 @@ const CategoryPage = () => {
   const filteredMenus = (menuList: IMenus[]) => {
     let copiedMenuList = cloneDeep(menuList);
     const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
+
     if (hasCategory) {
       copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
     }
 
-    switch (categoryFilters?.order) {
-      case '': {
-        return menuList;
-      }
-      case 'ORDER_COUNT_DESC': {
-        return copiedMenuList.sort((a, b) => a.orderCount - b.orderCount);
-      }
-      case 'LAUNCHED_DESC': {
-        return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
-      }
-      case 'PRICE_DESC': {
-        return getPriceOrder(copiedMenuList, 'max');
-      }
-      case 'PRICE_ASC': {
-        return getPriceOrder(copiedMenuList, 'min');
-      }
-      case 'REVIEW_COUNT_DESC': {
-        return copiedMenuList.sort((a, b) => a.reviewCount - b.reviewCount);
+    if (!categoryFilters?.order) {
+      return copiedMenuList;
+    } else {
+      switch (categoryFilters?.order) {
+        case '': {
+          return menuList;
+        }
+        case 'ORDER_COUNT_DESC': {
+          return copiedMenuList.sort((a, b) => b.orderCount - a.orderCount);
+        }
+        case 'LAUNCHED_DESC': {
+          return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
+        }
+        case 'PRICE_DESC': {
+          return getPriceOrder(copiedMenuList, 'max');
+        }
+        case 'PRICE_ASC': {
+          return getPriceOrder(copiedMenuList, 'min');
+        }
+        case 'REVIEW_COUNT_DESC': {
+          return copiedMenuList.sort((a, b) => b.reviewCount - a.reviewCount);
+        }
+        default:
+          return menuList;
       }
     }
   };
@@ -184,10 +173,10 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (categoryFilters?.order || categoryFilters?.filter) {
-      setIsFilter(true);
+      // setIsFilter(true);
       checkIsFiltered(defaultMenus!);
     }
-  }, [categoryFilters, isFilter]);
+  }, [categoryFilters]);
 
   if (isLoading) {
     return <div>로딩 중</div>;
