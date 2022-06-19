@@ -1,7 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useCallback } from 'react';
+import styled, { css } from 'styled-components';
 import { TextB3R, TextH6B, TextH7B } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
+import { getMenuOptionPrice } from '@utils/menu/getMenuDisplayPrice';
+import { IMenuDetails } from '@model/index';
 
 type TProps = {
   option: any;
@@ -10,34 +12,52 @@ type TProps = {
 };
 
 const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
-  const getMenuOptionPrice = () => {
-    const price = option.price;
-    const discount = Math.floor((option.discountPrice / option.price) * 100);
-    const discountedPrice = option.price - option.discountPrice;
-    return { price, discount, discountedPrice };
+  const { discount, discountedPrice, price } = getMenuOptionPrice(option);
+
+  const messageRender = () => {
+    switch (true) {
+      case option.isSold: {
+        return <TextH7B color={theme.greyScale25}>품절</TextH7B>;
+      }
+      case option.personalMaximum: {
+        return <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>;
+      }
+      default: {
+        return ``;
+      }
+    }
   };
 
   return (
-    <OptionList onClick={() => selectMenuHandler({ ...option, menuId })}>
+    <OptionList
+      onClick={() => {
+        if (option.isSold) return;
+        selectMenuHandler({ ...option, menuId });
+      }}
+      isSold={option.isSold}
+    >
       <FlexBetween>
         <TextB3R>{option.name}</TextB3R>
-        <TextH7B>{option.limit}</TextH7B>
+        {option.personalMaximum && (
+          <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>
+        )}
+        {option.isSold && <TextH7B color={theme.greyScale25}>품절</TextH7B>}
       </FlexBetween>
       <FlexRowStart padding="0 0 4px 0">
-        <TextH7B color={theme.brandColor}>{option.badge}</TextH7B>
+        {/* <TextH7B color={theme.brandColor}>{option.personalMaximum}</TextH7B> */}
       </FlexRowStart>
       <FlexRow>
-        <TextH6B color={theme.brandColor}>{getMenuOptionPrice().discount}%</TextH6B>
-        <TextH6B padding="0 4px">{getMenuOptionPrice().discountedPrice}원</TextH6B>
-        <TextH6B color={theme.greyScale65} textDecoration="line-through">
-          {getMenuOptionPrice().price}원
+        <TextH6B color={!option.isSold ? theme.brandColor : theme.greyScale25}>{discount}%</TextH6B>
+        <TextH6B padding="0 4px">{discountedPrice.toLocaleString()}원</TextH6B>
+        <TextH6B color={theme.greyScale25} textDecoration="line-through">
+          {price.toLocaleString()}원
         </TextH6B>
       </FlexRow>
     </OptionList>
   );
 };
 
-const OptionList = styled.li`
+const OptionList = styled.li<{ isSold?: boolean }>`
   display: flex;
   flex-direction: column;
   list-style-type: none;
@@ -46,6 +66,15 @@ const OptionList = styled.li`
   background-color: white;
   cursor: pointer;
 
+  ${({ isSold }) => {
+    if (isSold) {
+      return css`
+        color: ${theme.greyScale25};
+      `;
+    } else if (!isSold) {
+      return css``;
+    }
+  }}
   :hover {
     background-color: #d9d9d9;
   }

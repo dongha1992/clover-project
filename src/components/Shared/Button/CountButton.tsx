@@ -47,6 +47,7 @@ const Container = styled.div<{ isSold?: boolean }>`
   border: 1px solid #dedede;
   box-sizing: border-box;
   border-radius: 32px;
+  cursor: pointer;
 `;
 
 const Wrapper = styled.div`

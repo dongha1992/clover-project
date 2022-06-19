@@ -98,6 +98,11 @@ export interface IUser {
   recommendCode: boolean;
   joinType: string;
   createdAt: string;
+  marketingEmailReceived?: boolean;
+  marketingPushReceived?: boolean;
+  marketingSmsReceived?: boolean;
+  notiPushReceived?: boolean;
+  primePushReceived?: boolean;
 }
 
 export interface ILogin {
@@ -1653,6 +1658,16 @@ export interface IMenuImage {
   url: string;
   width: number;
 }
+export interface IDetailImage {
+  createdAt: string;
+  height: number;
+  id: number;
+  name: string;
+  originalName: string;
+  size: number;
+  url: string;
+  width: number;
+}
 
 export interface IMenuDetails {
   id: number;
@@ -1662,15 +1677,49 @@ export interface IMenuDetails {
   main: boolean;
   dailyMaximum?: number;
   isSold?: number;
+  calorie: number;
+  thumbnail?: IDetailImage;
+  protein: number;
+  personalMaximum?: number;
 }
 
+export interface IMenuDetail {
+  badgeMessage: string;
+  category: string;
+  constitutionTag: string;
+  description: string;
+  id: number;
+  isReopen: boolean;
+  isSold: boolean;
+  menuDetails: IMenuDetails[];
+  menuSort: number;
+  likeCount: number;
+  name: string;
+  openedAt: string;
+  orderCount: number;
+  priority: number;
+  thumbnail: string;
+  liked: boolean;
+  type: string;
+  subscriptionDeliveries: string[];
+  subscriptionPeriods: string[];
+  subscriptionDeliveryCycle: string;
+  reopenNotificationRequested: boolean;
+  reopenMessage: string;
+}
+
+export interface IMenuDetailsResponse {
+  data: IMenuDetail;
+  message: string;
+  code: number;
+}
 export interface IMenus {
   id: number;
   name: string;
   type: string;
   category: string;
-  description: string;
-  thumbnail: string;
+  summary: string;
+  thumbnail: IMenuImage[];
   badgeMessage: string;
   launchedAt: string;
   liked: boolean;
@@ -1688,8 +1737,54 @@ export interface IMenus {
   isReopen?: boolean;
   isSold?: boolean;
   reopenNotificationRequested: boolean;
+  subscriptionDeliveryCycle?: string;
+  menuFaq: IMenuFaq;
+  productInfoNotis: IProductInfo[];
+  nutritionInfoNotis: INutitionInfo[];
+  deliveryMethods: IMenuImage[];
+  description: string;
 }
 
+export interface INutitionInfo {
+  carbohydrates: string;
+  cholesterol: string;
+  etc: string;
+  fat: string;
+  name: string;
+  nutritionInfo: string;
+  protein: string;
+  saturatedFat: string;
+  sodium: string;
+  sugars: string;
+  totalSugarsRatio: string;
+  transFat: string;
+}
+
+export interface IProductInfo {
+  allergens: string;
+  businessName: any;
+  foodType: string;
+  name: string;
+  packingMaterial: string;
+  precautions: string;
+  rawMaterial: string;
+  returnExchangePlace: string;
+  serviceCenterTel: string;
+  shelfLife: string;
+  storage: any;
+  weight: string;
+}
+
+interface IContents {
+  description: string;
+  title: string;
+}
+
+export interface IMenuFaq {
+  contents: IContents[];
+  id: number;
+  priority: number;
+}
 /* REVIEW */
 export interface IGetMenusResponse {
   code: number;
@@ -1966,6 +2061,36 @@ export interface IPromotionRequest {
   reward: TReward | null;
 }
 
+export interface IGetPromotionRequest {
+  type: string;
+}
+
+export interface IPromotion {
+  id: number;
+  type: string;
+  reward: string;
+  name: string;
+  comment: string;
+  code: string;
+  maximum: number;
+  coupon: {
+    name: string;
+    descriptions: string[];
+    criteria: string;
+    value: number;
+    expiredDate: string;
+    isApp: false;
+    createdAt: string;
+  };
+  participationCount: number;
+  userParticipationCount: number;
+}
+
+export interface IMenuPromotionResponse {
+  code: number;
+  message: string;
+  data: { promotions: IPromotion[] };
+}
 /* SUBSCRIPTION */
 export interface IGetSubscription {
   id: number;

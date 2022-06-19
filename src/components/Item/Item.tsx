@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
@@ -21,10 +21,12 @@ import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import 'dayjs/locale/ko';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
-import { deleteNotificationApi } from '@api/menu';
+import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
-import cloneDeep from 'lodash-es/cloneDeep';
+import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
+import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
+
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
@@ -38,20 +40,18 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
-  const test: any = [];
-  const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+
+  const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
     async () => {
-      const { data } = await deleteNotificationApi({ menuId: item.id });
+      const { data } = await deleteNotificationApi(item.id);
     },
+
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          return previous.map((_item: IMenus) => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
             }
@@ -67,40 +67,93 @@ const Item = ({ item, isHorizontal }: TProps) => {
     }
   );
 
-  const { me } = useSelector(userForm);
-  const { menuDetails } = item;
-  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
+  /* TODO: 리팩토링 해야함, hook */
 
-  const checkIsAllSold: boolean = menuDetails
-    .filter((details) => details.main)
-    .every((item: IMenuDetails) => item.isSold);
-
-  const isItemSold = checkIsAllSold || item.isSold;
-
-  const checkIsSoon = (): string | boolean => {
-    let { openedAt } = item;
-
-    const today = dayjs();
-    const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
-
-    try {
-      if (isBeforeThanLaunchedAt) {
-        const { dayWithTime } = getCustomDate(new Date(openedAt));
-        return dayWithTime;
-      } else {
-        return false;
+  const { mutate: mutatePostMenuLike } = useMutation(
+    async () => {
+      const { data } = await postLikeMenus({ menuId: item.id });
+      if (data.code === 1032) {
+        alert(data.message);
       }
-    } catch (error) {
-      console.error(error);
+    },
+    {
+      onSuccess: async () => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
+        });
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
     }
-    return false;
-  };
+  );
 
-  const checkIsBeforeThanLaunchAt: string | boolean = checkIsSoon();
+  const { mutate: mutateDeleteMenuLike } = useMutation(
+    async () => {
+      const { data } = await deleteLikeMenus({ menuId: item.id });
+    },
+    {
+      onSuccess: async () => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
+        });
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+
+  const { me } = useSelector(userForm);
+  const { menuDetails, isReopen } = item;
+  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
+  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
+
+  const isTempSold = isItemSold && !isReopen;
+  const isOpenSoon = !isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+  const isReOpen = isItemSold && isReopen;
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    if (checkIsAllSold || checkIsSoon()) {
+    if (isItemSold || checkIsBeforeThanLaunchAt.length > 0) {
       return;
     }
 
@@ -112,11 +165,25 @@ const Item = ({ item, isHorizontal }: TProps) => {
     );
   };
 
-  const goToDetail = (item: IMenus) => {
-    if (checkIsAllSold || checkIsSoon() || item.isReopen) {
+  const menuLikeHandler = (e: any) => {
+    e.stopPropagation();
+    if (!me) {
+      goToLogin();
       return;
     }
 
+    if (item.liked) {
+      mutateDeleteMenuLike();
+    } else {
+      console.log('post');
+      mutatePostMenuLike();
+    }
+  };
+
+  const goToDetail = (item: IMenus) => {
+    // if (isItemSold || checkIsBeforeThanLaunchAt.length > 0 || item.isReopen) {
+    //   return;
+    // }
     dispatch(SET_MENU_ITEM(item));
     router.push(`/menu/${item.id}`);
   };
@@ -129,10 +196,10 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
     const { badgeMessage, isReopen, isSold } = item;
 
-    if (isItemSold) {
+    if (isTempSold) {
       return <Badge message="일시품절" />;
-    } else if (isSold && isReopen && checkIsBeforeThanLaunchAt) {
-      return <Badge message={`${checkIsSoon()}시 오픈`} />;
+    } else if (isOpenSoon) {
+      return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
       return <Badge message={badgeMap[badgeMessage]} />;
     } else {
@@ -140,16 +207,20 @@ const Item = ({ item, isHorizontal }: TProps) => {
     }
   };
 
+  const goToLogin = () => {
+    return dispatch(
+      SET_ALERT({
+        alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
+        onSubmit: () => router.push('/onboarding'),
+        closeBtnText: '취소',
+      })
+    );
+  };
+
   const goToReopen = (e: any) => {
     e.stopPropagation();
     if (!me) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
-          onSubmit: () => router.push('/onboarding'),
-          closeBtnText: '취소',
-        })
-      );
+      goToLogin();
       return;
     }
 
@@ -164,25 +235,25 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail}
+          src={item.thumbnail[0]?.url ? IMAGE_S3_URL + item.thumbnail[0]?.url : IMAGE_ERROR}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
           layout="responsive"
           className="rounded"
         />
-        {isItemSold && item.isReopen && (
+        {isReOpen && (
           <ForReopen>
             <TextH6B color={theme.white}>재오픈 알림받기</TextH6B>
           </ForReopen>
         )}
-        {!isItemSold && !item.isReopen ? (
+        {isReOpen || isOpenSoon ? (
           <ReopenBtn onClick={goToReopen}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
         ) : (
           <>
-            {!isItemSold && (
+            {!isTempSold && (
               <CartBtn onClick={goToCartSheet}>
                 <SVGIcon name="cartBtn" />
               </CartBtn>
@@ -197,23 +268,23 @@ const Item = ({ item, isHorizontal }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        {!isItemSold && !item.isReopen && (
+        {!isOpenSoon && !isReOpen && (
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%
             </TextH5B>
-            <TextH5B>{discountedPrice}원</TextH5B>
+            <TextH5B>{discountedPrice.toLocaleString()}원</TextH5B>
           </PriceWrapper>
         )}
         {!isHorizontal && (
           <>
             <DesWrapper>
-              <TextB3R color={theme.greyScale65}>{item.description.trim().slice(0, 30)}</TextB3R>
+              <TextB3R color={theme.greyScale65}>{item.summary.trim().slice(0, 30)}</TextB3R>
             </DesWrapper>
             <LikeAndReview>
-              <Like>
+              <Like onClick={menuLikeHandler}>
                 <SVGIcon name={item.liked ? 'like' : 'unlike'} />
-                <TextB3R>{item.likeCount}</TextB3R>
+                <TextB3R padding="2px 0 0 0">{item.likeCount}</TextB3R>
               </Like>
               <TextB3R>리뷰 {item.reviewCount}</TextB3R>
             </LikeAndReview>

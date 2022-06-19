@@ -144,7 +144,7 @@ const OrderPage = () => {
     subscription: false,
   });
 
-  const auth = getCookie({ name: 'refreshTokenObj' });
+  const auth = getCookie({ name: 'accessToken' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);

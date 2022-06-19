@@ -30,7 +30,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    router.back();
+    router.push('/');
   };
 
   const goToShare = () => {
@@ -52,7 +52,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet isMenu />,
+          content: <ShareSheet />,
         })
       );
     }
@@ -122,6 +122,7 @@ const BtnWrapper = styled.div`
   align-items: center;
   .share {
     padding-right: 27px;
+    cursor: pointer;
   }
 `;
 

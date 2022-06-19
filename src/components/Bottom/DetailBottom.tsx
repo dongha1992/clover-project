@@ -20,28 +20,107 @@ import { useRouter } from 'next/router';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
+import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
+import { Item } from '@components/Item';
 import { userForm } from '@store/user';
-/*TODO: Like 리덕스로 받아서 like + 시 api 콜 */
-/*TODO: 재입고 알림등 리덕스에서 메뉴 정보 가져와야 함 */
+import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
+import { useMutation, useQueryClient } from 'react-query';
+import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
+import { filterSelector } from '@store/filter';
+import { IMenuDetails, IMenuDetail, IMenus } from '@model/index';
+import { isEmpty } from 'lodash-es';
+
+interface IMenuStatus {
+  isItemSold: boolean | undefined;
+  checkIsBeforeThanLaunchAt: string | boolean;
+}
 
 const DetailBottom = () => {
   const router = useRouter();
-  const [menuDetailId, setMenuDetailId] = useState<number>();
+  const queryClient = useQueryClient();
+
   const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
   const [subsDiscount, setSubsDiscount] = useState<string>();
-  const [tempIsLike, setTempIsLike] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
+
   const { isTimerTooltip } = useSelector(orderForm);
-  const { menuItem } = useSelector(menuSelector);
+  const {
+    menuItem: { id },
+  } = useSelector(menuSelector);
+  const { me } = useSelector(userForm);
+
   const deliveryType = checkTimerLimitHelper();
   const { isLoginSuccess } = useSelector(userForm);
 
-  useEffect(() => {
-    if (router.isReady) {
-      setMenuDetailId(Number(router.query.menuId));
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(id!);
+
+      return data?.data;
+    },
+
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
     }
-  }, [router.isReady]);
+  );
+
+  const { mutate: mutatePostMenuLike } = useMutation(
+    async () => {
+      const { data } = await postLikeMenus({ menuId: menuDetail?.id! });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getMenuDetail');
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+
+  const { mutate: mutateDeleteMenuLike } = useMutation(
+    async () => {
+      const { data } = await deleteLikeMenus({ menuId: menuDetail?.id! });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getMenuDetail');
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
+  const { mutate: mutateDeleteNotification } = useMutation(
+    async () => {
+      const { data } = await deleteNotificationApi(menuDetail?.id!);
+    },
+    {
+      onSuccess: async () => {
+        showToast({ message: '알림을 취소했어요!' });
+        await queryClient.refetchQueries('getMenuDetail');
+      },
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
 
   useEffect(() => {
     const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
@@ -52,25 +131,6 @@ const DetailBottom = () => {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
     }
   }, []);
-
-  const {
-    data: menuDetail,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getMenuDetail'],
-    async () => {
-      const { data } = await getMenuDetailApi(menuDetailId!);
-      return data.data;
-    },
-
-    {
-      onSuccess: (data) => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!menuDetailId,
-    }
-  );
 
   useEffect(() => {
     if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
@@ -88,56 +148,95 @@ const DetailBottom = () => {
     }
   }, [menuDetail]);
 
-  // const tempStatus = 'isSoldout';
-  const tempStatus = '';
-  const tempNotiOff = false;
-  const isAlreadyStockNoti = false;
+  useEffect(() => {
+    return () => hideToast();
+  }, []);
 
-  const goToDib = useCallback(() => {
-    setTempIsLike((prev) => !prev);
-  }, [tempIsLike]);
+  const goToLike = () => {
+    if (!me) {
+      goToLogin();
+      return;
+    }
+    if (menuDetail?.liked) {
+      mutateDeleteMenuLike();
+    } else {
+      mutatePostMenuLike();
+    }
+  };
 
-  const buttonStatusRender = useCallback((status: string) => {
-    switch (status) {
-      case 'isSoldout': {
-        return '일시품절·재입고 알림받기';
+  const buttonStatusRender = (menuDetail: IMenuDetail) => {
+    const { isReopen, reopenNotificationRequested } = menuDetail!;
+    const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail || {});
+    const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+    const isOpenSoon = !isItemSold && isReopen;
+    const reOpenCondition = isOpenSoon || isReOpen;
+
+    switch (true) {
+      case isItemSold && !isReopen: {
+        return '재입고 예정이에요';
+      }
+      case reOpenCondition && !reopenNotificationRequested: {
+        return '오픈 알림 신청 받기';
+      }
+      case reOpenCondition && reopenNotificationRequested: {
+        return '오픈 알림 취소하기';
       }
       default: {
         return `장바구니 담기`;
       }
     }
-  }, []);
+  };
 
-  const goToRestockSetting = () => {};
+  const cartClickButtonHandler = (e: React.MouseEvent<HTMLElement>) => {
+    const { innerHTML } = e.target as HTMLDivElement;
+    const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail!);
 
-  const cartClickButtonHandler = () => {
-    if (!tempNotiOff) {
-      /* TODO: 이거 뭔지 확인 */
-      dispatch(SET_MENU_ITEM(menuItem));
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <CartSheet />,
-        })
-      );
-      return;
+    switch (innerHTML) {
+      case '재입고 예정이에요': {
+        return;
+      }
+      case '오픈 알림 신청 받기': {
+        if (!me) {
+          goToLogin();
+          return;
+        }
+        dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={menuDetail?.id!} isDetailBottom /> }));
+        return;
+      }
+      case '오픈 알림 취소하기': {
+        if (!me) {
+          goToLogin();
+          return;
+        }
+        mutateDeleteNotification();
+        return;
+      }
+      case '장바구니 담기': {
+        if (!isItemSold) {
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <CartSheet />,
+            })
+          );
+        }
+
+        return;
+      }
+      default: {
+        return;
+      }
     }
+  };
 
-    if (tempNotiOff) {
-      const restockMgs = '재입고 알림 신청을 위해 알림을 허용해주세요.';
-      dispatch(
-        SET_ALERT({
-          alertMessage: restockMgs,
-          onSubmit: () => {
-            goToRestockSetting();
-          },
-          submitBtnText: '설정 앱 이동',
-          closeBtnText: '취소',
-        })
-      );
-    } else {
-      const message = isAlreadyStockNoti ? '이미 재입고 알림 신청한 상품이에요!' : '재입고 알림 신청을 완료했어요!';
-      showToast({ message });
-    }
+  const goToLogin = () => {
+    return dispatch(
+      SET_ALERT({
+        alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
+      })
+    );
   };
 
   const subscriptionButtonHandler = () => {
@@ -145,21 +244,25 @@ const DetailBottom = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
     if (isLoginSuccess) {
-      router.push(`/subscription/set-info?menuId=${menuDetailId}&subsDeliveryType=${subsDeliveryType}`);
+      router.push(`/subscription/set-info?menuId=${menuDetail?.id}&subsDeliveryType=${subsDeliveryType}`);
     } else {
       router.push('/onboarding');
     }
   };
 
+  if (isLoading) {
+    return <div>로딩</div>;
+  }
+
   return (
     <Container>
       <Wrapper>
         <LikeWrapper>
-          <LikeBtn onClick={goToDib}>
-            <SVGIcon name={tempIsLike ? 'likeRed' : 'likeBlack'} />
+          <LikeBtn onClick={goToLike}>
+            <SVGIcon name={menuDetail?.liked ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
           <TextH5B color={theme.white} padding="0 0 0 4px">
-            {menuItem.likeCount ? menuItem.likeCount : 0}
+            {menuDetail?.likeCount || 0}
           </TextH5B>
         </LikeWrapper>
         <Col />
@@ -175,7 +278,7 @@ const DetailBottom = () => {
         ) : (
           <BtnWrapper onClick={cartClickButtonHandler}>
             <TextH5B color={theme.white} pointer>
-              {buttonStatusRender(tempStatus)}
+              {menuDetail && buttonStatusRender(menuDetail)}
             </TextH5B>
           </BtnWrapper>
         )}
@@ -221,6 +324,7 @@ const Wrapper = styled.div`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
+  width: 40px;
 `;
 
 const Col = styled.div`
@@ -234,11 +338,13 @@ const Col = styled.div`
 const BtnWrapper = styled.div`
   position: relative;
   width: 100%;
+  width: 400px;
   text-align: center;
 `;
 
 const LikeBtn = styled.div`
   display: flex;
+
   cursor: pointer;
   svg {
     margin-bottom: 3px;

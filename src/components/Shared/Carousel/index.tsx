@@ -8,7 +8,7 @@ import { SVGIcon } from '@utils/common';
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
   // images: IBanners[];
-  images: any[];
+  images: any[] | any;
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -46,11 +46,12 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
   };
 
   //temp
-  if (typeof images === 'string') {
-    images = [images];
-  }
+  // if (typeof images === 'string') {
+  //   images = [images];
+  // }
 
   /*TODO: menu에 reviews 어떻게 들어오는지 아직 모름, */
+
   return (
     <Container
       onMouseEnter={() => {
@@ -63,14 +64,14 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
       <Slider {...settings}>
         {images?.map((image: any, index: number) => {
           // temp
-          if (!image.imageUrl) {
-            image = {
-              imageUrl: image,
-            };
-          }
+          // if (!image.imageUrl) {
+          //   image = {
+          //     imageUrl: image,
+          //   };
+          // }
           return (
             <ImageWrapper
-              src={IMAGE_S3_URL + image.imageUrl}
+              src={`${IMAGE_S3_URL}${image.url ? image.url : image.imageUrl}`}
               alt="image"
               key={index}
               isLast={index === images.length + 1}

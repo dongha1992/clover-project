@@ -10,8 +10,8 @@ export const RADIO_CHECKBOX_MENU = [
   { id: 0, text: '추천 순', value: '' },
   { id: 1, text: '구매수 순', value: 'ORDER_COUNT_DESC' },
   { id: 2, text: '신제품 순', value: 'LAUNCHED_DESC' },
-  { id: 3, text: '가격 낮은 순', value: 'PRICE_DESC' },
-  { id: 4, text: '가격 높은 순', value: 'PRICE_ASC' },
+  { id: 3, text: '가격 낮은 순', value: 'PRICE_ASC' },
+  { id: 4, text: '가격 높은 순', value: 'PRICE_DESC' },
   { id: 5, text: '리뷰수 순', value: 'REVIEW_COUNT_DESC' },
 ];
 

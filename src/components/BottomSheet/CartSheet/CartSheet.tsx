@@ -17,12 +17,13 @@ import { calculateArrival, getCustomDate, checkTimerLimitHelper } from '@utils/d
 import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { Obj } from '@model/index';
+import { Obj, IMenus, IMenuDetails } from '@model/index';
 // import { UPDATE_CART_LIST } from '@store/cart';
 import { postCartsApi } from '@api/cart';
 
 import 'dayjs/locale/ko';
 import { menuSelector } from '@store/menu';
+import { SET_ALERT } from '@store/alert';
 
 dayjs.locale('ko');
 
@@ -38,10 +39,11 @@ interface ISelectedMenu {
   discountPrice: number;
   id: number;
   main: boolean;
-  menuId: number;
+  menuId?: number;
   name: string;
   price: number;
-  menuQuantity?: number;
+  quantity?: number;
+  personalMaximum?: number;
 }
 
 const CartSheet = () => {
@@ -77,50 +79,49 @@ const CartSheet = () => {
   /* TODO: axios 여러번 */
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
-      selectedMenus = [...selectedMenus, ...selectedMenus];
+      const reqBody = selectedMenus.map((item) => {
+        return {
+          menuId: menuItem.id,
+          menuDetailId: item.id,
+          quantity: item.quantity,
+          main: item.main,
+        };
+      });
 
-      // const reqBody = selectedMenus.map((item) => {
-      //   return {
-      //     menuId: item.menuId,
-      //     menuDetailId: item.id,
-      //     menuQuantity: item.menuQuantity || null,
-      //     main: item.main,
-      //   };
-      // });
-
-      const reqBody = [
-        {
-          menuDetailId: 110,
-          menuQuantity: 1,
-          menuId: 10,
-          main: true,
-        },
-        {
-          menuDetailId: 72,
-          menuQuantity: 1,
-          menuId: 9,
-          main: true,
-        },
-        {
-          menuDetailId: 73,
-          menuQuantity: 1,
-          menuId: 9,
-          main: true,
-        },
-      ];
+      // const reqBody = [
+      //   {
+      //     menuDetailId: 110,
+      //     menuQuantity: 1,
+      //     menuId: 10,
+      //     main: true,
+      //   },
+      //   {
+      //     menuDetailId: 72,
+      //     menuQuantity: 1,
+      //     menuId: 9,
+      //     main: true,
+      //   },
+      //   {
+      //     menuDetailId: 73,
+      //     menuQuantity: 1,
+      //     menuId: 9,
+      //     main: true,
+      //   },
+      // ];
 
       const result = checkAlreadyInCart();
       const { data } = await postCartsApi(reqBody);
+      console.log(data, 'data after cart');
     },
     {
-      onError: () => {},
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+      },
       onSuccess: async (message) => {
-        // if (message) {
-        // showToast({ message: '상품을 장바구니에 담았어요! 😍' });
-        // dispatch(INIT_BOTTOM_SHEET());
-        // await queryClient.refetchQueries('getCartList');
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        dispatch(INIT_BOTTOM_SHEET());
+        await queryClient.refetchQueries('getCartList');
         // dispatch(UPDATE_CART_LIST());
-        // }
       },
     }
   );
@@ -245,19 +246,19 @@ const CartSheet = () => {
     setRollingData(newRollingData);
   };
 
-  const selectMenuHandler = (menu: any) => {
+  const selectMenuHandler = (menu: IMenuDetails) => {
     if (!checkAlreadySelect(menu.id)) {
-      setSelectedMenus([...selectedMenus, menu]);
+      setSelectedMenus([...selectedMenus, { ...menu, quantity: 1 }]);
     } else {
       clickPlusButton(menu.id);
     }
   };
 
-  const getCalculateTotalPrice = useCallback(() => {
+  const getCalculateTotalPrice = () => {
     return selectedMenus.reduce((acc: number, cur: any) => {
-      return acc + cur.price;
+      return acc + (cur.price - cur.discountPrice) * cur.quantity;
     }, 0);
-  }, [selectedMenus]);
+  };
 
   const removeCartItemHandler = (id: number): void => {
     const newSelectedMenus = selectedMenus.filter((item: any) => item.id !== id);
@@ -289,6 +290,13 @@ const CartSheet = () => {
 
   const clickPlusButton = async (id: number, quantity?: number) => {
     /*TODO: 중복코드 */
+
+    const foundItem = selectedMenus.find((item) => item.id === id);
+
+    if (foundItem?.personalMaximum) {
+      if (foundItem?.personalMaximum < quantity!) return;
+    }
+
     const newSelectedMenus = selectedMenus.map((item: any) => {
       if (item.id === id) {
         if (item.limitQuantity && item.quantity > item.limitQuantity - 1) {
@@ -318,7 +326,7 @@ const CartSheet = () => {
     if (checkHasMainMenu()) {
       await mutateAddCartItem();
     } else {
-      showToast({ message: '필수옵션을 선택해주세요.' });
+      dispatch(SET_ALERT({ alertMessage: '필수옵션을 선택해주세요.' }));
     }
   };
 
@@ -336,6 +344,10 @@ const CartSheet = () => {
     }
   }, []);
 
+  useEffect(() => {
+    getCalculateTotalPrice();
+  }, [selectedMenus]);
+
   if (menuItem.length === 0) {
     return <div>로딩</div>;
   }
@@ -351,7 +363,7 @@ const CartSheet = () => {
             필수옵션
           </TextH5B>
           <Select placeholder="필수옵션" type={'main'}>
-            {menuItem?.menuDetails.map((option: any, index: number) => {
+            {menuItem?.menuDetails?.map((option: any, index: number) => {
               if (option.main) {
                 return (
                   <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
@@ -365,7 +377,7 @@ const CartSheet = () => {
             선택옵션
           </TextH5B>
           <Select placeholder="선택옵션" type={'optional'}>
-            {menuItem?.menuDetails.map((option: any, index: number) => {
+            {menuItem?.menuDetails?.map((option: any, index: number) => {
               if (!option.main) {
                 return (
                   <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
@@ -392,7 +404,7 @@ const CartSheet = () => {
       <OrderInfoContainer>
         <TotalSumContainer>
           <TextH5B>총 {selectedMenus.length}개</TextH5B>
-          <TextH5B>{getCalculateTotalPrice()}원</TextH5B>
+          <TextH5B>{getCalculateTotalPrice().toLocaleString()}원</TextH5B>
         </TotalSumContainer>
         <BorderLine height={1} margin="13px 0 10px 0" />
         <DeliveryInforContainer>

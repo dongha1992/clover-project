@@ -34,12 +34,9 @@ const LocationPage = () => {
   const addressRef = useRef<HTMLInputElement>(null);
   const [resultAddress, setResultAddress] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
-  const [isSearched, setIsSearched] = useState(false);
+  const [isSearched, setIsSearched] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [keyword, setKeyword] = useState<string>();
   const [isTyping, setIsTyping] = useState(false);
-  const [userLocation, setUserLocation] = useState('');
-  const [spotRegistration, setSpotRegistration] = useState<ISpotsDetail[]>([]);
 
   const userId = Number(me?.id);
 
@@ -65,7 +62,10 @@ const LocationPage = () => {
   }, []);
 
   useEffect(() => {
-    getSearchAddressResult();
+    if (page > 1) {
+      getSearchAddressResult();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
 
@@ -88,14 +88,12 @@ const LocationPage = () => {
           y: position.coords.latitude?.toString(),
           x: position.coords.longitude?.toString(),
         });
-        setUserLocation(data.documents[0].address_name);
         setCurrentLoc(data.documents[0].address_name);
       });
     }
   };
 
   const addressInputHandler = () => {
-    setKeyword(addressRef.current?.value);
     const keyword = addressRef.current?.value.length;
     setIsTyping(true);
     if (addressRef.current) {
@@ -110,14 +108,12 @@ const LocationPage = () => {
   const getSearchAddressResult = async () => {
     if (addressRef.current) {
       let query = addressRef.current?.value;
-      
       const params = {
         query,
         page: page,
       };
       try {
         let { data } = await searchAddressJuso(params);
-
         const list = data?.results.juso ?? [];
         setResultAddress((prevList) => [...prevList, ...list]);
         setTotalCount(data.results.common.totalCount);
@@ -128,7 +124,7 @@ const LocationPage = () => {
     }
   };
 
-  const getSearchAddress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const getSearchAddress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setResultAddress([]);
       getSearchAddressResult();
@@ -136,6 +132,13 @@ const LocationPage = () => {
   };
 
   const clearInputHandler = () => {
+    if (addressRef.current?.value.length! > 0) {
+      if (addressRef.current) {
+        addressRef.current.value = '';
+      };
+      setIsSearched(false);
+    };
+
     if (addressRef.current) {
       addressRef.current.value = '';
     }
@@ -195,7 +198,6 @@ const LocationPage = () => {
     };
     try {
       const { data } = await getRegistrationSearch(params);
-      setSpotRegistration(data.data.spotRegistrations);
 
       // query type 으로 각 타입별 스팟 신청 목록 선택
       const findRegisterList = data.data.spotRegistrations.find((i) => i.type === type);
@@ -285,61 +287,61 @@ const LocationPage = () => {
   return (
     <HomeContainer>
       <Wrapper>
-        <TextInput
-          name="input"
-          placeholder="도로명, 건물명 또는 지번으로 검색"
-          inputType="text"
-          svg="searchIcon"
-          eventHandler={addressInputHandler}
-          keyPressHandler={getSearchAddress}
-          ref={addressRef}
-        />
+        <SearchBarWrapper>
+          <TextInput
+            name="input"
+            placeholder="도로명, 건물명 또는 지번으로 검색"
+            inputType="text"
+            svg="searchIcon"
+            eventHandler={addressInputHandler}
+            keyPressHandler={getSearchAddress}
+            ref={addressRef}
+          />
+          {
+            addressRef.current?.value && (
+              <div className="removeSvg" onClick={clearInputHandler}>
+                <SVGIcon name="removeItem" />
+              </div>
+            )
+          }
+        </SearchBarWrapper>
+
         <CurrentLocBtn>
           <SVGIcon name="locationBlack" />
           <TextH6B pointer padding="0 0 0 4px" onClick={getGeoLocation}>
             현 위치로 설정하기
           </TextH6B>
         </CurrentLocBtn>
-        <ResultList>
-          {resultAddress.length > 0 && (
-            <>
-              <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
-              <CaseWrapper>
-                <FlexRow width="100%">
-                  <TextH6B>도로명주소 + 건물명</TextH6B>
-                </FlexRow>
-                <FlexRowStart padding="4px 0 0 0">
-                  <Tag padding="2px" width="8%" center>
-                    지번
-                  </Tag>
-                  <TextB3R margin="2px 0 0 4px">(우편번호)지번주소</TextB3R>
-                </FlexRowStart>
-              </CaseWrapper>
-              {resultAddress.map((address, index) => {
-                return (
-                  <AddressItem
-                    key={index}
-                    roadAddr={address.roadAddrPart1}
-                    bdNm={address.bdNm}
-                    jibunAddr={address.jibunAddr}
-                    zipNo={address.zipNo}
-                    onClick={() => goToSpotRegisterationDetailInfo(address)}
-                  />
-                );
-              })}
-            </>
-          )}
-          {
-          !resultAddress.length && 
-            isSearched && (
-              <NoResultWrapper>
-                <TextB2R center color={theme.greyScale65}>
-                {'검색 결과가 없어요. 😭\n입력한 주소를 다시 한 번 확인해 주세요.'}
-                </TextB2R>
-              </NoResultWrapper>
-            )
-          }
-        </ResultList>
+        {
+          isSearched && (
+            <ResultList>
+              {resultAddress.length > 0 ? (
+                <>
+                  <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
+                  {resultAddress.map((address, index) => {
+                    return (
+                      <AddressItem
+                        key={index}
+                        roadAddr={address.roadAddrPart1}
+                        bdNm={address.bdNm}
+                        jibunAddr={address.jibunAddr}
+                        zipNo={address.zipNo}
+                        onClick={() => goToSpotRegisterationDetailInfo(address)}
+                      />
+                    );
+                  })}
+                </>
+              ) : (
+                <NoResultWrapper>
+                  <TextB2R center color={theme.greyScale65}>
+                  {'검색 결과가 없어요. 😭\n입력한 주소를 다시 한 번 확인해 주세요.'}
+                  </TextB2R>
+                </NoResultWrapper>
+              )
+              }
+            </ResultList>
+          )
+        }
       </Wrapper>
     </HomeContainer>
   );
@@ -349,13 +351,21 @@ const Wrapper = styled.div`
   padding: 8px 0px 24px;
 `;
 
-const TextInputWrapper = styled.div`
+const SearchBarWrapper = styled.div`
   position: relative;
   .removeSvg {
     position: absolute;
-    right: 5%;
-    top: 32%;
+    right: 0;
+    top: 0;
+    margin: 15px 14px 0 0;
   }
+
+  // position: relative;
+  // .removeSvg {
+  //   position: absolute;
+  //   right: 5%;
+  //   top: 32%;
+  // }
 `;
 
 const CurrentLocBtn = styled.div`

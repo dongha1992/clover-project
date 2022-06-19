@@ -1,7 +1,7 @@
 import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { homePadding, bottomSheetButton } from '@styles/theme';
-import { TextH5B } from '@components/Shared/Text';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { RadioButton, Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { getSpotRegisterationsOption } from '@api/spot';
@@ -105,7 +105,13 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
                   onChange={() => registrationsOptionsHandler(items.value)}
                   isSelected={items.value === selectTab()?.value}
                 />
-                <TextH5B padding="0 0 0 8px">{items.name}</TextH5B>
+                {
+                  items.value === selectTab()?.value ? (
+                    <TextH5B padding="0 0 0 8px" onClick={() => registrationsOptionsHandler(items.value)}>{items.name}</TextH5B>
+                  ) : (
+                    <TextB2R padding="0 0 0 8px" onClick={() => registrationsOptionsHandler(items.value)}>{items.name}</TextB2R>
+                  )
+                }
               </Selected>
             );
           })}

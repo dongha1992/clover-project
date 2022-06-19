@@ -142,7 +142,7 @@ const SpotRegisterSheet = ({ items, type, recruited }: TPrams): JSX.Element => {
                 onClick={closeBottomSheet}
                 backgroundColor={theme.balck}
               >
-                설정하기
+                닫기
               </Button>
             ): (
               <ButtonGroup
