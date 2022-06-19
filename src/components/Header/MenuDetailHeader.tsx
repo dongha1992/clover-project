@@ -22,6 +22,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
   const { isMobile } = useSelector(commonSelector);
 
   const router = useRouter();
+  const { isSpot } = router.query;
 
   useEffect(() => {
     return () => {
@@ -30,7 +31,11 @@ const MenuDetailHeader = ({ title }: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    router.push('/');
+    if ( isSpot ) {
+      router.back();
+    } else {
+      router.push('/');
+    };
   };
 
   const goToShare = () => {

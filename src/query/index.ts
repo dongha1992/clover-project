@@ -1,6 +1,7 @@
 import { deleteSpotLike, postSpotLike } from "@api/spot";
 import { useMutation, useQueryClient } from "react-query";
 
+// 프코스팟 메인 페이지 좋아요 버튼
 export const useOnLike = (id: number, liked: boolean) => {
   const KEYS = ['POPULAR', 'NEW', 'EVENT'];
   const queryClient = useQueryClient();
