@@ -267,7 +267,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             {item.name.trim()}
           </TextB3R>
         </NameWrapper>
-        {(!isItemSold || !isReOpen) && (
+        {!isItemSold && !isReOpen && (
           <PriceWrapper>
             <TextH5B color={theme.brandColor} padding="0 4px 0 0">
               {discount}%

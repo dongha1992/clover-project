@@ -41,6 +41,7 @@ const CategoryPage = () => {
     WRAP: [],
     SANDWICH: [],
   });
+  const [isFilter, setIsFilter] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -86,6 +87,7 @@ const CategoryPage = () => {
 
     if (isAllMenu) {
       const grouped = groupByMenu(reordered, 'type');
+
       setAllMenus({ ...grouped });
       setMenus([]);
     } else {
@@ -109,6 +111,13 @@ const CategoryPage = () => {
       return obj;
     }, {});
   };
+
+  useEffect(() => {
+    setIsFilter(true);
+    console.log(order, filter, 'order, filter');
+  }, [order, filter]);
+
+  console.log(isFilter);
 
   if (isLoading) {
     return <div>로딩 중</div>;
