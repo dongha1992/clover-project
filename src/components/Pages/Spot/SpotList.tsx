@@ -50,7 +50,10 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     if (isSearch) {
       return;
     }
-    router.push(`/spot/detail/${id}`);
+    router.push({
+      pathname: `/spot/detail/${id}`,
+      query: { isSpot : true },
+    });
   };
 
   const orderHandler = (e: any): void => {
