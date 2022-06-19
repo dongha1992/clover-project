@@ -8,9 +8,9 @@ function AddressItem({ roadAddr, bdNm, jibunAddr, zipNo, onClick }: any) {
   return (
     <Container onClick={onClick}>
       <FlexRow width="100%">
-        <TextH6B>
+        <TextH5B>
           {roadAddr} {bdNm}
-        </TextH6B>
+        </TextH5B>
       </FlexRow>
       <FlexRowStart padding="4px 0 0 0">
         <Tag padding="2px" width="8%" center>

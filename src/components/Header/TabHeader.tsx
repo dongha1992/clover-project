@@ -33,6 +33,8 @@ const TabHeader = ({ title }: TProps) => {
     /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
     if (router.asPath === '/login/find-account/password' || router.asPath === '/login/find-account/email') {
       router.push('/login');
+    } else if (router.pathname.split('/').includes('detail')) {
+      router.push(`/menu/${router.query.menuId}`);
     } else {
       router.back();
     }
@@ -41,13 +43,18 @@ const TabHeader = ({ title }: TProps) => {
   const clickTabHandler = useCallback(
     (tabItem: any) => {
       setSelectedTab(tabItem.link);
-      router.push(`${tabItem.link}`);
+
+      if (router.query.menuId) {
+        router.push({ pathname: `${tabItem.link}`, query: { menuId: router.query.menuId } });
+      } else {
+        router.push(`${tabItem.link}`);
+      }
     },
     [router]
   );
 
   useEffect(() => {
-    if (router.isReady) setSelectedTab(router.asPath);
+    if (router.isReady) setSelectedTab(router.pathname);
   }, [router.isReady]);
 
   const mapper: Obj = {

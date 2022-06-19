@@ -24,7 +24,7 @@ const checkTimerLimitHelper = (): TResult => {
 
   // let currentTime;
   /* 스팟 런치 테스트 */
-  currentTime = 8.0;
+  // currentTime = 9.2;
 
   /* 스팟 저녁 테스트 */
   // currentTime = 10.4;

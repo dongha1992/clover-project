@@ -27,7 +27,7 @@ const SpotSearchHeader = ({ title }: IProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        {router.pathname === '/spot/search' ? (
+        {router.pathname === '/spot/search/main' ? (
           <BtnWrapper>
             <div className="map" onClick={goToMap}>
               <SVGIcon name="map" />

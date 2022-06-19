@@ -1,19 +1,21 @@
 import { Obj } from '@model/index';
 
+export const IMAGE_ERROR = 'https://s3.ap-northeast-2.amazonaws.com/freshcode-clover/dev/menu/img_thumbnail_empty.jpg';
+
 export const MENU_DETAIL_INFORMATION = [
   {
     text: '상품 정보',
-    link: '/menu/detail/product',
+    link: '/menu/[menuId]/detail/product',
     value: 'product',
   },
   {
     text: '영양 정보',
-    link: '/menu/detail/nutrition',
+    link: '/menu/[menuId]/detail/nutrition',
     value: 'nutrition',
   },
   {
     text: '배송 정보',
-    link: '/menu/detail/delivery',
+    link: '/menu/[menuId]/detail/delivery',
     value: 'delivery',
   },
 ];

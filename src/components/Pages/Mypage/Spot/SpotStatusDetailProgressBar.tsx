@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { TextB3R, TextH4B } from '@components/Shared/Text';
+import { TextB3R, TextH4B, TextB2R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { theme, FlexBetween, textH6 } from '@styles/theme';
@@ -180,7 +180,7 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
                   </TextB3R>
                 ) : (
                   progressStepType()?.subtitle && 
-                    <TextB3R padding="0 24px 0 24px">{progressStepType()?.subtitle}</TextB3R>
+                    <TextB2R padding="0 24px 0 24px">{progressStepType()?.subtitle}</TextB2R>
                 )
               }
             </>
@@ -202,7 +202,7 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
                         selectedStep?.id === idx &&
                       <TooltipWrapper type={item?.step}>
                         <EventTooltip
-                          message={`현재 ${item?.recruitingCount}명 참여 중`}
+                          message={`현재 ${item?.recruitingCount}명 참여 중`}
                           bgColor={theme.black}
                           color={theme.white}
                           minWidth="99px"

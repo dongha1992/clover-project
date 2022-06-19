@@ -88,7 +88,7 @@ const DeliverInfoPage = () => {
     if (userSelectDeliveryType === 'spot') {
       if (isSubscription) {
         router.push({
-          pathname: '/spot/search',
+          pathname: '/spot/search/main',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
             isSubscription: true,
@@ -98,7 +98,7 @@ const DeliverInfoPage = () => {
         });
       } else {
         router.push({
-          pathname: '/spot/search',
+          pathname: '/spot/search/main',
           query: { isDelivery: true },
         });
       }

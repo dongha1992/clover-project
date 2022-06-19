@@ -26,9 +26,7 @@ const MenuFilter = () => {
   const [selectedRadioId, setSelectedRadioId] = useState<string>('');
 
   const dispatch = useDispatch();
-  const {
-    categoryFilters: { order, filter },
-  } = useSelector(filterSelector);
+  const { categoryFilters } = useSelector(filterSelector);
 
   const checkboxHandler = (name: string) => {
     const findItem = selectedCheckboxIds.find((_name) => _name === name);
@@ -73,12 +71,12 @@ const MenuFilter = () => {
   };
 
   useEffect(() => {
-    const selectedCheckBox = MUTILPLE_CHECKBOX_MENU.filter((item) => filter.includes(item.value)).map(
+    const selectedCheckBox = MUTILPLE_CHECKBOX_MENU.filter((item) => categoryFilters?.filter.includes(item.value)).map(
       (item) => item.name
     );
     const hasSelectCheckBox = selectedCheckBox.length > 0;
 
-    setSelectedRadioId(order || '');
+    setSelectedRadioId(categoryFilters?.order || '');
     setSelectedCheckboxIds(hasSelectCheckBox ? selectedCheckBox : ['전체']);
   }, []);
 

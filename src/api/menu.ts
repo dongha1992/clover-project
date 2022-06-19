@@ -6,6 +6,7 @@ import {
   IMenuReviewsResponse,
   IReviewsDetailResponse,
   IPostMenuReview,
+  IMenuDetailsResponse,
   IResponse,
   ICompletionReviewsResponse,
   IWillWriteReviewsResponse,
@@ -17,7 +18,7 @@ export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusR
   return Api.get(`menu/v1/menus/`, { params });
 };
 
-export const getMenuDetailApi = (id: number): Promise<AxiosResponse<any>> => {
+export const getMenuDetailApi = (id: number): Promise<AxiosResponse<IMenuDetailsResponse>> => {
   return Api.get(`menu/v1/menus/${id}`);
 };
 
@@ -78,10 +79,22 @@ export const postNotificationApi = ({
   return Api.post(`menu/v1/notification?menuId=${menuId}&tel=${tel}&type=${type}`);
 };
 
-export const deleteNotificationApi = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+export const deleteNotificationApi = (menuId: number): Promise<AxiosResponse<IResponse>> => {
   return Api.delete(`menu/v1/notification/${menuId}`);
 };
 
 export const getLikeMenus = (menuPattern: string): Promise<AxiosResponse<any>> => {
   return Api.get(`menu/v1/menus/like`, { params: { menuPattern } });
+};
+
+export const postLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`menu/v1/like${menuId}`);
+};
+
+export const deleteLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`menu/v1/like/${menuId}`);
+};
+
+export const getRecommendMenusApi = (): Promise<AxiosResponse<IGetMenusResponse>> => {
+  return Api.get(`menu/v1/recommend`);
 };

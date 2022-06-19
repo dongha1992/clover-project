@@ -8,6 +8,8 @@ const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: any) => 
     <Container>
       <TabWrapper ref={ref}>
         {tabList.map((tabItem: any, index: number) => {
+          const defaulUrl = selectedTab === tabItem.link;
+
           return (
             <Tab
               tabItem={tabItem}

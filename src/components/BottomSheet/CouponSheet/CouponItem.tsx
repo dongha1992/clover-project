@@ -1,36 +1,46 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextH3B, TextB3R, TextB2R, TextB4R, TextH7B } from '@components/Shared/Text';
+import { TextH3B, TextB3R, TextB2R18, TextB4R, TextH7B, TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { FlexRow } from '@styles/theme';
+import dayjs from 'dayjs';
+import { Tag } from '@components/Shared/Tag';
+import { getCustomDate } from '@utils/destination';
+import { commonSelector } from '@store/common';
+import { useSelector } from 'react-redux';
+import { IPromotion } from '@model/index';
+interface IProps {
+  coupon: IPromotion;
+  onClick: (coupon: IPromotion) => void;
+}
 
-const CouponItem = ({ coupon, onClick }: any) => {
+const CouponItem = ({ coupon, onClick }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
-  const isRateDiscount = coupon.type === 'rate';
-  const isMoreThenOneMenu = coupon.canUseMenu.length > 1;
+  const { isMobile } = useSelector(commonSelector);
 
+  const isRateDiscount = coupon.coupon.criteria === 'RATIO';
+  const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon?.coupon.expiredDate));
+  // 임시
+  const isDownload = true;
   return (
-    <Container isDownload={coupon.isDownload}>
+    <Container isDownload={isDownload}>
       <Wrapper>
         <Content>
-          <TextH3B color={theme.brandColor}>{isRateDiscount ? `${coupon.discount}%` : `${coupon.discount}원`}</TextH3B>
-          <TextB2R>{coupon.name}</TextB2R>
-          {coupon.deliveryMethod && (
-            <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
-              배송방법: {coupon.deliveryMethod}
-            </TextB3R>
-          )}
-          {coupon.condition && <TextB3R>{coupon.condition}</TextB3R>}
-          {coupon.canUseMenu && (
-            <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
-              사용가능 메뉴:
-              {isMoreThenOneMenu ? '특정 상품 한정' : coupon.canUseMenu[0]}
-            </TextB3R>
-          )}
-          {isShow &&
+          <TextH3B color={theme.brandColor}>
+            {isRateDiscount ? `${coupon?.coupon.value}%` : `${coupon?.coupon.value}원`}
+          </TextH3B>
+          <TextH5B padding="4px 0 8px 0">{coupon?.name}</TextH5B>
+          {coupon?.coupon?.descriptions?.map((description: string, index: number) => {
+            return (
+              <TextB4R color={theme.greyScale65} key={index}>
+                {description}
+              </TextB4R>
+            );
+          })}
+          {/* {isShow &&
             coupon.canUseMenu.map((menu: any, index: number) => {
               return (
                 <FlexRow key={index}>
@@ -38,8 +48,8 @@ const CouponItem = ({ coupon, onClick }: any) => {
                   <TextB4R color={theme.greyScale65}>{menu}</TextB4R>
                 </FlexRow>
               );
-            })}
-          {isMoreThenOneMenu && (
+            })} */}
+          {/* {isMoreThenOneMenu && (
             <TextH7B
               textDecoration="underline"
               onClick={() => setIsShow(!isShow)}
@@ -49,17 +59,31 @@ const CouponItem = ({ coupon, onClick }: any) => {
             >
               {isShow ? '접기' : '더보기'}
             </TextH7B>
-          )}
-          <TextB3R color={theme.brandColor}>{coupon.expireDate}</TextB3R>
+          )} */}
+          <FlexRow margin="8px 0 0 0">
+            {coupon?.coupon.isApp && (
+              <TextH7B color={theme.brandColor} margin="0 4px 0 0">
+                APP 전용
+              </TextH7B>
+            )}
+            <TextB4R color={theme.brandColor}>{expiredDate} 까지</TextB4R>
+          </FlexRow>
         </Content>
         <BtnGroup>
           <SVGIcon name="dotColumn" />
-          {coupon.isDownload ? (
+          {isDownload ? (
             <Complete>
               <SVGIcon name="couponDownloadComplete" />
             </Complete>
           ) : (
-            <Incomplete onClick={onClick}>
+            <Incomplete
+              onClick={() => {
+                if (isMobile) {
+                  if (!coupon.coupon.isApp) return;
+                }
+                onClick(coupon);
+              }}
+            >
               <SVGIcon name="couponDownloadAvailable" />
             </Incomplete>
           )}

@@ -29,9 +29,10 @@ const FIVE_MINUTE = 300;
 
 interface IProps {
   menuId: number;
+  isDetailBottom?: boolean;
 }
 
-const ReopenSheet = ({ menuId }: IProps) => {
+const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
   const dispatch = useDispatch();
 
   let authTimerRef = useRef(300);
@@ -58,10 +59,7 @@ const ReopenSheet = ({ menuId }: IProps) => {
 
   const queryClient = useQueryClient();
 
-  const {
-    categoryFilters: { filter, order },
-    type,
-  } = useSelector(filterSelector);
+  const { type } = useSelector(filterSelector);
 
   const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
@@ -75,16 +73,21 @@ const ReopenSheet = ({ menuId }: IProps) => {
     },
     {
       onSuccess: async (data) => {
+        console.log(type, 'type');
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
-        queryClient.setQueryData(['getMenus', type, order, filter], (previous: any) => {
-          return previous.map((_item: IMenus) => {
-            if (_item.id === menuId) {
-              return { ..._item, reopenNotificationRequested: true };
-            }
-            return _item;
+        if (isDetailBottom) {
+          await queryClient.refetchQueries('getMenuDetail');
+        } else {
+          queryClient.setQueryData(['getMenus', type], (previous: any) => {
+            return previous.map((_item: IMenus) => {
+              if (_item.id === menuId) {
+                return { ..._item, reopenNotificationRequested: true };
+              }
+              return _item;
+            });
           });
-        });
+        }
       },
       onError: async (error: any) => {
         if (error.code === 1000) {
@@ -288,6 +291,7 @@ const ReopenSheet = ({ menuId }: IProps) => {
 
   useEffect(() => {
     setUserTel(me?.tel!);
+    setIsMarketinngChecked(me?.marketingSmsReceived!);
   }, [me]);
 
   useEffect(() => {
@@ -399,11 +403,11 @@ const Container = styled.div<{ isMobile: boolean }>`
   ${({ isMobile }) => {
     if (isMobile) {
       return css`
-        height: 80vh;
+        height: 85vh;
       `;
     } else {
       return css`
-        height: 95vh;
+        height: 96vh;
       `;
     }
   }}

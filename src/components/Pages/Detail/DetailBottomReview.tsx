@@ -11,6 +11,9 @@ import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { pipe, groupBy } from '@fxts/core';
 import { Obj, ISearchReviews } from '@model/index';
+import { SET_ALERT } from '@store/alert';
+import { useSelector } from 'react-redux';
+import { userForm } from '@store/user';
 
 export interface IMergedReview {
   id: number;
@@ -27,7 +30,8 @@ export interface IMergedReview {
 const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   const dispatch = useDispatch();
   const { searchReviews, searchReviewImages } = reviews;
-  const hasReivew = searchReviewImages.length > 0;
+  const hasReivew = searchReviewImages.length !== 0;
+  const { me } = useSelector(userForm);
 
   const idByReviewImg: Obj = pipe(
     searchReviewImages,
@@ -58,16 +62,22 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
   };
 
   const goToWriteReview = () => {
+    if (!me) {
+      return dispatch(
+        SET_ALERT({
+          alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
+        })
+      );
+    }
     router.push(`/mypage/review/write/${menuId}`);
   };
 
   const clickImgViewHandler = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
-
-  if (mergedReviews.length === 0) {
-    return <div>로딩</div>;
-  }
 
   return (
     <Container isSticky={isSticky}>
@@ -96,21 +106,32 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
-      <BorderLine height={8} />
-      <ReviewWrapper>
-        {mergedReviews.map((review: any, index: number) => {
-          return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
-        })}
-        <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-          {mergedReviews?.length}개 후기 전체보기
-        </Button>
-      </ReviewWrapper>
+      {hasReivew && (
+        <>
+          <BorderLine height={8} />
+          <ReviewWrapper>
+            {mergedReviews.map((review: any, index: number) => {
+              return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
+            })}
+            <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
+              {mergedReviews?.length}개 후기 전체보기
+            </Button>
+          </ReviewWrapper>
+        </>
+      )}
     </Container>
   );
 };
 
 const Container = styled.div<{ isSticky: boolean }>`
   margin-top: ${({ isSticky }) => (isSticky ? 82 : 32)}px;
+`;
+
+const Center = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
 `;
 
 const Wrapper = styled.div<{ hasReivew?: boolean }>`

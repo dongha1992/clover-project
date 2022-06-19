@@ -55,7 +55,7 @@ const Background = styled.div`
   bottom: 0px;
   max-width: ${breakpoints.mobile}px;
   height: 100%;
-  z-index: 1000;
+  z-index: 1000001;
   background-color: rgba(0, 0, 0, 0.3);
 
   ${({ theme }) => theme.desktop`
@@ -104,6 +104,7 @@ const BottomSheetContent = styled.div`
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
   margin-bottom: 56px;
+  overflow-y: scroll;
 `;
 
 export default React.memo(BottomSheet);

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextB3R, TextH5B } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import MapAPI from '@components/Map';
 import { IGetRegistrationStatus } from '@model/index';
@@ -43,26 +43,26 @@ const LocationInfo = ({ item }: IParams) => {
           item?.type === 'PRIVATE' ? (
             <>
               <TextH5B margin='0 0 8px 0'>픽업 정보</TextH5B>
-              <TextB3R margin='0 0 24px 0'>{item?.pickupType}</TextB3R>
+              <TextB2R margin='0 0 24px 0'>{item?.pickupType}</TextB2R>
               <TextH5B margin='0 0 8px 0'>장소 종류</TextH5B>
               <div className='placeTypeEtc'>
-                <TextB3R margin='0 0 24px 0'>{placeType()}</TextB3R>
+                <TextB2R margin='0 0 24px 0'>{placeType()}</TextB2R>
                 {
                   item?.placeType === 'ETC' &&
-                  <TextB3R margin='0 0 24px 0'>{`/ ${item?.placeTypeDetail}`}</TextB3R>
+                  <TextB2R margin='0 0 24px 0'>{`/ ${item?.placeTypeDetail}`}</TextB2R>
                 }
               </div>
               <TextH5B margin='0 0 8px 0'>점심시간</TextH5B>
-              <TextB3R>{item?.lunchTime}</TextB3R>
+              <TextB2R>{item?.lunchTime}</TextB2R>
             </>
           ) : (
             <>
               <TextH5B margin='0 0 8px 0'>장소 종류</TextH5B>
               <div className='placeTypeEtc'>
-                <TextB3R margin='0 0 24px 0'>{placeType()}</TextB3R>
+                <TextB2R margin='0 0 24px 0'>{placeType()}</TextB2R>
                 {
                   item?.placeType === 'ETC' &&
-                  <TextB3R margin='0 0 24px 0'>{`/ ${item?.placeTypeDetail}`}</TextB3R>
+                  <TextB2R margin='0 0 24px 0'>{`/ ${item?.placeTypeDetail}`}</TextB2R>
                 }
               </div>
             </>

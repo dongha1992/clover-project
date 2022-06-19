@@ -101,7 +101,7 @@ const MypagePage = () => {
   return (
     <Container>
       <Wrapper>
-        {isLoginSuccess ? (
+        {me ? (
           // 회원
           <>
             <UserInfoWrapper>
@@ -179,9 +179,9 @@ const MypagePage = () => {
           // 비회원
           <>
             <UserInfoWrapper className="hideBorder">
-              <FlexRow>
+              <FlexRow onClick={() => onUnauthorized()}>
                 <TextH2B padding="0 6px 0 0">로그인을 해주세요</TextH2B>
-                <IconBox onClick={() => onUnauthorized()}>
+                <IconBox>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
               </FlexRow>

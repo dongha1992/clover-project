@@ -43,9 +43,9 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
   // 운영 종료 예정 or 종료
-  const closedDate = item?.spotPickup?.spot.closedDate;
+  const closedDate = item?.closedDate;
   const dDay = now.diff(dayjs(closedDate), 'day');
-  const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
+  const closedOperation = dDay > 0 || item?.isClosed;
   const closedSoonOperation = dDay >= -14;
 
   const renderSpotMsg = () => {
@@ -88,15 +88,6 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
           </MeterAndTime>
         );
       }
-    }
-  };
-
-  const typeTag = (): string | undefined => {
-    switch (item.type) {
-      case 'PRIVATE':
-        return '프라이빗';
-      case 'PUBLIC':
-        return '퍼블릭';
     }
   };
 
@@ -279,19 +270,25 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         {renderSpotMsg()}
         <TagWrapper>
           {
-            item?.isTrial ? (
-              <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
-            ) : 
-            item?.type === 'PRIVATE' ? (
-              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
-            ) : (
-              null
-            )
-          }
-          {
-            item?.discountRate! > 0 &&
-              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.discountRate}% 할인 중`}</Tag>
-          }
+            !item.isClosed &&(
+            <>
+              {
+                item?.isTrial ? (
+                  <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
+                ) : 
+                item?.type === 'PRIVATE' ? (
+                  <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+                ) : (
+                  null
+                )
+              }
+              {
+                item?.discountRate! > 0 &&
+                  <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.discountRate}% 할인 중`}</Tag>
+              }
+            </>
+          )
+        }
           {!item.isOpened && 
             <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
               오픈예정

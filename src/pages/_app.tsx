@@ -21,6 +21,7 @@ import { useQuery } from 'react-query';
 import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 import { NAME_REGX } from '@constants/regex';
 import { useRouter } from 'next/router';
+
 // persist
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -30,6 +31,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { INIT_USER, SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
+import { useToast } from '@hooks/useToast';
 declare global {
   interface Window {
     Kakao: any;
@@ -49,6 +51,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const isWithContentsSection = useMediaQuery('(min-width:1024px)');
   const isMobile = useMediaQuery('(max-width:512px)');
 
+  // const { showToast, hideToast } = useToast();
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
@@ -152,13 +155,15 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
         <title>프레시코드</title>
       </Head>
       <>
+        <Script type="text/javascript" src="//developers.band.us/js/share/band-button.js?v=13062022"></Script>
         <Script
           type="text/javascript"
           src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
         ></Script>
         <Script
+          strategy="beforeInteractive"
           type="text/javascript"
-          src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=b298p0vcq4&callback=initMap"
+          src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_MAP_KEY}&callback=initMap`}
         ></Script>
         <Script
           type="text/javascript"
