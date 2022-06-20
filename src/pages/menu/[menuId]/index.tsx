@@ -85,6 +85,28 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const dispatch = useDispatch();
 
+  // const {
+  //   data: menuDetail,
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery(
+  //   'getMenuDetail',
+  //   async () => {
+  //     const { data } = await getMenuDetailApi(id!);
+
+  //     return data?.data;
+  //   },
+
+  //   {
+  //     onSuccess: (data) => {
+  //       dispatch(SET_MENU_ITEM(data));
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     enabled: !!id,
+  //   }
+  // );
+
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
@@ -555,7 +577,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
-
+  console.log(data, 'dd');
   return {
     props: { menuDetail: data.data },
     revalidate: 100,
