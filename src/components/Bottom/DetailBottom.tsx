@@ -167,8 +167,8 @@ const DetailBottom = () => {
   const buttonStatusRender = (menuDetail: IMenuDetail) => {
     const { isReopen, reopenNotificationRequested } = menuDetail!;
     const { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail || {});
-    const isReOpen = isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
-    const isOpenSoon = !isItemSold && isReopen;
+    const isOpenSoon = !isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
+    const isReOpen = isItemSold && isReopen;
     const reOpenCondition = isOpenSoon || isReOpen;
 
     switch (true) {
