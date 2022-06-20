@@ -11,18 +11,18 @@ import { useRouter } from 'next/router';
 import { ISubsActiveDate } from '@model/index';
 import { getSubscriptionApi } from '@api/menu';
 import { SubsCalendarContainer } from '@components/Calendar/subscription/style';
+import useCalendarTitleContent from '@hooks/subscription/useCalendarTitleContent';
 
 dayjs.locale('ko');
 interface IProps {
-  subsActiveDates: ISubsActiveDate[];
+  subsActiveDates: any;
   disabledDate?: string[];
   deliveryComplete?: string[];
-  deliveryExpectedDate?: { deliveryDate: string }[];
+  deliveryExpectedDate?: any;
   setDeliveryExpectedDate?: Dispatch<SetStateAction<{ deliveryDate: string }[]>>;
   deliveryHoliday?: string[];
   deliveryChange?: string[];
   sumDelivery?: string[];
-  sumDeliveryComplete?: string[];
   setPickupDay?: (value: any[]) => void;
   setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
   menuChangeDate?: any[] | null;
@@ -41,7 +41,6 @@ const SubsCalendar = ({
   deliveryHoliday = [], // 배송휴무일
   deliveryChange = [], // 배송일변경
   sumDelivery = [], // 배송예정일(합배송 포함)
-  sumDeliveryComplete = [], // 배송완료(합배송 포함)
   setPickupDay, // 구독 플랜 단계에서 픽업 날짜
   setSelectDate, // 선택한 날짜
   menuChangeDate = [], // 식단 변경 날짜
@@ -90,102 +89,19 @@ const SubsCalendar = ({
     }
   }, []);
 
-  const titleContent = useCallback(
-    ({ date, view }: { date: any; view: any }) => {
-      let element = [];
-      if (
-        calendarType === 'deliveryChange' &&
-        deliveryExpectedDate[0].deliveryDate === dayjs(date).format('YYYY-MM-DD')
-      ) {
-        // 배송일변경 시 변경전 날짜
-        element.push(<div className="deliveryChangeBeforeDate" key={`00-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
-      }
-
-      if (menuChangeDate?.find((x) => x.changed === true && x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
-        element.push(
-          <div className="menuChange" key={`11-${dayjs(date).format('YYYY-MM-DD')}`}>
-            식단변경
-          </div>
-        );
-      }
-
-      if (deliveryExpectedDate.find((x) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
-        element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
-      }
-
-      if (today === dayjs(date).format('YYYY-MM-DD')) {
-        // 오늘
-        element.push(
-          <div className="today" key={`02-${dayjs(date).format('YYYY-MM-DD')}`}>
-            오늘
-          </div>
-        );
-      }
-
-      if (deliveryHoliday.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송 휴무일
-        element.push(
-          <div className="deliveryHoliday" key={`03-${dayjs(date).format('YYYY-MM-DD')}`}>
-            배송휴무일
-          </div>
-        );
-      }
-
-      if (deliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송완료 or 주문취소
-        element.push(<div className="deliveryComplete" key={`04-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
-      }
-
-      if (deliveryChange.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송일변경
-        element.push(
-          <div className="deliveryChange" key={`05-${dayjs(date).format('YYYY-MM-DD')}`}>
-            <span>배송일변경</span>
-          </div>
-        );
-      }
-
-      if (sumDelivery.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송예정일(합배송 포함)
-        if (calendarType === 'deliveryChange') {
-          if (dayjs(date).format('YYYY-MM-DD') !== deliveryExpectedDate[0].deliveryDate) {
-            element.push(
-              <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
-                <span></span>
-              </div>
-            );
-          } else {
-            element.push(
-              <div className="sumDelivery delChange" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
-                <span></span>
-              </div>
-            );
-          }
-        } else {
-          element.push(
-            <div className="sumDelivery" key={`06-${dayjs(date).format('YYYY-MM-DD')}`}>
-              <span></span>
-            </div>
-          );
-        }
-      }
-
-      if (sumDeliveryComplete.find((x) => x === dayjs(date).format('YYYY-MM-DD'))) {
-        // 배송완료(합배송 포함)
-        element.push(
-          <div className="sumDeliveryComplete" key={`07-${dayjs(date).format('YYYY-MM-DD')}`}>
-            <span></span>
-          </div>
-        );
-      }
-
-      return <>{element}</>;
-    },
-    [deliveryExpectedDate, menuChangeDate]
-  );
+  const titleContent = useCalendarTitleContent({
+    today,
+    calendarType,
+    deliveryExpectedDate,
+    menuChangeDate,
+    deliveryHoliday,
+    deliveryComplete,
+    deliveryChange,
+    sumDelivery,
+  });
 
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
-    if (!subsActiveDates.find((x) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
+    if (!subsActiveDates?.find((x: any) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
       return true;
     }
     if (date.getDay() === 0) {

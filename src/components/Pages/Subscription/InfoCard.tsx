@@ -4,6 +4,7 @@ import { IGetOrders, IOrderDeliverie } from '@model/index';
 import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
 import { cloneDeep } from 'lodash-es';
+import router from 'next/router';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -50,6 +51,9 @@ const InfoCard = () => {
             break;
           }
         }
+      },
+      onError: () => {
+        router.replace('/onboarding');
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,

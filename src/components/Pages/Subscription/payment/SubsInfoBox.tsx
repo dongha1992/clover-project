@@ -5,7 +5,21 @@ import { getFormatDate } from '@utils/common';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-const SubsInfoBox = ({ subscriptionRound }: { subscriptionRound: number }) => {
+interface IProps {
+  subscriptionRound: number;
+  deliveryDayLength: number;
+  deliveryDay: string;
+  datePeriodFirst: string;
+  datePeriodLast: string;
+}
+
+const SubsInfoBox = ({
+  subscriptionRound,
+  deliveryDayLength,
+  deliveryDay,
+  datePeriodFirst,
+  datePeriodLast,
+}: IProps) => {
   const { subsInfo } = useSelector(subscriptionForm);
   return (
     <SubsInfoBoxContainer>
@@ -13,7 +27,7 @@ const SubsInfoBox = ({ subscriptionRound }: { subscriptionRound: number }) => {
       <FlexBetween padding="0 0 16px">
         <TextH5B>배송주기</TextH5B>
         <TextB2R>
-          주 {subsInfo?.deliveryDay?.length}회 / {subsInfo?.deliveryDay?.join('·')}
+          주 {deliveryDayLength}회 / {deliveryDay}
         </TextB2R>
       </FlexBetween>
       <FlexBetweenStart>
@@ -21,7 +35,7 @@ const SubsInfoBox = ({ subscriptionRound }: { subscriptionRound: number }) => {
         <FlexColEnd>
           <TextB2R>정기구독 {subscriptionRound}회차</TextB2R>
           <TextB2R>
-            {getFormatDate(subsInfo?.datePeriod![0])} ~ {getFormatDate(subsInfo?.datePeriod![1])}
+            {datePeriodFirst} ~ {datePeriodLast}
           </TextB2R>
         </FlexColEnd>
       </FlexBetweenStart>

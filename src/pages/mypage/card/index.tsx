@@ -10,10 +10,11 @@ import router from 'next/router';
 import { getCardLists } from '@api/card';
 import { IGetCard } from '@model/index';
 
-import { useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import isNil from 'lodash-es/isNil';
 import { SET_CARD } from '@store/order';
 import { useDispatch } from 'react-redux';
+import { postOrderCardChangeApi } from '@api/order';
 
 const CardManagementPage = () => {
   const {
@@ -33,11 +34,20 @@ const CardManagementPage = () => {
 
   const dispatch = useDispatch();
 
-  const { isOrder } = router.query;
+  const { isOrder, orderId } = router.query;
   const isFromOrder = isOrder === 'true';
 
-  const cardEditHandler = (card: IGetCard) => {
-    if (isFromOrder) {
+  const cardEditHandler = async (card: IGetCard) => {
+    // TODO(young) : 카드 api {code: 1120, message: 'not found order delivery'} 확인필요
+    if (isOrder && orderId) {
+      // const cardId = card.id;
+      // let orderIdNumber = Number(orderId);
+      // const { data } = await postOrderCardChangeApi({ orderId: orderIdNumber, cardId });
+
+      // if (data.code === 200) {
+      // }
+      router.push(`/subscription/${orderId}`);
+    } else if (isFromOrder) {
       dispatch(SET_CARD(card.id));
       router.push('/order');
     } else {

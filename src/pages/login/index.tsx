@@ -22,10 +22,13 @@ const LoginPage = () => {
   const [returnPath, setReturnPath] = useState<string | string[]>('/');
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-
   const { isLoginSuccess } = useSelector(userForm);
   const dispatch = useDispatch();
   const onRouter = useRouter();
+
+  useEffect(() => {
+    setReturnPath(onRouter.query.returnPath || '/');
+  }, []);
 
   const passwordInputHandler = () => {
     if (emailRef.current && passwordRef.current) {
@@ -71,6 +74,7 @@ const LoginPage = () => {
         });
 
         if (data.code === 200) {
+          const isDormantAccount = false;
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {
             dispatch(SET_USER_AUTH(userTokenObj));
@@ -95,6 +99,12 @@ const LoginPage = () => {
             },
           });
           dispatch(SET_USER(userInfo.data));
+
+          if (isDormantAccount) {
+            router.push('/mypage/profile/dormant');
+          } else {
+            router.push(`${returnPath}`);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -111,21 +121,18 @@ const LoginPage = () => {
     }
   };
 
-  useEffect(() => {
-    setReturnPath(onRouter.query.returnPath || '/');
-  }, []);
-
-  useEffect(() => {
-    if (isLoginSuccess) {
-      const isDormantAccount = false;
-      if (isDormantAccount) {
-        router.push('/mypage/profile/dormant');
-      } else {
-        router.push(`${returnPath}`);
-      }
-    }
-    return () => {};
-  }, [isLoginSuccess]);
+  // TODO : finish 이후에 넣는게 맞는거같음
+  // useEffect(() => {
+  //   if (isLoginSuccess) {
+  //     const isDormantAccount = false;
+  //     if (isDormantAccount) {
+  //       router.push('/mypage/profile/dormant');
+  //     } else {
+  //       router.push(`${returnPath}`);
+  //     }
+  //   }
+  //   return () => {};
+  // }, [isLoginSuccess]);
 
   return (
     <Container>
