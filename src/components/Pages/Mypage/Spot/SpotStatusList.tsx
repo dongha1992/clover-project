@@ -6,7 +6,7 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
 import { IGetRegistrationStatus, ISpotsInfo } from '@model/index';
-import { postSpotsRegistrationsRetrial, getSpotInfo } from '@api/spot';
+import { postSpotsRegistrationsRetrial } from '@api/spot';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
@@ -16,31 +16,15 @@ import { userForm } from '@store/user';
 
 interface IProps {
   item: IGetRegistrationStatus;
+  getInfo: any;
 };
 
-const SpotStatusList = ({ item }: IProps): ReactElement => {
+const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const routers = useRouter();
   const { me } = useSelector(userForm);
-  const [info, setInfo] = useState<ISpotsInfo>();
 
   const loginUserId = me?.id!;
-
-  useEffect(() => {
-    // 스팟 정보 조회
-    const getSpotInfoData = async () => {
-      try {
-        const { data } = await getSpotInfo();
-        if (data.code === 200) {
-          setInfo(data.data);
-          dispatch(SET_SPOT_INFO(data.data));  
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getSpotInfoData();
-  }, []);
 
   const spotType = (type: string | undefined) => {
     switch(type){
@@ -90,7 +74,7 @@ const SpotStatusList = ({ item }: IProps): ReactElement => {
 
   // 스팟 등록 - 재신청
   const handleSpotRetrial = async (id: number) => {
-    if(info?.canPrivateSpotRegistration) {
+    if(getInfo?.canPrivateSpotRegistration) {
       dispatch(
         SET_ALERT({
           alertMessage: `트라이얼(2주) 기간동안 해당 프코스팟으로 5명이 주문/배송을 완료해야 정식 오픈됩니다.\n\n오픈 재신청하시겠어요?`,
@@ -121,6 +105,7 @@ const SpotStatusList = ({ item }: IProps): ReactElement => {
   };
 
   const goToSpotStatusDetail = (id: number, type: string, userId: number) => {
+    // 우리가게 신청이고, 신청자일 경우
     if(type === 'OWNER' && (Number(loginUserId) !== userId)) {
       return;
     }
@@ -161,7 +146,7 @@ const SpotStatusList = ({ item }: IProps): ReactElement => {
             <TextH6B padding='4px 0 0 0' margin="0 0 0 6px" color={theme.brandColor}>{`${item?.recruitingCount}/100명 참여 중`}</TextH6B>
           </FlexStart>
         }
-        {item?.type === 'PRIVATE' && item?.step === 'TRIAL' && !item?.rejected && !item?.canRetrial && (
+        {item?.type === 'PRIVATE' && item?.step === 'TRIAL' && !item?.rejected && !item?.canRetrial && (Number(loginUserId) === item.userId) && (
           <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
             오픈 참여 공유하고 포인트 받기
           </Button>
