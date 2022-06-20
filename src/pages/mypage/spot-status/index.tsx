@@ -6,28 +6,52 @@ import { SPOT_STATUS } from '@constants/spot';
 import { SpotStatusList, SpotWishList } from '@components/Pages/Mypage/Spot';
 import { FixedTab, homePadding, theme } from '@styles/theme';
 import router from 'next/router';
-import { IParamsSpots, IGetDestinationsRequest } from '@model/index';
+import { IParamsSpots, IGetDestinationsRequest, IGetRegistrationStatus } from '@model/index';
 import { useQuery } from 'react-query';
 import { getSpotsWishList } from '@api/spot';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
-import { deleteSpotLike, getSpotsRegistrationStatus } from '@api/spot';
+import { deleteSpotLike, getSpotsRegistrationStatus, getSpotInfo } from '@api/spot';
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 
 const SpotStatusPage = () => {
-  // TODO
-  // 필요하다면 무한스크롤 페이지네이션 작업
-  // 좋아요 버튼 활성화 작업
   const router = useRouter();
   const { spotsPosition } = useSelector(spotSelector);
-  const [selectedTab, setSelectedTab] = useState('/spot/status/list');
-  // const [page, setPage] = useState(1);
-  const [items, setItems] = useState(false);
-
+  const [selectedTab, setSelectedTab] = useState<string>('/spot/status/list');
+  const [page, setPage] = useState<number>(1);
+  const [items, setItems] = useState<boolean>(false);
+  const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [statusList, setStatusList] = useState<IGetRegistrationStatus[]>([]);
   const latLen = spotsPosition.latitude?.length > 0;
   const lonLen = spotsPosition.longitude?.length > 0;
+
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
+        // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
+        setPage(page + 1);
+      }
+    };
+    // scroll event listener 등록
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      // scroll event listener 해제
+      window.removeEventListener('scroll', handleScroll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusList.length > 0]);
+
+  useEffect(()=> {
+    getSpotRegistrationList();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   // 찜한 스팟 api
   const { data: wishList } = useQuery(
@@ -45,19 +69,33 @@ const SpotStatusPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  // 스팟 현황 api 
-  const { data: spotStatusList } = useQuery(
-    ['statusList'],
+  // 스팟 정보 조회 api
+  const { data: getInfo } = useQuery(
+    ['spotList'],
     async () => {
-      const params: IGetDestinationsRequest = {
-        page: 1,
-        size: 10,
-      };
-      const response = await getSpotsRegistrationStatus(params);
+      const response = await getSpotInfo();
       return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
+
+
+  // 스팟 신청 목록 조회 api
+  const getSpotRegistrationList = async() => {
+    const params: IGetDestinationsRequest = {
+      page: page,
+      size: 10,
+    };
+    try {
+      const { data } = await getSpotsRegistrationStatus(params);
+      const list = data.data.spotRegistrations;
+      const lastPage = data.data.pagination.totalPage;
+      setStatusList((prevList) => [...prevList, ...list]);
+      setIsLastPage(page === lastPage);
+    } catch(e) {
+      console.error(e);
+    }
+  };
 
   const selectTabHandler = (tabItem: any) => {
     setSelectedTab(tabItem.link);
@@ -92,11 +130,11 @@ const SpotStatusPage = () => {
         {selectedTab === '/spot/status/list' ? (
           <>
           {
-            spotStatusList?.spotRegistrations.length! > 0 ? (
+            statusList.length! > 0 ? (
               <SpotStatusListWrapper >
-                {spotStatusList?.spotRegistrations.map((item, idx) => {
+                {statusList?.map((item, idx) => {
                   return (
-                      <SpotStatusList item={item} key={idx} />
+                      <SpotStatusList item={item} key={idx} getInfo={getInfo} />
                   )
                 })}
               </SpotStatusListWrapper>
