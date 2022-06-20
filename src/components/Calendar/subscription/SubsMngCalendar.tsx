@@ -2,7 +2,7 @@ import useCalendarTitleContent from '@hooks/subscription/useCalendarTitleContent
 import { SET_SUBS_CALENDAR_SELECT_MENU, SET_SUBS_CALENDAR_SELECT_ORDERS } from '@store/subscription';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { useDispatch } from 'react-redux';
 import { SubsCalendarContainer } from './style';
@@ -31,19 +31,26 @@ const SubsMngCalendar = ({ orderDeliveries }: IProps) => {
     setDeliveryChange(arr);
   }, [orderDeliveries]);
 
+  useEffect(() => {
+    setMaxDate(new Date(orderDeliveries[orderDeliveries.length - 1]?.deliveryDate));
+  }, [orderDeliveries]);
+
   const titleContent = useCalendarTitleContent({
     today,
     deliveryExpectedDate: orderDeliveries,
     deliveryChange: deliveryChange,
   });
 
-  const tileDisabled = ({ date, view }: { date: any; view: any }) => {
-    if (!orderDeliveries?.find((x: any) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const tileDisabled = useCallback(
+    ({ date, view }: { date: any; view: any }) => {
+      if (!orderDeliveries?.find((x: any) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [orderDeliveries]
+  );
 
   const dateSelect = (date: string) => {
     const data = cloneDeep(orderDeliveries);
