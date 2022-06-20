@@ -142,7 +142,7 @@ const CouponSheet = ({ coupons }: IProps) => {
       <Wrapper>
         <InfoWrapper>
           <TextB3R color={theme.greyScale65}>{'마이페이지>쿠폰함으로 저장돼요!'}</TextB3R>
-          <TextH6B textDecoration="underLine" color={theme.greyScale65} onClick={downloadAllCoupon}>
+          <TextH6B textDecoration="underLine" color={theme.greyScale65} onClick={downloadAllCoupon} pointer>
             {coupons?.length! > 0 ? '전체 다운받기' : ''}
           </TextH6B>
         </InfoWrapper>

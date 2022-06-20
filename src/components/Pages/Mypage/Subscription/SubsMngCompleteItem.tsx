@@ -21,6 +21,13 @@ const SubsMngCompleteItem = ({ item }: IProps) => {
   const goToSubsDetail = () => {
     router.push({ pathname: `/subscription/${item.id}`, query: { menuId: item.subscriptionMenuId } });
   };
+
+  const reorderHandler = () => {
+    router.push({
+      pathname: '/subscription/set-info',
+      query: { subsDeliveryType: item?.delivery, menuId: item?.subscriptionMenuId ?? null },
+    });
+  };
   return (
     <Container>
       <FlexBetween>
@@ -61,8 +68,8 @@ const SubsMngCompleteItem = ({ item }: IProps) => {
           </TextB3R>
         </InfoBox>
       </FlexRowStart>
-      {item.subscriptionPeriod === 'UNLIMITED' && item.status === 'COMPLETED' && (
-        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black}>
+      {item.subscriptionPeriod === 'UNLIMITED' && item.status === 'CANCELED' && (
+        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black} onClick={reorderHandler}>
           재주문하기
         </Button>
       )}
@@ -72,7 +79,7 @@ const SubsMngCompleteItem = ({ item }: IProps) => {
         </Button>
       )}
       {item.subscriptionPeriod !== 'UNLIMITED' && item.status === 'CANCELED' && (
-        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black}>
+        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black} onClick={reorderHandler}>
           재주문하기
         </Button>
       )}

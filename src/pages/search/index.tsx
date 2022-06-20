@@ -52,7 +52,7 @@ const SearchPage = () => {
       setIsSearched(true);
       setRecentKeywords([...recentKeywords, value]);
 
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: keyword, type: '' };
+      const params = { searchKeyword: keyword, type: '' };
       try {
         const { data } = await getMenusApi(params);
         if (data.code === 200) {

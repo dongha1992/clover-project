@@ -49,7 +49,7 @@ const Home = () => {
   } = useQuery(
     ['getMenus', type],
     async () => {
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
+      const params = { type: '' };
       const { data } = await getMenusApi(params);
       return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
     },

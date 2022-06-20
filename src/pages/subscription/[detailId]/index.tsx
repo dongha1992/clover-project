@@ -12,6 +12,7 @@ import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/
 import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
+import { SET_ALERT } from '@store/alert';
 import { subscriptionForm, SUBS_INIT } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
@@ -87,10 +88,19 @@ const SubsDetailPage = () => {
   };
 
   const paymentChangeHandler = () => {
-    router.push({
-      pathname: '/mypage/card',
-      query: { isOrder: true, orderId: orderDetail?.id },
-    });
+    dispatch(
+      SET_ALERT({
+        alertMessage: `다음 회차의 정기결제부터\n변경한 결제수단이 적용됩니다.`,
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => {
+          router.push({
+            pathname: '/mypage/card',
+            query: { isOrder: true, orderId: orderDetail?.id },
+          });
+        },
+      })
+    );
   };
 
   if (isLoading) return <div>...로딩중</div>;
@@ -170,15 +180,17 @@ const SubsDetailPage = () => {
             <TextB2R>신용카드</TextB2R>
           </FlexBetween>
         )}
-        <Button
-          onClick={paymentChangeHandler}
-          backgroundColor="#fff"
-          color="#242424"
-          border
-          disabled={orderDetail?.status === 'COMPLETED' || orderDetail?.status === 'CANCELED' ? true : false}
-        >
-          결제수단 변경하기
-        </Button>
+        {orderDetail?.subscriptionPeriod === 'UNLIMITED' && (
+          <Button
+            onClick={paymentChangeHandler}
+            backgroundColor="#fff"
+            color="#242424"
+            border
+            disabled={orderDetail?.status === 'COMPLETED' || orderDetail?.status === 'CANCELED' ? true : false}
+          >
+            결제수단 변경하기
+          </Button>
+        )}
       </OrderInfoBox>
 
       <BorderLine height={8} />

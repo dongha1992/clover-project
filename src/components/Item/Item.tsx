@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import { theme, FlexCol } from '@styles/theme';
+import { theme, FlexCol, showMoreText } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { TAG_MAP } from '@constants/menu';
 import Image from 'next/image';
 import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
 import getCustomDate from '@utils/destination/getCustomDate';
@@ -279,7 +280,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
         {!isHorizontal && (
           <>
             <DesWrapper>
-              <TextB3R color={theme.greyScale65}>{item.summary.trim().slice(0, 30)}</TextB3R>
+              <TextB3R color={theme.greyScale65} textHideMultiline>
+                {item.summary.trim()}
+              </TextB3R>
             </DesWrapper>
             <LikeAndReview>
               <Like onClick={menuLikeHandler}>
@@ -292,7 +295,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
         )}
         <TagWrapper>
           {item.constitutionTag && item.constitutionTag !== 'NONE' && (
-            <Tag margin="0px 8px 8px 0px">{item.constitutionTag}</Tag>
+            <Tag margin="0px 8px 8px 0px">{TAG_MAP[item.constitutionTag]}</Tag>
           )}
         </TagWrapper>
       </FlexCol>
@@ -340,7 +343,6 @@ const ForReopen = styled.div`
 const DesWrapper = styled.div`
   width: 100%;
   height: 38px;
-  overflow: hidden;
 `;
 
 const CartBtn = styled.div`

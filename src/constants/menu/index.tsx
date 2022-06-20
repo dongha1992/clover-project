@@ -38,6 +38,18 @@ export const MENU_REVIEW_AND_FAQ = [
   },
 ];
 
+export const TAG_MAP: Obj = {
+  VEGETARIAN: '채식',
+  VEGAN: '비건',
+  FRUITARIAN: '프루테리언',
+  POLLO_PESCO_VEGETARIAN: '폴로페스코',
+  POLLO_VEGETARIAN: '폴로베지테리언',
+  PESCO_VEGETARIAN: '페스코베지테리언',
+  LACTO_OVO_VEGETARIAN: '락토오보베지테리언',
+  LACTO_VEGETARIAN: '락토베지테리언',
+  OVO_VEGETARIAN: '오보베지테리언',
+  FLEXITARIAN: '플렉시테리언',
+};
 export const COUPON_LIST = [
   {
     id: 1,
