@@ -17,6 +17,8 @@ const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
 const SubscriptionHeader = dynamic(() => import('./SubscriptionHeader'));
 const SpotStatusDetailHeader = dynamic(() => import('./SpotStatusDetailHeader'));
+const SpotDetailHeader = dynamic(()=> import('./SpotDetailHeader'));
+
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Header = () => {
@@ -108,8 +110,12 @@ const Header = () => {
       case ['/category/[category]'].includes(currentPath):
         return <CategorySubHeader title={title} />;
 
-      case ['/menu/[menuId]', '/spot/detail/[id]', '/subscription/products/[id]'].includes(currentPath): {
+      case ['/menu/[menuId]', '/subscription/products/[id]'].includes(currentPath): {
         return <MenuDetailHeader />;
+      }
+
+      case ['/spot/detail/[id]'].includes(currentPath): {
+        return <SpotDetailHeader />;
       }
 
       case ['/mypage'].includes(currentPath): {
