@@ -20,7 +20,6 @@ import { userForm, INIT_USER, SET_USER } from '@store/user';
 import { availabilityEmail, userChangeInfo, userProfile } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
 import { EMAIL_REGX } from '@pages/signup/email-password';
-import { YearPicker, MonthPicker, DayPicker } from 'react-dropdown-date';
 import { getFormatTime } from '@utils/destination';
 import BirthDate from '@components/BirthDate';
 import { NAME_REGX } from '@constants/regex';
