@@ -10,9 +10,9 @@ interface IProps {
 }
 const ToggleHeader = ({ text, isToggle, setIsToggle }: IProps) => {
   return (
-    <FlexBetween padding="0 0 16px 0">
+    <FlexBetween padding="16px 0" onClick={() => setIsToggle(text)} pointer>
       <TextB2R>{text}</TextB2R>
-      <FlexRow onClick={() => setIsToggle(text)}>
+      <FlexRow>
         <SVGIcon name={isToggle ? 'triangleUp' : 'triangleDown'} />
       </FlexRow>
     </FlexBetween>
