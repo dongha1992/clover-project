@@ -300,7 +300,7 @@ const SpotSearchMainPage = (): ReactElement => {
           ref={inputRef}
         />
         {
-          currentValueLen && (
+          (inputRef.current?.value || currentValueLen)  && (
             <div className="removeSvg" onClick={clearInputHandler}>
               <SVGIcon name="removeItem" />
             </div>
