@@ -85,6 +85,28 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const dispatch = useDispatch();
 
+  // const {
+  //   data: menuDetail,
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery(
+  //   'getMenuDetail',
+  //   async () => {
+  //     const { data } = await getMenuDetailApi(id!);
+
+  //     return data?.data;
+  //   },
+
+  //   {
+  //     onSuccess: (data) => {
+  //       dispatch(SET_MENU_ITEM(data));
+  //     },
+  //     refetchOnMount: true,
+  //     refetchOnWindowFocus: false,
+  //     enabled: !!id,
+  //   }
+  // );
+
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
