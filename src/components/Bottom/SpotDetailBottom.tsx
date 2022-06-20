@@ -258,26 +258,30 @@ const SpotDetailBottom = () => {
           <Wrapper>
             {
               !spotDetail?.isTrial &&
+              <>
               <LikeWrapper>
                 <LikeBtn onClick={hanlderLike}>
                   <SVGIcon name={spotDetail?.liked ? 'likeRed' : 'likeBlack'} />
                 </LikeBtn>
                 <TextH5B color={theme.white} padding="0 0 0 4px">
-                  {spotDetail?.likeCount}
+                  {spotDetail?.likeCount || 0}
                 </TextH5B>
-                <Col />
               </LikeWrapper>
+                <Col />
+                </>
             }
             <BtnWrapper onClick={orderHandler}>
               <TextH5B color={theme.white}>{spotDetail?.isOpened ? '주문하기' : `${openDate}`}</TextH5B>
             </BtnWrapper>
             {spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
-              <SpotDetailEventTooltip
-                message={`${spotDetail?.discountRate}% 할인 중`}
-                bgColor={theme.brandColor}
-                color={theme.white}
-                minWidth="78px"
-              />
+              <TooltipWrapper>
+                <SpotDetailEventTooltip
+                  message={`${spotDetail?.discountRate}% 할인 중`}
+                  bgColor={theme.brandColor}
+                  color={theme.white}
+                  minWidth="78px"
+                />
+              </TooltipWrapper>
             )}
           </Wrapper>
       )}
@@ -327,7 +331,7 @@ const Wrapper = styled.div`
 const LikeWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 25%;
+  width: 40px;
 `;
 
 const Col = styled.div`
@@ -339,13 +343,29 @@ const Col = styled.div`
 `;
 
 const BtnWrapper = styled.div`
+  position: relative;
   width: 100%;
+  width: 400px;
   text-align: center;
-  cursor: pointer;
 `;
 
 const LikeBtn = styled.div`
+  display: flex;
   cursor: pointer;
+  svg {
+    margin-bottom: 3px;
+  }
+`;
+
+const TooltipWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  top: -17%;
+  left: 45%;
+
+  ${({ theme }) => theme.mobile`
+    left: 43%;
+  `};
 `;
 
 export default SpotDetailBottom;
