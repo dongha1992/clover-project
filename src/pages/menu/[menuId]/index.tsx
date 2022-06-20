@@ -555,7 +555,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
-
+  console.log(data, 'dd');
   return {
     props: { menuDetail: data.data },
     revalidate: 100,
