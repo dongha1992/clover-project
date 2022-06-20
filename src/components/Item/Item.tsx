@@ -11,6 +11,7 @@ import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { TAG_MAP } from '@constants/menu';
 import Image from 'next/image';
 import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
 import getCustomDate from '@utils/destination/getCustomDate';
@@ -294,7 +295,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
         )}
         <TagWrapper>
           {item.constitutionTag && item.constitutionTag !== 'NONE' && (
-            <Tag margin="0px 8px 8px 0px">{item.constitutionTag}</Tag>
+            <Tag margin="0px 8px 8px 0px">{TAG_MAP[item.constitutionTag]}</Tag>
           )}
         </TagWrapper>
       </FlexCol>
