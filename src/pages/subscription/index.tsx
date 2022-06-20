@@ -45,22 +45,21 @@ const SubscriptiopPage = () => {
   } = useQuery(
     ['getSubscriptionOrders', 'progress'],
     async () => {
-      if (me) {
-        const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
-        const { data } = await getOrdersApi(params);
-        let filterData = await data.data.orders
-          .map((item: IGetOrders) => {
-            item.orderDeliveries.sort(
-              (a: IOrderDeliverie, b: IOrderDeliverie) =>
-                Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
-            );
+      const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
+      const { data } = await getOrdersApi(params);
 
-            return item;
-          })
-          .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
+      let filterData = await data.data.orders
+        .map((item: IGetOrders) => {
+          item.orderDeliveries.sort(
+            (a: IOrderDeliverie, b: IOrderDeliverie) =>
+              Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
+          );
 
-        return filterData;
-      }
+          return item;
+        })
+        .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
+
+      return filterData;
     },
     {
       refetchOnMount: true,

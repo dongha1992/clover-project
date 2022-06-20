@@ -8,6 +8,7 @@ import { useQuery } from 'react-query';
 import { IGetOrders, IOrderDeliverie } from '@model/index';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
+import router from 'next/router';
 
 const MySubsList = () => {
   const { me } = useSelector(userForm);
@@ -21,6 +22,7 @@ const MySubsList = () => {
       if (me) {
         const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
         const { data } = await getOrdersApi(params);
+
         let filterData = await data.data.orders
           .map((item: IGetOrders) => {
             item.orderDeliveries.sort(
@@ -36,6 +38,9 @@ const MySubsList = () => {
       }
     },
     {
+      onError: () => {
+        router.replace('/onboarding');
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       staleTime: 0,

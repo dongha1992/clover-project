@@ -186,3 +186,13 @@ export const postTossPaymentApi = ({
 }): Promise<AxiosResponse<IGetTossPaymentResponse>> => {
   return Api.post(`order/v1/orders/${orderId}/toss-payment`, data);
 };
+
+export const postOrderCardChangeApi = ({
+  orderId,
+  cardId,
+}: {
+  cardId: any;
+  orderId: any;
+}): Promise<AxiosResponse<IResponse>> => {
+  return Api.post(`order/v1/deliveries/${orderId}/date`, { cardId: cardId });
+};

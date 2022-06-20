@@ -110,7 +110,7 @@ export const SubsCalendarContainer = styled.div`
           font-style: normal;
           font-weight: 700;
           font-size: 14px;
-          z-index: 1;
+          z-index: 3;
           color: #242424;
         }
 
@@ -125,17 +125,17 @@ export const SubsCalendarContainer = styled.div`
             width: 32px;
             height: 32px;
             background-color: #35ad73;
+            z-index: 2;
             border-radius: 50%;
           }
           abbr {
-            z-index: 1;
+            z-index: 3;
             color: #fff;
           }
           .deliveryExpectedDate,
           .deliveryComplete,
           .today,
           .deliveryHoliday,
-          .deliveryChange,
           .sumDeliveryComplete {
             display: none;
           }
@@ -157,6 +157,7 @@ export const SubsCalendarContainer = styled.div`
     height: 32px;
     border-radius: 50%;
     background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='15.5' stroke='%2335AD73' stroke-dasharray='2 2'/%3E%3C/svg%3E%0A");
+    z-index: 1;
   }
   .deliveryChangeBeforeDate {
     position: absolute;
@@ -164,6 +165,7 @@ export const SubsCalendarContainer = styled.div`
     height: 32px;
     border-radius: 50%;
     background-color: #daece3;
+    z-index: 2;
   }
   .deliveryComplete {
     position: absolute;

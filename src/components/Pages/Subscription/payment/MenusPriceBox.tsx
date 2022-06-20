@@ -23,7 +23,7 @@ interface IProps {
   deliveryPrice: number;
   deliveryLength: number;
   point?: number;
-  type?: string | 'progress' | 'last';
+  type?: string | 'progress' | 'last' | 'management';
   deliveryType: string;
 }
 
@@ -51,7 +51,7 @@ const MenusPriceBox = ({
   };
 
   return (
-    <MenuPriceContainer>
+    <MenuPriceContainer className={type}>
       <FlexBetween padding="0 0 16px" margin="0 0 16px" className="bbN">
         <TextH5B>총 상품금액</TextH5B>
         <TextB2R>{getFormatPrice(String(menuPrice))}원</TextB2R>
@@ -70,12 +70,20 @@ const MenusPriceBox = ({
             <TextB2R>{menuDiscount ? `-${getFormatPrice(String(menuDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
         )}
-        {deliveryType === 'SPOT' && eventDiscount !== 0 && (
-          <MenuPriceLi>
-            <TextB2R>스팟 이벤트 할인</TextB2R>
-            <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
-          </MenuPriceLi>
-        )}
+        {type === 'management'
+          ? eventDiscount !== 0 && (
+              <MenuPriceLi>
+                <TextB2R>이벤트 할인</TextB2R>
+                <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
+              </MenuPriceLi>
+            )
+          : deliveryType === 'SPOT' &&
+            eventDiscount !== 0 && (
+              <MenuPriceLi>
+                <TextB2R>스팟 이벤트 할인</TextB2R>
+                <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
+              </MenuPriceLi>
+            )}
       </MenuPriceUl>
       <MenuPriceUl>
         <MenuPriceLi className="btN" padding="16px 0 0">
@@ -121,7 +129,7 @@ const MenusPriceBox = ({
         </FlexBetween>
       )}
       <FlexBetween padding="16px 0 0" margin="0 0 8px" className="btB">
-        <TextH4B>{type === 'last' ? '최종 결제금액' : '결제예정금액'}</TextH4B>
+        <TextH4B>{type === 'last' || type === 'management' ? '최종 결제금액' : '결제예정금액'}</TextH4B>
         <TextH4B>
           {disposable
             ? getFormatPrice(
@@ -144,10 +152,13 @@ const MenusPriceBox = ({
     </MenuPriceContainer>
   );
 };
-const Container = styled.div``;
+
 export const MenuPriceContainer = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
+  &.management {
+    background-color: #fff;
+  }
   .btB {
     border-top: 1px solid #242424;
   }

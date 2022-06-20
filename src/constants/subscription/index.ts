@@ -59,6 +59,14 @@ export const PERIOD_NUMBER: Obj = {
   SEVEN_WEEK: '7',
 };
 
+export const SUBS_MNG_STATUS: Obj = {
+  UNPAID: '주문예정',
+  RESERVED: '주문완료',
+  PROGRESS: '주문완료',
+  COMPLETED: '주문완료',
+  CANCELED: '주문취소',
+};
+
 export const SUBS_STATUS: Obj = {
   UNPAID: '구독예정',
   RESERVED: '구독예정',
