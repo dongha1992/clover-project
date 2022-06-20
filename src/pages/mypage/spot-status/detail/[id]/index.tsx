@@ -63,7 +63,17 @@ const SpotStatusDetailPage = (): ReactElement => {
     if(router.isReady) {
       setId(Number(router.query?.id));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
+
+  useEffect(()=> {
+    if(recruited){
+      const message = '참여해 주셔서 감사해요:)';
+      showToast({ message });
+      return () => hideToast();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data: statusDetail } = useQuery(
     ['statusDetail'],
@@ -184,14 +194,6 @@ const SpotStatusDetailPage = (): ReactElement => {
       );
     }
   };
-
-  useEffect(()=> {
-    if(recruited){
-      const message = '참여해 주셔서 감사해요:)';
-      showToast({ message });
-      return () => hideToast();
-    }
-  }, [])
   
   return (
     <Container order={orderCondition()}>

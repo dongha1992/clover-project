@@ -38,6 +38,36 @@ const SpotDetailPage = (): ReactElement => {
   const [id, setId] = useState<number>();
   const HEADER_HEIGHT = 56;
 
+  // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
+        // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
+        setPage(page + 1);
+      }
+    };
+    // scroll event listener 등록
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      // scroll event listener 해제
+      window.removeEventListener('scroll', handleScroll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stories.length > 0]);
+
+  // 스팟 상세 하단 스토리, 매장정보 스티키
+  useEffect(() => {
+    window.addEventListener('scroll', onScrollHandler);
+    return () => {
+      window.removeEventListener('scroll', onScrollHandler);
+      //   dispatch(SET_MENU_ITEM({}));
+    };
+  }, [tabRef?.current?.offsetTop]);
+  
   // 스팟 상세 api
   const {
     data : spotItem,
@@ -162,36 +192,6 @@ const SpotDetailPage = (): ReactElement => {
     infinite: false,
     centerPadding: sliceLen ? '30px' : '25px',
   };
-
-  // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = document.documentElement.scrollTop;
-      const clientHeight = document.documentElement.clientHeight;
-
-      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
-        // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
-        setPage(page + 1);
-      }
-    };
-    // scroll event listener 등록
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      // scroll event listener 해제
-      window.removeEventListener('scroll', handleScroll);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stories.length > 0]);
-
-  // 스팟 상세 하단 스토리, 매장정보 스티키
-  useEffect(() => {
-    window.addEventListener('scroll', onScrollHandler);
-    return () => {
-      window.removeEventListener('scroll', onScrollHandler);
-      //   dispatch(SET_MENU_ITEM({}));
-    };
-  }, [tabRef?.current?.offsetTop]);
 
   if (isSpotLoading) {
     return <div>loading...</div>;
