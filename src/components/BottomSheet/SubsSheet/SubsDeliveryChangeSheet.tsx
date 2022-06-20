@@ -1,53 +1,238 @@
+import { editDeliveryDateApi, getOrderDetailApi } from '@api/order';
 import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
+import SubsDateMngCalendar from '@components/Calendar/subscription/SubsDateMngCalendar';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
+import useSubDeliveryDates from '@hooks/subscription/useSubDeliveryDates';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-const SubsDeliveryChangeSheet = () => {
+interface IProps {
+  item: any;
+  setToggleState: any;
+}
+const SubsDeliveryChangeSheet = ({ item, setToggleState }: IProps) => {
   // TODO(young) : 임시로 subscription/set-info에서 캘린더 선택에서 등록한 데이터 사용 추후 교체 해야됨
-
   const dispatch = useDispatch();
-  const { subsDeliveryExpectedDate } = useSelector(subscriptionForm);
-  const [sumDelivery, setSumDelivery] = useState(['2022-04-08']);
+  const router = useRouter();
+  const [detailId, setDetailId] = useState<number>();
   const [changeDate, setChangeDate] = useState('날짜 선택');
   const [selectDate, setSelectDate] = useState<Date | undefined>();
+  const [deliveryComplete, setDeliveryComplete] = useState(['2022-06-20']);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    // console.log(selectDate);
-    // console.log(dayjs(selectDate).format('M'));
+    return () => {
+      setToggleState(false);
+    };
+  }, []);
 
+  useEffect(() => {
+    if (router.isReady) {
+      setDetailId(Number(router.query?.detailId));
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
     if (selectDate) {
       setChangeDate(dateFormat(selectDate));
     }
   }, [selectDate]);
+
+  const {
+    data: orderDetail,
+    error,
+    isLoading,
+  } = useQuery(
+    ['getOrderDetail', detailId],
+    async () => {
+      const { data } = await getOrderDetailApi(detailId!);
+      data.data.orderDeliveries.sort(
+        (a, b) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
+      );
+
+      return data.data;
+    },
+    {
+      onSuccess: (data) => {
+        let completeArr: any = [];
+        data.orderDeliveries.forEach((o) => {
+          if (o.status === 'COMPLETED') {
+            completeArr.push(o.deliveryDate);
+          }
+        });
+        setDeliveryComplete(completeArr);
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!detailId,
+    }
+  );
+
+  const subDates = useSubDeliveryDates();
+
+  const { mutate: changeDeliveryDateMutation } = useMutation(
+    async () => {
+      const { data } = await editDeliveryDateApi({
+        deliveryId: item.id,
+        selectedDeliveryDay: dayjs(selectDate).format('YYYY-MM-DD'),
+      });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(['getOrderDetail', detailId]);
+        setSelectDate(selectDate);
+      },
+      onError: async (error: any) => {
+        dispatch(
+          SET_ALERT({
+            alertMessage: error.message,
+            submitBtnText: '확인',
+          })
+        );
+      },
+    }
+  );
 
   const dateFormat = (date: Date | string) => {
     return `${dayjs(date).format('M')}월 ${dayjs(date).format('D')}일 (${dayjs(date).format('dd')})`;
   };
 
   const deliveryChangeHandler = () => {
-    if (subsDeliveryExpectedDate[0].deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) {
+    // 선택한 배송이 DELIVERING 상태
+    if (item?.status === 'DELIVERING') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `현재 배송 중인 날짜입니다.`,
+          submitBtnText: '확인',
+        })
+      );
+
+      return;
+    }
+    // 선택한 배송이 DELIVERING 상태
+    if (item?.status === 'PREPARING') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `현재 상품준비 중인 날짜입니다.`,
+          submitBtnText: '확인',
+        })
+      );
+
+      return;
+    }
+
+    if (item?.deliveryDateChangeMaximum - item?.deliveryDateChangeCount === 0) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `배송일 변경 제한 횟수(5회)를\n초과하여 더 이상 변경할 수 없어요.`,
+          submitBtnText: '확인',
+        })
+      );
+
+      return;
+    }
+
+    if (item?.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) {
       dispatch(
         SET_ALERT({
           alertMessage: `변경 전 날짜로\n배송일을 변경할 수 없어요.`,
           submitBtnText: '확인',
         })
       );
-    } else {
-      dispatch(INIT_BOTTOM_SHEET());
+      return;
     }
+
+    // 변경전 날짜가 합배송이 아닐경우
+    if (
+      subDates.findIndex((x: any) => x.deliveryDate === item.deliveryDate) === -1 &&
+      orderDetail?.orderDeliveries.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) ===
+        -1
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `배송일을 변경하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            changeDeliveryDateMutation();
+            dispatch(INIT_BOTTOM_SHEET());
+          },
+        })
+      );
+    }
+
+    // 변경전 날짜가 합배송이 아닐경우 && 변경날짜가 배송예정일인 경우
+    if (
+      subDates.findIndex((x: any) => x.deliveryDate === item.deliveryDate) === -1 &&
+      orderDetail?.orderDeliveries.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) !==
+        -1
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `다른 회차의 배송예정일로 변경 시\n기존 주문과는 별도로 배송됩니다.`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            changeDeliveryDateMutation();
+            dispatch(INIT_BOTTOM_SHEET());
+          },
+        })
+      );
+    }
+
+    // 변경전 날짜가 합배송이 맞을경우
+    if (
+      subDates.find((x: any) => x.deliveryDate === item.deliveryDate) &&
+      orderDetail?.orderDeliveries.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) !==
+        -1
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `다른 회차의 배송예정일로 변경 시\n함께배송 주문도 함께 변경되며,\n기존 주문과는 별도로 배송됩니다.`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            dispatch(INIT_BOTTOM_SHEET());
+          },
+        })
+      );
+    }
+
+    // 변경전 날짜가 합배송이 맞을경우 && 변경날짜가 배송예정일인 경우
+    if (
+      subDates.find((x: any) => x.deliveryDate === item.deliveryDate) &&
+      orderDetail?.orderDeliveries.findIndex((x: any) => x.deliveryDate === dayjs(selectDate).format('YYYY-MM-DD')) ===
+        -1
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `함께배송 주문도 함께 변경됩니다.\n변경하시겠어요?`,
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            dispatch(INIT_BOTTOM_SHEET());
+          },
+        })
+      );
+    }
+    // dispatch(INIT_BOTTOM_SHEET());
   };
+
+  if (isLoading) return <div>...로딩중</div>;
 
   return (
     <Container>
       <Header>
+        <TextH4B>배송일 변경</TextH4B>
         <CloseBtn
           onClick={() => {
             dispatch(INIT_BOTTOM_SHEET());
@@ -58,26 +243,32 @@ const SubsDeliveryChangeSheet = () => {
       </Header>
       <RemainCountBox>
         <TextB2R>
-          배송일 변경 잔여 횟수 : <b>5회</b>
+          배송일 변경 잔여 횟수 : <b>{item?.deliveryDateChangeMaximum - item?.deliveryDateChangeCount}회</b>
         </TextB2R>
       </RemainCountBox>
       <DateChangeDayBox>
         <li>
-          <TextB3R padding="0 0 4px">배송 1회차 - 변경 전</TextB3R>
-          <TextH4B>{dateFormat(subsDeliveryExpectedDate[0].deliveryDate)}</TextH4B>
+          <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 전</TextB3R>
+          <TextH4B>{dateFormat(item.deliveryDate)}</TextH4B>
         </li>
         <li>
-          <TextB3R padding="0 0 4px">배송 1회차 - 변경 후</TextB3R>
+          <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 후</TextB3R>
           <TextH4B>{changeDate}</TextH4B>
         </li>
       </DateChangeDayBox>
-      <SubsCalendar
-        subsActiveDates={subsDeliveryExpectedDate}
-        deliveryExpectedDate={subsDeliveryExpectedDate}
-        sumDelivery={sumDelivery}
-        setSelectDate={setSelectDate}
-        calendarType="deliveryChange"
-      />
+
+      {orderDetail && (
+        <SubsDateMngCalendar
+          orderDeliveries={orderDetail?.orderDeliveries}
+          firstDeliveryDate={orderDetail?.orderDeliveries[0].deliveryDate!}
+          lastDeliveryDate={orderDetail?.orderDeliveries[orderDetail?.orderDeliveries.length - 1].deliveryDate!}
+          setSelectDate={setSelectDate}
+          megCalendarSelectDate={item?.deliveryDate}
+          deliveryComplete={deliveryComplete}
+          sumDelivery={subDates}
+          deliveryChangeBeforeDate={item.deliveryDate}
+        />
+      )}
       <FlexRow className="sumEx" padding="8px 24px 0">
         <SVGIcon name="brandColorDot" />
         <TextB3R color="#717171" margin="0 0 0 6px">

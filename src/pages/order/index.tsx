@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import BorderLine from '@components/Shared/BorderLine';
 import {
@@ -18,7 +18,7 @@ import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import { getCookie, getFormatPrice, SVGIcon } from '@utils/common';
+import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -28,34 +28,22 @@ import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { couponForm, INIT_COUPON } from '@store/coupon';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD_VALUE } from '@constants/order';
-import { destinationForm } from '@store/destination';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import {
   createOrderPreviewApi,
   createOrderApi,
   postKakaoPaymentApi,
   postTossPaymentApi,
-  postTossApproveApi,
   postPaycoPaymentApi,
   postNicePaymnetApi,
-  postNiceApproveApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
-import { isNil } from 'lodash-es';
-import {
-  Obj,
-  IGetCard,
-  ILocation,
-  ICoupon,
-  ICreateOrder,
-  IGetNicePayment,
-  IGetNicePaymentResponse,
-} from '@model/index';
+import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder, IGetNicePaymentResponse } from '@model/index';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { orderForm, INIT_CARD, INIT_ORDER, SET_RECENT_PAYMENT } from '@store/order';
+import { orderForm, SET_RECENT_PAYMENT } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsInfoBox, SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
 import { SET_ALERT } from '@store/alert';
@@ -1166,7 +1154,13 @@ const OrderPage = () => {
 
       {previewOrder?.order.type === 'SUBSCRIPTION' && (
         <>
-          <SubsInfoBox subscriptionRound={previewOrder.order.subscriptionRound} />
+          <SubsInfoBox
+            subscriptionRound={previewOrder.order.subscriptionRound}
+            deliveryDayLength={subsInfo?.deliveryDay?.length!}
+            deliveryDay={subsInfo?.deliveryDay?.join('·')!}
+            datePeriodFirst={getFormatDate(subsInfo?.datePeriod![0])!}
+            datePeriodLast={getFormatDate(subsInfo?.datePeriod![1])!}
+          />
           <BorderLine height={8} />
         </>
       )}
@@ -1503,7 +1497,7 @@ const OrderPage = () => {
           eventDiscount={eventDiscount!}
           menuOption1={options?.option1!}
           menuOption2={options?.option2!}
-          deliveryPrice={deliveryFee!}
+          deliveryPrice={(deliveryFee - deliveryFeeDiscount)!}
           deliveryLength={previewOrder?.order.orderDeliveries.length}
           point={userInputObj.point}
           type={'last'}
