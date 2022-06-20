@@ -4,8 +4,9 @@ import styled from 'styled-components';
 interface IProps {
   state: Boolean;
   duration: number;
+  change?: any;
 }
-const SlideToggle: React.FC<IProps> = ({ children, state = false, duration = 0.5 }) => {
+const SlideToggle: React.FC<IProps> = ({ children, state = false, duration = 0.5, change }) => {
   const [contentDefault, setContentDefault] = useState<any>();
   const [contentH, setContentH] = useState<any>(0);
   const contentRef = useRef<any>(null);
@@ -17,7 +18,7 @@ const SlideToggle: React.FC<IProps> = ({ children, state = false, duration = 0.5
       setContentH(current.offsetHeight);
     }
     state ? setContentH(contentDefault) : setContentH(0);
-  }, [contentDefault, state]);
+  }, [contentDefault, state, change]);
 
   return (
     <Container style={{ height: contentH, transition: `all ${duration}s` }}>
