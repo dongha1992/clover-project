@@ -5,11 +5,12 @@ import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextB3R } from '@components/Shared/Text';
 import { Item, HorizontalItem } from '@components/Item';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
 import { getMenusApi, getRecommendMenusApi } from '@api/menu';
+import { filterSelector } from '@store/filter';
 
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
@@ -18,6 +19,7 @@ const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
+  const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
 
   const { error: carouselError } = useQuery(
@@ -45,7 +47,7 @@ const Home = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    ['getMenus', ''],
+    ['getMenus', type],
     async () => {
       const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
       const { data } = await getMenusApi(params);
