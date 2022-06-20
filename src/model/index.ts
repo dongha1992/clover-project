@@ -1646,9 +1646,9 @@ export type TType =
   | string;
 export interface IGetMenus {
   categories?: TCategory;
-  menuSort: TMenuSort | string;
+  menuSort?: TMenuSort | string;
   searchKeyword?: string;
-  type?: TType | string;
+  type: TType | string;
 }
 
 export interface IMenuImage {
