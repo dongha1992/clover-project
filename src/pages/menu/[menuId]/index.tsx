@@ -351,8 +351,8 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        <ReviewContainer>
-          {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen && (
+        {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen ? (
+          <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
                 <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
@@ -368,8 +368,10 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               </ReviewHeader>
               <ReviewList reviews={reviews} onClick={goToReviewDetail} />
             </ReviewWrapper>
-          )}
-        </ReviewContainer>
+          </ReviewContainer>
+        ) : (
+          <BorderLine height={1} margin="0 auto" width={'calc(100% - 48px)'} />
+        )}
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
             <div key={index}>
