@@ -571,7 +571,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 }
 
@@ -580,7 +580,7 @@ export async function getStaticProps({ params }: { params: { menuId: string } })
   console.log(data, 'dd');
   return {
     props: { menuDetail: data.data },
-    revalidate: 100,
+    revalidate: 10,
   };
 }
 
