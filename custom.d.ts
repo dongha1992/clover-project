@@ -12,3 +12,8 @@ declare module 'AppleID' {
   const content: any;
   export default content;
 }
+
+declare module 'react-render-markup' {
+  const renderMarkup: any;
+  export default renderMarkup;
+}
