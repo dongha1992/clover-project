@@ -153,7 +153,7 @@ const Header = () => {
         return <SpotSearchHeader title={title} />;
       }
 
-      case ['/spot/register/submit/finish', '/spot/open'].includes(currentPath): {
+      case ['/spot/join/main/form/submit/finish', '/spot/open'].includes(currentPath): {
         return <CloseDefaultHeader title={title} />;
       }
 
