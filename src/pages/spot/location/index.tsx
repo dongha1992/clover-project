@@ -62,9 +62,7 @@ const LocationPage = () => {
   }, []);
 
   useEffect(() => {
-    if (page > 1) {
       getSearchAddressResult();
-    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
@@ -136,6 +134,7 @@ const LocationPage = () => {
       if (addressRef.current) {
         addressRef.current.value = '';
       };
+      setResultAddress([]);
       setIsSearched(false);
     };
 
@@ -313,7 +312,7 @@ const LocationPage = () => {
           </TextH6B>
         </CurrentLocBtn>
         {
-          isSearched && (
+          isSearched ? (
             <ResultList>
               {resultAddress.length > 0 ? (
                 <>
@@ -340,6 +339,8 @@ const LocationPage = () => {
               )
               }
             </ResultList>
+          ) : (
+            null
           )
         }
       </Wrapper>
