@@ -42,7 +42,7 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
 };
 
 const Container = styled.div`
-  padding: 24px;
+  padding: 8px 24px 24px 24px;
 `;
 
 const Content = styled.div`
@@ -55,6 +55,9 @@ const Content = styled.div`
 `;
 
 const Contents = styled.div`
-  margin-top: 24px;
+  border-bottom: 1px solid ${theme.greyScale6};
+  &:last-of-type {
+    border-bottom: none;
+  }
 `;
 export default DetailBottomFAQ;
