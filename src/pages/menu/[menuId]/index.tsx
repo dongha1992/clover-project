@@ -18,7 +18,7 @@ import { Tag } from '@components/Shared/Tag';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewList } from '@components/Pages/Review';
-import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ } from '@constants/menu';
+import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ, TAG_MAP } from '@constants/menu';
 import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
@@ -282,22 +282,19 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
         <MenuDetailWrapper>
           <MenuNameWrapper>
             <TextH2B padding={'0 0 8px 0'}>{menuDetail.name}</TextH2B>
-            {menuDetail.constitutionTag && menuDetail.constitutionTag !== 'NONE' && (
-              <Tag margin="0 4px 0 0">{menuDetail.constitutionTag}</Tag>
-            )}
             <div className="tagBox">
+              {menuDetail.constitutionTag && menuDetail.constitutionTag !== 'NONE' && (
+                <Tag margin="0 4px 0 0">{TAG_MAP[menuDetail.constitutionTag]}</Tag>
+              )}
               {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
                 <Label className={item} key={index}>
                   {DELIVERY_TYPE_MAP[item]}
                 </Label>
               ))}
               {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
-              {menuDetail.constitutionTag && menuDetail.constitutionTag !== 'NONE' && (
-                <Tag margin="0 4px 0 0">{menuDetail.constitutionTag}</Tag>
-              )}
             </div>
           </MenuNameWrapper>
-          <TextB2R padding="0 16px 0" color={theme.greyScale65}>
+          <TextB2R padding="16px 0" color={theme.greyScale65}>
             {menuDetail.summary}
           </TextB2R>
           <PriceAndCouponWrapper>
@@ -577,7 +574,6 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
-  console.log(data, 'dd');
   return {
     props: { menuDetail: data.data },
     revalidate: 10,
