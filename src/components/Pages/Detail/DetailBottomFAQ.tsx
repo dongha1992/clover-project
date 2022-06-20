@@ -15,16 +15,16 @@ interface IProps {
 }
 
 const DetailBottomFAQ = ({ menuFaq }: IProps) => {
-  const [toggleObj, setToggleObj] = useState({ title: '', isToggle: false });
+  const [toggleObj, setToggleObj] = useState('');
 
   const setToggleHandler = (title: string) => {
-    setToggleObj({ title, isToggle: !toggleObj.isToggle });
+    setToggleObj(title);
   };
 
   return (
     <Container>
       {menuFaq?.contents?.map((content: IContents, index: number) => {
-        const isToggle = toggleObj.title === content.title && toggleObj.isToggle;
+        const isToggle = toggleObj === content.title;
         return (
           <Contents key={index}>
             <ToggleHeader setIsToggle={setToggleHandler} text={content.title} isToggle={isToggle} />
