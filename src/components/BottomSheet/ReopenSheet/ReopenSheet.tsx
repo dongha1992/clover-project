@@ -10,7 +10,7 @@ import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { userAuthTel, userConfirmTel, userChangeInfo } from '@api/user';
+import { userAuthTel, userConfirmTel, userChangeInfo, userProfile } from '@api/user';
 import { postNotificationApi } from '@api/menu';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
@@ -61,6 +61,23 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
 
   const { type } = useSelector(filterSelector);
 
+  const { data: user, isLoading: infoLoading } = useQuery(
+    'getUserProfile',
+    async () => {
+      const { data } = await userProfile();
+
+      if (data.code === 200) {
+        return data.data;
+      }
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {},
+      onError: () => {},
+    }
+  );
+
   const { mutateAsync: mutatePostNoti } = useMutation(
     async () => {
       const reqBody = {
@@ -73,7 +90,6 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
     },
     {
       onSuccess: async (data) => {
-        console.log(type, 'type');
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
         if (isDetailBottom) {
@@ -290,9 +306,9 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
   };
 
   useEffect(() => {
-    setUserTel(me?.tel!);
+    setUserTel(user?.tel!);
     setIsMarketinngChecked(me?.marketingSmsReceived!);
-  }, [me]);
+  }, [me, user]);
 
   useEffect(() => {
     if (authTimerRef.current < 0) {
