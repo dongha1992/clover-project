@@ -60,8 +60,6 @@ const CategoryPage = () => {
     ['getMenus', type],
     async ({ queryKey }) => {
       const params = {
-        categories: '',
-        menuSort: '',
         type: types,
       };
 
