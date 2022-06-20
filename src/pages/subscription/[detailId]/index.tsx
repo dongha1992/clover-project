@@ -86,6 +86,13 @@ const SubsDetailPage = () => {
     });
   };
 
+  const paymentChangeHandler = () => {
+    router.push({
+      pathname: '/mypage/card',
+      query: { isOrder: true, orderId: orderDetail?.id },
+    });
+  };
+
   if (isLoading) return <div>...로딩중</div>;
 
   return (
@@ -164,6 +171,7 @@ const SubsDetailPage = () => {
           </FlexBetween>
         )}
         <Button
+          onClick={paymentChangeHandler}
           backgroundColor="#fff"
           color="#242424"
           border
