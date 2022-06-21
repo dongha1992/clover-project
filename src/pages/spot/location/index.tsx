@@ -62,9 +62,7 @@ const LocationPage = () => {
   }, []);
 
   useEffect(() => {
-    if (page > 1) {
       getSearchAddressResult();
-    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
@@ -117,7 +115,6 @@ const LocationPage = () => {
         const list = data?.results.juso ?? [];
         setResultAddress((prevList) => [...prevList, ...list]);
         setTotalCount(data.results.common.totalCount);
-        setIsSearched(true);
       } catch (err) {
         console.error(err);
       }
@@ -128,6 +125,7 @@ const LocationPage = () => {
     if (e.key === 'Enter') {
       setResultAddress([]);
       getSearchAddressResult();
+      setIsSearched(true);
     }
   };
 
@@ -136,6 +134,7 @@ const LocationPage = () => {
       if (addressRef.current) {
         addressRef.current.value = '';
       };
+      setResultAddress([]);
       setIsSearched(false);
     };
 
@@ -305,19 +304,12 @@ const LocationPage = () => {
             )
           }
         </SearchBarWrapper>
-
-        <CurrentLocBtn>
-          <SVGIcon name="locationBlack" />
-          <TextH6B pointer padding="0 0 0 4px" onClick={getGeoLocation}>
-            현 위치로 설정하기
-          </TextH6B>
-        </CurrentLocBtn>
         {
-          isSearched && (
+          isSearched ? (
             <ResultList>
               {resultAddress.length > 0 ? (
                 <>
-                  <TextH5B padding="0 0 17px 0">검색 결과 {totalCount}개</TextH5B>
+                  <TextH5B padding="24px 0 24px 0">검색 결과 {totalCount}개</TextH5B>
                   {resultAddress.map((address, index) => {
                     return (
                       <AddressItem
@@ -340,6 +332,8 @@ const LocationPage = () => {
               )
               }
             </ResultList>
+          ) : (
+            null
           )
         }
       </Wrapper>
@@ -359,33 +353,14 @@ const SearchBarWrapper = styled.div`
     top: 0;
     margin: 15px 14px 0 0;
   }
-
-  // position: relative;
-  // .removeSvg {
-  //   position: absolute;
-  //   right: 5%;
-  //   top: 32%;
-  // }
-`;
-
-const CurrentLocBtn = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 16px;
 `;
 
 const ResultList = styled.div``;
 
-const CaseWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 24px;
-`;
-
 const NoResultWrapper = styled.div`
-  height: 50vh;
+  height: 40vh;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
 `;
 
