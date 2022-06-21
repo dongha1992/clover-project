@@ -44,29 +44,29 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   const { type } = useSelector(filterSelector);
 
-  // const { mutate: mutateDeleteNotification } = useMutation(
-  //   async () => {
-  //     const { data } = await deleteNotificationApi(item.id);
-  //   },
+  const { mutate: mutateDeleteNotification } = useMutation(
+    async () => {
+      const { data } = await deleteNotificationApi(item.id);
+    },
 
-  //   {
-  //     onSuccess: async () => {
-  //       queryClient.setQueryData(['getMenus', type], (previous: any) => {
-  //         return previous?.map((_item: IMenus) => {
-  //           if (_item.id === item.id) {
-  //             return { ..._item, reopenNotificationRequested: false };
-  //           }
-  //           return _item;
-  //         });
-  //       });
-  //     },
-  //     onMutate: async () => {},
-  //     onError: async (error: any) => {
-  //       dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
-  //       console.error(error);
-  //     },
-  //   }
-  // );
+    {
+      onSuccess: async () => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            if (_item.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
 
   /* TODO: 리팩토링 해야함, hook */
 
@@ -219,6 +219,10 @@ const Item = ({ item, isHorizontal }: TProps) => {
   };
 
   const goToReopen = (item: IMenus) => {
+    if (item.reopenNotificationRequested) {
+      mutateDeleteNotification();
+      return;
+    }
     dispatch(SET_MENU_ITEM(item));
     router.push({ pathname: `/menu/${item.id}`, query: { isReopen: true } });
     // if (!me) {

@@ -1692,13 +1692,13 @@ export interface IMenuDetail {
   isReopen: boolean;
   isSold: boolean;
   menuDetails: IMenuDetails[];
-  menuSort: number;
+  menuSort: string;
   likeCount: number;
   name: string;
   openedAt: string;
   orderCount: number;
   priority: number;
-  thumbnail: string;
+  thumbnail: IMenuImage[];
   liked: boolean;
   type: string;
   subscriptionDeliveries: string[];
@@ -1706,6 +1706,12 @@ export interface IMenuDetail {
   subscriptionDeliveryCycle: string;
   reopenNotificationRequested: boolean;
   reopenMessage: string;
+  menuFaq: IMenuFaq;
+  productInfoNotis: IProductInfo[];
+  summary: string;
+  nutritionInfoNotis: INutitionInfo[];
+  deliveryMethods: IMenuImage[];
+  reviewCount: number;
 }
 
 export interface IMenuDetailsResponse {
@@ -1721,18 +1727,18 @@ export interface IMenus {
   summary: string;
   thumbnail: IMenuImage[];
   badgeMessage: string;
-  launchedAt: string;
+  launchedAt?: string;
   liked: boolean;
   likeCount: number;
   reviewCount: number;
   menuDetails: IMenuDetails[];
   menuSort: string;
   orderCount: number;
-  priority: string;
-  closedAt: string;
+  priority: number;
+  closedAt?: string;
   openedAt: string;
   subscriptionDeliveries?: string[];
-  subscriptionPeriods?: string;
+  subscriptionPeriods?: string[];
   constitutionTag: string;
   isReopen?: boolean;
   isSold?: boolean;
