@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { Obj } from '@model/index';
+import { createGlobalStyle } from 'styled-components';
 
 /* TODO: 주석 */
 
