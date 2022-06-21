@@ -45,35 +45,11 @@ const DetailBottom = () => {
   const { showToast, hideToast } = useToast();
 
   const { isTimerTooltip } = useSelector(orderForm);
-  const {
-    menuItem: { id },
-  } = useSelector(menuSelector);
+  const { menuItem: menuDetail } = useSelector(menuSelector);
   const { me } = useSelector(userForm);
 
   const deliveryType = checkTimerLimitHelper();
   const { isLoginSuccess } = useSelector(userForm);
-
-  const {
-    data: menuDetail,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    'getMenuDetail',
-    async () => {
-      const { data } = await getMenuDetailApi(id!);
-
-      return data?.data;
-    },
-
-    {
-      onSuccess: (data) => {
-        dispatch(SET_MENU_ITEM(data));
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!id,
-    }
-  );
 
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {
@@ -256,7 +232,7 @@ const DetailBottom = () => {
     }
   };
 
-  if (isLoading) {
+  if (!menuDetail) {
     return <div>로딩</div>;
   }
 

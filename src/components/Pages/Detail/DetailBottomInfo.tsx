@@ -7,10 +7,14 @@ interface IProps {
 }
 
 const DetailBottomInfo = ({ menuDescription }: IProps) => {
-  return <Container dangerouslySetInnerHTML={{ __html: menuDescription! }}></Container>;
+  return (
+    <Container>
+      <div dangerouslySetInnerHTML={{ __html: menuDescription! }}></div>
+    </Container>
+  );
 };
 
-const Container = styled.div`
+const Container = styled.pre`
   padding: 24px;
 `;
 export default DetailBottomInfo;

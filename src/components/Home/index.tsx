@@ -25,7 +25,7 @@ const Home = () => {
   const { error: carouselError } = useQuery(
     'carouselBanners',
     async () => {
-      const params = { type: 'CAROUSEL' };
+      const params = { type: 'CAROUSEL', size: 100 };
       const { data } = await getBannersApi(params);
       setBannerList(data.data);
     },
@@ -35,26 +35,12 @@ const Home = () => {
   const { error: eventsError } = useQuery(
     'eventsBanners',
     async () => {
-      const params = { type: 'EVENT' };
+      const params = { type: 'EVENT', size: 100 };
       const { data } = await getBannersApi(params);
       setEventBannerList(data.data);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
-
-  // const {
-  //   data: menus,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   ['getMenus', type],
-  //   async () => {
-  //     const params = { type: '' };
-  //     const { data } = await getMenusApi(params);
-  //     return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
-  //   },
-  //   { refetchOnMount: true, refetchOnWindowFocus: false }
-  // );
 
   const {
     data: menus,

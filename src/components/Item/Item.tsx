@@ -44,29 +44,29 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   const { type } = useSelector(filterSelector);
 
-  // const { mutate: mutateDeleteNotification } = useMutation(
-  //   async () => {
-  //     const { data } = await deleteNotificationApi(item.id);
-  //   },
+  const { mutate: mutateDeleteNotification } = useMutation(
+    async () => {
+      const { data } = await deleteNotificationApi(item.id);
+    },
 
-  //   {
-  //     onSuccess: async () => {
-  //       queryClient.setQueryData(['getMenus', type], (previous: any) => {
-  //         return previous?.map((_item: IMenus) => {
-  //           if (_item.id === item.id) {
-  //             return { ..._item, reopenNotificationRequested: false };
-  //           }
-  //           return _item;
-  //         });
-  //       });
-  //     },
-  //     onMutate: async () => {},
-  //     onError: async (error: any) => {
-  //       dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
-  //       console.error(error);
-  //     },
-  //   }
-  // );
+    {
+      onSuccess: async () => {
+        queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            if (_item.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
+      },
+      onMutate: async () => {},
+      onError: async (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '알림 취소에 실패했습니다.' }));
+        console.error(error);
+      },
+    }
+  );
 
   /* TODO: 리팩토링 해야함, hook */
 
@@ -208,28 +208,28 @@ const Item = ({ item, isHorizontal }: TProps) => {
     }
   };
 
-  const goToLogin = () => {
-    return dispatch(
-      SET_ALERT({
-        alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
-        onSubmit: () => router.push('/onboarding'),
-        closeBtnText: '취소',
-      })
-    );
-  };
+  const goToLogin = () => {};
 
-  const goToReopen = (item: IMenus) => {
-    dispatch(SET_MENU_ITEM(item));
-    router.push({ pathname: `/menu/${item.id}`, query: { isReopen: true } });
-    // if (!me) {
-    //   goToLogin();
-    //   return;
-    // }
-    // if (item.reopenNotificationRequested) {
-    //   mutateDeleteNotification();
-    //   return;
-    // }
-    // dispatch(SET_BOTTOM_SHEET({ content: <ReopenSheet menuId={item.id} /> }));
+  const goToReopen = (e: any, item: IMenus) => {
+    e.stopPropagation();
+    if (item.reopenNotificationRequested && me) {
+      mutateDeleteNotification();
+      return;
+    } else {
+      if (!me) {
+        return dispatch(
+          SET_ALERT({
+            alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
+            onSubmit: () =>
+              router.push(`/onboarding?returnPath=${encodeURIComponent(String(`/menu/${item.id}?isReopen=true`))}`),
+            closeBtnText: '취소',
+          })
+        );
+      } else {
+        dispatch(SET_MENU_ITEM(item));
+        router.push({ pathname: `/menu/${item.id}`, query: { isReopen: true } });
+      }
+    }
   };
 
   return (
@@ -249,7 +249,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
           </ForReopen>
         )}
         {isReOpen || isOpenSoon ? (
-          <ReopenBtn onClick={() => goToReopen(item)}>
+          <ReopenBtn onClick={(e) => goToReopen(e, item)}>
             <SVGIcon name={item.reopenNotificationRequested ? 'reopened' : 'reopen'} />
           </ReopenBtn>
         ) : (
