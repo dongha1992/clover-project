@@ -49,6 +49,8 @@ import { PERIOD_NUMBER } from '@constants/subscription';
 import MenuItem from '@components/Pages/Subscription/register/MenuItem';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { getPromotionCodeApi } from '@api/promotion';
+import { getBannersApi } from '@api/banner';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -137,6 +139,20 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
+  );
+
+  const {
+    data: banners,
+    isLoading: bannerLoading,
+    error: bannerError,
+  } = useQuery(
+    'menuBanners',
+    async () => {
+      const params = { type: 'MENU', size: 2 };
+      const { data } = await getBannersApi(params);
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const onScrollHandler = (e: any) => {
@@ -263,7 +279,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     };
   }, []);
 
-  if (isLoading) {
+  if (isLoading && bannerLoading) {
     <div>로딩</div>;
   }
 
@@ -337,7 +353,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   <TextH4B>{getNutiritionInfo().kcal}</TextH4B>
                   <TextB3R padding="0 0 0 2px">kcal</TextB3R>
                 </NutritionInfoBox>
-                <MLWrapper></MLWrapper>
+                {/* <MLWrapper></MLWrapper> */}
               </NutritionInfoWrapper>
               <ProteinWrapper>
                 <TextH7B color={theme.greyScale65}>단백질 함량</TextH7B>
@@ -345,7 +361,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   <TextH4B>{getNutiritionInfo().protein}</TextH4B>
                   <TextB3R padding="0 0 0 2px">kcal</TextB3R>
                 </NutritionInfoBox>
-                <MLWrapper></MLWrapper>
+                {/* <MLWrapper></MLWrapper> */}
               </ProteinWrapper>
             </NutritionInfo>
           )}
@@ -407,7 +423,18 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           ))}
         </DetailInfoContainer>
       </Top>
-      <AdWrapper></AdWrapper>
+      {banners?.length! > 0 && (
+        <>
+          {banners?.map((banner, index) => {
+            return (
+              <AdWrapper key={index}>
+                <BannerImg src={IMAGE_S3_URL + banner.imageUrl} />
+              </AdWrapper>
+            );
+          })}
+        </>
+      )}
+
       <div ref={tabRef} />
       <Bottom>
         <StickyTab
@@ -522,7 +549,13 @@ const ReviewContainer = styled.div`
 const AdWrapper = styled.div`
   width: 100%;
   height: 96px;
-  background-color: #dedede;
+  /* background-color: #dedede; */
+  margin-bottom: 16px;
+`;
+
+const BannerImg = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
 const ReviewWrapper = styled.div`
