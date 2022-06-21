@@ -119,6 +119,9 @@ const ProfilePage = () => {
           })
         );
         await queryClient.refetchQueries('getUserProfile');
+        if (router.query.returnPath) {
+          router.push({ pathname: router?.query?.returnPath as string, query: { isReopen: true } });
+        }
       },
       onError: async (error: any) => {
         console.error(error);
