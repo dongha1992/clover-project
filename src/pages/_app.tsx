@@ -32,6 +32,8 @@ import { INIT_USER, SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
 import { useToast } from '@hooks/useToast';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 declare global {
   interface Window {
     Kakao: any;

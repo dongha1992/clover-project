@@ -42,6 +42,20 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  // const {
+  //   data: menus,
+  //   error: menuError,
+  //   isLoading,
+  // } = useQuery(
+  //   ['getMenus', type],
+  //   async () => {
+  //     const params = { type: '' };
+  //     const { data } = await getMenusApi(params);
+  //     return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+  //   },
+  //   { refetchOnMount: true, refetchOnWindowFocus: false }
+  // );
+
   const {
     data: menus,
     error: menuError,
@@ -49,25 +63,11 @@ const Home = () => {
   } = useQuery(
     ['getMenus', type],
     async () => {
-      const params = { type: '' };
-      const { data } = await getMenusApi(params);
+      const { data } = await getRecommendMenusApi();
       return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
-
-  // const {
-  //   data: menus,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   ['getRecommendMenus'],
-  //   async () => {
-  //     const { data } = await getRecommendMenusApi();
-  //     return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
-  //   },
-  //   { refetchOnMount: true, refetchOnWindowFocus: false }
-  // );
 
   if (isLoading) {
     return <div>로딩</div>;

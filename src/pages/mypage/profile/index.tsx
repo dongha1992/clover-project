@@ -6,7 +6,7 @@ import TextInput from '@components/Shared/TextInput';
 import BorderLine from '@components/Shared/BorderLine';
 import { GENDER } from '@pages/signup/optional';
 import { Button, RadioButton } from '@components/Shared/Button';
-import router from 'next/router';
+import { useRouter } from 'next/router';
 import { SVGIcon } from '@utils/common';
 import { useInterval } from '@hooks/useInterval';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +26,8 @@ import { NAME_REGX } from '@constants/regex';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { IChangeMe } from '@model/index';
 import { getValidBirthday } from '@utils/common';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 
 interface IVaildation {
   message: string;
@@ -84,6 +86,7 @@ const ProfilePage = () => {
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data: me, isLoading: infoLoading } = useQuery(
     'getUserProfile',
@@ -110,12 +113,20 @@ const ProfilePage = () => {
     async (reqBody: IChangeMe) => {
       const { data } = await userChangeInfo(reqBody);
       return data;
-    },
+    }, // query: { menuId: router.query.menuId },
     {
       onSuccess: async () => {
         dispatch(
           SET_ALERT({
             alertMessage: '수정을 성공하였습니다.',
+            onSubmit: () => {
+              const path = router?.query?.returnPath as string;
+
+              if (router.query.returnPath) {
+                const editReturnPath = `${router.query.returnPath}?isReopen=true`;
+                router.push(editReturnPath as string);
+              }
+            },
           })
         );
         await queryClient.refetchQueries('getUserProfile');
