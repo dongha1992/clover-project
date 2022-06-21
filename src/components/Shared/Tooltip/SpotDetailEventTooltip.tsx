@@ -22,15 +22,10 @@ const Container = styled.div<Props>`
   display: inline-block;
   text-align: center;
   position: absolute;
-  left: 50%;
-  top: -20px;
-
-  ${({ theme }) => theme.mobile`
-    left: 49%;
-  `};
-  
-  z-index: 90;
-  padding: 4px 12px;
+  left: 24px;
+  top: -13px;
+  z-index: 9;
+  padding: 4px 8px;
   border-radius: 4px;
   background-color: ${(props) => props.bgColor};
   &::after {
