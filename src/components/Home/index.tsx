@@ -61,7 +61,7 @@ const Home = () => {
     error: menuError,
     isLoading,
   } = useQuery(
-    ['getRecommendMenus'],
+    ['getMenus', type],
     async () => {
       const { data } = await getRecommendMenusApi();
       return data.data.sort((a: any, b: any) => a.isSold - b.isSold);

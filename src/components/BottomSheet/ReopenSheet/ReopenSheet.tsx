@@ -30,30 +30,19 @@ const FIVE_MINUTE = 300;
 interface IProps {
   menuId: number;
   isDetailBottom?: boolean;
+  returnPath?: string;
 }
 
-const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
+const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
   const dispatch = useDispatch();
 
-  let authTimerRef = useRef(300);
-  const authCodeNumberRef = useRef<HTMLInputElement>(null);
   const { me } = useSelector(userForm);
   const { isMobile } = useSelector(commonSelector);
 
   const { showToast } = useToast();
 
-  const [minute, setMinute] = useState<number>(0);
-  const [second, setSecond] = useState<number>(0);
-  const [phoneValidation, setPhoneValidation] = useState(false);
   const [userTel, setUserTel] = useState<string>('');
-  const [isAuthTel, setIsAuthTel] = useState(false);
-  const [delay, setDelay] = useState<number | null>(null);
-  const [oneMinuteDisabled, setOneMinuteDisabled] = useState(false);
-  const [isOverTime, setIsOverTime] = useState<boolean>(false);
-  const [authCodeValidation, setAuthCodeValidation] = useState(false);
-  const [authCodeConfirm, setAuthCodeConfirm] = useState<boolean>(false);
   const [isMarketinngChecked, setIsMarketinngChecked] = useState<boolean>(false);
-  const [isChangedTel, setIsChangedTel] = useState<boolean>(true);
 
   const router = useRouter();
 
@@ -92,7 +81,7 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
       onSuccess: async (data) => {
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
-        if (isDetailBottom) {
+        if (isDetailBottom || router.pathname === '/menu/[menuId]') {
           await queryClient.refetchQueries('getMenuDetail');
         } else {
           queryClient.setQueryData(['getMenus', type], (previous: any) => {
@@ -103,6 +92,7 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
               return _item;
             });
           });
+          // router.push(returnPath ?? router.pathname);
         }
       },
       onError: async (error: any) => {
@@ -134,8 +124,13 @@ const ReopenSheet = ({ menuId, isDetailBottom }: IProps) => {
     mutatePostNoti();
   };
 
+  const getQuery = (path: string) => {
+    return path.split('?')[0];
+  };
+
   const goToMypage = () => {
-    router.push(`/mypage/profile/confirm?returnPath=${encodeURIComponent(String(router.asPath))}`);
+    const path = getQuery(router.asPath);
+    router.push(`/mypage/profile/confirm?returnPath=${encodeURIComponent(String(path))}`);
     dispatch(INIT_BOTTOM_SHEET());
   };
 

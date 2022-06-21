@@ -42,7 +42,7 @@ const CategoryPage = () => {
     WRAP: [],
     SANDWICH: [],
   });
-  // const [isFilter, setIsFilter] = useState<boolean>(false);
+
   const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
   const router = useRouter();
 
