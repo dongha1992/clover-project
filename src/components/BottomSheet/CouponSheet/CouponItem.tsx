@@ -23,10 +23,12 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
 
   const isRateDiscount = coupon.coupon.criteria === 'RATIO';
   const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon?.coupon.expiredDate));
-  // 임시
-  const isDownload = true;
+
+  const { participationStatus } = coupon;
+  const isBlock = participationStatus !== 'POSSIBLE';
+  console.log(participationStatus);
   return (
-    <Container isDownload={isDownload}>
+    <Container isDownload={isBlock}>
       <Wrapper>
         <Content>
           <TextH3B color={theme.brandColor}>
@@ -71,11 +73,13 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
         </Content>
         <BtnGroup>
           <SVGIcon name="dotColumn" />
-          {isDownload ? (
-            <Complete>
-              <SVGIcon name="couponDownloadComplete" />
-            </Complete>
-          ) : (
+          {participationStatus === 'COMPLETED' ||
+            (participationStatus === 'DUPLICATED' && (
+              <Complete>
+                <SVGIcon name="couponDownloadComplete" />
+              </Complete>
+            ))}
+          {participationStatus === 'POSSIBLE' && (
             <Incomplete
               onClick={() => {
                 if (isMobile) {
@@ -86,6 +90,11 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
             >
               <SVGIcon name="couponDownloadAvailable" />
             </Incomplete>
+          )}
+          {participationStatus === 'IMPOSSIBLE' && (
+            <Complete>
+              <SVGIcon name="blockCoupon" />
+            </Complete>
           )}
         </BtnGroup>
       </Wrapper>
