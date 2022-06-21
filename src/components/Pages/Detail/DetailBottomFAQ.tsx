@@ -43,7 +43,7 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
             <ToggleHeader setIsToggle={setToggleHandler} text={content.title} isToggle={content.isToggle} />
             <SlideToggle state={content.isToggle} duration={0.5}>
               <Content>
-                <TextH6B padding="0 0 12px 0">{content.title}</TextH6B>
+                {/* <TextH6B padding="0 0 12px 0">{content.title}</TextH6B> */}
                 <TextB3R>{content.description}</TextB3R>
               </Content>
             </SlideToggle>
