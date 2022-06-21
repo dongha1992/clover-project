@@ -26,7 +26,7 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
 
     // const isDisplayBadge = diff > 0 && diff <= ONE_WEEK;
     /* TODO: 임시 */
-    const customOpenedAt = openedAt.replace(/-/g, '/');
+    const customOpenedAt = openedAt?.replace(/-/g, '/');
     const isDisplayBadge = diff > 0;
     const isBeforeThanLaunchedAt = today.isSameOrBefore(customOpenedAt, 'day');
 

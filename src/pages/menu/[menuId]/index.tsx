@@ -49,6 +49,8 @@ import { PERIOD_NUMBER } from '@constants/subscription';
 import MenuItem from '@components/Pages/Subscription/register/MenuItem';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { getPromotionCodeApi } from '@api/promotion';
+import { getBannersApi } from '@api/banner';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -56,15 +58,11 @@ dayjs.locale('ko');
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
-/* TODO: 영양 정보 리팩토링 */
-/* TODO: 영양 정보 샐러드만 보여줌 */
-/* TODO: 베스트후기 없으면 안 보여줌  */
-
 interface IProps {
-  menuDetail: IMenus;
+  menuId: number;
 }
 
-const MenuDetailPage = ({ menuDetail }: IProps) => {
+const MenuDetailPage = ({ menuId }: IProps) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const tabRef = useRef<HTMLDivElement>(null);
@@ -74,43 +72,43 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const { me } = useSelector(userForm);
   const { menuItem } = useSelector(menuSelector);
-  let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(menuDetail);
-  const { badgeMessage, isReopen, isSold } = menuDetail;
-
-  const isTempSold = isItemSold && !isReopen;
-  const isOpenSoon = !isItemSold && isReopen && checkIsBeforeThanLaunchAt.length > 0;
-  const isReOpen = isItemSold && isReopen;
 
   let timer: any = null;
 
   const dispatch = useDispatch();
 
-  // const {
-  //   data: menuDetail,
-  //   error: menuError,
-  //   isLoading,
-  // } = useQuery(
-  //   'getMenuDetail',
-  //   async () => {
-  //     const { data } = await getMenuDetailApi(id!);
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(Number(menuId)!);
 
-  //     return data?.data;
-  //   },
+      return data?.data;
+    },
 
-  //   {
-  //     onSuccess: (data) => {
-  //       dispatch(SET_MENU_ITEM(data));
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     enabled: !!id,
-  //   }
-  // );
+    {
+      onSuccess: (data) => {
+        dispatch(SET_MENU_ITEM(data));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
+    }
+  );
+
+  let result = menuDetail && checkMenuStatus(menuDetail)!;
+
+  const isTempSold = result?.isItemSold && !menuDetail?.isReopen;
+  const isOpenSoon = !result?.isItemSold && menuDetail?.isReopen && result?.checkIsBeforeThanLaunchAt?.length! > 0;
+  const isReOpen = result?.isItemSold && menuDetail?.isReopen;
 
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(menuDetail.id);
+      const { data } = await getMenuDetailReviewApi(Number(menuId)!);
       return data.data;
     },
 
@@ -141,6 +139,20 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
+  );
+
+  const {
+    data: banners,
+    isLoading: bannerLoading,
+    error: bannerError,
+  } = useQuery(
+    'menuBanners',
+    async () => {
+      const params = { type: 'MENU', size: 2 };
+      const { data } = await getBannersApi(params);
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const onScrollHandler = (e: any) => {
@@ -182,7 +194,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   );
 
   const goToReviewDetail = (review: any) => {
-    router.push(`/menu/${menuDetail.id}/review/${review.id}`);
+    router.push(`/menu/${menuDetail?.id!}/review/${review.id}`);
   };
 
   const goToReviewSection = () => {
@@ -199,13 +211,15 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
     }, 100);
   };
 
+  console.log(coupons, 'co');
+
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review': {
         if (isOpenSoon) {
           return;
         }
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail.id} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail?.id} />;
       }
 
       case '/menu/detail/faq':
@@ -216,7 +230,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   };
 
   const getMenuDetailPrice = () => {
-    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuDetail.menuDetails ?? [{}]);
+    const { discount, price, discountedPrice } = getMenuDisplayPrice(menuDetail?.menuDetails ?? [{}]);
     return { discount, price, discountedPrice };
   };
 
@@ -226,16 +240,14 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       BEST: 'Best',
     };
 
-    const { badgeMessage, isReopen, isSold } = menuDetail;
-
     if (isTempSold) {
       return <Badge message="일시품절" />;
     } else if (isOpenSoon) {
-      return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
+      return <Badge message={`${result?.checkIsBeforeThanLaunchAt!}시 오픈`} />;
     } else if (isReOpen) {
       return <Badge message="재오픈예정" />;
-    } else if (!isReopen && badgeMessage) {
-      return <Badge message={badgeMap[badgeMessage]} />;
+    } else if (!menuDetail?.isReopen && menuDetail?.badgeMessage) {
+      return <Badge message={badgeMap[menuDetail?.badgeMessage]} />;
     } else {
       return;
     }
@@ -243,7 +255,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
 
   const getNutiritionInfo = () => {
     const copied = cloneDeep(menuDetail);
-    const sorted = copied?.menuDetails?.sort((a, b) => a.price - b.price);
+    const sorted = copied?.menuDetails?.sort((a, b) => a.price - b.price)!;
     const lowerPriceDetail = sorted[0];
     return { kcal: lowerPriceDetail.calorie || 0, protein: lowerPriceDetail.protein || 0 };
   };
@@ -257,7 +269,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
   }, [tabRef?.current?.offsetTop]);
 
   useEffect(() => {
-    dispatch(SET_INFO(menuDetail));
+    dispatch(SET_INFO(menuDetail!));
     if (isEmpty(menuItem)) {
       dispatch(SET_MENU_ITEM(menuDetail));
     }
@@ -268,6 +280,10 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       dispatch(INIT_MENU_ITEM());
     };
   }, []);
+
+  if (isLoading && bannerLoading) {
+    <div>로딩</div>;
+  }
 
   return (
     <Container>
@@ -281,10 +297,10 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
       <Top>
         <MenuDetailWrapper>
           <MenuNameWrapper>
-            <TextH2B padding={'0 0 8px 0'}>{menuDetail.name}</TextH2B>
+            <TextH2B padding={'0 0 8px 0'}>{menuDetail?.name}</TextH2B>
             <div className="tagBox">
-              {menuDetail.constitutionTag && menuDetail.constitutionTag !== 'NONE' && (
-                <Tag margin="0 4px 0 0">{TAG_MAP[menuDetail.constitutionTag]}</Tag>
+              {menuDetail?.constitutionTag && menuDetail?.constitutionTag !== 'NONE' && (
+                <Tag margin="0 4px 0 0">{TAG_MAP[menuDetail?.constitutionTag]}</Tag>
               )}
               {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
                 <Label className={item} key={index}>
@@ -295,7 +311,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             </div>
           </MenuNameWrapper>
           <TextB2R padding="16px 0" color={theme.greyScale65}>
-            {menuDetail.summary}
+            {menuDetail?.summary}
           </TextB2R>
           <PriceAndCouponWrapper>
             {!isOpenSoon && !isReOpen && (
@@ -309,7 +325,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                   <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
                   <TextH3B padding={'0 0 0 4px'}>
                     {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
-                    {menuDetail.type === 'SUBSCRIPTION' && '~'}
+                    {menuDetail?.type === 'SUBSCRIPTION' && '~'}
                   </TextH3B>
                 </DiscountedPrice>
               </PriceWrapper>
@@ -330,8 +346,8 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
               </>
             )}
           </PriceAndCouponWrapper>
-          <BorderLine height={1} margin="16px 0 0 0" />
-          {menuDetail.type !== 'SUBSCRIPTION' && menuDetail.type === 'SALAD' && (
+          {/* <BorderLine height={1} margin="16px 0 0 0" /> */}
+          {menuDetail?.type !== 'SUBSCRIPTION' && menuDetail?.type === 'SALAD' && (
             <NutritionInfo>
               <NutritionInfoWrapper>
                 <TextH7B color={theme.greyScale65}>영양정보</TextH7B>
@@ -339,7 +355,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                   <TextH4B>{getNutiritionInfo().kcal}</TextH4B>
                   <TextB3R padding="0 0 0 2px">kcal</TextB3R>
                 </NutritionInfoBox>
-                <MLWrapper></MLWrapper>
+                {/* <MLWrapper></MLWrapper> */}
               </NutritionInfoWrapper>
               <ProteinWrapper>
                 <TextH7B color={theme.greyScale65}>단백질 함량</TextH7B>
@@ -347,11 +363,11 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
                   <TextH4B>{getNutiritionInfo().protein}</TextH4B>
                   <TextB3R padding="0 0 0 2px">kcal</TextB3R>
                 </NutritionInfoBox>
-                <MLWrapper></MLWrapper>
+                {/* <MLWrapper></MLWrapper> */}
               </ProteinWrapper>
             </NutritionInfo>
           )}
-          {menuDetail.type === 'SUBSCRIPTION' && (
+          {menuDetail?.type === 'SUBSCRIPTION' && (
             <DeliveryInfoBox>
               <TextH5B padding="16px 0">배송 안내</TextH5B>
               <DeliveryUl>
@@ -396,7 +412,7 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
             <div key={index}>
               <DetailInfoWrapper>
                 <TextH4B>{info.text}</TextH4B>
-                <Link href={`${menuDetail.id}/detail/${info.value}`} passHref>
+                <Link href={`${menuDetail?.id!}/detail/${info.value}`} passHref>
                   <a>
                     <TextH6B textDecoration="underLine" color={theme.greyScale65}>
                       자세히
@@ -409,7 +425,18 @@ const MenuDetailPage = ({ menuDetail }: IProps) => {
           ))}
         </DetailInfoContainer>
       </Top>
-      <AdWrapper></AdWrapper>
+      {banners?.length! > 0 && (
+        <>
+          {banners?.map((banner, index) => {
+            return (
+              <AdWrapper key={index}>
+                <BannerImg src={IMAGE_S3_URL + banner.imageUrl} />
+              </AdWrapper>
+            );
+          })}
+        </>
+      )}
+
       <div ref={tabRef} />
       <Bottom>
         <StickyTab
@@ -524,7 +551,13 @@ const ReviewContainer = styled.div`
 const AdWrapper = styled.div`
   width: 100%;
   height: 96px;
-  background-color: #dedede;
+  /* background-color: #dedede; */
+  margin-bottom: 16px;
+`;
+
+const BannerImg = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
 const ReviewWrapper = styled.div`
@@ -574,8 +607,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
+
   return {
-    props: { menuDetail: data.data },
+    props: { menuId: data.data.id },
     revalidate: 10,
   };
 }
