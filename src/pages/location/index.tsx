@@ -99,15 +99,7 @@ const LocationPage = () => {
         console.error(error);
       }
     }
-};
-
-  // const focusInputHandler = () => {
-  //   setIsFocus(true);
-  // };
-
-  // const blurInputHandler = () => {
-  //   setIsFocus(false);
-  // };
+  };
 
   const clearInputHandler = () => {
     if (addressRef.current) {
