@@ -232,7 +232,7 @@ const DetailBottom = () => {
     }
   };
 
-  if (menuDetail) {
+  if (!menuDetail) {
     return <div>로딩</div>;
   }
 
