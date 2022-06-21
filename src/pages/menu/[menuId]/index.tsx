@@ -211,8 +211,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     }, 100);
   };
 
-  console.log(coupons, 'co');
-
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review': {
@@ -331,18 +329,21 @@ const MenuDetailPage = ({ menuId }: IProps) => {
               </PriceWrapper>
             )}
 
-            {/* <CouponWrapper>
-              <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
-              <SVGIcon name="checkBlack18" />
-            </CouponWrapper> */}
-            {!isTempSold && !isReOpen && !isOpenSoon && (
+            {!isTempSold && !isReOpen && !isOpenSoon && coupons?.length! > 0 && (
               <>
-                <CouponWrapper onClick={couponDownloadHandler}>
-                  <TextH6B padding="4px 4px 0 0" pointer>
-                    쿠폰 받기
-                  </TextH6B>
-                  <SVGIcon name="download" />
-                </CouponWrapper>
+                {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
+                  <CouponWrapper onClick={couponDownloadHandler}>
+                    <TextH6B padding="4px 4px 0 0" pointer>
+                      쿠폰 받기
+                    </TextH6B>
+                    <SVGIcon name="download" />
+                  </CouponWrapper>
+                ) : (
+                  <CouponWrapper>
+                    <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
+                    <SVGIcon name="checkBlack18" />
+                  </CouponWrapper>
+                )}
               </>
             )}
           </PriceAndCouponWrapper>
