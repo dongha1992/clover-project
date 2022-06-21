@@ -36,7 +36,6 @@ const CouponSheet = ({ coupons }: IProps) => {
     },
     {
       onSuccess: async (data) => {
-        console.log(data, 'on sucess');
         dispatch(
           SET_ALERT({
             alertMessage: '쿠폰을 다운받았습니다.',
