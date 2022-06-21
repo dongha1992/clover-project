@@ -766,6 +766,7 @@ type BannerType = 'CAROUSEL' | 'CATEGORY' | 'EVENT' | 'EXHIBITION' | 'IMAGE' | '
 
 export interface IBanner {
   type: string;
+  size: number;
 }
 export interface ITermRequest {
   type: string;
