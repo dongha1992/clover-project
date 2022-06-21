@@ -2091,6 +2091,8 @@ export interface IPromotion {
   };
   participationCount: number;
   userParticipationCount: number;
+  participationStatus: string;
+  userMaximum: number;
 }
 
 export interface IMenuPromotionResponse {

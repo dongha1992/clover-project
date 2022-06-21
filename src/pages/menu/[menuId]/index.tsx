@@ -211,6 +211,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     }, 100);
   };
 
+  console.log(coupons, 'co');
+
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review': {
@@ -344,7 +346,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
               </>
             )}
           </PriceAndCouponWrapper>
-          <BorderLine height={1} margin="16px 0 0 0" />
+          {/* <BorderLine height={1} margin="16px 0 0 0" /> */}
           {menuDetail?.type !== 'SUBSCRIPTION' && menuDetail?.type === 'SALAD' && (
             <NutritionInfo>
               <NutritionInfoWrapper>
