@@ -53,10 +53,14 @@ const CategorySubHeader = ({ title }: TProps) => {
     router.push('/cart');
   };
 
+  const getQuery = (path: string) => {
+    return path.split('?')[0];
+  };
+
   useEffect(() => {
     const { category }: any = router.query;
     const queryString = router.asPath;
-    setSelectedTab(queryString);
+    setSelectedTab(getQuery(queryString));
     dispatch(SET_MENU_TAB(category));
   }, [router.query]);
 

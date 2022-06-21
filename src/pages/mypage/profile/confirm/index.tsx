@@ -41,7 +41,11 @@ const PasswordConfirmPage = () => {
       try {
         const { data } = await userConfirmPassword({ password });
         if (data.code === 200) {
-          router.push('/mypage/profile');
+          if (router.query.returnPath) {
+            router.push(`/mypage/profile?returnPath=${encodeURIComponent(String(router.query.returnPath))}`);
+          } else {
+            router.push('/mypage/profile');
+          }
         }
       } catch (error: any) {
         console.error(error);
