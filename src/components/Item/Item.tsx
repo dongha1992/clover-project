@@ -208,7 +208,15 @@ const Item = ({ item, isHorizontal }: TProps) => {
     }
   };
 
-  const goToLogin = () => {};
+  const goToLogin = () => {
+    return dispatch(
+      SET_ALERT({
+        alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
+        onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(String(router.asPath))}`),
+        closeBtnText: '취소',
+      })
+    );
+  };
 
   const goToReopen = (e: any, item: IMenus) => {
     e.stopPropagation();
