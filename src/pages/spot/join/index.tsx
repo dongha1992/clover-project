@@ -114,7 +114,6 @@ const RegistrationsListPage = () => {
 
 const Container = styled.main`
   width: 100%;
-  padding: 24px;
 `;
 
 const ImgWrapper = styled.div`
@@ -130,6 +129,7 @@ const BacngroundImg = styled.img`
 const BtnWrapper = styled.div`
   width: 100%;
   cursor: pointer;
+  padding: 0 24px;
 `;
 
 export default RegistrationsListPage;
