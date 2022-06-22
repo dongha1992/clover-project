@@ -15,7 +15,7 @@ import { cartForm } from '@store/cart';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
-import { useOnLike } from 'src/query';
+import { useOnLike } from 'src/queries';
 import { spotSelector } from '@store/spot';
 import { getSpotDistanceUnit } from '@utils/spot';
 // spot list type은 세가지가 있다.
@@ -52,7 +52,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     }
     router.push({
       pathname: `/spot/detail/${id}`,
-      query: { isSpot : true },
+      query: { isSpot: true },
     });
   };
 
@@ -219,16 +219,13 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {
-                list.isTrial ? (
-                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                ) : 
-                  list.images.length > 0 ? (
-                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-                  ) : (
-                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                  )
-              }
+              {list.isTrial ? (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              ) : list.images.length > 0 ? (
+                <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+              ) : (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              )}
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB3R margin="8px 0 0 0" color={theme.black}>
@@ -236,10 +233,11 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               </TextB3R>
               {
                 // 유저 위치정보 있을때 노출
-                userLocationLen && 
+                userLocationLen && (
                   <TextH6B color={theme.greyScale65}>
                     {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
                   </TextH6B>
+                )
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
@@ -258,16 +256,13 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              {
-                list.isTrial ? (
-                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                ) : 
-                  list.images.length > 0 ? (
-                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-                  ) : (
-                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                  )
-              }
+              {list.isTrial ? (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              ) : list.images.length > 0 ? (
+                <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+              ) : (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              )}
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
@@ -279,10 +274,11 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               <ButtonWrapper>
                 {
                   // 유저 위치정보 있을때 노출
-                  userLocationLen && 
+                  userLocationLen && (
                     <TextH6B color={theme.greyScale65}>
                       {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
                     </TextH6B>
+                  )
                 }
                 <Button onClick={orderHandler}>주문하기</Button>
               </ButtonWrapper>
