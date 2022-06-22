@@ -90,7 +90,6 @@ const Header = () => {
       '/spot/join/main/form/submit/finish': '신청하기',
       '/destination/search': '배송지 검색',
       '/destination/destination-detail': '배송지 검색',
-      '/spot/search/location': '프코스팟 검색',
       '/spot/status': '스팟 관리',
       '/spot/location': '주소 검색',
       '/spot/location/address': '주소 검색',
@@ -155,7 +154,7 @@ const Header = () => {
         return <SpotHeader />;
       }
 
-      case ['/spot/search', '/spot/search/main', '/spot/search/location'].includes(currentPath): {
+      case ['/spot/search', '/spot/search/main'].includes(currentPath): {
         return <SpotSearchHeader title={title} />;
       }
 

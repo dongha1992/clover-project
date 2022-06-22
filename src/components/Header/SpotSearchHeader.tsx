@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import { useSelector, useDispatch } from 'react-redux';
+import { spotSelector, SET_SPOT_MAP_SWITCH, INIT_SPOT_MAP_SWITCH } from '@store/spot';
 
 interface IProps {
   title?: string;
@@ -11,13 +13,19 @@ interface IProps {
 
 const SpotSearchHeader = ({ title }: IProps) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { isMapSwitch } = useSelector(spotSelector);
 
   const goBack = (): void => {
     router.back();
   };
 
-  const goToMap = () => {
-    router.push('/spot/search/location');
+  const goToSwitchMap = () => {
+    if(!isMapSwitch) {
+      dispatch(SET_SPOT_MAP_SWITCH());
+    } else {
+      dispatch(INIT_SPOT_MAP_SWITCH());
+    }
   };
 
   return (
@@ -27,15 +35,15 @@ const SpotSearchHeader = ({ title }: IProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        {router.pathname === '/spot/search/main' ? (
+        { !isMapSwitch ? (
           <BtnWrapper>
-            <div className="map" onClick={goToMap}>
+            <div className="map" onClick={goToSwitchMap}>
               <SVGIcon name="map" />
             </div>
           </BtnWrapper>
         ) : (
           <BtnWrapper>
-            <div className="threeLines" onClick={goToMap}>
+            <div className="threeLines" onClick={goToSwitchMap}>
               <SVGIcon name="threeLines" />
             </div>
           </BtnWrapper>
