@@ -2180,3 +2180,7 @@ export interface ISubscribeInfo {
   menuImage: string | null;
   datePeriod: string[] | null;
 }
+
+export interface ISubsManage {
+  changeDate: string | null;
+}
