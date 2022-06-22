@@ -126,15 +126,17 @@ const SpotSearchMainPage = (): ReactElement => {
   // cartList = ['!1'];
 
   const latLen = spotsPosition?.latitude !== null;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : 37.50101118367814;
   const lonLen = spotsPosition?.longitude !== null;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : 127.03525895821902;
 
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(
     ['spotRecommendList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: latLen ? Number(spotsPosition?.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition?.longitude) : null,
+        latitude: latitude,
+        longitude: longitude,
         size: 3,
       };
       const response = await getSpotSearchRecommend(params);
@@ -151,8 +153,8 @@ const SpotSearchMainPage = (): ReactElement => {
         page: 1,
         size: 10,
         delivery: 'SPOT',
-        latitude: latLen ? Number(spotsPosition.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition.longitude) : null,
+        latitude: latitude,
+        longitude: longitude,
       };
       const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
@@ -185,8 +187,8 @@ const SpotSearchMainPage = (): ReactElement => {
     try {
       const params = {
         keyword: keyword,
-        latitude: latLen ? Number(spotsPosition.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition.longitude) : null,
+        latitude: latitude,
+        longitude: longitude,
       };
       const { data } = await getSpotSearch(params);
       if (data.code === 200) {
@@ -332,7 +334,7 @@ const SpotSearchMainPage = (): ReactElement => {
               <>
               {
                 // 픽업 이력 없는 경우, 추천 스팟 노출
-                spotRecommend?.spots.length! > 0 && (
+                spotRecommend?.spots.length! > 0 ?(
                   <SpotRecommendWrapper>
                   <FlexBetween margin="0 0 24px 0">
                     <TextH2B>{spotRecommend?.title}</TextH2B>
@@ -345,11 +347,10 @@ const SpotSearchMainPage = (): ReactElement => {
                     return <SpotRecommendList item={item} key={index} />;
                   })}
                 </SpotRecommendWrapper>
-                )  
-              }
-              {
-                // 픽업 이력 없고, 추천 스팟도 없는 경우
-                spotRecommend?.spots.length! < 0 && null
+                ) : (
+                  // 픽업 이력 없고, 추천 스팟도 없는 경우
+                  null
+                )
               }
               </>
               )
