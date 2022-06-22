@@ -12,6 +12,8 @@ import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { getSpotInfo } from '@api/spot';
 import { ISpotsInfo } from '@model/index';
+import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import { Button } from '@components/Shared/Button';
 
 const RegistrationsListPage = () => {
   const router = useRouter();
@@ -88,33 +90,45 @@ const RegistrationsListPage = () => {
 
   return (
     <Container>
-     <BtnWrapper onClick={() =>goToRegistration('PRIVATE')}>
-       <TextB1B padding='24px 0'>우리 회사•학교 신청하기</TextB1B>
-     </BtnWrapper>
-     <BtnWrapper onClick={() => goToRegistration('PUBLIC')}>
-        <TextB1B padding='24px 0'>단골가게 신청하기</TextB1B>
-     </BtnWrapper>
-     <BtnWrapper onClick={() => goToRegistration('OWNER')}>
-       <TextB1B padding='24px 0'>우리가게 신청하기</TextB1B>
-     </BtnWrapper>
+      <ImgWrapper>
+        <BacngroundImg src={`${IMAGE_S3_DEV_URL}/img_detail_fco_add.png`} />
+      </ImgWrapper>
+      <BtnWrapper onClick={() =>goToRegistration('PRIVATE')}>
+        <Button margin="24px 0 24px 0" border color={theme.black} backgroundColor={theme.white}>
+          우리 회사•학교 신청하기
+        </Button>
+      </BtnWrapper>
+      <BtnWrapper onClick={() => goToRegistration('PUBLIC')}>
+        <Button margin="24px 0 24px 0" border color={theme.black} backgroundColor={theme.white}>
+          단골가게 신청하기
+        </Button>
+      </BtnWrapper>
+      <BtnWrapper onClick={() => goToRegistration('OWNER')}>
+        <Button margin="24px 0 24px 0" border color={theme.black} backgroundColor={theme.white}>
+          우리가게 신청하기
+        </Button>
+      </BtnWrapper>
     </Container>
   );
 };
 
 const Container = styled.main`
   width: 100%;
-  position: absolute;
-  bottom: 0;
   padding: 24px;
+`;
+
+const ImgWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const BacngroundImg = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
 const BtnWrapper = styled.div`
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${theme.greyScale25};
-  margin-bottom: 15px;
   cursor: pointer;
 `;
 
