@@ -1,24 +1,20 @@
 import { TextB1R, TextB2R, TextH6B } from '@components/Shared/Text';
-import { subscriptionForm } from '@store/subscription';
 import { getFormatDate, SVGIcon } from '@utils/common';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { FlexBetween, FlexRow } from '@styles/theme';
 import SlideToggle from '@components/Shared/SlideToggle';
-import { cloneDeep } from 'lodash-es';
 
 interface IProps {
   item: any;
+  index: number;
 }
-const EntireItem = ({ item }: IProps) => {
-  const { subsDeliveryExpectedDate } = useSelector(subscriptionForm);
+const DietItem = ({ item, index }: IProps) => {
   const [toggleState, setToggleState] = useState(false);
-  const menu = cloneDeep(item);
+
   return (
-    <ToggleItemContainer key={item.deliveryDate}>
+    <ToggleItemContainer>
       <FlexBetween
         className="title"
         onClick={() => {
@@ -27,10 +23,7 @@ const EntireItem = ({ item }: IProps) => {
       >
         <TextB1R>
           <b>
-            배송{' '}
-            {subsDeliveryExpectedDate.findIndex(
-              (x: any) => x.deliveryDate === dayjs(item.deliveryDate).format('YYYY-MM-DD')
-            ) + 1}
+            배송 {index + 1}
             회차
           </b>{' '}
           - {getFormatDate(item.deliveryDate)}
@@ -49,28 +42,23 @@ const EntireItem = ({ item }: IProps) => {
       )}
       <SlideToggle state={toggleState} duration={0.3}>
         <ul className="menuList">
-          {menu.menuTableItems
-            ?.sort((a: any, b: any) => b.main - a.main)
-            .map(
-              (item: any) =>
-                item.selected && (
-                  <li key={item.id}>
-                    <FlexBetween>
-                      <FlexRow>
-                        <TextB2R>
-                          {item.menuName} / {item.menuDetailName}
-                        </TextB2R>
-                        {item.changed && (
-                          <TextH6B margin="0 0 0 4px" color="#35AD73">
-                            변경
-                          </TextH6B>
-                        )}
-                      </FlexRow>
-                      <TextB2R>{item.count ? item.count : 1}개</TextB2R>
-                    </FlexBetween>
-                  </li>
-                )
-            )}
+          {item.menuTableItems.map((menu: any) => (
+            <li key={menu.id}>
+              <FlexBetween>
+                <FlexRow>
+                  <TextB2R>
+                    {menu.menuName} / {menu.menuDetailName}
+                  </TextB2R>
+                  {menu.changed && (
+                    <TextH6B margin="0 0 0 4px" color="#35AD73">
+                      변경
+                    </TextH6B>
+                  )}
+                </FlexRow>
+                <TextB2R>{menu.count ? menu.count : 1}개</TextB2R>
+              </FlexBetween>
+            </li>
+          ))}
         </ul>
       </SlideToggle>
     </ToggleItemContainer>
@@ -102,4 +90,4 @@ const ToggleItemContainer = styled.li`
     }
   }
 `;
-export default EntireItem;
+export default DietItem;

@@ -1,4 +1,4 @@
-import { IMenuTableItems, IMenuTable, ISubscribeInfo } from '@model/index';
+import { IMenuTableItems, IMenuTable, ISubscribeInfo, ISubsManage } from '@model/index';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 
@@ -9,6 +9,7 @@ interface TProps {
   subsCalendarSelectMenu: IMenuTable | null;
   subsInfo: ISubscribeInfo | null;
   subsCalendarSelectOrders: any | null;
+  subsManage: ISubsManage | null;
 }
 
 const initialState: TProps = {
@@ -28,6 +29,9 @@ const initialState: TProps = {
     menuDetails: null,
     menuImage: null,
     datePeriod: null,
+  },
+  subsManage: {
+    changeDate: null,
   },
 };
 
@@ -56,6 +60,9 @@ export const subscription = createSlice({
     SET_SUBS_INFO: (state, action) => {
       state.subsInfo = action.payload.subsInfo;
     },
+    SET_SUBS_MANAGE: (state, action) => {
+      state.subsManage = { ...state.subsManage, ...action.payload };
+    },
     SUBS_INIT: (state) => {
       state.subsStartDate = null;
       state.subsOrderMenus = [];
@@ -83,6 +90,7 @@ export const {
   SET_SUBS_CALENDAR_SELECT_MENU,
   SET_SUBS_CALENDAR_SELECT_ORDERS,
   SET_SUBS_INFO_STATE,
+  SET_SUBS_MANAGE,
   SUBS_INIT,
 } = subscription.actions;
 export const subscriptionForm = (state: AppState): TProps => state.subscription;
