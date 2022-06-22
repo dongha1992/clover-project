@@ -246,11 +246,10 @@ const SpotSearchMainPage = (): ReactElement => {
 
   // 스팟 필터
   let filterResult = filteredItem();
-  filterResult = filterResult?.filter(spot => spotSearchSelectedFilters.every(filterItem => spot[filterItem]))
+  filterResult = filterResult?.filter(spot => spotSearchSelectedFilters.every(filterItem => spot[filterItem]));
 
-
-  useEffect(()=> {
-    dispatch(SET_SERACH_MAP_SPOT(filterResult));
+  useEffect(() => {
+    dispatch(SET_SERACH_MAP_SPOT(filterResult!));
   }, [searchResult]);
 
   // GPS - 현재위치 가져오기

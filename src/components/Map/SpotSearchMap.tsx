@@ -9,16 +9,20 @@ import {ISpotsDetail} from '@model/index';
     zoom?: number;
     centerLat?: string;
     centerLng?: string;
+    currentIdx?: number;
   };
   
   const SpotSearchMap = ({
     zoom,
     centerLat,
     centerLng,
+    currentIdx,
   }: IProps): ReactElement => {
   const { spotSearchArr } = useSelector(spotSelector);
 
   const spotsArr = spotSearchArr&&spotSearchArr;
+  const idx = currentIdx&&currentIdx;
+  const SelectedSpotArr = spotsArr[idx ? idx : 0];
 
     useEffect(() => {
       const initMap = () => {
@@ -26,8 +30,18 @@ import {ISpotsDetail} from '@model/index';
         let infoWindows = new Array(); // 정보창을 담는 배열
         
         var map = new naver.maps.Map('map', {
-            center: new naver.maps.LatLng(spotsArr?.length ? spotsArr[0]?.coordinate.lat : 37.50101118367814, spotsArr?.length ? spotsArr[0]?.coordinate.lon : 127.03525895821902), //지도 시작 지점
-            zoom: zoom ? zoom : 16,
+            center: new naver.maps.LatLng(spotsArr?.length ? SelectedSpotArr?.coordinate.lat : 37.50101118367814, spotsArr?.length ? SelectedSpotArr?.coordinate.lon : 127.03525895821902), //지도 시작 지점
+            zoom: zoom ? zoom : 19,
+        });
+        let marker = new naver.maps.Marker({
+          icon: { // 이미지 아이콘
+            url: `${IMAGE_S3_DEV_URL}/ic_map_pin.png`,
+            size: new naver.maps.Size(50, 52),
+            anchor: new naver.maps.Point(25, 26),
+            // onClick: () => {}
+        },
+          position: new naver.maps.LatLng(spotsArr?.length ? SelectedSpotArr?.coordinate.lat : 37.50101118367814, spotsArr?.length ? SelectedSpotArr?.coordinate.lon : 127.03525895821902), // 최초 찍히는 마커
+          map: map,
         });
 	    // ic_bookstore.png
         // ic_cafe.png
@@ -151,7 +165,8 @@ import {ISpotsDetail} from '@model/index';
       };
     
       initMap();
-    }, [spotsArr]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [spotsArr, currentIdx]);
   
   
   
