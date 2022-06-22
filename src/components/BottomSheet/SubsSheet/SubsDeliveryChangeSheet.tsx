@@ -5,7 +5,7 @@ import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import useSubDeliveryDates from '@hooks/subscription/useSubDeliveryDates';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { subscriptionForm } from '@store/subscription';
+import { SET_SUBS_MANAGE, subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
@@ -88,8 +88,8 @@ const SubsDeliveryChangeSheet = ({ item, setToggleState }: IProps) => {
     },
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries(['getOrderDetail', detailId]);
-        setSelectDate(selectDate);
+        await queryClient.invalidateQueries(['getOrderDetail', 'subscription', detailId]);
+        dispatch(SET_SUBS_MANAGE({ changeDate: dayjs(selectDate).format('YYYY-MM-DD') }));
       },
       onError: async (error: any) => {
         dispatch(

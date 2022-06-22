@@ -46,7 +46,10 @@ const useCalendarTitleContent = ({
         element.push(<div className="deliveryExpectedDate" key={`01-${dayjs(date).format('YYYY-MM-DD')}`}></div>);
       }
 
-      if (today === dayjs(date).format('YYYY-MM-DD')) {
+      if (
+        today === dayjs(date).format('YYYY-MM-DD') &&
+        deliveryChange?.findIndex((x) => x === dayjs(date).format('YYYY-MM-DD')) === -1
+      ) {
         // 오늘
         element.push(
           <div className="today" key={`02-${dayjs(date).format('YYYY-MM-DD')}`}>
