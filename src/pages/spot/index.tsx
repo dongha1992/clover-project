@@ -21,6 +21,7 @@ import { destinationForm } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
 import { getAddressFromLonLat } from '@api/location';
 import { getComputeDistance } from '@utils/spot';
+import { IMAGE_S3_DEV_URL } from '@constants/mock';
 
 const FCO_SPOT_BANNER = [
   {
@@ -365,13 +366,13 @@ const SpotPage = () => {
         )
       }
       {
-      // 트라이얼 스팟
+      // 오픈 진행중인 스팟 (단골가게)
       uerLocationInfo &&
       trialSpotList?.spotRegistrations?.length! > 0 && (
         <>
           <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
           <SpotOpenBannerWrapper>
-            <SpotOpenBanner>스팟 오픈 베너 이미지 제작 예정</SpotOpenBanner>
+            <ImgBanner src={`${IMAGE_S3_DEV_URL}/img_banner_fco_open.png`} />
           </SpotOpenBannerWrapper>
           <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
             {trialSpotList?.spotRegistrations.map((list, idx) => {
@@ -399,7 +400,9 @@ const SpotPage = () => {
                 </FlexBetween>
               </SpotRegistration>
             </Wrapper>
-            <BottomStory onClick={goToSpotNotice}>프코스팟 브랜딩 베너영역 + 링크</BottomStory>
+            <StoryContentsWrapper onClick={goToSpotNotice}>
+              <ImgStory src={`${IMAGE_S3_DEV_URL}/img_banner_fco_info.jpg`} />
+            </StoryContentsWrapper>
             {/* 우리가게 스팟 신청 CTA */}
             <Wrapper>
               <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[2].type)}>
@@ -541,30 +544,29 @@ const SpotRegistration = styled.div`
   cursor: pointer;
 `;
 
-const BottomStory = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 514px;
-  background: ${theme.greyScale6};
-  font-weight: 700;
-  cursor: pointer;
-`;
 
 const SpotOpenBannerWrapper = styled.div`
   width: 100%;
-  height: 200px;
+  height: 100%;
   padding: 24px 0;
 `;
 
-const SpotOpenBanner = styled.div`
+const ImgBanner = styled.img`
   width: 100%;
   height: 100%;
-  background: ${theme.greyScale3};
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
+
+const StoryContentsWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+`;
+
+const ImgStory = styled.img`
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+`;
+
 
 export default SpotPage;

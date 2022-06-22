@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
 import { useSelector } from 'react-redux';
+import { IMAGE_S3_DEV_URL } from '@constants/mock';
 
 const FinishPage = () => {
   const router = useRouter();
@@ -46,15 +47,14 @@ const FinishPage = () => {
         <TextH2B padding='24px 0 24px 0'>{msgMapper()?.title}</TextH2B>
         <TextB3R color={theme.greyScale65}>{msgMapper()?.subTitle}</TextB3R>
       </TopWrapper>
-      <ImgContent />
+      <FinishImgWrapper>
+        <FinishImg src={`${IMAGE_S3_DEV_URL}/img_fco_add_main.png`} />
+      </FinishImgWrapper>
       {
         type !== 'PUBLIC' && (
-          <OpenTipWrapper>
-            <TextH5B padding="48px 24px 16px 24px">프코스팟 오픈 TIP!</TextH5B>
-            <BannerWrapper onClick={goToSpotNotice}>
-                <TextH5B>프코스팟 이용방법 및 혜택 알아보기</TextH5B>
-            </BannerWrapper>
-          </OpenTipWrapper>
+          <SpotNoticeWrapper onClick={goToSpotNotice}>
+            <SpotNoticeImg src={`${IMAGE_S3_DEV_URL}/img_banner_fco_info_360_96.png`} />
+          </SpotNoticeWrapper>
         )
       }
       {
@@ -85,27 +85,30 @@ const FixedButton = styled.section`
 const TopWrapper = styled.div`
   padding: 24px 24px 0 24px;
 `;
-const ImgContent = styled.div`
+const FinishImgWrapper = styled.div`
   width: 100%;
-  height: 130px;
-  background: ${theme.greyScale25};
-  margin-top: 48px;
+  height: 100%;
+  padding: 48px 0;
 `;
 
-const OpenTipWrapper = styled.div`
+const FinishImg = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
-const BannerWrapper = styled.div`
-  height: 96px;
-  padding: 16px 24px;
-  margin-bottom: 8px;
-  background: ${theme.greyScale25};
+const SpotNoticeWrapper = styled.div`
+  width: 100%;
+  height: 100%;
   cursor: pointer;
 `;
 
+const SpotNoticeImg = styled.img`
+  width: 100%;
+  height: 100%;
+`;
+
 const ChannelIokWrapper = styled.div`
-  padding: 0 24px;
-  margin-top: 48px;
+  padding: 48px 24px 0 24px;
 `;
 
 export default FinishPage;
