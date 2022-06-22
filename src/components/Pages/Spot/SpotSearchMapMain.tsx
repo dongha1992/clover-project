@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
@@ -20,7 +20,9 @@ export interface IArea {
 
 const SpotSearchMapMain = (): ReactElement => {
   const router = useRouter();
+  const slideRef = useRef(null);
   const { spotSearchArr } = useSelector(spotSelector);
+  const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
 
   const spotMapList = spotSearchArr&&spotSearchArr;
 
@@ -32,14 +34,16 @@ const SpotSearchMapMain = (): ReactElement => {
     centerMode: true,
     infinite: false,
     centerPadding: '30px',
+    beforeChange: (current: number, next: number) =>
+    setCurrentIdx({current: current, next: next}),
   };
 
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchMap />
+        <SpotSearchMap currentIdx={currentIdx.next} />
         <SpotListWrapper>
-          <SpotListSlider {...setting}>
+          <SpotListSlider {...setting} ref={slideRef}>
             {spotMapList?.map((item, index) => (
               <SpotSearchMapList item={item} key={index} />
             ))}
