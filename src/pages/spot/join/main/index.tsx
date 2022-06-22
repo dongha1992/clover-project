@@ -17,6 +17,7 @@ import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { ISpotsInfo } from '@model/index';
 import { getSpotInfo } from '@api/spot';
+import { IMAGE_S3_DEV_URL } from '@constants/mock';
 
 const SpotReqPage = () => {
   const router = useRouter();
@@ -121,9 +122,15 @@ const SpotReqPage = () => {
           {mainText()?.textDesc}
         </TextB3R>
       </TopWrapper>
-      <GuideWrapper>
-        <Guide></Guide>
-      </GuideWrapper>
+      <GuideImgWrapper>
+        { type === 'PRIVATE' ? 
+          (
+            <Img src={`${IMAGE_S3_DEV_URL}/img_detail_fco_add_private.png`} />
+          ) : (
+            <Img src={`${IMAGE_S3_DEV_URL}/img_detail_fco_add_public.png`} />
+          )
+        }
+      </GuideImgWrapper>
       <ChannelIoBottomWrapper>
         <BtnWrapper>
           {/* TODO 채널톡 작업 */}
@@ -147,13 +154,15 @@ const TopWrapper = styled.section`
   ${homePadding};
 `;
 
-const GuideWrapper = styled.section`
+const GuideImgWrapper = styled.section`
   width: 100%;
-  height: 412px;
-  background: ${theme.greyScale25};
+  height: 100%;
 `;
 
-const Guide = styled.div``;
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+`;
 
 const ChannelIoBottomWrapper = styled.section`
   ${homePadding};
