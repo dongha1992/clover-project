@@ -2,11 +2,11 @@
 import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { SearchResult } from '@components/Pages/Search';
+import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
 import { theme, FlexBetween } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
-import { SpotRecommendList, SpotRecentPickupList } from '@components/Pages/Spot';
+import { SpotList, SpotRecommendList, SpotRecentPickupList, SpotSearchMapMain } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotSearch } from '@api/spot';
 import { ISpotsDetail } from '@model/index';
@@ -23,6 +23,8 @@ import {
   SET_SPOT_SEARCH_SORT,
   SET_SPOT_POSITIONS,
   SET_SEARCH_KEYWORD,
+  SET_SERACH_MAP_SPOT,
+  INIT_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -39,6 +41,7 @@ const SpotSearchMainPage = (): ReactElement => {
     spotSearchSelectedFilters, 
     spotSearchSort,
     spotKeyword,
+    isMapSwitch,
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
@@ -51,6 +54,7 @@ const SpotSearchMainPage = (): ReactElement => {
   useEffect(()=> {
     defaultRedioId();
     inputRef.current?.focus();
+    dispatch(INIT_SPOT_MAP_SWITCH());
   }, []);
 
   useEffect(()=> {
@@ -195,7 +199,8 @@ const SpotSearchMainPage = (): ReactElement => {
         const fetchData = data.data;
         setSearchResult(fetchData?.spots);
         setIsSearched(true); 
-        setInputFocus(true); 
+        setInputFocus(true);
+        dispatch(SET_SERACH_MAP_SPOT(fetchData.spots)); 
       };
     } catch (err) {
       console.error(err);
@@ -243,6 +248,11 @@ const SpotSearchMainPage = (): ReactElement => {
   let filterResult = filteredItem();
   filterResult = filterResult?.filter(spot => spotSearchSelectedFilters.every(filterItem => spot[filterItem]))
 
+
+  useEffect(()=> {
+    dispatch(SET_SERACH_MAP_SPOT(filterResult));
+  }, [searchResult]);
+
   // GPS - 현재위치 가져오기
   const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
@@ -264,7 +274,6 @@ const SpotSearchMainPage = (): ReactElement => {
        return { Status: false, };
      }
   };
-  
 
   const clearInputHandler = () => {
     if (inputRef.current?.value.length! > 0) {
@@ -286,86 +295,94 @@ const SpotSearchMainPage = (): ReactElement => {
 
   return (
     <Container>
-      <SearchBarWrapper>
-        <TextInput
-          name="input"
-          inputType="text"
-          placeholder="도로명, 건물명 또는 지번으로 검색"
-          svg="searchIcon"
-          fontSize='14px'
-          keyPressHandler={getSearchResult}
-          eventHandler={changeInputHandler}
-          onFocus={() => {
-            setInputFocus(true);
-          }}
-          value={spotKeyword}
-          ref={inputRef}
-        />
-        {
-          (inputRef.current?.value || currentValueLen)  && (
-            <div className="removeSvg" onClick={clearInputHandler}>
-              <SVGIcon name="removeItem" />
-            </div>
-          )
-        }
-      </SearchBarWrapper>
       {
-        (!inputFocus || !isSearched) && (
-          <KeyWordWrapper>
-            <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
-          </KeyWordWrapper>
-        )
-      }
-      {/* 스팟 검색 메인 - 검색바 포커싱 o  */}
-        <>
-          {!isSearched && (
-            recentPickedSpotList?.length! > 0 ? (
-              // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-              <DefaultSearchContainer>
-                <RecentPickWrapper>
-                  <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                  {recentPickedSpotList?.map((item: any, index) => (
-                    // 스팟 최근 픽업 이력 리스트
-                    <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                  ))}
-                </RecentPickWrapper>
-              </DefaultSearchContainer>
-              ) : (
-              <>
+        isMapSwitch ? 
+        (
+          <SpotSearchMapMain />
+        ) : (
+          <>
+            <SearchBarWrapper>
+              <TextInput
+                name="input"
+                inputType="text"
+                placeholder="도로명, 건물명 또는 지번으로 검색"
+                svg="searchIcon"
+                fontSize='14px'
+                keyPressHandler={getSearchResult}
+                eventHandler={changeInputHandler}
+                onFocus={() => {
+                  setInputFocus(true);
+                }}
+                value={spotKeyword}
+                ref={inputRef}
+              />
               {
-                // 픽업 이력 없는 경우, 추천 스팟 노출
-                spotRecommend?.spots.length! > 0 ?(
-                  <SpotRecommendWrapper>
-                  <FlexBetween margin="0 0 24px 0">
-                    <TextH2B>{spotRecommend?.title}</TextH2B>
-                    {
-                      // 사용자 위치 설정 했을 경우 노출
-                      userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
-                    }
-                  </FlexBetween>
-                  {spotRecommend?.spots.map((item: any, index: number) => {
-                    return <SpotRecommendList item={item} key={index} />;
-                  })}
-                </SpotRecommendWrapper>
-                ) : (
-                  // 픽업 이력 없고, 추천 스팟도 없는 경우
-                  null
+                (inputRef.current?.value || currentValueLen)  && (
+                  <div className="removeSvg" onClick={clearInputHandler}>
+                    <SVGIcon name="removeItem" />
+                  </div>
                 )
               }
-              </>
+            </SearchBarWrapper>
+            {
+              (!inputFocus || !isSearched) && (
+                <KeyWordWrapper>
+                  <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
+                </KeyWordWrapper>
               )
-            )
-          }
-          {
-            isSearched && (
-            // 검색 결과
-            <SearchResultContainer>
-              <SearchResult searchResult={filterResult} isSpot orderId={orderId} hasCart={true} getLocation={getLocation} />
-            </SearchResultContainer>
-            )
-          }
-        </>
-  
+            }
+            {/* 스팟 검색 메인 - 검색바 포커싱 o  */}
+            <>
+              {!isSearched && (
+                recentPickedSpotList?.length! > 0 ? (
+                  // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+                  <DefaultSearchContainer>
+                    <RecentPickWrapper>
+                      <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                      {recentPickedSpotList?.map((item: any, index) => (
+                        // 스팟 최근 픽업 이력 리스트
+                        <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                      ))}
+                    </RecentPickWrapper>
+                  </DefaultSearchContainer>
+                  ) : (
+                  <>
+                  {
+                    // 픽업 이력 없는 경우, 추천 스팟 노출
+                    spotRecommend?.spots.length! > 0 ?(
+                      <SpotRecommendWrapper>
+                      <FlexBetween margin="0 0 24px 0">
+                        <TextH2B>{spotRecommend?.title}</TextH2B>
+                        {
+                          // 사용자 위치 설정 했을 경우 노출
+                          userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                        }
+                      </FlexBetween>
+                      {spotRecommend?.spots.map((item: any, index: number) => {
+                        return <SpotRecommendList item={item} key={index} />;
+                      })}
+                    </SpotRecommendWrapper>
+                    ) : (
+                      // 픽업 이력 없고, 추천 스팟도 없는 경우
+                      null
+                    )
+                  }
+                  </>
+                  )
+                )
+              }
+              {
+                isSearched && (
+                // 검색 결과
+                <SearchResultContainer>
+                  <SpotSearchResult searchResult={filterResult} orderId={orderId} hasCart={true} getLocation={getLocation} />
+                </SearchResultContainer>
+                )
+              }
+            </>
+          </>
+        )
+      }
     </Container>
   );
 };
