@@ -33,7 +33,9 @@ const SpotSearchPage = (): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
 
   const latLen = spotsPosition?.latitude !== null;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : 37.50101118367814;
   const lonLen = spotsPosition?.longitude !== null;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : 127.03525895821902;
 
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
@@ -45,8 +47,8 @@ const SpotSearchPage = (): ReactElement => {
     ['spotRecommendList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: latLen ? Number(spotsPosition?.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition?.longitude) : null,
+        latitude: latitude,
+        longitude: longitude,
         size: 3,
       };
       const response = await getSpotSearchRecommend(params);
@@ -60,8 +62,8 @@ const SpotSearchPage = (): ReactElement => {
     ['spotEvetnList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: latLen ? Number(spotsPosition?.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition.longitude) : null,
+        latitude: latitude,
+        longitude: longitude,
         size: 6,
       };
       const response = await getSpotEvent(params);
@@ -78,8 +80,8 @@ const SpotSearchPage = (): ReactElement => {
         page: 1,
         size: 10,
         delivery: 'SPOT',
-        latitude: latLen ? Number(spotsPosition.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition.longitude) : null,
+        latitude: latitude,
+        longitude: longitude,
       };
       const { data } = await getDestinationsApi(params);
       const totalList = data.data.destinations;
@@ -172,7 +174,7 @@ const SpotSearchPage = (): ReactElement => {
             ) : (
               // 최근 픽업 이력이 없는 경우, 안내 문구 노출
               <DefaultSearchContainer empty>
-                <TextB2R color={theme.greyScale65} center>{'500m 내 프코스팟이 없어요.\n찾으시는 프코스팟을 검색해 보세요. 😭 '}</TextB2R>
+                <TextB2R color={theme.greyScale65} center>{'찾으시는 프코스팟을 검색해 보세요.\n(이용 가능 지역: 서울 및 경기도 일부)'}</TextB2R>
               </DefaultSearchContainer>
             )
           }
