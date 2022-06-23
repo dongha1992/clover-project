@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B, TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { Item } from '@components/Item';
-import { SearchResult, RecentSearch } from '@components/Pages/Search';
 import { homePadding, FlexWrapWrapper, theme } from '@styles/theme';
 import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
@@ -13,24 +12,9 @@ import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
 import { IMenus, Obj } from '@model/index';
-import cloneDeep from 'lodash-es/cloneDeep';
-import debounce from 'lodash-es/debounce';
 import router from 'next/router';
 
 const SearchPage = () => {
-  const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
-  const [searchResult, setSearchResult] = useState<any>([]);
-  const [keyword, setKeyword] = useState<string>('');
-  const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
-  const [isSearched, setIsSearched] = useState<boolean>(false);
-  const [isFocus, setIsFocus] = useState<boolean>(false);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const dispatch = useDispatch();
-  const { categoryFilters, type } = useSelector(filterSelector);
-  const isFilter = categoryFilters?.order || categoryFilters?.filter;
-
   const {
     data: menus,
     error: mdMenuError,
