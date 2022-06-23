@@ -25,7 +25,7 @@ const SearchMainPage = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  const [isFocus, setIsFocus] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -35,7 +35,12 @@ const SearchMainPage = () => {
 
   /* TODO: [category] 쪽이랑 코드 중복 */
 
-  const { error: menuError, isLoading } = useQuery(
+  const {
+    error: menuError,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useQuery(
     ['getMenus', type],
     async ({ queryKey }) => {
       const params = {
@@ -66,10 +71,12 @@ const SearchMainPage = () => {
     } else {
       setSearchResult(menuList);
     }
+    // setIsLoading(false);
   };
 
   useEffect(() => {
-    if (categoryFilters?.order || categoryFilters?.filter) {
+    const hasSearchResult = searchResult.length > 0;
+    if ((categoryFilters?.order || categoryFilters?.filter) && hasSearchResult) {
       checkIsFiltered(defaultMenus!);
     }
   }, [categoryFilters]);
@@ -98,8 +105,8 @@ const SearchMainPage = () => {
   };
 
   const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // setIsLoading(true);
     const { value } = e.target as HTMLInputElement;
-
     if (e.key === 'Enter') {
       if (!value) {
         setSearchResult([]);
@@ -114,8 +121,10 @@ const SearchMainPage = () => {
       } else {
         setRecentKeywords(mergedKeywords);
       }
-
+      // setIsLoading(false);
       setIsSearched(true);
+      dispatch(INIT_CATEGORY_FILTER());
+      refetch();
     }
   };
 
@@ -133,6 +142,7 @@ const SearchMainPage = () => {
 
   const initInputHandler = () => {
     setKeyword('');
+    setIsSearched(false);
   };
 
   const removeRecentSearchItemHandler = useCallback(
@@ -162,13 +172,10 @@ const SearchMainPage = () => {
     setIsSearched(true);
   };
 
-  console.log(keyword, isSearched);
-
   const filteredMenus = (menuList: IMenus[]) => {
     try {
       let copiedMenuList = cloneDeep(menuList);
-      const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
-
+      const hasCategory = categoryFilters?.filter && categoryFilters?.filter?.filter((i) => i).length !== 0;
       if (hasCategory) {
         copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
       }
@@ -222,7 +229,8 @@ const SearchMainPage = () => {
     });
   };
 
-  if (isLoading) {
+  console.log(isLoading, 'isLoading', searchResult, isSearched, 'isSearched');
+  if (isFetching) {
     return <div>로딩중</div>;
   }
 
