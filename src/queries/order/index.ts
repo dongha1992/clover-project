@@ -1,7 +1,7 @@
 import { getOrderDetailApi } from '@api/order';
 import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
 
-export const useGetSubsOrderDetail = (key: QueryKey, id: number, options?: UseQueryOptions<any>) =>
+export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryOptions<any>) =>
   useQuery(
     key,
     async () => {

@@ -144,7 +144,7 @@ const OrderPage = () => {
     subscription: false,
   });
 
-  const auth = getCookie({ name: 'accessToken' });
+  const token = getCookie({ name: 'acstk' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
@@ -964,7 +964,7 @@ const OrderPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!auth) router.replace('/login');
+    if (!token) router.replace('/login');
   }, []);
 
   useEffect(() => {
