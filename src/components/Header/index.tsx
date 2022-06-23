@@ -17,7 +17,7 @@ const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
 const SubscriptionHeader = dynamic(() => import('./SubscriptionHeader'));
 const SpotStatusDetailHeader = dynamic(() => import('./SpotStatusDetailHeader'));
-const SpotDetailHeader = dynamic(()=> import('./SpotDetailHeader'));
+const SpotDetailHeader = dynamic(() => import('./SpotDetailHeader'));
 
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
@@ -34,6 +34,7 @@ const Header = () => {
   const renderComponent = (currentPath: string) => {
     const headerTitleMap: Obj = {
       '/search': '검색',
+      '/search/main': '검색',
       '/location': '내 위치 설정하기',
       '/location/address-detail': '내 위치 설정하기',
       '/category/[category]': CATEGORY_TITLE_MAP[category?.toString()!],
@@ -139,9 +140,13 @@ const Header = () => {
         return <TabHeader title={title} />;
       }
 
-      case ['/search', '/mypage/dib/general', '/mypage/dib/subscription', '/mypage/order-detail'].includes(
-        currentPath
-      ): {
+      case [
+        '/search',
+        '/search/main',
+        '/mypage/dib/general',
+        '/mypage/dib/subscription',
+        '/mypage/order-detail',
+      ].includes(currentPath): {
         return <DefaultHeaderWithCart title={title} />;
       }
 
