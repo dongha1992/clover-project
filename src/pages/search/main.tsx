@@ -17,6 +17,8 @@ import { IMenus, Obj } from '@model/index';
 import cloneDeep from 'lodash-es/cloneDeep';
 import debounce from 'lodash-es/debounce';
 
+const LIMIT = 20;
+
 const SearchMainPage = () => {
   const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
   const [searchResult, setSearchResult] = useState<any>([]);
@@ -104,9 +106,25 @@ const SearchMainPage = () => {
         return;
       }
 
+      const deletedDuplicateKeywords = findDuplicate(value);
+      const mergedKeywords = [value, ...deletedDuplicateKeywords];
+      if (mergedKeywords.length === LIMIT + 1) {
+        const deleteLastKeywords = findLastKeyword(mergedKeywords);
+        setRecentKeywords(deleteLastKeywords);
+      } else {
+        setRecentKeywords(mergedKeywords);
+      }
+
       setIsSearched(true);
-      setRecentKeywords([...recentKeywords, value]);
     }
+  };
+
+  const findDuplicate = (value: string) => {
+    return recentKeywords.filter((item) => item !== value);
+  };
+
+  const findLastKeyword = (list: string[]) => {
+    return list.filter((item, index) => index < list.length - 1);
   };
 
   const clearInputHandler = () => {
