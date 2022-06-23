@@ -203,6 +203,7 @@ const Container = styled.div<{
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
+      padding-top: 3px;
     }
 
     input:disabled {

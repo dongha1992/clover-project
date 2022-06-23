@@ -59,6 +59,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        queryClient.setQueryData(['getRecommenMenus'], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            if (_item.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -99,6 +107,26 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
+        });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -115,6 +143,26 @@ const Item = ({ item, isHorizontal }: TProps) => {
     {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type], (previous: any) => {
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
+        });
+        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             let liked, likeCount;
             if (_item.id === item.id) {
