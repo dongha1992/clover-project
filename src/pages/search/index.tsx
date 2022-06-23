@@ -10,10 +10,15 @@ import { homePadding, FlexWrapWrapper } from '@styles/theme';
 import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
-import { getMenusApi } from '@api/menu';
+import { getMenusApi, getRecommendMenusApi } from '@api/menu';
+import { useDispatch, useSelector } from 'react-redux';
+import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
+import { IMenus, Obj } from '@model/index';
+import cloneDeep from 'lodash-es/cloneDeep';
+import { debounce } from 'lodash-es';
 
 const SearchPage = () => {
-  const [itemList, setItemList] = useState<any[]>([]);
+  const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
   const [searchResult, setSearchResult] = useState<any>([]);
   const [keyword, setKeyword] = useState<string>('');
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
@@ -21,6 +26,64 @@ const SearchPage = () => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useDispatch();
+  const { categoryFilters, type } = useSelector(filterSelector);
+  const isFilter = categoryFilters?.order || categoryFilters?.filter;
+
+  const {
+    data: menus,
+    error: mdMenuError,
+    isLoading: mdIsLoading,
+  } = useQuery(
+    ['getMenus', type],
+    async () => {
+      const { data } = await getRecommendMenusApi();
+      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  /* TODO: [category] 쪽이랑 코드 중복 */
+
+  const { error: menuError, isLoading } = useQuery(
+    ['getMenus', type],
+    async ({ queryKey }) => {
+      const params = {
+        type: '',
+        searchKeyword: keyword,
+      };
+
+      const { data } = await getMenusApi(params);
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!isSearched,
+      onError: () => {},
+      onSuccess: (data) => {
+        const reOrdered = checkIsSold(data);
+        setDefaultMenus(reOrdered);
+        checkIsFiltered(reOrdered);
+      },
+    }
+  );
+
+  const checkIsFiltered = (menuList: IMenus[]) => {
+    if (isFilter) {
+      const filered = filteredMenus(menuList);
+      setSearchResult(filered!);
+    } else {
+      setSearchResult(menuList);
+    }
+  };
+
+  useEffect(() => {
+    if (categoryFilters?.order || categoryFilters?.filter) {
+      checkIsFiltered(defaultMenus!);
+    }
+  }, [categoryFilters]);
 
   useEffect(() => {
     initLocalStorage();
@@ -30,15 +93,16 @@ const SearchPage = () => {
     setLocalStorage();
   }, [recentKeywords]);
 
-  const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeInputHandler = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setKeyword(value);
     setIsSearched(false);
+    dispatch(INIT_CATEGORY_FILTER());
 
     if (!value) {
       setSearchResult([]);
     }
-  };
+  }, 300);
 
   const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
@@ -52,18 +116,18 @@ const SearchPage = () => {
       setIsSearched(true);
       setRecentKeywords([...recentKeywords, value]);
 
-      const params = { searchKeyword: keyword, type: '' };
-      try {
-        const { data } = await getMenusApi(params);
-        if (data.code === 200) {
-          if (data.data?.length! > 0) {
-            setSearchResult(data.data);
-          } else {
-            // 검색 결과 없음
-            setSearchResult('');
-          }
-        }
-      } catch (error) {}
+      // const params = { searchKeyword: keyword, type: '' };
+      // try {
+      //   const { data } = await getMenusApi(params);
+      //   if (data.code === 200) {
+      //     if (data.data?.length! > 0) {
+      //       setSearchResult(data.data);
+      //     } else {
+      //       // 검색 결과 없음
+      //       setSearchResult('');
+      //     }
+      //   }
+      // } catch (error) {}
     }
   };
 
@@ -106,6 +170,64 @@ const SearchPage = () => {
 
   const setLocalStorage = () => {
     localStorage.setItem('recentSearch', JSON.stringify(recentKeywords));
+  };
+
+  const filteredMenus = (menuList: IMenus[]) => {
+    try {
+      let copiedMenuList = cloneDeep(menuList);
+      const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
+
+      if (hasCategory) {
+        copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
+      }
+
+      if (!categoryFilters?.order) {
+        return copiedMenuList;
+      } else {
+        switch (categoryFilters?.order) {
+          case '': {
+            return menuList;
+          }
+          case 'ORDER_COUNT_DESC': {
+            return copiedMenuList.sort((a, b) => b.orderCount - a.orderCount);
+          }
+          case 'LAUNCHED_DESC': {
+            return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
+          }
+          case 'PRICE_DESC': {
+            return getPriceOrder(copiedMenuList, 'max');
+          }
+          case 'PRICE_ASC': {
+            return getPriceOrder(copiedMenuList, 'min');
+          }
+          case 'REVIEW_COUNT_DESC': {
+            return copiedMenuList.sort((a, b) => b.reviewCount - a.reviewCount);
+          }
+          default:
+            return menuList;
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
+    const mapped = list?.map((menu: IMenus) => {
+      const prices = menu?.menuDetails?.map((item) => item.price);
+      return { ...menu, [order]: Math[order](...prices) };
+    });
+
+    return mapped.sort((a: any, b: any) => {
+      const isMin = order === 'min';
+      return isMin ? a[order] - b[order] : b[order] - a[order];
+    });
+  };
+
+  const checkIsSold = (menuList: IMenus[]) => {
+    return menuList?.sort((a: any, b: any) => {
+      return a.isSold - b.isSold;
+    });
   };
 
   return (
@@ -151,11 +273,15 @@ const SearchPage = () => {
               <BorderLine padding="0 24px" />
               <MdRecommendationWrapper>
                 <TextH3B padding="24px">MD 추천</TextH3B>
-                {/* <FlexWrapWrapper>
-                  {menus?.map((item, index) => {
-                    return <Item item={item} key={index} />;
-                  })}
-                </FlexWrapWrapper> */}
+                {menus?.length! > 0 ? (
+                  <FlexWrapWrapper>
+                    {menus?.map((item, index) => {
+                      return <Item item={item} key={index} />;
+                    })}
+                  </FlexWrapWrapper>
+                ) : (
+                  '상품을 준비 중입니다'
+                )}
               </MdRecommendationWrapper>
             </DefaultSearchContainer>
           ) : (
