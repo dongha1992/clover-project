@@ -86,18 +86,11 @@ const MenuDetailHeader = ({ title }: TProps) => {
 };
 
 const Container = styled.div`
-  position: relative;
   width: 100%;
+  height: 100%;
   max-width: ${breakpoints.mobile}px;
-  position: fixed;
+  position: absolute;
   top: 0;
-  right: 0;
-  z-index: 10;
-  height: auto;
-  left: calc(50%);
-  background-color: white;
-  z-index: 100000;
-  height: 56px;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;

@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
 import { CATEGORY_TITLE_MAP } from '@constants/menu';
+import { SET_SCROLL } from '@store/common';
+import { useDispatch } from 'react-redux';
+import { breakpoints } from '@utils/common/getMediaQuery';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -23,11 +27,32 @@ const SpotDetailHeader = dynamic(()=> import('./SpotDetailHeader'));
 
 const Header = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [currentPath, setCurrentPath] = useState<string>(router.pathname);
+  const [scroll, setScroll] = useState(false);
 
   useEffect(() => {
     setCurrentPath(router.pathname);
   }, [router.pathname]);
+
+  useEffect(() => {
+    dispatch(SET_SCROLL(false));
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll); //clean up
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleScroll = () => {
+    if(window.scrollY){
+      setScroll(true);
+      dispatch(SET_SCROLL(true));
+    }else{
+      setScroll(false);
+      dispatch(SET_SCROLL(false));
+    };
+  };
 
   const { category } = router.query;
 
@@ -174,6 +199,40 @@ const Header = () => {
     }
   };
 
-  return <>{renderComponent(currentPath)}</>;
+  return <Container scroll={scroll}>{renderComponent(currentPath)}</Container>;
 };
+
+const Container = styled.div<{scroll: boolean}>`
+  width: 100%;
+  max-width: ${breakpoints.mobile}px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  height: 56px;
+  left: calc(50%);
+  background-color: white;
+
+  ${({scroll}) => {
+    if(scroll){
+      return css`
+        filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+      `;
+    }
+  }};
+  
+  ${({ theme }) => theme.desktop`
+  margin: 0 auto;
+  left: 0px;
+
+`};
+
+${({ theme }) => theme.mobile`
+  margin: 0 auto;
+  left: 0px;
+`};
+
+
+`;
+
 export default React.memo(Header);
