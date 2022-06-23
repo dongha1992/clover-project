@@ -200,7 +200,6 @@ const SpotSearchMainPage = (): ReactElement => {
         setSearchResult(fetchData?.spots);
         setIsSearched(true); 
         setInputFocus(true);
-        dispatch(SET_SERACH_MAP_SPOT(fetchData.spots)); 
       };
     } catch (err) {
       console.error(err);
@@ -229,18 +228,19 @@ const SpotSearchMainPage = (): ReactElement => {
   };
 
   const filteredItem = () => {
+    const list = searchResult ?? [];
     const sort = spotSearchSort;
     switch (sort) {
       case undefined:
-        return searchResult;
+        return list;
       case 'nearest':
         return (
-          searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  a.distance - b.distance })
+          list.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  a.distance - b.distance })
           );
       case 'frequency':
-        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.score - a.score });
+        return list.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.score - a.score });
       case 'user':
-        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.userCount - a.userCount });
+        return list.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.userCount - a.userCount });
     }
   };
 

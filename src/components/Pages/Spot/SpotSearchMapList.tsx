@@ -18,11 +18,16 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { SVGIcon } from '@utils/common';
+import { getSpotDistanceUnit } from '@utils/spot';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 interface IProps {
     item: ISpotsDetail | any;
-  }
-  
+}
+
+const now = dayjs();
+
 const SpotSearchMapList = ({item}: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -30,22 +35,62 @@ const SpotSearchMapList = ({item}: IProps): ReactElement => {
   const { cartLists } = useSelector(cartForm);
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
-  const { spotSearchArr } = useSelector(spotSelector);
+  const { spotSearchArr, spotsPosition } = useSelector(spotSelector);
   const spotList = spotSearchArr&&spotSearchArr;
 
+  const positionLen = spotsPosition?.latitude !== null;
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
 
-  const typeTag = (): string => {
-    switch (item.type) {
-    case 'PRIVATE':
-        return '프라이빗';
-    case 'PUBLIC':
-        return '퍼블릭';
-    default:
-        return '퍼블릭';
+  // 운영 종료 예정 or 종료
+  const closedDate = item?.closedDate;
+  const dDay = now.diff(dayjs(closedDate), 'day');
+  const closedOperation = dDay > 0 || item?.isClosed;
+  const closedSoonOperation = dDay >= -14;
+  
+  const renderSpotMsg = () => {
+    switch (true) {
+      case closedOperation: {
+        return (
+          <MeterAndTime>
+            <SVGIcon name="exclamationMark" width="14" height="14" />
+            <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+              운영 종료된 프코스팟이에요
+            </TextB3R>
+          </MeterAndTime>
+        );
+      }
+      case closedSoonOperation: {
+        if (closedDate) {
+          return (
+            <MeterAndTime>
+              <SVGIcon name="exclamationMark" width="14" height="14" />
+              <TextB3R color={theme.brandColor} padding="0 0 0 2px">
+                운영 종료 예정인 프코스팟이에요
+              </TextB3R>
+            </MeterAndTime>
+          );
+        }
+      }
+      default: {
+        return (
+          <MeterAndTime>
+            {(userLocationLen || positionLen) && (
+              <>
+                <TextH6B>{`${getSpotDistanceUnit(item.distance).distance}${getSpotDistanceUnit(item.distance).unit}`}</TextH6B>
+                <Col />
+              </>
+            )}
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
+          </MeterAndTime>
+        );
+      }
     }
   };
+
 
   const orderHandler = () => {
     const destinationInfo = {
@@ -221,52 +266,33 @@ const SpotSearchMapList = ({item}: IProps): ReactElement => {
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
-        {
-          item.isClosed ? (
-            <MeterAndTime>
-              <SVGIcon name='exclamationMark' width='14' height='14' />
-              <TextB3R color={theme.brandColor} padding='0 0 0 2px'>운영 종료된 프코스팟이에요</TextB3R>
-            </MeterAndTime>
-          ) : !!item?.closedDate ? (
-            <MeterAndTime>
-              <SVGIcon name='exclamationMark' width='14' height='14' />
-              <TextB3R color={theme.brandColor} padding='0 0 0 2px'>운영 종료 예정인 프코스팟이에요</TextB3R>
-            </MeterAndTime>
-          ) : (
-            <MeterAndTime>
-              {userLocationLen && (
-                <>
-                  <TextH6B>{`${Math.round(item.distance)}m`}</TextH6B>
-                  <Col />
-                </>
-              )}
-              <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
-                픽업
-              </TextH6B>
-              <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
-            </MeterAndTime>
-          )
-        }
+        {renderSpotMsg()}
         <TagWrapper>
-          {!item.isTrial ? (
-            <div>
-              <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                {typeTag()}
-              </Tag>
-            </div>
-          ) : (
-            <div>
-              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                트라이얼
-              </Tag>
-            </div>
-          )}
-          { !!item.discountRate && 
-            <div>
-                <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor} margin='0 0 0 5px'>
-                  {`${item.discountRate}% 할인중`}
-                </Tag>
-            </div>
+        {
+            !item.isClosed && 
+            (
+              <>
+                {
+                  item?.isTrial ? (
+                    <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
+                  ) : 
+                  item?.type === 'PRIVATE' ? (
+                    <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
+                  ) : (
+                    null
+                  )
+                }
+                {
+                  item?.discountRate! > 0 &&
+                    <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.discountRate}% 할인 중`}</Tag>
+                }
+              </>
+            )
+          }
+          {!item.isOpened && 
+            <Tag backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              오픈예정
+            </Tag>
           }
         </TagWrapper>
       </FlexColStart>
@@ -300,6 +326,7 @@ const Container = styled.section<{ mapList: boolean }>`
   height: 145px;
   margin-bottom: 24px;
   padding: 16px;
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
   ${({ mapList }) => {
     if (mapList) {
       return css`
