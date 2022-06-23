@@ -6,7 +6,7 @@ import { theme } from '@styles/theme';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useGetSubsOrderDetail } from 'src/queries/order';
+import { useGetOrderDetail } from 'src/queries/order';
 import styled from 'styled-components';
 
 const DietInfoPage = () => {
@@ -20,22 +20,18 @@ const DietInfoPage = () => {
     }
   }, [router.isReady]);
 
-  const { data: orderDetail, isLoading } = useGetSubsOrderDetail(
-    ['getOrderDetail', 'subscription', detailId],
-    detailId!,
-    {
-      onSuccess: (data: IOrderDetail) => {
-        let pickupDayObj = new Set();
-        data.orderDeliveries.forEach((o) => {
-          pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
-        });
-        setDeliveryDay(Array.from(pickupDayObj));
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!detailId,
-    }
-  );
+  const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', detailId], detailId!, {
+    onSuccess: (data: IOrderDetail) => {
+      let pickupDayObj = new Set();
+      data.orderDeliveries.forEach((o) => {
+        pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
+      });
+      setDeliveryDay(Array.from(pickupDayObj));
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!detailId,
+  });
   if (isLoading) return <div>...로딩중</div>;
 
   return (
