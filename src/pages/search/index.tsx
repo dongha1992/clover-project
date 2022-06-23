@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
 import { IMenus, Obj } from '@model/index';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { debounce } from 'lodash-es';
+import debounce from 'lodash-es/debounce';
 
 const SearchPage = () => {
   const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
@@ -36,10 +36,10 @@ const SearchPage = () => {
     error: mdMenuError,
     isLoading: mdIsLoading,
   } = useQuery(
-    ['getMenus', type],
+    'getRecommendMenus',
     async () => {
       const { data } = await getRecommendMenusApi();
-      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+      return checkIsSold(data.data);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -93,16 +93,20 @@ const SearchPage = () => {
     setLocalStorage();
   }, [recentKeywords]);
 
-  const changeInputHandler = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+  const deleteAllRecentKeyword = () => {
+    localStorage.removeItem('recentSearch');
+    setRecentKeywords([]);
+  };
+
+  const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setKeyword(value);
-    setIsSearched(false);
     dispatch(INIT_CATEGORY_FILTER());
-
     if (!value) {
       setSearchResult([]);
+      setIsSearched(false);
     }
-  }, 300);
+  };
 
   const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
@@ -115,29 +119,7 @@ const SearchPage = () => {
 
       setIsSearched(true);
       setRecentKeywords([...recentKeywords, value]);
-
-      // const params = { searchKeyword: keyword, type: '' };
-      // try {
-      //   const { data } = await getMenusApi(params);
-      //   if (data.code === 200) {
-      //     if (data.data?.length! > 0) {
-      //       setSearchResult(data.data);
-      //     } else {
-      //       // 검색 결과 없음
-      //       setSearchResult('');
-      //     }
-      //   }
-      // } catch (error) {}
     }
-  };
-
-  const onFocusHandler = () => {
-    setIsFocus(true);
-  };
-
-  const onBlurHandler = () => {
-    setIsFocus(false);
-    initInputHandler();
   };
 
   const clearInputHandler = () => {
@@ -145,14 +127,12 @@ const SearchPage = () => {
   };
 
   const initInputHandler = () => {
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
+    setKeyword('');
   };
 
   const removeRecentSearchItemHandler = useCallback(
-    (keyword: string) => {
-      const filtedRecentList = recentKeywords.filter((k) => k !== keyword);
+    (keyword: string, index: number) => {
+      const filtedRecentList = recentKeywords.filter((k, i) => i !== index);
       setRecentKeywords(filtedRecentList);
     },
     [recentKeywords]
@@ -171,6 +151,13 @@ const SearchPage = () => {
   const setLocalStorage = () => {
     localStorage.setItem('recentSearch', JSON.stringify(recentKeywords));
   };
+
+  const selectRecentSearchItemHandler = (keyword: string) => {
+    setKeyword(keyword);
+    setIsSearched(true);
+  };
+
+  console.log(keyword, isSearched);
 
   const filteredMenus = (menuList: IMenus[]) => {
     try {
@@ -230,6 +217,10 @@ const SearchPage = () => {
     });
   };
 
+  if (isLoading) {
+    return <div>로딩중</div>;
+  }
+
   return (
     <Container>
       <Wrapper>
@@ -238,61 +229,61 @@ const SearchPage = () => {
           svg="searchIcon"
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
-          onFocus={onFocusHandler}
-          onBlur={onBlurHandler}
-          ref={inputRef}
+          // onFocus={onFocusHandler}
+          // onBlur={onBlurHandler}
+          value={keyword || ''}
         />
-        {inputRef.current && inputRef.current?.value.length > 0 && (
+        {keyword.length > 0 && (
           <div className="removeSvg" onClick={clearInputHandler}>
             <SVGIcon name="removeItem" />
           </div>
         )}
       </Wrapper>
-      {keyword && isSearched ? (
+      {keyword && isSearched && (
         <SearchResultContainer>
           <SearchResult searchResult={searchResult} />
         </SearchResultContainer>
-      ) : (
-        <>
-          {!isFocus ? (
-            <DefaultSearchContainer>
-              <CategoryWrapper>
-                <TextH3B>카테고리</TextH3B>
-                <CatetoryList>
-                  {CATEGORY.map((item, index) => {
-                    return (
-                      <TextB1R key={index} width="148px" padding="8px 0">
-                        <Link href={item.link}>
-                          <a>{item.text}</a>
-                        </Link>
-                      </TextB1R>
-                    );
-                  })}
-                </CatetoryList>
-              </CategoryWrapper>
-              <BorderLine padding="0 24px" />
-              <MdRecommendationWrapper>
-                <TextH3B padding="24px">MD 추천</TextH3B>
-                {menus?.length! > 0 ? (
-                  <FlexWrapWrapper>
-                    {menus?.map((item, index) => {
-                      return <Item item={item} key={index} />;
-                    })}
-                  </FlexWrapWrapper>
-                ) : (
-                  '상품을 준비 중입니다'
-                )}
-              </MdRecommendationWrapper>
-            </DefaultSearchContainer>
-          ) : (
-            <RecentSearchContainer>
-              <RecentSearch
-                recentKeywords={recentKeywords}
-                removeRecentSearchItemHandler={removeRecentSearchItemHandler}
-              />
-            </RecentSearchContainer>
-          )}
-        </>
+      )}
+      {keyword.length === 0 && (
+        <DefaultSearchContainer>
+          <CategoryWrapper>
+            <TextH3B>카테고리</TextH3B>
+            <CatetoryList>
+              {CATEGORY.map((item, index) => {
+                return (
+                  <TextB1R key={index} width="148px" padding="8px 0">
+                    <Link href={item.link}>
+                      <a>{item.text}</a>
+                    </Link>
+                  </TextB1R>
+                );
+              })}
+            </CatetoryList>
+          </CategoryWrapper>
+          <BorderLine padding="0 24px" />
+          <MdRecommendationWrapper>
+            <TextH3B padding="24px">MD 추천</TextH3B>
+            {menus?.length! > 0 ? (
+              <FlexWrapWrapper>
+                {menus?.map((item, index) => {
+                  return <Item item={item} key={index} />;
+                })}
+              </FlexWrapWrapper>
+            ) : (
+              '상품을 준비 중입니다'
+            )}
+          </MdRecommendationWrapper>
+        </DefaultSearchContainer>
+      )}
+      {keyword && !isSearched && (
+        <RecentSearchContainer>
+          <RecentSearch
+            recentKeywords={recentKeywords}
+            removeRecentSearchItemHandler={removeRecentSearchItemHandler}
+            deleteAllRecentKeyword={deleteAllRecentKeyword}
+            selectRecentSearchItemHandler={selectRecentSearchItemHandler}
+          />
+        </RecentSearchContainer>
       )}
     </Container>
   );
