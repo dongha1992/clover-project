@@ -37,6 +37,7 @@ import {
   IDeliveryObj,
   IMenus,
   IDeleteCartRequest,
+  IOrderedMenuDetails,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -47,7 +48,7 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postCartsApi } from '@api/cart';
-import { getMenusApi } from '@api/menu';
+import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { pluck, pipe, reduce, toArray, map, entries, each, flatMap, intersectionBy } from '@fxts/core';
@@ -85,7 +86,6 @@ const now = dayjs();
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
-  const [itemList, setItemList] = useState<any[]>([]);
   const [checkedMenus, setCheckedMenus] = useState<IGetCart[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
@@ -197,18 +197,32 @@ const CartPage = () => {
     }
   );
 
-  /* TODO: 찜한 상품, 이전 구매 상품 리스트 받아오면 변경해야함 */
+  const { data: likeMenusList, isLoading: likeLoading } = useQuery(
+    ['getLikeMenus', 'GENERAL'],
+    async () => {
+      const { data } = await getLikeMenus('GENERAL');
 
-  // const { error: menuError } = useQuery(
-  //   'getMenus',
-  //   async () => {
-  //     const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: '' };
-  //     const { data } = await getMenusApi(params);
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
-  //     setItemList(data.data);
-  //   },
-  //   { refetchOnMount: true, refetchOnWindowFocus: false }
-  // );
+  const { data: orderedMenusList, isLoading: orderedMenuLoading } = useQuery(
+    ['getOrderedMenus', 'GENERAL'],
+    async () => {
+      const params = { size: 10 };
+      const { data } = await getOrderedMenusApi({ params });
+
+      return data.data.menuDetails;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const {} = useQuery(
     'getSubOrderLists',
@@ -307,8 +321,8 @@ const CartPage = () => {
       onSuccess: (data) => {
         /* TODO: 서버랑 store랑 싱크 init후 set으로? */
         try {
-          reOrderCartList(data);
-          setNutritionObj(getTotalNutrition(data));
+          reOrderCartList(data.cartMenus);
+          setNutritionObj(getTotalNutrition(data.cartMenus));
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
         } catch (error) {
@@ -325,8 +339,9 @@ const CartPage = () => {
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
 
   const reOrderCartList = (data: IGetCart[]) => {
+    console.log(data, 'data');
     const checkMenusId = checkedMenus.map((item) => item.menuId);
-    const updatedQuantity = data?.filter((item) => checkMenusId.includes(item.menuId));
+    const updatedQuantity = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
     setCheckedMenus(updatedQuantity);
     setCartItemList(data);
   };
@@ -380,6 +395,7 @@ const CartPage = () => {
   };
 
   const handleSelectAllCartItem = () => {
+    console.log(cartItemList, 'cartItemList');
     const canCheckMenus = cartItemList.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails));
 
     if (!isAllChecked) {
@@ -892,31 +908,6 @@ const CartPage = () => {
     return <div>로딩</div>;
   }
 
-  // if (cartItemList.length === 0) {
-  //   return (
-  //     <EmptyContainer>
-  //       <FlexCol width="100%">
-  //         <DeliveryTypeAndLocation
-  //           goToDeliveryInfo={goToDeliveryInfo}
-  //           deliveryType={destinationObj.delivery!}
-  //           deliveryDestination={destinationObj.location}
-  //         />
-  //         <BorderLine height={8} margin="24px 0" />
-  //       </FlexCol>
-  //       <FlexCol width="100%">
-  //         <TextB2R padding="0 0 32px 0" center>
-  //           장바구니가 비었어요 😭
-  //         </TextB2R>
-  //         <BtnWrapper onClick={goToSearchPage}>
-  //           <Button backgroundColor={theme.white} color={theme.black} border>
-  //             상품 담으러 가기
-  //           </Button>
-  //         </BtnWrapper>
-  //       </FlexCol>
-  //     </EmptyContainer>
-  //   );
-  // }
-
   return (
     <Container>
       {isLoginSuccess ? (
@@ -1098,7 +1089,7 @@ const CartPage = () => {
             <TextH3B padding="0 0 24px 0">루이스님이 찜한 상품이에요</TextH3B>
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
-                {itemList?.map((item, index) => {
+                {likeMenusList?.map((item: IMenus, index: number) => {
                   return <Item item={item} key={index} isHorizontal />;
                 })}
               </ScrollHorizonListGroup>
@@ -1110,9 +1101,9 @@ const CartPage = () => {
             <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
-                {itemList?.map((item, index) => {
+                {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   return <Item item={item} key={index} isHorizontal />;
-                })}
+                })} */}
               </ScrollHorizonListGroup>
             </ScrollHorizonList>
           </MenuListHeader>
