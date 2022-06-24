@@ -34,6 +34,7 @@ const BtnWrapper = styled.div`
   right: 0px;
   z-index: 10;
   height: 56px;
+  left: 50%;
   background-color: ${({ theme }) => theme.black};
   ${({ theme }) => theme.desktop`
     margin: 0 auto;

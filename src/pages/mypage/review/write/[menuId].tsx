@@ -94,6 +94,7 @@ const WriteReviewPage = ({ menuId }: any) => {
             submitBtnText: '확인',
           })
         );
+        await queryClient.refetchQueries('getReviewDetail');
       },
     }
   );

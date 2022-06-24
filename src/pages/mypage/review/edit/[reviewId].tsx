@@ -5,16 +5,15 @@ import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon, getImageSize } from '@utils/common';
-import debounce from 'lodash-es/debounce';
+import { ButtonGroup } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
-import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
+import { getReviewDetailApi, editMenuReviewApi, deleteReviewApi } from '@api/menu';
 import { StarRating } from '@components/StarRating';
 import NextImage from 'next/image';
 import { userForm } from '@store/user';
@@ -58,6 +57,8 @@ const EditReviewPage = ({ reviewId }: any) => {
   /* TODO: 사이즈 체크 및 사진 올리는 hooks */
   /* TODO: 상수 파일에서 관리 */
 
+  // deleteReviewApi;
+
   const {
     data: selectedReviewDetail,
     error: menuError,
@@ -70,7 +71,7 @@ const EditReviewPage = ({ reviewId }: any) => {
     },
 
     {
-      onSuccess: (data) => {},
+      onSuccess: async (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -84,15 +85,22 @@ const EditReviewPage = ({ reviewId }: any) => {
       onSuccess: async () => {
         dispatch(
           SET_ALERT({
-            children: (
-              <GreyBg>
-                <TextH5B>+ 300P 적립</TextH5B>
-              </GreyBg>
-            ),
-            alertMessage: `${me?.name}님의 소중한 후기에 감사드려요!`,
+            alertMessage: `후기 수정이 완료되었습니다.`,
             submitBtnText: '확인',
           })
         );
+        await queryClient.refetchQueries('getReviewDetail');
+      },
+    }
+  );
+
+  const { mutateAsync: mutateDeleteMenuReview } = useMutation(
+    async () => {
+      const { data } = await deleteReviewApi({ id: reviewId });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getReviewDetail');
       },
     }
   );
@@ -205,6 +213,22 @@ const EditReviewPage = ({ reviewId }: any) => {
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
     mutateEditMenuReview(formData);
+  };
+
+  const deleteReview = () => {
+    dispatch(
+      SET_ALERT({
+        children: (
+          <GreyBg>
+            <TextH5B>+ 300P 적립</TextH5B>
+          </GreyBg>
+        ),
+        alertMessage: `삭제 후 재작성은 불가합니다. \n작성한 후기를 삭제하시겠어요?`,
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => mutateDeleteMenuReview(),
+      })
+    );
   };
 
   useEffect(() => {
@@ -343,9 +367,12 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextB3R>
         </FlexCol>
       </PointInfoWrapper>
-      <BtnWrapper onClick={finishWriteReview}>
-        <Button height="100%">작성하기</Button>
-      </BtnWrapper>
+      <ButtonGroup
+        leftButtonHandler={deleteReview}
+        rightButtonHandler={finishWriteReview}
+        leftText="삭제하기"
+        rightText="수정하기"
+      />
     </Container>
   );
 };
