@@ -24,7 +24,10 @@ interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
   rating: number;
+  content: string;
 }
+
+const LIMIT = 30;
 
 export const FinishReview = () => {
   return (
@@ -36,13 +39,12 @@ export const FinishReview = () => {
 
 const WriteReviewPage = ({ menuId }: any) => {
   const [isShow, setIsShow] = useState(false);
-  const [rating, setRating] = useState<number>(5);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
-  const [previewImg, setPreviewImg] = useState<string[]>([]);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
+    content: '',
     rating: 5,
   });
 
@@ -104,14 +106,14 @@ const WriteReviewPage = ({ menuId }: any) => {
       idx -= 0.5;
     }
 
-    setRating(idx);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
   };
 
-  const writeReviewHandler = debounce(() => {
+  const writeReviewHandler = () => {
     if (textAreaRef.current) {
       setNumberOfReivewContent(textAreaRef.current?.value.length);
     }
-  }, 50);
+  };
 
   const onChangeFileHandler = (e: any) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
@@ -175,15 +177,15 @@ const WriteReviewPage = ({ menuId }: any) => {
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
-      setPreviewImg([...previewImg, e.target.result]);
+      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
     };
 
     imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = previewImg.filter((img, idx) => idx !== index);
-    setPreviewImg(filterPreviewImg);
+    const filterPreviewImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
   };
 
   const finishWriteReview = async () => {
@@ -198,7 +200,7 @@ const WriteReviewPage = ({ menuId }: any) => {
 
     const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef.current?.value!);
+    formData.append('content', textAreaRef?.current?.value || '');
     formData.append('menuDetailId', '1');
     formData.append('menuId', '1');
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
@@ -209,6 +211,8 @@ const WriteReviewPage = ({ menuId }: any) => {
   };
 
   console.log(data, 'data');
+
+  const over30Letter = LIMIT - numberOfReivewContent > 0;
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -239,7 +243,7 @@ const WriteReviewPage = ({ menuId }: any) => {
         </FlexRow>
         <RateWrapper>
           <StarRating
-            rating={rating}
+            rating={writeMenuReviewObj.rating}
             // onRating={onStarHoverRating}
             hoverRating={hoverRating}
             onClick={onStarHoverRating}
@@ -250,7 +254,11 @@ const WriteReviewPage = ({ menuId }: any) => {
         </RateWrapper>
         <TextArea
           name="reviewArea"
-          placeholder="placeholder"
+          placeholder=" - 후기 작성 후 조건에 부합할 시 포인트가 자동 지급&#13;&#10;
+          - 후기 내용은 띄어쓰기를 포함한 글자 수로 체크&#13;&#10;
+          - 비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제 가능&#13;&#10;
+          - 상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 적립금 미지급&#13;&#10;
+          - 사진이 자사 제품과 무관할 경우 자동 지급된 포인트 삭제 및 미지급의 불이익이 발생할 수 있음"
           minLength={0}
           maxLength={1000}
           rows={20}
@@ -258,7 +266,9 @@ const WriteReviewPage = ({ menuId }: any) => {
           ref={textAreaRef}
         />
         <FlexBetween margin="8px 0 0 0">
-          <TextB3R color={theme.brandColor}>{30 - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!</TextB3R>
+          <TextB3R color={theme.brandColor}>
+            {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
+          </TextB3R>
           <TextB3R>{numberOfReivewContent}/1000</TextB3R>
         </FlexBetween>
       </Wrapper>
@@ -275,7 +285,7 @@ const WriteReviewPage = ({ menuId }: any) => {
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          {previewImg.length < 2 && (
+          {writeMenuReviewObj.imgFiles.length < 2 && (
             <UploadInputWrapper>
               <TextInput
                 width="100%"
@@ -290,9 +300,9 @@ const WriteReviewPage = ({ menuId }: any) => {
               </div>
             </UploadInputWrapper>
           )}
-
-          {previewImg.length > 0 &&
-            previewImg.map((img: string, index: number) => {
+          {writeMenuReviewObj.imgFiles.length > 0 &&
+            writeMenuReviewObj.imgFiles.map((img: string, index: number) => {
+              console.log(img);
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={img} />

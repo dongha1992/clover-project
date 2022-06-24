@@ -85,7 +85,7 @@ const Container = styled.div<{
   position: relative;
   margin: ${({ margin }) => margin && margin}px;
   width: 100%;
-
+  white-space: pre-wrap;
   textarea {
     width: ${({ width }) => width};
     height: ${({ height }) => height};

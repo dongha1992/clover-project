@@ -11,12 +11,13 @@ import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi } from '@api/menu';
 import { StarRating } from '@components/StarRating';
 import NextImage from 'next/image';
+import { userForm } from '@store/user';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -24,6 +25,8 @@ interface IWriteMenuReviewObj {
   rating: number;
   content: string;
 }
+
+const LIMIT = 30;
 
 export const FinishReview = () => {
   return (
@@ -42,9 +45,11 @@ const EditReviewPage = ({ reviewId }: any) => {
     content: '',
   });
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const { me } = useSelector(userForm);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -84,7 +89,7 @@ const EditReviewPage = ({ reviewId }: any) => {
                 <TextH5B>+ 300P 적립</TextH5B>
               </GreyBg>
             ),
-            alertMessage: '제이미님의 소중한 후기에 감사드려요!',
+            alertMessage: `${me?.name}님의 소중한 후기에 감사드려요!`,
             submitBtnText: '확인',
           })
         );
@@ -104,10 +109,11 @@ const EditReviewPage = ({ reviewId }: any) => {
     setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
   };
 
-  const writeReviewHandler = debounce((e) => {
-    const { value } = e.target;
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, content: value });
-  }, 80);
+  const writeReviewHandler = () => {
+    if (textAreaRef.current) {
+      setNumberOfReivewContent(textAreaRef.current?.value.length);
+    }
+  };
 
   const onChangeFileHandler = (e: any) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
@@ -194,7 +200,7 @@ const EditReviewPage = ({ reviewId }: any) => {
 
     const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', writeMenuReviewObj.content);
+    formData.append('content', textAreaRef?.current?.value || '');
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
@@ -213,6 +219,10 @@ const EditReviewPage = ({ reviewId }: any) => {
     }
   }, [selectedReviewDetail]);
 
+  console.log(writeMenuReviewObj, 'writeMenuReviewObj');
+
+  const over30Letter = LIMIT - writeMenuReviewObj?.content.length > 0;
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -222,7 +232,7 @@ const EditReviewPage = ({ reviewId }: any) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>제이미님</TextH3B>
+          <TextH3B>{me?.name}님</TextH3B>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
@@ -241,31 +251,29 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRating
-            rating={writeMenuReviewObj.rating}
-            // onRating={onStarHoverRating}
-            hoverRating={hoverRating}
-            onClick={onStarHoverRating}
-          />
+          <StarRating rating={writeMenuReviewObj.rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>
         </RateWrapper>
         <TextArea
           name="reviewArea"
-          placeholder="placeholder"
+          placeholder=" - 후기 작성 후 조건에 부합할 시 포인트가 자동 지급&#13;&#10;
+          - 후기 내용은 띄어쓰기를 포함한 글자 수로 체크&#13;&#10;
+          - 비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제 가능&#13;&#10;
+          - 상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 적립금 미지급&#13;&#10;
+          - 사진이 자사 제품과 무관할 경우 자동 지급된 포인트 삭제 및 미지급의 불이익이 발생할 수 있음"
           minLength={0}
           maxLength={1000}
           rows={20}
           eventHandler={writeReviewHandler}
-          value={writeMenuReviewObj?.content}
+          ref={textAreaRef}
         />
         <FlexBetween margin="8px 0 0 0">
           <TextB3R color={theme.brandColor}>
-            {30 - writeMenuReviewObj?.content.length > 0 &&
-              `${30 - writeMenuReviewObj?.content.length}자만 더 쓰면 포인트 적립 조건 충족!`}
+            {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{writeMenuReviewObj?.content.length}/1000</TextB3R>
+          <TextB3R>{numberOfReivewContent}/1000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
