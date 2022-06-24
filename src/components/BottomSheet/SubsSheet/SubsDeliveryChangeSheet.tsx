@@ -64,7 +64,7 @@ const SubsDeliveryChangeSheet = ({ item, setToggleState }: IProps) => {
     enabled: !!detailId,
   });
 
-  const subDates = useSubDeliveryDates();
+  const subDates = useSubDeliveryDates(orderDetail?.orderDeliveries!);
 
   const { mutate: changeDeliveryDateMutation } = useMutation(
     async () => {
@@ -248,13 +248,14 @@ const SubsDeliveryChangeSheet = ({ item, setToggleState }: IProps) => {
       {orderDetail && (
         <SubsDateMngCalendar
           orderDeliveries={orderDetail?.orderDeliveries}
-          firstDeliveryDate={orderDetail?.orderDeliveries[0].deliveryDate!}
-          lastDeliveryDate={orderDetail?.orderDeliveries[orderDetail?.orderDeliveries.length - 1].deliveryDate!}
+          firstDeliveryDate={orderDetail?.firstDeliveryDateOrigin!}
+          lastDeliveryDate={orderDetail?.lastDeliveryDateOrigin!}
           setSelectDate={setSelectDate}
           megCalendarSelectDate={item?.deliveryDate}
           deliveryComplete={deliveryComplete}
-          sumDelivery={subDates}
+          sumDelivery={orderDetail?.orderDeliveries}
           deliveryChangeBeforeDate={item.deliveryDate}
+          deliveryType={orderDetail?.delivery!}
         />
       )}
       <FlexRow className="sumEx" padding="8px 24px 0">

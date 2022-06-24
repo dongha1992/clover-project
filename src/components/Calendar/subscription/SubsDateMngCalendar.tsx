@@ -16,6 +16,7 @@ interface IProps {
   setSelectDate?: Dispatch<SetStateAction<Date | undefined>>;
   megCalendarSelectDate: string; // 배송변경 캘린더에서 선택 날짜
   deliveryChangeBeforeDate: string;
+  deliveryType: string; // 배송 타입 PARCEL,MORNING,SPOT
 }
 
 const SubsDateMngCalendar = ({
@@ -26,6 +27,7 @@ const SubsDateMngCalendar = ({
   deliveryChangeBeforeDate,
   deliveryComplete,
   sumDelivery,
+  deliveryType,
   setSelectDate,
 }: IProps) => {
   const dispatch = useDispatch();
@@ -47,13 +49,26 @@ const SubsDateMngCalendar = ({
     deliveryChangeBeforeDate: deliveryChangeBeforeDate,
   });
 
+  // 새벽 : 월 ~ 토 비활성(일)
+  // 택배 : 화 ~ 토 비활성(일,월)
+  // 스팟 : 월 ~ 금 비활성(일,토)
+
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
+    if (date.getDay() === 6 && deliveryType === 'SPOT') {
+      // 토요일 비활성화(스팟)
+      return true;
+    } else if (date.getDay() === 0) {
+      // 일요일 비활성화(새벽/택배/스팟)
+      return true;
+    } else if (date.getDay() === 1 && deliveryType === 'PARCEL') {
+      // 월요일 비활성화(택배)
+      return true;
+    }
+
     if (
-      Number(firstDeliveryDate.replaceAll('-', '')) < Number(dayjs(date).format('YYYYMMDD')) &&
-      Number(lastDeliveryDate.replaceAll('-', '')) + 7 > Number(dayjs(date).format('YYYYMMDD'))
+      Number(firstDeliveryDate.replaceAll('-', '')) <= Number(dayjs(date).format('YYYYMMDD')) &&
+      Number(lastDeliveryDate.replaceAll('-', '')) + 7 >= Number(dayjs(date).format('YYYYMMDD'))
     ) {
-      return false;
-    } else {
       return false;
     }
   };
