@@ -21,8 +21,9 @@ export const useMenuLikes = ({ previous, id, likeCount, liked }: IProps) => {
         prevLiked = true;
         prevLikeCount = likeCount + 1;
       }
-      return { ...preItem, prevLiked, prevLikeCount };
+      return { ...preItem, liked: prevLiked, likeCount: prevLikeCount };
+    } else {
+      return preItem;
     }
-    return preItem;
   });
 };
