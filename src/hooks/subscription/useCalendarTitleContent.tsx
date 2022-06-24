@@ -81,19 +81,8 @@ const useCalendarTitleContent = ({
         );
       }
 
-      if (
-        // 합배송은 배송예정일 기간 안에서만 표시
-        sumDelivery?.find((x) => {
-          if (
-            Number(dayjs(deliveryExpectedDate[0].deliveryDate).format('YYYYMMDD')) <=
-              Number(dayjs(x.deliveryDate).format('YYYYMMDD')) &&
-            Number(dayjs(deliveryExpectedDate[deliveryExpectedDate.length - 1].deliveryDate).format('YYYYMMDD')) >
-              Number(dayjs(x.deliveryDate).format('YYYYMMDD'))
-          ) {
-            return x.deliveryDate === dayjs(date).format('YYYY-MM-DD');
-          }
-        })
-      ) {
+      // TODO(young) : 합배송 테스트 필요
+      if (sumDelivery?.find((x) => x.type === 'SUB' && x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
         // 배송예정일(합배송 포함)
         if (calendarType === 'deliveryChange') {
           if (dayjs(date).format('YYYY-MM-DD') !== deliveryExpectedDate[0].deliveryDate) {
@@ -118,9 +107,11 @@ const useCalendarTitleContent = ({
         }
       }
 
+      // TODO(young) : 합배송 테스트 필요
       if (
-        sumDelivery?.find((x) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD')) &&
-        sumDelivery?.find((x) => x.status === 'COMPLETED')
+        sumDelivery?.find(
+          (x) => x.type === 'SUB' && x.status === 'COMPLETED' && x.deliveryDate === dayjs(date).format('YYYY-MM-DD')
+        )
       ) {
         // 배송완료(합배송 포함)
         element.push(
