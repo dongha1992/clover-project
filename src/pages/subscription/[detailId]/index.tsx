@@ -12,6 +12,7 @@ import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/
 import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
+import { IOrderDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { subscriptionForm, SUBS_INIT } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexEnd, FlexRow, theme } from '@styles/theme';
@@ -22,6 +23,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { useGetSubsOrderDetail } from 'src/queries/order';
 import styled from 'styled-components';
 dayjs.locale('ko');
 
@@ -41,22 +43,11 @@ const SubsDetailPage = () => {
     }
   }, [router.isReady]);
 
-  const {
-    data: orderDetail,
-    error,
-    isLoading,
-  } = useQuery(
-    ['getOrderDetail', detailId],
-    async () => {
-      const { data } = await getOrderDetailApi(detailId!);
-      data.data.orderDeliveries.sort(
-        (a, b) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
-      );
-
-      return data.data;
-    },
+  const { data: orderDetail, isLoading } = useGetSubsOrderDetail(
+    ['getOrderDetail', 'subscription', detailId],
+    detailId!,
     {
-      onSuccess: (data) => {
+      onSuccess: (data: IOrderDetail) => {
         let pickupDayObj = new Set();
         data.orderDeliveries.forEach((o) => {
           pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
@@ -103,6 +94,10 @@ const SubsDetailPage = () => {
     );
   };
 
+  const goToEntireDiet = () => {
+    router.push(`/subscription/${detailId}/diet-info`);
+  };
+
   if (isLoading) return <div>...로딩중</div>;
 
   return (
@@ -124,7 +119,7 @@ const SubsDetailPage = () => {
 
       <DietConfirmBox>
         <TextH4B>식단 확인</TextH4B>
-        <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
+        <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToEntireDiet}>
           전체 식단 보기
         </TextH6B>
       </DietConfirmBox>

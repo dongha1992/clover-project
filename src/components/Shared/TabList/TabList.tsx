@@ -1,11 +1,15 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useEffect } from 'react';
+import styled, { css } from 'styled-components';
 import Tab from '@components/Shared/TabList/Tab';
 import { theme } from '@styles/theme';
+import { useSelector, useDispatch } from 'react-redux';
+import { commonSelector } from '@store/common';
 
 const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: any) => {
+  const { isScroll } = useSelector(commonSelector);
+
   return (
-    <Container>
+    <Container scroll={isScroll}>
       <TabWrapper ref={ref}>
         {tabList.map((tabItem: any, index: number) => {
           const defaulUrl = selectedTab === tabItem.link;
@@ -25,12 +29,19 @@ const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: any) => 
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{scroll: boolean}>`
   display: flex;
   height: 48px;
   justify-content: space-between;
   width: 100%;
   background-color: ${theme.white};
+  ${({scroll}) => {
+    if (scroll) {
+      return css `
+        //filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+      `;
+    }
+  }}
 `;
 
 const TabWrapper = styled.div`

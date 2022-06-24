@@ -144,7 +144,7 @@ const OrderPage = () => {
     subscription: false,
   });
 
-  const auth = getCookie({ name: 'accessToken' });
+  const auth = getCookie({ name: 'acstk' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
@@ -1126,8 +1126,11 @@ const OrderPage = () => {
               className="checkBox"
               onChange={() => checkFormHanlder('samePerson')}
               isSelected={checkForm.samePerson.isSelected}
+              disabled={tempOrder?.isSubOrderDelivery}
             />
-            <TextB2R padding="0 0 0 8px">주문자와 동일</TextB2R>
+            <TextB2R padding="0 0 0 8px" color={tempOrder?.isSubOrderDelivery ? theme.greyScale45 : theme.black}>
+              주문자와 동일
+            </TextB2R>
           </FlexRow>
         </FlexBetween>
         <FlexCol padding="24px 0">
@@ -1137,6 +1140,7 @@ const OrderPage = () => {
             value={checkForm.samePerson.isSelected ? previewOrder?.order.userName : userInputObj.receiverName}
             name="receiverName"
             eventHandler={userInputHandler}
+            disabled={tempOrder?.isSubOrderDelivery}
           />
         </FlexCol>
         <FlexCol>
@@ -1147,6 +1151,7 @@ const OrderPage = () => {
             name="receiverTel"
             value={checkForm.samePerson.isSelected ? previewOrder?.order.userTel : userInputObj.receiverTel}
             eventHandler={userInputHandler}
+            disabled={tempOrder?.isSubOrderDelivery}
           />
         </FlexCol>
       </ReceiverInfoWrapper>

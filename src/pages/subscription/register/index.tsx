@@ -188,7 +188,7 @@ const SubsRegisterPage = () => {
   };
 
   const goToEntireDiet = () => {
-    router.push('/subscription/register/entire-diet');
+    router.push('/subscription/register/diet-info');
   };
 
   return (
