@@ -71,6 +71,7 @@ const FindEmailPage = () => {
         }
       } catch (error) {
         console.error(error);
+
         setErrorMessage('입력하신 정보로 일치하는 계정이 없습니다.');
       }
     }
