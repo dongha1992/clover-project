@@ -161,20 +161,6 @@ const ProfilePage = () => {
 
   useInterval(timerHandler, delay);
 
-  const logoutHandler = () => {
-    dispatch(SET_LOGIN_SUCCESS(false));
-    dispatch(INIT_USER());
-    delete sessionStorage.accessToken;
-    removeCookie({ name: 'refreshTokenObj' });
-    removeCookie({ name: 'autoL' });
-    removeCookie({ name: 'acstk' });
-    localStorage.removeItem('persist:nextjs');
-    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
-      window.Kakao.Auth.logout();
-    }
-    router.push('/mypage');
-  };
-
   const otherAuthTelHandler = () => {
     setIsAuthTel(true);
     setUserInfo({ ...userInfo, tel: '' });
@@ -460,9 +446,6 @@ const ProfilePage = () => {
         <LoginInfoWrapper>
           <FlexBetween padding="24px 0 ">
             <TextH4B>로그인 정보</TextH4B>
-            <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={logoutHandler} pointer>
-              로그아웃
-            </TextH6B>
           </FlexBetween>
           <NameInputWrapper>
             <TextH5B padding="0 0 9px 0">이메일</TextH5B>
