@@ -32,6 +32,7 @@ const CartItem = ({
   removeCartDisplayItemHandler,
   menu,
 }: handleSelectCartItemIProps) => {
+  console.log(menu, 'menu');
   return (
     <Container>
       <CartDisplayItem

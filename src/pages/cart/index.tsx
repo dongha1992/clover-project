@@ -272,12 +272,14 @@ const CartPage = () => {
   // );
 
   const { mutate: mutateItemQuantity } = useMutation(
-    async (params: { menuDetailId: number; menuQuantity: number }) => {
+    async (params: { menuDetailId: number; quantity: number }) => {
       /* TODO : 구매제한체크 api */
       // const checkHasLimitQuantity = checkedMenus.find((item) => item.id === menuDetailId)?.limitQuantity;
       // if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
       //   return;
       // }
+
+      console.log(params, 'params');
 
       const { data } = await patchCartsApi(params);
     },
@@ -341,8 +343,8 @@ const CartPage = () => {
   const reOrderCartList = (data: IGetCart[]) => {
     console.log(data, 'data');
     const checkMenusId = checkedMenus.map((item) => item.menuId);
-    const updatedQuantity = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
-    setCheckedMenus(updatedQuantity);
+    const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
+    setCheckedMenus(updatedQuantityCart);
     setCartItemList(data);
   };
 
@@ -559,7 +561,7 @@ const CartPage = () => {
   const clickPlusButton = (menuDetailId: number, quantity: number) => {
     const parmas = {
       menuDetailId,
-      menuQuantity: quantity,
+      quantity,
     };
     mutateItemQuantity(parmas);
   };
@@ -567,8 +569,9 @@ const CartPage = () => {
   const clickMinusButton = (menuDetailId: number, quantity: number) => {
     const parmas = {
       menuDetailId,
-      menuQuantity: quantity,
+      quantity,
     };
+
     mutateItemQuantity(parmas);
   };
 
@@ -624,34 +627,14 @@ const CartPage = () => {
       delivery: destinationObj.delivery?.toUpperCase()!,
       deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
       isSubOrderDelivery: subDeliveryId ? true : false,
-      // orderDeliveries: [
-      //   {
-      //     orderMenus,
-      //     orderOptions,
-      //     deliveryDate: selectedDeliveryDay,
-      //   },
-      // ],
       orderDeliveries: [
         {
+          orderMenus,
+          orderOptions,
           deliveryDate: selectedDeliveryDay,
-          orderMenus: [
-            {
-              menuDetailId: 72,
-              menuQuantity: 1,
-            },
-            {
-              menuDetailId: 511,
-              menuQuantity: 1,
-            },
-          ],
-          orderOptions: [
-            {
-              optionId: 1,
-              optionQuantity: 1,
-            },
-          ],
         },
       ],
+
       type: 'GENERAL',
     };
     dispatch(SET_ORDER(reqBody));
@@ -731,7 +714,7 @@ const CartPage = () => {
     return checkedMenus?.reduce((totalPrice, item) => {
       return item.menuDetails.reduce((totalPrice, detail) => {
         if (detail.isSold) return totalPrice;
-        return totalPrice + detail.price * detail.menuQuantity;
+        return totalPrice + detail.price * detail.quantity;
       }, totalPrice);
     }, 0);
   }, [checkedMenus]);
@@ -741,6 +724,7 @@ const CartPage = () => {
     const disposablePrice = getDisposableItemPrice();
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
+    console.log(itemsPrice, disposablePrice, totalDiscountPrice);
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus]);
 
