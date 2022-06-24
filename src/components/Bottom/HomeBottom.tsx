@@ -4,6 +4,7 @@ import { TextH7B, TextB4R } from '@components/Shared/Text';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
+import { theme } from '@styles/theme';
 
 const textStyle = {
   padding: '4px 0 0 0',
@@ -77,6 +78,7 @@ const Container = styled.div`
   height: 56px;
   left: calc(50%);
   background-color: white;
+  border-top: 1px solid ${theme.greyScale6};
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;

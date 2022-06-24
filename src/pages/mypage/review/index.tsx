@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { FixedTab, homePadding, theme } from '@styles/theme';
+import styled, { css } from 'styled-components';
+import { fixedTab, homePadding, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
@@ -10,7 +10,8 @@ import { useQuery } from 'react-query';
 import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';
 import { useDispatch } from 'react-redux';
-import { SET_IMAGE_VIEWER } from '@store/common';
+import { SET_IMAGE_VIEWER, commonSelector } from '@store/common';
+import { useSelector } from 'react-redux';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -18,6 +19,7 @@ const TAB_LIST = [
 ];
 
 const ReviewPage = () => {
+  const { isScroll } = useSelector(commonSelector);
   const [selectedTab, setSelectedTab] = useState('/willWrite');
   const [isShow, setIsShow] = useState(false);
 
@@ -78,7 +80,7 @@ const ReviewPage = () => {
 
   return (
     <Container>
-      <FixedTab>
+      <FixedTab scroll={isScroll}>
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} countObj={countObj} />
       </FixedTab>
       <Wrapper>
@@ -124,9 +126,23 @@ const ReviewPage = () => {
 };
 
 const Container = styled.div``;
+
+const FixedTab = styled.div<{scroll: boolean}>`
+  ${fixedTab};
+
+  ${({scroll}) => {
+    if (scroll) {
+      return css `
+        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
+      `;
+    }
+  }}
+`;
+
 const Wrapper = styled.div`
   ${homePadding}
 `;
+
 const ReviewInfoWrapper = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
