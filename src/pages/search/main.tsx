@@ -57,21 +57,16 @@ const SearchMainPage = () => {
       enabled: !!isSearched,
       onError: () => {},
       onSuccess: (data) => {
-        const reOrdered = checkIsSold(data);
-        setDefaultMenus(reOrdered);
-        checkIsFiltered(reOrdered);
+        setDefaultMenus(data);
+        checkIsFiltered(data);
       },
     }
   );
 
   const checkIsFiltered = (menuList: IMenus[]) => {
-    if (isFilter) {
-      const filered = filteredMenus(menuList);
-      setSearchResult(filered!);
-    } else {
-      setSearchResult(menuList);
-    }
-    // setIsLoading(false);
+    const searchResult = isFilter ? filteredMenus(menuList) : menuList;
+    const reOrderedSearchResult = checkIsSold(searchResult!);
+    setSearchResult(reOrderedSearchResult!);
   };
 
   useEffect(() => {
@@ -105,7 +100,6 @@ const SearchMainPage = () => {
   };
 
   const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // setIsLoading(true);
     const { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
       if (!value) {
@@ -113,19 +107,20 @@ const SearchMainPage = () => {
         return;
       }
 
-      const deletedDuplicateKeywords = findDuplicate(value);
-      const mergedKeywords = [value, ...deletedDuplicateKeywords];
-      if (mergedKeywords.length === LIMIT + 1) {
-        const deleteLastKeywords = findLastKeyword(mergedKeywords);
-        setRecentKeywords(deleteLastKeywords);
-      } else {
-        setRecentKeywords(mergedKeywords);
-      }
-      // setIsLoading(false);
-      setIsSearched(true);
+      reOrderRecentKeywords(value);
       dispatch(INIT_CATEGORY_FILTER());
+      setIsSearched(true);
       refetch();
     }
+  };
+
+  const reOrderRecentKeywords = (value: string) => {
+    const deletedDuplicateKeywords = findDuplicate(value);
+    const mergedKeywords = [value, ...deletedDuplicateKeywords];
+    const isLimit = mergedKeywords.length === LIMIT + 1;
+
+    const deleteLastKeywords = isLimit ? findLastKeyword(mergedKeywords) : mergedKeywords;
+    setRecentKeywords(deleteLastKeywords);
   };
 
   const findDuplicate = (value: string) => {
@@ -143,6 +138,7 @@ const SearchMainPage = () => {
   const initInputHandler = () => {
     setKeyword('');
     setIsSearched(false);
+    setSearchResult([]);
   };
 
   const removeRecentSearchItemHandler = useCallback(
@@ -242,9 +238,7 @@ const SearchMainPage = () => {
           svg="searchIcon"
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
-          // onFocus={onFocusHandler}
-          // onBlur={onBlurHandler}
-          value={keyword || ''}
+          value={keyword}
         />
         {keyword.length > 0 && (
           <div className="removeSvg" onClick={clearInputHandler}>
@@ -279,7 +273,7 @@ const Wrapper = styled.div`
   .removeSvg {
     cursor: pointer;
     position: absolute;
-    right: 10%;
+    right: 7%;
     top: 35%;
   }
 `;
