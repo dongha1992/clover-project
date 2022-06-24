@@ -1,18 +1,21 @@
 import { getOrdersApi } from '@api/order';
 import { StickyTab } from '@components/Shared/TabList';
-import { FixedTab } from '@styles/theme';
+import { fixedTab } from '@styles/theme';
 import { cloneDeep } from 'lodash-es';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { commonSelector } from '@store/common';
+import { useSelector } from 'react-redux';
 
 const SubsIng = dynamic(() => import('@components/Pages/Mypage/Subscription/Tab/SubsIng'));
 const SubsComplete = dynamic(() => import('@components/Pages/Mypage/Subscription/Tab/SubsComplete'));
 
 const SubscriptionManagementPage = () => {
   const router = useRouter();
+  const { isScroll } = useSelector(commonSelector);
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState(
     `${router.route}?tab=${router.query.tab ? router.query.tab : 'subscribing'}`
@@ -74,7 +77,7 @@ const SubscriptionManagementPage = () => {
 
   return (
     <Container>
-      <FixedTab>
+      <FixedTab scroll={isScroll}>
         <StickyTab tabList={TabList} isSticky={isSticky} selectedTab={selectedTab} onClick={selectTabHandler} />
       </FixedTab>
       <TabContent>
@@ -85,6 +88,19 @@ const SubscriptionManagementPage = () => {
   );
 };
 const Container = styled.div``;
+
+const FixedTab = styled.div<{scroll: boolean}>`
+  ${fixedTab};
+
+  ${({scroll}) => {
+    if (scroll) {
+      return css `
+        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
+      `;
+    }
+  }}
+`;
+
 const TabContent = styled.div`
   padding: 74px 24px 24px;
 `;

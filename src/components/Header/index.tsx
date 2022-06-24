@@ -134,22 +134,34 @@ const Header = () => {
 
     switch (true) {
       case ['/category/[category]'].includes(currentPath):
-        return <CategorySubHeader title={title} />;
+        return (
+          <Container scroll={scroll}>
+            <CategorySubHeader title={title} />
+          </Container> 
+        )
 
       case ['/menu/[menuId]', '/subscription/products/[id]'].includes(currentPath): {
-        return <MenuDetailHeader />;
-      }
-
-      case ['/spot/detail/[id]'].includes(currentPath): {
-        return <SpotDetailHeader />;
+        return (
+          <Container scroll={scroll}>
+            <MenuDetailHeader />
+          </Container> 
+        )
       }
 
       case ['/mypage'].includes(currentPath): {
-        return <MyPageHeader />;
+        return (
+          <Container scroll={scroll}>
+            <MyPageHeader />
+          </Container> 
+        )
       }
 
       case ['/mypage/noti'].includes(currentPath): {
-        return <NotiHeader />;
+        return (
+          <Container scroll={scroll}>
+            <NotiHeader />
+          </Container> 
+        )
       }
 
       case [
@@ -161,48 +173,107 @@ const Header = () => {
         '/mypage/dib/general',
         '/mypage/dib/subscription',
       ].includes(currentPath): {
-        return <TabHeader title={title} />;
+        return (
+          <Container scroll={scroll}>
+            <TabHeader title={title} />
+          </Container> 
+        )
+        
       }
 
       case ['/search', '/mypage/dib/general', '/mypage/dib/subscription', '/mypage/order-detail'].includes(
         currentPath
       ): {
-        return <DefaultHeaderWithCart title={title} />;
+        return (
+          <Container scroll={scroll}>
+            <DefaultHeaderWithCart title={title} />
+          </Container>
+        )
       }
 
       case ['/'].includes(currentPath): {
-        return <HomeHeader />;
+        return (
+          <Container scroll={scroll}>
+            <HomeHeader />
+          </Container>
+        )
       }
       case ['/subscription'].includes(currentPath): {
-        return <SubscriptionHeader />;
+        return (
+          <Container scroll={scroll}>
+            <SubscriptionHeader />
+          </Container> 
+        )
       }
 
       case ['/spot'].includes(currentPath): {
-        return <SpotHeader />;
+        return  (
+          <Container scroll={scroll}>
+            <SpotHeader />
+          </Container> 
+        )
+      }
+
+      case ['/spot/detail/[id]'].includes(currentPath): {
+        return  (
+          <Container scroll={scroll}>
+            <SpotDetailHeader />
+          </Container> 
+        )
       }
 
       case ['/spot/search', '/spot/search/main', '/spot/search/location'].includes(currentPath): {
-        return <SpotSearchHeader title={title} />;
+        return (
+          <Container scroll={scroll}>
+            <SpotSearchHeader title={title} />
+          </Container> 
+        )
       }
 
       case ['/spot/join/main/form/submit/finish', '/spot/open'].includes(currentPath): {
-        return <CloseDefaultHeader title={title} />;
+        return (
+          <Container scroll={scroll}>
+            <CloseDefaultHeader title={title} />
+          </Container> 
+        ) 
       }
 
       case ['/mypage/spot-status/detail/[id]'].includes(currentPath): {
-        return <SpotStatusDetailHeader />;
+        return (
+          <Container scroll={scroll}>
+            <SpotStatusDetailHeader />
+          </Container> 
+        )
+      }
+
+      case [
+        '/mypage/spot-status', 
+        '/mypage/review', 
+        '/mypage/address',
+        '/mypage/subscription',
+      ].includes(currentPath): {
+        return     (
+          <Container>
+            <DefaultHeader title={title} />
+          </Container>
+        )       
       }
 
       default: {
-        return <DefaultHeader title={title} />;
+        return (
+          <Container scroll={scroll}>
+            <DefaultHeader title={title} />
+          </Container> 
+        )
       }
+
     }
   };
 
-  return <Container scroll={scroll}>{renderComponent(currentPath)}</Container>;
+  return <>{renderComponent(currentPath)}</>;
 };
 
-const Container = styled.div<{scroll: boolean}>`
+const Container = styled.div<{scroll?: boolean}>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -216,23 +287,22 @@ const Container = styled.div<{scroll: boolean}>`
   ${({scroll}) => {
     if(scroll){
       return css`
+        //box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
         filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
       `;
     }
   }};
   
-  ${({ theme }) => theme.desktop`
-  margin: 0 auto;
-  left: 0px;
+    ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 0px;
 
-`};
+  `};
 
-${({ theme }) => theme.mobile`
-  margin: 0 auto;
-  left: 0px;
-`};
-
-
+  ${({ theme }) => theme.mobile`
+    margin: 0 auto;
+    left: 0px;
+  `};
 `;
 
 export default React.memo(Header);
