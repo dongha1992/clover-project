@@ -130,7 +130,12 @@ const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
 
   const goToMypage = () => {
     const path = getQuery(router.asPath);
-    router.push(`/mypage/profile/confirm?returnPath=${encodeURIComponent(String(path))}`);
+    if (me?.joinType! !== 'EMAIL') {
+      router.push(`/mypage/profile?returnPath=${encodeURIComponent(String(path))}`);
+    } else {
+      router.push(`/mypage/profile/confirm?returnPath=${encodeURIComponent(String(path))}`);
+    }
+
     dispatch(INIT_BOTTOM_SHEET());
   };
 

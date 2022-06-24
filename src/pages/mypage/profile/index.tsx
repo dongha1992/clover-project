@@ -120,11 +120,11 @@ const ProfilePage = () => {
           SET_ALERT({
             alertMessage: '수정을 성공하였습니다.',
             onSubmit: () => {
-              const path = router?.query?.returnPath as string;
-
               if (router.query.returnPath) {
                 const editReturnPath = `${router.query.returnPath}?isReopen=true`;
                 router.push(editReturnPath as string);
+              } else {
+                router.push('/mypage');
               }
             },
           })

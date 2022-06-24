@@ -155,11 +155,11 @@ const LoginPage = () => {
         <Button disabled={!isValid}>로그인하기</Button>
       </BtnWrapper>
       <FlexCenter>
-        <TextB2R color={theme.greyScale75} onClick={goToFindEmail}>
+        <TextB2R color={theme.greyScale75} onClick={goToFindEmail} pointer>
           아이디(이메일) 찾기
         </TextB2R>
         <Col />
-        <TextB2R color={theme.greyScale75} onClick={goToFindPassword}>
+        <TextB2R color={theme.greyScale75} onClick={goToFindPassword} pointer>
           비밀번호 찾기
         </TextB2R>
       </FlexCenter>
