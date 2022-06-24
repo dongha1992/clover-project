@@ -69,13 +69,10 @@ const HomeHeader = () => {
 
 const Container = styled.div<{ isBottomSheet?: boolean }>`
   width: 100%;
+  height: 100%;
   max-width: ${breakpoints.mobile}px;
-  position: fixed;
+  position: absolute;
   top: 0;
-  right: 0;
-  z-index: 1000;
-  height: 56px;
-  left: calc(50%);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
@@ -92,7 +89,7 @@ const Container = styled.div<{ isBottomSheet?: boolean }>`
   ${({ isBottomSheet }) => {
     if (!isBottomSheet) {
       return css`
-        filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+        // filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
       `;
     } else {
       return css``;
