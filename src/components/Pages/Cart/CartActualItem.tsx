@@ -61,8 +61,8 @@ const CartActualItem = ({
               </Tag> */}
               <CountButton
                 isSold={menuDetail.isSold}
-                menuDetailId={menuDetail.menuDetailId}
-                quantity={menuDetail.menuQuantity}
+                menuDetailId={menuDetail.id}
+                quantity={menuDetail.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}
               />

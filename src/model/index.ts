@@ -2015,7 +2015,7 @@ export interface IDeleteCartRequest {
 
 export interface IPatchCartRequest {
   menuDetailId: number;
-  menuQuantity: number;
+  quantity: number;
 }
 
 export interface ILunchOrDinner {
