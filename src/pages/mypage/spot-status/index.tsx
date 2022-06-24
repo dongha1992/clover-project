@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SPOT_STATUS } from '@constants/spot';
 import { SpotStatusList, SpotWishList } from '@components/Pages/Mypage/Spot';
-import { FixedTab, homePadding, theme } from '@styles/theme';
+import { fixedTab, homePadding, theme } from '@styles/theme';
 import router from 'next/router';
 import { IParamsSpots, IGetDestinationsRequest, IGetRegistrationStatus } from '@model/index';
 import { useQuery } from 'react-query';
@@ -15,10 +15,12 @@ import { deleteSpotLike, getSpotsRegistrationStatus, getSpotInfo } from '@api/sp
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
+import { commonSelector } from '@store/common';
 
 const SpotStatusPage = () => {
   const router = useRouter();
   const { spotsPosition } = useSelector(spotSelector);
+  const { isScroll } = useSelector(commonSelector);
   const [selectedTab, setSelectedTab] = useState<string>('/spot/status/list');
   const [page, setPage] = useState<number>(1);
   const [items, setItems] = useState<boolean>(false);
@@ -123,7 +125,7 @@ const SpotStatusPage = () => {
 
   return (
     <Container>
-      <FixedTab>
+      <FixedTab scroll={isScroll}>
         <TabList tabList={SPOT_STATUS} onClick={selectTabHandler} selectedTab={selectedTab} />
       </FixedTab>
       <ContentWrapper>
@@ -182,6 +184,18 @@ const Container = styled.div``;
 
 const ContentWrapper = styled.div`
   ${homePadding};
+`;
+
+const FixedTab = styled.div<{scroll: boolean}>`
+  ${fixedTab};
+
+  ${({scroll}) => {
+    if (scroll) {
+      return css `
+        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
+      `;
+    }
+  }}
 `;
 
 const SpotStatusListWrapper = styled.section`
