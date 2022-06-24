@@ -3,6 +3,7 @@ import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import SubsDateMngCalendar from '@components/Calendar/subscription/SubsDateMngCalendar';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import useSubDeliveryDates from '@hooks/subscription/useSubDeliveryDates';
+import { IOrderDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_SUBS_MANAGE, subscriptionForm } from '@store/subscription';
@@ -13,6 +14,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { useGetOrderDetail } from 'src/queries/order';
 import styled from 'styled-components';
 
 interface IProps {
@@ -47,35 +49,20 @@ const SubsDeliveryChangeSheet = ({ item, setToggleState }: IProps) => {
     }
   }, [selectDate]);
 
-  const {
-    data: orderDetail,
-    error,
-    isLoading,
-  } = useQuery(
-    ['getOrderDetail', detailId],
-    async () => {
-      const { data } = await getOrderDetailApi(detailId!);
-      data.data.orderDeliveries.sort(
-        (a, b) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
-      );
-
-      return data.data;
+  const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', detailId], detailId!, {
+    onSuccess: (data: IOrderDetail) => {
+      let completeArr: any = [];
+      data.orderDeliveries.forEach((o) => {
+        if (o.status === 'COMPLETED') {
+          completeArr.push(o.deliveryDate);
+        }
+      });
+      setDeliveryComplete(completeArr);
     },
-    {
-      onSuccess: (data) => {
-        let completeArr: any = [];
-        data.orderDeliveries.forEach((o) => {
-          if (o.status === 'COMPLETED') {
-            completeArr.push(o.deliveryDate);
-          }
-        });
-        setDeliveryComplete(completeArr);
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!detailId,
-    }
-  );
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!detailId,
+  });
 
   const subDates = useSubDeliveryDates();
 
@@ -201,6 +188,7 @@ const SubsDeliveryChangeSheet = ({ item, setToggleState }: IProps) => {
           submitBtnText: '확인',
           closeBtnText: '취소',
           onSubmit: () => {
+            changeDeliveryDateMutation();
             dispatch(INIT_BOTTOM_SHEET());
           },
         })
