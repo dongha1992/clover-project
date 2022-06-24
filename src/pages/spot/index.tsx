@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
-import { theme, FlexBetween, FlexCenter } from '@styles/theme';
+import { theme, FlexBetween, FlexCenter, FlexCol } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -22,6 +22,7 @@ import { SET_ALERT } from '@store/alert';
 import { getAddressFromLonLat } from '@api/location';
 import { getComputeDistance } from '@utils/spot';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import { Button } from '@components/Shared/Button';
 
 const FCO_SPOT_BANNER = [
   {
@@ -300,7 +301,7 @@ const SpotPage = () => {
         popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
           <>
             <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
-            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={700}>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
               {popularSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
@@ -310,7 +311,7 @@ const SpotPage = () => {
               })}
             </SpotsSlider>
             <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
-            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
               {newSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
@@ -327,9 +328,19 @@ const SpotPage = () => {
                 {'주변에 사용 가능한 프코스팟이 없어요. 😭\n(이용 가능 지역: 서울 및 경기도 일부)'}
               </TextB2R>
             </FlexCenter>
-            <ButtonWrapper>
-              <Button onClick={goToLocation}>위치 변경하기</Button>
-            </ButtonWrapper>
+            <FlexCenter>
+              <Button
+                backgroundColor={theme.white}
+                color={theme.black}
+                width="111px"
+                height="38px"
+                margin='16px 0 0 0'
+                border
+                onClick={goToLocation}
+              >
+                위치 변경하기
+              </Button>
+            </FlexCenter>
           </EmptyySpotListWrapper>
         )
       }
@@ -350,10 +361,10 @@ const SpotPage = () => {
       }
       {
         // 이벤트 중인 스팟
-        eventSpotList?.spots.length! > 0 && popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 && (
+        eventSpotList?.spots.length! > 0 && (
           <>
             <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
-            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
               {eventSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
@@ -453,24 +464,24 @@ const EmptyySpotListWrapper = styled.section`
   padding: 64px 0;
 `;
 
-const ButtonWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 16px;
-`;
+// const ButtonWrapper = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   margin-top: 16px;
+// `;
 
-const Button = styled.button`
-  height: 38px;
-  padding: 10px 16px;
-  border: 1px solid ${theme.black};
-  border-radius: 8px;
-  background: ${theme.white};
-  font-weight: bold;
-  color: ${theme.black};
-  cursor: pointer;
-`;
+// const Button = styled.button`
+//   height: 38px;
+//   padding: 10px 16px;
+//   border: 1px solid ${theme.black};
+//   border-radius: 8px;
+//   background: ${theme.white};
+//   font-weight: bold;
+//   color: ${theme.black};
+//   cursor: pointer;
+// `;
 
 const EmptySpotImg = styled.div`
   width: 100%;

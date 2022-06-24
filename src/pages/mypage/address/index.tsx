@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
@@ -7,11 +7,13 @@ import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
-import { FixedTab } from '@styles/theme';
+import { fixedTab } from '@styles/theme';
 import { useQuery } from 'react-query';
 import { getCartsApi } from '@api/cart';
 import { useDispatch } from 'react-redux';
 import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
+import { commonSelector } from '@store/common';
+import { useSelector } from 'react-redux';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -20,6 +22,7 @@ const TAB_LIST = [
 
 const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
+  const { isScroll } = useSelector(commonSelector);
 
   const dispatch = useDispatch();
 
@@ -64,7 +67,7 @@ const AddressManagementPage = () => {
 
   return (
     <Container>
-      <FixedTab>
+      <FixedTab scroll={isScroll}>
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </FixedTab>
       <Wrapper>
@@ -81,6 +84,18 @@ const AddressManagementPage = () => {
 };
 
 const Container = styled.div``;
+
+const FixedTab = styled.div<{scroll: boolean}>`
+  ${fixedTab};
+
+  ${({scroll}) => {
+    if (scroll) {
+      return css `
+        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
+      `;
+    }
+  }}
+`;
 
 const Wrapper = styled.div`
   padding: 74px 0 24px 0px;
