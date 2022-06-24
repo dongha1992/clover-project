@@ -49,8 +49,8 @@ const SubsDateMngCalendar = ({
 
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
     if (
-      Number(firstDeliveryDate.replaceAll('-', '')) < Number(dayjs(date).format('YYYY-MM-DD').replaceAll('-', '')) &&
-      Number(lastDeliveryDate.replaceAll('-', '')) + 7 > Number(dayjs(date).format('YYYY-MM-DD').replaceAll('-', ''))
+      Number(firstDeliveryDate.replaceAll('-', '')) < Number(dayjs(date).format('YYYYMMDD')) &&
+      Number(lastDeliveryDate.replaceAll('-', '')) + 7 > Number(dayjs(date).format('YYYYMMDD'))
     ) {
       return false;
     } else {

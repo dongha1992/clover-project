@@ -81,7 +81,19 @@ const useCalendarTitleContent = ({
         );
       }
 
-      if (sumDelivery?.find((x) => x.deliveryDate === dayjs(date).format('YYYY-MM-DD'))) {
+      if (
+        // 합배송은 배송예정일 기간 안에서만 표시
+        sumDelivery?.find((x) => {
+          if (
+            Number(dayjs(deliveryExpectedDate[0].deliveryDate).format('YYYYMMDD')) <=
+              Number(dayjs(x.deliveryDate).format('YYYYMMDD')) &&
+            Number(dayjs(deliveryExpectedDate[deliveryExpectedDate.length - 1].deliveryDate).format('YYYYMMDD')) >
+              Number(dayjs(x.deliveryDate).format('YYYYMMDD'))
+          ) {
+            return x.deliveryDate === dayjs(date).format('YYYY-MM-DD');
+          }
+        })
+      ) {
         // 배송예정일(합배송 포함)
         if (calendarType === 'deliveryChange') {
           if (dayjs(date).format('YYYY-MM-DD') !== deliveryExpectedDate[0].deliveryDate) {
