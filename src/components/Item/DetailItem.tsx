@@ -32,11 +32,11 @@ dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
 type TProps = {
-  item: IMenus;
+  item: IOrderedMenuDetails;
   isHorizontal?: boolean;
 };
 
-const Item = ({ item, isHorizontal }: TProps) => {
+const DetailItem = ({ item, isHorizontal }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -407,4 +407,4 @@ const TagWrapper = styled.div`
   white-space: wrap;
 `;
 
-export default React.memo(Item);
+export default React.memo(DetailItem);

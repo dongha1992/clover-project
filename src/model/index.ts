@@ -1947,6 +1947,7 @@ export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 
 export interface IMenuDetailsInCart {
+  availabilityInfo: { availability: boolean; remainingQuantity: number };
   menuDetailId: number;
   name: string;
   price: number;
@@ -1958,26 +1959,47 @@ export interface IMenuDetailsInCart {
   status: TCartMenuStatus;
   createdAt: string;
   discountPrice: number;
+  discountRate: number;
+  id: number;
+  quantity: number;
 }
 
 export interface IGetCart {
+  cartId: number;
   menuId: number;
+  holiday: number[][];
   menuName: string;
   image: {
     id: number;
     url: string;
     width: number;
     height: number;
+    name: string;
+    originalName: string;
   };
   menuDetails: IMenuDetailsInCart[];
-  isSold: boolean;
-  createdAt: string;
+  isSold?: boolean;
+  createdAt?: string;
 }
-
+export interface IDiscountInfos {
+  type: string;
+  discountRate: number;
+}
+export interface IMenuDetailOptions {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  type: string;
+}
 export interface IGetCartResponse {
   code: number;
   message: string;
-  data: IGetCart[];
+  data: {
+    cartMenus: IGetCart[];
+    discountInfos: IDiscountInfos[];
+    menuDetailOptions: IMenuDetailOptions[];
+  };
 }
 export interface ICreateCartRequest {
   main: boolean;

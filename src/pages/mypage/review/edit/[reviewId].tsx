@@ -208,7 +208,7 @@ const EditReviewPage = ({ reviewId }: any) => {
 
     const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef?.current?.value || '');
+    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.searchReview?.content!);
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
@@ -235,7 +235,6 @@ const EditReviewPage = ({ reviewId }: any) => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        content: selectedReviewDetail.searchReview.content,
         rating: selectedReviewDetail.searchReview.rating,
         imgFiles:
           selectedReviewDetail?.searchReview && selectedReviewDetail?.searchReview?.images?.map((img) => img.url),
@@ -243,9 +242,7 @@ const EditReviewPage = ({ reviewId }: any) => {
     }
   }, [selectedReviewDetail]);
 
-  console.log(writeMenuReviewObj, 'writeMenuReviewObj');
-
-  const over30Letter = LIMIT - writeMenuReviewObj?.content.length > 0;
+  const over30Letter = LIMIT - numberOfReivewContent > 0;
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -292,6 +289,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           rows={20}
           eventHandler={writeReviewHandler}
           ref={textAreaRef}
+          value={selectedReviewDetail?.searchReview?.content}
         />
         <FlexBetween margin="8px 0 0 0">
           <TextB3R color={theme.brandColor}>
