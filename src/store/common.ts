@@ -9,6 +9,7 @@ interface IState {
   versionOfTerm: number;
   withInDays: number;
   userAccessMethod: IAccessMethod | undefined;
+  isScroll: boolean;
 }
 
 const INITIAL_STATE: IState = {
@@ -19,6 +20,7 @@ const INITIAL_STATE: IState = {
   versionOfTerm: 2,
   withInDays: 90,
   userAccessMethod: undefined,
+  isScroll: false,
 };
 
 export const commonSlice = createSlice({
@@ -49,9 +51,11 @@ export const commonSlice = createSlice({
     SET_ACCESS_METHOD: (state: any, { payload }: PayloadAction<IAccessMethod | undefined>) => {
       state.userAccessMethod = payload;
     },
-
     INIT_ACCESS_METHOD: (state: any, action: PayloadAction) => {
       state.userAccessMethod = undefined;
+    },
+    SET_SCROLL: (state: any, { payload }: PayloadAction<boolean>) => {
+      state.isScroll = payload;
     },
   },
 });
@@ -66,6 +70,7 @@ export const {
   SET_ORDER_LIST_FILTER,
   SET_ACCESS_METHOD,
   INIT_ACCESS_METHOD,
+  SET_SCROLL,
 } = commonSlice.actions;
 export const commonSelector = (state: AppState): IState => state.common;
 export default commonSlice.reducer;

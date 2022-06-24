@@ -21,8 +21,9 @@ const SpotHeader = () => {
     if(userLocation?.emdNm){
       getLocation();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  
   //GPS - 현재위치 가져오기
   const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
@@ -84,13 +85,10 @@ const SpotHeader = () => {
 
 const Container = styled.div`
   width: 100%;
+  height: 100%;
   max-width: ${breakpoints.mobile}px;
-  position: fixed;
+  position: absolute;
   top: 0;
-  right: 0;
-  z-index: 10;
-  height: 56px;
-  left: calc(50%);
   background-color: white;
 
   ${({ theme }) => theme.desktop`
