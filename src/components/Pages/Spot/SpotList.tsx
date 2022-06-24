@@ -15,9 +15,10 @@ import { cartForm } from '@store/cart';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
-import { useOnLike } from 'src/query';
+import { useOnLike } from 'src/queries';
 import { spotSelector } from '@store/spot';
 import { getSpotDistanceUnit } from '@utils/spot';
+import { Button } from '@components/Shared/Button';
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
@@ -52,7 +53,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
     }
     router.push({
       pathname: `/spot/detail/${id}`,
-      query: { isSpot : true },
+      query: { isSpot: true },
     });
   };
 
@@ -219,31 +220,29 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {
-                list.isTrial ? (
-                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                ) : 
-                  list.images.length > 0 ? (
-                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-                  ) : (
-                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                  )
-              }
+              {list.isTrial ? (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              ) : list.images.length > 0 ? (
+                <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+              ) : (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              )}
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
-              <TextB3R margin="8px 0 0 0" color={theme.black}>
+              <TextB2R margin="8px 0 0 0" color={theme.black}>
                 {list?.name}
-              </TextB3R>
+              </TextB2R>
               {
                 // 유저 위치정보 있을때 노출
-                userLocationLen && 
+                userLocationLen && (
                   <TextH6B color={theme.greyScale65}>
                     {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
                   </TextH6B>
+                )
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
-                <TextB2R padding="4px 0 0 1px">{list?.likeCount}</TextB2R>
+                <TextB3R padding="4px 0 0 1px">{list?.likeCount}</TextB3R>
               </LikeWrapper>
             </LocationInfoWrapper>
           </Container>
@@ -258,16 +257,13 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 </LikeWrapper>
               )}
-              {
-                list.isTrial ? (
-                  <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                ) : 
-                  list.images.length > 0 ? (
-                    <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-                  ) : (
-                    <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-                  )
-              }
+              {list.isTrial ? (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              ) : list.images.length > 0 ? (
+                <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
+              ) : (
+                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
+              )}
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
@@ -279,17 +275,27 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
               <ButtonWrapper>
                 {
                   // 유저 위치정보 있을때 노출
-                  userLocationLen && 
+                  userLocationLen && (
                     <TextH6B color={theme.greyScale65}>
                       {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
                     </TextH6B>
+                  )
                 }
-                <Button onClick={orderHandler}>주문하기</Button>
+                <Button
+                  backgroundColor={theme.white}
+                  color={theme.black}
+                  width="75px"
+                  height="38px"
+                  border
+                  onClick={orderHandler}
+                >
+                  주문하기
+                </Button>
               </ButtonWrapper>
             </LocationInfoWrapper>
           </Container>
         );
-      // 단골 가게 스팟
+      // 오픈 진행중인 스팟 (단골가게)
       case 'trial':
         return (
           <Container type="trial">
@@ -313,9 +319,20 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                   >{`${list.recruitingCount}/100명 참여중`}</TextH6B>
                 </FlexRow>
                 {!list.recruited ? (
-                  <Button onClick={() => clickSpotOpen(list.id!)}>참여하기</Button>
+                  <Button
+                    backgroundColor={theme.white}
+                    color={theme.black}
+                    width="75px"
+                    height="38px"
+                    border
+                    onClick={() => clickSpotOpen(list.id!)}
+                  >
+                    주문하기
+                  </Button>
                 ) : (
-                  <ButtonComplete onClick={() => {}}>참여완료</ButtonComplete>
+                  <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
+                    참여완료
+                  </Button>
                 )}
               </FlexCol>
             </LocationInfoWrapper>
@@ -376,8 +393,8 @@ const Tag = styled.span`
 `;
 
 const Img = styled.img`
-  width: 120px;
-  heigth: 120px;
+  width: 132px;
+  heigth: 132px;
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
 `;
@@ -389,6 +406,7 @@ const LocationInfoWrapper = styled.div<{ type: string }>`
         width: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         padding-left: 16px;
       `;
     } else if (type === 'trial') {
@@ -424,30 +442,29 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: end;
-  margin-top: 35px;
   margin-right: 7px;
 `;
 
-const Button = styled.button`
-  width: 75px;
-  height: 38px;
-  border: 1px solid ${theme.black};
-  border-radius: 8px;
-  background: ${theme.white};
-  font-weight: bold;
-  color: ${theme.black};
-  cursor: pointer;
-`;
+// const Button = styled.button`
+//   width: 75px;
+//   height: 38px;
+//   border: 1px solid ${theme.black};
+//   border-radius: 8px;
+//   background: ${theme.white};
+//   font-weight: bold;
+//   color: ${theme.black};
+//   cursor: pointer;
+// `;
 
-const ButtonComplete = styled.button`
-  width: 75px;
-  height: 38px;
-  border: 1px solid ${theme.greyScale25};
-  border-radius: 8px;
-  background: ${theme.white};
-  font-weight: bold;
-  color: ${theme.greyScale25};
-  cursor: pointer;
-`;
+// const ButtonComplete = styled.button`
+//   width: 75px;
+//   height: 38px;
+//   border: 1px solid ${theme.greyScale25};
+//   border-radius: 8px;
+//   background: ${theme.white};
+//   font-weight: bold;
+//   color: ${theme.greyScale25};
+//   cursor: pointer;
+// `;
 
 export default SpotList;

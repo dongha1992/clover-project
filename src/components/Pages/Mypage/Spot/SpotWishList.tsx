@@ -8,7 +8,7 @@ import { ISpotsDetail } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { destinationForm } from '@store/destination';
 import { useRouter } from 'next/router';
-import { useOnLike } from 'src/query';
+import { useOnLike } from 'src/queries';
 import { getSpotDistanceUnit } from '@utils/spot';
 
 interface IParams {
@@ -40,23 +40,25 @@ const SpotWishList = ({ items, onClick }: IParams) => {
 
   // 날짜 커스텀
   const dt = new Date(items?.openedAt!);
-  const openDate = `${dt?.getMonth()+1}/${dt.getDate()} ${dt.getHours()}시 오픈`;
+  const openDate = `${dt?.getMonth() + 1}/${dt.getDate()} ${dt.getHours()}시 오픈`;
 
   return (
     <Container>
       <WishList onClick={goToDetail}>
         <StorImgWrapper>
           <ImgWrapper src={`${IMAGE_S3_URL}${items.images[0].url}`} alt="매장이미지" />
-          {
-            !items.isOpened && 
-              <OpenLabel>
-                <TextH6B color={theme.white} padding='5px 10px 4px 10px'>{openDate}</TextH6B>
-              </OpenLabel>
-          }
-          {
-            items.isClosed &&
-              <ClosedFilter><TextB2R color={theme.white}>운영종료</TextB2R></ClosedFilter>
-          }
+          {!items.isOpened && (
+            <OpenLabel>
+              <TextH6B color={theme.white} padding="5px 10px 4px 10px">
+                {openDate}
+              </TextH6B>
+            </OpenLabel>
+          )}
+          {items.isClosed && (
+            <ClosedFilter>
+              <TextB2R color={theme.white}>운영종료</TextB2R>
+            </ClosedFilter>
+          )}
         </StorImgWrapper>
         <LocationInfoWrapper>
           <TextB2R margin="8px 0 0 0" color={theme.black}>
@@ -64,7 +66,11 @@ const SpotWishList = ({ items, onClick }: IParams) => {
           </TextB2R>
           {
             // 유저 위치정보 있을때 노출
-            userLocationLen && <TextH5B color={theme.greyScale65}>{`${getSpotDistanceUnit(items?.distance).distance}${getSpotDistanceUnit(items?.distance).unit}`}</TextH5B>
+            userLocationLen && (
+              <TextH5B color={theme.greyScale65}>{`${getSpotDistanceUnit(items?.distance).distance}${
+                getSpotDistanceUnit(items?.distance).unit
+              }`}</TextH5B>
+            )
           }
           <LikeWrapper onClick={(e) => onClickLike(e)}>
             <SVGIcon name={!like ? 'likeRed18' : 'likeBorderGray'} />
