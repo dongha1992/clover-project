@@ -34,7 +34,9 @@ const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick }: IProp
           onClick={(e) => onClick && onClick(e, idx)}
           // onMouseLeave={(e) => onRating && onRating(e, idx)}
         >
-          <SVGIcon name={getSvgName(idx)} />
+          <div>
+            <SVGIcon name={getSvgName(idx)} />
+          </div>
         </div>
       ));
   }, [count, rating]);
@@ -44,6 +46,9 @@ const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick }: IProp
 
 const Container = styled.div`
   display: flex;
+  > div {
+    padding-right: 8px;
+  }
 `;
 
 export default StarRating;

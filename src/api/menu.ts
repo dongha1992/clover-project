@@ -57,6 +57,10 @@ export const getWillWriteReviews = (): Promise<AxiosResponse<IWillWriteReviewsRe
   return Api.get(`menu/v1/reviews/expectation`);
 };
 
+export const deleteReviewApi = ({ id }: { id: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`menu/v1/reviews/${id}`);
+};
+
 export const getSubscriptionApi = ({
   id,
   destinationId,
