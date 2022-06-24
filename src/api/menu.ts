@@ -12,6 +12,7 @@ import {
   IWillWriteReviewsResponse,
   ISubscriptionResponse,
   IGetSubscription,
+  IGetOrderMenusResponse,
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
@@ -97,4 +98,12 @@ export const deleteLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosRe
 
 export const getRecommendMenusApi = (): Promise<AxiosResponse<IGetMenusResponse>> => {
   return Api.get(`menu/v1/menus/recommend`);
+};
+
+export const getOrderedMenusApi = ({
+  params,
+}: {
+  params: { size: number };
+}): Promise<AxiosResponse<IGetOrderMenusResponse>> => {
+  return Api.get(`menu/v1/details/ordered`, { params });
 };

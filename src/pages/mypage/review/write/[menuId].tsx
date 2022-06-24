@@ -12,13 +12,14 @@ import TextInput from '@components/Shared/TextInput';
 import { getImageSize } from '@utils/common';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
-import { DETAIL } from '@constants/menu/index';
 import { StarRating } from '@components/StarRating';
+import { userForm } from '@store/user';
+
 interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
@@ -47,6 +48,7 @@ const WriteReviewPage = ({ menuId }: any) => {
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const { me } = useSelector(userForm);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -86,7 +88,7 @@ const WriteReviewPage = ({ menuId }: any) => {
                 <TextH5B>+ 300P 적립</TextH5B>
               </GreyBg>
             ),
-            alertMessage: '제이미님의 소중한 후기에 감사드려요!',
+            alertMessage: `${me?.name}님의 소중한 후기에 감사드려요!`,
             submitBtnText: '확인',
           })
         );
@@ -206,6 +208,8 @@ const WriteReviewPage = ({ menuId }: any) => {
     mutateCreateMenuReview(formData);
   };
 
+  console.log(data, 'data');
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -215,13 +219,13 @@ const WriteReviewPage = ({ menuId }: any) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>제이미님</TextH3B>
+          <TextH3B>{me?.name}님</TextH3B>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
             <NextImage
-              src={IMAGE_S3_URL + data?.thumbnail}
+              src={IMAGE_S3_URL + data?.thumbnail[0].url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}

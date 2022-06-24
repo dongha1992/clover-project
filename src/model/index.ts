@@ -1916,6 +1916,25 @@ export interface IWillWriteReviewsResponse {
   message: string;
   data: IWillWriteReview[];
 }
+
+export interface IOrderedMenuDetails {
+  calorie: number;
+  discountPrice: number;
+  id: number;
+  isSold: boolean;
+  main: boolean;
+  menu: IMenus;
+  personalMaximum: number;
+  price: number;
+  protein: number;
+  thumbnail: IDetailImage;
+}
+
+export interface IGetOrderMenusResponse {
+  code: number;
+  message: string;
+  data: { menuDetails: IOrderedMenuDetails[]; pagination: IPagination };
+}
 declare global {
   interface Window {
     ReactNativeWebView: any;
