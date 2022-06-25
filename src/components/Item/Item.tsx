@@ -235,7 +235,10 @@ const Item = ({ item, isHorizontal }: TProps) => {
         );
       } else {
         dispatch(SET_MENU_ITEM(item));
-        router.push({ pathname: `/menu/${item.id}`, query: { isReopen: true } });
+        router.push({
+          pathname: `/menu/[menuId]`,
+          query: { isReopen: true, returnPath: router.asPath, menuId: item.id },
+        });
       }
     }
   };
