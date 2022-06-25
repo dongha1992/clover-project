@@ -7,14 +7,11 @@ import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import useOrderPrice from '@hooks/subscription/useOrderPrice';
 import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { subscriptionForm } from '@store/subscription';
-import { FlexBetween, FlexBetweenStart, FlexColEnd, theme } from '@styles/theme';
+import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import axios from 'axios';
-import { cloneDeep } from 'lodash-es';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import MenuPriceBox from '../payment/MenuPriceBox';
 
@@ -42,18 +39,41 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
     );
   };
 
+  const goToReview = () => {};
+
   return (
     <Container>
-      <FlexBetween padding="24px 24px" className="box" onClick={toggleClickHandler}>
-        <TextH4B color={`${item?.status === 'CANCELED' && '#C8C8C8'}`}>
-          배송 {item?.deliveryRound ?? 1}회차 - {getFormatDate(item.deliveryDate)}{' '}
-          {item.status === 'COMPLETED' ? '도착' : '도착예정'}{' '}
-          {item?.deliveryDateChangeCount > 0 && <span className="deliveryChange">(배송일변경)</span>}
-        </TextH4B>
-        <div className={`toggleIcon ${toggleState ? 'down' : ''}`}>
-          <SVGIcon name="triangleDown" />
-        </div>
-      </FlexBetween>
+      <FlexCol padding="24px 24px">
+        <FlexBetween className="box" onClick={toggleClickHandler}>
+          <TextH4B color={`${item?.status === 'CANCELED' && '#C8C8C8'}`}>
+            배송 {item?.deliveryRound ?? 1}회차 - {getFormatDate(item.deliveryDate)}{' '}
+            {item?.status === 'COMPLETED' ? '도착' : '도착예정'}{' '}
+            {item?.deliveryDateChangeCount > 0 && <span className="deliveryChange">(배송일변경)</span>}
+          </TextH4B>
+          <div className={`toggleIcon ${toggleState ? 'down' : ''}`}>
+            <SVGIcon name="triangleDown" />
+          </div>
+        </FlexBetween>
+        {item.delivery === 'PARCEL' && (
+          <FlexRow padding="8px 0 0 0">
+            <SVGIcon name="deliveryTruckIcon" />
+            {item.invoiced ? (
+              <>
+                <TextB2R margin="0 0 0 4px" padding="3px 0 0 0">
+                  운송장번호
+                </TextB2R>
+                <TextH5B margin="0 0 0 4px" padding="3px 0 0 0" color={theme.brandColor} textDecoration="underline">
+                  {123123213}
+                </TextH5B>
+              </>
+            ) : (
+              <TextB3R margin="0 0 0 4px" padding="3px 0 0 0" color={theme.greyScale65}>
+                배송중 단계부터 배송상태 조회가 가능합니다.
+              </TextB3R>
+            )}
+          </FlexRow>
+        )}
+      </FlexCol>
       <SlideToggle state={toggleState} duration={0.5} change={item}>
         <MenuUl className="menuWrpper">
           {item.orderMenus.map((menu: any, index: number) => (
@@ -81,8 +101,14 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
               </MenuTextBox>
             </MenuLi>
           ))}
+          {subscriptionPeriod !== 'UNLIMITED' && item?.status === 'COMPLETED' && (
+            <MenuLi>
+              <Button backgroundColor="#fff" color="#242424" border onClick={goToReview}>
+                후기 작성하기
+              </Button>
+            </MenuLi>
+          )}
         </MenuUl>
-
         <MenuPriceBox
           menuPrice={priceInfo.menuPrice}
           menuDiscount={priceInfo.menuDiscount}

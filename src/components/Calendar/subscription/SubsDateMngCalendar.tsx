@@ -1,7 +1,5 @@
 import useCalendarTitleContent from '@hooks/subscription/useCalendarTitleContent';
-import { SET_SUBS_CALENDAR_SELECT_ORDERS } from '@store/subscription';
 import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash-es';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { useDispatch } from 'react-redux';
@@ -54,22 +52,32 @@ const SubsDateMngCalendar = ({
   // 스팟 : 월 ~ 금 비활성(일,토)
 
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
-    if (date.getDay() === 6 && deliveryType === 'SPOT') {
+    if (date.getDay() === 6) {
       // 토요일 비활성화(스팟)
-      return true;
+      if (deliveryType === 'SPOT') {
+        return true;
+      }
     } else if (date.getDay() === 0) {
       // 일요일 비활성화(새벽/택배/스팟)
       return true;
-    } else if (date.getDay() === 1 && deliveryType === 'PARCEL') {
+    } else if (date.getDay() === 1) {
       // 월요일 비활성화(택배)
-      return true;
+      if (deliveryType === 'PARCEL') {
+        return true;
+      }
     }
 
+    // TODO(young) : 배송일 변경은 무조건 오늘+1로 통일하는게 어떤지
+    // 오늘 + 1 이후부터
+    // origin 첫번째 배송일 ~ origin 마지막 배송일 + 7
     if (
+      Number(dayjs(date).format('YYYYMMDD')) > Number(today.replaceAll('-', '')) + 1 &&
       Number(firstDeliveryDate.replaceAll('-', '')) <= Number(dayjs(date).format('YYYYMMDD')) &&
       Number(lastDeliveryDate.replaceAll('-', '')) + 7 >= Number(dayjs(date).format('YYYYMMDD'))
     ) {
       return false;
+    } else {
+      return true;
     }
   };
 
