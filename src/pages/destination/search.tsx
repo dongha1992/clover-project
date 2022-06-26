@@ -25,7 +25,7 @@ const DestinationSearchPage = () => {
   const dispatch = useDispatch();
   const { userDeliveryType } = useSelector(destinationForm);
 
-  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
+  const { orderId, isSubscription, destinationId, subsDeliveryType, menuId } = router.query;
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
@@ -70,7 +70,7 @@ const DestinationSearchPage = () => {
     if (orderId) {
       router.push({
         pathname: '/mypage/order-detail/edit/[orderId]',
-        query: { orderId },
+        query: { orderId, destinationId },
       });
       dispatch(SET_TEMP_EDIT_DESTINATION(destination));
     } else {
@@ -88,7 +88,8 @@ const DestinationSearchPage = () => {
 
   const goToDestinationDetail = (address: any) => {
     if (orderId) {
-      router.push({ pathname: '/destination/destination-detail', query: { orderId } });
+      dispatch(SET_LOCATION_TEMP(address));
+      router.push({ pathname: '/destination/destination-detail', query: { orderId, destinationId } });
     } else {
       dispatch(SET_LOCATION_TEMP(address));
       if (isSubscription) {
