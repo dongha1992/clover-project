@@ -20,6 +20,7 @@ interface TProps {
   destinationDeliveryType: string;
   userDeliveryType: string;
   locationStatus: TLocationType;
+  applyAll: boolean;
 }
 
 const locationState = {
@@ -69,6 +70,7 @@ const INITIAL_STATE: TProps = {
   locationStatus: '',
   destinationDeliveryType: '',
   userDeliveryType: '',
+  applyAll: false,
 };
 
 export const destination = createSlice({
@@ -136,6 +138,11 @@ export const destination = createSlice({
     INIT_USER_DELIVERY_TYPE: (state, action: PayloadAction) => {
       state.userDeliveryType = '';
     },
+
+    // 구독 배송지 변경시 전체 변경 설정
+    SET_APPLY_ALL: (state, action: PayloadAction<boolean>) => {
+      state.applyAll = action.payload;
+    },
   },
 });
 
@@ -154,6 +161,7 @@ export const {
   INIT_DESTINATION_TYPE,
   SET_USER_DELIVERY_TYPE,
   INIT_USER_DELIVERY_TYPE,
+  SET_APPLY_ALL,
 } = destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;

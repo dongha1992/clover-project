@@ -4,7 +4,7 @@ import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 
 export interface IRadioProps {
-  onChange: React.MouseEventHandler<HTMLElement>;
+  onChange?: React.MouseEventHandler<HTMLElement>;
   isSelected?: boolean;
   margin?: string;
 }

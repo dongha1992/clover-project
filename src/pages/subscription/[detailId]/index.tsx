@@ -118,7 +118,11 @@ const SubsDetailPage = () => {
 
       {orderDetail && <SubsMngCalendar orderDeliveries={orderDetail?.orderDeliveries} />}
       {subsCalendarSelectOrders && (
-        <SubsDetailOrderInfo status={orderDetail?.status!} subscriptionPeriod={orderDetail?.subscriptionPeriod!} />
+        <SubsDetailOrderInfo
+          status={orderDetail?.status!}
+          subscriptionPeriod={orderDetail?.subscriptionPeriod!}
+          orderId={orderDetail?.id!}
+        />
       )}
 
       <BorderLine height={8} />

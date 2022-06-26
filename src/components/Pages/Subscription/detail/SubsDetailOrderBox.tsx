@@ -1,4 +1,4 @@
-import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
+import { SubsDeliveryDateChangeSheet } from '@components/BottomSheet/SubsSheet';
 import { Button } from '@components/Shared/Button';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
@@ -10,6 +10,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from 'next/image';
+import router from 'next/router';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -18,9 +19,10 @@ import MenuPriceBox from '../payment/MenuPriceBox';
 interface IProps {
   item: any;
   subscriptionPeriod: string;
+  orderId: number;
 }
 
-const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
+const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
   const [toggleState, setToggleState] = useState(false);
   const dispatch = useDispatch();
 
@@ -34,12 +36,19 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
   const deliveryDateChangeHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsDeliveryChangeSheet item={item} setToggleState={setToggleState} />,
+        content: <SubsDeliveryDateChangeSheet item={item} setToggleState={setToggleState} />,
       })
     );
   };
 
   const goToReview = () => {};
+
+  const deliveryInfoChangeHandler = () => {
+    router.push({
+      pathname: `/mypage/order-detail/edit/${orderId}`,
+      query: { destinationId: item.id },
+    });
+  };
 
   return (
     <Container>
@@ -169,12 +178,22 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
           )}
           <FlexBetween>
             <Button
+              onClick={() => {
+                subscriptionPeriod === 'UNLIMITED' &&
+                  item?.status !== 'COMPLETED' &&
+                  item?.status !== 'CANCELED' &&
+                  item?.status !== 'DELIVERING' &&
+                  deliveryInfoChangeHandler();
+              }}
               width="48%"
               backgroundColor="#fff"
               color="#242424"
               border
               disabled={
-                subscriptionPeriod !== 'UNLIMITED' || item?.status === 'COMPLETED' || item?.status === 'CANCELED'
+                subscriptionPeriod !== 'UNLIMITED' ||
+                item?.status === 'COMPLETED' ||
+                item?.status === 'CANCELED' ||
+                item?.status === 'DELIVERING'
                   ? true
                   : false
               }
@@ -186,6 +205,7 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
                 subscriptionPeriod === 'UNLIMITED' &&
                   item?.status !== 'COMPLETED' &&
                   item?.status !== 'CANCELED' &&
+                  item?.status !== 'DELIVERING' &&
                   deliveryDateChangeHandler();
               }}
               width="48%"
@@ -193,7 +213,10 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
               color="#242424"
               border
               disabled={
-                subscriptionPeriod !== 'UNLIMITED' || item?.status === 'COMPLETED' || item?.status === 'CANCELED'
+                subscriptionPeriod !== 'UNLIMITED' ||
+                item?.status === 'COMPLETED' ||
+                item?.status === 'CANCELED' ||
+                item?.status === 'DELIVERING'
                   ? true
                   : false
               }
