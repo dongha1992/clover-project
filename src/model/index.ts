@@ -1171,6 +1171,7 @@ export interface IOrderDetailInOrderDeliveries {
 }
 
 export interface IEditOrderDestination {
+  applyAll?: boolean;
   deliveryMessage: string;
   deliveryMessageType: string;
   location: ILocation;
@@ -1179,6 +1180,7 @@ export interface IEditOrderDestination {
 }
 
 export interface IEditOrderSpotDestination {
+  applyAll?: boolean;
   receiverName: string;
   receiverTel: string;
   spotPickupId: number;
