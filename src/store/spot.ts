@@ -53,7 +53,6 @@ interface IProps {
   spotsRegistrationInfo: ISpotsRegistrationInfo | any;
   spotRegistrationsPostResult: IPostRegistrations | any;
   spotsPosition: ISpotsPostions | any;
-  spotsPickupSelected: ISpotsDetail | null;
   spotSearchSelectedFilters: string[];
   spotPickupId: number | null;
   spotInfo: ISpotsInfo | null;
@@ -61,6 +60,8 @@ interface IProps {
   spotJoinFormChecked: boolean;
   spotStatusDetail: IGetRegistrationStatus | null;
   spotKeyword: string;
+  isMapSwitch: boolean;
+  spotSearchArr: ISpotsDetail[];
 };
 
 const spotAddressState = {
@@ -112,13 +113,14 @@ const initialState: IProps = {
   spotsPosition: {
     ...spotsPostionsState,
   },
-  spotsPickupSelected: null,
   spotPickupId: null,
   spotInfo: null,
   spotSearchSelectedFilters: [],
   spotSearchSort: '',
   spotJoinFormChecked: false,
   spotKeyword: '',
+  isMapSwitch: false,
+  spotSearchArr: [],
 };
 
 export const spot = createSlice({
@@ -159,10 +161,6 @@ export const spot = createSlice({
     INIT_SPOT_POSITIONS: (state, action: PayloadAction) => {
       state.spotsPosition = spotsPostionsState;
     },
-    // 스팟 검색, 주문하기->스팟 픽업장소
-    SET_SPOT_PICKUP_SELECTED: (state, action: PayloadAction<ISpotsDetail | null>) => {
-      state.spotsPickupSelected = action.payload;
-    },
     SET_SPOT_PICKUP_ID: (state, action: PayloadAction<number | null>) => {
       state.spotPickupId = action.payload;
     },
@@ -193,6 +191,15 @@ export const spot = createSlice({
     SET_SEARCH_KEYWORD: (state, action: PayloadAction<string>) => {
       state.spotKeyword = action.payload;
     },
+    SET_SPOT_MAP_SWITCH: (state, action : PayloadAction) => {
+      state.isMapSwitch = true;
+    },
+    INIT_SPOT_MAP_SWITCH: (state, action : PayloadAction) => {
+      state.isMapSwitch = false;
+    },
+    SET_SERACH_MAP_SPOT: (state, action: PayloadAction<ISpotsDetail[]>) => {
+      state.spotSearchArr = action.payload;
+    },
   },
 });
 
@@ -209,7 +216,6 @@ export const {
   SET_SPOT_REGISTRATIONS_POST_RESULT,
   SET_SPOT_POSITIONS,
   INIT_SPOT_POSITIONS,
-  SET_SPOT_PICKUP_SELECTED,
   SET_SPOT_PICKUP_ID,
   SET_SPOT_INFO,
   SET_SPOT_SEARCH_SELECTED_FILTERS,
@@ -219,6 +225,9 @@ export const {
   SET_SPOT_JOIN_FORM_CHECKED,
   INIT_SPOT_JOIN_FORM_CHECKED,
   SET_SEARCH_KEYWORD,
+  SET_SPOT_MAP_SWITCH,
+  INIT_SPOT_MAP_SWITCH,
+  SET_SERACH_MAP_SPOT,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;

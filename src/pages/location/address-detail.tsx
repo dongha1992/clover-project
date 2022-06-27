@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom } from '@styles/theme';
 import { Button, ButtonGroup } from '@components/Shared/Button';
-import MapAPI from '@components/Map';
+import { DefaultMap } from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import { CheckDestinationPlace } from '@components/Pages/Destination/';
@@ -81,7 +81,7 @@ const AddressDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <MapAPI centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
+        <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       {canNotDelivery ? (
         <ButtonGroup

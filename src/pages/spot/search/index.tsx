@@ -3,7 +3,12 @@ import styled, { css } from 'styled-components';
 import { homePadding } from '@styles/theme';
 import { theme, FlexBetween, FlexEnd } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
-import { SpotList, SpotRecommendList, SpotRecentPickupList } from '@components/Pages/Spot';
+import { 
+  SpotList, 
+  SpotRecommendList, 
+  SpotRecentPickupList, 
+  SpotSearchMapMain 
+} from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotEvent } from '@api/spot';
 import { useQuery } from 'react-query';
@@ -16,6 +21,8 @@ import { destinationForm } from '@store/destination';
 import { 
   spotSelector,
   SET_SEARCH_KEYWORD,
+  SET_SERACH_MAP_SPOT,
+  INIT_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -28,6 +35,7 @@ const SpotSearchPage = (): ReactElement => {
   const router = useRouter();
   const { 
     spotsPosition, 
+    isMapSwitch,
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -39,6 +47,7 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
+    dispatch(INIT_SPOT_MAP_SWITCH());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -58,7 +67,7 @@ const SpotSearchPage = (): ReactElement => {
   );
   
   // 스팟 검색 - 이벤트 스팟 api
-  const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
+  const { data: eventSpot, isLoading: isLoadingEventSpot } = useQuery(
     ['spotEvetnList'],
     async () => {
       const params: IParamsSpots = {
@@ -90,6 +99,14 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  // 추천스팟 + 이벤트 스팟 
+  const spotsArr = spotRecommend?.spots.concat(eventSpot?.spots!);
+
+  useEffect(()=> {
+    dispatch(SET_SERACH_MAP_SPOT(spotsArr!));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[eventSpot]);
+
   const goToSpotSearch = () => {
     router.push('/spot/search/main');
   };
@@ -106,6 +123,12 @@ const SpotSearchPage = (): ReactElement => {
 
   return (
     <Container>
+      {
+        isMapSwitch ? (
+          <SpotSearchMapMain />
+        ) : (
+        <>
+        
       <SearchBarWrapper onClick={goToSpotSearch}>
         <TextInputButton>
           <div className='sgv'>
@@ -125,7 +148,7 @@ const SpotSearchPage = (): ReactElement => {
       </KeyWordWrapper>
       {
       // 스팟 검색 메인 - 검색바 포커싱 x
-        ((spotRecommend?.spots.length! > 0) && (eventSpotList?.spots.length! > 0)) ? (
+        ((spotRecommend?.spots.length! > 0) && (eventSpot?.spots.length! > 0)) ? (
           // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
           <>
           {/* 추천스팟 */}
@@ -144,9 +167,9 @@ const SpotSearchPage = (): ReactElement => {
             {/* 이벤트 중인 스팟 */}
             <BottomContentWrapper>
               <Row />
-              <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
+              <TextH2B padding="24px 24px 24px 24px">{eventSpot?.title}</TextH2B>
               <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-                {eventSpotList?.spots.map((list, idx) => {
+                {eventSpot?.spots.map((list, idx) => {
                   return (
                     <SwiperSlide className="swiper-slide" key={idx}>
                       <SpotList list={list} type="event" isSearch />
@@ -181,6 +204,11 @@ const SpotSearchPage = (): ReactElement => {
           </>
         )
       }
+
+</>
+        )
+}
+
     </Container>
   );
 };
