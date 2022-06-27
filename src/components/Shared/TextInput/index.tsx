@@ -52,6 +52,7 @@ export interface ITextFieldProps {
   accept?: string;
   disabled?: boolean;
   pattern?: string;
+  withValue?: boolean;
 }
 
 const defaultProps = {
@@ -86,6 +87,7 @@ const TextInput = React.forwardRef(
       accept,
       disabled,
       pattern,
+      withValue,
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
@@ -107,23 +109,41 @@ const TextInput = React.forwardRef(
       >
         <div className="wrapper">
           {svg ? <SVGIcon name={svg} /> : ''}
-          {ref ? (
-            <input
-              style={style}
-              type={inputType ? inputType : 'text'}
-              defaultValue={value}
-              onChange={onChange}
-              placeholder={placeholder}
-              name={name}
-              onKeyPress={keyPressHandler}
-              ref={ref}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              accept={accept}
-              disabled={disabled}
-              pattern={pattern}
-            />
-          ) : (
+          {ref ? 
+            withValue ? (
+              <input
+                style={style}
+                type={inputType ? inputType : 'text'}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                name={name}
+                onKeyPress={keyPressHandler}
+                ref={ref}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                accept={accept}
+                disabled={disabled}
+                pattern={pattern}
+              />
+            ) : (
+              <input
+                style={style}
+                type={inputType ? inputType : 'text'}
+                defaultValue={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                name={name}
+                onKeyPress={keyPressHandler}
+                ref={ref}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                accept={accept}
+                disabled={disabled}
+                pattern={pattern}
+              />
+            )
+           : (
             <input
               style={style}
               type={inputType ? inputType : 'text'}
