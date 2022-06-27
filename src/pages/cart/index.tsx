@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
+import { AxiosError } from 'axios';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
 import {
@@ -137,8 +138,50 @@ const CartPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
   const queryClient = useQueryClient();
 
+  const {
+    data: cartResponse,
+    isLoading,
+    isError,
+  } = useQuery(
+    ['getCartList'],
+    async () => {
+      const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
+      /* TODO: 스팟아이디 넣어야함 */
+      const params = {
+        delivery: userDeliveryType?.toUpperCase()!,
+        deliveryDate: selectedDeliveryDay,
+        spotId: isSpot ? 1 : null,
+      };
+
+      const { data } = await getCartsApi({ params });
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: !!selectedDeliveryDay && !!me,
+      onSuccess: (data) => {
+        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
+        try {
+          reOrderCartList(data.cartMenus);
+          setNutritionObj(getTotalNutrition(data.cartMenus));
+          dispatch(INIT_CART_LISTS());
+          dispatch(SET_CART_LISTS(data));
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      onError: (error: any) => {
+        alert(error.message);
+      },
+    }
+  );
+
+  console.log(cartResponse, 'cartMenus, discountInfos, menuDetailOptions');
+
   const { data: recentOrderDelivery } = useQuery(
-    ['getOrderLists', me],
+    ['getOrderLists'],
     async () => {
       const params = {
         days: 90,
@@ -242,12 +285,12 @@ const CartPage = () => {
   );
 
   // const { data: result, refetch } = useQuery(
-  //   ['getAvailabilityDestination', hasDeliveryTypeAndDestination],
+  //   ['getAvailabilityDestination'],
   //   async () => {
   //     const params = {
-  //       roadAddress: userDestination?.location.address!,
+  //       roadAddress: userDestination?.location?.address!,
   //       jibunAddress: null,
-  //       zipCode: userDestination?.location.zipCode!,
+  //       zipCode: userDestination?.location?.zipCode!,
   //       delivery: userDeliveryType.toUpperCase() || null,
   //     };
   //     const { data } = await getAvailabilityDestinationApi(params);
@@ -267,7 +310,7 @@ const CartPage = () => {
   //     refetchOnMount: true,
   //     refetchOnWindowFocus: false,
   //     cacheTime: 0,
-  //     enabled: hasDeliveryTypeAndDestination,
+  //     enabled: me!! && !!userDestination,
   //   }
   // );
 
@@ -301,49 +344,13 @@ const CartPage = () => {
     }
   );
 
-  const { isLoading, isError } = useQuery(
-    ['getCartList'],
-    async () => {
-      const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
-      /* TODO: 스팟아이디 넣어야함 */
-      const params = {
-        delivery: userDeliveryType?.toUpperCase()!,
-        deliveryDate: selectedDeliveryDay,
-        spotId: isSpot ? 1 : null,
-      };
-
-      const { data } = await getCartsApi({ params });
-      return data.data;
-    },
-    {
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      cacheTime: 0,
-      enabled: !!selectedDeliveryDay && !!me,
-      onSuccess: (data) => {
-        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
-        try {
-          reOrderCartList(data.cartMenus);
-          setNutritionObj(getTotalNutrition(data.cartMenus));
-          dispatch(INIT_CART_LISTS());
-          dispatch(SET_CART_LISTS(data));
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      onError: (error: any) => {
-        alert(error.message);
-      },
-    }
-  );
-
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
 
   const reOrderCartList = (data: IGetCart[]) => {
-    console.log(data, 'data');
     const checkMenusId = checkedMenus.map((item) => item.menuId);
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
+
     setCheckedMenus(updatedQuantityCart);
     setCartItemList(data);
   };
@@ -379,10 +386,12 @@ const CartPage = () => {
   };
 
   const handleSelectCartItem = (menu: IGetCart) => {
+    console.log(menu, 'menumenu');
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
     let tempCheckedMenus: IGetCart[] = checkedMenus.slice();
     if (foundItem) {
       tempCheckedMenus = tempCheckedMenus.filter((item) => item.menuId !== menu.menuId);
+
       if (isAllChecked) {
         setIsAllchecked(!isAllChecked);
       }
@@ -392,12 +401,12 @@ const CartPage = () => {
 
       tempCheckedMenus.push(menu);
     }
+    console.log(tempCheckedMenus, cartItemList, 'tempCheckedMenus');
 
     setCheckedMenus(tempCheckedMenus);
   };
 
   const handleSelectAllCartItem = () => {
-    console.log(cartItemList, 'cartItemList');
     const canCheckMenus = cartItemList.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails));
 
     if (!isAllChecked) {
@@ -724,7 +733,7 @@ const CartPage = () => {
     const disposablePrice = getDisposableItemPrice();
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
-    console.log(itemsPrice, disposablePrice, totalDiscountPrice);
+
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus]);
 
@@ -912,7 +921,7 @@ const CartPage = () => {
         </DeliveryMethodAndPickupLocation>
       )}
       <BorderLine height={8} margin="24px 0" />
-      {checkedMenus.length === 0 ? (
+      {cartItemList.length === 0 ? (
         <EmptyContainer>
           <FlexCol width="100%">
             <TextB2R padding="0 0 32px 0" center>
@@ -962,12 +971,12 @@ const CartPage = () => {
               <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
             </WrapperTitle>
             <CheckBoxWrapper>
-              {disposableList?.map((item, index) => (
+              {cartResponse?.menuDetailOptions?.map((item, index) => (
                 <DisposableItem key={index}>
                   <div className="disposableLeft">
                     <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected} />
                     <div className="disposableText">
-                      <TextB2R padding="0 4px 0 8px">{item.text}</TextB2R>
+                      <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
                       <TextH5B>+{item.price}원</TextH5B>
                     </div>
                   </div>
