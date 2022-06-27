@@ -1171,6 +1171,7 @@ export interface IOrderDetailInOrderDeliveries {
 }
 
 export interface IEditOrderDestination {
+  applyAll?: boolean;
   deliveryMessage: string;
   deliveryMessageType: string;
   location: ILocation;
@@ -1179,6 +1180,7 @@ export interface IEditOrderDestination {
 }
 
 export interface IEditOrderSpotDestination {
+  applyAll?: boolean;
   receiverName: string;
   receiverTel: string;
   spotPickupId: number;
@@ -1298,7 +1300,9 @@ export interface IGetOrders {
   orderDeliveries: IOrderDeliverie[];
   image: IMenuImage;
   firstDeliveryDate?: string;
+  firstDeliveryDateOrigin?: string;
   lastDeliveryDate?: string;
+  lastDeliveryDateOrigin?: string;
   currentDeliveryDate?: string;
   subscriptionMenuId?: number;
 }

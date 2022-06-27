@@ -101,7 +101,7 @@ Api.interceptors.request.use((req) => {
   const request = cloneDeep(req);
 
   // const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
-  const accessTokenObj = getCookie({ name: 'acstk' }) ?? {};
+  const accessTokenObj = getCookie({ name: 'acstk' }) ?? '';
 
   request.headers = {
     ...req.headers,

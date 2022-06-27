@@ -10,7 +10,6 @@ import {
   SET_SUBS_DELIVERY_EXPECTED_DATE,
   SET_SUBS_START_DATE,
   subscriptionForm,
-  SUBS_INIT,
   SET_SUBS_INFO_STATE,
 } from '@store/subscription';
 import { theme } from '@styles/theme';

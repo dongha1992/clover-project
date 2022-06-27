@@ -258,7 +258,7 @@ const SubsSetInfoPage = () => {
         deliveryType: subsDeliveryType,
         menuId: menuId,
         menuDetails: menuDetail?.menuDetails,
-        menuImage: menuDetail?.thumbnail,
+        menuImage: menuDetail?.thumbnail[0].url,
         datePeriod: [
           subsDeliveryExpectedDate[0].deliveryDate,
           subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate,
