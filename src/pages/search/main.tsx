@@ -45,7 +45,7 @@ const SearchMainPage = () => {
     async ({ queryKey }) => {
       const params = {
         type: '',
-        searchKeyword: keyword,
+        keyword,
       };
 
       const { data } = await getMenusApi(params);
