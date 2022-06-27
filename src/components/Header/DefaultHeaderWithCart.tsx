@@ -14,7 +14,11 @@ const DefaultHeaderWithCart = ({ title }: TProps) => {
   const router = useRouter();
 
   const goBack = (): void => {
-    router.back();
+    if (router.pathname === '/search') {
+      router.push('/');
+    } else {
+      router.back();
+    }
   };
 
   const goToCart = () => {

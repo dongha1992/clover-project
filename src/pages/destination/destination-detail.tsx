@@ -48,7 +48,7 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, destinationId, menuId } = router.query;
 
   // 배송 가능 여부
   const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
@@ -103,7 +103,7 @@ const DestinationDetailPage = () => {
         dispatch(INIT_AVAILABLE_DESTINATION());
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId },
+          query: { orderId, destinationId },
         });
       } else {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));

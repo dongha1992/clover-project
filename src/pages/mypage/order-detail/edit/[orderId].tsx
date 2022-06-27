@@ -30,15 +30,19 @@ import { destinationForm, SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { pipe, indexBy } from '@fxts/core';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
+import { useGetOrderDetail } from 'src/queries/order';
+import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 
 /* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
   orderId: number;
+  destinationId: number;
 }
 
-const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
   const { userAccessMethod } = useSelector(commonSelector);
   const { tempEditDestination, tempEditSpot, tempOrderInfo } = useSelector(mypageSelector);
+  const { applyAll } = useSelector(destinationForm);
 
   const [isSamePerson, setIsSamePerson] = useState(tempOrderInfo?.isSamePerson);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
@@ -49,41 +53,41 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     receiverTel: '',
     receiverName: '',
   });
+  const [deliveryRound, setDeliveryRound] = useState();
+  const [isSub, setIsSub] = useState(false);
 
   const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery(
-    ['getOrderDetail'],
-    async () => {
-      const { data } = await getOrderDetailApi(orderId);
+  const { data } = useGetOrderDetail(['getOrderDetail', orderId], orderId, {
+    onSuccess: (data) => {
+      const orderDetail = data?.orderDeliveries[0];
 
-      return data.data;
+      const userAccessMethodMap = pipe(
+        ACCESS_METHOD,
+        indexBy((item) => item.value)
+      );
+      data.orderDeliveries.forEach((o: any) => {
+        if (o.type === 'SUB') {
+          setIsSub(true);
+        }
+        if (o.id === destinationId) {
+          setDeliveryRound(o.deliveryRound);
+        }
+      });
+      setDeliveryEditObj({
+        selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
+        deliveryMessageType: orderDetail?.deliveryMessageType!,
+        deliveryMessage: orderDetail?.deliveryMessage!,
+        receiverName: tempOrderInfo?.receiverName ? tempOrderInfo?.receiverName : orderDetail?.receiverName!,
+        receiverTel: tempOrderInfo?.receiverTel ? tempOrderInfo?.receiverTel : orderDetail?.receiverTel!,
+        location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
+      });
     },
-    {
-      onSuccess: (data) => {
-        const orderDetail = data?.orderDeliveries[0];
-
-        const userAccessMethodMap = pipe(
-          ACCESS_METHOD,
-          indexBy((item) => item.value)
-        );
-        setDeliveryEditObj({
-          selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
-          deliveryMessageType: orderDetail?.deliveryMessageType!,
-          deliveryMessage: orderDetail?.deliveryMessage!,
-          receiverName: tempOrderInfo?.receiverName ? tempOrderInfo?.receiverName : orderDetail?.receiverName!,
-          receiverTel: tempOrderInfo?.receiverTel ? tempOrderInfo?.receiverTel : orderDetail?.receiverTel!,
-          location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
-        });
-      },
-      onSettled: async () => {},
-
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
-  );
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
 
   const orderDetail = data?.orderDeliveries[0];
 
@@ -99,12 +103,13 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
           deliveryId,
-          data: { ...rest },
+          data: { ...rest, applyAll },
         });
       } else {
         const { data } = await editSpotDestinationApi({
           deliveryId,
           data: {
+            applyAll,
             receiverName: deliveryEditObj.receiverName,
             receiverTel: deliveryEditObj.receiverTel,
             spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickupId!,
@@ -133,14 +138,65 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
     if (!checkBeforeEdit()) {
       return;
     }
+    if (data.type === 'SUBSCRIPTION') {
+      if (applyAll) {
+        // 정기구독 배송지 남은 전체 회차 변경
 
-    dispatch(
-      SET_ALERT({
-        alertMessage: '배송정보를 변경하시겠어요?',
-        onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
-        submitBtnText: '확인',
-      })
-    );
+        if (isSub) {
+          // 합배송이 있는경우
+          dispatch(
+            SET_ALERT({
+              alertMessage: '함께배송 주문 배송지도 변경돼요!\n남은 회차 모두 변경하시겠어요?',
+              onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
+              submitBtnText: '확인',
+              closeBtnText: '취소',
+            })
+          );
+        } else {
+          // 합배송이 없는경우
+          dispatch(
+            SET_ALERT({
+              alertMessage: '남은 회차 모두 변경하시겠어요?',
+              onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
+              submitBtnText: '확인',
+              closeBtnText: '취소',
+            })
+          );
+        }
+      } else {
+        // 정기구독 배송지 선택 회차만 변경
+
+        if (isSub) {
+          // 합배송이 있는경우
+          dispatch(
+            SET_ALERT({
+              alertMessage: `함께배송 주문 배송지도 변경돼요!\n${deliveryRound}회차의 배송지를 변경하시겠어요?`,
+              onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
+              submitBtnText: '확인',
+              closeBtnText: '취소',
+            })
+          );
+        } else {
+          // 합배송이 없는경우
+          dispatch(
+            SET_ALERT({
+              alertMessage: `${deliveryRound}회차의 배송지를\n변경하시겠어요?`,
+              onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
+              submitBtnText: '확인',
+              closeBtnText: '취소',
+            })
+          );
+        }
+      }
+    } else {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '배송정보를 변경하시겠어요?',
+          onSubmit: () => mutationDeliveryInfo(deliveryEditObj),
+          submitBtnText: '확인',
+        })
+      );
+    }
   };
 
   const checkBeforeEdit = (): boolean => {
@@ -199,10 +255,22 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
   };
 
   const changeDeliveryPlace = () => {
-    if (isSpot) {
-      router.push({ pathname: '/spot/search/main', query: { orderId } });
+    if (data.type === 'SUBSCRIPTION') {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <SubsDeliveryChangeSheet goToDeliverySearch={goToDeliverySearch} />,
+        })
+      );
     } else {
-      router.push({ pathname: '/destination/search', query: { orderId } });
+      goToDeliverySearch();
+    }
+  };
+
+  const goToDeliverySearch = () => {
+    if (isSpot) {
+      router.push({ pathname: '/spot/search/main', query: { orderId, destinationId } });
+    } else {
+      router.push({ pathname: '/destination/search', query: { orderId, destinationId } });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
     }
   };
@@ -320,16 +388,18 @@ const OrderDetailAddressEditPage = ({ orderId }: IProps) => {
               </FlexColEnd>
             </FlexBetweenStart>
           ) : (
-            <FlexBetweenStart padding="16px 0 0 0">
-              <TextH5B>배송지</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
-                <TextB2R>{deliveryEditObj?.location?.addressDetail}</TextB2R>
-              </FlexColEnd>
-            </FlexBetweenStart>
+            <>
+              <FlexBetweenStart padding="16px 0 0 0">
+                <TextH5B>배송지</TextH5B>
+                <FlexColEnd>
+                  <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
+                  <TextB2R>{deliveryEditObj?.location?.addressDetail}</TextB2R>
+                </FlexColEnd>
+              </FlexBetweenStart>
+              <BorderLine height={8} margin="24px 0 0 0" />
+            </>
           )}
         </DevlieryInfoWrapper>
-        <BorderLine height={8} margin="24px 0 0 0" />
         {isMorning && (
           <VisitorAccessMethodWrapper>
             <FlexBetween>
@@ -431,10 +501,10 @@ const BtnWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId } = context.query;
+  const { orderId, destinationId } = context.query;
 
   return {
-    props: { orderId: Number(orderId) },
+    props: { orderId: Number(orderId), destinationId: Number(destinationId) },
   };
 }
 export default OrderDetailAddressEditPage;

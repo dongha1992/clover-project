@@ -3,11 +3,13 @@ import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { TextB2R } from '@components/Shared/Text';
 
-const RecentSearchItem = ({ keyword, onClick }: any) => {
+const RecentSearchItem = ({ keyword, removeRecentSearchItemHandler, selectRecentSearchItemHandler }: any) => {
   return (
     <Container>
-      <TextB2R>{keyword}</TextB2R>
-      <RemoveBtn onClick={() => onClick(keyword)}>
+      <TextB2R onClick={() => selectRecentSearchItemHandler(keyword)} pointer>
+        {keyword}
+      </TextB2R>
+      <RemoveBtn onClick={() => removeRecentSearchItemHandler(keyword)}>
         <SVGIcon name="removeItem" />
       </RemoveBtn>
     </Container>
