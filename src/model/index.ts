@@ -488,7 +488,16 @@ export interface IParamsSpots {
 export interface ISpotsResponse {
   code: number;
   message: string;
-  data: ISpots;
+  data: {
+    title: string;
+    spots: ISpotsDetail[];
+    pagination: {
+      page: number;
+      total: number;
+      totalPage: number;
+      size: number;
+    }
+  };
 }
 
 export interface ISpots {
