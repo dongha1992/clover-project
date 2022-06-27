@@ -120,9 +120,8 @@ const CategoryWrapper = styled.div`
 `;
 
 const CatetoryList = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   margin-top: 16px;
 `;
 
