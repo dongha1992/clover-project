@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
-import { theme, FlexBetween } from '@styles/theme';
-import { TextH3B, TextB3R, TextH6B, TextH2B } from '@components/Shared/Text';
+import { theme, FlexBetween, textBody2 } from '@styles/theme';
+import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
 import { SpotList, SpotRecommendList, SpotRecentPickupList, SpotSearchMapMain } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotSearch } from '@api/spot';
@@ -48,12 +48,14 @@ const SpotSearchMainPage = (): ReactElement => {
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(true);
   const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
+  const [keyword, setKeyword] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
   const userLocationLen = !!userLocation.emdNm?.length;
 
   useEffect(()=> {
     defaultRedioId();
     inputRef.current?.focus();
+    setKeyword(spotKeyword);
     dispatch(INIT_SPOT_MAP_SWITCH());
   }, []);
 
@@ -207,10 +209,12 @@ const SpotSearchMainPage = (): ReactElement => {
   };
 
   const handleSelectedKeywordVaule = (value: string) => {
+    setKeyword(value);
     dispatch(SET_SEARCH_KEYWORD(value));
   };
 
   const changeInputHandler = (e: any) => {
+    setKeyword(e.target.value);
     const inputText = inputRef.current?.value.length;
     if (!inputText) {
       setSearchResult([]);
@@ -279,6 +283,7 @@ const SpotSearchMainPage = (): ReactElement => {
       initInputHandler();
       setIsSearched(false);
       setCurrentValurLen(false);
+      setKeyword('')
     };
   };
 
@@ -301,22 +306,28 @@ const SpotSearchMainPage = (): ReactElement => {
         ) : (
           <>
             <SearchBarWrapper>
-              <TextInput
-                name="input"
-                inputType="text"
-                placeholder="도로명, 건물명 또는 지번으로 검색"
-                svg="searchIcon"
-                fontSize='14px'
-                keyPressHandler={getSearchResult}
-                eventHandler={changeInputHandler}
-                onFocus={() => {
-                  setInputFocus(true);
-                }}
-                value={spotKeyword}
-                ref={inputRef}
-              />
+              <label className='textLabel'>
+                {
+                  !inputRef.current?.value &&
+                    <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
+                }
+                <TextInput
+                  name="input"
+                  inputType="text"
+                  svg="searchIcon"
+                  fontSize='14px'
+                  keyPressHandler={getSearchResult}
+                  eventHandler={changeInputHandler}
+                  onFocus={() => {
+                    setInputFocus(true);
+                  }}
+                  value={keyword}
+                  ref={inputRef}
+                  withValue
+                />
+              </label>
               {
-                (inputRef.current?.value || currentValueLen)  && (
+                inputRef.current?.value.length! > 0 && (
                   <div className="removeSvg" onClick={clearInputHandler}>
                     <SVGIcon name="removeItem" />
                   </div>
@@ -391,6 +402,17 @@ const Container = styled.main``;
 const SearchBarWrapper = styled.div`
   margin: 8px 24px 0 24px;
   position: relative;
+  .textLabel {
+    width: 100%;
+    .textPlaceholde{
+      position: absolute;
+      top: 13px;
+      left: 50px;
+      z-index: 100;
+      color: ${theme.greyScale45};
+      ${textBody2};    
+    }
+  }
   .removeSvg {
     position: absolute;
     right: 0;
@@ -398,6 +420,7 @@ const SearchBarWrapper = styled.div`
     margin: 15px 14px 0 0;
   }
 `;
+
 
 const KeyWordWrapper = styled.div`
   padding: 16px 24px 24px 24px;
