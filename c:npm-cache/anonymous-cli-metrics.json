@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"metricId":"56ba8149-e209-444d-96ab-fbb3c0736d02","metrics":{"from":"2022-05-23T11:58:48.873Z","to":"2022-06-27T02:21:46.764Z","successfulInstalls":10,"failedInstalls":0}}
-=======
-{"metricId":"56ba8149-e209-444d-96ab-fbb3c0736d02","metrics":{"from":"2022-05-23T11:58:48.873Z","to":"2022-06-24T00:47:06.960Z","successfulInstalls":9,"failedInstalls":0}}
->>>>>>> 3e2b1d3d5e3c76ba4696741896547ed210e1e6bc
+{"metricId":"34e5f518-de9c-405f-a1ab-e855f458dcc8","metrics":{"from":"2022-06-27T05:13:32.828Z","to":"2022-06-27T05:13:37.112Z","successfulInstalls":2,"failedInstalls":0}}
