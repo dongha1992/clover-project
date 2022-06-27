@@ -54,7 +54,7 @@ const CartActualItem = ({
             <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
-            <InfoMessage status={menuDetail.isSold && 'isSold'} />
+            <InfoMessage isSold={menuDetail.isSold} availabilityInfo={menuDetail.availabilityInfo} holiday={holiday} />
             <CountButtonContainer>
               <CountButton
                 isSold={menuDetail.isSold}

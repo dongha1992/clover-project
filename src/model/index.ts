@@ -1968,7 +1968,14 @@ export interface IMenuDetailsInCart {
   quantity: number;
 }
 
+export type TCartRemainingQuantity = 'DAILY' | 'HOLIDAY' | 'NONE' | 'WEEKLY' | 'PERIOD' | 'PERSON' | string;
+export interface ICartAvailabilty {
+  availability: boolean;
+  menuDetailAvailabilityMessage: TCartRemainingQuantity;
+  remainingQuantity: number;
+}
 export interface IGetCart {
+  availabilityInfo: ICartAvailabilty;
   cartId: number;
   menuId: number;
   holiday: number[][];
