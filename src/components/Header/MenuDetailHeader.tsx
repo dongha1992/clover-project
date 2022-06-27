@@ -31,11 +31,13 @@ const MenuDetailHeader = ({ title }: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    if ( isSpot ) {
+    if (isSpot) {
       router.back();
+    } else if (router.query.returnPath) {
+      router.push(router.query.returnPath as string);
     } else {
-      router.push('/');
-    };
+      router.back();
+    }
   };
 
   const goToShare = () => {
