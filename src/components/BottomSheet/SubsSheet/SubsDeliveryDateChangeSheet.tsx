@@ -8,7 +8,7 @@ import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_SUBS_MANAGE, subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
-import { SVGIcon } from '@utils/common';
+import { getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
 
   useEffect(() => {
     if (selectDate) {
-      setChangeDate(dateFormat(selectDate));
+      setChangeDate(getFormatDate(selectDate));
     }
   }, [selectDate]);
 
@@ -88,10 +88,6 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
       },
     }
   );
-
-  const dateFormat = (date: Date | string) => {
-    return `${dayjs(date).format('M')}월 ${dayjs(date).format('D')}일 (${dayjs(date).format('dd')})`;
-  };
 
   const deliveryChangeHandler = () => {
     // 선택한 배송이 DELIVERING 상태
@@ -212,7 +208,6 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
         })
       );
     }
-    // dispatch(INIT_BOTTOM_SHEET());
   };
 
   if (isLoading) return <div>...로딩중</div>;
@@ -237,7 +232,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
       <DateChangeDayBox>
         <li>
           <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 전</TextB3R>
-          <TextH4B>{dateFormat(item.deliveryDate)}</TextH4B>
+          <TextH4B>{getFormatDate(item.deliveryDate)}</TextH4B>
         </li>
         <li>
           <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 후</TextB3R>
