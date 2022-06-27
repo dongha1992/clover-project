@@ -6,7 +6,7 @@ interface IProps {
   likeCount: number;
   liked: boolean;
 }
-export const useMenuLikes = ({ previous, id, likeCount, liked }: IProps) => {
+export const onMenuLikes = ({ previous, id, likeCount, liked }: IProps) => {
   return previous?.map((preItem: IMenus) => {
     let prevLiked, prevLikeCount;
     if (preItem.id === id) {
