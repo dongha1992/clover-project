@@ -49,7 +49,7 @@ const SearchPage = () => {
           <div className="sgv">
             <SVGIcon name="searchIcon" />
           </div>
-          <TextB2R color={theme.greyScale45}>도로명, 건물명 또는 지번으로 검색</TextB2R>
+          <TextB2R color={theme.greyScale45}>원하는 상품을 검색해보세요.</TextB2R>
         </TextInputButton>
       </Wrapper>
       <DefaultSearchContainer>
