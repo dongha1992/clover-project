@@ -35,6 +35,7 @@ const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
   const [subsOrders, setSubsOrders] = useState([]);
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
+  const [subsCloseOrders, setSubsCloseOrders] = useState([]);
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
@@ -67,8 +68,10 @@ const MypagePage = () => {
             } else if (item.id === 723075) {
               item.subscriptionRound = 2;
               item.status = 'UNPAID';
-            } else if (item.id === 723152 || item.id === 723033) {
+            } else if (item.id === 723152 || item.id === 723033 || item.id === 723038) {
               item.status = 'UNPAID';
+            } else if (item.id === 723082) {
+              item.unsubscriptionType = 'PAYMENT_FAILED';
             }
             return item;
           })
@@ -88,8 +91,17 @@ const MypagePage = () => {
           })
           .filter((order: IGetOrders) => order.status !== 'COMPLETED' && order.status !== 'CANCELED');
         const unpaidOrders = orders.filter((order: IGetOrders) => order.status === 'UNPAID');
-        console.log('unpaidOrder', unpaidOrders);
-        console.log('orders', orders);
+        const closeOrders = orders.filter(
+          (order: IGetOrders) =>
+            order.isSubscribing === false &&
+            order.subscriptionPeriod === 'UNLIMITED' &&
+            (order.unsubscriptionType === 'DISABLED_DESTINATION' ||
+              order.unsubscriptionType === 'DISABLED_MENU' ||
+              order.unsubscriptionType === 'PAYMENT_FAILED' ||
+              order.unsubscriptionType === 'USER_CANCEL')
+        );
+
+        setSubsCloseOrders(closeOrders);
         setSubsUnpaidOrders(unpaidOrders);
         setSubsOrders(orders);
       },
@@ -214,7 +226,11 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList} />}</OrderAndDeliveryWrapper>
-            <SubsDashboard subsOrders={subsOrders} subsUnpaidOrders={subsUnpaidOrders} />
+            <SubsDashboard
+              subsOrders={subsOrders}
+              subsUnpaidOrders={subsUnpaidOrders}
+              subsCloseOrders={subsCloseOrders}
+            />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />

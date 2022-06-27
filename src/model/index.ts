@@ -496,7 +496,7 @@ export interface ISpotsResponse {
       total: number;
       totalPage: number;
       size: number;
-    }
+    };
   };
 }
 
@@ -1314,6 +1314,7 @@ export interface IGetOrders {
   lastDeliveryDateOrigin?: string;
   currentDeliveryDate?: string;
   subscriptionMenuId?: number;
+  unsubscriptionType?: string;
 }
 export interface IOrderDeliverie {
   id: number;

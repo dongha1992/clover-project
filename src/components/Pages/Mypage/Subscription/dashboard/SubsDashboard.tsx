@@ -4,12 +4,16 @@ import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import router from 'next/router';
 import { IGetOrders } from '@model/index';
+import SubsProgressBoard from './SubsProgressBoard';
+import SubsUnpaidBoard from './SubsUnpaidBoard';
+import SubsCloseBoard from './SubsCloseBoard';
 
 interface IProps {
   subsOrders: IGetOrders[];
   subsUnpaidOrders: IGetOrders[];
+  subsCloseOrders: IGetOrders[];
 }
-const SubsDashboard = ({ subsOrders, subsUnpaidOrders }: IProps) => {
+const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders }: IProps) => {
   return (
     <DashBoardBox>
       <FlexCol>
@@ -23,14 +27,21 @@ const SubsDashboard = ({ subsOrders, subsUnpaidOrders }: IProps) => {
           </FlexRow>
         </FlexBetween>
       </FlexCol>
-      <Wrapper></Wrapper>
-      <SubsInfoBox>
+      {subsCloseOrders.length ? (
+        <SubsCloseBoard />
+      ) : subsUnpaidOrders.length ? (
+        <SubsUnpaidBoard firstDeliveryDate={subsUnpaidOrders[0]?.firstDeliveryDateOrigin!} />
+      ) : (
+        <SubsProgressBoard subscriptionRound={subsOrders[0]?.subscriptionRound} />
+      )}
+
+      {/* <SubsInfoBox>
         <SVGIcon name="exclamationMark" />
         <TextB3R color={theme.brandColor}>
           <b>구독 3회차 N% 할인</b> <br />
           1월 6일 (목) 자동 결제되는 새 구독플랜을 확인해 주세요!
         </TextB3R>
-      </SubsInfoBox>
+      </SubsInfoBox> */}
     </DashBoardBox>
   );
 };
