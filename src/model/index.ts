@@ -1649,7 +1649,7 @@ export type TType =
 export interface IGetMenus {
   categories?: TCategory;
   menuSort?: TMenuSort | string;
-  searchKeyword?: string;
+  keyword?: string;
   type: TType | string;
 }
 
