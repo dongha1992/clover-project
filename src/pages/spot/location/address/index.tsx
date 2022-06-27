@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { fixedBottom, theme, FlexRow } from '@styles/theme';
 import { TextH1B, TextB2R, TextB3R, TextH4B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
-import MapAPI from '@components/Map';
+import { DefaultMap } from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import router from 'next/router';
@@ -89,7 +89,7 @@ const AddressDetailPage = () => {
         </TextB2R>
       </Wrapper>
       <MapWrapper>
-        <MapAPI centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
+        <DefaultMap centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
       </MapWrapper>
       <Wrapper>
         <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>
