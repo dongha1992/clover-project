@@ -1,11 +1,7 @@
-import { getOrderDetailApi } from '@api/order';
-import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import SubsMngCalendar from '@components/Calendar/subscription/SubsMngCalendar';
-import { SubsDetailOrderBox } from '@components/Pages/Subscription/detail';
 import SubsDetailOrderInfo from '@components/Pages/Subscription/detail/SubsDetailOrderInfo';
 import { SubsInfoBox, SubsOrderItem } from '@components/Pages/Subscription/payment';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
-import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -14,16 +10,15 @@ import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
 import { IOrderDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
-import { subscriptionForm, SUBS_INIT } from '@store/subscription';
-import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexEnd, FlexRow, theme } from '@styles/theme';
-import { getFormatDate, SVGIcon } from '@utils/common';
+import { subscriptionForm } from '@store/subscription';
+import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styles/theme';
+import { getFormatDate } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetSubsOrderDetail } from 'src/queries/order';
+import { useGetOrderDetail } from 'src/queries/order';
 import styled from 'styled-components';
 dayjs.locale('ko');
 
@@ -36,6 +31,7 @@ const SubsDetailPage = () => {
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
   const [options, setOptions] = useState({});
+
   useEffect(() => {
     if (router.isReady) {
       setDetailId(Number(router.query?.detailId));
@@ -43,30 +39,26 @@ const SubsDetailPage = () => {
     }
   }, [router.isReady]);
 
-  const { data: orderDetail, isLoading } = useGetSubsOrderDetail(
-    ['getOrderDetail', 'subscription', detailId],
-    detailId!,
-    {
-      onSuccess: (data: IOrderDetail) => {
-        let pickupDayObj = new Set();
-        data.orderDeliveries.forEach((o) => {
-          pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
-        });
-        setDeliveryDay(Array.from(pickupDayObj));
+  const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', detailId], detailId!, {
+    onSuccess: (data: IOrderDetail) => {
+      let pickupDayObj = new Set();
+      data.orderDeliveries.forEach((o) => {
+        pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
+      });
+      setDeliveryDay(Array.from(pickupDayObj));
 
-        if ([30, 31, 1, 2].includes(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')))) {
-          //첫 구독시작일이 [30일, 31일, 1일, 2일]일때 자동결제일: 27일
-          setRegularPaymentDate(27);
-        } else {
-          //첫 구독시작일이 3일 ~ 29일 이면 자동결제일: D-2
-          setRegularPaymentDate(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')) - 2);
-        }
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!detailId,
-    }
-  );
+      if ([30, 31, 1, 2].includes(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')))) {
+        //첫 구독시작일이 [30일, 31일, 1일, 2일]일때 자동결제일: 27일
+        setRegularPaymentDate(27);
+      } else {
+        //첫 구독시작일이 3일 ~ 29일 이면 자동결제일: D-2
+        setRegularPaymentDate(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')) - 2);
+      }
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!detailId,
+  });
 
   const status = useSubsStatus(orderDetail?.status!);
   const optionsPrice = useOptionsPrice(orderDetail?.orderDeliveries!);
@@ -126,7 +118,11 @@ const SubsDetailPage = () => {
 
       {orderDetail && <SubsMngCalendar orderDeliveries={orderDetail?.orderDeliveries} />}
       {subsCalendarSelectOrders && (
-        <SubsDetailOrderInfo status={orderDetail?.status!} subscriptionPeriod={orderDetail?.subscriptionPeriod!} />
+        <SubsDetailOrderInfo
+          status={orderDetail?.status!}
+          subscriptionPeriod={orderDetail?.subscriptionPeriod!}
+          orderId={orderDetail?.id!}
+        />
       )}
 
       <BorderLine height={8} />

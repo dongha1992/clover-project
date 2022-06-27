@@ -4,17 +4,18 @@ import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 
 export interface IRadioProps {
-  onChange: React.MouseEventHandler<HTMLElement>;
+  onChange?: React.MouseEventHandler<HTMLElement>;
   isSelected?: boolean;
+  margin?: string;
 }
 
 const defaultProps = {
   name: 'color',
 };
 
-const RadioButton = ({ isSelected, onChange }: IRadioProps) => {
+const RadioButton = ({ isSelected, onChange, margin }: IRadioProps) => {
   return (
-    <RadioContainer onClick={onChange}>
+    <RadioContainer onClick={onChange} style={{ margin: margin }}>
       <RadioLabel>
         <SVGIcon name={isSelected ? 'checkedRoundBox' : 'uncheckedRoundBox'} />
       </RadioLabel>

@@ -19,7 +19,7 @@ import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
-import { ILocation, IOrderDeliveriesInSpot } from '@model/index';
+import { ILocation, IOrderDeliveriesInSpot, IOrderDetail } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie, getFormatDate, removeCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,6 +33,7 @@ dayjs.locale('ko');
 
 import { SET_ALERT } from '@store/alert';
 import { INIT_COUPON } from '@store/coupon';
+import { useGetOrderDetail } from 'src/queries/order';
 
 interface IProps {
   orderId: number;
@@ -52,31 +53,18 @@ const OrderFinishPage = () => {
   const dispatch = useDispatch();
   const { pg_token: pgToken, orderId, pg } = router.query;
 
-  const { data: orderDetail, isLoading } = useQuery(
-    ['getOrderDetail'],
-    async () => {
-      const { data } = await getOrderDetailApi(Number(orderId));
-
-      // orderDeliveries 날짜 순서대로 정렬
-      data.data.orderDeliveries.sort(
-        (a, b) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
-      );
-      return data.data;
+  const { data: orderDetail } = useGetOrderDetail(['getOrderDetail'], Number(orderId), {
+    onSuccess: (data: IOrderDetail) => {
+      let pickupDayObj = new Set();
+      data.orderDeliveries.forEach((item) => {
+        pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
+      });
+      setPickupDay(Array.from(pickupDayObj));
     },
-    {
-      onSuccess: (data) => {
-        // ex) [화·목] 형태로 pickupDay에 저장
-        let pickupDayObj = new Set();
-        data.orderDeliveries.forEach((item) => {
-          pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
-        });
-        setPickupDay(Array.from(pickupDayObj));
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!isPaymentSuccess,
-    }
-  );
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!isPaymentSuccess,
+  });
 
   const checkPg = async () => {
     try {
@@ -123,7 +111,7 @@ const OrderFinishPage = () => {
 
   const goToOrderDetail = () => {
     if (orderDetail?.type === 'SUBSCRIPTION') {
-      router.push('/subscription/detail');
+      router.push(`/subscription/${orderDetail?.id}`);
     } else {
       router.push({ pathname: `/mypage/order-detail/${orderId}` });
     }

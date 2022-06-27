@@ -36,7 +36,7 @@ const MenuDetailHeader = ({ title }: TProps) => {
     } else if (router.query.returnPath) {
       router.push(router.query.returnPath as string);
     } else {
-      router.push('/');
+      router.back();
     }
   };
 

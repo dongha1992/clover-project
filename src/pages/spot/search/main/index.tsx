@@ -17,9 +17,9 @@ import { useRouter } from 'next/router';
 import { Swiper } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
-import { 
-  spotSelector, 
-  INIT_SEARCH_SELECTED_FILTERS, 
+import {
+  spotSelector,
+  INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
   SET_SPOT_POSITIONS,
   SET_SEARCH_KEYWORD,
@@ -34,12 +34,7 @@ const SpotSearchMainPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { orderId, isDelivery } = router.query;
-  const { 
-    spotsPosition, 
-    spotSearchSelectedFilters, 
-    spotSearchSort,
-    spotKeyword,
-  } = useSelector(spotSelector);
+  const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, spotKeyword } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
@@ -48,25 +43,25 @@ const SpotSearchMainPage = (): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
   const userLocationLen = !!userLocation.emdNm?.length;
 
-  useEffect(()=> {
+  useEffect(() => {
     defaultRedioId();
     inputRef.current?.focus();
   }, []);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (spotKeyword?.length > 0) {
-        fetchSpotSearchData({keyword: spotKeyword});
-    };
+      fetchSpotSearchData({ keyword: spotKeyword });
+    }
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (spotKeyword?.length > 0) {
-      fetchSpotSearchData({keyword: spotKeyword});
+      fetchSpotSearchData({ keyword: spotKeyword });
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
-    };
+    }
   }, [spotKeyword]);
 
-  useEffect(()=> {
+  useEffect(() => {
     filteredItem();
   }, [searchResult, spotSearchSort]);
 
@@ -80,9 +75,9 @@ const SpotSearchMainPage = (): ReactElement => {
       if (inputRef.current) {
         inputRef.current.focus();
       } else {
-          return;
-      };
-    };
+        return;
+      }
+    }
   }, [orderId]);
 
   useEffect(() => {
@@ -166,9 +161,9 @@ const SpotSearchMainPage = (): ReactElement => {
   // 스팟 검색 결과 api
   const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
-    if(value.length > 0){
+    if (value.length > 0) {
       setCurrentValurLen(true);
-    };
+    }
 
     if (e.key === 'Enter') {
       if (inputRef.current) {
@@ -178,12 +173,12 @@ const SpotSearchMainPage = (): ReactElement => {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData({keyword});
+        fetchSpotSearchData({ keyword });
       }
     }
   }, []);
 
-  const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
+  const fetchSpotSearchData = async ({ keyword }: { keyword: string }) => {
     try {
       const params = {
         keyword: keyword,
@@ -194,9 +189,9 @@ const SpotSearchMainPage = (): ReactElement => {
       if (data.code === 200) {
         const fetchData = data.data;
         setSearchResult(fetchData?.spots);
-        setIsSearched(true); 
-        setInputFocus(true); 
-      };
+        setIsSearched(true);
+        setInputFocus(true);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -211,16 +206,15 @@ const SpotSearchMainPage = (): ReactElement => {
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
-    };
+    }
   };
-
 
   const defaultRedioId = () => {
     if (userLocationLen) {
-      return dispatch(SET_SPOT_SEARCH_SORT('nearest'))
+      return dispatch(SET_SPOT_SEARCH_SORT('nearest'));
     } else if (!userLocationLen) {
-      return dispatch(SET_SPOT_SEARCH_SORT('frequency'))
-    } 
+      return dispatch(SET_SPOT_SEARCH_SORT('frequency'));
+    }
   };
 
   const filteredItem = () => {
@@ -229,60 +223,64 @@ const SpotSearchMainPage = (): ReactElement => {
       case undefined:
         return searchResult;
       case 'nearest':
-        return (
-          searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  a.distance - b.distance })
-          );
+        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
+          return a.distance - b.distance;
+        });
       case 'frequency':
-        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.score - a.score });
+        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
+          return b.score - a.score;
+        });
       case 'user':
-        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.userCount - a.userCount });
+        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
+          return b.userCount - a.userCount;
+        });
     }
   };
 
   // 스팟 필터
   let filterResult = filteredItem();
-  filterResult = filterResult?.filter(spot => spotSearchSelectedFilters.every(filterItem => spot[filterItem]))
+  filterResult = filterResult?.filter((spot) => spotSearchSelectedFilters.every((filterItem) => spot[filterItem]));
 
   // GPS - 현재위치 가져오기
-  const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+  const getCurrentPosition = () =>
+    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
   const getLocation = async () => {
-      try {
-        const position: any = await getCurrentPosition();
-        if(position) {
-          // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
-          dispatch(
-            SET_SPOT_POSITIONS({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            })
-          );  
-        }
-       return { Status: true, position, };
-     } catch (error) {
-       console.log("getCurrentLatLong::catcherror =>", error);
-       return { Status: false, };
-     }
+    try {
+      const position: any = await getCurrentPosition();
+      if (position) {
+        // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
+        dispatch(
+          SET_SPOT_POSITIONS({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          })
+        );
+      }
+      return { Status: true, position };
+    } catch (error) {
+      console.log('getCurrentLatLong::catcherror =>', error);
+      return { Status: false };
+    }
   };
-  
 
   const clearInputHandler = () => {
     if (inputRef.current?.value.length! > 0) {
       initInputHandler();
       setIsSearched(false);
       setCurrentValurLen(false);
-    };
+    }
   };
 
   const initInputHandler = () => {
     if (inputRef.current) {
       inputRef.current.value = '';
-    };
+    }
   };
 
   if (isLoadingRecomand && isLoadingPickup) {
     return <div>로딩</div>;
-  };
+  }
 
   return (
     <Container>
@@ -292,7 +290,7 @@ const SpotSearchMainPage = (): ReactElement => {
           inputType="text"
           placeholder="도로명, 건물명 또는 지번으로 검색"
           svg="searchIcon"
-          fontSize='14px'
+          fontSize="14px"
           keyPressHandler={getSearchResult}
           eventHandler={changeInputHandler}
           onFocus={() => {
@@ -301,71 +299,66 @@ const SpotSearchMainPage = (): ReactElement => {
           value={spotKeyword}
           ref={inputRef}
         />
-        {
-          (inputRef.current?.value || currentValueLen)  && (
-            <div className="removeSvg" onClick={clearInputHandler}>
-              <SVGIcon name="removeItem" />
-            </div>
-          )
-        }
+        {(inputRef.current?.value || currentValueLen) && (
+          <div className="removeSvg" onClick={clearInputHandler}>
+            <SVGIcon name="removeItem" />
+          </div>
+        )}
       </SearchBarWrapper>
-      {
-        (!inputFocus || !isSearched) && (
-          <KeyWordWrapper>
-            <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
-          </KeyWordWrapper>
-        )
-      }
+      {(!inputFocus || !isSearched) && (
+        <KeyWordWrapper>
+          <SpotSearchKeyword onChange={handleSelectedKeywordVaule} />
+        </KeyWordWrapper>
+      )}
       {/* 스팟 검색 메인 - 검색바 포커싱 o  */}
-        <>
-          {!isSearched && (
-            recentPickedSpotList?.length! > 0 ? (
-              // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-              <DefaultSearchContainer>
-                <RecentPickWrapper>
-                  <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                  {recentPickedSpotList?.map((item: any, index) => (
-                    // 스팟 최근 픽업 이력 리스트
-                    <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                  ))}
-                </RecentPickWrapper>
-              </DefaultSearchContainer>
-              ) : (
-              <>
+      <>
+        {!isSearched &&
+          (recentPickedSpotList?.length! > 0 ? (
+            // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+            <DefaultSearchContainer>
+              <RecentPickWrapper>
+                <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                {recentPickedSpotList?.map((item: any, index) => (
+                  // 스팟 최근 픽업 이력 리스트
+                  <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                ))}
+              </RecentPickWrapper>
+            </DefaultSearchContainer>
+          ) : (
+            <>
               {
                 // 픽업 이력 없는 경우, 추천 스팟 노출
-                spotRecommend?.spots.length! > 0 ?(
+                spotRecommend?.spots.length! > 0 ? (
                   <SpotRecommendWrapper>
-                  <FlexBetween margin="0 0 24px 0">
-                    <TextH2B>{spotRecommend?.title}</TextH2B>
-                    {
-                      // 사용자 위치 설정 했을 경우 노출
-                      userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
-                    }
-                  </FlexBetween>
-                  {spotRecommend?.spots.map((item: any, index: number) => {
-                    return <SpotRecommendList item={item} key={index} />;
-                  })}
-                </SpotRecommendWrapper>
-                ) : (
-                  // 픽업 이력 없고, 추천 스팟도 없는 경우
-                  null
-                )
+                    <FlexBetween margin="0 0 24px 0">
+                      <TextH2B>{spotRecommend?.title}</TextH2B>
+                      {
+                        // 사용자 위치 설정 했을 경우 노출
+                        userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                      }
+                    </FlexBetween>
+                    {spotRecommend?.spots.map((item: any, index: number) => {
+                      return <SpotRecommendList item={item} key={index} />;
+                    })}
+                  </SpotRecommendWrapper>
+                ) : // 픽업 이력 없고, 추천 스팟도 없는 경우
+                null
               }
-              </>
-              )
-            )
-          }
-          {
-            isSearched && (
-            // 검색 결과
-            <SearchResultContainer>
-              <SearchResult searchResult={filterResult} isSpot orderId={orderId} hasCart={true} getLocation={getLocation} />
-            </SearchResultContainer>
-            )
-          }
-        </>
-  
+            </>
+          ))}
+        {isSearched && (
+          // 검색 결과
+          <SearchResultContainer>
+            <SearchResult
+              searchResult={filterResult}
+              isSpot
+              orderId={orderId}
+              hasCart={true}
+              getLocation={getLocation}
+            />
+          </SearchResultContainer>
+        )}
+      </>
     </Container>
   );
 };
@@ -398,15 +391,15 @@ const RecentPickWrapper = styled.div`
   ${homePadding};
 `;
 
-const DefaultSearchContainer = styled.section<{empty?: boolean}>`
-  ${({empty}) => {
-    if(empty){
+const DefaultSearchContainer = styled.section<{ empty?: boolean }>`
+  ${({ empty }) => {
+    if (empty) {
       return css`
         height: 32vh;
         display: flex;
         justify-content: center;
         align-items: end;
-      `
+      `;
     }
   }}
 `;
