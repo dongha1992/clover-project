@@ -5,8 +5,8 @@ import { IMAGE_S3_DEV_URL } from '@constants/mock';
 
 interface IProps {
   zoom?: number;
-  centerLat?: string;
-  centerLng?: string;
+  centerLat?: number;
+  centerLng?: number;
 }
 
 const DefaultMap = ({

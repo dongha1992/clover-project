@@ -56,7 +56,7 @@ const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday, placeTel}:
         </StoreInfoWrapper>
       </Wrapper>
       <MapWrapper>
-        <DefaultMap centerLat={lat ? lat.toString() : '37.54669189732'} centerLng={lon ? lon.toString() : '126.833485621837'} />
+        <DefaultMap centerLat={lat ? lat : 37.54669189732} centerLng={lon ? lon : 126.833485621837} />
       </MapWrapper>
     </Container>
   );
