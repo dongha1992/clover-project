@@ -49,6 +49,8 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
     router.push('/spot/join');
   };
 
+  console.log(searchResult, 'searchResult');
+
   return (
     <>
       {searchResult?.length! > 0 && (
@@ -89,7 +91,7 @@ const SearchResult = ({ searchResult, onClick, isSpot, orderId, hasCart, getLoca
             </NoResult>
           </NoResultWrapper>
         ) : (
-          <div>검색결과가 없습니다.</div>
+          <NoResultWrapper>검색하신 상품을 찾을 수 없어요. 다른 검색어를 입력해 보세요. 😭 </NoResultWrapper>
         )}
       </ItemListWrapper>
     </>

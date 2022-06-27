@@ -7,12 +7,14 @@ import RecentSearchItem from './RecentSearchItem';
 const RecentSearch = ({
   removeRecentSearchItemHandler,
   recentKeywords,
+  deleteAllRecentKeyword,
+  selectRecentSearchItemHandler,
 }: any) => {
   return (
     <Container>
       <Header>
         <TextH5B>최근검색어</TextH5B>
-        <TextH6B color={theme.greyScale65} textDecoration="underline" pointer>
+        <TextH6B color={theme.greyScale65} textDecoration="underline" pointer onClick={deleteAllRecentKeyword}>
           전체삭제
         </TextH6B>
       </Header>
@@ -22,7 +24,8 @@ const RecentSearch = ({
             <RecentSearchItem
               key={index}
               keyword={keyword}
-              onClick={removeRecentSearchItemHandler}
+              selectRecentSearchItemHandler={selectRecentSearchItemHandler}
+              removeRecentSearchItemHandler={() => removeRecentSearchItemHandler(keyword, index)}
             />
           ))}
       </ListContainer>
