@@ -46,6 +46,10 @@ export const categoryPageSet = css`
 export const verticalCenter = css`
   display: flex;
   align-self: center;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const FlexCenter = styled.div<{ padding?: string; margin?: string; pointer?: boolean }>`
@@ -247,7 +251,7 @@ export const FixedTab = styled.div`
   `};
 `;
 
-export const fixedTab = css `
+export const fixedTab = css`
   position: fixed;
   width: 100%;
   left: calc(50%);
