@@ -254,7 +254,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
             <StorImgWrapper onClick={goToDetail}>
               {!isSearch && (
                 <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
-                  <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
+                  <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
                 </LikeWrapper>
               )}
               {list.isTrial ? (
