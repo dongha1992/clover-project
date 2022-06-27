@@ -27,7 +27,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
-import { useMenuLikes } from '@queries/menu';
+import { onMenuLikes } from '@queries/menu';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -88,11 +88,11 @@ const Item = ({ item, isHorizontal }: TProps) => {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type], (previous: any) => {
           if (previous) {
-            return useMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
+            return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
         queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
-          return useMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
+          return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
         });
       },
       onMutate: async () => {},
@@ -111,12 +111,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type], (previous: any) => {
           if (previous) {
-            return useMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
+            return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
         queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           if (previous) {
-            return useMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
+            return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
       },
