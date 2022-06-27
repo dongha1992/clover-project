@@ -1385,13 +1385,13 @@ export interface IGetOrderDetailResponse {
   data: IOrderDetail;
 }
 export interface IOrderOptionsInOrderPreviewRequest {
-  optionId: number;
-  optionQuantity: number;
+  optionId: number | null;
+  optionQuantity: number | null;
 }
 export interface IOrderDeliveriesInOrderPreviewRequest {
   deliveryDate: string;
   orderMenus: IOrderMenusInOrderList[];
-  orderOptions: IOrderOptionsInOrderPreviewRequest[];
+  orderOptions?: IOrderOptionsInOrderPreviewRequest[] | null;
 }
 export interface IOrderPreviewRequest {
   delivery: string;
@@ -1991,6 +1991,7 @@ export interface IMenuDetailOptions {
   price: number;
   quantity: number;
   type: string;
+  isSelected?: boolean;
 }
 export interface IGetCartResponse {
   code: number;

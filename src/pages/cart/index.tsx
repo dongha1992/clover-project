@@ -39,6 +39,7 @@ import {
   IMenus,
   IDeleteCartRequest,
   IOrderedMenuDetails,
+  IOrderOptionsInOrderPreviewRequest,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -71,9 +72,9 @@ interface IMenuDetailsId {
 
 interface IDisposable {
   id: number;
-  value: string;
+  value?: string;
   quantity: number;
-  text: string;
+  name: string;
   price: number;
   isSelected: boolean;
 }
@@ -111,10 +112,7 @@ const CartPage = () => {
   ]);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
-  const [disposableList, setDisposableList] = useState<IDisposable[]>([
-    { id: 1, value: 'fork', quantity: 1, text: '포크/물티슈', price: 100, isSelected: true },
-    { id: 2, value: 'stick', quantity: 1, text: '젓가락/물티슈', price: 100, isSelected: true },
-  ]);
+  const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
   const [subDeliveryId, setSubDeliveryId] = useState<number | null>(null);
@@ -168,6 +166,11 @@ const CartPage = () => {
           setNutritionObj(getTotalNutrition(data.cartMenus));
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
+          setDisposableList(
+            data.menuDetailOptions.map((item) => {
+              return { ...item, isSelected: true };
+            })
+          );
         } catch (error) {
           console.error(error);
         }
@@ -177,8 +180,6 @@ const CartPage = () => {
       },
     }
   );
-
-  console.log(cartResponse, 'cartMenus, discountInfos, menuDetailOptions');
 
   const { data: recentOrderDelivery } = useQuery(
     ['getOrderLists'],
@@ -386,7 +387,6 @@ const CartPage = () => {
   };
 
   const handleSelectCartItem = (menu: IGetCart) => {
-    console.log(menu, 'menumenu');
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
     let tempCheckedMenus: IGetCart[] = checkedMenus.slice();
     if (foundItem) {
@@ -401,7 +401,6 @@ const CartPage = () => {
 
       tempCheckedMenus.push(menu);
     }
-    console.log(tempCheckedMenus, cartItemList, 'tempCheckedMenus');
 
     setCheckedMenus(tempCheckedMenus);
   };
@@ -425,6 +424,7 @@ const CartPage = () => {
         return item;
       }
     });
+
     setDisposableList(newDisposableList);
   };
 
@@ -630,6 +630,7 @@ const CartPage = () => {
 
     const orderMenus = getMenuDetailsId(checkedMenus);
     const orderOptions = getOptionsItemId(disposableList);
+    console.log(orderOptions, 'orderOptions');
 
     const reqBody = {
       destinationId: destinationObj.destinationId!,
@@ -665,13 +666,22 @@ const CartPage = () => {
     return tempOrderMenus;
   };
 
-  const getOptionsItemId = (list: IDisposable[]): { optionId: number; optionQuantity: number }[] => {
-    return list.map((item: IDisposable) => {
-      return {
-        optionId: item.id,
-        optionQuantity: item.quantity,
-      };
-    });
+  const getOptionsItemId = (list: IDisposable[]): IOrderOptionsInOrderPreviewRequest[] => {
+    return list
+      ?.map((item: IDisposable) => {
+        if (item.isSelected) {
+          return {
+            optionId: item.id,
+            optionQuantity: item.quantity,
+          };
+        } else {
+          return {
+            optionId: null,
+            optionQuantity: null,
+          };
+        }
+      })
+      .filter((item) => item.optionId || item.optionQuantity);
   };
 
   const goToSubDeliverySheet = (deliveryId: number): void => {
@@ -971,10 +981,10 @@ const CartPage = () => {
               <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
             </WrapperTitle>
             <CheckBoxWrapper>
-              {cartResponse?.menuDetailOptions?.map((item, index) => (
+              {disposableList?.map((item, index) => (
                 <DisposableItem key={index}>
                   <div className="disposableLeft">
-                    <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected} />
+                    <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
                     <div className="disposableText">
                       <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
                       <TextH5B>+{item.price}원</TextH5B>
