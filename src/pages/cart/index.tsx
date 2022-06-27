@@ -133,7 +133,7 @@ const CartPage = () => {
   const { isClosed } = router.query;
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
-  const { isLoginSuccess, me } = useSelector(userForm);
+  const { me } = useSelector(userForm);
   const queryClient = useQueryClient();
 
   const {
@@ -160,9 +160,8 @@ const CartPage = () => {
       cacheTime: 0,
       enabled: !!selectedDeliveryDay && !!me,
       onSuccess: (data) => {
-        /* TODO: 서버랑 store랑 싱크 init후 set으로? */
         try {
-          reOrderCartList(data.cartMenus);
+          reorderCartList(data.cartMenus);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
           if (isFirstRender) {
@@ -246,14 +245,16 @@ const CartPage = () => {
     ['getLikeMenus', 'GENERAL'],
     async () => {
       const { data } = await getLikeMenus('GENERAL');
-
-      return data.data;
+      return reorderLikeMenus(data.data);
     },
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
+
+  /* TODO: 재구매 내역 data 질문 */
 
   const { data: orderedMenusList, isLoading: orderedMenuLoading } = useQuery(
     ['getOrderedMenus', 'GENERAL'],
@@ -266,6 +267,7 @@ const CartPage = () => {
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -349,7 +351,14 @@ const CartPage = () => {
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
 
-  const reOrderCartList = (data: IGetCart[]) => {
+  const reorderOrderedMenus = (menus: IMenus[]) => {};
+
+  const reorderLikeMenus = (menus: IMenus[]) => {
+    let copiedMenus = menus.slice();
+    return copiedMenus.filter((menu, index) => !menu.isSold && index < 10);
+  };
+
+  const reorderCartList = (data: IGetCart[]) => {
     const checkMenusId = checkedMenus.map((item) => item.menuId);
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
 
@@ -584,8 +593,6 @@ const CartPage = () => {
 
     mutateItemQuantity(parmas);
   };
-
-  const clickRestockNoti = () => {};
 
   const changeDeliveryDate = (dateValue: string) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
@@ -830,7 +837,6 @@ const CartPage = () => {
   }, [selectedDeliveryDay]);
 
   useEffect(() => {
-    /* TODO: 초기값 설정 때문에 조금 버벅임 */
     if (calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
 
@@ -968,7 +974,6 @@ const CartPage = () => {
                   checkedMenus={checkedMenus}
                   clickPlusButton={clickPlusButton}
                   clickMinusButton={clickMinusButton}
-                  clickRestockNoti={clickRestockNoti}
                   removeCartDisplayItemHandler={removeCartDisplayItemHandler}
                   removeCartActualItemHandler={removeCartActualItemHandler}
                   key={index}
@@ -1090,7 +1095,7 @@ const CartPage = () => {
       <MenuListContainer>
         <MenuListWarpper>
           <MenuListHeader>
-            <TextH3B padding="0 0 24px 0">루이스님이 찜한 상품이에요</TextH3B>
+            <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
             <ScrollHorizonList>
               <ScrollHorizonListGroup>
                 {likeMenusList?.map((item: IMenus, index: number) => {

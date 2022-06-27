@@ -9,29 +9,29 @@ import InfoMessage from '@components/Shared/Message';
 import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
 interface IProps {
-  menuDetail: IMenuDetailsInCart;
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
-  clickRestockNoti: any;
   menuId: number;
+  menuDetail: IMenuDetailsInCart;
+  holiday: number[][];
 }
 
 /* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
 
 const CartActualItem = ({
-  menuDetail,
   removeCartActualItemHandler,
   clickPlusButton,
   clickMinusButton,
-  clickRestockNoti,
   menuId,
+  menuDetail,
+  holiday,
 }: IProps) => {
   const { discount, discountedPrice } = getDiscountPrice({
     discountPrice: menuDetail.discountPrice,
     price: menuDetail.price,
   });
-
+  console.log(menuDetail, 'menuDetail');
   return (
     <Container isSold={menuDetail.isSold}>
       <ContentWrapper>
@@ -54,11 +54,8 @@ const CartActualItem = ({
             <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
           <FlexBetweenStart>
-            {/* <InfoMessage status={menuDetail.isSold && 'isSold'} /> */}
+            <InfoMessage status={menuDetail.isSold && 'isSold'} />
             <CountButtonContainer>
-              {/* <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
-                <TextH6B color={theme.white}>재입고 알림</TextH6B>
-              </Tag> */}
               <CountButton
                 isSold={menuDetail.isSold}
                 menuDetailId={menuDetail.id}
