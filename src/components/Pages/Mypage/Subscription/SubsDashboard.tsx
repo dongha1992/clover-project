@@ -3,43 +3,27 @@ import { FlexBetween, FlexCol, FlexColCenter, FlexRow, theme } from '@styles/the
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import router from 'next/router';
+import { IGetOrders } from '@model/index';
 
-const SubsDashboard = () => {
+interface IProps {
+  subsOrders: IGetOrders[];
+  subsUnpaidOrders: IGetOrders[];
+}
+const SubsDashboard = ({ subsOrders, subsUnpaidOrders }: IProps) => {
   return (
     <DashBoardBox>
       <FlexCol>
         <FlexBetween>
           <TextH4B>구독 관리</TextH4B>
           <FlexRow>
-            <TextB2R padding="0 8px 0 0">{1} 건</TextB2R>
+            <TextB2R padding="0 8px 0 0">{subsOrders.length} 건</TextB2R>
             <div className="rightArrow" onClick={() => router.push('/mypage/subscription')}>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
         </FlexBetween>
       </FlexCol>
-      <Wrapper>
-        <FlexBetween padding="20px 45px 15px 45px">
-          <FlexColCenter>
-            <TextH3B>1</TextH3B>
-            <TextB4R color={theme.greyScale65}>구독예정</TextB4R>
-          </FlexColCenter>
-          <ArrowWrapper>
-            <SVGIcon name="arrowRightGrey" />
-          </ArrowWrapper>
-          <FlexColCenter>
-            <TextH3B>2</TextH3B>
-            <TextB4R color={theme.greyScale65}>구독 중</TextB4R>
-          </FlexColCenter>
-          <ArrowWrapper>
-            <SVGIcon name="arrowRightGrey" />
-          </ArrowWrapper>
-          <FlexColCenter>
-            <TextH3B>3</TextH3B>
-            <TextB4R color={theme.greyScale65}>구독완료</TextB4R>
-          </FlexColCenter>
-        </FlexBetween>
-      </Wrapper>
+      <Wrapper></Wrapper>
       <SubsInfoBox>
         <SVGIcon name="exclamationMark" />
         <TextB3R color={theme.brandColor}>

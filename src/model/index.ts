@@ -1300,7 +1300,9 @@ export interface IGetOrders {
   orderDeliveries: IOrderDeliverie[];
   image: IMenuImage;
   firstDeliveryDate?: string;
+  firstDeliveryDateOrigin?: string;
   lastDeliveryDate?: string;
+  lastDeliveryDateOrigin?: string;
   currentDeliveryDate?: string;
   subscriptionMenuId?: number;
 }
