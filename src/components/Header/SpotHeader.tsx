@@ -67,7 +67,7 @@ const SpotHeader = () => {
             <div onClick={goToLocation}>
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
-            { distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="139px" left="-5px" top="29px" />}
+            { distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="141px" left="-5px" top="29px" />}
           </AddressWrapper>
         </Left>
         <Right>

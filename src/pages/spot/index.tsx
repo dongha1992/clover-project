@@ -427,7 +427,9 @@ const SpotPage = () => {
             </Wrapper>
           </>
         ) : (
-          <EmptySpotImg />
+          <StoryContentsWrapper>
+            <EmptyImg src={`${IMAGE_S3_DEV_URL}/img_banner_fco_info.jpg`} />
+          </StoryContentsWrapper>
         )
       }
     </Container>
@@ -464,35 +466,8 @@ const EmptyySpotListWrapper = styled.section`
   padding: 64px 0;
 `;
 
-// const ButtonWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   margin-top: 16px;
-// `;
-
-// const Button = styled.button`
-//   height: 38px;
-//   padding: 10px 16px;
-//   border: 1px solid ${theme.black};
-//   border-radius: 8px;
-//   background: ${theme.white};
-//   font-weight: bold;
-//   color: ${theme.black};
-//   cursor: pointer;
-// `;
-
-const EmptySpotImg = styled.div`
-  width: 100%;
-  height: 210px;
-  background: ${theme.greyScale6};
-  margin: 64px 0 10px 0;
-`;
-
 const TrialSlider = styled(Swiper)`
   padding: 0 24px;
-  height: 201px;
   .swiper-slide {
     width: 220px;
   }
@@ -579,5 +554,9 @@ const ImgStory = styled.img`
   cursor: pointer;
 `;
 
+const EmptyImg = styled.img`
+  width: 100%;
+  height: 100%;
+`;
 
 export default SpotPage;
