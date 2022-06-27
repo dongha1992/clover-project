@@ -1,4 +1,4 @@
-import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
+import { SubsDeliveryDateChangeSheet } from '@components/BottomSheet/SubsSheet';
 import { Button } from '@components/Shared/Button';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
@@ -7,23 +7,22 @@ import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import useOrderPrice from '@hooks/subscription/useOrderPrice';
 import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { subscriptionForm } from '@store/subscription';
-import { FlexBetween, FlexBetweenStart, FlexColEnd, theme } from '@styles/theme';
+import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import axios from 'axios';
-import { cloneDeep } from 'lodash-es';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import router from 'next/router';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import MenuPriceBox from '../payment/MenuPriceBox';
 
 interface IProps {
   item: any;
   subscriptionPeriod: string;
+  orderId: number;
 }
 
-const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
+const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
   const [toggleState, setToggleState] = useState(false);
   const dispatch = useDispatch();
 
@@ -37,23 +36,53 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
   const deliveryDateChangeHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsDeliveryChangeSheet item={item} setToggleState={setToggleState} />,
+        content: <SubsDeliveryDateChangeSheet item={item} setToggleState={setToggleState} />,
       })
     );
   };
 
+  const goToReview = () => {};
+
+  const deliveryInfoChangeHandler = () => {
+    router.push({
+      pathname: `/mypage/order-detail/edit/${orderId}`,
+      query: { destinationId: item.id },
+    });
+  };
+
   return (
     <Container>
-      <FlexBetween padding="24px 24px" className="box" onClick={toggleClickHandler}>
-        <TextH4B color={`${item?.status === 'CANCELED' && '#C8C8C8'}`}>
-          배송 {item?.deliveryRound ?? 1}회차 - {getFormatDate(item.deliveryDate)}{' '}
-          {item.status === 'COMPLETED' ? '도착' : '도착예정'}{' '}
-          {item?.deliveryDateChangeCount > 0 && <span className="deliveryChange">(배송일변경)</span>}
-        </TextH4B>
-        <div className={`toggleIcon ${toggleState ? 'down' : ''}`}>
-          <SVGIcon name="triangleDown" />
-        </div>
-      </FlexBetween>
+      <FlexCol padding="24px 24px">
+        <FlexBetween className="box" onClick={toggleClickHandler}>
+          <TextH4B color={`${item?.status === 'CANCELED' && '#C8C8C8'}`}>
+            배송 {item?.deliveryRound ?? 1}회차 - {getFormatDate(item.deliveryDate)}{' '}
+            {item?.status === 'COMPLETED' ? '도착' : '도착예정'}{' '}
+            {item?.deliveryDateChangeCount > 0 && <span className="deliveryChange">(배송일변경)</span>}
+          </TextH4B>
+          <div className={`toggleIcon ${toggleState ? 'down' : ''}`}>
+            <SVGIcon name="triangleDown" />
+          </div>
+        </FlexBetween>
+        {item.delivery === 'PARCEL' && (
+          <FlexRow padding="8px 0 0 0">
+            <SVGIcon name="deliveryTruckIcon" />
+            {item.invoiced ? (
+              <>
+                <TextB2R margin="0 0 0 4px" padding="3px 0 0 0">
+                  운송장번호
+                </TextB2R>
+                <TextH5B margin="0 0 0 4px" padding="3px 0 0 0" color={theme.brandColor} textDecoration="underline">
+                  {123123213}
+                </TextH5B>
+              </>
+            ) : (
+              <TextB3R margin="0 0 0 4px" padding="3px 0 0 0" color={theme.greyScale65}>
+                배송중 단계부터 배송상태 조회가 가능합니다.
+              </TextB3R>
+            )}
+          </FlexRow>
+        )}
+      </FlexCol>
       <SlideToggle state={toggleState} duration={0.5} change={item}>
         <MenuUl className="menuWrpper">
           {item.orderMenus.map((menu: any, index: number) => (
@@ -81,8 +110,14 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
               </MenuTextBox>
             </MenuLi>
           ))}
+          {subscriptionPeriod !== 'UNLIMITED' && item?.status === 'COMPLETED' && (
+            <MenuLi>
+              <Button backgroundColor="#fff" color="#242424" border onClick={goToReview}>
+                후기 작성하기
+              </Button>
+            </MenuLi>
+          )}
         </MenuUl>
-
         <MenuPriceBox
           menuPrice={priceInfo.menuPrice}
           menuDiscount={priceInfo.menuDiscount}
@@ -143,12 +178,22 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
           )}
           <FlexBetween>
             <Button
+              onClick={() => {
+                subscriptionPeriod === 'UNLIMITED' &&
+                  item?.status !== 'COMPLETED' &&
+                  item?.status !== 'CANCELED' &&
+                  item?.status !== 'DELIVERING' &&
+                  deliveryInfoChangeHandler();
+              }}
               width="48%"
               backgroundColor="#fff"
               color="#242424"
               border
               disabled={
-                subscriptionPeriod !== 'UNLIMITED' || item?.status === 'COMPLETED' || item?.status === 'CANCELED'
+                subscriptionPeriod !== 'UNLIMITED' ||
+                item?.status === 'COMPLETED' ||
+                item?.status === 'CANCELED' ||
+                item?.status === 'DELIVERING'
                   ? true
                   : false
               }
@@ -160,6 +205,7 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
                 subscriptionPeriod === 'UNLIMITED' &&
                   item?.status !== 'COMPLETED' &&
                   item?.status !== 'CANCELED' &&
+                  item?.status !== 'DELIVERING' &&
                   deliveryDateChangeHandler();
               }}
               width="48%"
@@ -167,7 +213,10 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod }: IProps) => {
               color="#242424"
               border
               disabled={
-                subscriptionPeriod !== 'UNLIMITED' || item?.status === 'COMPLETED' || item?.status === 'CANCELED'
+                subscriptionPeriod !== 'UNLIMITED' ||
+                item?.status === 'COMPLETED' ||
+                item?.status === 'CANCELED' ||
+                item?.status === 'DELIVERING'
                   ? true
                   : false
               }

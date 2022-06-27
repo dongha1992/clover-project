@@ -79,9 +79,10 @@ const CheckDestinationPlace = () => {
         }
       },
       onError: (error: AxiosError) => {
-        const { message } = error.response?.data;
-        alert(message);
-        return;
+        // TODO : 리액트쿼리 onError에서 error.response란 값 자체가 안옴 확인 필요
+        // const { message } = error.response?.data;
+        // alert(message);
+        // return;
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
