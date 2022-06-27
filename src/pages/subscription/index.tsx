@@ -30,7 +30,7 @@ const SubscriptiopPage = () => {
   } = useQuery(
     'getSubscriptionMenus',
     async () => {
-      const params = { categories: '', menuSort: 'LAUNCHED_DESC', searchKeyword: '', type: 'SUBSCRIPTION' };
+      const params = { categories: '', keyword: '', type: 'SUBSCRIPTION' };
 
       const { data } = await getMenusApi(params);
       return data.data;
