@@ -9,7 +9,7 @@ import router from 'next/router';
 import Image from 'next/image';
 import newUserImg from '@public/images/img2.png';
 import friendPushEventImg from '@public/images/img3.png';
-import { Obj } from '@model/index';
+import { IGetOrders, IOrderDeliverie, Obj } from '@model/index';
 import { INIT_USER, userForm } from '@store/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
@@ -20,6 +20,7 @@ import { SubsDashboard } from '@components/Pages/Mypage/Subscription';
 import { getOrderInfoApi } from '@api/order';
 import { userInvitationApi, getUserInfoApi } from '@api/user';
 import isNil from 'lodash-es/isNil';
+import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 interface IMypageMenu {
@@ -32,6 +33,8 @@ interface IMypageMenu {
 const MypagePage = () => {
   const dispatch = useDispatch();
   const { me, isLoginSuccess } = useSelector(userForm);
+  const [subsOrders, setSubsOrders] = useState([]);
+  const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
@@ -45,6 +48,51 @@ const MypagePage = () => {
     },
     {
       onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!me,
+    }
+  );
+
+  const { isLoading: subsOrdersLoading } = useGetOrders(
+    ['getSubscriptionOrders'],
+    { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' },
+    {
+      onSuccess: async (data) => {
+        const orders = await data.orders
+          .map((item: any) => {
+            if (item.id === 723074) {
+              item.subscriptionRound = 3;
+              item.status = 'UNPAID';
+            } else if (item.id === 723075) {
+              item.subscriptionRound = 2;
+              item.status = 'UNPAID';
+            } else if (item.id === 723152 || item.id === 723033) {
+              item.status = 'UNPAID';
+            }
+            return item;
+          })
+          .sort((a: IGetOrders, b: IGetOrders) => {
+            if (a.subscriptionRound! > b.subscriptionRound!) return -1;
+            if (a.subscriptionRound! < b.subscriptionRound!) return 1;
+            if (
+              Number(a.firstDeliveryDateOrigin?.replaceAll('-', '')) >
+              Number(b.firstDeliveryDateOrigin?.replaceAll('-', ''))
+            )
+              return 1;
+            if (
+              Number(a.firstDeliveryDateOrigin?.replaceAll('-', '')) <
+              Number(b.firstDeliveryDateOrigin?.replaceAll('-', ''))
+            )
+              return -1;
+          })
+          .filter((order: IGetOrders) => order.status !== 'COMPLETED' && order.status !== 'CANCELED');
+        const unpaidOrders = orders.filter((order: IGetOrders) => order.status === 'UNPAID');
+        console.log('unpaidOrder', unpaidOrders);
+        console.log('orders', orders);
+        setSubsUnpaidOrders(unpaidOrders);
+        setSubsOrders(orders);
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -110,7 +158,7 @@ const MypagePage = () => {
     router.push('/mypage');
   };
 
-  if (isNil(orderList) && infoLoading) {
+  if (isNil(orderList) && infoLoading && subsOrdersLoading) {
     return <div>로딩</div>;
   }
 
@@ -166,7 +214,7 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList} />}</OrderAndDeliveryWrapper>
-            <SubsDashboard />
+            <SubsDashboard subsOrders={subsOrders} subsUnpaidOrders={subsUnpaidOrders} />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />

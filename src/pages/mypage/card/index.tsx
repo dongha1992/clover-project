@@ -40,13 +40,13 @@ const CardManagementPage = () => {
   const cardEditHandler = async (card: IGetCard) => {
     // TODO(young) : 카드 api {code: 1120, message: 'not found order delivery'} 확인필요
     if (isOrder && orderId) {
-      // const cardId = card.id;
-      // let orderIdNumber = Number(orderId);
-      // const { data } = await postOrderCardChangeApi({ orderId: orderIdNumber, cardId });
+      const cardId = card.id;
+      let orderIdNumber = Number(orderId);
+      const { data } = await postOrderCardChangeApi({ orderId: orderIdNumber, cardId });
 
-      // if (data.code === 200) {
-      // }
-      router.push(`/subscription/${orderId}`);
+      if (data.code === 200) {
+        router.push(`/subscription/${orderId}`);
+      }
     } else if (isFromOrder) {
       dispatch(SET_CARD(card.id));
       router.push('/order');

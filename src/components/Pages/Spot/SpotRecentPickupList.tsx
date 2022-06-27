@@ -30,7 +30,7 @@ const now = dayjs();
 const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, isSubscription, subsDeliveryType, menuId }: any = router.query;
+  const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
@@ -76,7 +76,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             <MeterAndTime>
               {userLocationLen && (
                 <>
-                  <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit}`}</TextH6B>
+                  <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
+                    getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
+                  }`}</TextH6B>
                   <Col />
                 </>
               )}
@@ -93,7 +95,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           <MeterAndTime>
             {userLocationLen && (
               <>
-                <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit}`}</TextH6B>
+                <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
+                  getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
+                }`}</TextH6B>
                 <Col />
               </>
             )}
@@ -150,11 +154,12 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       });
     };
 
-
-    if (!isOpened) {  // 스찻 오픈 예정인 상태 - 주문 불가
+    if (!isOpened) {
+      // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if (isClosed) {  // 스팟 종료된 상태 - 주문 불가
+    if (isClosed) {
+      // 스팟 종료된 상태 - 주문 불가
       return;
     }
     if (isLoginSuccess) {
@@ -168,15 +173,19 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         );
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId },
+          query: { orderId, destinationId },
         });
         return;
       }
 
-      if (hasCart) {  // 로그인o and 장바구니 o
-        if (isDelivery) {  // 장바구니 o, 배송 정보에서 넘어온 경우
-          if (isSubscription) {  // 구독에서 넘어옴
-            if (!!closedDate) {  // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
+      if (hasCart) {
+        // 로그인o and 장바구니 o
+        if (isDelivery) {
+          // 장바구니 o, 배송 정보에서 넘어온 경우
+          if (isSubscription) {
+            // 구독에서 넘어옴
+            if (!!closedDate) {
+              // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
               dispatch(
                 SET_ALERT({
                   alertMessage: `운영 종료 예정된 프코스팟은\n구독을 이용할 수 없어요!`,
@@ -187,15 +196,20 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             } else {
               handleSubsDeliveryType();
             }
-          } else {  // 장바구니 o , 배송 정보에서 넘어온 경우
+          } else {
+            // 장바구니 o , 배송 정보에서 넘어온 경우
             goToDeliveryInfo();
           }
-        } else {  // 장바구니 o, 스팟 검색에서 cart로 이동
+        } else {
+          // 장바구니 o, 스팟 검색에서 cart로 이동
           goToCart();
         }
-      } else {  // 로그인o and 장바구니 x
-        if (isSubscription) {  // 구독에서 넘어옴
-          if (!!closedDate) {  // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
+      } else {
+        // 로그인o and 장바구니 x
+        if (isSubscription) {
+          // 구독에서 넘어옴
+          if (!!closedDate) {
+            // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
             dispatch(
               SET_ALERT({
                 alertMessage: `운영 종료 예정된 프코스팟은\n구독을 이용할 수 없어요!`,
@@ -206,11 +220,13 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           } else {
             handleSubsDeliveryType();
           }
-        } else {  // 로그인o and 장바구니 x, cart로 이동
+        } else {
+          // 로그인o and 장바구니 x, cart로 이동
           goToCart();
         }
       }
-    } else {  // 로그인x, 로그인 이동
+    } else {
+      // 로그인x, 로그인 이동
       dispatch(
         SET_ALERT({
           alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
@@ -237,41 +253,37 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
         {renderSpotMsg()}
         <TagWrapper>
-            {   
-            !isClosed && 
-              (
-                <>
-                  {
-                    isTrial ? (
-                      <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
-                    ) : 
-                    type === 'PRIVATE' ? (
-                      <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
-                    ) : (
-                      null
-                    )
-                  }
-                  {
-                    discountRate! > 0 &&
-                      <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${item?.spotPickup?.spot?.discountRate}% 할인 중`}</Tag>
-                  }
-                </>
-              )
-            }
+          {!isClosed && (
+            <>
+              {isTrial ? (
+                <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                  트라이얼
+                </Tag>
+              ) : type === 'PRIVATE' ? (
+                <Tag margin="0 5px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                  프라이빗
+                </Tag>
+              ) : null}
+              {discountRate! > 0 && (
+                <Tag
+                  margin="0 5px 0 0"
+                  backgroundColor={theme.brandColor5P}
+                  color={theme.brandColor}
+                >{`${item?.spotPickup?.spot?.discountRate}% 할인 중`}</Tag>
+              )}
+            </>
+          )}
         </TagWrapper>
       </FlexColStart>
       <FlexCol>
         <ImageWrapper mapList>
-          {
-            item?.spotPickup?.spot.isTrial ? (
-              <SpotImg  src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
-            ) : 
-              item?.spotPickup?.spot?.images?.length! > 0 ? (
-                <SpotImg src={`${IMAGE_S3_URL}${item?.spotPickup?.spot.images[0].url}`} />
-            ) : (
-              <SpotImg  src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
-            )
-          }
+          {item?.spotPickup?.spot.isTrial ? (
+            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+          ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
+            <SpotImg src={`${IMAGE_S3_URL}${item?.spotPickup?.spot.images[0].url}`} />
+          ) : (
+            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+          )}
         </ImageWrapper>
         {isOpened && !isClosed ? (
           // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled

@@ -41,11 +41,25 @@ const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
           const isSelected = selectedAccessMethod?.id === method.id;
           return (
             <PickWrapper key={index}>
-              <RadioButton onChange={() => changeRadioHandler(method)} isSelected={isSelected} />
+              <RadioButton onChange={() => changeRadioHandler(method)} isSelected={isSelected} margin="0 0 2px" />
               {isSelected ? (
-                <TextH5B padding="0 0 0 8px">{method.text}</TextH5B>
+                <TextH5B
+                  padding="0 0 0 8px"
+                  onClick={() => {
+                    changeRadioHandler(method);
+                  }}
+                >
+                  {method.text}
+                </TextH5B>
               ) : (
-                <TextB2R padding="0 0 0 8px">{method.text}</TextB2R>
+                <TextB2R
+                  padding="0 0 0 8px"
+                  onClick={() => {
+                    changeRadioHandler(method);
+                  }}
+                >
+                  {method.text}
+                </TextB2R>
               )}
             </PickWrapper>
           );
@@ -65,6 +79,7 @@ const Wrapper = styled.div`
   ${homePadding}
 `;
 const PickWrapper = styled.div`
+  cursor: pointer;
   display: flex;
   margin-bottom: 16px;
 `;

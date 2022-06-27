@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { CloseBtn, Container, Header } from './SubsDeliveryChangeSheet';
+import { CloseBtn, Container, Header } from './SubsDeliveryDateChangeSheet';
 
 interface IProps {
   type: string; // required , select
