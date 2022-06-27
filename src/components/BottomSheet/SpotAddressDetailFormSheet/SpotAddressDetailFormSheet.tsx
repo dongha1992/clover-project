@@ -111,7 +111,7 @@ const SpotAddressDetailFormSheet = ({title}: IProps) => {
         </TextB2R>
       </Wrapper>
       <MapWrapper>
-        <DefaultMap centerLat={latitudeLongitude?.latitude} centerLng={latitudeLongitude?.longitude} />
+        <DefaultMap centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
       </MapWrapper>
       <AddressWrapper>
         <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>
