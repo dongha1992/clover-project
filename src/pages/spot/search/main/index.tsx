@@ -17,9 +17,9 @@ import { useRouter } from 'next/router';
 import { Swiper } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
-import { 
-  spotSelector, 
-  INIT_SEARCH_SELECTED_FILTERS, 
+import {
+  spotSelector,
+  INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
   SET_SPOT_POSITIONS,
   SET_SEARCH_KEYWORD,
@@ -52,27 +52,27 @@ const SpotSearchMainPage = (): ReactElement => {
   const inputRef = useRef<HTMLInputElement>(null);
   const userLocationLen = !!userLocation.emdNm?.length;
 
-  useEffect(()=> {
+  useEffect(() => {
     defaultRedioId();
     inputRef.current?.focus();
     setKeyword(spotKeyword);
     dispatch(INIT_SPOT_MAP_SWITCH());
   }, []);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (spotKeyword?.length > 0) {
-        fetchSpotSearchData({keyword: spotKeyword});
-    };
+      fetchSpotSearchData({ keyword: spotKeyword });
+    }
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (spotKeyword?.length > 0) {
-      fetchSpotSearchData({keyword: spotKeyword});
+      fetchSpotSearchData({ keyword: spotKeyword });
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
-    };
+    }
   }, [spotKeyword]);
 
-  useEffect(()=> {
+  useEffect(() => {
     filteredItem();
   }, [searchResult, spotSearchSort]);
 
@@ -86,9 +86,9 @@ const SpotSearchMainPage = (): ReactElement => {
       if (inputRef.current) {
         inputRef.current.focus();
       } else {
-          return;
-      };
-    };
+        return;
+      }
+    }
   }, [orderId]);
 
   useEffect(() => {
@@ -172,9 +172,9 @@ const SpotSearchMainPage = (): ReactElement => {
   // 스팟 검색 결과 api
   const getSearchResult = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
-    if(value.length > 0){
+    if (value.length > 0) {
       setCurrentValurLen(true);
-    };
+    }
 
     if (e.key === 'Enter') {
       if (inputRef.current) {
@@ -184,12 +184,12 @@ const SpotSearchMainPage = (): ReactElement => {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData({keyword});
+        fetchSpotSearchData({ keyword });
       }
     }
   }, []);
 
-  const fetchSpotSearchData = async({keyword} : {keyword: string}) => {
+  const fetchSpotSearchData = async ({ keyword }: { keyword: string }) => {
     try {
       const params = {
         keyword: keyword,
@@ -219,16 +219,15 @@ const SpotSearchMainPage = (): ReactElement => {
     if (!inputText) {
       setSearchResult([]);
       setIsSearched(false);
-    };
+    }
   };
-
 
   const defaultRedioId = () => {
     if (userLocationLen) {
-      return dispatch(SET_SPOT_SEARCH_SORT('nearest'))
+      return dispatch(SET_SPOT_SEARCH_SORT('nearest'));
     } else if (!userLocationLen) {
-      return dispatch(SET_SPOT_SEARCH_SORT('frequency'))
-    } 
+      return dispatch(SET_SPOT_SEARCH_SORT('frequency'));
+    }
   };
 
   const filteredItem = () => {
@@ -238,13 +237,17 @@ const SpotSearchMainPage = (): ReactElement => {
       case undefined:
         return list;
       case 'nearest':
-        return (
-          list.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  a.distance - b.distance })
-          );
+        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
+          return a.distance - b.distance;
+        });
       case 'frequency':
-        return list.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.score - a.score });
+        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
+          return b.score - a.score;
+        });
       case 'user':
-        return list.sort((a: ISpotsDetail, b: ISpotsDetail): number => { return  b.userCount - a.userCount });
+        return searchResult.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
+          return b.userCount - a.userCount;
+        });
     }
   };
 
@@ -257,25 +260,26 @@ const SpotSearchMainPage = (): ReactElement => {
   }, [searchResult]);
 
   // GPS - 현재위치 가져오기
-  const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+  const getCurrentPosition = () =>
+    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
   const getLocation = async () => {
-      try {
-        const position: any = await getCurrentPosition();
-        if(position) {
-          // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
-          dispatch(
-            SET_SPOT_POSITIONS({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            })
-          );  
-        }
-       return { Status: true, position, };
-     } catch (error) {
-       console.log("getCurrentLatLong::catcherror =>", error);
-       return { Status: false, };
-     }
+    try {
+      const position: any = await getCurrentPosition();
+      if (position) {
+        // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
+        dispatch(
+          SET_SPOT_POSITIONS({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          })
+        );
+      }
+      return { Status: true, position };
+    } catch (error) {
+      console.log('getCurrentLatLong::catcherror =>', error);
+      return { Status: false };
+    }
   };
 
   const clearInputHandler = () => {
@@ -290,12 +294,12 @@ const SpotSearchMainPage = (): ReactElement => {
   const initInputHandler = () => {
     if (inputRef.current) {
       inputRef.current.value = '';
-    };
+    }
   };
 
   if (isLoadingRecomand && isLoadingPickup) {
     return <div>로딩</div>;
-  };
+  }
 
   return (
     <Container>
@@ -437,15 +441,15 @@ const RecentPickWrapper = styled.div`
   ${homePadding};
 `;
 
-const DefaultSearchContainer = styled.section<{empty?: boolean}>`
-  ${({empty}) => {
-    if(empty){
+const DefaultSearchContainer = styled.section<{ empty?: boolean }>`
+  ${({ empty }) => {
+    if (empty) {
       return css`
         height: 32vh;
         display: flex;
         justify-content: center;
         align-items: end;
-      `
+      `;
     }
   }}
 `;

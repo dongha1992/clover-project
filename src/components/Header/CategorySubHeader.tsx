@@ -26,11 +26,7 @@ const CategorySubHeader = ({ title }: TProps) => {
   const router = useRouter();
 
   const goBack = (): void => {
-    if (router.pathname.indexOf('category') > -1) {
-      router.push('/');
-    } else {
-      router.back();
-    }
+    router.back();
   };
 
   const scrollToAllMenusItemOffsetLeft = (targetOffset: number) => {

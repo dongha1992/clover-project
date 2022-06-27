@@ -1180,6 +1180,7 @@ export interface IOrderDetailInOrderDeliveries {
 }
 
 export interface IEditOrderDestination {
+  applyAll?: boolean;
   deliveryMessage: string;
   deliveryMessageType: string;
   location: ILocation;
@@ -1188,6 +1189,7 @@ export interface IEditOrderDestination {
 }
 
 export interface IEditOrderSpotDestination {
+  applyAll?: boolean;
   receiverName: string;
   receiverTel: string;
   spotPickupId: number;
@@ -1307,7 +1309,9 @@ export interface IGetOrders {
   orderDeliveries: IOrderDeliverie[];
   image: IMenuImage;
   firstDeliveryDate?: string;
+  firstDeliveryDateOrigin?: string;
   lastDeliveryDate?: string;
+  lastDeliveryDateOrigin?: string;
   currentDeliveryDate?: string;
   subscriptionMenuId?: number;
 }
@@ -1658,7 +1662,7 @@ export type TType =
 export interface IGetMenus {
   categories?: TCategory;
   menuSort?: TMenuSort | string;
-  searchKeyword?: string;
+  keyword?: string;
   type: TType | string;
 }
 
