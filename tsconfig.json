@@ -14,7 +14,8 @@
       "@constants/*": ["./src/constants/*"],
       "@styles/*": ["./src/styles/*"],
       "@utils/*": ["./src/utils/*"],
-      "@enum/*": ["./src/enum/*"]
+      "@enum/*": ["./src/enum/*"],
+      "@queries/*": ["./src/queries/*"]
     },
     "allowJs": true,
     "skipLibCheck": true,

@@ -21,6 +21,8 @@ import { getOrderInfoApi } from '@api/order';
 import { userInvitationApi, getUserInfoApi } from '@api/user';
 import isNil from 'lodash-es/isNil';
 import { useGetOrders } from 'src/queries/order';
+import { removeCookie } from '@utils/common/cookie';
+import { SET_LOGIN_SUCCESS } from '@store/user';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -93,6 +95,7 @@ const MypagePage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -139,6 +142,20 @@ const MypagePage = () => {
     } else {
       router.push('/mypage/profile/confirm');
     }
+  };
+
+  const logoutHandler = () => {
+    dispatch(SET_LOGIN_SUCCESS(false));
+    dispatch(INIT_USER());
+    delete sessionStorage.accessToken;
+    removeCookie({ name: 'refreshTokenObj' });
+    removeCookie({ name: 'autoL' });
+    removeCookie({ name: 'acstk' });
+    localStorage.removeItem('persist:nextjs');
+    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+      window.Kakao.Auth.logout();
+    }
+    router.push('/mypage');
   };
 
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
@@ -220,6 +237,11 @@ const MypagePage = () => {
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="앱설정" link="/mypage/setting" />
               <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
+              <LogoutWrapper onClick={logoutHandler}>
+                <FlexBetween padding="24px 0">
+                  <TextH4B>로그아웃</TextH4B>
+                </FlexBetween>
+              </LogoutWrapper>
             </ManageWrapper>
           </>
         ) : (
@@ -321,6 +343,15 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   margin-bottom: 158px;
+`;
+
+const LogoutWrapper = styled.div`
+  cursor: pointer;
+  padding: 0 24px;
+  list-style: none;
+  > div {
+    border-bottom: 1px solid ${theme.greyScale3};
+  }
 `;
 
 const UserInfoWrapper = styled.div`
