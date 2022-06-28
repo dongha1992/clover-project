@@ -254,7 +254,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
             <StorImgWrapper onClick={goToDetail}>
               {!isSearch && (
                 <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
-                  <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
+                  <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
                 </LikeWrapper>
               )}
               {list.isTrial ? (
@@ -327,7 +327,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                     border
                     onClick={() => clickSpotOpen(list.id!)}
                   >
-                    주문하기
+                    참여하기
                   </Button>
                 ) : (
                   <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
@@ -444,27 +444,5 @@ const ButtonWrapper = styled.div`
   align-items: end;
   margin-right: 7px;
 `;
-
-// const Button = styled.button`
-//   width: 75px;
-//   height: 38px;
-//   border: 1px solid ${theme.black};
-//   border-radius: 8px;
-//   background: ${theme.white};
-//   font-weight: bold;
-//   color: ${theme.black};
-//   cursor: pointer;
-// `;
-
-// const ButtonComplete = styled.button`
-//   width: 75px;
-//   height: 38px;
-//   border: 1px solid ${theme.greyScale25};
-//   border-radius: 8px;
-//   background: ${theme.white};
-//   font-weight: bold;
-//   color: ${theme.greyScale25};
-//   cursor: pointer;
-// `;
 
 export default SpotList;

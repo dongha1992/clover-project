@@ -202,8 +202,7 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
             </Button>
             <Button
               onClick={() => {
-                subscriptionPeriod === 'UNLIMITED' &&
-                  item?.status !== 'COMPLETED' &&
+                item?.status !== 'COMPLETED' &&
                   item?.status !== 'CANCELED' &&
                   item?.status !== 'DELIVERING' &&
                   deliveryDateChangeHandler();
@@ -213,10 +212,7 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
               color="#242424"
               border
               disabled={
-                subscriptionPeriod !== 'UNLIMITED' ||
-                item?.status === 'COMPLETED' ||
-                item?.status === 'CANCELED' ||
-                item?.status === 'DELIVERING'
+                item?.status === 'COMPLETED' || item?.status === 'CANCELED' || item?.status === 'DELIVERING'
                   ? true
                   : false
               }

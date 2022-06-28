@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { homePadding, bottomSheetButton, fixedBottom, theme, FlexRow } from '@styles/theme';
 import { TextB2R, TextH1B, TextH4B, TextH6B, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
-import MapAPI from '@components/Map';
+import { DefaultMap } from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import router from 'next/router';
@@ -111,7 +111,7 @@ const SpotAddressDetailFormSheet = ({title}: IProps) => {
         </TextB2R>
       </Wrapper>
       <MapWrapper>
-        <MapAPI centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
+        <DefaultMap centerLat={Number(latitudeLongitude?.latitude)} centerLng={Number(latitudeLongitude?.longitude)} />
       </MapWrapper>
       <AddressWrapper>
         <TextH4B padding="0 0 4px 0">{tempLocation.roadAddr}</TextH4B>

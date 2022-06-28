@@ -7,3 +7,5 @@ export { default as SpotRecommendList } from './SpotRecommendList';
 export { default as SpotSearchFilter } from './SpotSearchFilter';
 export { default as SpotRecentPickupList } from './SpotRecentPickupList';
 export { default as SpotSearchKeyword } from './SpotSearchKeyword';
+export { default as SpotSearchMapList } from './SpotSearchMapList';
+export { default as SpotSearchMapMain } from './SpotSearchMapMain';
