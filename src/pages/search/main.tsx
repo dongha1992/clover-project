@@ -23,15 +23,12 @@ const SearchMainPage = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
   const { categoryFilters, type } = useSelector(filterSelector);
   const isFilter = categoryFilters?.order || categoryFilters?.filter;
-
-  /* TODO: [category] 쪽이랑 코드 중복 */
 
   const {
     error: menuError,
@@ -76,6 +73,12 @@ const SearchMainPage = () => {
 
   useEffect(() => {
     initLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_CATEGORY_FILTER());
+    };
   }, []);
 
   useEffect(() => {
@@ -213,7 +216,7 @@ const Wrapper = styled.div`
   .removeSvg {
     cursor: pointer;
     position: absolute;
-    right: 7%;
+    right: 9%;
     top: 35%;
   }
 `;
