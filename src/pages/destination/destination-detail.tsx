@@ -194,7 +194,7 @@ const DestinationDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <DefaultMap centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
+        <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>
