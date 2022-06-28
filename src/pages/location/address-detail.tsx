@@ -18,12 +18,11 @@ const AddressDetailPage = () => {
   const { isSpot } = router.query;
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
-    latitude: '',
-    longitude: '',
+    latitude: null,
+    longitude: null,
   });
 
   // 배송 가능 여부
-
   const destinationDeliveryType = checkDestinationHelper(availableDestination);
   const canNotDelivery = destinationDeliveryType === 'noDelivery';
 
@@ -81,7 +80,7 @@ const AddressDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <DefaultMap centerLat={latitudeLongitude.latitude} centerLng={latitudeLongitude.longitude} />
+        <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       {canNotDelivery ? (
         <ButtonGroup
