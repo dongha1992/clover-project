@@ -729,12 +729,15 @@ const CartPage = () => {
     }
   };
 
-  const getDisposableItemPrice = useCallback((): number => {
-    return (
-      disposableList.reduce((totalPrice, item) => {
-        return totalPrice + item.price * item.quantity;
-      }, 0) || 0
-    );
+  const getDisposableItem = useCallback((): { price: number; quantity: number } => {
+    return disposableList
+      ?.filter((item) => item.isSelected)
+      .reduce(
+        (total, item) => {
+          return { price: total.price + item.price * item.quantity, quantity: total.quantity + item.quantity };
+        },
+        { price: 0, quantity: 0 }
+      );
   }, [disposableList]);
 
   const getItemsPrice = useCallback((): number => {
@@ -748,7 +751,7 @@ const CartPage = () => {
 
   const getTotalPrice = useCallback((): void => {
     const itemsPrice = getItemsPrice();
-    const disposablePrice = getDisposableItemPrice();
+    const disposablePrice = getDisposableItem().price;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
     setTotalAmount(tempTotalAmout);
@@ -913,7 +916,7 @@ const CartPage = () => {
       );
     }
   }, [destinationObj]);
-
+  console.log(getDisposableItem());
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -1138,18 +1141,24 @@ const CartPage = () => {
                 <TextB2R>{getSpotDiscountPrice()}원</TextB2R>
               </FlexBetween>
             )}
-            <BorderLine height={1} margin="16px 0" />
-            <FlexBetween padding="16px 0 8px">
-              <TextH5B>환경부담금 (일회용품)</TextH5B>
-              <TextB2R>
-                {}개 / {getDisposableItemPrice()}원
-              </TextB2R>
-            </FlexBetween>
+
+            {disposableList.some((item) => item.isSelected) && (
+              <>
+                <BorderLine height={1} margin="16px 0" />
+                <FlexBetween padding="16px 0 8px">
+                  <TextH5B>환경부담금 (일회용품)</TextH5B>
+                  <TextB2R>
+                    {getDisposableItem().quantity}개 / {getDisposableItem().price}원
+                  </TextB2R>
+                </FlexBetween>
+              </>
+            )}
             {disposableList.length > 0 &&
               disposableList.map((disposable, index) => {
-                const { id, quantity, price } = disposable;
-                const hasFork = id === 1;
-                const hasChopsticks = id === 2;
+                const { id, quantity, price, isSelected } = disposable;
+
+                const hasFork = id === 1 && isSelected;
+                const hasChopsticks = id === 2 && isSelected;
                 return (
                   <div key={index}>
                     {hasFork && (
