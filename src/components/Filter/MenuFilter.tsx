@@ -116,6 +116,7 @@ const MenuFilter = () => {
 const Container = styled.div`
   width: 100%;
   margin-bottom: 32px;
+  background-color: white;
 `;
 const Wrapper = styled.div`
   padding-left: 24px;

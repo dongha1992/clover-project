@@ -1,17 +1,19 @@
 import cloneDeep from 'lodash-es/cloneDeep';
 import { IMenus, Obj } from '@model/index';
 
+interface IFilter {
+  order: string;
+  filter: string[];
+}
 interface IProps {
-  categoryFilters: {
-    order: string;
-    filter: string[];
-  };
+  categoryFilters: IFilter | null;
   menus: IMenus[];
 }
 const getFilteredMenus = ({ menus, categoryFilters }: IProps) => {
   try {
     let copiedMenuList = cloneDeep(menus);
     const hasCategory = categoryFilters?.filter && categoryFilters?.filter?.filter((i) => i).length !== 0;
+
     if (hasCategory) {
       copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
     }
@@ -62,7 +64,10 @@ export const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
 
 const reorderedMenusBySoldout = (menuList: IMenus[]) => {
   return menuList?.sort((a: any, b: any) => {
-    return a.isSold - b.isSold;
+    return (
+      a?.menuDetails?.every((menu: IMenus) => menu.isSold) - b?.menuDetails?.every((menu: IMenus) => menu.isSold) ||
+      a.isSold - b.isSold
+    );
   });
 };
 
