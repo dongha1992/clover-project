@@ -82,12 +82,16 @@ export const FlexBetween = styled.div<{
 export const FlexBetweenStart = styled.div<{
   padding?: string;
   margin?: string;
+  width?: string;
+  height?: string;
 }>`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
+  height: ${({ height }) => height && height};
 `;
 
 export const FlexRowStart = styled.div<{ padding?: string; margin?: string; width?: string }>`

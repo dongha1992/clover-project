@@ -23,6 +23,7 @@ import isNil from 'lodash-es/isNil';
 import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
+import { INIT_CART_LISTS } from '@store/cart';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -147,6 +148,7 @@ const MypagePage = () => {
   const logoutHandler = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
     dispatch(INIT_USER());
+    dispatch(INIT_CART_LISTS());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     removeCookie({ name: 'autoL' });

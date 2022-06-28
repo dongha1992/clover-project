@@ -4,13 +4,14 @@ import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Obj } from '@model/index';
+import { getHolidayByMenu } from '@utils/menu';
 interface IProps {
   isSold?: boolean;
   holiday?: number[][];
   availabilityInfo?: {
     availability: boolean;
     remainingQuantity: number;
-    menuDetailAvailabilityMessage: string;
+    menuDetailAvailabilityMessage?: string;
   };
 }
 
@@ -23,20 +24,14 @@ const InfoMessage = ({ isSold, holiday, availabilityInfo }: IProps) => {
 
     switch (true) {
       case isSold: {
-        <TextB3R padding="4px 0 0 4px" color={theme.brandColor}>
-          품절된 상품이에요.
-        </TextB3R>;
+        return <TextB3R color={theme.brandColor}>품절된 상품이에요.</TextB3R>;
       }
       case hasLimitDate: {
-        <TextB3R padding="4px 0 0 4px" color={theme.brandColor}>
-          품절 임박! 상품이 {availabilityInfo?.remainingQuantity}개 남았어요
-        </TextB3R>;
+        return <TextB3R color={theme.brandColor}>{getHolidayByMenu(holiday!)} 배송이 불가능해요</TextB3R>;
       }
       case hasLimitQuantity: {
         return (
-          <TextB3R padding="4px 0 0 4px" color={theme.brandColor}>
-            품절 임박! 상품이 {availabilityInfo?.remainingQuantity}개 남았어요
-          </TextB3R>
+          <TextB3R color={theme.brandColor}>품절 임박! 상품이 {availabilityInfo?.remainingQuantity}개 남았어요</TextB3R>
         );
       }
       default: {
@@ -47,16 +42,22 @@ const InfoMessage = ({ isSold, holiday, availabilityInfo }: IProps) => {
 
   return (
     <Container>
-      <SVGIcon name="exclamationMark" />
+      <div>
+        <SVGIcon name="exclamationMark" />
+      </div>
       <div>{getCartMenuStatus()}</div>
     </Container>
   );
 };
 
 const Container = styled.div`
-  width: 100%;
   display: flex;
   align-items: center;
+  margin-right: 6px;
+
+  > div {
+    align-self: flex-start;
+  }
 `;
 
 export default React.memo(InfoMessage);
