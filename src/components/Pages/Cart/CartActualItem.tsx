@@ -31,7 +31,7 @@ const CartActualItem = ({
     discountPrice: menuDetail.discountPrice,
     price: menuDetail.price,
   });
-  console.log(menuDetail, 'menuDetail');
+
   return (
     <Container isSold={menuDetail.isSold}>
       <ContentWrapper>
@@ -53,7 +53,7 @@ const CartActualItem = ({
             </TextH5B>
             <TextH5B>{discountedPrice}원</TextH5B>
           </PriceWrapper>
-          <FlexBetweenStart>
+          <InfoContainer>
             <InfoMessage isSold={menuDetail.isSold} availabilityInfo={menuDetail.availabilityInfo} holiday={holiday} />
             <CountButtonContainer>
               <CountButton
@@ -64,7 +64,7 @@ const CartActualItem = ({
                 clickMinusButton={clickMinusButton}
               />
             </CountButtonContainer>
-          </FlexBetweenStart>
+          </InfoContainer>
         </FlexCol>
       </ContentWrapper>
     </Container>
@@ -80,12 +80,13 @@ const Container = styled.div<{ isSold?: boolean }>`
   border-radius: 8px;
   position: relative;
   margin-left: 28px;
+  height: 100%;
 `;
 
 const ContentWrapper = styled.div`
   margin-left: 8px;
   width: 100%;
-  height: 70px;
+  /* height: 70px; */
 `;
 
 const PriceWrapper = styled.div`
@@ -94,9 +95,15 @@ const PriceWrapper = styled.div`
 `;
 
 const CountButtonContainer = styled.div`
-  position: absolute;
+  /* position: absolute; */
   bottom: 12px;
   right: 12px;
 `;
 
+const InfoContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  height: 100%;
+`;
 export default React.memo(CartActualItem);

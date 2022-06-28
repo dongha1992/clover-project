@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
-import { AxiosError } from 'axios';
 import BorderLine from '@components/Shared/BorderLine';
 import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
 import {
   homePadding,
   theme,
-  flexCenter,
   ScrollHorizonList,
   FlexBetween,
   FlexStart,
@@ -53,7 +51,7 @@ import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postC
 import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { pluck, pipe, reduce, toArray, map, entries, each, flatMap, intersectionBy } from '@fxts/core';
+import { pipe, toArray, flatMap } from '@fxts/core';
 import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ } from '@constants/cart';
 import dayjs from 'dayjs';
@@ -288,6 +286,8 @@ const CartPage = () => {
     }
   );
 
+  /* TODO: 배송지 가능 api 질문 */
+
   // const { data: result, refetch } = useQuery(
   //   ['getAvailabilityDestination'],
   //   async () => {
@@ -388,8 +388,7 @@ const CartPage = () => {
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
       const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
-      let sameDeliveryAddress = isEqual(location, destinationObj?.location);
-      sameDeliveryAddress = true;
+      const sameDeliveryAddress = isEqual(location, destinationObj?.location);
       return sameDeliveryAddress && sameDeliveryType;
     };
 
@@ -638,7 +637,6 @@ const CartPage = () => {
 
     const orderMenus = getMenuDetailsId(checkedMenus);
     const orderOptions = getOptionsItemId(disposableList);
-    console.log(orderOptions, 'orderOptions');
 
     const reqBody = {
       destinationId: destinationObj.destinationId!,
@@ -754,6 +752,7 @@ const CartPage = () => {
     const disposablePrice = getDisposableItem().price;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
+
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
@@ -784,7 +783,7 @@ const CartPage = () => {
       if (!fee || amountForFree < totalAmount) return 0;
       return fee;
     }
-  }, [totalAmount, destinationObj?.delivery, disposableList]);
+  }, [destinationObj?.delivery, disposableList, totalAmount]);
 
   const orderButtonRender = () => {
     let buttonMessage = '';
@@ -842,7 +841,6 @@ const CartPage = () => {
   useEffect(() => {
     if (calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
-
       window.scrollTo({
         behavior: 'smooth',
         left: 0,
@@ -891,23 +889,17 @@ const CartPage = () => {
   }, [checkedMenus, disposableList]);
 
   useEffect(() => {
-    setIsFirstRender(true);
-    dispatch(INIT_ACCESS_METHOD());
-  }, []);
-
-  useEffect(() => {
     // 스팟 종료 날짜
     const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
-
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
+
     // 스팟 운영 종료
     if (dDay) {
       return;
     }
 
     const closedSoonOperation = dDay >= -14;
-
-    if (closedSoonOperation && destinationObj.delivery === 'spot') {
+    if (closedSoonOperation && isSpot) {
       dispatch(
         SET_ALERT({
           alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
@@ -916,7 +908,12 @@ const CartPage = () => {
       );
     }
   }, [destinationObj]);
-  console.log(getDisposableItem());
+
+  useEffect(() => {
+    setIsFirstRender(true);
+    dispatch(INIT_ACCESS_METHOD());
+  }, []);
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -1192,7 +1189,7 @@ const CartPage = () => {
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
-              <TextH4B>{totalAmount}원</TextH4B>
+              <TextH4B>{totalAmount + getDeliveryFee()}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>

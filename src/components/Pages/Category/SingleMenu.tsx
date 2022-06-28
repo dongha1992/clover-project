@@ -40,15 +40,6 @@ const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
     return <div>로딩중</div>;
   }
 
-  console.log(
-    reorderedMenusBySoldout(
-      getFilteredMenus({
-        menus: lunchAndConvenienceFood,
-        categoryFilters,
-      })
-    )
-  );
-
   return (
     <Container>
       {!isAllMenu ? <TextH3B padding="0 0 17px 0">{title}</TextH3B> : ''}
