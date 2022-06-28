@@ -49,7 +49,9 @@ const SearchPage = () => {
           <div className="sgv">
             <SVGIcon name="searchIcon" />
           </div>
-          <TextB2R color={theme.greyScale45}>원하시는 상품을 검색해보세요.</TextB2R>
+          <TextB2R color={theme.greyScale45} padding="1px 0 0 0">
+            원하시는 상품을 검색해보세요.
+          </TextB2R>
         </TextInputButton>
       </Wrapper>
       <DefaultSearchContainer>
@@ -86,6 +88,7 @@ const SearchPage = () => {
 };
 
 const Container = styled.main``;
+
 const TextInputButton = styled.div`
   position: relative;
   width: 100%;
@@ -94,7 +97,7 @@ const TextInputButton = styled.div`
   border: 1px solid ${theme.greyScale15};
   outline: none;
   cursor: pointer;
-  padding: 13px 48px;
+  padding: 12px 48px;
   .sgv {
     position: absolute;
     left: 15px;
