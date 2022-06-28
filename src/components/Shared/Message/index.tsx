@@ -17,6 +17,9 @@ interface IProps {
 
 /* TODO: 최대 구매? */
 
+// 판매중지일 먼저
+// 어느 날짜에나 스태퍼는 동일. 인당 제한만
+
 const InfoMessage = ({ isSold, holiday, availabilityInfo }: IProps) => {
   const getCartMenuStatus = () => {
     const hasLimitDate = holiday?.length! > 0;
