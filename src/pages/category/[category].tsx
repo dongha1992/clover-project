@@ -14,6 +14,7 @@ import { getMenusApi } from '@api/menu';
 import { useRouter } from 'next/router';
 import { IAllMenus } from '@components/Pages/Category/SingleMenu';
 import { cloneDeep } from 'lodash-es';
+import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 
 /* TODO: 로그인 체크 알림신청 */
 /* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
@@ -72,22 +73,16 @@ const CategoryPage = () => {
       enabled: !!type,
       onError: () => {},
       onSuccess: (data) => {
-        const reOrdered = checkIsSold(data);
+        const reOrdered = reorderedMenusBySoldout(data);
         checkIsFiltered(reOrdered);
         setDefaultMenus(reOrdered);
       },
     }
   );
 
-  const checkIsSold = (menuList: IMenus[]) => {
-    return menuList?.sort((a: any, b: any) => {
-      return a.isSold - b.isSold;
-    });
-  };
-
   const checkIsFiltered = (menuList: IMenus[]) => {
     if (isFilter) {
-      const filered = filteredMenus(menuList);
+      const filered = reorderedMenusBySoldout(getFilteredMenus({ menus: menuList, categoryFilters }));
       checkIsAllMenus(filered!);
     } else {
       checkIsAllMenus(menuList);
@@ -119,58 +114,6 @@ const CategoryPage = () => {
       obj[group].push(menu);
       return obj;
     }, {});
-  };
-
-  const filteredMenus = (menuList: IMenus[]) => {
-    try {
-      let copiedMenuList = cloneDeep(menuList);
-      const hasCategory = categoryFilters?.filter?.filter((i) => i).length !== 0;
-
-      if (hasCategory) {
-        copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
-      }
-
-      if (!categoryFilters?.order) {
-        return copiedMenuList;
-      } else {
-        switch (categoryFilters?.order) {
-          case '': {
-            return menuList;
-          }
-          case 'ORDER_COUNT_DESC': {
-            return copiedMenuList.sort((a, b) => b.orderCount - a.orderCount);
-          }
-          case 'LAUNCHED_DESC': {
-            return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
-          }
-          case 'PRICE_DESC': {
-            return getPriceOrder(copiedMenuList, 'max');
-          }
-          case 'PRICE_ASC': {
-            return getPriceOrder(copiedMenuList, 'min');
-          }
-          case 'REVIEW_COUNT_DESC': {
-            return copiedMenuList.sort((a, b) => b.reviewCount - a.reviewCount);
-          }
-          default:
-            return menuList;
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
-    const mapped = list?.map((menu: IMenus) => {
-      const prices = menu?.menuDetails?.map((item) => item.price);
-      return { ...menu, [order]: Math[order](...prices) };
-    });
-
-    return mapped.sort((a: any, b: any) => {
-      const isMin = order === 'min';
-      return isMin ? a[order] - b[order] : b[order] - a[order];
-    });
   };
 
   useEffect(() => {
