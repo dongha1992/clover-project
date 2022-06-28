@@ -21,7 +21,7 @@ const CloseDefaultHeader = dynamic(() => import('./CloseDefaultHeader'));
 const DefaultHeaderWithCart = dynamic(() => import('./DefaultHeaderWithCart'));
 const SubscriptionHeader = dynamic(() => import('./SubscriptionHeader'));
 const SpotStatusDetailHeader = dynamic(() => import('./SpotStatusDetailHeader'));
-const SpotDetailHeader = dynamic(()=> import('./SpotDetailHeader'));
+const SpotDetailHeader = dynamic(() => import('./SpotDetailHeader'));
 
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
@@ -41,17 +41,17 @@ const Header = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll); //clean up
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleScroll = () => {
-    if(window.scrollY){
+    if (window.scrollY) {
       setScroll(true);
       dispatch(SET_SCROLL(true));
-    }else{
+    } else {
       setScroll(false);
       dispatch(SET_SCROLL(false));
-    };
+    }
   };
 
   const { category } = router.query;
@@ -59,6 +59,7 @@ const Header = () => {
   const renderComponent = (currentPath: string) => {
     const headerTitleMap: Obj = {
       '/search': '검색',
+      '/search/main': '검색',
       '/location': '내 위치 설정하기',
       '/location/address-detail': '내 위치 설정하기',
       '/category/[category]': CATEGORY_TITLE_MAP[category?.toString()!],
@@ -115,7 +116,6 @@ const Header = () => {
       '/spot/join/main/form/submit/finish': '신청하기',
       '/destination/search': '배송지 검색',
       '/destination/destination-detail': '배송지 검색',
-      '/spot/search/location': '프코스팟 검색',
       '/spot/status': '스팟 관리',
       '/spot/location': '주소 검색',
       '/spot/location/address': '주소 검색',
@@ -137,31 +137,31 @@ const Header = () => {
         return (
           <Container scroll={scroll}>
             <CategorySubHeader title={title} />
-          </Container> 
-        )
+          </Container>
+        );
 
       case ['/menu/[menuId]', '/subscription/products/[id]'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <MenuDetailHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
       case ['/mypage'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <MyPageHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
       case ['/mypage/noti'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <NotiHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
       case [
@@ -176,19 +176,22 @@ const Header = () => {
         return (
           <Container scroll={scroll}>
             <TabHeader title={title} />
-          </Container> 
-        )
-        
+          </Container>
+        );
       }
 
-      case ['/search', '/mypage/dib/general', '/mypage/dib/subscription', '/mypage/order-detail'].includes(
-        currentPath
-      ): {
+      case [
+        '/search',
+        '/search/main',
+        '/mypage/dib/general',
+        '/mypage/dib/subscription',
+        '/mypage/order-detail',
+      ].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <DefaultHeaderWithCart title={title} />
           </Container>
-        )
+        );
       }
 
       case ['/'].includes(currentPath): {
@@ -196,84 +199,78 @@ const Header = () => {
           <Container scroll={scroll}>
             <HomeHeader />
           </Container>
-        )
+        );
       }
       case ['/subscription'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <SubscriptionHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
       case ['/spot'].includes(currentPath): {
-        return  (
+        return (
           <Container scroll={scroll}>
             <SpotHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
       case ['/spot/detail/[id]'].includes(currentPath): {
-        return  (
+        return (
           <Container scroll={scroll}>
             <SpotDetailHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
-      case ['/spot/search', '/spot/search/main', '/spot/search/location'].includes(currentPath): {
+      case ['/spot/search', '/spot/search/main'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <SpotSearchHeader title={title} />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
       case ['/spot/join/main/form/submit/finish', '/spot/open'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <CloseDefaultHeader title={title} />
-          </Container> 
-        ) 
+          </Container>
+        );
       }
 
       case ['/mypage/spot-status/detail/[id]'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <SpotStatusDetailHeader />
-          </Container> 
-        )
+          </Container>
+        );
       }
 
-      case [
-        '/mypage/spot-status', 
-        '/mypage/review', 
-        '/mypage/address',
-        '/mypage/subscription',
-      ].includes(currentPath): {
-        return     (
+      case ['/mypage/spot-status', '/mypage/review', '/mypage/address', '/mypage/subscription'].includes(currentPath): {
+        return (
           <Container>
             <DefaultHeader title={title} />
           </Container>
-        )       
+        );
       }
 
       default: {
         return (
           <Container scroll={scroll}>
             <DefaultHeader title={title} />
-          </Container> 
-        )
+          </Container>
+        );
       }
-
     }
   };
 
   return <>{renderComponent(currentPath)}</>;
 };
 
-const Container = styled.div<{scroll?: boolean}>`
+const Container = styled.div<{ scroll?: boolean }>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
@@ -284,16 +281,16 @@ const Container = styled.div<{scroll?: boolean}>`
   left: calc(50%);
   background-color: white;
 
-  ${({scroll}) => {
-    if(scroll){
+  ${({ scroll }) => {
+    if (scroll) {
       return css`
         //box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
         filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
       `;
     }
   }};
-  
-    ${({ theme }) => theme.desktop`
+
+  ${({ theme }) => theme.desktop`
     margin: 0 auto;
     left: 0px;
 

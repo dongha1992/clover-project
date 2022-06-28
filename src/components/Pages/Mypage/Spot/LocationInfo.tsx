@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH5B, TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import MapAPI from '@components/Map';
+import { DefaultMap } from '@components/Map';
 import { IGetRegistrationStatus } from '@model/index';
 
 interface IParams {
@@ -70,7 +70,7 @@ const LocationInfo = ({ item }: IParams) => {
         }
       </InfoWrapper>
       <MapWrapper>
-        <MapAPI centerLat={item?.coordinate.lat} centerLng={item?.coordinate.lon} />
+        <DefaultMap centerLat={item?.coordinate.lat} centerLng={item?.coordinate.lon} />
       </MapWrapper>
     </Container>
   )

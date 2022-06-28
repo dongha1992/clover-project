@@ -247,7 +247,7 @@ export const FixedTab = styled.div`
   `};
 `;
 
-export const fixedTab = css `
+export const fixedTab = css`
   position: fixed;
   width: 100%;
   left: calc(50%);
@@ -329,9 +329,9 @@ export const textBody1 = css`
 `;
 export const textBody2 = css`
   font-size: 14px;
-  letter-spacing: -0.4;
+  letter-spacing: -0.4px;
   font-weight: normal;
-  line-height: 24px;
+  line-height: 22px;
 `;
 export const textBody3 = css`
   font-size: 12px;

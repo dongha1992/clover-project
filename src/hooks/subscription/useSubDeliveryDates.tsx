@@ -1,34 +1,23 @@
 import { getOrderListsApi } from '@api/order';
 import { useEffect, useState } from 'react';
 
-const useSubDeliveryDates = () => {
+const useSubDeliveryDates = (orderDeliveries: any) => {
+  console.log('useSubDeliveryDates');
+
   const [subDates, setSubDates] = useState<any>([]);
 
   useEffect(() => {
-    getApi();
-  }, []);
+    let datas: any = [];
 
-  const getApi = async () => {
-    const params = {
-      days: 90,
-      page: 1,
-      size: 1,
-      type: 'GENERAL',
-    };
+    orderDeliveries?.forEach((o: any) => {
+      if (o?.subOrderDelivery?.type === 'SUB') {
+        datas.push(o);
+      }
+    });
 
-    const { data } = await getOrderListsApi(params);
+    setSubDates(datas);
+  }, [orderDeliveries]);
 
-    let dates: any = [];
-
-    if (data.code === 200) {
-      data.data.orderDeliveries.forEach((o) => {
-        if (o.subOrderDelivery) {
-          dates.push(o.subOrderDelivery);
-        }
-      });
-      setSubDates(dates);
-    }
-  };
   return subDates;
 };
 export default useSubDeliveryDates;

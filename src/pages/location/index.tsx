@@ -9,8 +9,16 @@ import { useDispatch } from 'react-redux';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
-import { SET_LOCATION_TEMP } from '@store/destination';
+import { SET_LOCATION_TEMP, SET_LOCATION } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
+import { getAddressFromLonLat } from '@api/location';
+import { SET_ALERT } from '@store/alert';
+import { SET_SPOT_POSITIONS } from '@store/spot';
+
+interface IPosition {
+  latitude: number | null;
+  longitude: number | null
+};
 
 const LocationPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -19,14 +27,12 @@ const LocationPage = () => {
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-
+  const [position, setPostion] = useState<IPosition>({latitude: null, longitude: null});
   const addressRef = useRef<HTMLInputElement>(null);
 
   const router = useRouter();
   const dispatch = useDispatch();
   const { isSpot } = router.query;
-
-  const getGeoLocation = () => {};
 
   useEffect(() => {
     const handleScroll = () => {
@@ -109,7 +115,7 @@ const LocationPage = () => {
     setIsSearched(false);
   };
 
-  const goToMapScreen = (address: any): void => {
+  const goToMapDetail = (address: any): void => {
     dispatch(SET_LOCATION_TEMP(address));
     if (isSpot) {
       router.push({
@@ -123,6 +129,59 @@ const LocationPage = () => {
       });
     }
   };
+
+  const getGeoLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { data } = await getAddressFromLonLat({
+          y: position.coords.latitude?.toString(),
+          x: position.coords.longitude?.toString(),
+        });
+        setPostion({
+          latitude: position.coords.latitude,
+          longitude: position.coords.latitude,
+        });
+        dispatch(SET_LOCATION_TEMP({
+            roadAddr: null,
+            roadAddrPart1: data.documents[0].address_name,
+            roadAddrPart2: null,
+            jibunAddr: null,
+            engAddr: null,
+            zipNo: null,
+            admCd: null,
+            rnMgtSn: null,
+            bdMgtSn: null,
+            detBdNmList: null,
+            bdNm: null,
+            bdKdcd: null,
+            siNm: null,
+            sggNm: null,
+            emdNm: data.documents[0].region_3depth_name,
+            liNm: null,
+            rn: null,
+            udrtYn: null,
+            buldMnnm: null,
+            buldSlno: null,
+            mtYn: null,
+            lnbrMnnm: null,
+            lnbrSlno: null,
+            emdNo: null,
+          }));
+        if (isSpot) {
+          router.push({
+            pathname: '/location/address-detail',
+            query: { isSpot: true },
+          });
+        } else {
+          router.push({
+            pathname: '/location/address-detail',
+            query: { isLocation: true },
+          });
+        };
+      });
+    };
+  };
+
 
   return (
     <HomeContainer>
@@ -165,7 +224,7 @@ const LocationPage = () => {
                         bdNm={address.bdNm}
                         jibunAddr={address.jibunAddr}
                         zipNo={address.zipNo}
-                        onClick={() => goToMapScreen(address)}
+                        onClick={() => goToMapDetail(address)}
                       />
                     );
                   })}
