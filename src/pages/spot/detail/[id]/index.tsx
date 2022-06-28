@@ -201,6 +201,10 @@ const SpotDetailPage = (): ReactElement => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
+  const goToSpotNotice = (): void => {
+    router.push('/spot/notice');
+  };
+
   return (
     <Container>
       {
@@ -361,8 +365,8 @@ const SpotDetailPage = (): ReactElement => {
           )}
         </PickUpInfoWrapper>
       </PickupWrapper>
-      <SpotEventBannerWrapper>
-        <TextH4B>해당 스팟 이벤트 영역</TextH4B>
+      <SpotEventBannerWrapper onClick={goToSpotNotice}>
+        <EventBanner src={`${IMAGE_S3_DEV_URL}/img_banner_fco_detail.png`} />
       </SpotEventBannerWrapper>
       {/* <BorderLine height={8} ref={tabRef} /> */}
       <BottomTabWrapper>
@@ -482,11 +486,13 @@ const PickUpInfoContent = styled.tr`
 
 const SpotEventBannerWrapper = styled.section`
   width: 100%;
-  height: 96px;
-  background: ${theme.greyScale6};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 100%;
+  cursor: pointer;
+`;
+
+const EventBanner = styled.img`
+  width:100%;
+  height: 100%;
 `;
 
 const BottomTabWrapper = styled.section`

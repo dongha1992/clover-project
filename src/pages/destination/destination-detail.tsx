@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { CheckDestinationPlace } from '@components/Pages/Destination';
-import MapAPI from '@components/Map';
+import { DefaultMap } from '@components/Map';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
 import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
@@ -48,7 +48,7 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId, isSubscription, subsDeliveryType, menuId } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, destinationId, menuId } = router.query;
 
   // 배송 가능 여부
   const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
@@ -103,7 +103,7 @@ const DestinationDetailPage = () => {
         dispatch(INIT_AVAILABLE_DESTINATION());
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId },
+          query: { orderId, destinationId },
         });
       } else {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
@@ -194,7 +194,7 @@ const DestinationDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <MapAPI centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
+        <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>
