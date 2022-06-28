@@ -60,6 +60,7 @@ import { INIT_ACCESS_METHOD } from '@store/common';
 dayjs.locale('ko');
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
+/*TODO: 배송비할인 */
 
 const disabledDates: any = ['2022-02-22'];
 
@@ -780,7 +781,7 @@ const CartPage = () => {
     if (destinationObj?.delivery) {
       const { fee, amountForFree, minimum } =
         destinationObj.delivery && DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!]!;
-      if (!fee || amountForFree < totalAmount) return 0;
+      if (!fee || amountForFree <= totalAmount) return 0;
       return fee;
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
@@ -1180,11 +1181,11 @@ const CartPage = () => {
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
               <TextH5B>배송비</TextH5B>
-              <TextB2R>{getDeliveryFee()}원</TextB2R>
+              <TextB2R>{getDeliveryFee() ? `${getDeliveryFee()}원` : '무료배송'}</TextB2R>
             </FlexBetween>
             <FlexBetween>
               <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
-              <TextB2R>{getDeliveryFee()}원</TextB2R>
+              <TextB2R>-{getDeliveryFee()}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
