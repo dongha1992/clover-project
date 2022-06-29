@@ -1539,6 +1539,31 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
+
+  whiteHeart24: () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_d_14708_48871)">
+      <path 
+        d="M9.5 5.5C7.0151 5.5 5 7.61243 5 10.2186C5 12.3225 5.7875 17.3157 13.5392 22.3632C13.6781 22.4527 13.8375 22.5 14 22.5C14.1625 22.5 14.3219 22.4527 14.4608 22.3632C22.2125 17.3157 23 12.3225 23 10.2186C23 7.61243 20.9849 5.5 18.5 5.5C16.0151 5.5 14 8.35978 14 8.35978C14 8.35978 11.9849 5.5 9.5 5.5Z" 
+        stroke="white" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+      </g>
+      <defs>
+      <filter id="filter0_d_14708_48871" x="0" y="0.5" width="28" height="27" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset/>
+      <feGaussianBlur stdDeviation="2"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0.35 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_14708_48871"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_14708_48871" result="shape"/>
+      </filter>
+      </defs>
+    </svg>
+  )
 };
 /*TODO: name이 없으면 에러남 */
 

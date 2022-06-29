@@ -109,7 +109,7 @@ const TextInput = React.forwardRef(
       >
         <div className="wrapper">
           {svg ? <SVGIcon name={svg} /> : ''}
-          {ref ? 
+          {ref ? (
             withValue ? (
               <input
                 style={style}
@@ -143,7 +143,7 @@ const TextInput = React.forwardRef(
                 pattern={pattern}
               />
             )
-           : (
+          ) : (
             <input
               style={style}
               type={inputType ? inputType : 'text'}
@@ -223,7 +223,7 @@ const Container = styled.div<{
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
-      padding-top: 3px;
+      padding-top: 4px;
     }
 
     input:disabled {

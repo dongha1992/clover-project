@@ -6,6 +6,9 @@ import { TextH3B } from '@components/Shared/Text';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { IMenus } from '@model/index';
+import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
+import { useSelector } from 'react-redux';
+import { filterSelector } from '@store/filter';
 
 export interface IAllMenus {
   DRINK?: IMenus[];
@@ -27,6 +30,12 @@ interface IProps {
 }
 
 const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
+  const { categoryFilters } = useSelector(filterSelector);
+
+  const wrapAndSandwich = [...(allMenus?.SANDWICH ?? []), ...(allMenus?.WRAP ?? [])];
+  const lunchAndConvenienceFood = [...(allMenus?.LUNCH_BOX ?? []), ...(allMenus?.CONVENIENCE_FOOD ?? [])];
+  const soups = [...(allMenus?.KOREAN_SOUP ?? []), ...(allMenus?.SOUP ?? [])];
+
   if (menuList.length < 0) {
     return <div>로딩중</div>;
   }
@@ -54,24 +63,39 @@ const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
           </FlexWrapWrapper>
           <TextH3B padding="17px 0 17px 0">랩·샌드위치</TextH3B>
           <FlexWrapWrapper>
-            {[...(allMenus?.SANDWICH ?? []), ...(allMenus?.WRAP ?? [])].length > 0
-              ? [...(allMenus?.SANDWICH ?? []), ...(allMenus?.WRAP ?? [])]?.map((item, index) => {
+            {wrapAndSandwich.length > 0
+              ? reorderedMenusBySoldout(
+                  getFilteredMenus({
+                    menus: wrapAndSandwich,
+                    categoryFilters,
+                  })
+                )?.map((item, index) => {
                   return <Item item={item} key={index} />;
                 })
               : '상품을 준비 중입니다.'}
           </FlexWrapWrapper>
           <TextH3B padding="17px 0 17px 0">도시락·간편식</TextH3B>
           <FlexWrapWrapper>
-            {[...(allMenus?.LUNCH_BOX ?? []), ...(allMenus?.CONVENIENCE_FOOD ?? [])].length > 0
-              ? [...(allMenus?.LUNCH_BOX ?? []), ...(allMenus?.CONVENIENCE_FOOD ?? [])]?.map((item, index) => {
+            {lunchAndConvenienceFood.length > 0
+              ? reorderedMenusBySoldout(
+                  getFilteredMenus({
+                    menus: lunchAndConvenienceFood,
+                    categoryFilters,
+                  })
+                )?.map((item, index) => {
                   return <Item item={item} key={index} />;
                 })
               : '상품을 준비 중입니다.'}
           </FlexWrapWrapper>
           <TextH3B padding="17px 0 17px 0">죽·스프</TextH3B>
           <FlexWrapWrapper>
-            {[...(allMenus?.KOREAN_SOUP ?? []), ...(allMenus?.SOUP ?? [])].length > 0
-              ? [...(allMenus?.KOREAN_SOUP ?? []), ...(allMenus?.SOUP ?? [])]?.map((item, index) => {
+            {soups.length > 0
+              ? reorderedMenusBySoldout(
+                  getFilteredMenus({
+                    menus: soups,
+                    categoryFilters,
+                  })
+                )?.map((item, index) => {
                   return <Item item={item} key={index} />;
                 })
               : '상품을 준비 중입니다.'}
