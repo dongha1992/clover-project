@@ -30,8 +30,7 @@ const SubsDetailPage = () => {
   const [menuId, setMenuId] = useState<number>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
-  const [options, setOptions] = useState({});
-
+  const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
   useEffect(() => {
     if (router.isReady) {
       setDetailId(Number(router.query?.detailId));
@@ -42,9 +41,14 @@ const SubsDetailPage = () => {
   const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', detailId], detailId!, {
     onSuccess: (data: IOrderDetail) => {
       let pickupDayObj = new Set();
+      let subArr: number[] = [];
       data.orderDeliveries.forEach((o) => {
         pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
+        if (o?.subOrderDelivery) {
+          subArr.push(o.subOrderDelivery.order.id);
+        }
       });
+      setSubDeliveries(subArr);
       setDeliveryDay(Array.from(pickupDayObj));
 
       if ([30, 31, 1, 2].includes(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')))) {
@@ -84,6 +88,16 @@ const SubsDetailPage = () => {
         },
       })
     );
+  };
+
+  const orderCancelHandler = () => {
+    if (subDeliveries.length === 0) {
+      router.push(`/subscription/${detailId}/cancel`);
+    } else {
+      router.push({
+        pathname: `/subscription/${detailId}/sub-cancel`,
+      });
+    }
   };
 
   const goToEntireDiet = () => {
@@ -209,7 +223,7 @@ const SubsDetailPage = () => {
             재주문하기
           </Button>
         ) : (
-          <Button backgroundColor="#fff" color="#242424" border>
+          <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
             주문 취소하기
           </Button>
         )}
