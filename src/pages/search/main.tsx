@@ -7,15 +7,13 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Item } from '@components/Item';
 import { SearchResult, RecentSearch } from '@components/Pages/Search';
 import { homePadding, FlexWrapWrapper } from '@styles/theme';
-import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
 import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
 import { IMenus, Obj } from '@model/index';
-import cloneDeep from 'lodash-es/cloneDeep';
-import debounce from 'lodash-es/debounce';
+import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 
 const LIMIT = 20;
 
@@ -25,15 +23,12 @@ const SearchMainPage = () => {
   const [keyword, setKeyword] = useState<string>('');
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
   const { categoryFilters, type } = useSelector(filterSelector);
   const isFilter = categoryFilters?.order || categoryFilters?.filter;
-
-  /* TODO: [category] 쪽이랑 코드 중복 */
 
   const {
     error: menuError,
@@ -64,8 +59,8 @@ const SearchMainPage = () => {
   );
 
   const checkIsFiltered = (menuList: IMenus[]) => {
-    const searchResult = isFilter ? filteredMenus(menuList) : menuList;
-    const reOrderedSearchResult = checkIsSold(searchResult!);
+    const searchResult = isFilter ? getFilteredMenus({ menus: menuList, categoryFilters }) : menuList;
+    const reOrderedSearchResult = reorderedMenusBySoldout(searchResult!);
     setSearchResult(reOrderedSearchResult!);
   };
 
@@ -78,6 +73,12 @@ const SearchMainPage = () => {
 
   useEffect(() => {
     initLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_CATEGORY_FILTER());
+    };
   }, []);
 
   useEffect(() => {
@@ -168,64 +169,6 @@ const SearchMainPage = () => {
     setIsSearched(true);
   };
 
-  const filteredMenus = (menuList: IMenus[]) => {
-    try {
-      let copiedMenuList = cloneDeep(menuList);
-      const hasCategory = categoryFilters?.filter && categoryFilters?.filter?.filter((i) => i).length !== 0;
-      if (hasCategory) {
-        copiedMenuList = copiedMenuList.filter((menu: Obj) => categoryFilters?.filter.includes(menu.category));
-      }
-
-      if (!categoryFilters?.order) {
-        return copiedMenuList;
-      } else {
-        switch (categoryFilters?.order) {
-          case '': {
-            return menuList;
-          }
-          case 'ORDER_COUNT_DESC': {
-            return copiedMenuList.sort((a, b) => b.orderCount - a.orderCount);
-          }
-          case 'LAUNCHED_DESC': {
-            return copiedMenuList.sort((a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime());
-          }
-          case 'PRICE_DESC': {
-            return getPriceOrder(copiedMenuList, 'max');
-          }
-          case 'PRICE_ASC': {
-            return getPriceOrder(copiedMenuList, 'min');
-          }
-          case 'REVIEW_COUNT_DESC': {
-            return copiedMenuList.sort((a, b) => b.reviewCount - a.reviewCount);
-          }
-          default:
-            return menuList;
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
-    const mapped = list?.map((menu: IMenus) => {
-      const prices = menu?.menuDetails?.map((item) => item.price);
-      return { ...menu, [order]: Math[order](...prices) };
-    });
-
-    return mapped.sort((a: any, b: any) => {
-      const isMin = order === 'min';
-      return isMin ? a[order] - b[order] : b[order] - a[order];
-    });
-  };
-
-  const checkIsSold = (menuList: IMenus[]) => {
-    return menuList?.sort((a: any, b: any) => {
-      return a.isSold - b.isSold;
-    });
-  };
-
-  console.log(isLoading, 'isLoading', searchResult, isSearched, 'isSearched');
   if (isFetching) {
     return <div>로딩중</div>;
   }
@@ -273,7 +216,7 @@ const Wrapper = styled.div`
   .removeSvg {
     cursor: pointer;
     position: absolute;
-    right: 7%;
+    right: 9%;
     top: 35%;
   }
 `;

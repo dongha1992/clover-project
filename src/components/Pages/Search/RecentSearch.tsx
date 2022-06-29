@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { homePadding, theme } from '@styles/theme';
 import RecentSearchItem from './RecentSearchItem';
 
@@ -19,7 +19,7 @@ const RecentSearch = ({
         </TextH6B>
       </Header>
       <ListContainer>
-        {recentKeywords &&
+        {recentKeywords.length > 0 ? (
           recentKeywords.map((keyword: any, index: number) => (
             <RecentSearchItem
               key={index}
@@ -27,7 +27,10 @@ const RecentSearch = ({
               selectRecentSearchItemHandler={selectRecentSearchItemHandler}
               removeRecentSearchItemHandler={() => removeRecentSearchItemHandler(keyword, index)}
             />
-          ))}
+          ))
+        ) : (
+          <TextB2R color={theme.greyScale65}>최근 검색어가 없습니다.</TextB2R>
+        )}
       </ListContainer>
     </Container>
   );
