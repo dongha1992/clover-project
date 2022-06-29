@@ -1638,6 +1638,20 @@ export interface IGetTossPaymentResponse {
   data: IGetTossPayment;
 }
 
+export interface IDeleteOrderCancelPreviewResponse {
+  code: number;
+  message: string;
+  data: {
+    totalPayAmount: number;
+    completedDeliveryCount: number;
+    completedAmount: number;
+    partialRefundAmount: number;
+    refundPoint: number;
+    refundPayAmount: number;
+    couponCount: number;
+  };
+}
+
 /* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN' | string;
