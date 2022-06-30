@@ -5,6 +5,7 @@ import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox'
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
+import { PAYMENT_METHOD } from '@constants/order';
 import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
@@ -195,7 +196,7 @@ const SubsDetailPage = () => {
         ) : (
           <FlexBetween padding="0 0 16px">
             <TextH5B>결제수단</TextH5B>
-            <TextB2R>신용카드</TextB2R>
+            <TextB2R>{PAYMENT_METHOD[orderDetail?.payMethod] ?? '신용카드'}</TextB2R>
           </FlexBetween>
         )}
         {orderDetail?.subscriptionPeriod === 'UNLIMITED' && (
