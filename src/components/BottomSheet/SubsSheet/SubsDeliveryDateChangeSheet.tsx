@@ -142,6 +142,17 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
     ) {
       dispatch(
         SET_ALERT({
+          children: (
+            <FlexRow padding="0 0 16px 0">
+              <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
+                {getFormatDate(item.deliveryDate)}
+              </TextH5B>
+              <SVGIcon name="arrowRightBrand" />
+              <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
+                {changeDate}
+              </TextH5B>
+            </FlexRow>
+          ),
           alertMessage: `배송일을 변경하시겠어요?`,
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -161,6 +172,17 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
     ) {
       dispatch(
         SET_ALERT({
+          children: (
+            <FlexRow padding="0 0 16px 0">
+              <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
+                {getFormatDate(item.deliveryDate)}
+              </TextH5B>
+              <SVGIcon name="arrowRightBrand" />
+              <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
+                {changeDate}
+              </TextH5B>
+            </FlexRow>
+          ),
           alertMessage: `다른 회차의 배송예정일로 변경 시\n기존 주문과는 별도로 배송됩니다.`,
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -180,6 +202,17 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
     ) {
       dispatch(
         SET_ALERT({
+          children: (
+            <FlexRow padding="0 0 16px 0">
+              <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
+                {getFormatDate(item.deliveryDate)}
+              </TextH5B>
+              <SVGIcon name="arrowRightBrand" />
+              <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
+                {changeDate}
+              </TextH5B>
+            </FlexRow>
+          ),
           alertMessage: `다른 회차의 배송예정일로 변경 시\n함께배송 주문도 함께 변경되며,\n기존 주문과는 별도로 배송됩니다.`,
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -199,6 +232,17 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
     ) {
       dispatch(
         SET_ALERT({
+          children: (
+            <FlexRow padding="0 0 16px 0">
+              <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
+                {getFormatDate(item.deliveryDate)}
+              </TextH5B>
+              <SVGIcon name="arrowRightBrand" />
+              <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
+                {changeDate}
+              </TextH5B>
+            </FlexRow>
+          ),
           alertMessage: `함께배송 주문도 함께 변경됩니다.\n변경하시겠어요?`,
           submitBtnText: '확인',
           closeBtnText: '취소',
@@ -291,7 +335,7 @@ export const CloseBtn = styled.button`
 `;
 
 const RemainCountBox = styled.div`
-  padding: 16px 0;
+  padding: 16px 24px;
   b {
     font-weight: bold;
   }
