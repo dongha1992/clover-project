@@ -4,6 +4,7 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { SUBS_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import useSubsSetProgress from '@hooks/subscription/useSubsSetProgress';
+import { useSubsStatusMsg } from '@hooks/subscription/useSubsStatusMsg';
 import { IGetOrders } from '@model/index';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
@@ -22,6 +23,8 @@ const SubsMngIngItem = ({ item }: IProps) => {
   const goToSubsDetail = () => {
     router.push(`/subscription/${item.id}`);
   };
+
+  const { subsStatusmsg, subsStatusBoldmsg } = useSubsStatusMsg(item);
   return (
     <Container>
       <FlexBetween>
@@ -64,12 +67,14 @@ const SubsMngIngItem = ({ item }: IProps) => {
       </FlexRowStart>
       <ProgressBox>
         <SubsProgressBar length={item?.orderDeliveries.length} round={round} />
-        {/* <FlexRow padding="8px 0 0">
+        {subsStatusmsg && (
+          <FlexRow padding="8px 0 0">
             <SVGIcon name="exclamationMark" />
             <TextB3R color={theme.brandColor}>
-              <b></b> 구독 식단이 종료되어 N월 N일 (목) 자동으로 구독 해지될 예정이에요.
+              {subsStatusBoldmsg && <b>{subsStatusBoldmsg}</b>} {subsStatusmsg}
             </TextB3R>
-          </FlexRow> */}
+          </FlexRow>
+        )}
       </ProgressBox>
     </Container>
   );
