@@ -22,7 +22,7 @@ import {
   spotSelector,
   SET_SEARCH_KEYWORD,
   SET_SERACH_MAP_SPOT,
-  INIT_SPOT_MAP_SWITCH,
+  SET_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -47,7 +47,7 @@ const SpotSearchPage = (): ReactElement => {
 
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
-    dispatch(INIT_SPOT_MAP_SWITCH());
+    dispatch(SET_SPOT_MAP_SWITCH(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -127,88 +127,85 @@ const SpotSearchPage = (): ReactElement => {
         isMapSwitch ? (
           <SpotSearchMapMain />
         ) : (
-        <>
-        
-      <SearchBarWrapper onClick={goToSpotSearch}>
-        <TextInputButton>
-          <div className='sgv'>
-            <SVGIcon name="searchIcon" />
-          </div>
-          <Text>도로명, 건물명 또는 지번으로 검색</Text>
-        </TextInputButton>
-      </SearchBarWrapper>
-      <FlexEnd padding="16px 24px 0 0">
-        <SVGIcon name="locationBlack" />
-        <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
-          현 위치로 설정하기
-        </TextH6B>
-      </FlexEnd>
-      <KeyWordWrapper>
-        <SpotSearchKeyword onChange={handlerSearchKeyword} />
-      </KeyWordWrapper>
-      {
-      // 스팟 검색 메인 - 검색바 포커싱 x
-        ((spotRecommend?.spots.length! > 0) && (eventSpot?.spots.length! > 0)) ? (
-          // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
           <>
-          {/* 추천스팟 */}
-            <SpotRecommendWrapper>
-              <FlexBetween margin="0 0 24px 0">
-                <TextH2B>{spotRecommend?.title}</TextH2B>
+            <SearchBarWrapper onClick={goToSpotSearch}>
+              <TextInputButton>
+                <div className='sgv'>
+                  <SVGIcon name="searchIcon" />
+                </div>
+                <Text>도로명, 건물명 또는 지번으로 검색</Text>
+              </TextInputButton>
+            </SearchBarWrapper>
+            <FlexEnd padding="16px 24px 0 0">
+              <SVGIcon name="locationBlack" />
+              <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
+                현 위치로 설정하기
+              </TextH6B>
+            </FlexEnd>
+            <KeyWordWrapper>
+              <SpotSearchKeyword onChange={handlerSearchKeyword} />
+            </KeyWordWrapper>
+            {
+            // 스팟 검색 메인 - 검색바 포커싱 x
+              ((spotRecommend?.spots.length! > 0) && (eventSpot?.spots.length! > 0)) ? (
+                // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
+                <>
+                {/* 추천스팟 */}
+                  <SpotRecommendWrapper>
+                    <FlexBetween margin="0 0 24px 0">
+                      <TextH2B>{spotRecommend?.title}</TextH2B>
+                      {
+                        // 사용자 위치 설정 했을 경우 노출
+                        userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                      }
+                    </FlexBetween>
+                    {spotRecommend?.spots.map((item: any, index: number) => {
+                      return <SpotRecommendList item={item} key={index} />;
+                    })}
+                  </SpotRecommendWrapper>
+                  {/* 이벤트 중인 스팟 */}
+                  <BottomContentWrapper>
+                    <Row />
+                    <TextH2B padding="24px 24px 24px 24px">{eventSpot?.title}</TextH2B>
+                    <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
+                      {eventSpot?.spots.map((list, idx) => {
+                        return (
+                          <SwiperSlide className="swiper-slide" key={idx}>
+                            <SpotList list={list} type="event" isSearch />
+                          </SwiperSlide>
+                        );
+                      })}
+                    </EventSlider>
+                  </BottomContentWrapper>
+                </>
+              ) : (
+                // 스팟 검색 메인 - 추천, 이벤트 스팟 둘다 없는 경우, 최근 픽업 이력 노출
+                <>
                 {
-                  // 사용자 위치 설정 했을 경우 노출
-                  userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                  recentPickedSpotList?.length! > 0 ? (
+                    // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+                    <DefaultSearchContainer>
+                      <RecentPickWrapper>
+                        <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                        {recentPickedSpotList?.map((item: any, index) => (
+                          // 스팟 최근 픽업 이력 리스트
+                          <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                        ))}
+                      </RecentPickWrapper>
+                    </DefaultSearchContainer>
+                  ) : (
+                    // 최근 픽업 이력이 없는 경우, 안내 문구 노출
+                    <DefaultSearchContainer empty>
+                      <TextB2R color={theme.greyScale65} center>{'찾으시는 프코스팟을 검색해 보세요.\n(이용 가능 지역: 서울 및 경기도 일부)'}</TextB2R>
+                    </DefaultSearchContainer>
+                  )
                 }
-              </FlexBetween>
-              {spotRecommend?.spots.map((item: any, index: number) => {
-                return <SpotRecommendList item={item} key={index} />;
-              })}
-            </SpotRecommendWrapper>
-            {/* 이벤트 중인 스팟 */}
-            <BottomContentWrapper>
-              <Row />
-              <TextH2B padding="24px 24px 24px 24px">{eventSpot?.title}</TextH2B>
-              <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-                {eventSpot?.spots.map((list, idx) => {
-                  return (
-                    <SwiperSlide className="swiper-slide" key={idx}>
-                      <SpotList list={list} type="event" isSearch />
-                    </SwiperSlide>
-                  );
-                })}
-              </EventSlider>
-            </BottomContentWrapper>
-          </>
-        ) : (
-          // 스팟 검색 메인 - 추천, 이벤트 스팟 둘다 없는 경우, 최근 픽업 이력 노출
-          <>
-          {
-            recentPickedSpotList?.length! > 0 ? (
-              // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-              <DefaultSearchContainer>
-                <RecentPickWrapper>
-                  <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                  {recentPickedSpotList?.map((item: any, index) => (
-                    // 스팟 최근 픽업 이력 리스트
-                    <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                  ))}
-                </RecentPickWrapper>
-              </DefaultSearchContainer>
-            ) : (
-              // 최근 픽업 이력이 없는 경우, 안내 문구 노출
-              <DefaultSearchContainer empty>
-                <TextB2R color={theme.greyScale65} center>{'찾으시는 프코스팟을 검색해 보세요.\n(이용 가능 지역: 서울 및 경기도 일부)'}</TextB2R>
-              </DefaultSearchContainer>
-            )
-          }
+                </>
+              )
+            }
           </>
         )
       }
-
-</>
-        )
-}
-
     </Container>
   );
 };

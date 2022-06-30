@@ -5,7 +5,7 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
-import { spotSelector, SET_SPOT_MAP_SWITCH, INIT_SPOT_MAP_SWITCH } from '@store/spot';
+import { spotSelector, SET_SPOT_MAP_SWITCH } from '@store/spot';
 
 interface IProps {
   title?: string;
@@ -22,9 +22,9 @@ const SpotSearchHeader = ({ title }: IProps) => {
 
   const goToSwitchMap = () => {
     if(!isMapSwitch) {
-      dispatch(SET_SPOT_MAP_SWITCH());
+      dispatch(SET_SPOT_MAP_SWITCH(true));
     } else {
-      dispatch(INIT_SPOT_MAP_SWITCH());
+      dispatch(SET_SPOT_MAP_SWITCH(false));
     }
   };
 
