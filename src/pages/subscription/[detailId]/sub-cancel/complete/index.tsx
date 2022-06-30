@@ -25,7 +25,11 @@ const SubOrderCancelCompletePage = () => {
     onSuccess: (data: IOrderDetail) => {
       let arr: any = [];
       data.orderDeliveries.forEach((o) => {
-        if (o?.subOrderDelivery) {
+        if (
+          o?.subOrderDelivery &&
+          o?.subOrderDelivery.status !== 'COMPLETED' &&
+          o?.subOrderDelivery.status !== 'CANCELED'
+        ) {
           arr.push(o?.subOrderDelivery);
         }
         setSubDeliveries(arr);
