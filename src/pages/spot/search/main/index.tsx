@@ -24,7 +24,7 @@ import {
   SET_SPOT_POSITIONS,
   SET_SEARCH_KEYWORD,
   SET_SERACH_MAP_SPOT,
-  INIT_SPOT_MAP_SWITCH,
+  SET_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -56,7 +56,7 @@ const SpotSearchMainPage = (): ReactElement => {
     defaultRedioId();
     inputRef.current?.focus();
     setKeyword(spotKeyword);
-    dispatch(INIT_SPOT_MAP_SWITCH());
+    dispatch(SET_SPOT_MAP_SWITCH(false));
   }, []);
 
   useEffect(() => {
@@ -299,7 +299,7 @@ const SpotSearchMainPage = (): ReactElement => {
 
   if (isLoadingRecomand && isLoadingPickup) {
     return <div>로딩</div>;
-  }
+  };
 
   return (
     <Container>
