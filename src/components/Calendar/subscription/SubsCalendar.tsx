@@ -58,6 +58,10 @@ const SubsCalendar = ({
   const [maxDate, setMaxDate] = useState<Date>(new Date(subsActiveDates[subsActiveDates.length - 1]?.deliveryDate));
 
   useEffect(() => {
+    if (subsActiveDates.length !== 0) {
+      mutateSelectDate(dayjs(minDate).format('YYYY-MM-DD'));
+      setValue(minDate);
+    }
     if (router.pathname === '/subscription/register') {
     } else if (subsDeliveryExpectedDate) {
       // TODO : 꼭 해야만 하는가 확인 필요
