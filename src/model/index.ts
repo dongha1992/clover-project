@@ -1733,6 +1733,7 @@ export interface IMenuDetail {
   subscriptionDeliveries: string[];
   subscriptionPeriods: string[];
   subscriptionDeliveryCycle: string;
+  subscriptionDescription?: string;
   reopenNotificationRequested: boolean;
   reopenMessage: string;
   menuFaq: IMenuFaq;

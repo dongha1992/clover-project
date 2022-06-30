@@ -381,7 +381,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                 </DeliveryLi>
                 <DeliveryLi>
                   <TextB2R>상품 구성</TextB2R>
-                  <TextB2R>단백질 위주의 식단 교차 배송</TextB2R>
+                  <TextB2R>{menuDetail?.subscriptionDescription}</TextB2R>
                 </DeliveryLi>
               </DeliveryUl>
             </DeliveryInfoBox>
@@ -512,6 +512,7 @@ const NutritionInfoBox = styled.div`
 
 const DeliveryInfoBox = styled.div`
   border-top: 1px solid ${theme.greyScale6};
+  margin-top: 24px;
 `;
 const DeliveryUl = styled.ul``;
 const DeliveryLi = styled.li`
