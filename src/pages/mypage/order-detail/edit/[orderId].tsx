@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SVGIcon } from '@utils/common';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
@@ -40,6 +40,8 @@ interface IProps {
 }
 
 const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
+  const router = useRouter();
+
   const { userAccessMethod } = useSelector(commonSelector);
   const { tempEditDestination, tempEditSpot, tempOrderInfo } = useSelector(mypageSelector);
   const { applyAll } = useSelector(destinationForm);
@@ -102,24 +104,24 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
-          deliveryId,
           data: { ...rest, applyAll },
+          deliveryId: destinationId ?? deliveryId,
         });
       } else {
         const { data } = await editSpotDestinationApi({
-          deliveryId,
           data: {
             applyAll,
             receiverName: deliveryEditObj.receiverName,
             receiverTel: deliveryEditObj.receiverTel,
             spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickupId!,
           },
+          deliveryId: destinationId ?? deliveryId,
         });
       }
     },
     {
       onSuccess: async () => {
-        await queryClient.refetchQueries('getOrderDetail');
+        await queryClient.refetchQueries(['getOrderDetail', orderId]);
         dispatch(INIT_TEMP_EDIT_DESTINATION());
       },
       onError: async (error: any) => {
@@ -255,10 +257,11 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
   };
 
   const changeDeliveryPlace = () => {
+    const isCancel = !!data?.unsubscriptionType;
     if (data.type === 'SUBSCRIPTION') {
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <SubsDeliveryChangeSheet goToDeliverySearch={goToDeliverySearch} />,
+          content: <SubsDeliveryChangeSheet goToDeliverySearch={goToDeliverySearch} isCancel={isCancel} />,
         })
       );
     } else {

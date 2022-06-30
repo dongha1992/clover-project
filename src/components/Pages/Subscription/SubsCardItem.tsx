@@ -44,6 +44,8 @@ const SubsCardItem = ({ item }: any) => {
   const cardClickHandler = () => {
     if (limitedCompleted) {
       router.push({ pathname: '/subscription/set-info' });
+    } else {
+      router.push(`/subscription/${item.id}`);
     }
   };
 
