@@ -44,7 +44,11 @@ const SubsDetailPage = () => {
       let subArr: number[] = [];
       data.orderDeliveries.forEach((o) => {
         pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
-        if (o?.subOrderDelivery) {
+        if (
+          o?.subOrderDelivery &&
+          o?.subOrderDelivery.status !== 'COMPLETED' &&
+          o?.subOrderDelivery.status !== 'CANCELED'
+        ) {
           subArr.push(o.subOrderDelivery.order.id);
         }
       });
@@ -94,9 +98,18 @@ const SubsDetailPage = () => {
     if (subDeliveries.length === 0) {
       router.push(`/subscription/${detailId}/cancel`);
     } else {
-      router.push({
-        pathname: `/subscription/${detailId}/sub-cancel`,
-      });
+      dispatch(
+        SET_ALERT({
+          alertMessage: `함께배송 주문을 먼저 취소해야\n구독 주문 취소할 수 있어요.\n함께배송 주문을 취소하시겠어요?`,
+          submitBtnText: '주문 취소하기',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            router.push({
+              pathname: `/subscription/${detailId}/sub-cancel`,
+            });
+          },
+        })
+      );
     }
   };
 
