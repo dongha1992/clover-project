@@ -249,14 +249,22 @@ const DetailBottom = () => {
         </LikeWrapper>
         <Col />
         {menuDetail?.type === 'SUBSCRIPTION' ? (
-          <BtnWrapper onClick={subscriptionButtonHandler}>
-            <TextH5B color={theme.white} pointer>
-              <TootipWrapper>
-                <TimerTooltip message={subsDiscount} bgColor={theme.brandColor} color={theme.white} minWidth="0" />
-              </TootipWrapper>
-              구독하기
-            </TextH5B>
-          </BtnWrapper>
+          menuDetail?.isSold ? (
+            <BtnWrapper>
+              <TextH5B color={theme.white} pointer>
+                일시품절
+              </TextH5B>
+            </BtnWrapper>
+          ) : (
+            <BtnWrapper onClick={subscriptionButtonHandler}>
+              <TextH5B color={theme.white} pointer>
+                <TootipWrapper>
+                  <TimerTooltip message={subsDiscount} bgColor={theme.brandColor} color={theme.white} minWidth="0" />
+                </TootipWrapper>
+                구독하기
+              </TextH5B>
+            </BtnWrapper>
+          )
         ) : (
           <BtnWrapper onClick={cartClickButtonHandler}>
             <TextH5B color={theme.white} pointer>
