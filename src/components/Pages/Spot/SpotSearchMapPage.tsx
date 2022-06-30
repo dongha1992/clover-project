@@ -4,7 +4,7 @@ import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { SVGIcon } from '@utils/common';
-import { SpotSearchMapList } from '@components/Pages/Spot';
+import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import Slider from 'react-slick';
@@ -12,19 +12,13 @@ import { SpotSearchMap } from '@components/Map';
 import { spotSelector } from '@store/spot';
 import { useDispatch, useSelector } from 'react-redux';
 
-export interface IArea {
-  location: string;
-  lat: string;
-  lng: string;
-}
-
-const SpotSearchMapMain = (): ReactElement => {
+const SpotSearchMapPage = (): ReactElement => {
   const router = useRouter();
   const slideRef = useRef(null);
   const { spotSearchArr } = useSelector(spotSelector);
   const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
 
-  const spotMapList = spotSearchArr&&spotSearchArr;
+  const list = spotSearchArr ?? [];
 
   const setting = {
     arrows: false,
@@ -44,8 +38,8 @@ const SpotSearchMapMain = (): ReactElement => {
         <SpotSearchMap currentIdx={currentIdx.next} />
         <SpotListWrapper>
           <SpotListSlider {...setting} ref={slideRef}>
-            {spotMapList?.map((item, index) => (
-              <SpotSearchMapList item={item} key={index} />
+            {list?.map((item, index) => (
+              <SpotsSearchResultList map item={item} key={index} />
             ))}
           </SpotListSlider>
         </SpotListWrapper>
@@ -67,7 +61,7 @@ const SpotListSlider = styled(Slider)`
   width: 100%;
   padding: 16px 0;
   .slick-slide > div {
-    padding: 0 5px;
+    padding: 0 6px;
   }
 `;
 
@@ -82,4 +76,4 @@ const SpotListWrapper = styled.section`
   z-index: 50;
 `;
 
-export default SpotSearchMapMain;
+export default SpotSearchMapPage;

@@ -85,7 +85,6 @@ const FilterRow = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 24px;
-  padding-bottom: 17px;
 `;
 
 const FilterWrapper = styled.div`
