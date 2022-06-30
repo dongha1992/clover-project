@@ -36,6 +36,7 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
     description,
     liked,
     likeCount,
+    summary,
     subscriptionPeriods,
     subscriptionDeliveries,
   } = item;
@@ -149,8 +150,8 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
       </ImageWrapper>
       <TextBox>
         <TextH5B>{name?.trim()}</TextH5B>
-        <TextB3R color={theme.greyScale65} margin="8px 0 4px" className="description">
-          {description?.trim()}
+        <TextB3R color={theme.greyScale65} margin="8px 0 4px" className="description" textHide>
+          {summary?.trim()}
         </TextB3R>
         <FlexWrapWrapper>
           <TextH5B>{getFormatPrice(String(discountedPrice))}원 ~</TextH5B>

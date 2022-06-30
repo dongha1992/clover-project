@@ -243,7 +243,7 @@ const DetailBottom = () => {
           <LikeBtn onClick={goToLike}>
             <SVGIcon name={menuDetail?.liked ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
-          <TextH5B color={theme.white} padding="0 0 0 4px">
+          <TextH5B color={theme.white} padding="2px 0 0 4px">
             {menuDetail?.likeCount || 0}
           </TextH5B>
         </LikeWrapper>
@@ -326,11 +326,7 @@ const BtnWrapper = styled.div`
 
 const LikeBtn = styled.div`
   display: flex;
-
   cursor: pointer;
-  svg {
-    margin-bottom: 3px;
-  }
 `;
 const TimerTooltipWrapper = styled.div`
   position: absolute;
