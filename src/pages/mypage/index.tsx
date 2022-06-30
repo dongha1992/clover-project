@@ -61,20 +61,6 @@ const MypagePage = () => {
     {
       onSuccess: async (data) => {
         const orders = await data.orders
-          .map((item: any) => {
-            if (item.id === 723074) {
-              item.subscriptionRound = 3;
-              item.status = 'UNPAID';
-            } else if (item.id === 723075) {
-              item.subscriptionRound = 2;
-              item.status = 'UNPAID';
-            } else if (item.id === 723152 || item.id === 723033 || item.id === 723038) {
-              item.status = 'UNPAID';
-            } else if (item.id === 723082) {
-              item.unsubscriptionType = 'PAYMENT_FAILED';
-            }
-            return item;
-          })
           .sort((a: IGetOrders, b: IGetOrders) => {
             if (a.subscriptionRound! > b.subscriptionRound!) return -1;
             if (a.subscriptionRound! < b.subscriptionRound!) return 1;
