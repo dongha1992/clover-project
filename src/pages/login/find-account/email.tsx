@@ -69,9 +69,15 @@ const FindEmailPage = () => {
         if (data.code === 200) {
           dispatch(SET_ALERT({ alertMessage: '입력하신 휴대폰 번호로 이메일 주소를 보냈어요.' }));
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (error.code === 2008) {
+          dispatch(SET_ALERT({ alertMessage: '카카오로 가입한 계정입니다. 카카오로 로그인해 주세요.' }));
+        } else if (error.code === 2007) {
+          dispatch(SET_ALERT({ alertMessage: '애플로 가입한 계정입니다. 애플로 로그인해 주세요.' }));
+        } else {
+          setErrorMessage('입력하신 정보로 일치하는 계정이 없습니다.');
+        }
         console.error(error);
-        setErrorMessage('입력하신 정보로 일치하는 계정이 없습니다.');
       }
     }
   };
