@@ -223,11 +223,7 @@ const Container = styled.div<{
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
-<<<<<<< HEAD
       padding-top: 3px;
-=======
-      padding-top: 4px;
->>>>>>> 1c5a7904d281ccb33e80eb562ab95114d8ae961a
     }
 
     input:disabled {
