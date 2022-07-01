@@ -75,7 +75,7 @@ const TotalReviewPage = ({ menuId }: any) => {
   }
 
   const hasImageReview = reviewsImages?.images?.length! !== 0;
-  const hasReivews = reviews?.searchReviews.length !== 0;
+  const hasReivews = reviews?.menuReviews.length !== 0;
 
   return (
     <Container>
@@ -85,7 +85,7 @@ const TotalReviewPage = ({ menuId }: any) => {
             reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={getMenuAverageRate({ reviews: reviews?.searchReviews!, total: reviews?.pagination.total! })}
+            averageRating={getMenuAverageRate({ reviews: reviews?.menuReviews!, total: reviews?.pagination.total! })}
             totalReviews={reviews?.pagination?.total!}
           />
         )}
@@ -104,7 +104,7 @@ const TotalReviewPage = ({ menuId }: any) => {
       <ReviewWrapper>
         {hasReivews ? (
           <>
-            {reviews?.searchReviews?.map((review: any, index: number) => {
+            {reviews?.menuReviews?.map((review: any, index: number) => {
               return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
             })}
           </>

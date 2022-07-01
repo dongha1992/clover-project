@@ -271,7 +271,7 @@ const SubsProductIdPage = () => {
           <Bottom>
             <StickyTab
               tabList={MENU_REVIEW_AND_FAQ}
-              countObj={{ 후기: reviews?.searchReviews.length }}
+              countObj={{ 후기: reviews?.menuReviews?.length }}
               isSticky={isSticky}
               selectedTab={selectedTab}
               onClick={selectTabHandler}
