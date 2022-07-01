@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH4B, TextB3R, TextH6B } from '@components/Shared/Text';
 import SlideToggle from '@components/Shared/SlideToggle';
-import { textBody2, theme } from '@styles/theme';
+import { textBody2, theme, homePadding } from '@styles/theme';
 import ToggleHeader from '@components/Shared/ToggleHeader';
 import { IMenuFaq } from '@model/index';
 interface IContents {
@@ -23,7 +23,7 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
       if (item.title === title) {
         return { ...item, isToggle: !item.isToggle };
       }
-      return { ...item, isToggle: false };
+      return item;
     });
     setFaq(found);
   };
@@ -43,8 +43,7 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
             <ToggleHeader setIsToggle={setToggleHandler} text={content.title} isToggle={content.isToggle} />
             <SlideToggle state={content.isToggle} duration={0.5}>
               <Content>
-                {/* <TextH6B padding="0 0 12px 0">{content.title}</TextH6B> */}
-                <TextB3R>{content.description}</TextB3R>
+                <TextB2R>{content.description}</TextB2R>
               </Content>
             </SlideToggle>
           </Contents>
@@ -55,7 +54,7 @@ const DetailBottomFAQ = ({ menuFaq }: IProps) => {
 };
 
 const Container = styled.div`
-  padding: 24px;
+  ${homePadding}
 `;
 
 const Content = styled.div`

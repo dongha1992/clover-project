@@ -128,7 +128,7 @@ const WelcomeSheet = () => {
       <Body>
         <FlexCol>
           <TextH2B>
-            <span className="brandColor">{me?.name}</span>님,
+            <span className="brandColor">{me?.nickName || me?.name}</span>님,
           </TextH2B>
           <TextH2B>프레시코드 회원이 되신걸</TextH2B>
           <TextH2B>진심으로 축하드려요!</TextH2B>

@@ -93,7 +93,7 @@ const AlertBox = styled.div`
 
 const AlertText = styled.div`
   text-align: center;
-  padding: 45px 30px;
+  /* padding: 45px 30px; */
 `;
 
 const AlertBtnBox = styled.div`
@@ -101,6 +101,7 @@ const AlertBtnBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  padding-top: 24px;
 
   .cancelBtn {
     width: 100%;

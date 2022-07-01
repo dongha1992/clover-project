@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { CATEGORY } from '@constants/search';
-import { TextB1R, TextH3B, TextB2R } from '@components/Shared/Text';
+import { TextB1R, TextH3B, TextB2R, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { Item } from '@components/Item';
-import { homePadding, FlexWrapWrapper, theme } from '@styles/theme';
+import { homePadding, FlexWrapWrapper, theme, FlexBetween } from '@styles/theme';
 import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
@@ -37,6 +37,8 @@ const SearchPage = () => {
   const changeInputHandler = () => {
     router.push('/search/main');
   };
+
+  const goToMore = () => {};
 
   if (mdIsLoading) {
     return <div>로딩중</div>;
@@ -71,13 +73,26 @@ const SearchPage = () => {
         </CategoryWrapper>
         <BorderLine padding="0 24px" />
         <MdRecommendationWrapper>
-          <TextH3B padding="24px 0">MD 추천</TextH3B>
+          <FlexBetween>
+            <TextH3B padding="24px 0">MD 추천</TextH3B>
+            <TextH6B
+              textDecoration="underline"
+              color={theme.greyScale65}
+              padding="0 24px 0 0"
+              onClick={goToMore}
+              pointer
+            >
+              더보기
+            </TextH6B>
+          </FlexBetween>
           {menus?.length! > 0 ? (
-            <FlexWrapWrapper>
-              {menus?.map((item, index) => {
-                return <Item item={item} key={index} />;
-              })}
-            </FlexWrapWrapper>
+            <ItemListRowWrapper>
+              <ItemListRow>
+                {menus?.map((item, index) => {
+                  return <Item item={item} key={index} isHorizontal />;
+                })}
+              </ItemListRow>
+            </ItemListRowWrapper>
           ) : (
             '상품을 준비 중입니다'
           )}
@@ -88,6 +103,23 @@ const SearchPage = () => {
 };
 
 const Container = styled.main``;
+
+const ItemListRow = styled.div`
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  > div {
+    padding-right: 10px;
+    width: 194px;
+  }
+`;
+
+const ItemListRowWrapper = styled.div`
+  padding: 16px 0px 16px 0px;
+  width: auto;
+  margin-bottom: 48px;
+`;
 
 const TextInputButton = styled.div`
   position: relative;

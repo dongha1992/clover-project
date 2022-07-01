@@ -164,6 +164,8 @@ const ChangePasswordPage = () => {
   };
 
   const getChangePassword = async () => {
+    if (!isAllVaild) return;
+
     if (newPasswordRef.current) {
       const oldPassword = oldPasswordRef.current?.value.toString();
       const newPassword = newPasswordRef.current?.value.toString();

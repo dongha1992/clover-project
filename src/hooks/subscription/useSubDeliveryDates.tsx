@@ -1,4 +1,3 @@
-import { getOrderListsApi } from '@api/order';
 import { useEffect, useState } from 'react';
 
 const useSubDeliveryDates = (orderDeliveries: any) => {

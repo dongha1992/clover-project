@@ -108,7 +108,12 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(Number(menuId)!);
+      const params = {
+        id: Number(menuId)!,
+        size: 10,
+        page: 1,
+      };
+      const { data } = await getMenuDetailReviewApi(params);
       return data.data;
     },
 
@@ -314,14 +319,20 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           <PriceAndCouponWrapper>
             {!isOpenSoon && !isReOpen && (
               <PriceWrapper>
-                <OriginPrice>
-                  <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                    {getFormatPrice(String(getMenuDetailPrice().price))}원
-                  </TextH6B>
-                </OriginPrice>
+                {!isTempSold && (
+                  <OriginPrice>
+                    <TextH6B color={theme.greyScale25} textDecoration=" line-through">
+                      {getFormatPrice(String(getMenuDetailPrice().price))}원
+                    </TextH6B>
+                  </OriginPrice>
+                )}
                 <DiscountedPrice>
-                  <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
-                  <TextH3B padding={'0 0 0 4px'}>
+                  {!isTempSold && (
+                    <TextH3B padding={'0 4px 0 0px'} color={theme.brandColor}>
+                      {getMenuDetailPrice().discount}%
+                    </TextH3B>
+                  )}
+                  <TextH3B>
                     {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
                     {menuDetail?.type === 'SUBSCRIPTION' && '~'}
                   </TextH3B>
@@ -329,7 +340,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
               </PriceWrapper>
             )}
 
-            {!isTempSold && !isReOpen && !isOpenSoon && coupons?.length! > 0 && (
+            {!isTempSold && !isReOpen && !isOpenSoon && (
               <>
                 {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
@@ -339,7 +350,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                     <SVGIcon name="download" />
                   </CouponWrapper>
                 ) : (
-                  <CouponWrapper>
+                  <CouponWrapper onClick={couponDownloadHandler}>
                     <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
                     <SVGIcon name="checkBlack18" />
                   </CouponWrapper>
@@ -381,7 +392,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                 </DeliveryLi>
                 <DeliveryLi>
                   <TextB2R>상품 구성</TextB2R>
-                  <TextB2R>단백질 위주의 식단 교차 배송</TextB2R>
+                  <TextB2R>{menuDetail?.subscriptionDescription}</TextB2R>
                 </DeliveryLi>
               </DeliveryUl>
             </DeliveryInfoBox>
@@ -489,6 +500,7 @@ const CouponWrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px 10px 10px 16px;
+  cursor: pointer;
 `;
 
 const OriginPrice = styled.div``;
@@ -512,6 +524,7 @@ const NutritionInfoBox = styled.div`
 
 const DeliveryInfoBox = styled.div`
   border-top: 1px solid ${theme.greyScale6};
+  margin-top: 24px;
 `;
 const DeliveryUl = styled.ul``;
 const DeliveryLi = styled.li`
@@ -541,7 +554,7 @@ const CountWrapper = styled.div`
   bottom: 10px;
   padding: 4px 8px;
   border-radius: 50%;
-  background: ${theme.greyScale65};
+  background: rgba(36, 36, 36, 0.5);
   border-radius: 24px;
 `;
 

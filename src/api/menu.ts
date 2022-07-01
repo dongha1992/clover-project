@@ -22,8 +22,16 @@ export const getMenuDetailApi = (id: number): Promise<AxiosResponse<IMenuDetails
   return Api.get(`menu/v1/menus/${id}`);
 };
 
-export const getMenuDetailReviewApi = (id: number): Promise<AxiosResponse<IMenuReviewsResponse>> => {
-  return Api.get(`menu/v1/reviews?menuId=${id}`);
+export const getMenuDetailReviewApi = ({
+  id,
+  size,
+  page,
+}: {
+  id: number;
+  size: number;
+  page: number;
+}): Promise<AxiosResponse<IMenuReviewsResponse>> => {
+  return Api.get(`menu/v1/reviews/${id}`, { params: { size, page } });
 };
 
 export const getReviewDetailApi = (reivewId: number): Promise<AxiosResponse<IReviewsDetailResponse>> => {

@@ -96,6 +96,7 @@ const Right = styled.div`
   padding: 8px;
   max-width: 410px;
   width: 100%;
+  color: ${theme.greyScale65};
 `;
 
 export default NutritionInfoPage;
