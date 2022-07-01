@@ -3,14 +3,39 @@ import styled from 'styled-components';
 import { homePadding } from '@styles/theme';
 import useFetch from '@hooks/useFetch';
 import router from 'next/router';
+import { getMenuDetailReviewImageApi } from '@api/menu';
+import { useQuery } from 'react-query';
+import { IMAGE_S3_URL } from '@constants/mock';
 
 /* 사진 전체 후기 */
 
 const ReviewPage = ({ menuId }: any) => {
   const [page, setPage] = useState<number>(0);
-  const { loading, error, list } = useFetch(page);
+  // const { loading, error, list } = useFetch(page);
   const ref = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+
+  const {
+    data: reviewsImages,
+    error: reviewsImagesError,
+    isFetching,
+    isLoading,
+    refetch,
+  } = useQuery(
+    'getMenuDetailReviewImages',
+    async () => {
+      const params = { id: Number(menuId)!, page, size: 30 };
+      const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: () => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId && !!page,
+    }
+  );
 
   const option = {
     root: parentRef.current, // 관찰대상의 부모요소를 지정
@@ -35,21 +60,28 @@ const ReviewPage = ({ menuId }: any) => {
     return () => observer.disconnect();
   }, [handleObserver]);
 
+  useEffect(() => {
+    if (page) {
+      refetch();
+    }
+  }, [page]);
+
   const goToReviewDetail = useCallback(({ id }) => {
     router.push(`/menu/${menuId}/review/${id}`);
   }, []);
 
-  if (!loading) {
+  if (isLoading || isFetching) {
     <div>로딩중</div>;
   }
 
   return (
     <Container>
       <Wrapper ref={parentRef}>
-        {list.map((image: any, index: number) => {
+        {reviewsImages?.images?.map((image: any, index: number) => {
+          console.log(image, 'image');
           return (
             <ReviewImage
-              src={image.url}
+              src={IMAGE_S3_URL + image.url}
               alt="리뷰이미지"
               key={index}
               onClick={() => goToReviewDetail(image)}

@@ -58,6 +58,7 @@ dayjs.locale('ko');
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
+/*TODO: 베스트 후기 수정해야함 */
 interface IProps {
   menuId: number;
 }
