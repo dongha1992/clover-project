@@ -88,11 +88,7 @@ const SpotPage = () => {
     ['spotList', 'NEW'],
     async () => {
       const response = await getNewSpots(params);
-      const listSort = response.data.data.spots.sort((a, b) => a.distance - b.distance);
-      return {
-        data: response.data.data,
-        spotList: listSort,
-      }
+      return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -102,11 +98,7 @@ const SpotPage = () => {
     ['spotList', 'EVENT'],
     async () => {
       const response = await getSpotEvent(params);
-      const listSort = response.data.data.spots?.sort((a, b) => a.distance - b.distance);
-      return  {
-        data: response.data.data,
-        spotList: listSort,
-      }
+      return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -116,11 +108,7 @@ const SpotPage = () => {
     ['spotList', 'POPULAR'],
     async () => {
       const response = await getSpotPopular(params);
-      const listSort = response.data.data.spots?.sort((a, b) => a.distance - b.distance);
-      return {
-        data: response.data.data,
-        spotList: listSort,
-      }
+      return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -313,11 +301,11 @@ const SpotPage = () => {
       {
         // 근처 인기있는 스팟 & 신규 스팟
         // 오늘 점심 함께 주문해요.
-        popularSpotList?.spotList?.length! > 0 && newSpotList?.spotList?.length! > 0 ? (
+        popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 ? (
           <>
-            <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.data.title}</TextH2B>
+            <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
             <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
-              {popularSpotList?.spotList.map((list, idx) => {
+              {popularSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
                     <SpotList list={list} type="normal" />
@@ -325,9 +313,9 @@ const SpotPage = () => {
                 );
               })}
             </SpotsSlider>
-            <TextH2B padding="49px 24px 24px 24px">{newSpotList?.data.title}</TextH2B>
+            <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
             <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
-              {newSpotList?.spotList.map((list, idx) => {
+              {newSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
                     <SpotList list={list} type="normal" />
@@ -361,7 +349,7 @@ const SpotPage = () => {
       }
       {
         //프라이빗 스팟 신청 CTA
-        popularSpotList?.spotList?.length! > 0 && newSpotList?.spotList?.length! > 0 && (
+        popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 && (
           <Wrapper>
             <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
               <FlexBetween height="92px" padding="22px">
@@ -376,11 +364,11 @@ const SpotPage = () => {
       }
       {
         // 이벤트 중인 스팟
-        eventSpotList?.spotList?.length! > 0 && (
+        eventSpotList?.spots?.length! > 0 && (
           <>
-            <TextH2B padding="0 24px 24px 24px">{eventSpotList?.data.title}</TextH2B>
+            <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
             <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
-              {eventSpotList?.spotList.map((list, idx) => {
+              {eventSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
                     <SpotList list={list} type="event" />
@@ -414,7 +402,7 @@ const SpotPage = () => {
       }
       {
         //퍼블릭 스팟 신청 CTA
-        popularSpotList?.spotList?.length! > 0 && newSpotList?.spotList?.length! > 0 ? (
+        popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 ? (
           <>
             <Wrapper type="PUBLIC">
               <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>

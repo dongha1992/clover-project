@@ -80,11 +80,7 @@ const SpotSearchPage = (): ReactElement => {
         size: 6,
       };
       const response = await getSpotEvent(params);
-      const listSort = response.data.data.spots.sort((a, b) => a.distance - b.distance);
-      return {
-        data: response.data.data,
-        spotList: listSort,
-      }
+      return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -108,7 +104,7 @@ const SpotSearchPage = (): ReactElement => {
   ); 
 
   // 추천스팟 + 이벤트 스팟 
-  const spotsArr = spotRecommendList?.spotList.concat(eventSpotList?.spotList!);
+  const spotsArr = spotRecommendList?.spotList.concat(eventSpotList?.spots!);
 
   useEffect(()=> {
     dispatch(SET_SERACH_MAP_SPOT(spotsArr!));
@@ -156,7 +152,7 @@ const SpotSearchPage = (): ReactElement => {
       </KeyWordWrapper>
       {
       // 스팟 검색 메인 - 검색바 포커싱 x
-        ((spotRecommendList?.spotList.length! > 0) && (eventSpotList?.spotList?.length! > 0)) ? (
+        ((spotRecommendList?.spotList.length! > 0) && (eventSpotList?.spots?.length! > 0)) ? (
           // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
           <>
           {/* 추천스팟 */}
@@ -175,9 +171,9 @@ const SpotSearchPage = (): ReactElement => {
             {/* 이벤트 중인 스팟 */}
             <BottomContentWrapper>
               <Row />
-              <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.data.title}</TextH2B>
+              <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
               <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-                {eventSpotList?.spotList?.map((list, idx) => {
+                {eventSpotList?.spots?.map((list, idx) => {
                   return (
                     <SwiperSlide className="swiper-slide" key={idx}>
                       <SpotList list={list} type="event" />
