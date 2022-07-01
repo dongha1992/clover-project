@@ -443,15 +443,11 @@ const MenuDetailPage = ({ menuId }: IProps) => {
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
             <div key={index}>
-              <DetailInfoWrapper>
+              <DetailInfoWrapper onClick={() => router.replace(`${menuDetail?.id!}/detail/${info.value}`)}>
                 <TextH4B>{info.text}</TextH4B>
-                <Link href={`${menuDetail?.id!}/detail/${info.value}`} passHref>
-                  <a>
-                    <TextH6B textDecoration="underLine" color={theme.greyScale65}>
-                      자세히
-                    </TextH6B>
-                  </a>
-                </Link>
+                <TextH6B textDecoration="underLine" color={theme.greyScale65}>
+                  자세히
+                </TextH6B>
               </DetailInfoWrapper>
               {index !== MENU_DETAIL_INFORMATION.length - 1 ? <BorderLine height={1} margin="16px 0" /> : null}
             </div>
@@ -610,6 +606,7 @@ const DetailInfoWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Bottom = styled.div``;
