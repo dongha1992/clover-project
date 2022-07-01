@@ -4,6 +4,7 @@ import {
   IGetMenus,
   IGetMenusResponse,
   IMenuReviewsResponse,
+  IMenuReviewsImageResponse,
   IReviewsDetailResponse,
   IPostMenuReview,
   IMenuDetailsResponse,
@@ -22,8 +23,28 @@ export const getMenuDetailApi = (id: number): Promise<AxiosResponse<IMenuDetails
   return Api.get(`menu/v1/menus/${id}`);
 };
 
-export const getMenuDetailReviewApi = (id: number): Promise<AxiosResponse<IMenuReviewsResponse>> => {
-  return Api.get(`menu/v1/reviews?menuId=${id}`);
+export const getMenuDetailReviewApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IMenuReviewsResponse>> => {
+  return Api.get(`menu/v1/reviews/${id}`, { params: { page, size } });
+};
+
+export const getMenuDetailReviewImageApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IMenuReviewsResponse>> => {
+  return Api.get(`menu/v1/reviews/images/${id}`, { params: { page, size } });
 };
 
 export const getReviewDetailApi = (reivewId: number): Promise<AxiosResponse<IReviewsDetailResponse>> => {

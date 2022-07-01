@@ -25,8 +25,8 @@ const TotalReviewPage = ({ menuId }: any) => {
   const { data, error, isLoading } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(menuId);
-      // const { data } = await axios.get(`${BASE_URL}/review`);
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewApi(params);
 
       const { searchReviewImages, searchReviews } = data.data;
 

@@ -1831,8 +1831,8 @@ export interface ISearchReviews {
   id: number;
   menuId?: number;
   userNickName: string;
-  menuName: string;
-  menuDetailName: string;
+  menuName?: string;
+  menuDetailName?: string;
   orderCount?: number;
   rating: number;
   content: string;
@@ -1863,12 +1863,19 @@ export interface IMenuImageInReivew {
 }
 export interface IMenuReviews {
   searchReviews: ISearchReviews[];
-  searchReviewImages: ISearchReviewImages[];
 }
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews;
+  data: { reviews: IMenuReviews; pagination: IPagination };
+  message: string;
+}
+
+export interface IMenuReviewsImages {}
+
+export interface IMenuReviewsImageResponse {
+  code: number;
+  data: { images: IMenuReviewsImages; pagination: IPagination };
   message: string;
 }
 
