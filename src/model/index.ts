@@ -1689,14 +1689,15 @@ export interface IMenuImage {
   width: number;
 }
 export interface IDetailImage {
-  createdAt: string;
   height: number;
   id: number;
-  name: string;
-  originalName: string;
-  size: number;
   url: string;
   width: number;
+  createdAt?: string;
+  name?: string;
+  originalName?: string;
+  size?: number;
+  reviewId?: number;
 }
 
 export interface IMenuDetails {
@@ -1833,8 +1834,8 @@ export interface ISearchReviews {
   id: number;
   menuId?: number;
   userNickName: string;
-  menuName: string;
-  menuDetailName: string;
+  menuName?: string;
+  menuDetailName?: string;
   orderCount?: number;
   rating: number;
   content: string;
@@ -1863,14 +1864,16 @@ export interface IMenuImageInReivew {
   url: string;
   width: number;
 }
-export interface IMenuReviews {
-  searchReviews: ISearchReviews[];
-  searchReviewImages: ISearchReviewImages[];
-}
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: IMenuReviews;
+  data: { menuReviews: ISearchReviews[]; pagination: IPagination };
+  message: string;
+}
+
+export interface IMenuReviewsImageResponse {
+  code: number;
+  data: { images: IDetailImage[]; pagination: IPagination };
   message: string;
 }
 
@@ -1878,7 +1881,7 @@ export interface IReviewsDetailResponse {
   code: number;
   message: string;
   data: {
-    searchReview: ISearchReviews;
+    menuReviews: ISearchReviews;
     menuImage: IMenuImageInReivew;
   };
 }

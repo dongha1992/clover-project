@@ -24,7 +24,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               <RatingAndUser>
                 <Rating>
                   <SVGIcon name="singleStar" />
-                  <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
+                  <TextH5B padding="0 0 0 4px">{review.rating >= 5 ? 5 : review.rating}</TextH5B>
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
@@ -115,7 +115,12 @@ const Rating = styled.div`
 
 const ReviewBody = styled.div`
   margin-top: 8px;
-  ${showMoreText}
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
 `;
 
 const UserInfo = styled.div`

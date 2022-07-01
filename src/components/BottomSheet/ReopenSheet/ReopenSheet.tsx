@@ -183,7 +183,7 @@ const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
       </Body>
       <BtnWrapper onClick={goToNoti}>
         <Button height="100%" borderRadius="0" disabled={!isMarketinngChecked}>
-          확인
+          신청하기
         </Button>
       </BtnWrapper>
     </Container>
