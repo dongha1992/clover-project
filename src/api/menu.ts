@@ -43,7 +43,7 @@ export const getMenuDetailReviewImageApi = ({
   id: number;
   page: number;
   size: number;
-}): Promise<AxiosResponse<IMenuReviewsResponse>> => {
+}): Promise<AxiosResponse<IMenuReviewsImageResponse>> => {
   return Api.get(`menu/v1/reviews/images/${id}`, { params: { page, size } });
 };
 

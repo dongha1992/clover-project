@@ -12,9 +12,9 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '@constants/mock';
 import { useQuery } from 'react-query';
-import { Obj, ISearchReviews, IMenuReviews, ISearchReviewImages } from '@model/index';
+import { Obj, ISearchReviews, ISearchReviewImages } from '@model/index';
 import { groupBy, pipe } from '@fxts/core';
-import { getMenuDetailReviewApi } from '@api/menu';
+import { getMenuDetailReviewApi, getMenuDetailReviewImageApi } from '@api/menu';
 
 /* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
 /* TODO: 중복 코드 많음 , 리팩토링 */
@@ -22,29 +22,48 @@ import { getMenuDetailReviewApi } from '@api/menu';
 const TotalReviewPage = ({ menuId }: any) => {
   const dispatch = useDispatch();
 
-  const { data, error, isLoading } = useQuery(
+  const {
+    data: reviews,
+    error,
+    isLoading,
+  } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const params = { id: Number(menuId)!, page: 1, size: 100 };
       const { data } = await getMenuDetailReviewApi(params);
 
-      const { searchReviewImages, searchReviews } = data.data;
-
-      return { searchReviewImages, searchReviews };
+      return data.data;
     },
 
     {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
-  const getAverageRate = () => {
-    const totalRating = data?.searchReviews?.reduce((rating: number, review: ISearchReviews) => {
+  const { data: reviewsImages, error: reviewsImagesError } = useQuery(
+    'getMenuDetailReviewImages',
+    async () => {
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
+    }
+  );
+
+  const getAverageRate = (): string => {
+    const totalRating = reviews?.searchReviews?.reduce((rating: number, review: ISearchReviews) => {
       return rating + review?.rating;
     }, 0)!;
-    return (totalRating / data?.searchReviews.length!).toFixed(1);
+    return (totalRating / reviews?.searchReviews.length!).toFixed(1);
   };
 
   const goToReviewImages = useCallback(() => {
@@ -59,33 +78,22 @@ const TotalReviewPage = ({ menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
-  /* TODO: 함수화 */
-
-  const idByReviewImg: Obj = pipe(
-    data?.searchReviewImages!,
-    groupBy((review: ISearchReviewImages) => review?.menuReviewId!)
-  );
-
-  const mergedReviews = data?.searchReviews.map((review: ISearchReviews) => {
-    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
-  });
-
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  const hasReivew = data?.searchReviews?.length! > 0;
+  const hasReivew = reviewsImages?.images?.length! > 0;
 
   return (
     <Container>
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
           <ReviewOnlyImage
-            reviews={data?.searchReviewImages}
+            reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
             averageRating={getAverageRate()}
-            totalReviews={data?.searchReviews.length}
+            totalReviews={reviewsImages?.pagination?.total!}
           />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
@@ -105,7 +113,7 @@ const TotalReviewPage = ({ menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {mergedReviews?.map((review: any, index: number) => {
+        {reviews?.searchReviews?.map((review: any, index: number) => {
           return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
         })}
       </ReviewWrapper>
