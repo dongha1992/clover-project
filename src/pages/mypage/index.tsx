@@ -36,7 +36,7 @@ const MypagePage = () => {
   const [subsOrders, setSubsOrders] = useState([]);
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
-
+  const [showBoard, setShowBoard] = useState<string>('');
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
@@ -76,8 +76,8 @@ const MypagePage = () => {
               return -1;
           })
           .filter((order: IGetOrders) => order.status !== 'COMPLETED' && order.status !== 'CANCELED');
-        const unpaidOrders = orders.filter((order: IGetOrders) => order.status === 'UNPAID');
-        const closeOrders = orders.filter(
+        const unpaidOrders = await orders.filter((order: IGetOrders) => order.status === 'UNPAID');
+        const closeOrders = await orders.filter(
           (order: IGetOrders) =>
             order.subscriptionPeriod === 'UNLIMITED' &&
             (order.unsubscriptionType === 'DISABLED_DESTINATION' ||
@@ -85,6 +85,13 @@ const MypagePage = () => {
               order.unsubscriptionType === 'PAYMENT_FAILED' ||
               order.unsubscriptionType === 'USER_CANCEL')
         );
+        if (closeOrders.length > 0) {
+          setShowBoard('close');
+        } else if (closeOrders.length === 0 && unpaidOrders.length > 0) {
+          setShowBoard('unpaid');
+        } else {
+          setShowBoard('progress');
+        }
 
         setSubsCloseOrders(closeOrders);
         setSubsUnpaidOrders(unpaidOrders);
@@ -215,6 +222,7 @@ const MypagePage = () => {
               subsOrders={subsOrders}
               subsUnpaidOrders={subsUnpaidOrders}
               subsCloseOrders={subsCloseOrders}
+              showBoard={showBoard}
             />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />

@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { IAllMenus } from '@components/Pages/Category/SingleMenu';
 import { cloneDeep } from 'lodash-es';
 import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
+import { CategoryFilter } from '@components/Pages/Category';
 
 /* TODO: 로그인 체크 알림신청 */
 /* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
@@ -129,6 +130,7 @@ const CategoryPage = () => {
 
   return (
     <Container>
+      <CategoryFilter />
       <SingleMenu
         menuList={menus || []}
         title={CATEGORY_TITLE_MAP[type as string]}
