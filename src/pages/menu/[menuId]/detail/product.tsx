@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { TextH5B } from '@components/Shared/Text';
 
-import { textBody3, theme } from '@styles/theme';
+import { textBody3, textBody2, theme } from '@styles/theme';
 const ProductInfoPage = () => {
   const { info } = useSelector(menuSelector);
 
@@ -96,20 +96,21 @@ const RowLast = styled.div`
   width: 100%;
   flex-direction: row;
   display: flex;
-  border-top: 2px solid ${theme.black};
+  /* border-top: 2px solid ${theme.black}; */
 `;
 const Left = styled.div`
-  ${textBody3}
+  ${textBody2}
   max-width: 74px;
   width: 100%;
   background-color: ${theme.greyScale6};
   padding: 8px;
 `;
 const Right = styled.div`
-  ${textBody3}
+  ${textBody2}
   padding: 8px;
   max-width: 410px;
   width: 100%;
+  color: ${theme.greyScale65};
 `;
 
 export default ProductInfoPage;
