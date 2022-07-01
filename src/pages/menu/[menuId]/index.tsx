@@ -30,7 +30,7 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi, getMenuDetailReviewImageApi } from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
@@ -117,6 +117,22 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: reviewsImages, error: reviewsImagesError } = useQuery(
+    'getMenuDetailReviewImages',
+    async () => {
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
@@ -213,12 +229,20 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   };
 
   const renderBottomContent = () => {
+    console.log(reviews, 'reviewsreviewreviewreviewsss');
     switch (selectedTab) {
       case '/menu/detail/review': {
         if (isOpenSoon) {
           return;
         }
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail?.id} />;
+        return (
+          <DetailBottomReview
+            reviews={reviews!}
+            isSticky={isSticky}
+            menuId={menuDetail?.id!}
+            reviewsImages={reviewsImages!}
+          />
+        );
       }
 
       case '/menu/detail/faq':
@@ -388,7 +412,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen ? (
+        {reviews?.pagination?.total! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
@@ -443,7 +467,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: reviews?.searchReviews.length }}
+          countObj={{ 후기: reviews?.pagination.total }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}

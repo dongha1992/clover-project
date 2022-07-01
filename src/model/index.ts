@@ -1688,14 +1688,14 @@ export interface IMenuImage {
   width: number;
 }
 export interface IDetailImage {
-  createdAt: string;
   height: number;
   id: number;
-  name: string;
-  originalName: string;
-  size: number;
   url: string;
   width: number;
+  createdAt?: string;
+  name?: string;
+  originalName?: string;
+  size?: number;
 }
 
 export interface IMenuDetails {
@@ -1861,21 +1861,16 @@ export interface IMenuImageInReivew {
   url: string;
   width: number;
 }
-export interface IMenuReviews {
-  searchReviews: ISearchReviews[];
-}
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: { reviews: IMenuReviews; pagination: IPagination };
+  data: { searchReviews: ISearchReviews[]; pagination: IPagination };
   message: string;
 }
 
-export interface IMenuReviewsImages {}
-
 export interface IMenuReviewsImageResponse {
   code: number;
-  data: { images: IMenuReviewsImages; pagination: IPagination };
+  data: { images: IDetailImage[]; pagination: IPagination };
   message: string;
 }
 

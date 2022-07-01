@@ -1,14 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH5B } from '@components/Shared/Text';
-import { SVGIcon } from '@utils/common';
 import { TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { StarRating } from '@components/StarRating';
+import { IDetailImage } from '@model/index';
 
-const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail, averageRating, totalReviews }: any) => {
+interface IProps {
+  reviewsImages: IDetailImage[];
+  goToReviewImages: () => void;
+  goToReviewDetail: (id: number) => void;
+  averageRating: string;
+  totalReviews: number;
+}
+
+const ReviewOnlyImage = ({
+  reviewsImages,
+  goToReviewImages,
+  goToReviewDetail,
+  averageRating,
+  totalReviews,
+}: IProps) => {
   return (
     <Container>
       <Wrapper>
@@ -18,17 +32,17 @@ const ReviewOnlyImage = ({ reviews, goToReviewImages, goToReviewDetail, averageR
             <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
-            <StarRating rating={averageRating} />
+            <StarRating rating={Number(averageRating)} />
           </Star>
         </Header>
         <ReviewSwipe>
-          {reviews?.map((review: any, index: number) => {
+          {reviewsImages?.map((review: any, index: number) => {
             if (index > 3) return;
-            if (reviews.length > 4 && index === 3) {
+            if (reviewsImages?.length > 4 && index === 3) {
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>+ {reviews.length - 4}</TextH1B>
+                    <TextH1B color={theme.white}>+ {totalReviews - 4}</TextH1B>
                   </LastImg>
                   <Image
                     src={IMAGE_S3_URL + review?.url}
@@ -91,6 +105,7 @@ const ReviewSwipe = styled.div`
   overflow: hidden;
   width: 100%;
   margin: 16px 0 24px 0;
+  cursor: pointer;
 `;
 
 const ReviewImgWrapper = styled.div`

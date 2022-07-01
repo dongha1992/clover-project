@@ -9,45 +9,30 @@ import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { pipe, groupBy } from '@fxts/core';
+import { IDetailImage, IPagination } from '@model/index';
 import { Obj, ISearchReviews } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 
-export interface IMergedReview {
-  id: number;
-  userNickName: string;
-  menuName: string;
-  menuDetailName: string;
-  orderCount: number;
-  rating: number;
-  content: string;
-  createdAt: string;
-  reviewImg: { id: number; url: string; width: number; height: number; size: number };
+interface IProps {
+  reviews: { searchReviews: ISearchReviews[]; pagination: IPagination };
+  isSticky: boolean;
+  menuId: number;
+  reviewsImages: { images: IDetailImage[]; pagination: IPagination };
 }
 
-const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
-  console.log(reviews, 'reviews');
+const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
   const dispatch = useDispatch();
-  const { searchReviews, searchReviewImages } = reviews;
-  const hasReivew = searchReviewImages.length !== 0;
+  const { searchReviews } = reviews;
+  const hasReivew = searchReviews?.length !== 0;
   const { me } = useSelector(userForm);
 
-  const idByReviewImg: Obj = pipe(
-    searchReviewImages,
-    groupBy((review: any) => review.menuReviewId)
-  );
-
-  const mergedReviews = searchReviews.map((review: ISearchReviews) => {
-    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
-  });
-
-  const getAverageRate = () => {
-    const totalRating = searchReviews.reduce((rating: number, review: ISearchReviews) => {
+  const getAverageRate = (): string => {
+    const totalRating = searchReviews?.reduce((rating: number, review: ISearchReviews) => {
       return rating + review.rating;
     }, 0);
-    return (totalRating / searchReviews.length).toFixed(1);
+    return (totalRating / searchReviews?.length).toFixed(1);
   };
 
   const goToReviewImages = useCallback(() => {
@@ -85,11 +70,11 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
       <Wrapper hasReivew={hasReivew}>
         {hasReivew ? (
           <ReviewOnlyImage
-            reviews={searchReviewImages}
+            reviewsImages={reviewsImages.images}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
             averageRating={getAverageRate()}
-            totalReviews={searchReviews.length}
+            totalReviews={reviewsImages.pagination.total}
           />
         ) : (
           <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
@@ -111,11 +96,11 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
         <>
           <BorderLine height={8} />
           <ReviewWrapper>
-            {mergedReviews.map((review: any, index: number) => {
+            {searchReviews?.map((review: any, index: number) => {
               return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-              {mergedReviews?.length}개 후기 전체보기
+              {reviews.pagination.total}개 후기 전체보기
             </Button>
           </ReviewWrapper>
         </>
