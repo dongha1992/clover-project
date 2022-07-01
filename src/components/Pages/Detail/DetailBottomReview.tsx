@@ -20,7 +20,7 @@ interface IProps {
   reviews: { menuReviews: ISearchReviews[]; pagination: IPagination };
   isSticky: boolean;
   menuId: number;
-  reviewsImages: { images: IDetailImage[]; pagination: IPagination };
+  reviewsImages?: { images: IDetailImage[]; pagination: IPagination };
 }
 
 const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
@@ -66,7 +66,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
       {hasImageReviews && (
         <Wrapper>
           <ReviewOnlyImage
-            reviewsImages={reviewsImages.images}
+            reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
             averageRating={getMenuAverageRate({ reviews: menuReviews, total: reviews?.pagination.total })}

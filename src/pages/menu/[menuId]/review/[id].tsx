@@ -18,7 +18,11 @@ const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
   } = useQuery(
     'getReviewDetail',
     async () => {
-      const { data } = await getReviewDetailApi(Number(reviewId));
+      const params = {
+        id: 9,
+        reviewId: Number(reviewId),
+      };
+      const { data } = await getReviewDetailApi(params);
       return data.data;
     },
 
