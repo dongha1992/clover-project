@@ -32,7 +32,7 @@ export const getMenuDetailReviewApi = ({
   page: number;
   size: number;
 }): Promise<AxiosResponse<IMenuReviewsResponse>> => {
-  return Api.get(`menu/v1/reviews/${id}`, { params: { page, size } });
+  return Api.get(`menu/v1/menus/${id}/reviews`, { params: { page, size } });
 };
 
 export const getMenuDetailReviewImageApi = ({
@@ -44,11 +44,17 @@ export const getMenuDetailReviewImageApi = ({
   page: number;
   size: number;
 }): Promise<AxiosResponse<IMenuReviewsImageResponse>> => {
-  return Api.get(`menu/v1/reviews/images/${id}`, { params: { page, size } });
+  return Api.get(`menu/v1/menus/${id}/reviews/images`, { params: { page, size } });
 };
 
-export const getReviewDetailApi = (reivewId: number): Promise<AxiosResponse<IReviewsDetailResponse>> => {
-  return Api.get(`menu/v1/reviews/${reivewId}`);
+export const getReviewDetailApi = ({
+  id,
+  reivewId,
+}: {
+  id: number;
+  reivewId: number;
+}): Promise<AxiosResponse<IReviewsDetailResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/${reivewId}`);
 };
 
 export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {

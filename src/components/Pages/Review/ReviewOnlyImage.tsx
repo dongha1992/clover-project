@@ -96,8 +96,7 @@ const Count = styled.div`
   align-items: center;
 `;
 
-const Star = styled.div`
-di`;
+const Star = styled.div``;
 
 const ReviewSwipe = styled.div`
   display: flex;

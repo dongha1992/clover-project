@@ -469,7 +469,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           })}
         </>
       )}
-
       <div ref={tabRef} />
       <Bottom>
         <StickyTab
