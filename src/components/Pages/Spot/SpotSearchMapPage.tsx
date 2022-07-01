@@ -8,11 +8,16 @@ import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import Slider from 'react-slick';
-import { SpotSearchMap } from '@components/Map';
+import { SpotSearchMap, NaverMap } from '@components/Map';
 import { spotSelector } from '@store/spot';
 import { useDispatch, useSelector } from 'react-redux';
 
-const SpotSearchMapPage = (): ReactElement => {
+interface IProps {
+  isSearched?: boolean;
+  searchListLen?: number;
+};
+
+const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement => {
   const router = useRouter();
   const slideRef = useRef(null);
   const { spotSearchArr } = useSelector(spotSelector);
@@ -35,14 +40,18 @@ const SpotSearchMapPage = (): ReactElement => {
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchMap currentIdx={currentIdx.next} />
-        <SpotListWrapper>
-          <SpotListSlider {...setting} ref={slideRef}>
-            {list?.map((item, index) => (
-              <SpotsSearchResultList map item={item} key={index} />
-            ))}
-          </SpotListSlider>
-        </SpotListWrapper>
+        <NaverMap currentIdx={currentIdx.next} />
+        {
+          isSearched && searchListLen! > 0 && (
+            <SpotListWrapper>
+              <SpotListSlider {...setting} ref={slideRef}>
+                {list?.map((item, index) => (
+                  <SpotsSearchResultList map item={item} key={index} />
+                ))}
+              </SpotListSlider>
+            </SpotListWrapper>
+          )
+        }
       </MapWrapper>
     </Container>
   );

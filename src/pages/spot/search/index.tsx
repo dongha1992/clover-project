@@ -7,10 +7,10 @@ import {
   SpotList, 
   SpotRecommendList, 
   SpotRecentPickupList, 
-  SpotSearchMapMain 
+  SpotSearchMapPage 
 } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
-import { getSpotSearchRecommend, getSpotEvent } from '@api/spot';
+import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
@@ -48,6 +48,7 @@ const SpotSearchPage = (): ReactElement => {
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
     dispatch(SET_SPOT_MAP_SWITCH(false));
+    getSpotList({keyword: ''});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -99,13 +100,31 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  // 추천스팟 + 이벤트 스팟 
-  const spotsArr = spotRecommend?.spots.concat(eventSpot?.spots!);
+  const getSpotList = async ({ keyword }: { keyword: string }) => {
+    try {
+      const params = {
+        keyword: keyword,
+        latitude: latitude,
+        longitude: longitude,
+      };
+      const { data } = await getSpotSearch(params);
+      if (data.code === 200) {
+        const spotList = data.data.spots;
+        dispatch(SET_SERACH_MAP_SPOT(spotList!));
+        // setSearchResult(fetchData?.spots);
+      };
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  useEffect(()=> {
-    dispatch(SET_SERACH_MAP_SPOT(spotsArr!));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[eventSpot]);
+  // 추천스팟 + 이벤트 스팟 
+  // const spotsArr = spotRecommend?.spots.concat(eventSpot?.spots!);
+
+  // useEffect(()=> {
+  //   dispatch(SET_SERACH_MAP_SPOT(spotsArr!));
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[eventSpot]);
 
   const goToSpotSearch = () => {
     router.push('/spot/search/main');
@@ -125,7 +144,7 @@ const SpotSearchPage = (): ReactElement => {
     <Container>
       {
         isMapSwitch ? (
-          <SpotSearchMapMain />
+          <SpotSearchMapPage />
         ) : (
           <>
             <SearchBarWrapper onClick={goToSpotSearch}>

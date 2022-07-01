@@ -6,7 +6,7 @@ import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
 import { theme, FlexBetween, textBody2 } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
-import { SpotList, SpotRecommendList, SpotRecentPickupList, SpotSearchMapMain } from '@components/Pages/Spot';
+import { SpotList, SpotRecommendList, SpotRecentPickupList, SpotSearchMapPage } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotSearch } from '@api/spot';
 import { ISpotsDetail } from '@model/index';
@@ -61,13 +61,13 @@ const SpotSearchMainPage = (): ReactElement => {
 
   useEffect(() => {
     if (spotKeyword?.length > 0) {
-      fetchSpotSearchData({ keyword: spotKeyword });
+      getSpotList({ keyword: spotKeyword });
     }
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
   useEffect(() => {
     if (spotKeyword?.length > 0) {
-      fetchSpotSearchData({ keyword: spotKeyword });
+      getSpotList({ keyword: spotKeyword });
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
     }
   }, [spotKeyword]);
@@ -184,12 +184,12 @@ const SpotSearchMainPage = (): ReactElement => {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData({ keyword });
+        getSpotList({ keyword });
       }
     }
   }, []);
 
-  const fetchSpotSearchData = async ({ keyword }: { keyword: string }) => {
+  const getSpotList = async ({ keyword }: { keyword: string }) => {
     try {
       const params = {
         keyword: keyword,
@@ -306,7 +306,7 @@ const SpotSearchMainPage = (): ReactElement => {
       {
         isMapSwitch ? 
         (
-          <SpotSearchMapMain />
+          <SpotSearchMapPage isSearched={isSearched} searchListLen={filterResult?.length} />
         ) : (
           <>
             <SearchBarWrapper>
