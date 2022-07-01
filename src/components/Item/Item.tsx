@@ -60,7 +60,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
-        queryClient.setQueryData(['getRecommenMenus'], (previous: any) => {
+        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
