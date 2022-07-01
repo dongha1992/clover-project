@@ -43,6 +43,7 @@ const CouponSheet = ({ coupons }: IProps) => {
           })
         );
         await queryClient.refetchQueries('getCouponList');
+        await queryClient.refetchQueries('getPromotion');
         dispatch(SET_IS_LOADING(false));
       },
       onError: async (error: any) => {

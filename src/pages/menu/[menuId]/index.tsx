@@ -110,6 +110,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     'getMenuDetailReview',
     async () => {
       const params = { id: Number(menuId)!, page: 1, size: 100 };
+
       const { data } = await getMenuDetailReviewApi(params);
       return data.data;
     },
@@ -339,14 +340,20 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           <PriceAndCouponWrapper>
             {!isOpenSoon && !isReOpen && (
               <PriceWrapper>
-                <OriginPrice>
-                  <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                    {getFormatPrice(String(getMenuDetailPrice().price))}원
-                  </TextH6B>
-                </OriginPrice>
+                {!isTempSold && (
+                  <OriginPrice>
+                    <TextH6B color={theme.greyScale25} textDecoration=" line-through">
+                      {getFormatPrice(String(getMenuDetailPrice().price))}원
+                    </TextH6B>
+                  </OriginPrice>
+                )}
                 <DiscountedPrice>
-                  <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
-                  <TextH3B padding={'0 0 0 4px'}>
+                  {!isTempSold && (
+                    <TextH3B padding={'0 4px 0 0px'} color={theme.brandColor}>
+                      {getMenuDetailPrice().discount}%
+                    </TextH3B>
+                  )}
+                  <TextH3B>
                     {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
                     {menuDetail?.type === 'SUBSCRIPTION' && '~'}
                   </TextH3B>
@@ -514,6 +521,7 @@ const CouponWrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px 10px 10px 16px;
+  cursor: pointer;
 `;
 
 const OriginPrice = styled.div``;
@@ -567,7 +575,7 @@ const CountWrapper = styled.div`
   bottom: 10px;
   padding: 4px 8px;
   border-radius: 50%;
-  background: ${theme.greyScale65};
+  background: rgba(36, 36, 36, 0.5);
   border-radius: 24px;
 `;
 
