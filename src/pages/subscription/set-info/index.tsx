@@ -84,7 +84,6 @@ const SubsSetInfoPage = () => {
     },
     {
       onSuccess: (data) => {
-        // dispatch(SET_MENU_ITEM(data));
         !subsInfo?.period &&
           setUserSelectPeriod(
             last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
@@ -291,13 +290,12 @@ const SubsSetInfoPage = () => {
           subsDeliveryExpectedDate[0].deliveryDate,
           subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate,
         ],
+        subscriptionDiscountRates: menuDetail?.subscriptionDiscountRates,
       })
     );
   };
 
   const goToDeliveryInfo = () => {
-    console.log('subsDeliveryType', subsDeliveryType);
-
     if (subsDeliveryType !== 'SPOT' && mainDestinationAddress) {
       dispatch(
         SET_ALERT({
@@ -358,7 +356,15 @@ const SubsSetInfoPage = () => {
               >
                 <RadioButton isSelected={disabled ? isSelected : false} />
                 <TextB2R className={`${isSelected && 'fBold'} ${!disabled && 'disabled'}`} padding="0 0 0 8px" pointer>
-                  {item.text}
+                  {index === 4 ? (
+                    <>
+                      {item.text} (최대 {menuDetail?.subscriptionDiscountRates![index]}% 할인)
+                    </>
+                  ) : (
+                    <>
+                      {item.text} ({menuDetail?.subscriptionDiscountRates![index]}% 할인)
+                    </>
+                  )}
                 </TextB2R>
               </RadioLi>
             );
@@ -374,7 +380,8 @@ const SubsSetInfoPage = () => {
           <TextB3R color={theme.brandColor}>
             - 매달 새로운 식단을 자동결제로 편리하게 구독해 보세요. <br />
             - 구독 결제 기간에 따라 할인율이 점차 증가합니다. <br />
-            (1개월 5% / 2개월 7% / 3개월 10% / 4개월 15%)
+            (1개월 {menuDetail?.subscriptionDiscountRates![3]}% / 2개월 {menuDetail?.subscriptionDiscountRates![5]}% /
+            3개월 {menuDetail?.subscriptionDiscountRates![6]}% / 4개월 {menuDetail?.subscriptionDiscountRates![7]}%)
           </TextB3R>
         </SubsInfoBox>
       </PeriodBox>

@@ -1444,6 +1444,7 @@ export interface ICreateOrderPreview {
   subscriptionMenuDetailId: number;
   subscriptionPeriod: string;
   subscriptionRound: number;
+  subscriptionDiscountRates: number[];
   deliveryMessageReused?: boolean;
   orderDeliveries: [
     {
@@ -1734,6 +1735,7 @@ export interface IMenuDetail {
   subscriptionPeriods: string[];
   subscriptionDeliveryCycle: string;
   subscriptionDescription?: string;
+  subscriptionDiscountRates?: number[];
   reopenNotificationRequested: boolean;
   reopenMessage: string;
   menuFaq: IMenuFaq;
@@ -2208,6 +2210,7 @@ export interface ISubscribeInfo {
     | null;
   menuImage: string | null;
   datePeriod: string[] | null;
+  subscriptionDiscountRates: number[] | null;
 }
 
 export interface ISubsManage {
