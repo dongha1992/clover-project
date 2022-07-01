@@ -130,7 +130,12 @@ const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
 
   const goToMypage = () => {
     const path = getQuery(router.asPath);
-    router.push(`/mypage/profile/confirm?returnPath=${encodeURIComponent(String(path))}`);
+    if (me?.joinType! !== 'EMAIL') {
+      router.push(`/mypage/profile?returnPath=${encodeURIComponent(String(path))}`);
+    } else {
+      router.push(`/mypage/profile/confirm?returnPath=${encodeURIComponent(String(path))}`);
+    }
+
     dispatch(INIT_BOTTOM_SHEET());
   };
 
@@ -166,12 +171,12 @@ const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
             </Button>
           </FlexRow>
         </FlexCol>
-        <TextB3R color={theme.greyScale65}>
+        <TextB2R color={theme.greyScale65}>
           {
-            " 알림 신청 시 인증된 번호는 회원정보에도 업데이트 됩니다. '확인'을 누르시면 마케팅 및 광고 문자, 알림톡 수신을 위한 개인정보 제공에 동의하신 것으로 간주되니 참고해주세요."
+            "사용 중인 휴대폰 번호가 다르면 회원정보를 수정해 주세요. '신청하기'를 누르시면 마케팅 및 광고 문자, 알림톡 수신을 위한 개인정보 제공에 동의하신 것으로 간주되니 참고해 주세요."
           }
-        </TextB3R>
-        <FlexRow margin="17px 0 0 0">
+        </TextB2R>
+        <FlexRow margin="17px 0 0 0" onClick={checkMarketingTermHandler}>
           <Checkbox onChange={checkMarketingTermHandler} isSelected={isMarketinngChecked} />
           <TextB2R padding="2px 0 0 8px">{'[필수] 마케팅 정보 수신에 동의합니다.'}</TextB2R>
         </FlexRow>

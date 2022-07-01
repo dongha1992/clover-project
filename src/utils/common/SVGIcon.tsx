@@ -138,6 +138,14 @@ const svgMap: TSvg = {
       <path d="M13 31L20 24L13 17" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  arrowRightBrand: () => (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M3.00831 8.88148L3 9.00047C3.00001 9.21191 3.07791 9.41618 3.21929 9.57552C3.36067 9.73487 3.55597 9.8385 3.76908 9.86725L3.89013 9.87542L11.9596 9.87542L9.28447 12.5061C9.13359 12.6544 9.04196 12.8511 9.02627 13.0604C9.01059 13.2696 9.07189 13.4773 9.19902 13.6458L9.28447 13.7438C9.43541 13.8921 9.63553 13.9822 9.84837 13.9976C10.0612 14.0131 10.2726 13.9528 10.444 13.8278L10.5437 13.7438L14.7392 9.61877C14.89 9.47062 14.9816 9.27422 14.9975 9.06528C15.0134 8.85633 14.9525 8.64871 14.8259 8.48018L14.7392 8.38218L10.5437 4.25712C10.3849 4.10057 10.1717 4.00893 9.94688 4.00062C9.72211 3.99231 9.50248 4.06795 9.33214 4.21233C9.16179 4.35671 9.05338 4.55913 9.02868 4.77888C9.00399 4.99864 9.06484 5.21943 9.19902 5.39687L9.28447 5.49487L11.962 8.12553L3.89013 8.12553C3.67503 8.12554 3.46721 8.20211 3.3051 8.34108C3.14299 8.48005 3.03756 8.67202 3.00831 8.88148Z"
+        fill="#35AD73"
+      />
+    </svg>
+  ),
 
   locationBlack: () => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -490,6 +498,18 @@ const svgMap: TSvg = {
         />
         <path d="M9 6V9.5" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" />
         <circle cx="9" cy="9" r="6.25" stroke="#35AD73" strokeWidth="1.5" />
+      </svg>
+    );
+  },
+  exclamationRedMark: () => {
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M9.001 11C8.90251 11 8.80498 11.0194 8.71399 11.0571C8.62299 11.0948 8.54031 11.15 8.47067 11.2197C8.40103 11.2893 8.34578 11.372 8.30809 11.463C8.2704 11.554 8.251 11.6515 8.251 11.75C8.251 11.8485 8.2704 11.946 8.30809 12.037C8.34578 12.128 8.40103 12.2107 8.47067 12.2803C8.54031 12.35 8.62299 12.4052 8.71399 12.4429C8.80498 12.4806 8.90251 12.5 9.001 12.5C9.19965 12.5 9.39016 12.4211 9.53062 12.2806C9.67109 12.1402 9.75 11.9496 9.75 11.751C9.75 11.5524 9.67109 11.3618 9.53062 11.2214C9.39016 11.0809 9.19965 11.002 9.001 11.002L9.001 11Z"
+          fill="#D32F2F"
+        />
+        <path d="M9 6V9.5" stroke="#D32F2F" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="9" cy="9" r="6.25" stroke="#D32F2F" strokeWidth="1.5" />
       </svg>
     );
   },
@@ -1529,27 +1549,40 @@ const svgMap: TSvg = {
   whiteHeart24: () => (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g filter="url(#filter0_d_14708_48871)">
-      <path 
-        d="M9.5 5.5C7.0151 5.5 5 7.61243 5 10.2186C5 12.3225 5.7875 17.3157 13.5392 22.3632C13.6781 22.4527 13.8375 22.5 14 22.5C14.1625 22.5 14.3219 22.4527 14.4608 22.3632C22.2125 17.3157 23 12.3225 23 10.2186C23 7.61243 20.9849 5.5 18.5 5.5C16.0151 5.5 14 8.35978 14 8.35978C14 8.35978 11.9849 5.5 9.5 5.5Z" 
-        stroke="white" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-      />
+        <path
+          d="M9.5 5.5C7.0151 5.5 5 7.61243 5 10.2186C5 12.3225 5.7875 17.3157 13.5392 22.3632C13.6781 22.4527 13.8375 22.5 14 22.5C14.1625 22.5 14.3219 22.4527 14.4608 22.3632C22.2125 17.3157 23 12.3225 23 10.2186C23 7.61243 20.9849 5.5 18.5 5.5C16.0151 5.5 14 8.35978 14 8.35978C14 8.35978 11.9849 5.5 9.5 5.5Z"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </g>
       <defs>
-      <filter id="filter0_d_14708_48871" x="0" y="0.5" width="28" height="27" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-      <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-      <feOffset/>
-      <feGaussianBlur stdDeviation="2"/>
-      <feColorMatrix type="matrix" values="0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0.35 0"/>
-      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_14708_48871"/>
-      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_14708_48871" result="shape"/>
-      </filter>
+        <filter
+          id="filter0_d_14708_48871"
+          x="0"
+          y="0.5"
+          width="28"
+          height="27"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset />
+          <feGaussianBlur stdDeviation="2" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0.35 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_14708_48871" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_14708_48871" result="shape" />
+        </filter>
       </defs>
     </svg>
-  )
+  ),
 };
 /*TODO: name이 없으면 에러남 */
 
