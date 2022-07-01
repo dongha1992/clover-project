@@ -34,7 +34,7 @@ const TabHeader = ({ title }: TProps) => {
     if (router.asPath === '/login/find-account/password' || router.asPath === '/login/find-account/email') {
       router.push('/login');
     } else if (router.pathname.split('/').includes('detail')) {
-      router.push(`/menu/${router.query.menuId}`);
+      router.replace(`/menu/${router.query.menuId}`);
     } else {
       router.back();
     }
@@ -45,9 +45,9 @@ const TabHeader = ({ title }: TProps) => {
       setSelectedTab(tabItem.link);
 
       if (router.query.menuId) {
-        router.push({ pathname: `${tabItem.link}`, query: { menuId: router.query.menuId } });
+        router.replace({ pathname: `${tabItem.link}`, query: { menuId: router.query.menuId } });
       } else {
-        router.push(`${tabItem.link}`);
+        router.replace(`${tabItem.link}`);
       }
     },
     [router]
