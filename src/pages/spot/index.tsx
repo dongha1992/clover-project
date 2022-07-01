@@ -83,6 +83,7 @@ const SpotPage = () => {
 
   // react-query
 
+  // 신규 프코스팟
   const { data: newSpotList, isLoading: isLoadingNew } = useQuery(
     ['spotList', 'NEW'],
     async () => {
@@ -92,6 +93,7 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  // 이벤트 진행 중인 프코스팟
   const { data: eventSpotList, isLoading: isLoadingEvent } = useQuery(
     ['spotList', 'EVENT'],
     async () => {
@@ -101,6 +103,7 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  // 오늘 점심 함계 주문해요 (근처 인기있는 프코스팟)
   const { data: popularSpotList, isLoading: isLoadingPopular } = useQuery(
     ['spotList', 'POPULAR'],
     async () => {
@@ -110,7 +113,7 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  // 단골 스팟 (트라이얼)
+  // 단골가게 프코스팟 (퍼블릭)
   const { data: trialSpotList, isLoading: isLoadingTrial } = useQuery(
     ['trialSpot'],
     async () => {
@@ -298,7 +301,7 @@ const SpotPage = () => {
       {
         // 근처 인기있는 스팟 & 신규 스팟
         // 오늘 점심 함께 주문해요.
-        popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
+        popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 ? (
           <>
             <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
             <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
@@ -346,7 +349,7 @@ const SpotPage = () => {
       }
       {
         //프라이빗 스팟 신청 CTA
-        popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 && (
+        popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 && (
           <Wrapper>
             <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[0].type)}>
               <FlexBetween height="92px" padding="22px">
@@ -361,7 +364,7 @@ const SpotPage = () => {
       }
       {
         // 이벤트 중인 스팟
-        eventSpotList?.spots.length! > 0 && (
+        eventSpotList?.spots?.length! > 0 && (
           <>
             <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
             <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
@@ -399,7 +402,7 @@ const SpotPage = () => {
       }
       {
         //퍼블릭 스팟 신청 CTA
-        popularSpotList?.spots.length! > 0 && newSpotList?.spots.length! > 0 ? (
+        popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 ? (
           <>
             <Wrapper type="PUBLIC">
               <SpotRegistration onClick={() => goToSpotReq(FCO_SPOT_BANNER[1].type)}>

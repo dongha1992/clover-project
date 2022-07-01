@@ -52,12 +52,13 @@ const SearchResult = ({ searchResult, onClick, orderId, hasCart, getLocation }: 
       <ItemListWrapper>
         {searchResult.length ? (
           searchResult.map((item: any, index: number) => {
-            return (
-              <Item item={item} key={index} />
-            )
+            return <Item item={item} key={index} />;
           })
-        ) : ( 
-          <NoResultWrapper>검색하신 상품을 찾을 수 없어요. 다른 검색어를 입력해 보세요. 😭 </NoResultWrapper>
+        ) : (
+          <NoResultWrapper>
+            <TextB2R color={theme.greyScale65}>검색하신 상품을 찾을 수 없어요.</TextB2R>
+            <TextB2R color={theme.greyScale65}>다른 검색어를 입력해 보세요. 😭</TextB2R>
+          </NoResultWrapper>
         )}
       </ItemListWrapper>
     </>
@@ -87,8 +88,11 @@ const ItemListWrapper = styled.div`
 
 const NoResultWrapper = styled.div`
   width: 100%;
-  text-align: center;
-  margin-top: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 50vh;
 `;
 
 const NoResult = styled.div``;

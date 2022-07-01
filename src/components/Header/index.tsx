@@ -128,6 +128,10 @@ const Header = () => {
       '/subscription/[detailId]/diet-info': '전체 식단 정보',
       '/mypage/subscription': '구독관리',
       '/subscription/[detailId]': '구독상세',
+      '/subscription/[detailId]/cancel': '주문취소',
+      '/subscription/[detailId]/sub-cancel': '주문취소',
+      '/subscription/[detailId]/sub-cancel/complete': '취소완료',
+      '/subscription/[detailId]/cancel/complete': '취소완료',
     };
 
     const title = headerTitleMap[currentPath];

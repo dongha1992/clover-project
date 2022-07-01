@@ -32,7 +32,8 @@ const CategoryFilter = () => {
 };
 
 const CategroyTabWrapper = styled.div`
-  padding: 12px;
+  padding: 18px 0px 0px 0px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;

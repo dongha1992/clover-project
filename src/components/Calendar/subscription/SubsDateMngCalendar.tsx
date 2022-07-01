@@ -72,7 +72,7 @@ const SubsDateMngCalendar = ({
     // origin 첫번째 배송일 ~ origin 마지막 배송일 + 7
 
     if (
-      Number(dayjs(date).format('YYYYMMDD')) > Number(today.replaceAll('-', '')) + 1 &&
+      Number(dayjs(date).format('YYYYMMDD')) > Number(today.replaceAll('-', '')) &&
       Number(firstDeliveryDate.replaceAll('-', '')) <= Number(dayjs(date).format('YYYYMMDD')) &&
       Number(dayjs(lastDeliveryDate).add(7, 'day').format('YYYYMMDD')) >= Number(dayjs(date).format('YYYYMMDD'))
     ) {

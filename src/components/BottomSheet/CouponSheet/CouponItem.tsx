@@ -25,10 +25,13 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
   const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon?.coupon.expiredDate));
 
   const { participationStatus } = coupon;
-  const isBlock = participationStatus !== 'POSSIBLE';
-  console.log(participationStatus);
+  const isDownloaded = participationStatus === 'COMPLETED';
+
+  const isMoreThenOneMenu = coupon?.coupon?.descriptions?.join().includes('특정 상품');
+  const tagetIndex = coupon?.coupon?.descriptions?.findIndex((item) => item.includes('특정 상품'));
+
   return (
-    <Container isDownload={isBlock}>
+    <Container isDownloaded={isDownloaded}>
       <Wrapper>
         <Content>
           <TextH3B color={theme.brandColor}>
@@ -36,22 +39,16 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
           </TextH3B>
           <TextH5B padding="4px 0 8px 0">{coupon?.name}</TextH5B>
           {coupon?.coupon?.descriptions?.map((description: string, index: number) => {
+            if (index === tagetIndex + 1 && !isShow) {
+              return;
+            }
             return (
               <TextB4R color={theme.greyScale65} key={index}>
                 {description}
               </TextB4R>
             );
           })}
-          {/* {isShow &&
-            coupon.canUseMenu.map((menu: any, index: number) => {
-              return (
-                <FlexRow key={index}>
-                  <Dot />
-                  <TextB4R color={theme.greyScale65}>{menu}</TextB4R>
-                </FlexRow>
-              );
-            })} */}
-          {/* {isMoreThenOneMenu && (
+          {isMoreThenOneMenu && (
             <TextH7B
               textDecoration="underline"
               onClick={() => setIsShow(!isShow)}
@@ -61,7 +58,7 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
             >
               {isShow ? '접기' : '더보기'}
             </TextH7B>
-          )} */}
+          )}
           <FlexRow margin="8px 0 0 0">
             {coupon?.coupon.isApp && (
               <TextH7B color={theme.brandColor} margin="0 4px 0 0">
@@ -73,12 +70,11 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
         </Content>
         <BtnGroup>
           <SVGIcon name="dotColumn" />
-          {participationStatus === 'COMPLETED' ||
-            (participationStatus === 'DUPLICATED' && (
-              <Complete>
-                <SVGIcon name="couponDownloadComplete" />
-              </Complete>
-            ))}
+          {(participationStatus === 'COMPLETED' || participationStatus === 'DUPLICATED') && (
+            <Complete>
+              <SVGIcon name="couponDownloadComplete" />
+            </Complete>
+          )}
           {participationStatus === 'POSSIBLE' && (
             <Incomplete
               onClick={() => {
@@ -102,7 +98,7 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
   );
 };
 
-const Container = styled.div<{ isDownload: boolean }>`
+const Container = styled.div<{ isDownloaded: boolean }>`
   border: 1px solid #dedede;
   box-sizing: border-box;
   border-radius: 8px;
@@ -112,8 +108,8 @@ const Container = styled.div<{ isDownload: boolean }>`
   max-width: ${breakpoints.mobile}px;
   width: 100%;
 
-  ${({ isDownload }) => {
-    if (isDownload) {
+  ${({ isDownloaded }) => {
+    if (isDownloaded) {
       return css`
         * {
           color: ${({ theme }) => theme.greyScale25};

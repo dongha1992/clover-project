@@ -18,6 +18,7 @@ import {
   IGetPaycoRequest,
   IGetPaycoPaymentResponse,
   IGetTossPaymentResponse,
+  IDeleteOrderCancelPreviewResponse,
 } from '@model/index';
 
 export const getOrderInfoApi = (params: { orderType: string }): Promise<AxiosResponse<IGetOrderInfoResponse>> => {
@@ -195,4 +196,11 @@ export const postOrderCardChangeApi = ({
   orderId: any;
 }): Promise<AxiosResponse<IResponse>> => {
   return Api.post(`order/v1/orders/${orderId}/card`, { cardId: cardId });
+};
+
+export const deleteOrderCancelApi = (id: number): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`/order/v1/orders/${id}`);
+};
+export const deleteOrderCancelPreviewApi = (id: number): Promise<AxiosResponse<IDeleteOrderCancelPreviewResponse>> => {
+  return Api.delete(`/order/v1/orders/${id}/preview`);
 };

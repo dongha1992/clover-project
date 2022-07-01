@@ -59,7 +59,6 @@ const OnBoarding: NextPage = () => {
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
-    // dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
   }, []);
 
   const kakaoLoginHandler = () => {
