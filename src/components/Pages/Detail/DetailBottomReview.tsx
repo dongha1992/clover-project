@@ -28,6 +28,7 @@ export interface IMergedReview {
 }
 
 const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
+  console.log(reviews, 'reviews');
   const dispatch = useDispatch();
   const { searchReviews, searchReviewImages } = reviews;
   const hasReivew = searchReviewImages.length !== 0;

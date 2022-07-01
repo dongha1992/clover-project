@@ -108,7 +108,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(Number(menuId)!);
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewApi(params);
       return data.data;
     },
 
@@ -329,7 +330,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
               </PriceWrapper>
             )}
 
-            {!isTempSold && !isReOpen && !isOpenSoon && coupons?.length! > 0 && (
+            {!isTempSold && !isReOpen && !isOpenSoon && (
               <>
                 {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
@@ -339,7 +340,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                     <SVGIcon name="download" />
                   </CouponWrapper>
                 ) : (
-                  <CouponWrapper>
+                  <CouponWrapper onClick={couponDownloadHandler}>
                     <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
                     <SVGIcon name="checkBlack18" />
                   </CouponWrapper>

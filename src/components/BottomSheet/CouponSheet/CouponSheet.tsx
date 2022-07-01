@@ -24,6 +24,7 @@ const CouponSheet = ({ coupons }: IProps) => {
   const { me } = useSelector(userForm);
 
   let aleadyDownloadedCount = 0;
+
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async (couponItem: IPromotion) => {
       const reqBody = {
