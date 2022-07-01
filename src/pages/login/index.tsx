@@ -110,7 +110,7 @@ const LoginPage = () => {
         console.error(error);
 
         /* TODO: 서버에서 내려오는 message에 따라 wrapper 만들어야 함 */
-        setErrorMessage('가입하지 않은 아이디이거나, 로그인 정보를 확인해주세요.');
+        setErrorMessage('이메일 혹은 비밀번호를 다시 입력해 주세요.');
       }
     }
   };
@@ -122,6 +122,7 @@ const LoginPage = () => {
   };
 
   // TODO : finish 이후에 넣는게 맞는거같음
+
   // useEffect(() => {
   //   if (isLoginSuccess) {
   //     const isDormantAccount = false;
@@ -155,11 +156,11 @@ const LoginPage = () => {
         <Button disabled={!isValid}>로그인하기</Button>
       </BtnWrapper>
       <FlexCenter>
-        <TextB2R color={theme.greyScale75} onClick={goToFindEmail}>
+        <TextB2R color={theme.greyScale75} onClick={goToFindEmail} pointer>
           아이디(이메일) 찾기
         </TextB2R>
         <Col />
-        <TextB2R color={theme.greyScale75} onClick={goToFindPassword}>
+        <TextB2R color={theme.greyScale75} onClick={goToFindPassword} pointer>
           비밀번호 찾기
         </TextB2R>
       </FlexCenter>
