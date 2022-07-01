@@ -89,6 +89,7 @@ const SubsDetailPage = () => {
     orderDetail?.subscriptionPeriod,
     orderDetail?.status
   );
+  console.log('subsFailTypesubsFailType', subsFailType);
 
   useEffect(() => {
     subsCloseSheetHandler();
@@ -184,12 +185,16 @@ const SubsDetailPage = () => {
           name={orderDetail?.name!}
           menuImage={orderDetail?.image.url!}
         />
-        <FlexBetween padding="16px" margin="16px 0 0 0" className="failInfoBox">
-          <TextH6B color={theme.greyScale65}>정기구독 자동 해지 안내</TextH6B>
-          <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={subsCloseSheetHandler}>
-            자세히
-          </TextH6B>
-        </FlexBetween>
+        {subsFailType && (
+          <FlexBetween padding="16px" margin="16px 0 0 0" className="failInfoBox">
+            {subsFailType === 'payment' ||
+              (subsFailType === 'destination' && <TextH6B color={theme.greyScale65}>정기구독 자동 해지 안내</TextH6B>)}
+            {subsFailType === 'close' && <TextH6B color={theme.greyScale65}>정기구독 결제 실패 안내</TextH6B>}
+            <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={subsCloseSheetHandler}>
+              자세히
+            </TextH6B>
+          </FlexBetween>
+        )}
       </InfoBox>
 
       <BorderLine height={8} />
