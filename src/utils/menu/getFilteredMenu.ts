@@ -56,7 +56,7 @@ export const getPriceOrder = (list: IMenus[], order: 'max' | 'min') => {
     return { ...menu, [order]: Math[order](...prices) };
   });
 
-  return mapped.sort((a: any, b: any) => {
+  return mapped?.sort((a: any, b: any) => {
     const isMin = order === 'min';
     return isMin ? a[order] - b[order] : b[order] - a[order];
   });

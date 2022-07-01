@@ -305,10 +305,7 @@ const SubsSetInfoPage = () => {
                   disabled ? changeRadioHanler(item.period) : null;
                 }}
               >
-                <RadioButton
-                  isSelected={disabled ? isSelected : false}
-                  onChange={() => changeRadioHanler(item.period)}
-                />
+                <RadioButton isSelected={disabled ? isSelected : false} />
                 <TextB2R className={`${isSelected && 'fBold'} ${!disabled && 'disabled'}`} padding="0 0 0 8px" pointer>
                   {item.text}
                 </TextB2R>
