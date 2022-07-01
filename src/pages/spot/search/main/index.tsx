@@ -146,7 +146,11 @@ const SpotSearchMainPage = (): ReactElement => {
         size: 3,
       };
       const response = await getSpotSearchRecommend(params);
-      return response.data.data;
+      const listSort = response.data.data.spots.sort((a, b) => a.distance - b.distance);
+      return {
+        data: response.data.data,
+        spotList: listSort,
+      }
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -353,7 +357,7 @@ const SpotSearchMainPage = (): ReactElement => {
                   <DefaultSearchContainer>
                     <RecentPickWrapper>
                       <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                      {recentPickedSpotList?.map((item: any, index) => (
+                      {recentPickedSpotList?.map((item, index) => (
                         // 스팟 최근 픽업 이력 리스트
                         <SpotRecentPickupList item={item} key={index} hasCart={true} />
                       ))}
@@ -363,16 +367,16 @@ const SpotSearchMainPage = (): ReactElement => {
                   <>
                   {
                     // 픽업 이력 없는 경우, 추천 스팟 노출
-                    spotRecommend?.spots.length! > 0 ?(
+                    spotRecommend?.spotList.length! > 0 ?(
                       <SpotRecommendWrapper>
                       <FlexBetween margin="0 0 24px 0">
-                        <TextH2B>{spotRecommend?.title}</TextH2B>
+                        <TextH2B>{spotRecommend?.data.title}</TextH2B>
                         {
                           // 사용자 위치 설정 했을 경우 노출
                           userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
                         }
                       </FlexBetween>
-                      {spotRecommend?.spots.map((item: any, index: number) => {
+                      {spotRecommend?.spotList?.map((item, index) => {
                         return <SpotRecommendList item={item} key={index} />;
                       })}
                     </SpotRecommendWrapper>
