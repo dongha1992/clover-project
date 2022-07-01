@@ -126,7 +126,7 @@ const CouponSheet = ({ coupons }: IProps) => {
       goToLogin();
       return;
     }
-    console.log(coupon, 'coupon');
+
     dispatch(SET_IS_LOADING(true));
     await mutatePostPromotionCode(coupon);
   };

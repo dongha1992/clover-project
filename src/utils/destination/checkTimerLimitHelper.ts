@@ -1,5 +1,7 @@
 import getCustomDate from './getCustomDate';
 import { getFormatTime } from '@utils/destination';
+import { useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
 
 export type TResult =
   | '스팟점심타이머'
@@ -21,6 +23,7 @@ interface IProps {
 
 const checkTimerLimitHelper = (): TResult => {
   let { days, currentTime } = getCustomDate(new Date());
+  let { locationStatus } = useSelector(destinationForm);
 
   // let currentTime;
   /* 스팟 런치 테스트 */
@@ -47,6 +50,8 @@ const checkTimerLimitHelper = (): TResult => {
   let isFriday = days === '금';
   let isSunday = days === '일';
   let isWeekends = ['토', '일'].includes(days);
+  const isParcel = locationStatus === 'parcel';
+  const isMorning = locationStatus === 'morning';
 
   // 주말의 경우 타이머 없고 '새벽택배'만 나옴. 단, 일요일 17시 이후부터 24시까지 '스팟점심N일'
   if (isWeekends) {
@@ -59,6 +64,9 @@ const checkTimerLimitHelper = (): TResult => {
     // 평일의 경우
     switch (true) {
       case spotLunchTimer: {
+        if (isParcel || isMorning) {
+          return '스팟점심';
+        }
         return '스팟점심타이머';
       }
       case spotDinnerTimer: {
