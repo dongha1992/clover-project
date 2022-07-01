@@ -1865,7 +1865,7 @@ export interface IMenuImageInReivew {
 
 export interface IMenuReviewsResponse {
   code: number;
-  data: { menuReview: ISearchReviews[]; pagination: IPagination };
+  data: { menuReviews: ISearchReviews[]; pagination: IPagination };
   message: string;
 }
 
@@ -1879,7 +1879,7 @@ export interface IReviewsDetailResponse {
   code: number;
   message: string;
   data: {
-    searchReview: ISearchReviews;
+    menuReviews: ISearchReviews;
     menuImage: IMenuImageInReivew;
   };
 }

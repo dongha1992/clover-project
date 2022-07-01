@@ -12,7 +12,7 @@ const ReviewList = ({ reviews, onClick }: any) => {
 
   return (
     <ScrollHorizonList height="106px">
-      {reviews.searchReviews.map((review: any, index: number) => {
+      {reviews.menuReviews.map((review: any, index: number) => {
         return (
           <ReviewItem
             review={review}
