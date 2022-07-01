@@ -28,6 +28,7 @@ import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { SET_ALERT } from '@store/alert';
 import { getOrderListsApi } from '@api/order';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { SET_SUBS_DELIVERY_EXPECTED_DATE, SET_SUBS_INFO_STATE, SET_SUBS_START_DATE } from '@store/subscription';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -220,11 +221,31 @@ const DeliverInfoPage = () => {
           } catch (error) {
             console.log('error', error);
           }
+        } else {
+          if (userDestination?.delivery !== userTempDestination?.delivery) {
+            dispatch(
+              SET_SUBS_INFO_STATE({
+                startDate: null,
+                deliveryDay: null,
+                deliveryTime: null,
+              })
+            );
+            dispatch(
+              SET_SUBS_START_DATE({
+                subsStartDate: null,
+              })
+            );
+            dispatch(
+              SET_SUBS_DELIVERY_EXPECTED_DATE({
+                subsDeliveryExpectedDate: null,
+              })
+            );
+          }
+          router.push({
+            pathname: '/subscription/set-info',
+            query: { subsDeliveryType: subsDeliveryType, menuId },
+          });
         }
-        router.push({
-          pathname: '/subscription/set-info',
-          query: { subsDeliveryType: subsDeliveryType, menuId },
-        });
       } else {
         router.push('/cart');
       }
