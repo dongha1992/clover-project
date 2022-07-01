@@ -164,50 +164,36 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const onLike = useOnLike(list.id!, list.liked);
 
-  const clickSpotOpen = async (id: number) => {
+  const clickSpotJoin = async (id: number) => {
     if (list.recruited) {
       return;
     }
-    // const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    // dispatch(
-    //   SET_ALERT({
-    //     alertMessage: TitleMsg,
-    //     onSubmit: () => {
-    //       setSpotRegisteration(true);
-    //       const message = '참여해주셔서 감사해요:)';
-    //       showToast({ message });
-    //       /* TODO: warning 왜? */
-    //       return () => hideToast();
-    //     },
-    //     submitBtnText: '확인',
-    //     closeBtnText: '취소',
-    //   })
-    // );
-
-    try {
-      const { data } = await postSpotRegistrationsRecruiting(id);
-      if (data.code === 200) {
-        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-        dispatch(
-          SET_ALERT({
-            alertMessage: TitleMsg,
-            onSubmit: () => {
-              // TODO 스팟 현황 상세 이동
-              // router.push('/onboarding');
-              const message = '참여해주셔서 감사해요:)';
-              showToast({ message });
-              /* TODO: warning 왜? */
-              return () => hideToast();
-            },
-            submitBtnText: '확인',
-            closeBtnText: '취소',
-          })
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+    dispatch(
+      SET_ALERT({
+        alertMessage: TitleMsg,
+        onSubmit: () => joinPublicSpotRecruiting(id),
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
   };
+
+  const joinPublicSpotRecruiting = async(id: number) => {
+    try{
+      const {data} = await postSpotRegistrationsRecruiting(id);
+      if(data.code === 200){
+        router.push({
+          pathname: `/mypage/spot-status/detail/${id}`,
+          query: { recruited: true }
+        });
+      }
+    } catch(e){
+      console.error(e);
+    };
+  };
+
+
 
   const SpotsListTypeRender = () => {
     switch (type) {
@@ -325,7 +311,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                     width="75px"
                     height="38px"
                     border
-                    onClick={() => clickSpotOpen(list.id!)}
+                    onClick={() => clickSpotJoin(list.id!)}
                   >
                     참여하기
                   </Button>
