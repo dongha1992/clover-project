@@ -29,6 +29,8 @@ const DefaultHeader = ({ title }: TProps) => {
       );
     } else if (router.pathname === '/order/finish') {
       router.replace('/');
+    } else if (router.pathname === '/login') {
+      router.replace('/onboarding');
     } else {
       router.back();
     }
