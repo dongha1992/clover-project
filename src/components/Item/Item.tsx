@@ -372,7 +372,6 @@ const NameWrapper = styled.div`
 
 const PriceWrapper = styled.div`
   display: flex;
-  margin-bottom: 8px;
 `;
 
 const LikeAndReview = styled.div`
@@ -380,7 +379,7 @@ const LikeAndReview = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 8px 0px;
+  margin: 4px 0 0 0px;
 `;
 
 const Like = styled.div`
@@ -390,6 +389,7 @@ const Like = styled.div`
 
 const TagWrapper = styled.div`
   white-space: wrap;
+  margin-top: 8px;
 `;
 
 export default React.memo(Item);
