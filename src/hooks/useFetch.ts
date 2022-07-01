@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, SetStateAction } from 'react';
 import axios from 'axios';
 import { REVIEWS_URL } from '@constants/mock';
-
+import { getMenuDetailReviewImageApi } from '@api/menu';
 export interface IUseFetch {
   page?: number;
 }
@@ -12,12 +12,11 @@ const useFetch = (page: number) => {
   const [list, setList] = useState<any>([]);
 
   const sendQuery = useCallback(async (page: any) => {
+    const params = {};
     try {
       await setLoading(true);
       await setError(false);
-      const { data } = await axios.get(
-        `${REVIEWS_URL}/photos?_page=${page}&_limit=20`
-      );
+      const { data } = await axios.get(`${REVIEWS_URL}/photos?_page=${page}&_limit=20`);
       await setList((prev: any) => [...prev, ...data]);
     } catch (error) {
       setError(error);

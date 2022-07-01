@@ -30,7 +30,7 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi, getMenuDetailReviewImageApi } from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
@@ -58,6 +58,7 @@ dayjs.locale('ko');
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
+/*TODO: 베스트 후기 수정해야함 */
 interface IProps {
   menuId: number;
 }
@@ -108,11 +109,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const params = {
-        id: Number(menuId)!,
-        size: 10,
-        page: 1,
-      };
+      const params = { id: Number(menuId)!, page: 1, size: 100 };
+
       const { data } = await getMenuDetailReviewApi(params);
       return data.data;
     },
@@ -121,6 +119,22 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: reviewsImages, error: reviewsImagesError } = useQuery(
+    'getMenuDetailReviewImages',
+    async () => {
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
@@ -222,7 +236,14 @@ const MenuDetailPage = ({ menuId }: IProps) => {
         if (isOpenSoon) {
           return;
         }
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail?.id} />;
+        return (
+          <DetailBottomReview
+            reviews={reviews!}
+            isSticky={isSticky}
+            menuId={menuDetail?.id!}
+            reviewsImages={reviewsImages!}
+          />
+        );
       }
 
       case '/menu/detail/faq':
@@ -398,7 +419,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        {/* {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen ? (
+        {reviews?.pagination?.total! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
@@ -418,7 +439,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           </ReviewContainer>
         ) : (
           <BorderLine height={1} margin="0 auto" width={'calc(100% - 48px)'} />
-        )} */}
+        )}
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
             <div key={index}>
@@ -448,12 +469,11 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           })}
         </>
       )}
-
       <div ref={tabRef} />
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: reviews?.menuReview?.length }}
+          countObj={{ 후기: reviews?.pagination.total }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
