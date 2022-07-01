@@ -144,7 +144,7 @@ const SubsProductIdPage = () => {
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId!} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:

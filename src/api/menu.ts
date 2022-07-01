@@ -49,12 +49,12 @@ export const getMenuDetailReviewImageApi = ({
 
 export const getReviewDetailApi = ({
   id,
-  reivewId,
+  reviewId,
 }: {
   id: number;
-  reivewId: number;
+  reviewId: number;
 }): Promise<AxiosResponse<IReviewsDetailResponse>> => {
-  return Api.get(`menu/v1/menus/${id}/reviews/${reivewId}`);
+  return Api.get(`menu/v1/menus/${id}/reviews/${reviewId}`);
 };
 
 export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
