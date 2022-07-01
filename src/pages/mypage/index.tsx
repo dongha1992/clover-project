@@ -79,7 +79,6 @@ const MypagePage = () => {
         const unpaidOrders = orders.filter((order: IGetOrders) => order.status === 'UNPAID');
         const closeOrders = orders.filter(
           (order: IGetOrders) =>
-            order.isSubscribing === false &&
             order.subscriptionPeriod === 'UNLIMITED' &&
             (order.unsubscriptionType === 'DISABLED_DESTINATION' ||
               order.unsubscriptionType === 'DISABLED_MENU' ||
