@@ -25,10 +25,9 @@ import { Button } from '@components/Shared/Button';
 interface IProps {
   list: ISpotsDetail;
   type: string;
-  isSearch?: boolean;
 }
 
-const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
+const SpotList = ({ list, type }: IProps): ReactElement => {
   const { id } = list;
   const routers = useRouter();
   const dispatch = useDispatch();
@@ -48,9 +47,6 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   };
 
   const goToDetail = (): void => {
-    if (isSearch) {
-      return;
-    }
     router.push({
       pathname: `/spot/detail/${id}`,
       query: { isSpot: true },
@@ -236,13 +232,11 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       //이벤트 스팟
       case 'event':
         return (
-          <Container type="event">
-            <StorImgWrapper onClick={goToDetail}>
-              {!isSearch && (
-                <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
-                  <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
-                </LikeWrapper>
-              )}
+          <Container type="event" onClick={goToDetail}>
+            <StorImgWrapper >
+              <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
+                <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
+              </LikeWrapper>
               {list.isTrial ? (
                 <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
               ) : list.images.length > 0 ? (
@@ -343,6 +337,7 @@ const Container = styled.section<{ type: string }>`
         margin-bottom: 48px;
         border-radius: 8px;
         justify-content: space-between;
+        cursor: pointer;
       `;
     } else if (type === 'normal') {
       return css`

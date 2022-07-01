@@ -52,7 +52,7 @@ const SpotSearchPage = (): ReactElement => {
   }, []);
 
   // 스팟 검색 - 추천 스팟 api
-  const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(
+  const { data: spotRecommendList, isLoading: isLoadingRecomand } = useQuery(
     ['spotRecommendList'],
     async () => {
       const params: IParamsSpots = {
@@ -67,8 +67,8 @@ const SpotSearchPage = (): ReactElement => {
   );
   
   // 스팟 검색 - 이벤트 스팟 api
-  const { data: eventSpot, isLoading: isLoadingEventSpot } = useQuery(
-    ['spotEvetnList'],
+  const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
+    ['spotList', 'EVENT'],
     async () => {
       const params: IParamsSpots = {
         latitude: latitude,
@@ -100,12 +100,12 @@ const SpotSearchPage = (): ReactElement => {
   );
 
   // 추천스팟 + 이벤트 스팟 
-  const spotsArr = spotRecommend?.spots.concat(eventSpot?.spots!);
+  const spotsArr = spotRecommendList?.spots.concat(eventSpotList?.spots!);
 
   useEffect(()=> {
     dispatch(SET_SERACH_MAP_SPOT(spotsArr!));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[eventSpot]);
+  },[eventSpotList]);
 
   const goToSpotSearch = () => {
     router.push('/spot/search/main');
@@ -148,31 +148,31 @@ const SpotSearchPage = (): ReactElement => {
       </KeyWordWrapper>
       {
       // 스팟 검색 메인 - 검색바 포커싱 x
-        ((spotRecommend?.spots.length! > 0) && (eventSpot?.spots.length! > 0)) ? (
+        ((spotRecommendList?.spots.length! > 0) && (eventSpotList?.spots.length! > 0)) ? (
           // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
           <>
           {/* 추천스팟 */}
             <SpotRecommendWrapper>
               <FlexBetween margin="0 0 24px 0">
-                <TextH2B>{spotRecommend?.title}</TextH2B>
+                <TextH2B>{spotRecommendList?.title}</TextH2B>
                 {
                   // 사용자 위치 설정 했을 경우 노출
-                  userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                  userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
                 }
               </FlexBetween>
-              {spotRecommend?.spots.map((item: any, index: number) => {
+              {spotRecommendList?.spots.map((item: any, index: number) => {
                 return <SpotRecommendList item={item} key={index} />;
               })}
             </SpotRecommendWrapper>
             {/* 이벤트 중인 스팟 */}
             <BottomContentWrapper>
               <Row />
-              <TextH2B padding="24px 24px 24px 24px">{eventSpot?.title}</TextH2B>
+              <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
               <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-                {eventSpot?.spots.map((list, idx) => {
+                {eventSpotList?.spots.map((list, idx) => {
                   return (
                     <SwiperSlide className="swiper-slide" key={idx}>
-                      <SpotList list={list} type="event" isSearch />
+                      <SpotList list={list} type="event" />
                     </SwiperSlide>
                   );
                 })}
