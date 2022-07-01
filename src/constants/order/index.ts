@@ -81,3 +81,12 @@ export const DELIVERY_TIME_MAP2: Obj = {
   저녁: 'DINNER',
   점심: 'LUNCH',
 };
+
+export const PAYMENT_METHOD: Obj = {
+  NICE_BILLING: '프코페이',
+  NICE_CARD: '신용카드',
+  NICE_BANK: '계좌이체',
+  KAKAO_CARD: '카카오페이',
+  PAYCO_EASY: '페이코',
+  TOSS_CARD: '토스',
+};

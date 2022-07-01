@@ -1,12 +1,7 @@
-import BorderLine from '@components/Shared/BorderLine';
-import { Button } from '@components/Shared/Button';
-import { TextB3R, TextH2B, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { IResponse } from '@model/index';
-import { BtnWrapper } from '@pages/subscription/[detailId]/cancel';
-import { useDeleteOrderCancel } from '@queries/order';
-import { fixedBottom, FlexBetween, FlexRow, theme } from '@styles/theme';
-import { getFormatPrice, SVGIcon } from '@utils/common';
+import { FlexBetween, FlexRow } from '@styles/theme';
+import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from 'next/image';
 import router from 'next/router';
 import styled from 'styled-components';
@@ -19,13 +14,14 @@ const RefundOrderBox = ({ subOrder }: IProps) => {
   const goToOrderDetail = () => {
     router.push(`/mypage/order-detail/${subOrder.order.id}`);
   };
+
   return (
     <RefundOrderContainer>
       <article className="orderInfo">
         <FlexBetween padding="0 0 16px">
           <FlexRow>
             <SVGIcon name="delivery" />
-            <TextH5B>4월 14일 (목) 도착예정</TextH5B>
+            <TextH5B>{getFormatDate(subOrder.deliveryDate)} 도착예정</TextH5B>
           </FlexRow>
           <TextH6B pointer textDecoration="underline" color="#757575" onClick={goToOrderDetail}>
             주문상세 보기

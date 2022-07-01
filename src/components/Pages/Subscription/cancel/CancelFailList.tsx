@@ -5,7 +5,7 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { IResponse } from '@model/index';
 import { useDeleteOrderCancel } from '@queries/order';
 import { FlexBetween, FlexRow, theme } from '@styles/theme';
-import { getFormatPrice, SVGIcon } from '@utils/common';
+import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from 'next/image';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
@@ -51,7 +51,7 @@ const CancelFailList = ({ cancelFailList }: IProps) => {
           <FlexBetween padding="0 0 16px">
             <FlexRow>
               <SVGIcon name="delivery" />
-              <TextH5B>4월 14일 (목) 도착예정</TextH5B>
+              <TextH5B>{getFormatDate(item.deliveryDate)} 도착예정</TextH5B>
             </FlexRow>
             <TextH6B
               pointer

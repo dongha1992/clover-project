@@ -9,6 +9,7 @@ import { BottomButton } from './SubsDeliveryDateChangeSheet';
 
 interface IProps {
   goToDeliverySearch: () => void;
+  isCancel: boolean;
 }
 
 const DESTINATION_SELECT = [
@@ -24,7 +25,7 @@ const DESTINATION_SELECT = [
   },
 ];
 
-const SubsDeliveryChangeSheet = ({ goToDeliverySearch }: IProps) => {
+const SubsDeliveryChangeSheet = ({ goToDeliverySearch, isCancel }: IProps) => {
   const dispatch = useDispatch();
   const { applyAll } = useSelector(destinationForm);
   const [changeType, setChangeType] = useState(applyAll ? 'all' : 'select');
@@ -46,17 +47,32 @@ const SubsDeliveryChangeSheet = ({ goToDeliverySearch }: IProps) => {
       </TextH5B>
       <RadioWrapper>
         {DESTINATION_SELECT.map((item) => {
-          let isSelected = changeType === item.type;
-
+          let isSelected;
+          if (isCancel) {
+            isSelected = item.type === 'all' ? true : false;
+          } else {
+            isSelected = changeType === item.type;
+          }
           return (
             <li
               key={item.id}
               onClick={() => {
-                changeRadioHanler(item.type);
+                if (isCancel) {
+                  if (item.type === 'all') {
+                    changeRadioHanler(item.type);
+                  }
+                } else {
+                  changeRadioHanler(item.type);
+                }
               }}
             >
               <RadioButton isSelected={isSelected} margin="0 0 2px" />
-              <TextH5B className="textBox" pointer margin="0 0 0 8px">
+              <TextH5B
+                className="textBox"
+                pointer
+                margin="0 0 0 8px"
+                color={`${isCancel && item.type === 'select' && '#C8C8C8'}`}
+              >
                 {item.text}
               </TextH5B>
             </li>
