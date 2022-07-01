@@ -14,7 +14,8 @@ import { Obj, ISearchReviews } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
-
+import { getMenuAverageRate } from '@utils/menu';
+import { isFulfilled } from '@reduxjs/toolkit';
 interface IProps {
   reviews: { searchReviews: ISearchReviews[]; pagination: IPagination };
   isSticky: boolean;
@@ -25,15 +26,10 @@ interface IProps {
 const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
   const dispatch = useDispatch();
   const { searchReviews } = reviews;
-  const hasReivew = searchReviews?.length !== 0;
-  const { me } = useSelector(userForm);
+  const hasImageReviews = reviewsImages?.images?.length !== 0;
+  const hasReviews = searchReviews.length !== 0;
 
-  const getAverageRate = (): string => {
-    const totalRating = searchReviews?.reduce((rating: number, review: ISearchReviews) => {
-      return rating + review.rating;
-    }, 0);
-    return (totalRating / searchReviews?.length).toFixed(1);
-  };
+  const { me } = useSelector(userForm);
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -67,19 +63,15 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
 
   return (
     <Container isSticky={isSticky}>
-      <Wrapper hasReivew={hasReivew}>
-        {hasReivew ? (
+      <Wrapper hasImageReviews={hasImageReviews}>
+        {hasImageReviews && (
           <ReviewOnlyImage
             reviewsImages={reviewsImages.images}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={getAverageRate()}
-            totalReviews={reviewsImages.pagination.total}
+            averageRating={getMenuAverageRate({ reviews: searchReviews, total: reviews?.pagination.total })}
+            totalReviews={reviews.pagination.total}
           />
-        ) : (
-          <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
-            상품의 첫 번째 후기를 작성해주세요 :)
-          </TextB2R>
         )}
         <Button
           backgroundColor={theme.white}
@@ -92,11 +84,12 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
           후기 작성하기 (최대 3,000포인트 적립)
         </Button>
       </Wrapper>
-      {hasReivew && (
+      {hasReviews ? (
         <>
           <BorderLine height={8} />
           <ReviewWrapper>
             {searchReviews?.map((review: any, index: number) => {
+              if (index > 10) return;
               return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
@@ -104,6 +97,10 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
             </Button>
           </ReviewWrapper>
         </>
+      ) : (
+        <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
+          상품의 첫 번째 후기를 작성해주세요 :)
+        </TextB2R>
       )}
     </Container>
   );
@@ -120,14 +117,14 @@ const Center = styled.div`
   height: 70vh;
 `;
 
-const Wrapper = styled.div<{ hasReivew?: boolean }>`
+const Wrapper = styled.div<{ hasImageReviews?: boolean }>`
   ${homePadding}
   display: flex;
   flex-direction: column;
   width: 100%;
 
-  ${({ hasReivew }) => {
-    if (!hasReivew) {
+  ${({ hasImageReviews }) => {
+    if (!hasImageReviews) {
       return css`
         justify-content: center;
         align-items: center;
