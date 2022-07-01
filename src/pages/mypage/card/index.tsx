@@ -29,17 +29,18 @@ const CardManagementPage = () => {
         return data.data;
       }
     },
-    { refetchOnMount: false, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const dispatch = useDispatch();
 
-  const { isOrder, orderId } = router.query;
+  const { isOrder, orderId, isSubscription } = router.query;
   const isFromOrder = isOrder === 'true';
+  const isFromSubscription = isSubscription === 'true';
 
   const cardEditHandler = async (card: IGetCard) => {
     // TODO(young) : 카드 api {code: 1120, message: 'not found order delivery'} 확인필요
-    if (isOrder && orderId) {
+    if (isOrder && orderId && isFromSubscription) {
       const cardId = card.id;
       let orderIdNumber = Number(orderId);
       const { data } = await postOrderCardChangeApi({ orderId: orderIdNumber, cardId });
@@ -47,6 +48,9 @@ const CardManagementPage = () => {
       if (data.code === 200) {
         router.push(`/subscription/${orderId}`);
       }
+    } else if (isFromOrder && isFromSubscription) {
+      dispatch(SET_CARD(card.id));
+      router.push({ pathname: '/order', query: { isSubscription } });
     } else if (isFromOrder) {
       dispatch(SET_CARD(card.id));
       router.push('/order');
@@ -56,7 +60,13 @@ const CardManagementPage = () => {
   };
 
   const goToCardRegister = (): void => {
-    router.push({ pathname: '/mypage/card/register', query: { isOrder: isFromOrder } });
+    if (isOrder && orderId && isFromSubscription) {
+      router.push({ pathname: '/mypage/card/register', query: { isOrder: isFromOrder, orderId, isSubscription } });
+    } else if (isOrder && isFromSubscription) {
+      router.push({ pathname: '/mypage/card/register', query: { isOrder: isFromOrder, isSubscription } });
+    } else {
+      router.push({ pathname: '/mypage/card/register', query: { isOrder: isFromOrder } });
+    }
   };
 
   if (isLoading || isNil(cards)) {
