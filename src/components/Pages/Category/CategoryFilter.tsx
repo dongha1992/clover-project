@@ -32,14 +32,13 @@ const CategoryFilter = () => {
 };
 
 const CategroyTabWrapper = styled.div`
-  padding: 18px 0px 6px 0px;
+  padding: 18px 0px 0px 0px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 `;
 
-const PageTitleWrapper = styled.div`
-  ${homePadding}
-`;
+const PageTitleWrapper = styled.div``;
 
 export default React.memo(CategoryFilter);

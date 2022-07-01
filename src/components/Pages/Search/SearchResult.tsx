@@ -56,9 +56,8 @@ const SearchResult = ({ searchResult, onClick, orderId, hasCart, getLocation }: 
           })
         ) : (
           <NoResultWrapper>
-            <TextB2R color={theme.greyScale65}>
-              {'검색하신 상품을 찾을 수 없어요.\n 다른 검색어를 입력해 보세요. 😭'}
-            </TextB2R>
+            <TextB2R color={theme.greyScale65}>검색하신 상품을 찾을 수 없어요.</TextB2R>
+            <TextB2R color={theme.greyScale65}>다른 검색어를 입력해 보세요. 😭</TextB2R>
           </NoResultWrapper>
         )}
       </ItemListWrapper>
@@ -92,6 +91,7 @@ const NoResultWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   height: 50vh;
 `;
 
