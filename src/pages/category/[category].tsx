@@ -74,7 +74,6 @@ const CategoryPage = () => {
       enabled: !!type,
       onError: () => {},
       onSuccess: (data) => {
-        console.log(categoryFilters, '---');
         const reOrdered = reorderedMenusBySoldout(data);
         checkIsFiltered(reOrdered);
         setDefaultMenus(reOrdered);
