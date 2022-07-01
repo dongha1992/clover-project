@@ -398,7 +398,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen ? (
+        {/* {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
@@ -418,7 +418,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           </ReviewContainer>
         ) : (
           <BorderLine height={1} margin="0 auto" width={'calc(100% - 48px)'} />
-        )}
+        )} */}
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
             <div key={index}>
@@ -453,7 +453,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: reviews?.searchReviews.length }}
+          countObj={{ 후기: reviews?.menuReview?.length }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
