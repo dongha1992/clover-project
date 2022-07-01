@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { getMainDestinationsApi, postDestinationApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
-import { getOrderListsApi } from '@api/order';
+import { getOrderDetailApi, getOrderListsApi, getOrdersApi } from '@api/order';
 import { getMenuDetailApi, getSubscriptionApi } from '@api/menu';
 import { last } from 'lodash-es';
 import { SET_MENU_ITEM } from '@store/menu';
@@ -172,7 +172,7 @@ const SubsSetInfoPage = () => {
       days: 90,
       page: 1,
       size: 100,
-      type: 'GENERAL',
+      type: 'SUBSCRIPTION',
     };
     try {
       if (['PARCEL', 'MORNING'].includes(subsDeliveryType! as string)) {
@@ -183,30 +183,34 @@ const SubsSetInfoPage = () => {
             address: userDestination?.location?.address,
           });
         } else {
-          const res = await getOrderListsApi(params);
-          const filterData = res.data.data.orderDeliveries.filter((item) =>
+          // const res = await getOrderListsApi(params);
+          const res = await getOrdersApi(params);
+          const filterData = await res.data.data.orders.filter((item: any) =>
             ['PARCEL', 'MORNING'].includes(item.delivery)
           );
+          const res2 = await getOrderDetailApi(filterData[0].id);
+          const destination = res2.data.data.orderDeliveries[0];
+
           if (filterData) {
             const reqBody = {
-              name: filterData[0]?.location?.addressDetail!,
-              delivery: filterData[0].delivery.toUpperCase(),
-              deliveryMessage: '',
-              main: filterData[0].type === 'MAIN' ? true : false,
-              receiverName: '',
-              receiverTel: '',
+              name: destination?.location?.addressDetail!,
+              delivery: destination.delivery.toUpperCase(),
+              deliveryMessage: destination.deliveryMessage ?? '',
+              main: destination.type === 'MAIN' ? true : false,
+              receiverName: destination.receiverName ?? '',
+              receiverTel: destination.receiverTel ?? '',
               location: {
-                addressDetail: filterData[0]?.location?.addressDetail!,
-                address: filterData[0]?.location?.address!,
-                zipCode: filterData[0]?.location?.zipCode!,
-                dong: filterData[0]?.location?.dong!,
+                addressDetail: destination?.location?.addressDetail!,
+                address: destination?.location?.address!,
+                zipCode: destination?.location?.zipCode!,
+                dong: destination?.location?.dong!,
               },
             };
             postDestination(reqBody);
-            setSubsDeliveryType(filterData[0].delivery);
+            setSubsDeliveryType(destination.delivery);
             setMainDestinationAddress({
-              delivery: mapper[filterData[0].delivery],
-              address: filterData[0].location.address,
+              delivery: mapper[destination.delivery],
+              address: destination.location.address,
             });
           } else {
             setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
@@ -292,15 +296,38 @@ const SubsSetInfoPage = () => {
   };
 
   const goToDeliveryInfo = () => {
-    router.push({
-      pathname: '/cart/delivery-info',
-      query: {
-        subsDeliveryType: subsDeliveryType,
-        menuId: menuId,
-        isSubscription: true,
-        selected: userDestination ? 'Y' : 'N',
-      },
-    });
+    console.log('subsDeliveryType', subsDeliveryType);
+
+    if (subsDeliveryType !== 'SPOT' && mainDestinationAddress) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '배송방법을 변경하면\n구독 시작/배송일이 초기화 됩니다.',
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: {
+                subsDeliveryType: subsDeliveryType,
+                menuId: menuId,
+                isSubscription: true,
+                selected: userDestination ? 'Y' : 'N',
+              },
+            });
+          },
+        })
+      );
+    } else {
+      router.push({
+        pathname: '/cart/delivery-info',
+        query: {
+          subsDeliveryType: subsDeliveryType,
+          menuId: menuId,
+          isSubscription: true,
+          selected: userDestination ? 'Y' : 'N',
+        },
+      });
+    }
   };
 
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
