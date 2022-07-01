@@ -70,12 +70,11 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
         </Content>
         <BtnGroup>
           <SVGIcon name="dotColumn" />
-          {participationStatus === 'COMPLETED' ||
-            (participationStatus === 'DUPLICATED' && (
-              <Complete>
-                <SVGIcon name="couponDownloadComplete" />
-              </Complete>
-            ))}
+          {(participationStatus === 'COMPLETED' || participationStatus === 'DUPLICATED') && (
+            <Complete>
+              <SVGIcon name="couponDownloadComplete" />
+            </Complete>
+          )}
           {participationStatus === 'POSSIBLE' && (
             <Incomplete
               onClick={() => {

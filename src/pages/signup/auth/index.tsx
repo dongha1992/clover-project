@@ -78,7 +78,6 @@ const SignupAuthPage = () => {
     }
     setSignUpInfo({ ...signUpInfo, name: value });
   };
-  console.log(signUpInfo);
 
   const phoneNumberInputHandler = (e: any): void => {
     const { value } = e.target;
