@@ -369,7 +369,7 @@ const SpotSearchMainPage = (): ReactElement => {
                         <TextH2B>{spotRecommend?.title}</TextH2B>
                         {
                           // 사용자 위치 설정 했을 경우 노출
-                          userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                          userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
                         }
                       </FlexBetween>
                       {spotRecommend?.spots.map((item: any, index: number) => {
