@@ -5,6 +5,7 @@ import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import { periodMapper, SUBS_DELIVERY_STATUS, SUBS_DELIVERY_UNPAID_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import { useSubsStatusMsg } from '@hooks/subscription/useSubsStatusMsg';
+import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
 import { theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
@@ -31,19 +32,28 @@ const SubsCardItem = ({ item }: any) => {
   }, [item?.subscriptionPeriod]);
 
   const cards = useSubsNowDeliveryInfo(item);
-  const msg = useSubsStatusMsg(item);
+
+  const { tooltipMsg } = useSubsPaymentFail(
+    item?.unsubscriptionType,
+    item.isSubscribing,
+    item.lastDeliveryDateOrigin,
+    item.subscriptionPeriod,
+    item.status
+  );
 
   const cardClickHandler = () => {
     if (limitedCompleted) {
       router.push({ pathname: '/subscription/set-info' });
+    } else {
+      router.push(`/subscription/${item.id}`);
     }
   };
 
   return (
     <CardBox onClick={cardClickHandler}>
-      {msg && (
+      {tooltipMsg && (
         <TooltipWrapper>
-          <SubsStatusTooltip message={msg!} />
+          <SubsStatusTooltip message={tooltipMsg!} />
         </TooltipWrapper>
       )}
       <Content>

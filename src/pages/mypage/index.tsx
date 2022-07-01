@@ -35,6 +35,7 @@ const MypagePage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
   const [subsOrders, setSubsOrders] = useState([]);
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
+  const [subsCloseOrders, setSubsCloseOrders] = useState([]);
 
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
@@ -60,18 +61,6 @@ const MypagePage = () => {
     {
       onSuccess: async (data) => {
         const orders = await data.orders
-          .map((item: any) => {
-            if (item.id === 723074) {
-              item.subscriptionRound = 3;
-              item.status = 'UNPAID';
-            } else if (item.id === 723075) {
-              item.subscriptionRound = 2;
-              item.status = 'UNPAID';
-            } else if (item.id === 723152 || item.id === 723033) {
-              item.status = 'UNPAID';
-            }
-            return item;
-          })
           .sort((a: IGetOrders, b: IGetOrders) => {
             if (a.subscriptionRound! > b.subscriptionRound!) return -1;
             if (a.subscriptionRound! < b.subscriptionRound!) return 1;
@@ -88,8 +77,16 @@ const MypagePage = () => {
           })
           .filter((order: IGetOrders) => order.status !== 'COMPLETED' && order.status !== 'CANCELED');
         const unpaidOrders = orders.filter((order: IGetOrders) => order.status === 'UNPAID');
-        console.log('unpaidOrder', unpaidOrders);
-        console.log('orders', orders);
+        const closeOrders = orders.filter(
+          (order: IGetOrders) =>
+            order.subscriptionPeriod === 'UNLIMITED' &&
+            (order.unsubscriptionType === 'DISABLED_DESTINATION' ||
+              order.unsubscriptionType === 'DISABLED_MENU' ||
+              order.unsubscriptionType === 'PAYMENT_FAILED' ||
+              order.unsubscriptionType === 'USER_CANCEL')
+        );
+
+        setSubsCloseOrders(closeOrders);
         setSubsUnpaidOrders(unpaidOrders);
         setSubsOrders(orders);
       },
@@ -214,7 +211,11 @@ const MypagePage = () => {
             </FlexBetweenStart>
             <BorderLine height={8} />
             <OrderAndDeliveryWrapper>{orderList && <OrderDashboard orderList={orderList} />}</OrderAndDeliveryWrapper>
-            <SubsDashboard subsOrders={subsOrders} subsUnpaidOrders={subsUnpaidOrders} />
+            <SubsDashboard
+              subsOrders={subsOrders}
+              subsUnpaidOrders={subsUnpaidOrders}
+              subsCloseOrders={subsCloseOrders}
+            />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />

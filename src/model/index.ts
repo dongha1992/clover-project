@@ -496,7 +496,7 @@ export interface ISpotsResponse {
       total: number;
       totalPage: number;
       size: number;
-    }
+    };
   };
 }
 
@@ -1314,6 +1314,7 @@ export interface IGetOrders {
   lastDeliveryDateOrigin?: string;
   currentDeliveryDate?: string;
   subscriptionMenuId?: number;
+  unsubscriptionType?: string;
 }
 export interface IOrderDeliverie {
   id: number;
@@ -1637,6 +1638,20 @@ export interface IGetTossPaymentResponse {
   data: IGetTossPayment;
 }
 
+export interface IDeleteOrderCancelPreviewResponse {
+  code: number;
+  message: string;
+  data: {
+    totalPayAmount: number;
+    completedDeliveryCount: number;
+    completedAmount: number;
+    partialRefundAmount: number;
+    refundPoint: number;
+    refundPayAmount: number;
+    couponCount: number;
+  };
+}
+
 /* MENU */
 
 export type TCategory = 'DAIRY_PRODUCTS' | 'MEAT' | 'SEAFOOD' | 'VEGAN' | string;
@@ -1718,6 +1733,7 @@ export interface IMenuDetail {
   subscriptionDeliveries: string[];
   subscriptionPeriods: string[];
   subscriptionDeliveryCycle: string;
+  subscriptionDescription?: string;
   reopenNotificationRequested: boolean;
   reopenMessage: string;
   menuFaq: IMenuFaq;

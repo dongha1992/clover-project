@@ -23,7 +23,7 @@ const SubsIng = () => {
 
           return item;
         })
-        .filter((item: any) => item?.status !== 'COMPLETED' || item?.status !== 'CANCELED');
+        .filter((item: any) => item?.status !== 'COMPLETED' && item?.status !== 'CANCELED');
 
       return filterData;
     },
