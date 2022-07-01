@@ -331,7 +331,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   {DELIVERY_TYPE_MAP[item]}
                 </Label>
               ))}
-              {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
+              {menuDetail?.type === 'SUBSCRIPTION' && !menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && (
+                <Tag margin="0 4px 0 0">단기구독전용</Tag>
+              )}
             </div>
           </MenuNameWrapper>
           <TextB2R padding="16px 0" color={theme.greyScale65}>

@@ -41,7 +41,7 @@ const MenuItem = ({ item, menuSelectHandler, menuDeleteHandler, buttonState = tr
           {item.menuName} / {item.menuDetailName}
         </TextB3R>
         <div className="wrap">
-          <TextH5B>{getFormatPrice(String(item.menuPrice - item.menuDiscount - item.eventDiscount))}원</TextH5B>
+          <TextH5B>{getFormatPrice(String(item.menuPrice))}원</TextH5B>
           <div className="line"></div>
           <TextB2R>{item.count ? item.count : 1}개</TextB2R>
           {buttonType !== 'delete' && (
