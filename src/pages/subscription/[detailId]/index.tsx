@@ -153,7 +153,7 @@ const SubsDetailPage = () => {
         onSubmit: () => {
           router.push({
             pathname: '/mypage/card',
-            query: { isOrder: true, orderId: orderDetail?.id },
+            query: { isOrder: true, orderId: orderDetail?.id, isSubscription: true },
           });
         },
       })
@@ -233,13 +233,7 @@ const SubsDetailPage = () => {
       </DietConfirmBox>
 
       {orderDetail && <SubsMngCalendar orderDeliveries={orderDetail?.orderDeliveries} />}
-      {subsCalendarSelectOrders && (
-        <SubsDetailOrderInfo
-          status={orderDetail?.status!}
-          subscriptionPeriod={orderDetail?.subscriptionPeriod!}
-          orderId={orderDetail?.id!}
-        />
-      )}
+      {subsCalendarSelectOrders && <SubsDetailOrderInfo status={orderDetail?.status!} orderId={orderDetail?.id!} />}
 
       <BorderLine height={8} />
 
