@@ -161,7 +161,6 @@ const Item = ({ item, isHorizontal }: TProps) => {
     if (item.liked) {
       mutateDeleteMenuLike();
     } else {
-      console.log('post');
       mutatePostMenuLike();
     }
   };
