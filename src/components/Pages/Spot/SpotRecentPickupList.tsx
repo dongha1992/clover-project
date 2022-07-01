@@ -109,6 +109,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         );
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const orderHandler = () => {
@@ -239,11 +240,10 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   const goToDetail = (id: number | undefined) => {
-    if (isClosed) {
-      router.push(`/spot/detail/${id}`);
-    } else {
-      return;
-    }
+    router.push({
+      pathname: `/spot/detail/${id}`,
+      query: { isSpot: true },
+    });
   };
 
   return (
