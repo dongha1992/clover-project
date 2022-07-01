@@ -5,7 +5,10 @@ import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import useOrderPrice from '@hooks/subscription/useOrderPrice';
+import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
+import { IOrderDetail } from '@model/index';
 import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
+import { useGetOrderDetail } from '@queries/order';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
@@ -15,18 +18,31 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import MenuPriceBox from '../payment/MenuPriceBox';
+import DeliveryInfoGuidBox from './GuideBox/DeliveryInfoGuidBox';
+import DietGuideBox from './GuideBox/DietGuideBox';
 
 interface IProps {
   item: any;
-  subscriptionPeriod: string;
   orderId: number;
 }
 
-const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
+const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
   const [toggleState, setToggleState] = useState(false);
   const dispatch = useDispatch();
+  const { data: orderDetail } = useGetOrderDetail(['getOrderDetail', 'subscription', orderId], orderId!, {
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    enabled: !!orderId,
+  });
 
   const priceInfo = useOrderPrice(item.orderMenus, item.orderOptions);
+  const { subsFailType } = useSubsPaymentFail(
+    orderDetail?.unsubscriptionType,
+    orderDetail?.isSubscribing,
+    orderDetail?.lastDeliveryDateOrigin,
+    orderDetail?.subscriptionPeriod,
+    orderDetail?.status
+  );
 
   // TODO : 구독상품 타입에 따라서 주문완료,주문취소,배송완료 변경
   const toggleClickHandler = () => {
@@ -49,6 +65,7 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
       query: { destinationId: item.id },
     });
   };
+  console.log('itemitemitemitem', item);
 
   return (
     <Container>
@@ -110,11 +127,16 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
               </MenuTextBox>
             </MenuLi>
           ))}
-          {subscriptionPeriod !== 'UNLIMITED' && item?.status === 'COMPLETED' && (
-            <MenuLi>
+          {item?.status === 'COMPLETED' && (
+            <MenuLi className="menuLi">
               <Button backgroundColor="#fff" color="#242424" border onClick={goToReview}>
                 후기 작성하기
               </Button>
+            </MenuLi>
+          )}
+          {orderDetail?.status === 'UNPAID' && (
+            <MenuLi className="menuLi">
+              <DietGuideBox />
             </MenuLi>
           )}
         </MenuUl>
@@ -128,7 +150,6 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
           deliveryType={item.delivery}
           disposable={true}
         />
-
         <DeliveryInfoBox>
           <TextH4B padding="0 0 24px 0">배송정보</TextH4B>
           <FlexBetween padding="0 0 16px">
@@ -164,22 +185,36 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
                 <TextH5B>배송방법</TextH5B>
                 <TextB2R>{DELIVERY_TYPE_MAP[item.delivery]}</TextB2R>
               </FlexBetween>
-              <FlexBetweenStart padding="0 0 24px">
-                <TextH5B>픽업장소</TextH5B>
-                <FlexColEnd>
-                  <TextB2R>{item.spotName}</TextB2R>
-                  <TextB2R className="textRight">
-                    {item.location.address} <br />
-                    {item.location.addressDetail}
-                  </TextB2R>
-                </FlexColEnd>
-              </FlexBetweenStart>
+              {subsFailType === 'destination' ? (
+                <FlexBetweenStart padding="0 0 16px">
+                  <TextH5B>픽업장소</TextH5B>
+                  <FlexColEnd>
+                    <FlexRow>
+                      <SVGIcon name="exclamationMark" />
+                      <TextB2R padding="2.5px 0 0 4px" className="textRight">
+                        {item.location.address}
+                      </TextB2R>
+                    </FlexRow>
+                    <TextB2R className="textRight">{item.location.addressDetail}</TextB2R>
+                  </FlexColEnd>
+                </FlexBetweenStart>
+              ) : (
+                <FlexBetweenStart padding="0 0 24px">
+                  <TextH5B>픽업장소</TextH5B>
+                  <FlexColEnd>
+                    <TextB2R className="textRight">{item.location.address}</TextB2R>
+                    <TextB2R className="textRight">{item.location.addressDetail}</TextB2R>
+                  </FlexColEnd>
+                </FlexBetweenStart>
+              )}
             </>
           )}
+          {subsFailType === 'destination' && <DeliveryInfoGuidBox />}
+
           <FlexBetween>
             <Button
               onClick={() => {
-                subscriptionPeriod === 'UNLIMITED' &&
+                orderDetail?.subscriptionPeriod === 'UNLIMITED' &&
                   item?.status !== 'COMPLETED' &&
                   item?.status !== 'CANCELED' &&
                   item?.status !== 'DELIVERING' &&
@@ -190,7 +225,7 @@ const SubsDetailOrderBox = ({ item, subscriptionPeriod, orderId }: IProps) => {
               color="#242424"
               border
               disabled={
-                subscriptionPeriod !== 'UNLIMITED' ||
+                orderDetail?.subscriptionPeriod !== 'UNLIMITED' ||
                 item?.status === 'COMPLETED' ||
                 item?.status === 'CANCELED' ||
                 item?.status === 'DELIVERING'
