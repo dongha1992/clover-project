@@ -36,7 +36,7 @@ const MypagePage = () => {
   const [subsOrders, setSubsOrders] = useState([]);
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
-
+  const [showBoard, setShowBoard] = useState<string>('');
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
@@ -61,20 +61,6 @@ const MypagePage = () => {
     {
       onSuccess: async (data) => {
         const orders = await data.orders
-          .map((item: any) => {
-            if (item.id === 723074) {
-              item.subscriptionRound = 3;
-              item.status = 'UNPAID';
-            } else if (item.id === 723075) {
-              item.subscriptionRound = 2;
-              item.status = 'UNPAID';
-            } else if (item.id === 723152 || item.id === 723033 || item.id === 723038) {
-              item.status = 'UNPAID';
-            } else if (item.id === 723082) {
-              item.unsubscriptionType = 'PAYMENT_FAILED';
-            }
-            return item;
-          })
           .sort((a: IGetOrders, b: IGetOrders) => {
             if (a.subscriptionRound! > b.subscriptionRound!) return -1;
             if (a.subscriptionRound! < b.subscriptionRound!) return 1;
@@ -90,16 +76,22 @@ const MypagePage = () => {
               return -1;
           })
           .filter((order: IGetOrders) => order.status !== 'COMPLETED' && order.status !== 'CANCELED');
-        const unpaidOrders = orders.filter((order: IGetOrders) => order.status === 'UNPAID');
-        const closeOrders = orders.filter(
+        const unpaidOrders = await orders.filter((order: IGetOrders) => order.status === 'UNPAID');
+        const closeOrders = await orders.filter(
           (order: IGetOrders) =>
-            order.isSubscribing === false &&
             order.subscriptionPeriod === 'UNLIMITED' &&
             (order.unsubscriptionType === 'DISABLED_DESTINATION' ||
               order.unsubscriptionType === 'DISABLED_MENU' ||
               order.unsubscriptionType === 'PAYMENT_FAILED' ||
               order.unsubscriptionType === 'USER_CANCEL')
         );
+        if (closeOrders.length > 0) {
+          setShowBoard('close');
+        } else if (closeOrders.length === 0 && unpaidOrders.length > 0) {
+          setShowBoard('unpaid');
+        } else {
+          setShowBoard('progress');
+        }
 
         setSubsCloseOrders(closeOrders);
         setSubsUnpaidOrders(unpaidOrders);
@@ -230,6 +222,7 @@ const MypagePage = () => {
               subsOrders={subsOrders}
               subsUnpaidOrders={subsUnpaidOrders}
               subsCloseOrders={subsCloseOrders}
+              showBoard={showBoard}
             />
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />

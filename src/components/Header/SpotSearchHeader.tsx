@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SVGIcon } from '@utils/common';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
@@ -35,19 +35,19 @@ const SpotSearchHeader = ({ title }: IProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
-        { !isMapSwitch ? (
-          <BtnWrapper>
-            <div className="map" onClick={goToSwitchMap}>
-              <SVGIcon name="map" />
-            </div>
-          </BtnWrapper>
-        ) : (
+        { !isMapSwitch ? 
+            <BtnWrapper>
+              <div className="map" onClick={goToSwitchMap}>
+                <SVGIcon name="map" />
+              </div>
+            </BtnWrapper>
+          : 
           <BtnWrapper>
             <div className="threeLines" onClick={goToSwitchMap}>
               <SVGIcon name="threeLines" />
             </div>
           </BtnWrapper>
-        )}
+        }
       </Wrapper>
     </Container>
   );

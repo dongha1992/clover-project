@@ -93,7 +93,8 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
     }
   };
 
-  const orderHandler = () => {
+  const orderHandler = (e: any) => {
+    e.stopPropagation();
     const destinationInfo = {
       id: item.id,
       name: item.name,
@@ -244,11 +245,10 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   };
 
   const goToDetail = (id: number | undefined) => {
-    if (item?.isClosed) {
-      router.push(`/spot/detail/${id}`);
-    } else {
-      return;
-    }
+    router.push({
+      pathname: `/spot/detail/${id}`,
+      query: { isSpot: true },
+    });
   };
 
   return (
@@ -303,7 +303,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
             width="75px"
             height="38px"
             border
-            onClick={orderHandler}
+            onClick={(e) => orderHandler(e)}
           >
             주문하기
           </Button>

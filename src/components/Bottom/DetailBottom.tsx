@@ -243,20 +243,28 @@ const DetailBottom = () => {
           <LikeBtn onClick={goToLike}>
             <SVGIcon name={menuDetail?.liked ? 'likeRed' : 'likeBlack'} />
           </LikeBtn>
-          <TextH5B color={theme.white} padding="0 0 0 4px">
+          <TextH5B color={theme.white} padding="2px 0 0 4px">
             {menuDetail?.likeCount || 0}
           </TextH5B>
         </LikeWrapper>
         <Col />
         {menuDetail?.type === 'SUBSCRIPTION' ? (
-          <BtnWrapper onClick={subscriptionButtonHandler}>
-            <TextH5B color={theme.white} pointer>
-              <TootipWrapper>
-                <TimerTooltip message={subsDiscount} bgColor={theme.brandColor} color={theme.white} minWidth="0" />
-              </TootipWrapper>
-              구독하기
-            </TextH5B>
-          </BtnWrapper>
+          menuDetail?.isSold ? (
+            <BtnWrapper>
+              <TextH5B color={theme.white} pointer>
+                일시품절
+              </TextH5B>
+            </BtnWrapper>
+          ) : (
+            <BtnWrapper onClick={subscriptionButtonHandler}>
+              <TextH5B color={theme.white} pointer>
+                <TootipWrapper>
+                  <TimerTooltip message={subsDiscount} bgColor={theme.brandColor} color={theme.white} minWidth="0" />
+                </TootipWrapper>
+                구독하기
+              </TextH5B>
+            </BtnWrapper>
+          )
         ) : (
           <BtnWrapper onClick={cartClickButtonHandler}>
             <TextH5B color={theme.white} pointer>
@@ -326,11 +334,7 @@ const BtnWrapper = styled.div`
 
 const LikeBtn = styled.div`
   display: flex;
-
   cursor: pointer;
-  svg {
-    margin-bottom: 3px;
-  }
 `;
 const TimerTooltipWrapper = styled.div`
   position: absolute;

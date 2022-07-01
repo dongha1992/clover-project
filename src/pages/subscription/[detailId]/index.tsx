@@ -1,3 +1,5 @@
+import SubsCloseSheet from '@components/BottomSheet/SubsSheet/SubsPaymentCloseSheet';
+import SubsFailSheet from '@components/BottomSheet/SubsSheet/SubsPaymentFailSheet';
 import SubsMngCalendar from '@components/Calendar/subscription/SubsMngCalendar';
 import SubsDetailOrderInfo from '@components/Pages/Subscription/detail/SubsDetailOrderInfo';
 import { SubsInfoBox, SubsOrderItem } from '@components/Pages/Subscription/payment';
@@ -5,11 +7,14 @@ import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox'
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
+import { PAYMENT_METHOD } from '@constants/order';
 import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
+import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
 import { IOrderDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
+import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate } from '@utils/common';
@@ -31,6 +36,13 @@ const SubsDetailPage = () => {
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
   const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_BOTTOM_SHEET());
+    };
+  }, []);
+
   useEffect(() => {
     if (router.isReady) {
       setDetailId(Number(router.query?.detailId));
@@ -44,7 +56,11 @@ const SubsDetailPage = () => {
       let subArr: number[] = [];
       data.orderDeliveries.forEach((o) => {
         pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
-        if (o?.subOrderDelivery) {
+        if (
+          o?.subOrderDelivery &&
+          o?.subOrderDelivery.status !== 'COMPLETED' &&
+          o?.subOrderDelivery.status !== 'CANCELED'
+        ) {
           subArr.push(o.subOrderDelivery.order.id);
         }
       });
@@ -66,6 +82,47 @@ const SubsDetailPage = () => {
 
   const status = useSubsStatus(orderDetail?.status!);
   const optionsPrice = useOptionsPrice(orderDetail?.orderDeliveries!);
+  const { subsFailType } = useSubsPaymentFail(
+    orderDetail?.unsubscriptionType,
+    orderDetail?.isSubscribing,
+    orderDetail?.lastDeliveryDateOrigin,
+    orderDetail?.subscriptionPeriod,
+    orderDetail?.status
+  );
+  console.log('subsFailTypesubsFailType', subsFailType);
+
+  useEffect(() => {
+    subsCloseSheetHandler();
+  }, [subsFailType]);
+
+  const subsCloseSheetHandler = () => {
+    if (subsFailType === 'payment' || subsFailType === 'destination') {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: (
+            <SubsFailSheet
+              subsFailType={subsFailType}
+              firstDeliveryDateOrigin={orderDetail?.firstDeliveryDateOrigin}
+              unsubscriptionMessage={orderDetail?.unsubscriptionMessage}
+              orderId={orderDetail?.id}
+              destinationId={orderDetail.orderDeliveries[0].id}
+            />
+          ),
+        })
+      );
+    } else if (subsFailType === 'close') {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: (
+            <SubsCloseSheet
+              unsubscriptionMessage={orderDetail?.unsubscriptionMessage}
+              lastDeliveryDateOrigin={orderDetail?.lastDeliveryDateOrigin}
+            />
+          ),
+        })
+      );
+    }
+  };
 
   const reorderHandler = () => {
     router.push({
@@ -94,9 +151,18 @@ const SubsDetailPage = () => {
     if (subDeliveries.length === 0) {
       router.push(`/subscription/${detailId}/cancel`);
     } else {
-      router.push({
-        pathname: `/subscription/${detailId}/sub-cancel`,
-      });
+      dispatch(
+        SET_ALERT({
+          alertMessage: `함께배송 주문을 먼저 취소해야\n구독 주문 취소할 수 있어요.\n함께배송 주문을 취소하시겠어요?`,
+          submitBtnText: '주문 취소하기',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            router.push({
+              pathname: `/subscription/${detailId}/sub-cancel`,
+            });
+          },
+        })
+      );
     }
   };
 
@@ -119,6 +185,16 @@ const SubsDetailPage = () => {
           name={orderDetail?.name!}
           menuImage={orderDetail?.image.url!}
         />
+        {subsFailType && (
+          <FlexBetween padding="16px" margin="16px 0 0 0" className="failInfoBox">
+            {subsFailType === 'payment' ||
+              (subsFailType === 'destination' && <TextH6B color={theme.greyScale65}>정기구독 자동 해지 안내</TextH6B>)}
+            {subsFailType === 'close' && <TextH6B color={theme.greyScale65}>정기구독 결제 실패 안내</TextH6B>}
+            <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={subsCloseSheetHandler}>
+              자세히
+            </TextH6B>
+          </FlexBetween>
+        )}
       </InfoBox>
 
       <BorderLine height={8} />
@@ -182,7 +258,7 @@ const SubsDetailPage = () => {
         ) : (
           <FlexBetween padding="0 0 16px">
             <TextH5B>결제수단</TextH5B>
-            <TextB2R>신용카드</TextB2R>
+            <TextB2R>{PAYMENT_METHOD[orderDetail?.payMethod] ?? '신용카드'}</TextB2R>
           </FlexBetween>
         )}
         {orderDetail?.subscriptionPeriod === 'UNLIMITED' && (
@@ -244,6 +320,9 @@ const Container = styled.div`
 `;
 const InfoBox = styled.div`
   padding: 24px;
+  .failInfoBox {
+    background-color: ${theme.greyScale3};
+  }
 `;
 const DietConfirmBox = styled.div`
   width: 100%;
