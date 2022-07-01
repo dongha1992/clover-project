@@ -2,10 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH5B } from '@components/Shared/Text';
 import ShareSheetItem from './SheetSheetItem';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { homePadding } from '@styles/theme';
 import { SVGIcon, getUrlLink } from '@utils/common';
+import { useToast } from '@hooks/useToast';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 /* TODO : og 태그 고려 */
 
@@ -17,6 +19,8 @@ const SHARE_ICONS = [
 ];
 
 const ShareSheet = () => {
+  const dispatch = useDispatch();
+  const { showToast, hideToast } = useToast();
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
     let url = window.location.href;
     const shareMapper: { [index: string]: () => void } = {
@@ -35,11 +39,16 @@ const ShareSheet = () => {
         window.open(link, 'share', 'width=500, height=500');
       },
       urlIcon: () => {
-        getUrlLink(e);
+        getUrlLink(e, toastHandler);
       },
     };
 
     shareMapper[value]();
+  };
+
+  const toastHandler = () => {
+    showToast({ message: '링크가 복사되었습니다.' });
+    dispatch(INIT_BOTTOM_SHEET());
   };
 
   const windowOpen = (url: string) => {

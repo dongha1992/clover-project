@@ -46,6 +46,7 @@ const Container = styled.div<{ isSold?: boolean }>`
   height: 32px;
   border: 1px solid #dedede;
   box-sizing: border-box;
+  background-color: ${theme.white};
   border-radius: 32px;
   cursor: pointer;
 `;
