@@ -1507,6 +1507,7 @@ const OrderPage = () => {
           point={userInputObj.point}
           type={'last'}
           deliveryType={previewOrder?.order.delivery}
+          subscriptionDiscountRates={previewOrder?.order.subscriptionDiscountRates}
         />
       )}
       <OrderTermWrapper>

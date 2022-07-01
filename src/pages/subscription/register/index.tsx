@@ -314,6 +314,7 @@ const SubsRegisterPage = () => {
               deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : allMenuPriceInfo.deliveryPrice}
               deliveryLength={subsOrderMenus?.length!}
               deliveryType={subsInfo?.deliveryType!}
+              subscriptionDiscountRates={subsInfo?.subscriptionDiscountRates!}
             />
           )}
           <BottomButton onClick={onSubscribe}>

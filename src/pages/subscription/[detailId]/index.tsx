@@ -289,6 +289,7 @@ const SubsDetailPage = () => {
         point={orderDetail?.point!}
         type="management"
         deliveryType={orderDetail?.delivery!}
+        subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
       />
 
       <BorderLine height={8} />
