@@ -13,6 +13,7 @@ import { CategoryFilter } from '@components/Pages/Category';
 import TabList from '@components/Shared/TabList/TabList';
 import { useSelector } from 'react-redux';
 import { INIT_CATEGORY_FILTER, filterSelector, SET_MENU_TAB } from '@store/filter';
+import { FlexCol } from '@styles/theme';
 
 type TProps = {
   title?: string;
@@ -71,7 +72,6 @@ const CategorySubHeader = ({ title }: TProps) => {
           <CartIcon onClick={goToCart} />
         </Wrapper>
         <TabList onClick={clickTabHandler} selectedTab={selectedTab} tabList={CATEGORY} ref={categoryRef} />
-        <CategoryFilter />
       </Container>
     </>
   );
