@@ -25,10 +25,9 @@ import { Button } from '@components/Shared/Button';
 interface IProps {
   list: ISpotsDetail;
   type: string;
-  isSearch?: boolean;
 }
 
-const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
+const SpotList = ({ list, type }: IProps): ReactElement => {
   const { id } = list;
   const routers = useRouter();
   const dispatch = useDispatch();
@@ -48,9 +47,6 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
   };
 
   const goToDetail = (): void => {
-    if (isSearch) {
-      return;
-    }
     router.push({
       pathname: `/spot/detail/${id}`,
       query: { isSpot: true },
@@ -164,50 +160,36 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
 
   const onLike = useOnLike(list.id!, list.liked);
 
-  const clickSpotOpen = async (id: number) => {
+  const clickSpotJoin = async (id: number) => {
     if (list.recruited) {
       return;
     }
-    // const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-    // dispatch(
-    //   SET_ALERT({
-    //     alertMessage: TitleMsg,
-    //     onSubmit: () => {
-    //       setSpotRegisteration(true);
-    //       const message = '참여해주셔서 감사해요:)';
-    //       showToast({ message });
-    //       /* TODO: warning 왜? */
-    //       return () => hideToast();
-    //     },
-    //     submitBtnText: '확인',
-    //     closeBtnText: '취소',
-    //   })
-    // );
-
-    try {
-      const { data } = await postSpotRegistrationsRecruiting(id);
-      if (data.code === 200) {
-        const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
-        dispatch(
-          SET_ALERT({
-            alertMessage: TitleMsg,
-            onSubmit: () => {
-              // TODO 스팟 현황 상세 이동
-              // router.push('/onboarding');
-              const message = '참여해주셔서 감사해요:)';
-              showToast({ message });
-              /* TODO: warning 왜? */
-              return () => hideToast();
-            },
-            submitBtnText: '확인',
-            closeBtnText: '취소',
-          })
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    const TitleMsg = `프코스팟 오픈에 참여하시겠습니까?\n오픈 시 알려드릴게요!`;
+    dispatch(
+      SET_ALERT({
+        alertMessage: TitleMsg,
+        onSubmit: () => joinPublicSpotRecruiting(id),
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+      })
+    );
   };
+
+  const joinPublicSpotRecruiting = async(id: number) => {
+    try{
+      const {data} = await postSpotRegistrationsRecruiting(id);
+      if(data.code === 200){
+        router.push({
+          pathname: `/mypage/spot-status/detail/${id}`,
+          query: { recruited: true }
+        });
+      }
+    } catch(e){
+      console.error(e);
+    };
+  };
+
+
 
   const SpotsListTypeRender = () => {
     switch (type) {
@@ -250,13 +232,11 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
       //이벤트 스팟
       case 'event':
         return (
-          <Container type="event">
-            <StorImgWrapper onClick={goToDetail}>
-              {!isSearch && (
-                <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
-                  <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
-                </LikeWrapper>
-              )}
+          <Container type="event" onClick={goToDetail}>
+            <StorImgWrapper >
+              <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
+                <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
+              </LikeWrapper>
               {list.isTrial ? (
                 <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
               ) : list.images.length > 0 ? (
@@ -325,7 +305,7 @@ const SpotList = ({ list, type, isSearch }: IProps): ReactElement => {
                     width="75px"
                     height="38px"
                     border
-                    onClick={() => clickSpotOpen(list.id!)}
+                    onClick={() => clickSpotJoin(list.id!)}
                   >
                     참여하기
                   </Button>
@@ -357,6 +337,7 @@ const Container = styled.section<{ type: string }>`
         margin-bottom: 48px;
         border-radius: 8px;
         justify-content: space-between;
+        cursor: pointer;
       `;
     } else if (type === 'normal') {
       return css`

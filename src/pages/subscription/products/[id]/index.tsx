@@ -144,7 +144,7 @@ const SubsProductIdPage = () => {
   const renderBottomContent = () => {
     switch (selectedTab) {
       case '/menu/detail/review':
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId} />;
+        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuId!} />;
       case '/menu/detail/faq':
         return <DetailBottomFAQ />;
       default:
@@ -271,7 +271,7 @@ const SubsProductIdPage = () => {
           <Bottom>
             <StickyTab
               tabList={MENU_REVIEW_AND_FAQ}
-              countObj={{ 후기: reviews?.searchReviews.length }}
+              countObj={{ 후기: reviews?.menuReviews?.length }}
               isSticky={isSticky}
               selectedTab={selectedTab}
               onClick={selectTabHandler}

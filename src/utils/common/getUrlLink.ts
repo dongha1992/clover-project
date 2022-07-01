@@ -1,4 +1,4 @@
-const getUrlLink = (e: any) => {
+const getUrlLink = (e: any, cb: any) => {
   e.preventDefault();
   const url = window.location.href;
 
@@ -8,7 +8,7 @@ const getUrlLink = (e: any) => {
   }
   const clipboard = window.navigator.clipboard;
   clipboard.writeText(url).then(() => {
-    alert('링크가 복사되었습니다.');
+    cb();
   });
 };
 

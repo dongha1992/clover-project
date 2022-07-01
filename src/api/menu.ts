@@ -4,6 +4,7 @@ import {
   IGetMenus,
   IGetMenusResponse,
   IMenuReviewsResponse,
+  IMenuReviewsImageResponse,
   IReviewsDetailResponse,
   IPostMenuReview,
   IMenuDetailsResponse,
@@ -22,12 +23,38 @@ export const getMenuDetailApi = (id: number): Promise<AxiosResponse<IMenuDetails
   return Api.get(`menu/v1/menus/${id}`);
 };
 
-export const getMenuDetailReviewApi = (id: number): Promise<AxiosResponse<IMenuReviewsResponse>> => {
-  return Api.get(`menu/v1/reviews?menuId=${id}`);
+export const getMenuDetailReviewApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IMenuReviewsResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews`, { params: { page, size } });
 };
 
-export const getReviewDetailApi = (reivewId: number): Promise<AxiosResponse<IReviewsDetailResponse>> => {
-  return Api.get(`menu/v1/reviews/${reivewId}`);
+export const getMenuDetailReviewImageApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IMenuReviewsImageResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/images`, { params: { page, size } });
+};
+
+export const getReviewDetailApi = ({
+  id,
+  reviewId,
+}: {
+  id: number;
+  reviewId: number;
+}): Promise<AxiosResponse<IReviewsDetailResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/${reviewId}`);
 };
 
 export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
