@@ -11,7 +11,7 @@ import { MenuFilter } from '@components/Filter';
 import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import { spotSelector } from '@store/spot';
+import { spotSelector, SET_SPOT_MAP_SWITCH, INIT_SPOT_MAP_SWITCH } from '@store/spot';
 import { ISpotsDetail } from '@model/index';
 
 interface IProps {
@@ -25,7 +25,7 @@ interface IProps {
 const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart}: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { spotsPosition } = useSelector(spotSelector);
+  const { isMapSwitch } = useSelector(spotSelector);
 
   const clickFilterHandler = () => {
     dispatch(
@@ -37,6 +37,10 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
 
   const goToSpotsRegistrations = () => {
     router.push('/spot/join');
+  };
+
+  const goToSwitchMap = () => {
+      dispatch(SET_SPOT_MAP_SWITCH());
   };
 
   return (
@@ -62,9 +66,9 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
           <NoResultWrapper>
             <NoResult>
               <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>
-                등록된 스팟이 없어 보이네요.😭
+                등록된 프코스팟이 없어 보이네요.😭
               </TextB2R>
-              <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border>
+              <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSwitchMap}>
                 지도로 주변 프코스팟 찾기
               </Button>
               {!orderId && (
@@ -102,8 +106,11 @@ const ItemListWrapper = styled.div`
 
 const NoResultWrapper = styled.div`
   width: 100%;
+  height: 40vh;
   text-align: center;
-  margin-top: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 `;
 
 const NoResult = styled.div``;
