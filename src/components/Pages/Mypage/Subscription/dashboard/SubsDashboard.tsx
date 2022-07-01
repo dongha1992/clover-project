@@ -12,8 +12,9 @@ interface IProps {
   subsOrders: IGetOrders[];
   subsUnpaidOrders: IGetOrders[];
   subsCloseOrders: IGetOrders[];
+  showBoard: string;
 }
-const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders }: IProps) => {
+const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders, showBoard }: IProps) => {
   return (
     <DashBoardBox>
       <FlexCol>
@@ -27,21 +28,9 @@ const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders }: IProps
           </FlexRow>
         </FlexBetween>
       </FlexCol>
-      {subsCloseOrders.length ? (
-        <SubsCloseBoard />
-      ) : subsUnpaidOrders.length ? (
-        <SubsUnpaidBoard firstDeliveryDate={subsUnpaidOrders[0]?.firstDeliveryDateOrigin!} />
-      ) : (
-        <SubsProgressBoard subscriptionRound={subsOrders[0]?.subscriptionRound} />
-      )}
-
-      {/* <SubsInfoBox>
-        <SVGIcon name="exclamationMark" />
-        <TextB3R color={theme.brandColor}>
-          <b>구독 3회차 N% 할인</b> <br />
-          1월 6일 (목) 자동 결제되는 새 구독플랜을 확인해 주세요!
-        </TextB3R>
-      </SubsInfoBox> */}
+      {showBoard === 'close' && <SubsCloseBoard />}
+      {showBoard === 'unpaid' && <SubsUnpaidBoard firstDeliveryDate={subsUnpaidOrders[0]?.firstDeliveryDateOrigin!} />}
+      {showBoard === 'progress' && <SubsProgressBoard subscriptionRound={subsOrders[0]?.subscriptionRound} />}
     </DashBoardBox>
   );
 };
