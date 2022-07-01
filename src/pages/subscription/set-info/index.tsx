@@ -9,7 +9,12 @@ import { IRegisterDestinationRequest, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm, INIT_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
-import { SET_SUBS_INFO_STATE, subscriptionForm } from '@store/subscription';
+import {
+  SET_SUBS_DELIVERY_EXPECTED_DATE,
+  SET_SUBS_INFO_STATE,
+  SET_SUBS_START_DATE,
+  subscriptionForm,
+} from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
@@ -214,7 +219,26 @@ const SubsSetInfoPage = () => {
   };
 
   const changeRadioHanler = async (value: string) => {
+    // 구독기간 변경시 : store에 구독기간 저장 / 구독시작일,구독기간 초기화
     setUserSelectPeriod(value);
+    dispatch(
+      SET_SUBS_INFO_STATE({
+        period: value,
+        startDate: null,
+        deliveryDay: null,
+        deliveryTime: null,
+      })
+    );
+    dispatch(
+      SET_SUBS_START_DATE({
+        subsStartDate: null,
+      })
+    );
+    dispatch(
+      SET_SUBS_DELIVERY_EXPECTED_DATE({
+        subsDeliveryExpectedDate: null,
+      })
+    );
   };
 
   const calendarSettingHandler = () => {
