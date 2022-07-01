@@ -1696,6 +1696,7 @@ export interface IDetailImage {
   name?: string;
   originalName?: string;
   size?: number;
+  reviewId?: number;
 }
 
 export interface IMenuDetails {
