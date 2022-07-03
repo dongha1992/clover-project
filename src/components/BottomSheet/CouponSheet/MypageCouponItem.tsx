@@ -87,6 +87,7 @@ const Container = styled.div<{ isDownload?: boolean; isSelected?: boolean }>`
   justify-content: space-between;
   max-width: ${breakpoints.mobile}px;
   width: 100%;
+  cursor: pointer;
 `;
 
 const Wrapper = styled.div`
