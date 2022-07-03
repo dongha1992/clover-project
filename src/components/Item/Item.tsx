@@ -28,6 +28,7 @@ import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
 import { onMenuLikes } from '@queries/menu';
+import { useToast } from '@hooks/useToast';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -42,7 +43,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
-
+  const { showToast } = useToast();
   const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
@@ -68,6 +69,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        showToast({ message: '알림 신청을 완료했어요!' });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
