@@ -100,7 +100,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 27px;
+  margin: 16px 24px;
   .arrow {
     cursor: pointer;
     > svg {
