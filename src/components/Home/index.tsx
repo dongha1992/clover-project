@@ -77,7 +77,7 @@ const Home = () => {
       <LineBanner>
         <Image
           src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_banner.png`}
-          height="100%"
+          height="120px"
           width="512px"
           layout="responsive"
         />
@@ -88,7 +88,7 @@ const Home = () => {
       </FlexSpace>
       <Image
         src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
-        height="200px"
+        height="300px"
         width="512px"
         layout="responsive"
       />
