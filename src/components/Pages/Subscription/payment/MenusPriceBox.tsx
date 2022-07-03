@@ -1,9 +1,10 @@
 import SubsDiscountSheet from '@components/BottomSheet/SubsSheet/SubsDiscountSheet';
 import { TextB2R, TextB3R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 export interface option {
@@ -25,6 +26,7 @@ interface IProps {
   point?: number;
   type?: string | 'progress' | 'last' | 'management';
   deliveryType: string;
+  subscriptionDiscountRates: number[];
 }
 
 const MenusPriceBox = ({
@@ -39,13 +41,14 @@ const MenusPriceBox = ({
   point,
   type,
   deliveryType,
+  subscriptionDiscountRates,
 }: IProps) => {
   const dispatch = useDispatch();
 
   const subsDiscountInfoHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsDiscountSheet />,
+        content: <SubsDiscountSheet subscriptionDiscountRates={subscriptionDiscountRates} />,
       })
     );
   };

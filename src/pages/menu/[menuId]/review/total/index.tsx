@@ -9,12 +9,11 @@ import { ReviewDetailItem } from '@components/Pages/Review';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
-import { BASE_URL } from '@constants/mock';
 import { useQuery } from 'react-query';
-import { Obj, ISearchReviews, IMenuReviews, ISearchReviewImages } from '@model/index';
+import { Obj, ISearchReviews, ISearchReviewImages } from '@model/index';
 import { groupBy, pipe } from '@fxts/core';
-import { getMenuDetailReviewApi } from '@api/menu';
+import { getMenuDetailReviewApi, getMenuDetailReviewImageApi } from '@api/menu';
+import { getMenuAverageRate } from '@utils/menu';
 
 /* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
 /* TODO: 중복 코드 많음 , 리팩토링 */
@@ -22,30 +21,42 @@ import { getMenuDetailReviewApi } from '@api/menu';
 const TotalReviewPage = ({ menuId }: any) => {
   const dispatch = useDispatch();
 
-  const { data, error, isLoading } = useQuery(
+  const {
+    data: reviews,
+    error,
+    isLoading,
+  } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(menuId);
-      // const { data } = await axios.get(`${BASE_URL}/review`);
+      const params = { id: Number(menuId)!, page: 1, size: 100 };
+      const { data } = await getMenuDetailReviewApi(params);
 
-      const { searchReviewImages, searchReviews } = data.data;
-
-      return { searchReviewImages, searchReviews };
+      return data.data;
     },
 
     {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
-  const getAverageRate = () => {
-    const totalRating = data?.searchReviews?.reduce((rating: number, review: ISearchReviews) => {
-      return rating + review?.rating;
-    }, 0)!;
-    return (totalRating / data?.searchReviews.length!).toFixed(1);
-  };
+  const { data: reviewsImages, error: reviewsImagesError } = useQuery(
+    'getMenuDetailReviewImages',
+    async () => {
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
+    }
+  );
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -59,38 +70,24 @@ const TotalReviewPage = ({ menuId }: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
 
-  /* TODO: 함수화 */
-
-  const idByReviewImg: Obj = pipe(
-    data?.searchReviewImages!,
-    groupBy((review: ISearchReviewImages) => review?.menuReviewId!)
-  );
-
-  const mergedReviews = data?.searchReviews.map((review: ISearchReviews) => {
-    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
-  });
-
   if (isLoading) {
     return <div>로딩</div>;
   }
 
-  const hasReivew = data?.searchReviews?.length! > 0;
+  const hasImageReview = reviewsImages?.images?.length! !== 0;
+  const hasReivews = reviews?.menuReviews.length !== 0;
 
   return (
     <Container>
-      <Wrapper hasReivew={hasReivew}>
-        {hasReivew ? (
+      <Wrapper hasImageReview={hasImageReview}>
+        {hasImageReview && (
           <ReviewOnlyImage
-            reviews={data?.searchReviewImages}
+            reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={getAverageRate()}
-            totalReviews={data?.searchReviews.length}
+            averageRating={getMenuAverageRate({ reviews: reviews?.menuReviews!, total: reviews?.pagination.total! })}
+            totalReviews={reviews?.pagination?.total!}
           />
-        ) : (
-          <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
-            상품의 첫 번째 후기를 작성해주세요 :)
-          </TextB2R>
         )}
         <Button
           backgroundColor={theme.white}
@@ -105,9 +102,17 @@ const TotalReviewPage = ({ menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
-        {mergedReviews?.map((review: any, index: number) => {
-          return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
-        })}
+        {hasReivews ? (
+          <>
+            {reviews?.menuReviews?.map((review: any, index: number) => {
+              return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
+            })}
+          </>
+        ) : (
+          <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
+            상품의 첫 번째 후기를 작성해주세요 :)
+          </TextB2R>
+        )}
       </ReviewWrapper>
     </Container>
   );
@@ -115,14 +120,14 @@ const TotalReviewPage = ({ menuId }: any) => {
 
 const Container = styled.div``;
 
-const Wrapper = styled.div<{ hasReivew?: boolean }>`
+const Wrapper = styled.div<{ hasImageReview?: boolean }>`
   ${homePadding}
   display: flex;
   flex-direction: column;
   width: 100%;
 
-  ${({ hasReivew }) => {
-    if (!hasReivew) {
+  ${({ hasImageReview }) => {
+    if (!hasImageReview) {
       return css`
         justify-content: center;
         align-items: center;

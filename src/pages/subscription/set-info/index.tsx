@@ -9,7 +9,12 @@ import { IRegisterDestinationRequest, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm, INIT_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
-import { SET_SUBS_INFO_STATE, subscriptionForm } from '@store/subscription';
+import {
+  SET_SUBS_DELIVERY_EXPECTED_DATE,
+  SET_SUBS_INFO_STATE,
+  SET_SUBS_START_DATE,
+  subscriptionForm,
+} from '@store/subscription';
 import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
@@ -19,7 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { getMainDestinationsApi, postDestinationApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
-import { getOrderListsApi } from '@api/order';
+import { getOrderDetailApi, getOrderListsApi, getOrdersApi } from '@api/order';
 import { getMenuDetailApi, getSubscriptionApi } from '@api/menu';
 import { last } from 'lodash-es';
 import { SET_MENU_ITEM } from '@store/menu';
@@ -79,7 +84,6 @@ const SubsSetInfoPage = () => {
     },
     {
       onSuccess: (data) => {
-        // dispatch(SET_MENU_ITEM(data));
         !subsInfo?.period &&
           setUserSelectPeriod(
             last(SUBSCRIPTION_PERIOD.filter((item) => data?.subscriptionPeriods.includes(item.period)))?.period!
@@ -167,7 +171,7 @@ const SubsSetInfoPage = () => {
       days: 90,
       page: 1,
       size: 100,
-      type: 'GENERAL',
+      type: 'SUBSCRIPTION',
     };
     try {
       if (['PARCEL', 'MORNING'].includes(subsDeliveryType! as string)) {
@@ -178,30 +182,34 @@ const SubsSetInfoPage = () => {
             address: userDestination?.location?.address,
           });
         } else {
-          const res = await getOrderListsApi(params);
-          const filterData = res.data.data.orderDeliveries.filter((item) =>
+          // const res = await getOrderListsApi(params);
+          const res = await getOrdersApi(params);
+          const filterData = await res.data.data.orders.filter((item: any) =>
             ['PARCEL', 'MORNING'].includes(item.delivery)
           );
+          const res2 = await getOrderDetailApi(filterData[0].id);
+          const destination = res2.data.data.orderDeliveries[0];
+
           if (filterData) {
             const reqBody = {
-              name: filterData[0]?.location?.addressDetail!,
-              delivery: filterData[0].delivery.toUpperCase(),
-              deliveryMessage: '',
-              main: filterData[0].type === 'MAIN' ? true : false,
-              receiverName: '',
-              receiverTel: '',
+              name: destination?.location?.addressDetail!,
+              delivery: destination.delivery.toUpperCase(),
+              deliveryMessage: destination.deliveryMessage ?? '',
+              main: destination.type === 'MAIN' ? true : false,
+              receiverName: destination.receiverName ?? '',
+              receiverTel: destination.receiverTel ?? '',
               location: {
-                addressDetail: filterData[0]?.location?.addressDetail!,
-                address: filterData[0]?.location?.address!,
-                zipCode: filterData[0]?.location?.zipCode!,
-                dong: filterData[0]?.location?.dong!,
+                addressDetail: destination?.location?.addressDetail!,
+                address: destination?.location?.address!,
+                zipCode: destination?.location?.zipCode!,
+                dong: destination?.location?.dong!,
               },
             };
             postDestination(reqBody);
-            setSubsDeliveryType(filterData[0].delivery);
+            setSubsDeliveryType(destination.delivery);
             setMainDestinationAddress({
-              delivery: mapper[filterData[0].delivery],
-              address: filterData[0].location.address,
+              delivery: mapper[destination.delivery],
+              address: destination.location.address,
             });
           } else {
             setMainDestinationAddress({ delivery: '배송방법', address: '배송지를 설정해 주세요' });
@@ -214,7 +222,26 @@ const SubsSetInfoPage = () => {
   };
 
   const changeRadioHanler = async (value: string) => {
+    // 구독기간 변경시 : store에 구독기간 저장 / 구독시작일,구독기간 초기화
     setUserSelectPeriod(value);
+    dispatch(
+      SET_SUBS_INFO_STATE({
+        period: value,
+        startDate: null,
+        deliveryDay: null,
+        deliveryTime: null,
+      })
+    );
+    dispatch(
+      SET_SUBS_START_DATE({
+        subsStartDate: null,
+      })
+    );
+    dispatch(
+      SET_SUBS_DELIVERY_EXPECTED_DATE({
+        subsDeliveryExpectedDate: null,
+      })
+    );
   };
 
   const calendarSettingHandler = () => {
@@ -263,20 +290,42 @@ const SubsSetInfoPage = () => {
           subsDeliveryExpectedDate[0].deliveryDate,
           subsDeliveryExpectedDate[subsDeliveryExpectedDate.length - 1].deliveryDate,
         ],
+        subscriptionDiscountRates: menuDetail?.subscriptionDiscountRates,
       })
     );
   };
 
   const goToDeliveryInfo = () => {
-    router.push({
-      pathname: '/cart/delivery-info',
-      query: {
-        subsDeliveryType: subsDeliveryType,
-        menuId: menuId,
-        isSubscription: true,
-        selected: userDestination ? 'Y' : 'N',
-      },
-    });
+    if (subsDeliveryType !== 'SPOT' && mainDestinationAddress) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '배송방법을 변경하면\n구독 시작/배송일이 초기화 됩니다.',
+          submitBtnText: '확인',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            router.push({
+              pathname: '/cart/delivery-info',
+              query: {
+                subsDeliveryType: subsDeliveryType,
+                menuId: menuId,
+                isSubscription: true,
+                selected: userDestination ? 'Y' : 'N',
+              },
+            });
+          },
+        })
+      );
+    } else {
+      router.push({
+        pathname: '/cart/delivery-info',
+        query: {
+          subsDeliveryType: subsDeliveryType,
+          menuId: menuId,
+          isSubscription: true,
+          selected: userDestination ? 'Y' : 'N',
+        },
+      });
+    }
   };
 
   // TODO : 비로그인시 온보딩 화면으로 리다이렉트
@@ -307,7 +356,15 @@ const SubsSetInfoPage = () => {
               >
                 <RadioButton isSelected={disabled ? isSelected : false} />
                 <TextB2R className={`${isSelected && 'fBold'} ${!disabled && 'disabled'}`} padding="0 0 0 8px" pointer>
-                  {item.text}
+                  {index === 4 ? (
+                    <>
+                      {item.text} (최대 {menuDetail?.subscriptionDiscountRates![index]}% 할인)
+                    </>
+                  ) : (
+                    <>
+                      {item.text} ({menuDetail?.subscriptionDiscountRates![index]}% 할인)
+                    </>
+                  )}
                 </TextB2R>
               </RadioLi>
             );
@@ -323,7 +380,8 @@ const SubsSetInfoPage = () => {
           <TextB3R color={theme.brandColor}>
             - 매달 새로운 식단을 자동결제로 편리하게 구독해 보세요. <br />
             - 구독 결제 기간에 따라 할인율이 점차 증가합니다. <br />
-            (1개월 5% / 2개월 7% / 3개월 10% / 4개월 15%)
+            (1개월 {menuDetail?.subscriptionDiscountRates![3]}% / 2개월 {menuDetail?.subscriptionDiscountRates![5]}% /
+            3개월 {menuDetail?.subscriptionDiscountRates![6]}% / 4개월 {menuDetail?.subscriptionDiscountRates![7]}%)
           </TextB3R>
         </SubsInfoBox>
       </PeriodBox>

@@ -3,8 +3,10 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexRow, theme } from '@styles/theme';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
-const SubsDiscountSheet = () => {
+interface IProps {
+  subscriptionDiscountRates: number[];
+}
+const SubsDiscountSheet = ({ subscriptionDiscountRates }: IProps) => {
   const dispatch = useDispatch();
   return (
     <SubsDiscountSheetContainer>
@@ -16,7 +18,7 @@ const SubsDiscountSheet = () => {
           <TextH5B>1주 구독</TextH5B>
           <FlexRow>
             <TextB2R>
-              <Span>3%</Span> 할인
+              <Span>{subscriptionDiscountRates[0]}%</Span> 할인
             </TextB2R>
           </FlexRow>
         </li>
@@ -24,7 +26,7 @@ const SubsDiscountSheet = () => {
           <TextH5B>2주 구독</TextH5B>
           <FlexRow>
             <TextB2R>
-              <Span>3%</Span> 할인
+              <Span>{subscriptionDiscountRates[1]}%</Span> 할인
             </TextB2R>
           </FlexRow>
         </li>
@@ -32,7 +34,7 @@ const SubsDiscountSheet = () => {
           <TextH5B>3주 구독</TextH5B>
           <FlexRow>
             <TextB2R>
-              <Span>5%</Span> 할인
+              <Span>{subscriptionDiscountRates[2]}%</Span> 할인
             </TextB2R>
           </FlexRow>
         </li>
@@ -40,7 +42,7 @@ const SubsDiscountSheet = () => {
           <TextH5B>4주 구독</TextH5B>
           <FlexRow>
             <TextB2R>
-              <Span>5%</Span> 할인
+              <Span>{subscriptionDiscountRates[3]}%</Span> 할인
             </TextB2R>
           </FlexRow>
         </li>
@@ -48,14 +50,15 @@ const SubsDiscountSheet = () => {
           <TextH5B>정기구독</TextH5B>
           <FlexRow>
             <TextB2R>
-              최대 <Span>15%</Span> 할인
+              최대 <Span>{subscriptionDiscountRates[4]}%</Span> 할인
             </TextB2R>
           </FlexRow>
         </li>
       </ul>
       <TextB3R color={theme.brandColor} padding="4px 0 24px">
         정기구독의 경우 구독 결제 기간에 따라 할인율이 점차 증가합니다. <br />
-        (1개월 5% / 2개월 7% / 3개월 10% / 4개월 15%)
+        (1개월 {subscriptionDiscountRates[3]}% / 2개월 {subscriptionDiscountRates[5]}% / 3개월{' '}
+        {subscriptionDiscountRates[6]}% / 4개월 {subscriptionDiscountRates[7]}%)
       </TextB3R>
       <BottomButton
         onClick={() => {
