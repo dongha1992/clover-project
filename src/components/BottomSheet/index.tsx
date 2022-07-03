@@ -15,7 +15,8 @@ const BottomSheet = () => {
   const { content, height }: any = useSelector(bottomSheetForm);
 
   useEffect(() => {
-    if (sheetRef.current && size.maxY) {
+    // sheetRef.current => sheetRef.current?.offsetHeight 수정
+    if (size.maxY && sheetRef.current?.offsetHeight) {
       sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
     }
     document!.querySelector('html')!.style!.overflow! = 'hidden';
@@ -84,7 +85,7 @@ const Container = styled.div<{ height: number | null }>`
   bottom: -100px;
   background-color: #fff;
   /* top: ${({ height }) => height}px; */
-  height: ${({ height }) => (height ? height : null)};
+  /* height: ${({ height }) => (height ? height : null)}; */
   transition: transform 150ms ease-out;
 
   ${({ theme }) => theme.desktop`
