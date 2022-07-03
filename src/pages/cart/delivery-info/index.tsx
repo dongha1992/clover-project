@@ -189,18 +189,18 @@ const DeliverInfoPage = () => {
               dispatch(
                 SET_DESTINATION({
                   name: response.name,
+                  delivery: response.delivery,
+                  deliveryMessageType: '',
+                  main: response.main,
+                  receiverName: response.receiverName,
+                  receiverTel: response.receiverTel,
                   location: {
                     addressDetail: response.location.addressDetail,
                     address: response.location.address,
                     dong: response.location.dong,
                     zipCode: response.location.zipCode,
                   },
-                  main: response.main,
                   deliveryMessage: response.deliveryMessage,
-                  receiverName: response.receiverName,
-                  receiverTel: response.receiverTel,
-                  deliveryMessageType: '',
-                  delivery: response.delivery,
                   id: response.id,
                 })
               );
@@ -219,6 +219,12 @@ const DeliverInfoPage = () => {
               }
             }
           } catch (error) {
+            if (isSubscription) {
+              router.push({
+                pathname: '/subscription/set-info',
+                query: { subsDeliveryType: subsDeliveryType, menuId },
+              });
+            }
             console.log('error', error);
           }
         } else {

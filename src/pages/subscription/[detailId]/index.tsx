@@ -13,7 +13,7 @@ import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
-import { IOrderDetail, IResponse } from '@model/index';
+import { IOrderDetail, IOrderDetailInOrderDeliveries, IResponse } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
@@ -21,6 +21,7 @@ import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styl
 import { getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { last } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,7 +34,6 @@ const SubsDetailPage = () => {
   const dispatch = useDispatch();
   const { subsCalendarSelectOrders } = useSelector(subscriptionForm);
   const [detailId, setDetailId] = useState<any>();
-  const [menuId, setMenuId] = useState<number>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
   const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
@@ -60,7 +60,6 @@ const SubsDetailPage = () => {
   useEffect(() => {
     if (router.isReady) {
       setDetailId(Number(router.query?.detailId));
-      setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
 
@@ -140,7 +139,7 @@ const SubsDetailPage = () => {
   const reorderHandler = () => {
     router.push({
       pathname: '/subscription/set-info',
-      query: { subsDeliveryType: orderDetail?.delivery, menuId: menuId ?? null },
+      query: { subsDeliveryType: orderDetail?.delivery, menuId: orderDetail?.subscriptionMenuId },
     });
   };
 
@@ -328,23 +327,44 @@ const SubsDetailPage = () => {
         subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
       />
 
-      <BorderLine height={8} />
-
-      <FlexRow padding="24px">
-        {orderDetail?.isSubscribing === false ? (
-          <Button backgroundColor="#fff" color="#242424" border onClick={reorderHandler}>
-            재주문하기
-          </Button>
-        ) : orderDetail?.status === 'UNPAID' ? (
-          <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
-            구독 해지하기
-          </Button>
-        ) : (
-          <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
-            주문 취소하기
-          </Button>
+      {orderDetail?.isSubscribing === false &&
+        (orderDetail?.status === 'COMPLETED' || orderDetail?.status === 'CANCELED') && (
+          <>
+            <BorderLine height={8} />
+            <FlexRow padding="24px">
+              <Button backgroundColor="#fff" color="#242424" border onClick={reorderHandler}>
+                재주문하기
+              </Button>
+            </FlexRow>
+          </>
         )}
-      </FlexRow>
+      {orderDetail?.isSubscribing === false &&
+        orderDetail?.status !== 'COMPLETED' &&
+        orderDetail?.status !== 'CANCELED' &&
+        orderDetail?.subscriptionPeriod !== 'UNLIMITED' &&
+        last(orderDetail?.orderDeliveries as any[]).status !== 'CANCELED' && (
+          <>
+            <BorderLine height={8} />
+            <FlexRow padding="24px">
+              <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
+                주문 취소하기
+              </Button>
+            </FlexRow>
+          </>
+        )}
+      {orderDetail?.isSubscribing === true &&
+        orderDetail?.status !== 'COMPLETED' &&
+        orderDetail?.status !== 'CANCELED' &&
+        orderDetail?.subscriptionPeriod === 'UNLIMITED' && (
+          <>
+            <BorderLine height={8} />
+            <FlexRow padding="24px">
+              <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
+                구독 해지하기
+              </Button>
+            </FlexRow>
+          </>
+        )}
     </Container>
   );
 };
