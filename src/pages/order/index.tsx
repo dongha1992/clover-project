@@ -178,7 +178,7 @@ const OrderPage = () => {
         subscriptionRound,
         type,
       } = tempOrder!;
-      console.log(tempOrder, 'TEMP ORDER');
+
       const previewBody = {
         delivery,
         deliveryDetail: deliveryDetail ? deliveryDetail : null,
@@ -414,9 +414,10 @@ const OrderPage = () => {
 
   const getAllOfPointHandler = () => {
     const { point } = previewOrder!;
+
     const { payAmount } = previewOrder?.order!;
 
-    const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon || 0);
+    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon || 0);
 
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
@@ -1002,7 +1003,7 @@ const OrderPage = () => {
       return;
     }
   }
-  console.log(previewOrder, 'PREVIEW');
+
   const {
     userName,
     userTel,
@@ -1143,6 +1144,7 @@ const OrderPage = () => {
             name="receiverName"
             eventHandler={userInputHandler}
             disabled={tempOrder?.isSubOrderDelivery}
+            maxLength={20}
           />
         </FlexCol>
         <FlexCol>
@@ -1299,16 +1301,16 @@ const OrderPage = () => {
           <BorderLine height={8} />
         </>
       )}
-      <CouponWrapper>
+      <CouponWrapper onClick={() => couponHandler(previewOrder?.coupons!)}>
         <FlexBetween>
-          <TextH4B>할인 쿠폰 ({previewOrder?.coupons.length})</TextH4B>
+          <TextH4B>할인 쿠폰</TextH4B>
           <FlexRow>
             {userInputObj.coupon ? (
               <TextB2R padding="0 10px 0 0">{userInputObj.coupon.toLocaleString()}원</TextB2R>
             ) : (
               <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
-            <div onClick={() => couponHandler(previewOrder?.coupons!)}>
+            <div>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
@@ -1318,19 +1320,21 @@ const OrderPage = () => {
       <PointWrapper>
         <FlexBetween>
           <TextH4B>포인트 사용</TextH4B>
-          <FlexRow
-            pointer
-            onClick={() => {
-              checkFormHanlder('alwaysPointAll');
-            }}
-          >
-            <Checkbox
-              className="checkBox"
-              onChange={() => checkFormHanlder('alwaysPointAll')}
-              isSelected={checkForm.alwaysPointAll.isSelected}
-            />
-            <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
-          </FlexRow>
+          {previewOrder?.order?.subscriptionPeriod !== 'UNLIMITED' && (
+            <FlexRow
+              pointer
+              onClick={() => {
+                checkFormHanlder('alwaysPointAll');
+              }}
+            >
+              <Checkbox
+                className="checkBox"
+                onChange={() => checkFormHanlder('alwaysPointAll')}
+                isSelected={checkForm.alwaysPointAll.isSelected}
+              />
+              <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
+            </FlexRow>
+          )}
         </FlexBetween>
         <FlexRow padding="24px 0 0 0">
           <span className="inputBox">
@@ -1619,6 +1623,7 @@ const VisitorAccessMethodWrapper = styled.div`
 
 const CouponWrapper = styled.div`
   padding: 24px;
+  cursor: pointer;
 `;
 
 const RegisteredCardWrapper = styled.div`
