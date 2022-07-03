@@ -255,7 +255,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
     <Container map={map} spotClose={item.isClosed} onClick={() => goToDetail(item.id)}>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
-        <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
+        <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
         {renderSpotMsg()}
         <TagWrapper>
           {!item.isClosed && (

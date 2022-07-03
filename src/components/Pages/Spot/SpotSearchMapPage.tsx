@@ -1,5 +1,5 @@
-import React, { ReactElement, useRef, useState } from 'react';
-import styled from 'styled-components';
+import React, { ReactElement, useRef, useState, useEffect } from 'react';
+import styled, {css} from 'styled-components';
 import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
@@ -19,11 +19,19 @@ interface IProps {
 
 const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement => {
   const router = useRouter();
-  const slideRef = useRef(null);
+  const slideRef = useRef<HTMLElement | null | any>(null);
   const { spotSearchArr } = useSelector(spotSelector);
   const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
-
+  const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
+  const [selectedSpotList, setSelectedSpotList] = useState({});
+  const [selected, setSelected] = useState<boolean>(false);
   const list = spotSearchArr ?? [];
+
+  useEffect(()=> {
+    if(slideRef.current){
+      slideRef.current?.slickGoTo(selectedCarouselIndex);
+    }
+  }, [selectedCarouselIndex]);
 
   const setting = {
     arrows: false,
@@ -37,10 +45,26 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
     setCurrentIdx({current: current, next: next}),
   };
 
+  const selectedSlickIdx = (i: number) => {
+    setSelectedCarouselIndex(i)
+  };
+
+  const selectedSpot = (i: any) => {
+    setSelectedSpotList(i);
+  };
+
   return (
     <Container>
       <MapWrapper>
-        <NaverMap currentIdx={currentIdx.next} />
+        <NaverMap currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected}   />
+        {
+          selected && !isSearched &&
+          <SpotListWrapper>
+            <SpotListSlider piece={true}>
+              <SpotsSearchResultList map item={selectedSpotList} />
+            </SpotListSlider>
+          </SpotListWrapper>
+        }
         {
           isSearched && searchListLen! > 0 && (
             <SpotListWrapper>
@@ -50,7 +74,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
                 ))}
               </SpotListSlider>
             </SpotListWrapper>
-          )
+          ) 
         }
       </MapWrapper>
     </Container>
@@ -66,11 +90,21 @@ const MapWrapper = styled.section`
   height: 100%;
   background: ${theme.greyScale15};
 `;
-const SpotListSlider = styled(Slider)`
+const SpotListSlider = styled(Slider)<{piece?: boolean}>`
   width: 100%;
   padding: 16px 0;
   .slick-slide > div {
-    padding: 0 6px;
+    ${({piece}) => {
+      if (piece) {
+        return css `
+          padding: 0px 30px;
+        `;
+      } else {
+        return css `
+          padding: 0 6px;
+        `;
+      }
+    }}
   }
 `;
 
