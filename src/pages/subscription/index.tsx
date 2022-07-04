@@ -11,6 +11,8 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { getOrdersApi } from '@api/order';
 import { IGetOrders, IOrderDeliverie } from '@model/index';
+import Image from 'next/image';
+import subsMainBanner from '@public/images/subsMainBanner.svg';
 
 const SubscriptiopPage = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
@@ -69,6 +71,10 @@ const SubscriptiopPage = () => {
       enabled: !!me,
     }
   );
+
+  const goToSubsInformation = () => {
+    router.push('/subscription/information');
+  };
 
   if (isLoading) {
     return <div>...로딩중</div>;
@@ -130,7 +136,9 @@ const SubscriptiopPage = () => {
           </ScrollHorizonList>
         </ListBox>
       </SubsListContainer>
-      <Banner>정기구독 안내 배너</Banner>
+      <Banner onClick={goToSubsInformation}>
+        <Image src={subsMainBanner} alt="웰컴이미지" width={360} height={96} layout="responsive" objectFit="cover" />
+      </Banner>
     </Container>
   );
 };
@@ -162,12 +170,8 @@ const SubsList = styled.div`
   }
 `;
 const Banner = styled.div`
-  width: 100%;
-  height: 96px;
   background-color: #f2f2f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  cursor: pointer;
 `;
 
 export default SubscriptiopPage;

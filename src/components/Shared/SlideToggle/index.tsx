@@ -7,18 +7,18 @@ interface IProps {
   change?: any;
 }
 const SlideToggle: React.FC<IProps> = ({ children, state = false, duration = 0.5, change }) => {
+  const contentRef = useRef<any>(null);
+  const contentDefaultRef = useRef();
   const [contentDefault, setContentDefault] = useState<any>();
   const [contentH, setContentH] = useState<any>(0);
-  const contentRef = useRef<any>(null);
 
   useEffect(() => {
-    const { current } = contentRef;
-    if (current !== null) {
-      setContentDefault(current.offsetHeight);
-      setContentH(current.offsetHeight);
+    if (contentRef.current !== null) {
+      contentDefaultRef.current = contentRef.current.offsetHeight;
+      setContentH(contentRef.current.offsetHeight);
     }
-    state ? setContentH(contentDefault) : setContentH(0);
-  }, [contentDefault, state, change]);
+    state ? setContentH(contentDefaultRef.current) : setContentH(0);
+  }, [state, contentDefaultRef, contentRef, children]);
 
   return (
     <Container style={{ height: contentH, transition: `all ${duration}s` }}>

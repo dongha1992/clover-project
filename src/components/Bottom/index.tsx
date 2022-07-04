@@ -22,7 +22,7 @@ const Bottom = () => {
   }, [router.pathname]);
 
   const renderComponent = useCallback(
-    (currentPath: string): ReactElement => {
+    (currentPath: string): ReactElement | null => {
       switch (true) {
         case ['/', '/spot', '/mypage', '/subscription'].includes(currentPath): {
           return <HomeBottom />;
@@ -35,6 +35,11 @@ const Bottom = () => {
         }
         case ['/subscription/products/[id]'].includes(currentPath): {
           return <SubsBottom />;
+        }
+        case ['/mypage/card/register/term', '/subscription/information', '/mypage/subscription'].includes(
+          currentPath
+        ): {
+          return null;
         }
         default: {
           return <></>;
