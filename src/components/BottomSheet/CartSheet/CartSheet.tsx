@@ -109,7 +109,10 @@ const CartSheet = () => {
       //   },
       // ];
 
-      const result = checkAlreadyInCart();
+      /* TODO: 장바구니에 이미 있는지? */
+
+      // const result = checkAlreadyInCart();
+
       const { data } = await postCartsApi(reqBody);
       console.log(data, 'data after cart');
     },
@@ -265,20 +268,20 @@ const CartSheet = () => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  const checkAlreadyInCart = () => {
-    const result = selectedMenus?.map((sMenu: any) => {
-      const inCart = cartLists?.find((cartItem: any) => cartItem.id === sMenu.id);
-      if (inCart) {
-        return {
-          ...sMenu,
-          quantity: sMenu.quantity + inCart.quantity,
-        };
-      } else {
-        return sMenu;
-      }
-    });
-    return result;
-  };
+  // const checkAlreadyInCart = () => {
+  //   const result = selectedMenus?.map((sMenu: any) => {
+  //     const inCart = cartLists?.find((cartItem: any) => cartItem.id === sMenu.id);
+  //     if (inCart) {
+  //       return {
+  //         ...sMenu,
+  //         quantity: sMenu.quantity + inCart.quantity,
+  //       };
+  //     } else {
+  //       return sMenu;
+  //     }
+  //   });
+  //   return result;
+  // };
 
   const checkHasMainMenu = (): boolean => {
     return selectedMenus.some((item: any) => item.main);

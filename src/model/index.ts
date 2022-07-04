@@ -2017,7 +2017,7 @@ export interface IMenuDetailsInCart {
   menuDetailId: number;
   name: string;
   price: number;
-  menuQuantity: number;
+  menuQuantity?: number;
   calorie: number;
   protein: number;
   isSold: boolean;
