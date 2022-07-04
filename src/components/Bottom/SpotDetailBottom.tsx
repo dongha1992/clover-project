@@ -8,8 +8,8 @@ import router from 'next/router';
 import { useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { SpotDetailEventTooltip } from '@components/Shared/Tooltip';
-import { postSpotLike, deleteSpotLike, getSpotLike, getSpotDetail } from '@api/spot';
-import { SET_SPOT_LIKED, INIT_SPOT_LIKED, SPOT_ITEM } from '@store/spot';
+import { postSpotLike, deleteSpotLike, getSpotDetail } from '@api/spot';
+import { SPOT_ITEM } from '@store/spot';
 import { userForm } from '@store/user';
 import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
@@ -27,7 +27,6 @@ const SpotDetailBottom = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupId } = useSelector(spotSelector);
-  const [spotLike, setSpotLike] = useState(spotDetail?.liked);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
   // 날짜 커스텀

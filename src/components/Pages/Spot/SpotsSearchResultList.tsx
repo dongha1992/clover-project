@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback } from 'react';
 import styled, { css } from 'styled-components';
-import { theme, FlexCol, FlexColStart } from '@styles/theme';
+import { theme, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
@@ -24,11 +24,12 @@ import { getSpotDistanceUnit } from '@utils/spot';
 interface IProps {
   item: ISpotsDetail | any;
   hasCart?: boolean;
+  map?: boolean;
 }
 const now = dayjs();
 
 // 스팟 검색 - 검색 결과
-const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
+const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId }: any = router.query;
@@ -251,10 +252,10 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   return (
-    <Container mapList spotClose={item.isClosed} onClick={() => goToDetail(item.id)}>
+    <Container map={map} spotClose={item.isClosed} onClick={() => goToDetail(item.id)}>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
-        <TextB3R padding="2px 0 0 0">{item.location.address}</TextB3R>
+        <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
         {renderSpotMsg()}
         <TagWrapper>
           {!item.isClosed && (
@@ -285,7 +286,7 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
         </TagWrapper>
       </FlexColStart>
       <FlexCol>
-        <ImageWrapper mapList>
+        <ImageWrapper>
           {item.isTrial ? (
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           ) : item.images?.length! > 0 ? (
@@ -316,23 +317,31 @@ const SpotsSearchResultList = ({ item, hasCart }: IProps): ReactElement => {
   );
 };
 
-const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
+const Container = styled.section<{ spotClose?: boolean, map?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 114px;
-  cursor: pointer;
-  ${({ mapList }) => {
-    if (mapList) {
+  background: ${theme.white};
+  max-width: ${breakpoints.desktop}px;
+  max-width: ${breakpoints.mobile}px;
+
+  ${({map}) => {
+    if (map) {
       return css`
-        background: ${theme.white};
-        max-width: ${breakpoints.desktop}px;
-        max-width: ${breakpoints.mobile}px;
-        height: 146px;
+        margin-bottom: 10px;
+        padding: 16px;
+        filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+        height: 160px;
         border-radius: 8px;
+        padding: 20px;
+      `;
+    } else {
+      return css`
+        padding: 24px 0;
       `;
     }
-  }};
+  }}
+
   ${({ spotClose }) => {
     if (spotClose) {
       return css`
@@ -349,14 +358,18 @@ const MeterAndTime = styled.div`
 
 const TagWrapper = styled.div``;
 
-const ImageWrapper = styled.div<{ mapList: boolean }>`
-  width: 60px;
+const ImageWrapper = styled.div<{map?: boolean}>`
   margin-left: 15px;
   border-radius: 8px;
-  ${({ mapList }) => {
-    if (mapList) {
+  margin-bottom: 10px;
+  ${({map}) => {
+    if(map){
       return css`
-        margin-bottom: 10px;
+        width: 70px;
+      `;
+    }else {
+      return css`
+        width: 60px;
       `;
     }
   }}
@@ -366,6 +379,12 @@ const SpotImg = styled.img`
   width: 100%;
   border-radius: 8px;
   border: 1px solid ${theme.greyScale6};
+`;
+
+const FlexCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const Col = styled.div`

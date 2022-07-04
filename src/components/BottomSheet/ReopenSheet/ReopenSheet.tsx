@@ -39,7 +39,7 @@ const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
   const { me } = useSelector(userForm);
   const { isMobile } = useSelector(commonSelector);
 
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   const [userTel, setUserTel] = useState<string>('');
   const [isMarketinngChecked, setIsMarketinngChecked] = useState<boolean>(false);
@@ -79,6 +79,7 @@ const ReopenSheet = ({ menuId, isDetailBottom, returnPath }: IProps) => {
     },
     {
       onSuccess: async (data) => {
+        hideToast();
         showToast({ message: '알림 신청을 완료했어요!' });
         dispatch(INIT_BOTTOM_SHEET());
         if (isDetailBottom || router.pathname === '/menu/[menuId]') {
