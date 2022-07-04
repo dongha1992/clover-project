@@ -259,7 +259,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
-          <TextB2R margin="8px 0 0 0" width="100%" textHide>
+          <TextB2R margin="8px 0 0px 0" width="100%" textHide>
             {item.name.trim()}
           </TextB2R>
         </NameWrapper>
@@ -337,6 +337,7 @@ const ForReopen = styled.div`
 const DesWrapper = styled.div`
   width: 100%;
   height: 38px;
+  margin-top: 8px;
 `;
 
 const CartBtn = styled.div`

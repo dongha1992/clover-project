@@ -10,12 +10,13 @@ import { IOrderDetail } from '@model/index';
 import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
 import { useGetOrderDetail } from '@queries/order';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from 'next/image';
 import router from 'next/router';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import MenuPriceBox from '../payment/MenuPriceBox';
 import DeliveryInfoGuidBox from './GuideBox/DeliveryInfoGuidBox';
@@ -62,10 +63,9 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
   const deliveryInfoChangeHandler = () => {
     router.push({
       pathname: `/mypage/order-detail/edit/${orderId}`,
-      query: { destinationId: item.id },
+      query: { destinationId: item.id, isSubscription: true },
     });
   };
-  console.log('itemitemitemitem', item);
 
   return (
     <Container>

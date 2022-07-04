@@ -118,7 +118,7 @@ const SectionWrapper = styled.section`
 
 const SectionTitle = styled.div`
   ${textH3}
-  margin-top: 16px;
+  margin-top: 24px;
   margin-bottom: 24px;
 `;
 

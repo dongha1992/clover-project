@@ -28,12 +28,12 @@ const SubsFailSheet = ({
     if (subsFailType === 'payment') {
       router.push({
         pathname: '/mypage/card',
-        query: { isOrder: true, orderId },
+        query: { isOrder: true, orderId, isSubscription: true },
       });
     } else if (subsFailType === 'destination') {
       router.push({
         pathname: `/mypage/order-detail/edit/${orderId}`,
-        query: { destinationId },
+        query: { destinationId, isSubscription: true },
       });
     }
     dispatch(INIT_BOTTOM_SHEET());
