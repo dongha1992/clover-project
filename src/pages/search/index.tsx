@@ -108,10 +108,8 @@ const ItemListRow = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-
   > div {
     padding-right: 10px;
-    width: 194px;
   }
 `;
 
