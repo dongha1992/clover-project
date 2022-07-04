@@ -160,7 +160,6 @@ export const ItemListRow = styled.div`
 
   > div {
     padding-right: 10px;
-    /* width: 194px; */
   }
 `;
 
