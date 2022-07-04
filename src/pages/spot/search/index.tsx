@@ -38,7 +38,7 @@ const SpotSearchPage = (): ReactElement => {
     isMapSwitch,
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
-  const userLocationLen = !!userLocation.emdNm?.length;
+  const userLocationLen = userLocation.emdNm?.length! > 0;
 
   const latLen = spotsPosition?.latitude !== null;
   const latitude = latLen ? Number(spotsPosition?.latitude) : 37.50101118367814;
@@ -144,6 +144,14 @@ const SpotSearchPage = (): ReactElement => {
     return <div>로딩</div>;
   };
 
+  // 위치 정보 있는 경우 
+  // -> 추천, 이벤트 스팟 있으면 노출
+  // -> 추천, 이벤트 스팟 없으면 픽업이력 노출 
+  // -> 픽업이력 없는 경우 안내 문구 노출
+
+  // 위치 정보 없는 경우 
+  // -> 픽업 이력 노출
+  // -> 픽업 이력 없는 경우 안내 문구 노출
   return (
     <Container>
       {
@@ -169,9 +177,9 @@ const SpotSearchPage = (): ReactElement => {
               <SpotSearchKeyword onChange={handlerSearchKeyword} />
             </KeyWordWrapper>
             {
-            // 스팟 검색 메인 - 검색바 포커싱 x
-              ((spotRecommendList?.spotList.length! > 0) && (spotRecommendList?.spotList.length! > 0)) ? (
-                // 스팟 검색 메인 - 추천, 이벤트 스팟이 있는 경우 노출
+            // 스팟 검색 메인 
+              userLocationLen ?  // 위지 정보가 있는 상태
+              (spotRecommendList?.spotList.length! > 0 && eventSpotList?.spots.length! > 0) ? (// 추천, 이벤트 스팟이 있는 경우 
                 <>
                 {/* 추천스팟 */}
                   <SpotRecommendWrapper>
@@ -189,9 +197,9 @@ const SpotSearchPage = (): ReactElement => {
                   {/* 이벤트 중인 스팟 */}
                   <BottomContentWrapper>
                     <Row />
-                    <TextH2B padding="24px 24px 24px 24px">{spotRecommendList?.data?.title}</TextH2B>
+                    <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
                     <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-                      {spotRecommendList?.spotList.map((list, idx) => {
+                      {eventSpotList?.spots.map((list, idx) => {
                         return (
                           <SwiperSlide className="swiper-slide" key={idx}>
                             <SpotList list={list} type="event" />
@@ -202,11 +210,10 @@ const SpotSearchPage = (): ReactElement => {
                   </BottomContentWrapper>
                 </>
               ) : (
-                // 스팟 검색 메인 - 추천, 이벤트 스팟 둘다 없는 경우, 최근 픽업 이력 노출
-                <>
-                {
+                <> 
+                { // 추천, 이벤트 스팟이 없는 경우 
                   recentPickedSpotList?.length! > 0 ? (
-                    // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+                    // 최근 픽업 이력이 있는 경우
                     <DefaultSearchContainer>
                       <RecentPickWrapper>
                         <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
@@ -217,7 +224,31 @@ const SpotSearchPage = (): ReactElement => {
                       </RecentPickWrapper>
                     </DefaultSearchContainer>
                   ) : (
-                    // 최근 픽업 이력이 없는 경우, 안내 문구 노출
+                    // 최근 픽업 이력이 없는 경우
+                    <DefaultSearchContainer empty>
+                      <TextB2R color={theme.greyScale65} center>{'찾으시는 프코스팟을 검색해 보세요.\n(이용 가능 지역: 서울 및 경기도 일부)'}</TextB2R>
+                    </DefaultSearchContainer>
+                  )
+                }
+                </>
+              )
+               : (
+                //위치 없보 없는 경우
+                <>
+                {
+                  recentPickedSpotList?.length! > 0 ? (
+                    // 최근 픽업 이력이 있는 경우
+                    <DefaultSearchContainer>
+                      <RecentPickWrapper>
+                        <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                        {recentPickedSpotList?.map((item: any, index) => (
+                          // 스팟 최근 픽업 이력 리스트
+                          <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                        ))}
+                      </RecentPickWrapper>
+                    </DefaultSearchContainer>
+                  ) : (
+                    // 최근 픽업 이력이 없는 경우
                     <DefaultSearchContainer empty>
                       <TextB2R color={theme.greyScale65} center>{'찾으시는 프코스팟을 검색해 보세요.\n(이용 가능 지역: 서울 및 경기도 일부)'}</TextB2R>
                     </DefaultSearchContainer>
