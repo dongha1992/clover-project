@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { TextH4B } from '@components/Shared/Text';
+import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -22,13 +22,13 @@ const MainTab = () => {
           <TabWrapper key={index} onClick={() => router.push(`${tab.link}`)}>
             <Image
               src={`${process.env.IMAGE_S3_URL}/menu/img_thumbnail_empty.jpg`}
-              height="100px"
-              width="100px"
+              height="80px"
+              width="80px"
               className="rounded"
             />
-            <TextH4B padding="12px 0" pointer>
+            <TextH5B padding="12px 0" pointer>
               {tab.title}
-            </TextH4B>
+            </TextH5B>
           </TabWrapper>
         );
       })}
@@ -48,6 +48,7 @@ const TabWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   cursor: pointer;
   .rounded {
     border-radius: 50%;
