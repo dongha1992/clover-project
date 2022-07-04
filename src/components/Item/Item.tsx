@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol, showMoreText } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
@@ -228,7 +228,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   return (
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
-      <ImageWrapper>
+      <ImageWrapper isHorizontal={isHorizontal}>
         <Image
           src={item.thumbnail[0]?.url ? IMAGE_S3_URL + item.thumbnail[0]?.url : IMAGE_ERROR}
           alt="상품이미지"
@@ -259,9 +259,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
-          <TextB3R margin="8px 0 0 0" width="100%" textHide>
+          <TextB2R margin="8px 0 0px 0" width="100%" textHide>
             {item.name.trim()}
-          </TextB3R>
+          </TextB2R>
         </NameWrapper>
         {!isOpenSoon && !isReOpen && (
           <PriceWrapper>
@@ -337,6 +337,7 @@ const ForReopen = styled.div`
 const DesWrapper = styled.div`
   width: 100%;
   height: 38px;
+  margin-top: 8px;
 `;
 
 const CartBtn = styled.div`
@@ -358,17 +359,30 @@ const ReopenBtn = styled.div`
   z-index: 2;
 `;
 
-const ImageWrapper = styled.div`
+const ImageWrapper = styled.div<{ isHorizontal?: boolean }>`
   position: relative;
-  width: 100%;
+
   .rounded {
     border-radius: 8px;
   }
+  ${({ isHorizontal }) => {
+    if (isHorizontal) {
+      return css`
+        width: 132px;
+        height: 132px;
+      `;
+    } else {
+      return css`
+        width: 100%;
+      `;
+    }
+  }}
 `;
 
 const NameWrapper = styled.div`
   height: 26px;
   width: 100%;
+  margin-bottom: 4px;
 `;
 
 const PriceWrapper = styled.div`

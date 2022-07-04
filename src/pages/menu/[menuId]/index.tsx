@@ -362,8 +362,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                 </DiscountedPrice>
               </PriceWrapper>
             )}
-
-            {!isTempSold && !isReOpen && !isOpenSoon && (
+            {/* {!isTempSold && !isReOpen && !isOpenSoon && (
               <>
                 {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
@@ -379,7 +378,22 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   </CouponWrapper>
                 )}
               </>
-            )}
+            )} */}
+            <>
+              {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
+                <CouponWrapper onClick={couponDownloadHandler}>
+                  <TextH6B padding="4px 4px 0 0" pointer>
+                    쿠폰 받기
+                  </TextH6B>
+                  <SVGIcon name="download" />
+                </CouponWrapper>
+              ) : (
+                <CouponWrapper onClick={couponDownloadHandler}>
+                  <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
+                  <SVGIcon name="checkBlack18" />
+                </CouponWrapper>
+              )}
+            </>
           </PriceAndCouponWrapper>
           {/* <BorderLine height={1} margin="16px 0 0 0" /> */}
           {menuDetail?.type !== 'SUBSCRIPTION' && menuDetail?.type === 'SALAD' && (

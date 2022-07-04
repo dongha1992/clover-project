@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { INutitionInfo } from '@model/index';
-import { textBody3, theme } from '@styles/theme';
+import { textBody3, theme, textBody2 } from '@styles/theme';
 
 const NutritionInfoPage = () => {
   const { info } = useSelector(menuSelector);
@@ -85,14 +85,14 @@ const Row = styled.div`
   border-bottom: 1px solid ${theme.greyScale6};
 `;
 const Left = styled.div`
-  ${textBody3}
+  ${textBody2}
   max-width: 74px;
   width: 100%;
   background-color: ${theme.greyScale6};
   padding: 8px;
 `;
 const Right = styled.div`
-  ${textBody3}
+  ${textBody2}
   padding: 8px;
   max-width: 410px;
   width: 100%;
