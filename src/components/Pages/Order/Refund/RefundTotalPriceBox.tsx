@@ -26,10 +26,10 @@ const RefundTotalPriceBox = ({ cancelPrivew }: IProps) => {
         <li className="col">
           <FlexBetween padding="0 0 16px">
             <TextH5B>배송받은 횟수</TextH5B>
-            <TextB2R>{getFormatPrice(String(cancelPrivew?.completedDeliveryCount))}원</TextB2R>
+            <TextB2R>{getFormatPrice(String(cancelPrivew?.completedDeliveryCount))}회</TextB2R>
           </FlexBetween>
           <FlexBetween>
-            <TextH5B>배송받은 횟수</TextH5B>
+            <TextH5B>배송받은 상품금액</TextH5B>
             <TextB2R>{getFormatPrice(String(cancelPrivew?.completedAmount))}원</TextB2R>
           </FlexBetween>
         </li>
@@ -45,7 +45,7 @@ const RefundTotalPriceBox = ({ cancelPrivew }: IProps) => {
           <FlexBetween padding="0 0 8px">
             <TextB2R>환불금액</TextB2R>
             <TextB2R>
-              {cancelPrivew && getFormatPrice(String(cancelPrivew?.refundPayAmount - cancelPrivew?.refundPoint))}
+              {cancelPrivew && getFormatPrice(String(cancelPrivew?.refundPayAmount - cancelPrivew?.refundPoint))}원
             </TextB2R>
           </FlexBetween>
           <FlexBetween padding="0 0 8px">
