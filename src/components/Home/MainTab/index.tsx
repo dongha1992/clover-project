@@ -17,14 +17,14 @@ const MainTab = () => {
     <Container>
       {TABS.map((tab, index) => {
         return (
-          <TabWrapper>
+          <TabWrapper key={index}>
             <Image
               src={`${process.env.IMAGE_S3_URL}/menu/img_thumbnail_empty.jpg`}
               height="100px"
               width="100px"
               className="rounded"
             />
-            <TextH4B padding="12px 0" pointer key={index}>
+            <TextH4B padding="12px 0" pointer>
               <Link href={tab.link}>{tab.title}</Link>
             </TextH4B>
           </TabWrapper>
