@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { TextH4B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 const TABS = [
   { title: '카테고리', link: '/category/all' },
@@ -13,11 +14,12 @@ const TABS = [
 ];
 
 const MainTab = () => {
+  const router = useRouter();
   return (
     <Container>
       {TABS.map((tab, index) => {
         return (
-          <TabWrapper key={index}>
+          <TabWrapper key={index} onClick={() => router.push(`${tab.link}`)}>
             <Image
               src={`${process.env.IMAGE_S3_URL}/menu/img_thumbnail_empty.jpg`}
               height="100px"
@@ -25,7 +27,7 @@ const MainTab = () => {
               className="rounded"
             />
             <TextH4B padding="12px 0" pointer>
-              <Link href={tab.link}>{tab.title}</Link>
+              {tab.title}
             </TextH4B>
           </TabWrapper>
         );
@@ -46,6 +48,7 @@ const TabWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   .rounded {
     border-radius: 50%;
   }
