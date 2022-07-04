@@ -1,6 +1,7 @@
 import SubsCloseSheet from '@components/BottomSheet/SubsSheet/SubsPaymentCloseSheet';
 import SubsFailSheet from '@components/BottomSheet/SubsSheet/SubsPaymentFailSheet';
 import SubsMngCalendar from '@components/Calendar/subscription/SubsMngCalendar';
+import PaymentGuideBox from '@components/Pages/Subscription/detail/GuideBox/PaymentGuideBox';
 import SubsDetailOrderInfo from '@components/Pages/Subscription/detail/SubsDetailOrderInfo';
 import { SubsInfoBox, SubsOrderItem } from '@components/Pages/Subscription/payment';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
@@ -12,18 +13,19 @@ import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
 import useSubsStatus from '@hooks/subscription/useSubsStatus';
-import { IOrderDetail } from '@model/index';
+import { IOrderDetail, IOrderDetailInOrderDeliveries, IResponse } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styles/theme';
-import { getFormatDate } from '@utils/common';
+import { getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { last } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGetOrderDetail } from 'src/queries/order';
+import { useDeleteOrderCancel, useGetOrderDetail } from 'src/queries/order';
 import styled from 'styled-components';
 dayjs.locale('ko');
 
@@ -31,11 +33,23 @@ const SubsDetailPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { subsCalendarSelectOrders } = useSelector(subscriptionForm);
-  const [detailId, setDetailId] = useState<number>();
-  const [menuId, setMenuId] = useState<number>();
+  const [detailId, setDetailId] = useState<any>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
   const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
+
+  const { mutate: deleteOrderCancel } = useDeleteOrderCancel(['deleteOrderCancel'], {
+    onSuccess: (data) => {
+      router.push(`/mypage/subscription`);
+    },
+    onError: (error: IResponse | any) => {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `${error.message}`,
+        })
+      );
+    },
+  });
 
   useEffect(() => {
     return () => {
@@ -46,7 +60,6 @@ const SubsDetailPage = () => {
   useEffect(() => {
     if (router.isReady) {
       setDetailId(Number(router.query?.detailId));
-      setMenuId(Number(router.query?.menuId));
     }
   }, [router.isReady]);
 
@@ -89,7 +102,6 @@ const SubsDetailPage = () => {
     orderDetail?.subscriptionPeriod,
     orderDetail?.status
   );
-  console.log('subsFailTypesubsFailType', subsFailType);
 
   useEffect(() => {
     subsCloseSheetHandler();
@@ -127,7 +139,7 @@ const SubsDetailPage = () => {
   const reorderHandler = () => {
     router.push({
       pathname: '/subscription/set-info',
-      query: { subsDeliveryType: orderDetail?.delivery, menuId: menuId ?? null },
+      query: { subsDeliveryType: orderDetail?.delivery, menuId: orderDetail?.subscriptionMenuId },
     });
   };
 
@@ -140,7 +152,7 @@ const SubsDetailPage = () => {
         onSubmit: () => {
           router.push({
             pathname: '/mypage/card',
-            query: { isOrder: true, orderId: orderDetail?.id },
+            query: { isOrder: true, orderId: orderDetail?.id, isSubscription: true },
           });
         },
       })
@@ -148,21 +160,34 @@ const SubsDetailPage = () => {
   };
 
   const orderCancelHandler = () => {
-    if (subDeliveries.length === 0) {
-      router.push(`/subscription/${detailId}/cancel`);
-    } else {
+    if (orderDetail?.status === 'UNPAID') {
       dispatch(
         SET_ALERT({
-          alertMessage: `함께배송 주문을 먼저 취소해야\n구독 주문 취소할 수 있어요.\n함께배송 주문을 취소하시겠어요?`,
-          submitBtnText: '주문 취소하기',
+          alertMessage: `아직 결제가 진행되지 않은 구독 플랜을 해지하시겠어요? (구독기간에 따른 추가혜택도 초기화됩니다.)`,
+          submitBtnText: '해지하기',
           closeBtnText: '취소',
           onSubmit: () => {
-            router.push({
-              pathname: `/subscription/${detailId}/sub-cancel`,
-            });
+            deleteOrderCancel(detailId!);
           },
         })
       );
+    } else {
+      if (subDeliveries.length === 0) {
+        router.push(`/subscription/${detailId}/cancel`);
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `함께배송 주문을 먼저 취소해야\n구독 주문 취소할 수 있어요.\n함께배송 주문을 취소하시겠어요?`,
+            submitBtnText: '주문 취소하기',
+            closeBtnText: '취소',
+            onSubmit: () => {
+              router.push({
+                pathname: `/subscription/${detailId}/sub-cancel`,
+              });
+            },
+          })
+        );
+      }
     }
   };
 
@@ -207,13 +232,7 @@ const SubsDetailPage = () => {
       </DietConfirmBox>
 
       {orderDetail && <SubsMngCalendar orderDeliveries={orderDetail?.orderDeliveries} />}
-      {subsCalendarSelectOrders && (
-        <SubsDetailOrderInfo
-          status={orderDetail?.status!}
-          subscriptionPeriod={orderDetail?.subscriptionPeriod!}
-          orderId={orderDetail?.id!}
-        />
-      )}
+      {subsCalendarSelectOrders && <SubsDetailOrderInfo status={orderDetail?.status!} orderId={orderDetail?.id!} />}
 
       <BorderLine height={8} />
 
@@ -246,15 +265,31 @@ const SubsDetailPage = () => {
           </FlexBetween>
         )}
         {orderDetail?.subscriptionPeriod === 'UNLIMITED' ? (
-          <FlexBetweenStart padding="0 0 24px">
-            <TextH5B>결제수단</TextH5B>
-            <FlexColEnd>
-              <TextB2R>정기결제 / 신용카드</TextB2R>
-              <TextB3R color="#717171">
-                다음 결제일은 {dayjs().add(1, 'month').format('M')}월 {regularPaymentDate}일 입니다.
-              </TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
+          subsFailType === 'payment' ? (
+            // 결제 실패일경우
+            <>
+              <FlexBetweenStart padding="0 0 16px">
+                <TextH5B>결제수단</TextH5B>
+                <FlexRow>
+                  <SVGIcon name="exclamationMark" />
+                  <TextH5B padding="2.5px 0 0 2px" color={theme.brandColor}>
+                    결제실패
+                  </TextH5B>
+                </FlexRow>
+              </FlexBetweenStart>
+              <PaymentGuideBox />
+            </>
+          ) : (
+            <FlexBetweenStart padding="0 0 24px">
+              <TextH5B>결제수단</TextH5B>
+              <FlexColEnd>
+                <TextB2R>정기결제 / 신용카드</TextB2R>
+                <TextB3R color="#717171">
+                  다음 결제일은 {dayjs().add(1, 'month').format('M')}월 {regularPaymentDate}일 입니다.
+                </TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+          )
         ) : (
           <FlexBetween padding="0 0 16px">
             <TextH5B>결제수단</TextH5B>
@@ -289,21 +324,47 @@ const SubsDetailPage = () => {
         point={orderDetail?.point!}
         type="management"
         deliveryType={orderDetail?.delivery!}
+        subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
       />
 
-      <BorderLine height={8} />
-
-      <FlexRow padding="24px">
-        {orderDetail?.status === 'CANCELED' ? (
-          <Button backgroundColor="#fff" color="#242424" border onClick={reorderHandler}>
-            재주문하기
-          </Button>
-        ) : (
-          <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
-            주문 취소하기
-          </Button>
+      {orderDetail?.isSubscribing === false &&
+        (orderDetail?.status === 'COMPLETED' || orderDetail?.status === 'CANCELED') && (
+          <>
+            <BorderLine height={8} />
+            <FlexRow padding="24px">
+              <Button backgroundColor="#fff" color="#242424" border onClick={reorderHandler}>
+                재주문하기
+              </Button>
+            </FlexRow>
+          </>
         )}
-      </FlexRow>
+      {orderDetail?.isSubscribing === false &&
+        orderDetail?.status !== 'COMPLETED' &&
+        orderDetail?.status !== 'CANCELED' &&
+        orderDetail?.subscriptionPeriod !== 'UNLIMITED' &&
+        last(orderDetail?.orderDeliveries as any[]).status !== 'CANCELED' && (
+          <>
+            <BorderLine height={8} />
+            <FlexRow padding="24px">
+              <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
+                주문 취소하기
+              </Button>
+            </FlexRow>
+          </>
+        )}
+      {orderDetail?.isSubscribing === true &&
+        orderDetail?.status !== 'COMPLETED' &&
+        orderDetail?.status !== 'CANCELED' &&
+        orderDetail?.subscriptionPeriod === 'UNLIMITED' && (
+          <>
+            <BorderLine height={8} />
+            <FlexRow padding="24px">
+              <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
+                구독 해지하기
+              </Button>
+            </FlexRow>
+          </>
+        )}
     </Container>
   );
 };

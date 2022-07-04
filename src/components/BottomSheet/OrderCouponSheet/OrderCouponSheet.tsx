@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { fixedBottom, FlexBetween, FlexCol, FlexRow, homePadding } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
@@ -6,8 +6,8 @@ import { Button } from '@components/Shared/Button';
 import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
 import { useRouter } from 'next/router';
-import { SET_USER_SELECT_COUPON } from '@store/coupon';
-import { useDispatch } from 'react-redux';
+import { couponForm, INIT_COUPON, SET_USER_SELECT_COUPON } from '@store/coupon';
+import { useDispatch, useSelector } from 'react-redux';
 import { ICoupon } from '@model/index';
 import { useMutation, useQueryClient } from 'react-query';
 import { SVGIcon } from '@utils/common';
@@ -18,20 +18,33 @@ interface IProps {
   isOrder?: boolean;
 }
 const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
-  const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
+  const { selectedCoupon } = useSelector(couponForm);
+  const [useSelectedCoupon, setUseSelectedCoupon] = useState<ICoupon | null>();
   const router = useRouter();
+
+  useEffect(() => {
+    if (selectedCoupon) setUseSelectedCoupon(selectedCoupon);
+  }, []);
 
   const promotionCodeRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
 
   const goToOrder = () => {
-    dispatch(SET_USER_SELECT_COUPON(selectedCoupon!));
     dispatch(INIT_BOTTOM_SHEET());
+    if (useSelectedCoupon === selectedCoupon) {
+      dispatch(INIT_COUPON());
+    } else {
+      dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
+    }
   };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
-    setSelectedCoupon(coupon);
+    if (useSelectedCoupon === selectedCoupon) {
+      setUseSelectedCoupon(null);
+    } else {
+      setUseSelectedCoupon(coupon);
+    }
   };
 
   const registerPromotionCode = () => {};
@@ -40,15 +53,15 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
     dispatch(INIT_BOTTOM_SHEET());
   };
 
-  const isDisabled = selectedCoupon !== undefined;
+  const isDisabled = useSelectedCoupon !== undefined;
 
   return (
     <Container>
       <Wrapper>
-        <FlexBetween margin="26px 0">
+        <FlexBetween className="couponHeader">
           <div />
           <TextH4B>쿠폰</TextH4B>
-          <div onClick={closeBottomSheet}>
+          <div onClick={closeBottomSheet} className="svgIcon">
             <SVGIcon name="defaultCancel" width="24" height="24" />
           </div>
         </FlexBetween>
@@ -65,7 +78,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
               coupon={coupon}
               key={index}
               selectCouponHandler={selectCouponHandler}
-              isSelected={selectedCoupon?.id === coupon.id}
+              isSelected={useSelectedCoupon?.id === coupon.id}
             />
           ))}
         </FlexCol>
@@ -81,8 +94,14 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
 
 const Container = styled.div`
   ${homePadding}
-  height:100%;
+  height:calc(100vh - 56px);
   overflow-y: scroll;
+  .couponHeader {
+    height: 56px;
+  }
+  .svgIcon {
+    cursor: pointer;
+  }
 `;
 
 const Wrapper = styled.div``;
@@ -90,7 +109,6 @@ const Wrapper = styled.div``;
 const ButtonWrapper = styled.div`
   ${fixedBottom}
   left: 0%;
-  bottom: -2px;
 `;
 
 export default OrderCouponSheet;

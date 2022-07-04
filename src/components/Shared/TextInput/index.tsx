@@ -53,6 +53,7 @@ export interface ITextFieldProps {
   disabled?: boolean;
   pattern?: string;
   withValue?: boolean;
+  maxLength?: number;
 }
 
 const defaultProps = {
@@ -88,6 +89,7 @@ const TextInput = React.forwardRef(
       disabled,
       pattern,
       withValue,
+      maxLength,
     }: ITextFieldProps,
     ref: React.ForwardedRef<HTMLInputElement>
   ) => {
@@ -125,6 +127,7 @@ const TextInput = React.forwardRef(
                 accept={accept}
                 disabled={disabled}
                 pattern={pattern}
+                maxLength={maxLength}
               />
             ) : (
               <input
@@ -141,6 +144,7 @@ const TextInput = React.forwardRef(
                 accept={accept}
                 disabled={disabled}
                 pattern={pattern}
+                maxLength={maxLength}
               />
             )
           ) : (
@@ -158,6 +162,7 @@ const TextInput = React.forwardRef(
               accept={accept}
               disabled={disabled}
               pattern={pattern}
+              maxLength={maxLength}
             />
           )}
         </div>

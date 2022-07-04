@@ -17,28 +17,34 @@ const SpotHeader = () => {
   const { userLocation } = useSelector(destinationForm);
   const [distance, setDistance] = useState<number>(0);
 
-  useEffect(()=> {
-    if(userLocation?.emdNm){
+  useEffect(() => {
+    if (userLocation?.emdNm) {
       getLocation();
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
   //GPS - 현재위치 가져오기
-  const getCurrentPosition = () => new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+  const getCurrentPosition = () =>
+    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
   const getLocation = async () => {
     try {
       const position: any = await getCurrentPosition();
-      if(position) {
+      if (position) {
         // console.log('현재 위치', position.coords.latitude + ' ' + position.coords.longitude);
-        const distance = getComputeDistance(spotsPosition.latitude, spotsPosition.longitude, position.coords.latitude, position.coords.longitude);
+        const distance = getComputeDistance(
+          spotsPosition.latitude,
+          spotsPosition.longitude,
+          position.coords.latitude,
+          position.coords.longitude
+        );
         setDistance(distance);
       }
-      return { Status: true, position, };
+      return { Status: true, position };
     } catch (error) {
-      console.error("getCurrentLatLong::catcherror =>", error);
-      return { Status: false, };
+      console.error('getCurrentLatLong::catcherror =>', error);
+      return { Status: false };
     }
   };
 
@@ -67,7 +73,7 @@ const SpotHeader = () => {
             <div onClick={goToLocation}>
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
             </div>
-            { distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="141px" left="-5px" top="29px" />}
+            {distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="141px" left="-5px" top="29px" />}
           </AddressWrapper>
         </Left>
         <Right>

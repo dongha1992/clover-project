@@ -29,6 +29,7 @@ const initialState: TProps = {
     menuDetails: null,
     menuImage: null,
     datePeriod: null,
+    subscriptionDiscountRates: null,
   },
   subsManage: {
     changeDate: null,
@@ -79,6 +80,7 @@ export const subscription = createSlice({
         menuDetails: null,
         menuImage: null,
         datePeriod: null,
+        subscriptionDiscountRates: null,
       };
     },
   },

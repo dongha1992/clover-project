@@ -6,7 +6,7 @@ import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
 import { theme, FlexBetween, textBody2 } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
-import { SpotList, SpotRecommendList, SpotRecentPickupList, SpotSearchMapMain } from '@components/Pages/Spot';
+import { SpotList, SpotRecommendList, SpotRecentPickupList, SpotSearchMapPage } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { getSpotSearchRecommend, getSpotSearch } from '@api/spot';
 import { ISpotsDetail } from '@model/index';
@@ -24,7 +24,7 @@ import {
   SET_SPOT_POSITIONS,
   SET_SEARCH_KEYWORD,
   SET_SERACH_MAP_SPOT,
-  INIT_SPOT_MAP_SWITCH,
+  SET_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -45,30 +45,35 @@ const SpotSearchMainPage = (): ReactElement => {
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
+  const [copiedSpotList, setCopiedSpotList] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(true);
   const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const userLocationLen = !!userLocation.emdNm?.length;
+  const userLocationLen = userLocation.emdNm?.length! > 0;
 
   useEffect(() => {
     defaultRedioId();
     inputRef.current?.focus();
     setKeyword(spotKeyword);
-    dispatch(INIT_SPOT_MAP_SWITCH());
+    dispatch(SET_SPOT_MAP_SWITCH(false));
   }, []);
 
   useEffect(() => {
     if (spotKeyword?.length > 0) {
-      fetchSpotSearchData({ keyword: spotKeyword });
+      getSpotList({ keyword: spotKeyword });
+      setIsSearched(true); 
+      setInputFocus(true);
     }
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
   useEffect(() => {
     if (spotKeyword?.length > 0) {
-      fetchSpotSearchData({ keyword: spotKeyword });
+      getSpotList({ keyword: spotKeyword });
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
+      setIsSearched(true); 
+      setInputFocus(true);
     }
   }, [spotKeyword]);
 
@@ -101,40 +106,10 @@ const SpotSearchMainPage = (): ReactElement => {
     }
   }, [isDelivery]);
 
-  // 장바구니 조회
-  /* TODO: 장바구니 params 변경돼서 주석 */
-
-  // let {
-  //   data: cartList,
-  //   isLoading: isLoadingCart,
-  //   isError,
-  // } = useQuery(
-  //   'getCartList',
-  //   async () => {
-  //     const { data } = await getCartsApi();
-  //     return data.data;
-  //   },
-  //   {
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     cacheTime: 0,
-  //     onSuccess: (data) => {
-  //       try {
-  //         dispatch(INIT_CART_LISTS());
-  //         dispatch(SET_CART_LISTS(data));
-  //       } catch (error) {
-  //         console.error(error);
-  //       }
-  //     },
-  //   }
-  // );
-
-  // cartList = ['!1'];
-
   const latLen = spotsPosition?.latitude !== null;
-  const latitude = latLen ? Number(spotsPosition?.latitude) : 37.50101118367814;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : null;
   const lonLen = spotsPosition?.longitude !== null;
-  const longitude = lonLen ? Number(spotsPosition?.longitude) : 127.03525895821902;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(
@@ -188,12 +163,14 @@ const SpotSearchMainPage = (): ReactElement => {
           setSearchResult([]);
           return;
         }
-        fetchSpotSearchData({ keyword });
+        getSpotList({ keyword });
+        setIsSearched(true); 
+        setInputFocus(true);
       }
     }
   }, []);
 
-  const fetchSpotSearchData = async ({ keyword }: { keyword: string }) => {
+  const getSpotList = async ({ keyword }: { keyword: string }) => {
     try {
       const params = {
         keyword: keyword,
@@ -203,9 +180,13 @@ const SpotSearchMainPage = (): ReactElement => {
       const { data } = await getSpotSearch(params);
       if (data.code === 200) {
         const fetchData = data.data;
-        setSearchResult(fetchData?.spots);
-        setIsSearched(true); 
-        setInputFocus(true);
+        if( inputRef.current?.value.length! > 0 ) {
+          setSearchResult(fetchData?.spots);
+        } else {
+          dispatch(SET_SERACH_MAP_SPOT(fetchData?.spots));
+        }
+        // setIsSearched(true); 
+        // setInputFocus(true);
       };
     } catch (err) {
       console.error(err);
@@ -291,6 +272,7 @@ const SpotSearchMainPage = (): ReactElement => {
       initInputHandler();
       setIsSearched(false);
       setCurrentValurLen(false);
+      getSpotList({keyword: ''});
       setKeyword('')
     };
   };
@@ -303,20 +285,29 @@ const SpotSearchMainPage = (): ReactElement => {
 
   if (isLoadingRecomand && isLoadingPickup) {
     return <div>로딩</div>;
-  }
+  };
 
+  // 검색바 활성화 된 상테
+  // 위치 정보 있는 경우 
+  // -> 추천 스팟 노출
+  // -> 추천 스팟 없으면 픽업 이력 노출
+  // -> 픽업 이력 없으면 빈 화면 노출
+
+  // 위치 정보 없는 경우
+  // -> 픽업 이력 노출
+  // -> 픽업 이력 없는 경우 빈 화면 노출
   return (
     <Container>
       {
         isMapSwitch ? 
         (
-          <SpotSearchMapMain />
+          <SpotSearchMapPage isSearched={isSearched} searchListLen={filterResult?.length} />
         ) : (
           <>
             <SearchBarWrapper>
               <label className='textLabel'>
                 {
-                  !inputRef.current?.value &&
+                  keyword.length < 0 &&
                     <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
                 }
                 <TextInput
@@ -335,7 +326,7 @@ const SpotSearchMainPage = (): ReactElement => {
                 />
               </label>
               {
-                inputRef.current?.value.length! > 0 && (
+                keyword.length > 0 && (
                   <div className="removeSvg" onClick={clearInputHandler}>
                     <SVGIcon name="removeItem" />
                   </div>
@@ -349,49 +340,55 @@ const SpotSearchMainPage = (): ReactElement => {
                 </KeyWordWrapper>
               )
             }
-            {/* 스팟 검색 메인 - 검색바 포커싱 o  */}
             <>
-              {!isSearched && (
-                recentPickedSpotList?.length! > 0 ? (
-                  // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-                  <DefaultSearchContainer>
-                    <RecentPickWrapper>
-                      <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                      {recentPickedSpotList?.map((item, index) => (
-                        // 스팟 최근 픽업 이력 리스트
-                        <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                      ))}
-                    </RecentPickWrapper>
-                  </DefaultSearchContainer>
-                  ) : (
-                  <>
-                  {
-                    // 픽업 이력 없는 경우, 추천 스팟 노출
-                    spotRecommend?.spotList.length! > 0 ?(
+              {!isSearched && (  // 검색바 활성화 
+                userLocationLen ? // 위치 정보 있는 경우
+                    spotRecommend?.spotList.length! > 0 ? ( // 추천 스팟 있는 경우
                       <SpotRecommendWrapper>
-                      <FlexBetween margin="0 0 24px 0">
-                        <TextH2B>{spotRecommend?.data.title}</TextH2B>
-                        {
-                          // 사용자 위치 설정 했을 경우 노출
-                          userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
-                        }
-                      </FlexBetween>
-                      {spotRecommend?.spotList?.map((item, index) => {
-                        return <SpotRecommendList item={item} key={index} />;
-                      })}
-                    </SpotRecommendWrapper>
+                        <FlexBetween margin="0 0 24px 0">
+                          <TextH2B>{spotRecommend?.data.title}</TextH2B>
+                          {
+                            // 사용자 위치 설정 했을 경우 노출
+                            userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
+                          }
+                        </FlexBetween>
+                        {spotRecommend?.spotList?.map((item, index) => {
+                          return <SpotRecommendList item={item} key={index} />;
+                        })}
+                      </SpotRecommendWrapper>
                     ) : (
-                      // 픽업 이력 없고, 추천 스팟도 없는 경우
-                      null
+                      recentPickedSpotList?.length! > 0 ? ( // 추천 스팟 없고, 픽업 이력 있는 경우
+                        <DefaultSearchContainer>
+                        <RecentPickWrapper>
+                          <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                          {recentPickedSpotList?.map((item, index) => (
+                            // 스팟 최근 픽업 이력 리스트
+                            <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                          ))}
+                        </RecentPickWrapper>
+                      </DefaultSearchContainer>
+  
+                      ) : (
+                        null // 추천 스팟 없고, 픽업 이력 없는 경우 빈화면 노출
+                      )
                     )
-                  }
-                  </>
-                  )
-                )
-              }
+                 : // 위치 정보 없는 경우
+                  recentPickedSpotList?.length! > 0 ? ( // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+                    <DefaultSearchContainer>
+                      <RecentPickWrapper>
+                        <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                        {recentPickedSpotList?.map((item, index) => (
+                          // 스팟 최근 픽업 이력 리스트
+                          <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                        ))}
+                      </RecentPickWrapper>
+                    </DefaultSearchContainer>
+                    ) : (
+                      null // 픽업 이력 없는 경우 빈화면 노출
+                    )
+              )}
               {
-                isSearched && (
-                // 검색 결과
+                isSearched && ( // 검색 결과
                 <SearchResultContainer>
                   <SpotSearchResult searchResult={filterResult} orderId={orderId} hasCart={true} getLocation={getLocation} />
                 </SearchResultContainer>

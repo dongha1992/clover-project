@@ -66,7 +66,7 @@ const CardRegisterPage = () => {
   const nicknameRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
-  const { isOrder } = router.query;
+  const { isOrder, orderId, isSubscription } = router.query;
   const isFromOrder = isOrder === 'true';
 
   const isCorporationCard = selectedCardType === 2;
@@ -205,6 +205,9 @@ const CardRegisterPage = () => {
       const corporationNo = corportaionRef?.current && corportaionRef?.current.value;
       const name = nicknameRef.current.value;
 
+      // 필수조건 작성하기 전까지 버튼 비활성화
+      if (!isDisabled) return;
+
       /* TODO: 에러 내용 추가 / 벨리데이트 다시  */
       if (isCorporationCard) {
         if (expireDate.length < 4) {
@@ -233,6 +236,9 @@ const CardRegisterPage = () => {
         if (!name.length) {
           return alert('카드별명을 설정해주세요.');
         }
+        if (!isTermCheck) {
+          return alert('이용약관에 동의해주세요.');
+        }
       }
 
       const expiredMM = expireDate.slice(0, 2);
@@ -258,7 +264,15 @@ const CardRegisterPage = () => {
               alertMessage: successMsg,
               submitBtnText: '확인',
               onSubmit: () => {
-                router.push({ pathname: '/mypage/card', query: { isOrder: isFromOrder } });
+                if (isOrder && orderId && isSubscription) {
+                  router.push({ pathname: `/subscription/${orderId}` });
+                } else if (isOrder && isSubscription) {
+                  router.push({ pathname: '/order', query: { isSubscription } });
+                } else if (isOrder) {
+                  router.push({ pathname: '/order' });
+                } else {
+                  router.push({ pathname: '/mypage/card', query: { isOrder: isFromOrder } });
+                }
               },
             })
           );
@@ -278,19 +292,19 @@ const CardRegisterPage = () => {
   useEffect(() => {
     const { number1, number2, number3, number4 } = card;
     if (isCorporationCard) {
-      if (number1 && number2 && number3 && number4 && expireDate) {
+      if (number1 && number2 && number3 && number4 && expireDate && isTermCheck) {
         setIsDisabled(true);
       } else {
         setIsDisabled(false);
       }
     } else {
-      if (number1 && number2 && number3 && number4 && expireDate && password && birthDate) {
+      if (number1 && number2 && number3 && number4 && expireDate && password && birthDate && isTermCheck) {
         setIsDisabled(true);
       } else {
         setIsDisabled(false);
       }
     }
-  }, [card, expireDate, password, birthDate]);
+  }, [card, expireDate, password, birthDate, isTermCheck]);
 
   return (
     <Container>
@@ -421,14 +435,19 @@ const CardRegisterPage = () => {
       </OtherNameOfCardWrapper>
       <FlexRow>
         <Checkbox isSelected={isMainCard} onChange={selectMainCardHandler} />
-        <TextB2R padding="4px 0 0 8px">대표카드로 설정합니다.</TextB2R>
+        <TextB2R padding="4px 0 0 8px" pointer onClick={selectMainCardHandler}>
+          대표카드로 설정합니다.
+        </TextB2R>
       </FlexRow>
       <BorderLine height={1} margin="24px 0" />
       <FlexRow>
         <Checkbox isSelected={isTermCheck} onChange={selectTermHandler} />
         <FlexRow padding="4px 4px 0 8px">
-          <TextB2R>이용 약관에 동의합니다.</TextB2R>
+          <TextB2R onClick={selectTermHandler} pointer>
+            이용 약관에 동의합니다.
+          </TextB2R>
           <TextH6B
+            pointer
             color={theme.greyScale65}
             textDecoration="underline"
             padding="0 0 0 4px"

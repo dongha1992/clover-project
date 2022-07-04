@@ -121,6 +121,7 @@ const Header = () => {
       '/spot/location/address': '주소 검색',
       '/spot/notice': '프코스팟 안내',
       '/mypage/spot-status': '프코스팟 관리',
+      '/subscription/information': '구독 안내',
       '/subscription/products': '정기구독',
       '/subscription/set-info': '구독하기',
       '/subscription/register': '구독하기',

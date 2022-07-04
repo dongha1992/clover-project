@@ -1,9 +1,11 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, FC, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import {ISpotsDetail} from '@model/index';
+import { lt } from '@fxts/core';
+
 
   interface IProps {
     zoom?: number;
@@ -20,30 +22,32 @@ import {ISpotsDetail} from '@model/index';
   }: IProps): ReactElement => {
   const { spotSearchArr } = useSelector(spotSelector);
 
-  const spotsArr = spotSearchArr&&spotSearchArr;
+  const spotsArr = spotSearchArr ?? [];
   const idx = currentIdx&&currentIdx;
   const SelectedSpotArr = spotsArr[idx ? idx : 0];
 
     useEffect(() => {
       const initMap = () => {
-        let markers = new Array(); // 마커 정보를 담는 배열
-        let infoWindows = new Array(); // 정보창을 담는 배열
-        
-        var map = new naver.maps.Map('map', {
-            center: new naver.maps.LatLng(spotsArr?.length ? SelectedSpotArr?.coordinate.lat : 37.50101118367814, spotsArr?.length ? SelectedSpotArr?.coordinate.lon : 127.03525895821902), //지도 시작 지점
+        const markers: naver.maps.Marker[] = []; // 마커 정보를 담는 배열
+        let infoWindows = []; // 정보창을 담는 배열
+        const currentPositionLat = spotsArr?.length ? SelectedSpotArr?.coordinate.lat : 37.50101118367814;
+        const currentPositionLon =  spotsArr?.length ? SelectedSpotArr?.coordinate.lon : 127.03525895821902;
+        const map = new naver.maps.Map('map', {
+            center: new naver.maps.LatLng(currentPositionLat, currentPositionLon), //지도 시작 지점
             zoom: zoom ? zoom : 19,
         });
-        let marker = new naver.maps.Marker({
+        const marker = new naver.maps.Marker({
           icon: { // 이미지 아이콘
             url: `${IMAGE_S3_DEV_URL}/ic_map_pin.png`,
             size: new naver.maps.Size(50, 52),
             anchor: new naver.maps.Point(25, 26),
             // onClick: () => {}
         },
-          position: new naver.maps.LatLng(spotsArr?.length ? SelectedSpotArr?.coordinate.lat : 37.50101118367814, spotsArr?.length ? SelectedSpotArr?.coordinate.lon : 127.03525895821902), // 최초 찍히는 마커
+          position: new naver.maps.LatLng(currentPositionLat, currentPositionLon), // 최초 찍히는 마커
           map: map,
         });
-	    // ic_bookstore.png
+        // pin list
+	      // ic_bookstore.png
         // ic_cafe.png
         // ic_circle.png
         // ic_GS25.png
@@ -57,7 +61,9 @@ import {ISpotsDetail} from '@model/index';
         // ic_etc.png
         // ic_tripin.png
 
-        for(let i=0; i < spotsArr?.length!; i++) {
+        //ic_group_pin.png
+
+        for (let i=0; i < spotsArr?.length!; i++) {
             const placeType = () => {
               switch(spotsArr[i].placeType){
                 case 'CAFE':
@@ -83,20 +89,55 @@ import {ISpotsDetail} from '@model/index';
                 default:
                   return '/ic_circle.png';
               };
-            }
-            // console.log(placeType());
-          let marker = new naver.maps.Marker({
+            };
+          let spot = spotsArr[i],
+          latlng = new naver.maps.LatLng(spot.coordinate.lat, spot.coordinate.lon),
+          marker = new naver.maps.Marker({
               map: map,
-              position: new naver.maps.LatLng(spotsArr[i]?.coordinate.lat, spotsArr[i]?.coordinate.lon),
+              draggable: false,
+              zIndex: 100,
+              position: latlng,
               icon: { // 이미지 아이콘
               url: `${spotsArr[i].type === 'PRIVATE' ?`${IMAGE_S3_DEV_URL}/ic_circle.png` :`${IMAGE_S3_DEV_URL}${placeType()}`}`,
               size: new naver.maps.Size(50, 52),
               anchor: new naver.maps.Point(25, 26),
+              
             //   onClick: () => {}
-            }
+            },
           })
         markers.push(marker); 
-        }
+
+        naver.maps.Event.addListener(marker, "click", (e: any) => {
+          const latLng = new naver.maps.LatLng(
+            Number(spot.coordinate.lat),
+            Number(spot.coordinate.lon)
+          );
+          map.panTo(latLng, e?.coord);
+          
+        });
+
+      }
+
+    //   let htmlMarker1 = {
+    //     content: `<div style="cursor:pointer;width:40px;height:40px;line-height:42px;font-size:10px;color:white;text-align:center;font-weight:bold;background:url(${IMAGE_S3_DEV_URL}/ic_group_pin.png);background-size:contain;"></div>`,
+    //     size: new naver.maps.Size(40, 40),
+    //     anchor: new naver.maps.Point(20, 20)
+    //   };
+
+    //   let markerClustering = new MarkerClustering({
+    //     minClusterSize: 2,
+    //     maxZoom: 13,
+    //     map: map,
+    //     markers: markers,
+    //     disableClickZoom: false,
+    //     gridSize: 120,
+    //     icons: [htmlMarker1],
+    //     indexGenerator: [10, 100, 200, 500, 1000],
+    //     stylingFunction: function(clusterMarker: { getElement: () => any; }, count: any) {
+    //         $(clusterMarker.getElement()).find('div:first-child').text(count);
+    //     }
+    // });
+
         // const map = new naver.maps.Map('map', {
         //   center: new naver.maps.LatLng(
         //     Number(centerLat ? centerLat : '37.413294'),
@@ -168,6 +209,17 @@ import {ISpotsDetail} from '@model/index';
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [spotsArr, currentIdx]);
   
+    // let markers: any[] = [];
+
+    // const getClickHandler = seq => {
+    //   return function (e) {
+       
+    //   }
+    // };
+   
+    // for(let i = 0;  i < spotsArr.length; i++){
+    //   naver.maps.Event.addListener(markers[i], 'click', getClickHandler);
+    // }
   
   
     //지도 사이즈 관련 스타일

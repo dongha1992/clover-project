@@ -37,9 +37,10 @@ import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 interface IProps {
   orderId: number;
   destinationId: number;
+  isSubscription: string;
 }
 
-const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: IProps) => {
   const router = useRouter();
 
   const { userAccessMethod } = useSelector(commonSelector);
@@ -64,12 +65,10 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
 
   const { data } = useGetOrderDetail(['getOrderDetail', orderId], orderId, {
     onSuccess: (data) => {
-      const orderDetail = data?.orderDeliveries[0];
+      // TODO(young) : 구독에서 destinationId있으면 orderDeliveries에서 같은 destinationId로
+      // 일반 주문도 orderId가 아닌 destinationId가 필요한지 확인 필요
+      let orderDetail;
 
-      const userAccessMethodMap = pipe(
-        ACCESS_METHOD,
-        indexBy((item) => item.value)
-      );
       data.orderDeliveries.forEach((o: any) => {
         if (o.type === 'SUB') {
           setIsSub(true);
@@ -77,7 +76,20 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
         if (o.id === destinationId) {
           setDeliveryRound(o.deliveryRound);
         }
+        if (o.id === destinationId) {
+          orderDetail = o;
+        }
       });
+
+      if (!destinationId) {
+        orderDetail = data?.orderDeliveries[0];
+      }
+
+      const userAccessMethodMap = pipe(
+        ACCESS_METHOD,
+        indexBy((item) => item.value)
+      );
+
       setDeliveryEditObj({
         selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
         deliveryMessageType: orderDetail?.deliveryMessageType!,
@@ -121,6 +133,10 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId }: IProps) => {
     },
     {
       onSuccess: async () => {
+        // TODO : 일반 주문도 배송지 변경후 이동 action이 있어야 할듯
+        if (isSubscription && destinationId) {
+          router.push({ pathname: `/subscription/${orderId}` });
+        }
         await queryClient.refetchQueries(['getOrderDetail', orderId]);
         dispatch(INIT_TEMP_EDIT_DESTINATION());
       },
@@ -504,10 +520,10 @@ const BtnWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, destinationId } = context.query;
+  const { orderId, destinationId, isSubscription } = context.query;
 
   return {
-    props: { orderId: Number(orderId), destinationId: Number(destinationId) },
+    props: { orderId: Number(orderId), destinationId: Number(destinationId), isSubscription: String(isSubscription) },
   };
 }
 export default OrderDetailAddressEditPage;

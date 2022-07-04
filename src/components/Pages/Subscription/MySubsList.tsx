@@ -48,6 +48,11 @@ const MySubsList = () => {
       enabled: !!me,
     }
   );
+
+  const goToSubsMng = () => {
+    router.push('/mypage/subscription');
+  };
+
   if (isLoading) {
     return <div>로딩중</div>;
   }
@@ -55,7 +60,7 @@ const MySubsList = () => {
     <MySubsBox>
       <Head>
         <TextH3B>내 구독 ({subsList.length})</TextH3B>
-        <TextH6B color={theme.greyScale65} pointer textDecoration="underline">
+        <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToSubsMng}>
           구독 관리
         </TextH6B>
       </Head>

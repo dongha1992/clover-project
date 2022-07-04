@@ -31,6 +31,7 @@ const BtnWrapper = styled.div`
   max-width: ${breakpoints.mobile}px;
   position: fixed;
   bottom: 0px;
+  left: 50%;
   right: 0px;
   z-index: 10;
   height: 56px;

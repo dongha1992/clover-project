@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B, TextB2R, TextH6B } from '@components/Shared/Text';
@@ -11,10 +11,12 @@ import { useQuery } from 'react-query';
 import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
+import { INIT_MENU_KEYWORD } from '@store/menu';
 import { IMenus, Obj } from '@model/index';
 import router from 'next/router';
 
 const SearchPage = () => {
+  const dispatch = useDispatch();
   const {
     data: menus,
     error: mdMenuError,
@@ -27,6 +29,10 @@ const SearchPage = () => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
+
+  useEffect(() => {
+    dispatch(INIT_MENU_KEYWORD());
+  }, []);
 
   const checkIsSold = (menuList: IMenus[]) => {
     return menuList?.sort((a: any, b: any) => {
@@ -108,10 +114,8 @@ const ItemListRow = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-
   > div {
     padding-right: 10px;
-    width: 194px;
   }
 `;
 
