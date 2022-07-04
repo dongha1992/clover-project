@@ -72,16 +72,8 @@ export const getBestReviewApi = ({
   return Api.get(`menu/v1/menus/${id}/reviews/best`, { params: { page, size } });
 };
 
-export const getReviewAvailabilityApi = ({
-  id,
-  page,
-  size,
-}: {
-  id: number;
-  page: number;
-  size: number;
-}): Promise<AxiosResponse<IReviewAvailityResponse>> => {
-  return Api.get(`menu/v1/menus/${id}/reviews/availaility`, { params: { page, size } });
+export const getReviewAvailabilityApi = (id: number): Promise<AxiosResponse<IReviewAvailityResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/availability`);
 };
 
 export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
