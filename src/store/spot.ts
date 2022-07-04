@@ -47,7 +47,6 @@ interface ISpotsPostions {
 
 interface IProps {
   spotDetail: ISpotsDetail | null;
-  isSpotLiked: boolean;
   spotLocation: ISpotAddress;
   spotsRegistrationOptions: ISpotRegistrationsOpions | any;
   spotsRegistrationInfo: ISpotsRegistrationInfo | any;
@@ -99,7 +98,6 @@ const spotsPostionsState = {
 const initialState: IProps = {
   spotDetail: null,
   spotStatusDetail: null,
-  isSpotLiked: false,
   spotLocation: {
     ...spotAddressState,
   },
@@ -130,12 +128,6 @@ export const spot = createSlice({
     // 스팟 상세 페이지 정보
     SPOT_ITEM: (state, action: PayloadAction<ISpotsDetail | null>) => {
       state.spotDetail = action.payload;
-    },
-    INIT_SPOT_LIKED: (state, action: PayloadAction) => {
-      state.isSpotLiked = false;
-    },
-    SET_SPOT_LIKED: (state, action: PayloadAction) => {
-      state.isSpotLiked = true;
     },
     SET_SPOT_LOCATION: (state, action: PayloadAction<ISpotAddress>) => {
       state.spotLocation = action.payload;
@@ -191,11 +183,8 @@ export const spot = createSlice({
     SET_SEARCH_KEYWORD: (state, action: PayloadAction<string>) => {
       state.spotKeyword = action.payload;
     },
-    SET_SPOT_MAP_SWITCH: (state, action : PayloadAction) => {
-      state.isMapSwitch = true;
-    },
-    INIT_SPOT_MAP_SWITCH: (state, action : PayloadAction) => {
-      state.isMapSwitch = false;
+    SET_SPOT_MAP_SWITCH: (state, action : PayloadAction<boolean>) => {
+      state.isMapSwitch = action.payload;
     },
     SET_SERACH_MAP_SPOT: (state, action: PayloadAction<ISpotsDetail[]>) => {
       state.spotSearchArr = action.payload;
@@ -206,8 +195,6 @@ export const spot = createSlice({
 export const {
   SPOT_ITEM,
   SET_SPOT_STATUS_DETAIL_ITEMS,
-  SET_SPOT_LIKED,
-  INIT_SPOT_LIKED,
   SET_SPOT_LOCATION,
   INIT_SPOT_LOCATION,
   SET_SPOT_REGISTRATIONS_OPTIONS,
@@ -226,7 +213,6 @@ export const {
   INIT_SPOT_JOIN_FORM_CHECKED,
   SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
-  INIT_SPOT_MAP_SWITCH,
   SET_SERACH_MAP_SPOT,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
