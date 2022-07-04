@@ -6,7 +6,9 @@ import {
   IMenuReviewsResponse,
   IMenuReviewsImageResponse,
   IReviewsDetailResponse,
+  IBestReviewResponse,
   IPostMenuReview,
+  IReviewAvailityResponse,
   IMenuDetailsResponse,
   IResponse,
   ICompletionReviewsResponse,
@@ -56,6 +58,30 @@ export const getReviewDetailApi = ({
   reviewId: number;
 }): Promise<AxiosResponse<IReviewsDetailResponse>> => {
   return Api.get(`menu/v1/menus/${id}/reviews/${reviewId}`);
+};
+
+export const getBestReviewApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IBestReviewResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/best`, { params: { page, size } });
+};
+
+export const getReviewAvailabilityApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IReviewAvailityResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/availaility`, { params: { page, size } });
 };
 
 export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {

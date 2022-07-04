@@ -32,7 +32,7 @@ const ReviewOnlyImage = ({
             <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
-            <StarRating rating={Number(averageRating)} width={30} height={30} />
+            <StarRating rating={Number(averageRating)} width={'30'} height={'30'} />
           </Star>
         </Header>
         <ReviewSwipe>

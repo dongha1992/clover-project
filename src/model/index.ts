@@ -1714,6 +1714,12 @@ export interface IMenuDetails {
   personalMaximum?: number;
 }
 
+export interface IBestReviewResponse {
+  data: { menuReviews: ISearchReviews[] };
+  message: string;
+  code: number;
+}
+
 export interface IMenuDetail {
   badgeMessage: string;
   category: string;
@@ -1845,6 +1851,15 @@ export interface ISearchReviews {
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
+}
+export interface IReviewAvaility {
+  availability: boolean;
+}
+
+export interface IReviewAvailityResponse {
+  code: number;
+  message: string;
+  data: IReviewAvaility;
 }
 
 export interface ISearchReviewImages {

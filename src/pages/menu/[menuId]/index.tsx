@@ -30,7 +30,13 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi, getMenuDetailReviewImageApi } from '@api/menu';
+import {
+  getMenuDetailApi,
+  getMenuDetailReviewApi,
+  getMenusApi,
+  getMenuDetailReviewImageApi,
+  getBestReviewApi,
+} from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
@@ -58,7 +64,6 @@ dayjs.locale('ko');
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
-/*TODO: 베스트 후기 수정해야함 */
 interface IProps {
   menuId: number;
 }
@@ -112,6 +117,22 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       const params = { id: Number(menuId)!, page: 1, size: 100 };
 
       const { data } = await getMenuDetailReviewApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: bestReviews, error: bestReviewsError } = useQuery(
+    'getBestReviewApi',
+    async () => {
+      const params = { id: Number(menuId)!, page: 1, size: 100 };
+
+      const { data } = await getBestReviewApi(params);
       return data.data;
     },
 
@@ -420,7 +441,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        {reviews?.pagination?.total! > 0 && !isTempSold && !isReOpen ? (
+        {/* {bestReviews?.menuReviews?.length! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
@@ -436,6 +457,28 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                 </TextH6B>
               </ReviewHeader>
               <ReviewList reviews={reviews} onClick={goToReviewDetail} />
+            </ReviewWrapper>
+          </ReviewContainer>
+        ) : (
+          <BorderLine height={1} margin="0 auto" width={'calc(100% - 48px)'} />
+        )} */}
+
+        {bestReviews?.menuReviews?.length! > 0 ? (
+          <ReviewContainer>
+            <ReviewWrapper>
+              <ReviewHeader>
+                <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
+                <TextH6B
+                  textDecoration="underline"
+                  color={theme.greyScale65}
+                  padding="0 24px 0 0"
+                  onClick={goToReviewSection}
+                  pointer
+                >
+                  더보기
+                </TextH6B>
+              </ReviewHeader>
+              <ReviewList reviews={bestReviews?.menuReviews} onClick={goToReviewDetail} />
             </ReviewWrapper>
           </ReviewContainer>
         ) : (
