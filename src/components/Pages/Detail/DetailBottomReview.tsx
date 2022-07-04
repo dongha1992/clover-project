@@ -15,6 +15,7 @@ import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { getMenuAverageRate } from '@utils/menu';
+import { menuSelector } from '@store/menu';
 
 interface IProps {
   reviews: { menuReviews: ISearchReviews[]; pagination: IPagination };
@@ -25,9 +26,12 @@ interface IProps {
 
 const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
   const dispatch = useDispatch();
+  const { menuItem } = useSelector(menuSelector);
   const { menuReviews } = reviews;
   const hasImageReviews = reviewsImages?.images?.length !== 0;
   const hasReviews = menuReviews.length !== 0;
+
+  const { rating, reviewCount } = menuItem;
 
   const { me } = useSelector(userForm);
 
@@ -69,8 +73,8 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
             reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={getMenuAverageRate({ reviews: menuReviews, total: reviews?.pagination.total })}
-            totalReviews={reviews.pagination.total}
+            averageRating={rating}
+            totalReviews={reviewCount}
           />
         </Wrapper>
       )}
@@ -83,7 +87,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
               return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-              {reviews.pagination.total}개 후기 전체보기
+              {reviewCount}개 후기 전체보기
             </Button>
           </ReviewWrapper>
         </>

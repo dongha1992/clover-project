@@ -380,7 +380,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
               </>
             )}
           </PriceAndCouponWrapper>
-          {/* <BorderLine height={1} margin="16px 0 0 0" /> */}
+
           {menuDetail?.type !== 'SUBSCRIPTION' && menuDetail?.type === 'SALAD' && (
             <NutritionInfo>
               <NutritionInfoWrapper>
@@ -470,7 +470,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: reviews?.pagination.total }}
+          countObj={{ 후기: menuDetail?.reviewCount }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}

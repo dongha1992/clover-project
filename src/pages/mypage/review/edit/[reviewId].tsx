@@ -208,7 +208,7 @@ const EditReviewPage = ({ reviewId }: any) => {
 
     const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.searchReview?.content!);
+    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReviews?.content!);
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
@@ -289,7 +289,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           rows={20}
           eventHandler={writeReviewHandler}
           ref={textAreaRef}
-          value={selectedReviewDetail?.searchReview?.content}
+          value={selectedReviewDetail?.menuReviews?.content}
         />
         <FlexBetween margin="8px 0 0 0">
           <TextB3R color={theme.brandColor}>

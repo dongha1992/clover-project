@@ -8,18 +8,22 @@ import BorderLine from '@components/Shared/BorderLine';
 import { ReviewDetailItem } from '@components/Pages/Review';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
 import { Obj, ISearchReviews, ISearchReviewImages } from '@model/index';
 import { groupBy, pipe } from '@fxts/core';
 import { getMenuDetailReviewApi, getMenuDetailReviewImageApi } from '@api/menu';
 import { getMenuAverageRate } from '@utils/menu';
+import { menuSelector } from '@store/menu';
 
 /* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
 /* TODO: 중복 코드 많음 , 리팩토링 */
 
 const TotalReviewPage = ({ menuId }: any) => {
   const dispatch = useDispatch();
+  const { menuItem } = useSelector(menuSelector);
+
+  const { rating, reviewCount } = menuItem;
 
   const {
     data: reviews,
@@ -85,8 +89,8 @@ const TotalReviewPage = ({ menuId }: any) => {
             reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={getMenuAverageRate({ reviews: reviews?.menuReviews!, total: reviews?.pagination.total! })}
-            totalReviews={reviews?.pagination?.total!}
+            averageRating={rating}
+            totalReviews={reviewCount}
           />
         )}
         <Button
@@ -109,9 +113,11 @@ const TotalReviewPage = ({ menuId }: any) => {
             })}
           </>
         ) : (
-          <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
-            상품의 첫 번째 후기를 작성해주세요 :)
-          </TextB2R>
+          <Wrapper>
+            <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
+              상품의 첫 번째 후기를 작성해주세요 :)
+            </TextB2R>
+          </Wrapper>
         )}
       </ReviewWrapper>
     </Container>
@@ -125,6 +131,7 @@ const Wrapper = styled.div<{ hasImageReview?: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding-top: 16px;
 
   ${({ hasImageReview }) => {
     if (!hasImageReview) {
