@@ -36,9 +36,13 @@ const Bottom = () => {
         case ['/subscription/products/[id]'].includes(currentPath): {
           return <SubsBottom />;
         }
-        case ['/mypage/card/register/term', '/subscription/information', '/mypage/subscription'].includes(
-          currentPath
-        ): {
+        case [
+          '/mypage/card/register/term',
+          '/subscription/information',
+          '/mypage/subscription',
+          '/mypage/order-detail/[id]',
+          '/subscription/[detailId]',
+        ].includes(currentPath): {
           return null;
         }
         default: {

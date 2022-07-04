@@ -122,14 +122,14 @@ const ImageWrapper = styled.img<{ isLast: boolean }>`
 `;
 const NextArrowWrapper = styled.div`
   position: absolute;
-  right: 10%;
+  right: 0%;
   top: 50%;
 `;
 
 const PreviousArrowWrapper = styled.div`
   position: absolute;
   top: 50%;
-  left: 10%;
+  left: 0%;
   z-index: 10;
 `;
 

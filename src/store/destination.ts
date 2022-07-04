@@ -21,6 +21,7 @@ interface TProps {
   userDeliveryType: string;
   locationStatus: TLocationType;
   applyAll: boolean;
+  isCanNotDelivery: boolean;
 }
 
 const locationState = {
@@ -71,6 +72,7 @@ const INITIAL_STATE: TProps = {
   destinationDeliveryType: '',
   userDeliveryType: '',
   applyAll: false,
+  isCanNotDelivery: true,
 };
 
 export const destination = createSlice({
@@ -143,6 +145,10 @@ export const destination = createSlice({
     SET_APPLY_ALL: (state, action: PayloadAction<boolean>) => {
       state.applyAll = action.payload;
     },
+
+    SET_CAN_NOT_DELIVERY: (state, action: PayloadAction<boolean>) => {
+      state.isCanNotDelivery = action.payload;
+    },
   },
 });
 
@@ -162,6 +168,7 @@ export const {
   SET_USER_DELIVERY_TYPE,
   INIT_USER_DELIVERY_TYPE,
   SET_APPLY_ALL,
+  SET_CAN_NOT_DELIVERY,
 } = destination.actions;
 export const destinationForm = (state: AppState): TProps => state.destination;
 export default destination.reducer;

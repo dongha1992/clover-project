@@ -362,7 +362,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                 </DiscountedPrice>
               </PriceWrapper>
             )}
-
             {!isTempSold && !isReOpen && !isOpenSoon && (
               <>
                 {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
@@ -374,7 +373,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   </CouponWrapper>
                 ) : (
                   <CouponWrapper onClick={couponDownloadHandler}>
-                    <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
+                    <TextH6B padding="4px 4px 0 0">{!me ? '쿠폰 받기' : '다운 완료'}</TextH6B>
                     <SVGIcon name="checkBlack18" />
                   </CouponWrapper>
                 )}

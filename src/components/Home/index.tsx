@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
 import Image from 'next/image';
+import BorderLine from '@components/Shared/BorderLine';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 /* TODO: static props로  */
 
@@ -64,6 +65,7 @@ const Home = () => {
       <Banner bannerList={bannerList} />
       <SectionWrapper>
         <MainTab />
+        <BorderLine height={1} margin="24px 0 24px 0" />
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
           {menus?.length! > 0
@@ -158,7 +160,6 @@ export const ItemListRow = styled.div`
 
   > div {
     padding-right: 10px;
-    /* width: 194px; */
   }
 `;
 
