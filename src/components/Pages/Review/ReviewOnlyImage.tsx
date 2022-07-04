@@ -12,7 +12,7 @@ interface IProps {
   reviewsImages: IDetailImage[];
   goToReviewImages: () => void;
   goToReviewDetail: (id: number) => void;
-  averageRating: string;
+  averageRating: number;
   totalReviews: number;
 }
 

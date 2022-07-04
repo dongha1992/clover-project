@@ -1727,6 +1727,7 @@ export interface IMenuDetail {
   likeCount: number;
   name: string;
   openedAt: string;
+  rating: number;
   orderCount: number;
   priority: number;
   thumbnail: IMenuImage[];

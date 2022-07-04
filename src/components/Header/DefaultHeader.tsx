@@ -5,7 +5,8 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SET_ALERT } from '@store/alert';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { menuSelector } from '@store/menu';
 
 type TProps = {
   title?: string;
@@ -14,6 +15,7 @@ type TProps = {
 const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { menuItem } = useSelector(menuSelector);
 
   const goBack = (): void => {
     if (router.pathname === '/spot/join/main/form') {
@@ -37,7 +39,7 @@ const DefaultHeader = ({ title }: TProps) => {
   };
 
   const oauth = router.pathname === '/oauth';
-
+  const totalReview = router.pathname === '/menu/[menuId]/review/total';
   return (
     <Container>
       <Wrapper>
@@ -46,7 +48,7 @@ const DefaultHeader = ({ title }: TProps) => {
             <SVGIcon name="arrowLeft" />
           </div>
         )}
-        <TextH4B padding="2px 0 0 0">{title}</TextH4B>
+        <TextH4B padding="2px 0 0 0">{totalReview ? `${title} (${menuItem.reviewCount})` : title}</TextH4B>
       </Wrapper>
     </Container>
   );
