@@ -134,7 +134,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       const params = { id: Number(menuId)!, page: 1, size: 100 };
 
       const { data } = await getBestReviewApi(params);
-      return data.data;
+      return data.data.menuReviews;
     },
 
     {
@@ -148,7 +148,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     'getReviewAvailabilityApi',
     async () => {
       const { data } = await getReviewAvailabilityApi(Number(menuId)!);
-      return data.data;
+      return data.data.availability;
     },
 
     {
@@ -458,7 +458,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        {bestReviews?.menuReviews?.length! > 0 && !isTempSold && !isReOpen ? (
+        {bestReviews?.length! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
@@ -473,7 +473,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   더보기
                 </TextH6B>
               </ReviewHeader>
-              <ReviewList reviews={reviews} onClick={goToReviewDetail} />
+              <ReviewList reviews={bestReviews!} onClick={goToReviewDetail} />
             </ReviewWrapper>
           </ReviewContainer>
         ) : (

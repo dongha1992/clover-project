@@ -1714,8 +1714,24 @@ export interface IMenuDetails {
   personalMaximum?: number;
 }
 
+export interface IBestReviews {
+  id: number;
+  menuId?: number;
+  userNickName: string;
+  menuName?: string;
+  menuDetailName?: string;
+  orderCount?: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+  images: IMenuImageInReivew[];
+  comment?: string;
+  commenter?: string;
+  commentCreatedAt?: string;
+}
+
 export interface IBestReviewResponse {
-  data: { menuReviews: ISearchReviews[] };
+  data: { menuReviews: IBestReviews[] };
   message: string;
   code: number;
 }
