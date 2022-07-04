@@ -4,7 +4,12 @@ import styled from 'styled-components';
 import { getAvailabilityDestinationApi } from '@api/destination';
 import { checkDestinationHelper } from '@utils/destination';
 import { useSelector, useDispatch } from 'react-redux';
-import { destinationForm, SET_AVAILABLE_DESTINATION, SET_LOCATION_STATUS } from '@store/destination';
+import {
+  destinationForm,
+  SET_AVAILABLE_DESTINATION,
+  SET_LOCATION_STATUS,
+  SET_CAN_NOT_DELIVERY,
+} from '@store/destination';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { TLocationType } from '@utils/destination/checkDestinationHelper';
@@ -71,18 +76,24 @@ const CheckDestinationPlace = () => {
     },
     {
       onSuccess: async ({ status, availableDestinationObj }: IResponse) => {
+        const isCanNotDelivery = Object.values(availableDestinationObj)?.every((delivery) => !delivery);
+
+        if (isCanNotDelivery) {
+          dispatch(SET_CAN_NOT_DELIVERY(true));
+          return;
+        }
+
         if (isLocation) {
           dispatch(SET_LOCATION_STATUS(status));
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         } else {
           dispatch(SET_AVAILABLE_DESTINATION({ ...availableDestinationObj }));
         }
+
+        dispatch(SET_CAN_NOT_DELIVERY(false));
       },
       onError: (error: AxiosError) => {
-        // TODO : 리액트쿼리 onError에서 error.response란 값 자체가 안옴 확인 필요
-        // const { message } = error.response?.data;
-        // alert(message);
-        // return;
+        return error.message;
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,

@@ -25,6 +25,7 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
   const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon?.coupon.expiredDate));
 
   const { participationStatus } = coupon;
+
   const isDownloaded = participationStatus === 'COMPLETED';
 
   const isMoreThenOneMenu = coupon?.coupon?.descriptions?.join().includes('특정 상품');
@@ -107,16 +108,6 @@ const Container = styled.div<{ isDownloaded: boolean }>`
   justify-content: space-between;
   max-width: ${breakpoints.mobile}px;
   width: 100%;
-
-  ${({ isDownloaded }) => {
-    if (isDownloaded) {
-      return css`
-        * {
-          color: ${({ theme }) => theme.greyScale25};
-        }
-      `;
-    }
-  }}
 `;
 
 const Wrapper = styled.div`
