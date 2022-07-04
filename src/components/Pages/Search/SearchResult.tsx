@@ -34,8 +34,6 @@ const SearchResult = ({ searchResult, onClick, orderId, hasCart, getLocation }: 
     );
   };
 
-  console.log(searchResult, 'searchResult');
-
   return (
     <>
       {searchResult?.length! > 0 && (
