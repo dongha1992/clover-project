@@ -341,7 +341,7 @@ const SpotSearchMainPage = (): ReactElement => {
               )
             }
             <>
-              {!isSearched &&  // 검색바 활성화 
+              {!isSearched && (  // 검색바 활성화 
                 userLocationLen ? // 위치 정보 있는 경우
                     spotRecommend?.spotList.length! > 0 ? ( // 추천 스팟 있는 경우
                       <SpotRecommendWrapper>
@@ -386,10 +386,9 @@ const SpotSearchMainPage = (): ReactElement => {
                     ) : (
                       null // 픽업 이력 없는 경우 빈화면 노출
                     )
-              }
+              )}
               {
-                isSearched && ( // 
-                // 검색 결과
+                isSearched && ( // 검색 결과
                 <SearchResultContainer>
                   <SpotSearchResult searchResult={filterResult} orderId={orderId} hasCart={true} getLocation={getLocation} />
                 </SearchResultContainer>
