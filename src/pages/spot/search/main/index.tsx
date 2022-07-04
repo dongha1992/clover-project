@@ -51,7 +51,7 @@ const SpotSearchMainPage = (): ReactElement => {
   const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const userLocationLen = !!userLocation.emdNm?.length;
+  const userLocationLen = userLocation.emdNm?.length! > 0;
 
   useEffect(() => {
     defaultRedioId();
@@ -287,6 +287,15 @@ const SpotSearchMainPage = (): ReactElement => {
     return <div>로딩</div>;
   };
 
+  // 검색바 활성화 된 상테
+  // 위치 정보 있는 경우 
+  // -> 추천 스팟 노출
+  // -> 추천 스팟 없으면 픽업 이력 노출
+  // -> 픽업 이력 없으면 빈 화면 노출
+
+  // 위치 정보 없는 경우
+  // -> 픽업 이력 노출
+  // -> 픽업 이력 없는 경우 빈 화면 노출
   return (
     <Container>
       {
@@ -331,48 +340,55 @@ const SpotSearchMainPage = (): ReactElement => {
                 </KeyWordWrapper>
               )
             }
-            {/* 스팟 검색 메인 - 검색바 포커싱 o  */}
             <>
-              {!isSearched && (
-                recentPickedSpotList?.length! > 0 ? (
-                  // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-                  <DefaultSearchContainer>
-                    <RecentPickWrapper>
-                      <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                      {recentPickedSpotList?.map((item, index) => (
-                        // 스팟 최근 픽업 이력 리스트
-                        <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                      ))}
-                    </RecentPickWrapper>
-                  </DefaultSearchContainer>
-                  ) : (
-                  <>
-                  {
-                    // 픽업 이력 없는 경우, 추천 스팟 노출
-                    spotRecommend?.spotList.length! > 0 ?(
+              {!isSearched &&  // 검색바 활성화 
+                userLocationLen ? // 위치 정보 있는 경우
+                    spotRecommend?.spotList.length! > 0 ? ( // 추천 스팟 있는 경우
                       <SpotRecommendWrapper>
-                      <FlexBetween margin="0 0 24px 0">
-                        <TextH2B>{spotRecommend?.data.title}</TextH2B>
-                        {
-                          // 사용자 위치 설정 했을 경우 노출
-                          userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
-                        }
-                      </FlexBetween>
-                      {spotRecommend?.spotList?.map((item, index) => {
-                        return <SpotRecommendList item={item} key={index} />;
-                      })}
-                    </SpotRecommendWrapper>
+                        <FlexBetween margin="0 0 24px 0">
+                          <TextH2B>{spotRecommend?.data.title}</TextH2B>
+                          {
+                            // 사용자 위치 설정 했을 경우 노출
+                            userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
+                          }
+                        </FlexBetween>
+                        {spotRecommend?.spotList?.map((item, index) => {
+                          return <SpotRecommendList item={item} key={index} />;
+                        })}
+                      </SpotRecommendWrapper>
                     ) : (
-                      // 픽업 이력 없고, 추천 스팟도 없는 경우
-                      null
+                      recentPickedSpotList?.length! > 0 ? ( // 추천 스팟 없고, 픽업 이력 있는 경우
+                        <DefaultSearchContainer>
+                        <RecentPickWrapper>
+                          <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                          {recentPickedSpotList?.map((item, index) => (
+                            // 스팟 최근 픽업 이력 리스트
+                            <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                          ))}
+                        </RecentPickWrapper>
+                      </DefaultSearchContainer>
+  
+                      ) : (
+                        null // 추천 스팟 없고, 픽업 이력 없는 경우 빈화면 노출
+                      )
                     )
-                  }
-                  </>
-                  )
-                )
+                 : // 위치 정보 없는 경우
+                  recentPickedSpotList?.length! > 0 ? ( // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
+                    <DefaultSearchContainer>
+                      <RecentPickWrapper>
+                        <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                        {recentPickedSpotList?.map((item, index) => (
+                          // 스팟 최근 픽업 이력 리스트
+                          <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                        ))}
+                      </RecentPickWrapper>
+                    </DefaultSearchContainer>
+                    ) : (
+                      null // 픽업 이력 없는 경우 빈화면 노출
+                    )
               }
               {
-                isSearched && (
+                isSearched && ( // 
                 // 검색 결과
                 <SearchResultContainer>
                   <SpotSearchResult searchResult={filterResult} orderId={orderId} hasCart={true} getLocation={getLocation} />
