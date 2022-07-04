@@ -48,11 +48,11 @@ const useOrderPrice = (orderMenus: any, orderOptions: any) => {
     orderOptions?.forEach((option: any) => {
       if (option.optionId === 1) {
         if (info.option1.name === '') info.option1.name = option.optionName;
-        info.option1.price = info.option1.price + option.optionPrice;
+        info.option1.price = info.option1.price + option.optionPrice * option.optionQuantity;
         info.option1.quantity = info.option1.quantity + option.optionQuantity;
       } else if (option.optionId === 2) {
         if (info.option2.name === '') info.option2.name = option.optionName;
-        info.option2.price = info.option2.price + option.optionPrice;
+        info.option2.price = info.option2.price + option.optionPrice * option.optionQuantity;
         info.option2.quantity = info.option2.quantity + option.optionQuantity;
       }
     });
