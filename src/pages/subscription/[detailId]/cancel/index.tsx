@@ -16,7 +16,6 @@ const OrderCancelPage = () => {
   const [detailId, setDetailId] = useState<any>();
   const { mutate: deleteOrderCancel } = useDeleteOrderCancel(['deleteOrderCancel'], {
     onSuccess: (data) => {
-      console.log('success', data);
       router.push(`/subscription/${detailId}/cancel/complete`);
     },
     onError: (error: IResponse | any) => {

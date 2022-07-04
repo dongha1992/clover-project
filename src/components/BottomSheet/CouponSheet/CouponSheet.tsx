@@ -24,6 +24,7 @@ const CouponSheet = ({ coupons }: IProps) => {
   const { me } = useSelector(userForm);
 
   let aleadyDownloadedCount = 0;
+
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async (couponItem: IPromotion) => {
       const reqBody = {
@@ -42,6 +43,7 @@ const CouponSheet = ({ coupons }: IProps) => {
           })
         );
         await queryClient.refetchQueries('getCouponList');
+        await queryClient.refetchQueries('getPromotion');
         dispatch(SET_IS_LOADING(false));
       },
       onError: async (error: any) => {
