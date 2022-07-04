@@ -4,27 +4,27 @@ export const SUBSCRIPTION_PERIOD = [
   {
     id: 1,
     period: 'ONE_WEEK',
-    text: '1주 (3% 할인)',
+    text: '1주',
   },
   {
     id: 2,
     period: 'TWO_WEEK',
-    text: '2주 (3% 할인)',
+    text: '2주',
   },
   {
     id: 3,
     period: 'THREE_WEEK',
-    text: '3주 (5% 할인)',
+    text: '3주',
   },
   {
     id: 4,
     period: 'FOUR_WEEK',
-    text: '4주 (5% 할인)',
+    text: '4주',
   },
   {
     id: 5,
     period: 'UNLIMITED',
-    text: '정기구독 (최대 15% 할인)',
+    text: '정기구독',
   },
 ];
 

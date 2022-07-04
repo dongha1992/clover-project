@@ -9,45 +9,27 @@ import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
-import { pipe, groupBy } from '@fxts/core';
+import { IDetailImage, IPagination } from '@model/index';
 import { Obj, ISearchReviews } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
+import { getMenuAverageRate } from '@utils/menu';
 
-export interface IMergedReview {
-  id: number;
-  userNickName: string;
-  menuName: string;
-  menuDetailName: string;
-  orderCount: number;
-  rating: number;
-  content: string;
-  createdAt: string;
-  reviewImg: { id: number; url: string; width: number; height: number; size: number };
+interface IProps {
+  reviews: { menuReviews: ISearchReviews[]; pagination: IPagination };
+  isSticky: boolean;
+  menuId: number;
+  reviewsImages?: { images: IDetailImage[]; pagination: IPagination };
 }
 
-const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
+const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
   const dispatch = useDispatch();
-  const { searchReviews, searchReviewImages } = reviews;
-  const hasReivew = searchReviewImages.length !== 0;
+  const { menuReviews } = reviews;
+  const hasImageReviews = reviewsImages?.images?.length !== 0;
+  const hasReviews = menuReviews.length !== 0;
+
   const { me } = useSelector(userForm);
-
-  const idByReviewImg: Obj = pipe(
-    searchReviewImages,
-    groupBy((review: any) => review.menuReviewId)
-  );
-
-  const mergedReviews = searchReviews.map((review: ISearchReviews) => {
-    return { ...review, reviewImg: idByReviewImg[review.id] || [] };
-  });
-
-  const getAverageRate = () => {
-    const totalRating = searchReviews.reduce((rating: number, review: ISearchReviews) => {
-      return rating + review.rating;
-    }, 0);
-    return (totalRating / searchReviews.length).toFixed(1);
-  };
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -81,43 +63,46 @@ const DetailBottomReview = ({ reviews, isSticky, menuId }: any) => {
 
   return (
     <Container isSticky={isSticky}>
-      <Wrapper hasReivew={hasReivew}>
-        {hasReivew ? (
+      {hasImageReviews && (
+        <Wrapper>
           <ReviewOnlyImage
-            reviews={searchReviewImages}
+            reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={getAverageRate()}
-            totalReviews={searchReviews.length}
+            averageRating={getMenuAverageRate({ reviews: menuReviews, total: reviews?.pagination.total })}
+            totalReviews={reviews.pagination.total}
           />
-        ) : (
-          <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
-            상품의 첫 번째 후기를 작성해주세요 :)
-          </TextB2R>
-        )}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          borderRadius="8"
-          margin="0 0 32px 0"
-          onClick={goToWriteReview}
-        >
-          후기 작성하기 (최대 3,000포인트 적립)
-        </Button>
-      </Wrapper>
-      {hasReivew && (
+        </Wrapper>
+      )}
+      {hasReviews ? (
         <>
           <BorderLine height={8} />
           <ReviewWrapper>
-            {mergedReviews.map((review: any, index: number) => {
+            {menuReviews?.map((review: any, index: number) => {
+              if (index > 10) return;
               return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-              {mergedReviews?.length}개 후기 전체보기
+              {reviews.pagination.total}개 후기 전체보기
             </Button>
           </ReviewWrapper>
         </>
+      ) : (
+        <Wrapper>
+          <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
+            상품의 첫 번째 후기를 작성해주세요 :)
+          </TextB2R>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            borderRadius="8"
+            margin="0 0 32px 0"
+            onClick={goToWriteReview}
+          >
+            후기 작성하기 (최대 3,000포인트 적립)
+          </Button>
+        </Wrapper>
       )}
     </Container>
   );
@@ -134,18 +119,18 @@ const Center = styled.div`
   height: 70vh;
 `;
 
-const Wrapper = styled.div<{ hasReivew?: boolean }>`
+const Wrapper = styled.div<{ hasImageReviews?: boolean }>`
   ${homePadding}
   display: flex;
   flex-direction: column;
   width: 100%;
 
-  ${({ hasReivew }) => {
-    if (!hasReivew) {
+  ${({ hasImageReviews }) => {
+    if (!hasImageReviews) {
       return css`
         justify-content: center;
         align-items: center;
-        height: 50vh;
+        height: 30vh;
       `;
     }
   }}

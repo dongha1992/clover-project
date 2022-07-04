@@ -7,8 +7,8 @@ import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
 import Image from 'next/image';
-import newUserImg from '@public/images/img2.png';
-import friendPushEventImg from '@public/images/img3.png';
+import newUserImg from '@public/images/newUserImg.svg';
+import friendPushEventImg from '@public/images/friendPushEventImg.svg';
 import { IGetOrders, IOrderDeliverie, Obj } from '@model/index';
 import { INIT_USER, userForm } from '@store/user';
 import { useDispatch, useSelector } from 'react-redux';
@@ -353,10 +353,10 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  margin-bottom: 158px;
+  /* margin-bottom: 158px; */
 `;
 
-const LogoutWrapper = styled.div`
+const LogoutWrapper = styled.li`
   cursor: pointer;
   padding: 0 24px;
   list-style: none;
@@ -384,7 +384,11 @@ const SubscriptionWrapper = styled.div`
   padding-top: 32px;
 `;
 
-const ManageWrapper = styled.ul``;
+const ManageWrapper = styled.ul`
+  & > li:last-of-type > div {
+    border-bottom: none;
+  }
+`;
 const MypageItem = styled.li`
   cursor: pointer;
   padding: 0 24px;

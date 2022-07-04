@@ -7,11 +7,11 @@ import SubsDetailOrderBox from './SubsDetailOrderBox';
 
 interface IProps {
   status: string;
-  subscriptionPeriod: string;
+
   orderId: number;
 }
 
-const SubsDetailOrderInfo = ({ status, subscriptionPeriod, orderId }: IProps) => {
+const SubsDetailOrderInfo = ({ status, orderId }: IProps) => {
   const { subsCalendarSelectOrders } = useSelector(subscriptionForm);
   const orderStatus = useSubsOrderStatus(subsCalendarSelectOrders[0]?.status, status);
   return (
@@ -22,7 +22,7 @@ const SubsDetailOrderInfo = ({ status, subscriptionPeriod, orderId }: IProps) =>
       <ul className="SubsDetailOrderWrapper">
         {subsCalendarSelectOrders.map((item: any, index: number) => (
           <li key={index}>
-            <SubsDetailOrderBox item={item} subscriptionPeriod={subscriptionPeriod} orderId={orderId} />
+            <SubsDetailOrderBox item={item} orderId={orderId} />
           </li>
         ))}
       </ul>

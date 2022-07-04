@@ -11,7 +11,8 @@ import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
 import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
-
+import Image from 'next/image';
+import BorderLine from '@components/Shared/BorderLine';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
@@ -63,6 +64,7 @@ const Home = () => {
       <Banner bannerList={bannerList} />
       <SectionWrapper>
         <MainTab />
+        <BorderLine height={1} margin="24px 0 24px 0" />
         <SectionTitle>MD 추천</SectionTitle>
         <FlexWrapWrapper>
           {menus?.length! > 0
@@ -73,11 +75,24 @@ const Home = () => {
             : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>
       </SectionWrapper>
-      <LineBanner />
+      <LineBanner>
+        <Image
+          src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_banner.png`}
+          height="120px"
+          width="512px"
+          layout="responsive"
+        />
+      </LineBanner>
       <FlexSpace>
-        <SectionTitle>이벤트 / 기획전 타이틀</SectionTitle>
+        <SectionTitle>메인 콘텐츠 기획전 - 1</SectionTitle>
         <TextB3R color={theme.greyScale65}>더보기</TextB3R>
       </FlexSpace>
+      <Image
+        src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
+        height="300px"
+        width="512px"
+        layout="responsive"
+      />
       {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
       <ItemListRowWrapper>
         <ItemListRow>
@@ -104,7 +119,7 @@ const SectionWrapper = styled.section`
 
 const SectionTitle = styled.div`
   ${textH3}
-  margin-top: 16px;
+  margin-top: 24px;
   margin-bottom: 24px;
 `;
 
@@ -115,9 +130,10 @@ export const ItemListCol = styled.div`
 `;
 
 const LineBanner = styled.div`
-  background-color: ${({ theme }) => theme.greyScale65};
-  height: 200px;
-  margin: 48px 0px;
+  height: 96px;
+  max-width: 512px;
+  width: 100%;
+  margin: 24px 0px;
 `;
 
 const FlexSpace = styled.div`
@@ -133,7 +149,7 @@ const ItemListRowWrapper = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-  margin-bottom: 48px;
+  margin-bottom: 12px;
 `;
 
 export const ItemListRow = styled.div`
@@ -143,7 +159,6 @@ export const ItemListRow = styled.div`
 
   > div {
     padding-right: 10px;
-    width: 194px;
   }
 `;
 

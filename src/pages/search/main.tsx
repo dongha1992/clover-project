@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
+import { INIT_MENU_KEYWORD, menuSelector, SET_MENU_KEYWORD } from '@store/menu';
 import { IMenus, Obj } from '@model/index';
 import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 
@@ -24,10 +25,10 @@ const SearchMainPage = () => {
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const dispatch = useDispatch();
   const { categoryFilters, type } = useSelector(filterSelector);
+  const { menuKeyword } = useSelector(menuSelector);
+
   const isFilter = categoryFilters?.order || categoryFilters?.filter;
 
   const {
@@ -65,13 +66,6 @@ const SearchMainPage = () => {
   };
 
   useEffect(() => {
-    const hasSearchResult = searchResult.length > 0;
-    if ((categoryFilters?.order || categoryFilters?.filter) && hasSearchResult) {
-      checkIsFiltered(defaultMenus!);
-    }
-  }, [categoryFilters]);
-
-  useEffect(() => {
     initLocalStorage();
   }, []);
 
@@ -82,8 +76,26 @@ const SearchMainPage = () => {
   }, []);
 
   useEffect(() => {
+    if (menuKeyword) {
+      startMenuSearch(menuKeyword);
+    }
+  }, [menuKeyword]);
+
+  useEffect(() => {
     setLocalStorage();
   }, [recentKeywords]);
+
+  useEffect(() => {
+    const hasSearchResult = searchResult.length > 0;
+    if ((categoryFilters?.order || categoryFilters?.filter) && hasSearchResult) {
+      checkIsFiltered(defaultMenus!);
+    }
+  }, [categoryFilters]);
+
+  const startMenuSearch = (keyword: string) => {
+    setKeyword(keyword);
+    setIsSearched(true);
+  };
 
   const deleteAllRecentKeyword = () => {
     localStorage.removeItem('recentSearch');
@@ -107,10 +119,10 @@ const SearchMainPage = () => {
         setSearchResult([]);
         return;
       }
-
-      reOrderRecentKeywords(value);
+      dispatch(SET_MENU_KEYWORD(value));
       dispatch(INIT_CATEGORY_FILTER());
-      setIsSearched(true);
+      startMenuSearch(value);
+      reOrderRecentKeywords(value);
       refetch();
     }
   };
@@ -165,8 +177,8 @@ const SearchMainPage = () => {
   };
 
   const selectRecentSearchItemHandler = (keyword: string) => {
-    setKeyword(keyword);
-    setIsSearched(true);
+    dispatch(SET_MENU_KEYWORD(keyword));
+    startMenuSearch(keyword);
   };
 
   if (isFetching) {

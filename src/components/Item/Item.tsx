@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol, showMoreText } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
@@ -28,6 +28,7 @@ import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
 import { onMenuLikes } from '@queries/menu';
+import { useToast } from '@hooks/useToast';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -42,7 +43,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
-
+  const { showToast } = useToast();
   const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
@@ -68,6 +69,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        showToast({ message: '알림 신청을 완료했어요!' });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -229,7 +231,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   return (
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
-      <ImageWrapper>
+      <ImageWrapper isHorizontal={isHorizontal}>
         <Image
           src={item.thumbnail[0]?.url ? IMAGE_S3_URL + item.thumbnail[0]?.url : IMAGE_ERROR}
           alt="상품이미지"
@@ -260,9 +262,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
-          <TextB3R margin="8px 0 0 0" width="100%" textHide>
+          <TextB2R margin="8px 0 0px 0" width="100%" textHide>
             {item.name.trim()}
-          </TextB3R>
+          </TextB2R>
         </NameWrapper>
         {!isOpenSoon && !isReOpen && (
           <PriceWrapper>
@@ -305,6 +307,7 @@ const Container = styled.div<{ isHorizontal?: boolean }>`
   display: inline-block;
   height: auto;
   background-color: #fff;
+  cursor: pointer;
   ${({ isHorizontal }) => {
     if (isHorizontal) {
       return css`
@@ -338,6 +341,7 @@ const ForReopen = styled.div`
 const DesWrapper = styled.div`
   width: 100%;
   height: 38px;
+  margin-top: 8px;
 `;
 
 const CartBtn = styled.div`
@@ -359,17 +363,30 @@ const ReopenBtn = styled.div`
   z-index: 2;
 `;
 
-const ImageWrapper = styled.div`
+const ImageWrapper = styled.div<{ isHorizontal?: boolean }>`
   position: relative;
-  width: 100%;
+
   .rounded {
     border-radius: 8px;
   }
+  ${({ isHorizontal }) => {
+    if (isHorizontal) {
+      return css`
+        width: 132px;
+        height: 132px;
+      `;
+    } else {
+      return css`
+        width: 100%;
+      `;
+    }
+  }}
 `;
 
 const NameWrapper = styled.div`
   height: 26px;
   width: 100%;
+  margin-bottom: 4px;
 `;
 
 const PriceWrapper = styled.div`

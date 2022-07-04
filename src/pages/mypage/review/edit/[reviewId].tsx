@@ -235,9 +235,9 @@ const EditReviewPage = ({ reviewId }: any) => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        rating: selectedReviewDetail.searchReview.rating,
-        imgFiles:
-          selectedReviewDetail?.searchReview && selectedReviewDetail?.searchReview?.images?.map((img) => img.url),
+        content: selectedReviewDetail.menuReviews.content,
+        rating: selectedReviewDetail.menuReviews.rating,
+        imgFiles: selectedReviewDetail?.menuReviews && selectedReviewDetail?.menuReviews?.images?.map((img) => img.url),
       });
     }
   }, [selectedReviewDetail]);
@@ -268,7 +268,7 @@ const EditReviewPage = ({ reviewId }: any) => {
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.searchReview.menuName}</TextB2R>
+            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.menuReviews.menuName}</TextB2R>
           </TextWrapper>
         </FlexRow>
         <RateWrapper>

@@ -7,6 +7,7 @@ type TProps = {
   menuItem: IMenus | any;
   categoryMenus: IMenus[];
   info: any;
+  menuKeyword: string;
 };
 
 const initialState: TProps = {
@@ -14,6 +15,7 @@ const initialState: TProps = {
   menuItem: {},
   categoryMenus: [],
   info: {},
+  menuKeyword: '',
 };
 
 export const menu = createSlice({
@@ -41,10 +43,24 @@ export const menu = createSlice({
     SET_INFO: (state: any, action: PayloadAction<IMenus>) => {
       state.info = action.payload;
     },
+    SET_MENU_KEYWORD: (state: any, action: PayloadAction<string>) => {
+      state.menuKeyword = action.payload;
+    },
+    INIT_MENU_KEYWORD: (state: any, action: PayloadAction) => {
+      state.menuKeyword = '';
+    },
   },
 });
 
-export const { SET_MENU, SET_MENU_ITEM, SET_CATEGORY_MENU, INIT_CATEGORY_MENU, INIT_MENU_ITEM, SET_INFO } =
-  menu.actions;
+export const {
+  SET_MENU,
+  SET_MENU_ITEM,
+  SET_CATEGORY_MENU,
+  INIT_CATEGORY_MENU,
+  INIT_MENU_ITEM,
+  SET_INFO,
+  SET_MENU_KEYWORD,
+  INIT_MENU_KEYWORD,
+} = menu.actions;
 export const menuSelector = (state: AppState): TProps => state.menu;
 export default menu.reducer;

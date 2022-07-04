@@ -51,10 +51,8 @@ const DestinationDetailPage = () => {
   const { orderId, isSubscription, subsDeliveryType, destinationId, menuId } = router.query;
 
   // 배송 가능 여부
-  const { tempLocation, availableDestination, userDeliveryType } = useSelector(destinationForm);
+  const { tempLocation, availableDestination, userDeliveryType, isCanNotDelivery } = useSelector(destinationForm);
   const destinationDeliveryType = checkDestinationHelper(availableDestination);
-
-  const canNotDelivery = destinationDeliveryType === 'noDelivery';
 
   const getLonLanForMap = async () => {
     const params = {
@@ -79,7 +77,7 @@ const DestinationDetailPage = () => {
   };
 
   const getDestination = async () => {
-    if (canNotDelivery) {
+    if (isCanNotDelivery) {
       return;
     }
 
@@ -224,7 +222,7 @@ const DestinationDetailPage = () => {
           </FlexRow>
         )}
       </DestinationInfoWrarpper>
-      {canNotDelivery && (
+      {isCanNotDelivery && (
         <ButtonGroup
           leftButtonHandler={goToSearch}
           rightButtonHandler={goToHome}
@@ -232,7 +230,7 @@ const DestinationDetailPage = () => {
           rightText="닫기"
         />
       )}
-      {!canNotDelivery && (
+      {!isCanNotDelivery && (
         <ButtonWrapper>
           <Button height="100%" borderRadius="0" onClick={getDestination}>
             {isMaybeChangeType ? `${deliveryMap[destinationStatusByRule]}으로 변경하기` : '설정하기'}

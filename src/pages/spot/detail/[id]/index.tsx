@@ -25,7 +25,6 @@ interface IParams {
 
 const SpotDetailPage = (): ReactElement => {
   const dispatch = useDispatch();
-  const { isSpotLiked } = useSelector(spotSelector);
   const tabRef = useRef<HTMLDivElement>(null);
   // const [spotItem, getSpotItem] = useState<ISpotsDetail>();
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');

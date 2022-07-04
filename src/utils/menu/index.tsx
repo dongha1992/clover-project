@@ -3,6 +3,8 @@ import { getMenuDisplayPrice, getDiscountPrice } from './getMenuDisplayPrice';
 import getDisplayMenuName from './getDisplayMenuName';
 import { getFilteredMenus, reorderedMenusBySoldout } from './getFilteredMenu';
 import { getHolidayByMenu } from './getHolidayByMenu';
+import { getMenuAverageRate } from './getMenuAverageRate';
+
 export {
   getMenuDisplayPrice,
   getDiscountPrice,
@@ -10,5 +12,6 @@ export {
   getDisplayMenuName,
   getFilteredMenus,
   reorderedMenusBySoldout,
+  getMenuAverageRate,
   getHolidayByMenu,
 };
