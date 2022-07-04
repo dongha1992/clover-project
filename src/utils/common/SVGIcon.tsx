@@ -6,8 +6,8 @@ interface TSvg {
 
 interface TProps {
   name: string;
-  width?: string;
-  height?: string;
+  width?: string | undefined;
+  height?: string | undefined;
   color?: string;
   color2?: string;
 }
@@ -921,16 +921,28 @@ const svgMap: TSvg = {
       <path d="M3 9.5H7" stroke="#242424" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  reviewStarFull: ({ color, color2 }) => (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  reviewStarFull: ({ height, width }) => (
+    <svg
+      width={width ? width : 44}
+      height={height ? height : 44}
+      viewBox="0 0 44 44"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M21.1252 1.57919C21.5059 0.891939 22.494 0.891938 22.8747 1.57919L29.2615 13.1089C29.3994 13.3578 29.6368 13.5362 29.9142 13.5993L42.3922 16.4405C43.1242 16.6071 43.4183 17.491 42.9322 18.0631L34.3739 28.1341C34.1988 28.3402 34.1146 28.6084 34.1405 28.8776L35.4295 42.2634C35.5035 43.0324 34.7147 43.5914 34.0137 43.2665L22.4204 37.8949C22.1537 37.7713 21.8462 37.7713 21.5796 37.8949L9.98625 43.2665C9.28524 43.5914 8.49639 43.0324 8.57045 42.2634L9.85942 28.8776C9.88534 28.6084 9.80114 28.3402 9.62604 28.1341L1.06774 18.0631C0.581582 17.491 0.875725 16.6071 1.60775 16.4405L14.0857 13.5993C14.3632 13.5362 14.6006 13.3578 14.7385 13.1089L21.1252 1.57919Z"
         fill="#F4D740"
       />
     </svg>
   ),
-  reviewStarHalf: () => (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  reviewStarHalf: ({ height, width }) => (
+    <svg
+      width={width ? width : 44}
+      height={height ? height : 44}
+      viewBox="0 0 44 44"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M21.1252 1.57919C21.5059 0.891939 22.494 0.891938 22.8747 1.57919L29.2615 13.1089C29.3994 13.3578 29.6368 13.5362 29.9142 13.5993L42.3922 16.4405C43.1242 16.6071 43.4183 17.491 42.9322 18.0631L34.3739 28.1341C34.1988 28.3402 34.1146 28.6084 34.1405 28.8776L35.4295 42.2634C35.5035 43.0324 34.7147 43.5914 34.0137 43.2665L22.4204 37.8949C22.1537 37.7713 21.8462 37.7713 21.5796 37.8949L9.98625 43.2665C9.28524 43.5914 8.49639 43.0324 8.57045 42.2634L9.85942 28.8776C9.88534 28.6084 9.80114 28.3402 9.62604 28.1341L1.06774 18.0631C0.581582 17.491 0.875725 16.6071 1.60775 16.4405L14.0857 13.5993C14.3632 13.5362 14.6006 13.3578 14.7385 13.1089L21.1252 1.57919Z"
         fill="#F2F2F2"
@@ -943,8 +955,14 @@ const svgMap: TSvg = {
       />
     </svg>
   ),
-  reviewStarEmpty: () => (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  reviewStarEmpty: ({ width, height }) => (
+    <svg
+      width={width ? width : 44}
+      height={height ? height : 44}
+      viewBox="0 0 44 44"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M21.1252 1.57919C21.5059 0.891939 22.494 0.891938 22.8747 1.57919L29.2615 13.1089C29.3994 13.3578 29.6368 13.5362 29.9142 13.5993L42.3922 16.4405C43.1242 16.6071 43.4183 17.491 42.9322 18.0631L34.3739 28.1341C34.1988 28.3402 34.1146 28.6084 34.1405 28.8776L35.4295 42.2634C35.5035 43.0324 34.7147 43.5914 34.0137 43.2665L22.4204 37.8949C22.1537 37.7713 21.8462 37.7713 21.5796 37.8949L9.98625 43.2665C9.28524 43.5914 8.49639 43.0324 8.57045 42.2634L9.85942 28.8776C9.88534 28.6084 9.80114 28.3402 9.62604 28.1341L1.06774 18.0631C0.581582 17.491 0.875725 16.6071 1.60775 16.4405L14.0857 13.5993C14.3632 13.5362 14.6006 13.3578 14.7385 13.1089L21.1252 1.57919Z"
         fill="#F2F2F2"
@@ -1549,17 +1567,36 @@ const svgMap: TSvg = {
   whiteHeart24: () => (
     <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g filter="url(#filter0_d_15131_49493)">
-        <path d="M9.5 5.5C7.0151 5.5 5 7.61243 5 10.2186C5 12.3225 5.7875 17.3157 13.5392 22.3632C13.6781 22.4527 13.8375 22.5 14 22.5C14.1625 22.5 14.3219 22.4527 14.4608 22.3632C22.2125 17.3157 23 12.3225 23 10.2186C23 7.61243 20.9849 5.5 18.5 5.5C16.0151 5.5 14 8.35978 14 8.35978C14 8.35978 11.9849 5.5 9.5 5.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path
+          d="M9.5 5.5C7.0151 5.5 5 7.61243 5 10.2186C5 12.3225 5.7875 17.3157 13.5392 22.3632C13.6781 22.4527 13.8375 22.5 14 22.5C14.1625 22.5 14.3219 22.4527 14.4608 22.3632C22.2125 17.3157 23 12.3225 23 10.2186C23 7.61243 20.9849 5.5 18.5 5.5C16.0151 5.5 14 8.35978 14 8.35978C14 8.35978 11.9849 5.5 9.5 5.5Z"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </g>
       <defs>
-        <filter id="filter0_d_15131_49493" x="0" y="0.5" width="28" height="27" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset/>
-          <feGaussianBlur stdDeviation="2"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0.35 0"/>
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_15131_49493"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_15131_49493" result="shape"/>
+        <filter
+          id="filter0_d_15131_49493"
+          x="0"
+          y="0.5"
+          width="28"
+          height="27"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset />
+          <feGaussianBlur stdDeviation="2" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0 0.141176 0 0 0 0.35 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_15131_49493" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_15131_49493" result="shape" />
         </filter>
       </defs>
     </svg>
