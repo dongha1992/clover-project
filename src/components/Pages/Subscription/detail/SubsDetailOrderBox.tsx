@@ -30,8 +30,8 @@ interface IProps {
 const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
   const [toggleState, setToggleState] = useState(false);
   const dispatch = useDispatch();
-  const { data: orderDetail } = useGetOrderDetail(['getOrderDetail', 'subscription', orderId], orderId!, {
-    refetchOnMount: true,
+  const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', orderId], orderId!, {
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     enabled: !!orderId,
   });
@@ -66,7 +66,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
       query: { destinationId: item.id, isSubscription: true },
     });
   };
-
+  if (isLoading) return <div>...로딩중</div>;
   return (
     <Container>
       <FlexCol padding="24px 24px">
