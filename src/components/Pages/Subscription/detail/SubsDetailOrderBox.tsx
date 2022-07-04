@@ -214,8 +214,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
           <FlexBetween>
             <Button
               onClick={() => {
-                orderDetail?.subscriptionPeriod === 'UNLIMITED' &&
-                  item?.status !== 'COMPLETED' &&
+                item?.status !== 'COMPLETED' &&
                   item?.status !== 'CANCELED' &&
                   item?.status !== 'DELIVERING' &&
                   deliveryInfoChangeHandler();
@@ -225,10 +224,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
               color="#242424"
               border
               disabled={
-                orderDetail?.subscriptionPeriod !== 'UNLIMITED' ||
-                item?.status === 'COMPLETED' ||
-                item?.status === 'CANCELED' ||
-                item?.status === 'DELIVERING'
+                item?.status === 'COMPLETED' || item?.status === 'CANCELED' || item?.status === 'DELIVERING'
                   ? true
                   : false
               }
