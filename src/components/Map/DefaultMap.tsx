@@ -39,6 +39,7 @@ const DefaultMap = ({
       },
         position: new naver.maps.LatLng(Number(centerLat), Number(centerLng)), // 최초 찍히는 마커
         map: map,
+        draggable: false,
       });
     };
   
