@@ -2,22 +2,34 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { TextH4B } from '@components/Shared/Text';
+import { theme } from '@styles/theme';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+
 const TABS = [
-  { title: '전체메뉴', link: '/category/all' },
-  { title: '프코추천', link: '/recommendation' },
-  { title: '이벤트', link: '/' },
+  { title: '카테고리', link: '/category/all' },
+  { title: 'HOT썸머 할인!!', link: '/recommendation' },
   { title: '기획전', link: '/' },
-  { title: '기획전2', link: '/' },
+  { title: '이벤트', link: '/event' },
 ];
 
 const MainTab = () => {
+  const router = useRouter();
   return (
     <Container>
       {TABS.map((tab, index) => {
         return (
-          <TextH4B padding="12px 0" pointer key={index}>
-            <Link href={tab.link}>{tab.title}</Link>
-          </TextH4B>
+          <TabWrapper key={index} onClick={() => router.push(`${tab.link}`)}>
+            <Image
+              src={`${process.env.IMAGE_S3_URL}/menu/img_thumbnail_empty.jpg`}
+              height="100px"
+              width="100px"
+              className="rounded"
+            />
+            <TextH4B padding="12px 0" pointer>
+              {tab.title}
+            </TextH4B>
+          </TabWrapper>
         );
       })}
     </Container>
@@ -29,6 +41,17 @@ const Container = styled.div`
   width: 100%;
   justify-content: space-between;
   margin-top: 19px;
+`;
+
+const TabWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  .rounded {
+    border-radius: 50%;
+  }
 `;
 
 export default MainTab;
