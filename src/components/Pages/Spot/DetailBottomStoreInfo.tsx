@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB1R, TextB1B, TextB2R } from '@components/Shared/Text';
-import { DefaultMap } from '@components/Map';
+import { DefaultKakaoMap } from '@components/Map';
 import { textH5 } from '@styles/theme';
 
 interface IProps {
@@ -56,7 +56,7 @@ const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday, placeTel}:
         </StoreInfoWrapper>
       </Wrapper>
       <MapWrapper>
-        <DefaultMap centerLat={lat ? lat : 37.54669189732} centerLng={lon ? lon : 126.833485621837} />
+        <DefaultKakaoMap centerLat={lat ? lat : 37.54669189732} centerLng={lon ? lon : 126.833485621837} />
       </MapWrapper>
     </Container>
   );
