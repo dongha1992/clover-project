@@ -11,7 +11,7 @@ import { MenuFilter } from '@components/Filter';
 import { SpotSearchFilter } from '@components/Pages/Spot';
 import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import { spotSelector, SET_SPOT_MAP_SWITCH, INIT_SPOT_MAP_SWITCH } from '@store/spot';
+import { spotSelector, SET_SPOT_MAP_SWITCH } from '@store/spot';
 import { ISpotsDetail } from '@model/index';
 
 interface IProps {
@@ -40,7 +40,7 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
   };
 
   const goToSwitchMap = () => {
-      dispatch(SET_SPOT_MAP_SWITCH());
+      dispatch(SET_SPOT_MAP_SWITCH(true));
   };
 
   return (
@@ -89,7 +89,6 @@ const FilterRow = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-top: 24px;
-  padding-bottom: 17px;
 `;
 
 const FilterWrapper = styled.div`
