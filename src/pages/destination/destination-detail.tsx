@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { CheckDestinationPlace } from '@components/Pages/Destination';
-import { DefaultMap } from '@components/Map';
+import { DefaultKakaoMap } from '@components/Map';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
 import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
@@ -192,7 +192,7 @@ const DestinationDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
+        <DefaultKakaoMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>
