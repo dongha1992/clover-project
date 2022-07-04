@@ -34,12 +34,14 @@ import { getCookie } from '@utils/common/cookie';
 import { useToast } from '@hooks/useToast';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
+
 declare global {
   interface Window {
     Kakao: any;
     nicepaySubmit: any;
     nicepayClose: any;
     nicepayMobileStart: any;
+    kakao: any;
   }
 }
 
