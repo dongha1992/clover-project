@@ -107,9 +107,9 @@ const SpotSearchMainPage = (): ReactElement => {
   }, [isDelivery]);
 
   const latLen = spotsPosition?.latitude !== null;
-  const latitude = latLen ? Number(spotsPosition?.latitude) : 37.50101118367814;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : null;
   const lonLen = spotsPosition?.longitude !== null;
-  const longitude = lonLen ? Number(spotsPosition?.longitude) : 127.03525895821902;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(

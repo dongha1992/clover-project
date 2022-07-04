@@ -41,9 +41,9 @@ const SpotSearchPage = (): ReactElement => {
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
   const latLen = spotsPosition?.latitude !== null;
-  const latitude = latLen ? Number(spotsPosition?.latitude) : 37.50101118367814;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : null;
   const lonLen = spotsPosition?.longitude !== null;
-  const longitude = lonLen ? Number(spotsPosition?.longitude) : 127.03525895821902;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));

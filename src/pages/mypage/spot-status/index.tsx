@@ -60,8 +60,8 @@ const SpotStatusPage = () => {
     ['spotList'],
     async () => {
       const params: IParamsSpots = {
-        latitude: latLen ? Number(spotsPosition.latitude) : 37.50101118367814,
-        longitude: lonLen ? Number(spotsPosition.longitude) : 127.03525895821902,
+        latitude: latLen ? Number(spotsPosition.latitude) : null,
+        longitude: lonLen ? Number(spotsPosition.longitude) : null,
         size: 10,
         page: 1,
       };
