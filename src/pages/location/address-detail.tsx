@@ -13,8 +13,9 @@ import { checkDestinationHelper } from '@utils/destination';
 import { SET_SPOT_POSITIONS } from '@store/spot';
 
 const AddressDetailPage = () => {
-  const { tempLocation, availableDestination } = useSelector(destinationForm);
+  const { tempLocation, availableDestination, isCanNotDelivery } = useSelector(destinationForm);
   const dispatch = useDispatch();
+
   const { isSpot } = router.query;
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
@@ -82,7 +83,7 @@ const AddressDetailPage = () => {
       <MapWrapper>
         <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
-      {canNotDelivery ? (
+      {isCanNotDelivery ? (
         <ButtonGroup
           leftButtonHandler={goToSearch}
           rightButtonHandler={goToHome}
