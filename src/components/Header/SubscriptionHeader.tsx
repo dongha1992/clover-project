@@ -1,12 +1,16 @@
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
+import router from 'next/router';
 
 const SubscriptionHeader = () => {
+  const goToSubsInformation = () => {
+    router.push('/subscription/information');
+  };
   return (
     <Container>
       <Wrapper>
-        <Button>구독안내</Button>
+        <Button onClick={goToSubsInformation}>구독안내</Button>
       </Wrapper>
     </Container>
   );

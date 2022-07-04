@@ -109,10 +109,11 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         );
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const orderHandler = () => {
+  const orderHandler = (e: any) => {
+    e.stopPropagation();
     /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
 
     const destinationInfo = {
