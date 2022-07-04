@@ -31,8 +31,10 @@ import { filterSelector } from '@store/filter';
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
+/* TODO ITEM과 싱크 */
 type TProps = {
-  item: IOrderedMenuDetails;
+  // item: IOrderedMenuDetails;
+  item: any;
   isHorizontal?: boolean;
 };
 
