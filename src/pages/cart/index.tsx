@@ -665,7 +665,7 @@ const CartPage = () => {
       item.menuDetails.forEach((detail) => {
         tempOrderMenus.push({
           menuDetailId: detail.menuDetailId,
-          menuQuantity: detail.menuQuantity,
+          menuQuantity: detail.quantity,
         });
       })
     );
