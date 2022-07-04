@@ -304,6 +304,7 @@ const Container = styled.div<{ isHorizontal?: boolean }>`
   display: inline-block;
   height: auto;
   background-color: #fff;
+  cursor: pointer;
   ${({ isHorizontal }) => {
     if (isHorizontal) {
       return css`
