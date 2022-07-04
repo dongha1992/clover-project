@@ -37,6 +37,8 @@ const HomeHeader = () => {
     setIsBottomSheet(content ? true : false);
   }, [content]);
 
+  console.log(formatAvailableDestination);
+
   return (
     <Container isBottomSheet={isBottomSheet}>
       <Wrapper>
