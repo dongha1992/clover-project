@@ -30,7 +30,7 @@ import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel from '@components/Shared/Carousel';
 import { useQuery } from 'react-query';
-import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenusApi, getMenuDetailReviewImageApi } from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
@@ -58,6 +58,7 @@ dayjs.locale('ko');
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
+/*TODO: 베스트 후기 수정해야함 */
 interface IProps {
   menuId: number;
 }
@@ -108,7 +109,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const { data } = await getMenuDetailReviewApi(Number(menuId)!);
+      const params = { id: Number(menuId)!, page: 1, size: 100 };
+
+      const { data } = await getMenuDetailReviewApi(params);
       return data.data;
     },
 
@@ -116,6 +119,22 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: reviewsImages, error: reviewsImagesError } = useQuery(
+    'getMenuDetailReviewImages',
+    async () => {
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
+      const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
     }
   );
 
@@ -217,7 +236,14 @@ const MenuDetailPage = ({ menuId }: IProps) => {
         if (isOpenSoon) {
           return;
         }
-        return <DetailBottomReview reviews={reviews} isSticky={isSticky} menuId={menuDetail?.id} />;
+        return (
+          <DetailBottomReview
+            reviews={reviews!}
+            isSticky={isSticky}
+            menuId={menuDetail?.id!}
+            reviewsImages={reviewsImages!}
+          />
+        );
       }
 
       case '/menu/detail/faq':
@@ -305,7 +331,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   {DELIVERY_TYPE_MAP[item]}
                 </Label>
               ))}
-              {!menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && <Tag margin="0 4px 0 0">단기구독전용</Tag>}
+              {menuDetail?.type === 'SUBSCRIPTION' && !menuDetail?.subscriptionPeriods?.includes('UNLIMITED') && (
+                <Tag margin="0 4px 0 0">단기구독전용</Tag>
+              )}
             </div>
           </MenuNameWrapper>
           <TextB2R padding="16px 0" color={theme.greyScale65}>
@@ -314,14 +342,20 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           <PriceAndCouponWrapper>
             {!isOpenSoon && !isReOpen && (
               <PriceWrapper>
-                <OriginPrice>
-                  <TextH6B color={theme.greyScale25} textDecoration=" line-through">
-                    {getFormatPrice(String(getMenuDetailPrice().price))}원
-                  </TextH6B>
-                </OriginPrice>
+                {!isTempSold && (
+                  <OriginPrice>
+                    <TextH6B color={theme.greyScale25} textDecoration=" line-through">
+                      {getFormatPrice(String(getMenuDetailPrice().price))}원
+                    </TextH6B>
+                  </OriginPrice>
+                )}
                 <DiscountedPrice>
-                  <TextH3B color={theme.brandColor}>{getMenuDetailPrice().discount}%</TextH3B>
-                  <TextH3B padding={'0 0 0 4px'}>
+                  {!isTempSold && (
+                    <TextH3B padding={'0 4px 0 0px'} color={theme.brandColor}>
+                      {getMenuDetailPrice().discount}%
+                    </TextH3B>
+                  )}
+                  <TextH3B>
                     {getFormatPrice(String(getMenuDetailPrice().discountedPrice))}원
                     {menuDetail?.type === 'SUBSCRIPTION' && '~'}
                   </TextH3B>
@@ -329,7 +363,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
               </PriceWrapper>
             )}
 
-            {!isTempSold && !isReOpen && !isOpenSoon && coupons?.length! > 0 && (
+            {!isTempSold && !isReOpen && !isOpenSoon && (
               <>
                 {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
@@ -339,7 +373,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                     <SVGIcon name="download" />
                   </CouponWrapper>
                 ) : (
-                  <CouponWrapper>
+                  <CouponWrapper onClick={couponDownloadHandler}>
                     <TextH6B padding="4px 4px 0 0">다운 완료</TextH6B>
                     <SVGIcon name="checkBlack18" />
                   </CouponWrapper>
@@ -387,7 +421,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             </DeliveryInfoBox>
           )}
         </MenuDetailWrapper>
-        {reviews?.searchReviewImages?.length! > 0 && !isTempSold && !isReOpen ? (
+        {reviews?.pagination?.total! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
             <ReviewWrapper>
               <ReviewHeader>
@@ -411,15 +445,11 @@ const MenuDetailPage = ({ menuId }: IProps) => {
         <DetailInfoContainer>
           {MENU_DETAIL_INFORMATION.map((info, index) => (
             <div key={index}>
-              <DetailInfoWrapper>
+              <DetailInfoWrapper onClick={() => router.replace(`${menuDetail?.id!}/detail/${info.value}`)}>
                 <TextH4B>{info.text}</TextH4B>
-                <Link href={`${menuDetail?.id!}/detail/${info.value}`} passHref>
-                  <a>
-                    <TextH6B textDecoration="underLine" color={theme.greyScale65}>
-                      자세히
-                    </TextH6B>
-                  </a>
-                </Link>
+                <TextH6B textDecoration="underLine" color={theme.greyScale65}>
+                  자세히
+                </TextH6B>
               </DetailInfoWrapper>
               {index !== MENU_DETAIL_INFORMATION.length - 1 ? <BorderLine height={1} margin="16px 0" /> : null}
             </div>
@@ -437,12 +467,11 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           })}
         </>
       )}
-
       <div ref={tabRef} />
       <Bottom>
         <StickyTab
           tabList={MENU_REVIEW_AND_FAQ}
-          countObj={{ 후기: reviews?.searchReviews.length }}
+          countObj={{ 후기: reviews?.pagination.total }}
           isSticky={isSticky}
           selectedTab={selectedTab}
           onClick={selectTabHandler}
@@ -489,6 +518,7 @@ const CouponWrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding: 10px 10px 10px 16px;
+  cursor: pointer;
 `;
 
 const OriginPrice = styled.div``;
@@ -542,7 +572,7 @@ const CountWrapper = styled.div`
   bottom: 10px;
   padding: 4px 8px;
   border-radius: 50%;
-  background: ${theme.greyScale65};
+  background: rgba(36, 36, 36, 0.5);
   border-radius: 24px;
 `;
 
@@ -578,6 +608,7 @@ const DetailInfoWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Bottom = styled.div``;

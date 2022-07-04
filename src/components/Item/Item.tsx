@@ -28,6 +28,7 @@ import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
 import { onMenuLikes } from '@queries/menu';
+import { useToast } from '@hooks/useToast';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -42,7 +43,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
-
+  const { showToast } = useToast();
   const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
@@ -60,7 +61,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
-        queryClient.setQueryData(['getRecommenMenus'], (previous: any) => {
+        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
@@ -68,6 +69,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        showToast({ message: '알림 신청을 완료했어요!' });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -161,7 +163,6 @@ const Item = ({ item, isHorizontal }: TProps) => {
     if (item.liked) {
       mutateDeleteMenuLike();
     } else {
-      console.log('post');
       mutatePostMenuLike();
     }
   };
@@ -372,7 +373,6 @@ const NameWrapper = styled.div`
 
 const PriceWrapper = styled.div`
   display: flex;
-  margin-bottom: 8px;
 `;
 
 const LikeAndReview = styled.div`
@@ -380,7 +380,7 @@ const LikeAndReview = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 8px 0px;
+  margin: 4px 0 0 0px;
 `;
 
 const Like = styled.div`
@@ -390,6 +390,7 @@ const Like = styled.div`
 
 const TagWrapper = styled.div`
   white-space: wrap;
+  margin-top: 8px;
 `;
 
 export default React.memo(Item);

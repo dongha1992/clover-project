@@ -88,6 +88,7 @@ const DetailBottom = () => {
     },
     {
       onSuccess: async () => {
+        hideToast();
         showToast({ message: '알림을 취소했어요!' });
         await queryClient.refetchQueries('getMenuDetail');
       },

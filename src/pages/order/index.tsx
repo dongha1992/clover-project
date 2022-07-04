@@ -153,7 +153,7 @@ const OrderPage = () => {
 
   const queryClient = useQueryClient();
   const router = useRouter();
-
+  const { message, isSubscription } = router.query;
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
 
   const {
@@ -591,7 +591,11 @@ const OrderPage = () => {
   };
 
   const goToCardManagemnet = (card: IGetCard) => {
-    router.push({ pathname: '/mypage/card', query: { isOrder: true } });
+    if (isSubscription) {
+      router.push({ pathname: '/mypage/card', query: { isOrder: true, isSubscription: true } });
+    } else {
+      router.push({ pathname: '/mypage/card', query: { isOrder: true } });
+    }
   };
 
   const goToRegisteredCard = () => {
@@ -934,8 +938,6 @@ const OrderPage = () => {
   }, [checkForm.samePerson.isSelected]);
 
   useEffect(() => {
-    const { message } = router.query;
-
     if (router.isReady && message) {
       try {
         let preDecode = decodeURIComponent(message as string).replace(/ /g, '+');
@@ -1507,6 +1509,7 @@ const OrderPage = () => {
           point={userInputObj.point}
           type={'last'}
           deliveryType={previewOrder?.order.delivery}
+          subscriptionDiscountRates={previewOrder?.order.subscriptionDiscountRates}
         />
       )}
       <OrderTermWrapper>

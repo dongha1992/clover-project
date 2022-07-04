@@ -81,11 +81,7 @@ const SpotSearchPage = (): ReactElement => {
         size: 6,
       };
       const response = await getSpotEvent(params);
-      const listSort = response.data.data.spots.sort((a, b) => a.distance - b.distance);
-      return {
-        data: response.data.data,
-        spotList: listSort,
-      }
+      return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
