@@ -8,9 +8,11 @@ interface IProps {
   onRating?: (e: React.MouseEvent<HTMLDivElement>, idx: number) => void;
   hoverRating?: number;
   onClick?: (e: React.MouseEvent<HTMLDivElement>, idx: number) => void;
+  width?: string;
+  height?: string;
 }
 
-const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick }: IProps) => {
+const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick, width, height }: IProps) => {
   const getSvgName = (index: number) => {
     if (Math.ceil(rating) === index && rating % 1 !== 0) {
       return 'reviewStarHalf';
@@ -35,7 +37,7 @@ const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick }: IProp
           // onMouseLeave={(e) => onRating && onRating(e, idx)}
         >
           <div>
-            <SVGIcon name={getSvgName(idx)} />
+            <SVGIcon name={getSvgName(idx)} width={width} height={height} />
           </div>
         </div>
       ));

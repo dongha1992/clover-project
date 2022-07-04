@@ -32,7 +32,7 @@ const ReviewOnlyImage = ({
             <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
-            <StarRating rating={Number(averageRating)} />
+            <StarRating rating={Number(averageRating)} width={30} height={30} />
           </Star>
         </Header>
         <ReviewSwipe>
@@ -42,7 +42,7 @@ const ReviewOnlyImage = ({
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>+ {totalReviews - 4}</TextH1B>
+                    <TextH1B color={theme.white}>+ {totalReviews > 4 ? totalReviews - 4 : 0}</TextH1B>
                   </LastImg>
                   <Image
                     src={IMAGE_S3_URL + review?.url}
