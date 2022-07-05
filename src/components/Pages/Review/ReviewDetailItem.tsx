@@ -15,7 +15,6 @@ interface IProps {
 }
 
 const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps) => {
-  console.log(review, 'menuReview');
   return (
     <>
       <Container>

@@ -10,10 +10,7 @@ import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
-import { Obj, ISearchReviews, ISearchReviewImages } from '@model/index';
-import { groupBy, pipe } from '@fxts/core';
-import { getMenuDetailReviewApi, getMenuDetailReviewImageApi } from '@api/menu';
-import { getMenuAverageRate } from '@utils/menu';
+import { getMenuDetailReviewApi, getMenuDetailReviewImageApi, getReviewAvailabilityApi } from '@api/menu';
 import { menuSelector } from '@store/menu';
 
 /* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
@@ -32,7 +29,7 @@ const TotalReviewPage = ({ menuId }: any) => {
   } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const params = { id: Number(menuId)!, page: 1, size: 100 };
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
       const { data } = await getMenuDetailReviewApi(params);
 
       return data.data;
@@ -51,6 +48,21 @@ const TotalReviewPage = ({ menuId }: any) => {
     async () => {
       const params = { id: Number(menuId)!, page: 1, size: 10 };
       const { data } = await getMenuDetailReviewImageApi(params);
+      return data.data;
+    },
+
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId,
+    }
+  );
+
+  const { data: reviewAvailability, error: availabilityError } = useQuery(
+    'getReviewAvailability',
+    async () => {
+      const { data } = await getReviewAvailabilityApi(Number(menuId)!);
       return data.data;
     },
 

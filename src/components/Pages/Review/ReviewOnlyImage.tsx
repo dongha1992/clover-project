@@ -23,7 +23,6 @@ const ReviewOnlyImage = ({
   averageRating,
   totalReviews,
 }: IProps) => {
-  console.log(reviewsImages, 'reviewsImages');
   return (
     <Container>
       <Wrapper>
@@ -43,7 +42,7 @@ const ReviewOnlyImage = ({
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>+ {totalReviews > 4 ? totalReviews - 4 : 0}</TextH1B>
+                    <TextH1B color={theme.white}>+ {reviewsImages.length - 4}</TextH1B>
                   </LastImg>
                   <Image
                     src={IMAGE_S3_URL + review?.url}
@@ -101,7 +100,6 @@ const Star = styled.div``;
 
 const ReviewSwipe = styled.div`
   display: flex;
-  justify-content: space-between;
   overflow: hidden;
   width: 100%;
   margin: 16px 0 24px 0;
@@ -110,6 +108,7 @@ const ReviewSwipe = styled.div`
 
 const ReviewImgWrapper = styled.div`
   width: calc((100% - 24px) / 4);
+  margin-right: 6px;
 
   > span {
     border-radius: 8px;
