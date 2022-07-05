@@ -6,17 +6,19 @@ import router from 'next/router';
 import { getMenuDetailReviewImageApi } from '@api/menu';
 import { useQuery } from 'react-query';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { IDetailImage } from '@model/index';
 
 /* 사진 전체 후기 */
 
+const DEFAULT_SIZE = 30;
+
 const ReviewPage = ({ menuId }: any) => {
   const [page, setPage] = useState<number>(0);
-  // const { loading, error, list } = useFetch(page);
+  const [list, setList] = useState<IDetailImage[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data: reviewsImages,
+  let {
     error: reviewsImagesError,
     isFetching,
     isLoading,
@@ -24,13 +26,16 @@ const ReviewPage = ({ menuId }: any) => {
   } = useQuery(
     'getMenuDetailReviewImages',
     async () => {
-      const params = { id: Number(menuId)!, page, size: 30 };
+      const params = { id: Number(menuId)!, page, size: 10 };
       const { data } = await getMenuDetailReviewImageApi(params);
-      return data.data;
+      return data.data.images;
     },
 
     {
-      onSuccess: () => {},
+      onSuccess: (newList) => {
+        setList((prev: IDetailImage[]) => [...prev, ...newList]);
+      },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId && !!page,
@@ -53,7 +58,6 @@ const ReviewPage = ({ menuId }: any) => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, option);
-
     if (ref.current) {
       observer.observe(ref?.current);
     }
@@ -77,8 +81,7 @@ const ReviewPage = ({ menuId }: any) => {
   return (
     <Container>
       <Wrapper ref={parentRef}>
-        {reviewsImages?.images?.map((image: any, index: number) => {
-          console.log(image, 'image');
+        {list?.map((image: any, index: number) => {
           return (
             <ReviewImage
               src={IMAGE_S3_URL + image.url}
