@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
 import { getMenuDetailReviewApi, getMenuDetailReviewImageApi, getReviewAvailabilityApi } from '@api/menu';
 import { menuSelector } from '@store/menu';
+import { userForm } from '@store/user';
 
 /* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
 /* TODO: 중복 코드 많음 , 리팩토링 */
@@ -19,6 +20,7 @@ import { menuSelector } from '@store/menu';
 const TotalReviewPage = ({ menuId }: any) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
+  const { me } = useSelector(userForm);
 
   const { rating, reviewCount } = menuItem;
 
@@ -70,7 +72,7 @@ const TotalReviewPage = ({ menuId }: any) => {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      enabled: !!menuId,
+      enabled: !!menuId && !!me,
     }
   );
 
@@ -105,16 +107,18 @@ const TotalReviewPage = ({ menuId }: any) => {
             totalReviews={reviewCount}
           />
         )}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          borderRadius="8"
-          margin="0 0 32px 0"
-          onClick={() => router.push(`/mypage/review/write/${menuId}`)}
-        >
-          후기 작성하기 (최대 3,000포인트 적립)
-        </Button>
+        {reviewAvailability && (
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            borderRadius="8"
+            margin="0 0 32px 0"
+            onClick={() => router.push(`/mypage/review/write/${menuId}`)}
+          >
+            후기 작성하기 (최대 3,000포인트 적립)
+          </Button>
+        )}
       </Wrapper>
       <BorderLine height={8} />
       <ReviewWrapper>
