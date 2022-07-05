@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
@@ -7,15 +7,39 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
+import { useQuery, useQueryClient } from 'react-query';
+import { getMenuDetailApi } from '@api/menu';
 
 type TProps = {
   title?: string;
 };
 
 const DefaultHeader = ({ title }: TProps) => {
+  const [menuId, setMenuId] = useState<string>();
   const router = useRouter();
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
+
+  const oauth = router.pathname === '/oauth';
+  const totalReview = router.pathname === '/menu/[menuId]/review/total';
+
+  const {
+    data: menuDetail,
+    error: menuError,
+    isLoading,
+  } = useQuery(
+    'getMenuDetail',
+    async () => {
+      const { data } = await getMenuDetailApi(Number(menuId)!);
+      return data?.data;
+    },
+    {
+      onSuccess: (data) => {},
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!menuId && !!totalReview,
+    }
+  );
 
   const goBack = (): void => {
     if (router.pathname === '/spot/join/main/form') {
@@ -38,8 +62,11 @@ const DefaultHeader = ({ title }: TProps) => {
     }
   };
 
-  const oauth = router.pathname === '/oauth';
-  const totalReview = router.pathname === '/menu/[menuId]/review/total';
+  useEffect(() => {
+    if (router.isReady && totalReview) {
+      setMenuId(router?.query?.menuId as string);
+    }
+  }, [router.isReady]);
 
   return (
     <Container>
@@ -49,7 +76,7 @@ const DefaultHeader = ({ title }: TProps) => {
             <SVGIcon name="arrowLeft" />
           </div>
         )}
-        <TextH4B padding="2px 0 0 0">{totalReview ? `${title} (${menuItem.reviewCount})` : title}</TextH4B>
+        <TextH4B padding="2px 0 0 0">{totalReview ? `${title} (${menuDetail?.reviewCount})` : title}</TextH4B>
       </Wrapper>
     </Container>
   );
