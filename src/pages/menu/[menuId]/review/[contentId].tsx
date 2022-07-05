@@ -8,11 +8,11 @@ import { useQuery } from 'react-query';
 import { getReviewDetailApi } from '@api/menu';
 import assignIn from 'lodash-es/assignIn';
 
-const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
+const ReviewDetailPage = ({ contentId }: { contentId: string }) => {
   const dispatch = useDispatch();
 
   const {
-    data: selectedReviewDetail,
+    data: menuReview,
     error,
     isLoading,
   } = useQuery(
@@ -20,10 +20,10 @@ const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
     async () => {
       const params = {
         id: 9,
-        reviewId: Number(reviewId),
+        menuReviewId: Number(contentId),
       };
       const { data } = await getReviewDetailApi(params);
-      return data.data;
+      return data.data.menuReview;
     },
 
     {
@@ -43,7 +43,7 @@ const ReviewDetailPage = ({ reviewId }: { reviewId: string }) => {
 
   return (
     <Container>
-      <ReviewDetailItem review={selectedReviewDetail} isDetailPage clickImgViewHandler={clickImgViewHandler} />
+      <ReviewDetailItem review={menuReview} isDetailPage clickImgViewHandler={clickImgViewHandler} />
     </Container>
   );
 };
@@ -53,9 +53,9 @@ const Container = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { id } = context.query;
+  const { contentId } = context.query;
   return {
-    props: { reviewId: id },
+    props: { contentId },
   };
 }
 

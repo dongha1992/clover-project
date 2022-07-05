@@ -7,6 +7,8 @@ import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { INIT_IMAGE_VIEWER } from '@store/common';
+import ViewerCarousel from './ViewerCarousel';
+import { breakpoints } from '@utils/common/getMediaQuery';
 
 const ImageViewer = ({ images }: any) => {
   const [currentImg, setCurrentImg] = useState(0);
@@ -19,7 +21,7 @@ const ImageViewer = ({ images }: any) => {
   const totalImg = images.length;
 
   return (
-    <ModalFullScreen height={'300px'} padding="10px" style={{ borderRadius: '8px' }}>
+    <ModalFullScreen height="300px" padding="10px" style={{ borderRadius: '8px' }}>
       <Container>
         <Header>
           <TextH5B color={theme.white}>
@@ -29,7 +31,7 @@ const ImageViewer = ({ images }: any) => {
             <SVGIcon name="defaultCancel24White" />
           </div>
         </Header>
-        <Carousel images={images} setCountIndex={setCurrentImg} />
+        <ViewerCarousel images={images} setCountIndex={setCurrentImg} />
       </Container>
     </ModalFullScreen>
   );
