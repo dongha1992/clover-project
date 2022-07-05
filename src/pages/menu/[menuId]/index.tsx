@@ -145,7 +145,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   );
 
   const { data: reviewAvailability, error: reviewsAvailabilityError } = useQuery(
-    'getReviewAvailabilityApi',
+    'getReviewAvailability',
     async () => {
       const { data } = await getReviewAvailabilityApi(Number(menuId)!);
       return data.data.availability;

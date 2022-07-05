@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
@@ -40,6 +40,7 @@ const DefaultHeader = ({ title }: TProps) => {
 
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
+
   return (
     <Container>
       <Wrapper>

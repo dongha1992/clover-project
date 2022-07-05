@@ -49,7 +49,7 @@ const ReviewDetailPage = ({ contentId }: { contentId: string }) => {
 };
 
 const Container = styled.div`
-  ${homePadding}
+  padding: 12px 24px 24px 24px;
 `;
 
 export async function getServerSideProps(context: any) {
