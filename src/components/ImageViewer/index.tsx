@@ -53,6 +53,7 @@ const Header = styled.div`
   z-index: 1000001;
 
   .close {
+    cursor: pointer;
     position: absolute;
     right: 10%;
     ${({ theme }) => theme.mobile`
