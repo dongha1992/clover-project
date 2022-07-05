@@ -23,6 +23,7 @@ const ReviewOnlyImage = ({
   averageRating,
   totalReviews,
 }: IProps) => {
+  console.log(reviewsImages, 'reviewsImages');
   return (
     <Container>
       <Wrapper>
@@ -55,7 +56,7 @@ const ReviewOnlyImage = ({
               );
             }
             return (
-              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.reviewId)}>
+              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
                 <Image
                   src={IMAGE_S3_URL + review?.url}
                   alt="리뷰이미지"

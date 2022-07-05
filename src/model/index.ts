@@ -1913,8 +1913,7 @@ export interface IReviewsDetailResponse {
   code: number;
   message: string;
   data: {
-    menuReviews: ISearchReviews;
-    menuImage: IMenuImageInReivew;
+    menuReview: ISearchReviews;
   };
 }
 

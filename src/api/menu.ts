@@ -52,12 +52,12 @@ export const getMenuDetailReviewImageApi = ({
 
 export const getReviewDetailApi = ({
   id,
-  reviewId,
+  menuReviewId,
 }: {
   id: number;
-  reviewId: number;
+  menuReviewId: number;
 }): Promise<AxiosResponse<IReviewsDetailResponse>> => {
-  return Api.get(`menu/v1/menus/${id}/reviews/${reviewId}`);
+  return Api.get(`menu/v1/menus/${id}/reviews/${menuReviewId}`);
 };
 
 export const getBestReviewApi = ({
