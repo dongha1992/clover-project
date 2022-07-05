@@ -15,31 +15,14 @@ type TProps = {
 };
 
 const DefaultHeader = ({ title }: TProps) => {
-  const [menuId, setMenuId] = useState<string>();
   const router = useRouter();
   const dispatch = useDispatch();
+
   const { menuItem } = useSelector(menuSelector);
+  const { rating, reviewCount } = menuItem;
 
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
-
-  const {
-    data: menuDetail,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    'getMenuDetail',
-    async () => {
-      const { data } = await getMenuDetailApi(Number(menuId)!);
-      return data?.data;
-    },
-    {
-      onSuccess: (data) => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!menuId && !!totalReview,
-    }
-  );
 
   const goBack = (): void => {
     if (router.pathname === '/spot/join/main/form') {
@@ -62,12 +45,6 @@ const DefaultHeader = ({ title }: TProps) => {
     }
   };
 
-  useEffect(() => {
-    if (router.isReady && totalReview) {
-      setMenuId(router?.query?.menuId as string);
-    }
-  }, [router.isReady]);
-
   return (
     <Container>
       <Wrapper>
@@ -76,7 +53,7 @@ const DefaultHeader = ({ title }: TProps) => {
             <SVGIcon name="arrowLeft" />
           </div>
         )}
-        <TextH4B padding="2px 0 0 0">{totalReview ? `${title} (${menuDetail?.reviewCount})` : title}</TextH4B>
+        <TextH4B padding="2px 0 0 0">{totalReview ? `${title} (${reviewCount})` : title}</TextH4B>
       </Wrapper>
     </Container>
   );
