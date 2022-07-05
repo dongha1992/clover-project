@@ -115,7 +115,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
-      const params = { id: Number(menuId)!, page: 1, size: 100 };
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
 
       const { data } = await getMenuDetailReviewApi(params);
       return data.data;
@@ -131,7 +131,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { data: bestReviews, error: bestReviewsError } = useQuery(
     'getBestReviewApi',
     async () => {
-      const params = { id: Number(menuId)!, page: 1, size: 100 };
+      const params = { id: Number(menuId)!, page: 1, size: 10 };
 
       const { data } = await getBestReviewApi(params);
       return data.data.menuReviews;

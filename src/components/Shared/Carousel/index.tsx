@@ -44,14 +44,7 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
     nextArrow: <NextArrow />,
     prevArrow: <PreviousArrow />,
   };
-
-  //temp
-  // if (typeof images === 'string') {
-  //   images = [images];
-  // }
-
-  /*TODO: menu에 reviews 어떻게 들어오는지 아직 모름, */
-
+  console.log(images);
   return (
     <Container
       onMouseEnter={() => {
@@ -64,11 +57,11 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
       <Slider {...settings}>
         {images?.map((image: any, index: number) => {
           // temp
-          // if (!image.imageUrl) {
-          //   image = {
-          //     imageUrl: image,
-          //   };
-          // }
+          if (typeof image === 'string') {
+            image = {
+              imageUrl: image,
+            };
+          }
           return (
             <ImageWrapper
               src={`${IMAGE_S3_URL}${image.url ? image.url : image.imageUrl}`}
@@ -117,7 +110,7 @@ const Container = styled.div`
 const ImageWrapper = styled.img<{ isLast: boolean }>`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fit;
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;
 const NextArrowWrapper = styled.div`
