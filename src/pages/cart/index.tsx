@@ -756,9 +756,9 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getSpotDiscountPrice = (): number => {
-    const itemsPrice = getItemsPrice();
-    console.log(itemsPrice, 'itemsPrice');
-    return 0;
+    const spotDiscount = cartResponse?.discountInfos[0];
+    const discoutnedItemsPrice = getItemsPrice() - getTotalDiscountPrice();
+    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice;
   };
 
   const getDeliveryFee = useCallback(() => {
@@ -1118,6 +1118,7 @@ const CartPage = () => {
               itemDiscountPrice={getItemDiscountPrice()}
               spotDiscountPrice={getSpotDiscountPrice()}
               hasSpotEvent={cartResponse?.discountInfos.length !== 0}
+              isSpot={isSpot}
             />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
