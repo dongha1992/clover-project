@@ -90,6 +90,10 @@ export const user = createSlice({
       setCookie({
         name: 'acstk',
         value: JSON.stringify(accessTokenObj),
+        option: {
+          path: '/',
+          maxAge: accessTokenObj.expiresIn,
+        },
       });
 
       const refreshTokenObj = JSON.stringify({

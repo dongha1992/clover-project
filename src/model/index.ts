@@ -1302,6 +1302,7 @@ export interface IGetOrders {
   subscriptionPeriod?: string;
   subscriptionRound?: number;
   subscriptionDiscountRate?: number;
+  subscriptionPaymentDate?: string;
   isSubscribing?: boolean;
   deliveryDetail?: string;
   status: string;
@@ -1445,6 +1446,7 @@ export interface ICreateOrderPreview {
   subscriptionPeriod: string;
   subscriptionRound: number;
   subscriptionDiscountRates: number[];
+  subscriptionPaymentDate?: string;
   deliveryMessageReused?: boolean;
   orderDeliveries: [
     {

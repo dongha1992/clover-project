@@ -25,6 +25,7 @@ const SubsMngIngItem = ({ item }: IProps) => {
   };
 
   const { subsStatusmsg, subsStatusBoldmsg } = useSubsStatusMsg(item);
+
   return (
     <Container>
       <FlexBetween>
