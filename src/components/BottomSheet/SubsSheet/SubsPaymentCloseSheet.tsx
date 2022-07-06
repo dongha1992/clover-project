@@ -1,10 +1,7 @@
-import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
-import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
+import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { FlexBetween, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
 import { getFormatDate } from '@utils/common';
-import { getSubsPaymentDate } from '@utils/subscription/getSubsPaymentDate';
-import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
