@@ -6,19 +6,22 @@ import { getFormatPrice } from '@utils/common';
 
 interface IProps {
   deliveryFee: number;
+  deliveryFeeDiscount?: number;
 }
 
-const CartDeliveryFeeBox = ({ deliveryFee }: IProps) => {
+const CartDeliveryFeeBox = ({ deliveryFee, deliveryFeeDiscount }: IProps) => {
   return (
     <>
       <FlexBetween>
         <TextH5B>배송비</TextH5B>
         <TextB2R>{deliveryFee ? `${getFormatPrice(String(deliveryFee))}원` : '무료배송'}</TextB2R>
       </FlexBetween>
-      <FlexBetween>
-        <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
-        <TextB2R>-{getFormatPrice(String(deliveryFee))}원</TextB2R>
-      </FlexBetween>
+      {deliveryFeeDiscount !== 0 && (
+        <FlexBetween>
+          <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
+          <TextB2R>-{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
+        </FlexBetween>
+      )}
     </>
   );
 };

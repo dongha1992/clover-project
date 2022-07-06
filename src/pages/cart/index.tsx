@@ -7,12 +7,10 @@ import {
   theme,
   ScrollHorizonList,
   FlexBetween,
-  FlexStart,
   FlexEnd,
   FlexCol,
   FlexRow,
   fixedBottom,
-  FlexColStart,
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
 import { SVGIcon, getFormatPrice } from '@utils/common';
@@ -31,12 +29,10 @@ import {
   ISubOrderDelivery,
   IMenuDetailsInCart,
   IGetCart,
-  ILocation,
   ILunchOrDinner,
   IDeliveryObj,
   IMenus,
   IDeleteCartRequest,
-  IOrderedMenuDetails,
   IOrderOptionsInOrderPreviewRequest,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
@@ -60,14 +56,13 @@ import {
   CartDeliveryFeeBox,
   NutritionBox,
 } from '@components/Pages/Cart';
-import { DELIVERY_FEE_OBJ } from '@constants/cart';
+import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { INIT_ACCESS_METHOD } from '@store/common';
 
 dayjs.locale('ko');
 
-/*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 /*TODO: 배송비할인 */
 
 interface IMenuDetailsId {
@@ -84,37 +79,13 @@ export interface IDisposable {
   isSelected: boolean;
 }
 
-const INITIAL_NUTRITION = {
-  protein: 0,
-  calorie: 0,
-};
-
 const now = dayjs();
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
   const [checkedMenus, setCheckedMenus] = useState<IGetCart[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
-  const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
-    {
-      id: 1,
-      value: 'LUNCH',
-      text: '점심',
-      discription: '(오전 9:30까지 주문시 12:00 전 도착)',
-      isDisabled: false,
-      isSelected: true,
-      time: '12시',
-    },
-    {
-      id: 2,
-      value: 'DINNER',
-      text: '저녁',
-      discription: '(오전 11:00까지 주문시 17:00 전 도착)',
-      isDisabled: false,
-      isSelected: false,
-      time: '17시',
-    },
-  ]);
+  const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
@@ -798,7 +769,7 @@ const CartPage = () => {
 
     if (!me) {
       return (
-        <Button borderRadius="0" height="100%" disabled={true}>
+        <Button borderRadius="0" height="100%" disabled={true} onClick={onUnauthorized}>
           로그인을 해주세요
         </Button>
       );
@@ -916,11 +887,12 @@ const CartPage = () => {
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
 
     // 스팟 운영 종료
-    if (dDay) {
+    if (dDay || !destinationObj?.closedDate!) {
       return;
     }
 
     const closedSoonOperation = dDay >= -14;
+
     if (closedSoonOperation && isSpot) {
       dispatch(
         SET_ALERT({
@@ -1100,30 +1072,34 @@ const CartPage = () => {
       )}
       <BorderLine height={8} margin="32px 0" />
       <MenuListContainer>
-        <MenuListWarpper>
-          <MenuListHeader>
-            <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
-            <ScrollHorizonList>
-              <ScrollHorizonListGroup>
-                {likeMenusList?.map((item: IMenus, index: number) => {
-                  return <Item item={item} key={index} isHorizontal />;
-                })}
-              </ScrollHorizonListGroup>
-            </ScrollHorizonList>
-          </MenuListHeader>
-        </MenuListWarpper>
-        <MenuListWarpper>
-          <MenuListHeader>
-            <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
-            <ScrollHorizonList>
-              <ScrollHorizonListGroup>
-                {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
+        {me && (
+          <MenuListWarpper>
+            <MenuListHeader>
+              <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
+              <ScrollHorizonList>
+                <ScrollHorizonListGroup>
+                  {likeMenusList?.map((item: IMenus, index: number) => {
+                    return <Item item={item} key={index} isHorizontal />;
+                  })}
+                </ScrollHorizonListGroup>
+              </ScrollHorizonList>
+            </MenuListHeader>
+          </MenuListWarpper>
+        )}
+        {me && (
+          <MenuListWarpper>
+            <MenuListHeader>
+              <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
+              <ScrollHorizonList>
+                <ScrollHorizonListGroup>
+                  {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   return <Item item={item} key={index} isHorizontal />;
                 })} */}
-              </ScrollHorizonListGroup>
-            </ScrollHorizonList>
-          </MenuListHeader>
-        </MenuListWarpper>
+                </ScrollHorizonListGroup>
+              </ScrollHorizonList>
+            </MenuListHeader>
+          </MenuListWarpper>
+        )}
         {cartItemList.length > 0 && (
           <TotalPriceWrapper>
             <FlexBetween>
@@ -1139,7 +1115,7 @@ const CartPage = () => {
             />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} />
+            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
@@ -1168,7 +1144,8 @@ const Container = styled.div`
 const EmptyContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
+  height: 50vh;
 `;
 
 const DeliveryMethodAndPickupLocation = styled.div`
