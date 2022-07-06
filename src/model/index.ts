@@ -2018,7 +2018,7 @@ export interface IMenuDetailsInCart {
   menuDetailId: number;
   name: string;
   price: number;
-  menuQuantity?: number;
+  quantity: number;
   calorie: number;
   protein: number;
   isSold: boolean;
@@ -2028,7 +2028,7 @@ export interface IMenuDetailsInCart {
   discountPrice: number;
   discountRate: number;
   id: number;
-  quantity: number;
+  // menuQuantity?: number;
 }
 
 export type TCartRemainingQuantity = 'DAILY' | 'HOLIDAY' | 'NONE' | 'WEEKLY' | 'PERIOD' | 'PERSON' | string;
@@ -2042,7 +2042,7 @@ export interface IGetCart {
   cartId: number;
   menuId: number;
   holiday: number[][];
-  menuName: string;
+  name: string;
   image: {
     id: number;
     url: string;
@@ -2080,7 +2080,7 @@ export interface ICreateCartRequest {
   main: boolean;
   menuDetailId: number;
   menuId: number;
-  menuQuantity?: number | null;
+  quantity?: number | null;
 }
 
 export interface IDeleteCartRequest {
