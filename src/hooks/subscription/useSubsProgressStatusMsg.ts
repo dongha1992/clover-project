@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useSubsStatus = (subsStatus: string) => {
+const useSubsProgressStatusMsg = (subsStatus: string) => {
   const [status, setStatus] = useState<string>();
   useEffect(() => {
     switch (subsStatus) {
@@ -26,4 +26,4 @@ const useSubsStatus = (subsStatus: string) => {
   }, [subsStatus]);
   return status;
 };
-export default useSubsStatus;
+export default useSubsProgressStatusMsg;

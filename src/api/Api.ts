@@ -73,6 +73,10 @@ Api.interceptors.response.use(
               setCookie({
                 name: 'acstk',
                 value: JSON.stringify(accessTokenObj),
+                option: {
+                  path: '/',
+                  maxAge: accessTokenObj.expiresIn,
+                },
               });
 
               isTokenRefreshing = false;

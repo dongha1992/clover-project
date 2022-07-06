@@ -6,7 +6,6 @@ export const useSubsStatusMsg = (item: any) => {
   const [subsStatusmsg, setSubsStatusMsg] = useState<string>();
   const [subsStatusBoldmsg, setSubsStatusBoldMsg] = useState<string>();
   useEffect(() => {
-    const year = dayjs(item.firstDeliveryDateOrigin).format('YYYY');
     if (item.isSubscribing && item.subscriptionPeriod === 'UNLIMITED') {
       if (
         item.status === 'UNPAID' &&
@@ -18,17 +17,7 @@ export const useSubsStatusMsg = (item: any) => {
         // 구독주문 생성 후, 구독 결제 전, 결제실패나 해지사유가 없을때
 
         setSubsStatusBoldMsg(`구독 ${item.subscriptionRound}회차 ${item.subscriptionDiscountRate}% 할인!`);
-
-        if ([30, 31, 1, 2].includes(Number(dayjs(item.firstDeliveryDateOrigin).format('DD')))) {
-          const month = dayjs(item.firstDeliveryDateOrigin).subtract(1, 'month').format('M');
-          const dd = dayjs(`${year}-${month}-27`).format('dd');
-          setSubsStatusMsg(`${month}월 27일 (${dd}) 결제되는 구독 식단을 확인해 주세요!`);
-        } else {
-          const month = dayjs(item.firstDeliveryDateOrigin).format('M');
-          const day = dayjs(item.firstDeliveryDateOrigin).subtract(2, 'day').format('DD');
-          const dd = dayjs(`${year}-${month}-${day}`).format('dd');
-          setSubsStatusMsg(`${month}월 ${day}일 (${dd}) 결제되는 구독 식단을 확인해 주세요!`);
-        }
+        setSubsStatusMsg(`${getFormatDate(item.subscriptionPaymentDate)} 결제되는 구독 식단을 확인해 주세요!`);
       } else if (
         (item.status === 'UNPAID' && item?.unsubscriptionType === 'DISABLED_DESTINATION') ||
         item?.unsubscriptionType === 'DISABLED_MENU' ||

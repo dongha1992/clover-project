@@ -1,15 +1,21 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
+import { IGetCart, IDiscountInfos, IMenuDetailOptions } from '@model/index';
 
-type TProps = {
-  cartLists: any[];
+interface ICartLists {
+  cartMenus: IGetCart[];
+  discountInfos: IDiscountInfos[];
+  menuDetailOptions: IMenuDetailOptions[];
+}
+interface IProps {
+  cartLists: ICartLists[];
   cartSheetObj: any;
   isFromDeliveryPage: boolean;
   isLoading: boolean;
   isError: boolean;
-};
+}
 
-const initialState: TProps = {
+const initialState: IProps = {
   cartLists: [],
   cartSheetObj: {},
   isFromDeliveryPage: false,
@@ -22,13 +28,13 @@ export const cart = createSlice({
   initialState,
   reducers: {
     // bottom sheet 눌렀을 때
-    SET_CART_SHEET_OBJ: (state, action: PayloadAction<TProps>) => {
+    SET_CART_SHEET_OBJ: (state, action: PayloadAction<IProps>) => {
       state.cartSheetObj = action.payload;
     },
 
-    // 장바구니 담기 눌렀을 때
-    SET_CART_LISTS: (state, action: PayloadAction<any[]>) => {
-      state.cartLists.push(...action.payload);
+    // 장바구니 api 호출 후
+    SET_CART_LISTS: (state, action: PayloadAction<ICartLists>) => {
+      state.cartLists.push(action.payload);
     },
 
     INIT_CART_LISTS: (state, action: PayloadAction) => {
@@ -73,5 +79,5 @@ export const {
   REMOVE_CART_ITEM,
   INIT_CART_LISTS,
 } = cart.actions;
-export const cartForm = (state: AppState): TProps => state.cart;
+export const cartForm = (state: AppState): IProps => state.cart;
 export default cart.reducer;

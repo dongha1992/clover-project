@@ -5,20 +5,11 @@ import CartActualItem from './CartActualItem';
 import { IGetCart, IMenuDetailsInCart } from '@model/index';
 interface handleSelectCartItemIProps {
   handleSelectCartItem: (menu: IGetCart) => void;
-  checkedMenus: IGetCart[];
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
-  clickRestockNoti: any;
-  removeCartActualItemHandler: ({
-    menuDetailId,
-
-    menuId,
-  }: {
-    menuId: number;
-
-    menuDetailId: number;
-  }) => void;
+  removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => void;
   removeCartDisplayItemHandler: (menu: IGetCart) => void;
+  checkedMenus: IGetCart[];
   menu: IGetCart;
 }
 
@@ -27,7 +18,6 @@ const CartItem = ({
   checkedMenus,
   clickPlusButton,
   clickMinusButton,
-  clickRestockNoti,
   removeCartActualItemHandler,
   removeCartDisplayItemHandler,
   menu,
@@ -45,11 +35,12 @@ const CartItem = ({
           <CartActualItem
             clickPlusButton={clickPlusButton}
             clickMinusButton={clickMinusButton}
-            clickRestockNoti={clickRestockNoti}
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
             key={index}
             menuId={menu.menuId}
+            holiday={menu.holiday}
+            menuName={menu.name}
           />
         );
       })}

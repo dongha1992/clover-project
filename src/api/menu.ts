@@ -6,13 +6,16 @@ import {
   IMenuReviewsResponse,
   IMenuReviewsImageResponse,
   IReviewsDetailResponse,
+  IBestReviewResponse,
   IPostMenuReview,
+  IReviewAvailityResponse,
   IMenuDetailsResponse,
   IResponse,
   ICompletionReviewsResponse,
   IWillWriteReviewsResponse,
   ISubscriptionResponse,
   IGetSubscription,
+  IGetOrderMenusResponse,
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
@@ -49,12 +52,28 @@ export const getMenuDetailReviewImageApi = ({
 
 export const getReviewDetailApi = ({
   id,
-  reviewId,
+  menuReviewId,
 }: {
   id: number;
-  reviewId: number;
+  menuReviewId: number;
 }): Promise<AxiosResponse<IReviewsDetailResponse>> => {
-  return Api.get(`menu/v1/menus/${id}/reviews/${reviewId}`);
+  return Api.get(`menu/v1/menus/${id}/reviews/${menuReviewId}`);
+};
+
+export const getBestReviewApi = ({
+  id,
+  page,
+  size,
+}: {
+  id: number;
+  page: number;
+  size: number;
+}): Promise<AxiosResponse<IBestReviewResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/best`, { params: { page, size } });
+};
+
+export const getReviewAvailabilityApi = (id: number): Promise<AxiosResponse<IReviewAvailityResponse>> => {
+  return Api.get(`menu/v1/menus/${id}/reviews/availability`);
 };
 
 export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
@@ -81,6 +100,10 @@ export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsRe
 
 export const getWillWriteReviews = (): Promise<AxiosResponse<IWillWriteReviewsResponse>> => {
   return Api.get(`menu/v1/reviews/expectation`);
+};
+
+export const deleteReviewApi = ({ id }: { id: number }): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`menu/v1/reviews/${id}`);
 };
 
 export const getSubscriptionApi = ({
@@ -124,4 +147,12 @@ export const deleteLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosRe
 
 export const getRecommendMenusApi = (): Promise<AxiosResponse<IGetMenusResponse>> => {
   return Api.get(`menu/v1/menus/recommend`);
+};
+
+export const getOrderedMenusApi = ({
+  params,
+}: {
+  params: { size: number };
+}): Promise<AxiosResponse<IGetOrderMenusResponse>> => {
+  return Api.get(`menu/v1/details/ordered`, { params });
 };

@@ -1302,6 +1302,7 @@ export interface IGetOrders {
   subscriptionPeriod?: string;
   subscriptionRound?: number;
   subscriptionDiscountRate?: number;
+  subscriptionPaymentDate?: string;
   isSubscribing?: boolean;
   deliveryDetail?: string;
   status: string;
@@ -1399,13 +1400,13 @@ export interface IGetOrderDetailResponse {
   data: IOrderDetail;
 }
 export interface IOrderOptionsInOrderPreviewRequest {
-  optionId: number;
-  optionQuantity: number;
+  optionId: number | null;
+  optionQuantity: number | null;
 }
 export interface IOrderDeliveriesInOrderPreviewRequest {
   deliveryDate: string;
   orderMenus: IOrderMenusInOrderList[];
-  orderOptions: IOrderOptionsInOrderPreviewRequest[];
+  orderOptions?: IOrderOptionsInOrderPreviewRequest[] | null;
 }
 export interface IOrderPreviewRequest {
   delivery: string;
@@ -1445,6 +1446,7 @@ export interface ICreateOrderPreview {
   subscriptionPeriod: string;
   subscriptionRound: number;
   subscriptionDiscountRates: number[];
+  subscriptionPaymentDate?: string;
   deliveryMessageReused?: boolean;
   orderDeliveries: [
     {
@@ -1714,6 +1716,28 @@ export interface IMenuDetails {
   personalMaximum?: number;
 }
 
+export interface IBestReviews {
+  id: number;
+  menuId?: number;
+  userNickName: string;
+  menuName?: string;
+  menuDetailName?: string;
+  orderCount?: number;
+  rating: number;
+  content: string;
+  createdAt: string;
+  images: IMenuImageInReivew[];
+  comment?: string;
+  commenter?: string;
+  commentCreatedAt?: string;
+}
+
+export interface IBestReviewResponse {
+  data: { menuReviews: IBestReviews[] };
+  message: string;
+  code: number;
+}
+
 export interface IMenuDetail {
   badgeMessage: string;
   category: string;
@@ -1727,6 +1751,7 @@ export interface IMenuDetail {
   likeCount: number;
   name: string;
   openedAt: string;
+  rating: number;
   orderCount: number;
   priority: number;
   thumbnail: IMenuImage[];
@@ -1845,6 +1870,15 @@ export interface ISearchReviews {
   commenter?: string;
   commentCreatedAt?: string;
 }
+export interface IReviewAvaility {
+  availability: boolean;
+}
+
+export interface IReviewAvailityResponse {
+  code: number;
+  message: string;
+  data: IReviewAvaility;
+}
 
 export interface ISearchReviewImages {
   id: number;
@@ -1881,8 +1915,7 @@ export interface IReviewsDetailResponse {
   code: number;
   message: string;
   data: {
-    menuReviews: ISearchReviews;
-    menuImage: IMenuImageInReivew;
+    menuReview: ISearchReviews;
   };
 }
 
@@ -1950,6 +1983,25 @@ export interface IWillWriteReviewsResponse {
   message: string;
   data: IWillWriteReview[];
 }
+
+export interface IOrderedMenuDetails {
+  calorie: number;
+  discountPrice: number;
+  id: number;
+  isSold: boolean;
+  main: boolean;
+  menu: IMenus;
+  personalMaximum: number;
+  price: number;
+  protein: number;
+  thumbnail: IDetailImage;
+}
+
+export interface IGetOrderMenusResponse {
+  code: number;
+  message: string;
+  data: { menuDetails: IOrderedMenuDetails[]; pagination: IPagination };
+}
 declare global {
   interface Window {
     ReactNativeWebView: any;
@@ -1962,10 +2014,11 @@ export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 
 export interface IMenuDetailsInCart {
+  availabilityInfo: { availability: boolean; remainingQuantity: number };
   menuDetailId: number;
   name: string;
   price: number;
-  menuQuantity: number;
+  quantity: number;
   calorie: number;
   protein: number;
   isSold: boolean;
@@ -1973,32 +2026,61 @@ export interface IMenuDetailsInCart {
   status: TCartMenuStatus;
   createdAt: string;
   discountPrice: number;
+  discountRate: number;
+  id: number;
+  // menuQuantity?: number;
 }
 
+export type TCartRemainingQuantity = 'DAILY' | 'HOLIDAY' | 'NONE' | 'WEEKLY' | 'PERIOD' | 'PERSON' | string;
+export interface ICartAvailabilty {
+  availability: boolean;
+  menuDetailAvailabilityMessage: TCartRemainingQuantity;
+  remainingQuantity: number;
+}
 export interface IGetCart {
+  availabilityInfo: ICartAvailabilty;
+  cartId: number;
   menuId: number;
-  menuName: string;
+  holiday: number[][];
+  name: string;
   image: {
     id: number;
     url: string;
     width: number;
     height: number;
+    name: string;
+    originalName: string;
   };
   menuDetails: IMenuDetailsInCart[];
-  isSold: boolean;
-  createdAt: string;
+  isSold?: boolean;
+  createdAt?: string;
 }
-
+export interface IDiscountInfos {
+  type: string;
+  discountRate: number;
+}
+export interface IMenuDetailOptions {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  type: string;
+  isSelected?: boolean;
+}
 export interface IGetCartResponse {
   code: number;
   message: string;
-  data: IGetCart[];
+  data: {
+    cartMenus: IGetCart[];
+    discountInfos: IDiscountInfos[];
+    menuDetailOptions: IMenuDetailOptions[];
+  };
 }
 export interface ICreateCartRequest {
   main: boolean;
   menuDetailId: number;
   menuId: number;
-  menuQuantity?: number | null;
+  quantity?: number | null;
 }
 
 export interface IDeleteCartRequest {
@@ -2008,7 +2090,7 @@ export interface IDeleteCartRequest {
 
 export interface IPatchCartRequest {
   menuDetailId: number;
-  menuQuantity: number;
+  quantity: number;
 }
 
 export interface ILunchOrDinner {

@@ -8,24 +8,27 @@ import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
 import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
+import { getFormatPrice } from '@utils/common';
 interface IProps {
-  menuDetail: IMenuDetailsInCart;
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
-  clickRestockNoti: any;
   menuId: number;
+  menuDetail: IMenuDetailsInCart;
+  holiday: number[][];
+  menuName: string;
 }
 
 /* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
 
 const CartActualItem = ({
-  menuDetail,
   removeCartActualItemHandler,
   clickPlusButton,
   clickMinusButton,
-  clickRestockNoti,
   menuId,
+  menuDetail,
+  holiday,
+  menuName,
 }: IProps) => {
   const { discount, discountedPrice } = getDiscountPrice({
     discountPrice: menuDetail.discountPrice,
@@ -36,7 +39,7 @@ const CartActualItem = ({
     <Container isSold={menuDetail.isSold}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : menuDetail.name}</TextB3R>
+          <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : `${menuName} / ${menuDetail.name}`}</TextB3R>
           <div
             onClick={() =>
               removeCartActualItemHandler &&
@@ -51,23 +54,20 @@ const CartActualItem = ({
             <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
               {discount}%
             </TextH5B>
-            <TextH5B>{discountedPrice}원</TextH5B>
+            <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
           </PriceWrapper>
-          <FlexBetweenStart>
-            {/* <InfoMessage status={menuDetail.isSold && 'isSold'} /> */}
+          <InfoContainer>
+            <InfoMessage isSold={menuDetail.isSold} availabilityInfo={menuDetail.availabilityInfo} holiday={holiday} />
             <CountButtonContainer>
-              {/* <Tag backgroundColor={theme.black} padding="6px 10px" borderRadius={32} onClick={clickRestockNoti}>
-                <TextH6B color={theme.white}>재입고 알림</TextH6B>
-              </Tag> */}
               <CountButton
                 isSold={menuDetail.isSold}
-                menuDetailId={menuDetail.menuDetailId}
-                quantity={menuDetail.menuQuantity}
+                menuDetailId={menuDetail.id}
+                quantity={menuDetail.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}
               />
             </CountButtonContainer>
-          </FlexBetweenStart>
+          </InfoContainer>
         </FlexCol>
       </ContentWrapper>
     </Container>
@@ -83,12 +83,13 @@ const Container = styled.div<{ isSold?: boolean }>`
   border-radius: 8px;
   position: relative;
   margin-left: 28px;
+  height: 100%;
 `;
 
 const ContentWrapper = styled.div`
   margin-left: 8px;
   width: 100%;
-  height: 70px;
+  /* height: 70px; */
 `;
 
 const PriceWrapper = styled.div`
@@ -97,9 +98,15 @@ const PriceWrapper = styled.div`
 `;
 
 const CountButtonContainer = styled.div`
-  position: absolute;
+  /* position: absolute; */
   bottom: 12px;
   right: 12px;
 `;
 
+const InfoContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  height: 100%;
+`;
 export default React.memo(CartActualItem);

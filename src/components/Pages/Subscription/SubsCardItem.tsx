@@ -1,18 +1,12 @@
-import { getOrderDetailApi } from '@api/order';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SubsStatusTooltip from '@components/Shared/Tooltip/SubsStatusTooltip';
-import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
-import { periodMapper, SUBS_DELIVERY_STATUS, SUBS_DELIVERY_UNPAID_STATUS } from '@constants/subscription';
+import { SUBS_DELIVERY_STATUS, SUBS_DELIVERY_UNPAID_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
-import { useSubsStatusMsg } from '@hooks/subscription/useSubsStatusMsg';
 import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
 import { theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
-import dayjs from 'dayjs';
-import { last } from 'lodash-es';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import SubsLabel from './SubsLabel';
 

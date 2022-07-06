@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol, showMoreText } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
@@ -27,23 +27,23 @@ import { useMutation, useQueryClient } from 'react-query';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
-import { onMenuLikes } from '@queries/menu';
-import { useToast } from '@hooks/useToast';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
+/* TODO ITEM과 싱크 */
 type TProps = {
-  item: IMenus;
+  // item: IOrderedMenuDetails;
+  item: any;
   isHorizontal?: boolean;
 };
 
-const Item = ({ item, isHorizontal }: TProps) => {
+const DetailItem = ({ item, isHorizontal }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { categoryMenus } = useSelector(menuSelector);
-  const { showToast } = useToast();
+
   const { type } = useSelector(filterSelector);
 
   const { mutate: mutateDeleteNotification } = useMutation(
@@ -61,15 +61,6 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
-        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
-          return previous?.map((_item: IMenus) => {
-            if (_item.id === item.id) {
-              return { ..._item, reopenNotificationRequested: false };
-            }
-            return _item;
-          });
-        });
-        showToast({ message: '알림 신청을 완료했어요!' });
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -78,6 +69,8 @@ const Item = ({ item, isHorizontal }: TProps) => {
       },
     }
   );
+
+  /* TODO: 리팩토링 해야함, hook */
 
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {
@@ -89,12 +82,24 @@ const Item = ({ item, isHorizontal }: TProps) => {
     {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type], (previous: any) => {
-          if (previous) {
-            return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
-          }
-        });
-        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
-          return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
         });
       },
       onMutate: async () => {},
@@ -112,14 +117,24 @@ const Item = ({ item, isHorizontal }: TProps) => {
     {
       onSuccess: async () => {
         queryClient.setQueryData(['getMenus', type], (previous: any) => {
-          if (previous) {
-            return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
-          }
-        });
-        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
-          if (previous) {
-            return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
-          }
+          return previous?.map((_item: IMenus) => {
+            let liked, likeCount;
+            if (_item.id === item.id) {
+              if (item.liked) {
+                liked = false;
+                if (item.likeCount > 0) {
+                  likeCount = item.likeCount - 1;
+                } else {
+                  likeCount = 0;
+                }
+              } else {
+                liked = true;
+                likeCount = item.likeCount + 1;
+              }
+              return { ..._item, liked, likeCount };
+            }
+            return _item;
+          });
         });
       },
       onMutate: async () => {},
@@ -163,6 +178,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     if (item.liked) {
       mutateDeleteMenuLike();
     } else {
+      console.log('post');
       mutatePostMenuLike();
     }
   };
@@ -221,17 +237,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
         );
       } else {
         dispatch(SET_MENU_ITEM(item));
-        router.push({
-          pathname: `/menu/[menuId]`,
-          query: { isReopen: true, returnPath: router.asPath, menuId: item.id },
-        });
+        router.push({ pathname: `/menu/${item.id}`, query: { isReopen: true } });
       }
     }
   };
 
   return (
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
-      <ImageWrapper isHorizontal={isHorizontal}>
+      <ImageWrapper>
         <Image
           src={item.thumbnail[0]?.url ? IMAGE_S3_URL + item.thumbnail[0]?.url : IMAGE_ERROR}
           alt="상품이미지"
@@ -262,9 +275,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
-          <TextB2R margin="8px 0 0px 0" width="100%" textHide>
+          <TextB3R margin="8px 0 0 0" width="100%" textHide>
             {item.name.trim()}
-          </TextB2R>
+          </TextB3R>
         </NameWrapper>
         {!isOpenSoon && !isReOpen && (
           <PriceWrapper>
@@ -307,7 +320,6 @@ const Container = styled.div<{ isHorizontal?: boolean }>`
   display: inline-block;
   height: auto;
   background-color: #fff;
-  cursor: pointer;
   ${({ isHorizontal }) => {
     if (isHorizontal) {
       return css`
@@ -341,7 +353,6 @@ const ForReopen = styled.div`
 const DesWrapper = styled.div`
   width: 100%;
   height: 38px;
-  margin-top: 8px;
 `;
 
 const CartBtn = styled.div`
@@ -363,34 +374,22 @@ const ReopenBtn = styled.div`
   z-index: 2;
 `;
 
-const ImageWrapper = styled.div<{ isHorizontal?: boolean }>`
+const ImageWrapper = styled.div`
   position: relative;
-
+  width: 100%;
   .rounded {
     border-radius: 8px;
   }
-  ${({ isHorizontal }) => {
-    if (isHorizontal) {
-      return css`
-        width: 132px;
-        height: 132px;
-      `;
-    } else {
-      return css`
-        width: 100%;
-      `;
-    }
-  }}
 `;
 
 const NameWrapper = styled.div`
   height: 26px;
   width: 100%;
-  margin-bottom: 4px;
 `;
 
 const PriceWrapper = styled.div`
   display: flex;
+  margin-bottom: 8px;
 `;
 
 const LikeAndReview = styled.div`
@@ -398,7 +397,7 @@ const LikeAndReview = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 4px 0 0 0px;
+  margin: 8px 0px;
 `;
 
 const Like = styled.div`
@@ -408,7 +407,6 @@ const Like = styled.div`
 
 const TagWrapper = styled.div`
   white-space: wrap;
-  margin-top: 8px;
 `;
 
-export default React.memo(Item);
+export default React.memo(DetailItem);
