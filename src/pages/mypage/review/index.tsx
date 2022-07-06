@@ -74,6 +74,9 @@ const ReviewPage = () => {
     '작성 완료': completeWriteList?.length,
   };
 
+  const isWillWrite = selectedTab === '/willWrite';
+  const isComplete = selectedTab === '/completed';
+
   if (completeIsLoading || willWriteIsLoading) {
     return <div>로딩</div>;
   }
@@ -86,17 +89,17 @@ const ReviewPage = () => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
       </Wrapper>
-      {selectedTab === '/willWrite' && !willWriteList?.length && (
+      {isWillWrite && !willWriteList?.length && (
         <Center>
           <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
         </Center>
       )}
-      {selectedTab === '/completed' && !completeWriteList?.length && (
+      {isComplete && !completeWriteList?.length && (
         <Center>
           <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
         </Center>
       )}
-      {selectedTab === '/willWrite' ? (
+      {isWillWrite ? (
         <Wrapper>
           <WillReviewItmesWrapper>
             {willWriteList?.map((review, index) => (
@@ -121,9 +124,11 @@ const ReviewPage = () => {
           </WillReviewItmesWrapper>
         </Wrapper>
       )}
-      <ReviewInfoWrapper>
-        최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
-      </ReviewInfoWrapper>
+      {((isComplete && completeWriteList?.length! !== 0) || (isWillWrite && willWriteList?.length! !== 0)) && (
+        <ReviewInfoWrapper>
+          최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
+        </ReviewInfoWrapper>
+      )}
     </Container>
   );
 };
