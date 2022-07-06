@@ -15,7 +15,7 @@ import {
   FlexColStart,
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
-import SVGIcon from '@utils/common/SVGIcon';
+import { SVGIcon, getFormatPrice } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
@@ -52,11 +52,19 @@ import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { pipe, toArray, flatMap } from '@fxts/core';
-import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
+import {
+  CartItem,
+  DeliveryTypeAndLocation,
+  CartDisposableBox,
+  CartPriceBox,
+  CartDiscountBox,
+  CartDeliveryFeeBox,
+} from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ } from '@constants/cart';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { INIT_ACCESS_METHOD } from '@store/common';
+
 dayjs.locale('ko');
 
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
@@ -67,7 +75,7 @@ interface IMenuDetailsId {
   menuQuantity: number;
 }
 
-interface IDisposable {
+export interface IDisposable {
   id: number;
   value?: string;
   quantity: number;
@@ -1140,75 +1148,30 @@ const CartPage = () => {
           <TotalPriceWrapper>
             <FlexBetween>
               <TextH5B>총 상품금액</TextH5B>
-              <TextB2R>{getItemsPrice()}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(getItemsPrice()))}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
               <TextH5B>총 할인 금액</TextH5B>
-              <TextB2R>{getTotalDiscountPrice(isSpot)}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(getTotalDiscountPrice(isSpot)))}원</TextB2R>
             </FlexBetween>
             <FlexBetween padding="8px 0 0 0">
               <TextB2R>상품 할인</TextB2R>
-              <TextB2R>{getItemDiscountPrice()}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(getItemDiscountPrice()))}원</TextB2R>
             </FlexBetween>
-            {isSpot && (
+            {isSpot && cartResponse?.discountInfos.length !== 0 && (
               <FlexBetween padding="8px 0 0 0">
                 <TextB2R>스팟 이벤트 할인</TextB2R>
-                <TextB2R>{getSpotDiscountPrice()}원</TextB2R>
+                <TextB2R>{getFormatPrice(String(getSpotDiscountPrice()))}원</TextB2R>
               </FlexBetween>
             )}
-
-            {disposableList.some((item) => item.isSelected) && (
-              <>
-                <BorderLine height={1} margin="16px 0" />
-                <FlexBetween padding="16px 0 8px">
-                  <TextH5B>환경부담금 (일회용품)</TextH5B>
-                  <TextB2R>
-                    {getDisposableItem().quantity}개 / {getDisposableItem().price}원
-                  </TextB2R>
-                </FlexBetween>
-              </>
-            )}
-            {disposableList.length > 0 &&
-              disposableList.map((disposable, index) => {
-                const { id, quantity, price, isSelected } = disposable;
-
-                const hasFork = id === 1 && isSelected;
-                const hasChopsticks = id === 2 && isSelected;
-                return (
-                  <div key={index}>
-                    {hasFork && (
-                      <FlexBetween padding="8px 0 0 0">
-                        <TextB2R>포크+물티슈</TextB2R>
-                        <TextB2R>
-                          {quantity}개 / {price * quantity}원
-                        </TextB2R>
-                      </FlexBetween>
-                    )}
-                    {hasChopsticks && (
-                      <FlexBetween padding="8px 0 0 0">
-                        <TextB2R>젓가락+물티슈</TextB2R>
-                        <TextB2R>
-                          {quantity}개 / {price * quantity}원
-                        </TextB2R>
-                      </FlexBetween>
-                    )}
-                  </div>
-                );
-              })}
+            <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <FlexBetween>
-              <TextH5B>배송비</TextH5B>
-              <TextB2R>{getDeliveryFee() ? `${getDeliveryFee()}원` : '무료배송'}</TextB2R>
-            </FlexBetween>
-            <FlexBetween>
-              <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
-              <TextB2R>-{getDeliveryFee()}원</TextB2R>
-            </FlexBetween>
+            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
-              <TextH4B>{totalAmount + getDeliveryFee()}원</TextH4B>
+              <TextH4B>{getFormatPrice(String(totalAmount + getDeliveryFee()))}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
