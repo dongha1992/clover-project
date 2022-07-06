@@ -45,6 +45,10 @@ const DefaultHeader = ({ title }: TProps) => {
     }
   };
 
+  if (totalReview && !reviewCount) {
+    return <div>로딩</div>;
+  }
+
   return (
     <Container>
       <Wrapper>
