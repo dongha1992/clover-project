@@ -23,6 +23,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
 
   const isContentHide = review.content.length >= 280;
 
+  console.log(review, 'review');
   return (
     <>
       <Container>
@@ -33,7 +34,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
               <TextH6B
                 color={theme.greyScale65}
                 textDecoration="underline"
-                onClick={() => router.push(`/mypage/review/edit/${review.id}`)}
+                onClick={() => router.push(`/mypage/review/edit/${review.id}?menuId=${review.menuId}`)}
               >
                 편집
               </TextH6B>

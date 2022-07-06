@@ -17,6 +17,7 @@ import { getReviewDetailApi, editMenuReviewApi, deleteReviewApi } from '@api/men
 import { StarRating } from '@components/StarRating';
 import NextImage from 'next/image';
 import { userForm } from '@store/user';
+import { useRouter } from 'next/router';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -51,6 +52,7 @@ const EditReviewPage = ({ reviewId }: any) => {
   const { me } = useSelector(userForm);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   /* TODO: text area 1000 넘었을 때 */
   /* TODO: blob 타입 정의 */
@@ -66,7 +68,12 @@ const EditReviewPage = ({ reviewId }: any) => {
   } = useQuery(
     'getReviewDetail',
     async () => {
-      const { data } = await getReviewDetailApi(reviewId);
+      const menuId = router?.query.menuId! as string;
+      const params = {
+        id: Number(menuId),
+        menuReviewId: reviewId,
+      };
+      const { data } = await getReviewDetailApi(params);
       return data.data;
     },
 
@@ -208,7 +215,7 @@ const EditReviewPage = ({ reviewId }: any) => {
 
     const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReviews?.content!);
+    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReview?.content!);
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
     formData.append('rating', writeMenuReviewObj.rating.toString());
 
@@ -235,9 +242,9 @@ const EditReviewPage = ({ reviewId }: any) => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        content: selectedReviewDetail.menuReviews.content,
-        rating: selectedReviewDetail.menuReviews.rating,
-        imgFiles: selectedReviewDetail?.menuReviews && selectedReviewDetail?.menuReviews?.images?.map((img) => img.url),
+        content: selectedReviewDetail.menuReview.content,
+        rating: selectedReviewDetail.menuReview.rating,
+        imgFiles: selectedReviewDetail?.menuReview && selectedReviewDetail?.menuReview?.images?.map((img) => img.url),
       });
     }
   }, [selectedReviewDetail]);
@@ -258,17 +265,17 @@ const EditReviewPage = ({ reviewId }: any) => {
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
-            <NextImage
+            {/* <NextImage
               src={IMAGE_S3_URL + selectedReviewDetail?.menuImage.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
               layout="responsive"
               className="rounded"
-            />
+            /> */}
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.menuReviews.menuName}</TextB2R>
+            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.menuReview.menuName}</TextB2R>
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
@@ -289,7 +296,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           rows={20}
           eventHandler={writeReviewHandler}
           ref={textAreaRef}
-          value={selectedReviewDetail?.menuReviews?.content}
+          value={selectedReviewDetail?.menuReview?.content}
         />
         <FlexBetween margin="8px 0 0 0">
           <TextB3R color={theme.brandColor}>
