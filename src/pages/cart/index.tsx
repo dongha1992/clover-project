@@ -752,11 +752,11 @@ const CartPage = () => {
     }, 0);
   }, [checkedMenus]);
 
-  const getSpotDiscountPrice = (): number => {
+  const getSpotDiscountPrice = useCallback((): number => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
     return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice;
-  };
+  }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
     if (destinationObj?.delivery) {
