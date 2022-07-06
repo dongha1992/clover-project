@@ -56,9 +56,9 @@ import {
   CartItem,
   DeliveryTypeAndLocation,
   CartDisposableBox,
-  CartPriceBox,
   CartDiscountBox,
   CartDeliveryFeeBox,
+  NutritionBox,
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ } from '@constants/cart';
 import dayjs from 'dayjs';
@@ -1046,27 +1046,7 @@ const CartPage = () => {
                 <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
               </div>
             </FlexBetween>
-            {isShow && (
-              <InfoWrapper>
-                <BorderLine height={1} margin="16px 0" />
-                <FlexStart>
-                  <Calorie>
-                    <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
-                      총 열량
-                    </TextH7B>
-                    <TextH4B padding="0 2px 0 0">{nutritionObj.calorie}</TextH4B>
-                    <TextB3R>Kcal</TextB3R>
-                  </Calorie>
-                  <Protein>
-                    <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
-                      총 단백질
-                    </TextH7B>
-                    <TextH4B padding="0 2px 0 0">{nutritionObj.protein}</TextH4B>
-                    <TextB3R>g</TextB3R>
-                  </Protein>
-                </FlexStart>
-              </InfoWrapper>
-            )}
+            {isShow && <NutritionBox nutritionObj={nutritionObj} />}
           </NutritionInfoWrapper>
           <GetMoreBtn ref={calendarRef} onClick={goToSearchPage}>
             <Button backgroundColor={theme.white} color={theme.black} border>
@@ -1151,20 +1131,12 @@ const CartPage = () => {
               <TextB2R>{getFormatPrice(String(getItemsPrice()))}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
-            <FlexBetween>
-              <TextH5B>총 할인 금액</TextH5B>
-              <TextB2R>{getFormatPrice(String(getTotalDiscountPrice(isSpot)))}원</TextB2R>
-            </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>상품 할인</TextB2R>
-              <TextB2R>{getFormatPrice(String(getItemDiscountPrice()))}원</TextB2R>
-            </FlexBetween>
-            {isSpot && cartResponse?.discountInfos.length !== 0 && (
-              <FlexBetween padding="8px 0 0 0">
-                <TextB2R>스팟 이벤트 할인</TextB2R>
-                <TextB2R>{getFormatPrice(String(getSpotDiscountPrice()))}원</TextB2R>
-              </FlexBetween>
-            )}
+            <CartDiscountBox
+              totalDiscountPrice={getTotalDiscountPrice(isSpot)}
+              itemDiscountPrice={getItemDiscountPrice()}
+              spotDiscountPrice={getSpotDiscountPrice()}
+              hasSpotEvent={cartResponse?.discountInfos.length !== 0}
+            />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
             <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} />
@@ -1278,21 +1250,6 @@ const NutritionInfoWrapper = styled.div`
       color: ${theme.brandColor};
     }
   }
-`;
-
-const InfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const Calorie = styled.div`
-  width: 50%;
-  display: flex;
-  align-items: center;
-`;
-const Protein = styled.div`
-  width: 50%;
-  display: flex;
-  align-items: center;
 `;
 
 const GetMoreBtn = styled.div``;
