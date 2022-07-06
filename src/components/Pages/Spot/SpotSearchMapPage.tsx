@@ -8,7 +8,7 @@ import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import Slider from 'react-slick';
-import { SpotSearchMap, NaverMap } from '@components/Map';
+import { SpotSearchKakaoMap } from '@components/Map';
 import { spotSelector } from '@store/spot';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -41,6 +41,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
     centerMode: true,
     infinite: false,
     centerPadding: '30px',
+    speed: 700,
     beforeChange: (current: number, next: number) =>
     setCurrentIdx({current: current, next: next}),
   };
@@ -56,7 +57,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
   return (
     <Container>
       <MapWrapper>
-        <NaverMap currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected}   />
+        <SpotSearchKakaoMap currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected}   />
         {
           selected && !isSearched &&
           <SpotListWrapper>
