@@ -62,8 +62,6 @@ dayjs.locale('ko');
 /*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 /*TODO: 배송비할인 */
 
-const disabledDates: any = ['2022-02-22'];
-
 interface IMenuDetailsId {
   menuDetailId: number;
   menuQuantity: number;
@@ -139,6 +137,7 @@ const CartPage = () => {
     data: cartResponse,
     isLoading,
     isError,
+    refetch,
   } = useQuery(
     ['getCartList'],
     async () => {
@@ -789,10 +788,21 @@ const CartPage = () => {
   const orderButtonRender = () => {
     let buttonMessage = '';
 
+    if (!me) {
+      return (
+        <Button borderRadius="0" height="100%" disabled={true}>
+          로그인을 해주세요
+        </Button>
+      );
+    }
+
     if (destinationObj.delivery) {
       const { fee, amountForFree, minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
       const isUnderMinimum = totalAmount < minimum;
-      if (amountForFree > totalAmount) {
+
+      if (isUnderMinimum) {
+        buttonMessage = `최소주문금액까지 ${minimum - totalAmount}원 남았습니다`;
+      } else if (amountForFree > totalAmount) {
         buttonMessage = `${amountForFree - totalAmount}원 더 담고 무료 배송하기`;
       } else {
         buttonMessage = `${totalAmount}원 주문하기`;
@@ -803,11 +813,10 @@ const CartPage = () => {
           {buttonMessage}
         </Button>
       );
-    } else if (!me) {
-      buttonMessage = '로그인을 해주세요';
+    } else {
       return (
-        <Button borderRadius="0" height="100%" disabled={true}>
-          {buttonMessage}
+        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj)}>
+          배송정보를 입력해주세요.
         </Button>
       );
     }
@@ -836,6 +845,10 @@ const CartPage = () => {
         });
       }
       setLunchOrDinner(newLunchDinner);
+    }
+
+    if (selectedDeliveryDay) {
+      refetch();
     }
   }, [selectedDeliveryDay]);
 
@@ -961,7 +974,12 @@ const CartPage = () => {
                 <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus?.length}/${cartItemList?.length}`})</TextB2R>
               </div>
               <Right>
-                <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeSelectedItemHandler}>
+                <TextH6B
+                  color={theme.greyScale65}
+                  textDecoration="underline"
+                  onClick={removeSelectedItemHandler}
+                  pointer
+                >
                   선택삭제
                 </TextH6B>
               </Right>
@@ -1061,7 +1079,7 @@ const CartPage = () => {
               {deliveryTimeInfoRenderer()}
             </FlexBetween>
             <Calendar
-              disabledDates={disabledDates}
+              disabledDates={[]}
               subOrderDelivery={subOrderDelivery}
               selectedDeliveryDay={selectedDeliveryDay}
               changeDeliveryDate={changeDeliveryDate}
@@ -1286,6 +1304,7 @@ const NutritionInfoWrapper = styled.div`
   padding: 16px 24px;
   background-color: #f8f8f8;
   margin-bottom: 24px;
+  cursor: pointer;
   .h5B {
     font-size: 14px;
     letter-spacing: -0.4px;
