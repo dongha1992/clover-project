@@ -23,6 +23,7 @@ import isNil from 'lodash-es/isNil';
 import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
+import { INIT_CART_LISTS } from '@store/cart';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -151,6 +152,7 @@ const MypagePage = () => {
   const logoutHandler = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
     dispatch(INIT_USER());
+    dispatch(INIT_CART_LISTS());
     delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     removeCookie({ name: 'autoL' });
@@ -227,7 +229,7 @@ const MypagePage = () => {
             <ManageWrapper>
               <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
-              <MypageMenu title="찜 관리" link="/mypage/dib/general" count={1} />
+              <MypageMenu title="찜 관리" link="/mypage/dib/general" />
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <MypageMenu title="주소 관리" link="/mypage/address" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
@@ -320,20 +322,11 @@ const MypagePage = () => {
 };
 
 export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypageMenu) => {
-  const mapper: Obj = {
-    '구독 관리': '개',
-    '찜 관리': '건',
-    '친구 초대': '명',
-  };
   return (
     <MypageItem onClick={() => router.push(link)} className={`${hideBorder && 'hideBorder'}`}>
       <FlexBetween padding="24px 0">
         <TextH4B>{title}</TextH4B>
         <FlexRow>
-          <TextB2R padding="0 8px 0 0">
-            {count}
-            {mapper[title]}
-          </TextB2R>
           <div>
             <SVGIcon name="arrowRight" />
           </div>
