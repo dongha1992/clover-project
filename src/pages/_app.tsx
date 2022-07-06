@@ -165,11 +165,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
         ></Script>
         <Script
-          strategy="beforeInteractive"
-          type="text/javascript"
-          src={`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_MAP_KEY}`}
-        ></Script>
-        <Script
           type="text/javascript"
           src="https://developers.kakao.com/sdk/js/kakao.min.js"
           strategy="beforeInteractive"
