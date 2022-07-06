@@ -14,11 +14,12 @@ const DEFAULT_SIZE = 30;
 
 const ReviewPage = ({ menuId }: any) => {
   const [page, setPage] = useState<number>(0);
-  const [list, setList] = useState<IDetailImage[]>([]);
+  let [list, setList] = useState<IDetailImage[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   let {
+    data,
     error: reviewsImagesError,
     isFetching,
     isLoading,
@@ -28,12 +29,12 @@ const ReviewPage = ({ menuId }: any) => {
     async () => {
       const params = { id: Number(menuId)!, page, size: 10 };
       const { data } = await getMenuDetailReviewImageApi(params);
-      return data.data.images;
+      return data.data;
     },
 
     {
-      onSuccess: (newList) => {
-        setList((prev: IDetailImage[]) => [...prev, ...newList]);
+      onSuccess: (data) => {
+        setList((prev: IDetailImage[]) => [...prev, ...data.images]);
       },
 
       refetchOnMount: true,
@@ -65,6 +66,10 @@ const ReviewPage = ({ menuId }: any) => {
   }, [handleObserver]);
 
   useEffect(() => {
+    const isLastPage = data?.pagination?.totalPage! <= page;
+
+    if (isLastPage) return;
+
     if (page) {
       refetch();
     }

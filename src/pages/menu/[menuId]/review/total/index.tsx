@@ -10,6 +10,7 @@ import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
+import { ISearchReviews } from '@model/index';
 import {
   getMenuDetailReviewApi,
   getMenuDetailReviewImageApi,
@@ -37,8 +38,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
 
-  console.log(page, 'page');
-
   const {
     data: menuDetail,
     error: menuError,
@@ -59,12 +58,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     }
   );
 
-  const {
-    data: reviews,
-    error,
-    isLoading,
-    refetch,
-  } = useQuery(
+  const { data, error, isLoading, refetch } = useQuery(
     'getMenuDetailReview',
     async () => {
       const params = { id: Number(menuId)!, page, size: DEFAULT_SIZE };
@@ -73,7 +67,9 @@ const TotalReviewPage = ({ menuId }: IProps) => {
       return data.data;
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        setList((prev) => [...prev, ...data.menuReviews]);
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId && !!page,
@@ -131,16 +127,19 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     }
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, option);
+  const observer = new IntersectionObserver(handleObserver, option);
 
+  useEffect(() => {
     if (ref.current) {
       observer.observe(ref?.current);
     }
-    return () => observer.disconnect();
+    return () => observer && observer.disconnect();
   }, [handleObserver]);
 
   useEffect(() => {
+    const isLastPage = data?.pagination?.totalPage! <= page;
+
+    if (isLastPage) return;
     if (page) {
       refetch();
     }
@@ -163,7 +162,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   }
 
   const hasImageReview = reviewsImages?.images?.length! !== 0;
-  const hasReivews = reviews?.menuReviews.length !== 0;
+  const hasReivews = list?.length !== 0;
 
   return (
     <Container>
@@ -195,7 +194,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
         <ReviewWrapper>
           {hasReivews ? (
             <>
-              {reviews?.menuReviews?.map((review: any, index: number) => {
+              {list?.map((review: any, index: number) => {
                 return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
               })}
             </>
