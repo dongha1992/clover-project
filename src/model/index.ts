@@ -2080,7 +2080,7 @@ export interface ICreateCartRequest {
   main: boolean;
   menuDetailId: number;
   menuId: number;
-  menuQuantity?: number | null;
+  quantity?: number | null;
 }
 
 export interface IDeleteCartRequest {
