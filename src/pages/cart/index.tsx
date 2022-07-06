@@ -739,12 +739,9 @@ const CartPage = () => {
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
-  const getTotalDiscountPrice = useCallback(
-    (isSpot?: boolean): number => {
-      return isSpot ? getItemDiscountPrice() + getSpotDiscountPrice() : getItemDiscountPrice();
-    },
-    [checkedMenus]
-  );
+  const getTotalDiscountPrice = useCallback((): number => {
+    return isSpot ? getItemDiscountPrice() + getSpotDiscountPrice() : getItemDiscountPrice();
+  }, [checkedMenus]);
 
   const getItemDiscountPrice = useCallback((): number => {
     return checkedMenus?.reduce((tdp, item) => {
@@ -757,7 +754,7 @@ const CartPage = () => {
 
   const getSpotDiscountPrice = (): number => {
     const spotDiscount = cartResponse?.discountInfos[0];
-    const discoutnedItemsPrice = getItemsPrice() - getTotalDiscountPrice();
+    const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
     return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice;
   };
 
@@ -1114,7 +1111,7 @@ const CartPage = () => {
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
             <CartDiscountBox
-              totalDiscountPrice={getTotalDiscountPrice(isSpot)}
+              totalDiscountPrice={getTotalDiscountPrice()}
               itemDiscountPrice={getItemDiscountPrice()}
               spotDiscountPrice={getSpotDiscountPrice()}
               hasSpotEvent={cartResponse?.discountInfos.length !== 0}
