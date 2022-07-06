@@ -137,7 +137,7 @@ const OrderPage = () => {
     coupon: 0,
   });
   const [card, setCard] = useState<IGetCard>();
-  const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
+
   const [options, setOptions] = useState<any>();
   const [checkTermList, setCheckTermList] = useState<Obj>({
     privacy: false,
@@ -223,13 +223,6 @@ const OrderPage = () => {
 
         setOptions(options);
 
-        if ([30, 31, 1, 2].includes(Number(dayjs(data?.order.orderDeliveries[0].deliveryDate).format('DD')))) {
-          //첫 구독시작일이 [30일, 31일, 1일, 2일]일때 자동결제일: 27일
-          setRegularPaymentDate(27);
-        } else {
-          //첫 구독시작일이 3일 ~ 29일 이면 자동결제일: D-2
-          setRegularPaymentDate(Number(dayjs(data?.order.orderDeliveries[0].deliveryDate).format('DD')) - 2);
-        }
         if (data?.order.type === 'SUBSCRIPTION' && data?.order.subscriptionPeriod === 'UNLIMITED') {
           // 정기구독은 카드결제만 가능
           setSelectedOrderMethod('NICE_BILLING');
@@ -1404,10 +1397,9 @@ const OrderPage = () => {
         </OrderMethodWrapper>
       ) : (
         <SubsPaymentMethod
-          previewOrder={previewOrder}
           goToCardManagemnet={goToCardManagemnet}
           card={card!}
-          regularPaymentDate={regularPaymentDate!}
+          subscriptionPaymentDate={previewOrder?.order?.subscriptionPaymentDate!}
         />
       )}
 
