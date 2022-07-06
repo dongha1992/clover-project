@@ -31,9 +31,14 @@ const LIMIT = 30;
 
 export const FinishReview = () => {
   return (
-    <GreyBg>
-      <TextH5B color={theme.white}>+ 300P 적립</TextH5B>
-    </GreyBg>
+    <FinishComplete>
+      <div className="svg">
+        <SVGIcon name="reviewComplete" />
+      </div>
+      <div className="point">
+        <TextH3B color={theme.white}>300P</TextH3B>
+      </div>
+    </FinishComplete>
   );
 };
 
@@ -85,12 +90,8 @@ const WriteReviewPage = ({ menuId }: any) => {
       onSuccess: async () => {
         dispatch(
           SET_ALERT({
-            children: (
-              <GreyBg>
-                <TextH5B>+ 300P 적립</TextH5B>
-              </GreyBg>
-            ),
-            alertMessage: `${me?.name}님의 소중한 후기에 감사드려요!`,
+            children: <FinishReview />,
+            alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
             submitBtnText: '확인',
           })
         );
@@ -432,13 +433,16 @@ const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-const GreyBg = styled.div`
-  height: 110px;
-  width: 100%;
-  background-color: #c4c4c4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const FinishComplete = styled.div`
+  position: relative;
+  .point {
+    position: absolute;
+    top: 30%;
+    left: 40%;
+  }
+  .svg {
+    width: 100%;
+  }
 `;
 
 export async function getServerSideProps(context: any) {

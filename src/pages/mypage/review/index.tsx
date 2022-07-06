@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { fixedTab, homePadding, theme } from '@styles/theme';
+import { fixedTab, homePadding, textBody3, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
@@ -121,18 +121,21 @@ const ReviewPage = () => {
           </WillReviewItmesWrapper>
         </Wrapper>
       )}
+      <ReviewInfoWrapper>
+        최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
+      </ReviewInfoWrapper>
     </Container>
   );
 };
 
 const Container = styled.div``;
 
-const FixedTab = styled.div<{scroll: boolean}>`
+const FixedTab = styled.div<{ scroll: boolean }>`
   ${fixedTab};
 
-  ${({scroll}) => {
+  ${({ scroll }) => {
     if (scroll) {
-      return css `
+      return css`
         box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
       `;
     }
@@ -145,8 +148,10 @@ const Wrapper = styled.div`
 
 const ReviewInfoWrapper = styled.div`
   background-color: ${theme.greyScale3};
-  padding: 16px;
-  margin: 24px 0;
+  padding: 24px;
+  margin: 24px 0 0 0;
+  color: ${theme.greyScale65};
+  ${textBody3};
 `;
 
 const WillReviewItmesWrapper = styled.div`
@@ -156,7 +161,7 @@ const Center = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  height: 80vh;
 `;
 
 export default ReviewPage;

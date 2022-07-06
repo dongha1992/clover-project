@@ -43,6 +43,7 @@ const Bottom = () => {
           '/mypage/order-detail/[id]',
           '/subscription/[detailId]',
           '/menu/[menuId]/review/total',
+          '/mypage/review',
         ].includes(currentPath): {
           return null;
         }
