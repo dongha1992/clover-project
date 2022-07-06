@@ -36,7 +36,7 @@ export const FinishReview = () => {
   );
 };
 
-const EditReviewPage = ({ reviewId }: any) => {
+const EditReviewPage = ({ reviewId, menuId }: any) => {
   const [isShow, setIsShow] = useState(false);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
@@ -68,17 +68,18 @@ const EditReviewPage = ({ reviewId }: any) => {
   } = useQuery(
     'getReviewDetail',
     async () => {
-      const menuId = router?.query.menuId! as string;
       const params = {
         id: Number(menuId),
-        menuReviewId: reviewId,
+        menuReviewId: Number(reviewId),
       };
+
       const { data } = await getReviewDetailApi(params);
       return data.data;
     },
 
     {
       onSuccess: async (data) => {},
+      cacheTime: 0,
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -111,6 +112,8 @@ const EditReviewPage = ({ reviewId }: any) => {
       },
     }
   );
+
+  useEffect(() => {}, []);
 
   const onStarHoverRating = (e: React.MouseEvent<HTMLDivElement>, idx: number) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
@@ -477,9 +480,9 @@ const GreyBg = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { reviewId } = context.query;
+  const { reviewId, menuId } = context.query;
   return {
-    props: { reviewId },
+    props: { reviewId, menuId },
   };
 }
 

@@ -32,6 +32,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
             <FlexBetween padding="0 0 16px 0">
               <TextH5B onClick={() => router.push(`/menu/${review.menuId}`)}>{review.menuName}</TextH5B>
               <TextH6B
+                pointer
                 color={theme.greyScale65}
                 textDecoration="underline"
                 onClick={() => router.push(`/mypage/review/edit/${review.id}?menuId=${review.menuId}`)}
