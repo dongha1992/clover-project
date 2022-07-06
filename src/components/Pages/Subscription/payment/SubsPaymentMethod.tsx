@@ -7,16 +7,20 @@ import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { IGetCard } from '@model/index';
 import { getFormatDate } from '@utils/common';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+dayjs.locale('ko');
+
 interface IProps {
-  previewOrder: any;
   goToCardManagemnet: any;
   card: IGetCard;
-  regularPaymentDate: number;
+  subscriptionPaymentDate: string;
 }
-const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, card, regularPaymentDate }: IProps) => {
+const SubsPaymentMethod = ({ goToCardManagemnet, card, subscriptionPaymentDate }: IProps) => {
   const goToRegisteredCard = () => {
     router.push('/mypage/card/register');
   };
+
   return (
     <SubsPaymentMethodContainer>
       <CardBox>
@@ -24,7 +28,7 @@ const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, card, regularPaym
         <TextB2R padding="0 0 24px" color={theme.greyScale65}>
           등록한 카드로 자동/정기결제가 진행됩니다.
         </TextB2R>
-        {previewOrder?.cards?.length! > 0 ? (
+        {card ? (
           <>
             <CardItem onClick={goToCardManagemnet} card={card} />
             <Button
@@ -47,7 +51,7 @@ const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, card, regularPaym
         <FlexRow className="titleBox">
           <SVGIcon name="calendar" />
           <TextH5B className="title">
-            정기결제일은 <span>매달 {regularPaymentDate}일</span> 입니다.
+            정기결제일은 <span>매달 {dayjs(subscriptionPaymentDate).format('D')}일</span> 입니다.
           </TextH5B>
         </FlexRow>
         <ul className="exList">
@@ -69,8 +73,7 @@ const SubsPaymentMethod = ({ previewOrder, goToCardManagemnet, card, regularPaym
         </ul>
       </ExBox>
       <TextH5B padding="10px 0" backgroundColor={theme.brandColor} color="#fff" center>
-        {getFormatDate(previewOrder.order.orderDeliveries[0].deliveryDate)} 구독 {previewOrder.order.subscriptionRound}
-        회차 결제가 진행됩니다.
+        {getFormatDate(dayjs().format('YYYY-MM-DD'))} 구독 1회차 결제가 진행됩니다.
       </TextH5B>
     </SubsPaymentMethodContainer>
   );
