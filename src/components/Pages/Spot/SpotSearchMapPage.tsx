@@ -8,7 +8,7 @@ import { SpotsSearchResultList } from '@components/Pages/Spot';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import Slider from 'react-slick';
-import { SpotSearchKakaoMap, NaverMap } from '@components/Map';
+import { SpotSearchKakaoMap } from '@components/Map';
 import { spotSelector } from '@store/spot';
 import { useDispatch, useSelector } from 'react-redux';
 
