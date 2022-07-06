@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ISearchReviews } from '@model/index';
+import { compose } from '@reduxjs/toolkit';
 interface IProps {
   review: ISearchReviews;
   clickImgViewHandler: (imgUrlForViwer: string[]) => void;
@@ -22,6 +23,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
 
   const isContentHide = review.content.length >= 280;
 
+  console.log(review, 'review');
   return (
     <>
       <Container>
@@ -32,7 +34,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
               <TextH6B
                 color={theme.greyScale65}
                 textDecoration="underline"
-                onClick={() => router.push(`/mypage/review/edit/${review.id}`)}
+                onClick={() => router.push(`/mypage/review/edit/${review.id}?menuId=${review.menuId}`)}
               >
                 편집
               </TextH6B>
@@ -81,6 +83,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
               <ImgWrapper>
                 {review.images?.map((img: any, index: number) => {
                   const imgUrlForViwer = review?.images?.map((item: any) => item.url);
+
                   return (
                     <ReviewImageWrapper
                       isFirst
@@ -178,7 +181,7 @@ const RatingAndUser = styled.div`
 const ImgWrapper = styled.div`
   display: flex;
   width: 100%;
-  height: 75px;
+  /* height: 72px; */
   .rounded {
     border-radius: 8px;
   }
@@ -200,7 +203,7 @@ const ReplyBody = styled.div`
 `;
 
 const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`
-  width: calc((100% - 24px) / 4);
+  width: 72px;
   margin-right: ${({ isFirst }) => isFirst && 8}px;
   .rounded {
     border-radius: 8px;

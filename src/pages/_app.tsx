@@ -18,7 +18,6 @@ import Script from 'next/script';
 import { commonSelector, SET_IS_LOADING } from '@store/common';
 import { getCartsApi } from '@api/cart';
 import { useQuery } from 'react-query';
-import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 import { NAME_REGX } from '@constants/regex';
 import { useRouter } from 'next/router';
 
@@ -34,12 +33,14 @@ import { getCookie } from '@utils/common/cookie';
 import { useToast } from '@hooks/useToast';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
+
 declare global {
   interface Window {
     Kakao: any;
     nicepaySubmit: any;
     nicepayClose: any;
     nicepayMobileStart: any;
+    kakao: any;
   }
 }
 

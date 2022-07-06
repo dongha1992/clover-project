@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { theme, verticalCenter } from '@styles/theme';
-import { TextH6B } from '@components/Shared/Text';
+import { TextH5B } from '@components/Shared/Text';
 
 interface IProps {
   isSold?: boolean;
@@ -25,7 +25,7 @@ const CountButton = ({ menuDetailId, quantity, clickPlusButton, clickMinusButton
           <SVGIcon name="minus" color={isSold ? theme.greyScale25 : ''} />
         </Minus>
         <Count>
-          <TextH6B margin="4px 0 0 0">{quantity}</TextH6B>
+          <TextH5B margin="4px 0 0 0">{quantity}</TextH5B>
         </Count>
         <Plus
           onClick={() => {
@@ -42,7 +42,7 @@ const CountButton = ({ menuDetailId, quantity, clickPlusButton, clickMinusButton
 
 const Container = styled.div<{ isSold?: boolean }>`
   position: relative;
-  width: 64px;
+  width: 72px;
   height: 32px;
   border: 1px solid #dedede;
   box-sizing: border-box;
@@ -59,13 +59,13 @@ const Wrapper = styled.div`
 `;
 
 const Minus = styled.div`
-  padding-left: 12px;
   ${verticalCenter}
+  margin-left: 4px;
 `;
 
 const Plus = styled.div`
-  padding-right: 12px;
   ${verticalCenter}
+  margin-right: 4px;
 `;
 const Count = styled.div`
   ${verticalCenter}
