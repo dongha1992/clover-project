@@ -8,6 +8,7 @@ import { Tag } from '@components/Shared/Tag';
 import InfoMessage from '@components/Shared/Message';
 import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
+import { getFormatPrice } from '@utils/common';
 interface IProps {
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
@@ -15,6 +16,7 @@ interface IProps {
   menuId: number;
   menuDetail: IMenuDetailsInCart;
   holiday: number[][];
+  menuName: string;
 }
 
 /* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
@@ -26,6 +28,7 @@ const CartActualItem = ({
   menuId,
   menuDetail,
   holiday,
+  menuName,
 }: IProps) => {
   const { discount, discountedPrice } = getDiscountPrice({
     discountPrice: menuDetail.discountPrice,
@@ -36,7 +39,7 @@ const CartActualItem = ({
     <Container isSold={menuDetail.isSold}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : menuDetail.name}</TextB3R>
+          <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : `${menuName} / ${menuDetail.name}`}</TextB3R>
           <div
             onClick={() =>
               removeCartActualItemHandler &&
@@ -51,7 +54,7 @@ const CartActualItem = ({
             <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
               {discount}%
             </TextH5B>
-            <TextH5B>{discountedPrice}원</TextH5B>
+            <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
           </PriceWrapper>
           <InfoContainer>
             <InfoMessage isSold={menuDetail.isSold} availabilityInfo={menuDetail.availabilityInfo} holiday={holiday} />
