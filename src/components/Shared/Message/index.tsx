@@ -27,14 +27,24 @@ const InfoMessage = ({ isSold, holiday, availabilityInfo }: IProps) => {
 
     switch (true) {
       case isSold: {
-        return <TextB3R color={theme.brandColor}>품절된 상품이에요.</TextB3R>;
+        return (
+          <TextB3R padding="1px 0 0 1px" color={theme.brandColor}>
+            품절된 상품이에요.
+          </TextB3R>
+        );
       }
       case hasLimitDate: {
-        return <TextB3R color={theme.brandColor}>{getHolidayByMenu(holiday!)} 배송이 불가능해요</TextB3R>;
+        return (
+          <TextB3R padding="1px 0 0 1px" color={theme.brandColor}>
+            {getHolidayByMenu(holiday!)} 배송이 불가능해요
+          </TextB3R>
+        );
       }
       case hasLimitQuantity: {
         return (
-          <TextB3R color={theme.brandColor}>품절 임박! 상품이 {availabilityInfo?.remainingQuantity}개 남았어요</TextB3R>
+          <TextB3R padding="1px 0 0 1px" color={theme.brandColor}>
+            품절 임박! 상품이 {availabilityInfo?.remainingQuantity}개 남았어요
+          </TextB3R>
         );
       }
       default: {
