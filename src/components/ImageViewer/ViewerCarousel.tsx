@@ -1,10 +1,11 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { IBanners } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
+
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
   // images: IBanners[];
@@ -27,7 +28,7 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const Carousel = ({ images, setCountIndex }: IProps) => {
+const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
 
   const settings = {
@@ -55,16 +56,10 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
       }}
     >
       <Slider {...settings}>
-        {images?.map((image: any, index: number) => {
-          // temp
-          if (typeof image === 'string') {
-            image = {
-              imageUrl: image,
-            };
-          }
+        {images?.map((url: string, index: number) => {
           return (
             <ImageWrapper
-              src={`${IMAGE_S3_URL}${image.url ? image.url : image.imageUrl}`}
+              src={`${IMAGE_S3_URL}${url}`}
               alt="리뷰이미지"
               key={index}
               isLast={index === images.length + 1}
@@ -80,12 +75,15 @@ const Container = styled.div`
   position: relative;
   max-width: ${breakpoints.mobile}px;
   min-width: ${breakpoints.sm}px;
+  width: 100%;
   .slick-slider {
+    width: 100%;
     .slick-list {
       padding: 0 !important;
       .slick-track {
         .slick-slide {
           font-size: 0;
+          width: 100%;
         }
       }
     }
@@ -123,4 +121,4 @@ const PreviousArrowWrapper = styled.div`
   z-index: 10;
 `;
 
-export default React.memo(Carousel);
+export default React.memo(ViewerCarousel);

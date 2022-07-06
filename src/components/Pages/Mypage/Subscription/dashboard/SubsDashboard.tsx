@@ -17,19 +17,20 @@ interface IProps {
 const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders, showBoard }: IProps) => {
   return (
     <DashBoardBox>
-      <FlexCol>
+      <FlexCol onClick={() => router.push('/mypage/subscription')} pointer>
         <FlexBetween>
           <TextH4B>구독 관리</TextH4B>
           <FlexRow>
-            <TextB2R padding="0 8px 0 0">{subsOrders.length} 건</TextB2R>
-            <div className="rightArrow" onClick={() => router.push('/mypage/subscription')}>
+            <div className="rightArrow">
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>
         </FlexBetween>
       </FlexCol>
       {showBoard === 'close' && <SubsCloseBoard />}
-      {showBoard === 'unpaid' && <SubsUnpaidBoard firstDeliveryDate={subsUnpaidOrders[0]?.firstDeliveryDateOrigin!} />}
+      {showBoard === 'unpaid' && (
+        <SubsUnpaidBoard subscriptionPaymentDate={subsUnpaidOrders[0]?.subscriptionPaymentDate!} />
+      )}
       {showBoard === 'progress' && <SubsProgressBoard subscriptionRound={subsOrders[0]?.subscriptionRound} />}
     </DashBoardBox>
   );

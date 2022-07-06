@@ -37,6 +37,8 @@ const CategroyTabWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  background-color: white;
+  width: 100%;
 `;
 
 const PageTitleWrapper = styled.div``;

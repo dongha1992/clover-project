@@ -65,7 +65,7 @@ const Header = () => {
       '/category/[category]': CATEGORY_TITLE_MAP[category?.toString()!],
       '/menu/[menuId]/review/photo': '사진 후기',
       '/menu/[menuId]/review/total': '전체 후기',
-      '/menu/[menuId]/review/[id]': '후기 상세',
+      '/menu/[menuId]/review/[contentId]': '후기 상세',
       '/cart': '장바구니',
       '/cart/delivery-info': '배송정보',
       '/order': '결제',

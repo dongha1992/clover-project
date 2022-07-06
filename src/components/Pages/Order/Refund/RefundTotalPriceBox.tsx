@@ -60,7 +60,7 @@ const RefundTotalPriceBox = ({ cancelPrivew }: IProps) => {
         <li>
           <FlexBetween>
             <TextH4B>최종 환불금액</TextH4B>
-            <TextH4B>{getFormatPrice(String(cancelPrivew?.refundPayAmount))}원</TextH4B>
+            <TextH4B>{getFormatPrice(String(cancelPrivew?.refundPayAmount + cancelPrivew?.refundPoint))}원</TextH4B>
           </FlexBetween>
         </li>
       </ul>
