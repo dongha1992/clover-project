@@ -18,7 +18,6 @@ import Script from 'next/script';
 import { commonSelector, SET_IS_LOADING } from '@store/common';
 import { getCartsApi } from '@api/cart';
 import { useQuery } from 'react-query';
-import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 import { NAME_REGX } from '@constants/regex';
 import { useRouter } from 'next/router';
 

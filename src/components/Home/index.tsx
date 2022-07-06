@@ -14,7 +14,6 @@ import { filterSelector } from '@store/filter';
 import Image from 'next/image';
 import BorderLine from '@components/Shared/BorderLine';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
-/* TODO: static props로  */
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);

@@ -12,7 +12,7 @@ interface IProps {
   reviewsImages: IDetailImage[];
   goToReviewImages: () => void;
   goToReviewDetail: (id: number) => void;
-  averageRating: string;
+  averageRating: number;
   totalReviews: number;
 }
 
@@ -32,7 +32,7 @@ const ReviewOnlyImage = ({
             <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
-            <StarRating rating={Number(averageRating)} />
+            <StarRating rating={Number(averageRating)} width={'30'} height={'30'} />
           </Star>
         </Header>
         <ReviewSwipe>
@@ -42,7 +42,7 @@ const ReviewOnlyImage = ({
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>+ {totalReviews - 4}</TextH1B>
+                    <TextH1B color={theme.white}>+ {reviewsImages.length - 4}</TextH1B>
                   </LastImg>
                   <Image
                     src={IMAGE_S3_URL + review?.url}
@@ -55,7 +55,7 @@ const ReviewOnlyImage = ({
               );
             }
             return (
-              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.reviewId)}>
+              <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
                 <Image
                   src={IMAGE_S3_URL + review?.url}
                   alt="리뷰이미지"
@@ -100,7 +100,6 @@ const Star = styled.div``;
 
 const ReviewSwipe = styled.div`
   display: flex;
-  justify-content: space-between;
   overflow: hidden;
   width: 100%;
   margin: 16px 0 24px 0;
@@ -109,6 +108,7 @@ const ReviewSwipe = styled.div`
 
 const ReviewImgWrapper = styled.div`
   width: calc((100% - 24px) / 4);
+  margin-right: 6px;
 
   > span {
     border-radius: 8px;
