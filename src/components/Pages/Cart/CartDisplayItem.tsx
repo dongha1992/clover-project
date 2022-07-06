@@ -50,7 +50,7 @@ const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplay
         </FlexRowStart>
         <FlexBetween>
           <FlexCol margin="0 0 0 8px">
-            <TextB2R color={isDisabled ? theme.greyScale25 : ''}>{menu.menuName}</TextB2R>
+            <TextB2R color={isDisabled ? theme.greyScale25 : ''}>{menu.name}</TextB2R>
             {/* <InfoMessage status={isDisabled && 'isSold'} /> */}
           </FlexCol>
           <RemoveBtnContainer onClick={() => removeCartDisplayItemHandler && removeCartDisplayItemHandler(menu)}>

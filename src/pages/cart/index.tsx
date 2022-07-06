@@ -21,7 +21,7 @@ import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
 import { SET_ORDER } from '@store/order';
-import { HorizontalItem, Item } from '@components/Item';
+import { Item } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
@@ -57,9 +57,10 @@ import {
   NutritionBox,
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
+import { INIT_ACCESS_METHOD } from '@store/common';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { INIT_ACCESS_METHOD } from '@store/common';
 
 dayjs.locale('ko');
 
@@ -605,11 +606,14 @@ const CartPage = () => {
   };
 
   const goToSearchPage = () => {
-    router.push('/search');
+    router.push('/');
   };
 
   const goToOrder = () => {
-    if (isNil(destinationObj) || !me) return;
+    const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
+    const isUnderMinimum = totalAmount < minimum;
+
+    if (isNil(destinationObj) || !me || isUnderMinimum) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
@@ -746,12 +750,14 @@ const CartPage = () => {
     return checkedMenus?.reduce((tdp, item) => {
       return item.menuDetails.reduce((tdp, detail) => {
         if (detail.isSold) return tdp;
-        return tdp + detail.discountPrice;
+        return tdp + detail.discountPrice * detail.quantity;
       }, tdp);
     }, 0);
   }, [checkedMenus]);
 
   const getSpotDiscountPrice = (): number => {
+    const itemsPrice = getItemsPrice();
+    console.log(itemsPrice, 'itemsPrice');
     return 0;
   };
 
@@ -992,7 +998,7 @@ const CartPage = () => {
                     <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
                     <div className="disposableText">
                       <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
-                      <TextH5B>+{item.price}원</TextH5B>
+                      <TextH5B>{item.price}원</TextH5B>
                     </div>
                   </div>
                   <Right>
@@ -1072,7 +1078,7 @@ const CartPage = () => {
       )}
       <BorderLine height={8} margin="32px 0" />
       <MenuListContainer>
-        {me && (
+        {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
               <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
@@ -1086,7 +1092,7 @@ const CartPage = () => {
             </MenuListHeader>
           </MenuListWarpper>
         )}
-        {me && (
+        {me && orderedMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
               <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
@@ -1126,7 +1132,7 @@ const CartPage = () => {
                 프코 회원
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-              <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+              <TextH6B> n 포인트 (n%) 적립 예정</TextH6B>
             </FlexEnd>
           </TotalPriceWrapper>
         )}
