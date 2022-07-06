@@ -54,18 +54,19 @@ const Container = styled.div<{ isSold?: boolean }>`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   position: relative;
   height: 100%;
 `;
 
 const Minus = styled.div`
   ${verticalCenter}
-  margin-left: 4px;
+  margin-left: 6px;
 `;
 
 const Plus = styled.div`
   ${verticalCenter}
-  margin-right: 4px;
+  margin-right: 6px;
 `;
 const Count = styled.div`
   ${verticalCenter}
