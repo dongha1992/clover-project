@@ -7,6 +7,7 @@ import CartDeliveryFeeBox from './CartDeliveryFeeBox';
 import CartDiscountBox from './CartDiscountBox';
 import CartPriceBox from './CartPriceBox';
 import CartDisposableBox from './CartDisposableBox';
+import NutritionBox from './NutritionBox';
 
 export {
   CartDisposableBox,
@@ -18,4 +19,5 @@ export {
   CartItem,
   CartDisplayItem,
   DeliveryTypeAndLocation,
+  NutritionBox,
 };
