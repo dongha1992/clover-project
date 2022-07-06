@@ -28,14 +28,6 @@ interface IWriteMenuReviewObj {
 
 const LIMIT = 30;
 
-export const FinishReview = () => {
-  return (
-    <GreyBg>
-      <TextH5B color={theme.white}>+ 300P 적립</TextH5B>
-    </GreyBg>
-  );
-};
-
 const EditReviewPage = ({ reviewId, menuId }: any) => {
   const [isShow, setIsShow] = useState(false);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
@@ -228,11 +220,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const deleteReview = () => {
     dispatch(
       SET_ALERT({
-        children: (
-          <GreyBg>
-            <TextH5B>+ 300P 적립</TextH5B>
-          </GreyBg>
-        ),
         alertMessage: `삭제 후 재작성은 불가합니다. \n작성한 후기를 삭제하시겠어요?`,
         submitBtnText: '확인',
         closeBtnText: '취소',
@@ -464,19 +451,6 @@ const PointInfoWrapper = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
   margin-bottom: 105px;
-`;
-
-const BtnWrapper = styled.div`
-  ${fixedBottom}
-`;
-
-const GreyBg = styled.div`
-  height: 110px;
-  width: 100%;
-  background-color: #c4c4c4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export async function getServerSideProps(context: any) {
