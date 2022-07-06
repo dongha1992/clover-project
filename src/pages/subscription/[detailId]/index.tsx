@@ -12,8 +12,8 @@ import { PAYMENT_METHOD } from '@constants/order';
 import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
 import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
-import useSubsStatus from '@hooks/subscription/useSubsStatus';
-import { IOrderDetail, IOrderDetailInOrderDeliveries, IResponse } from '@model/index';
+import useSubsProgressStatusMsg from '@hooks/subscription/useSubsProgressStatusMsg';
+import { IOrderDetail, IResponse } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
@@ -35,7 +35,6 @@ const SubsDetailPage = () => {
   const { subsCalendarSelectOrders } = useSelector(subscriptionForm);
   const [detailId, setDetailId] = useState<any>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
-  const [regularPaymentDate, setRegularPaymentDate] = useState<number>();
   const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
 
   const { mutate: deleteOrderCancel } = useDeleteOrderCancel(['deleteOrderCancel'], {
@@ -79,21 +78,13 @@ const SubsDetailPage = () => {
       });
       setSubDeliveries(subArr);
       setDeliveryDay(Array.from(pickupDayObj));
-
-      if ([30, 31, 1, 2].includes(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')))) {
-        //첫 구독시작일이 [30일, 31일, 1일, 2일]일때 자동결제일: 27일
-        setRegularPaymentDate(27);
-      } else {
-        //첫 구독시작일이 3일 ~ 29일 이면 자동결제일: D-2
-        setRegularPaymentDate(Number(dayjs(data.orderDeliveries[0].deliveryDate).format('DD')) - 2);
-      }
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     enabled: !!detailId,
   });
 
-  const status = useSubsStatus(orderDetail?.status!);
+  const status = useSubsProgressStatusMsg(orderDetail?.status!);
   const optionsPrice = useOptionsPrice(orderDetail?.orderDeliveries!);
   const { subsFailType } = useSubsPaymentFail(
     orderDetail?.unsubscriptionType,
@@ -285,7 +276,8 @@ const SubsDetailPage = () => {
               <FlexColEnd>
                 <TextB2R>정기결제 / 신용카드</TextB2R>
                 <TextB3R color="#717171">
-                  다음 결제일은 {dayjs().add(1, 'month').format('M')}월 {regularPaymentDate}일 입니다.
+                  다음 결제일은 {dayjs(orderDetail?.subscriptionPaymentDate).format('M')}월{' '}
+                  {dayjs(orderDetail?.subscriptionPaymentDate).format('D')}일 입니다.
                 </TextB3R>
               </FlexColEnd>
             </FlexBetweenStart>
