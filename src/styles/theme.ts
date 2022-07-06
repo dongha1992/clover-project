@@ -46,6 +46,10 @@ export const categoryPageSet = css`
 export const verticalCenter = css`
   display: flex;
   align-self: center;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const FlexCenter = styled.div<{ padding?: string; margin?: string; pointer?: boolean }>`
@@ -78,12 +82,16 @@ export const FlexBetween = styled.div<{
 export const FlexBetweenStart = styled.div<{
   padding?: string;
   margin?: string;
+  width?: string;
+  height?: string;
 }>`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
+  width: ${({ width }) => width && width};
+  height: ${({ height }) => height && height};
 `;
 
 export const FlexRowStart = styled.div<{ padding?: string; margin?: string; width?: string }>`

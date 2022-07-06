@@ -69,8 +69,9 @@ const ModalBox = styled.div<{
 }>`
   position: relative;
   max-width: ${breakpoints.mobile}px;
-  ${({ height }) => height && `height: ${height}`}
-  padding: ${({ padding }) => (padding ? padding : `10px`)};
+  width: 100%;
+  /* height: ${({ height }) => height && `${height}`}; */
+  /* padding: ${({ padding }) => (padding ? padding : `10px`)}; */
   z-index: 11;
   box-sizing: border-box;
 `;

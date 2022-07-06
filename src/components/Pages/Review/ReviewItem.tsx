@@ -6,13 +6,19 @@ import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+import { IBestReviews } from '@model/index';
 
-const ReviewItem = ({ review, onClick, reviewImg }: any) => {
+interface IProps {
+  review: IBestReviews;
+  onClick: (review: IBestReviews) => void;
+}
+
+const ReviewItem = ({ review, onClick }: IProps) => {
   return (
-    <Container onClick={onClick}>
+    <Container onClick={() => onClick(review)}>
       <Wrapper>
         <ImgWrapper>
-          <ReviewImg src={IMAGE_S3_URL + reviewImg?.url} />
+          <ReviewImg src={IMAGE_S3_URL + review?.images[0]?.url!} />
         </ImgWrapper>
         <ReviewContent>
           <ReviewHeader>

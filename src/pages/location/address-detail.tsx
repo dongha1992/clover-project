@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { fixedBottom } from '@styles/theme';
 import { Button, ButtonGroup } from '@components/Shared/Button';
-import { DefaultMap } from '@components/Map';
+import { DefaultKakaoMap } from '@components/Map';
 import { destinationForm } from '@store/destination';
 import { useSelector, useDispatch } from 'react-redux';
 import { CheckDestinationPlace } from '@components/Pages/Destination/';
@@ -81,7 +81,7 @@ const AddressDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <DefaultMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
+        <DefaultKakaoMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
       </MapWrapper>
       {isCanNotDelivery ? (
         <ButtonGroup
