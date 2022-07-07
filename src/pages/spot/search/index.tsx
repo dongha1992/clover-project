@@ -23,6 +23,7 @@ import {
   SET_SEARCH_KEYWORD,
   SET_SERACH_MAP_SPOT,
   SET_SPOT_MAP_SWITCH,
+  SET_SPOT_SEARCH_ALL_LIST_CHECKED,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -115,7 +116,7 @@ const SpotSearchPage = (): ReactElement => {
       if (data.code === 200) {
         const spotList = data.data.spots;
         dispatch(SET_SERACH_MAP_SPOT(spotList!));
-        // setSearchResult(fetchData?.spots);
+        dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
       };
     } catch (err) {
       console.error(err);
