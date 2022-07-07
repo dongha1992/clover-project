@@ -5,7 +5,6 @@ import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
-import debounce from 'lodash-es/debounce';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
@@ -124,11 +123,11 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
 
   const onChangeFileHandler = (e: any) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
+    let imageFile = e.target.files! as any;
+    if (!imageFile[0]) return;
 
     try {
       if (e.target.files.length > 0) {
-        let imageFile = e.target.files;
-
         /* 사이즈 제한 걸리는 경우 */
         if (LIMIT_SIZE < imageFile[0].size) {
           /* 이미지 사이즈 줄이기 */
@@ -139,13 +138,11 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
           const QUALITY = 0.8;
           const img = new Image();
           img.src = blobURL;
-
           img.onerror = () => {
             URL.revokeObjectURL(blobURL);
             alert('이미지 업로드에 실패했습니다');
             return;
           };
-
           img.onload = () => {
             URL.revokeObjectURL(blobURL);
             const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
@@ -159,7 +156,6 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
                 imageFile = new File([blob], imageFile[0].name, {
                   type: imageFile[0].type,
                 });
-
                 getImageFileReader(imageFile);
               },
               MIME_TYPE,
@@ -180,9 +176,8 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
 
     imageFileReader.onload = (e: any) => {
       setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
+      imageFileReader.readAsDataURL(imageFile);
     };
-
-    imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
