@@ -15,7 +15,6 @@ import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi, deleteReviewApi } from '@api/menu';
 import { StarRating } from '@components/StarRating';
-import NextImage from 'next/image';
 import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
@@ -69,7 +68,10 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
     {
       onSuccess: async (data) => {},
-      cacheTime: 0,
+      onError: () => {
+        router.back();
+      },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -94,11 +96,13 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
   const { mutateAsync: mutateDeleteMenuReview } = useMutation(
     async () => {
-      const { data } = await deleteReviewApi({ id: reviewId });
+      console.log(reviewId, 'reviewId');
+      const { data } = await deleteReviewApi({ id: Number(reviewId) });
     },
     {
       onSuccess: async () => {
-        await queryClient.refetchQueries('getReviewDetail');
+        router.back();
+        await queryClient.refetchQueries('getCompleteWriteReview');
       },
     }
   );
@@ -121,13 +125,13 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
   };
 
-  const onChangeFileHandler = (e: any) => {
+  const onChangeFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
+    let imageFile = e.target.files! as any;
+    if (!imageFile[0]) return;
 
     try {
-      if (e.target.files.length > 0) {
-        let imageFile = e.target.files;
-
+      if (imageFile.length! > 0) {
         /* 사이즈 제한 걸리는 경우 */
         if (LIMIT_SIZE < imageFile[0].size) {
           /* 이미지 사이즈 줄이기 */
@@ -138,13 +142,11 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
           const QUALITY = 0.8;
           const img = new Image();
           img.src = blobURL;
-
           img.onerror = () => {
             URL.revokeObjectURL(blobURL);
             alert('이미지 업로드에 실패했습니다');
             return;
           };
-
           img.onload = () => {
             URL.revokeObjectURL(blobURL);
             const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
@@ -158,7 +160,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
                 imageFile = new File([blob], imageFile[0].name, {
                   type: imageFile[0].type,
                 });
-
                 getImageFileReader(imageFile);
               },
               MIME_TYPE,
@@ -180,7 +181,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     imageFileReader.onload = (e: any) => {
       setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
     };
-
     imageFileReader.readAsDataURL(imageFile);
   };
 
@@ -204,6 +204,8 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     // formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
     // formData.append('rating', rating.toString());
 
+    console.log(writeMenuReviewObj.imgFiles, '--');
+
     const reqBody = {
       content: textAreaRef?.current?.value!,
       images: writeMenuReviewObj.imgFiles,
@@ -224,11 +226,13 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     );
   };
 
+  const changeS3ToBase64 = async (urls: string[]) => {};
+
   useEffect(() => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        imgFiles: selectedReviewDetail?.menuReview && selectedReviewDetail?.menuReview?.images?.map((img) => img.url),
+        imgFiles: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
       });
       setRating(selectedReviewDetail.menuReview.rating);
     }
@@ -324,6 +328,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
+                  {/* <img src={img} /> */}
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
