@@ -59,7 +59,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, reviewAv
         })
       );
     }
-    router.push(`/mypage/review/write/${menuId}`);
+    router.push(`/mypage/review`);
   };
 
   const clickImgViewHandler = (images: any) => {
