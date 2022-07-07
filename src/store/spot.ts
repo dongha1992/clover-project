@@ -61,6 +61,7 @@ interface IProps {
   spotKeyword: string;
   isMapSwitch: boolean;
   spotSearchArr: ISpotsDetail[];
+  spotListAllChecked: boolean;
 };
 
 const spotAddressState = {
@@ -119,6 +120,7 @@ const initialState: IProps = {
   spotKeyword: '',
   isMapSwitch: false,
   spotSearchArr: [],
+  spotListAllChecked: false,
 };
 
 export const spot = createSlice({
@@ -162,19 +164,19 @@ export const spot = createSlice({
     SET_SPOT_SEARCH_SELECTED_FILTERS: (state, action: PayloadAction<string[]>) => {
       state.spotSearchSelectedFilters = action.payload;
     },
-    INIT_SEARCH_SELECTED_FILTERS : (state, action: PayloadAction) => {
+    INIT_SEARCH_SELECTED_FILTERS: (state, action: PayloadAction) => {
       state.spotSearchSelectedFilters = [];
     },
-    SET_SPOT_SEARCH_SORT : (state, action: PayloadAction<string>) => {
+    SET_SPOT_SEARCH_SORT: (state, action: PayloadAction<string>) => {
       state.spotSearchSort = action.payload;
     },
-    INIT_SPOT_SEARCH_SORT : (state, action: PayloadAction) => {
+    INIT_SPOT_SEARCH_SORT: (state, action: PayloadAction) => {
       state.spotSearchSort = '';
     },
-    SET_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction<boolean>) => {
+    SET_SPOT_JOIN_FORM_CHECKED: (state, action: PayloadAction<boolean>) => {
       state.spotJoinFormChecked = action.payload;
     },
-    INIT_SPOT_JOIN_FORM_CHECKED : (state, action: PayloadAction) => {
+    INIT_SPOT_JOIN_FORM_CHECKED: (state, action: PayloadAction) => {
       state.spotJoinFormChecked = false;
     },
     SET_SPOT_STATUS_DETAIL_ITEMS: (state, action: PayloadAction<IGetRegistrationStatus | null>) => {
@@ -188,6 +190,9 @@ export const spot = createSlice({
     },
     SET_SERACH_MAP_SPOT: (state, action: PayloadAction<ISpotsDetail[]>) => {
       state.spotSearchArr = action.payload;
+    },
+    SET_SPOT_SEARCH_ALL_LIST_CHECKED: (state, action: PayloadAction<boolean>) => {
+      state.spotListAllChecked = action.payload;
     },
   },
 });
@@ -214,6 +219,7 @@ export const {
   SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
   SET_SERACH_MAP_SPOT,
+  SET_SPOT_SEARCH_ALL_LIST_CHECKED,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
 export default spot.reducer;
