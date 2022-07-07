@@ -22,7 +22,6 @@ import { useRouter } from 'next/router';
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
   deletedImgIds: string[];
-  rating: number;
   content: string;
 }
 
@@ -33,10 +32,10 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
-    rating: 5,
     content: '',
   });
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [rating, setRating] = useState(5);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
 
   const dispatch = useDispatch();
@@ -105,8 +104,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
   );
 
-  useEffect(() => {}, []);
-
   const onStarHoverRating = (e: React.MouseEvent<HTMLDivElement>, idx: number) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
 
@@ -116,7 +113,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       idx -= 0.5;
     }
 
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
+    setRating(idx);
   };
 
   const writeReviewHandler = () => {
@@ -179,11 +176,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   };
 
   const getImageFileReader = (imageFile: any) => {
-    setWriteMenuReviewObj({
-      ...writeMenuReviewObj,
-      imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
-    });
-
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
@@ -212,7 +204,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
     formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReview?.content!);
     formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    formData.append('rating', writeMenuReviewObj.rating.toString());
+    formData.append('rating', rating.toString());
 
     mutateEditMenuReview(formData);
   };
@@ -233,9 +225,10 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
         content: selectedReviewDetail.menuReview.content,
-        rating: selectedReviewDetail.menuReview.rating,
+
         imgFiles: selectedReviewDetail?.menuReview && selectedReviewDetail?.menuReview?.images?.map((img) => img.url),
       });
+      setRating(selectedReviewDetail.menuReview.rating);
     }
   }, [selectedReviewDetail]);
 
@@ -269,7 +262,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRating rating={writeMenuReviewObj.rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
+          <StarRating rating={rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>
@@ -323,12 +316,12 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
               </div>
             </UploadInputWrapper>
           )}
-
           {writeMenuReviewObj?.imgFiles?.length! > 0 &&
             writeMenuReviewObj?.imgFiles?.map((img: string, index: number) => {
+              const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={img} />
+                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
@@ -409,6 +402,7 @@ const UploadInputWrapper = styled.label`
   background-color: ${theme.greyScale6};
   border-radius: 8px;
   margin: 16px 0 48px 0;
+  cursor: pointer;
   input {
     position: absolute;
     left: 0;
@@ -440,6 +434,7 @@ const PreviewImgWrapper = styled.div`
 
   .svgWrapper {
     svg {
+      cursor: pointer;
       position: absolute;
       right: 10%;
       top: 10%;

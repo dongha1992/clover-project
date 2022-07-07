@@ -104,7 +104,7 @@ const ReviewPage = () => {
           <WillReviewItmesWrapper>
             {willWriteList?.map((review, index) => (
               <div key={index}>
-                <WillWriteReviewItem menu={review} />
+                <WillWriteReviewItem review={review} />
                 {willWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
               </div>
             ))}
@@ -133,7 +133,9 @@ const ReviewPage = () => {
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding-bottom: 24px;
+`;
 
 const FixedTab = styled.div<{ scroll: boolean }>`
   ${fixedTab};
@@ -152,11 +154,14 @@ const Wrapper = styled.div`
 `;
 
 const ReviewInfoWrapper = styled.div`
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
   background-color: ${theme.greyScale3};
   padding: 24px;
-  margin: 24px 0 0 0;
   color: ${theme.greyScale65};
   ${textBody3};
+  text-align: center;
 `;
 
 const WillReviewItmesWrapper = styled.div`

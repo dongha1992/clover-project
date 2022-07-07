@@ -23,7 +23,6 @@ import { userForm } from '@store/user';
 interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
-  rating: number;
   content: string;
 }
 
@@ -50,8 +49,8 @@ const WriteReviewPage = ({ menuId }: any) => {
     imgFiles: [],
     deletedImgIds: [],
     content: '',
-    rating: 5,
   });
+  const [rating, setRating] = useState(5);
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -83,8 +82,8 @@ const WriteReviewPage = ({ menuId }: any) => {
   );
 
   const { mutateAsync: mutateCreateMenuReview } = useMutation(
-    async (formData: FormData) => {
-      const { data } = await createMenuReviewApi(formData);
+    async (reqBody) => {
+      const { data } = await createMenuReviewApi(reqBody);
     },
     {
       onSuccess: async () => {
@@ -107,8 +106,6 @@ const WriteReviewPage = ({ menuId }: any) => {
     if (xPos <= 0.5) {
       idx -= 0.5;
     }
-
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
   };
 
   const writeReviewHandler = () => {
@@ -171,11 +168,6 @@ const WriteReviewPage = ({ menuId }: any) => {
   };
 
   const getImageFileReader = (imageFile: any) => {
-    setWriteMenuReviewObj({
-      ...writeMenuReviewObj,
-      imgFiles: [...writeMenuReviewObj.imgFiles, imageFile],
-    });
-
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
@@ -191,25 +183,33 @@ const WriteReviewPage = ({ menuId }: any) => {
   };
 
   const finishWriteReview = async () => {
-    /* TODO: 리뷰 등록 물어봐야 함 */
-    let formData = new FormData();
+    // let formData = new FormData();
 
-    if (writeMenuReviewObj.imgFiles.length > 0) {
-      for (let i = 0; i < writeMenuReviewObj.imgFiles.length; i++) {
-        formData.append('files' + '[' + i + ']', writeMenuReviewObj.imgFiles[i]);
-      }
-    }
+    // if (writeMenuReviewObj.imgFiles.length > 0) {
+    //   for (let i = 0; i < writeMenuReviewObj.imgFiles.length; i++) {
+    //     formData.append('files' + '[' + i + ']', writeMenuReviewObj.imgFiles[i]);
+    //   }
+    // }
 
-    const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
+    // const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef?.current?.value || '');
-    formData.append('menuDetailId', '1');
-    formData.append('menuId', '1');
-    formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    formData.append('orderDeliveryId', '11');
-    formData.append('rating', writeMenuReviewObj.rating.toString());
+    // formData.append('content', textAreaRef?.current?.value || '');
+    // formData.append('menuDetailId', '1');
+    // formData.append('menuId', '1');
+    // formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
+    // formData.append('orderDeliveryId', '11');
+    // formData.append('rating', rating.toString());
 
-    mutateCreateMenuReview(formData);
+    //   const reqBody = {
+    //      content: textAreaRef?.current.value,
+    // images: writeMenuReviewObj.i
+    // menuDetailId: number;
+    // menuId: number;
+    // orderDeliveryId: number;
+    // rating: rating;
+    //   };
+
+    mutateCreateMenuReview(reqBody);
   };
 
   console.log(data, 'data');
@@ -245,7 +245,7 @@ const WriteReviewPage = ({ menuId }: any) => {
         </FlexRow>
         <RateWrapper>
           <StarRating
-            rating={writeMenuReviewObj.rating}
+            rating={rating}
             // onRating={onStarHoverRating}
             hoverRating={hoverRating}
             onClick={onStarHoverRating}
@@ -304,10 +304,10 @@ const WriteReviewPage = ({ menuId }: any) => {
           )}
           {writeMenuReviewObj.imgFiles.length > 0 &&
             writeMenuReviewObj.imgFiles.map((img: string, index: number) => {
-              console.log(img);
+              const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={img} />
+                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>

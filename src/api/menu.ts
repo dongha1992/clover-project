@@ -16,6 +16,7 @@ import {
   ISubscriptionResponse,
   IGetSubscription,
   IGetOrderMenusResponse,
+  ICreateReivewRequest,
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
@@ -76,10 +77,14 @@ export const getReviewAvailabilityApi = (id: number): Promise<AxiosResponse<IRev
   return Api.get(`menu/v1/menus/${id}/reviews/availability`);
 };
 
-export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
-  return Api.post('menu/v1/reviews', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+// export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
+//   return Api.post('menu/v1/reviews', formData, {
+//     headers: { 'Content-Type': 'multipart/form-data' },
+//   });
+// };
+
+export const createMenuReviewApi = (data: ICreateReivewRequest): Promise<AxiosResponse<IResponse>> => {
+  return Api.post('menu/v1/reviews', data);
 };
 
 export const editMenuReviewApi = ({

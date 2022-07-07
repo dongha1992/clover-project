@@ -184,7 +184,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
               border
               borderRadius="8"
               margin="0 0 32px 0"
-              onClick={() => router.push(`/mypage/review/write/${menuId}`)}
+              onClick={() => router.push('/mypage/review')}
             >
               후기 작성하기 (최대 3,000포인트 적립)
             </Button>
