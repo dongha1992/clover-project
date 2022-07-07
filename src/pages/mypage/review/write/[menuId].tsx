@@ -19,6 +19,7 @@ import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
 import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
+import { ICreateReivewRequest } from '@model/index';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
@@ -41,7 +42,13 @@ export const FinishReview = () => {
   );
 };
 
-const WriteReviewPage = ({ menuId }: any) => {
+interface IProps {
+  menuId: number;
+  orderDeliveryId: number;
+  menuDetailId: number;
+}
+
+const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   const [isShow, setIsShow] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
@@ -82,7 +89,7 @@ const WriteReviewPage = ({ menuId }: any) => {
   );
 
   const { mutateAsync: mutateCreateMenuReview } = useMutation(
-    async (reqBody) => {
+    async (reqBody: ICreateReivewRequest) => {
       const { data } = await createMenuReviewApi(reqBody);
     },
     {
@@ -106,6 +113,7 @@ const WriteReviewPage = ({ menuId }: any) => {
     if (xPos <= 0.5) {
       idx -= 0.5;
     }
+    setRating(idx);
   };
 
   const writeReviewHandler = () => {
@@ -200,14 +208,14 @@ const WriteReviewPage = ({ menuId }: any) => {
     // formData.append('orderDeliveryId', '11');
     // formData.append('rating', rating.toString());
 
-    //   const reqBody = {
-    //      content: textAreaRef?.current.value,
-    // images: writeMenuReviewObj.i
-    // menuDetailId: number;
-    // menuId: number;
-    // orderDeliveryId: number;
-    // rating: rating;
-    //   };
+    const reqBody = {
+      content: textAreaRef?.current?.value!,
+      images: writeMenuReviewObj.imgFiles,
+      menuDetailId: Number(menuDetailId),
+      menuId: Number(menuId),
+      orderDeliveryId: Number(orderDeliveryId),
+      rating,
+    };
 
     mutateCreateMenuReview(reqBody);
   };
@@ -446,9 +454,9 @@ const FinishComplete = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
+  const { menuId, orderDeliveryId, menuDetailId } = context.query;
   return {
-    props: { menuId },
+    props: { menuId, orderDeliveryId, menuDetailId },
   };
 }
 

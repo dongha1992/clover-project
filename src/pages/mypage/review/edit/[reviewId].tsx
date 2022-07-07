@@ -18,11 +18,11 @@ import { StarRating } from '@components/StarRating';
 import NextImage from 'next/image';
 import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
+import { IPatchReviewRequest } from '@model/index';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
   deletedImgIds: string[];
-  content: string;
 }
 
 const LIMIT = 30;
@@ -32,7 +32,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
-    content: '',
   });
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [rating, setRating] = useState(5);
@@ -77,8 +76,8 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   );
 
   const { mutateAsync: mutateEditMenuReview } = useMutation(
-    async (formData: FormData) => {
-      const { data } = await editMenuReviewApi({ formData, reviewId });
+    async (reqBody: IPatchReviewRequest) => {
+      const { data } = await editMenuReviewApi({ data: reqBody, reviewId });
     },
     {
       onSuccess: async () => {
@@ -191,22 +190,27 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   };
 
   const finishWriteReview = async () => {
-    /* TODO: 리뷰 등록 물어봐야 함 */
-    let formData = new FormData();
+    // let formData = new FormData();
 
-    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
-      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        writeMenuReviewObj.imgFiles && formData.append('files' + '[' + i + ']', writeMenuReviewObj?.imgFiles[i]);
-      }
-    }
+    // if (writeMenuReviewObj?.imgFiles?.length! > 0) {
+    //   for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
+    //     writeMenuReviewObj.imgFiles && formData.append('files' + '[' + i + ']', writeMenuReviewObj?.imgFiles[i]);
+    //   }
+    // }
 
-    const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
+    // const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
 
-    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReview?.content!);
-    formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    formData.append('rating', rating.toString());
+    // formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReview?.content!);
+    // formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
+    // formData.append('rating', rating.toString());
 
-    mutateEditMenuReview(formData);
+    const reqBody = {
+      content: textAreaRef?.current?.value!,
+      images: writeMenuReviewObj.imgFiles,
+      rating,
+    };
+
+    mutateEditMenuReview(reqBody);
   };
 
   const deleteReview = () => {
@@ -224,8 +228,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        content: selectedReviewDetail.menuReview.content,
-
         imgFiles: selectedReviewDetail?.menuReview && selectedReviewDetail?.menuReview?.images?.map((img) => img.url),
       });
       setRating(selectedReviewDetail.menuReview.rating);

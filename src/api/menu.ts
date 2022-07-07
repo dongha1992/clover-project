@@ -17,6 +17,7 @@ import {
   IGetSubscription,
   IGetOrderMenusResponse,
   ICreateReivewRequest,
+  IPatchReviewRequest,
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
@@ -87,16 +88,26 @@ export const createMenuReviewApi = (data: ICreateReivewRequest): Promise<AxiosRe
   return Api.post('menu/v1/reviews', data);
 };
 
+// export const editMenuReviewApi = ({
+//   formData,
+//   reviewId,
+// }: {
+//   formData: FormData;
+//   reviewId: number;
+// }): Promise<AxiosResponse<IResponse>> => {
+//   return Api.patch(`menu/v1/review/${reviewId}`, formData, {
+//     headers: { 'Content-Type': 'multipart/form-data' },
+//   });
+// };
+
 export const editMenuReviewApi = ({
-  formData,
+  data,
   reviewId,
 }: {
-  formData: FormData;
+  data: IPatchReviewRequest;
   reviewId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.patch(`menu/v1/review/${reviewId}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  return Api.patch(`menu/v1/review/${reviewId}`, data);
 };
 
 export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsResponse>> => {
