@@ -25,8 +25,9 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
   const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
   const [selectedSpotList, setSelectedSpotList] = useState({});
   const [selected, setSelected] = useState<boolean>(false);
+  const [selectedTest, setSelectedTest] = useState<boolean>(false);
   const list = spotSearchArr ?? [];
-
+// console.log(selectedSpotList);
   useEffect(()=> {
     if(slideRef.current){
       slideRef.current?.slickGoTo(selectedCarouselIndex);
@@ -46,8 +47,8 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
     setCurrentIdx({current: current, next: next}),
   };
 
-  const selectedSlickIdx = (i: number) => {
-    setSelectedCarouselIndex(i)
+  const selectedSlickIdx = (idx: number) => {
+    setSelectedCarouselIndex(idx)
   };
 
   const selectedSpot = (i: any) => {
@@ -57,9 +58,9 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchKakaoMap currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected}   />
+        <SpotSearchKakaoMap zoom={3} currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected} selectedTest={setSelectedTest}   />
         {
-          selected && !isSearched &&
+          selected &&
           <SpotListWrapper>
             <SpotListSlider piece={true}>
               <SpotsSearchResultList map item={selectedSpotList} />
@@ -67,7 +68,10 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
           </SpotListWrapper>
         }
         {
-          isSearched && searchListLen! > 0 && (
+          isSearched && searchListLen! > 0 && 
+          
+          (
+            !selectedTest &&
             <SpotListWrapper>
               <SpotListSlider {...setting} ref={slideRef}>
                 {list?.map((item, index) => (

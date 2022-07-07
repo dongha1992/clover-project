@@ -21,9 +21,10 @@ interface IProps {
   hasCart?: boolean;
   getLocation?: any;
   totalCount?: number;
+  goToSwitchMap?: () => void;
 }
 
-const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart, totalCount}: IProps) => {
+const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart, totalCount, goToSwitchMap}: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isMapSwitch } = useSelector(spotSelector);
@@ -38,10 +39,6 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
 
   const goToSpotsRegistrations = () => {
     router.push('/spot/join');
-  };
-
-  const goToSwitchMap = () => {
-      dispatch(SET_SPOT_MAP_SWITCH(true));
   };
 
   return (
@@ -91,7 +88,7 @@ const FilterRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 24px;
+  padding: 24px 0 12px 0;
 `;
 
 const FilterWrapper = styled.div`
