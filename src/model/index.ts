@@ -1874,7 +1874,7 @@ export interface ISearchReviews {
 
 export interface ICreateReivewRequest {
   content: string;
-  images: string[];
+  images?: string[];
   menuDetailId: number;
   menuId: number;
   orderDeliveryId: number;
@@ -1948,7 +1948,11 @@ export interface IPostMenuReview {
   rating: number;
 }
 
-export interface IPostMenuReviewResponse {}
+export interface IPatchReviewRequest {
+  content: string;
+  images?: string[];
+  rating: number;
+}
 
 export interface ICompletionReviewImg {
   id: number;
