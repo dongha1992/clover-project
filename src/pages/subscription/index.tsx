@@ -3,7 +3,6 @@ import { MySubsList } from '@components/Pages/Subscription';
 import { TextB2R, TextH3B, TextH6B } from '@components/Shared/Text';
 import { userForm } from '@store/user';
 import { ScrollHorizonList, theme } from '@styles/theme';
-import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import router from 'next/router';
 import styled from 'styled-components';
@@ -13,9 +12,11 @@ import { getOrdersApi } from '@api/order';
 import { IGetOrders, IOrderDeliverie } from '@model/index';
 import Image from 'next/image';
 import subsMainBanner from '@public/images/subsMainBanner.svg';
+import dayjs from 'dayjs';
+import { parcelDeliveryCompledN, spotDeliveryCompledN, todayN } from '@utils/common';
 
 const SubscriptiopPage = () => {
-  const { isLoginSuccess, me } = useSelector(userForm);
+  const { me } = useSelector(userForm);
 
   const goToRegularSpot = () => {
     router.push('/subscription/products?tab=spot');
@@ -25,11 +26,7 @@ const SubscriptiopPage = () => {
     router.push('/subscription/products?tab=dawn');
   };
 
-  const {
-    data: menus,
-    error: menuError,
-    isLoading,
-  } = useQuery(
+  const { data: menus, isLoading: isMenusLoading } = useQuery(
     'getSubscriptionMenus',
     async () => {
       const params = { categories: '', keyword: '', type: 'SUBSCRIPTION' };
@@ -40,11 +37,7 @@ const SubscriptiopPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const {
-    data: subsList,
-    error,
-    isLoading: isSubsLoading,
-  } = useQuery(
+  const { data: subsList, isLoading: isOrdersLoading } = useQuery(
     ['getSubscriptionOrders', 'progress'],
     async () => {
       const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
@@ -59,7 +52,36 @@ const SubscriptiopPage = () => {
 
           return item;
         })
-        .filter((item: any) => item?.status !== 'COMPLETED' && item?.status !== 'CANCELED');
+        .filter((item: IGetOrders) => {
+          // 정기구독, 구독진행 x, 구독실패 type o, 구독 완료일이 지났을때
+          // COMPLETED, CANCELED로 넘어가지 않는 경우
+          if (
+            item.subscriptionPeriod === 'UNLIMITED' &&
+            !item.isSubscribing &&
+            !!item.unsubscriptionType &&
+            todayN() > Number(dayjs(item.subscriptionPaymentDate).add(2, 'day').format('YYYYMMDD'))
+          ) {
+            return;
+          } else if (
+            item.subscriptionPeriod !== 'UNLIMITED' &&
+            item.status === 'COMPLETED' &&
+            item.delivery === 'SPOT' &&
+            spotDeliveryCompledN(item.lastDeliveryDate!) < todayN() + 1
+          ) {
+            // 단기구독(스팟) 완료후 구독정보카드 하루유지
+            return item;
+          } else if (
+            item.subscriptionPeriod !== 'UNLIMITED' &&
+            item.status === 'COMPLETED' &&
+            (item.delivery === 'PARCEL' || item.delivery === 'MORNING') &&
+            parcelDeliveryCompledN(item.lastDeliveryDate!) < todayN() + 1
+          ) {
+            // 단기구독(새벽/택배) 완료후 구독정보카드 하루유지
+            return item;
+          } else if (item?.status !== 'COMPLETED' && item?.status !== 'CANCELED') {
+            return item;
+          }
+        });
 
       return filterData;
     },
@@ -76,14 +98,14 @@ const SubscriptiopPage = () => {
     router.push('/subscription/information');
   };
 
-  if (isLoading) {
+  if (isMenusLoading && isOrdersLoading) {
     return <div>...로딩중</div>;
   }
 
   return (
     <Container>
-      <InfoCard />
-      {subsList?.length > 0 && <MySubsList />}
+      <InfoCard subsCount={subsList?.length} />
+      {subsList?.length > 0 && <MySubsList subsList={subsList} />}
 
       <SubsListContainer>
         <TitleBox>

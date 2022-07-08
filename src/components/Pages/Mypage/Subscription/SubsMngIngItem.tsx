@@ -17,7 +17,7 @@ interface IProps {
 }
 
 const SubsMngIngItem = ({ item }: IProps) => {
-  const cards = useSubsNowDeliveryInfo(item);
+  const { cards } = useSubsNowDeliveryInfo(item);
   const round = useSubsSetProgress(item);
 
   const goToSubsDetail = () => {

@@ -1,6 +1,5 @@
 import { deleteOrderCancelApi, deleteOrderCancelPreviewApi, getOrderDetailApi, getOrdersApi } from '@api/order';
 import { IGetOrderListRequest } from '@model/index';
-import { AxiosError } from 'axios';
 import { MutationKey, QueryKey, useMutation, UseMutationOptions, useQuery, UseQueryOptions } from 'react-query';
 
 export const useGetOrders = (key: QueryKey, params: IGetOrderListRequest, options?: UseQueryOptions<any>) =>
