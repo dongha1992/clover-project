@@ -23,7 +23,7 @@ import { ICreateReivewRequest } from '@model/index';
 interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
-  content: string;
+  preview: string[];
 }
 
 const LIMIT = 30;
@@ -54,7 +54,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
-    content: '',
+    preview: [],
   });
   const [rating, setRating] = useState(5);
 
@@ -175,33 +175,29 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
+      setWriteMenuReviewObj({
+        ...writeMenuReviewObj,
+        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
+        preview: [...writeMenuReviewObj?.preview!, e.target.result],
+      });
       imageFileReader.readAsDataURL(imageFile);
     };
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
+    const filterImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
+    const filterPreviewImg = writeMenuReviewObj?.preview?.filter((img, idx) => idx !== index);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterImg, preview: filterPreviewImg });
   };
 
   const finishWriteReview = async () => {
-    // let formData = new FormData();
+    let formData = new FormData();
 
-    // if (writeMenuReviewObj.imgFiles.length > 0) {
-    //   for (let i = 0; i < writeMenuReviewObj.imgFiles.length; i++) {
-    //     formData.append('files' + '[' + i + ']', writeMenuReviewObj.imgFiles[i]);
-    //   }
-    // }
-
-    // const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
-
-    // formData.append('content', textAreaRef?.current?.value || '');
-    // formData.append('menuDetailId', '1');
-    // formData.append('menuId', '1');
-    // formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    // formData.append('orderDeliveryId', '11');
-    // formData.append('rating', rating.toString());
+    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
+      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
+        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+      }
+    }
 
     const reqBody = {
       content: textAreaRef?.current?.value!,
