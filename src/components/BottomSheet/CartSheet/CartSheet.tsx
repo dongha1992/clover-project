@@ -67,7 +67,7 @@ const CartSheet = () => {
   ]);
   let [selectedMenus, setSelectedMenus] = useState<ISelectedMenu[]>([]);
 
-  const { showToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   const dispatch = useDispatch();
   const { cartLists } = useSelector(cartForm);

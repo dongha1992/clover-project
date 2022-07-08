@@ -107,6 +107,12 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
   );
 
+  useEffect(() => {
+    if (textAreaRef.current) {
+      setNumberOfReivewContent(textAreaRef.current?.value?.length);
+    }
+  }, [selectedReviewDetail]);
+
   const onStarHoverRating = (e: React.MouseEvent<HTMLDivElement>, idx: number) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
 
@@ -201,22 +207,27 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
 
     let formData = new FormData();
+    let location = [];
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
         writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+        const result = await postImageApi(formData);
+        location.push(result.headers.location);
       }
-      const result = await postImageApi(formData);
-      console.log(result, 'formData result');
     }
 
-    // const reqBody = {
-    //   content: textAreaRef?.current?.value!,
-    //   images: JSON.stringify(writeMenuReviewObj?.imgFiles[0]),
-    //   rating,
-    // };
+    const hasReviewImgs = location.length !== 0;
 
-    // mutateEditMenuReview(reqBody);
+    const reqBody = {
+      content: textAreaRef?.current?.value!,
+      images: hasReviewImgs ? location : [],
+      rating,
+    };
+
+    console.log(reqBody, 'reqBody');
+
+    mutateEditMenuReview(reqBody);
   };
 
   const deleteReview = () => {
@@ -298,7 +309,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" />
+        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" isBottom />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>

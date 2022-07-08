@@ -58,6 +58,7 @@ import {
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import { INIT_ACCESS_METHOD } from '@store/common';
+import { useToast } from '@hooks/useToast';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -108,10 +109,13 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isClosed } = router.query;
+
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const { me } = useSelector(userForm);
   const queryClient = useQueryClient();
+
+  const { showToast, hideToast } = useToast();
 
   const {
     data: cartResponse,
@@ -322,8 +326,9 @@ const CartPage = () => {
       // const { data } = await deleteCartsApi(reqBody, cartId);
 
       const { data } = await cartIds?.map((cartId: number) => {
-        deleteCartsApi(reqBody, cartId);
+        return deleteCartsApi(reqBody, cartId);
       });
+      console.log(data, 'AFTER DELETE');
     },
     {
       onSuccess: async () => {
