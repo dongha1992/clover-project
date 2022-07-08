@@ -318,8 +318,12 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async (reqBody: IDeleteCartRequest[]) => {
-      const { data } = await deleteCartsApi(reqBody);
+    async ({ reqBody, cartIds }: { reqBody: IDeleteCartRequest[]; cartIds: number[] }) => {
+      // const { data } = await deleteCartsApi(reqBody, cartId);
+
+      const { data } = await cartIds?.map((cartId: number) => {
+        deleteCartsApi(reqBody, cartId);
+      });
     },
     {
       onSuccess: async () => {
@@ -430,6 +434,7 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
+    const cartIds = checkedMenus.map((item) => item.cartId);
     const reqBody = pipe(
       checkedMenus,
       flatMap((item) =>
@@ -448,12 +453,20 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(reqBody),
+        onSubmit: () => mutateDeleteItem({ reqBody, cartIds }),
       })
     );
   };
 
-  const removeCartActualItemHandler = ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => {
+  const removeCartActualItemHandler = ({
+    menuDetailId,
+    menuId,
+    cartId,
+  }: {
+    menuId: number;
+    menuDetailId: number;
+    cartId: number;
+  }) => {
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
 
     const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
@@ -493,12 +506,13 @@ const CartPage = () => {
         alertMessage,
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(reqBody),
+        onSubmit: () => mutateDeleteItem({ reqBody, cartIds: [cartId] }),
       })
     );
   };
 
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
+    const cartIds = menu.cartId;
     const reqBody = menu.menuDetails.map((item) => {
       return {
         menuId: menu.menuId,
@@ -511,7 +525,7 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(reqBody),
+        onSubmit: () => mutateDeleteItem({ reqBody, cartIds: [cartIds] }),
       })
     );
   };
