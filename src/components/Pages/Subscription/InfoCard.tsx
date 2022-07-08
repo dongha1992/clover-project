@@ -11,33 +11,36 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 
-const InfoCard = () => {
+interface IProps {
+  subsCount: number;
+}
+const InfoCard = ({ subsCount }: IProps) => {
   const { isLoginSuccess, me } = useSelector(userForm);
-  const [subsList, setSubsList] = useState([]);
+  // const [subsList, setSubsList] = useState([]);
 
-  const {} = useGetOrders(
-    ['getSubscriptionOrders'],
-    { days: 365, page: 1, size: 1000, type: 'SUBSCRIPTION' },
-    {
-      onSuccess: async (data) => {
-        const filterData = data.orders.filter((o: IGetOrders) => o.status !== 'COMPLETED' && o.status !== 'CANCELED');
-        setSubsList(filterData);
-      },
-      onError: () => {
-        router.replace('/onboarding');
-      },
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-      cacheTime: 0,
-      enabled: !!me,
-    }
-  );
+  // const {} = useGetOrders(
+  //   ['getSubscriptionOrders'],
+  //   { days: 365, page: 1, size: 1000, type: 'SUBSCRIPTION' },
+  //   {
+  //     onSuccess: async (data) => {
+  //       const filterData = data.orders.filter((o: IGetOrders) => o.status !== 'COMPLETED' && o.status !== 'CANCELED');
+  //       setSubsList(filterData);
+  //     },
+  //     onError: () => {
+  //       router.replace('/onboarding');
+  //     },
+  //     refetchOnMount: false,
+  //     refetchOnWindowFocus: false,
+  //     staleTime: 0,
+  //     cacheTime: 0,
+  //     enabled: !!me,
+  //   }
+  // );
 
   return (
     <Container>
       {isLoginSuccess &&
-        (subsList?.length === 0 ? (
+        (subsCount === 0 ? (
           <TextH2B>
             <span>{me?.nickName}</span>님 <br />
             건강한 식단을 구독해 보세요!
