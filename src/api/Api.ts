@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { getCookie, setCookie } from '@utils/common';
+import { getCookie, removeCookie, setCookie } from '@utils/common';
 import { userRefreshToken } from './user';
 import router from 'next/router';
 
@@ -56,6 +56,9 @@ Api.interceptors.response.use(
           if (!isTokenRefreshing) {
             console.log('## I response TokenRefreshing');
             isTokenRefreshing = true;
+            removeCookie({ name: 'refreshTokenObj' });
+            removeCookie({ name: 'autoL' });
+            removeCookie({ name: 'acstk' });
             const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
             if (refreshTokenObj) {
               console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');

@@ -191,6 +191,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   };
 
   const finishWriteReview = async () => {
+    if (!over30Letter) return;
     let formData = new FormData();
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
@@ -341,7 +342,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
         </FlexCol>
       </PointInfoWrapper>
       <BtnWrapper onClick={finishWriteReview}>
-        <Button height="100%">작성하기</Button>
+        <Button height="100%" disabled={over30Letter}>
+          작성하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
