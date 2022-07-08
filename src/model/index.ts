@@ -1855,6 +1855,7 @@ export interface IGetMenusResponse {
   data: IMenus[];
   message: string;
 }
+
 export interface ISearchReviews {
   id: number;
   menuId?: number;
@@ -1869,6 +1870,15 @@ export interface ISearchReviews {
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
+}
+
+export interface ICreateReivewRequest {
+  content: string;
+  images?: string[];
+  menuDetailId: number;
+  menuId: number;
+  orderDeliveryId: number;
+  rating: number;
 }
 export interface IReviewAvaility {
   availability: boolean;
@@ -1938,7 +1948,11 @@ export interface IPostMenuReview {
   rating: number;
 }
 
-export interface IPostMenuReviewResponse {}
+export interface IPatchReviewRequest {
+  content: string;
+  images?: string[];
+  rating: number;
+}
 
 export interface ICompletionReviewImg {
   id: number;
@@ -1957,6 +1971,12 @@ export interface ICompletionReviews {
   content: string;
   createdAt: string;
   images: ICompletionReviewImg[];
+  commentCreatedAt?: string;
+  comment?: string;
+  commenter?: string;
+  menuId: number;
+  menuDetailId?: number;
+  orderDeliveryId: number;
 }
 
 export interface ICompletionReviewsResponse {
@@ -1976,6 +1996,10 @@ export interface IWillWriteReview {
   orderDeliveryId: number;
   url: string;
   width: number;
+  name: string;
+  id: number;
+  deliveryDetail?: string;
+  orderType?: string;
 }
 
 export interface IWillWriteReviewsResponse {
