@@ -199,16 +199,20 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   };
 
   const finishWriteReview = async () => {
+    if (over30Letter) {
+      dispatch(SET_ALERT({ alertMessage: '최소 30자 이상 입력해 주세요' }));
+      return;
+    }
+
     let formData = new FormData();
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
         writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
       }
+      const result = await postImageApi(formData);
+      console.log(result, 'formData result');
     }
-
-    const result = await postImageApi(formData);
-    console.log(result, 'formData result');
 
     // const reqBody = {
     //   content: textAreaRef?.current?.value!,

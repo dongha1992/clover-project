@@ -19,6 +19,7 @@ import NextImage from 'next/image';
 import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
 import { ICreateReivewRequest } from '@model/index';
+import { postImageApi } from '@api/image';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
@@ -198,6 +199,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
         writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
       }
+      const result = await postImageApi(formData);
     }
 
     const reqBody = {

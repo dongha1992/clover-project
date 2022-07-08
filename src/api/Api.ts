@@ -62,7 +62,6 @@ Api.interceptors.response.use(
             const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
             if (refreshTokenObj) {
               console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
-
               const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
               console.log(refreshTokenObj.refreshToken);
               const userTokenObj: any = data.data;
