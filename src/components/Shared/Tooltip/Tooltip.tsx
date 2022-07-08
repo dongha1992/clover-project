@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TextH6B } from '@components/Shared/Text';
@@ -14,9 +14,10 @@ interface ITooltip {
   bottom?: string;
   width?: string;
   left?: string;
+  isBottom?: boolean;
 }
 
-const Tooltip = ({ message, top, width, bottom, left }: ITooltip): JSX.Element | null => {
+const Tooltip = ({ message, top, width, bottom, left, isBottom }: ITooltip): JSX.Element | null => {
   const [isTooltipOpen, setIsTooltipOpen] = useState<boolean>(false);
 
   const showTooltip = (): void => {
@@ -37,7 +38,7 @@ const Tooltip = ({ message, top, width, bottom, left }: ITooltip): JSX.Element |
 
   return (
     <TooltipContainer top={top} width={width} bottom={bottom} left={left}>
-      <TextContainer>
+      <TextContainer isBottom={isBottom}>
         <TextH6B color={theme.white}>{message}</TextH6B>
         <div onClick={hideToolTip} className="svg">
           <SVGIcon name="whiteCancel" />
@@ -55,6 +56,7 @@ const TooltipContainer = styled.div<{
 }>`
   display: flex;
   position: absolute;
+  cursor: pointer;
   top: ${({ top }) => top && top};
   width: ${({ width }) => width && width};
   right: 0px;
@@ -76,7 +78,7 @@ const TooltipContainer = styled.div<{
   `};
 `;
 
-const TextContainer = styled.div`
+const TextContainer = styled.div<{ isBottom?: boolean }>`
   z-index: 11;
   display: flex;
   align-items: center;
@@ -91,11 +93,24 @@ const TextContainer = styled.div`
     content: '';
     position: absolute;
     left: 10%;
-    bottom: -4px;
     transform: translateX(-10%);
     width: 0px;
     height: 0px;
-    border-top: 4px solid rgba(36, 36, 36, 0.9);
+
+    ${({ isBottom }) => {
+      if (isBottom) {
+        return css`
+          border-top: 4px solid rgba(36, 36, 36, 0.9);
+          bottom: -4px;
+        `;
+      } else {
+        return css`
+          border-bottom: 4px solid rgba(36, 36, 36, 0.9);
+          top: -4px;
+        `;
+      }
+    }}
+
     border-left: 3px solid transparent;
     border-right: 3px solid transparent;
   }

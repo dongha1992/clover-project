@@ -274,7 +274,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" />
+        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" isBottom />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
