@@ -60,6 +60,7 @@ const LoginPage = () => {
   };
 
   const finishLogin = async () => {
+    if (!isValid) return;
     dispatch(SET_LOGIN_SUCCESS(false));
 
     if (emailRef.current && passwordRef.current) {

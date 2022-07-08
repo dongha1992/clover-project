@@ -88,27 +88,6 @@ const CartSheet = () => {
         };
       });
 
-      // const reqBody = [
-      //   {
-      //     menuDetailId: 110,
-      //     menuQuantity: 1,
-      //     menuId: 10,
-      //     main: true,
-      //   },
-      //   {
-      //     menuDetailId: 72,
-      //     menuQuantity: 1,
-      //     menuId: 9,
-      //     main: true,
-      //   },
-      //   {
-      //     menuDetailId: 73,
-      //     menuQuantity: 1,
-      //     menuId: 9,
-      //     main: true,
-      //   },
-      // ];
-
       /* TODO: 장바구니에 이미 있는지? */
 
       // const result = checkAlreadyInCart();

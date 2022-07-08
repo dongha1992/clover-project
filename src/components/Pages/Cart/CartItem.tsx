@@ -40,6 +40,7 @@ const CartItem = ({
             key={index}
             menuId={menu.menuId}
             holiday={menu.holiday}
+            menuName={menu.name}
           />
         );
       })}

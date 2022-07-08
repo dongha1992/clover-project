@@ -20,9 +20,11 @@ interface IProps {
   orderId?: string | string[];
   hasCart?: boolean;
   getLocation?: any;
+  totalCount?: number;
+  goToSwitchMap?: () => void;
 }
 
-const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart}: IProps) => {
+const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart, totalCount, goToSwitchMap}: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isMapSwitch } = useSelector(spotSelector);
@@ -39,15 +41,11 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
     router.push('/spot/join');
   };
 
-  const goToSwitchMap = () => {
-      dispatch(SET_SPOT_MAP_SWITCH(true));
-  };
-
   return (
     <>
       {!!searchResult?.length && (
         <FilterRow>
-          <TextH5B>검색결과 {searchResult.length}개</TextH5B>
+          <TextH5B>검색결과 {totalCount}개</TextH5B>
           <FilterWrapper onClick={clickFilterHandler}>
             <SVGIcon name="filter" />
             <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
@@ -55,30 +53,32 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
         </FilterRow>
       )}
       <ItemListWrapper>
-        {searchResult?.length ? (
-          searchResult?.map((item, index) => {
-            return (
-              // 스팟 검색 결과 리스트
-              <SpotsSearchResultList item={item} key={index} hasCart={hasCart} />
-            );
-          })
-        ) :  (
-          <NoResultWrapper>
-            <NoResult>
-              <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>
-                등록된 프코스팟이 없어 보이네요.😭
-              </TextB2R>
-              <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSwitchMap}>
-                지도로 주변 프코스팟 찾기
-              </Button>
-              {!orderId && (
-                <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
-                  직접 프코스팟 신청하기
+        {
+          searchResult?.length! > 0 ? (
+            searchResult?.map((item, index) => {
+              return (
+                // 스팟 검색 결과 리스트
+                <SpotsSearchResultList item={item} key={index} hasCart={hasCart} />
+              );
+            })
+          ) :  (
+            <NoResultWrapper>
+              <NoResult>
+                <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>
+                  등록된 프코스팟이 없어 보이네요.😭
+                </TextB2R>
+                <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSwitchMap}>
+                  지도로 주변 프코스팟 찾기
                 </Button>
-              )}
-            </NoResult>
-          </NoResultWrapper>
-        )}
+                {!orderId && (
+                  <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
+                    직접 프코스팟 신청하기
+                  </Button>
+                )}
+              </NoResult>
+            </NoResultWrapper>
+          )
+        }
       </ItemListWrapper>
     </>
   );
@@ -88,7 +88,7 @@ const FilterRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 24px;
+  padding: 24px 0 12px 0;
 `;
 
 const FilterWrapper = styled.div`
