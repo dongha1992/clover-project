@@ -16,7 +16,7 @@ interface IProps {
 }
 
 const SubsMngCompleteItem = ({ item }: IProps) => {
-  const cards = useSubsNowDeliveryInfo(item);
+  const { cards } = useSubsNowDeliveryInfo(item);
 
   const goToSubsDetail = () => {
     router.push({ pathname: `/subscription/${item.id}`, query: { menuId: item.subscriptionMenuId } });

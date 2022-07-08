@@ -23,7 +23,7 @@ const goToSubsDetail = () => {
 };
 
 const SubsManagementItem = ({ type, item }: IProps) => {
-  const cards = useSubsNowDeliveryInfo(item);
+  const { cards } = useSubsNowDeliveryInfo(item);
   const round = useSubsSetProgress(item);
 
   return (
