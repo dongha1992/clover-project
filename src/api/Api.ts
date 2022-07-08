@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { CLOVER_URL } from '@constants/mock';
 import cloneDeep from 'lodash-es/cloneDeep';
-import { getCookie, setCookie } from '@utils/common';
+import { getCookie, removeCookie, setCookie } from '@utils/common';
 import { userRefreshToken } from './user';
 import router from 'next/router';
 
@@ -49,17 +49,19 @@ Api.interceptors.response.use(
     console.log(error, 'error');
 
     try {
-      if (response?.status === 401) {
+      if (response?.status === 401 && refreshSubscribers.length !== 0) {
         console.log('status 401');
 
         if (response?.data.code !== 2003) {
           if (!isTokenRefreshing) {
             console.log('## I response TokenRefreshing');
             isTokenRefreshing = true;
+            removeCookie({ name: 'refreshTokenObj' });
+            removeCookie({ name: 'autoL' });
+            removeCookie({ name: 'acstk' });
             const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
             if (refreshTokenObj) {
               console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
-
               const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
               console.log(refreshTokenObj.refreshToken);
               const userTokenObj: any = data.data;
@@ -80,12 +82,14 @@ Api.interceptors.response.use(
               });
 
               isTokenRefreshing = false;
+              // Api.defaults.headers.common.Authorization = `Bearer ${userTokenObj.accessToken}`;
               onTokenRefreshed(userTokenObj.accessToken);
               return Api(pendingRequest);
             }
           } else {
             return new Promise((resolve) => {
               addRefreshSubscriber((accessToken: string) => {
+                console.log(accessToken, 'accessToken in addRefreshSubscriber');
                 pendingRequest.headers.Authorization = `Bearer ${accessToken}`;
                 return resolve(Api(pendingRequest));
               });
@@ -103,6 +107,9 @@ Api.interceptors.response.use(
 
 Api.interceptors.request.use((req) => {
   const request = cloneDeep(req);
+  if (request.url === '/user/v1/token/refresh' || request.url === '/user/v1/login') {
+    delete request.headers?.Authorization;
+  }
 
   // const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
   const accessTokenObj = getCookie({ name: 'acstk' }) ?? '';
@@ -117,6 +124,6 @@ Api.interceptors.request.use((req) => {
 });
 
 export const onError = (error: AxiosError): Promise<never> => {
-  const { status } = (error.response as AxiosResponse) || 500;
+  const { status } = (error?.response as AxiosResponse) || 500;
   return Promise.reject(error.response?.data);
 };

@@ -153,7 +153,6 @@ const MypagePage = () => {
     dispatch(SET_LOGIN_SUCCESS(false));
     dispatch(INIT_USER());
     dispatch(INIT_CART_LISTS());
-    delete sessionStorage.accessToken;
     removeCookie({ name: 'refreshTokenObj' });
     removeCookie({ name: 'autoL' });
     removeCookie({ name: 'acstk' });

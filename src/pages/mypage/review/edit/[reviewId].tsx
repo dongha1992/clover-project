@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { ReviewInfo } from '@components/Pages/Mypage/Review';
+import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -15,36 +15,29 @@ import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi, deleteReviewApi } from '@api/menu';
 import { StarRating } from '@components/StarRating';
-import NextImage from 'next/image';
 import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
+import { IPatchReviewRequest } from '@model/index';
+import { postImageApi } from '@api/image';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
   deletedImgIds: string[];
-  rating: number;
-  content: string;
+  preview: string[];
 }
 
 const LIMIT = 30;
 
-export const FinishReview = () => {
-  return (
-    <GreyBg>
-      <TextH5B color={theme.white}>+ 300P 적립</TextH5B>
-    </GreyBg>
-  );
-};
-
-const EditReviewPage = ({ reviewId }: any) => {
+const EditReviewPage = ({ reviewId, menuId }: any) => {
   const [isShow, setIsShow] = useState(false);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
-    rating: 5,
-    content: '',
+    preview: [],
   });
+
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [rating, setRating] = useState(5);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
 
   const dispatch = useDispatch();
@@ -68,25 +61,29 @@ const EditReviewPage = ({ reviewId }: any) => {
   } = useQuery(
     'getReviewDetail',
     async () => {
-      const menuId = router?.query.menuId! as string;
       const params = {
         id: Number(menuId),
-        menuReviewId: reviewId,
+        menuReviewId: Number(reviewId),
       };
+
       const { data } = await getReviewDetailApi(params);
       return data.data;
     },
 
     {
       onSuccess: async (data) => {},
+      onError: () => {
+        router.back();
+      },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
   const { mutateAsync: mutateEditMenuReview } = useMutation(
-    async (formData: FormData) => {
-      const { data } = await editMenuReviewApi({ formData, reviewId });
+    async (reqBody: IPatchReviewRequest) => {
+      const { data } = await editMenuReviewApi({ data: reqBody, reviewId });
     },
     {
       onSuccess: async () => {
@@ -103,11 +100,13 @@ const EditReviewPage = ({ reviewId }: any) => {
 
   const { mutateAsync: mutateDeleteMenuReview } = useMutation(
     async () => {
-      const { data } = await deleteReviewApi({ id: reviewId });
+      console.log(reviewId, 'reviewId');
+      const { data } = await deleteReviewApi({ id: Number(reviewId) });
     },
     {
       onSuccess: async () => {
-        await queryClient.refetchQueries('getReviewDetail');
+        router.back();
+        await queryClient.refetchQueries('getCompleteWriteReview');
       },
     }
   );
@@ -121,7 +120,7 @@ const EditReviewPage = ({ reviewId }: any) => {
       idx -= 0.5;
     }
 
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
+    setRating(idx);
   };
 
   const writeReviewHandler = () => {
@@ -130,13 +129,13 @@ const EditReviewPage = ({ reviewId }: any) => {
     }
   };
 
-  const onChangeFileHandler = (e: any) => {
+  const onChangeFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
+    let imageFile = e.target.files! as any;
+    if (!imageFile[0]) return;
 
     try {
-      if (e.target.files.length > 0) {
-        let imageFile = e.target.files;
-
+      if (imageFile.length! > 0) {
         /* 사이즈 제한 걸리는 경우 */
         if (LIMIT_SIZE < imageFile[0].size) {
           /* 이미지 사이즈 줄이기 */
@@ -153,7 +152,6 @@ const EditReviewPage = ({ reviewId }: any) => {
             alert('이미지 업로드에 실패했습니다');
             return;
           };
-
           img.onload = () => {
             URL.revokeObjectURL(blobURL);
             const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
@@ -167,7 +165,6 @@ const EditReviewPage = ({ reviewId }: any) => {
                 imageFile = new File([blob], imageFile[0].name, {
                   type: imageFile[0].type,
                 });
-
                 getImageFileReader(imageFile);
               },
               MIME_TYPE,
@@ -184,52 +181,51 @@ const EditReviewPage = ({ reviewId }: any) => {
   };
 
   const getImageFileReader = (imageFile: any) => {
-    setWriteMenuReviewObj({
-      ...writeMenuReviewObj,
-      imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
-    });
-
     const imageFileReader = new FileReader();
-
     imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
+      setWriteMenuReviewObj({
+        ...writeMenuReviewObj,
+        preview: [...writeMenuReviewObj?.preview!, e.target.result],
+        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
+      });
     };
-
     imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = writeMenuReviewObj?.imgFiles?.filter((img, idx) => idx !== index);
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
+    const filterImg = writeMenuReviewObj?.imgFiles?.filter((img, idx) => idx !== index);
+    const filterPreviewImg = writeMenuReviewObj?.preview?.filter((img, idx) => idx !== index);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterImg, preview: filterPreviewImg });
   };
 
   const finishWriteReview = async () => {
-    /* TODO: 리뷰 등록 물어봐야 함 */
+    if (over30Letter) {
+      dispatch(SET_ALERT({ alertMessage: '최소 30자 이상 입력해 주세요' }));
+      return;
+    }
+
     let formData = new FormData();
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        writeMenuReviewObj.imgFiles && formData.append('files' + '[' + i + ']', writeMenuReviewObj?.imgFiles[i]);
+        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
       }
+      const result = await postImageApi(formData);
+      console.log(result, 'formData result');
     }
 
-    const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
+    // const reqBody = {
+    //   content: textAreaRef?.current?.value!,
+    //   images: JSON.stringify(writeMenuReviewObj?.imgFiles[0]),
+    //   rating,
+    // };
 
-    formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReview?.content!);
-    formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    formData.append('rating', writeMenuReviewObj.rating.toString());
-
-    mutateEditMenuReview(formData);
+    // mutateEditMenuReview(reqBody);
   };
 
   const deleteReview = () => {
     dispatch(
       SET_ALERT({
-        children: (
-          <GreyBg>
-            <TextH5B>+ 300P 적립</TextH5B>
-          </GreyBg>
-        ),
         alertMessage: `삭제 후 재작성은 불가합니다. \n작성한 후기를 삭제하시겠어요?`,
         submitBtnText: '확인',
         closeBtnText: '취소',
@@ -242,10 +238,9 @@ const EditReviewPage = ({ reviewId }: any) => {
     if (selectedReviewDetail) {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        content: selectedReviewDetail.menuReview.content,
-        rating: selectedReviewDetail.menuReview.rating,
-        imgFiles: selectedReviewDetail?.menuReview && selectedReviewDetail?.menuReview?.images?.map((img) => img.url),
+        imgFiles: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
       });
+      setRating(selectedReviewDetail.menuReview.rating);
     }
   }, [selectedReviewDetail]);
 
@@ -279,7 +274,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRating rating={writeMenuReviewObj.rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
+          <StarRating rating={rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>
@@ -302,7 +297,7 @@ const EditReviewPage = ({ reviewId }: any) => {
           <TextB3R color={theme.brandColor}>
             {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{numberOfReivewContent}/1000</TextB3R>
+          <TextB3R>{numberOfReivewContent}/1,000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
@@ -333,12 +328,12 @@ const EditReviewPage = ({ reviewId }: any) => {
               </div>
             </UploadInputWrapper>
           )}
-
-          {writeMenuReviewObj?.imgFiles?.length! > 0 &&
-            writeMenuReviewObj?.imgFiles?.map((img: string, index: number) => {
+          {writeMenuReviewObj?.preview?.length! > 0 &&
+            writeMenuReviewObj?.preview?.map((img: string, index: number) => {
+              const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={img} />
+                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
@@ -348,29 +343,7 @@ const EditReviewPage = ({ reviewId }: any) => {
         </FlexRow>
       </UploadPhotoWrapper>
       <PointInfoWrapper>
-        <TextH5B color={theme.greyScale65}>포인트 적립 유의사항</TextH5B>
-        <BorderLine height={1} margin="16px 0" />
-        <TextH6B color={theme.greyScale65}>
-          [샐러드/건강간식/세트 상품] 수령일 기준 7일 내 제품만 등록 가능합니다.
-        </TextH6B>
-        <FlexCol>
-          <TextB3R color={theme.greyScale65}>[정기배송 상품] 2회 수령 후 30일 내 등록 가능합니다.</TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            후기 작성일 기준 2-3일 내 적립금이 자동 지급됩니다. (영업일 외 명절 및 공휴일은 지연될 수 있음)
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품마다 개별 작성건만 적립됩니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            사진 후기는 자사 제품 사진의 경우만 해당합니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제될 수 있습니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 추가 적립금 미지급됩니다.
-          </TextB3R>
-        </FlexCol>
+        <ReviewInfoBottom />
       </PointInfoWrapper>
       <ButtonGroup
         leftButtonHandler={deleteReview}
@@ -419,6 +392,7 @@ const UploadInputWrapper = styled.label`
   background-color: ${theme.greyScale6};
   border-radius: 8px;
   margin: 16px 0 48px 0;
+  cursor: pointer;
   input {
     position: absolute;
     left: 0;
@@ -450,6 +424,7 @@ const PreviewImgWrapper = styled.div`
 
   .svgWrapper {
     svg {
+      cursor: pointer;
       position: absolute;
       right: 10%;
       top: 10%;
@@ -463,23 +438,10 @@ const PointInfoWrapper = styled.div`
   margin-bottom: 105px;
 `;
 
-const BtnWrapper = styled.div`
-  ${fixedBottom}
-`;
-
-const GreyBg = styled.div`
-  height: 110px;
-  width: 100%;
-  background-color: #c4c4c4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 export async function getServerSideProps(context: any) {
-  const { reviewId } = context.query;
+  const { reviewId, menuId } = context.query;
   return {
-    props: { reviewId },
+    props: { reviewId, menuId },
   };
 }
 
