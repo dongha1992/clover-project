@@ -293,7 +293,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
           <TextB3R color={theme.brandColor}>
             {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{numberOfReivewContent}/1000</TextB3R>
+          <TextB3R>{numberOfReivewContent}/1,000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
