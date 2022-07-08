@@ -249,12 +249,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRating
-            rating={rating}
-            // onRating={onStarHoverRating}
-            hoverRating={hoverRating}
-            onClick={onStarHoverRating}
-          />
+          <StarRating rating={rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>
