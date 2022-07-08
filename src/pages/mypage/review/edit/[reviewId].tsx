@@ -47,12 +47,8 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
-  /* TODO: text area 1000 넘었을 때 */
   /* TODO: blob 타입 정의 */
   /* TODO: 사이즈 체크 및 사진 올리는 hooks */
-  /* TODO: 상수 파일에서 관리 */
-
-  // deleteReviewApi;
 
   const {
     data: selectedReviewDetail,
