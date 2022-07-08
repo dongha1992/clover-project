@@ -1,61 +1,20 @@
 import { TextH3B, TextH6B } from '@components/Shared/Text';
 import { ScrollHorizonList, theme } from '@styles/theme';
-import { useState } from 'react';
 import styled from 'styled-components';
 import { SubsCardItem } from '@components/Pages/Subscription';
-import { getOrdersApi } from '@api/order';
-import { useQuery } from 'react-query';
-import { IGetOrders, IOrderDeliverie } from '@model/index';
+import { IGetOrders } from '@model/index';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import router from 'next/router';
+interface IProps {
+  subsList: IGetOrders[];
+}
 
-const MySubsList = () => {
-  const { me } = useSelector(userForm);
-  const {
-    data: subsList,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getSubscriptionOrders', 'progress'],
-    async () => {
-      if (me) {
-        const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
-        const { data } = await getOrdersApi(params);
-
-        let filterData = await data.data.orders
-          .map((item: IGetOrders) => {
-            item.orderDeliveries.sort(
-              (a: IOrderDeliverie, b: IOrderDeliverie) =>
-                Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
-            );
-
-            return item;
-          })
-          .filter((item: any) => item?.status !== 'COMPLETED' && item?.status !== 'CANCELED');
-
-        return filterData;
-      }
-    },
-    {
-      onError: () => {
-        router.replace('/onboarding');
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-      cacheTime: 0,
-      enabled: !!me,
-    }
-  );
-
+const MySubsList = ({ subsList }: IProps) => {
   const goToSubsMng = () => {
     router.push('/mypage/subscription');
   };
 
-  if (isLoading) {
-    return <div>로딩중</div>;
-  }
   return (
     <MySubsBox>
       <Head>
