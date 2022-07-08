@@ -78,27 +78,9 @@ export const getReviewAvailabilityApi = (id: number): Promise<AxiosResponse<IRev
   return Api.get(`menu/v1/menus/${id}/reviews/availability`);
 };
 
-// export const createMenuReviewApi = (formData: any): Promise<AxiosResponse<IResponse>> => {
-//   return Api.post('menu/v1/reviews', formData, {
-//     headers: { 'Content-Type': 'multipart/form-data' },
-//   });
-// };
-
 export const createMenuReviewApi = (data: ICreateReivewRequest): Promise<AxiosResponse<IResponse>> => {
   return Api.post('menu/v1/reviews', data);
 };
-
-// export const editMenuReviewApi = ({
-//   formData,
-//   reviewId,
-// }: {
-//   formData: FormData;
-//   reviewId: number;
-// }): Promise<AxiosResponse<IResponse>> => {
-//   return Api.patch(`menu/v1/review/${reviewId}`, formData, {
-//     headers: { 'Content-Type': 'multipart/form-data' },
-//   });
-// };
 
 export const editMenuReviewApi = ({
   data,
