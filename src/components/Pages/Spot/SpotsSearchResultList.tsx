@@ -337,7 +337,7 @@ const Container = styled.section<{ spotClose?: boolean, map?: boolean }>`
       `;
     } else {
       return css`
-        padding: 24px 0;
+        padding: 12px 0;
       `;
     }
   }}

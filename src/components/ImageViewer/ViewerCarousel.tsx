@@ -45,7 +45,7 @@ const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
     nextArrow: <NextArrow />,
     prevArrow: <PreviousArrow />,
   };
-  console.log(images);
+
   return (
     <Container
       onMouseEnter={() => {

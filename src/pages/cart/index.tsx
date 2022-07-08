@@ -7,15 +7,13 @@ import {
   theme,
   ScrollHorizonList,
   FlexBetween,
-  FlexStart,
   FlexEnd,
   FlexCol,
   FlexRow,
   fixedBottom,
-  FlexColStart,
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
-import SVGIcon from '@utils/common/SVGIcon';
+import { SVGIcon, getFormatPrice } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
@@ -23,7 +21,7 @@ import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
 import { SET_ORDER } from '@store/order';
-import { HorizontalItem, Item } from '@components/Item';
+import { Item } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
@@ -31,12 +29,10 @@ import {
   ISubOrderDelivery,
   IMenuDetailsInCart,
   IGetCart,
-  ILocation,
   ILunchOrDinner,
   IDeliveryObj,
   IMenus,
   IDeleteCartRequest,
-  IOrderedMenuDetails,
   IOrderOptionsInOrderPreviewRequest,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
@@ -52,24 +48,30 @@ import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { pipe, toArray, flatMap } from '@fxts/core';
-import { CartItem, DeliveryTypeAndLocation } from '@components/Pages/Cart';
-import { DELIVERY_FEE_OBJ } from '@constants/cart';
+import {
+  CartItem,
+  DeliveryTypeAndLocation,
+  CartDisposableBox,
+  CartDiscountBox,
+  CartDeliveryFeeBox,
+  NutritionBox,
+} from '@components/Pages/Cart';
+import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
+import { INIT_ACCESS_METHOD } from '@store/common';
+
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { INIT_ACCESS_METHOD } from '@store/common';
+
 dayjs.locale('ko');
 
-/*TODO: 찜하기&이전구매 UI, 찜하기 사이즈에 따라 가격 레인지, 첫 구매시 100원 -> 이전  */
 /*TODO: 배송비할인 */
-
-const disabledDates: any = ['2022-02-22'];
 
 interface IMenuDetailsId {
   menuDetailId: number;
   menuQuantity: number;
 }
 
-interface IDisposable {
+export interface IDisposable {
   id: number;
   value?: string;
   quantity: number;
@@ -78,37 +80,13 @@ interface IDisposable {
   isSelected: boolean;
 }
 
-const INITIAL_NUTRITION = {
-  protein: 0,
-  calorie: 0,
-};
-
 const now = dayjs();
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
   const [checkedMenus, setCheckedMenus] = useState<IGetCart[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
-  const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>([
-    {
-      id: 1,
-      value: 'LUNCH',
-      text: '점심',
-      discription: '(오전 9:30까지 주문시 12:00 전 도착)',
-      isDisabled: false,
-      isSelected: true,
-      time: '12시',
-    },
-    {
-      id: 2,
-      value: 'DINNER',
-      text: '저녁',
-      discription: '(오전 11:00까지 주문시 17:00 전 도착)',
-      isDisabled: false,
-      isSelected: false,
-      time: '17시',
-    },
-  ]);
+  const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
@@ -139,6 +117,7 @@ const CartPage = () => {
     data: cartResponse,
     isLoading,
     isError,
+    refetch,
   } = useQuery(
     ['getCartList'],
     async () => {
@@ -627,11 +606,14 @@ const CartPage = () => {
   };
 
   const goToSearchPage = () => {
-    router.push('/search');
+    router.push('/');
   };
 
   const goToOrder = () => {
-    if (isNil(destinationObj) || !me) return;
+    const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
+    const isUnderMinimum = totalAmount < minimum;
+
+    if (isNil(destinationObj) || !me || isUnderMinimum) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
@@ -757,25 +739,24 @@ const CartPage = () => {
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
-  const getTotalDiscountPrice = useCallback(
-    (isSpot?: boolean): number => {
-      return isSpot ? getItemDiscountPrice() + getSpotDiscountPrice() : getItemDiscountPrice();
-    },
-    [checkedMenus]
-  );
+  const getTotalDiscountPrice = useCallback((): number => {
+    return isSpot ? getItemDiscountPrice() + getSpotDiscountPrice() : getItemDiscountPrice();
+  }, [checkedMenus]);
 
   const getItemDiscountPrice = useCallback((): number => {
     return checkedMenus?.reduce((tdp, item) => {
       return item.menuDetails.reduce((tdp, detail) => {
         if (detail.isSold) return tdp;
-        return tdp + detail.discountPrice;
+        return tdp + detail.discountPrice * detail.quantity;
       }, tdp);
     }, 0);
   }, [checkedMenus]);
 
-  const getSpotDiscountPrice = (): number => {
-    return 0;
-  };
+  const getSpotDiscountPrice = useCallback((): number => {
+    const spotDiscount = cartResponse?.discountInfos[0];
+    const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
+    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice;
+  }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
     if (destinationObj?.delivery) {
@@ -789,10 +770,21 @@ const CartPage = () => {
   const orderButtonRender = () => {
     let buttonMessage = '';
 
+    if (!me) {
+      return (
+        <Button borderRadius="0" height="100%" disabled={true} onClick={onUnauthorized}>
+          로그인을 해주세요
+        </Button>
+      );
+    }
+
     if (destinationObj.delivery) {
       const { fee, amountForFree, minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
       const isUnderMinimum = totalAmount < minimum;
-      if (amountForFree > totalAmount) {
+
+      if (isUnderMinimum) {
+        buttonMessage = `최소주문금액까지 ${minimum - totalAmount}원 남았습니다`;
+      } else if (amountForFree > totalAmount) {
         buttonMessage = `${amountForFree - totalAmount}원 더 담고 무료 배송하기`;
       } else {
         buttonMessage = `${totalAmount}원 주문하기`;
@@ -803,11 +795,10 @@ const CartPage = () => {
           {buttonMessage}
         </Button>
       );
-    } else if (!me) {
-      buttonMessage = '로그인을 해주세요';
+    } else {
       return (
-        <Button borderRadius="0" height="100%" disabled={true}>
-          {buttonMessage}
+        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj)}>
+          배송정보를 입력해주세요.
         </Button>
       );
     }
@@ -836,6 +827,10 @@ const CartPage = () => {
         });
       }
       setLunchOrDinner(newLunchDinner);
+    }
+
+    if (selectedDeliveryDay) {
+      refetch();
     }
   }, [selectedDeliveryDay]);
 
@@ -895,11 +890,12 @@ const CartPage = () => {
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
 
     // 스팟 운영 종료
-    if (dDay) {
+    if (dDay || !destinationObj?.closedDate!) {
       return;
     }
 
     const closedSoonOperation = dDay >= -14;
+
     if (closedSoonOperation && isSpot) {
       dispatch(
         SET_ALERT({
@@ -961,7 +957,12 @@ const CartPage = () => {
                 <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus?.length}/${cartItemList?.length}`})</TextB2R>
               </div>
               <Right>
-                <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={removeSelectedItemHandler}>
+                <TextH6B
+                  color={theme.greyScale65}
+                  textDecoration="underline"
+                  onClick={removeSelectedItemHandler}
+                  pointer
+                >
                   선택삭제
                 </TextH6B>
               </Right>
@@ -994,7 +995,7 @@ const CartPage = () => {
                     <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
                     <div className="disposableText">
                       <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
-                      <TextH5B>+{item.price}원</TextH5B>
+                      <TextH5B>{item.price}원</TextH5B>
                     </div>
                   </div>
                   <Right>
@@ -1020,27 +1021,7 @@ const CartPage = () => {
                 <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
               </div>
             </FlexBetween>
-            {isShow && (
-              <InfoWrapper>
-                <BorderLine height={1} margin="16px 0" />
-                <FlexStart>
-                  <Calorie>
-                    <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
-                      총 열량
-                    </TextH7B>
-                    <TextH4B padding="0 2px 0 0">{nutritionObj.calorie}</TextH4B>
-                    <TextB3R>Kcal</TextB3R>
-                  </Calorie>
-                  <Protein>
-                    <TextH7B padding="0 8px 0 0" color={theme.greyScale45}>
-                      총 단백질
-                    </TextH7B>
-                    <TextH4B padding="0 2px 0 0">{nutritionObj.protein}</TextH4B>
-                    <TextB3R>g</TextB3R>
-                  </Protein>
-                </FlexStart>
-              </InfoWrapper>
-            )}
+            {isShow && <NutritionBox nutritionObj={nutritionObj} />}
           </NutritionInfoWrapper>
           <GetMoreBtn ref={calendarRef} onClick={goToSearchPage}>
             <Button backgroundColor={theme.white} color={theme.black} border>
@@ -1061,7 +1042,7 @@ const CartPage = () => {
               {deliveryTimeInfoRenderer()}
             </FlexBetween>
             <Calendar
-              disabledDates={disabledDates}
+              disabledDates={[]}
               subOrderDelivery={subOrderDelivery}
               selectedDeliveryDay={selectedDeliveryDay}
               changeDeliveryDate={changeDeliveryDate}
@@ -1094,110 +1075,62 @@ const CartPage = () => {
       )}
       <BorderLine height={8} margin="32px 0" />
       <MenuListContainer>
-        <MenuListWarpper>
-          <MenuListHeader>
-            <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
-            <ScrollHorizonList>
-              <ScrollHorizonListGroup>
-                {likeMenusList?.map((item: IMenus, index: number) => {
-                  return <Item item={item} key={index} isHorizontal />;
-                })}
-              </ScrollHorizonListGroup>
-            </ScrollHorizonList>
-          </MenuListHeader>
-        </MenuListWarpper>
-        <MenuListWarpper>
-          <MenuListHeader>
-            <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
-            <ScrollHorizonList>
-              <ScrollHorizonListGroup>
-                {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
+        {me && likeMenusList?.length !== 0 && (
+          <MenuListWarpper>
+            <MenuListHeader>
+              <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
+              <ScrollHorizonList>
+                <ScrollHorizonListGroup>
+                  {likeMenusList?.map((item: IMenus, index: number) => {
+                    return <Item item={item} key={index} isHorizontal />;
+                  })}
+                </ScrollHorizonListGroup>
+              </ScrollHorizonList>
+            </MenuListHeader>
+          </MenuListWarpper>
+        )}
+        {me && orderedMenusList?.length !== 0 && (
+          <MenuListWarpper>
+            <MenuListHeader>
+              <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
+              <ScrollHorizonList>
+                <ScrollHorizonListGroup>
+                  {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   return <Item item={item} key={index} isHorizontal />;
                 })} */}
-              </ScrollHorizonListGroup>
-            </ScrollHorizonList>
-          </MenuListHeader>
-        </MenuListWarpper>
+                </ScrollHorizonListGroup>
+              </ScrollHorizonList>
+            </MenuListHeader>
+          </MenuListWarpper>
+        )}
         {cartItemList.length > 0 && (
           <TotalPriceWrapper>
             <FlexBetween>
               <TextH5B>총 상품금액</TextH5B>
-              <TextB2R>{getItemsPrice()}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(getItemsPrice()))}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
-            <FlexBetween>
-              <TextH5B>총 할인 금액</TextH5B>
-              <TextB2R>{getTotalDiscountPrice(isSpot)}원</TextB2R>
-            </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>상품 할인</TextB2R>
-              <TextB2R>{getItemDiscountPrice()}원</TextB2R>
-            </FlexBetween>
-            {isSpot && (
-              <FlexBetween padding="8px 0 0 0">
-                <TextB2R>스팟 이벤트 할인</TextB2R>
-                <TextB2R>{getSpotDiscountPrice()}원</TextB2R>
-              </FlexBetween>
-            )}
-
-            {disposableList.some((item) => item.isSelected) && (
-              <>
-                <BorderLine height={1} margin="16px 0" />
-                <FlexBetween padding="16px 0 8px">
-                  <TextH5B>환경부담금 (일회용품)</TextH5B>
-                  <TextB2R>
-                    {getDisposableItem().quantity}개 / {getDisposableItem().price}원
-                  </TextB2R>
-                </FlexBetween>
-              </>
-            )}
-            {disposableList.length > 0 &&
-              disposableList.map((disposable, index) => {
-                const { id, quantity, price, isSelected } = disposable;
-
-                const hasFork = id === 1 && isSelected;
-                const hasChopsticks = id === 2 && isSelected;
-                return (
-                  <div key={index}>
-                    {hasFork && (
-                      <FlexBetween padding="8px 0 0 0">
-                        <TextB2R>포크+물티슈</TextB2R>
-                        <TextB2R>
-                          {quantity}개 / {price * quantity}원
-                        </TextB2R>
-                      </FlexBetween>
-                    )}
-                    {hasChopsticks && (
-                      <FlexBetween padding="8px 0 0 0">
-                        <TextB2R>젓가락+물티슈</TextB2R>
-                        <TextB2R>
-                          {quantity}개 / {price * quantity}원
-                        </TextB2R>
-                      </FlexBetween>
-                    )}
-                  </div>
-                );
-              })}
+            <CartDiscountBox
+              totalDiscountPrice={getTotalDiscountPrice()}
+              itemDiscountPrice={getItemDiscountPrice()}
+              spotDiscountPrice={getSpotDiscountPrice()}
+              hasSpotEvent={cartResponse?.discountInfos.length !== 0}
+              isSpot={isSpot}
+            />
+            <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <FlexBetween>
-              <TextH5B>배송비</TextH5B>
-              <TextB2R>{getDeliveryFee() ? `${getDeliveryFee()}원` : '무료배송'}</TextB2R>
-            </FlexBetween>
-            <FlexBetween>
-              <TextB2R padding="8px 0 0 0">배송비 할인</TextB2R>
-              <TextB2R>-{getDeliveryFee()}원</TextB2R>
-            </FlexBetween>
+            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
-              <TextH4B>{totalAmount + getDeliveryFee()}원</TextH4B>
+              <TextH4B>{getFormatPrice(String(totalAmount + getDeliveryFee()))}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
                 프코 회원
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-              <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+              <TextH6B> n 포인트 (n%) 적립 예정</TextH6B>
             </FlexEnd>
           </TotalPriceWrapper>
         )}
@@ -1215,7 +1148,8 @@ const Container = styled.div`
 const EmptyContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
+  height: 50vh;
 `;
 
 const DeliveryMethodAndPickupLocation = styled.div`
@@ -1286,6 +1220,7 @@ const NutritionInfoWrapper = styled.div`
   padding: 16px 24px;
   background-color: #f8f8f8;
   margin-bottom: 24px;
+  cursor: pointer;
   .h5B {
     font-size: 14px;
     letter-spacing: -0.4px;
@@ -1296,21 +1231,6 @@ const NutritionInfoWrapper = styled.div`
       color: ${theme.brandColor};
     }
   }
-`;
-
-const InfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const Calorie = styled.div`
-  width: 50%;
-  display: flex;
-  align-items: center;
-`;
-const Protein = styled.div`
-  width: 50%;
-  display: flex;
-  align-items: center;
 `;
 
 const GetMoreBtn = styled.div``;

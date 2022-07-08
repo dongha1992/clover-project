@@ -25,6 +25,7 @@ import {
   SET_SEARCH_KEYWORD,
   SET_SERACH_MAP_SPOT,
   SET_SPOT_MAP_SWITCH,
+  SET_SPOT_SEARCH_ALL_LIST_CHECKED,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -35,6 +36,7 @@ import { SpotSearchKeyword } from '@components/Pages/Spot';
 const SpotSearchMainPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
   const { orderId, isDelivery } = router.query;
   const { 
     spotsPosition, 
@@ -44,14 +46,21 @@ const SpotSearchMainPage = (): ReactElement => {
     isMapSwitch,
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
+
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [copiedSpotList, setCopiedSpotList] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputFocus, setInputFocus] = useState<boolean>(true);
   const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [spotListAll, setSpotListAll] = useState<boolean>(false);
+
   const userLocationLen = userLocation.emdNm?.length! > 0;
+  const latLen = spotsPosition?.latitude !== null;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : null;
+  const lonLen = spotsPosition?.longitude !== null;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   useEffect(() => {
     defaultRedioId();
@@ -106,10 +115,28 @@ const SpotSearchMainPage = (): ReactElement => {
     }
   }, [isDelivery]);
 
-  const latLen = spotsPosition?.latitude !== null;
-  const latitude = latLen ? Number(spotsPosition?.latitude) : null;
-  const lonLen = spotsPosition?.longitude !== null;
-  const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
+  // GPS - 현재위치 가져오기
+  const getCurrentPosition = () =>
+  new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+
+  const getLocation = async () => {
+    try {
+      const position: any = await getCurrentPosition();
+      if (position) {
+        // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
+        dispatch(
+          SET_SPOT_POSITIONS({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          })
+        );
+      }
+      return { Status: true, position };
+    } catch (error) {
+      console.log('getCurrentLatLong::catcherror =>', error);
+      return { Status: false };
+    }
+  };
 
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(
@@ -161,8 +188,8 @@ const SpotSearchMainPage = (): ReactElement => {
         let keyword = inputRef.current?.value;
         if (!keyword) {
           setSearchResult([]);
-          return;
-        }
+          inputRef.current.blur();
+        };
         getSpotList({ keyword });
         setIsSearched(true); 
         setInputFocus(true);
@@ -180,10 +207,13 @@ const SpotSearchMainPage = (): ReactElement => {
       const { data } = await getSpotSearch(params);
       if (data.code === 200) {
         const fetchData = data.data;
+        setTotalCount(fetchData.spots?.length);
         if( inputRef.current?.value.length! > 0 ) {
           setSearchResult(fetchData?.spots);
+          dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(false));
         } else {
           dispatch(SET_SERACH_MAP_SPOT(fetchData?.spots));
+          dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
         }
         // setIsSearched(true); 
         // setInputFocus(true);
@@ -244,36 +274,14 @@ const SpotSearchMainPage = (): ReactElement => {
     dispatch(SET_SERACH_MAP_SPOT(filterResult!));
   }, [searchResult]);
 
-  // GPS - 현재위치 가져오기
-  const getCurrentPosition = () =>
-    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
-
-  const getLocation = async () => {
-    try {
-      const position: any = await getCurrentPosition();
-      if (position) {
-        // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
-        dispatch(
-          SET_SPOT_POSITIONS({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-      }
-      return { Status: true, position };
-    } catch (error) {
-      console.log('getCurrentLatLong::catcherror =>', error);
-      return { Status: false };
-    }
-  };
-
   const clearInputHandler = () => {
     if (inputRef.current?.value.length! > 0) {
       initInputHandler();
       setIsSearched(false);
       setCurrentValurLen(false);
       getSpotList({keyword: ''});
-      setKeyword('')
+      setKeyword('');
+      dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
     };
   };
 
@@ -285,6 +293,13 @@ const SpotSearchMainPage = (): ReactElement => {
 
   if (isLoadingRecomand && isLoadingPickup) {
     return <div>로딩</div>;
+  };
+
+  const goToSwitchMap = () => {
+    setKeyword('');
+    getSpotList({keyword: ''});
+    dispatch(SET_SPOT_MAP_SWITCH(true));
+    dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
   };
 
   // 검색바 활성화 된 상테
@@ -390,7 +405,7 @@ const SpotSearchMainPage = (): ReactElement => {
               {
                 isSearched && ( // 검색 결과
                 <SearchResultContainer>
-                  <SpotSearchResult searchResult={filterResult} orderId={orderId} hasCart={true} getLocation={getLocation} />
+                  <SpotSearchResult searchResult={filterResult} orderId={orderId} hasCart={true} getLocation={getLocation} goToSwitchMap={goToSwitchMap} totalCount={totalCount} />
                 </SearchResultContainer>
                 )
               }
