@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { ReviewInfo } from '@components/Pages/Mypage/Review';
+import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -192,7 +192,10 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   };
 
   const finishWriteReview = async () => {
-    if (!over30Letter) return;
+    if (over30Letter) {
+      dispatch(SET_ALERT({ alertMessage: '최소 30자 이상 입력해 주세요' }));
+      return;
+    }
     let formData = new FormData();
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
@@ -319,34 +322,10 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
         </FlexRow>
       </UploadPhotoWrapper>
       <PointInfoWrapper>
-        <TextH5B color={theme.greyScale65}>포인트 적립 유의사항</TextH5B>
-        <BorderLine height={1} margin="16px 0" />
-        <TextH6B color={theme.greyScale65}>
-          [샐러드/건강간식/세트 상품] 수령일 기준 7일 내 제품만 등록 가능합니다.
-        </TextH6B>
-        <FlexCol>
-          <TextB3R color={theme.greyScale65}>[정기배송 상품] 2회 수령 후 30일 내 등록 가능합니다.</TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            후기 작성일 기준 2-3일 내 적립금이 자동 지급됩니다. (영업일 외 명절 및 공휴일은 지연될 수 있음)
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품마다 개별 작성건만 적립됩니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            사진 후기는 자사 제품 사진의 경우만 해당합니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제될 수 있습니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 추가 적립금 미지급됩니다.
-          </TextB3R>
-        </FlexCol>
+        <ReviewInfoBottom />
       </PointInfoWrapper>
       <BtnWrapper onClick={finishWriteReview}>
-        <Button height="100%" disabled={over30Letter}>
-          작성하기
-        </Button>
+        <Button height="100%">작성하기</Button>
       </BtnWrapper>
     </Container>
   );
