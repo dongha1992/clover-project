@@ -18,10 +18,12 @@ import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
+import { postImageApi } from '@api/image';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
   deletedImgIds: string[];
+  preview: string[];
 }
 
 const LIMIT = 30;
@@ -31,7 +33,9 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
+    preview: [],
   });
+
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [rating, setRating] = useState(5);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
@@ -142,6 +146,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
           const QUALITY = 0.8;
           const img = new Image();
           img.src = blobURL;
+
           img.onerror = () => {
             URL.revokeObjectURL(blobURL);
             alert('이미지 업로드에 실패했습니다');
@@ -177,42 +182,41 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
   const getImageFileReader = (imageFile: any) => {
     const imageFileReader = new FileReader();
-
     imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
+      setWriteMenuReviewObj({
+        ...writeMenuReviewObj,
+        preview: [...writeMenuReviewObj?.preview!, e.target.result],
+        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
+      });
     };
     imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = writeMenuReviewObj?.imgFiles?.filter((img, idx) => idx !== index);
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
+    const filterImg = writeMenuReviewObj?.imgFiles?.filter((img, idx) => idx !== index);
+    const filterPreviewImg = writeMenuReviewObj?.preview?.filter((img, idx) => idx !== index);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterImg, preview: filterPreviewImg });
   };
 
   const finishWriteReview = async () => {
-    // let formData = new FormData();
+    let formData = new FormData();
 
-    // if (writeMenuReviewObj?.imgFiles?.length! > 0) {
-    //   for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-    //     writeMenuReviewObj.imgFiles && formData.append('files' + '[' + i + ']', writeMenuReviewObj?.imgFiles[i]);
-    //   }
-    // }
+    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
+      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
+        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+      }
+    }
 
-    // const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
+    const result = await postImageApi(formData);
+    console.log(result, 'formData result');
 
-    // formData.append('content', textAreaRef?.current?.value || selectedReviewDetail?.menuReview?.content!);
-    // formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    // formData.append('rating', rating.toString());
+    // const reqBody = {
+    //   content: textAreaRef?.current?.value!,
+    //   images: JSON.stringify(writeMenuReviewObj?.imgFiles[0]),
+    //   rating,
+    // };
 
-    console.log(writeMenuReviewObj.imgFiles, '--');
-
-    const reqBody = {
-      content: textAreaRef?.current?.value!,
-      images: writeMenuReviewObj.imgFiles,
-      rating,
-    };
-
-    mutateEditMenuReview(reqBody);
+    // mutateEditMenuReview(reqBody);
   };
 
   const deleteReview = () => {
@@ -225,8 +229,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       })
     );
   };
-
-  const changeS3ToBase64 = async (urls: string[]) => {};
 
   useEffect(() => {
     if (selectedReviewDetail) {
@@ -322,13 +324,12 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
               </div>
             </UploadInputWrapper>
           )}
-          {writeMenuReviewObj?.imgFiles?.length! > 0 &&
-            writeMenuReviewObj?.imgFiles?.map((img: string, index: number) => {
+          {writeMenuReviewObj?.preview?.length! > 0 &&
+            writeMenuReviewObj?.preview?.map((img: string, index: number) => {
               const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
-                  {/* <img src={img} /> */}
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
