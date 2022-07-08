@@ -56,8 +56,6 @@ Api.interceptors.response.use(
           if (!isTokenRefreshing) {
             console.log('## I response TokenRefreshing');
             isTokenRefreshing = true;
-            removeCookie({ name: 'refreshTokenObj' });
-            removeCookie({ name: 'autoL' });
             removeCookie({ name: 'acstk' });
             const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
             if (refreshTokenObj) {
