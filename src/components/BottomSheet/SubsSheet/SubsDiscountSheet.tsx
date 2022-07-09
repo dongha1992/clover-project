@@ -1,6 +1,7 @@
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexRow, theme } from '@styles/theme';
+import { last } from 'lodash-es';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
@@ -50,14 +51,14 @@ const SubsDiscountSheet = ({ subscriptionDiscountRates }: IProps) => {
           <TextH5B>정기구독</TextH5B>
           <FlexRow>
             <TextB2R>
-              최대 <Span>{subscriptionDiscountRates[4]}%</Span> 할인
+              최대 <Span>{last(subscriptionDiscountRates)}%</Span> 할인
             </TextB2R>
           </FlexRow>
         </li>
       </ul>
       <TextB3R color={theme.brandColor} padding="4px 0 24px">
         정기구독의 경우 구독 결제 기간에 따라 할인율이 점차 증가합니다. <br />
-        (1개월 {subscriptionDiscountRates[3]}% / 2개월 {subscriptionDiscountRates[5]}% / 3개월{' '}
+        (1개월 {subscriptionDiscountRates[4]}% / 2개월 {subscriptionDiscountRates[5]}% / 3개월{' '}
         {subscriptionDiscountRates[6]}% / 4개월 {subscriptionDiscountRates[7]}%)
       </TextB3R>
       <BottomButton
