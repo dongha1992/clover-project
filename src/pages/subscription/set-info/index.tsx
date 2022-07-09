@@ -358,7 +358,7 @@ const SubsSetInfoPage = () => {
                 <TextB2R className={`${isSelected && 'fBold'} ${!disabled && 'disabled'}`} padding="0 0 0 8px" pointer>
                   {index === 4 ? (
                     <>
-                      {item.text} (최대 {menuDetail?.subscriptionDiscountRates![index]}% 할인)
+                      {item.text} (최대 {last(menuDetail?.subscriptionDiscountRates)}% 할인)
                     </>
                   ) : (
                     <>
@@ -380,7 +380,7 @@ const SubsSetInfoPage = () => {
           <TextB3R color={theme.brandColor}>
             - 매달 새로운 식단을 자동결제로 편리하게 구독해 보세요. <br />
             - 구독 결제 기간에 따라 할인율이 점차 증가합니다. <br />
-            (1개월 {menuDetail?.subscriptionDiscountRates![3]}% / 2개월 {menuDetail?.subscriptionDiscountRates![5]}% /
+            (1개월 {menuDetail?.subscriptionDiscountRates![4]}% / 2개월 {menuDetail?.subscriptionDiscountRates![5]}% /
             3개월 {menuDetail?.subscriptionDiscountRates![6]}% / 4개월 {menuDetail?.subscriptionDiscountRates![7]}%)
           </TextB3R>
         </SubsInfoBox>
