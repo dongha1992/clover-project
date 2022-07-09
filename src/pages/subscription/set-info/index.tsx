@@ -99,7 +99,7 @@ const SubsSetInfoPage = () => {
     try {
       if (subsDeliveryType === 'SPOT') {
         if ((userDestination?.delivery === 'spot' || userDestination?.delivery === 'SPOT') && userDestination) {
-          setSpotMainDestination(userDestination.name);
+          setSpotMainDestination(userDestination.location?.address);
         } else {
           const { data } = await getMainDestinationsApi({
             delivery: 'SPOT',
@@ -121,7 +121,7 @@ const SubsSetInfoPage = () => {
             };
             dispatch(SET_DESTINATION(destinationInfo));
             dispatch(INIT_TEMP_DESTINATION());
-            setSpotMainDestination(data.data.name);
+            setSpotMainDestination(data.data.location?.address);
           } else {
             setSpotMainDestination('픽업장소를 설정해 주세요');
           }
