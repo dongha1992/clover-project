@@ -28,7 +28,7 @@ interface IProps {
 }
 
 const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
-  const [toggleState, setToggleState] = useState(false);
+  const [toggleState, setToggleState] = useState(true);
   const dispatch = useDispatch();
   const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', orderId], orderId!, {
     refetchOnMount: false,

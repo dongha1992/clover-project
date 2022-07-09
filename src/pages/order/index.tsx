@@ -833,21 +833,53 @@ const OrderPage = () => {
       return;
     }
 
-    if (previewOrder?.order.delivery === 'MORNING') {
+    if (previewOrder?.order.type === 'SUBSCRIPTION') {
       dispatch(
         SET_ALERT({
-          alertMessage:
-            '주문변경 및 취소는 배송일 전날 오후 3시까지만 가능합니다.\n[배송지/배송요청사항] 오기입으로 인해 상품 수령이 불가능하게 될 경우, 고객님의 책임으로 간주되어 보상이 불가능합니다.\n 배송지를 최종 확인 하셨나요?',
+          children: (
+            <>
+              <FlexRow padding="0 0 16px 0">
+                <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
+                  구독 결제 전 꼭 확인해 주세요!
+                </TextH5B>
+              </FlexRow>
+              <SubsAlertTextBox>
+                <li>
+                  <TextB2R>배송지, 배송 요청사항 오기입으로 상품 수령이 불가능한 경우, 보상이 불가해요.</TextB2R>
+                </li>
+                <li>
+                  <TextB2R>
+                    프레시코드 구독은 사전예약 상품으로 환불 규정에 따라 특정 시간대 취소 시 전액 환불이 불가할 수
+                    있어요. 환불 규정을 참고해 주세요.
+                  </TextB2R>
+                </li>
+              </SubsAlertTextBox>
+            </>
+          ),
           closeBtnText: '취소',
           submitBtnText: '확인',
-          onClose: () => {},
           onSubmit: () => {
             mutateCreateOrder();
           },
         })
       );
     } else {
-      mutateCreateOrder();
+      if (previewOrder?.order.delivery === 'MORNING') {
+        dispatch(
+          SET_ALERT({
+            alertMessage:
+              '주문변경 및 취소는 배송일 전날 오후 3시까지만 가능합니다.\n[배송지/배송요청사항] 오기입으로 인해 상품 수령이 불가능하게 될 경우, 고객님의 책임으로 간주되어 보상이 불가능합니다.\n 배송지를 최종 확인 하셨나요?',
+            closeBtnText: '취소',
+            submitBtnText: '확인',
+            onClose: () => {},
+            onSubmit: () => {
+              mutateCreateOrder();
+            },
+          })
+        );
+      } else {
+        mutateCreateOrder();
+      }
     }
   };
 
@@ -1662,6 +1694,24 @@ const OrderTermWrapper = styled.div`
 
 const OrderBtn = styled.div`
   ${fixedBottom}
+`;
+
+const SubsAlertTextBox = styled.ul`
+  li {
+    position: relative;
+    padding-left: 20px;
+    word-break: keep-all;
+    &::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 3px;
+      left: 9px;
+      top: 7.5px;
+      background-color: ${theme.black};
+    }
+  }
 `;
 
 export default OrderPage;
