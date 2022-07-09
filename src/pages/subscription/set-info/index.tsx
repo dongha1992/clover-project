@@ -296,7 +296,7 @@ const SubsSetInfoPage = () => {
   };
 
   const goToDeliveryInfo = () => {
-    if (subsDeliveryType !== 'SPOT' && mainDestinationAddress) {
+    if (subsDeliveryType !== 'SPOT' && mainDestinationAddress && subsStartDate) {
       dispatch(
         SET_ALERT({
           alertMessage: '배송방법을 변경하면\n구독 시작/배송일이 초기화 됩니다.',

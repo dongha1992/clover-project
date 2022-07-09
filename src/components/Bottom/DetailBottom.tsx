@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import SVGIcon from '@utils/common/SVGIcon';
 import { TextH5B } from '@components/Shared/Text';
@@ -12,23 +12,19 @@ import { SET_TIMER_STATUS } from '@store/order';
 import { orderForm } from '@store/order';
 import { useToast } from '@hooks/useToast';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
-import { menuSelector, SET_MENU_ITEM } from '@store/menu';
+import { menuSelector } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { useQuery } from 'react-query';
-import { getMenuDetailApi } from '@api/menu';
 import { useRouter } from 'next/router';
 import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
-import { Item } from '@components/Item';
 import { userForm } from '@store/user';
 import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import { useMutation, useQueryClient } from 'react-query';
 import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
-import { filterSelector } from '@store/filter';
-import { IMenuDetails, IMenuDetail, IMenus } from '@model/index';
-import { isEmpty } from 'lodash-es';
+import { IMenuDetail } from '@model/index';
+import { last } from 'lodash-es';
 
 interface IMenuStatus {
   isItemSold: boolean | undefined;
@@ -36,20 +32,19 @@ interface IMenuStatus {
 }
 
 const DetailBottom = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
-  const [subsDiscount, setSubsDiscount] = useState<string>();
-  const dispatch = useDispatch();
-  const { showToast, hideToast } = useToast();
-
-  const { isTimerTooltip } = useSelector(orderForm);
   const { menuItem: menuDetail } = useSelector(menuSelector);
+  const { isTimerTooltip } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
+  const [subsDeliveryType, setSubsDeliveryType] = useState<string>();
+  const [subsDiscount, setSubsDiscount] = useState<string>();
+  const { showToast, hideToast } = useToast();
+
   const deliveryType = checkTimerLimitHelper();
-  const { isLoginSuccess } = useSelector(userForm);
 
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {
@@ -117,9 +112,9 @@ const DetailBottom = () => {
 
   useEffect(() => {
     if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
-      setSubsDiscount('정기구독 최대 15% 할인');
+      setSubsDiscount(`정기구독 최대 ${last(menuDetail?.subscriptionDiscountRates)}% 할인`);
     } else {
-      setSubsDiscount('최대 9% 할인');
+      setSubsDiscount(`최대 ${menuDetail?.subscriptionDiscountRates[3]}% 할인`);
     }
     if (menuDetail?.subscriptionDeliveries?.includes('SPOT')) {
       setSubsDeliveryType('SPOT');
@@ -226,10 +221,10 @@ const DetailBottom = () => {
     dispatch(SUBS_INIT());
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
-    if (isLoginSuccess) {
+    if (me) {
       router.push(`/subscription/set-info?menuId=${menuDetail?.id}&subsDeliveryType=${subsDeliveryType}`);
     } else {
-      router.push('/onboarding');
+      goToLogin();
     }
   };
 
