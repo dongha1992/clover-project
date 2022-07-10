@@ -91,11 +91,11 @@ const TextContainer = styled.div`
     content: '';
     position: absolute;
     left: 10%;
-    top: -4px;
+    bottom: -4px;
     transform: translateX(-10%);
     width: 0px;
     height: 0px;
-    border-bottom: 4px solid rgba(36, 36, 36, 0.9);
+    border-top: 4px solid rgba(36, 36, 36, 0.9);
     border-left: 3px solid transparent;
     border-right: 3px solid transparent;
   }

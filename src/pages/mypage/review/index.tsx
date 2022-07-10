@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { fixedTab, homePadding, theme } from '@styles/theme';
+import { fixedTab, homePadding, textBody3, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
@@ -74,6 +74,9 @@ const ReviewPage = () => {
     '작성 완료': completeWriteList?.length,
   };
 
+  const isWillWrite = selectedTab === '/willWrite';
+  const isComplete = selectedTab === '/completed';
+
   if (completeIsLoading || willWriteIsLoading) {
     return <div>로딩</div>;
   }
@@ -86,22 +89,22 @@ const ReviewPage = () => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
       </Wrapper>
-      {selectedTab === '/willWrite' && !willWriteList?.length && (
+      {isWillWrite && !willWriteList?.length && (
         <Center>
           <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
         </Center>
       )}
-      {selectedTab === '/completed' && !completeWriteList?.length && (
+      {isComplete && !completeWriteList?.length && (
         <Center>
           <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
         </Center>
       )}
-      {selectedTab === '/willWrite' ? (
+      {isWillWrite ? (
         <Wrapper>
           <WillReviewItmesWrapper>
             {willWriteList?.map((review, index) => (
               <div key={index}>
-                <WillWriteReviewItem menu={review} />
+                <WillWriteReviewItem review={review} />
                 {willWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
               </div>
             ))}
@@ -121,18 +124,25 @@ const ReviewPage = () => {
           </WillReviewItmesWrapper>
         </Wrapper>
       )}
+      {((isComplete && completeWriteList?.length! !== 0) || (isWillWrite && willWriteList?.length! !== 0)) && (
+        <ReviewInfoWrapper>
+          최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
+        </ReviewInfoWrapper>
+      )}
     </Container>
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding-bottom: 24px;
+`;
 
-const FixedTab = styled.div<{scroll: boolean}>`
+const FixedTab = styled.div<{ scroll: boolean }>`
   ${fixedTab};
 
-  ${({scroll}) => {
+  ${({ scroll }) => {
     if (scroll) {
-      return css `
+      return css`
         box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
       `;
     }
@@ -144,9 +154,14 @@ const Wrapper = styled.div`
 `;
 
 const ReviewInfoWrapper = styled.div`
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
   background-color: ${theme.greyScale3};
-  padding: 16px;
-  margin: 24px 0;
+  padding: 24px;
+  color: ${theme.greyScale65};
+  ${textBody3};
+  text-align: center;
 `;
 
 const WillReviewItmesWrapper = styled.div`
@@ -156,7 +171,7 @@ const Center = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 70vh;
+  height: 80vh;
 `;
 
 export default ReviewPage;

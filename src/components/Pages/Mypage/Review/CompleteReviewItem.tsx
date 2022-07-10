@@ -9,10 +9,10 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
-import { ISearchReviews } from '@model/index';
-import { compose } from '@reduxjs/toolkit';
+import { ICompletionReviews } from '@model/index';
+
 interface IProps {
-  review: ISearchReviews;
+  review: ICompletionReviews;
   clickImgViewHandler: (imgUrlForViwer: string[]) => void;
 }
 
@@ -30,11 +30,18 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
         <Wrapper>
           <ReviewContent>
             <FlexBetween padding="0 0 16px 0">
-              <TextH5B onClick={() => router.push(`/menu/${review.menuId}`)}>{review.menuName}</TextH5B>
+              <TextH5B pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
+                {review.menuName}
+              </TextH5B>
               <TextH6B
+                pointer
                 color={theme.greyScale65}
                 textDecoration="underline"
-                onClick={() => router.push(`/mypage/review/edit/${review.id}?menuId=${review.menuId}`)}
+                onClick={() =>
+                  router.push(
+                    `/mypage/review/edit/${review.id}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderDeliveryId=${review.orderDeliveryId}`
+                  )
+                }
               >
                 편집
               </TextH6B>
@@ -103,7 +110,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 })}
               </ImgWrapper>
             )}
-            {review.commentCreatedAt ? (
+            {review.commentCreatedAt && review.comment ? (
               <ReplyContent>
                 <ReplyHeader>
                   <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>

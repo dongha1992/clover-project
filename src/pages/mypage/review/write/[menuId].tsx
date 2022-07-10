@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { ReviewInfo } from '@components/Pages/Mypage/Review';
+import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
-import debounce from 'lodash-es/debounce';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
@@ -19,34 +18,46 @@ import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
 import NextImage from 'next/image';
 import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
+import { ICreateReivewRequest } from '@model/index';
+import { postImageApi } from '@api/image';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
   deletedImgIds: string[];
-  rating: number;
-  content: string;
+  preview: string[];
 }
 
 const LIMIT = 30;
 
 export const FinishReview = () => {
   return (
-    <GreyBg>
-      <TextH5B color={theme.white}>+ 300P 적립</TextH5B>
-    </GreyBg>
+    <FinishComplete>
+      <div className="svg">
+        <SVGIcon name="reviewComplete" />
+      </div>
+      <div className="point">
+        <TextH3B color={theme.white}>300P</TextH3B>
+      </div>
+    </FinishComplete>
   );
 };
 
-const WriteReviewPage = ({ menuId }: any) => {
+interface IProps {
+  menuId: number;
+  orderDeliveryId: number;
+  menuDetailId: number;
+}
+
+const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   const [isShow, setIsShow] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
     deletedImgIds: [],
-    content: '',
-    rating: 5,
+    preview: [],
   });
+  const [rating, setRating] = useState(5);
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -78,19 +89,15 @@ const WriteReviewPage = ({ menuId }: any) => {
   );
 
   const { mutateAsync: mutateCreateMenuReview } = useMutation(
-    async (formData: FormData) => {
-      const { data } = await createMenuReviewApi(formData);
+    async (reqBody: ICreateReivewRequest) => {
+      const { data } = await createMenuReviewApi(reqBody);
     },
     {
       onSuccess: async () => {
         dispatch(
           SET_ALERT({
-            children: (
-              <GreyBg>
-                <TextH5B>+ 300P 적립</TextH5B>
-              </GreyBg>
-            ),
-            alertMessage: `${me?.name}님의 소중한 후기에 감사드려요!`,
+            children: <FinishReview />,
+            alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
             submitBtnText: '확인',
           })
         );
@@ -106,8 +113,7 @@ const WriteReviewPage = ({ menuId }: any) => {
     if (xPos <= 0.5) {
       idx -= 0.5;
     }
-
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, rating: idx });
+    setRating(idx);
   };
 
   const writeReviewHandler = () => {
@@ -118,11 +124,11 @@ const WriteReviewPage = ({ menuId }: any) => {
 
   const onChangeFileHandler = (e: any) => {
     const LIMIT_SIZE = 5 * 1024 * 1024;
+    let imageFile = e.target.files! as any;
+    if (!imageFile[0]) return;
 
     try {
       if (e.target.files.length > 0) {
-        let imageFile = e.target.files;
-
         /* 사이즈 제한 걸리는 경우 */
         if (LIMIT_SIZE < imageFile[0].size) {
           /* 이미지 사이즈 줄이기 */
@@ -133,13 +139,11 @@ const WriteReviewPage = ({ menuId }: any) => {
           const QUALITY = 0.8;
           const img = new Image();
           img.src = blobURL;
-
           img.onerror = () => {
             URL.revokeObjectURL(blobURL);
             alert('이미지 업로드에 실패했습니다');
             return;
           };
-
           img.onload = () => {
             URL.revokeObjectURL(blobURL);
             const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
@@ -153,7 +157,6 @@ const WriteReviewPage = ({ menuId }: any) => {
                 imageFile = new File([blob], imageFile[0].name, {
                   type: imageFile[0].type,
                 });
-
                 getImageFileReader(imageFile);
               },
               MIME_TYPE,
@@ -170,45 +173,48 @@ const WriteReviewPage = ({ menuId }: any) => {
   };
 
   const getImageFileReader = (imageFile: any) => {
-    setWriteMenuReviewObj({
-      ...writeMenuReviewObj,
-      imgFiles: [...writeMenuReviewObj.imgFiles, imageFile],
-    });
-
     const imageFileReader = new FileReader();
 
     imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: [...writeMenuReviewObj?.imgFiles!, e.target.result] });
+      setWriteMenuReviewObj({
+        ...writeMenuReviewObj,
+        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
+        preview: [...writeMenuReviewObj?.preview!, e.target.result],
+      });
+      imageFileReader.readAsDataURL(imageFile);
     };
-
-    imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterPreviewImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterPreviewImg });
+    const filterImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
+    const filterPreviewImg = writeMenuReviewObj?.preview?.filter((img, idx) => idx !== index);
+    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterImg, preview: filterPreviewImg });
   };
 
   const finishWriteReview = async () => {
-    /* TODO: 리뷰 등록 물어봐야 함 */
+    if (over30Letter) {
+      dispatch(SET_ALERT({ alertMessage: '최소 30자 이상 입력해 주세요' }));
+      return;
+    }
     let formData = new FormData();
 
-    if (writeMenuReviewObj.imgFiles.length > 0) {
-      for (let i = 0; i < writeMenuReviewObj.imgFiles.length; i++) {
-        formData.append('files' + '[' + i + ']', writeMenuReviewObj.imgFiles[i]);
+    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
+      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
+        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
       }
+      const result = await postImageApi(formData);
     }
 
-    const menuReviewImages = { height: 0, main: true, name: 'string', priority: 0, size: 0, width: 0 };
+    const reqBody = {
+      content: textAreaRef?.current?.value!,
+      images: writeMenuReviewObj.imgFiles,
+      menuDetailId: Number(menuDetailId),
+      menuId: Number(menuId),
+      orderDeliveryId: Number(orderDeliveryId),
+      rating,
+    };
 
-    formData.append('content', textAreaRef?.current?.value || '');
-    formData.append('menuDetailId', '1');
-    formData.append('menuId', '1');
-    formData.append('menuReviewImages', JSON.stringify([menuReviewImages]));
-    formData.append('orderDeliveryId', '11');
-    formData.append('rating', writeMenuReviewObj.rating.toString());
-
-    mutateCreateMenuReview(formData);
+    mutateCreateMenuReview(reqBody);
   };
 
   console.log(data, 'data');
@@ -243,12 +249,7 @@ const WriteReviewPage = ({ menuId }: any) => {
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
-          <StarRating
-            rating={writeMenuReviewObj.rating}
-            // onRating={onStarHoverRating}
-            hoverRating={hoverRating}
-            onClick={onStarHoverRating}
-          />
+          <StarRating rating={rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
             터치하여 별점을 선택해주세요.
           </TextH6B>
@@ -303,10 +304,10 @@ const WriteReviewPage = ({ menuId }: any) => {
           )}
           {writeMenuReviewObj.imgFiles.length > 0 &&
             writeMenuReviewObj.imgFiles.map((img: string, index: number) => {
-              console.log(img);
+              const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={img} />
+                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
@@ -316,29 +317,7 @@ const WriteReviewPage = ({ menuId }: any) => {
         </FlexRow>
       </UploadPhotoWrapper>
       <PointInfoWrapper>
-        <TextH5B color={theme.greyScale65}>포인트 적립 유의사항</TextH5B>
-        <BorderLine height={1} margin="16px 0" />
-        <TextH6B color={theme.greyScale65}>
-          [샐러드/건강간식/세트 상품] 수령일 기준 7일 내 제품만 등록 가능합니다.
-        </TextH6B>
-        <FlexCol>
-          <TextB3R color={theme.greyScale65}>[정기배송 상품] 2회 수령 후 30일 내 등록 가능합니다.</TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            후기 작성일 기준 2-3일 내 적립금이 자동 지급됩니다. (영업일 외 명절 및 공휴일은 지연될 수 있음)
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품마다 개별 작성건만 적립됩니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            사진 후기는 자사 제품 사진의 경우만 해당합니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제될 수 있습니다.
-          </TextB3R>
-          <TextB3R color={theme.greyScale65} padding="4px 0 0 0">
-            상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 추가 적립금 미지급됩니다.
-          </TextB3R>
-        </FlexCol>
+        <ReviewInfoBottom />
       </PointInfoWrapper>
       <BtnWrapper onClick={finishWriteReview}>
         <Button height="100%">작성하기</Button>
@@ -432,19 +411,22 @@ const BtnWrapper = styled.div`
   ${fixedBottom}
 `;
 
-const GreyBg = styled.div`
-  height: 110px;
-  width: 100%;
-  background-color: #c4c4c4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const FinishComplete = styled.div`
+  position: relative;
+  .point {
+    position: absolute;
+    top: 30%;
+    left: 40%;
+  }
+  .svg {
+    width: 100%;
+  }
 `;
 
 export async function getServerSideProps(context: any) {
-  const { menuId } = context.query;
+  const { menuId, orderDeliveryId, menuDetailId } = context.query;
   return {
-    props: { menuId },
+    props: { menuId, orderDeliveryId, menuDetailId },
   };
 }
 
