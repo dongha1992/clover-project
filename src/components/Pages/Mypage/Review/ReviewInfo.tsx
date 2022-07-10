@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 const ReviewInfo = ({ isShow, setIsShow }: any) => {
   return (
-    <ReviewInfoWrapper>
+    <ReviewInfoWrapper onClick={() => setIsShow(!isShow)}>
       <FlexBetween>
         <FlexRow>
           <TextH6B color={theme.greyScale65}>후기 작성하고</TextH6B>
@@ -16,7 +16,7 @@ const ReviewInfo = ({ isShow, setIsShow }: any) => {
           </TextH6B>
           <TextH6B color={theme.greyScale65}>혜택받으세요!</TextH6B>
         </FlexRow>
-        <div onClick={() => setIsShow(!isShow)}>
+        <div>
           <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
         </div>
       </FlexBetween>
@@ -38,6 +38,7 @@ const ReviewInfo = ({ isShow, setIsShow }: any) => {
 };
 
 const ReviewInfoWrapper = styled.div`
+  cursor: pointer;
   background-color: ${theme.greyScale3};
   padding: 16px;
   margin: 24px 0;

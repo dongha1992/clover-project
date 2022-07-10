@@ -1,32 +1,15 @@
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import SubsStatusTooltip from '@components/Shared/Tooltip/SubsStatusTooltip';
-import { SUBS_DELIVERY_STATUS, SUBS_DELIVERY_UNPAID_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
 import { theme } from '@styles/theme';
-import { getFormatDate, SVGIcon } from '@utils/common';
+import { SVGIcon } from '@utils/common';
 import router from 'next/router';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SubsLabel from './SubsLabel';
 
 const SubsCardItem = ({ item }: any) => {
-  const [subsType, setSubsType] = useState<'UNLIMITED' | 'LIMITED'>();
-  const [limitedCompleted, setLimitedCompleted] = useState<boolean>();
-
-  useEffect(() => {
-    if (item?.subscriptionPeriod === 'UNLIMITED') {
-      setSubsType('UNLIMITED');
-    } else {
-      item.orderDeliveries[item.orderDeliveries.length - 1].status === 'COMPLETED'
-        ? setLimitedCompleted(true)
-        : setLimitedCompleted(false);
-      setSubsType('LIMITED');
-    }
-  }, [item?.subscriptionPeriod]);
-
-  const cards = useSubsNowDeliveryInfo(item);
-
+  const { deliveryInfo } = useSubsNowDeliveryInfo(item);
   const { tooltipMsg } = useSubsPaymentFail(
     item?.unsubscriptionType,
     item.isSubscribing,
@@ -36,7 +19,8 @@ const SubsCardItem = ({ item }: any) => {
   );
 
   const cardClickHandler = () => {
-    if (limitedCompleted) {
+    if (item?.subscriptionPeriod !== 'UNLIMITED' && item.status === 'COMPLETED') {
+      // 단기구독 완료일때 재주문 CTA
       router.push({ pathname: '/subscription/set-info' });
     } else {
       router.push(`/subscription/${item.id}`);
@@ -59,27 +43,14 @@ const SubsCardItem = ({ item }: any) => {
           />
         </LabelList>
         <TextH5B className="name">{item?.name}</TextH5B>
-        {subsType === 'UNLIMITED' ? (
-          <TextB3R className="deliveryInfo">
-            <b>
-              {item.status === 'UNPAID'
-                ? `${SUBS_DELIVERY_UNPAID_STATUS[cards[0]?.status]} ${item?.subscriptionRound}회차`
-                : cards.length > 1
-                ? `${SUBS_DELIVERY_STATUS[cards[0]?.status]} (배송 ${cards[0].deliveryRound}회차 외 ${
-                    cards.length - 1
-                  }건)`
-                : `${SUBS_DELIVERY_STATUS[cards[0]?.status]} (배송 ${cards[0].deliveryRound}회차)`}
-            </b>{' '}
-            - {getFormatDate(cards[0]?.deliveryDate)} 도착예정
-          </TextB3R>
-        ) : limitedCompleted ? (
+        {item?.subscriptionPeriod !== 'UNLIMITED' && item.status === 'COMPLETED' ? (
           <TextB3R color="#35AD73">할인쿠폰 받고 지금 바로 재구매하러 가기!</TextB3R>
         ) : (
           <TextB3R className="deliveryInfo">
             <b>
-              {SUBS_DELIVERY_STATUS[cards[0]?.status]} (배송 {cards[0]?.deliveryRound}회차)
+              {deliveryInfo.status} {deliveryInfo.round}
             </b>{' '}
-            - {getFormatDate(cards[0]?.deliveryDate)} 도착예정
+            - {deliveryInfo.deliveryDate}
           </TextB3R>
         )}
       </Content>
