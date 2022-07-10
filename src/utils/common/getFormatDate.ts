@@ -17,3 +17,7 @@ export const parcelDeliveryCompledN = (date: string): number => {
 export const todayN = (): number => {
   return Number(dayjs().format('YYYYMMDD'));
 };
+
+export const subsClosedDateN = (subscriptionPaymentDate: string) => {
+  return Number(dayjs(subscriptionPaymentDate).add(2, 'day').format('YYYYMMDD'));
+};

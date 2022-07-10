@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { todayN, subsClosedDateN } from '@utils/common';
+
 dayjs.locale('ko');
 
 type unSubscriptionStatus = string | 'paymentFail' | 'closeReserved' | 'closed';
 
 const useUnSubsStatus = (
-  unsubscriptionType: string,
+  unsubscriptionType: string | null,
   isSubscribing: boolean,
   status: string,
   subscriptionPaymentDate: string
@@ -33,10 +35,8 @@ const useUnSubsStatus = (
         }
       } else {
         // 구독 진행 x
-        if (
-          Number(dayjs(subscriptionPaymentDate).subtract(5, 'day').format('YYMMDD')) <=
-          Number(dayjs().format('YYYYMMDD'))
-        ) {
+
+        if (subsClosedDateN(subscriptionPaymentDate) <= todayN()) {
           setUnSubsStatus('closed');
         } else {
           setUnSubsStatus('closeReserved');
