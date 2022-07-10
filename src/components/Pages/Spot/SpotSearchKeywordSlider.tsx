@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 interface IProps {
-    onChange: any
+    onChange: (vaule: string) => void;
 }
 
 const SEARCH_KEYWORD = [
@@ -26,27 +26,38 @@ const SEARCH_KEYWORD = [
     keyword: '#카페',
     value: '카페',
   },
+  {
+    keyword: '#위워크',
+    value: '위워크',
+  },
+
 ];
   
-const SpotSearchKeyword = ({onChange}: IProps) => {
+const SpotSearchKeywordSlider = ({onChange}: IProps) => {
   return (
-    <Slider className="swiper-container" slidesPerView={'auto'} spaceBetween={10} speed={500}>
-      <KeyWorkdWrapper>
-        {
-          SEARCH_KEYWORD.map((i, idx) => {
-            return (
-            <SwiperSlide className="swiper-slide" key={idx}>
-              <KeyWord onClick={()=> onChange(i?.value)}>
-                <TextB2R padding='8p 16px 8px 16px' color={theme.black}>{i.keyword}</TextB2R>
-              </KeyWord>
-            </SwiperSlide>
-            )
-          })
-        }
-      </KeyWorkdWrapper>
-    </Slider>
+    <Conatainer>
+      <Slider className="swiper-container" slidesPerView={'auto'} spaceBetween={10} speed={500}>
+        <KeyWorkdWrapper>
+          {
+            SEARCH_KEYWORD.map((i, idx) => {
+              return (
+              <SwiperSlide className="swiper-slide" key={idx}>
+                <KeyWord onClick={()=> onChange(i?.value)}>
+                  <TextB2R padding='8p 16px 8px 16px' color={theme.black}>{i.keyword}</TextB2R>
+                </KeyWord>
+              </SwiperSlide>
+              )
+            })
+          }
+        </KeyWorkdWrapper>
+      </Slider>
+    </Conatainer>
   );
 };
+
+const Conatainer= styled.div`
+  padding: 16px 24px 24px 24px;
+`;
 
 const KeyWorkdWrapper = styled.section`
   display: flex;
@@ -69,4 +80,4 @@ const Slider= styled(Swiper)`
   }
 `;
 
-export default SpotSearchKeyword;
+export default SpotSearchKeywordSlider;

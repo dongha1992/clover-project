@@ -20,7 +20,7 @@ interface IProps {
 const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement => {
   const router = useRouter();
   const slideRef = useRef<HTMLElement | null | any>(null);
-  const { spotSearchArr } = useSelector(spotSelector);
+  const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
   const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
   const [selectedSpotList, setSelectedSpotList] = useState({});
@@ -60,7 +60,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
       <MapWrapper>
         <SpotSearchKakaoMap zoom={3} currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected} selectedTest={setSelectedTest}   />
         {
-          selected &&
+          selected && spotListAllChecked &&
           <SpotListWrapper>
             <SpotListSlider piece={true}>
               <SpotsSearchResultList map item={selectedSpotList} />
@@ -68,8 +68,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
           </SpotListWrapper>
         }
         {
-          isSearched && searchListLen! > 0 && 
-          
+          searchListLen! > 0 && !spotListAllChecked && 
           (
             !selectedTest &&
             <SpotListWrapper>

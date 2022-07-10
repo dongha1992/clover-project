@@ -72,6 +72,7 @@ const SpotSearchMainPage = (): ReactElement => {
   useEffect(() => {
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
+      getPaginatedSpotList(searchResult); 
       setIsSearched(true); 
       // setInputFocus(true);
     }
@@ -80,6 +81,7 @@ const SpotSearchMainPage = (): ReactElement => {
   useEffect(() => {
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
+      getPaginatedSpotList(searchResult); 
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
       setIsSearched(true); 
       // setInputFocus(true);
@@ -99,12 +101,13 @@ const SpotSearchMainPage = (): ReactElement => {
   }, [isSearched]);
 
   useEffect(() => { // 리스트 결과에 따라 지도에 반영
+    getPaginatedSpotList(searchResult); 
     dispatch(SET_SERACH_MAP_SPOT(searchResult!)); 
   }, [searchResult]);
 
   useEffect(()=> { // 인피니티 스크롤 반영
     getPaginatedSpotList(searchResult); 
-  }, [searchResult, size]);
+  }, [size]);
 
   useEffect(() => {
     if (orderId) {
@@ -163,7 +166,7 @@ const SpotSearchMainPage = (): ReactElement => {
       }
       return { Status: true, position };
     } catch (error) {
-      console.log('getCurrentLatLong::catcherror =>', error);
+      console.error('getCurrentLatLong::catcherror =>', error);
       return { Status: false };
     }
   };
@@ -234,6 +237,7 @@ const SpotSearchMainPage = (): ReactElement => {
       const { data } = await getSpotSearch(params);
       if (data.code === 200) {
         const spotList = data.data.spots;
+        setSize(10);
         if( inputRef.current?.value.length! > 0 ) {
           spotFiltered(spotList);
           setDefaultSpotList(spotList);
@@ -266,11 +270,14 @@ const SpotSearchMainPage = (): ReactElement => {
   };
 
   const changeInputHandler = (e: any) => {
-    setKeyword(e.target.value);
-    const inputText = inputRef.current?.value.length;
+    const value = e.target.value;
+    setKeyword(value);
+    const inputText = inputRef.current?.value?.length! > 0;
     if (!inputText) {
-      setSearchResult([]);
+      // setSearchResult([]);
       setIsSearched(false);
+      setKeyword('');
+      dispatch(SET_SEARCH_KEYWORD(''));
     }
   };
 
@@ -278,8 +285,8 @@ const SpotSearchMainPage = (): ReactElement => {
     if (inputRef.current?.value.length! > 0) {
       initInputHandler();
       setIsSearched(false);
-      // getSpotList({keyword: ''});
       setKeyword('');
+      dispatch(SET_SEARCH_KEYWORD(''));
       // dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
     };
   };
@@ -289,7 +296,6 @@ const SpotSearchMainPage = (): ReactElement => {
       inputRef.current.value = '';
     }
   };
-
 
   const defaultRedioId = () => { // 검색 결과 정렬 초기화
     if (userLocationLen) {

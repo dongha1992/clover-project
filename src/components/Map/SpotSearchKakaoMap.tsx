@@ -59,8 +59,7 @@ const SpotSearchKakaoMap = ({
 
         const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
         const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
-        // 지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가한다.
-        map.addControl(zoomControl, zoomControlPosition);
+        map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 52);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
