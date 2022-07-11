@@ -111,18 +111,20 @@ const DetailBottom = () => {
   }, []);
 
   useEffect(() => {
-    if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
-      setSubsDiscount(`정기구독 최대 ${last(menuDetail?.subscriptionDiscountRates)}% 할인`);
-    } else {
-      setSubsDiscount(`최대 ${menuDetail?.subscriptionDiscountRates[3]}% 할인`);
-    }
-    if (menuDetail?.subscriptionDeliveries?.includes('SPOT')) {
-      setSubsDeliveryType('SPOT');
-    } else if (
-      menuDetail?.subscriptionDeliveries?.includes('PARCEL') ||
-      menuDetail?.subscriptionDeliveries?.includes('MORNING')
-    ) {
-      setSubsDeliveryType('PARCEL');
+    if (menuDetail.type === 'SUBSCRIPTION') {
+      if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
+        setSubsDiscount(`정기구독 최대 ${last(menuDetail?.subscriptionDiscountRates)}% 할인`);
+      } else {
+        setSubsDiscount(`최대 ${menuDetail?.subscriptionDiscountRates[3]}% 할인`);
+      }
+      if (menuDetail?.subscriptionDeliveries?.includes('SPOT')) {
+        setSubsDeliveryType('SPOT');
+      } else if (
+        menuDetail?.subscriptionDeliveries?.includes('PARCEL') ||
+        menuDetail?.subscriptionDeliveries?.includes('MORNING')
+      ) {
+        setSubsDeliveryType('PARCEL');
+      }
     }
   }, [menuDetail]);
 
