@@ -166,7 +166,7 @@ const CartPage = () => {
         days: 90,
         page: 1,
         size: 10,
-        type: 'GENERAL',
+        orderType: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);
@@ -618,7 +618,7 @@ const CartPage = () => {
 
     const orderMenus = getMenuDetailsId(checkedMenus);
     const orderOptions = getOptionsItemId(disposableList);
-    console.log(destinationObj, 'destinationObj');
+
     const reqBody = {
       destinationId: destinationObj.destinationId!,
       delivery: destinationObj.delivery?.toUpperCase()!,
@@ -644,7 +644,7 @@ const CartPage = () => {
     list.forEach((item: IGetCart) =>
       item.menuDetails.forEach((detail) => {
         tempOrderMenus.push({
-          menuDetailId: detail.menuDetailId,
+          menuDetailId: detail.id,
           menuQuantity: detail.quantity,
         });
       })
