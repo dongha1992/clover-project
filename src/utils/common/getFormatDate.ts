@@ -18,6 +18,11 @@ export const todayN = (): number => {
   return Number(dayjs().format('YYYYMMDD'));
 };
 
+export const subsClosedDate = (subscriptionPaymentDate: string) => {
+  return `${dayjs(subscriptionPaymentDate).add(2, 'day').format('M')}월 ${dayjs(subscriptionPaymentDate)
+    .add(2, 'day')
+    .format('D')}일 (${dayjs(subscriptionPaymentDate).add(2, 'day').format('dd')})`;
+};
 export const subsClosedDateN = (subscriptionPaymentDate: string) => {
   return Number(dayjs(subscriptionPaymentDate).add(2, 'day').format('YYYYMMDD'));
 };
