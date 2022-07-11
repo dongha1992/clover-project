@@ -114,6 +114,14 @@ const OnBoarding: NextPage = () => {
         }
       } catch (error: any) {
         if (error.code === 2103) {
+          dispatch(SET_ALERT({ alertMessage: '잘못된 애플 토큰입니다.' }));
+        } else if (error.code === 2102) {
+          dispatch(SET_ALERT({ alertMessage: '애플 토큰이 만료되었습니다.' }));
+        } else if (error.code === 2101) {
+          dispatch(SET_ALERT({ alertMessage: '애플 인증정보가 잘못되었습니다.' }));
+        } else if (error.code === 2104) {
+          dispatch(SET_ALERT({ alertMessage: '애플 회원 정보를 찾을 수 없습니다.' }));
+        } else {
           dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
         }
       }
