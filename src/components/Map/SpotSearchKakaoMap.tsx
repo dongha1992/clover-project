@@ -31,12 +31,13 @@ const SpotSearchKakaoMap = ({
 
   const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
+  const [clickLevel, setClickLevel] = useState<number>(9);
   const spotList = spotSearchArr ?? [];
   const idx = currentIdx&&currentIdx;
   const SelectedSpotArr = spotListAllChecked ?  spotList[selectedIdx] : spotList[idx!];
   const currentPositionLat = SelectedSpotArr?.coordinate.lat;
   const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
-  const level = zoom ? zoom : 3;
+  const level = zoom ? zoom : 2;
   const levelControl = spotListAllChecked ? 9 : level;
   // console.log('spotListAllChecked', spotListAllChecked);
   // console.log('currentIdx', currentIdx, 'selectedIdx', selectedIdx);
@@ -55,12 +56,11 @@ const SpotSearchKakaoMap = ({
           level: levelControl,
           maxLevel: 9,
         };
-        const map = new window.kakao.maps.Map(container, options);
+        const map = new window.kakao.maps.Map(container, options); // 지도 생성
 
         const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
         const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
-        // 지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가한다.
-        map.addControl(zoomControl, zoomControlPosition);
+        map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 52);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
@@ -147,34 +147,34 @@ const SpotSearchKakaoMap = ({
           const markersArr =[];
 
           const placeType = () => {
-            if (item.type === 'PRIVATE') {
-              return '/ic_circle.png';
-            } else if (item.type === 'PUBLIC') {
-              switch(item.placeType){
-                case 'CAFE':
-                    return '/ic_cafe.png';
-                case 'CONVENIENCE_STORE':
-                    return '/ic_GS25.png';
-                case 'ETC':
-                    return '/ic_etc.png';
-                case 'BOOKSTORE':
-                    return '/ic_bookstore.png';
-                case 'DRUGSTORE':
-                    return '/ic_pharmacy.png';
-                case 'FITNESS_CENTER':
-                    return '/ic_gym.png';
-                // case 'OFFICE':
-                //     return '/ic_etc.png';
-                // case 'SHARED_OFFICE':
-                //     return '/ic_etc.png';
-                case 'STORE':
-                    return '/ic_store.png';
-                // case 'SCHOOL':
-                //     return '/ic_etc.png';
-                default:
-                    return '/ic_etc.png';
-                };  
-            }
+            switch(item.spotMarker) {
+              case 'PRIVATE': 
+                return '/ic_circle.png';
+              case 'BOOKSTORE': 
+                return '/ic_bookstore.png';
+              case 'CAFE': 
+                return '/ic_cafe.png';
+              case 'CAFE_STORYWAY':
+                return '/ic_cafe_storyway.png';
+              case 'CAFE_TRIPIN':
+                return '/ic_tripin.png';
+              case 'CONVENIENCE_STORE_GS25':
+                return '/ic_GS25.png';
+              case 'CONVENIENCE_STORE_SEVEN_ELEVEN':
+                return '/ic_seveneleven.png';
+              case 'CONVENIENCE_STORE_STORYWAY':
+                return '/ic_storyway.png';
+              case 'DRUGSTORE':
+                return '/ic_pharmacy.png';
+              case 'ETC':
+                return '/ic_etc.png';
+              case 'FITNESS_CENTER':
+                return '/ic_gym.png';
+              case 'STORE':
+                return '/ic_store.png';
+              default: 
+                return '/ic_etc.png';
+            };
           };
           
           // 마커 이미지를 생성
@@ -209,9 +209,6 @@ const SpotSearchKakaoMap = ({
               `${IMAGE_S3_DEV_URL}/ic_map_pin.png`,
               new window.kakao.maps.Size(50, 52));
             markers.setImage(defaultMarkerImage);
-            // 마커 위에 인포윈도우를 표시합니다
-            // map.setLevel(3);
-            // console.log(map.getLevel());
             selectedTest(false);
             onClick(idx);
             selectedSpot(item);
@@ -220,7 +217,6 @@ const SpotSearchKakaoMap = ({
           });
 
           new window.kakao.maps.event.addListener(map, 'click', function() {
-            // 마커 위에 인포윈도우를 표시합니다
             selectedTest(true);
             const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
             markers.setImage(markerImage);
