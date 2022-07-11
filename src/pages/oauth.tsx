@@ -66,12 +66,40 @@ const Oauth = () => {
         // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
       }
     } catch (error: any) {
-      if (error.code === 2107) {
+      if (error.code === 2010) {
         dispatch(
           SET_ALERT({
-            alertMessage: '전화번호가 등록되지 않은 카카오톡 계정입니다. ',
+            alertMessage: '탈퇴한 번호입니다. 탈퇴한 날부터 30일 이후 재가입 가능해요.',
             onSubmit: () => {
-              router.replace('/onboarding');
+              goToOnboarding();
+            },
+          })
+        );
+      } else if (error.code === 2106) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '카카오톡 인증 정보를 다시 확인해 주세요.',
+            onSubmit: () => {
+              goToOnboarding();
+            },
+          })
+        );
+      } else if (error.code === 2107) {
+        dispatch(
+          SET_ALERT({
+            alertMessage:
+              '휴대폰 번호가 등록되지 않은 카카오톡 계정입니다. 먼저 카카오톡 계정에 휴대폰 번호를 인증해 주세요.',
+            onSubmit: () => {
+              goToOnboarding();
+            },
+          })
+        );
+      } else if (error.code === 2108) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '프레시코드는 국내 휴대폰 번호로만 카카오 소셜로그인이 가능해요.',
+            onSubmit: () => {
+              goToOnboarding();
             },
           })
         );
@@ -80,7 +108,25 @@ const Oauth = () => {
           SET_ALERT({
             alertMessage: '이미 가입되어 있는 회원입니다.',
             onSubmit: () => {
-              router.replace('/onboarding');
+              goToOnboarding();
+            },
+          })
+        );
+      } else if (error.code === 2000) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 사용 중인 휴대폰 번호예요.',
+            onSubmit: () => {
+              goToOnboarding();
+            },
+          })
+        );
+      } else if (error.code === 2012) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 사용 중인 이메일 주소예요.',
+            onSubmit: () => {
+              goToOnboarding();
             },
           })
         );
@@ -89,12 +135,16 @@ const Oauth = () => {
           SET_ALERT({
             alertMessage: error.message,
             onSubmit: () => {
-              router.replace('/onboarding');
+              goToOnboarding();
             },
           })
         );
       }
     }
+  };
+
+  const goToOnboarding = () => {
+    router.replace('/onboarding');
   };
 
   const initKakaoAuth = async () => {
