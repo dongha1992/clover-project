@@ -852,7 +852,7 @@ export type TPlaceType =
   | 'SHARED_OFFICE'
   | 'STORE';
 
-type TSpotMarkerType = 
+type TSpotMarkerType =
   | 'BOOKSTORE'
   | 'CAFE'
   | 'CAFE_STORYWAY'
@@ -866,11 +866,7 @@ type TSpotMarkerType =
   | 'PRIVATE'
   | 'STORE';
 
-type TSpotPlaceDetailType = 
-  | 'GS25'
-  | 'SEVEN_ELEVEN'
-  | 'STORYWAY'
-  | 'TRIPIN';
+type TSpotPlaceDetailType = 'GS25' | 'SEVEN_ELEVEN' | 'STORYWAY' | 'TRIPIN';
 
 type TDistanceUnit =
   | 'CENTIMETERS'
@@ -1818,6 +1814,7 @@ export interface IMenus {
   closedAt?: string;
   openedAt: string;
   subscriptionDeliveries?: string[];
+  subscriptionDiscountRates?: number[];
   subscriptionPeriods?: string[];
   constitutionTag: string;
   isReopen?: boolean;
