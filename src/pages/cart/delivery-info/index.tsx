@@ -65,8 +65,8 @@ const DeliverInfoPage = () => {
       const params = {
         days: 90,
         page: 1,
-        size: 100,
-        type: 'GENERAL',
+        size: 10,
+        orderType: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);
@@ -166,7 +166,6 @@ const DeliverInfoPage = () => {
 
       if (isSubscription) {
         if (isSpot) {
-          //TODO(young) 임시로 구독일때만 spotPickupId로 배송지 등록 다른 spot 검색 부분들도 담당다분들과 대화후 변경
           const reqBody = {
             name: tempDestination?.name!,
             delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
@@ -444,7 +443,7 @@ const DeliverInfoPage = () => {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
         if (data.data) {
-          setTempDestination({ ...data.data, id: isSpot ? data.data.spotPickup?.id! : data.data.id! });
+          setTempDestination({ ...data.data });
           setIsMaindestination(true);
         } else {
           setTempDestination(null);

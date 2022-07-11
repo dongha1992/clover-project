@@ -268,7 +268,7 @@ const CartPage = () => {
 
   /* TODO: 배송지 가능 api 질문 */
 
-  // const { data: result, refetch } = useQuery(
+  // const { data: result } = useQuery(
   //   ['getAvailabilityDestination'],
   //   async () => {
   //     const params = {
@@ -281,14 +281,12 @@ const CartPage = () => {
 
   //     if (data.code === 200) {
   //       const { morning, parcel, quick, spot } = data.data;
-  //       console.log(data.data, 'data.data');
   //     }
   //   },
   //   {
   //     onSuccess: async () => {},
-  //     onError: (error: AxiosError) => {
-  //       const { message } = error.response?.data;
-  //       alert(message);
+  //     onError: (error: any) => {
+  //       alert(error.message);
   //       return;
   //     },
   //     refetchOnMount: true,
@@ -620,7 +618,7 @@ const CartPage = () => {
 
     const orderMenus = getMenuDetailsId(checkedMenus);
     const orderOptions = getOptionsItemId(disposableList);
-
+    console.log(destinationObj, 'destinationObj');
     const reqBody = {
       destinationId: destinationObj.destinationId!,
       delivery: destinationObj.delivery?.toUpperCase()!,
@@ -783,11 +781,11 @@ const CartPage = () => {
       const isUnderMinimum = totalAmount < minimum;
 
       if (isUnderMinimum) {
-        buttonMessage = `최소주문금액까지 ${minimum - totalAmount}원 남았습니다`;
+        buttonMessage = `최소주문금액까지 ${getFormatPrice(String(minimum - totalAmount))}원 남았습니다`;
       } else if (amountForFree > totalAmount) {
-        buttonMessage = `${amountForFree - totalAmount}원 더 담고 무료 배송하기`;
+        buttonMessage = `${getFormatPrice(String(amountForFree - totalAmount))}원 더 담고 무료 배송하기`;
       } else {
-        buttonMessage = `${totalAmount}원 주문하기`;
+        buttonMessage = `${getFormatPrice(String(totalAmount))}원 주문하기`;
       }
 
       return (

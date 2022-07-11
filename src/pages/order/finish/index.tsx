@@ -34,6 +34,7 @@ dayjs.locale('ko');
 import { SET_ALERT } from '@store/alert';
 import { INIT_COUPON } from '@store/coupon';
 import { useGetOrderDetail } from 'src/queries/order';
+import { INIT_CART_LISTS } from '@store/cart';
 
 interface IProps {
   orderId: number;
@@ -106,6 +107,7 @@ const OrderFinishPage = () => {
       dispatch(INIT_ORDER());
       dispatch(INIT_CARD());
       dispatch(INIT_ACCESS_METHOD());
+      dispatch(INIT_CART_LISTS());
     }
   };
 

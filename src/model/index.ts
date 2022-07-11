@@ -1065,6 +1065,13 @@ export interface IGetOrderListRequest {
   days: number;
   page: number;
   size: number;
+  orderType: TOrderType | string;
+}
+
+export interface IGetOrderRequest {
+  days: number;
+  page: number;
+  size: number;
   type: TOrderType | string;
 }
 
