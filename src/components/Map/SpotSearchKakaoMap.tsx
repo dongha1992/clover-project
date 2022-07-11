@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { spotSelector } from '@store/spot';
+import { useSelector, useDispatch } from 'react-redux';
+import { spotSelector, SET_SPOT_MAP_SWITCH } from '@store/spot';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import { SET_ALERT } from '@store/alert';
 
 interface IProps {
   zoom?: number;
@@ -27,11 +28,11 @@ const SpotSearchKakaoMap = ({
   selectedTest,
   selected,
 }: IProps) => {
-
-
+  const dispatch = useDispatch();
   const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
   const [clickLevel, setClickLevel] = useState<number>(9);
+  const [statusChecked, setStatusChecked] = useState<boolean>(false);
   const spotList = spotSearchArr ?? [];
   const idx = currentIdx&&currentIdx;
   const SelectedSpotArr = spotListAllChecked ?  spotList[selectedIdx] : spotList[idx!];
@@ -49,6 +50,7 @@ const SpotSearchKakaoMap = ({
     document.head.appendChild(mapScript);
 
     const onLoadKakaoMap = () => {
+      try {
       window.kakao.maps.load(() => {
         const container = document.getElementById("map");
         const options = {
@@ -62,7 +64,7 @@ const SpotSearchKakaoMap = ({
         const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
         map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
-        const imageSize = new window.kakao.maps.Size(50, 52);
+        const imageSize = new window.kakao.maps.Size(50, 54);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
         const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
         if (!spotListAllChecked) {
@@ -122,13 +124,13 @@ const SpotSearchKakaoMap = ({
             styles: clusterStyles,
         });
 
-        //pin list
+        // 마커 리스트
+        //ic_map_pin.png 선택 마커
         //ic_circle.png 프라이빗 마커
-        //ic_bookstore.png
+        //ic_bookstore.png 퍼블릭 마커
         //ic_cafe.png
         //ic_GS25.png
         //ic_gym.png
-        //ic_map_pin.png
         //ic_pharmacy.png
         //ic_sevenelven.png
         //ic_store.png
@@ -137,7 +139,7 @@ const SpotSearchKakaoMap = ({
         //ic_etc.png
         //ic_tripin.png
 
-        //ic_group_pin.png
+        //ic_group_pin.png // 클러스터링 마커 
 
         for (let i = 0; i < spotList.length; i ++) {
           displayMarker(spotList[i], i);
@@ -196,7 +198,6 @@ const SpotSearchKakaoMap = ({
           const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
           const latlng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon)
           // 마커를 생성합니다
-          // map.panTo(latlng);
           const markers = new window.kakao.maps.Marker({
               map: map, // 마커를 표시할 지도
               position: latlng, // 마커를 표시할 위치
@@ -209,21 +210,39 @@ const SpotSearchKakaoMap = ({
               `${IMAGE_S3_DEV_URL}/ic_map_pin.png`,
               new window.kakao.maps.Size(50, 52));
             markers.setImage(defaultMarkerImage);
+            // map.setLevel(2);
+            // setClickLevel(2);
             selectedTest(false);
             onClick(idx);
             selectedSpot(item);
             setSelectedIdx(idx);
             setSelected(true);  
+            // setStatusChecked(true);
+            // console.log('marker click');
           });
 
           new window.kakao.maps.event.addListener(map, 'click', function() {
-            selectedTest(true);
             const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
             markers.setImage(markerImage);
+            selectedTest(true);
+            // console.log('map click');
           });
           clusterer.addMarkers(markersArr);
         };
+        
       });
+    } catch(e){
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알 수 없는 에러가 발생했습니다.',
+          submitBtnText: '확인',
+          onSubmit: ()=> {
+            dispatch(SET_SPOT_MAP_SWITCH(false));
+          }
+        })
+      );
+      console.error(e);
+    }
     };
     mapScript.addEventListener("load", onLoadKakaoMap);
     return () => mapScript.removeEventListener("load", onLoadKakaoMap);
