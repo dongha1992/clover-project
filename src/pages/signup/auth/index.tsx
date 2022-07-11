@@ -167,7 +167,7 @@ const SignupAuthPage = () => {
       if (error.code === 2000) {
         dispatch(
           SET_ALERT({
-            alertMessage: `이메일로 가입된 계정이 있습니다.`,
+            alertMessage: `이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.`,
           })
         );
       } else if (error.code === 2001) {
@@ -215,6 +215,16 @@ const SignupAuthPage = () => {
         } catch (error: any) {
           if (error.code === 2002) {
             dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
+          } else if (error.code === 2013) {
+            dispatch(
+              SET_ALERT({ alertMessage: '전화번호 인증 확인 횟수를 초과하였습니다.(하루 5회)', submitBtnText: '확인' })
+            );
+          } else if (error.code === 1103) {
+            dispatch(
+              SET_ALERT({
+                alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
+              })
+            );
           } else {
             dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));
           }
