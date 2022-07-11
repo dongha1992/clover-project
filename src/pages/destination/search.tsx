@@ -15,6 +15,7 @@ import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { getDestinationsApi } from '@api/destination';
 import { useQuery } from 'react-query';
 import { IDestinationsResponse } from '@model/index';
+import { DELIVERY_TYPE_MAP } from '@constants/order';
 
 const DestinationSearchPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -36,6 +37,7 @@ const DestinationSearchPage = () => {
         delivery: userDeliveryType.toUpperCase(),
       };
       const { data } = await getDestinationsApi(params);
+      console.log(data, '-dd');
       return data.data.destinations;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
@@ -133,7 +135,11 @@ const DestinationSearchPage = () => {
           </TextH6B>
         </CurrentLocBtn>
         {beforeSearch ? (
-          <RecentDelivery filteredList={filteredList ?? []} onClick={selectDestinationByList} />
+          <RecentDelivery
+            filteredList={filteredList ?? []}
+            onClick={selectDestinationByList}
+            delivery={DELIVERY_TYPE_MAP[userDeliveryType.toUpperCase()]}
+          />
         ) : (
           <DestinationSearchResult
             resultAddress={resultAddress}

@@ -443,6 +443,7 @@ const DeliverInfoPage = () => {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
         if (data.data) {
+          console.log(data.data, '--');
           setTempDestination({ ...data.data });
           setIsMaindestination(true);
         } else {
