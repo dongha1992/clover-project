@@ -49,7 +49,7 @@ Api.interceptors.response.use(
     console.log(error, 'error');
 
     try {
-      if (response?.status === 401 && refreshSubscribers.length !== 0) {
+      if (response?.status === 401) {
         console.log('status 401');
 
         if (response?.data.code !== 2003) {
