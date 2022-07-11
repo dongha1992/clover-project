@@ -109,7 +109,6 @@ const LoginPage = () => {
         }
       } catch (error) {
         console.error(error);
-
         /* TODO: 서버에서 내려오는 message에 따라 wrapper 만들어야 함 */
         setErrorMessage('이메일 혹은 비밀번호를 다시 입력해 주세요.');
       }
