@@ -26,11 +26,6 @@ const SEARCH_KEYWORD = [
     keyword: '#카페',
     value: '카페',
   },
-  {
-    keyword: '#위워크',
-    value: '위워크',
-  },
-
 ];
   
 const SpotSearchKeywordSlider = ({onChange}: IProps) => {
