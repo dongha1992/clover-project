@@ -128,6 +128,7 @@ const Center = styled.div`
 `;
 
 const Right = styled.div`
+  clip-path: inset(0 0 0 0);
   position: relative;
   width: 50%;
   max-width: ${breakpoints.mobile}px;

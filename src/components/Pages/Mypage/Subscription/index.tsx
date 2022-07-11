@@ -1,5 +1,4 @@
 import SubsDashboard from './dashboard/SubsDashboard';
-import SubsMngIngItem from './SubsMngIngItem';
-import SubsMngCompleteItem from './SubsMngCompleteItem';
+import SubsMngItem from './SubsMngItem';
 
-export { SubsDashboard, SubsMngIngItem, SubsMngCompleteItem };
+export { SubsDashboard, SubsMngItem };

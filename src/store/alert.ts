@@ -3,7 +3,7 @@ import React from 'react';
 import { AppState } from '.';
 
 type TAlert = {
-  alertMessage: string;
+  alertMessage?: string;
   alertSubMessage?: string;
   submitBtnText?: string;
   closeBtnText?: string;
