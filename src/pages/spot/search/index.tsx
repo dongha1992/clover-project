@@ -27,7 +27,7 @@ import {
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
-import { SpotSearchKeyword } from '@components/Pages/Spot';
+import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -174,9 +174,7 @@ const SpotSearchPage = (): ReactElement => {
                 현 위치로 설정하기
               </TextH6B>
             </FlexEnd>
-            <KeyWordWrapper>
-              <SpotSearchKeyword onChange={handlerSearchKeyword} />
-            </KeyWordWrapper>
+            <SpotSearchKeywordSlider onChange={handlerSearchKeyword} />
             {
             // 스팟 검색 메인 
               userLocationLen ?  // 위지 정보가 있는 상태
@@ -299,10 +297,6 @@ const Text = styled.div`
   font-size: 14px;
   font-weight: normal;
   line-height: 22px;
-`;
-
-const KeyWordWrapper = styled.div`
-  padding: 16px 24px 24px 24px;
 `;
 
 const SpotRecommendWrapper = styled.section`
