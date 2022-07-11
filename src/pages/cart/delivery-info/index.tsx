@@ -154,10 +154,11 @@ const DeliverInfoPage = () => {
     if (!tempDestination) {
       return;
     }
-
+    // spotId:tempDestination.spotPickup?.id:null
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
     if (destinationId || isMainDestination || isSpot) {
-      dispatch(SET_DESTINATION(tempDestination));
+      console.log(tempDestination, 'tempDestination');
+      dispatch(SET_DESTINATION({ ...tempDestination }));
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
@@ -426,9 +427,7 @@ const DeliverInfoPage = () => {
     if (!userSelectDeliveryType || userTempDestination) {
       return;
     }
-
-    const isSpot = userSelectDeliveryType === 'spot';
-
+    console.log(userDestination, 'userDestination');
     if (userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase()) {
       setTempDestination(userDestination);
       setIsMaindestination(true);
@@ -441,9 +440,9 @@ const DeliverInfoPage = () => {
 
     try {
       const { data } = await getMainDestinationsApi(params);
+      console.log(data, '000');
       if (data.code === 200) {
         if (data.data) {
-          console.log(data.data, '--');
           setTempDestination({ ...data.data });
           setIsMaindestination(true);
         } else {

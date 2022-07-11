@@ -852,7 +852,7 @@ export type TPlaceType =
   | 'SHARED_OFFICE'
   | 'STORE';
 
-type TSpotMarkerType = 
+type TSpotMarkerType =
   | 'BOOKSTORE'
   | 'CAFE'
   | 'CAFE_STORYWAY'
@@ -866,11 +866,7 @@ type TSpotMarkerType =
   | 'PRIVATE'
   | 'STORE';
 
-type TSpotPlaceDetailType = 
-  | 'GS25'
-  | 'SEVEN_ELEVEN'
-  | 'STORYWAY'
-  | 'TRIPIN';
+type TSpotPlaceDetailType = 'GS25' | 'SEVEN_ELEVEN' | 'STORYWAY' | 'TRIPIN';
 
 type TDistanceUnit =
   | 'CENTIMETERS'
@@ -2162,6 +2158,13 @@ export interface IDeliveryObj {
   deliveryDetail: string | null;
   location: ILocation | null;
   closedDate?: string | null;
+  createdAt?: string;
+  spotPickup?: ISpotPickupInDestinaion;
+  receiverTel?: string;
+  receiverName?: string;
+  name?: string;
+  main: boolean;
+  spotId?: number | null;
 }
 
 /* COUPON */

@@ -100,6 +100,8 @@ const CartPage = () => {
     deliveryDetail: null,
     location: null,
     closedDate: '',
+    main: false,
+    spotId: null,
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
@@ -123,10 +125,12 @@ const CartPage = () => {
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
       /* TODO: 스팟아이디 넣어야함 */
+      console.log(destinationObj, 'destinationObj');
+
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
         deliveryDate: selectedDeliveryDay,
-        spotId: isSpot ? 1 : null,
+        spotId: isSpot ? destinationObj?.spotId : null,
       };
 
       const { data } = await getCartsApi({ params });
@@ -176,6 +180,7 @@ const CartPage = () => {
       onSuccess: async (response) => {
         const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
         if (validDestination && userDeliveryType && userDestination) {
+          console.log(userDestination, 'here');
           const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -183,6 +188,7 @@ const CartPage = () => {
             destinationId,
             location: userDestination.location!,
             closedDate: userDestination.closedDate && userDestination.closedDate,
+            spotId: userDestination.spotPickup && userDestination.spotPickup.id,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -202,6 +208,7 @@ const CartPage = () => {
                 destinationId,
                 location: data.data?.location ? data.data?.location : null,
                 closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
+                spotId: data.data?.spotPickup?.id && data.data?.spotPickup?.id,
               });
 
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
