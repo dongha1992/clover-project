@@ -1,13 +1,6 @@
-import { getOrdersApi } from '@api/order';
 import { TextH2B } from '@components/Shared/Text';
-import { IGetOrders, IOrderDeliverie } from '@model/index';
-import { useGetOrders } from '@queries/order';
 import { userForm } from '@store/user';
 import { theme } from '@styles/theme';
-import { cloneDeep } from 'lodash-es';
-import router from 'next/router';
-import { useState } from 'react';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 

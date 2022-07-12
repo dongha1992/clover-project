@@ -3,8 +3,6 @@ import { ScrollHorizonList, theme } from '@styles/theme';
 import styled from 'styled-components';
 import { SubsCardItem } from '@components/Pages/Subscription';
 import { IGetOrders } from '@model/index';
-import { useSelector } from 'react-redux';
-import { userForm } from '@store/user';
 import router from 'next/router';
 interface IProps {
   subsList: IGetOrders[];
