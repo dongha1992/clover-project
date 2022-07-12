@@ -24,10 +24,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { getMainDestinationsApi, postDestinationApi } from '@api/destination';
 import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
-import { getOrderDetailApi, getOrderListsApi, getOrdersApi } from '@api/order';
-import { getMenuDetailApi, getSubscriptionApi } from '@api/menu';
+import { getOrderDetailApi, getOrdersApi } from '@api/order';
+import { getMenuDetailApi } from '@api/menu';
 import { last } from 'lodash-es';
-import { SET_MENU_ITEM } from '@store/menu';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 

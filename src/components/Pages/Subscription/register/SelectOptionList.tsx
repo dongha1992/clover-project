@@ -1,20 +1,11 @@
-import { getMenusApi } from '@api/menu';
-import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { IMenuTableItems } from '@model/index';
-import Id from '@pages/subscription/products/[id]';
-import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
+import { MenuUl } from '@pages/subscription/register';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_SUBS_CALENDAR_SELECT_MENU, SET_SUBS_ORDER_MENUS, subscriptionForm } from '@store/subscription';
-import { getMenuDisplayPrice } from '@utils/menu';
 import { cloneDeep } from 'lodash-es';
-import Image from 'next/image';
-import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
 import MenuItem from './MenuItem';
 import { OptionContainer } from './RequiredOptionList';
-import SelectOptionItem from './SelectOptionItem';
 
 interface IProps {
   buttonType: string;

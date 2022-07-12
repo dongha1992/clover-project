@@ -1,5 +1,3 @@
-import SubsCloseSheet from '@components/BottomSheet/SubsSheet/SubsPaymentCloseSheet';
-import SubsFailSheet from '@components/BottomSheet/SubsSheet/SubsPaymentFailSheet';
 import SubsMngCalendar from '@components/Calendar/subscription/SubsMngCalendar';
 import { ClosedGuideBox } from '@components/Pages/Subscription/detail';
 import PaymentGuideBox from '@components/Pages/Subscription/detail/GuideBox/PaymentGuideBox';
@@ -17,7 +15,7 @@ import useSubsProgressStatusMsg from '@hooks/subscription/useSubsProgressStatusM
 import useUnSubsStatus from '@hooks/subscription/useUnSubsStatus';
 import { IOrderDetail, IResponse } from '@model/index';
 import { SET_ALERT } from '@store/alert';
-import { INIT_BOTTOM_SHEET, SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
@@ -106,35 +104,6 @@ const SubsDetailPage = () => {
       );
     },
   });
-
-  // const subsCloseSheetHandler = () => {
-  //   if (subsFailType === 'payment' || subsFailType === 'destination') {
-  //     dispatch(
-  //       SET_BOTTOM_SHEET({
-  //         content: (
-  //           <SubsFailSheet
-  //             subsFailType={subsFailType}
-  //             firstDeliveryDateOrigin={orderDetail?.firstDeliveryDateOrigin}
-  //             unsubscriptionMessage={orderDetail?.unsubscriptionMessage}
-  //             orderId={orderDetail?.id}
-  //             destinationId={orderDetail.orderDeliveries[0].id}
-  //           />
-  //         ),
-  //       })
-  //     );
-  //   } else if (subsFailType === 'close') {
-  //     dispatch(
-  //       SET_BOTTOM_SHEET({
-  //         content: (
-  //           <SubsCloseSheet
-  //             unsubscriptionMessage={orderDetail?.unsubscriptionMessage}
-  //             lastDeliveryDateOrigin={orderDetail?.lastDeliveryDateOrigin}
-  //           />
-  //         ),
-  //       })
-  //     );
-  //   }
-  // };
 
   const reorderHandler = () => {
     router.push({
