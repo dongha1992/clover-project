@@ -312,10 +312,10 @@ export interface IAvilabiltyAddressResponse {
   code: number;
   message: string;
   data: {
-    morning: boolean;
-    parcel: boolean;
-    quick: boolean;
-    spot: boolean;
+    morning?: boolean;
+    parcel?: boolean;
+    quick?: boolean;
+    spot?: boolean;
   };
 }
 
