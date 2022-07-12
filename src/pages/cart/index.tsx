@@ -89,6 +89,7 @@ const CartPage = () => {
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
+  const [isInvalidDestination, setIsInvalidDestination] = useState<boolean>(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
@@ -275,33 +276,44 @@ const CartPage = () => {
 
   /* TODO: 배송지 가능 api 질문 */
 
-  // const { data: result } = useQuery(
-  //   ['getAvailabilityDestination'],
-  //   async () => {
-  //     const params = {
-  //       roadAddress: userDestination?.location?.address!,
-  //       jibunAddress: null,
-  //       zipCode: userDestination?.location?.zipCode!,
-  //       delivery: userDeliveryType.toUpperCase() || null,
-  //     };
-  //     const { data } = await getAvailabilityDestinationApi(params);
+  const { data: result } = useQuery(
+    ['getAvailabilityDestination'],
+    async () => {
+      const params = {
+        roadAddress: userDestination?.location?.address!,
+        jibunAddress: null,
+        zipCode: userDestination?.location?.zipCode!,
+        delivery: userDeliveryType.toUpperCase() || null,
+      };
+      const { data } = await getAvailabilityDestinationApi(params);
 
-  //     if (data.code === 200) {
-  //       const { morning, parcel, quick, spot } = data.data;
-  //     }
-  //   },
-  //   {
-  //     onSuccess: async () => {},
-  //     onError: (error: any) => {
-  //       alert(error.message);
-  //       return;
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     cacheTime: 0,
-  //     enabled: me!! && !!userDestination,
-  //   }
-  // );
+      if (data.code === 200) {
+        if (userDeliveryType === Object.keys(data.data)[0]) {
+          const availability = Object.values(data.data)[0];
+          if (!availability) {
+            dispatch(
+              SET_ALERT({
+                alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
+                onSubmit: () => {},
+              })
+            );
+            setIsInvalidDestination(true);
+          }
+        }
+      }
+    },
+    {
+      onSuccess: async () => {},
+      onError: (error: any) => {
+        alert(error.message);
+        return;
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: me!! && !!userDestination,
+    }
+  );
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IGetCart, IDiscountInfos, IMenuDetailOptions } from '@model/index';
 
-interface ICartLists {
+export interface ICartLists {
   cartMenus: IGetCart[];
   discountInfos: IDiscountInfos[];
   menuDetailOptions: IMenuDetailOptions[];
