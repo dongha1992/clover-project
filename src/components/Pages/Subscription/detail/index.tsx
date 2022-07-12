@@ -1,2 +1,4 @@
 import SubsDetailOrderBox from './SubsDetailOrderBox';
-export { SubsDetailOrderBox };
+import ClosedGuideBox from './GuideBox/ClosedGuideBox';
+
+export { SubsDetailOrderBox, ClosedGuideBox };

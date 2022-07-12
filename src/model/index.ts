@@ -1821,6 +1821,7 @@ export interface IMenus {
   closedAt?: string;
   openedAt: string;
   subscriptionDeliveries?: string[];
+  subscriptionDiscountRates?: number[];
   subscriptionPeriods?: string[];
   constitutionTag: string;
   isReopen?: boolean;

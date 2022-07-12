@@ -5,6 +5,7 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { SUBS_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import useSubsSetProgress from '@hooks/subscription/useSubsSetProgress';
+import { useSubsStatusMsg } from '@hooks/subscription/useSubsStatusMsg';
 import { IGetOrders } from '@model/index';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
@@ -14,17 +15,24 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SubsProgressBar from './ProgressBar';
 interface IProps {
-  type: string;
   item: IGetOrders;
 }
 
-const goToSubsDetail = () => {
-  router.push('/subscription/detail');
-};
-
-const SubsManagementItem = ({ type, item }: IProps) => {
+const SubsMngItem = ({ item }: IProps) => {
   const { cards } = useSubsNowDeliveryInfo(item);
   const round = useSubsSetProgress(item);
+  const { subsStatusmsg, subsStatusBoldmsg } = useSubsStatusMsg(item);
+
+  const goToSubsDetail = () => {
+    router.push(`/subscription/${item.id}`);
+  };
+
+  const reorderHandler = () => {
+    router.push({
+      pathname: '/subscription/set-info',
+      query: { subsDeliveryType: item?.delivery, menuId: item?.subscriptionMenuId ?? null },
+    });
+  };
 
   return (
     <Container>
@@ -44,7 +52,6 @@ const SubsManagementItem = ({ type, item }: IProps) => {
       <FlexRow padding="9px 0">
         <SVGIcon name="subscription" />{' '}
         <TextH5B padding="0 0 0 4px">
-          {item.status === 'COMPLETED' || item.status === 'CANCELED'}
           배송 {`${cards[0]?.deliveryRound}`}회차{cards.length > 1 && ` 외 ${cards.length - 1}건`} -{' '}
           {getFormatDate(cards[0]?.deliveryDate)} 도착예정
         </TextH5B>
@@ -67,29 +74,26 @@ const SubsManagementItem = ({ type, item }: IProps) => {
           </TextB3R>
         </InfoBox>
       </FlexRowStart>
-      {type === 'subsIng' && (
+      {item.status !== 'CANCELED' && item.status !== 'COMPLETED' && (
         <ProgressBox>
           <SubsProgressBar length={item?.orderDeliveries.length} round={round} />
-          {/* <FlexRow padding="8px 0 0">
-            <SVGIcon name="exclamationMark" />
-            <TextB3R color={theme.brandColor}>
-              <b></b> 구독 식단이 종료되어 N월 N일 (목) 자동으로 구독 해지될 예정이에요.
-            </TextB3R>
-          </FlexRow> */}
+          {subsStatusmsg && (
+            <FlexRow padding="8px 0 0">
+              <SVGIcon name="exclamationMark" />
+              <TextB3R color={theme.brandColor}>
+                {subsStatusBoldmsg && <b>{subsStatusBoldmsg}</b>} {subsStatusmsg}
+              </TextB3R>
+            </FlexRow>
+          )}
         </ProgressBox>
       )}
-      {type === 'subsComplete' && item.subscriptionPeriod === 'UNLIMITED' && item.status === 'COMPLETED' && (
-        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black}>
-          재주문하기
-        </Button>
-      )}
-      {type === 'subsComplete' && item.subscriptionPeriod !== 'UNLIMITED' && item.status === 'COMPLETED' && (
+      {item.subscriptionPeriod !== 'UNLIMITED' && item.status === 'COMPLETED' && (
         <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black}>
           할인쿠폰받고 재주문하기
         </Button>
       )}
-      {type === 'subsComplete' && item.subscriptionPeriod !== 'UNLIMITED' && item.status === 'CANCELED' && (
-        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black}>
+      {item.status === 'CANCELED' && (
+        <Button margin="16px 0 0" border backgroundColor="#fff" color={theme.black} onClick={reorderHandler}>
           재주문하기
         </Button>
       )}
@@ -131,4 +135,4 @@ const ProgressBox = styled.div`
     font-weight: bold;
   }
 `;
-export default SubsManagementItem;
+export default SubsMngItem;

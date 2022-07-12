@@ -58,7 +58,7 @@ const MypagePage = () => {
 
   const { isLoading: subsOrdersLoading } = useGetOrders(
     ['getSubscriptionOrders'],
-    { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' },
+    { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' },
     {
       onSuccess: async (data) => {
         const orders = await data.orders
@@ -77,20 +77,20 @@ const MypagePage = () => {
               return -1;
           })
           .filter((order: IGetOrders) => order.status !== 'COMPLETED' && order.status !== 'CANCELED');
-        const unpaidOrders = await orders.filter((order: IGetOrders) => order.status === 'UNPAID');
-        const closeOrders = await orders.filter(
-          (order: IGetOrders) =>
-            order.subscriptionPeriod === 'UNLIMITED' &&
-            (order.unsubscriptionType === 'DISABLED_DESTINATION' ||
-              order.unsubscriptionType === 'DISABLED_MENU' ||
-              order.unsubscriptionType === 'PAYMENT_FAILED' ||
-              order.unsubscriptionType === 'USER_CANCEL')
+
+        const unpaidOrders = await orders.filter(
+          (order: IGetOrders) => order.status === 'UNPAID' && !!order.isSubscribing && !order.unsubscriptionType
         );
+
+        const closeOrders = await orders.filter(
+          (order: IGetOrders) => order.subscriptionPeriod === 'UNLIMITED' && order.unsubscriptionType
+        );
+
         if (closeOrders.length > 0) {
           setShowBoard('close');
         } else if (closeOrders.length === 0 && unpaidOrders.length > 0) {
           setShowBoard('unpaid');
-        } else {
+        } else if (orders.length > 0) {
           setShowBoard('progress');
         }
 

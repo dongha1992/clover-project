@@ -228,7 +228,7 @@ const DeliverInfoPage = () => {
             console.log('error', error);
           }
         } else {
-          if (userDestination?.delivery !== userTempDestination?.delivery) {
+          if (userDestination?.delivery !== userSelectDeliveryType.toUpperCase()) {
             dispatch(
               SET_SUBS_INFO_STATE({
                 startDate: null,
