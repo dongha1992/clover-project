@@ -19,6 +19,8 @@ import {
   IGetPaycoPaymentResponse,
   IGetTossPaymentResponse,
   IDeleteOrderCancelPreviewResponse,
+  IGetOrderRequest,
+  IGetOrdersResponse,
 } from '@model/index';
 
 export const getOrderInfoApi = (params: { orderType: string }): Promise<AxiosResponse<IGetOrderInfoResponse>> => {
@@ -39,15 +41,15 @@ export const getOrderListsApi = ({
   days = 90,
   page = 1,
   size = 1,
-  type,
+  orderType,
 }: IGetOrderListRequest): Promise<AxiosResponse<IGetOrderListResponse>> => {
   const params = {
     days,
     page,
     size,
-    type,
+    orderType,
   };
-  return Api.get(`order/v1/deliveries/`, { params });
+  return Api.get(`order/v1/deliveries`, { params });
 };
 
 export const getOrdersApi = ({
@@ -55,7 +57,7 @@ export const getOrdersApi = ({
   page = 1,
   size = 1,
   type,
-}: IGetOrderListRequest): Promise<AxiosResponse<any>> => {
+}: IGetOrderRequest): Promise<AxiosResponse<IGetOrdersResponse>> => {
   const params = {
     days,
     page,

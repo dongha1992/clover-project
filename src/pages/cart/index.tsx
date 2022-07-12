@@ -89,6 +89,7 @@ const CartPage = () => {
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
+  const [isInvalidDestination, setIsInvalidDestination] = useState<boolean>(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
@@ -100,6 +101,8 @@ const CartPage = () => {
     deliveryDetail: null,
     location: null,
     closedDate: '',
+    main: false,
+    spotId: null,
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
@@ -123,10 +126,12 @@ const CartPage = () => {
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
       /* TODO: 스팟아이디 넣어야함 */
+      console.log(destinationObj, 'destinationObj');
+
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
         deliveryDate: selectedDeliveryDay,
-        spotId: isSpot ? 1 : null,
+        spotId: isSpot ? destinationObj?.spotId : null,
       };
 
       const { data } = await getCartsApi({ params });
@@ -166,7 +171,7 @@ const CartPage = () => {
         days: 90,
         page: 1,
         size: 10,
-        type: 'GENERAL',
+        orderType: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);
@@ -176,6 +181,7 @@ const CartPage = () => {
       onSuccess: async (response) => {
         const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
         if (validDestination && userDeliveryType && userDestination) {
+          console.log(userDestination, 'here');
           const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -183,6 +189,7 @@ const CartPage = () => {
             destinationId,
             location: userDestination.location!,
             closedDate: userDestination.closedDate && userDestination.closedDate,
+            spotId: userDestination.spotPickup && userDestination.spotPickup.id,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -202,6 +209,7 @@ const CartPage = () => {
                 destinationId,
                 location: data.data?.location ? data.data?.location : null,
                 closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
+                spotId: data.data?.spotPickup?.id && data.data?.spotPickup?.id,
               });
 
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
@@ -268,35 +276,44 @@ const CartPage = () => {
 
   /* TODO: 배송지 가능 api 질문 */
 
-  // const { data: result, refetch } = useQuery(
-  //   ['getAvailabilityDestination'],
-  //   async () => {
-  //     const params = {
-  //       roadAddress: userDestination?.location?.address!,
-  //       jibunAddress: null,
-  //       zipCode: userDestination?.location?.zipCode!,
-  //       delivery: userDeliveryType.toUpperCase() || null,
-  //     };
-  //     const { data } = await getAvailabilityDestinationApi(params);
+  const { data: result } = useQuery(
+    ['getAvailabilityDestination'],
+    async () => {
+      const params = {
+        roadAddress: userDestination?.location?.address!,
+        jibunAddress: null,
+        zipCode: userDestination?.location?.zipCode!,
+        delivery: userDeliveryType.toUpperCase() || null,
+      };
+      const { data } = await getAvailabilityDestinationApi(params);
 
-  //     if (data.code === 200) {
-  //       const { morning, parcel, quick, spot } = data.data;
-  //       console.log(data.data, 'data.data');
-  //     }
-  //   },
-  //   {
-  //     onSuccess: async () => {},
-  //     onError: (error: AxiosError) => {
-  //       const { message } = error.response?.data;
-  //       alert(message);
-  //       return;
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     cacheTime: 0,
-  //     enabled: me!! && !!userDestination,
-  //   }
-  // );
+      if (data.code === 200) {
+        if (userDeliveryType === Object.keys(data.data)[0]) {
+          const availability = Object.values(data.data)[0];
+          if (!availability) {
+            dispatch(
+              SET_ALERT({
+                alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
+                onSubmit: () => {},
+              })
+            );
+            setIsInvalidDestination(true);
+          }
+        }
+      }
+    },
+    {
+      onSuccess: async () => {},
+      onError: (error: any) => {
+        alert(error.message);
+        return;
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: me!! && !!userDestination,
+    }
+  );
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
@@ -646,7 +663,7 @@ const CartPage = () => {
     list.forEach((item: IGetCart) =>
       item.menuDetails.forEach((detail) => {
         tempOrderMenus.push({
-          menuDetailId: detail.menuDetailId,
+          menuDetailId: detail.id,
           menuQuantity: detail.quantity,
         });
       })
@@ -783,11 +800,11 @@ const CartPage = () => {
       const isUnderMinimum = totalAmount < minimum;
 
       if (isUnderMinimum) {
-        buttonMessage = `최소주문금액까지 ${minimum - totalAmount}원 남았습니다`;
+        buttonMessage = `최소주문금액까지 ${getFormatPrice(String(minimum - totalAmount))}원 남았습니다`;
       } else if (amountForFree > totalAmount) {
-        buttonMessage = `${amountForFree - totalAmount}원 더 담고 무료 배송하기`;
+        buttonMessage = `${getFormatPrice(String(amountForFree - totalAmount))}원 더 담고 무료 배송하기`;
       } else {
-        buttonMessage = `${totalAmount}원 주문하기`;
+        buttonMessage = `${getFormatPrice(String(totalAmount))}원 주문하기`;
       }
 
       return (

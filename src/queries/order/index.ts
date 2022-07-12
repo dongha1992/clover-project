@@ -1,5 +1,5 @@
 import { deleteOrderCancelApi, deleteOrderCancelPreviewApi, getOrderDetailApi, getOrdersApi } from '@api/order';
-import { IGetOrderListRequest, IGetOrders, IOrderDeliverie } from '@model/index';
+import { IGetOrderRequest, IGetOrders, IOrderDeliverie } from '@model/index';
 import {
   MutationKey,
   QueryKey,
@@ -10,7 +10,7 @@ import {
   UseQueryOptions,
 } from 'react-query';
 
-export const useGetOrders = (key: QueryKey, params: IGetOrderListRequest, options?: UseQueryOptions<any>) =>
+export const useGetOrders = (key: QueryKey, params: IGetOrderRequest, options?: UseQueryOptions<any>) =>
   useQuery(
     key,
     async () => {
