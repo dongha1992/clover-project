@@ -91,6 +91,9 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
         );
         await queryClient.refetchQueries('getReviewDetail');
       },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
     }
   );
 
@@ -103,6 +106,9 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       onSuccess: async () => {
         router.back();
         await queryClient.refetchQueries('getCompleteWriteReview');
+      },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
       },
     }
   );
@@ -209,11 +215,18 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     let formData = new FormData();
     let location = [];
 
+    console.log(writeMenuReviewObj.imgFiles, 'writeMenuReviewObj.imgFiles');
+
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
-        const result = await postImageApi(formData);
-        location.push(result.headers.location);
+        try {
+          writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+          const result = await postImageApi(formData);
+          location.push(result.headers.location);
+        } catch (error) {
+          dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
+          return;
+        }
       }
     }
 
