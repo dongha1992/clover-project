@@ -1259,7 +1259,6 @@ const OrderPage = () => {
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                {}
                 <TextB2R
                   color={ACCESS_METHOD_VALUE[userInputObj.deliveryMessageType] ? theme.greyScale100 : theme.greyScale45}
                 >
