@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState, useEffect } from 'react';
+import React, { ReactElement, useRef, useState, useEffect, useCallback } from 'react';
 import styled, {css} from 'styled-components';
 import { theme, FlexEnd } from '@styles/theme';
 import { TextH6B } from '@components/Shared/Text';
@@ -20,14 +20,13 @@ interface IProps {
 const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement => {
   const router = useRouter();
   const slideRef = useRef<HTMLElement | null | any>(null);
-  const { spotSearchArr } = useSelector(spotSelector);
+  const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
   const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
   const [selectedSpotList, setSelectedSpotList] = useState({});
   const [selected, setSelected] = useState<boolean>(false);
-  const [selectedTest, setSelectedTest] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
   const list = spotSearchArr ?? [];
-// console.log(selectedSpotList);
   useEffect(()=> {
     if(slideRef.current){
       slideRef.current?.slickGoTo(selectedCarouselIndex);
@@ -47,31 +46,33 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
     setCurrentIdx({current: current, next: next}),
   };
 
-  const selectedSlickIdx = (idx: number) => {
+  const selectedCurrentSlickIdx = useCallback((idx: number) => {
     setSelectedCarouselIndex(idx)
-  };
+  }, []);
 
-  const selectedSpot = (i: any) => {
+  const getSpotInfo = (i: any) => {
     setSelectedSpotList(i);
   };
 
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchKakaoMap zoom={3} currentIdx={currentIdx.next} onClick={selectedSlickIdx} selectedSpot={selectedSpot} setSelected={setSelected} selectedTest={setSelectedTest}   />
+        <SpotSearchKakaoMap zoom={2} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
         {
-          selected &&
-          <SpotListWrapper>
+          selected && spotListAllChecked && (
+            !visible &&
+            <SpotListWrapper>
             <SpotListSlider piece={true}>
               <SpotsSearchResultList map item={selectedSpotList} />
             </SpotListSlider>
           </SpotListWrapper>
+
+          )
         }
         {
-          isSearched && searchListLen! > 0 && 
-          
+          searchListLen! > 0 && !spotListAllChecked && 
           (
-            !selectedTest &&
+            !visible &&
             <SpotListWrapper>
               <SpotListSlider {...setting} ref={slideRef}>
                 {list?.map((item, index) => (

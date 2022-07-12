@@ -255,7 +255,7 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/spot-status', '/mypage/review', '/mypage/address', '/mypage/subscription'].includes(currentPath): {
+      case ['/mypage/spot-status', '/mypage/review', '/mypage/address'].includes(currentPath): {
         return (
           <Container>
             <DefaultHeader title={title} />

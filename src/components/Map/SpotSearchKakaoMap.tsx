@@ -1,18 +1,20 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { spotSelector } from '@store/spot';
+import { useSelector, useDispatch } from 'react-redux';
+import { spotSelector, SET_SPOT_MAP_SWITCH } from '@store/spot';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import { SET_ALERT } from '@store/alert';
+import { ISpotsDetail } from '@model/index';
 
 interface IProps {
   zoom?: number;
   centerLat?: number;
   centerLng?: number;
-  currentIdx?: number;
-  onClick?: any;
-  selectedSpot?: any
+  currentSlickIdx?: number;
+  onClickCurrentSlickIdx?: any;
+  getSpotInfo?: any
   setSelected?: any;
-  selectedTest?: any;
+  setVisible?: any;
   selected?: boolean;
 };
 
@@ -20,27 +22,25 @@ const SpotSearchKakaoMap = ({
   zoom,
   centerLat,
   centerLng,
-  currentIdx,
-  onClick,
-  selectedSpot,
+  currentSlickIdx,
+  onClickCurrentSlickIdx,
+  getSpotInfo,
   setSelected,
-  selectedTest,
+  setVisible,
   selected,
 }: IProps) => {
-
-
+  const dispatch = useDispatch();
   const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
+  const [selectedMarker, setSelectedmarker] = useState(null);
   const spotList = spotSearchArr ?? [];
-  const idx = currentIdx&&currentIdx;
+  const idx = currentSlickIdx&&currentSlickIdx;
   const SelectedSpotArr = spotListAllChecked ?  spotList[selectedIdx] : spotList[idx!];
   const currentPositionLat = SelectedSpotArr?.coordinate.lat;
   const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
-  const level = zoom ? zoom : 3;
+  const level = zoom ? zoom : 2;
   const levelControl = spotListAllChecked ? 9 : level;
-  // console.log('spotListAllChecked', spotListAllChecked);
-  // console.log('currentIdx', currentIdx, 'selectedIdx', selectedIdx);
-
+  
   useEffect(() => {
     const mapScript = document.createElement("script");
     mapScript.async = true;
@@ -48,192 +48,221 @@ const SpotSearchKakaoMap = ({
     document.head.appendChild(mapScript);
 
     const onLoadKakaoMap = () => {
-      window.kakao.maps.load(() => {
-        const container = document.getElementById("map");
-        const options = {
-          center: new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon),
-          level: levelControl,
-          maxLevel: 9,
-        };
-        const map = new window.kakao.maps.Map(container, options);
+      try {
+        window.kakao.maps.load(() => {
+          const container = document.getElementById("map");
+          const options = {
+            center: new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon),
+            level: levelControl,
+            maxLevel: 9,
+          };
+          const map = new window.kakao.maps.Map(container, options); // 지도 생성
+          if (spotListAllChecked) {
+            map.setCenter(new window.kakao.maps.LatLng(37.5206007, 127.005454));
+          };
+          const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
+          const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
+          map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
+          const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
+          const imageSize = new window.kakao.maps.Size(50, 54);
+          const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
+          const selectedMarkerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); // 선택된 마커 이미지
+          
+          // if (!spotListAllChecked) {
+          //   const marker = new window.kakao.maps.Marker({
+          //     position: markerPosition,
+          //     image: markerImage,
+          //     zIndex: 100,
+          //     visible: false,
+          //   });
+          //   marker.setMap(map);
+          // };
 
-        const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
-        const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
-        // 지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가한다.
-        map.addControl(zoomControl, zoomControlPosition);
-        const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
-        const imageSize = new window.kakao.maps.Size(50, 52);
-        const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
-        const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
-        if (!spotListAllChecked) {
-          const markers = new window.kakao.maps.Marker({
-            position: markerPosition,
-            image: markerImage,
-            zIndex: 100,
-            visible: false,
+          // 마커 클러스터러를 생성
+          const clusterStyles = [
+            {
+              width : '30px', 
+              height : '30px',
+              color: 'white',
+              textAlign: 'center',
+              fontSize: '13px',
+              background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat center`,
+              backgroundSize: '100% 100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: '3px',
+            },
+            {
+              width : '40px', 
+              height : '40px',
+              color: 'white',
+              background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat center`,
+              backgroundSize: '100% 100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: '3px',
+            },
+            {
+              width : '50px', 
+              height : '50px',
+              color: 'white',
+              fontSize: '15px',
+              background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat  center`,
+              backgroundSize: '100% 100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: '3px',
+            },
+          ];
+        
+          const clusterer = new window.kakao.maps.MarkerClusterer({
+              map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
+              averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
+              minLevel: 3, // 클러스터 할 최소 지도 레벨 
+              calculator: [10, 100, 1000],
+              minClusterSize: 3,
+              styles: clusterStyles,
           });
-          markers.setMap(map);
-        };
 
-        // 마커 클러스터러를 생성
-        const clusterStyles = [
-          {
-            width : '30px', 
-            height : '30px',
-            color: 'white',
-            textAlign: 'center',
-            fontSize: '13px',
-            background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat center`,
-            backgroundSize: '100% 100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: '3px',
-          },
-          {
-            width : '40px', 
-            height : '40px',
-            color: 'white',
-            background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat center`,
-            backgroundSize: '100% 100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: '3px',
-          },
-          {
-            width : '50px', 
-            height : '50px',
-            color: 'white',
-            fontSize: '15px',
-            background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat  center`,
-            backgroundSize: '100% 100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: '3px',
-          },
-        ];
-      
-        const clusterer = new window.kakao.maps.MarkerClusterer({
-            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
-            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-            minLevel: 3, // 클러스터 할 최소 지도 레벨 
-            calculator: [10, 100, 1000],
-            minClusterSize: 3,
-            styles: clusterStyles,
-        });
+          // 마커 리스트
+          //ic_map_pin.png 선택 마커
+          //ic_circle.png 프라이빗 마커
+          //ic_bookstore.png 퍼블릭 마커
+          //ic_cafe.png
+          //ic_GS25.png
+          //ic_gym.png
+          //ic_pharmacy.png
+          //ic_sevenelven.png
+          //ic_store.png
+          //ic_storyway.png
+          //ic_cafe_storyway.png
+          //ic_etc.png
+          //ic_tripin.png
 
-        //pin list
-        //ic_circle.png 프라이빗 마커
-        //ic_bookstore.png
-        //ic_cafe.png
-        //ic_GS25.png
-        //ic_gym.png
-        //ic_map_pin.png
-        //ic_pharmacy.png
-        //ic_sevenelven.png
-        //ic_store.png
-        //ic_storyway.png
-        //ic_cafe_storyway.png
-        //ic_etc.png
-        //ic_tripin.png
+          //ic_group_pin.png // 클러스터링 마커 
 
-        //ic_group_pin.png
+          for (let i = 0; i < spotList.length; i++) {
+            displayMarker(spotList[i], i);
+          };
 
-        for (let i = 0; i < spotList.length; i ++) {
-          displayMarker(spotList[i], i);
-        };
+          function displayMarker (item: ISpotsDetail, idx: number) {
+            const markersArr =[];
 
-        function displayMarker (item: any, idx: number) {
-          const markersArr =[];
-
-          const placeType = () => {
-            if (item.type === 'PRIVATE') {
-              return '/ic_circle.png';
-            } else if (item.type === 'PUBLIC') {
-              switch(item.placeType){
-                case 'CAFE':
-                    return '/ic_cafe.png';
-                case 'CONVENIENCE_STORE':
-                    return '/ic_GS25.png';
-                case 'ETC':
-                    return '/ic_etc.png';
-                case 'BOOKSTORE':
-                    return '/ic_bookstore.png';
+            const placeType = () => {
+              switch(item.spotMarker) {
+                case 'PRIVATE': 
+                  return '/ic_circle.png';
+                case 'BOOKSTORE': 
+                  return '/ic_bookstore.png';
+                case 'CAFE': 
+                  return '/ic_cafe.png';
+                case 'CAFE_STORYWAY':
+                  return '/ic_cafe_storyway.png';
+                case 'CAFE_TRIPIN':
+                  return '/ic_tripin.png';
+                case 'CONVENIENCE_STORE_GS25':
+                  return '/ic_GS25.png';
+                case 'CONVENIENCE_STORE_SEVEN_ELEVEN':
+                  return '/ic_seveneleven.png';
+                case 'CONVENIENCE_STORE_STORYWAY':
+                  return '/ic_storyway.png';
                 case 'DRUGSTORE':
-                    return '/ic_pharmacy.png';
+                  return '/ic_pharmacy.png';
+                case 'ETC':
+                  return '/ic_etc.png';
                 case 'FITNESS_CENTER':
-                    return '/ic_gym.png';
-                // case 'OFFICE':
-                //     return '/ic_etc.png';
-                // case 'SHARED_OFFICE':
-                //     return '/ic_etc.png';
+                  return '/ic_gym.png';
                 case 'STORE':
-                    return '/ic_store.png';
-                // case 'SCHOOL':
-                //     return '/ic_etc.png';
-                default:
-                    return '/ic_etc.png';
-                };  
-            }
+                  return '/ic_store.png';
+                default: 
+                  return '/ic_etc.png';
+              };
+            };
+            
+            // 마커 이미지를 생성
+            const mapMarkerImgSrc = `${IMAGE_S3_DEV_URL}${placeType()}`;
+            const imgSize = () => {
+              if (item.type === 'PRIVATE') {
+                return {
+                  x: 30,
+                  y: 30,
+                };
+              } else {
+                return {
+                  x: 50,
+                  y: 50,
+                }
+              };
+            };
+            const imageSize = new window.kakao.maps.Size(imgSize().x, imgSize().y); 
+            const typeMarkersImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); // 타입별 마커 이미지
+
+            // const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
+            const latlng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon)
+            // 마커를 생성합니다
+            const markers = new window.kakao.maps.Marker({
+                map: map, // 마커를 표시할 지도
+                position: latlng, // 마커를 표시할 위치
+                image : typeMarkersImage, // 마커 이미지 
+            });
+            markers.normalImage = typeMarkersImage;
+            markersArr.push(markers);
+
+            if(currentSlickIdx === idx) {
+              markers.setImage(selectedMarkerImage);
+            };
+
+            new window.kakao.maps.event.addListener(markers, 'click', function () {
+              if (!selectedMarker || selectedMarker !== markers) {
+                // 클릭된 마커 객체가 null이 아니면 클릭된 마커의 이미지를 기본 이미지로 변경
+                // !!selectedMarker && selectedMarker?.setImage(selectedMarker.normalImage);
+                // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
+                markers.setImage(typeMarkersImage);
+              };
+              // 클릭된 마커를 현재 클릭된 마커 객체로 설정
+              setSelectedmarker(markers);
+              // });
+
+              // markers.setImage(selectedMarkerImage);
+              map.setLevel(2);  
+              const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon);
+              map.panTo(moveLatLng);        
+
+              setVisible(false);
+              onClickCurrentSlickIdx(idx);
+              setSelectedIdx(idx);
+              getSpotInfo(item);
+              setSelected(true);  
+            });
+
+            new window.kakao.maps.event.addListener(map, 'click', function() {
+              markers.setImage(typeMarkersImage);
+              setVisible(true);
+            });
+            clusterer.addMarkers(markersArr);
           };
           
-          // 마커 이미지를 생성
-          const mapMarkerImgSrc = `${IMAGE_S3_DEV_URL}${placeType()}`;
-          const imgSize = () => {
-            if (item.type === 'PRIVATE') {
-              return {
-                x: 30,
-                y: 30,
-              };
-            } else {
-              return {
-                x: 50,
-                y: 50,
-              }
-            };
-          };
-          const imageSize = new window.kakao.maps.Size(imgSize().x, imgSize().y); 
-          const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
-          const latlng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon)
-          // 마커를 생성합니다
-          // map.panTo(latlng);
-          const markers = new window.kakao.maps.Marker({
-              map: map, // 마커를 표시할 지도
-              position: latlng, // 마커를 표시할 위치
-              image : markerImage, // 마커 이미지 
-          });
-          markersArr.push(markers);
+        });
+      } catch(e){
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러가 발생했습니다.',
+            submitBtnText: '확인',
+            onSubmit: ()=> {
+              dispatch(SET_SPOT_MAP_SWITCH(false));
+            }
+          })
+        );
+        console.error(e);
+      }
 
-          new window.kakao.maps.event.addListener(markers, 'click', function() {
-            const defaultMarkerImage = new window.kakao.maps.MarkerImage(
-              `${IMAGE_S3_DEV_URL}/ic_map_pin.png`,
-              new window.kakao.maps.Size(50, 52));
-            markers.setImage(defaultMarkerImage);
-            // 마커 위에 인포윈도우를 표시합니다
-            // map.setLevel(3);
-            // console.log(map.getLevel());
-            selectedTest(false);
-            onClick(idx);
-            selectedSpot(item);
-            setSelectedIdx(idx);
-            setSelected(true);  
-          });
-
-          new window.kakao.maps.event.addListener(map, 'click', function() {
-            // 마커 위에 인포윈도우를 표시합니다
-            selectedTest(true);
-            const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
-            markers.setImage(markerImage);
-          });
-          clusterer.addMarkers(markersArr);
-        };
-      });
     };
     mapScript.addEventListener("load", onLoadKakaoMap);
     return () => mapScript.removeEventListener("load", onLoadKakaoMap);
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spotList, currentIdx, onClick, selectedSpot, setSelected, selectedTest]);
+  }, [spotList, currentSlickIdx]);
     
   return (
     <MapContainer id="map"></MapContainer>

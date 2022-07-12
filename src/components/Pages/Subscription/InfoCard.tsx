@@ -16,26 +16,6 @@ interface IProps {
 }
 const InfoCard = ({ subsCount }: IProps) => {
   const { isLoginSuccess, me } = useSelector(userForm);
-  // const [subsList, setSubsList] = useState([]);
-
-  // const {} = useGetOrders(
-  //   ['getSubscriptionOrders'],
-  //   { days: 365, page: 1, size: 1000, type: 'SUBSCRIPTION' },
-  //   {
-  //     onSuccess: async (data) => {
-  //       const filterData = data.orders.filter((o: IGetOrders) => o.status !== 'COMPLETED' && o.status !== 'CANCELED');
-  //       setSubsList(filterData);
-  //     },
-  //     onError: () => {
-  //       router.replace('/onboarding');
-  //     },
-  //     refetchOnMount: false,
-  //     refetchOnWindowFocus: false,
-  //     staleTime: 0,
-  //     cacheTime: 0,
-  //     enabled: !!me,
-  //   }
-  // );
 
   return (
     <Container>
