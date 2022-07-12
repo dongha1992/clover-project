@@ -111,7 +111,7 @@ const DetailBottom = () => {
   }, []);
 
   useEffect(() => {
-    if (menuDetail.type === 'SUBSCRIPTION') {
+    if (menuDetail?.type === 'SUBSCRIPTION') {
       if (menuDetail?.subscriptionPeriods?.includes('UNLIMITED')) {
         setSubsDiscount(`정기구독 최대 ${last(menuDetail?.subscriptionDiscountRates)}% 할인`);
       } else {
