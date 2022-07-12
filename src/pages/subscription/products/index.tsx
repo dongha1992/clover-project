@@ -1,6 +1,5 @@
 import { StickyTab } from '@components/Shared/TabList';
 import { FixedTab } from '@styles/theme';
-
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
@@ -8,7 +7,7 @@ import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 
 const SpotTab = dynamic(() => import('@components/Pages/Subscription/Tab/SpotTab'));
-const DawnTab = dynamic(() => import('@components/Pages/Subscription/Tab/DawnTab'));
+const ParcelTab = dynamic(() => import('@components/Pages/Subscription/Tab/ParcelTab'));
 
 const MENU = [
   {
@@ -17,7 +16,7 @@ const MENU = [
   },
   {
     text: '새벽/택배',
-    link: '/subscription/products?tab=dawn',
+    link: '/subscription/products?tab=parcel',
   },
 ];
 
@@ -45,7 +44,7 @@ const SubsProductPage = () => {
       </FixedTab>
       <TabContent>
         {selectedTab === '/subscription/products?tab=spot' && <SpotTab />}
-        {selectedTab === '/subscription/products?tab=dawn' && <DawnTab />}
+        {selectedTab === '/subscription/products?tab=parcel' && <ParcelTab />}
       </TabContent>
     </Container>
   );
