@@ -113,7 +113,7 @@ const SpotListWrapper = styled.section`
   max-width: ${breakpoints.mobile}px;
   position: fixed;
   bottom: 0px;
-  z-index: 50;
+  z-index: 500;
 `;
 
 export default SpotSearchMapPage;
