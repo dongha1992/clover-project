@@ -40,7 +40,7 @@ const SubscriptiopPage = () => {
   const { data: subsList, isLoading: isOrdersLoading } = useQuery(
     ['getSubscriptionOrders', 'progress'],
     async () => {
-      const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
+      const params = { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' };
       const { data } = await getOrdersApi(params);
 
       let filterData = await data.data.orders
