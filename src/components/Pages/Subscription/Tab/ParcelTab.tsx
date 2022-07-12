@@ -3,7 +3,7 @@ import { SubsItem } from '@components/Pages/Subscription';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 
-const DawnTab = () => {
+const ParcelTab = () => {
   const {
     data: menus,
     error: menuError,
@@ -32,4 +32,4 @@ const DawnTab = () => {
   );
 };
 const DawnBox = styled.div``;
-export default DawnTab;
+export default ParcelTab;

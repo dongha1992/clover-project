@@ -2,7 +2,6 @@ import CancelFailList from '@components/Pages/Subscription/cancel/CancelFailList
 import CancelItemList from '@components/Pages/Subscription/cancel/CancelItemList';
 import OrderCancelDesBox from '@components/Pages/Subscription/cancel/OrderCancelDesBox';
 import OrderPartCancelDesBox from '@components/Pages/Subscription/cancel/OrderPartCancelDesBox';
-import SubsCancelDesBox from '@components/Pages/Subscription/cancel/SubsCancelDesBox';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { IOrderDetail } from '@model/index';

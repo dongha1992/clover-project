@@ -3,7 +3,6 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import { MenuImgBox, MenuLi, MenuTextBox } from '@pages/subscription/register';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import Image from 'next/image';
-import styled from 'styled-components';
 
 type TButtonType = 'select' | 'change' | 'delete';
 interface IProps {

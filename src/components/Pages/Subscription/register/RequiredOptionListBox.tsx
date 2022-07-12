@@ -6,7 +6,6 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { theme } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
 import Image from 'next/image';
-import { Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
