@@ -34,6 +34,7 @@ dayjs.locale('ko');
 import { SET_ALERT } from '@store/alert';
 import { INIT_COUPON } from '@store/coupon';
 import { useGetOrderDetail } from 'src/queries/order';
+import { cartForm, INIT_CART_LISTS, SET_CART_LISTS, ICartLists } from '@store/cart';
 
 interface IProps {
   orderId: number;
@@ -51,6 +52,9 @@ const OrderFinishPage = () => {
   const [pickupDay, setPickupDay] = useState<unknown[]>([]);
 
   const dispatch = useDispatch();
+
+  const { cartLists } = useSelector(cartForm);
+
   const { pg_token: pgToken, orderId, pg } = router.query;
 
   const { data: orderDetail } = useGetOrderDetail(['getOrderDetail'], Number(orderId), {
@@ -106,6 +110,13 @@ const OrderFinishPage = () => {
       dispatch(INIT_ORDER());
       dispatch(INIT_CARD());
       dispatch(INIT_ACCESS_METHOD());
+      // 장바구니 품절 상품이 있나 확인
+      // TODO: 결제 해서 테스트 해봐야함
+      // const filteredCartLists: ICartLists[] = cartLists
+      //   ?.map((carts) => carts?.cartMenus.filter((cart) => cart.isSold))
+      //   .filter((carts) => carts.length)!;
+
+      // filteredCartLists.length !== 0 ? dispatch(SET_CART_LISTS(filteredCartLists)) : dispatch(INIT_CART_LISTS());
     }
   };
 

@@ -312,10 +312,10 @@ export interface IAvilabiltyAddressResponse {
   code: number;
   message: string;
   data: {
-    morning: boolean;
-    parcel: boolean;
-    quick: boolean;
-    spot: boolean;
+    morning?: boolean;
+    parcel?: boolean;
+    quick?: boolean;
+    spot?: boolean;
   };
 }
 
@@ -1080,6 +1080,13 @@ export interface IOrderRequestInOrderDeliveries {
 }
 
 export interface IGetOrderListRequest {
+  days: number;
+  page: number;
+  size: number;
+  orderType: TOrderType | string;
+}
+
+export interface IGetOrderRequest {
   days: number;
   page: number;
   size: number;
@@ -2152,6 +2159,13 @@ export interface IDeliveryObj {
   deliveryDetail: string | null;
   location: ILocation | null;
   closedDate?: string | null;
+  createdAt?: string;
+  spotPickup?: ISpotPickupInDestinaion;
+  receiverTel?: string;
+  receiverName?: string;
+  name?: string;
+  main: boolean;
+  spotId?: number | null;
 }
 
 /* COUPON */

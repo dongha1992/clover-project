@@ -8,7 +8,7 @@ export const getCartsApi = ({
   params: {
     delivery: string;
     deliveryDate: string;
-    spotId: number | null;
+    spotId?: number | null;
   };
 }): Promise<AxiosResponse<IGetCartResponse>> => {
   return Api.get(`cart/v1/carts`, { params });
@@ -19,7 +19,7 @@ export const getRecentDeliveryApi = (): Promise<AxiosResponse<IResponse>> => {
 };
 
 export const postCartsApi = (data: ICreateCartRequest[]): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`cart/v1/carts/menu`, data);
+  return Api.post(`cart/v1/carts`, data);
 };
 
 export const deleteCartsApi = (data: IDeleteCartRequest[]): Promise<AxiosResponse<IResponse>> => {

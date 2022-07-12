@@ -26,10 +26,10 @@ import isNil from 'lodash-es/isNil';
 import { Obj } from '@model/index';
 
 interface IObj {
-  morning: boolean;
-  parcel: boolean;
-  quick: boolean;
-  spot: boolean;
+  morning?: boolean;
+  parcel?: boolean;
+  quick?: boolean;
+  spot?: boolean;
 }
 interface IResponse {
   status: TLocationType;

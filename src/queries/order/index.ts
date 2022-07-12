@@ -1,8 +1,8 @@
 import { deleteOrderCancelApi, deleteOrderCancelPreviewApi, getOrderDetailApi, getOrdersApi } from '@api/order';
-import { IGetOrderListRequest } from '@model/index';
+import { IGetOrderRequest } from '@model/index';
 import { MutationKey, QueryKey, useMutation, UseMutationOptions, useQuery, UseQueryOptions } from 'react-query';
 
-export const useGetOrders = (key: QueryKey, params: IGetOrderListRequest, options?: UseQueryOptions<any>) =>
+export const useGetOrders = (key: QueryKey, params: IGetOrderRequest, options?: UseQueryOptions<any>) =>
   useQuery(
     key,
     async () => {
