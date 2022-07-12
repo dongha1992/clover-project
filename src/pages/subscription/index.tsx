@@ -104,8 +104,8 @@ const SubscriptiopPage = () => {
 
   return (
     <Container>
-      <InfoCard subsCount={subsList?.length} />
-      {subsList?.length > 0 && <MySubsList subsList={subsList} />}
+      <InfoCard subsCount={subsList?.length!} />
+      {subsList && subsList?.length! > 0 && <MySubsList subsList={subsList} />}
 
       <SubsListContainer>
         <TitleBox>
