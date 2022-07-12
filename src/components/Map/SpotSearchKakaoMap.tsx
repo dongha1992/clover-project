@@ -1,7 +1,10 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { spotSelector, SET_SPOT_MAP_SWITCH } from '@store/spot';
+import { 
+  spotSelector, 
+  SET_SPOT_MAP_SWITCH, 
+  } from '@store/spot';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { SET_ALERT } from '@store/alert';
 import { ISpotsDetail } from '@model/index';
@@ -15,7 +18,6 @@ interface IProps {
   getSpotInfo?: any
   setSelected?: any;
   setVisible?: any;
-  selected?: boolean;
 };
 
 const SpotSearchKakaoMap = ({
@@ -27,20 +29,18 @@ const SpotSearchKakaoMap = ({
   getSpotInfo,
   setSelected,
   setVisible,
-  selected,
 }: IProps) => {
   const dispatch = useDispatch();
   const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
-  const [selectedIdx, setSelectedIdx] = useState<number>(0);
-  const [selectedMarker, setSelectedmarker] = useState(null);
+  const [selectedSpotIdx, setSelectedSpotIdx] = useState<number | null>(0);
   const spotList = spotSearchArr ?? [];
   const idx = currentSlickIdx&&currentSlickIdx;
-  const SelectedSpotArr = spotListAllChecked ?  spotList[selectedIdx] : spotList[idx!];
+  const SelectedSpotArr = spotListAllChecked ?  spotList[selectedSpotIdx!] : spotList[idx!];
   const currentPositionLat = SelectedSpotArr?.coordinate.lat;
   const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
   const level = zoom ? zoom : 2;
   const levelControl = spotListAllChecked ? 9 : level;
-  
+
   useEffect(() => {
     const mapScript = document.createElement("script");
     mapScript.async = true;
@@ -67,18 +67,7 @@ const SpotSearchKakaoMap = ({
           const imageSize = new window.kakao.maps.Size(50, 54);
           const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
           const selectedMarkerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); // 선택된 마커 이미지
-          
-          // if (!spotListAllChecked) {
-          //   const marker = new window.kakao.maps.Marker({
-          //     position: markerPosition,
-          //     image: markerImage,
-          //     zIndex: 100,
-          //     visible: false,
-          //   });
-          //   marker.setMap(map);
-          // };
-
-          // 마커 클러스터러를 생성
+         
           const clusterStyles = [
             {
               width : '30px', 
@@ -141,6 +130,7 @@ const SpotSearchKakaoMap = ({
           //ic_tripin.png
 
           //ic_group_pin.png // 클러스터링 마커 
+          let selectedMarker: any = null;
 
           for (let i = 0; i < spotList.length; i++) {
             displayMarker(spotList[i], i);
@@ -195,50 +185,54 @@ const SpotSearchKakaoMap = ({
                 }
               };
             };
+
             const imageSize = new window.kakao.maps.Size(imgSize().x, imgSize().y); 
             const typeMarkersImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); // 타입별 마커 이미지
-
-            // const markerImage = new window.kakao.maps.MarkerImage(mapMarkerImgSrc, imageSize); 
             const latlng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon)
-            // 마커를 생성합니다
-            const markers = new window.kakao.maps.Marker({
+            const markers = new window.kakao.maps.Marker({ // 타입별 마커 생성
                 map: map, // 마커를 표시할 지도
                 position: latlng, // 마커를 표시할 위치
                 image : typeMarkersImage, // 마커 이미지 
+                // zIndex: 100,
+                
             });
-            markers.normalImage = typeMarkersImage;
+            // markers.normalImage = typeMarkersImage;
             markersArr.push(markers);
 
-            if(currentSlickIdx === idx) {
+            if(currentSlickIdx === idx) { // 검색 결과에서 슬라이드 정보창 이동시 선택된 마커 유지
               markers.setImage(selectedMarkerImage);
             };
 
-            new window.kakao.maps.event.addListener(markers, 'click', function () {
-              if (!selectedMarker || selectedMarker !== markers) {
-                // 클릭된 마커 객체가 null이 아니면 클릭된 마커의 이미지를 기본 이미지로 변경
-                // !!selectedMarker && selectedMarker?.setImage(selectedMarker.normalImage);
-                // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
-                markers.setImage(typeMarkersImage);
-              };
-              // 클릭된 마커를 현재 클릭된 마커 객체로 설정
-              setSelectedmarker(markers);
-              // });
-
-              // markers.setImage(selectedMarkerImage);
-              map.setLevel(2);  
-              const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon);
-              map.panTo(moveLatLng);        
-
-              setVisible(false);
-              onClickCurrentSlickIdx(idx);
-              setSelectedIdx(idx);
-              getSpotInfo(item);
-              setSelected(true);  
+            new window.kakao.maps.event.addListener(markers, 'click', function () { // 마커에 click 이벤트 등록
+              if (spotListAllChecked) {
+                // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면 마커의 이미지를 클릭 이미지로 변경
+                if (!selectedMarker || selectedMarker !== markers) {
+                  // 클릭된 마커 객체가 null이 아니면 클릭된 마커의 이미지를 기본 이미지로 변경
+                  !!selectedMarker && selectedMarker.setImage(typeMarkersImage);
+                  // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
+                  markers.setImage(selectedMarkerImage); 
+                };
+                // 클릭된 마커를 현재 클릭된 마커 객체로 설정
+                selectedMarker = markers; 
+              } else {
+                if(currentSlickIdx === idx) { // 검색 결과에서 클릭한 마커 아이콘 변경
+                  markers.setImage(selectedMarkerImage);
+                };  
+              }
+              map.setLevel(2); // 마커 클릭시 zoom level 2
+              const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon); 
+              map.panTo(moveLatLng); // 클릭된 마커를 맵 중심으로 이동
+              setVisible(false); // 지도 클릭시 정보창 숨김 여부
+              onClickCurrentSlickIdx(idx); // 검색 결과에서 마커 클릭시 해당 정보창으로 slide 이동
+              setSelectedSpotIdx(idx);
+              const selectedSpotMarker = spotList.filter(i => i.id === item.id);
+              getSpotInfo(selectedSpotMarker); // 스팟 정보
+              setSelected(true); // 전체 리스트에서 마커 클릭시 정보창 보임
             });
 
-            new window.kakao.maps.event.addListener(map, 'click', function() {
-              markers.setImage(typeMarkersImage);
-              setVisible(true);
+            new window.kakao.maps.event.addListener(map, 'click', function() { // 지도 click 이벤트 등록, 마커 클릭 해제
+              markers.setImage(typeMarkersImage); // 지도 클릭시 선택된 마커 원복
+              setVisible(true); // 지도 클릭시 정보창 숨김 여부
             });
             clusterer.addMarkers(markersArr);
           };
