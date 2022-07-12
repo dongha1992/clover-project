@@ -44,7 +44,7 @@ const SubscriptionManagementPage = () => {
   }, [handleObserver]);
 
   useEffect(() => {
-    if (page <= data?.pages[0].totalPage) {
+    if (page <= data?.pages[0].totalPage!) {
       fetchNextPage();
     }
   }, [page]);
