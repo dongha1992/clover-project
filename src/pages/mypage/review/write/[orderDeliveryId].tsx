@@ -20,6 +20,7 @@ import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
 import { ICreateReivewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
+import router from 'next/router';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[];
@@ -81,6 +82,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
 
     {
       onSuccess: (data) => {},
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -100,6 +104,12 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
           })
         );
         await queryClient.refetchQueries('getReviewDetail');
+        await queryClient.refetchQueries('getWillWriteReview');
+        await queryClient.refetchQueries('getCompleteWriteReview');
+        router.replace('/mypage/review');
+      },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
       },
     }
   );
@@ -176,11 +186,11 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
     imageFileReader.onload = (e: any) => {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
-        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
         preview: [...writeMenuReviewObj?.preview!, e.target.result],
+        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
       });
-      imageFileReader.readAsDataURL(imageFile);
     };
+    imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
@@ -195,27 +205,36 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
       return;
     }
     let formData = new FormData();
+    let location = [];
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+        try {
+          writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+          const result = await postImageApi(formData);
+          location.push(result.headers.location);
+        } catch (error) {
+          dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
+          return;
+        }
       }
-      const result = await postImageApi(formData);
     }
+
+    const hasReviewImgs = location.length !== 0;
 
     const reqBody = {
       content: textAreaRef?.current?.value!,
-      images: writeMenuReviewObj.imgFiles,
+      images: hasReviewImgs ? location : [],
       menuDetailId: Number(menuDetailId),
       menuId: Number(menuId),
       orderDeliveryId: Number(orderDeliveryId),
       rating,
     };
 
+    console.log(reqBody, 'reqBody');
+
     mutateCreateMenuReview(reqBody);
   };
-
-  console.log(data, 'data');
 
   const over30Letter = LIMIT - numberOfReivewContent > 0;
 
@@ -269,7 +288,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
           <TextB3R color={theme.brandColor}>
             {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{numberOfReivewContent}/1000</TextB3R>
+          <TextB3R>{numberOfReivewContent}/1,000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
@@ -285,7 +304,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          {writeMenuReviewObj.imgFiles.length < 2 && (
+          {writeMenuReviewObj?.imgFiles?.length < 2 && (
             <UploadInputWrapper>
               <TextInput
                 width="100%"
@@ -300,8 +319,8 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
               </div>
             </UploadInputWrapper>
           )}
-          {writeMenuReviewObj.imgFiles.length > 0 &&
-            writeMenuReviewObj.imgFiles.map((img: string, index: number) => {
+          {writeMenuReviewObj?.preview.length! > 0 &&
+            writeMenuReviewObj?.preview.map((img: string, index: number) => {
               const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
@@ -318,7 +337,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
         <ReviewInfoBottom />
       </PointInfoWrapper>
       <BtnWrapper onClick={finishWriteReview}>
-        <Button height="100%">작성하기</Button>
+        <Button height="100%" borderRadius="0" disabled={over30Letter}>
+          작성하기
+        </Button>
       </BtnWrapper>
     </Container>
   );
