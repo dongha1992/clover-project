@@ -47,9 +47,11 @@ const SubscriptionManagementPage = () => {
     <Container>
       {subsList?.length !== 0 ? (
         <>
-          {subsList?.map((item: IGetOrders, index: number) => (
-            <SubsMngItem item={item} key={index} />
-          ))}
+          <SubsMngList>
+            {subsList?.map((item: IGetOrders, index: number) => (
+              <SubsMngItem item={item} key={index} />
+            ))}
+          </SubsMngList>
           <InfoBox>
             <TextB3R color={theme.greyScale65}>
               최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
@@ -72,10 +74,12 @@ const SubscriptionManagementPage = () => {
   );
 };
 const Container = styled.div`
-  padding: 24px 24px 0 24px;
+  /* padding: 24px 24px 0 24px; */
+`;
+const SubsMngList = styled.div`
+  padding: 24px;
 `;
 const InfoBox = styled.div`
-  margin-top: 24px;
   padding: 24px;
   background-color: ${theme.greyScale3};
 `;
