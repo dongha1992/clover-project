@@ -1,49 +1,30 @@
-import { getOrdersApi } from '@api/order';
-import { StickyTab } from '@components/Shared/TabList';
-import { fixedTab } from '@styles/theme';
-import { cloneDeep } from 'lodash-es';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
-import { useQuery } from 'react-query';
-import styled, { css } from 'styled-components';
-import { commonSelector } from '@store/common';
-import { useSelector } from 'react-redux';
-
-const SubsIng = dynamic(() => import('@components/Pages/Mypage/Subscription/Tab/SubsIng'));
-const SubsComplete = dynamic(() => import('@components/Pages/Mypage/Subscription/Tab/SubsComplete'));
+import styled from 'styled-components';
+import { useGetOrders } from '@queries/order';
+import { IGetOrders, IOrderDeliverie } from '@model/index';
+import { TextB2R, TextB3R } from '@components/Shared/Text';
+import { FlexCol, theme } from '@styles/theme';
+import { useState } from 'react';
+import { SubsMngItem } from '@components/Pages/Mypage/Subscription';
+import { Button } from '@components/Shared/Button';
 
 const SubscriptionManagementPage = () => {
   const router = useRouter();
-  const { isScroll } = useSelector(commonSelector);
-  const [isSticky, setIsStikcy] = useState<boolean>(false);
-  const [selectedTab, setSelectedTab] = useState(
-    `${router.route}?tab=${router.query.tab ? router.query.tab : 'subscribing'}`
-  );
-  const [subscribingLength, setSubscribingLength] = useState(0);
-  const [subsCompleteLength, setSubsCompleteLength] = useState(0);
+  const [subsList, setSubsList] = useState<IGetOrders[]>();
 
-  const {
-    data: subsList,
-    error: menuError,
-    isLoading,
-  } = useQuery(
-    ['getSubscriptionOrders', 'both'],
-    async () => {
-      const params = { days: 90, page: 1, size: 100, type: 'SUBSCRIPTION' };
-      const { data } = await getOrdersApi(params);
-
-      return data.data.orders;
-    },
+  const { isFetching } = useGetOrders(
+    ['getSubscriptionOrders'],
+    { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' },
     {
-      onSuccess: (data) => {
-        const ing = cloneDeep(data).filter((item: any) => item.status !== 'COMPLETED' || item.status !== 'CANCELED');
-        const complete = cloneDeep(data).filter(
-          (item: any) => item.status === 'COMPLETED' || item.status === 'CANCELED'
-        );
-
-        setSubscribingLength(ing.length);
-        setSubsCompleteLength(complete.length);
+      onSuccess: async (data) => {
+        let filterData = await data.orders.map((item: IGetOrders) => {
+          item.orderDeliveries.sort(
+            (a: IOrderDeliverie, b: IOrderDeliverie) =>
+              Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
+          );
+          return item;
+        });
+        setSubsList(filterData);
       },
       onError: () => {
         router.replace('/onboarding');
@@ -56,52 +37,53 @@ const SubscriptionManagementPage = () => {
     }
   );
 
-  const TabList = [
-    {
-      text: `구독 중 (${subscribingLength})`,
-      link: '/mypage/subscription?tab=subscribing',
-    },
-    {
-      text: `구독완료 (${subsCompleteLength})`,
-      link: '/mypage/subscription?tab=subscription-complete',
-    },
-  ];
+  const goToSubscription = () => {
+    router.push('/subscription');
+  };
 
-  const selectTabHandler = useCallback(
-    ({ link }: any) => {
-      setSelectedTab(link);
-    },
-
-    [selectedTab]
-  );
+  if (isFetching && !subsList) return <div>...로딩중</div>;
 
   return (
     <Container>
-      <FixedTab scroll={isScroll}>
-        <StickyTab tabList={TabList} isSticky={isSticky} selectedTab={selectedTab} onClick={selectTabHandler} />
-      </FixedTab>
-      <TabContent>
-        {selectedTab === '/mypage/subscription?tab=subscribing' && <SubsIng />}
-        {selectedTab === '/mypage/subscription?tab=subscription-complete' && <SubsComplete />}
-      </TabContent>
+      {subsList?.length !== 0 ? (
+        <>
+          {subsList?.map((item: IGetOrders, index: number) => (
+            <SubsMngItem item={item} key={index} />
+          ))}
+          <InfoBox>
+            <TextB3R color={theme.greyScale65}>
+              최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
+            </TextB3R>
+          </InfoBox>
+        </>
+      ) : (
+        <NoSubsBox>
+          <FlexCol width="100%">
+            <TextB2R padding="0 0 24px" color={theme.greyScale65} center>
+              구독중인 상품이 없어요 😭
+            </TextB2R>
+            <Button backgroundColor="#fff" color="#242424" width="100%" border onClick={goToSubscription}>
+              구독 상품 보러가기
+            </Button>
+          </FlexCol>
+        </NoSubsBox>
+      )}
     </Container>
   );
 };
-const Container = styled.div``;
-
-const FixedTab = styled.div<{scroll: boolean}>`
-  ${fixedTab};
-
-  ${({scroll}) => {
-    if (scroll) {
-      return css `
-        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
-      `;
-    }
-  }}
+const Container = styled.div`
+  padding: 24px 24px 0 24px;
+`;
+const InfoBox = styled.div`
+  margin-top: 24px;
+  padding: 24px;
+  background-color: ${theme.greyScale3};
+`;
+const NoSubsBox = styled.div`
+  height: calc(100vh - 104px);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
 `;
 
-const TabContent = styled.div`
-  padding: 74px 24px 24px;
-`;
 export default SubscriptionManagementPage;
