@@ -566,6 +566,8 @@ export interface ISpotsDetail {
   placeOpenTime: string;
   placeTel: string;
   placeType: TPlaceType;
+  spotMarker: TSpotMarkerType;
+  placeDetailType: TSpotPlaceDetailType;
   stories: ISpotStories[];
   type: string;
   image: {
@@ -849,6 +851,22 @@ export type TPlaceType =
   | 'SCHOOL'
   | 'SHARED_OFFICE'
   | 'STORE';
+
+type TSpotMarkerType =
+  | 'BOOKSTORE'
+  | 'CAFE'
+  | 'CAFE_STORYWAY'
+  | 'CAFE_TRIPIN'
+  | 'CONVENIENCE_STORE_GS25'
+  | 'CONVENIENCE_STORE_SEVEN_ELEVEN'
+  | 'CONVENIENCE_STORE_STORYWAY'
+  | 'DRUGSTORE'
+  | 'ETC'
+  | 'FITNESS_CENTER'
+  | 'PRIVATE'
+  | 'STORE';
+
+type TSpotPlaceDetailType = 'GS25' | 'SEVEN_ELEVEN' | 'STORYWAY' | 'TRIPIN';
 
 type TDistanceUnit =
   | 'CENTIMETERS'
@@ -1796,6 +1814,7 @@ export interface IMenus {
   closedAt?: string;
   openedAt: string;
   subscriptionDeliveries?: string[];
+  subscriptionDiscountRates?: number[];
   subscriptionPeriods?: string[];
   constitutionTag: string;
   isReopen?: boolean;

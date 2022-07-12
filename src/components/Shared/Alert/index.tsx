@@ -9,7 +9,7 @@ import { theme } from '@styles/theme';
 /* TODO: alert msg 텍스트 다시 조정 */
 
 type TProps = {
-  alertMessage: string;
+  alertMessage?: string;
   alertSubMessage?: string;
   submitBtnText?: string;
   closeBtnText?: string;
