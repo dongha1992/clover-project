@@ -227,8 +227,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     if (!me) {
       dispatch(
         SET_ALERT({
-          alertMessage: '로그인 후 쿠폰 다운로드 가능합니다.',
-          submitBtnText: '로그인 하기',
+          alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
+          submitBtnText: '확인',
           closeBtnText: '취소',
           onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
         })
@@ -388,7 +388,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   </OriginPrice>
                 )}
                 <DiscountedPrice>
-                  {!isTempSold && (
+                  {!isTempSold && menuDetail?.type !== 'SUBSCRIPTION' && (
                     <TextH3B padding={'0 4px 0 0px'} color={theme.brandColor}>
                       {getMenuDetailPrice().discount}%
                     </TextH3B>
