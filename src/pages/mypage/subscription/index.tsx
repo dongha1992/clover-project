@@ -1,57 +1,70 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { useGetOrders } from '@queries/order';
+import { useGetOrders, useInfiniteOrders } from '@queries/order';
 import { IGetOrders, IOrderDeliverie } from '@model/index';
 import { TextB2R, TextB3R } from '@components/Shared/Text';
 import { FlexCol, theme } from '@styles/theme';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SubsMngItem } from '@components/Pages/Mypage/Subscription';
 import { Button } from '@components/Shared/Button';
 
 const SubscriptionManagementPage = () => {
   const router = useRouter();
-  const [subsList, setSubsList] = useState<IGetOrders[]>();
+  const [page, setPage] = useState<number>(0);
+  const parentRef = useRef<any>();
+  const childRef = useRef<any>();
 
-  const { isFetching } = useGetOrders(
-    ['getSubscriptionOrders'],
-    { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' },
-    {
-      onSuccess: async (data) => {
-        let filterData = await data.orders.map((item: IGetOrders) => {
-          item.orderDeliveries.sort(
-            (a: IOrderDeliverie, b: IOrderDeliverie) =>
-              Number(a.deliveryDate?.replaceAll('-', '')) - Number(b.deliveryDate?.replaceAll('-', ''))
-          );
-          return item;
-        });
-        setSubsList(filterData);
-      },
-      onError: () => {
-        router.replace('/onboarding');
-      },
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-      cacheTime: 0,
-      retry: false,
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteOrders({
+    days: 365,
+    size: 10,
+    type: 'SUBSCRIPTION',
+  });
+
+  const option = {
+    root: parentRef?.current!, // 관찰대상의 부모요소를 지정
+    rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
+    threshold: 1.0,
+  };
+
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0];
+
+    if (target.isIntersecting) {
+      setPage((prev) => prev + 1);
     }
-  );
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, option);
+
+    if (childRef?.current) {
+      observer.observe(childRef?.current);
+    }
+    return () => observer.disconnect();
+  }, [handleObserver]);
+
+  useEffect(() => {
+    if (page <= data?.pages[0].totalPage) {
+      fetchNextPage();
+    }
+  }, [page]);
 
   const goToSubscription = () => {
     router.push('/subscription');
   };
 
-  if (isFetching && !subsList) return <div>...로딩중</div>;
-
   return (
-    <Container>
-      {subsList?.length !== 0 ? (
+    <Container ref={parentRef}>
+      {data?.pages[0]?.result.length !== 0 ? (
         <>
-          <SubsMngList>
-            {subsList?.map((item: IGetOrders, index: number) => (
-              <SubsMngItem item={item} key={index} />
-            ))}
-          </SubsMngList>
+          {data?.pages?.map((page: any, index) => (
+            <SubsMngList key={index}>
+              {page.result?.map((item: IGetOrders, index: number) => (
+                <SubsMngItem item={item} key={index} />
+              ))}
+            </SubsMngList>
+          ))}
+          {isFetching && <div>... 로딩중</div>}
           <InfoBox>
             <TextB3R color={theme.greyScale65}>
               최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
@@ -70,12 +83,11 @@ const SubscriptionManagementPage = () => {
           </FlexCol>
         </NoSubsBox>
       )}
+      <div ref={childRef}></div>
     </Container>
   );
 };
-const Container = styled.div`
-  /* padding: 24px 24px 0 24px; */
-`;
+const Container = styled.div``;
 const SubsMngList = styled.div`
   padding: 24px;
 `;
