@@ -360,7 +360,7 @@ const CartPage = () => {
   };
 
   const reorderCartList = (data: IGetCart[]) => {
-    const checkMenusId = checkedMenus.map((item) => item.menuId);
+    const checkMenusId = checkedMenus?.map((item) => item.menuId);
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
 
     setCheckedMenus(updatedQuantityCart);
@@ -601,21 +601,23 @@ const CartPage = () => {
   };
 
   const clickPlusButton = (menuDetailId: number, quantity: number) => {
+    console.log(me, '--', menuDetailId);
+
     if (!me) {
       const sliced = cartItemList.slice();
       const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
       setCartItemList(changedCartItemList);
       return;
+    } else {
+      const parmas = {
+        menuDetailId,
+        quantity,
+      };
+      mutateItemQuantity(parmas);
     }
-
-    const parmas = {
-      menuDetailId,
-      quantity,
-    };
-    mutateItemQuantity(parmas);
   };
 
-  const clickMinusButton = (menuDetailId: number, quantity: number, menuId: number) => {
+  const clickMinusButton = (menuDetailId: number, quantity: number) => {
     if (!me) {
       const sliced = cartItemList.slice();
       const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
@@ -941,6 +943,7 @@ const CartPage = () => {
   useEffect(() => {
     getTotalPrice();
     setNutritionObj(getTotalNutrition(checkedMenus));
+    console.log(checkedMenus, '--');
   }, [checkedMenus, disposableList]);
 
   useEffect(() => {
@@ -968,7 +971,8 @@ const CartPage = () => {
   useEffect(() => {
     // 비회원일경우
     if (!me) {
-      reorderCartList(nonMemberCartLists);
+      console.log(nonMemberCartLists, 'nonMemberCartLists');
+      reorderCartList(nonMemberCartLists ?? []);
     }
   }, []);
 
@@ -1049,33 +1053,36 @@ const CartPage = () => {
               ))}
             </VerticalCartList>
           </CartListWrapper>
-          <DisposableSelectWrapper>
-            <WrapperTitle>
-              <SVGIcon name="fcoIcon" />
-              <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
-            </WrapperTitle>
-            <CheckBoxWrapper>
-              {disposableList?.map((item, index) => (
-                <DisposableItem key={index}>
-                  <div className="disposableLeft">
-                    <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
-                    <div className="disposableText">
-                      <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
-                      <TextH5B>{item.price}원</TextH5B>
+          {me && (
+            <DisposableSelectWrapper>
+              <WrapperTitle>
+                <SVGIcon name="fcoIcon" />
+                <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
+              </WrapperTitle>
+              <CheckBoxWrapper>
+                {disposableList?.map((item, index) => (
+                  <DisposableItem key={index}>
+                    <div className="disposableLeft">
+                      <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
+                      <div className="disposableText">
+                        <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
+                        <TextH5B>{item.price}원</TextH5B>
+                      </div>
                     </div>
-                  </div>
-                  <Right>
-                    <CountButton
-                      menuDetailId={item.id}
-                      quantity={item.quantity}
-                      clickPlusButton={clickDisposableItemCount}
-                      clickMinusButton={clickDisposableItemCount}
-                    />
-                  </Right>
-                </DisposableItem>
-              ))}
-            </CheckBoxWrapper>
-          </DisposableSelectWrapper>
+                    <Right>
+                      <CountButton
+                        menuDetailId={item.id}
+                        quantity={item.quantity}
+                        clickPlusButton={clickDisposableItemCount}
+                        clickMinusButton={clickDisposableItemCount}
+                      />
+                    </Right>
+                  </DisposableItem>
+                ))}
+              </CheckBoxWrapper>
+            </DisposableSelectWrapper>
+          )}
+
           <NutritionInfoWrapper>
             <FlexBetween>
               <span className="h5B">
