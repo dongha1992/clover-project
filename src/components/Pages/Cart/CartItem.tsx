@@ -33,12 +33,12 @@ const CartItem = ({
       {menu?.menuDetails.map((menuDetail: IMenuDetailsInCart, index: number) => {
         return (
           <CartActualItem
+            key={index}
             clickPlusButton={clickPlusButton}
             clickMinusButton={clickMinusButton}
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
-            key={index}
-            menuId={menu.menuId}
+            menuId={menu?.menuId!}
             holiday={menu.holiday}
             menuName={menu.name}
           />
