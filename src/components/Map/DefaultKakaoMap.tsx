@@ -30,12 +30,17 @@ const DefaultKakaoMap = ({
         const options = {
           center: new window.kakao.maps.LatLng(centerLat, centerLng),
           level: zoom ? zoom : 3,
-          image: markerImage
+          image: markerImage,
+          maxLevel: 7,
         };
         
         const map = new window.kakao.maps.Map(container, options);
-        const markerPosition = new window.kakao.maps.LatLng(centerLat, centerLng);
         
+        const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
+        const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
+        map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
+
+        const markerPosition = new window.kakao.maps.LatLng(centerLat, centerLng);
         const marker = new window.kakao.maps.Marker({
           position: markerPosition,
           image: markerImage,
