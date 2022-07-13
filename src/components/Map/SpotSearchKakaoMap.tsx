@@ -48,7 +48,7 @@ const SpotSearchKakaoMap = ({
   const SelectedSpotArr = spotListAllChecked ?  spotList[selectedSpotIdx!] : spotList[idx!];
   const currentPositionLat = SelectedSpotArr?.coordinate.lat;
   const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
-  const level = zoom ? zoom : 2;
+  const level = zoom ? zoom : 3;
   const levelControl = spotListAllChecked ? 9 : level;
 
   useEffect(()=> {
@@ -108,7 +108,7 @@ const SpotSearchKakaoMap = ({
           const marker = new window.kakao.maps.Marker({
               position: currentPos,
               image: currentPositionIcon,
-              zIdex: 999,
+              zIdex: 900,
           });
       
           // 기존에 마커가 있다면 제거
@@ -169,11 +169,11 @@ const SpotSearchKakaoMap = ({
         const clusterer = new window.kakao.maps.MarkerClusterer({
             map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
             averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-            minLevel: 3, // 클러스터 할 최소 지도 레벨 
+            minLevel: 4, // 클러스터 할 최소 지도 레벨 
             calculator: [10, 100, 1000],
             minClusterSize: 3,
             styles: clusterStyles,
-            zIndex: 555,
+            zIndex: 700,
         });
 
         // 마커 리스트
@@ -194,7 +194,8 @@ const SpotSearchKakaoMap = ({
         //ic_group_pin.png // 클러스터링 마커 
         let selectedMarker: any = null;
 
-      //   const result = spotList?.reduce((acc: any, cur: any) => {
+      //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
+      //   const result = filterResult?.reduce((acc: any, cur: any) => {
       //     acc[cur.location.address] = (acc[cur.location.address] || 0) + 1;
       //     return acc;
       //   }, {});
@@ -262,6 +263,7 @@ const SpotSearchKakaoMap = ({
               map: map, // 마커를 표시할 지도
               position: latlng, // 마커를 표시할 위치
               image : typeMarkersImage, // 마커 이미지 
+              zIndex: 600,
               
           });
           // markers.normalImage = typeMarkersImage;
@@ -279,17 +281,17 @@ const SpotSearchKakaoMap = ({
                 !!selectedMarker && selectedMarker.setImage(typeMarkersImage);
                 // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
                 markers.setImage(selectedMarkerImage); 
-                markers.setZIndex(101);
+                markers.setZIndex(900);
               };
               // 클릭된 마커를 현재 클릭된 마커 객체로 설정
               selectedMarker = markers; 
             } else {
               if(currentSlickIdx === idx) { // 검색 결과에서 클릭한 마커 아이콘 변경
                 markers.setImage(selectedMarkerImage);
-                markers.setZIndex(101);
+                markers.setZIndex(900);
               };  
             }
-            map.setLevel(2); // 마커 클릭시 zoom level 2
+            map.setLevel(3); // 마커 클릭시 zoom level 3
 
             const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon); 
             map.panTo(moveLatLng); // 클릭된 마커를 맵 중심으로 이동, 부드럽게 이동
@@ -311,7 +313,14 @@ const SpotSearchKakaoMap = ({
           });
           clusterer.addMarkers(markersArr);
         };
-        
+
+        new window.kakao.maps.event.addListener(clusterer, 'clusterclick', function(cluster: any) {
+          // 현재 지도 레벨에서 1레벨 확대한 레벨
+          const level = map.getLevel()-1;
+          // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
+          map.setLevel(level, {anchor: cluster.getCenter()});
+        });
+
       });
     } catch(e){
       dispatch(

@@ -57,7 +57,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchKakaoMap zoom={2} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
+        <SpotSearchKakaoMap zoom={3} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
         {
           selected && spotListAllChecked && (
             !visible &&
