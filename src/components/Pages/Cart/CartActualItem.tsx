@@ -34,6 +34,7 @@ const CartActualItem = ({
     discountPrice: menuDetail.discountPrice,
     price: menuDetail.price,
   });
+  console.log(menuDetail);
 
   return (
     <Container isSold={menuDetail.isSold}>
@@ -70,7 +71,7 @@ const CartActualItem = ({
             <CountButtonContainer>
               <CountButton
                 isSold={menuDetail.isSold}
-                menuDetailId={menuDetail.menuDetailId}
+                menuDetailId={menuDetail.id}
                 quantity={menuDetail.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}

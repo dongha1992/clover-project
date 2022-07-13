@@ -1739,6 +1739,7 @@ export interface IMenuDetails {
   thumbnail?: IDetailImage;
   protein: number;
   personalMaximum?: number;
+  menuId?: number;
 }
 
 export interface IBestReviews {
@@ -2104,6 +2105,7 @@ export interface IGetCart {
   menuDetails: IMenuDetailsInCart[];
   isSold?: boolean;
   createdAt?: string;
+  id?: number;
 }
 export interface IDiscountInfos {
   type: string;

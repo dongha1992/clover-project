@@ -57,8 +57,15 @@ export const cart = createSlice({
       // );
     },
     SET_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<IGetCart>) => {
-      console.log(action.payload, 'action.payload');
-      state.nonMemberCartLists.push(action.payload);
+      state.nonMemberCartLists = action.payload;
+    },
+    DELETE_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<any>) => {
+      console.log(action.payload);
+      const target = state.nonMemberCartLists.filter((item) => {});
+      // state.nonMemberCartLists = [];
+    },
+    INIT_NON_MEMBER_CART_LISTS: (state, action: PayloadAction) => {
+      state.nonMemberCartLists = [];
     },
   },
 
@@ -85,6 +92,8 @@ export const {
   REMOVE_CART_ITEM,
   INIT_CART_LISTS,
   SET_NON_MEMBER_CART_LISTS,
+  INIT_NON_MEMBER_CART_LISTS,
+  DELETE_NON_MEMBER_CART_LISTS,
 } = cart.actions;
 export const cartForm = (state: AppState): IProps => state.cart;
 export default cart.reducer;

@@ -18,7 +18,7 @@ import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { Obj, IMenus, IMenuDetails, IGetCart, IMenuDetailsInCart } from '@model/index';
-import { SET_NON_MEMBER_CART_LISTS } from '@store/cart';
+import { SET_NON_MEMBER_CART_LISTS, INIT_NON_MEMBER_CART_LISTS, DELETE_NON_MEMBER_CART_LISTS } from '@store/cart';
 import { postCartsApi } from '@api/cart';
 import differenceWith from 'lodash-es/differenceWith';
 
@@ -51,7 +51,7 @@ interface ISelectedMenu {
   protein?: number;
 }
 
-const CartSheet = () => {
+const CartSheet = ({ menuItem }: any) => {
   const [rollingData, setRollingData] = useState([
     {
       id: 1,
@@ -78,7 +78,7 @@ const CartSheet = () => {
 
   const { cartLists, nonMemberCartLists } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
-  const { menuItem } = useSelector(menuSelector);
+  // const { menuItem } = useSelector(menuSelector);
   const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
@@ -236,9 +236,11 @@ const CartSheet = () => {
   };
 
   const selectMenuHandler = (menu: IMenuDetails) => {
-    if (!checkAlreadySelect(menu.id)) {
+    // menu.id === menuDetailId
+
+    if (!checkAlreadySelect(menu?.id!)) {
       const { id, ...rest } = menu;
-      setSelectedMenus([...selectedMenus, { ...rest, menuDetailId: menu.id, quantity: 1 }]);
+      setSelectedMenus([...selectedMenus, { ...menu, menuDetailId: menu.id, quantity: 1 }]);
     } else {
       clickPlusButton(menu.id);
     }
@@ -320,7 +322,8 @@ const CartSheet = () => {
       name: menuItem.name,
     };
 
-    const formatCartLists: IMenuDetailsInCart[] = selectedMenus?.map((item) => {
+    let formatCartLists: IMenuDetailsInCart[] = selectedMenus?.map((item) => {
+      //id: item.menuId! -> item.menuDetailId!
       return {
         availabilityInfo: null,
         menuDetailId: item.menuDetailId,
@@ -335,7 +338,8 @@ const CartSheet = () => {
         createdAt: '',
         discountPrice: item.discountPrice,
         discountRate: null,
-        id: item.menuId!,
+        id: item.menuDetailId!,
+        menuId: item.menuId,
       };
     });
 
@@ -350,40 +354,47 @@ const CartSheet = () => {
       createdAt: '',
     };
 
-    const alreadyInLocal = nonMemberCartLists?.find((item) => item.menuId === menuObj.menuId);
-    let newCartLists = [];
+    const addToAlreadyInCartLists: any = [];
+    const addedCartLists: any = [];
 
-    if (alreadyInLocal) {
-      const addToAlreadyInCartLists = alreadyInLocal.menuDetails.map((aItem) => {
-        const found = formatCartLists.find((fItem) => fItem.menuDetailId === aItem.menuDetailId);
-        if (found) {
-          return {
-            ...aItem,
-            quantity: aItem.quantity + found.quantity,
-          };
+    // 메뉴 하나
+    const found = nonMemberCartLists.find((item) => item.menuId === menuItem.id);
+
+    if (nonMemberCartLists.length !== 0 && found) {
+      nonMemberCartLists.forEach((localItem) => {
+        const changed = localItem.menuDetails.map((localDetail) => {
+          const found = formatCartLists.find((detail) => detail.menuDetailId === localDetail.menuDetailId);
+          if (found) {
+            addedCartLists.push(found.menuDetailId);
+            return { ...localDetail, quantity: localDetail.quantity + found.quantity };
+          } else {
+            return localDetail;
+          }
+        });
+
+        if (localItem.menuId === menuItem.id) {
+          const found = { ...localItem, menuDetails: changed };
+          addToAlreadyInCartLists.push(found);
         } else {
-          return aItem;
+          addToAlreadyInCartLists.push(localItem);
         }
       });
 
-      const restSelectedMenus = formatCartLists.filter(
-        (aItem) => !addToAlreadyInCartLists.map((sItem) => sItem.menuDetailId).includes(aItem.menuDetailId)
-      );
-      newCartLists = [...addToAlreadyInCartLists, ...restSelectedMenus];
+      const filtred = formatCartLists.filter((item) => !addedCartLists.includes(item.menuDetailId));
 
-      cartMenus = {
-        cartId: null,
-        menuId: menuObj.menuId,
-        holiday: null,
-        name: menuObj.name,
-        image: menuObj.image,
-        menuDetails: newCartLists,
-        isSold: menuObj.isSold,
-        createdAt: '',
-      };
+      const mergedCartLists = addToAlreadyInCartLists.map((item: IGetCart) => {
+        if (item.menuId === menuItem.id) {
+          return { ...item, menuDetails: [...filtred, ...item.menuDetails] };
+        } else {
+          return item;
+        }
+      });
+
+      dispatch(SET_NON_MEMBER_CART_LISTS(mergedCartLists));
+    } else {
+      const newCartLists = [...nonMemberCartLists, cartMenus] as any;
+      dispatch(SET_NON_MEMBER_CART_LISTS(newCartLists));
     }
-
-    dispatch(SET_NON_MEMBER_CART_LISTS(cartMenus));
   };
 
   const addToCart = async () => {
