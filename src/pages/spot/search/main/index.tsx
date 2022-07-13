@@ -67,7 +67,9 @@ const SpotSearchMainPage = (): ReactElement => {
     defaultRedioId();
     setKeyword(spotKeyword);
     dispatch(SET_SPOT_MAP_SWITCH(false));
-    getSpotList({ keyword: '' });
+    if (spotKeyword.length === 0) {
+      getSpotList({ keyword: '' });
+    };
   }, []);
 
   useEffect(() => {
