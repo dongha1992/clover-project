@@ -19,7 +19,13 @@ import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
+import {
+  INIT_AFTER_SETTING_DELIVERY,
+  cartForm,
+  SET_CART_LISTS,
+  INIT_CART_LISTS,
+  SET_NON_MEMBER_CART_LISTS,
+} from '@store/cart';
 import { SET_ORDER } from '@store/order';
 import { Item } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
@@ -317,8 +323,6 @@ const CartPage = () => {
     }
   );
 
-  console.log(nonMemberCartLists, 'nonMemberCartLists');
-
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
       /* TODO : 구매제한체크 api */
@@ -451,13 +455,16 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
+    if (!me) {
+      return;
+    }
     const reqBody = pipe(
       checkedMenus,
       flatMap((item) =>
         item.menuDetails.map((detail) => {
           return {
-            menuId: item.menuId,
-            menuDetailId: detail.menuDetailId,
+            menuId: item?.menuId!,
+            menuDetailId: detail.id,
           };
         })
       ),
@@ -522,8 +529,8 @@ const CartPage = () => {
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
     const reqBody = menu.menuDetails.map((item) => {
       return {
-        menuId: menu.menuId,
-        menuDetailId: item.menuDetailId,
+        menuId: menu?.menuId!,
+        menuDetailId: item.id,
       };
     });
 
@@ -532,7 +539,16 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(reqBody),
+        onSubmit: () => {
+          if (!me) {
+            const filtered: any = cartItemList.filter((item) => item.menuId !== menu.menuId);
+            dispatch(SET_NON_MEMBER_CART_LISTS(filtered));
+            setCartItemList(filtered);
+            return;
+          } else {
+            mutateDeleteItem(reqBody);
+          }
+        },
       })
     );
   };
@@ -583,10 +599,10 @@ const CartPage = () => {
       let menuId;
       const changed = item.menuDetails.map((detail) => {
         if (detail.menuDetailId === menuDetailId) {
-          menuId = detail.id;
+          menuId = detail.menuId!;
           return { ...detail, quantity };
         } else {
-          detail;
+          return detail;
         }
       });
 
@@ -601,12 +617,11 @@ const CartPage = () => {
   };
 
   const clickPlusButton = (menuDetailId: number, quantity: number) => {
-    console.log(me, '--', menuDetailId);
-
     if (!me) {
       const sliced = cartItemList.slice();
       const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
-      setCartItemList(changedCartItemList);
+
+      reorderCartList(changedCartItemList);
       return;
     } else {
       const parmas = {
@@ -621,7 +636,7 @@ const CartPage = () => {
     if (!me) {
       const sliced = cartItemList.slice();
       const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
-      setCartItemList(changedCartItemList);
+      reorderCartList(changedCartItemList);
       return;
     }
 
@@ -818,13 +833,13 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
-    if (destinationObj?.delivery) {
+    if (destinationObj?.delivery && me) {
       const { fee, amountForFree, minimum } =
         destinationObj.delivery && DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!]!;
       if (!fee || amountForFree <= totalAmount) return 0;
       return fee;
     } else {
-      return 3000;
+      return 0;
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
@@ -943,7 +958,6 @@ const CartPage = () => {
   useEffect(() => {
     getTotalPrice();
     setNutritionObj(getTotalNutrition(checkedMenus));
-    console.log(checkedMenus, '--');
   }, [checkedMenus, disposableList]);
 
   useEffect(() => {
@@ -971,7 +985,6 @@ const CartPage = () => {
   useEffect(() => {
     // 비회원일경우
     if (!me) {
-      console.log(nonMemberCartLists, 'nonMemberCartLists');
       reorderCartList(nonMemberCartLists ?? []);
     }
   }, []);
@@ -1192,7 +1205,7 @@ const CartPage = () => {
             />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} />
+            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} isLogin={isNil(me)} />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
