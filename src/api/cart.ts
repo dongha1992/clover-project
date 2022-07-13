@@ -8,7 +8,7 @@ export const getCartsApi = ({
   params: {
     delivery: string;
     deliveryDate: string;
-    spotId: number | null;
+    spotId?: number | null;
   };
 }): Promise<AxiosResponse<IGetCartResponse>> => {
   return Api.get(`cart/v1/carts`, { params });

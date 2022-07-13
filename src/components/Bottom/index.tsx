@@ -5,12 +5,10 @@ import styled from 'styled-components';
 // import HomeBottom from './HomeBottom';
 // import DetailBottom from './DetailBottom';
 // import SpotDetailBottom from './SpotDetailBottom';
-// import SubsBottom from './SubsBottom';
 
 const HomeBottom = dynamic(() => import('./HomeBottom'));
 const DetailBottom = dynamic(() => import('./DetailBottom'));
 const SpotDetailBottom = dynamic(() => import('./SpotDetailBottom'));
-const SubsBottom = dynamic(() => import('./SubsBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
 const Bottom = () => {
@@ -32,9 +30,6 @@ const Bottom = () => {
         }
         case ['/spot/detail/[id]'].includes(currentPath): {
           return <SpotDetailBottom />;
-        }
-        case ['/subscription/products/[id]'].includes(currentPath): {
-          return <SubsBottom />;
         }
         case [
           '/mypage/card/register/term',

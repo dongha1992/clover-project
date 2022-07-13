@@ -19,7 +19,13 @@ import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
-import { INIT_AFTER_SETTING_DELIVERY, cartForm, SET_CART_LISTS, INIT_CART_LISTS } from '@store/cart';
+import {
+  INIT_AFTER_SETTING_DELIVERY,
+  cartForm,
+  SET_CART_LISTS,
+  INIT_CART_LISTS,
+  SET_NON_MEMBER_CART_LISTS,
+} from '@store/cart';
 import { SET_ORDER } from '@store/order';
 import { Item } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
@@ -47,7 +53,7 @@ import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postC
 import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { pipe, toArray, flatMap } from '@fxts/core';
+import { pipe, toArray, flatMap, lte } from '@fxts/core';
 import {
   CartItem,
   DeliveryTypeAndLocation,
@@ -65,7 +71,7 @@ import 'dayjs/locale/ko';
 
 dayjs.locale('ko');
 
-/*TODO: 배송비할인 */
+/*TODO: 카트 삭제 id 처리 */
 
 interface IMenuDetailsId {
   menuDetailId: number;
@@ -90,6 +96,7 @@ const CartPage = () => {
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
+  const [isInvalidDestination, setIsInvalidDestination] = useState<boolean>(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
@@ -101,6 +108,8 @@ const CartPage = () => {
     deliveryDetail: null,
     location: null,
     closedDate: '',
+    main: false,
+    spotId: null,
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
@@ -113,6 +122,8 @@ const CartPage = () => {
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const { me } = useSelector(userForm);
+  const { nonMemberCartLists } = useSelector(cartForm);
+
   const queryClient = useQueryClient();
 
   const { showToast, hideToast } = useToast();
@@ -127,10 +138,12 @@ const CartPage = () => {
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
       /* TODO: 스팟아이디 넣어야함 */
+      console.log(destinationObj, 'destinationObj');
+
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
         deliveryDate: selectedDeliveryDay,
-        spotId: isSpot ? 1 : null,
+        spotId: isSpot ? destinationObj?.spotId : null,
       };
 
       const { data } = await getCartsApi({ params });
@@ -148,7 +161,7 @@ const CartPage = () => {
           dispatch(SET_CART_LISTS(data));
           if (isFirstRender) {
             setDisposableList(
-              data.menuDetailOptions.map((item) => {
+              data?.menuDetailOptions?.map((item) => {
                 return { ...item, isSelected: true };
               })
             );
@@ -170,7 +183,7 @@ const CartPage = () => {
         days: 90,
         page: 1,
         size: 10,
-        type: 'GENERAL',
+        orderType: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);
@@ -187,6 +200,7 @@ const CartPage = () => {
             destinationId,
             location: userDestination.location!,
             closedDate: userDestination.closedDate && userDestination.closedDate,
+            spotId: userDestination.spotPickup && userDestination.spotPickup.id,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -206,6 +220,7 @@ const CartPage = () => {
                 destinationId,
                 location: data.data?.location ? data.data?.location : null,
                 closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
+                spotId: data.data?.spotPickup?.id && data.data?.spotPickup?.id,
               });
 
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
@@ -272,35 +287,44 @@ const CartPage = () => {
 
   /* TODO: 배송지 가능 api 질문 */
 
-  // const { data: result, refetch } = useQuery(
-  //   ['getAvailabilityDestination'],
-  //   async () => {
-  //     const params = {
-  //       roadAddress: userDestination?.location?.address!,
-  //       jibunAddress: null,
-  //       zipCode: userDestination?.location?.zipCode!,
-  //       delivery: userDeliveryType.toUpperCase() || null,
-  //     };
-  //     const { data } = await getAvailabilityDestinationApi(params);
+  const { data: result } = useQuery(
+    ['getAvailabilityDestination'],
+    async () => {
+      const params = {
+        roadAddress: userDestination?.location?.address!,
+        jibunAddress: null,
+        zipCode: userDestination?.location?.zipCode!,
+        delivery: userDeliveryType.toUpperCase() || null,
+      };
+      const { data } = await getAvailabilityDestinationApi(params);
 
-  //     if (data.code === 200) {
-  //       const { morning, parcel, quick, spot } = data.data;
-  //       console.log(data.data, 'data.data');
-  //     }
-  //   },
-  //   {
-  //     onSuccess: async () => {},
-  //     onError: (error: AxiosError) => {
-  //       const { message } = error.response?.data;
-  //       alert(message);
-  //       return;
-  //     },
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //     cacheTime: 0,
-  //     enabled: me!! && !!userDestination,
-  //   }
-  // );
+      if (data.code === 200) {
+        if (userDeliveryType === Object.keys(data.data)[0]) {
+          const availability = Object.values(data.data)[0];
+          if (!availability) {
+            dispatch(
+              SET_ALERT({
+                alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
+                onSubmit: () => {},
+              })
+            );
+            setIsInvalidDestination(true);
+          }
+        }
+      }
+    },
+    {
+      onSuccess: async () => {},
+      onError: (error: any) => {
+        alert(error.message);
+        return;
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: !!me && !!userDestination,
+    }
+  );
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
@@ -348,7 +372,7 @@ const CartPage = () => {
   };
 
   const reorderCartList = (data: IGetCart[]) => {
-    const checkMenusId = checkedMenus.map((item) => item.menuId);
+    const checkMenusId = checkedMenus?.map((item) => item.menuId);
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
 
     setCheckedMenus(updatedQuantityCart);
@@ -365,8 +389,8 @@ const CartPage = () => {
       (total, menu) => {
         return menu.menuDetails.reduce((total, cur) => {
           return {
-            calorie: total.calorie + cur.calorie * cur.quantity,
-            protein: total.protein + cur.protein * cur.quantity,
+            calorie: total.calorie + cur?.calorie! * cur.quantity,
+            protein: total.protein + cur?.protein! * cur.quantity,
           };
         }, total);
       },
@@ -445,8 +469,8 @@ const CartPage = () => {
       flatMap((item) =>
         item.menuDetails.map((detail) => {
           return {
-            menuId: item.menuId,
-            menuDetailId: detail.menuDetailId,
+            menuId: item?.menuId!,
+            menuDetailId: detail.id,
           };
         })
       ),
@@ -458,7 +482,16 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem({ reqBody, cartIds }),
+        onSubmit: () => {
+          if (!me) {
+            const selectedIds = checkedMenus.map((item) => item.menuId);
+            const filtered = cartItemList.filter((item) => !selectedIds.includes(item.menuId));
+            setNonMemberCartListsHandler(filtered);
+            return;
+          } else {
+            mutateDeleteItem(reqBody);
+          }
+        },
       })
     );
   };
@@ -483,7 +516,6 @@ const CartPage = () => {
       const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
       if (hasOptionalMenu) {
         const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main).length === 1;
-
         if (hasMoreOneMainMenu) {
           alertMessage = '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.';
           const foundOptional =
@@ -511,7 +543,34 @@ const CartPage = () => {
         alertMessage,
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem({ reqBody, cartIds: [cartId] }),
+        onSubmit: () => {
+          /* TODO: 비회원일 때 선택옵션 끼고 테스트 해봐야함 */
+          if (!me) {
+            const menuDetailIds = reqBody.map((ids) => ids.menuDetailId);
+            let filtered = cartItemList.map((item) => {
+              if (item.menuId === menuId) {
+                return {
+                  ...item,
+                  menuDetails: item.menuDetails.filter((item) => !menuDetailIds.includes(item.menuDetailId)),
+                };
+              } else {
+                return item;
+              }
+            });
+
+            const checkHasMainMenu = filtered
+              .find((item) => item.menuId === menuId)
+              ?.menuDetails.some((item) => item.main);
+
+            if (!checkHasMainMenu) {
+              filtered = filtered.filter((item) => item.menuId !== menuId);
+            }
+
+            setNonMemberCartListsHandler(filtered);
+          } else {
+            mutateDeleteItem(reqBody);
+          }
+        },
       })
     );
   };
@@ -520,8 +579,8 @@ const CartPage = () => {
     const cartIds = menu.cartId;
     const reqBody = menu.menuDetails.map((item) => {
       return {
-        menuId: menu.menuId,
-        menuDetailId: item.menuDetailId,
+        menuId: menu?.menuId!,
+        menuDetailId: item.id,
       };
     });
 
@@ -530,9 +589,29 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem({ reqBody, cartIds: [cartIds] }),
+        onSubmit: () => {
+          if (!me) {
+            const filtered: any = cartItemList.filter((item) => item.menuId !== menu.menuId);
+            setNonMemberCartListsHandler(filtered);
+            return;
+          } else {
+            mutateDeleteItem(reqBody);
+          }
+        },
       })
     );
+  };
+
+  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
+  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
+  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
+  //   return { foundMenu, isMain, hasOptionalMenu };
+  // };
+
+  const setNonMemberCartListsHandler = (list: any) => {
+    dispatch(SET_NON_MEMBER_CART_LISTS(list));
+    setCartItemList(list);
   };
 
   const clickDisposableItemCount = (id: number, quantity: number) => {
@@ -575,15 +654,53 @@ const CartPage = () => {
     }
   };
 
+  const chnagedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+    let changedCartItemList: any = [];
+    list.forEach((item) => {
+      let menuId;
+      const changed = item.menuDetails.map((detail) => {
+        if (detail.menuDetailId === menuDetailId) {
+          menuId = detail.menuId!;
+          return { ...detail, quantity };
+        } else {
+          return detail;
+        }
+      });
+
+      if (item.menuId === menuId) {
+        const found = { ...item, menuDetails: changed };
+        changedCartItemList.push(found);
+      } else {
+        changedCartItemList.push(item);
+      }
+    });
+    return changedCartItemList;
+  };
+
   const clickPlusButton = (menuDetailId: number, quantity: number) => {
-    const parmas = {
-      menuDetailId,
-      quantity,
-    };
-    mutateItemQuantity(parmas);
+    if (!me) {
+      const sliced = cartItemList.slice();
+      const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
+
+      reorderCartList(changedCartItemList);
+      return;
+    } else {
+      const parmas = {
+        menuDetailId,
+        quantity,
+      };
+      mutateItemQuantity(parmas);
+    }
   };
 
   const clickMinusButton = (menuDetailId: number, quantity: number) => {
+    if (!me) {
+      const sliced = cartItemList.slice();
+      const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
+      reorderCartList(changedCartItemList);
+      return;
+    }
+
     const parmas = {
       menuDetailId,
       quantity,
@@ -629,10 +746,12 @@ const CartPage = () => {
   };
 
   const goToOrder = () => {
+    if (!me) return;
+
     const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
     const isUnderMinimum = totalAmount < minimum;
 
-    if (isNil(destinationObj) || !me || isUnderMinimum) return;
+    if (isNil(destinationObj) || isUnderMinimum) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
@@ -665,7 +784,7 @@ const CartPage = () => {
     list.forEach((item: IGetCart) =>
       item.menuDetails.forEach((detail) => {
         tempOrderMenus.push({
-          menuDetailId: detail.menuDetailId,
+          menuDetailId: detail.id,
           menuQuantity: detail.quantity,
         });
       })
@@ -754,7 +873,6 @@ const CartPage = () => {
     const disposablePrice = getDisposableItem().price;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
-
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
@@ -778,11 +896,13 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
-    if (destinationObj?.delivery) {
+    if (destinationObj?.delivery && me) {
       const { fee, amountForFree, minimum } =
         destinationObj.delivery && DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!]!;
       if (!fee || amountForFree <= totalAmount) return 0;
       return fee;
+    } else {
+      return 0;
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
@@ -802,11 +922,11 @@ const CartPage = () => {
       const isUnderMinimum = totalAmount < minimum;
 
       if (isUnderMinimum) {
-        buttonMessage = `최소주문금액까지 ${minimum - totalAmount}원 남았습니다`;
+        buttonMessage = `최소주문금액까지 ${getFormatPrice(String(minimum - totalAmount))}원 남았습니다`;
       } else if (amountForFree > totalAmount) {
-        buttonMessage = `${amountForFree - totalAmount}원 더 담고 무료 배송하기`;
+        buttonMessage = `${getFormatPrice(String(amountForFree - totalAmount))}원 더 담고 무료 배송하기`;
       } else {
-        buttonMessage = `${totalAmount}원 주문하기`;
+        buttonMessage = `${getFormatPrice(String(totalAmount))}원 주문하기`;
       }
 
       return (
@@ -926,6 +1046,13 @@ const CartPage = () => {
   }, [destinationObj]);
 
   useEffect(() => {
+    // 비회원일경우
+    if (!me) {
+      reorderCartList(nonMemberCartLists ?? []);
+    }
+  }, []);
+
+  useEffect(() => {
     setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
   }, []);
@@ -1002,33 +1129,36 @@ const CartPage = () => {
               ))}
             </VerticalCartList>
           </CartListWrapper>
-          <DisposableSelectWrapper>
-            <WrapperTitle>
-              <SVGIcon name="fcoIcon" />
-              <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
-            </WrapperTitle>
-            <CheckBoxWrapper>
-              {disposableList?.map((item, index) => (
-                <DisposableItem key={index}>
-                  <div className="disposableLeft">
-                    <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
-                    <div className="disposableText">
-                      <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
-                      <TextH5B>{item.price}원</TextH5B>
+          {me && (
+            <DisposableSelectWrapper>
+              <WrapperTitle>
+                <SVGIcon name="fcoIcon" />
+                <TextH5B padding="0 0 0 8px">일회용품은 한 번 더 생각해주세요!</TextH5B>
+              </WrapperTitle>
+              <CheckBoxWrapper>
+                {disposableList?.map((item, index) => (
+                  <DisposableItem key={index}>
+                    <div className="disposableLeft">
+                      <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
+                      <div className="disposableText">
+                        <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
+                        <TextH5B>{item.price}원</TextH5B>
+                      </div>
                     </div>
-                  </div>
-                  <Right>
-                    <CountButton
-                      menuDetailId={item.id}
-                      quantity={item.quantity}
-                      clickPlusButton={clickDisposableItemCount}
-                      clickMinusButton={clickDisposableItemCount}
-                    />
-                  </Right>
-                </DisposableItem>
-              ))}
-            </CheckBoxWrapper>
-          </DisposableSelectWrapper>
+                    <Right>
+                      <CountButton
+                        menuDetailId={item.id}
+                        quantity={item.quantity}
+                        clickPlusButton={clickDisposableItemCount}
+                        clickMinusButton={clickDisposableItemCount}
+                      />
+                    </Right>
+                  </DisposableItem>
+                ))}
+              </CheckBoxWrapper>
+            </DisposableSelectWrapper>
+          )}
+
           <NutritionInfoWrapper>
             <FlexBetween>
               <span className="h5B">
@@ -1138,7 +1268,7 @@ const CartPage = () => {
             />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} />
+            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} isLogin={isNil(me)} />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>

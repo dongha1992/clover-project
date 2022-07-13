@@ -17,13 +17,15 @@ import { calculateArrival, getCustomDate, checkTimerLimitHelper } from '@utils/d
 import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { Obj, IMenus, IMenuDetails } from '@model/index';
-// import { UPDATE_CART_LIST } from '@store/cart';
+import { Obj, IMenus, IMenuDetails, IGetCart, IMenuDetailsInCart } from '@model/index';
+import { SET_NON_MEMBER_CART_LISTS, INIT_NON_MEMBER_CART_LISTS, DELETE_NON_MEMBER_CART_LISTS } from '@store/cart';
 import { postCartsApi } from '@api/cart';
+import differenceWith from 'lodash-es/differenceWith';
 
 import 'dayjs/locale/ko';
 import { menuSelector } from '@store/menu';
 import { SET_ALERT } from '@store/alert';
+import { userForm } from '@store/user';
 
 dayjs.locale('ko');
 
@@ -37,16 +39,19 @@ interface IRolling {
 
 interface ISelectedMenu {
   discountPrice: number;
-  id: number;
+  menuDetailId: number;
   main: boolean;
   menuId?: number;
   name: string;
   price: number;
   quantity?: number;
   personalMaximum?: number;
+  calorie?: number;
+  isSold?: boolean;
+  protein?: number;
 }
 
-const CartSheet = () => {
+const CartSheet = ({ menuItem }: any) => {
   const [rollingData, setRollingData] = useState([
     {
       id: 1,
@@ -70,9 +75,11 @@ const CartSheet = () => {
   const { showToast, hideToast } = useToast();
 
   const dispatch = useDispatch();
-  const { cartLists } = useSelector(cartForm);
+
+  const { cartLists, nonMemberCartLists } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
-  const { menuItem } = useSelector(menuSelector);
+  // const { menuItem } = useSelector(menuSelector);
+  const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
 
@@ -82,7 +89,7 @@ const CartSheet = () => {
       const reqBody = selectedMenus.map((item) => {
         return {
           menuId: menuItem.id,
-          menuDetailId: item.id,
+          menuDetailId: item.menuDetailId,
           quantity: item.quantity,
           main: item.main,
         };
@@ -229,8 +236,11 @@ const CartSheet = () => {
   };
 
   const selectMenuHandler = (menu: IMenuDetails) => {
-    if (!checkAlreadySelect(menu.id)) {
-      setSelectedMenus([...selectedMenus, { ...menu, quantity: 1 }]);
+    // menu.id === menuDetailId
+
+    if (!checkAlreadySelect(menu?.id!)) {
+      const { id, ...rest } = menu;
+      setSelectedMenus([...selectedMenus, { ...menu, menuDetailId: menu.id, quantity: 1 }]);
     } else {
       clickPlusButton(menu.id);
     }
@@ -243,7 +253,7 @@ const CartSheet = () => {
   };
 
   const removeCartItemHandler = (id: number): void => {
-    const newSelectedMenus = selectedMenus.filter((item: any) => item.id !== id);
+    const newSelectedMenus = selectedMenus.filter((item: any) => item.menuDetailId !== id);
     setSelectedMenus(newSelectedMenus);
   };
 
@@ -273,18 +283,18 @@ const CartSheet = () => {
   const clickPlusButton = async (id: number, quantity?: number) => {
     /*TODO: 중복코드 */
 
-    const foundItem = selectedMenus.find((item) => item.id === id);
+    const foundItem = selectedMenus.find((item: ISelectedMenu) => item.menuDetailId === id);
 
     if (foundItem?.personalMaximum) {
       if (foundItem?.personalMaximum < quantity!) return;
     }
 
-    const newSelectedMenus = selectedMenus.map((item: any) => {
-      if (item.id === id) {
-        if (item.limitQuantity && item.quantity > item.limitQuantity - 1) {
+    const newSelectedMenus = selectedMenus.map((item: ISelectedMenu) => {
+      if (item.menuDetailId === id) {
+        if (item.personalMaximum && item?.quantity! > item.personalMaximum - 1) {
           return item;
         } else {
-          return { ...item, quantity: quantity ? quantity : item.quantity + 1 };
+          return { ...item, quantity: quantity ? quantity : item?.quantity! + 1 };
         }
       }
       return item;
@@ -294,8 +304,8 @@ const CartSheet = () => {
   };
 
   const clickMinusButton = (id: number, quantity: number) => {
-    const newSelectedMenus = selectedMenus.map((item: any) => {
-      if (item.id === id) {
+    const newSelectedMenus = selectedMenus.map((item: ISelectedMenu) => {
+      if (item.menuDetailId === id) {
         return { ...item, quantity };
       }
       return item;
@@ -304,11 +314,110 @@ const CartSheet = () => {
     setSelectedMenus(newSelectedMenus);
   };
 
+  const addNonMemberCart = () => {
+    const menuObj = {
+      isSold: menuItem.isSold,
+      menuId: menuItem.id,
+      image: menuItem.thumbnail[0],
+      name: menuItem.name,
+    };
+
+    let formatCartLists: IMenuDetailsInCart[] = selectedMenus?.map((item) => {
+      //id: item.menuId! -> item.menuDetailId!
+      return {
+        availabilityInfo: null,
+        menuDetailId: item.menuDetailId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity!,
+        calorie: item.calorie && item.calorie,
+        protein: item.protein && item.protein,
+        isSold: item.isSold!,
+        main: item.main,
+        status: '',
+        createdAt: '',
+        discountPrice: item.discountPrice,
+        discountRate: null,
+        id: item.menuDetailId!,
+        menuId: item.menuId,
+      };
+    });
+
+    let cartMenus: IGetCart = {
+      cartId: null,
+      menuId: menuObj.menuId,
+      holiday: null,
+      name: menuObj.name,
+      image: menuObj.image,
+      menuDetails: formatCartLists,
+      isSold: menuObj.isSold,
+      createdAt: '',
+    };
+
+    const addToAlreadyInCartLists: any = [];
+    const addedCartLists: any = [];
+
+    // 메뉴 하나
+    const found = nonMemberCartLists.find((item) => item.menuId === menuItem.id);
+
+    try {
+      if (nonMemberCartLists.length !== 0 && found) {
+        nonMemberCartLists.forEach((localItem) => {
+          const changed = localItem.menuDetails.map((localDetail) => {
+            const found = formatCartLists.find((detail) => detail.menuDetailId === localDetail.menuDetailId);
+            if (found) {
+              addedCartLists.push(found.menuDetailId);
+              return { ...localDetail, quantity: localDetail.quantity + found.quantity };
+            } else {
+              return localDetail;
+            }
+          });
+
+          if (localItem.menuId === menuItem.id) {
+            const found = { ...localItem, menuDetails: changed };
+            addToAlreadyInCartLists.push(found);
+          } else {
+            addToAlreadyInCartLists.push(localItem);
+          }
+        });
+
+        const filtred = formatCartLists.filter((item) => !addedCartLists.includes(item.menuDetailId));
+
+        const mergedCartLists = addToAlreadyInCartLists.map((item: IGetCart) => {
+          if (item.menuId === menuItem.id) {
+            return { ...item, menuDetails: [...filtred, ...item.menuDetails] };
+          } else {
+            return item;
+          }
+        });
+
+        dispatch(SET_NON_MEMBER_CART_LISTS(mergedCartLists));
+      } else {
+        const newCartLists = [...nonMemberCartLists, cartMenus] as any;
+        dispatch(SET_NON_MEMBER_CART_LISTS(newCartLists));
+      }
+    } catch (error) {
+      dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+    } finally {
+      showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+      dispatch(INIT_BOTTOM_SHEET());
+    }
+  };
+
   const addToCart = async () => {
-    if (checkHasMainMenu()) {
-      await mutateAddCartItem();
+    // 비회원일 경우
+    if (!me) {
+      if (checkHasMainMenu()) {
+        addNonMemberCart();
+      } else {
+        dispatch(SET_ALERT({ alertMessage: '필수옵션을 선택해주세요.' }));
+      }
     } else {
-      dispatch(SET_ALERT({ alertMessage: '필수옵션을 선택해주세요.' }));
+      if (checkHasMainMenu()) {
+        await mutateAddCartItem();
+      } else {
+        dispatch(SET_ALERT({ alertMessage: '필수옵션을 선택해주세요.' }));
+      }
     }
   };
 

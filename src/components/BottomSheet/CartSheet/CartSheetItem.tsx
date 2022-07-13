@@ -55,7 +55,7 @@ const CartSheetItem = ({
               <TextH5B>{discountedPrice.toLocaleString()}원</TextH5B>
             </PriceWrapper>
             {!isCart && (
-              <RemoveBtnContainer onClick={() => removeCartItemHandler && removeCartItemHandler(menu.id)}>
+              <RemoveBtnContainer onClick={() => removeCartItemHandler && removeCartItemHandler(menu.menuDetailId)}>
                 <SVGIcon name="defaultCancel" />
               </RemoveBtnContainer>
             )}
@@ -66,7 +66,7 @@ const CartSheetItem = ({
                 </Tag>
               ) : (
                 <CountButton
-                  menuDetailId={menu.id}
+                  menuDetailId={menu.menuDetailId}
                   quantity={menu.quantity}
                   clickPlusButton={clickPlusButton}
                   clickMinusButton={clickMinusButton}

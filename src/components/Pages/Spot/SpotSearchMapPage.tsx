@@ -20,10 +20,10 @@ interface IProps {
 const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement => {
   const router = useRouter();
   const slideRef = useRef<HTMLElement | null | any>(null);
-  const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
+  const { spotSearchArr,  spotListAllChecked } = useSelector(spotSelector);
   const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
   const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
-  const [selectedSpotList, setSelectedSpotList] = useState({});
+  const [selectedSpotList, setSelectedSpotList] = useState([]);
   const [selected, setSelected] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const list = spotSearchArr ?? [];
@@ -57,16 +57,17 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchKakaoMap zoom={2} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
+        <SpotSearchKakaoMap zoom={3} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
         {
           selected && spotListAllChecked && (
             !visible &&
             <SpotListWrapper>
-            <SpotListSlider piece={true}>
-              <SpotsSearchResultList map item={selectedSpotList} />
-            </SpotListSlider>
-          </SpotListWrapper>
-
+              <SpotListSlider {...setting} ref={slideRef}>
+                {selectedSpotList?.map((item, index) => (
+                  <SpotsSearchResultList map item={item} key={index} />
+                ))}
+              </SpotListSlider>
+            </SpotListWrapper>
           )
         }
         {
@@ -96,21 +97,11 @@ const MapWrapper = styled.section`
   height: 100%;
   background: ${theme.greyScale15};
 `;
-const SpotListSlider = styled(Slider)<{piece?: boolean}>`
+const SpotListSlider = styled(Slider)`
   width: 100%;
   padding: 16px 0;
   .slick-slide > div {
-    ${({piece}) => {
-      if (piece) {
-        return css `
-          padding: 0px 30px;
-        `;
-      } else {
-        return css `
-          padding: 0 6px;
-        `;
-      }
-    }}
+    padding: 0 6px;
   }
 `;
 
@@ -122,7 +113,7 @@ const SpotListWrapper = styled.section`
   max-width: ${breakpoints.mobile}px;
   position: fixed;
   bottom: 0px;
-  z-index: 50;
+  z-index: 500;
 `;
 
 export default SpotSearchMapPage;

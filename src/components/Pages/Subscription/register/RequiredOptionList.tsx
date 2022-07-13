@@ -1,10 +1,7 @@
 import cloneDeep from 'lodash-es/cloneDeep';
-import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMenuTableItems } from '@model/index';
-import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/register';
+import { MenuUl } from '@pages/subscription/register';
 import { SET_SUBS_CALENDAR_SELECT_MENU, SET_SUBS_ORDER_MENUS, subscriptionForm } from '@store/subscription';
-import Image from 'next/image';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';

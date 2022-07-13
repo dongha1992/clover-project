@@ -4,10 +4,10 @@ import { IJuso, IRegisterDestinationRequest, IDestinationsResponse, IGetOrderLis
 import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
 interface IAvailableDestination {
-  morning: boolean;
-  quick: boolean;
-  parcel: boolean;
-  spot: boolean;
+  morning?: boolean;
+  quick?: boolean;
+  parcel?: boolean;
+  spot?: boolean;
 }
 
 interface TProps {
