@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexCol, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -42,12 +42,21 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const isTrial = item?.spotPickup?.spot.isTrial;
   const type = item?.spotPickup?.spot?.type;
   const discountRate = item?.spotPickup?.spot?.discountRate;
+  const [isSubs, setIsSubs] = useState<boolean>();
 
   // 운영 종료 예정 or 종료
   const closedDate = item?.spotPickup?.spot.closedDate;
   const dDay = now.diff(dayjs(item?.spotPickup?.spot.closedDate), 'day');
   const closedOperation = dDay > 0 || item?.spotPickup?.spot.isClosed;
   const closedSoonOperation = dDay >= -14;
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.isSubscription) {
+        setIsSubs(true);
+      }
+    }
+  }, [router.isReady, router.query.isSubscription]);
 
   const renderSpotMsg = useCallback(() => {
     switch (true) {
@@ -265,7 +274,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
                   프라이빗
                 </Tag>
               ) : null}
-              {discountRate! > 0 && (
+              {discountRate! > 0 && !isSubs && (
                 <Tag
                   margin="0 5px 0 0"
                   backgroundColor={theme.brandColor5P}
