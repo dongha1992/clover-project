@@ -455,9 +455,6 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
-    if (!me) {
-      return;
-    }
     const reqBody = pipe(
       checkedMenus,
       flatMap((item) =>
@@ -476,7 +473,18 @@ const CartPage = () => {
         alertMessage: '선택을 상품을 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(reqBody),
+        onSubmit: () => {
+          if (!me) {
+            const selectedIds = checkedMenus.map((item) => item.menuId);
+            const filtered = cartItemList.filter((item) => !selectedIds.includes(item.menuId));
+
+            setNonMemberCartListsHandler(filtered);
+
+            return;
+          } else {
+            mutateDeleteItem(reqBody);
+          }
+        },
       })
     );
   };
@@ -542,8 +550,7 @@ const CartPage = () => {
         onSubmit: () => {
           if (!me) {
             const filtered: any = cartItemList.filter((item) => item.menuId !== menu.menuId);
-            dispatch(SET_NON_MEMBER_CART_LISTS(filtered));
-            setCartItemList(filtered);
+            setNonMemberCartListsHandler(filtered);
             return;
           } else {
             mutateDeleteItem(reqBody);
@@ -551,6 +558,11 @@ const CartPage = () => {
         },
       })
     );
+  };
+
+  const setNonMemberCartListsHandler = (list: any) => {
+    dispatch(SET_NON_MEMBER_CART_LISTS(list));
+    setCartItemList(list);
   };
 
   const clickDisposableItemCount = (id: number, quantity: number) => {
