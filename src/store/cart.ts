@@ -56,7 +56,7 @@ export const cart = createSlice({
       //   (item) => item.id !== payload
       // );
     },
-    SET_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<IGetCart>) => {
+    SET_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<IGetCart[]>) => {
       state.nonMemberCartLists = action.payload;
     },
     DELETE_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<any>) => {
