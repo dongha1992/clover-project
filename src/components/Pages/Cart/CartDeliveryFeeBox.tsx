@@ -1,20 +1,24 @@
 import React from 'react';
-import styled from 'styled-components';
-import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@components/Shared/Text';
-import { FlexBetween } from '@styles/theme';
+import { TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
+import { FlexBetween, theme } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
 
 interface IProps {
   deliveryFee: number;
   deliveryFeeDiscount?: number;
+  isLogin: boolean;
 }
 
-const CartDeliveryFeeBox = ({ deliveryFee, deliveryFeeDiscount }: IProps) => {
+const CartDeliveryFeeBox = ({ deliveryFee, deliveryFeeDiscount, isLogin }: IProps) => {
   return (
     <>
       <FlexBetween>
         <TextH5B>배송비</TextH5B>
-        <TextB2R>{deliveryFee ? `${getFormatPrice(String(deliveryFee))}원` : '무료배송'}</TextB2R>
+        {!isLogin ? (
+          <TextB2R>{deliveryFee ? `${getFormatPrice(String(deliveryFee))}원` : '무료배송'}</TextB2R>
+        ) : (
+          <TextH6B color={theme.brandColor}>배송방법에 따라 배송비가 부과돼요.</TextH6B>
+        )}
       </FlexBetween>
       {deliveryFeeDiscount !== 0 && (
         <FlexBetween>

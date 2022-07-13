@@ -38,7 +38,7 @@ const CartItem = ({
             clickMinusButton={clickMinusButton}
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
-            menuId={menu.menuId}
+            menuId={menu?.menuId!}
             holiday={menu.holiday}
             menuName={menu.name}
           />

@@ -31,20 +31,21 @@ const CartActualItem = ({
   menuName,
 }: IProps) => {
   const { discount, discountedPrice } = getDiscountPrice({
-    discountPrice: menuDetail.discountPrice,
-    price: menuDetail.price,
+    discountPrice: menuDetail?.discountPrice,
+    price: menuDetail?.price,
   });
-  console.log(menuDetail);
 
   return (
-    <Container isSold={menuDetail.isSold}>
+    <Container isSold={menuDetail?.isSold}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R>{!menuDetail.main ? `[선택옵션] ${menuDetail.name}` : `${menuName} / ${menuDetail.name}`}</TextB3R>
+          <TextB3R>
+            {!menuDetail?.main ? `[선택옵션] ${menuDetail?.name}` : `${menuName} / ${menuDetail?.name}`}
+          </TextB3R>
           <div
             onClick={() =>
               removeCartActualItemHandler &&
-              removeCartActualItemHandler({ menuDetailId: menuDetail.menuDetailId, menuId })
+              removeCartActualItemHandler({ menuDetailId: menuDetail?.menuDetailId, menuId })
             }
           >
             <SVGIcon name="defaultCancel" />
@@ -52,16 +53,16 @@ const CartActualItem = ({
         </FlexBetween>
         <FlexCol>
           <PriceWrapper>
-            <TextH5B color={menuDetail.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
+            <TextH5B color={menuDetail?.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
               {discount}%
             </TextH5B>
             <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
           </PriceWrapper>
           <InfoContainer>
-            {menuDetail.availabilityInfo || holiday ? (
+            {menuDetail?.availabilityInfo || holiday ? (
               <InfoMessage
-                isSold={menuDetail.isSold}
-                availabilityInfo={menuDetail.availabilityInfo}
+                isSold={menuDetail?.isSold}
+                availabilityInfo={menuDetail?.availabilityInfo}
                 holiday={holiday}
               />
             ) : (
@@ -70,9 +71,9 @@ const CartActualItem = ({
 
             <CountButtonContainer>
               <CountButton
-                isSold={menuDetail.isSold}
-                menuDetailId={menuDetail.id}
-                quantity={menuDetail.quantity}
+                isSold={menuDetail?.isSold}
+                menuDetailId={menuDetail?.id}
+                quantity={menuDetail?.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}
               />

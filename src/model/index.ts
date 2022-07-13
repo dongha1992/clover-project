@@ -2086,12 +2086,13 @@ export interface IMenuDetailsInCart {
   discountPrice: number;
   discountRate: number | null;
   id: number;
+  menuId?: number;
   // menuQuantity?: number;
 }
 export interface IGetCart {
   // availabilityInfo: ICartAvailabilty;
   cartId?: number | null;
-  menuId: number;
+  menuId?: number;
   holiday: number[][] | null;
   name: string;
   image: {
