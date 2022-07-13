@@ -5,8 +5,8 @@ import CartActualItem from './CartActualItem';
 import { IGetCart, IMenuDetailsInCart } from '@model/index';
 interface handleSelectCartItemIProps {
   handleSelectCartItem: (menu: IGetCart) => void;
-  clickPlusButton: (menuDetailId: number, quantity: number) => void;
-  clickMinusButton: (menuDetailId: number, quantity: number) => void;
+  clickPlusButton: (menuDetailId: number, quantity: number, menuId?: number) => void;
+  clickMinusButton: (menuDetailId: number, quantity: number, menuId?: number) => void;
   removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => void;
   removeCartDisplayItemHandler: (menu: IGetCart) => void;
   checkedMenus: IGetCart[];
@@ -33,11 +33,11 @@ const CartItem = ({
       {menu?.menuDetails.map((menuDetail: IMenuDetailsInCart, index: number) => {
         return (
           <CartActualItem
+            key={index}
             clickPlusButton={clickPlusButton}
             clickMinusButton={clickMinusButton}
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
-            key={index}
             menuId={menu.menuId}
             holiday={menu.holiday}
             menuName={menu.name}

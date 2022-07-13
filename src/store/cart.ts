@@ -9,6 +9,7 @@ export interface ICartLists {
 }
 interface IProps {
   cartLists: ICartLists[];
+  nonMemberCartLists: IGetCart[];
   cartSheetObj: any;
   isFromDeliveryPage: boolean;
   isLoading: boolean;
@@ -17,6 +18,7 @@ interface IProps {
 
 const initialState: IProps = {
   cartLists: [],
+  nonMemberCartLists: [],
   cartSheetObj: {},
   isFromDeliveryPage: false,
   isLoading: false,
@@ -54,6 +56,10 @@ export const cart = createSlice({
       //   (item) => item.id !== payload
       // );
     },
+    SET_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<IGetCart>) => {
+      console.log(action.payload, 'action.payload');
+      state.nonMemberCartLists.push(action.payload);
+    },
   },
 
   extraReducers: (builder) => {
@@ -78,6 +84,7 @@ export const {
   INIT_AFTER_SETTING_DELIVERY,
   REMOVE_CART_ITEM,
   INIT_CART_LISTS,
+  SET_NON_MEMBER_CART_LISTS,
 } = cart.actions;
 export const cartForm = (state: AppState): IProps => state.cart;
 export default cart.reducer;
