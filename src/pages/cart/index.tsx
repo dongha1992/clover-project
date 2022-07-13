@@ -47,7 +47,7 @@ import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postC
 import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { pipe, toArray, flatMap } from '@fxts/core';
+import { pipe, toArray, flatMap, lte } from '@fxts/core';
 import {
   CartItem,
   DeliveryTypeAndLocation,
@@ -111,9 +111,12 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isClosed } = router.query;
+
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
   const { me } = useSelector(userForm);
+  const { nonMemberCartLists } = useSelector(cartForm);
+
   const queryClient = useQueryClient();
 
   const {
@@ -149,7 +152,7 @@ const CartPage = () => {
           dispatch(SET_CART_LISTS(data));
           if (isFirstRender) {
             setDisposableList(
-              data.menuDetailOptions.map((item) => {
+              data?.menuDetailOptions?.map((item) => {
                 return { ...item, isSelected: true };
               })
             );
@@ -181,7 +184,6 @@ const CartPage = () => {
       onSuccess: async (response) => {
         const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
         if (validDestination && userDeliveryType && userDestination) {
-          console.log(userDestination, 'here');
           const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -311,9 +313,11 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
-      enabled: me!! && !!userDestination,
+      enabled: !!me && !!userDestination,
     }
   );
+
+  console.log(nonMemberCartLists, 'nonMemberCartLists');
 
   const { mutate: mutateItemQuantity } = useMutation(
     async (params: { menuDetailId: number; quantity: number }) => {
@@ -373,8 +377,8 @@ const CartPage = () => {
       (total, menu) => {
         return menu.menuDetails.reduce((total, cur) => {
           return {
-            calorie: total.calorie + cur.calorie * cur.quantity,
-            protein: total.protein + cur.protein * cur.quantity,
+            calorie: total.calorie + cur?.calorie! * cur.quantity,
+            protein: total.protein + cur?.protein! * cur.quantity,
           };
         }, total);
       },
@@ -573,7 +577,37 @@ const CartPage = () => {
     }
   };
 
+  const chnagedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+    let changedCartItemList: any = [];
+    list.forEach((item) => {
+      let menuId;
+      const changed = item.menuDetails.map((detail) => {
+        if (detail.menuDetailId === menuDetailId) {
+          menuId = detail.id;
+          return { ...detail, quantity };
+        } else {
+          detail;
+        }
+      });
+
+      if (item.menuId === menuId) {
+        const found = { ...item, menuDetails: changed };
+        changedCartItemList.push(found);
+      } else {
+        changedCartItemList.push(item);
+      }
+    });
+    return changedCartItemList;
+  };
+
   const clickPlusButton = (menuDetailId: number, quantity: number) => {
+    if (!me) {
+      const sliced = cartItemList.slice();
+      const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
+      setCartItemList(changedCartItemList);
+      return;
+    }
+
     const parmas = {
       menuDetailId,
       quantity,
@@ -581,7 +615,14 @@ const CartPage = () => {
     mutateItemQuantity(parmas);
   };
 
-  const clickMinusButton = (menuDetailId: number, quantity: number) => {
+  const clickMinusButton = (menuDetailId: number, quantity: number, menuId: number) => {
+    if (!me) {
+      const sliced = cartItemList.slice();
+      const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
+      setCartItemList(changedCartItemList);
+      return;
+    }
+
     const parmas = {
       menuDetailId,
       quantity,
@@ -752,7 +793,6 @@ const CartPage = () => {
     const disposablePrice = getDisposableItem().price;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
-
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
@@ -781,6 +821,8 @@ const CartPage = () => {
         destinationObj.delivery && DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!]!;
       if (!fee || amountForFree <= totalAmount) return 0;
       return fee;
+    } else {
+      return 3000;
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
@@ -922,6 +964,13 @@ const CartPage = () => {
       );
     }
   }, [destinationObj]);
+
+  useEffect(() => {
+    // 비회원일경우
+    if (!me) {
+      reorderCartList(nonMemberCartLists);
+    }
+  }, []);
 
   useEffect(() => {
     setIsFirstRender(true);

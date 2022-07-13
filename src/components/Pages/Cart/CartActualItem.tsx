@@ -15,7 +15,7 @@ interface IProps {
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
   menuId: number;
   menuDetail: IMenuDetailsInCart;
-  holiday: number[][];
+  holiday: number[][] | null;
   menuName: string;
 }
 
@@ -57,11 +57,20 @@ const CartActualItem = ({
             <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
           </PriceWrapper>
           <InfoContainer>
-            <InfoMessage isSold={menuDetail.isSold} availabilityInfo={menuDetail.availabilityInfo} holiday={holiday} />
+            {menuDetail.availabilityInfo || holiday ? (
+              <InfoMessage
+                isSold={menuDetail.isSold}
+                availabilityInfo={menuDetail.availabilityInfo}
+                holiday={holiday}
+              />
+            ) : (
+              <div />
+            )}
+
             <CountButtonContainer>
               <CountButton
                 isSold={menuDetail.isSold}
-                menuDetailId={menuDetail.id}
+                menuDetailId={menuDetail.menuDetailId}
                 quantity={menuDetail.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}

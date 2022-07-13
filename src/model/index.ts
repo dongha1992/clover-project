@@ -1734,7 +1734,7 @@ export interface IMenuDetails {
   discountPrice: number;
   main: boolean;
   dailyMaximum?: number;
-  isSold?: number;
+  isSold?: boolean;
   calorie: number;
   thumbnail?: IDetailImage;
   protein: number;
@@ -2063,35 +2063,35 @@ declare global {
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 
-export interface IMenuDetailsInCart {
-  availabilityInfo: { availability: boolean; remainingQuantity: number };
-  menuDetailId: number;
-  name: string;
-  price: number;
-  quantity: number;
-  calorie: number;
-  protein: number;
-  isSold: boolean;
-  main: boolean;
-  status: TCartMenuStatus;
-  createdAt: string;
-  discountPrice: number;
-  discountRate: number;
-  id: number;
-  // menuQuantity?: number;
-}
-
 export type TCartRemainingQuantity = 'DAILY' | 'HOLIDAY' | 'NONE' | 'WEEKLY' | 'PERIOD' | 'PERSON' | string;
 export interface ICartAvailabilty {
   availability: boolean;
   menuDetailAvailabilityMessage: TCartRemainingQuantity;
   remainingQuantity: number;
 }
+
+export interface IMenuDetailsInCart {
+  availabilityInfo: { availability: boolean; remainingQuantity: number } | null;
+  menuDetailId: number;
+  name: string;
+  price: number;
+  quantity: number;
+  calorie?: number;
+  protein?: number;
+  isSold?: boolean;
+  main: boolean;
+  status: TCartMenuStatus;
+  createdAt: string;
+  discountPrice: number;
+  discountRate: number | null;
+  id: number;
+  // menuQuantity?: number;
+}
 export interface IGetCart {
-  availabilityInfo: ICartAvailabilty;
-  cartId: number;
+  // availabilityInfo: ICartAvailabilty;
+  cartId?: number | null;
   menuId: number;
-  holiday: number[][];
+  holiday: number[][] | null;
   name: string;
   image: {
     id: number;
