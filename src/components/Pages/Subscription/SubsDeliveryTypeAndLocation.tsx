@@ -1,6 +1,5 @@
 import { TextB3R, TextH4B } from '@components/Shared/Text';
-import { DELIVERY_TYPE_MAP } from '@constants/order';
-import { ILocation, Obj } from '@model/index';
+import { ILocation } from '@model/index';
 import { IDestinationAddress } from '@pages/subscription/set-info';
 import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';

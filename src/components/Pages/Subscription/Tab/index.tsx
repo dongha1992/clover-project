@@ -1,3 +1,3 @@
-import DawnTab from './DawnTab';
+import ParcelTab from './ParcelTab';
 import SpotTab from './SpotTab';
-export { DawnTab, SpotTab };
+export { ParcelTab, SpotTab };

@@ -67,6 +67,7 @@ const SpotSearchMainPage = (): ReactElement => {
     defaultRedioId();
     setKeyword(spotKeyword);
     dispatch(SET_SPOT_MAP_SWITCH(false));
+    getSpotList({ keyword: '' });
   }, []);
 
   useEffect(() => {
@@ -102,7 +103,7 @@ const SpotSearchMainPage = (): ReactElement => {
 
   useEffect(() => { // 리스트 결과에 따라 지도에 반영
     getPaginatedSpotList(searchResult); 
-    dispatch(SET_SERACH_MAP_SPOT(searchResult!)); 
+    dispatch(SET_SERACH_MAP_SPOT(searchResult!));
   }, [searchResult]);
 
   useEffect(()=> { // 인피니티 스크롤 반영

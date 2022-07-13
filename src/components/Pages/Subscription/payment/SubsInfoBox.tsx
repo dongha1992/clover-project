@@ -1,7 +1,6 @@
 import { TextB2R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd } from '@styles/theme';
-import { getFormatDate } from '@utils/common';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 

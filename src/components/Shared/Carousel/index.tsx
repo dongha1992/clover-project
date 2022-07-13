@@ -114,13 +114,17 @@ const NextArrowWrapper = styled.div`
   position: absolute;
   right: 0%;
   top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 `;
 
 const PreviousArrowWrapper = styled.div`
   position: absolute;
   top: 50%;
   left: 0%;
+  transform: translateY(-50%);
   z-index: 10;
+  cursor: pointer;
 `;
 
 export default React.memo(Carousel);
