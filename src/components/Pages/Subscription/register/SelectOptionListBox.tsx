@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import MenuItem from './MenuItem';
-import { OptionLi, OptionUl } from './RequiredOptionListBox';
+import { OptionUl } from './RequiredOptionListBox';
 
 interface IProps {
   list: any;

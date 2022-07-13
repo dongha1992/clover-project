@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { theme, FlexColStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
@@ -36,6 +36,8 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId, spotsPosition } = useSelector(spotSelector);
+  const [isSubs, setIsSubs] = useState<boolean>();
+
   const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -47,6 +49,14 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   const dDay = now.diff(dayjs(closedDate), 'day');
   const closedOperation = dDay > 0 || item?.isClosed;
   const closedSoonOperation = dDay >= -14;
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.isSubscription) {
+        setIsSubs(true);
+      }
+    }
+  }, [router.isReady, router.query.isSubscription]);
 
   const renderSpotMsg = () => {
     switch (true) {
@@ -269,7 +279,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
                   프라이빗
                 </Tag>
               ) : null}
-              {item?.discountRate! > 0 && (
+              {item?.discountRate! > 0 && !isSubs && (
                 <Tag
                   margin="0 5px 0 0"
                   backgroundColor={theme.brandColor5P}
@@ -317,7 +327,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   );
 };
 
-const Container = styled.section<{ spotClose?: boolean, map?: boolean }>`
+const Container = styled.section<{ spotClose?: boolean; map?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -325,7 +335,7 @@ const Container = styled.section<{ spotClose?: boolean, map?: boolean }>`
   max-width: ${breakpoints.desktop}px;
   max-width: ${breakpoints.mobile}px;
 
-  ${({map}) => {
+  ${({ map }) => {
     if (map) {
       return css`
         margin-bottom: 10px;
@@ -358,16 +368,16 @@ const MeterAndTime = styled.div`
 
 const TagWrapper = styled.div``;
 
-const ImageWrapper = styled.div<{map?: boolean}>`
+const ImageWrapper = styled.div<{ map?: boolean }>`
   margin-left: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
-  ${({map}) => {
-    if(map){
+  ${({ map }) => {
+    if (map) {
       return css`
         width: 70px;
       `;
-    }else {
+    } else {
       return css`
         width: 60px;
       `;

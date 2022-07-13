@@ -1,12 +1,8 @@
 import DietItem from '@components/Pages/Subscription/DietItem';
-import ToggleItem from '@components/Pages/Subscription/DietItem';
-import { TextB1R, TextB2R } from '@components/Shared/Text';
+import { TextB2R } from '@components/Shared/Text';
 import { periodMapper } from '@constants/subscription';
-import { Obj } from '@model/index';
 import { subscriptionForm } from '@store/subscription';
 import { theme } from '@styles/theme';
-import { getFormatDate, SVGIcon } from '@utils/common';
-import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { cloneDeep } from 'lodash-es';
 import { useSelector } from 'react-redux';

@@ -67,7 +67,7 @@ const TooltipContainer = styled.div<{
 
   background: rgba(36, 36, 36, 0.9);
   border-radius: 8px;
-  z-index: 10;
+  z-index: 9;
 
   ${({ theme }) => theme.desktop`
     left: 0px;

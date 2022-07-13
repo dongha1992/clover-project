@@ -1,5 +1,5 @@
 import { TextB3R, TextH6B } from '@components/Shared/Text';
-import { FlexRow, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 

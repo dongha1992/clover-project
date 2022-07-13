@@ -12,6 +12,7 @@ import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER
 import { userLoginApi, userProfile } from '@api/user';
 import { EMAIL_REGX, PASSWORD_REGX } from '@pages/signup/email-password';
 import { SET_LOGIN_TYPE } from '@store/common';
+import { cartForm } from '@store/cart';
 import { setCookie } from '@utils/common';
 import { NAME_REGX } from '@constants/regex';
 
@@ -22,7 +23,10 @@ const LoginPage = () => {
   const [returnPath, setReturnPath] = useState<string | string[]>('/');
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
   const { isLoginSuccess } = useSelector(userForm);
+  const { cartLists } = useSelector(cartForm);
+
   const dispatch = useDispatch();
   const onRouter = useRouter();
 
@@ -87,6 +91,8 @@ const LoginPage = () => {
           dispatch(SET_LOGIN_SUCCESS(true));
           dispatch(SET_LOGIN_TYPE('EMAIL'));
 
+          // 비회원 장바구니 체크
+
           const userInfo = await userProfile().then((res) => {
             return res?.data;
           });
@@ -99,6 +105,7 @@ const LoginPage = () => {
               maxAge: userTokenObj?.refreshTokenExpiresIn,
             },
           });
+
           dispatch(SET_USER(userInfo.data));
 
           if (isDormantAccount) {

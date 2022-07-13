@@ -39,7 +39,7 @@ const OrderDeliveryHistoryPage = () => {
         days: Number(withInDays),
         page: 1,
         size: 10,
-        type: 'GENERAL',
+        orderType: 'GENERAL',
       };
 
       const { data } = await getOrderListsApi(params);

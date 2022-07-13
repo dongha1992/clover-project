@@ -23,18 +23,20 @@ const CartDiscountBox = ({
     <>
       <FlexBetween>
         <TextH5B>총 할인 금액</TextH5B>
-        <TextB2R>-{getFormatPrice(String(totalDiscountPrice))}원</TextB2R>
+        <TextB2R>{`${totalDiscountPrice ? `-${getFormatPrice(String(totalDiscountPrice))}원` : `0원`}`}</TextB2R>
       </FlexBetween>
-      <FlexBetween padding="8px 0 0 0">
-        <TextB2R>상품 할인</TextB2R>
-        <TextB2R>-{getFormatPrice(String(itemDiscountPrice))}원</TextB2R>
-      </FlexBetween>
-      {isSpot && hasSpotEvent && (
+      {itemDiscountPrice ? (
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>상품 할인</TextB2R>
+          <TextB2R>-{getFormatPrice(String(itemDiscountPrice))}원</TextB2R>
+        </FlexBetween>
+      ) : null}
+      {isSpot && hasSpotEvent && spotDiscountPrice ? (
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>스팟 이벤트 할인</TextB2R>
           <TextB2R>-{getFormatPrice(String(spotDiscountPrice))}원</TextB2R>
         </FlexBetween>
-      )}
+      ) : null}
     </>
   );
 };

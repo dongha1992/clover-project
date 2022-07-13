@@ -1,8 +1,8 @@
 interface IProps {
-  morning: boolean;
-  quick: boolean;
-  parcel: boolean;
-  spot: boolean;
+  morning?: boolean;
+  quick?: boolean;
+  parcel?: boolean;
+  spot?: boolean;
 }
 
 export type TLocationType = 'morning' | 'spot' | 'parcel' | 'quick' | 'noDelivery' | 'noQuick' | '';

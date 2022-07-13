@@ -146,7 +146,7 @@ const Header = () => {
           </Container>
         );
 
-      case ['/menu/[menuId]', '/subscription/products/[id]'].includes(currentPath): {
+      case ['/menu/[menuId]'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <MenuDetailHeader />

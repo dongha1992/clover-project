@@ -2,13 +2,14 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IGetCart, IDiscountInfos, IMenuDetailOptions } from '@model/index';
 
-interface ICartLists {
+export interface ICartLists {
   cartMenus: IGetCart[];
   discountInfos: IDiscountInfos[];
   menuDetailOptions: IMenuDetailOptions[];
 }
 interface IProps {
   cartLists: ICartLists[];
+  nonMemberCartLists: IGetCart[];
   cartSheetObj: any;
   isFromDeliveryPage: boolean;
   isLoading: boolean;
@@ -17,6 +18,7 @@ interface IProps {
 
 const initialState: IProps = {
   cartLists: [],
+  nonMemberCartLists: [],
   cartSheetObj: {},
   isFromDeliveryPage: false,
   isLoading: false,
@@ -54,6 +56,17 @@ export const cart = createSlice({
       //   (item) => item.id !== payload
       // );
     },
+    SET_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<IGetCart[]>) => {
+      state.nonMemberCartLists = action.payload;
+    },
+    DELETE_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<any>) => {
+      console.log(action.payload);
+      const target = state.nonMemberCartLists.filter((item) => {});
+      // state.nonMemberCartLists = [];
+    },
+    INIT_NON_MEMBER_CART_LISTS: (state, action: PayloadAction) => {
+      state.nonMemberCartLists = [];
+    },
   },
 
   extraReducers: (builder) => {
@@ -78,6 +91,9 @@ export const {
   INIT_AFTER_SETTING_DELIVERY,
   REMOVE_CART_ITEM,
   INIT_CART_LISTS,
+  SET_NON_MEMBER_CART_LISTS,
+  INIT_NON_MEMBER_CART_LISTS,
+  DELETE_NON_MEMBER_CART_LISTS,
 } = cart.actions;
 export const cartForm = (state: AppState): IProps => state.cart;
 export default cart.reducer;
