@@ -29,7 +29,7 @@ const HorizontalItem = ({ item }: TProps) => {
     dispatch(SET_MENU_ITEM(item));
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <CartSheet />,
+        content: <CartSheet menuItem={item} />,
       })
     );
   };
