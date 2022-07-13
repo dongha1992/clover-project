@@ -4,7 +4,6 @@ import { IMenus } from '@model/index';
 import { MenuImgBox, MenuLi, MenuTextBox } from '@pages/subscription/register';
 import { getMenuDisplayPrice } from '@utils/menu';
 import Image from 'next/image';
-import styled from 'styled-components';
 
 interface IProps {
   item: IMenus;

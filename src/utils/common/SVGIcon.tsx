@@ -1946,6 +1946,68 @@ const svgMap: TSvg = {
       </defs>
     </svg>
   ),
+  mapCurrentPositionActivedBtn: () => (
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_dd_10103_87677)">
+        <circle cx="30" cy="26" r="22" fill="white"/>
+      </g>
+      <path d="M30 28.25C31.2426 28.25 32.25 27.2426 32.25 26C32.25 24.7574 31.2426 23.75 30 23.75C28.7574 23.75 27.75 24.7574 27.75 26C27.75 27.2426 28.7574 28.25 30 28.25Z" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M30 34C34.4183 34 38 30.4183 38 26C38 21.5817 34.4183 18 30 18C25.5817 18 22 21.5817 22 26C22 30.4183 25.5817 34 30 34Z" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M30 18.5V20" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M30 32V33.5" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M36 26H37.5" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22.5 26H24" stroke="#35AD73" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <defs>
+        <filter id="filter0_dd_10103_87677" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="4"/>
+          <feGaussianBlur stdDeviation="4"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_10103_87677"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="1"/>
+          <feGaussianBlur stdDeviation="0.5"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+          <feBlend mode="normal" in2="effect1_dropShadow_10103_87677" result="effect2_dropShadow_10103_87677"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_10103_87677" result="shape"/>
+        </filter>
+      </defs>
+    </svg>
+  ),
+  mapCurrentPositionBtn: () => (
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g filter="url(#filter0_dd_10076_83961)">
+        <circle cx="30" cy="26" r="22" fill="white"/>
+      </g>
+      <path d="M30 28.25C31.2426 28.25 32.25 27.2426 32.25 26C32.25 24.7574 31.2426 23.75 30 23.75C28.7574 23.75 27.75 24.7574 27.75 26C27.75 27.2426 28.7574 28.25 30 28.25Z" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M30 34C34.4183 34 38 30.4183 38 26C38 21.5817 34.4183 18 30 18C25.5817 18 22 21.5817 22 26C22 30.4183 25.5817 34 30 34Z" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M30 18.5V20" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M30 32V33.5" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M36 26H37.5" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M22.5 26H24" stroke="#242424" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <defs>
+        <filter id="filter0_dd_10076_83961" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="4"/>
+          <feGaussianBlur stdDeviation="4"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_10076_83961"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="1"/>
+          <feGaussianBlur stdDeviation="0.5"/>
+          <feComposite in2="hardAlpha" operator="out"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+          <feBlend mode="normal" in2="effect1_dropShadow_10076_83961" result="effect2_dropShadow_10076_83961"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_10076_83961" result="shape"/>
+        </filter>
+      </defs>
+    </svg>
+  )
 };
 /*TODO: name이 없으면 에러남 */
 
