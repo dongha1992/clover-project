@@ -477,9 +477,7 @@ const CartPage = () => {
           if (!me) {
             const selectedIds = checkedMenus.map((item) => item.menuId);
             const filtered = cartItemList.filter((item) => !selectedIds.includes(item.menuId));
-
             setNonMemberCartListsHandler(filtered);
-
             return;
           } else {
             mutateDeleteItem(reqBody);
@@ -501,7 +499,6 @@ const CartPage = () => {
       const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
       if (hasOptionalMenu) {
         const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main).length === 1;
-
         if (hasMoreOneMainMenu) {
           alertMessage = '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.';
           const foundOptional =
@@ -529,7 +526,34 @@ const CartPage = () => {
         alertMessage,
         closeBtnText: '취소',
         submitBtnText: '확인',
-        onSubmit: () => mutateDeleteItem(reqBody),
+        onSubmit: () => {
+          /* TODO: 비회원일 때 선택옵션 끼고 테스트 해봐야함 */
+          if (!me) {
+            const menuDetailIds = reqBody.map((ids) => ids.menuDetailId);
+            let filtered = cartItemList.map((item) => {
+              if (item.menuId === menuId) {
+                return {
+                  ...item,
+                  menuDetails: item.menuDetails.filter((item) => !menuDetailIds.includes(item.menuDetailId)),
+                };
+              } else {
+                return item;
+              }
+            });
+
+            const checkHasMainMenu = filtered
+              .find((item) => item.menuId === menuId)
+              ?.menuDetails.some((item) => item.main);
+
+            if (!checkHasMainMenu) {
+              filtered = filtered.filter((item) => item.menuId !== menuId);
+            }
+
+            setNonMemberCartListsHandler(filtered);
+          } else {
+            mutateDeleteItem(reqBody);
+          }
+        },
       })
     );
   };
@@ -559,6 +583,13 @@ const CartPage = () => {
       })
     );
   };
+
+  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
+  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
+  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
+  //   return { foundMenu, isMain, hasOptionalMenu };
+  // };
 
   const setNonMemberCartListsHandler = (list: any) => {
     dispatch(SET_NON_MEMBER_CART_LISTS(list));
@@ -697,10 +728,12 @@ const CartPage = () => {
   };
 
   const goToOrder = () => {
+    if (!me) return;
+
     const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
     const isUnderMinimum = totalAmount < minimum;
 
-    if (isNil(destinationObj) || !me || isUnderMinimum) return;
+    if (isNil(destinationObj) || isUnderMinimum) return;
 
     const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
     const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;

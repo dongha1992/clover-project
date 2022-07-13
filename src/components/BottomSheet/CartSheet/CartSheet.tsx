@@ -360,40 +360,47 @@ const CartSheet = ({ menuItem }: any) => {
     // 메뉴 하나
     const found = nonMemberCartLists.find((item) => item.menuId === menuItem.id);
 
-    if (nonMemberCartLists.length !== 0 && found) {
-      nonMemberCartLists.forEach((localItem) => {
-        const changed = localItem.menuDetails.map((localDetail) => {
-          const found = formatCartLists.find((detail) => detail.menuDetailId === localDetail.menuDetailId);
-          if (found) {
-            addedCartLists.push(found.menuDetailId);
-            return { ...localDetail, quantity: localDetail.quantity + found.quantity };
+    try {
+      if (nonMemberCartLists.length !== 0 && found) {
+        nonMemberCartLists.forEach((localItem) => {
+          const changed = localItem.menuDetails.map((localDetail) => {
+            const found = formatCartLists.find((detail) => detail.menuDetailId === localDetail.menuDetailId);
+            if (found) {
+              addedCartLists.push(found.menuDetailId);
+              return { ...localDetail, quantity: localDetail.quantity + found.quantity };
+            } else {
+              return localDetail;
+            }
+          });
+
+          if (localItem.menuId === menuItem.id) {
+            const found = { ...localItem, menuDetails: changed };
+            addToAlreadyInCartLists.push(found);
           } else {
-            return localDetail;
+            addToAlreadyInCartLists.push(localItem);
           }
         });
 
-        if (localItem.menuId === menuItem.id) {
-          const found = { ...localItem, menuDetails: changed };
-          addToAlreadyInCartLists.push(found);
-        } else {
-          addToAlreadyInCartLists.push(localItem);
-        }
-      });
+        const filtred = formatCartLists.filter((item) => !addedCartLists.includes(item.menuDetailId));
 
-      const filtred = formatCartLists.filter((item) => !addedCartLists.includes(item.menuDetailId));
+        const mergedCartLists = addToAlreadyInCartLists.map((item: IGetCart) => {
+          if (item.menuId === menuItem.id) {
+            return { ...item, menuDetails: [...filtred, ...item.menuDetails] };
+          } else {
+            return item;
+          }
+        });
 
-      const mergedCartLists = addToAlreadyInCartLists.map((item: IGetCart) => {
-        if (item.menuId === menuItem.id) {
-          return { ...item, menuDetails: [...filtred, ...item.menuDetails] };
-        } else {
-          return item;
-        }
-      });
-
-      dispatch(SET_NON_MEMBER_CART_LISTS(mergedCartLists));
-    } else {
-      const newCartLists = [...nonMemberCartLists, cartMenus] as any;
-      dispatch(SET_NON_MEMBER_CART_LISTS(newCartLists));
+        dispatch(SET_NON_MEMBER_CART_LISTS(mergedCartLists));
+      } else {
+        const newCartLists = [...nonMemberCartLists, cartMenus] as any;
+        dispatch(SET_NON_MEMBER_CART_LISTS(newCartLists));
+      }
+    } catch (error) {
+      dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+    } finally {
+      showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+      dispatch(INIT_BOTTOM_SHEET());
     }
   };
 
