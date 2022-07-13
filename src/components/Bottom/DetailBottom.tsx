@@ -195,7 +195,7 @@ const DetailBottom = () => {
         if (!isItemSold) {
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <CartSheet />,
+              content: <CartSheet menuItem={menuDetail} />,
             })
           );
         }
