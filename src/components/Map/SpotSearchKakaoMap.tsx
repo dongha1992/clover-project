@@ -18,6 +18,7 @@ declare global {
 }
 
 interface IProps {
+  spotSearchList?: ISpotsDetail[];
   zoom?: number;
   centerLat?: number;
   centerLng?: number;
@@ -26,9 +27,11 @@ interface IProps {
   getSpotInfo?: any
   setSelected?: any;
   setVisible?: any;
+  spotListAllCheck?: boolean;
 };
 
 const SpotSearchKakaoMap = ({
+  spotSearchList,
   zoom,
   centerLat,
   centerLng,
@@ -37,22 +40,22 @@ const SpotSearchKakaoMap = ({
   getSpotInfo,
   setSelected,
   setVisible,
+  spotListAllCheck,
 }: IProps) => {
   const dispatch = useDispatch();
-  const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [selectedSpotIdx, setSelectedSpotIdx] = useState<number | null>(0);
   const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false);
   const [successPosition, setSuccessPosition] = useState<boolean>(false);
-  const spotList = spotSearchArr ?? [];
+  const spotList = spotSearchList ?? [];
   const idx = currentSlickIdx&&currentSlickIdx;
-  const SelectedSpotArr = spotListAllChecked ?  spotList[selectedSpotIdx!] : spotList[idx!];
+  const SelectedSpotArr = spotListAllCheck ?  spotList[selectedSpotIdx!] : spotList[idx!];
   const currentPositionLat = SelectedSpotArr?.coordinate.lat;
   const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
   const level = zoom ? zoom : 3;
-  const levelControl = spotListAllChecked ? 9 : level;
+  const levelControl = spotListAllCheck ? 9 : level;
 
   useEffect(()=> {
-    if(spotListAllChecked) {
+    if(spotListAllCheck) {
       setShowInfoWindow(true);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +83,7 @@ const SpotSearchKakaoMap = ({
           maxLevel: 9,
         };
         const map = new window.kakao.maps.Map(container, options); // 지도 생성
-        if (spotListAllChecked) {
+        if (spotListAllCheck) {
           map.setCenter(new window.kakao.maps.LatLng(37.5206007, 127.005454));
         };
         const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
@@ -268,24 +271,25 @@ const SpotSearchKakaoMap = ({
 
           if(currentSlickIdx === idx) { // 검색 결과에서 슬라이드 정보창 이동시 선택된 마커 유지
             markers.setImage(selectedMarkerImage);
+            markers.setZIndex(700);
           };
 
           new window.kakao.maps.event.addListener(markers, 'click', function () { // 마커에 click 이벤트 등록
-            if (spotListAllChecked) {
+            if (spotListAllCheck) {
               // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면 마커의 이미지를 클릭 이미지로 변경
               if (!selectedMarker || selectedMarker !== markers) {
                 // 클릭된 마커 객체가 null이 아니면 클릭된 마커의 이미지를 기본 이미지로 변경
                 !!selectedMarker && selectedMarker.setImage(typeMarkersImage);
                 // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
                 markers.setImage(selectedMarkerImage); 
-                markers.setZIndex(900);
+                markers.setZIndex(700);
               };
               // 클릭된 마커를 현재 클릭된 마커 객체로 설정
               selectedMarker = markers; 
             } else {
               if(currentSlickIdx === idx) { // 검색 결과에서 클릭한 마커 아이콘 변경
                 markers.setImage(selectedMarkerImage);
-                markers.setZIndex(900);
+                markers.setZIndex(700);
               };  
             }
             map.setLevel(3); // 마커 클릭시 zoom level 3
