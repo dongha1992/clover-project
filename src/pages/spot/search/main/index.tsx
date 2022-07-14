@@ -39,13 +39,8 @@ const SpotSearchMainPage = (): ReactElement => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const { orderId, isDelivery } = router.query;
-  const { 
-    spotsPosition, 
-    spotSearchSelectedFilters, 
-    spotSearchSort,
-    spotKeyword,
-    isMapSwitch,
-  } = useSelector(spotSelector);
+  const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, spotKeyword, isMapSwitch } =
+    useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
 
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
@@ -83,31 +78,35 @@ const SpotSearchMainPage = (): ReactElement => {
   useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
-      getPaginatedSpotList(searchResult); 
+      getPaginatedSpotList(searchResult);
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
       setIsSearched(true); 
     }
   }, [spotKeyword]);
 
-  useEffect(() => { // 정렬및 필터 반영
+  useEffect(() => {
+    // 정렬및 필터 반영
     const hasSearchResult = searchResult.length > 0;
-    if ((spotSearchSort ||spotSearchSelectedFilters) && hasSearchResult) {
+    if ((spotSearchSort || spotSearchSelectedFilters) && hasSearchResult) {
       spotFiltered(defaultSpotList);
-    };
+    }
   }, [spotSearchSelectedFilters, spotSearchSort]);
 
-  useEffect(() => { // 정렬필터값 초기화
+  useEffect(() => {
+    // 정렬필터값 초기화
     defaultRedioId();
-    dispatch(INIT_SEARCH_SELECTED_FILTERS()); 
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
   }, [isSearched]);
 
-  useEffect(() => { // 리스트 결과에 따라 지도에 반영
-    getPaginatedSpotList(searchResult); 
+  useEffect(() => {
+    // 리스트 결과에 따라 지도에 반영
+    getPaginatedSpotList(searchResult);
     dispatch(SET_SERACH_MAP_SPOT(searchResult!));
   }, [searchResult]);
 
-  useEffect(()=> { // 인피니티 스크롤 반영
-    getPaginatedSpotList(searchResult); 
+  useEffect(() => {
+    // 인피니티 스크롤 반영
+    getPaginatedSpotList(searchResult);
   }, [size]);
 
   useEffect(() => {
@@ -136,9 +135,9 @@ const SpotSearchMainPage = (): ReactElement => {
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
 
-      if ((Math.round(scrollTop + clientHeight) >= scrollHeight)) {
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
         setSize((prevPage) => prevPage + 10);
-      };
+      }
     };
     // scroll event listener 등록
     window.addEventListener('scroll', handleScroll);
@@ -151,7 +150,7 @@ const SpotSearchMainPage = (): ReactElement => {
 
   // GPS - 현재위치 가져오기
   const getCurrentPosition = () =>
-  new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
   const getLocation = async () => {
     try {
@@ -186,7 +185,7 @@ const SpotSearchMainPage = (): ReactElement => {
       return {
         data: response.data.data,
         spotList: listSort,
-      }
+      };
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -219,7 +218,7 @@ const SpotSearchMainPage = (): ReactElement => {
         if (!keyword) {
           setSearchResult([]);
           inputRef.current.blur();
-        };
+        }
         getSpotList({ keyword });
         setIsSearched(true); 
       }
@@ -238,7 +237,7 @@ const SpotSearchMainPage = (): ReactElement => {
       if (data.code === 200) {
         const spotList = data.data.spots;
         setSize(10);
-        if( inputRef.current?.value.length! > 0 ) {
+        if (inputRef.current?.value.length! > 0) {
           spotFiltered(spotList);
           setDefaultSpotList(spotList);
           dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(false));
@@ -246,15 +245,18 @@ const SpotSearchMainPage = (): ReactElement => {
           dispatch(SET_SERACH_MAP_SPOT(spotList));
           dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
         }
-      };
+      }
     } catch (err) {
       console.error(err);
     }
   };
 
-  const spotFiltered = (spotList: ISpotsDetail[]) => { // 스팟 검색 결과 정렬및필터
+  const spotFiltered = (spotList: ISpotsDetail[]) => {
+    // 스팟 검색 결과 정렬및필터
     const isFiltered = spotSearchSelectedFilters || spotSearchSort;
-    const spotSearchResult = isFiltered ? getFilteredSpotList({spotList: spotList, sort: spotSearchSort, filter: spotSearchSelectedFilters}) : spotList;
+    const spotSearchResult = isFiltered
+      ? getFilteredSpotList({ spotList: spotList, sort: spotSearchSort, filter: spotSearchSelectedFilters })
+      : spotList;
     setTotalCount(spotSearchResult?.length);
     setSearchResult(spotSearchResult);
   };
@@ -295,7 +297,8 @@ const SpotSearchMainPage = (): ReactElement => {
     }
   };
 
-  const defaultRedioId = () => { // 검색 결과 정렬 초기화
+  const defaultRedioId = () => {
+    // 검색 결과 정렬 초기화
     if (userLocationLen) {
       return dispatch(SET_SPOT_SEARCH_SORT('nearest'));
     } else if (!userLocationLen) {
@@ -303,19 +306,20 @@ const SpotSearchMainPage = (): ReactElement => {
     }
   };
 
-  const goToSwitchMap = () => { // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼 
+  const goToSwitchMap = () => {
+    // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼
     setKeyword('');
-    getSpotList({keyword: ''});
+    getSpotList({ keyword: '' });
     dispatch(SET_SPOT_MAP_SWITCH(true));
     dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
   };
 
   if (isLoadingRecomand && isLoadingPickup) {
     return <div>로딩</div>;
-  };
+  }
 
   // 검색바 활성화 된 상테
-  // 위치 정보 있는 경우 
+  // 위치 정보 있는 경우
   // -> 추천 스팟 노출
   // -> 추천 스팟 없으면 픽업 이력 노출
   // -> 픽업 이력 없으면 빈 화면 노출
@@ -325,11 +329,32 @@ const SpotSearchMainPage = (): ReactElement => {
   // -> 픽업 이력 없는 경우 빈 화면 노출
   return (
     <Container>
-      {
-        isMapSwitch ? 
-        (
-          <SpotSearchMapPage isSearched={isSearched} searchListLen={searchResult?.length} />
-        ) : (
+      {isMapSwitch ? (
+        <SpotSearchMapPage isSearched={isSearched} searchListLen={searchResult?.length} />
+      ) : (
+        <>
+          <SearchBarWrapper>
+            <label className="textLabel">
+              {keyword.length < 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
+              <TextInput
+                name="input"
+                inputType="text"
+                svg="searchIcon"
+                fontSize="14px"
+                keyPressHandler={getSearchResult}
+                eventHandler={changeInputHandler}
+                value={keyword}
+                ref={inputRef}
+                withValue
+              />
+            </label>
+            {keyword.length > 0 && (
+              <div className="removeSvg" onClick={clearInputHandler}>
+                <SVGIcon name="removeItem" />
+              </div>
+            )}
+          </SearchBarWrapper>
+          {!isSearched && <SpotSearchKeywordSlider onChange={handleSelectedKeywordVaule} />}
           <>
             <SearchBarWrapper>
               <label className='textLabel'>
@@ -361,64 +386,21 @@ const SpotSearchMainPage = (): ReactElement => {
                 <SpotSearchKeywordSlider onChange={handleSelectedKeywordVaule} />
               )
             }
-            <>
-              {!isSearched && (  // 검색바 활성화 
-                userLocationLen ? // 위치 정보 있는 경우
-                    spotRecommend?.spotList.length! > 0 ? ( // 추천 스팟 있는 경우
-                      <SpotRecommendWrapper>
-                        <FlexBetween margin="0 0 24px 0">
-                          <TextH2B>{spotRecommend?.data.title}</TextH2B>
-                          {
-                            // 사용자 위치 설정 했을 경우 노출
-                            userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
-                          }
-                        </FlexBetween>
-                        {spotRecommend?.spotList?.map((item, index) => {
-                          return <SpotRecommendList item={item} key={index} />;
-                        })}
-                      </SpotRecommendWrapper>
-                    ) : (
-                      recentPickedSpotList?.length! > 0 ? ( // 추천 스팟 없고, 픽업 이력 있는 경우
-                        <DefaultSearchContainer>
-                        <RecentPickWrapper>
-                          <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                          {recentPickedSpotList?.map((item, index) => (
-                            // 스팟 최근 픽업 이력 리스트
-                            <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                          ))}
-                        </RecentPickWrapper>
-                      </DefaultSearchContainer>
-  
-                      ) : (
-                        null // 추천 스팟 없고, 픽업 이력 없는 경우 빈화면 노출
-                      )
-                    )
-                 : // 위치 정보 없는 경우
-                  recentPickedSpotList?.length! > 0 ? ( // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-                    <DefaultSearchContainer>
-                      <RecentPickWrapper>
-                        <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                        {recentPickedSpotList?.map((item, index) => (
-                          // 스팟 최근 픽업 이력 리스트
-                          <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                        ))}
-                      </RecentPickWrapper>
-                    </DefaultSearchContainer>
-                    ) : (
-                      null // 픽업 이력 없는 경우 빈화면 노출
-                    )
-              )}
-              {
-                isSearched && ( // 검색 결과
-                <SearchResultContainer>
-                  <SpotSearchResult searchResult={paginatedSpotList} orderId={orderId} hasCart={true} getLocation={getLocation} goToSwitchMap={goToSwitchMap} totalCount={totalCount} />
-                </SearchResultContainer>
-                )
-              }
-            </>
+            {isSearched && ( // 검색 결과
+              <SearchResultContainer>
+                <SpotSearchResult
+                  searchResult={paginatedSpotList}
+                  orderId={orderId}
+                  hasCart={true}
+                  getLocation={getLocation}
+                  goToSwitchMap={goToSwitchMap}
+                  totalCount={totalCount}
+                />
+              </SearchResultContainer>
+            )}
           </>
-        )
-      }
+        </>
+      )}
     </Container>
   );
 };
@@ -430,13 +412,13 @@ const SearchBarWrapper = styled.div`
   position: relative;
   .textLabel {
     width: 100%;
-    .textPlaceholde{
+    .textPlaceholde {
       position: absolute;
       top: 14px;
       left: 49px;
       z-index: 100;
       color: ${theme.greyScale45};
-      ${textBody2};    
+      ${textBody2};
     }
   }
   .removeSvg {
@@ -446,7 +428,6 @@ const SearchBarWrapper = styled.div`
     margin: 15px 14px 0 0;
   }
 `;
-
 
 const KeyWordWrapper = styled.div`
   padding: 16px 24px 24px 24px;
