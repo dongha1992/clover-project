@@ -349,9 +349,10 @@ const CartPage = () => {
     async ({ reqBody, cartIds }: { reqBody: IDeleteCartRequest[]; cartIds: number[] }) => {
       // const { data } = await deleteCartsApi(reqBody, cartId);
 
-      const { data } = await cartIds?.map((cartId: number) => {
+      const data = await cartIds?.map((cartId: number) => {
         return deleteCartsApi(reqBody, cartId);
       });
+
       console.log(data, 'AFTER DELETE');
     },
     {
@@ -463,7 +464,7 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
-    const cartIds = checkedMenus.map((item) => item.cartId);
+    const cartIds = checkedMenus.map((item) => item.cartId)! as number[];
     const reqBody = pipe(
       checkedMenus,
       flatMap((item) =>
@@ -489,7 +490,7 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem(reqBody);
+            mutateDeleteItem({ reqBody, cartIds: cartIds! });
           }
         },
       })
@@ -568,7 +569,7 @@ const CartPage = () => {
 
             setNonMemberCartListsHandler(filtered);
           } else {
-            mutateDeleteItem(reqBody);
+            mutateDeleteItem({ reqBody, cartIds: [cartId] });
           }
         },
       })
@@ -576,7 +577,7 @@ const CartPage = () => {
   };
 
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
-    const cartIds = menu.cartId;
+    const cartIds = menu.cartId!;
     const reqBody = menu.menuDetails.map((item) => {
       return {
         menuId: menu?.menuId!,
@@ -595,7 +596,7 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem(reqBody);
+            mutateDeleteItem({ reqBody, cartIds: [cartIds] });
           }
         },
       })
