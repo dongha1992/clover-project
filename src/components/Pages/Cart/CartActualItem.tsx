@@ -55,7 +55,7 @@ const CartActualItem = ({
           <div
             onClick={() =>
               removeCartActualItemHandler &&
-              removeCartActualItemHandler({ menuDetailId: menuDetail?.menuDetailId, menuId })
+              removeCartActualItemHandler({ menuDetailId: menuDetail?.menuDetailId, menuId, cartId })
             }
           >
             <SVGIcon name="defaultCancel" />
