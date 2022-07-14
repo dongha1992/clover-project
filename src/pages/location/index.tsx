@@ -15,6 +15,12 @@ import { getAddressFromLonLat } from '@api/location';
 import { SET_ALERT } from '@store/alert';
 import { SET_SPOT_POSITIONS } from '@store/spot';
 
+declare global {
+  interface Window {
+    getCurrentPositionAddress: any;
+  }
+}
+
 interface IPosition {
   latitude: number | null;
   longitude: number | null
@@ -59,6 +65,41 @@ const LocationPage = () => {
       getSearchAddressResult();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
+
+  useEffect(()=> {
+    const mapScript = document.createElement("script");
+    mapScript.async = true;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services`;
+    document.head.appendChild(mapScript);
+
+    const onLoadKakaoMap = () => {
+      try {
+        window.kakao.maps.load(() => {
+
+          const getCurrentPositionAddress = (lat: number,lng: number) => {
+            let geocoder = new window.kakao.maps.services.Geocoder();
+            let coord = new window.kakao.maps.LatLng(lat, lng);
+            let callback = function(result: any, status: any) {
+                if (status === window.kakao.maps.services.Status.OK) {
+                    console.log(result);
+                }
+            };
+            geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+          };
+          window.getCurrentPositionAddress = getCurrentPositionAddress;
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  
+    mapScript.addEventListener("load", onLoadKakaoMap);
+    return () => mapScript.removeEventListener("load", onLoadKakaoMap);
+  }, []);
+
+  // useEffect(()=> {
+  //   console.log('위치값 들어옴');
+  // }, [position])
 
   const addressInputHandler = () => {
     const keyword = addressRef.current?.value.length;
@@ -139,45 +180,48 @@ const LocationPage = () => {
         });
         setPostion({
           latitude: position.coords.latitude,
-          longitude: position.coords.latitude,
+          longitude: position.coords.longitude,
         });
-        dispatch(SET_LOCATION_TEMP({
-            roadAddr: null,
-            roadAddrPart1: data.documents[0].address_name,
-            roadAddrPart2: null,
-            jibunAddr: null,
-            engAddr: null,
-            zipNo: null,
-            admCd: null,
-            rnMgtSn: null,
-            bdMgtSn: null,
-            detBdNmList: null,
-            bdNm: null,
-            bdKdcd: null,
-            siNm: null,
-            sggNm: null,
-            emdNm: data.documents[0].region_3depth_name,
-            liNm: null,
-            rn: null,
-            udrtYn: null,
-            buldMnnm: null,
-            buldSlno: null,
-            mtYn: null,
-            lnbrMnnm: null,
-            lnbrSlno: null,
-            emdNo: null,
-          }));
-        if (isSpot) {
-          router.push({
-            pathname: '/location/address-detail',
-            query: { isSpot: true },
-          });
-        } else {
-          router.push({
-            pathname: '/location/address-detail',
-            query: { isLocation: true },
-          });
-        };
+        window.getCurrentPositionAddress(position.coords.latitude, position.coords.longitude);
+
+        // console.log(position.coords.latitude, position.coords.longitude);
+        // dispatch(SET_LOCATION_TEMP({
+        //     roadAddr: null,
+        //     roadAddrPart1: data.documents[0].address_name,
+        //     roadAddrPart2: null,
+        //     jibunAddr: null,
+        //     engAddr: null,
+        //     zipNo: null,
+        //     admCd: null,
+        //     rnMgtSn: null,
+        //     bdMgtSn: null,
+        //     detBdNmList: null,
+        //     bdNm: null,
+        //     bdKdcd: null,
+        //     siNm: null,
+        //     sggNm: null,
+        //     emdNm: data.documents[0].region_3depth_name,
+        //     liNm: null,
+        //     rn: null,
+        //     udrtYn: null,
+        //     buldMnnm: null,
+        //     buldSlno: null,
+        //     mtYn: null,
+        //     lnbrMnnm: null,
+        //     lnbrSlno: null,
+        //     emdNo: null,
+        //   }));
+        // if (isSpot) {
+        //   router.push({
+        //     pathname: '/location/address-detail',
+        //     query: { isSpot: true },
+        //   });
+        // } else {
+        //   router.push({
+        //     pathname: '/location/address-detail',
+        //     query: { isLocation: true },
+        //   });
+        // };
       });
     };
   };
