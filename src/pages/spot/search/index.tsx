@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { homePadding } from '@styles/theme';
 import { theme, FlexBetween, FlexEnd, textBody2 } from '@styles/theme';
@@ -21,13 +21,12 @@ import { destinationForm } from '@store/destination';
 import { 
   spotSelector,
   SET_SEARCH_KEYWORD,
-  SET_SERACH_MAP_SPOT,
   SET_SPOT_MAP_SWITCH,
-  SET_SPOT_SEARCH_ALL_LIST_CHECKED,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
+import { ISpotsDetail } from '@model/index';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -39,6 +38,8 @@ const SpotSearchPage = (): ReactElement => {
     isMapSwitch,
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
+  const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
+  const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
   const latLen = spotsPosition?.latitude !== null;
@@ -115,21 +116,13 @@ const SpotSearchPage = (): ReactElement => {
       const { data } = await getSpotSearch(params);
       if (data.code === 200) {
         const spotList = data.data.spots;
-        dispatch(SET_SERACH_MAP_SPOT(spotList!));
-        dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
+        setSearchResult(spotList);
+        setSpotListAllCheck(true);
       };
     } catch (err) {
       console.error(err);
     }
   };
-
-  // 추천스팟 + 이벤트 스팟 
-  // const spotsArr = spotRecommend?.spots.concat(eventSpot?.spots!);
-
-  // useEffect(()=> {
-  //   dispatch(SET_SERACH_MAP_SPOT(spotsArr!));
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // },[eventSpot]);
 
   const goToSpotSearch = () => {
     router.push('/spot/search/main');
@@ -157,7 +150,7 @@ const SpotSearchPage = (): ReactElement => {
     <Container>
       {
         isMapSwitch ? (
-          <SpotSearchMapPage />
+          <SpotSearchMapPage spotSearchList={searchResult} spotListAllCheck={spotListAllCheck} />
         ) : (
           <>
             <SearchBarWrapper onClick={goToSpotSearch}>
