@@ -96,17 +96,17 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
     },
     {
       onSuccess: async () => {
+        await queryClient.refetchQueries('getReviewDetail');
+        await queryClient.refetchQueries('getWillWriteReview');
+        await queryClient.refetchQueries('getCompleteWriteReview');
         dispatch(
           SET_ALERT({
             children: <FinishReview />,
             alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
+            onSubmit: () => router.replace('/mypage/review'),
             submitBtnText: '확인',
           })
         );
-        await queryClient.refetchQueries('getReviewDetail');
-        await queryClient.refetchQueries('getWillWriteReview');
-        await queryClient.refetchQueries('getCompleteWriteReview');
-        router.replace('/mypage/review');
       },
       onError: (error: any) => {
         dispatch(SET_ALERT({ alertMessage: error.message }));
@@ -390,6 +390,7 @@ const UploadInputWrapper = styled.label`
   }
 
   .plusBtn {
+    cursor: pointer;
     position: absolute;
     left: 40%;
     top: 35%;
@@ -412,6 +413,7 @@ const PreviewImgWrapper = styled.div`
   }
 
   .svgWrapper {
+    cursor: pointer;
     svg {
       position: absolute;
       right: 10%;
