@@ -90,9 +90,6 @@ const SpotSearchKakaoMap = ({
         const imageSize = new window.kakao.maps.Size(50, 54);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
         const selectedMarkerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); // 선택된 마커 이미지
-        const imgContent = `
-          <img width='50px' height='30px' src=${`${IMAGE_S3_DEV_URL}/ic_map_pin.png`} alt="" />
-        `;
 
         const locationLoadSuccess = (pos: any) => {
           // 현재 위치 받아오기
