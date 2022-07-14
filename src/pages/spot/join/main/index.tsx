@@ -10,7 +10,7 @@ import {
   INIT_SPOT_REGISTRATIONS_OPTIONS, 
   SET_SPOT_REGISTRATIONS_INFO, 
   ISpotsRegistrationInfo,
-  INIT_SPOT_JOIN_FORM_CHECKED,
+  SET_SPOT_JOIN_FORM_CHECKED,
 } from '@store/spot';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
@@ -76,7 +76,7 @@ const SpotReqPage = () => {
     dispatch(SET_SPOT_REGISTRATIONS_INFO(spotsRegistrationInfoState));
     dispatch(INIT_SPOT_LOCATION());
     dispatch(INIT_SPOT_REGISTRATIONS_OPTIONS());
-    dispatch(INIT_SPOT_JOIN_FORM_CHECKED());
+    dispatch(SET_SPOT_JOIN_FORM_CHECKED(false));
     router.push({
       pathname: '/spot/join/main/form',
       query: { type },
