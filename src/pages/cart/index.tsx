@@ -137,7 +137,7 @@ const CartPage = () => {
     ['getCartList'],
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
-      /* TODO: 스팟아이디 넣어야함 */
+
       console.log(destinationObj, 'destinationObj');
 
       const params = {
@@ -284,8 +284,6 @@ const CartPage = () => {
       enabled: !!me,
     }
   );
-
-  /* TODO: 배송지 가능 api 질문 */
 
   const { data: result } = useQuery(
     ['getAvailabilityDestination'],
