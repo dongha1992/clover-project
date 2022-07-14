@@ -7,12 +7,12 @@ import { Obj } from '@model/index';
 import { getHolidayByMenu } from '@utils/menu';
 interface IProps {
   isSold?: boolean;
-  holiday?: number[][];
+  holiday?: number[][] | null;
   availabilityInfo?: {
     availability: boolean;
     remainingQuantity: number;
     menuDetailAvailabilityMessage?: string;
-  };
+  } | null;
 }
 
 /* TODO: 최대 구매? */

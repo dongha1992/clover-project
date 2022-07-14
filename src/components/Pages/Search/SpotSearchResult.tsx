@@ -24,7 +24,15 @@ interface IProps {
   goToSwitchMap?: () => void;
 }
 
-const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart, totalCount, goToSwitchMap}: IProps) => {
+const SpotSearchResult = ({
+  searchResult,
+  onClick,
+  orderId,
+  getLocation,
+  hasCart,
+  totalCount,
+  goToSwitchMap,
+}: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isMapSwitch } = useSelector(spotSelector);
@@ -53,32 +61,36 @@ const SpotSearchResult = ({ searchResult, onClick, orderId, getLocation, hasCart
         </FilterRow>
       )}
       <ItemListWrapper>
-        {
-          searchResult?.length! > 0 ? (
-            searchResult?.map((item, index) => {
-              return (
-                // 스팟 검색 결과 리스트
-                <SpotsSearchResultList item={item} key={index} hasCart={hasCart} />
-              );
-            })
-          ) :  (
-            <NoResultWrapper>
-              <NoResult>
-                <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>
-                  등록된 프코스팟이 없어 보이네요.😭
-                </TextB2R>
-                <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSwitchMap}>
-                  지도로 주변 프코스팟 찾기
+        {searchResult?.length! > 0 ? (
+          searchResult?.map((item, index) => {
+            return (
+              // 스팟 검색 결과 리스트
+              <SpotsSearchResultList item={item} key={index} hasCart={hasCart} />
+            );
+          })
+        ) : (
+          <NoResultWrapper>
+            <NoResult>
+              <TextB2R margin="0 0 32px 0" color={theme.greyScale65}>
+                등록된 프코스팟이 없어 보이네요.😭
+              </TextB2R>
+              <Button
+                margin="0 0 16px 0"
+                backgroundColor={theme.white}
+                color={theme.black}
+                border
+                onClick={goToSwitchMap}
+              >
+                지도로 주변 프코스팟 찾기
+              </Button>
+              {!orderId && (
+                <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
+                  직접 프코스팟 신청하기
                 </Button>
-                {!orderId && (
-                  <Button backgroundColor={theme.white} color={theme.black} border onClick={goToSpotsRegistrations}>
-                    직접 프코스팟 신청하기
-                  </Button>
-                )}
-              </NoResult>
-            </NoResultWrapper>
-          )
-        }
+              )}
+            </NoResult>
+          </NoResultWrapper>
+        )}
       </ItemListWrapper>
     </>
   );
@@ -98,9 +110,9 @@ const FilterWrapper = styled.div`
 `;
 
 const ItemListWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const NoResultWrapper = styled.div`
@@ -113,6 +125,5 @@ const NoResultWrapper = styled.div`
 `;
 
 const NoResult = styled.div``;
-
 
 export default SpotSearchResult;
