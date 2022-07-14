@@ -6,8 +6,7 @@ import { theme } from '@styles/theme';
 const Empty = () => {
   return (
     <Container>
-      <TextB2R color={theme.greyScale65}>필터 검색 결과가 없어요.</TextB2R>
-      <TextB2R color={theme.greyScale65}>다른 필터로 검색해 보세요. 😭</TextB2R>
+      <TextB2R color={theme.greyScale65}>상품을 준비 중이에요. 😭</TextB2R>
     </Container>
   );
 };
