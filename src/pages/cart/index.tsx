@@ -53,7 +53,7 @@ import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postC
 import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { pipe, toArray, flatMap, lte } from '@fxts/core';
+import { pipe, toArray, flatMap } from '@fxts/core';
 import {
   CartItem,
   DeliveryTypeAndLocation,
@@ -67,6 +67,7 @@ import { INIT_ACCESS_METHOD } from '@store/common';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { DeliveryTypeInfoSheet } from '@components/BottomSheet/DeliveryTypeInfoSheet';
 
 dayjs.locale('ko');
 
@@ -888,6 +889,10 @@ const CartPage = () => {
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
+  const goToBottomSheet = () => {
+    dispatch(SET_BOTTOM_SHEET({ content: <DeliveryTypeInfoSheet /> }));
+  };
+
   const orderButtonRender = () => {
     let buttonMessage = '';
 
@@ -1250,7 +1255,12 @@ const CartPage = () => {
             />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} isLogin={isNil(me)} />
+            <CartDeliveryFeeBox
+              deliveryFee={getDeliveryFee()}
+              deliveryFeeDiscount={0}
+              isLogin={isNil(me)}
+              onClick={goToBottomSheet}
+            />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
