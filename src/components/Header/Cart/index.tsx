@@ -4,9 +4,11 @@ import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
 import { theme } from '@styles/theme';
+import { userForm } from '@store/user';
 
 const CartIcon = ({ onClick }: any) => {
-  const { cartLists } = useSelector(cartForm);
+  const { cartLists, nonMemberCartLists } = useSelector(cartForm);
+  const { me } = useSelector(userForm);
 
   return (
     <Container onClick={onClick}>
@@ -14,7 +16,7 @@ const CartIcon = ({ onClick }: any) => {
         <SVGIcon name="cart" />
       </div>
       <CountWrapper>
-        <Count>{cartLists?.length || 0}</Count>
+        <Count> {me ? cartLists?.length : nonMemberCartLists.length}</Count>
       </CountWrapper>
     </Container>
   );
