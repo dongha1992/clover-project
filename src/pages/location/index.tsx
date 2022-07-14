@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
-import { SET_LOCATION_TEMP, SET_LOCATION } from '@store/destination';
+import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 import { getAddressFromLonLat } from '@api/location';
 import { SET_ALERT } from '@store/alert';
