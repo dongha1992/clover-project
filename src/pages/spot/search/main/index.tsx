@@ -23,9 +23,7 @@ import {
   SET_SPOT_SEARCH_SORT,
   SET_SPOT_POSITIONS,
   SET_SEARCH_KEYWORD,
-  SET_SERACH_MAP_SPOT,
   SET_SPOT_MAP_SWITCH,
-  SET_SPOT_SEARCH_ALL_LIST_CHECKED,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
@@ -50,6 +48,7 @@ const SpotSearchMainPage = (): ReactElement => {
   const [keyword, setKeyword] = useState<string>('');
   const [totalCount, setTotalCount] = useState<number>(0);
   const [size, setSize] = useState<number>(10);
+  const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
 
   const userLocationLen = userLocation.emdNm?.length! > 0;
   const latLen = spotsPosition?.latitude !== null;
@@ -59,21 +58,12 @@ const SpotSearchMainPage = (): ReactElement => {
 
   useEffect(() => {
     inputRef.current?.focus();
-    defaultRedioId();
     setKeyword(spotKeyword);
     dispatch(SET_SPOT_MAP_SWITCH(false));
     if (spotKeyword.length === 0) {
       getSpotList({ keyword: '' });
     };
   }, []);
-
-  useEffect(() => { // 사용자 위치 값 변경에 따른 api호출
-    if (spotKeyword?.length > 0) {
-      getSpotList({ keyword: spotKeyword });
-      getPaginatedSpotList(searchResult); 
-      setIsSearched(true); 
-    }
-  }, [spotsPosition.latitude, spotsPosition.longitude]);
 
   useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
     if (spotKeyword?.length > 0) {
@@ -93,21 +83,9 @@ const SpotSearchMainPage = (): ReactElement => {
   }, [spotSearchSelectedFilters, spotSearchSort]);
 
   useEffect(() => {
-    // 정렬필터값 초기화
-    defaultRedioId();
-    dispatch(INIT_SEARCH_SELECTED_FILTERS());
-  }, [isSearched]);
-
-  useEffect(() => {
-    // 리스트 결과에 따라 지도에 반영
-    getPaginatedSpotList(searchResult);
-    dispatch(SET_SERACH_MAP_SPOT(searchResult!));
-  }, [searchResult]);
-
-  useEffect(() => {
     // 인피니티 스크롤 반영
     getPaginatedSpotList(searchResult);
-  }, [size]);
+  }, [size, searchResult]);
 
   useEffect(() => {
     if (orderId) {
@@ -237,13 +215,15 @@ const SpotSearchMainPage = (): ReactElement => {
       if (data.code === 200) {
         const spotList = data.data.spots;
         setSize(10);
+        defaultRedioId();
+        dispatch(INIT_SEARCH_SELECTED_FILTERS());    
         if (inputRef.current?.value.length! > 0) {
           spotFiltered(spotList);
           setDefaultSpotList(spotList);
-          dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(false));
+          setSpotListAllCheck(false);
         } else {
-          dispatch(SET_SERACH_MAP_SPOT(spotList));
-          dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
+          setDefaultSpotList(spotList);
+          setSpotListAllCheck(true);
         }
       }
     } catch (err) {
@@ -311,7 +291,7 @@ const SpotSearchMainPage = (): ReactElement => {
     setKeyword('');
     getSpotList({ keyword: '' });
     dispatch(SET_SPOT_MAP_SWITCH(true));
-    dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
+    setSpotListAllCheck(true);
   };
 
   if (isLoadingRecomand && isLoadingPickup) {
@@ -330,31 +310,8 @@ const SpotSearchMainPage = (): ReactElement => {
   return (
     <Container>
       {isMapSwitch ? (
-        <SpotSearchMapPage isSearched={isSearched} searchListLen={searchResult?.length} />
+        <SpotSearchMapPage spotListAllCheck={spotListAllCheck} spotSearchList={searchResult} isSearched={isSearched} />
       ) : (
-        <>
-          <SearchBarWrapper>
-            <label className="textLabel">
-              {keyword.length < 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
-              <TextInput
-                name="input"
-                inputType="text"
-                svg="searchIcon"
-                fontSize="14px"
-                keyPressHandler={getSearchResult}
-                eventHandler={changeInputHandler}
-                value={keyword}
-                ref={inputRef}
-                withValue
-              />
-            </label>
-            {keyword.length > 0 && (
-              <div className="removeSvg" onClick={clearInputHandler}>
-                <SVGIcon name="removeItem" />
-              </div>
-            )}
-          </SearchBarWrapper>
-          {!isSearched && <SpotSearchKeywordSlider onChange={handleSelectedKeywordVaule} />}
           <>
             <SearchBarWrapper>
               <label className='textLabel'>
@@ -399,7 +356,7 @@ const SpotSearchMainPage = (): ReactElement => {
               </SearchResultContainer>
             )}
           </>
-        </>
+      
       )}
     </Container>
   );
