@@ -13,7 +13,6 @@ import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { useRouter } from 'next/router';
 import { IAllMenus } from '@components/Pages/Category/SingleMenu';
-import { cloneDeep } from 'lodash-es';
 import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 import { CategoryFilter } from '@components/Pages/Category';
 

@@ -9,6 +9,7 @@ import { IMenus } from '@model/index';
 import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 import { useSelector } from 'react-redux';
 import { filterSelector } from '@store/filter';
+import { Empty } from '@components/Pages/Category';
 
 export interface IAllMenus {
   DRINK?: IMenus[];
@@ -45,85 +46,103 @@ const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
       {!isAllMenu ? <TextH3B padding="0 0 17px 0">{title}</TextH3B> : ''}
       {!isAllMenu ? (
         <FlexWrapWrapper>
-          {menuList?.length! > 0
-            ? menuList?.map((item: any, index: number) => {
-                return <Item item={item} key={index} />;
-              })
-            : '상품을 준비 중입니다.'}
+          {menuList?.length! > 0 ? (
+            menuList?.map((item: any, index: number) => {
+              return <Item item={item} key={index} />;
+            })
+          ) : (
+            <Empty />
+          )}
         </FlexWrapWrapper>
       ) : (
         <>
-          <TextH3B padding="17px 0 17px 0">샐러드</TextH3B>
-          <FlexWrapWrapper>
-            {allMenus?.SALAD?.length!
-              ? allMenus?.SALAD?.map((item, index) => {
+          {allMenus?.SALAD?.length! > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">샐러드</TextH3B>
+              <FlexWrapWrapper>
+                {allMenus?.SALAD?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
-          <TextH3B padding="17px 0 17px 0">랩·샌드위치</TextH3B>
-          <FlexWrapWrapper>
-            {wrapAndSandwich.length > 0
-              ? reorderedMenusBySoldout(
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
+          {wrapAndSandwich.length > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">랩·샌드위치</TextH3B>
+              <FlexWrapWrapper>
+                {reorderedMenusBySoldout(
                   getFilteredMenus({
                     menus: wrapAndSandwich,
                     categoryFilters,
                   })
                 )?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
-          <TextH3B padding="17px 0 17px 0">도시락·간편식</TextH3B>
-          <FlexWrapWrapper>
-            {lunchAndConvenienceFood.length > 0
-              ? reorderedMenusBySoldout(
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
+
+          {lunchAndConvenienceFood.length > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">도시락·간편식</TextH3B>
+              <FlexWrapWrapper>
+                {reorderedMenusBySoldout(
                   getFilteredMenus({
                     menus: lunchAndConvenienceFood,
                     categoryFilters,
                   })
                 )?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
-          <TextH3B padding="17px 0 17px 0">죽·스프</TextH3B>
-          <FlexWrapWrapper>
-            {soups.length > 0
-              ? reorderedMenusBySoldout(
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
+
+          {soups.length > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">죽·스프</TextH3B>
+              <FlexWrapWrapper>
+                {reorderedMenusBySoldout(
                   getFilteredMenus({
                     menus: soups,
                     categoryFilters,
                   })
                 )?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
-          <TextH3B padding="17px 0 17px 0">세트상품</TextH3B>
-          <FlexWrapWrapper>
-            {allMenus?.SET?.length! > 0
-              ? allMenus?.SET?.map((item, index) => {
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
+          {allMenus?.SET?.length! > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">세트상품</TextH3B>
+              <FlexWrapWrapper>
+                {allMenus?.SET?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
-          <TextH3B padding="17px 0 17px 0">간식</TextH3B>
-          <FlexWrapWrapper>
-            {allMenus?.SNACK?.length! > 0
-              ? allMenus?.SNACK?.map((item, index) => {
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
+          {allMenus?.SNACK?.length! > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">간식</TextH3B>
+              <FlexWrapWrapper>
+                {allMenus?.SNACK?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
-          <TextH3B padding="17px 0 17px 0">음료</TextH3B>
-          <FlexWrapWrapper>
-            {allMenus?.DRINK?.length! > 0
-              ? allMenus?.DRINK?.map((item, index) => {
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
+          {allMenus?.DRINK?.length! > 0 && (
+            <>
+              <TextH3B padding="17px 0 17px 0">음료</TextH3B>
+              <FlexWrapWrapper>
+                {allMenus?.DRINK?.map((item, index) => {
                   return <Item item={item} key={index} />;
-                })
-              : '상품을 준비 중입니다.'}
-          </FlexWrapWrapper>
+                })}
+              </FlexWrapWrapper>
+            </>
+          )}
         </>
       )}
     </Container>
