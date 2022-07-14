@@ -72,22 +72,20 @@ const SpotSearchMainPage = (): ReactElement => {
     };
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // 사용자 위치 값 변경에 따른 api호출
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
       getPaginatedSpotList(searchResult); 
       setIsSearched(true); 
-      // setInputFocus(true);
     }
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
-  useEffect(() => {
+  useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
       getPaginatedSpotList(searchResult); 
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
       setIsSearched(true); 
-      // setInputFocus(true);
     }
   }, [spotKeyword]);
 
@@ -217,7 +215,6 @@ const SpotSearchMainPage = (): ReactElement => {
 
     if (e.key === 'Enter') {
       if (inputRef.current) {
-        // setKeyWord(inputRef.current?.value);
         let keyword = inputRef.current?.value;
         if (!keyword) {
           setSearchResult([]);
@@ -225,11 +222,11 @@ const SpotSearchMainPage = (): ReactElement => {
         };
         getSpotList({ keyword });
         setIsSearched(true); 
-        // setInputFocus(true);
       }
     }
   }, []);
 
+  // 스팟 검색 결과 api
   const getSpotList = async ({ keyword }: { keyword: string }) => {
     try {
       const params = {
@@ -277,7 +274,6 @@ const SpotSearchMainPage = (): ReactElement => {
     setKeyword(value);
     const inputText = inputRef.current?.value?.length! > 0;
     if (!inputText) {
-      // setSearchResult([]);
       setIsSearched(false);
       setKeyword('');
       dispatch(SET_SEARCH_KEYWORD(''));
@@ -290,7 +286,6 @@ const SpotSearchMainPage = (): ReactElement => {
       setIsSearched(false);
       setKeyword('');
       dispatch(SET_SEARCH_KEYWORD(''));
-      // dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
     };
   };
 
@@ -339,11 +334,10 @@ const SpotSearchMainPage = (): ReactElement => {
             <SearchBarWrapper>
               <label className='textLabel'>
                 {
-                  keyword.length < 0 &&
+                  keyword.length === 0 &&
                     <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
                 }
                 <TextInput
-                  name="input"
                   inputType="text"
                   svg="searchIcon"
                   fontSize='14px'
@@ -438,8 +432,8 @@ const SearchBarWrapper = styled.div`
     width: 100%;
     .textPlaceholde{
       position: absolute;
-      top: 13px;
-      left: 50px;
+      top: 14px;
+      left: 49px;
       z-index: 100;
       color: ${theme.greyScale45};
       ${textBody2};    
