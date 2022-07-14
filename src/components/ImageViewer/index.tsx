@@ -25,7 +25,7 @@ const ImageViewer = ({ images }: any) => {
       <Container>
         <Header>
           <TextH5B color={theme.white}>
-            {currentImg + 1}/{totalImg}
+            {currentImg + 1} / {totalImg}
           </TextH5B>
           <div className="close" onClick={closeModal}>
             <SVGIcon name="defaultCancel24White" />
@@ -50,7 +50,7 @@ const Header = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  top: 10%;
+  top: 5%;
   width: 100%;
   z-index: 1000001;
 

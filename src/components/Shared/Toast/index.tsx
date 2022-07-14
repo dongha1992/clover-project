@@ -35,6 +35,7 @@ const Toast = (): JSX.Element | null => {
   if (!isToastOpen) {
     return null;
   }
+
   return (
     <ToastContainer
       duration={toastConfig.duration ?? 3000}

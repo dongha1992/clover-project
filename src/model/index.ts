@@ -2091,7 +2091,7 @@ export interface IMenuDetailsInCart {
 }
 export interface IGetCart {
   // availabilityInfo: ICartAvailabilty;
-  cartId?: number | null;
+  cartId: number | null;
   menuId?: number;
   holiday: number[][] | null;
   name: string;
