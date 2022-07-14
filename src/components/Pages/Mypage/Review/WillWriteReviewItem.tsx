@@ -10,6 +10,8 @@ import getCustomDate from '@utils/destination/getCustomDate';
 import { getDisplayMenuName } from '@utils/menu';
 import dayjs from 'dayjs';
 import { IWillWriteReview } from '@model/index';
+import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
+import { DeliveryTag } from '@components/Shared/Tag';
 interface IProps {
   review: IWillWriteReview;
 }
@@ -28,8 +30,12 @@ const WillWriteReviewItem = ({ review }: IProps) => {
         <FlexRow margin="0 0 8px 0">
           <TextH5B color={theme.brandColor}>주문완료</TextH5B>
           {isSubscription && <Tag margin="0 4px 0 8px">정기구독</Tag>}
-          <Tag margin="0 4px 0 8px">{review.delivery}</Tag>
-          {isSpot && <Tag>{review.deliveryDetail}</Tag>}
+          <DeliveryTag deliveryType={review?.delivery!} margin="0 4px" />
+          {isSpot && (
+            <Tag backgroundColor={theme.white} border={theme.brandColor} color={theme.brandColor}>
+              {DELIVERY_TIME_MAP[review?.deliveryDetail!]}
+            </Tag>
+          )}
         </FlexRow>
         <FlexRow padding="0 0 8px 0">
           <SVGIcon name="deliveryTruckIcon" />
@@ -52,7 +58,11 @@ const WillWriteReviewItem = ({ review }: IProps) => {
             color={theme.black}
             border
             margin="0 8px 0 0"
-            onClick={() => router.push(`/mypage/review/write/${review.id}`)}
+            onClick={() =>
+              router.push(
+                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}`
+              )
+            }
           >
             후기 작성하기
           </Button>

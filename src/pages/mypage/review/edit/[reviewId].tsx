@@ -47,12 +47,8 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
-  /* TODO: text area 1000 넘었을 때 */
   /* TODO: blob 타입 정의 */
   /* TODO: 사이즈 체크 및 사진 올리는 hooks */
-  /* TODO: 상수 파일에서 관리 */
-
-  // deleteReviewApi;
 
   const {
     data: selectedReviewDetail,
@@ -95,6 +91,9 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
         );
         await queryClient.refetchQueries('getReviewDetail');
       },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
     }
   );
 
@@ -108,8 +107,17 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
         router.back();
         await queryClient.refetchQueries('getCompleteWriteReview');
       },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
     }
   );
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      setNumberOfReivewContent(textAreaRef.current?.value?.length);
+    }
+  }, [selectedReviewDetail]);
 
   const onStarHoverRating = (e: React.MouseEvent<HTMLDivElement>, idx: number) => {
     const xPos = (e.pageX - e.currentTarget.getBoundingClientRect().left) / e.currentTarget.offsetWidth;
@@ -205,22 +213,34 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
 
     let formData = new FormData();
+    let location = [];
+
+    console.log(writeMenuReviewObj.imgFiles, 'writeMenuReviewObj.imgFiles');
 
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+        try {
+          writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
+          const result = await postImageApi(formData);
+          location.push(result.headers.location);
+        } catch (error) {
+          dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
+          return;
+        }
       }
-      const result = await postImageApi(formData);
-      console.log(result, 'formData result');
     }
 
-    // const reqBody = {
-    //   content: textAreaRef?.current?.value!,
-    //   images: JSON.stringify(writeMenuReviewObj?.imgFiles[0]),
-    //   rating,
-    // };
+    const hasReviewImgs = location.length !== 0;
 
-    // mutateEditMenuReview(reqBody);
+    const reqBody = {
+      content: textAreaRef?.current?.value!,
+      images: hasReviewImgs ? location : [],
+      rating,
+    };
+
+    console.log(reqBody, 'reqBody');
+
+    mutateEditMenuReview(reqBody);
   };
 
   const deleteReview = () => {
@@ -302,7 +322,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" />
+        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" isBottom />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
