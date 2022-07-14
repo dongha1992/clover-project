@@ -7,10 +7,14 @@ import {
   SpotList, 
   SpotRecommendList, 
   SpotRecentPickupList, 
-  SpotSearchMapPage 
+  SpotSearchMapPage
 } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
-import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
+import { 
+  getSpotSearchRecommend, 
+  getSpotEvent, 
+  getSpotsAllListApi, 
+} from '@api/spot';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,7 +28,7 @@ import {
   SET_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
-import { IDestinationsResponse } from '@model/index';
+import { IDestinationsResponse, ISpotsAllListResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 import { ISpotsDetail } from '@model/index';
 // import { getCartsApi } from '@api/cart';
@@ -50,7 +54,7 @@ const SpotSearchPage = (): ReactElement => {
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
     dispatch(SET_SPOT_MAP_SWITCH(false));
-    getSpotList({keyword: ''});
+    getSpotAllList();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -104,18 +108,37 @@ const SpotSearchPage = (): ReactElement => {
       return totalList;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
-  ); 
+  );
 
-  const getSpotList = async ({ keyword }: { keyword: string }) => {
+  // const {data: spotAllList, isLoading } = useQuery(
+  //   ['allList'],
+  //   async () => {
+  //     const params = {
+  //       latitude: latitude,
+  //       longitude: longitude,
+  //     };
+  //     const { data } = await getSpotsAllListApi(params);
+  //     return data.data
+  //   },
+  //   { 
+  //     onSuccess: (data) => {
+  //       setSearchResult(data);
+  //       setSpotListAllCheck(true);
+  //     },
+  //     refetchOnMount: true, 
+  //     refetchOnWindowFocus: false 
+  //   }
+  // );
+
+  const getSpotAllList = async () => {
     try {
       const params = {
-        keyword: keyword,
         latitude: latitude,
         longitude: longitude,
       };
-      const { data } = await getSpotSearch(params);
+      const { data } = await getSpotsAllListApi(params);
       if (data.code === 200) {
-        const spotList = data.data.spots;
+        const spotList = data.data;
         setSearchResult(spotList);
         setSpotListAllCheck(true);
       };

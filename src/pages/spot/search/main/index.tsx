@@ -60,9 +60,6 @@ const SpotSearchMainPage = (): ReactElement => {
     inputRef.current?.focus();
     setKeyword(spotKeyword);
     dispatch(SET_SPOT_MAP_SWITCH(false));
-    if (spotKeyword.length === 0) {
-      getSpotList({ keyword: '' });
-    };
   }, []);
 
   useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
@@ -289,7 +286,6 @@ const SpotSearchMainPage = (): ReactElement => {
   const goToSwitchMap = () => {
     // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼
     setKeyword('');
-    getSpotList({ keyword: '' });
     dispatch(SET_SPOT_MAP_SWITCH(true));
     setSpotListAllCheck(true);
   };
