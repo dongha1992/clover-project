@@ -23,7 +23,6 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
 
   const isContentHide = review.content.length >= 280;
 
-  console.log(review, 'review');
   return (
     <>
       <Container>
