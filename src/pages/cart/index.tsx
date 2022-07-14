@@ -64,13 +64,14 @@ import {
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import { INIT_ACCESS_METHOD } from '@store/common';
+import { useToast } from '@hooks/useToast';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 
 dayjs.locale('ko');
 
-/*TODO: 배송비할인 */
+/*TODO: 카트 삭제 id 처리 */
 
 interface IMenuDetailsId {
   menuDetailId: number;
@@ -125,6 +126,8 @@ const CartPage = () => {
 
   const queryClient = useQueryClient();
 
+  const { showToast, hideToast } = useToast();
+
   const {
     data: cartResponse,
     isLoading,
@@ -134,7 +137,7 @@ const CartPage = () => {
     ['getCartList'],
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
-      /* TODO: 스팟아이디 넣어야함 */
+
       console.log(destinationObj, 'destinationObj');
 
       const params = {
@@ -282,8 +285,6 @@ const CartPage = () => {
     }
   );
 
-  /* TODO: 배송지 가능 api 질문 */
-
   const { data: result } = useQuery(
     ['getAvailabilityDestination'],
     async () => {
@@ -343,8 +344,14 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async (reqBody: IDeleteCartRequest[]) => {
-      const { data } = await deleteCartsApi(reqBody);
+    async ({ reqBody, cartIds }: { reqBody: IDeleteCartRequest[]; cartIds: number[] }) => {
+      // const { data } = await deleteCartsApi(reqBody, cartId);
+
+      const data = await cartIds?.map((cartId: number) => {
+        return deleteCartsApi(reqBody, cartId);
+      });
+
+      console.log(data, 'AFTER DELETE');
     },
     {
       onSuccess: async () => {
@@ -455,6 +462,7 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
+    const cartIds = checkedMenus.map((item) => item.cartId)! as number[];
     const reqBody = pipe(
       checkedMenus,
       flatMap((item) =>
@@ -480,14 +488,22 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem(reqBody);
+            mutateDeleteItem({ reqBody, cartIds: cartIds! });
           }
         },
       })
     );
   };
 
-  const removeCartActualItemHandler = ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => {
+  const removeCartActualItemHandler = ({
+    menuDetailId,
+    menuId,
+    cartId,
+  }: {
+    menuId: number;
+    menuDetailId: number;
+    cartId: number;
+  }) => {
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
 
     const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
@@ -551,7 +567,7 @@ const CartPage = () => {
 
             setNonMemberCartListsHandler(filtered);
           } else {
-            mutateDeleteItem(reqBody);
+            mutateDeleteItem({ reqBody, cartIds: [cartId] });
           }
         },
       })
@@ -559,6 +575,7 @@ const CartPage = () => {
   };
 
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
+    const cartIds = menu.cartId!;
     const reqBody = menu.menuDetails.map((item) => {
       return {
         menuId: menu?.menuId!,
@@ -577,7 +594,7 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem(reqBody);
+            mutateDeleteItem({ reqBody, cartIds: [cartIds] });
           }
         },
       })

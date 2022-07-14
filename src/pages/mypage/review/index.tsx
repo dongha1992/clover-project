@@ -86,9 +86,9 @@ const ReviewPage = () => {
       <FixedTab scroll={isScroll}>
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} countObj={countObj} />
       </FixedTab>
-      <Wrapper>
+      <InfoWrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
-      </Wrapper>
+      </InfoWrapper>
       {isWillWrite && !willWriteList?.length && (
         <Center>
           <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
@@ -135,6 +135,11 @@ const ReviewPage = () => {
 
 const Container = styled.div`
   padding-bottom: 24px;
+`;
+
+const InfoWrapper = styled.div`
+  ${homePadding}
+  padding-top:50px;
 `;
 
 const FixedTab = styled.div<{ scroll: boolean }>`

@@ -48,6 +48,7 @@ const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick, width, 
 
 const Container = styled.div`
   display: flex;
+  cursor: pointer;
   > div {
     padding-right: 8px;
   }
