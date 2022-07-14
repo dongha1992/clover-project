@@ -75,8 +75,8 @@ const ReviewPage = ({ menuId }: any) => {
     }
   }, [page]);
 
-  const goToReviewDetail = useCallback(({ id }) => {
-    router.push(`/menu/${menuId}/review/${id}`);
+  const goToReviewDetail = useCallback(({ contentId }) => {
+    router.push(`/menu/${menuId}/review/${contentId}`);
   }, []);
 
   if (isLoading || isFetching) {

@@ -10,13 +10,22 @@ import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
 import { getFormatPrice } from '@utils/common';
 interface IProps {
-  removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuDetailId: number; menuId: number }) => void;
+  removeCartActualItemHandler: ({
+    menuDetailId,
+    menuId,
+    cartId,
+  }: {
+    menuDetailId: number;
+    menuId: number;
+    cartId: number;
+  }) => void;
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
   menuId: number;
   menuDetail: IMenuDetailsInCart;
   holiday: number[][] | null;
   menuName: string;
+  cartId: number;
 }
 
 /* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
@@ -29,6 +38,7 @@ const CartActualItem = ({
   menuDetail,
   holiday,
   menuName,
+  cartId,
 }: IProps) => {
   const { discount, discountedPrice } = getDiscountPrice({
     discountPrice: menuDetail?.discountPrice,
@@ -45,7 +55,7 @@ const CartActualItem = ({
           <div
             onClick={() =>
               removeCartActualItemHandler &&
-              removeCartActualItemHandler({ menuDetailId: menuDetail?.menuDetailId, menuId })
+              removeCartActualItemHandler({ menuDetailId: menuDetail?.menuDetailId, menuId, cartId })
             }
           >
             <SVGIcon name="defaultCancel" />
