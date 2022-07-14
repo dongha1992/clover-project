@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { homePadding } from '@styles/theme';
-import { theme, FlexBetween, FlexEnd } from '@styles/theme';
+import { theme, FlexBetween, FlexEnd, textBody2 } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
 import { 
   SpotList, 
@@ -294,9 +294,7 @@ const TextInputButton = styled.div`
 
 const Text = styled.div`
   color: ${theme.greyScale45};
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 22px;
+  ${textBody2};
 `;
 
 const SpotRecommendWrapper = styled.section`
