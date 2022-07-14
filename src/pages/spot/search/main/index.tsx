@@ -67,22 +67,20 @@ const SpotSearchMainPage = (): ReactElement => {
     };
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // 사용자 위치 값 변경에 따른 api호출
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
-      getPaginatedSpotList(searchResult);
-      setIsSearched(true);
-      // setInputFocus(true);
+      getPaginatedSpotList(searchResult); 
+      setIsSearched(true); 
     }
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
-  useEffect(() => {
+  useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
     if (spotKeyword?.length > 0) {
       getSpotList({ keyword: spotKeyword });
       getPaginatedSpotList(searchResult);
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
-      setIsSearched(true);
-      // setInputFocus(true);
+      setIsSearched(true); 
     }
   }, [spotKeyword]);
 
@@ -216,19 +214,18 @@ const SpotSearchMainPage = (): ReactElement => {
 
     if (e.key === 'Enter') {
       if (inputRef.current) {
-        // setKeyWord(inputRef.current?.value);
         let keyword = inputRef.current?.value;
         if (!keyword) {
           setSearchResult([]);
           inputRef.current.blur();
         }
         getSpotList({ keyword });
-        setIsSearched(true);
-        // setInputFocus(true);
+        setIsSearched(true); 
       }
     }
   }, []);
 
+  // 스팟 검색 결과 api
   const getSpotList = async ({ keyword }: { keyword: string }) => {
     try {
       const params = {
@@ -279,7 +276,6 @@ const SpotSearchMainPage = (): ReactElement => {
     setKeyword(value);
     const inputText = inputRef.current?.value?.length! > 0;
     if (!inputText) {
-      // setSearchResult([]);
       setIsSearched(false);
       setKeyword('');
       dispatch(SET_SEARCH_KEYWORD(''));
@@ -292,8 +288,7 @@ const SpotSearchMainPage = (): ReactElement => {
       setIsSearched(false);
       setKeyword('');
       dispatch(SET_SEARCH_KEYWORD(''));
-      // dispatch(SET_SPOT_SEARCH_ALL_LIST_CHECKED(true));
-    }
+    };
   };
 
   const initInputHandler = () => {
@@ -361,44 +356,35 @@ const SpotSearchMainPage = (): ReactElement => {
           </SearchBarWrapper>
           {!isSearched && <SpotSearchKeywordSlider onChange={handleSelectedKeywordVaule} />}
           <>
-            {!isSearched && // 검색바 활성화
-              (userLocationLen ? ( // 위치 정보 있는 경우
-                spotRecommend?.spotList.length! > 0 ? ( // 추천 스팟 있는 경우
-                  <SpotRecommendWrapper>
-                    <FlexBetween margin="0 0 24px 0">
-                      <TextH2B>{spotRecommend?.data.title}</TextH2B>
-                      {
-                        // 사용자 위치 설정 했을 경우 노출
-                        userLocationLen && <TextB3R color={theme.greyScale65}>3km 이내 프코스팟</TextB3R>
-                      }
-                    </FlexBetween>
-                    {spotRecommend?.spotList?.map((item, index) => {
-                      return <SpotRecommendList item={item} key={index} />;
-                    })}
-                  </SpotRecommendWrapper>
-                ) : recentPickedSpotList?.length! > 0 ? ( // 추천 스팟 없고, 픽업 이력 있는 경우
-                  <DefaultSearchContainer>
-                    <RecentPickWrapper>
-                      <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                      {recentPickedSpotList?.map((item, index) => (
-                        // 스팟 최근 픽업 이력 리스트
-                        <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                      ))}
-                    </RecentPickWrapper>
-                  </DefaultSearchContainer>
-                ) : null // 추천 스팟 없고, 픽업 이력 없는 경우 빈화면 노출
-              ) : // 위치 정보 없는 경우
-              recentPickedSpotList?.length! > 0 ? ( // 최근 픽업 이력이 있는 경우, 픽업 이력 노출
-                <DefaultSearchContainer>
-                  <RecentPickWrapper>
-                    <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
-                    {recentPickedSpotList?.map((item, index) => (
-                      // 스팟 최근 픽업 이력 리스트
-                      <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                    ))}
-                  </RecentPickWrapper>
-                </DefaultSearchContainer>
-              ) : null) // 픽업 이력 없는 경우 빈화면 노출
+            <SearchBarWrapper>
+              <label className='textLabel'>
+                {
+                  keyword.length === 0 &&
+                    <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
+                }
+                <TextInput
+                  inputType="text"
+                  svg="searchIcon"
+                  fontSize='14px'
+                  keyPressHandler={getSearchResult}
+                  eventHandler={changeInputHandler}
+                  value={keyword}
+                  ref={inputRef}
+                  withValue
+                />
+              </label>
+              {
+                keyword.length > 0 && (
+                  <div className="removeSvg" onClick={clearInputHandler}>
+                    <SVGIcon name="removeItem" />
+                  </div>
+                )
+              }
+            </SearchBarWrapper>
+            {
+             !isSearched && (
+                <SpotSearchKeywordSlider onChange={handleSelectedKeywordVaule} />
+              )
             }
             {isSearched && ( // 검색 결과
               <SearchResultContainer>
@@ -428,8 +414,8 @@ const SearchBarWrapper = styled.div`
     width: 100%;
     .textPlaceholde {
       position: absolute;
-      top: 13px;
-      left: 50px;
+      top: 14px;
+      left: 49px;
       z-index: 100;
       color: ${theme.greyScale45};
       ${textBody2};
