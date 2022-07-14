@@ -257,21 +257,6 @@ const CartSheet = ({ menuItem }: any) => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  // const checkAlreadyInCart = () => {
-  //   const result = selectedMenus?.map((sMenu: any) => {
-  //     const inCart = cartLists?.find((cartItem: any) => cartItem.id === sMenu.id);
-  //     if (inCart) {
-  //       return {
-  //         ...sMenu,
-  //         quantity: sMenu.quantity + inCart.quantity,
-  //       };
-  //     } else {
-  //       return sMenu;
-  //     }
-  //   });
-  //   return result;
-  // };
-
   const checkHasMainMenu = (): boolean => {
     return selectedMenus.some((item: any) => item.main);
   };

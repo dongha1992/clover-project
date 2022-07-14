@@ -1164,13 +1164,13 @@ const CartPage = () => {
           )}
 
           <NutritionInfoWrapper>
-            <FlexBetween>
+            <FlexBetween onClick={() => setIsShow(!isShow)}>
               <span className="h5B">
                 💪 내 장바구니 체크! 현재
                 <span className="brandColor"> 관리중</span>
                 이신가요?
               </span>
-              <div onClick={() => setIsShow(!isShow)}>
+              <div>
                 <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
               </div>
             </FlexBetween>
