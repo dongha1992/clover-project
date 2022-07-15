@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
-import { SET_LOCATION_TEMP, SET_LOCATION } from '@store/destination';
+import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 import { getAddressFromLonLat } from '@api/location';
 import { SET_ALERT } from '@store/alert';
@@ -69,7 +69,7 @@ const LocationPage = () => {
   useEffect(()=> {
     const mapScript = document.createElement("script");
     mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services`;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
     document.head.appendChild(mapScript);
   
     mapScript.addEventListener("load", onLoadKakaoMap);
