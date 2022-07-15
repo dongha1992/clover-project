@@ -11,22 +11,25 @@ import Slider from 'react-slick';
 import { SpotSearchKakaoMap } from '@components/Map';
 import { spotSelector } from '@store/spot';
 import { useDispatch, useSelector } from 'react-redux';
+import { ISpotsDetail } from '@model/index';
 
 interface IProps {
   isSearched?: boolean;
-  searchListLen?: number;
+  spotSearchList?: ISpotsDetail[];
+  spotListAllCheck?: boolean;
 };
 
-const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement => {
+const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProps): ReactElement => {
   const router = useRouter();
   const slideRef = useRef<HTMLElement | null | any>(null);
-  const { spotSearchArr,  spotListAllChecked } = useSelector(spotSelector);
   const [currentIdx, setCurrentIdx] = useState({ current: 0, next: 0});
   const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
   const [selectedSpotList, setSelectedSpotList] = useState([]);
   const [selected, setSelected] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const list = spotSearchArr ?? [];
+  const list = spotSearchList ?? [];
+  const searchListLen = list.length;
+  
   useEffect(()=> {
     if(slideRef.current){
       slideRef.current?.slickGoTo(selectedCarouselIndex);
@@ -57,9 +60,9 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchKakaoMap zoom={2} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
+        <SpotSearchKakaoMap spotListAllCheck={spotListAllCheck} spotSearchList={list} zoom={3} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
         {
-          selected && spotListAllChecked && (
+          selected && spotListAllCheck && (
             !visible &&
             <SpotListWrapper>
               <SpotListSlider {...setting} ref={slideRef}>
@@ -71,7 +74,7 @@ const SpotSearchMapPage = ({isSearched, searchListLen}: IProps): ReactElement =>
           )
         }
         {
-          searchListLen! > 0 && !spotListAllChecked && 
+          searchListLen! > 0 && !spotListAllCheck && 
           (
             !visible &&
             <SpotListWrapper>

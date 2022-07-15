@@ -225,17 +225,17 @@ const SignupAuthPage = () => {
             dispatch(SET_ALERT({ alertMessage: '인증이 완료되었습니다.', submitBtnText: '확인' }));
           }
         } catch (error: any) {
-          if (error.code === 2002) {
-            dispatch(SET_ALERT({ alertMessage: '인증번호가 올바르지 않습니다.', submitBtnText: '확인' }));
-          } else if (error.code === 2013) {
-            dispatch(
-              SET_ALERT({ alertMessage: '전화번호 인증 확인 횟수를 초과하였습니다.(하루 5회)', submitBtnText: '확인' })
-            );
-          } else if (error.code === 1103) {
+          if (error.code === 2002 || error.code === 1103) {
             dispatch(
               SET_ALERT({
-                alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
+                alertMessage:
+                  '인증번호가 올바르지 않습니다. \n 5회 이상 실패 시 해당 번호로 인증 요청이 24시간 제한됩니다.',
+                submitBtnText: '확인',
               })
+            );
+          } else if (error.code === 2013) {
+            dispatch(
+              SET_ALERT({ alertMessage: '24시간 동안 해당 번호로 인증 요청이 불가합니다.', submitBtnText: '확인' })
             );
           } else {
             dispatch(SET_ALERT({ alertMessage: error.message, submitBtnText: '확인' }));

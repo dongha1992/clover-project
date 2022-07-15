@@ -22,8 +22,8 @@ export const postCartsApi = (data: ICreateCartRequest[]): Promise<AxiosResponse<
   return Api.post(`cart/v1/carts`, data);
 };
 
-export const deleteCartsApi = (data: IDeleteCartRequest[]): Promise<AxiosResponse<IResponse>> => {
-  return Api.delete(`cart/v1/carts/menu`, { data });
+export const deleteCartsApi = (data: IDeleteCartRequest[], cartId: number): Promise<AxiosResponse<IResponse>> => {
+  return Api.delete(`cart/v1/carts/${cartId}`, { data });
 };
 
 export const patchCartsApi = (data: IPatchCartRequest): Promise<AxiosResponse<IResponse>> => {
