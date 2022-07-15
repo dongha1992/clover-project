@@ -10,14 +10,18 @@ import { SET_ALERT } from '@store/alert';
 import { ISpotsDetail } from '@model/index';
 import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import { theme } from '@styles/theme';
 
 declare global {
   interface Window {
     getCurrentPosBtn: any;
+    zoomIn: any;
+    zoomOut: any;
   }
 }
 
 interface IProps {
+  spotSearchList?: ISpotsDetail[];
   zoom?: number;
   centerLat?: number;
   centerLng?: number;
@@ -26,9 +30,11 @@ interface IProps {
   getSpotInfo?: any
   setSelected?: any;
   setVisible?: any;
+  spotListAllCheck?: boolean;
 };
 
 const SpotSearchKakaoMap = ({
+  spotSearchList,
   zoom,
   centerLat,
   centerLng,
@@ -37,22 +43,22 @@ const SpotSearchKakaoMap = ({
   getSpotInfo,
   setSelected,
   setVisible,
+  spotListAllCheck,
 }: IProps) => {
   const dispatch = useDispatch();
-  const { spotSearchArr, spotListAllChecked } = useSelector(spotSelector);
   const [selectedSpotIdx, setSelectedSpotIdx] = useState<number | null>(0);
   const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false);
   const [successPosition, setSuccessPosition] = useState<boolean>(false);
-  const spotList = spotSearchArr ?? [];
+  const spotList = spotSearchList ?? [];
   const idx = currentSlickIdx&&currentSlickIdx;
-  const SelectedSpotArr = spotListAllChecked ?  spotList[selectedSpotIdx!] : spotList[idx!];
+  const SelectedSpotArr = spotListAllCheck ?  spotList[selectedSpotIdx!] : spotList[idx!];
   const currentPositionLat = SelectedSpotArr?.coordinate.lat;
   const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
-  const level = zoom ? zoom : 2;
-  const levelControl = spotListAllChecked ? 9 : level;
+  const level = zoom ? zoom : 3;
+  const levelControl = spotListAllCheck ? 9 : level;
 
   useEffect(()=> {
-    if(spotListAllChecked) {
+    if(spotListAllCheck) {
       setShowInfoWindow(true);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,7 +67,7 @@ const SpotSearchKakaoMap = ({
   useEffect(() => {
     const mapScript = document.createElement("script");
     mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=clusterer`;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
     document.head.appendChild(mapScript);
 
     mapScript.addEventListener("load", onLoadKakaoMap);
@@ -80,19 +86,13 @@ const SpotSearchKakaoMap = ({
           maxLevel: 9,
         };
         const map = new window.kakao.maps.Map(container, options); // 지도 생성
-        if (spotListAllChecked) {
+        if (spotListAllCheck) {
           map.setCenter(new window.kakao.maps.LatLng(37.5206007, 127.005454));
         };
-        const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
-        const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
-        map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 54);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
         const selectedMarkerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); // 선택된 마커 이미지
-        const imgContent = `
-          <img width='50px' height='30px' src=${`${IMAGE_S3_DEV_URL}/ic_map_pin.png`} alt="" />
-        `;
 
         const locationLoadSuccess = (pos: any) => {
           // 현재 위치 받아오기
@@ -108,7 +108,7 @@ const SpotSearchKakaoMap = ({
           const marker = new window.kakao.maps.Marker({
               position: currentPos,
               image: currentPositionIcon,
-              zIdex: 999,
+              zIdex: 900,
           });
       
           // 기존에 마커가 있다면 제거
@@ -169,11 +169,11 @@ const SpotSearchKakaoMap = ({
         const clusterer = new window.kakao.maps.MarkerClusterer({
             map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체 
             averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정 
-            minLevel: 3, // 클러스터 할 최소 지도 레벨 
+            minLevel: 4, // 클러스터 할 최소 지도 레벨 
             calculator: [10, 100, 1000],
             minClusterSize: 3,
             styles: clusterStyles,
-            zIndex: 555,
+            zIndex: 700,
         });
 
         // 마커 리스트
@@ -194,7 +194,8 @@ const SpotSearchKakaoMap = ({
         //ic_group_pin.png // 클러스터링 마커 
         let selectedMarker: any = null;
 
-      //   const result = spotList?.reduce((acc: any, cur: any) => {
+      //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
+      //   const result = filterResult?.reduce((acc: any, cur: any) => {
       //     acc[cur.location.address] = (acc[cur.location.address] || 0) + 1;
       //     return acc;
       //   }, {});
@@ -262,6 +263,7 @@ const SpotSearchKakaoMap = ({
               map: map, // 마커를 표시할 지도
               position: latlng, // 마커를 표시할 위치
               image : typeMarkersImage, // 마커 이미지 
+              zIndex: 600,
               
           });
           // markers.normalImage = typeMarkersImage;
@@ -269,27 +271,28 @@ const SpotSearchKakaoMap = ({
 
           if(currentSlickIdx === idx) { // 검색 결과에서 슬라이드 정보창 이동시 선택된 마커 유지
             markers.setImage(selectedMarkerImage);
+            markers.setZIndex(700);
           };
 
           new window.kakao.maps.event.addListener(markers, 'click', function () { // 마커에 click 이벤트 등록
-            if (spotListAllChecked) {
+            if (spotListAllCheck) {
               // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면 마커의 이미지를 클릭 이미지로 변경
               if (!selectedMarker || selectedMarker !== markers) {
                 // 클릭된 마커 객체가 null이 아니면 클릭된 마커의 이미지를 기본 이미지로 변경
                 !!selectedMarker && selectedMarker.setImage(typeMarkersImage);
                 // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
                 markers.setImage(selectedMarkerImage); 
-                markers.setZIndex(101);
+                markers.setZIndex(700);
               };
               // 클릭된 마커를 현재 클릭된 마커 객체로 설정
               selectedMarker = markers; 
             } else {
               if(currentSlickIdx === idx) { // 검색 결과에서 클릭한 마커 아이콘 변경
                 markers.setImage(selectedMarkerImage);
-                markers.setZIndex(101);
+                markers.setZIndex(700);
               };  
             }
-            map.setLevel(2); // 마커 클릭시 zoom level 2
+            map.setLevel(3); // 마커 클릭시 zoom level 3
 
             const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon); 
             map.panTo(moveLatLng); // 클릭된 마커를 맵 중심으로 이동, 부드럽게 이동
@@ -311,7 +314,28 @@ const SpotSearchKakaoMap = ({
           });
           clusterer.addMarkers(markersArr);
         };
-        
+
+        new window.kakao.maps.event.addListener(clusterer, 'clusterclick', function(cluster: any) {
+          // 현재 지도 레벨에서 1레벨 확대한 레벨
+          const level = map.getLevel()-1;
+          // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
+          map.setLevel(level, {anchor: cluster.getCenter()});
+        });
+
+        // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수
+        const zoomIn = () => {
+          const level = map.getLevel() - 1;
+          map.setLevel(level);
+        };
+      
+        // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수
+        const zoomOut = () => {
+          const level = map.getLevel() + 1;
+          map.setLevel(level);
+        };
+
+        window.zoomIn = zoomIn;
+        window.zoomOut = zoomOut;
       });
     } catch(e){
       dispatch(
@@ -329,6 +353,15 @@ const SpotSearchKakaoMap = ({
 
   return (
     <MapWrapper>
+      <ZoomContralWrapper>
+        <ZoomIn onClick={()=>window.zoomIn()}>
+          <SVGIcon name='mapZoomIn' />
+        </ZoomIn>
+        <Col />
+        <ZoomOut onClick={()=>window.zoomOut()}>
+          <SVGIcon name='mapZoomOut' />
+        </ZoomOut>
+      </ZoomContralWrapper>
       <SvgWrapper show={showInfoWindow} onClick={()=>window.getCurrentPosBtn()}>
         <SVGIcon name={successPosition ? "mapCurrentPositionActivedBtn" : "mapCurrentPositionBtn"} />
       </SvgWrapper>
@@ -343,10 +376,40 @@ const MapWrapper = styled.div`
   position: relative;
 `;
 
+const ZoomContralWrapper = styled.div`
+  max-width: ${breakpoints.mobile}px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+`;
+
+const ZoomIn = styled.span`
+`;
+
+const ZoomOut = styled.span`
+  position: absolute;
+  bottom: -12px;
+`;
+
+const Col = styled.div`
+  width: 100%;
+  height: 1px;
+  background: ${theme.greyScale25};
+  position: relative;
+  z-index: 500;
+  top: -4px;
+`;
+
+
 const SvgWrapper = styled.div<{show: boolean}>`
   position: absolute;
   max-width: ${breakpoints.mobile}px;
-  
   right: 20px;
   z-index: 500;
   cursor: pointer;

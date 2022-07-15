@@ -7,7 +7,15 @@ interface handleSelectCartItemIProps {
   handleSelectCartItem: (menu: IGetCart) => void;
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
-  removeCartActualItemHandler: ({ menuDetailId, menuId }: { menuId: number; menuDetailId: number }) => void;
+  removeCartActualItemHandler: ({
+    menuDetailId,
+    menuId,
+    cartId,
+  }: {
+    menuId: number;
+    menuDetailId: number;
+    cartId: number;
+  }) => void;
   removeCartDisplayItemHandler: (menu: IGetCart) => void;
   checkedMenus: IGetCart[];
   menu: IGetCart;
@@ -33,14 +41,15 @@ const CartItem = ({
       {menu?.menuDetails.map((menuDetail: IMenuDetailsInCart, index: number) => {
         return (
           <CartActualItem
+            key={index}
             clickPlusButton={clickPlusButton}
             clickMinusButton={clickMinusButton}
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
-            key={index}
-            menuId={menu.menuId}
+            menuId={menu?.menuId!}
             holiday={menu.holiday}
             menuName={menu.name}
+            cartId={menu.cartId!}
           />
         );
       })}

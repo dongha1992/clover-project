@@ -86,7 +86,7 @@ const Header = () => {
       '/mypage/dib/general': '찜 관리',
       '/mypage/friend': '친구 초대',
       '/mypage/review': '후기 관리',
-      '/mypage/review/write/[menuId]': '후기 작성',
+      '/mypage/review/write/[orderDeliveryId]': '후기 작성',
       '/mypage/review/edit/[reviewId]': '후기 작성',
       '/mypage/rank': '회원등급',
       '/mypage/customer-service': '고객센터',
