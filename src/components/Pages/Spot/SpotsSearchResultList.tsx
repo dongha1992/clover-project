@@ -52,8 +52,9 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
 
   useEffect(() => {
     if (router.isReady) {
-      if (router.query.isSubscription) {
-        setIsSubs(true);
+      if (router.query.isSubscription === 'true') {
+        const IsSubs = router.query.isSubscription === 'true';
+        setIsSubs(IsSubs);
       }
     }
   }, [router.isReady, router.query.isSubscription]);

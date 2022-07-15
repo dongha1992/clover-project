@@ -34,7 +34,7 @@ const GlobalStyle = createGlobalStyle`
     body {
         line-height: 1;
         margin: 0 auto;
-        background-color: #232323;
+        /* background-color: #232323; */
         width: 100%;
         overscroll-behavior-y: none;
     }
