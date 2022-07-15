@@ -64,7 +64,6 @@ const SpotSearchFilter = ({ getLocation }: IProps) => {
   const initSpotFilterHandler = () => {
     setSelectedCheckboxIds([]);
     defaultRedioId();
-    dispatch(INIT_SEARCH_SELECTED_FILTERS());
   };
 
   const onClick = () => {

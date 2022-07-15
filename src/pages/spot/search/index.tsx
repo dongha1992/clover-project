@@ -7,10 +7,14 @@ import {
   SpotList, 
   SpotRecommendList, 
   SpotRecentPickupList, 
-  SpotSearchMapPage 
+  SpotSearchMapPage
 } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
-import { getSpotSearchRecommend, getSpotEvent, getSpotSearch } from '@api/spot';
+import { 
+  getSpotSearchRecommend, 
+  getSpotEvent, 
+  getSpotsAllListApi, 
+} from '@api/spot';
 import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
@@ -26,7 +30,7 @@ import {
 } from '@store/spot';
 import { SET_LOCATION } from '@store/destination';
 import { getDestinationsApi } from '@api/destination';
-import { IDestinationsResponse } from '@model/index';
+import { IDestinationsResponse, ISpotsAllListResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 import { ISpotsDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
@@ -48,7 +52,6 @@ const SpotSearchPage = (): ReactElement => {
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
-  const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [isSeachingPosition, setIsSearchingPosition] = useState<boolean>(false);
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
@@ -60,7 +63,7 @@ const SpotSearchPage = (): ReactElement => {
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
     dispatch(SET_SPOT_MAP_SWITCH(false));
-    getSpotList({keyword: ''});
+    // getSpotAllList();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -198,25 +201,26 @@ const SpotSearchPage = (): ReactElement => {
       return totalList;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
-  ); 
+  );
 
-  const getSpotList = async ({ keyword }: { keyword: string }) => {
-    try {
+  const {data: spotAllList, isLoading: isLoadingSpotAllList } = useQuery(
+    ['allList'],
+    async () => {
       const params = {
-        keyword: keyword,
         latitude: latitude,
         longitude: longitude,
       };
-      const { data } = await getSpotSearch(params);
-      if (data.code === 200) {
-        const spotList = data.data.spots;
-        setSearchResult(spotList);
+      const { data } = await getSpotsAllListApi(params);
+      return data.data
+    },
+    { 
+      onSuccess: (data) => {
         setSpotListAllCheck(true);
-      };
-    } catch (err) {
-      console.error(err);
+      },
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false 
     }
-  };
+  );
 
   const goToSpotSearch = () => {
     router.push('/spot/search/main');
@@ -248,7 +252,7 @@ const SpotSearchPage = (): ReactElement => {
     <Container>
       {
         isMapSwitch ? (
-          <SpotSearchMapPage spotSearchList={searchResult} spotListAllCheck={spotListAllCheck} />
+          <SpotSearchMapPage spotSearchList={spotAllList} spotListAllCheck={spotListAllCheck} />
         ) : (
           <>
             <SearchBarWrapper onClick={goToSpotSearch}>

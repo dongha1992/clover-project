@@ -500,6 +500,12 @@ export interface ISpotsResponse {
   };
 }
 
+export interface ISpotsAllListResponse {
+  code: number;
+  message: string;
+  data: ISpotsDetail[]
+};
+
 export interface ISpots {
   title: string;
   spots: ISpotsDetail[];
