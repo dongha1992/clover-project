@@ -282,7 +282,7 @@ const Container = styled.div<{ scroll?: boolean }>`
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 10;
+  z-index: 998;
   height: 56px;
   left: calc(50%);
   background-color: white;
