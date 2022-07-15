@@ -52,7 +52,6 @@ const SpotSearchPage = (): ReactElement => {
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
-  const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [isSeachingPosition, setIsSearchingPosition] = useState<boolean>(false);
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
@@ -64,7 +63,7 @@ const SpotSearchPage = (): ReactElement => {
   useEffect(()=> {
     dispatch(SET_SEARCH_KEYWORD(''));
     dispatch(SET_SPOT_MAP_SWITCH(false));
-    getSpotAllList();
+    // getSpotAllList();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -204,42 +203,24 @@ const SpotSearchPage = (): ReactElement => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  // const {data: spotAllList, isLoading } = useQuery(
-  //   ['allList'],
-  //   async () => {
-  //     const params = {
-  //       latitude: latitude,
-  //       longitude: longitude,
-  //     };
-  //     const { data } = await getSpotsAllListApi(params);
-  //     return data.data
-  //   },
-  //   { 
-  //     onSuccess: (data) => {
-  //       setSearchResult(data);
-  //       setSpotListAllCheck(true);
-  //     },
-  //     refetchOnMount: true, 
-  //     refetchOnWindowFocus: false 
-  //   }
-  // );
-
-  const getSpotAllList = async () => {
-    try {
+  const {data: spotAllList, isLoading: isLoadingSpotAllList } = useQuery(
+    ['allList'],
+    async () => {
       const params = {
         latitude: latitude,
         longitude: longitude,
       };
       const { data } = await getSpotsAllListApi(params);
-      if (data.code === 200) {
-        const spotList = data.data;
-        setSearchResult(spotList);
+      return data.data
+    },
+    { 
+      onSuccess: (data) => {
         setSpotListAllCheck(true);
-      };
-    } catch (err) {
-      console.error(err);
+      },
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false 
     }
-  };
+  );
 
   const goToSpotSearch = () => {
     router.push('/spot/search/main');
@@ -271,7 +252,7 @@ const SpotSearchPage = (): ReactElement => {
     <Container>
       {
         isMapSwitch ? (
-          <SpotSearchMapPage spotSearchList={searchResult} spotListAllCheck={spotListAllCheck} />
+          <SpotSearchMapPage spotSearchList={spotAllList} spotListAllCheck={spotListAllCheck} />
         ) : (
           <>
             <SearchBarWrapper onClick={goToSpotSearch}>
