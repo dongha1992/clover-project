@@ -67,9 +67,9 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   max-width: ${breakpoints.mobile}px;
-  position: absolute;
+  position: relative;
   top: 0;
-  background-color: white;
+  background-color: #fff;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
