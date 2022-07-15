@@ -21,7 +21,6 @@ import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { userForm } from '@store/user';
 import { useInfiniteMenuReviews } from '@queries/menu';
 
-/* TODO: static 으로 변경, 이미지만 보여주는 리뷰와 이미지+글자 리뷰 데이터 어떻게 나눌지 */
 /* TODO: 중복 코드 많음 , 리팩토링 */
 
 const DEFAULT_SIZE = 10;
@@ -64,8 +63,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
       size: DEFAULT_SIZE,
       page,
     });
-
-  console.log(data, '--------data-------');
 
   const { data: reviewsImages, error: reviewsImagesError } = useQuery(
     'getMenuDetailReviewImages',
@@ -128,7 +125,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   }, [handleObserver]);
 
   useEffect(() => {
-    console.log(page, 'page');
     if (page <= data?.pages[0]?.totalPage!) {
       fetchNextPage();
     }
@@ -145,10 +141,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   const clickImgViewHandler = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
   };
-
-  // if (isLoading) {
-  //   return <div>로딩중</div>;
-  // }
 
   const hasImageReview = reviewsImages?.images?.length! !== 0;
 
@@ -179,7 +171,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
           )}
         </ImageWrapper>
         <BorderLine height={8} />
-        {/* <ReviewWrapper> */}
+
         {data?.pages[0]?.result?.length !== 0 ? (
           data?.pages?.map((page: any, index: number) => {
             return (
@@ -197,7 +189,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
             </TextB2R>
           </EmptyWrapper>
         )}
-        {/* </ReviewWrapper> */}
       </Wrapper>
       <div className="last" ref={ref}></div>
     </Container>
