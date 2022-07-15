@@ -10,18 +10,31 @@ import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
 import { checkDestinationHelper } from '@utils/destination';
-import { SET_SPOT_POSITIONS } from '@store/spot';
+import { SET_SPOT_POSITIONS, spotSelector } from '@store/spot';
 
 const AddressDetailPage = () => {
   const { tempLocation, availableDestination, isCanNotDelivery } = useSelector(destinationForm);
+  const { spotsPosition } = useSelector(spotSelector);
   const dispatch = useDispatch();
 
-  const { isSpot } = router.query;
+  const { isSpot, position } = router.query;
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: null,
     longitude: null,
   });
+
+  useEffect(() => {
+    if (!position) {
+      getLonLanForMap();
+    } else {
+      setLatitudeLongitude({
+        latitude: spotsPosition.latitude,
+        longitude: spotsPosition.longitude
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 배송 가능 여부
   const destinationDeliveryType = checkDestinationHelper(availableDestination);
@@ -72,10 +85,6 @@ const AddressDetailPage = () => {
   const goToHome = () => {
     router.push('/');
   };
-
-  useEffect(() => {
-    getLonLanForMap();
-  }, []);
 
   return (
     <Container>
