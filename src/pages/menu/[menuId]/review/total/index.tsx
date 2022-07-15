@@ -68,6 +68,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     },
     {
       onSuccess: (data) => {
+        console.log(data, '------data----');
         setList((prev) => [...prev, ...data.menuReviews]);
       },
       refetchOnMount: true,
@@ -137,7 +138,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   }, [handleObserver]);
 
   useEffect(() => {
-    const isLastPage = data?.pagination?.totalPage! <= page;
+    const isLastPage = data?.pagination?.totalPage! < page;
 
     if (isLastPage) return;
     if (page) {
@@ -199,11 +200,11 @@ const TotalReviewPage = ({ menuId }: IProps) => {
               })}
             </>
           ) : (
-            <Wrapper>
+            <EmptyWrapper>
               <TextB2R color={theme.greyScale65} padding="0 0 16px 0">
                 상품의 첫 번째 후기를 작성해주세요 :)
               </TextB2R>
-            </Wrapper>
+            </EmptyWrapper>
           )}
         </ReviewWrapper>
         <div ref={ref} />
@@ -215,6 +216,13 @@ const TotalReviewPage = ({ menuId }: IProps) => {
 const Container = styled.div``;
 
 const Wrapper = styled.div``;
+
+const EmptyWrapper = styled.div`
+  display: flex;
+  height: 50vh;
+  align-items: center;
+  justify-content: center;
+`;
 
 const ImageWrapper = styled.div<{ hasImageReview?: boolean }>`
   ${homePadding}
@@ -228,7 +236,7 @@ const ImageWrapper = styled.div<{ hasImageReview?: boolean }>`
       return css`
         justify-content: center;
         align-items: center;
-        height: 50vh;
+        /* height: 50vh; */
       `;
     }
   }}

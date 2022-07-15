@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
+import { getImageApi } from '@api/image';
 
 interface IProps {
   review: ICompletionReviews;
@@ -22,6 +23,15 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
 
   const isContentHide = review.content.length >= 280;
+
+  const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
+    const params = {
+      width,
+      url,
+    };
+    const data = await getImageApi(params);
+    return data;
+  };
 
   return (
     <>
@@ -36,11 +46,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 pointer
                 color={theme.greyScale65}
                 textDecoration="underline"
-                onClick={() =>
-                  router.push(
-                    `/mypage/review/edit/${review.id}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderDeliveryId=${review.orderDeliveryId}`
-                  )
-                }
+                onClick={() => router.push(`/mypage/review/edit/${review.id}?menuId=${review.menuId}`)}
               >
                 편집
               </TextH6B>
@@ -98,6 +104,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                     >
                       <Image
                         src={IMAGE_S3_URL + img.url}
+                        // scr={IMAGE_S3_URL + getResizeImg(500, img.url)}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}

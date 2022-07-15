@@ -89,11 +89,11 @@ export const editMenuReviewApi = ({
   data: IPatchReviewRequest;
   reviewId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.patch(`menu/v1/reviews/${reviewId}`, data);
+  return Api.put(`menu/v1/reviews/${reviewId}`, data);
 };
 
 export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsResponse>> => {
-  return Api.get(`menu/v1/reviews/completion`);
+  return Api.get(`menu/v1/reviews/completion/trash`);
 };
 
 export const getWillWriteReviews = (): Promise<AxiosResponse<IWillWriteReviewsResponse>> => {
