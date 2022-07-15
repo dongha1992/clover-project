@@ -16,11 +16,12 @@ import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import { commonSelector } from '@store/common';
+import useScrollCheck from '@hooks/useScrollCheck';
 
 const SpotStatusPage = () => {
   const router = useRouter();
   const { spotsPosition } = useSelector(spotSelector);
-  const { isScroll } = useSelector(commonSelector);
+  // const { isScroll } = useSelector(commonSelector);
   const [selectedTab, setSelectedTab] = useState<string>('/spot/status/list');
   const [page, setPage] = useState<number>(1);
   const [items, setItems] = useState<boolean>(false);
@@ -29,7 +30,8 @@ const SpotStatusPage = () => {
   const latLen = spotsPosition.latitude?.length > 0;
   const lonLen = spotsPosition.longitude?.length > 0;
 
-  
+  const isScroll = useScrollCheck();
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollHeight = document.documentElement.scrollHeight;
@@ -50,9 +52,9 @@ const SpotStatusPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusList.length > 0]);
 
-  useEffect(()=> {
+  useEffect(() => {
     getSpotRegistrationList();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   // 찜한 스팟 api
@@ -81,9 +83,8 @@ const SpotStatusPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-
   // 스팟 신청 목록 조회 api
-  const getSpotRegistrationList = async() => {
+  const getSpotRegistrationList = async () => {
     const params: IGetDestinationsRequest = {
       page: page,
       size: 10,
@@ -94,7 +95,7 @@ const SpotStatusPage = () => {
       const lastPage = data.data.pagination.totalPage;
       setStatusList((prevList) => [...prevList, ...list]);
       setIsLastPage(page === lastPage);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   };
@@ -131,48 +132,57 @@ const SpotStatusPage = () => {
       <ContentWrapper>
         {selectedTab === '/spot/status/list' ? (
           <>
-          {
-            statusList.length! > 0 ? (
-              <SpotStatusListWrapper >
+            {statusList.length! > 0 ? (
+              <SpotStatusListWrapper>
                 {statusList?.map((item, idx) => {
-                  return (
-                      <SpotStatusList item={item} key={idx} getInfo={getInfo} />
-                  )
+                  return <SpotStatusList item={item} key={idx} getInfo={getInfo} />;
                 })}
               </SpotStatusListWrapper>
             ) : (
               <SpotListEmptyScreen>
                 <EmptyWrapper>
-                  <TextB2R margin="0 0 24px 0" color={theme.greyScale65}>신청 중인 프코스팟이 없어요 😭 </TextB2R>
-                  <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSpotRegister}>
+                  <TextB2R margin="0 0 24px 0" color={theme.greyScale65}>
+                    신청 중인 프코스팟이 없어요 😭{' '}
+                  </TextB2R>
+                  <Button
+                    margin="0 0 16px 0"
+                    backgroundColor={theme.white}
+                    color={theme.black}
+                    border
+                    onClick={goToSpotRegister}
+                  >
                     프코스팟 신청하기
                   </Button>
                 </EmptyWrapper>
               </SpotListEmptyScreen>
-            )
-          }
+            )}
           </>
         ) : (
           <>
-          {
-            wishList?.spots.length! > 0 ? (
+            {wishList?.spots.length! > 0 ? (
               <SpotWishListWrapper>
                 {wishList?.spots.map((item, idx) => {
                   return <SpotWishList key={idx} items={item} onClick={handlerDislike} />;
                 })}
               </SpotWishListWrapper>
-  
             ) : (
               <SpotListEmptyScreen>
                 <EmptyWrapper>
-                  <TextB2R margin="0 0 24px 0" color={theme.greyScale65}>찜한 프코스팟이 없어요 😭 </TextB2R>
-                  <Button margin="0 0 16px 0" backgroundColor={theme.white} color={theme.black} border onClick={goToSpotMain}>
+                  <TextB2R margin="0 0 24px 0" color={theme.greyScale65}>
+                    찜한 프코스팟이 없어요 😭{' '}
+                  </TextB2R>
+                  <Button
+                    margin="0 0 16px 0"
+                    backgroundColor={theme.white}
+                    color={theme.black}
+                    border
+                    onClick={goToSpotMain}
+                  >
                     내 주변 프코스팟 보러가기
                   </Button>
                 </EmptyWrapper>
               </SpotListEmptyScreen>
-            )
-          }
+            )}
           </>
         )}
       </ContentWrapper>
@@ -186,12 +196,12 @@ const ContentWrapper = styled.div`
   ${homePadding};
 `;
 
-const FixedTab = styled.div<{scroll: boolean}>`
+const FixedTab = styled.div<{ scroll: boolean }>`
   ${fixedTab};
 
-  ${({scroll}) => {
+  ${({ scroll }) => {
     if (scroll) {
-      return css `
+      return css`
         box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
       `;
     }
@@ -201,7 +211,7 @@ const FixedTab = styled.div<{scroll: boolean}>`
 const SpotStatusListWrapper = styled.section`
   width: 100%;
   padding-top: 50px;
-`
+`;
 
 const SpotWishListWrapper = styled.section`
   width: 100%;
