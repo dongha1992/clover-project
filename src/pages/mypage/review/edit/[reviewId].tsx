@@ -264,6 +264,8 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
   }, [selectedReviewDetail]);
 
+  console.log(selectedReviewDetail, 'selectedReviewDetail');
+
   const over30Letter = LIMIT - numberOfReivewContent > 0;
 
   if (isLoading) {
