@@ -125,6 +125,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       onSuccess: (data) => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      // cacheTime: 0,
+      // staleTime: 0,
     }
   );
 

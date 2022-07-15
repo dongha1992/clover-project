@@ -8,6 +8,8 @@ import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { IBestReviews } from '@model/index';
 import { getImageApi } from '@api/image';
+import { IMAGE_ERROR } from '@constants/menu';
+
 interface IProps {
   review: IBestReviews;
   onClick: (review: IBestReviews) => void;
@@ -18,12 +20,16 @@ const ReviewItem = ({ review, onClick }: IProps) => {
   //   const data = await getImageApi(width, url);
   //   console.log(data, '----');
   // };
+
+  const hasImage = review?.images.length !== 0;
+  const s3Url = IMAGE_S3_URL + review?.images[0]?.url;
+
   return (
     <Container onClick={() => onClick(review)}>
       <Wrapper>
         <ImgWrapper>
           {/* {getResizeImg({ width: 500, url: review?.images[0]?.url! })} */}
-          <ReviewImg src={IMAGE_S3_URL + review?.images[0]?.url!} />
+          <ReviewImg src={hasImage ? s3Url : IMAGE_ERROR} alt="후기사진" />
         </ImgWrapper>
         <ReviewContent>
           <ReviewHeader>
