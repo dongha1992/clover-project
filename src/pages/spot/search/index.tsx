@@ -22,13 +22,22 @@ import {
   spotSelector,
   SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
+  SET_SPOT_POSITIONS,
 } from '@store/spot';
+import { SET_LOCATION } from '@store/destination';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 import { ISpotsDetail } from '@model/index';
+import { SET_ALERT } from '@store/alert';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
+
+declare global {
+  interface Window {
+    getCurrentPositionAddress: any;
+  }
+};
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -40,6 +49,7 @@ const SpotSearchPage = (): ReactElement => {
   const { userLocation } = useSelector(destinationForm);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
+  const [isSeachingPosition, setIsSearchingPosition] = useState<boolean>(false);
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
   const latLen = spotsPosition?.latitude !== null;
@@ -53,6 +63,90 @@ const SpotSearchPage = (): ReactElement => {
     getSpotList({keyword: ''});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(()=> {
+    const mapScript = document.createElement("script");
+    mapScript.async = true;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
+    document.head.appendChild(mapScript);
+  
+    mapScript.addEventListener("load", onLoadKakaoMap);
+    return () => mapScript.removeEventListener("load", onLoadKakaoMap);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
+  const onLoadKakaoMap = () => { 
+    try {
+      window.kakao.maps.load(() => {
+        const getCurrentPositionAddress = (lat: number,lng: number) => {
+          let geocoder = new window.kakao.maps.services.Geocoder();
+          let coord = new window.kakao.maps.LatLng(lat, lng);
+          let callback = function(result: any, status: any) {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const address = result[0];
+                const searchKeyword = result[0].road_address.address_name;
+                setIsSearchingPosition(false);
+                dispatch(SET_SEARCH_KEYWORD(searchKeyword));
+                router.push('/spot/search/main');
+                dispatch(SET_LOCATION({
+                  roadAddr: `${address.road_address.address_name}(${address.address.region_3depth_name})`,
+                  roadAddrPart1: address.road_address.address_name,
+                  roadAddrPart2: null,
+                  jibunAddr: `${address.address.address_name} ${address.road_address.building_name}`,
+                  engAddr: null,
+                  zipNo: address.road_address.zone_no,
+                  admCd: null,
+                  rnMgtSn: null,
+                  bdMgtSn: null,
+                  detBdNmList: null,
+                  bdNm: address.road_address.building_name,
+                  bdKdcd: null,
+                  siNm: null,
+                  sggNm: null,
+                  emdNm: address.address.region_3depth_name,
+                  liNm: null,
+                  rn: null,
+                  udrtYn: null,
+                  buldMnnm: null,
+                  buldSlno: null,
+                  mtYn: null,
+                  lnbrMnnm: null,
+                  lnbrSlno: null,
+                  emdNo: null,
+                }));
+              };
+          };
+          geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+        };
+        window.getCurrentPositionAddress = getCurrentPositionAddress;
+      });
+    } catch (e) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알 수 없는 에러가 발생했습니다.',
+          submitBtnText: '확인',
+        })
+      );  
+      console.error(e);
+    }
+  };
+
+  // 현 위치로 설정하기 - 위도,경도 좌표값 저장
+  const getGeoLocation = () => { 
+    setIsSearchingPosition(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        dispatch(
+          SET_SPOT_POSITIONS({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          })
+        );
+        window.getCurrentPositionAddress(position.coords.latitude, position.coords.longitude);
+      });
+    };
+  };
 
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommendList, isLoading: isLoadingRecomand } = useQuery(
@@ -138,6 +232,10 @@ const SpotSearchPage = (): ReactElement => {
     return <div>로딩</div>;
   };
 
+  if(isSeachingPosition){
+    return <div>현재 위치 찾는중...😊</div>
+  }
+
   // 위치 정보 있는 경우 
   // -> 추천, 이벤트 스팟 있으면 노출
   // -> 추천, 이벤트 스팟 없으면 픽업이력 노출 
@@ -161,12 +259,12 @@ const SpotSearchPage = (): ReactElement => {
                 <Text>도로명, 건물명 또는 지번으로 검색</Text>
               </TextInputButton>
             </SearchBarWrapper>
-            <FlexEnd padding="16px 24px 0 0">
+            <CurrentPositionSetting onClick={getGeoLocation}>
               <SVGIcon name="locationBlack" />
               <TextH6B margin="0 0 0 2px" padding="3px 0 0 0">
                 현 위치로 설정하기
               </TextH6B>
-            </FlexEnd>
+            </CurrentPositionSetting>
             <SpotSearchKeywordSlider onChange={handlerSearchKeyword} />
             {
             // 스팟 검색 메인 
@@ -267,6 +365,15 @@ const SearchBarWrapper = styled.div`
     top: 0;
     margin: 15px 14px 0 0;
   }
+`;
+
+const CurrentPositionSetting = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 24px 0 0;
+  cursor: pointer;
 `;
 
 const TextInputButton = styled.div`

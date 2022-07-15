@@ -17,13 +17,13 @@ const DefaultKakaoMap = ({
   useEffect(() => {
     const mapScript = document.createElement("script");
     mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false`;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
     document.head.appendChild(mapScript);
 
     const onLoadKakaoMap = () => {
       window.kakao.maps.load(() => {
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
-        const imageSize = new window.kakao.maps.Size(50, 52);
+        const imageSize = new window.kakao.maps.Size(50, 54);
         const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
 
         const container = document.getElementById("maps");
