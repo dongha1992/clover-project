@@ -7,6 +7,7 @@ import { CATEGORY_TITLE_MAP } from '@constants/menu';
 import { SET_SCROLL } from '@store/common';
 import { useDispatch } from 'react-redux';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import useScrollCheck from '@hooks/useScrollCheck';
 
 const HomeHeader = dynamic(() => import('./HomeHeader'));
 const DefaultHeader = dynamic(() => import('./DefaultHeader'));
@@ -29,30 +30,32 @@ const Header = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [currentPath, setCurrentPath] = useState<string>(router.pathname);
-  const [scroll, setScroll] = useState(false);
+  // const [scroll, setScroll] = useState(false);
+
+  const scroll = useScrollCheck();
 
   useEffect(() => {
     setCurrentPath(router.pathname);
   }, [router.pathname]);
 
-  useEffect(() => {
-    dispatch(SET_SCROLL(false));
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll); //clean up
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   dispatch(SET_SCROLL(false));
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll); //clean up
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  const handleScroll = () => {
-    if (window.scrollY) {
-      setScroll(true);
-      dispatch(SET_SCROLL(true));
-    } else {
-      setScroll(false);
-      dispatch(SET_SCROLL(false));
-    }
-  };
+  // const handleScroll = () => {
+  //   if (window.scrollY) {
+  //     setScroll(true);
+  //     dispatch(SET_SCROLL(true));
+  //   } else {
+  //     setScroll(false);
+  //     dispatch(SET_SCROLL(false));
+  //   }
+  // };
 
   const { category } = router.query;
 

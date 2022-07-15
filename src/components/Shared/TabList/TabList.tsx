@@ -4,9 +4,11 @@ import Tab from '@components/Shared/TabList/Tab';
 import { theme } from '@styles/theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { commonSelector } from '@store/common';
+import useScrollCheck from '@hooks/useScrollCheck';
 
 const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: any) => {
-  const { isScroll } = useSelector(commonSelector);
+  // const { isScroll } = useSelector(commonSelector);
+  const isScroll = useScrollCheck();
 
   return (
     <Container scroll={isScroll}>
@@ -29,15 +31,15 @@ const TabList = ({ onClick, selectedTab, tabList, countObj }: any, ref: any) => 
   );
 };
 
-const Container = styled.div<{scroll: boolean}>`
+const Container = styled.div<{ scroll: boolean }>`
   display: flex;
   height: 48px;
   justify-content: space-between;
   width: 100%;
   background-color: ${theme.white};
-  ${({scroll}) => {
+  ${({ scroll }) => {
     if (scroll) {
-      return css `
+      return css`
         //filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
       `;
     }
