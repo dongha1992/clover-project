@@ -635,7 +635,7 @@ const DeliverInfoPage = () => {
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
-        <Button borderRadius="0" disabled={!tempDestination}>
+        <Button borderRadius="0" height="56px" disabled={!tempDestination}>
           설정하기
         </Button>
       </SettingBtnWrapper>
@@ -645,7 +645,7 @@ const DeliverInfoPage = () => {
 
 const Container = styled.div`
   width: 100%;
-  margin-bottom: 60px;
+  margin-bottom: 56px;
 `;
 const Wrapper = styled.div`
   width: 100%;
