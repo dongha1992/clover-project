@@ -11,7 +11,9 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import { getImageApi } from '@api/image';
-import { ThumborImage } from 'react-thumbor-img';
+
+// 빌드에러남
+// import { ThumborImage } from 'react-thumbor-img';
 
 interface IProps {
   review: ICompletionReviews;
