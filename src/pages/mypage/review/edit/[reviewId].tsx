@@ -298,7 +298,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>{me?.name}님</TextH3B>
+          <TextH3B>{me?.nickName}님</TextH3B>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
