@@ -55,7 +55,6 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
-  console.log(menu, 'menu');
   /* TODO: blob 타입 정의 */
   /* TODO: 사이즈 체크 및 사진 올리는 hooks */
 
@@ -92,13 +91,16 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
     },
     {
       onSuccess: async () => {
+        await queryClient.refetchQueries('getReviewDetail');
         dispatch(
           SET_ALERT({
             alertMessage: `후기 수정이 완료되었습니다.`,
             submitBtnText: '확인',
+            onSubmit: () => {
+              router.replace('/mypage/review');
+            },
           })
         );
-        await queryClient.refetchQueries('getReviewDetail');
       },
       onError: (error: any) => {
         dispatch(SET_ALERT({ alertMessage: error.message }));
@@ -108,7 +110,6 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
 
   const { mutateAsync: mutateDeleteMenuReview } = useMutation(
     async () => {
-      console.log(reviewId, 'reviewId');
       const { data } = await deleteReviewApi({ id: Number(reviewId) });
     },
     {
@@ -153,7 +154,9 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   };
 
   const onChangeFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const LIMIT_SIZE = 5 * 1024 * 1024;
+    // const LIMIT_SIZE = 5 * 1024 * 1024;
+    const LIMIT_SIZE = 1000000;
+
     let imageFile = e.target.files! as any;
     if (!imageFile[0]) return;
 
@@ -206,6 +209,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   const getImageFileReader = (imageFile: any) => {
     const imageFileReader = new FileReader();
     imageFileReader.onload = (e: any) => {
+      console.log(imageFile, '-imageFile getImageFileReader 210');
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
         preview: [...writeMenuReviewObj?.preview!, e.target.result],
@@ -230,15 +234,21 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
     let formData = new FormData();
     let location = [];
 
-    console.log(writeMenuReviewObj.imgFiles, 'writeMenuReviewObj.imgFiles');
-
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
         try {
-          writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
-          const result = await postImageApi(formData);
-          location.push(result.headers.location);
+          const img = writeMenuReviewObj.imgFiles && writeMenuReviewObj?.imgFiles[i]!;
+
+          if (typeof img === 'string') {
+            location.push(img);
+          } else {
+            formData.append('media', img!);
+            const result = await postImageApi(formData);
+            formData = new FormData();
+            location.push(result.headers.location);
+          }
         } catch (error) {
+          console.error(error);
           dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
           return;
         }
@@ -252,8 +262,6 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       images: hasReviewImgs ? location : [],
       rating,
     };
-
-    console.log(reqBody, 'reqBody');
 
     mutateEditMenuReview(reqBody);
   };
@@ -274,6 +282,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
         imgFiles: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
+        preview: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
       });
       setRating(selectedReviewDetail.menuReview.rating);
     }
@@ -366,9 +375,10 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
           {writeMenuReviewObj?.preview?.length! > 0 &&
             writeMenuReviewObj?.preview?.map((img: string, index: number) => {
               const base64 = img?.includes('data:image');
+
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
+                  <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>

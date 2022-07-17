@@ -11,6 +11,7 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import { getImageApi } from '@api/image';
+import { ThumborImage } from 'react-thumbor-img';
 
 interface IProps {
   review: ICompletionReviews;
@@ -26,11 +27,20 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
   const isContentHide = review.content.length >= 280;
 
   const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
+    const formatUrl = url.replace('/image', '');
+
     const params = {
       width,
-      url,
+      url: formatUrl,
     };
+
+    // const params = {
+    //   width,
+    //   url,
+    // };
+
     const data = await getImageApi(params);
+    console.log(data);
     return data;
   };
 
@@ -103,7 +113,6 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
               <ImgWrapper>
                 {review.reviewImages?.map((img: any, index: number) => {
                   const imgUrlForViwer = review?.reviewImages?.map((item: any) => item.url);
-
                   return (
                     <ReviewImageWrapper
                       isFirst
@@ -111,8 +120,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                       key={index}
                     >
                       <Image
-                        src={IMAGE_S3_URL + img.url}
-                        // scr={IMAGE_S3_URL + getResizeImg(500, img.url)}
+                        src={process.env.REVIEW_IMAGE_URL + img.url}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}

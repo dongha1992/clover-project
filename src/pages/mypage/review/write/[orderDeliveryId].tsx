@@ -140,7 +140,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   };
 
   const onChangeFileHandler = (e: any) => {
-    const LIMIT_SIZE = 5 * 1024 * 1024;
+    // const LIMIT_SIZE = 5 * 1024 * 1024;
+    const LIMIT_SIZE = 1000000;
+
     let imageFile = e.target.files! as any;
     if (!imageFile[0]) return;
 
@@ -333,7 +335,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
               const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
+                  <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
