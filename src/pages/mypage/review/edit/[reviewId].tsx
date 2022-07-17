@@ -82,6 +82,8 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
 
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
     }
   );
 
