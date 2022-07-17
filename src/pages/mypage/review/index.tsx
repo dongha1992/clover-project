@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { fixedTab, homePadding, textBody3, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
@@ -13,6 +13,8 @@ import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER, commonSelector } from '@store/common';
 import { useSelector } from 'react-redux';
 import useScrollCheck from '@hooks/useScrollCheck';
+import { SET_MENU_IMAGE } from '@store/review';
+import { useRouter } from 'next/router';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -20,9 +22,12 @@ const TAB_LIST = [
 ];
 
 const ReviewPage = () => {
-  const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState('/willWrite');
   const [isShow, setIsShow] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const router = useRouter();
 
   // const { isScroll } = useSelector(commonSelector);
   const isScroll = useScrollCheck();
@@ -61,6 +66,14 @@ const ReviewPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
+  );
+
+  const goToReviewDetail = useCallback(
+    ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => {
+      dispatch(SET_MENU_IMAGE({ url, name }));
+      router.push(`/mypage/review/edit/${id}?menuId=${menuId}`);
+    },
+    []
   );
 
   const selectTabHandler = (tabItem: any) => {
@@ -118,7 +131,11 @@ const ReviewPage = () => {
             {completeWriteList?.map((review, index) => {
               return (
                 <div key={index}>
-                  <CompleteReviewItem review={review} clickImgViewHandler={clickImgViewHandler} />
+                  <CompleteReviewItem
+                    review={review}
+                    clickImgViewHandler={clickImgViewHandler}
+                    goToReviewDetail={goToReviewDetail}
+                  />
                   {completeWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
                 </div>
               );
@@ -158,6 +175,7 @@ const FixedTab = styled.div<{ scroll: boolean }>`
 
 const Wrapper = styled.div`
   ${homePadding}
+  margin-bottom:70px;
 `;
 
 const ReviewInfoWrapper = styled.div`

@@ -83,10 +83,19 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
     {
       onSuccess: (data) => {},
       onError: (error: any) => {
-        dispatch(SET_ALERT({ alertMessage: error.message }));
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러가 발생했습니다.',
+            onSubmit() {
+              return router.back();
+            },
+          })
+        );
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
     }
   );
 
