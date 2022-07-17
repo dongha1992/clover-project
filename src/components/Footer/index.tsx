@@ -6,6 +6,7 @@ import { SVGIcon } from '@utils/common';
 import { SITE_INFO_TITLE } from '@constants/footer';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
+import SlideToggle from '@components/Shared/SlideToggle';
 
 const Footer = () => {
   const [isShow, setIsShow] = useState(false);
@@ -21,13 +22,13 @@ const Footer = () => {
       <ButtonWrapper>
         <Button width="148px">채팅문의</Button>
       </ButtonWrapper>
-      <FlexWrapper>
+      <FlexWrapper onClick={() => setIsShow(!isShow)}>
         <TextH5B padding="0px 9px 0 0">사업자 정보</TextH5B>
-        <SVGWrapper onClick={() => setIsShow(!isShow)}>
+        <SVGWrapper>
           <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
         </SVGWrapper>
       </FlexWrapper>
-      {isShow && (
+      <SlideToggle state={isShow} duration={0.5}>
         <BossInfo>
           <TextB3R>대표 : 정유석</TextB3R>
           <TextB3R>주소 : 서울특별시 성동구 왕십리로 115, </TextB3R>
@@ -38,13 +39,32 @@ const Footer = () => {
           <TextB3R>카카오ID : @프레시코드-freshcode</TextB3R>
           <TextB3R>단체주문문의 : order@freshcode.me</TextB3R>
         </BossInfo>
-      )}
+      </SlideToggle>
       <SiteInfo>
         {SITE_INFO_TITLE.map((item, index) => {
           return <TextH6B key={index}>{item.title}</TextH6B>;
         })}
       </SiteInfo>
-      <LinkIconWrapper>링크들</LinkIconWrapper>
+      <LinkIconWrapper>
+        <SVGWrapper className="link">
+          <SVGIcon name="instaLink" />
+        </SVGWrapper>
+        <SVGWrapper className="link">
+          <SVGIcon name="facebookLink" />
+        </SVGWrapper>
+        <SVGWrapper className="link">
+          <SVGIcon name="youtubeLink" />
+        </SVGWrapper>
+        <SVGWrapper className="link">
+          <SVGIcon name="naverBlogLink" />
+        </SVGWrapper>
+        <SVGWrapper className="link">
+          <SVGIcon name="naverPostLink" />
+        </SVGWrapper>
+        <SVGWrapper className="link">
+          <SVGIcon name="channelTalkLink" />
+        </SVGWrapper>
+      </LinkIconWrapper>
     </Container>
   );
 };
@@ -59,28 +79,31 @@ const Container = styled.footer`
 `;
 
 const TimeInfoWrapper = styled.div`
-  margin-top: 12px;
+  padding-top: 12px;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  margin-top: 19px;
-  margin-bottom: 24px;
+  padding-top: 19px;
+  padding-bottom: 50px;
 `;
 
 const FlexWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding-top: 25px;
-  padding-bottom: 9px;
+  cursor: pointer;
 `;
 
 const SVGWrapper = styled.div`
   cursor: pointer;
   padding: 0 0 4px 0;
+  &.link {
+    padding: 0 16px 0 0;
+  }
 `;
 
 const BossInfo = styled.div`
+  padding-top: 9px;
   > div {
     color: ${({ theme }) => theme.greyScale65};
   }
@@ -100,6 +123,7 @@ const SiteInfo = styled.div`
 const LinkIconWrapper = styled.div`
   display: flex;
   padding-top: 24px;
+  flex-wrap: wrap;
 `;
 
 export default Footer;

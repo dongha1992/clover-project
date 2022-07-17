@@ -155,7 +155,7 @@ const Left = styled.div`
 const Main = styled.main`
   margin: 56px 0 0 0;
   width: 100%;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 112px);
 `;
 
 export default Wrapper;
