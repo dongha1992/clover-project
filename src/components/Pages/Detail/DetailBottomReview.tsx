@@ -22,10 +22,9 @@ interface IProps {
   isSticky: boolean;
   menuId: number;
   reviewsImages?: { images: IDetailImage[]; pagination: IPagination };
-  reviewAvailability?: boolean;
 }
 
-const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, reviewAvailability }: IProps) => {
+const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
   const { menuReviews } = reviews;
@@ -97,18 +96,16 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, reviewAv
           <TextB2R color={theme.greyScale65} padding="0 0 32px 0">
             상품의 첫 번째 후기를 작성해주세요 :)
           </TextB2R>
-          {reviewAvailability && (
-            <Button
-              backgroundColor={theme.white}
-              color={theme.black}
-              border
-              borderRadius="8"
-              margin="0 0 32px 0"
-              onClick={goToWriteReview}
-            >
-              후기 작성하기 (최대 3,000포인트 적립)
-            </Button>
-          )}
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            borderRadius="8"
+            margin="0 0 32px 0"
+            onClick={goToWriteReview}
+          >
+            후기 작성하기 (최대 3,000포인트 적립)
+          </Button>
         </Empty>
       )}
     </Container>
