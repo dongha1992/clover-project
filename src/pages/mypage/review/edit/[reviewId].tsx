@@ -209,7 +209,6 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   const getImageFileReader = (imageFile: any) => {
     const imageFileReader = new FileReader();
     imageFileReader.onload = (e: any) => {
-      console.log(imageFile, '-imageFile getImageFileReader 210');
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
         preview: [...writeMenuReviewObj?.preview!, e.target.result],
