@@ -7,12 +7,22 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
+import { getImageApi } from '@api/image';
 
 interface IProps {
   review: any;
   isDetailPage?: boolean;
   clickImgViewHandler?: (imgUrlForViwer: string[]) => void;
 }
+
+const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
+  const params = {
+    width,
+    url,
+  };
+  const data = await getImageApi(params);
+  return data;
+};
 
 const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps) => {
   return (
@@ -52,6 +62,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                     >
                       <Image
                         src={IMAGE_S3_URL + img.url}
+                        // src={IMAGE_S3_URL + getResizeImg({ width: 500, url: img.url })}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}

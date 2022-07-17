@@ -74,10 +74,6 @@ export const getBestReviewApi = ({
   return Api.get(`menu/v1/menus/${id}/reviews/best`, { params: { page, size } });
 };
 
-export const getReviewAvailabilityApi = (id: number): Promise<AxiosResponse<IReviewAvailityResponse>> => {
-  return Api.get(`menu/v1/menus/${id}/reviews/availability`);
-};
-
 export const createMenuReviewApi = (data: ICreateReivewRequest): Promise<AxiosResponse<IResponse>> => {
   return Api.post('menu/v1/reviews', data);
 };
@@ -89,7 +85,7 @@ export const editMenuReviewApi = ({
   data: IPatchReviewRequest;
   reviewId: number;
 }): Promise<AxiosResponse<IResponse>> => {
-  return Api.patch(`menu/v1/reviews/${reviewId}`, data);
+  return Api.put(`menu/v1/reviews/${reviewId}`, data);
 };
 
 export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsResponse>> => {
