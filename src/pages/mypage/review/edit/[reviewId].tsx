@@ -19,6 +19,8 @@ import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
+import NextImage from 'next/image';
+import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -26,9 +28,14 @@ interface IWriteMenuReviewObj {
   preview: string[];
 }
 
+interface IProp {
+  menuId: string;
+  reviewId: string;
+}
+
 const LIMIT = 30;
 
-const EditReviewPage = ({ reviewId, menuId }: any) => {
+const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   const [isShow, setIsShow] = useState(false);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
@@ -43,10 +50,12 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
+  const { menu } = useSelector(reviewSelector);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
+  console.log(menu, 'menu');
   /* TODO: blob 타입 정의 */
   /* TODO: 사이즈 체크 및 사진 올리는 hooks */
 
@@ -79,7 +88,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
   const { mutateAsync: mutateEditMenuReview } = useMutation(
     async (reqBody: IPatchReviewRequest) => {
-      const { data } = await editMenuReviewApi({ data: reqBody, reviewId });
+      const { data } = await editMenuReviewApi({ data: reqBody, reviewId: Number(reviewId) });
     },
     {
       onSuccess: async () => {
@@ -112,6 +121,12 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       },
     }
   );
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_MENU_IMAGE());
+    };
+  }, []);
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -264,8 +279,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     }
   }, [selectedReviewDetail]);
 
-  console.log(selectedReviewDetail, 'selectedReviewDetail');
-
   const over30Letter = LIMIT - numberOfReivewContent > 0;
 
   if (isLoading) {
@@ -282,14 +295,14 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
-            {/* <NextImage
-              src={IMAGE_S3_URL + selectedReviewDetail?.menuImage.url}
+            <NextImage
+              src={IMAGE_S3_URL + menu?.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
               layout="responsive"
               className="rounded"
-            /> */}
+            />
           </ImgWrapper>
           <TextWrapper>
             <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.menuReview.menuName}</TextB2R>

@@ -15,9 +15,10 @@ import { getImageApi } from '@api/image';
 interface IProps {
   review: ICompletionReviews;
   clickImgViewHandler: (imgUrlForViwer: string[]) => void;
+  goToReviewDetail: ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => void;
 }
 
-const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
+const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
@@ -46,7 +47,14 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 pointer
                 color={theme.greyScale65}
                 textDecoration="underline"
-                onClick={() => router.push(`/mypage/review/edit/${review.id}?menuId=${review.menuId}`)}
+                onClick={() =>
+                  goToReviewDetail({
+                    url: review.menuImage.url,
+                    menuId: review.menuId,
+                    id: review.id,
+                    name: review.menuName,
+                  })
+                }
               >
                 편집
               </TextH6B>
@@ -91,10 +99,10 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
             ) : (
               ''
             )}
-            {review.images && (
+            {review.reviewImages && (
               <ImgWrapper>
-                {review.images?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review?.images?.map((item: any) => item.url);
+                {review.reviewImages?.map((img: any, index: number) => {
+                  const imgUrlForViwer = review?.reviewImages?.map((item: any) => item.url);
 
                   return (
                     <ReviewImageWrapper

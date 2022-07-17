@@ -93,7 +93,7 @@ export const editMenuReviewApi = ({
 };
 
 export const getCompleteReviews = (): Promise<AxiosResponse<ICompletionReviewsResponse>> => {
-  return Api.get(`menu/v1/reviews/completion/trash`);
+  return Api.get(`menu/v1/reviews/completion`);
 };
 
 export const getWillWriteReviews = (): Promise<AxiosResponse<IWillWriteReviewsResponse>> => {
