@@ -168,20 +168,24 @@ const DeliverInfoPage = () => {
       if (isSubscription) {
         if (isSpot) {
           const reqBody = {
-            name: tempDestination?.name!,
+            name: tempDestination?.name! ?? userDestination?.name,
             delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
-            deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
-            main: tempDestination?.main!,
-            receiverName: tempDestination?.receiverName,
-            receiverTel: tempDestination?.receiverTel,
+            deliveryMessage: tempDestination?.deliveryMessage
+              ? tempDestination.deliveryMessage
+              : '' ?? userDestination?.deliveryMessage,
+            main: tempDestination?.main! ?? userDestination?.main,
+            receiverName: tempDestination?.receiverName ?? userDestination?.receiverName,
+            receiverTel: tempDestination?.receiverTel ?? userDestination?.receiverTel,
             location: {
-              addressDetail: tempDestination?.location?.addressDetail!,
-              address: tempDestination?.location?.address!,
-              zipCode: tempDestination?.location?.zipCode!,
-              dong: tempDestination?.location?.dong!,
+              addressDetail: tempDestination?.location?.addressDetail! ?? userDestination?.location?.addressDetail,
+              address: tempDestination?.location?.address! ?? userDestination?.location?.address,
+              zipCode: tempDestination?.location?.zipCode! ?? userDestination?.location?.zipCode,
+              dong: tempDestination?.location?.dong! ?? userDestination?.location?.dong,
             },
-            spotPickupId: tempDestination?.spotPickupId,
+            spotPickupId: tempDestination?.spotPickupId ?? userDestination?.spotPickupId,
           };
+          console.log('reqBody', reqBody);
+
           try {
             const { data } = await postDestinationApi(reqBody);
             if (data.code === 200) {
@@ -202,6 +206,9 @@ const DeliverInfoPage = () => {
                   },
                   deliveryMessage: response.deliveryMessage,
                   id: response.id,
+                  availableTime: tempDestination.availableTime,
+                  spaceType: tempDestination.spaceType,
+                  spotPickupId: tempDestination?.spotPickupId,
                 })
               );
               dispatch(SET_AFTER_SETTING_DELIVERY());
@@ -427,7 +434,7 @@ const DeliverInfoPage = () => {
     if (!userSelectDeliveryType || userTempDestination) {
       return;
     }
-    console.log(userDestination, 'userDestination');
+
     if (userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase()) {
       setTempDestination(userDestination);
       setIsMaindestination(true);
