@@ -2011,7 +2011,8 @@ export interface ICompletionReviews {
   rating: number;
   content: string;
   createdAt: string;
-  images: ICompletionReviewImg[];
+  menuImage: IMenuImage;
+  reviewImages: ICompletionReviewImg[];
   commentCreatedAt?: string;
   comment?: string;
   commenter?: string;
@@ -2029,17 +2030,22 @@ export interface ICompletionReviewsResponse {
 export interface IWillWriteReview {
   delivery: TDeliveryType | string;
   deliveryDate: string;
-  height: number;
-  menuDetailId: number;
-  menuDetailName: string;
-  menuId: number;
-  menuName: string;
-  orderDeliveryId: number;
-  url: string;
-  width: number;
-  name: string;
-  id: number;
   deliveryDetail?: string;
+  deliveryRound?: number;
+  displayMenuName: string;
+  menuDetailName: string;
+  image: {
+    contentId: number;
+    createdAt: string;
+    height: number;
+    id: number;
+    size: number;
+    url: string;
+    width: number;
+  };
+  menuId: number;
+  menuDetailId: number;
+  orderDeliveryId: number;
   orderType?: string;
 }
 
