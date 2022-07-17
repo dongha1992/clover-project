@@ -287,7 +287,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: 
 
   const goToDeliverySearch = () => {
     if (isSpot) {
-      router.push({ pathname: '/spot/search/main', query: { orderId, destinationId } });
+      const IsSubs = isSubscription === 'true';
+      router.push({ pathname: '/spot/search/main', query: { orderId, destinationId, isSubscription: IsSubs } });
     } else {
       router.push({ pathname: '/destination/search', query: { orderId, destinationId } });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
