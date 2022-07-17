@@ -85,8 +85,6 @@ export const useInfiniteOrders = ({ days, size, type }: { days: number; size: nu
     cacheTime: 0,
     staleTime: 0,
     retry: 1,
-    cacheTime: 0,
-    staleTime: 0,
   });
 
   return query;
