@@ -81,6 +81,7 @@ const Home = () => {
           height="120px"
           width="512px"
           layout="responsive"
+          alt="홈 배너"
         />
       </LineBanner>
       <FlexSpace>
@@ -92,6 +93,7 @@ const Home = () => {
         height="300px"
         width="512px"
         layout="responsive"
+        alt="메인 콘텐츠 기획전"
       />
       {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
       <ItemListRowWrapper>
@@ -144,7 +146,7 @@ const FlexSpace = styled.div`
 `;
 
 const ItemListRowWrapper = styled.div`
-  padding: 16px 0px 16px 16px;
+  padding: 24px 0px 24px 24px;
   width: auto;
   overflow-x: scroll;
   overflow-y: hidden;
@@ -158,7 +160,7 @@ export const ItemListRow = styled.div`
   white-space: nowrap;
 
   > div {
-    padding-right: 10px;
+    padding-right: 16px;
   }
 `;
 
