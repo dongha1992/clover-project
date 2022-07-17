@@ -82,6 +82,8 @@ export const useInfiniteOrders = ({ days, size, type }: { days: number; size: nu
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
+    cacheTime: 0,
+    staleTime: 0,
     retry: 1,
   });
 

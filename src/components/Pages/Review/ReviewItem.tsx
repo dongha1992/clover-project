@@ -7,6 +7,8 @@ import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { IBestReviews } from '@model/index';
+import { getImageApi } from '@api/image';
+import { IMAGE_ERROR } from '@constants/menu';
 
 interface IProps {
   review: IBestReviews;
@@ -14,11 +16,20 @@ interface IProps {
 }
 
 const ReviewItem = ({ review, onClick }: IProps) => {
+  // const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
+  //   const data = await getImageApi(width, url);
+  //   console.log(data, '----');
+  // };
+
+  const hasImage = review?.images.length !== 0;
+  const s3Url = IMAGE_S3_URL + review?.images[0]?.url;
+
   return (
     <Container onClick={() => onClick(review)}>
       <Wrapper>
         <ImgWrapper>
-          <ReviewImg src={IMAGE_S3_URL + review?.images[0]?.url!} />
+          {/* {getResizeImg({ width: 500, url: review?.images[0]?.url! })} */}
+          <ReviewImg src={hasImage ? s3Url : IMAGE_ERROR} alt="후기사진" />
         </ImgWrapper>
         <ReviewContent>
           <ReviewHeader>

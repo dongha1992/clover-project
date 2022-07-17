@@ -10,18 +10,39 @@ import Image from 'next/image';
 import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
+import { getImageApi } from '@api/image';
+import { ThumborImage } from 'react-thumbor-img';
 
 interface IProps {
   review: ICompletionReviews;
   clickImgViewHandler: (imgUrlForViwer: string[]) => void;
+  goToReviewDetail: ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => void;
 }
 
-const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
+const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
 
   const isContentHide = review.content.length >= 280;
+
+  const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
+    const formatUrl = url.replace('/image', '');
+
+    const params = {
+      width,
+      url: formatUrl,
+    };
+
+    // const params = {
+    //   width,
+    //   url,
+    // };
+
+    const data = await getImageApi(params);
+    console.log(data);
+    return data;
+  };
 
   return (
     <>
@@ -37,9 +58,12 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                 color={theme.greyScale65}
                 textDecoration="underline"
                 onClick={() =>
-                  router.push(
-                    `/mypage/review/edit/${review.id}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderDeliveryId=${review.orderDeliveryId}`
-                  )
+                  goToReviewDetail({
+                    url: review.menuImage.url,
+                    menuId: review.menuId,
+                    id: review.id,
+                    name: review.menuName,
+                  })
                 }
               >
                 편집
@@ -85,11 +109,10 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
             ) : (
               ''
             )}
-            {review.images && (
+            {review.reviewImages && (
               <ImgWrapper>
-                {review.images?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review?.images?.map((item: any) => item.url);
-
+                {review.reviewImages?.map((img: any, index: number) => {
+                  const imgUrlForViwer = review?.reviewImages?.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper
                       isFirst
@@ -97,7 +120,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler }: IProps) => {
                       key={index}
                     >
                       <Image
-                        src={IMAGE_S3_URL + img.url}
+                        src={process.env.REVIEW_IMAGE_URL + img.url}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}

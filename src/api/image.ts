@@ -33,6 +33,6 @@ export const postImageApi = (formData: any) => {
   });
 };
 
-export const getImageApi = () => {
-  return ImageApi.get('/image/unsafe/300x/smart');
+export const getImageApi = ({ width, url }: { width: number; url: string }) => {
+  return ImageApi.get(`/image/unsafe/${width}x/smart${url}`);
 };
