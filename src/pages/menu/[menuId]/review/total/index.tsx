@@ -11,12 +11,7 @@ import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useInfiniteQuery } from 'react-query';
 import { ISearchReviews } from '@model/index';
-import {
-  getMenuDetailReviewApi,
-  getMenuDetailReviewImageApi,
-  getReviewAvailabilityApi,
-  getMenuDetailApi,
-} from '@api/menu';
+import { getMenuDetailReviewApi, getMenuDetailReviewImageApi, getMenuDetailApi } from '@api/menu';
 import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { userForm } from '@store/user';
 import { useInfiniteMenuReviews } from '@queries/menu';
@@ -77,21 +72,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId,
-    }
-  );
-
-  const { data: reviewAvailability, error: availabilityError } = useQuery(
-    'getReviewAvailability',
-    async () => {
-      const { data } = await getReviewAvailabilityApi(Number(menuId)!);
-      return data.data;
-    },
-
-    {
-      onSuccess: (data) => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      enabled: !!menuId && !!me,
     }
   );
 
@@ -157,18 +137,16 @@ const TotalReviewPage = ({ menuId }: IProps) => {
               totalReviews={menuDetail?.reviewCount!}
             />
           )}
-          {reviewAvailability && (
-            <Button
-              backgroundColor={theme.white}
-              color={theme.black}
-              border
-              borderRadius="8"
-              margin="0 0 32px 0"
-              onClick={() => router.push('/mypage/review')}
-            >
-              후기 작성하기 (최대 3,000포인트 적립)
-            </Button>
-          )}
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            borderRadius="8"
+            margin="0 0 32px 0"
+            onClick={() => router.push('/mypage/review')}
+          >
+            후기 작성하기 (최대 3,000포인트 적립)
+          </Button>
         </ImageWrapper>
         <BorderLine height={8} />
 

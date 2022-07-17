@@ -36,7 +36,6 @@ import {
   getMenusApi,
   getMenuDetailReviewImageApi,
   getBestReviewApi,
-  getReviewAvailabilityApi,
 } from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -141,21 +140,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
 
     {
       onSuccess: (data) => {},
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  const { data: reviewAvailability, error: reviewsAvailabilityError } = useQuery(
-    'getReviewAvailability',
-    async () => {
-      const { data } = await getReviewAvailabilityApi(Number(menuId)!);
-      return data.data.availability;
-    },
-
-    {
-      onSuccess: (data) => {},
-      enabled: !!me,
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -281,7 +265,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             isSticky={isSticky}
             menuId={menuDetail?.id!}
             reviewsImages={reviewsImages!}
-            reviewAvailability={reviewAvailability}
           />
         );
       }
