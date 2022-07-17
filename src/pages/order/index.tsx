@@ -155,7 +155,14 @@ const OrderPage = () => {
   const router = useRouter();
   const { message, isSubscription } = router.query;
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
-
+  useEffect(() => {
+    window?.addEventListener('pageshow', (event) => {
+      console.log('e', event);
+    });
+    window?.addEventListener('pagehide', (event) => {
+      console.log('e', event);
+    });
+  }, []);
   const {
     data: previewOrder,
     isLoading: preveiwOrderLoading,
@@ -584,7 +591,7 @@ const OrderPage = () => {
     setUserInputObj({ ...userInputObj, point: 0 });
   };
 
-  const goToCardManagemnet = (card: IGetCard) => {
+  const goToCardManagemnet = () => {
     if (isSubscription) {
       router.push({ pathname: '/mypage/card', query: { isOrder: true, isSubscription: true } });
     } else {
@@ -1541,13 +1548,7 @@ const OrderPage = () => {
       )}
       <OrderTermWrapper>
         <TextH5B>구매 조건 확인 및 결제 진행 필수 동의</TextH5B>
-        <FlexRow
-          padding="17px 0 0 0"
-          pointer
-          onClick={() => {
-            checkOrderTermHandler('privacy');
-          }}
-        >
+        <FlexRow padding="17px 0 0 0" pointer>
           <Checkbox
             className="checkBox"
             isSelected={checkTermList.privacy}
@@ -1555,19 +1556,20 @@ const OrderPage = () => {
               checkOrderTermHandler('privacy');
             }}
           />
-          <TextB2R padding="0 8px">개인정보 수집·이용 동의 (필수)</TextB2R>
+          <TextB2R
+            padding="0 8px"
+            onClick={() => {
+              checkOrderTermHandler('privacy');
+            }}
+          >
+            개인정보 수집·이용 동의 (필수)
+          </TextB2R>
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo} pointer>
             자세히
           </TextH6B>
         </FlexRow>
         {previewOrder?.order.type === 'SUBSCRIPTION' && (
-          <FlexRow
-            padding="8px 0 0 0"
-            pointer
-            onClick={() => {
-              checkOrderTermHandler('subscription');
-            }}
-          >
+          <FlexRow padding="8px 0 0 0" pointer>
             <Checkbox
               className="checkBox"
               isSelected={checkTermList.subscription}
@@ -1575,7 +1577,14 @@ const OrderPage = () => {
                 checkOrderTermHandler('subscription');
               }}
             />
-            <TextB2R padding="0 8px">정기구독 이용약관・주의사항 동의 (필수)</TextB2R>
+            <TextB2R
+              padding="0 8px"
+              onClick={() => {
+                checkOrderTermHandler('subscription');
+              }}
+            >
+              정기구독 이용약관・주의사항 동의 (필수)
+            </TextB2R>
             <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
               자세히
             </TextH6B>
@@ -1688,7 +1697,7 @@ const OrderTermWrapper = styled.div`
   ${homePadding}
   display: flex;
   flex-direction: column;
-  padding: 32px 24px 32px 24px;
+  padding: 32px 24px 88px 24px;
 `;
 
 const OrderBtn = styled.div`

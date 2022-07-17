@@ -12,6 +12,7 @@ import { ICompletionReviews, IWillWriteReview } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER, commonSelector } from '@store/common';
 import { useSelector } from 'react-redux';
+import useScrollCheck from '@hooks/useScrollCheck';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -19,11 +20,12 @@ const TAB_LIST = [
 ];
 
 const ReviewPage = () => {
-  const { isScroll } = useSelector(commonSelector);
+  const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState('/willWrite');
   const [isShow, setIsShow] = useState(false);
 
-  const dispatch = useDispatch();
+  // const { isScroll } = useSelector(commonSelector);
+  const isScroll = useScrollCheck();
 
   const {
     data: willWriteList,
