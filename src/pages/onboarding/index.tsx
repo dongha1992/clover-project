@@ -1,38 +1,21 @@
 import type { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import bg from '@public/images/onBoarding.png';
-import Image from 'next/image';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { TextH5B, TextH1B, TextH6B } from '@components/Shared/Text';
+import { TextH6B, TextH3B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
 import router, { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { Obj } from '@model/index';
-import axios from 'axios';
 import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
-import { setCookie } from '@utils/common';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
-import { userForm, SET_USER_AUTH, SET_USER } from '@store/user';
+import { SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
 import { SET_ALERT } from '@store/alert';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
-declare global {
-  interface Window {
-    Kakao: any;
-  }
-}
-
-declare global {
-  interface Window {
-    AppleID: any;
-  }
-}
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -156,17 +139,18 @@ const OnBoarding: NextPage = () => {
 
   return (
     <Container>
-      <Image src={bg} layout="fill" />
+      {/* <Image height={321} width={360} src={bg} alt="onboarding img" /> */}
       <Wrapper>
-        <FlexCol padding="90px 0 0 0">
-          <TextH1B color={theme.white}>건강한 일상도,</TextH1B>
-          <TextH1B color={theme.white}>프리미엄 샐러드도</TextH1B>
-          <TextH1B color={theme.white}>프레시코드</TextH1B>
-          <TextH5B padding="17px 0 0 0" color={theme.white}>
-            샐러드·건강편의식 거점 배송서비스
-          </TextH5B>
-        </FlexCol>
+        <BrandImg></BrandImg>
         <ButtonWrapper>
+          <FlexCol padding="0 0 32px">
+            <TextH3B padding="0 0 7px" center>
+              안녕하세요! 👋
+            </TextH3B>
+            <TextB2R center color={theme.greyScale65}>
+              지금 바로 가입하고 다양한 혜택 받아가세요.
+            </TextB2R>
+          </FlexCol>
           <KakaoBtn onClick={() => kakaoLoginHandler()}>
             <Button {...kakaoButtonStyle}>카카오로 3초만에 시작하기</Button>
             <SVGIcon name="kakaoBuble" />
@@ -178,18 +162,23 @@ const OnBoarding: NextPage = () => {
             {loginType === 'APPLE' && renderLastLoginTag()}
           </AppleBtn>
           <EmailLoginAndSignUp>
-            <Button {...emailButtonStyle} onClick={emailLoginHandler}>
+            <Button {...emailButtonStyle} onClick={emailLoginHandler} backgroundColor={theme.greyScale3}>
               이메일로 로그인
             </Button>
-            <Button {...emailButtonStyle} onClick={emailSignUpHandler} margin="0 0 0 8px">
+            <Button
+              {...emailButtonStyle}
+              onClick={emailSignUpHandler}
+              margin="0 0 0 8px"
+              backgroundColor={theme.greyScale3}
+            >
               이메일로 회원가입
             </Button>
             {loginType === 'EMAIL' && renderLastLoginTag()}
           </EmailLoginAndSignUp>
           <TextH6B
-            color={theme.white}
+            color={theme.greyScale65}
             textDecoration="underline"
-            padding="24px 0 0 0"
+            padding="32px 0 0 0"
             onClick={goToHomeWithoutLogin}
             pointer
           >
@@ -228,32 +217,38 @@ const Container = styled.main`
     bottom: 0;
     left: 0;
     content: '';
-    background: rgba(36, 36, 36, 0.5);
+    /* background: rgba(36, 36, 36, 0.5); */
   }
 `;
 
 const Wrapper = styled.div`
+  padding-top: 32px;
   position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100vh;
   width: 100%;
-  padding: 0 32px;
   z-index: 101;
+`;
+
+const BrandImg = styled.div`
+  width: 100%;
+  height: 320px;
+  background-color: ${theme.greyScale3};
 `;
 
 const ButtonWrapper = styled.div`
   position: relative;
-  margin-bottom: 32px;
+  padding: 0 32px 32px 32px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  ${({ theme }) => theme.mobile`
+  /* ${({ theme }) => theme.mobile`
     top: -7%;
-  `};
+  `}; */
 `;
 
 const EmailLoginAndSignUp = styled.div`

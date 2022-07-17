@@ -265,6 +265,9 @@ const Header = () => {
           </Container>
         );
       }
+      case ['/onboarding'].includes(currentPath): {
+        return null;
+      }
 
       default: {
         return (

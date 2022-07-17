@@ -1,5 +1,13 @@
 import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
+declare global {
+  interface Window {
+    ReactNativeWebView: any;
+    AppleID: any;
+    Kakao: any;
+  }
+}
+
 export type Obj<T = any> = {
   [k: string]: T;
 };
@@ -503,8 +511,8 @@ export interface ISpotsResponse {
 export interface ISpotsAllListResponse {
   code: number;
   message: string;
-  data: ISpotsDetail[]
-};
+  data: ISpotsDetail[];
+}
 
 export interface ISpots {
   title: string;
@@ -2058,11 +2066,6 @@ export interface IGetOrderMenusResponse {
   code: number;
   message: string;
   data: { menuDetails: IOrderedMenuDetails[]; pagination: IPagination };
-}
-declare global {
-  interface Window {
-    ReactNativeWebView: any;
-  }
 }
 
 /* CART */
