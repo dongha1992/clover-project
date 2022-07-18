@@ -37,6 +37,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const [isSubs, setIsSubs] = useState<boolean>();
+  const [isLocker, setIsLocker] = useState<boolean>();
 
   const store = useStore();
 
@@ -58,6 +59,18 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
       }
     }
   }, [router.isReady, router.query.isSubscription]);
+
+  useEffect(() => {
+    console.log('itemitem', item);
+    item.pickups.forEach((p: any) => {
+      if (p.type === 'PICKUP') {
+        setIsLocker(false);
+        return;
+      } else {
+        setIsLocker(true);
+      }
+    });
+  }, []);
 
   const renderSpotMsg = () => {
     switch (true) {
@@ -308,18 +321,40 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
         </ImageWrapper>
         {item.isOpened && !item.isClosed ? (
           // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+          isSubs && (item.isTrial || isLocker) ? (
+            <Button
+              backgroundColor={theme.white}
+              width="75px"
+              height="38px"
+              disabled
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              주문하기
+            </Button>
+          ) : (
+            <Button
+              backgroundColor={theme.white}
+              color={theme.black}
+              width="75px"
+              height="38px"
+              border
+              onClick={(e) => orderHandler(e)}
+            >
+              주문하기
+            </Button>
+          )
+        ) : (
           <Button
             backgroundColor={theme.white}
-            color={theme.black}
             width="75px"
             height="38px"
-            border
-            onClick={(e) => orderHandler(e)}
+            disabled
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
           >
-            주문하기
-          </Button>
-        ) : (
-          <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
             주문하기
           </Button>
         )}
