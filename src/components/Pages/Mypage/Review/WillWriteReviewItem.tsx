@@ -65,7 +65,7 @@ const WillWriteReviewItem = ({ review }: IProps) => {
             margin="0 8px 0 0"
             onClick={() =>
               router.push(
-                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}`
+                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderType=${review.orderType}`
               )
             }
           >

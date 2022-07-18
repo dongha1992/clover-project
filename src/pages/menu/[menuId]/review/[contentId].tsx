@@ -8,7 +8,7 @@ import { useQuery } from 'react-query';
 import { getReviewDetailApi } from '@api/menu';
 import assignIn from 'lodash-es/assignIn';
 
-const ReviewDetailPage = ({ contentId }: { contentId: string }) => {
+const ReviewDetailPage = ({ contentId, menuId }: { contentId: string; menuId: string }) => {
   const dispatch = useDispatch();
 
   const {
@@ -19,7 +19,7 @@ const ReviewDetailPage = ({ contentId }: { contentId: string }) => {
     'getReviewDetail',
     async () => {
       const params = {
-        id: 9,
+        id: Number(menuId),
         menuReviewId: Number(contentId),
       };
       const { data } = await getReviewDetailApi(params);
@@ -53,9 +53,10 @@ const Container = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { contentId } = context.query;
+  const { contentId, menuId } = context.query;
+
   return {
-    props: { contentId },
+    props: { contentId, menuId },
   };
 }
 
