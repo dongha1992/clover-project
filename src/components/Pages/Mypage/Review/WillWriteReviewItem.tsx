@@ -29,7 +29,6 @@ const WillWriteReviewItem = ({ review }: IProps) => {
   const formatUrl = review.image.url.split('');
   const isError = formatUrl[0] !== '/';
 
-  console.log(review, '--');
   return (
     <Container>
       <Wrapper>

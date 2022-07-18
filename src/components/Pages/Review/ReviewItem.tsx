@@ -18,18 +18,22 @@ interface IProps {
 const ReviewItem = ({ review, onClick }: IProps) => {
   // const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
   //   const data = await getImageApi(width, url);
-  //   console.log(data, '----');
+  //
   // };
 
+  //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+
   const hasImage = review?.images.length !== 0;
-  const s3Url = IMAGE_S3_URL + review?.images[0]?.url;
+  const url = review?.images[0]?.url;
+  const fromS3 = url.includes('/menu');
+  const s3Url = IMAGE_S3_URL + url;
 
   return (
     <Container onClick={() => onClick(review)}>
       <Wrapper>
         <ImgWrapper>
           {/* {getResizeImg({ width: 500, url: review?.images[0]?.url! })} */}
-          <ReviewImg src={hasImage ? s3Url : IMAGE_ERROR} alt="후기사진" />
+          <ReviewImg src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + url} alt="후기사진" />
         </ImgWrapper>
         <ReviewContent>
           <ReviewHeader>
