@@ -25,11 +25,13 @@ interface IProps {
   item: ISpotsDetail | any;
   hasCart?: boolean;
   map?: boolean;
+  recommand?: boolean;
 }
 const now = dayjs();
 
 // 스팟 검색 - 검색 결과
-const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => {
+// 추천 스팟, 스팟 검색 결과, 스팟 검색 결과 지도뷰 리스트
+const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId }: any = router.query;
@@ -88,7 +90,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
           <MeterAndTime>
             {(userLocationLen || positionLen) && (
               <>
-                <TextH6B>{`${getSpotDistanceUnit(item.distance).distance}${
+                <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item.distance).distance}${
                   getSpotDistanceUnit(item.distance).unit
                 }`}</TextH6B>
                 <Col />
@@ -306,23 +308,28 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           )}
         </ImageWrapper>
-        {item.isOpened && !item.isClosed ? (
-          // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
-          <Button
-            backgroundColor={theme.white}
-            color={theme.black}
-            width="75px"
-            height="38px"
-            border
-            onClick={(e) => orderHandler(e)}
-          >
-            주문하기
-          </Button>
-        ) : (
-          <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
-            주문하기
-          </Button>
-        )}
+        
+        {
+          !recommand && (
+            item.isOpened && !item.isClosed ? (
+              // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+              <Button
+                backgroundColor={theme.white}
+                color={theme.black}
+                width="75px"
+                height="38px"
+                border
+                onClick={(e) => orderHandler(e)}
+              >
+                주문하기
+              </Button>
+            ) : (
+              <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
+                주문하기
+              </Button>
+            )
+          )
+        }
       </FlexCol>
     </Container>
   );

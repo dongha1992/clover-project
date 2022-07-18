@@ -5,9 +5,9 @@ import { theme, FlexBetween, FlexEnd, textBody2 } from '@styles/theme';
 import { TextH3B, TextB3R, TextH6B, TextH2B, TextB2R } from '@components/Shared/Text';
 import { 
   SpotList, 
-  SpotRecommendList, 
   SpotRecentPickupList, 
-  SpotSearchMapPage
+  SpotSearchMapPage,
+  SpotsSearchResultList
 } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { 
@@ -34,6 +34,7 @@ import { IDestinationsResponse, ISpotsAllListResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 import { ISpotsDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
+import { truncate } from 'lodash-es';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -273,19 +274,19 @@ const SpotSearchPage = (): ReactElement => {
             {
             // 스팟 검색 메인 
               userLocationLen ?  // 위지 정보가 있는 상태
-              (spotRecommendList?.spotList.length! > 0 && eventSpotList?.spots.length! > 0) ? (// 추천, 이벤트 스팟이 있는 경우 
+                spotRecommendList?.spotList.length! > 0 ? (// 추천, 이벤트 스팟이 있는 경우 
                 <>
                 {/* 추천스팟 */}
                   <SpotRecommendWrapper>
-                    <FlexBetween margin="0 0 24px 0">
+                    <FlexBetween margin="0 0 12px 0">
                       <TextH2B>{spotRecommendList?.data.title}</TextH2B>
                       {
                         // 사용자 위치 설정 했을 경우 노출
-                        userLocationLen && <TextB3R color={theme.greyScale65}>500m이내 프코스팟</TextB3R>
+                        userLocationLen && <TextB3R color={theme.greyScale65}>3km이내 프코스팟</TextB3R>
                       }
                     </FlexBetween>
                     {spotRecommendList?.spotList.map((item: any, index: number) => {
-                      return <SpotRecommendList item={item} key={index} />;
+                      return <SpotsSearchResultList item={item} key={index} recommand={true} />;
                     })}
                   </SpotRecommendWrapper>
                   {/* 이벤트 중인 스팟 */}
@@ -325,8 +326,7 @@ const SpotSearchPage = (): ReactElement => {
                   )
                 }
                 </>
-              )
-               : (
+              ) : (
                 //위치 없보 없는 경우
                 <>
                 {
