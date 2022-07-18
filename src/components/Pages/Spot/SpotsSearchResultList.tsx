@@ -265,7 +265,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   };
 
   return (
-    <Container map={map} spotClose={item.isClosed} onClick={() => goToDetail(item.id)}>
+    <Container map={map} onClick={() => goToDetail(item.id)}>
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
@@ -335,14 +335,14 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   );
 };
 
-const Container = styled.section<{ spotClose?: boolean; map?: boolean }>`
+const Container = styled.section<{ map?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
   background: ${theme.white};
   max-width: ${breakpoints.desktop}px;
   max-width: ${breakpoints.mobile}px;
-
+  cursor: pointer;
   ${({ map }) => {
     if (map) {
       return css`
@@ -359,14 +359,6 @@ const Container = styled.section<{ spotClose?: boolean; map?: boolean }>`
       `;
     }
   }}
-
-  ${({ spotClose }) => {
-    if (spotClose) {
-      return css`
-        cursor: pointer;
-      `;
-    }
-  }};
 `;
 
 const MeterAndTime = styled.div`

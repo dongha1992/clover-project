@@ -57,7 +57,7 @@ const SpotSearchMainPage = (): ReactElement => {
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
-  
+
   const userLocationLen = userLocation.emdNm?.length! > 0;
   const latLen = spotsPosition?.latitude !== null;
   const latitude = latLen ? Number(spotsPosition?.latitude) : null;
@@ -199,8 +199,7 @@ const SpotSearchMainPage = (): ReactElement => {
         longitude: longitude,
       };
       const { data } = await getDestinationsApi(params);
-      const totalList = data.data.destinations;
-      return totalList;
+      return data.data.destinations;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -398,7 +397,7 @@ const SpotSearchMainPage = (): ReactElement => {
             }
             {
              !isSearched && isFocusing &&
-              recentPickedSpotList ? (
+              recentPickedSpotList?.length! > 0 ? (
                 <DefaultSearchContainer>
                   <RecentPickWrapper>
                     <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
