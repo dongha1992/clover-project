@@ -21,6 +21,7 @@ const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
     url,
   };
   const data = await getImageApi(params);
+
   return data;
 };
 
@@ -34,26 +35,32 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               <RatingAndUser>
                 <Rating>
                   <SVGIcon name="singleStar" />
-                  <TextH5B padding="0 0 0 4px">{review.rating >= 5 ? 5 : review.rating}</TextH5B>
+                  <TextH5B padding="0 0 0 4px">{review?.rating >= 5 ? 5 : review?.rating}</TextH5B>
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.userNickName}
+                    {review?.userNickName}
                   </TextH6B>
-                  <TextB3R color={theme.greyScale65}>{review.createdAt}</TextB3R>
+                  <TextB3R color={theme.greyScale65}>{review?.createdAt}</TextB3R>
                 </UserInfo>
               </RatingAndUser>
               <TagWrapper>
                 <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                  {review.orderCount}번 째 구매
+                  {review?.orderCount}번 째 구매
                 </Tag>
               </TagWrapper>
             </ReviewHeader>
             <ReviewBody>
-              <TextB3R>{review.content}</TextB3R>
+              <TextBody>
+                <TextB3R>{review?.content}</TextB3R>
+              </TextBody>
               <ImgWrapper>
-                {review.images?.map((img: any, index: number) => {
-                  const imgUrlForViwer: string[] = review.images.map((item: any) => item.url);
+                {review?.images?.map((img: any, index: number) => {
+                  //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+                  const fromS3 = img.url.includes('/menu');
+                  const s3Url = IMAGE_S3_URL + img?.url;
+
+                  const imgUrlForViwer: string[] = review?.images.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper
                       isFirst
@@ -61,8 +68,8 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                       key={index}
                     >
                       <Image
-                        src={IMAGE_S3_URL + img.url}
-                        // src={IMAGE_S3_URL + getResizeImg({ width: 500, url: img.url })}
+                        src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + img.url}
+                        // src={fromS3 ? s3Url : getResizeImg({ width: 500, url: img.url })}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}
@@ -73,16 +80,16 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                   );
                 })}
               </ImgWrapper>
-              {!isDetailPage && review.comment ? (
+              {!isDetailPage && review?.comment ? (
                 <ReplyContent>
                   <ReplyHeader>
-                    <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
+                    <TextH6B color={theme.greyScale65}>{review?.commenter}</TextH6B>
                     <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
-                      {review.commentCreatedAt}
+                      {review?.commentCreatedAt}
                     </TextB3R>
                   </ReplyHeader>
                   <ReplyBody>
-                    <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
+                    <TextB3R color={theme.greyScale65}>{review?.comment}</TextB3R>
                   </ReplyBody>
                 </ReplyContent>
               ) : null}
@@ -99,6 +106,14 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+`;
+
+const TextBody = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
 `;
 
 const Wrapper = styled.div`
@@ -126,12 +141,6 @@ const Rating = styled.div`
 
 const ReviewBody = styled.div`
   margin-top: 8px;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
 `;
 
 const UserInfo = styled.div`
@@ -147,13 +156,14 @@ const RatingAndUser = styled.div`
 const TagWrapper = styled.div``;
 const ImgWrapper = styled.div`
   display: flex;
-  overflow: hidden;
+  /* overflow: hidden; */
   width: 100%;
   margin: 16px 0 24px 0;
 `;
 
 const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`
   width: calc((100% - 24px) / 4);
+  /* height: 100%; */
   margin-right: ${({ isFirst }) => isFirst && 8}px;
   .rounded {
     border-radius: 8px;
