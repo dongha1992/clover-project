@@ -15,7 +15,7 @@ import { getMenuDetailReviewApi, getMenuDetailReviewImageApi, getMenuDetailApi }
 import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { userForm } from '@store/user';
 import { useInfiniteMenuReviews } from '@queries/menu';
-
+import { SET_ALERT } from '@store/alert';
 /* TODO: 중복 코드 많음 , 리팩토링 */
 
 const DEFAULT_SIZE = 10;
@@ -143,7 +143,19 @@ const TotalReviewPage = ({ menuId }: IProps) => {
             border
             borderRadius="8"
             margin="0 0 32px 0"
-            onClick={() => router.push('/mypage/review')}
+            onClick={() => {
+              if (!me) {
+                return dispatch(
+                  SET_ALERT({
+                    alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
+                    submitBtnText: '확인',
+                    closeBtnText: '취소',
+                    onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`),
+                  })
+                );
+              }
+              router.push('/mypage/review');
+            }}
           >
             후기 작성하기 (최대 3,000포인트 적립)
           </Button>
