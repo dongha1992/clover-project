@@ -57,7 +57,7 @@ const SpotSearchMainPage = (): ReactElement => {
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
-console.log('isFocus', isFocusing)
+  
   const userLocationLen = userLocation.emdNm?.length! > 0;
   const latLen = spotsPosition?.latitude !== null;
   const latitude = latLen ? Number(spotsPosition?.latitude) : null;
