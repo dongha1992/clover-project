@@ -56,6 +56,7 @@ const EmailAndPasswordPage = () => {
     if (emailRef.current) {
       const email = emailRef.current?.value;
       const checkEmailRegx = EMAIL_REGX.test(email);
+
       if (checkEmailRegx) {
         setEmailValidataion({
           isValid: true,

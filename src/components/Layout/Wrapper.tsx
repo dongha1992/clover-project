@@ -128,7 +128,7 @@ const Center = styled.div`
 `;
 
 const Right = styled.div`
-  clip-path: inset(0 0 0 0);
+  /* clip-path: inset(0 0 0 0); */
   position: relative;
   width: 50%;
   max-width: ${breakpoints.mobile}px;
@@ -143,6 +143,9 @@ const Right = styled.div`
 `;
 
 const Left = styled.div`
+  position: relative;
+  /* z-index: 999; */
+  background-color: white;
   width: 50%;
   ${({ theme }) => theme.desktop`  
   display: none;
@@ -151,6 +154,8 @@ const Left = styled.div`
 
 const Main = styled.main`
   margin: 56px 0 0 0;
+  width: 100%;
+  min-height: calc(100vh - 112px);
 `;
 
 export default Wrapper;

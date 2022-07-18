@@ -1,4 +1,4 @@
-import { FlexBetween, FlexCol, FlexRow, theme } from '@styles/theme';
+import { FlexBetween, FlexCol, FlexColStart, FlexRow, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
@@ -12,6 +12,8 @@ import dayjs from 'dayjs';
 import { IWillWriteReview } from '@model/index';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import { DeliveryTag } from '@components/Shared/Tag';
+import { IMAGE_S3_URL } from '@constants/mock';
+import { IMAGE_ERROR } from '@constants/menu';
 interface IProps {
   review: IWillWriteReview;
 }
@@ -24,11 +26,14 @@ const WillWriteReviewItem = ({ review }: IProps) => {
   const isSpot = review.delivery === 'SPOT';
   const isSubscription = review.orderType === 'SUBSCRIPTION';
 
+  const formatUrl = review.image.url.split('');
+  const isError = formatUrl[0] !== '/';
+
   return (
     <Container>
       <Wrapper>
         <FlexRow margin="0 0 8px 0">
-          <TextH5B color={theme.brandColor}>주문완료</TextH5B>
+          <TextH5B>배송완료</TextH5B>
           {isSubscription && <Tag margin="0 4px 0 8px">정기구독</Tag>}
           <DeliveryTag deliveryType={review?.delivery!} margin="0 4px" />
           {isSpot && (
@@ -43,14 +48,14 @@ const WillWriteReviewItem = ({ review }: IProps) => {
         </FlexRow>
         <FlexRow padding="0 0 16px 0">
           <ImageWrapper>
-            <ItemImage src={review.url} alt="상품이미지" />
+            <ItemImage src={isError ? IMAGE_ERROR : IMAGE_S3_URL + review.image.url} alt="상품이미지" />
           </ImageWrapper>
-          <FlexCol width="70%" margin="0 0 0 16px">
-            <TextB2R padding="0 0 4px 0">{review.name}</TextB2R>
+          <FlexColStart width="70%" margin="0 0 0 16px">
+            <TextB2R padding="0 0 4px 0">{review.displayMenuName}</TextB2R>
             <FlexRow>
               <TextB3R color={theme.greyScale65}>{limitAt} 까지 작성 가능</TextB3R>
             </FlexRow>
-          </FlexCol>
+          </FlexColStart>
         </FlexRow>
         <FlexRow>
           <Button

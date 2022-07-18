@@ -49,6 +49,7 @@ const SubscriptionManagementPage = () => {
     }
   }, [page]);
 
+  console.log(data, 'sub data');
   const goToSubscription = () => {
     router.push('/subscription');
   };

@@ -57,9 +57,13 @@ const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
     >
       <Slider {...settings}>
         {images?.map((url: string, index: number) => {
+          //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+          const fromS3 = url.includes('/menu');
+          const s3Url = IMAGE_S3_URL + url;
+
           return (
             <ImageWrapper
-              src={`${IMAGE_S3_URL}${url}`}
+              src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + url}
               alt="리뷰이미지"
               key={index}
               isLast={index === images.length + 1}

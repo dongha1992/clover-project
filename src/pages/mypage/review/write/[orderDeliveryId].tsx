@@ -83,10 +83,19 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
     {
       onSuccess: (data) => {},
       onError: (error: any) => {
-        dispatch(SET_ALERT({ alertMessage: error.message }));
+        dispatch(
+          SET_ALERT({
+            alertMessage: '알 수 없는 에러가 발생했습니다.',
+            onSubmit() {
+              return router.back();
+            },
+          })
+        );
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
     }
   );
 
@@ -131,7 +140,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
   };
 
   const onChangeFileHandler = (e: any) => {
-    const LIMIT_SIZE = 5 * 1024 * 1024;
+    // const LIMIT_SIZE = 5 * 1024 * 1024;
+    const LIMIT_SIZE = 1000000;
+
     let imageFile = e.target.files! as any;
     if (!imageFile[0]) return;
 
@@ -247,7 +258,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>{me?.name}님</TextH3B>
+          <TextH3B>{me?.nickName}님</TextH3B>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
@@ -324,7 +335,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
               const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
+                  <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>

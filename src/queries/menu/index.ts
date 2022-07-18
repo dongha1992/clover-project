@@ -1,4 +1,14 @@
 import { IMenus } from '@model/index';
+import {
+  MutationKey,
+  QueryKey,
+  useInfiniteQuery,
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query';
+import { getMenuDetailReviewApi } from '@api/menu';
 
 interface IProps {
   previous: any;
@@ -26,4 +36,36 @@ export const onMenuLikes = ({ previous, id, likeCount, liked }: IProps) => {
       return preItem;
     }
   });
+};
+
+export const useInfiniteMenuReviews = ({ id, page, size }: { id: number; size: number; page: number }) => {
+  const fetchDatas = async ({ pageParam = 1 }) => {
+    const { data } = await getMenuDetailReviewApi({ id, page: pageParam, size });
+
+    return {
+      result: data.data.menuReviews,
+      nextPage: pageParam + 1,
+      totalPage: data.data.pagination.totalPage,
+    };
+  };
+
+  //getMenuDetailReview
+
+  const query = useInfiniteQuery('infiniteReviews', fetchDatas, {
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.totalPage >= lastPage.nextPage) {
+        return lastPage.nextPage;
+      } else {
+        return null;
+      }
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    retry: 1,
+    cacheTime: 0,
+    staleTime: 0,
+  });
+
+  return query;
 };

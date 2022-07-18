@@ -19,6 +19,8 @@ import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
+import NextImage from 'next/image';
+import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -26,9 +28,14 @@ interface IWriteMenuReviewObj {
   preview: string[];
 }
 
+interface IProp {
+  menuId: string;
+  reviewId: string;
+}
+
 const LIMIT = 30;
 
-const EditReviewPage = ({ reviewId, menuId }: any) => {
+const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   const [isShow, setIsShow] = useState(false);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
@@ -43,6 +50,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
+  const { menu } = useSelector(reviewSelector);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
@@ -74,22 +82,27 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
+      staleTime: 0,
     }
   );
 
   const { mutateAsync: mutateEditMenuReview } = useMutation(
     async (reqBody: IPatchReviewRequest) => {
-      const { data } = await editMenuReviewApi({ data: reqBody, reviewId });
+      const { data } = await editMenuReviewApi({ data: reqBody, reviewId: Number(reviewId) });
     },
     {
       onSuccess: async () => {
+        await queryClient.refetchQueries('getReviewDetail');
         dispatch(
           SET_ALERT({
             alertMessage: `후기 수정이 완료되었습니다.`,
             submitBtnText: '확인',
+            onSubmit: () => {
+              router.replace('/mypage/review');
+            },
           })
         );
-        await queryClient.refetchQueries('getReviewDetail');
       },
       onError: (error: any) => {
         dispatch(SET_ALERT({ alertMessage: error.message }));
@@ -99,7 +112,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
 
   const { mutateAsync: mutateDeleteMenuReview } = useMutation(
     async () => {
-      console.log(reviewId, 'reviewId');
       const { data } = await deleteReviewApi({ id: Number(reviewId) });
     },
     {
@@ -112,6 +124,12 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       },
     }
   );
+
+  useEffect(() => {
+    return () => {
+      dispatch(INIT_MENU_IMAGE());
+    };
+  }, []);
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -138,7 +156,9 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
   };
 
   const onChangeFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const LIMIT_SIZE = 5 * 1024 * 1024;
+    // const LIMIT_SIZE = 5 * 1024 * 1024;
+    const LIMIT_SIZE = 1000000;
+
     let imageFile = e.target.files! as any;
     if (!imageFile[0]) return;
 
@@ -215,15 +235,21 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
     let formData = new FormData();
     let location = [];
 
-    console.log(writeMenuReviewObj.imgFiles, 'writeMenuReviewObj.imgFiles');
-
     if (writeMenuReviewObj?.imgFiles?.length! > 0) {
       for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
         try {
-          writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
-          const result = await postImageApi(formData);
-          location.push(result.headers.location);
+          const img = writeMenuReviewObj.imgFiles && writeMenuReviewObj?.imgFiles[i]!;
+
+          if (typeof img === 'string') {
+            location.push(img);
+          } else {
+            formData.append('media', img!);
+            const result = await postImageApi(formData);
+            formData = new FormData();
+            location.push(result.headers.location);
+          }
         } catch (error) {
+          console.error(error);
           dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
           return;
         }
@@ -237,8 +263,6 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       images: hasReviewImgs ? location : [],
       rating,
     };
-
-    console.log(reqBody, 'reqBody');
 
     mutateEditMenuReview(reqBody);
   };
@@ -259,6 +283,7 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       setWriteMenuReviewObj({
         ...writeMenuReviewObj,
         imgFiles: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
+        preview: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
       });
       setRating(selectedReviewDetail.menuReview.rating);
     }
@@ -275,19 +300,19 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>{me?.name}님</TextH3B>
+          <TextH3B>{me?.nickName}님</TextH3B>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
-            {/* <NextImage
-              src={IMAGE_S3_URL + selectedReviewDetail?.menuImage.url}
+            <NextImage
+              src={IMAGE_S3_URL + menu?.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
               layout="responsive"
               className="rounded"
-            /> */}
+            />
           </ImgWrapper>
           <TextWrapper>
             <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.menuReview.menuName}</TextB2R>
@@ -351,9 +376,10 @@ const EditReviewPage = ({ reviewId, menuId }: any) => {
           {writeMenuReviewObj?.preview?.length! > 0 &&
             writeMenuReviewObj?.preview?.map((img: string, index: number) => {
               const base64 = img?.includes('data:image');
+
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${IMAGE_S3_URL}${img}`} />
+                  <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>

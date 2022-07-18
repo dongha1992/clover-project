@@ -10,10 +10,13 @@ import { SET_ALERT } from '@store/alert';
 import { ISpotsDetail } from '@model/index';
 import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import { theme } from '@styles/theme';
 
 declare global {
   interface Window {
     getCurrentPosBtn: any;
+    zoomIn: any;
+    zoomOut: any;
   }
 }
 
@@ -86,9 +89,6 @@ const SpotSearchKakaoMap = ({
         if (spotListAllCheck) {
           map.setCenter(new window.kakao.maps.LatLng(37.5206007, 127.005454));
         };
-        const zoomControl = new window.kakao.maps.ZoomControl(); // 줌 컨트롤러
-        const zoomControlPosition = window.kakao.maps.ControlPosition.RIGHT;
-        map.addControl(zoomControl, zoomControlPosition); //지도 오른쪽에 줌 컨트롤이 표시되도록 지도에 컨트롤을 추가
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 54);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
@@ -322,6 +322,20 @@ const SpotSearchKakaoMap = ({
           map.setLevel(level, {anchor: cluster.getCenter()});
         });
 
+        // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수
+        const zoomIn = () => {
+          const level = map.getLevel() - 1;
+          map.setLevel(level);
+        };
+      
+        // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수
+        const zoomOut = () => {
+          const level = map.getLevel() + 1;
+          map.setLevel(level);
+        };
+
+        window.zoomIn = zoomIn;
+        window.zoomOut = zoomOut;
       });
     } catch(e){
       dispatch(
@@ -339,6 +353,15 @@ const SpotSearchKakaoMap = ({
 
   return (
     <MapWrapper>
+      <ZoomContralWrapper>
+        <ZoomIn onClick={()=>window.zoomIn()}>
+          <SVGIcon name='mapZoomIn' />
+        </ZoomIn>
+        <Col />
+        <ZoomOut onClick={()=>window.zoomOut()}>
+          <SVGIcon name='mapZoomOut' />
+        </ZoomOut>
+      </ZoomContralWrapper>
       <SvgWrapper show={showInfoWindow} onClick={()=>window.getCurrentPosBtn()}>
         <SVGIcon name={successPosition ? "mapCurrentPositionActivedBtn" : "mapCurrentPositionBtn"} />
       </SvgWrapper>
@@ -353,10 +376,40 @@ const MapWrapper = styled.div`
   position: relative;
 `;
 
+const ZoomContralWrapper = styled.div`
+  max-width: ${breakpoints.mobile}px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+`;
+
+const ZoomIn = styled.span`
+`;
+
+const ZoomOut = styled.span`
+  position: absolute;
+  bottom: -12px;
+`;
+
+const Col = styled.div`
+  width: 100%;
+  height: 1px;
+  background: ${theme.greyScale25};
+  position: relative;
+  z-index: 500;
+  top: -4px;
+`;
+
+
 const SvgWrapper = styled.div<{show: boolean}>`
   position: absolute;
   max-width: ${breakpoints.mobile}px;
-  
   right: 20px;
   z-index: 500;
   cursor: pointer;
