@@ -87,9 +87,12 @@ const ReviewPage = ({ menuId }: any) => {
     <Container>
       <Wrapper ref={parentRef}>
         {list?.map((image: any, index: number) => {
+          //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+          const fromS3 = image.url.includes('menu');
+          const s3Url = IMAGE_S3_URL + image?.url;
           return (
             <ReviewImage
-              src={IMAGE_S3_URL + image.url}
+              src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + image?.url}
               alt="리뷰이미지"
               key={index}
               onClick={() => goToReviewDetail(image)}
@@ -108,12 +111,16 @@ const Container = styled.div`
 const Wrapper = styled.div`
   padding: 16px 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 150px);
+  align-items: center;
+  justify-content: center;
 `;
 
 const ReviewImage = styled.img`
   width: calc(100% - 24px / 3);
   margin-bottom: 8px;
+  height: 150px;
+  border-radius: 8px;
 `;
 
 export async function getServerSideProps(context: any) {

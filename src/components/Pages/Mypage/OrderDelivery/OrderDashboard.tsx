@@ -18,10 +18,10 @@ const OrderDashboard = ({ orderList }: IProps) => {
   return (
     <>
       <FlexCol>
-        <FlexBetween>
+        <FlexBetween pointer onClick={() => router.push('/mypage/order-delivery-history')}>
           <TextH4B>주문/배송 내역</TextH4B>
           <FlexRow>
-            <div onClick={() => router.push('/mypage/order-delivery-history')}>
+            <div>
               <SVGIcon name="arrowRight" />
             </div>
           </FlexRow>

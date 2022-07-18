@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { commonSelector } from '@store/common';
 import { useSelector } from 'react-redux';
+import useScrollCheck from '@hooks/useScrollCheck';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -22,7 +23,8 @@ const TAB_LIST = [
 
 const AddressManagementPage = () => {
   const [selectedTab, setSelectedTab] = useState('/pickup');
-  const { isScroll } = useSelector(commonSelector);
+  // const { isScroll } = useSelector(commonSelector);
+  const isScroll = useScrollCheck();
 
   const dispatch = useDispatch();
 
@@ -85,12 +87,12 @@ const AddressManagementPage = () => {
 
 const Container = styled.div``;
 
-const FixedTab = styled.div<{scroll: boolean}>`
+const FixedTab = styled.div<{ scroll: boolean }>`
   ${fixedTab};
 
-  ${({scroll}) => {
+  ${({ scroll }) => {
     if (scroll) {
-      return css `
+      return css`
         box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
       `;
     }
