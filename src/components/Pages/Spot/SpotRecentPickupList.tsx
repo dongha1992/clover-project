@@ -86,7 +86,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             <MeterAndTime>
               {userLocationLen && (
                 <>
-                  <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
+                  <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
                     getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
                   }`}</TextH6B>
                   <Col />
@@ -105,7 +105,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           <MeterAndTime>
             {userLocationLen && (
               <>
-                <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
+                <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
                   getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
                 }`}</TextH6B>
                 <Col />
@@ -258,7 +258,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   return (
-    <Container mapList spotClose={isClosed} onClick={(e) => goToDetail(item?.id)}>
+    <Container spotClose={isClosed} onClick={(e) => goToDetail(item?.id)}>
       <FlexColStart>
         <TextH5B>{item?.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
@@ -287,7 +287,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         </TagWrapper>
       </FlexColStart>
       <FlexCol>
-        <ImageWrapper mapList>
+        <ImageWrapper>
           {item?.spotPickup?.spot.isTrial ? (
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
@@ -318,22 +318,14 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   );
 };
 
-const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
+const Container = styled.section<{ spotClose?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 114px;
-  ${({ mapList }) => {
-    if (mapList) {
-      return css`
-        background: ${theme.white};
-        max-width: ${breakpoints.desktop}px;
-        max-width: ${breakpoints.mobile}px;
-        height: 146px;
-        border-radius: 8px;
-      `;
-    }
-  }};
+  background: ${theme.white};
+  max-width: ${breakpoints.desktop}px;
+  max-width: ${breakpoints.mobile}px;
+  padding: 12px 0;
   ${({ spotClose }) => {
     if (spotClose) {
       return css`
@@ -348,17 +340,11 @@ const MeterAndTime = styled.div`
   margin: 8px 0 10px 0;
 `;
 
-const ImageWrapper = styled.div<{ mapList: boolean }>`
+const ImageWrapper = styled.div`
   width: 60px;
   margin-left: 15px;
   border-radius: 8px;
-  ${({ mapList }) => {
-    if (mapList) {
-      return css`
-        margin-bottom: 10px;
-      `;
-    }
-  }}
+  margin-bottom: 10px;
 `;
 
 const SpotImg = styled.img`
