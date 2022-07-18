@@ -4,7 +4,8 @@ import styled, { css } from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
-import { theme, textBody2 } from '@styles/theme';
+import { theme, textBody2, FlexBetween } from '@styles/theme';
+import { TextH3B, TextH2B, TextB3R } from '@components/Shared/Text';
 import { SpotSearchMapPage } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { ISpotsDetail } from '@model/index';
@@ -12,7 +13,7 @@ import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-import { Swiper } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import {
@@ -28,9 +29,13 @@ import {
   getSpotSearchRecommend, 
   getSpotSearch, 
   getSpotsAllListApi,
+  getSpotEvent,
 } from '@api/spot';
 import { IDestinationsResponse } from '@model/index';
-import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
+import { 
+  SpotSearchKeywordSlider, 
+  SpotRecentPickupList, 
+} from '@components/Pages/Spot';
 import { getFilteredSpotList } from '@utils/spot';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
@@ -51,7 +56,8 @@ const SpotSearchMainPage = (): ReactElement => {
   const [keyword, setKeyword] = useState<string>('');
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
-
+  const [isFocusing, setIsFocusing] = useState<boolean>(false);
+console.log('isFocus', isFocusing)
   const userLocationLen = userLocation.emdNm?.length! > 0;
   const latLen = spotsPosition?.latitude !== null;
   const latitude = latLen ? Number(spotsPosition?.latitude) : null;
@@ -147,7 +153,7 @@ const SpotSearchMainPage = (): ReactElement => {
   };
 
   // 스팟 검색 - 추천 스팟 api
-  const { data: spotRecommend, isLoading: isLoadingRecomand } = useQuery(
+  const { data: spotRecommendList, isLoading: isLoadingRecomand } = useQuery(
     ['spotRecommendList'],
     async () => {
       const params: IParamsSpots = {
@@ -164,6 +170,22 @@ const SpotSearchMainPage = (): ReactElement => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
+
+  // 스팟 검색 - 이벤트 스팟 api
+  const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
+    ['spotList', 'EVENT'],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: latitude,
+        longitude: longitude,
+        size: 6,
+      };
+      const response = await getSpotEvent(params);
+      return response.data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+  
 
   // 최근 픽업 이력 조회 api
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
@@ -356,6 +378,9 @@ const SpotSearchMainPage = (): ReactElement => {
                   value={keyword}
                   ref={inputRef}
                   withValue
+                  onFocus={
+                    () => setIsFocusing(true)
+                  }
                 />
               </label>
               {
@@ -367,8 +392,24 @@ const SpotSearchMainPage = (): ReactElement => {
               }
             </SearchBarWrapper>
             {
-             !isSearched && (
+              !isSearched && (
                 <SpotSearchKeywordSlider onChange={selectedSelectedKeywordVaule} />
+              )
+            }
+            {
+             !isSearched && isFocusing &&
+              recentPickedSpotList ? (
+                <DefaultSearchContainer>
+                  <RecentPickWrapper>
+                    <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
+                    {recentPickedSpotList?.map((item: any, index) => (
+                      // 스팟 최근 픽업 이력 리스트
+                      <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                    ))}
+                  </RecentPickWrapper>
+                </DefaultSearchContainer>
+              ) : (
+                null
               )
             }
             {isSearched && ( // 검색 결과
