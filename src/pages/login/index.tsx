@@ -91,8 +91,6 @@ const LoginPage = () => {
           dispatch(SET_LOGIN_SUCCESS(true));
           dispatch(SET_LOGIN_TYPE('EMAIL'));
 
-          // 비회원 장바구니 체크
-
           const userInfo = await userProfile().then((res) => {
             return res?.data;
           });

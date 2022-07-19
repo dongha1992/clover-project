@@ -84,6 +84,7 @@ const CartSheet = ({ menuItem }: any) => {
   const queryClient = useQueryClient();
 
   /* TODO: axios 여러번 */
+
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
       const reqBody = selectedMenus.map((item) => {
@@ -256,21 +257,6 @@ const CartSheet = ({ menuItem }: any) => {
     const newSelectedMenus = selectedMenus.filter((item: any) => item.menuDetailId !== id);
     setSelectedMenus(newSelectedMenus);
   };
-
-  // const checkAlreadyInCart = () => {
-  //   const result = selectedMenus?.map((sMenu: any) => {
-  //     const inCart = cartLists?.find((cartItem: any) => cartItem.id === sMenu.id);
-  //     if (inCart) {
-  //       return {
-  //         ...sMenu,
-  //         quantity: sMenu.quantity + inCart.quantity,
-  //       };
-  //     } else {
-  //       return sMenu;
-  //     }
-  //   });
-  //   return result;
-  // };
 
   const checkHasMainMenu = (): boolean => {
     return selectedMenus.some((item: any) => item.main);

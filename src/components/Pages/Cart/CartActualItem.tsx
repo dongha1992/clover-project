@@ -49,7 +49,7 @@ const CartActualItem = ({
     <Container isSold={menuDetail?.isSold}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R>
+          <TextB3R margin="0 16px 0 0">
             {!menuDetail?.main ? `[선택옵션] ${menuDetail?.name}` : `${menuName} / ${menuDetail?.name}`}
           </TextB3R>
           <div
