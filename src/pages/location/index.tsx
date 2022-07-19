@@ -106,20 +106,31 @@ const LocationPage = () => {
     }
   };
     
-  // 현 위치로 설정하기 - 폼에 맞게 주소값 세팅 & address-detail페이지로 이동
-  const setCurrentPositionAddress = (address: any) => { 
+  // 현 위치로 설정하기 - 폼에 맞게 주소값 세팅 
+  // address-detail 배송안내 페이지로 이동
+  const setCurrentPositionAddress = (address: any) => {
+    const noneRoadAddress = address.road_address === null;
+    const jibunJuso = address.address.address_name;
+    const jibunZipNo = `${address.address.main_address_no}-${address.address.sub_address_no}`;
+
+    const setRoadAddressPart1 = noneRoadAddress ? jibunJuso : address.road_address.address_name;
+    const setRoadAddress = noneRoadAddress ? jibunJuso : `${address.road_address.address_name}(${address.address.region_3depth_name})`;
+    const setJibunAddr = noneRoadAddress ? jibunJuso : `${address.address.address_name} ${address.road_address.building_name}`;
+    const setZipNo = noneRoadAddress ? jibunZipNo : address.road_address.zone_no;
+    const setBdNm = noneRoadAddress? null : address.road_address.building_name;
+
     dispatch(SET_LOCATION_TEMP({
-      roadAddr: `${address.road_address.address_name}(${address.address.region_3depth_name})`,
-      roadAddrPart1: address.road_address.address_name,
+      roadAddr: setRoadAddress,
+      roadAddrPart1: setRoadAddressPart1,
       roadAddrPart2: null,
-      jibunAddr: `${address.address.address_name} ${address.road_address.building_name}`,
+      jibunAddr: setJibunAddr,
       engAddr: null,
-      zipNo: address.road_address.zone_no,
+      zipNo: setZipNo,
       admCd: null,
       rnMgtSn: null,
       bdMgtSn: null,
       detBdNmList: null,
-      bdNm: address.road_address.building_name,
+      bdNm: setBdNm,
       bdKdcd: null,
       siNm: null,
       sggNm: null,
