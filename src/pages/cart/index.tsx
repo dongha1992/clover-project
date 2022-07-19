@@ -25,6 +25,7 @@ import {
   SET_CART_LISTS,
   INIT_CART_LISTS,
   SET_NON_MEMBER_CART_LISTS,
+  INIT_NON_MEMBER_CART_LISTS,
 } from '@store/cart';
 import { SET_ORDER } from '@store/order';
 import { Item } from '@components/Item';
@@ -40,6 +41,7 @@ import {
   IMenus,
   IDeleteCartRequest,
   IOrderOptionsInOrderPreviewRequest,
+  ICreateCartRequest,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -53,7 +55,7 @@ import { getCartsApi, getRecentDeliveryApi, deleteCartsApi, patchCartsApi, postC
 import { getLikeMenus, getOrderedMenusApi } from '@api/menu';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
-import { pipe, toArray, flatMap, lte } from '@fxts/core';
+import { pipe, toArray, flatMap } from '@fxts/core';
 import {
   CartItem,
   DeliveryTypeAndLocation,
@@ -68,6 +70,7 @@ import { useToast } from '@hooks/useToast';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { DeliveryTypeInfoSheet } from '@components/BottomSheet/DeliveryTypeInfoSheet';
 
 dayjs.locale('ko');
 
@@ -128,6 +131,18 @@ const CartPage = () => {
 
   const { showToast, hideToast } = useToast();
 
+  const { mutateAsync: mutateAddCartItem } = useMutation(
+    async (reqBody: ICreateCartRequest[]) => {
+      const { data } = await postCartsApi(reqBody);
+    },
+    {
+      onError: (error: any) => {},
+      onSuccess: async (message) => {
+        // dispatch(INIT_NON_MEMBER_CART_LISTS());
+      },
+    }
+  );
+
   const {
     data: cartResponse,
     isLoading,
@@ -138,7 +153,7 @@ const CartPage = () => {
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
 
-      console.log(destinationObj, 'destinationObj');
+      console.log(selectedDeliveryDay, 'selectedDeliveryDay', destinationObj, 'destinationObj');
 
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
@@ -295,10 +310,12 @@ const CartPage = () => {
         delivery: userDeliveryType.toUpperCase() || null,
       };
       const { data } = await getAvailabilityDestinationApi(params);
-
-      if (data.code === 200) {
-        if (userDeliveryType === Object.keys(data.data)[0]) {
-          const availability = Object.values(data.data)[0];
+      return data.data;
+    },
+    {
+      onSuccess: async (data) => {
+        if (userDeliveryType === Object.keys(data)[0]) {
+          const availability = Object.values(data)[0];
           if (!availability) {
             dispatch(
               SET_ALERT({
@@ -309,10 +326,7 @@ const CartPage = () => {
             setIsInvalidDestination(true);
           }
         }
-      }
-    },
-    {
-      onSuccess: async () => {},
+      },
       onError: (error: any) => {
         alert(error.message);
         return;
@@ -905,6 +919,10 @@ const CartPage = () => {
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
+  const goToBottomSheet = () => {
+    dispatch(SET_BOTTOM_SHEET({ content: <DeliveryTypeInfoSheet /> }));
+  };
+
   const orderButtonRender = () => {
     let buttonMessage = '';
 
@@ -1048,6 +1066,23 @@ const CartPage = () => {
     // 비회원일경우
     if (!me) {
       reorderCartList(nonMemberCartLists ?? []);
+    } else {
+      // 회원일 경우 비회원 장바구니 리스트 있는 조회
+      const hasNonMemberCarts = nonMemberCartLists.length !== 0;
+      if (hasNonMemberCarts) {
+        const reqBody = nonMemberCartLists.flatMap((item) =>
+          item.menuDetails.map((detail) => {
+            return {
+              menuId: item.menuId!,
+              menuDetailId: detail.menuDetailId,
+              quantity: detail.quantity,
+              main: detail.main,
+            };
+          })
+        );
+
+        mutateAddCartItem(reqBody);
+      }
     }
   }, []);
 
@@ -1159,13 +1194,13 @@ const CartPage = () => {
           )}
 
           <NutritionInfoWrapper>
-            <FlexBetween>
+            <FlexBetween onClick={() => setIsShow(!isShow)}>
               <span className="h5B">
                 💪 내 장바구니 체크! 현재
                 <span className="brandColor"> 관리중</span>
                 이신가요?
               </span>
-              <div onClick={() => setIsShow(!isShow)}>
+              <div>
                 <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
               </div>
             </FlexBetween>
@@ -1267,7 +1302,12 @@ const CartPage = () => {
             />
             <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
             <BorderLine height={1} margin="16px 0" />
-            <CartDeliveryFeeBox deliveryFee={getDeliveryFee()} deliveryFeeDiscount={0} isLogin={isNil(me)} />
+            <CartDeliveryFeeBox
+              deliveryFee={getDeliveryFee()}
+              deliveryFeeDiscount={0}
+              isLogin={isNil(me)}
+              onClick={goToBottomSheet}
+            />
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween padding="8px 0 0 0">
               <TextH4B>결제예정금액</TextH4B>
