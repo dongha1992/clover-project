@@ -82,12 +82,14 @@ const Container = styled.div`
   width: 100%;
   .slick-slider {
     width: 100%;
+
     .slick-list {
       padding: 0 !important;
       .slick-track {
         .slick-slide {
           font-size: 0;
           width: 100%;
+          height: 100%;
         }
       }
     }
@@ -108,8 +110,8 @@ const Container = styled.div`
 
 const ImageWrapper = styled.img<{ isLast: boolean }>`
   width: 100%;
-  /* height: 100%; */
-  /* object-fit: cover; */
+  height: 390px;
+  object-fit: fill;
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;
 const NextArrowWrapper = styled.div`
