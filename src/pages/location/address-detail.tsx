@@ -115,7 +115,7 @@ const Container = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  ${fixedBottom}
+  ${fixedBottom};
 `;
 
 const MapWrapper = styled.div`
