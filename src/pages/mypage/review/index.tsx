@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { fixedTab, homePadding, textBody3, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
@@ -24,7 +24,7 @@ const TAB_LIST = [
 const ReviewPage = () => {
   const [selectedTab, setSelectedTab] = useState('/willWrite');
   const [isShow, setIsShow] = useState(false);
-
+  const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
   const router = useRouter();
@@ -67,6 +67,14 @@ const ReviewPage = () => {
       refetchOnWindowFocus: false,
     }
   );
+  useEffect(() => {
+    const offsetTop = ref.current?.offsetTop;
+    window.scrollTo({
+      behavior: 'smooth',
+      left: 0,
+      top: offsetTop,
+    });
+  }, [selectedTab]);
 
   const goToReviewDetail = useCallback(
     ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => {
@@ -97,7 +105,7 @@ const ReviewPage = () => {
   }
 
   return (
-    <Container>
+    <Container ref={ref}>
       <FixedTab scroll={isScroll}>
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} countObj={countObj} />
       </FixedTab>
