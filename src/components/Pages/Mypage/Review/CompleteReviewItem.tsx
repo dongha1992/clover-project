@@ -95,6 +95,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                   color={theme.greyScale65}
                   textDecoration="underLine"
                   onClick={() => setIsShow(!isShow)}
+                  pointer
                 >
                   전체 보기
                 </TextH6B>
@@ -104,6 +105,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                   color={theme.greyScale65}
                   textDecoration="underLine"
                   onClick={() => setIsShow(!isShow)}
+                  pointer
                 >
                   접기
                 </TextH6B>

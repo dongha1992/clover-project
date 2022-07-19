@@ -47,9 +47,10 @@ interface IProps {
   menuId: number;
   orderDeliveryId: number;
   menuDetailId: number;
+  orderType: string;
 }
 
-const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId }: IProps) => {
+const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: IProps) => {
   const [isShow, setIsShow] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
@@ -456,9 +457,9 @@ const FinishComplete = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { menuId, orderDeliveryId, menuDetailId } = context.query;
+  const { menuId, orderDeliveryId, menuDetailId, orderType } = context.query;
   return {
-    props: { menuId, orderDeliveryId, menuDetailId },
+    props: { menuId, orderDeliveryId, menuDetailId, orderType },
   };
 }
 

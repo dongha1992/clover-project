@@ -57,9 +57,13 @@ const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
     >
       <Slider {...settings}>
         {images?.map((url: string, index: number) => {
+          //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+          const fromS3 = url.includes('/menu');
+          const s3Url = IMAGE_S3_URL + url;
+
           return (
             <ImageWrapper
-              src={`${IMAGE_S3_URL}${url}`}
+              src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + url}
               alt="리뷰이미지"
               key={index}
               isLast={index === images.length + 1}
@@ -78,12 +82,14 @@ const Container = styled.div`
   width: 100%;
   .slick-slider {
     width: 100%;
+
     .slick-list {
       padding: 0 !important;
       .slick-track {
         .slick-slide {
           font-size: 0;
           width: 100%;
+          height: 100%;
         }
       }
     }
@@ -104,8 +110,8 @@ const Container = styled.div`
 
 const ImageWrapper = styled.img<{ isLast: boolean }>`
   width: 100%;
-  /* height: 100%; */
-  /* object-fit: cover; */
+  height: 390px;
+  object-fit: fill;
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;
 const NextArrowWrapper = styled.div`

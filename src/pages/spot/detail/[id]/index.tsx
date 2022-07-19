@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useCallback, useRef, ReactElement} from 'react';
+import React, { useState, useEffect, useCallback, useRef, ReactElement } from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
-import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R} from '@components/Shared/Text';
+import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart, textH5 } from '@styles/theme';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
@@ -66,12 +66,12 @@ const SpotDetailPage = (): ReactElement => {
       //   dispatch(SET_MENU_ITEM({}));
     };
   }, [tabRef?.current?.offsetTop]);
-  
+
   // 스팟 상세 api
   const {
-    data : spotItem,
+    data: spotItem,
     error: spotError,
-    isLoading : isSpotLoading,
+    isLoading: isSpotLoading,
   } = useQuery(
     'getSpotDetail',
     async () => {
@@ -93,7 +93,7 @@ const SpotDetailPage = (): ReactElement => {
   const {
     data,
     error: spotStoryError,
-    isLoading : isSpotStoryLoading,
+    isLoading: isSpotStoryLoading,
   } = useQuery(
     'getSpotDetailStory',
     async () => {
@@ -117,8 +117,8 @@ const SpotDetailPage = (): ReactElement => {
   const pickupsLen = spotItem && spotItem.pickups?.length;
   const imgTotalLen = spotItem && spotItem.images?.length;
 
-  useEffect(()=> {
-    if(router.isReady) {
+  useEffect(() => {
+    if (router.isReady) {
       setId(Number(router.query?.id));
     }
   }, [router.isReady]);
@@ -206,68 +206,58 @@ const SpotDetailPage = (): ReactElement => {
 
   return (
     <Container>
-      {
-        spotItem?.isTrial &&
+      {spotItem?.isTrial && (
         <TopNoticeWrapper>
-          <TextH5B  color={theme.white}>n월 n일까지 임시 사용 가능한 프코스팟이에요!</TextH5B>
+          <TextH5B color={theme.white}>n월 n일까지 임시 사용 가능한 프코스팟이에요!</TextH5B>
         </TopNoticeWrapper>
-      }
+      )}
       <SliderWrapper>
         <TopBannerSlider {...settingsTop}>
-          {
-            spotItem?.isTrial ? (
-              <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
-            ) : 
-            spotItem?.images?.length! > 0 ? (
-                <>
-                  {spotItem?.images?.map((item, idx: number) => {
-                    return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
-                  })}
-                </> 
-              ) : (
-                <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
-              )
-          }
+          {spotItem?.isTrial ? (
+            <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
+          ) : spotItem?.images?.length! > 0 ? (
+            <>
+              {spotItem?.images?.map((item, idx: number) => {
+                return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
+              })}
+            </>
+          ) : (
+            <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
+          )}
         </TopBannerSlider>
-        {
-          (!spotItem?.isTrial || spotItem?.images?.length! < 0) &&
+        {(!spotItem?.isTrial || spotItem?.images?.length! < 0) && (
           <SlideCount>
             <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
           </SlideCount>
-        }
+        )}
       </SliderWrapper>
       {/* 스팟 상세 상단 태그 리스트 */}
       <PlaceTypeTagWrapper>
         <>
-          { spotItem?.isTrial ? (
-              <Tag margin='0 5px 0 0' backgroundColor={theme.greyScale6} color={theme.greyScale45}>트라이얼</Tag>
-            ) : 
-            spotItem?.type === 'PRIVATE' ? (
-              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>프라이빗</Tag>
-            ) : (
-              null
-            )
-          }
-          {
-            spotItem?.type !== 'PRIVATE' && placeType() !== null && 
-              <Tag margin='0 5px 0 0'>{placeType()}</Tag>
-          }
-          {
-            spotItem?.canEat &&
-              <Tag margin='0 5px 0 0'>취식가능</Tag>
-          }
-          {
-            spotItem?.canParking &&
-              <Tag margin='0 5px 0 0'>주차가능</Tag>
-          }
-          {
-            !!spotItem?.discountRate &&
-              <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>{`${spotItem?.discountRate}% 할인 중`}</Tag>
-          }
-          {
-            !spotItem?.isOpened &&
-            <Tag margin='0 5px 0 0' backgroundColor={theme.brandColor5P} color={theme.brandColor}>오픈예정</Tag>
-          }
+          {spotItem?.isTrial ? (
+            <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+              트라이얼
+            </Tag>
+          ) : spotItem?.type === 'PRIVATE' ? (
+            <Tag margin="0 5px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              프라이빗
+            </Tag>
+          ) : null}
+          {spotItem?.type !== 'PRIVATE' && placeType() !== null && <Tag margin="0 5px 0 0">{placeType()}</Tag>}
+          {spotItem?.canEat && <Tag margin="0 5px 0 0">취식가능</Tag>}
+          {spotItem?.canParking && <Tag margin="0 5px 0 0">주차가능</Tag>}
+          {!!spotItem?.discountRate && (
+            <Tag
+              margin="0 5px 0 0"
+              backgroundColor={theme.brandColor5P}
+              color={theme.brandColor}
+            >{`${spotItem?.discountRate}% 할인 중`}</Tag>
+          )}
+          {!spotItem?.isOpened && (
+            <Tag margin="0 5px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              오픈예정
+            </Tag>
+          )}
         </>
         <TextH2B margin="8px 0 4px 0">{spotItem?.name}</TextH2B>
         <TextB2R display="inline" margin="0 8px 0 0">
@@ -294,74 +284,74 @@ const SpotDetailPage = (): ReactElement => {
           픽업정보
         </TextH5B>
         <PickUpInfoWrapper>
-          <PickUpInfoContent>
-            <th>
-              <TextTitle>도착예정</TextTitle>
-            </th>
-            <td>
-              <div>
-                <TextB2R>
-                  {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
-                  {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
-                </TextB2R>
-                <TextB2R>
-                  {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
-                  {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
-                </TextB2R>
-              </div>
-            </td>
-          </PickUpInfoContent>
-          {
-            spotItem?.type !== 'PRIVATE' && (
-              <PickUpInfoContent>
-                <th>
-                      <TextTitle>픽업가능</TextTitle>
-                </th>
-                <td>
-                      <TextB2R>{`${spotItem?.pickupStartTime}~${spotItem?.pickupEndTime}`}</TextB2R>
-                </td>
-              </PickUpInfoContent>
-            )
-          }
-          <PickUpInfoContent>
-            <th>
-              <TextTitle>픽업장소</TextTitle>
-            </th>
-            <td>
-              <div>
-                {spotItem?.pickups.map((i, idx) => {
-                  return (
-                    <FlexStart key={idx}>
-                      <TextB2R margin="0 8px 0 0">{i.name}</TextB2R>
-                      {i?.images?.map((j: { url: string }, idx) => {
-                        return (
-                          <TextH6B
-                            key={idx}
-                            color={theme.greyScale65}
-                            textDecoration="underline"
-                            pointer
-                            onClick={() => openImgViewer(j?.url)}
-                          >
-                            이미지로 보기
-                          </TextH6B>
-                        );
-                      })}
-                    </FlexStart>
-                  );
-                })}
-              </div>
-            </td>
-          </PickUpInfoContent>
-          {spotItem?.description && (
+          <tbody>
             <PickUpInfoContent>
               <th>
-                <TextTitle>기타정보</TextTitle>
+                <TextTitle>도착예정</TextTitle>
               </th>
               <td>
-                <TextB2R>{spotItem?.description}</TextB2R>
+                <div>
+                  <TextB2R>
+                    {`${spotItem?.lunchDeliveryStartTime}~${spotItem?.lunchDeliveryEndTime} (점심)`}
+                    {/* {`${spotItem?.lunchDelivery && spotItem.lunchDeliveryStartTime.slice(0,5)} (점심)`} */}
+                  </TextB2R>
+                  <TextB2R>
+                    {`${spotItem?.dinnerDeliveryStartTime}~${spotItem?.dinnerDeliveryEndTime} (저녁)`}
+                    {/* {`${spotItem?.dinnerDelivery && spotItem.dinnerDeliveryStartTime.slice(0,5)} (저녁)`} */}
+                  </TextB2R>
+                </div>
               </td>
             </PickUpInfoContent>
-          )}
+            {spotItem?.type !== 'PRIVATE' && (
+              <PickUpInfoContent>
+                <th>
+                  <TextTitle>픽업가능</TextTitle>
+                </th>
+                <td>
+                  <TextB2R>{`${spotItem?.pickupStartTime}~${spotItem?.pickupEndTime}`}</TextB2R>
+                </td>
+              </PickUpInfoContent>
+            )}
+            <PickUpInfoContent>
+              <th>
+                <TextTitle>픽업장소</TextTitle>
+              </th>
+              <td>
+                <div>
+                  {spotItem?.pickups.map((i, idx) => {
+                    return (
+                      <FlexStart key={idx}>
+                        <TextB2R margin="0 8px 0 0">{i.name}</TextB2R>
+                        {i?.images?.map((j: { url: string }, idx) => {
+                          return (
+                            <TextH6B
+                              key={idx}
+                              color={theme.greyScale65}
+                              textDecoration="underline"
+                              pointer
+                              onClick={() => openImgViewer(j?.url)}
+                            >
+                              이미지로 보기
+                            </TextH6B>
+                          );
+                        })}
+                      </FlexStart>
+                    );
+                  })}
+                </div>
+              </td>
+            </PickUpInfoContent>
+            {spotItem?.description && (
+              <PickUpInfoContent>
+                <th>
+                  <TextTitle>기타정보</TextTitle>
+                </th>
+                <td>
+                  <TextB2R>{spotItem?.description}</TextB2R>
+                </td>
+              </PickUpInfoContent>
+            )}
+          </tbody>
         </PickUpInfoWrapper>
       </PickupWrapper>
       <SpotEventBannerWrapper onClick={goToSpotNotice}>
@@ -403,7 +393,7 @@ const SpotDetailPage = (): ReactElement => {
 
 const Container = styled.main``;
 
-const TopNoticeWrapper= styled.div`
+const TopNoticeWrapper = styled.div`
   width: 100%;
   height: 45px;
   position: fiex;
@@ -490,7 +480,7 @@ const SpotEventBannerWrapper = styled.section`
 `;
 
 const EventBanner = styled.img`
-  width:100%;
+  width: 100%;
   height: 100%;
 `;
 

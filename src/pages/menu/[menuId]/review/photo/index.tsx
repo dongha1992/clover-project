@@ -7,7 +7,7 @@ import { getMenuDetailReviewImageApi } from '@api/menu';
 import { useQuery } from 'react-query';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { IDetailImage } from '@model/index';
-
+import NextImage from 'next/image';
 /* 사진 전체 후기 */
 
 const DEFAULT_SIZE = 30;
@@ -87,12 +87,19 @@ const ReviewPage = ({ menuId }: any) => {
     <Container>
       <Wrapper ref={parentRef}>
         {list?.map((image: any, index: number) => {
+          //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+          const fromS3 = image.url.includes('menu');
+          const s3Url = IMAGE_S3_URL + image?.url;
           return (
-            <ReviewImage
-              src={IMAGE_S3_URL + image.url}
+            <NextImage
+              src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + image?.url}
               alt="리뷰이미지"
               key={index}
               onClick={() => goToReviewDetail(image)}
+              width={'100%'}
+              height={'100%'}
+              layout="responsive"
+              className="rounded"
             />
           );
         })}
@@ -107,13 +114,13 @@ const Container = styled.div`
 `;
 const Wrapper = styled.div`
   padding: 16px 0;
+  width: 100%;
   display: grid;
+  grid-gap: 6px;
   grid-template-columns: repeat(3, 1fr);
-`;
-
-const ReviewImage = styled.img`
-  width: calc(100% - 24px / 3);
-  margin-bottom: 8px;
+  .rounded {
+    border-radius: 8px;
+  }
 `;
 
 export async function getServerSideProps(context: any) {

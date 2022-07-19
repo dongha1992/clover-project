@@ -25,11 +25,13 @@ interface IProps {
   item: ISpotsDetail | any;
   hasCart?: boolean;
   map?: boolean;
+  recommand?: boolean;
 }
 const now = dayjs();
 
 // 스팟 검색 - 검색 결과
-const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => {
+// 추천 스팟, 스팟 검색 결과, 스팟 검색 결과 지도뷰 리스트
+const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId }: any = router.query;
@@ -61,7 +63,6 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   }, [router.isReady, router.query.isSubscription]);
 
   useEffect(() => {
-    console.log('itemitem', item);
     item.pickups.forEach((p: any) => {
       if (p.type === 'PICKUP') {
         setIsLocker(false);
@@ -101,7 +102,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
           <MeterAndTime>
             {(userLocationLen || positionLen) && (
               <>
-                <TextH6B>{`${getSpotDistanceUnit(item.distance).distance}${
+                <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item.distance).distance}${
                   getSpotDistanceUnit(item.distance).unit
                 }`}</TextH6B>
                 <Col />
@@ -154,6 +155,7 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
       destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
+
       router.push({
         pathname: '/cart/delivery-info',
         query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
@@ -269,14 +271,26 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
   };
 
   const goToDetail = (id: number | undefined) => {
-    router.push({
-      pathname: `/spot/detail/${id}`,
-      query: { isSpot: true },
-    });
+    if (isSubs) {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true, destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
+      });
+    } else {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true },
+      });
+    }
   };
 
   return (
-    <Container map={map} spotClose={item.isClosed} onClick={() => goToDetail(item.id)}>
+    <Container
+      map={map}
+      onClick={() => {
+        isSubs && (item.isTrial || isLocker) ? null : goToDetail(item.id);
+      }}
+    >
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
@@ -319,9 +333,34 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           )}
         </ImageWrapper>
-        {item.isOpened && !item.isClosed ? (
-          // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
-          isSubs && (item.isTrial || isLocker) ? (
+        {!recommand &&
+          (item.isOpened && !item.isClosed ? (
+            // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+            isSubs && (item.isTrial || isLocker) ? (
+              <Button
+                backgroundColor={theme.white}
+                width="75px"
+                height="38px"
+                disabled
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                주문하기
+              </Button>
+            ) : (
+              <Button
+                backgroundColor={theme.white}
+                color={theme.black}
+                width="75px"
+                height="38px"
+                border
+                onClick={(e) => orderHandler(e)}
+              >
+                주문하기
+              </Button>
+            )
+          ) : (
             <Button
               backgroundColor={theme.white}
               width="75px"
@@ -333,44 +372,20 @@ const SpotsSearchResultList = ({ item, hasCart, map }: IProps): ReactElement => 
             >
               주문하기
             </Button>
-          ) : (
-            <Button
-              backgroundColor={theme.white}
-              color={theme.black}
-              width="75px"
-              height="38px"
-              border
-              onClick={(e) => orderHandler(e)}
-            >
-              주문하기
-            </Button>
-          )
-        ) : (
-          <Button
-            backgroundColor={theme.white}
-            width="75px"
-            height="38px"
-            disabled
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            주문하기
-          </Button>
-        )}
+          ))}
       </FlexCol>
     </Container>
   );
 };
 
-const Container = styled.section<{ spotClose?: boolean; map?: boolean }>`
+const Container = styled.section<{ map?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
   background: ${theme.white};
   max-width: ${breakpoints.desktop}px;
   max-width: ${breakpoints.mobile}px;
-
+  cursor: pointer;
   ${({ map }) => {
     if (map) {
       return css`
@@ -387,14 +402,6 @@ const Container = styled.section<{ spotClose?: boolean; map?: boolean }>`
       `;
     }
   }}
-
-  ${({ spotClose }) => {
-    if (spotClose) {
-      return css`
-        cursor: pointer;
-      `;
-    }
-  }};
 `;
 
 const MeterAndTime = styled.div`
