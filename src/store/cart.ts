@@ -59,11 +59,7 @@ export const cart = createSlice({
     SET_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<IGetCart[]>) => {
       state.nonMemberCartLists = action.payload;
     },
-    DELETE_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<any>) => {
-      console.log(action.payload);
-      const target = state.nonMemberCartLists.filter((item) => {});
-      // state.nonMemberCartLists = [];
-    },
+    DELETE_NON_MEMBER_CART_LISTS: (state, action: PayloadAction<any>) => {},
     INIT_NON_MEMBER_CART_LISTS: (state, action: PayloadAction) => {
       state.nonMemberCartLists = [];
     },
