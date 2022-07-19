@@ -375,6 +375,7 @@ const SubscriptionWrapper = styled.div`
 `;
 
 const ManageWrapper = styled.ul`
+  padding-top: 24px;
   & > li:last-of-type > div {
     border-bottom: none;
   }

@@ -151,7 +151,8 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
 
   const writeReviewHandler = () => {
     if (textAreaRef.current) {
-      setNumberOfReivewContent(textAreaRef.current?.value.length);
+      const text = textAreaRef.current?.value.trim();
+      setNumberOfReivewContent(text.length);
     }
   };
 
