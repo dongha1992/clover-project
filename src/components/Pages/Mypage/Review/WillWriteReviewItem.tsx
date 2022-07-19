@@ -29,7 +29,6 @@ const WillWriteReviewItem = ({ review }: IProps) => {
   const formatUrl = review.image.url.split('');
   const isError = formatUrl[0] !== '/';
 
-  console.log(review, '--');
   return (
     <Container>
       <Wrapper>
@@ -66,7 +65,7 @@ const WillWriteReviewItem = ({ review }: IProps) => {
             margin="0 8px 0 0"
             onClick={() =>
               router.push(
-                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}`
+                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderType=${review.orderType}`
               )
             }
           >

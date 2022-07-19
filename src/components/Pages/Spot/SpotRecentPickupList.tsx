@@ -43,6 +43,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const type = item?.spotPickup?.spot?.type;
   const discountRate = item?.spotPickup?.spot?.discountRate;
   const [isSubs, setIsSubs] = useState<boolean>();
+  const [isLocker, setIsLocker] = useState<boolean>();
 
   // 운영 종료 예정 or 종료
   const closedDate = item?.spotPickup?.spot.closedDate;
@@ -58,6 +59,15 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       }
     }
   }, [router.isReady, router.query.isSubscription]);
+
+  useEffect(() => {
+    if (item?.spotPickup?.type === 'PICKUP') {
+      setIsLocker(false);
+      return;
+    } else {
+      setIsLocker(true);
+    }
+  }, [item?.spotPickup?.type]);
 
   const renderSpotMsg = useCallback(() => {
     switch (true) {
@@ -86,9 +96,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             <MeterAndTime>
               {userLocationLen && (
                 <>
-                  <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
-                    getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
-                  }`}</TextH6B>
+                  <TextH6B color={theme.greyScale65}>{`${
+                    getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance
+                  }${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit}`}</TextH6B>
                   <Col />
                 </>
               )}
@@ -105,7 +115,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           <MeterAndTime>
             {userLocationLen && (
               <>
-                <TextH6B>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
+                <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
                   getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
                 }`}</TextH6B>
                 <Col />
@@ -251,14 +261,26 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   const goToDetail = (id: number | undefined) => {
-    router.push({
-      pathname: `/spot/detail/${id}`,
-      query: { isSpot: true },
-    });
+    if (isSubs) {
+      router.push({
+        pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
+        query: { isSpot: true, isSubscription, subsDeliveryType, menuId },
+      });
+    } else {
+      router.push({
+        pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
+        query: { isSpot: true },
+      });
+    }
   };
 
   return (
-    <Container mapList spotClose={isClosed} onClick={(e) => goToDetail(item?.id)}>
+    <Container
+      spotClose={isClosed}
+      onClick={() => {
+        isSubs && (item?.spotPickup?.spot.isTrial || isLocker) ? null : goToDetail(item?.id);
+      }}
+    >
       <FlexColStart>
         <TextH5B>{item?.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
@@ -287,7 +309,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         </TagWrapper>
       </FlexColStart>
       <FlexCol>
-        <ImageWrapper mapList>
+        <ImageWrapper>
           {item?.spotPickup?.spot.isTrial ? (
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
@@ -298,18 +320,42 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         </ImageWrapper>
         {isOpened && !isClosed ? (
           // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+          isSubs && (item?.spotPickup?.spot.isTrial || isLocker) ? (
+            <Button
+              backgroundColor={theme.white}
+              color={theme.black}
+              width="75px"
+              height="38px"
+              disabled
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              주문하기
+            </Button>
+          ) : (
+            <Button
+              backgroundColor={theme.white}
+              color={theme.black}
+              width="75px"
+              height="38px"
+              border
+              onClick={orderHandler}
+            >
+              주문하기
+            </Button>
+          )
+        ) : (
           <Button
             backgroundColor={theme.white}
             color={theme.black}
             width="75px"
             height="38px"
-            border
-            onClick={orderHandler}
+            disabled
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
           >
-            주문하기
-          </Button>
-        ) : (
-          <Button backgroundColor={theme.white} color={theme.black} width="75px" height="38px" disabled>
             주문하기
           </Button>
         )}
@@ -318,22 +364,14 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   );
 };
 
-const Container = styled.section<{ mapList: boolean; spotClose?: boolean }>`
+const Container = styled.section<{ spotClose?: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 114px;
-  ${({ mapList }) => {
-    if (mapList) {
-      return css`
-        background: ${theme.white};
-        max-width: ${breakpoints.desktop}px;
-        max-width: ${breakpoints.mobile}px;
-        height: 146px;
-        border-radius: 8px;
-      `;
-    }
-  }};
+  background: ${theme.white};
+  max-width: ${breakpoints.desktop}px;
+  max-width: ${breakpoints.mobile}px;
+  padding: 12px 0;
   ${({ spotClose }) => {
     if (spotClose) {
       return css`
@@ -348,17 +386,11 @@ const MeterAndTime = styled.div`
   margin: 8px 0 10px 0;
 `;
 
-const ImageWrapper = styled.div<{ mapList: boolean }>`
+const ImageWrapper = styled.div`
   width: 60px;
   margin-left: 15px;
   border-radius: 8px;
-  ${({ mapList }) => {
-    if (mapList) {
-      return css`
-        margin-bottom: 10px;
-      `;
-    }
-  }}
+  margin-bottom: 10px;
 `;
 
 const SpotImg = styled.img`
