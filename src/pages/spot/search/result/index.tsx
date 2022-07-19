@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
+import React, { ReactElement, useEffect, useState, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
-import { theme, textBody2, FlexBetween } from '@styles/theme';
-import { TextH3B, TextH2B, TextB3R } from '@components/Shared/Text';
+import { theme, textBody2 } from '@styles/theme';
+import { TextH3B } from '@components/Shared/Text';
 import { SpotSearchMapPage } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { ISpotsDetail } from '@model/index';
@@ -13,23 +13,18 @@ import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import {
   spotSelector,
   INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
-  SET_SPOT_POSITIONS,
-  SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { 
-  getSpotSearchRecommend, 
   getSpotSearch, 
   getSpotsAllListApi,
-  getSpotEvent,
 } from '@api/spot';
 import { IDestinationsResponse } from '@model/index';
 import { 
@@ -45,7 +40,7 @@ const SpotSearchResultPage = (): ReactElement => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const { orderId, isDelivery, keyword } = router.query;
-  const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, spotKeyword, isMapSwitch } =
+  const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, isMapSwitch } =
     useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
 
@@ -53,7 +48,7 @@ const SpotSearchResultPage = (): ReactElement => {
   const [defaultSpotList, setDefaultSpotList] = useState<ISpotsDetail[]>([]);
   const [paginatedSpotList, setPaginatedSpotList] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  const [inputKeyword, setInputKeyword] = useState<string>('');
+  const [inputKeyword, setInputKeyword] = useState<any>('');
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
@@ -192,7 +187,7 @@ const SpotSearchResultPage = (): ReactElement => {
         refetch();
         setInputKeyword(value);
         router.replace({
-            query: {keyword: value},
+            query: { keyword: value },
          })     
     }
   };
@@ -258,14 +253,14 @@ const SpotSearchResultPage = (): ReactElement => {
     setPaginatedSpotList(list);
   };
 
-  const startSpotListSearch = (keyword: string) => {
+  const startSpotListSearch = (keyword: any) => {
     setInputKeyword(keyword);
     setIsSearched(true);
   };
 
   const selectedSelectedKeywordVaule = (keyword: string) => {
     setInputKeyword(keyword);
-    // dispatch(SET_SEARCH_KEYWORD(keyword));
+    startSpotListSearch(keyword);
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());  
     // setSize(10);
@@ -282,7 +277,6 @@ const SpotSearchResultPage = (): ReactElement => {
     if (!value) {
       setIsSearched(false);
       setInputKeyword('');
-      dispatch(SET_SEARCH_KEYWORD(''));
     }
   };
 
@@ -293,7 +287,6 @@ const SpotSearchResultPage = (): ReactElement => {
       initInputHandler();
       setIsSearched(false);
       setInputKeyword('');
-      dispatch(SET_SEARCH_KEYWORD(''));
     };
   };
 
@@ -425,17 +418,8 @@ const SearchBarWrapper = styled.div`
     position: absolute;
     right: 0;
     top: 0;
-    padding: 22px 14px 0 0;
+    padding: 23px 14px 0 0;
   }
-`;
-
-const KeyWordWrapper = styled.div`
-  padding: 16px 24px 24px 24px;
-`;
-
-const SpotRecommendWrapper = styled.section`
-  margin-bottom: 16px;
-  ${homePadding};
 `;
 
 const RecentPickWrapper = styled.div`
@@ -460,27 +444,6 @@ const SearchResultContainer = styled.section`
   display: flex;
   flex-direction: column;
   ${homePadding}
-`;
-
-const EventSlider = styled(Swiper)`
-  padding: 0 24px;
-  .swiper-slide {
-    width: 299px;
-  }
-`;
-
-const Row = styled.div`
-  width: 100%;
-  height: 8px;
-  background: ${theme.greyScale3};
-`;
-
-const BottomContentWrapper = styled.section`
-  width: 100%;
-  position: relative;
-  bottom: 0px;
-  right: 0px;
-  background-color: ${theme.white};
 `;
 
 export default SpotSearchResultPage;
