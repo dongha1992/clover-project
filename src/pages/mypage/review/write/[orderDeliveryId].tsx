@@ -136,7 +136,8 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
 
   const writeReviewHandler = () => {
     if (textAreaRef.current) {
-      setNumberOfReivewContent(textAreaRef.current?.value.length);
+      const text = textAreaRef.current?.value.trim();
+      setNumberOfReivewContent(text.length);
     }
   };
 
