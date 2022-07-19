@@ -37,9 +37,9 @@ const DeliveryTypeInfoSheet = () => {
               </Item>
             );
           })}
-          {DELIVERY_METHOD.delivery.map((item: any) => {
+          {DELIVERY_METHOD.delivery.map((item: any, index: number) => {
             return (
-              <Item>
+              <Item key={index}>
                 <TextH5B margin="0 0 8px 0">{item.name}</TextH5B>
                 <TextB3R color={theme.greyScale65}>{item.description}</TextB3R>
                 <TextH6B color={theme.greyScale65}>{item.feeInfo}</TextH6B>
