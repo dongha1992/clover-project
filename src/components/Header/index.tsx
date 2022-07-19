@@ -112,7 +112,7 @@ const Header = () => {
       '/login/find-account/email': '이메일/비밀번호 찾기',
       '/login/find-account/password': '이메일/비밀번호 찾기',
       '/spot/search': '프코스팟 검색',
-      '/spot/search/main': '프코스팟 검색',
+      '/spot/search/result': '프코스팟 검색',
       '/spot/join': '프코스팟 신청 안내',
       '/spot/join/main': '신청하기',
       '/spot/join/main/form': '신청하기',
@@ -234,7 +234,7 @@ const Header = () => {
         );
       }
 
-      case ['/spot/search', '/spot/search/main'].includes(currentPath): {
+      case ['/spot/search', '/spot/search/result'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <SpotSearchHeader title={title} />
