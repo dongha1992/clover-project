@@ -24,13 +24,12 @@ import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import { 
   spotSelector,
-  SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
   SET_SPOT_POSITIONS,
 } from '@store/spot';
 import { SET_LOCATION } from '@store/destination';
 import { getDestinationsApi } from '@api/destination';
-import { IDestinationsResponse, ISpotsAllListResponse, IGetDestinationsResponse } from '@model/index';
+import { IDestinationsResponse, IGetDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 import { ISpotsDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
@@ -58,7 +57,6 @@ const SpotSearchPage = (): ReactElement => {
   const [isSeachingPosition, setIsSearchingPosition] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
-  const [isSearched, setIsSearched] = useState<boolean>(false);
   const [pickUpList, setPickUpList] = useState<any>([]);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
@@ -71,7 +69,6 @@ const SpotSearchPage = (): ReactElement => {
   const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   useEffect(()=> {
-    dispatch(SET_SEARCH_KEYWORD(''));
     dispatch(SET_SPOT_MAP_SWITCH(false));
     // getSpotAllList();
 
@@ -118,8 +115,6 @@ const SpotSearchPage = (): ReactElement => {
                 const address = result[0];
                 const searchKeyword = result[0].road_address.address_name;
                 setIsSearchingPosition(false);
-                dispatch(SET_SEARCH_KEYWORD(searchKeyword));
-                // router.push('/spot/search/main');
                 dispatch(SET_LOCATION({
                   roadAddr: `${address.road_address.address_name}(${address.address.region_3depth_name})`,
                   roadAddrPart1: address.road_address.address_name,
@@ -506,7 +501,7 @@ const SearchBarWrapper = styled.div`
     position: absolute;
     right: 0;
     top: 0;
-    padding: 22px 14px 0 0;
+    padding: 23px 14px 0 0;
   }
 `;
 
