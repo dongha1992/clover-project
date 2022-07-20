@@ -124,63 +124,65 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       spaceType: item.type,
       spotPickupId: spotPickupId!,
       closedDate: item.closedDate,
-      delivery: 'spot',
+      delivery: 'SPOT',
     };
 
-    const goToCart = () => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+      const reqBody = { 
+        name: userTempDestination?.name!,
+        delivery: 'SPOT',
+        deliveryMessage: userTempDestination?.deliveryMessage ? userTempDestination.deliveryMessage : '',
+        main: userTempDestination?.main!,
+        receiverName: userTempDestination?.receiverName,
+        receiverTel: userTempDestination?.receiverTel,
+        location: {
+          addressDetail: userTempDestination?.location?.addressDetail!,
+          address: userTempDestination?.location?.address!,
+          zipCode: userTempDestination?.location?.zipCode!,
+          dong: userTempDestination?.location?.dong!,
+        },
+        spotPickupId: spotPickupId,
+      };
+      try{
+        const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
+          if (data.code === 200) {
+            const response = data.data;
+            const destinationId = response.id;
+            dispatch(
+              SET_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: response.main,
+                deliveryMessage: response.deliveryMessage,
+                receiverName: response.receiverName,
+                receiverTel: response.receiverTel,
+                deliveryMessageType: '',
+                delivery: response.delivery,
+                id: destinationId,
+                spotId: item.id,
+              })
+            );
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
+            // dispatch(SET_DESTINATION(destinationInfo));
+            router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });      
+          };
+      }catch(e){
+        console.error(e);
+      };
+    };
+
+    const goToDeliveryInfo = () => { // 장바구니 o, 배송 정보에서 픽업장소 변경하기(스팟검색)로 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });
+      // CHECK_LIST : destinationId 쿼리 지워야 하는지 체크
+      router.push({ pathname: '/cart/delivery-info', query: { destinationId: destinationId, isClosed: !!closedDate } });  
     };
-
-    const goToDeliveryInfo = async() => { // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
-      // const reqBody = {
-      //   name: userTempDestination?.name!,
-      //   delivery: userTempDestination ? userTempDestination.toUpperCase() : userTempDestination.toUpperCase(),
-      //   deliveryMessage: userTempDestination?.deliveryMessage ? userTempDestination.deliveryMessage : '',
-      //   main: userTempDestination?.main!,
-      //   receiverName: userTempDestination?.receiverName,
-      //   receiverTel: userTempDestination?.receiverTel,
-      //   location: {
-      //     addressDetail: userTempDestination?.location?.addressDetail!,
-      //     address: userTempDestination?.location?.address!,
-      //     zipCode: userTempDestination?.location?.zipCode!,
-      //     dong: userTempDestination?.location?.dong!,
-      //   },
-      // };
-
-      // try{
-      //   const { data } = await postDestinationApi(reqBody);
-      //     if (data.code === 200) {
-      //       const response = data.data;
-      //         dispatch(
-      //           SET_DESTINATION({
-      //             name: response.name,
-      //             location: {
-      //               addressDetail: response.location.addressDetail,
-      //               address: response.location.address,
-      //               dong: response.location.dong,
-      //               zipCode: response.location.zipCode,
-      //             },
-      //             main: response.main,
-      //             deliveryMessage: response.deliveryMessage,
-      //             receiverName: response.receiverName,
-      //             receiverTel: response.receiverTel,
-      //             deliveryMessageType: '',
-      //             delivery: response.delivery,
-      //             id: response.id,
-      //           })
-      //         );
-
-      //     }
-      // }catch(e){
-      //   console.error(e);
-      // };
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!closedDate } }); // 
-    };
-
+    
     const handleSubsDeliveryType = () => {
       destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
@@ -233,7 +235,6 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
               );
             }
           } else { // 장바구니 o , 배송 정보에서 넘어온 경우
-            console.log('배송정보에서 넘어옴');
             dispatch(
               SET_BOTTOM_SHEET({
                 content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToDeliveryInfo} />,
@@ -289,7 +290,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   const goToDetail = (id: number | undefined) => {
     router.push({
       pathname: `/spot/detail/${id}`,
-      query: { isSpot: true },
+      query: { 
+        isSpot: true, 
+        isDelivery: isDelivery ? isDelivery : false, 
+      },
     });
   };
 
