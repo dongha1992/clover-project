@@ -20,6 +20,7 @@ import {
   INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
   SET_SPOT_MAP_SWITCH,
+  SET_SPOT_POSITIONS,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
 import { 
@@ -32,6 +33,7 @@ import {
   SpotRecentPickupList, 
 } from '@components/Pages/Spot';
 import { getFilteredSpotList } from '@utils/spot';
+import { SET_ALERT } from '@store/alert';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -87,13 +89,17 @@ const SpotSearchResultPage = (): ReactElement => {
   }, []);
 
   useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
+    if(keyword?.length === 0){
+        getPaginatedSpotList([]);
+        getSpotsAllList();
+        return
+      };    
     if (keyword) {
-    //   setInputKeyword(keyword);
       startSpotListSearch(keyword)
       getPaginatedSpotList(searchResult);
       setIsSearched(true); 
       setSpotListAllCheck(false);
-    }
+    };
   }, [keyword]);
 
   useEffect(() => {
@@ -131,27 +137,34 @@ const SpotSearchResultPage = (): ReactElement => {
 
 
   // GPS - 현재위치 가져오기
-//   const getCurrentPosition = () =>
-//     new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+  const getCurrentPosition = () =>
+    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
 
-//   const getLocation = async () => {
-//     try {
-//       const position: any = await getCurrentPosition();
-//       if (position) {
-//         // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
-//         dispatch(
-//           SET_SPOT_POSITIONS({
-//             latitude: position.coords.latitude,
-//             longitude: position.coords.longitude,
-//           })
-//         );
-//       }
-//       return { Status: true, position };
-//     } catch (error) {
-//       console.error('getCurrentLatLong::catcherror =>', error);
-//       return { Status: false };
-//     }
-//   };  
+  const getLocation = async () => {
+    try {
+      const position: any = await getCurrentPosition();
+      if (position) {
+        // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
+        dispatch(
+          SET_SPOT_POSITIONS({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          })
+        );
+      }
+      return { Status: true, position };
+    } catch (error) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알 수 없는 에러가 발생했습니다.',
+          submitBtnText: '확인',
+        })
+      );  
+      console.error('getCurrentLatLong::catcherror =>', error);
+      return { Status: false };
+    }
+  };  
+
 
   // 최근 픽업 이력 조회 api
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
@@ -176,7 +189,6 @@ const SpotSearchResultPage = (): ReactElement => {
     if (e.key === 'Enter') {
         if (!value) {
           getSpotsAllList();
-          setSpotListAllCheck(true);
           setSearchResult([]);
           return;
         };
@@ -233,6 +245,7 @@ const SpotSearchResultPage = (): ReactElement => {
       if (data.code === 200) {
         const list = data.data;
         setSearchResult(list);
+        setSpotListAllCheck(true);
       };
     } catch(e) {
       console.error(e);
@@ -263,7 +276,6 @@ const SpotSearchResultPage = (): ReactElement => {
     startSpotListSearch(keyword);
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());  
-    // setSize(10);
     router.replace({
        query: { keyword: keyword },
     })
@@ -307,11 +319,14 @@ const SpotSearchResultPage = (): ReactElement => {
 
   const goToSwitchMap = () => {
     // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼
-    
     getSpotsAllList();
     dispatch(SET_SPOT_MAP_SWITCH(true));
-    setSpotListAllCheck(true);
   };
+
+  const goToSpotsRegistrations = () => {
+    router.push('/spot/join');
+  };
+
 
   if(isFetching) {
     return <div>로딩</div>;
@@ -335,7 +350,7 @@ const SpotSearchResultPage = (): ReactElement => {
             <SearchBarWrapper>
               <label className='textLabel'>
                 {
-                  keyword?.length === 0 &&
+                  inputKeyword.length === 0 &&
                     <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
                 }
                 <TextInput
@@ -358,25 +373,26 @@ const SpotSearchResultPage = (): ReactElement => {
               }
             </SearchBarWrapper>
             {
-              inputKeyword.length === 0 && (
+              !isSearched && (
                 <SpotSearchKeywordSlider onChange={selectedSelectedKeywordVaule} />
               )
             }
             {
-             !isSearched && inputKeyword.length === 0 &&
-              recentPickedSpotList?.length! > 0 ? (
-                <DefaultSearchContainer>
-                  <RecentPickWrapper>
+             !isSearched && (
+                recentPickedSpotList?.length! > 0 ? (
+                  <DefaultSearchContainer>
+                    <RecentPickWrapper>
                     <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
                     {recentPickedSpotList?.map((item: any, index) => (
-                      // 스팟 최근 픽업 이력 리스트
-                      <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                        // 스팟 최근 픽업 이력 리스트
+                        <SpotRecentPickupList item={item} key={index} hasCart={true} />
                     ))}
-                  </RecentPickWrapper>
-                </DefaultSearchContainer>
-              ) : (
-                null
-              )
+                    </RecentPickWrapper>
+                  </DefaultSearchContainer>
+                ) : (
+                  null
+                )
+             )
             }
             {isSearched && ( // 검색 결과
               <SearchResultContainer>
@@ -384,8 +400,9 @@ const SpotSearchResultPage = (): ReactElement => {
                   searchResult={paginatedSpotList}
                   orderId={orderId}
                   hasCart={true}
-                //   getLocation={getLocation}
+                  getLocation={getLocation}
                   goToSwitchMap={goToSwitchMap}
+                  goToSpotsRegistrations={goToSpotsRegistrations}
                   totalCount={searchResult.length}
                 />
               </SearchResultContainer>

@@ -16,21 +16,21 @@ import { ISpotsDetail } from '@model/index';
 
 interface IProps {
   searchResult?: ISpotsDetail[];
-  onClick?: () => void;
   orderId?: string | string[];
   hasCart?: boolean;
   getLocation?: any;
   totalCount?: number;
   goToSwitchMap?: () => void;
+  goToSpotsRegistrations?: () => void;
 }
 
 const SpotSearchResult = ({
   searchResult,
-  onClick,
   orderId,
   getLocation,
   hasCart,
   totalCount,
+  goToSpotsRegistrations,
   goToSwitchMap,
 }: IProps) => {
   const dispatch = useDispatch();
@@ -43,10 +43,6 @@ const SpotSearchResult = ({
         content: <SpotSearchFilter getLocation={getLocation} />,
       })
     );
-  };
-
-  const goToSpotsRegistrations = () => {
-    router.push('/spot/join');
   };
 
   return (
