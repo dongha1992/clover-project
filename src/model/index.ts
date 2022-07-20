@@ -301,6 +301,7 @@ export interface IRegisterDestination {
   main: boolean;
   createdAt: string;
   deliveryMessage: string;
+  spotPickup: ISpotPickupInDestinaion;
 }
 
 export interface IRegisterDestinationResponse {
@@ -402,8 +403,8 @@ export interface IDestinationsResponse {
   location?: ILocation;
   main?: boolean;
   createdAt?: string;
-  spotPickup?: ISpotPickupInDestinaion;
-  spotPickupId?: number;
+  spotPickup?: ISpotPickupInDestinaion | null;
+  spotPickupId?: number | null;
   spaceType?: string;
   availableTime?: string;
   closedDate?: string;
