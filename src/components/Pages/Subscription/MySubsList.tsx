@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import { SubsCardItem } from '@components/Pages/Subscription';
 import { IGetOrders } from '@model/index';
 import router from 'next/router';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel } from 'swiper';
+import 'swiper/css';
 interface IProps {
   subsList: IGetOrders[];
 }
@@ -22,9 +25,11 @@ const MySubsList = ({ subsList }: IProps) => {
         </TextH6B>
       </Head>
       <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
-        <ListContainer>
+        <ListContainer slidesPerView={'auto'} spaceBetween={16} mousewheel={true} modules={[Mousewheel]}>
           {subsList.map((item: IGetOrders, index: number) => (
-            <SubsCardItem key={index} item={item} />
+            <SwiperSlide key={index}>
+              <SubsCardItem item={item} />
+            </SwiperSlide>
           ))}
         </ListContainer>
       </ScrollHorizonList>
@@ -42,10 +47,13 @@ const Head = styled.div`
   padding: 0 24px 16px;
 `;
 
-const ListContainer = styled.div`
-  display: flex;
+const ListContainer = styled(Swiper)`
+  width: auto;
   padding: 24px;
   background-color: ${theme.greyScale3};
+  .swiper-slide {
+    width: 312px;
+  }
 `;
 
 export default MySubsList;

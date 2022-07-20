@@ -21,6 +21,9 @@ const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders, showBoar
         <FlexBetween>
           <TextH4B>구독 관리</TextH4B>
           <FlexRow>
+            <TextB2R padding="0 8px 0 0" pointer>
+              {subsOrders.length} 건
+            </TextB2R>
             <div className="rightArrow">
               <SVGIcon name="arrowRight" />
             </div>
