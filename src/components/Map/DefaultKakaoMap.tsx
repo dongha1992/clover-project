@@ -96,6 +96,7 @@ const MapWrapper = styled.section`
   width: 100%;
   height: 100%;
   position: relative;
+  z-index: 5;
 `;
 
 const ZoomContralWrapper = styled.div`

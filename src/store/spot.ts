@@ -58,7 +58,6 @@ interface IProps {
   spotSearchSort: string;
   spotJoinFormChecked: boolean;
   spotStatusDetail: IGetRegistrationStatus | null;
-  spotKeyword: string;
   isMapSwitch: boolean;
 };
 
@@ -115,7 +114,6 @@ const initialState: IProps = {
   spotSearchSelectedFilters: [],
   spotSearchSort: '',
   spotJoinFormChecked: false,
-  spotKeyword: '',
   isMapSwitch: false,
 };
 
@@ -169,9 +167,6 @@ export const spot = createSlice({
     SET_SPOT_STATUS_DETAIL_ITEMS: (state, action: PayloadAction<IGetRegistrationStatus | null>) => {
       state.spotStatusDetail = action.payload;
     },
-    SET_SEARCH_KEYWORD: (state, action: PayloadAction<string>) => {
-      state.spotKeyword = action.payload;
-    },
     SET_SPOT_MAP_SWITCH: (state, action : PayloadAction<boolean>) => {
       state.isMapSwitch = action.payload;
     },
@@ -194,7 +189,6 @@ export const {
   INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
   SET_SPOT_JOIN_FORM_CHECKED,
-  SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
 } = spot.actions;
 export const spotSelector = (state: AppState): IProps => state.spot;
