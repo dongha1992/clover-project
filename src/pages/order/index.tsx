@@ -19,7 +19,7 @@ import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import { OrderItem } from '@components/Pages/Order';
+import { DeliveryDateBox, OrderItem } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -155,14 +155,7 @@ const OrderPage = () => {
   const router = useRouter();
   const { message, isSubscription } = router.query;
   const needCard = selectedOrderMethod === 'NICE_BILLING' || selectedOrderMethod === 'NICE_CARD';
-  useEffect(() => {
-    window?.addEventListener('pageshow', (event) => {
-      console.log('e', event);
-    });
-    window?.addEventListener('pagehide', (event) => {
-      console.log('e', event);
-    });
-  }, []);
+
   const {
     data: previewOrder,
     isLoading: preveiwOrderLoading,
@@ -427,130 +420,6 @@ const OrderPage = () => {
     }
 
     setUserInputObj({ ...userInputObj, point: avaliablePoint });
-  };
-
-  const deliveryDateRenderer = ({
-    location,
-    delivery,
-    deliveryDetail,
-    dayFormatter,
-    spotName,
-    spotPickupName,
-    deliveryStartTime,
-    deliveryEndTime,
-  }: {
-    location: ILocation;
-    delivery: string;
-    deliveryDetail: string;
-    dayFormatter: string;
-    spotName: string;
-    spotPickupName: string;
-    deliveryStartTime: string;
-    deliveryEndTime: string;
-  }) => {
-    const isLunch = deliveryDetail === 'LUNCH';
-
-    const deliveryTimeInfo = `${deliveryStartTime}-${deliveryEndTime}`;
-
-    switch (delivery) {
-      case 'PARCEL': {
-        return (
-          <>
-            <FlexBetweenStart margin="16px 0">
-              <TextH5B>배송 예정일시</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{dayFormatter}</TextB2R>
-                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-            <FlexBetweenStart>
-              <TextH5B>배송지</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{location.address}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          </>
-        );
-      }
-      case 'MORNING': {
-        return (
-          <>
-            <FlexBetweenStart margin="16px 0">
-              <TextH5B>배송 예정실시</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{dayFormatter} 00:00-07:00</TextB2R>
-                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-            <FlexBetweenStart>
-              <TextH5B>배송지</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{location.address}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          </>
-        );
-      }
-      case 'QUICK': {
-        return (
-          <>
-            <FlexBetweenStart margin="16px 0">
-              <TextH5B>배송 예정실시</TextH5B>
-              <FlexColEnd>
-                <TextB2R>
-                  {dayFormatter} {isLunch ? '11:30-12:00' : '15:30-18:00'}
-                </TextB2R>
-                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-            <FlexBetweenStart>
-              <TextH5B>배송지</TextH5B>
-              <FlexColEnd>
-                <TextB2R>{location.address}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          </>
-        );
-      }
-      case 'SPOT': {
-        return (
-          <>
-            <FlexBetweenStart margin="16px 0">
-              <TextH5B>배송 예정실시</TextH5B>
-              <FlexColEnd>
-                <TextB2R>
-                  {dayFormatter} {deliveryTimeInfo}
-                </TextB2R>
-                <TextB3R color={theme.greyScale65}>예정보다 빠르게 배송될 수 있습니다.</TextB3R>
-                <TextB3R color={theme.greyScale65}>(배송 후 문자 안내)</TextB3R>
-              </FlexColEnd>
-            </FlexBetweenStart>
-            <FlexBetweenStart>
-              <TextH5B>픽업장소</TextH5B>
-              <FlexColEnd>
-                <FlexRow>
-                  <TextB3R>
-                    {spotName} {spotPickupName}
-                  </TextB3R>
-                </FlexRow>
-                <FlexRow>
-                  <TextB3R color={theme.greyScale65} margin="0 4px 0 0">
-                    ({location.zipCode})
-                  </TextB3R>
-                  <TextB3R color={theme.greyScale65}>{location.address}</TextB3R>
-                </FlexRow>
-              </FlexColEnd>
-            </FlexBetweenStart>
-          </>
-        );
-      }
-    }
   };
 
   const cancelOrderInfoRenderer = (delivery: string, deliveryDetail: string) => {
@@ -1221,16 +1090,17 @@ const OrderPage = () => {
               <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>
             )}
           </FlexBetween>
-          {deliveryDateRenderer({
-            location,
-            delivery,
-            deliveryDetail,
-            dayFormatter,
-            spotName,
-            spotPickupName,
-            deliveryStartTime,
-            deliveryEndTime,
-          })}
+
+          <DeliveryDateBox
+            location={location}
+            delivery={delivery}
+            deliveryDetail={deliveryDetail}
+            dayFormatter={dayFormatter}
+            spotName={previewOrder?.destination.name!}
+            spotPickupName={spotPickupName}
+            deliveryStartTime={deliveryStartTime}
+            deliveryEndTime={deliveryEndTime}
+          />
         </FlexCol>
         <MustCheckAboutDelivery>
           <FlexCol>

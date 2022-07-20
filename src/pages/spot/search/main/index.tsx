@@ -25,17 +25,9 @@ import {
   SET_SPOT_MAP_SWITCH,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
-import { 
-  getSpotSearchRecommend, 
-  getSpotSearch, 
-  getSpotsAllListApi,
-  getSpotEvent,
-} from '@api/spot';
+import { getSpotSearchRecommend, getSpotSearch, getSpotsAllListApi, getSpotEvent } from '@api/spot';
 import { IDestinationsResponse } from '@model/index';
-import { 
-  SpotSearchKeywordSlider, 
-  SpotRecentPickupList, 
-} from '@components/Pages/Spot';
+import { SpotSearchKeywordSlider, SpotRecentPickupList } from '@components/Pages/Spot';
 import { getFilteredSpotList } from '@utils/spot';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
@@ -84,14 +76,14 @@ const SpotSearchMainPage = (): ReactElement => {
       // scroll event listener 해제
       window.removeEventListener('scroll', handleScroll);
     };
-
   }, []);
 
-  useEffect(() => { // 지정된 키워드 변경에 따른 api 호출
+  useEffect(() => {
+    // 지정된 키워드 변경에 따른 api 호출
     if (spotKeyword) {
-      startSpotListSearch(spotKeyword)
+      startSpotListSearch(spotKeyword);
       // getPaginatedSpotList(searchResult);
-      setIsSearched(true); 
+      setIsSearched(true);
       setSpotListAllCheck(false);
     }
   }, [spotKeyword]);
@@ -185,7 +177,6 @@ const SpotSearchMainPage = (): ReactElement => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
-  
 
   // 최근 픽업 이력 조회 api
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
@@ -205,20 +196,20 @@ const SpotSearchMainPage = (): ReactElement => {
   );
 
   // 스팟 검색 결과 호출
-  const getSearchResult = async(e: React.KeyboardEvent<HTMLInputElement>) => {
+  const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
-        if (!value) {
-          getSpotsAllList();
-          setSpotListAllCheck(true);
-          setSearchResult([]);
-          return;
-        };
-        defaultSortRedioId();
-        dispatch(INIT_SEARCH_SELECTED_FILTERS());
-        setSpotListAllCheck(false);
-        startSpotListSearch(value);
-        refetch();
+      if (!value) {
+        getSpotsAllList();
+        setSpotListAllCheck(true);
+        setSearchResult([]);
+        return;
+      }
+      defaultSortRedioId();
+      dispatch(INIT_SEARCH_SELECTED_FILTERS());
+      setSpotListAllCheck(false);
+      startSpotListSearch(value);
+      refetch();
     }
   };
 
@@ -235,7 +226,7 @@ const SpotSearchMainPage = (): ReactElement => {
         keyword,
         latitude: latitude,
         longitude: longitude,
-    };
+      };
       const { data } = await getSpotSearch(params);
       return data.data;
     },
@@ -253,7 +244,7 @@ const SpotSearchMainPage = (): ReactElement => {
   );
 
   // 스팟 전체 리스트 api
-  const getSpotsAllList = async() => {
+  const getSpotsAllList = async () => {
     try {
       const params = {
         latitude: latitude,
@@ -263,10 +254,10 @@ const SpotSearchMainPage = (): ReactElement => {
       if (data.code === 200) {
         const list = data.data;
         setSearchResult(list);
-      };
-    } catch(e) {
+      }
+    } catch (e) {
       console.error(e);
-    };
+    }
   };
 
   const spotFiltered = (spotList: ISpotsDetail[]) => {
@@ -297,7 +288,7 @@ const SpotSearchMainPage = (): ReactElement => {
     const value = e.target.value;
     setKeyword(value);
     defaultSortRedioId();
-    dispatch(INIT_SEARCH_SELECTED_FILTERS());  
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
     if (!value) {
       setIsSearched(false);
       setKeyword('');
@@ -308,12 +299,12 @@ const SpotSearchMainPage = (): ReactElement => {
   const clearInputHandler = () => {
     if (inputRef.current?.value.length! > 0) {
       defaultSortRedioId();
-      dispatch(INIT_SEARCH_SELECTED_FILTERS());  
+      dispatch(INIT_SEARCH_SELECTED_FILTERS());
       initInputHandler();
       setIsSearched(false);
       setKeyword('');
       dispatch(SET_SEARCH_KEYWORD(''));
-    };
+    }
   };
 
   const initInputHandler = () => {
@@ -333,7 +324,7 @@ const SpotSearchMainPage = (): ReactElement => {
 
   const goToSwitchMap = () => {
     // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼
-    
+
     getSpotsAllList();
     dispatch(SET_SPOT_MAP_SWITCH(true));
     setSpotListAllCheck(true);
@@ -343,9 +334,9 @@ const SpotSearchMainPage = (): ReactElement => {
     return <div>로딩</div>;
   }
 
-  if(isFetching) {
+  if (isFetching) {
     return <div>로딩</div>;
-  };
+  }
 
   // 검색바 활성화 된 상테
   // 위치 정보 있는 경우
@@ -361,70 +352,53 @@ const SpotSearchMainPage = (): ReactElement => {
       {isMapSwitch ? (
         <SpotSearchMapPage spotListAllCheck={spotListAllCheck} spotSearchList={searchResult} isSearched={isSearched} />
       ) : (
-          <>
-            <SearchBarWrapper>
-              <label className='textLabel'>
-                {
-                  keyword.length === 0 &&
-                    <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
-                }
-                <TextInput
-                  inputType="text"
-                  svg="searchIcon"
-                  fontSize='14px'
-                  keyPressHandler={getSearchResult}
-                  eventHandler={changeInputHandler}
-                  value={keyword}
-                  ref={inputRef}
-                  withValue
-                  onFocus={
-                    () => setIsFocusing(true)
-                  }
-                />
-              </label>
-              {
-                keyword.length > 0 && (
-                  <div className="removeSvg" onClick={clearInputHandler}>
-                    <SVGIcon name="removeItem" />
-                  </div>
-                )
-              }
-            </SearchBarWrapper>
-            {
-              !isSearched && (
-                <SpotSearchKeywordSlider onChange={selectedSelectedKeywordVaule} />
-              )
-            }
-            {
-             !isSearched && isFocusing &&
-              recentPickedSpotList?.length! > 0 ? (
-                <DefaultSearchContainer>
-                  <RecentPickWrapper>
-                    <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
-                    {recentPickedSpotList?.map((item: any, index) => (
-                      // 스팟 최근 픽업 이력 리스트
-                      <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                    ))}
-                  </RecentPickWrapper>
-                </DefaultSearchContainer>
-              ) : (
-                null
-              )
-            }
-            {isSearched && ( // 검색 결과
-              <SearchResultContainer>
-                <SpotSearchResult
-                  searchResult={paginatedSpotList}
-                  orderId={orderId}
-                  hasCart={true}
-                  getLocation={getLocation}
-                  goToSwitchMap={goToSwitchMap}
-                  totalCount={searchResult.length}
-                />
-              </SearchResultContainer>
+        <>
+          <SearchBarWrapper>
+            <label className="textLabel">
+              {keyword.length === 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
+              <TextInput
+                inputType="text"
+                svg="searchIcon"
+                fontSize="14px"
+                keyPressHandler={getSearchResult}
+                eventHandler={changeInputHandler}
+                value={keyword}
+                ref={inputRef}
+                withValue
+                onFocus={() => setIsFocusing(true)}
+              />
+            </label>
+            {keyword.length > 0 && (
+              <div className="removeSvg" onClick={clearInputHandler}>
+                <SVGIcon name="removeItem" />
+              </div>
             )}
-          </>
-      
+          </SearchBarWrapper>
+          {!isSearched && <SpotSearchKeywordSlider onChange={selectedSelectedKeywordVaule} />}
+          {!isSearched && isFocusing && recentPickedSpotList?.length! > 0 ? (
+            <DefaultSearchContainer>
+              <RecentPickWrapper>
+                <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
+                {recentPickedSpotList?.map((item: any, index) => (
+                  // 스팟 최근 픽업 이력 리스트
+                  <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                ))}
+              </RecentPickWrapper>
+            </DefaultSearchContainer>
+          ) : null}
+          {isSearched && ( // 검색 결과
+            <SearchResultContainer>
+              <SpotSearchResult
+                searchResult={paginatedSpotList}
+                orderId={orderId}
+                hasCart={true}
+                getLocation={getLocation}
+                goToSwitchMap={goToSwitchMap}
+                totalCount={searchResult.length}
+              />
+            </SearchResultContainer>
+          )}
+        </>
       )}
     </Container>
   );
