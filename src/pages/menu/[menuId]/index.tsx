@@ -650,6 +650,7 @@ export async function getStaticPaths() {
   };
 
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });
+
   const paths = data.data.map((menu: any) => ({
     params: { menuId: menu.id.toString() },
   }));
@@ -661,6 +662,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
+  console.log(params, '@@@@@@@@@@@@@');
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
 
   return {

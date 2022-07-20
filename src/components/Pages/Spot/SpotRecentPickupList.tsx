@@ -86,9 +86,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             <MeterAndTime>
               {userLocationLen && (
                 <>
-                  <TextH6B color={theme.greyScale65}>{`${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance}${
-                    getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit
-                  }`}</TextH6B>
+                  <TextH6B color={theme.greyScale65}>{`${
+                    getSpotDistanceUnit(item?.spotPickup?.spot.distance!).distance
+                  }${getSpotDistanceUnit(item?.spotPickup?.spot.distance!).unit}`}</TextH6B>
                   <Col />
                 </>
               )}
@@ -127,6 +127,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
 
     const destinationInfo = {
+      spotId: item?.spotPickup?.spot.id,
       id: item?.id,
       name: item?.name!,
       location: {
@@ -139,7 +140,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       main: false,
       availableTime: recentPickupTime!,
       spaceType: item?.spotPickup?.spot.type!,
-      spotPickupId: spotPickupId!,
+      spotPickupId: spotPickupId! || item?.spotPickup?.id,
       closedDate: closedDate,
     };
 

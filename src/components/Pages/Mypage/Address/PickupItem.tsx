@@ -44,7 +44,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
         return (
           <FlexRow margin="0 0 16px 0">
             <SVGIcon name="exclamationMark" />
-            <TextB3R margin="0 0 0 4px" padding='2px 0 0 0' color={theme.brandColor}>
+            <TextB3R margin="0 0 0 4px" padding="2px 0 0 0" color={theme.brandColor}>
               운영 종료된 프코스팟이에요
             </TextB3R>
           </FlexRow>
@@ -55,11 +55,11 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           return (
             <FlexRow margin="0 0 16px 0">
               <SVGIcon name="exclamationMark" />
-              <TextB3R margin="0 0 0 4px" padding='1px 0 0 0' color={theme.brandColor}>
+              <TextB3R margin="0 0 0 4px" padding="1px 0 0 0" color={theme.brandColor}>
                 운영 종료 예정인 프코스팟이에요
               </TextB3R>
             </FlexRow>
-          );  
+          );
         }
       }
       default: {
@@ -68,7 +68,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
             <TextH6B padding="0 4px 0 0">픽업</TextH6B>
             <TextB3R>{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
           </FlexRow>
-        )
+        );
       }
     }
   }, []);
@@ -80,7 +80,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{name}</TextH5B>
             <Tag margin="0 4px 0 0" {...mapper[spotPickup?.spot.type!]}>
-              {mapper[spotPickup?.spot.type!].name}
+              {mapper[spotPickup?.spot.type!]?.name}
             </Tag>
             {main && <Tag>기본 프코스팟</Tag>}
           </FlexRow>
