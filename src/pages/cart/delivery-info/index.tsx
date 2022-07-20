@@ -154,17 +154,18 @@ const DeliverInfoPage = () => {
     if (!tempDestination) {
       return;
     }
-    // spotId:tempDestination.spotPickup?.id:null
+
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
+
     if (destinationId || isMainDestination) {
-      console.log(tempDestination, 'tempDestination');
+      console.log(tempDestination, 'tempDestination 160');
       dispatch(SET_DESTINATION({ ...tempDestination, spotId: tempDestination.spotId }));
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
       dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
-      console.log('here 167');
+
       if (isSubscription) {
         if (isSpot) {
           const reqBody = {
@@ -280,8 +281,6 @@ const DeliverInfoPage = () => {
           spotPickupId: tempDestination?.spotPickupId ?? userDestination?.spotPickupId,
         };
 
-        console.log(reqBody, 'reqBody 282');
-
         try {
           const { data } = await postDestinationApi(reqBody);
           if (data.code === 200) {
@@ -302,6 +301,7 @@ const DeliverInfoPage = () => {
                 deliveryMessageType: '',
                 delivery: response.delivery,
                 id: response.id,
+                spotPickup: response.spotPickup ? response.spotPickup : null,
               })
             );
             dispatch(SET_AFTER_SETTING_DELIVERY());
