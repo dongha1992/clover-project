@@ -53,6 +53,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
     });
   };
 
+  // 스팟 주문하기 - 이벤트 스팟 주문하기
   const orderHandler = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {

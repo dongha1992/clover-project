@@ -161,6 +161,7 @@ const SpotStatusDetailPage = (): ReactElement => {
     };
   };
 
+  // 스팟 주문하기 - 스팟 관리 트라이얼 주문하기
   const orderHandler = () => {
     const destinationInfo = {
       name: statusDetail?.placeName!,

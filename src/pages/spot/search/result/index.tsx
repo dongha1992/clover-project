@@ -199,8 +199,11 @@ const SpotSearchResultPage = (): ReactElement => {
         refetch();
         setInputKeyword(value);
         router.replace({
-            query: { keyword: value },
-         })     
+          query: { 
+            keyword: value, 
+            isDelivery: isDelivery ? isDelivery: false,
+            },
+        });
     }
   };
   
@@ -277,8 +280,11 @@ const SpotSearchResultPage = (): ReactElement => {
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());  
     router.replace({
-       query: { keyword: keyword },
-    })
+      query: { 
+        keyword: keyword, 
+        isDelivery: isDelivery ? isDelivery: false,
+       },
+    });
   };
 
   const changeInputHandler = (e: any) => {
