@@ -10,13 +10,18 @@ const CartIcon = ({ onClick }: any) => {
   const { cartLists, nonMemberCartLists } = useSelector(cartForm);
   const { me } = useSelector(userForm);
 
+  const cartCount = me ? cartLists?.length : nonMemberCartLists.length;
+  const displayCount = cartCount > 9 ? '+9' : cartCount;
+
+  console.log(cartLists, 'cartLists');
+
   return (
     <Container onClick={onClick}>
       <div className="cart">
         <SVGIcon name="cart" />
       </div>
       <CountWrapper>
-        <Count> {me ? cartLists?.length : nonMemberCartLists.length}</Count>
+        <Count> {displayCount}</Count>
       </CountWrapper>
     </Container>
   );
@@ -30,7 +35,7 @@ const Container = styled.div`
 const CountWrapper = styled.div`
   position: absolute;
   right: -7px;
-  bottom: 12px;
+  bottom: 13px;
   width: 6px;
   height: 12px;
   background-color: ${theme.brandColor};
@@ -46,7 +51,7 @@ const Count = styled.div`
   line-height: 11.58px;
   letter-spacing: -0.4px;
   font-size: 8px;
-  padding-top: 2px;
+  padding-top: 1px;
   color: ${theme.white};
 `;
 
