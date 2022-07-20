@@ -1217,6 +1217,7 @@ export interface IOrderDetailInOrderDeliveries {
   status: string;
   orderMenus: IOrderMenus[];
   type: string;
+  name?: string;
   subOrderDelivery: ISubOrderDelivery;
 }
 

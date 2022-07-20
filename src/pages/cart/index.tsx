@@ -114,6 +114,7 @@ const CartPage = () => {
     closedDate: '',
     main: false,
     spotId: null,
+    name: '',
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
@@ -218,6 +219,7 @@ const CartPage = () => {
             location: userDestination.location!,
             closedDate: userDestination.closedDate && userDestination.closedDate,
             spotId: userDestination.spotId ? userDestination.spotId! : null,
+            name: userDestination.name,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -1119,7 +1121,7 @@ const CartPage = () => {
         <DeliveryTypeAndLocation
           goToDeliveryInfo={goToDeliveryInfo}
           deliveryType={destinationObj.delivery!}
-          deliveryDestination={destinationObj.location}
+          deliveryDestination={destinationObj}
         />
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>

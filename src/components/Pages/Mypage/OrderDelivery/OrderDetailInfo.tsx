@@ -22,6 +22,7 @@ interface IProps {
   deliveryMessageType?: string;
   spotName?: string;
   spotPickupName?: string;
+  name: string;
 }
 
 const OrderDetailInfo = ({
@@ -31,6 +32,7 @@ const OrderDetailInfo = ({
   delivery,
   location,
   status,
+  name,
   deliveryDetail,
   deliveryMessage,
   deliveryMessageType,
@@ -89,8 +91,11 @@ const OrderDetailInfo = ({
             </FlexColEnd>
           ) : (
             <FlexColEnd>
-              <TextB2R>{location.address}</TextB2R>
-              <TextB2R>{location.addressDetail}</TextB2R>
+              <TextB2R>{name}</TextB2R>
+              <TextB3R color={theme.greyScale65}>
+                {location.address}
+                {location.addressDetail}
+              </TextB3R>
             </FlexColEnd>
           )}
         </FlexBetweenStart>
