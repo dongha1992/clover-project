@@ -54,6 +54,7 @@ import { subscriptionForm } from '@store/subscription';
 import { periodMapper } from '@constants/subscription';
 import dayjs from 'dayjs';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
+import CancelOrderInfoBox from '@components/Pages/Order/CancelOrderInfoBox';
 
 declare global {
   interface Window {
@@ -420,36 +421,6 @@ const OrderPage = () => {
     }
 
     setUserInputObj({ ...userInputObj, point: avaliablePoint });
-  };
-
-  const cancelOrderInfoRenderer = (delivery: string, deliveryDetail: string) => {
-    const isLunch = deliveryDetail === 'LUNCH';
-
-    switch (delivery) {
-      case 'QUICK':
-      case 'SPOT': {
-        return (
-          <>
-            <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!</TextB3R>
-            <TextB3R color={theme.brandColor}>
-              단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
-              취소할 수 있어요!
-            </TextB3R>
-          </>
-        );
-      }
-      case 'PARCEL':
-      case 'MORNING': {
-        return (
-          <>
-            <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!</TextB3R>
-            <TextB3R color={theme.brandColor}>
-              단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
-            </TextB3R>
-          </>
-        );
-      }
-    }
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
@@ -1110,7 +1081,7 @@ const OrderPage = () => {
                 주문 변경 및 취소 시 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
-            {cancelOrderInfoRenderer(delivery, deliveryDetail)}
+            <CancelOrderInfoBox delivery={delivery} deliveryDetail={deliveryDetail} />
           </FlexCol>
         </MustCheckAboutDelivery>
       </DevlieryInfoWrapper>

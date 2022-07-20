@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
+import React, { ReactElement, useEffect, useState, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { SpotSearchResult } from '@components/Pages/Search';
 import { homePadding } from '@styles/theme';
-import { theme, textBody2, FlexBetween } from '@styles/theme';
-import { TextH3B, TextH2B, TextB3R } from '@components/Shared/Text';
+import { theme, textBody2 } from '@styles/theme';
+import { TextH3B } from '@components/Shared/Text';
 import { SpotSearchMapPage } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { ISpotsDetail } from '@model/index';
@@ -13,39 +13,37 @@ import { useQuery } from 'react-query';
 import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { destinationForm } from '@store/destination';
 import {
   spotSelector,
   INIT_SEARCH_SELECTED_FILTERS,
   SET_SPOT_SEARCH_SORT,
-  SET_SPOT_POSITIONS,
-  SET_SEARCH_KEYWORD,
   SET_SPOT_MAP_SWITCH,
+  SET_SPOT_POSITIONS,
 } from '@store/spot';
 import { getDestinationsApi } from '@api/destination';
-import { getSpotSearchRecommend, getSpotSearch, getSpotsAllListApi, getSpotEvent } from '@api/spot';
+import { getSpotSearch, getSpotsAllListApi } from '@api/spot';
 import { IDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider, SpotRecentPickupList } from '@components/Pages/Spot';
 import { getFilteredSpotList } from '@utils/spot';
+import { SET_ALERT } from '@store/alert';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
-const SpotSearchMainPage = (): ReactElement => {
+const SpotSearchResultPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { orderId, isDelivery } = router.query;
-  const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, spotKeyword, isMapSwitch } =
-    useSelector(spotSelector);
+  const { orderId, isDelivery, keyword } = router.query;
+  const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, isMapSwitch } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
 
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [defaultSpotList, setDefaultSpotList] = useState<ISpotsDetail[]>([]);
   const [paginatedSpotList, setPaginatedSpotList] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  const [keyword, setKeyword] = useState<string>('');
+  const [inputKeyword, setInputKeyword] = useState<any>('');
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
@@ -58,8 +56,12 @@ const SpotSearchMainPage = (): ReactElement => {
 
   useEffect(() => {
     inputRef.current?.focus();
-    setKeyword(spotKeyword);
+    // setKeyword(queryKeyword);
     dispatch(SET_SPOT_MAP_SWITCH(false));
+    if (inputKeyword?.length === 0) {
+      //   getSpotsAllList();
+      setSpotListAllCheck(true);
+    }
 
     const handleScroll = () => {
       const scrollHeight = document.documentElement.scrollHeight;
@@ -67,7 +69,7 @@ const SpotSearchMainPage = (): ReactElement => {
       const clientHeight = document.documentElement.clientHeight;
 
       if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
-        setSize((prevPage) => prevPage + 10);
+        setSize((prevSize) => prevSize + 10);
       }
     };
     // scroll event listener 등록
@@ -80,13 +82,18 @@ const SpotSearchMainPage = (): ReactElement => {
 
   useEffect(() => {
     // 지정된 키워드 변경에 따른 api 호출
-    if (spotKeyword) {
-      startSpotListSearch(spotKeyword);
-      // getPaginatedSpotList(searchResult);
+    if (keyword?.length === 0) {
+      getPaginatedSpotList([]);
+      getSpotsAllList();
+      return;
+    }
+    if (keyword) {
+      startSpotListSearch(keyword);
+      getPaginatedSpotList(searchResult);
       setIsSearched(true);
       setSpotListAllCheck(false);
     }
-  }, [spotKeyword]);
+  }, [keyword]);
 
   useEffect(() => {
     // 정렬및 필터 반영
@@ -139,44 +146,16 @@ const SpotSearchMainPage = (): ReactElement => {
       }
       return { Status: true, position };
     } catch (error) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알 수 없는 에러가 발생했습니다.',
+          submitBtnText: '확인',
+        })
+      );
       console.error('getCurrentLatLong::catcherror =>', error);
       return { Status: false };
     }
   };
-
-  // 스팟 검색 - 추천 스팟 api
-  const { data: spotRecommendList, isLoading: isLoadingRecomand } = useQuery(
-    ['spotRecommendList'],
-    async () => {
-      const params: IParamsSpots = {
-        latitude: latitude,
-        longitude: longitude,
-        size: 3,
-      };
-      const response = await getSpotSearchRecommend(params);
-      const listSort = response.data.data.spots.sort((a, b) => a.distance - b.distance);
-      return {
-        data: response.data.data,
-        spotList: listSort,
-      };
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
-
-  // 스팟 검색 - 이벤트 스팟 api
-  const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
-    ['spotList', 'EVENT'],
-    async () => {
-      const params: IParamsSpots = {
-        latitude: latitude,
-        longitude: longitude,
-        size: 6,
-      };
-      const response = await getSpotEvent(params);
-      return response.data.data;
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
 
   // 최근 픽업 이력 조회 api
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IDestinationsResponse[]>(
@@ -201,7 +180,6 @@ const SpotSearchMainPage = (): ReactElement => {
     if (e.key === 'Enter') {
       if (!value) {
         getSpotsAllList();
-        setSpotListAllCheck(true);
         setSearchResult([]);
         return;
       }
@@ -210,20 +188,24 @@ const SpotSearchMainPage = (): ReactElement => {
       setSpotListAllCheck(false);
       startSpotListSearch(value);
       refetch();
+      setInputKeyword(value);
+      router.replace({
+        query: { keyword: value },
+      });
     }
   };
 
-  // 스팟 검색 리스트 api
+  //스팟 검색 리스트 api
   const {
     error: spotSearchError,
     refetch,
     isLoading,
     isFetching,
   } = useQuery(
-    ['getMenus'],
-    async ({ queryKey }) => {
+    ['spotSearchList'],
+    async () => {
       const params = {
-        keyword,
+        keyword: inputKeyword,
         latitude: latitude,
         longitude: longitude,
       };
@@ -254,6 +236,7 @@ const SpotSearchMainPage = (): ReactElement => {
       if (data.code === 200) {
         const list = data.data;
         setSearchResult(list);
+        setSpotListAllCheck(true);
       }
     } catch (e) {
       console.error(e);
@@ -270,29 +253,33 @@ const SpotSearchMainPage = (): ReactElement => {
   };
 
   const getPaginatedSpotList = (searchResults: ISpotsDetail[]) => {
-    const list = searchResults.slice(0, size);
+    const list = searchResults?.slice(0, size);
     setPaginatedSpotList(list);
   };
 
-  const startSpotListSearch = (keyword: string) => {
-    setKeyword(keyword);
+  const startSpotListSearch = (keyword: any) => {
+    setInputKeyword(keyword);
     setIsSearched(true);
   };
 
   const selectedSelectedKeywordVaule = (keyword: string) => {
-    setKeyword(keyword);
-    dispatch(SET_SEARCH_KEYWORD(keyword));
+    setInputKeyword(keyword);
+    startSpotListSearch(keyword);
+    defaultSortRedioId();
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
+    router.replace({
+      query: { keyword: keyword },
+    });
   };
 
   const changeInputHandler = (e: any) => {
     const value = e.target.value;
-    setKeyword(value);
+    setInputKeyword(value);
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());
     if (!value) {
       setIsSearched(false);
-      setKeyword('');
-      dispatch(SET_SEARCH_KEYWORD(''));
+      setInputKeyword('');
     }
   };
 
@@ -302,8 +289,7 @@ const SpotSearchMainPage = (): ReactElement => {
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
       initInputHandler();
       setIsSearched(false);
-      setKeyword('');
-      dispatch(SET_SEARCH_KEYWORD(''));
+      setInputKeyword('');
     }
   };
 
@@ -324,15 +310,13 @@ const SpotSearchMainPage = (): ReactElement => {
 
   const goToSwitchMap = () => {
     // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼
-
     getSpotsAllList();
     dispatch(SET_SPOT_MAP_SWITCH(true));
-    setSpotListAllCheck(true);
   };
 
-  if (isLoadingRecomand && isLoadingPickup) {
-    return <div>로딩</div>;
-  }
+  const goToSpotsRegistrations = () => {
+    router.push('/spot/join');
+  };
 
   if (isFetching) {
     return <div>로딩</div>;
@@ -355,37 +339,37 @@ const SpotSearchMainPage = (): ReactElement => {
         <>
           <SearchBarWrapper>
             <label className="textLabel">
-              {keyword.length === 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
+              {inputKeyword.length === 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
               <TextInput
                 inputType="text"
                 svg="searchIcon"
                 fontSize="14px"
                 keyPressHandler={getSearchResult}
                 eventHandler={changeInputHandler}
-                value={keyword}
+                value={inputKeyword}
                 ref={inputRef}
                 withValue
-                onFocus={() => setIsFocusing(true)}
               />
             </label>
-            {keyword.length > 0 && (
+            {inputKeyword.length > 0 && (
               <div className="removeSvg" onClick={clearInputHandler}>
                 <SVGIcon name="removeItem" />
               </div>
             )}
           </SearchBarWrapper>
           {!isSearched && <SpotSearchKeywordSlider onChange={selectedSelectedKeywordVaule} />}
-          {!isSearched && isFocusing && recentPickedSpotList?.length! > 0 ? (
-            <DefaultSearchContainer>
-              <RecentPickWrapper>
-                <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
-                {recentPickedSpotList?.map((item: any, index) => (
-                  // 스팟 최근 픽업 이력 리스트
-                  <SpotRecentPickupList item={item} key={index} hasCart={true} />
-                ))}
-              </RecentPickWrapper>
-            </DefaultSearchContainer>
-          ) : null}
+          {!isSearched &&
+            (recentPickedSpotList?.length! > 0 ? (
+              <DefaultSearchContainer>
+                <RecentPickWrapper>
+                  <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
+                  {recentPickedSpotList?.map((item: any, index) => (
+                    // 스팟 최근 픽업 이력 리스트
+                    <SpotRecentPickupList item={item} key={index} hasCart={true} />
+                  ))}
+                </RecentPickWrapper>
+              </DefaultSearchContainer>
+            ) : null)}
           {isSearched && ( // 검색 결과
             <SearchResultContainer>
               <SpotSearchResult
@@ -394,6 +378,7 @@ const SpotSearchMainPage = (): ReactElement => {
                 hasCart={true}
                 getLocation={getLocation}
                 goToSwitchMap={goToSwitchMap}
+                goToSpotsRegistrations={goToSpotsRegistrations}
                 totalCount={searchResult.length}
               />
             </SearchResultContainer>
@@ -404,16 +389,17 @@ const SpotSearchMainPage = (): ReactElement => {
   );
 };
 
-const Container = styled.main``;
+const Container = styled.section``;
 
 const SearchBarWrapper = styled.div`
-  margin: 8px 24px 0 24px;
   position: relative;
+  margin: 0 24px 0 24px;
+  padding-top: 8px;
   .textLabel {
     width: 100%;
     .textPlaceholde {
       position: absolute;
-      top: 14px;
+      top: 22px;
       left: 49px;
       z-index: 100;
       color: ${theme.greyScale45};
@@ -424,21 +410,11 @@ const SearchBarWrapper = styled.div`
     position: absolute;
     right: 0;
     top: 0;
-    margin: 15px 14px 0 0;
+    padding: 23px 14px 0 0;
   }
 `;
 
-const KeyWordWrapper = styled.div`
-  padding: 16px 24px 24px 24px;
-`;
-
-const SpotRecommendWrapper = styled.section`
-  margin-bottom: 16px;
-  ${homePadding};
-`;
-
 const RecentPickWrapper = styled.div`
-  margin-top: 24px;
   margin-bottom: 16px;
   ${homePadding};
 `;
@@ -462,25 +438,4 @@ const SearchResultContainer = styled.section`
   ${homePadding}
 `;
 
-const EventSlider = styled(Swiper)`
-  padding: 0 24px;
-  .swiper-slide {
-    width: 299px;
-  }
-`;
-
-const Row = styled.div`
-  width: 100%;
-  height: 8px;
-  background: ${theme.greyScale3};
-`;
-
-const BottomContentWrapper = styled.section`
-  width: 100%;
-  position: relative;
-  bottom: 0px;
-  right: 0px;
-  background-color: ${theme.white};
-`;
-
-export default SpotSearchMainPage;
+export default SpotSearchResultPage;
