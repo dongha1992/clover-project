@@ -7,7 +7,7 @@ interface IProps {
   delivery: string;
   deliveryDetail: string;
   dayFormatter: string;
-  spotName: string;
+  destinationName: string;
   spotPickupName: string;
   deliveryStartTime: string;
   deliveryEndTime: string;
@@ -17,7 +17,7 @@ const DeliveryDateBox = ({
   delivery,
   deliveryDetail,
   dayFormatter,
-  spotName,
+  destinationName,
   spotPickupName,
   deliveryStartTime,
   deliveryEndTime,
@@ -40,8 +40,10 @@ const DeliveryDateBox = ({
           <FlexBetweenStart>
             <TextH5B>배송지</TextH5B>
             <FlexColEnd>
-              <TextB2R>{location.address}</TextB2R>
-              <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              <TextB2R>{destinationName}</TextB2R>
+              <TextB3R color={theme.greyScale65}>
+                {location.address} {location.addressDetail}
+              </TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
         </>
@@ -59,8 +61,10 @@ const DeliveryDateBox = ({
           <FlexBetweenStart>
             <TextH5B>배송지</TextH5B>
             <FlexColEnd>
-              <TextB2R>{location.address}</TextB2R>
-              <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              <TextB2R>{destinationName}</TextB2R>
+              <TextB3R color={theme.greyScale65}>
+                {location.address} {location.addressDetail}
+              </TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
         </>
@@ -80,8 +84,10 @@ const DeliveryDateBox = ({
           <FlexBetweenStart>
             <TextH5B>배송지</TextH5B>
             <FlexColEnd>
-              <TextB2R>{location.address}</TextB2R>
-              <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+              <TextB2R>{destinationName}</TextB2R>
+              <TextB3R color={theme.greyScale65}>
+                {location.address} {location.addressDetail}
+              </TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
         </>
@@ -102,15 +108,17 @@ const DeliveryDateBox = ({
             <TextH5B>픽업장소</TextH5B>
             <FlexColEnd>
               <FlexRow>
-                <TextB3R>
-                  {spotName} {spotPickupName}
-                </TextB3R>
+                <TextB2R>
+                  {destinationName} {spotPickupName}
+                </TextB2R>
               </FlexRow>
               <FlexRow>
                 <TextB3R color={theme.greyScale65} margin="0 4px 0 0">
                   ({location.zipCode})
                 </TextB3R>
-                <TextB3R color={theme.greyScale65}>{location.address}</TextB3R>
+                <TextB3R color={theme.greyScale65}>
+                  {location.address} {location.addressDetail}
+                </TextB3R>
               </FlexRow>
             </FlexColEnd>
           </FlexBetweenStart>
