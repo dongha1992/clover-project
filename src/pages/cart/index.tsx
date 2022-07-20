@@ -91,6 +91,7 @@ export interface IDisposable {
 }
 
 const now = dayjs();
+const REST_HEIGHT = 60;
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
@@ -117,6 +118,7 @@ const CartPage = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
   const calendarRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -152,8 +154,6 @@ const CartPage = () => {
     ['getCartList'],
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
-
-      console.log(selectedDeliveryDay, 'selectedDeliveryDay', destinationObj, 'destinationObj');
 
       const params = {
         delivery: userDeliveryType?.toUpperCase()!,
@@ -191,7 +191,7 @@ const CartPage = () => {
     }
   );
 
-  const { data: recentOrderDelivery } = useQuery(
+  const {} = useQuery(
     ['getOrderLists'],
     async () => {
       const params = {
@@ -206,8 +206,10 @@ const CartPage = () => {
     },
     {
       onSuccess: async (response) => {
-        const validDestination = userDestination?.delivery === userDeliveryType.toUpperCase();
+        const validDestination = userDestination?.delivery?.toUpperCase() === userDeliveryType.toUpperCase();
+
         if (validDestination && userDeliveryType && userDestination) {
+          console.log(userDestination, 'userDestination');
           const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -215,7 +217,7 @@ const CartPage = () => {
             destinationId,
             location: userDestination.location!,
             closedDate: userDestination.closedDate && userDestination.closedDate,
-            spotId: userDestination.spotPickup && userDestination.spotPickup.id,
+            spotId: userDestination.spotId ? userDestination.spotId! : null,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -266,8 +268,6 @@ const CartPage = () => {
     }
   );
 
-  /* TODO: 재구매 내역 data 질문 */
-
   const { data: orderedMenusList, isLoading: orderedMenuLoading } = useQuery(
     ['getOrderedMenus', 'GENERAL'],
     async () => {
@@ -314,16 +314,18 @@ const CartPage = () => {
     },
     {
       onSuccess: async (data) => {
+        console.log(data, '--');
         if (userDeliveryType === Object.keys(data)[0]) {
           const availability = Object.values(data)[0];
           if (!availability) {
             dispatch(
               SET_ALERT({
                 alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
-                onSubmit: () => {},
               })
             );
             setIsInvalidDestination(true);
+          } else {
+            setIsInvalidDestination(false);
           }
         }
       },
@@ -760,6 +762,22 @@ const CartPage = () => {
 
   const goToOrder = () => {
     if (!me) return;
+    if (isInvalidDestination) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
+          onSubmit: () => {
+            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
+            window.scrollTo({
+              behavior: 'smooth',
+              left: 0,
+              top: offsetTop,
+            });
+          },
+        })
+      );
+      return;
+    }
 
     const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
     const isUnderMinimum = totalAmount < minimum;
@@ -1096,7 +1114,7 @@ const CartPage = () => {
   }
 
   return (
-    <Container>
+    <Container ref={containerRef}>
       {me ? (
         <DeliveryTypeAndLocation
           goToDeliveryInfo={goToDeliveryInfo}

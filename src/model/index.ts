@@ -407,6 +407,7 @@ export interface IDestinationsResponse {
   spaceType?: string;
   availableTime?: string;
   closedDate?: string;
+  spotId?: number;
 }
 
 export interface IGetDestinationsResponse {
