@@ -187,6 +187,7 @@ const DeliverInfoPage = () => {
             const { data } = await postDestinationApi(reqBody);
             if (data.code === 200) {
               const response = data.data;
+
               dispatch(
                 SET_DESTINATION({
                   name: response.name,
@@ -205,6 +206,7 @@ const DeliverInfoPage = () => {
                   id: response.id,
                   availableTime: tempDestination.availableTime,
                   spaceType: tempDestination.spaceType,
+                  spotPickup: response?.spotPickup,
                   spotPickupId: tempDestination?.spotPickupId,
                 })
               );

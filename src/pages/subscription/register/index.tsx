@@ -197,7 +197,9 @@ const SubsRegisterPage = () => {
                 {!toggleState && (
                   <TextB2R className="infoText">
                     {DELIVERY_TYPE_MAP[subsInfo?.deliveryType!]} - {subsInfo?.deliveryTime} /{' '}
-                    {userDestination?.location?.address} {userDestination?.location?.addressDetail}
+                    {userDestination?.delivery === 'SPOT'
+                      ? userDestination.name
+                      : `${userDestination?.location?.address} ${userDestination?.location?.addressDetail}`}
                   </TextB2R>
                 )}
                 <div className={`svgBox ${toggleState ? 'down' : ''}`}>
@@ -217,7 +219,9 @@ const SubsRegisterPage = () => {
                   <li>
                     <TextH5B>픽업장소</TextH5B>
                     <TextB2R>
-                      {userDestination?.location?.address} {userDestination?.location?.addressDetail}
+                      {userDestination?.delivery === 'SPOT'
+                        ? `${userDestination?.name} ${userDestination?.spotPickup?.name}`
+                        : `${userDestination?.location?.address} ${userDestination?.location?.addressDetail}`}
                     </TextB2R>
                   </li>
                   <li>
