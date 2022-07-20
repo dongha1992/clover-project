@@ -113,38 +113,8 @@ const SpotSearchPage = (): ReactElement => {
           let callback = function(result: any, status: any) {
               if (status === window.kakao.maps.services.Status.OK) {
                 const address = result[0];
-                const searchKeyword = result[0].road_address.address_name;
                 setIsSearchingPosition(false);
-                dispatch(SET_LOCATION({
-                  roadAddr: `${address.road_address.address_name}(${address.address.region_3depth_name})`,
-                  roadAddrPart1: address.road_address.address_name,
-                  roadAddrPart2: null,
-                  jibunAddr: `${address.address.address_name} ${address.road_address.building_name}`,
-                  engAddr: null,
-                  zipNo: address.road_address.zone_no,
-                  admCd: null,
-                  rnMgtSn: null,
-                  bdMgtSn: null,
-                  detBdNmList: null,
-                  bdNm: address.road_address.building_name,
-                  bdKdcd: null,
-                  siNm: null,
-                  sggNm: null,
-                  emdNm: address.address.region_3depth_name,
-                  liNm: null,
-                  rn: null,
-                  udrtYn: null,
-                  buldMnnm: null,
-                  buldSlno: null,
-                  mtYn: null,
-                  lnbrMnnm: null,
-                  lnbrSlno: null,
-                  emdNo: null,
-                }));
-                router.push({
-                  pathname: '/spot/search/result',
-                  query: { keyword: searchKeyword, },
-                });
+                setCurrentPositionAddress(address);
               };
           };
           geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
@@ -160,6 +130,47 @@ const SpotSearchPage = (): ReactElement => {
       );  
       console.error(e);
     }
+  };
+
+  // 현 위치로 설정하기 - 폼에 맞게 주소값 세팅 
+  // 현위치에 맞게 추천스팟, 이벤트 스팟 세팅 & 각 스팟 distance 생성
+  const setCurrentPositionAddress = (address: any) => {
+    const noneRoadAddress = address.road_address === null;
+    const jibunJuso = address.address.address_name;
+    const jibunZipNo = `${address.address.main_address_no}-${address.address.sub_address_no}`;
+
+    const setRoadAddressPart1 = noneRoadAddress ? jibunJuso : address.road_address.address_name;
+    const setRoadAddress = noneRoadAddress ? jibunJuso : `${address.road_address.address_name}(${address.address.region_3depth_name})`;
+    const setJibunAddr = noneRoadAddress ? jibunJuso : `${address.address.address_name} ${address.road_address.building_name}`;
+    const setZipNo = noneRoadAddress ? jibunZipNo : address.road_address.zone_no;
+    const setBdNm = noneRoadAddress? null : address.road_address.building_name;
+
+    dispatch(SET_LOCATION({
+      roadAddr: setRoadAddress,
+      roadAddrPart1: setRoadAddressPart1,
+      roadAddrPart2: null,
+      jibunAddr: setJibunAddr,
+      engAddr: null,
+      zipNo: setZipNo,
+      admCd: null,
+      rnMgtSn: null,
+      bdMgtSn: null,
+      detBdNmList: null,
+      bdNm: setBdNm,
+      bdKdcd: null,
+      siNm: null,
+      sggNm: null,
+      emdNm: address.address.region_3depth_name,
+      liNm: null,
+      rn: null,
+      udrtYn: null,
+      buldMnnm: null,
+      buldSlno: null,
+      mtYn: null,
+      lnbrMnnm: null,
+      lnbrSlno: null,
+      emdNo: null,
+    }));
   };
 
   // 현 위치로 설정하기 - 위도,경도 좌표값 저장
