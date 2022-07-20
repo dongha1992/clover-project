@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B, TextB2R } from '@components/Shared/Text';
+import React, { useState } from 'react';
+import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween } from '@styles/theme';
-import { getCookie, SVGIcon } from '@utils/common';
+import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
@@ -9,7 +9,7 @@ import router from 'next/router';
 import Image from 'next/image';
 import newUserImg from '@public/images/newUserImg.svg';
 import friendPushEventImg from '@public/images/friendPushEventImg.svg';
-import { IGetOrders, IOrderDeliverie, Obj } from '@model/index';
+import { IGetOrders } from '@model/index';
 import { INIT_USER, userForm } from '@store/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { onUnauthorized } from '@api/Api';
@@ -226,7 +226,7 @@ const MypagePage = () => {
               showBoard={showBoard}
             />
             <ManageWrapper>
-              <MypageMenu title="스팟 관리" link="/mypage/spot-status" />
+              <MypageMenu title="프코스팟 관리" link="/mypage/spot-status" />
               <MypageMenu title="후기 관리" link="/mypage/review" />
               <MypageMenu title="찜 관리" link="/mypage/dib/general" />
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
@@ -365,8 +365,7 @@ const UserInfoWrapper = styled.div`
 `;
 
 const OrderAndDeliveryWrapper = styled.div`
-  ${homePadding}
-  padding-top: 32px;
+  padding: 32px 24px 0 24px;
 `;
 
 const SubscriptionWrapper = styled.div`
@@ -375,7 +374,6 @@ const SubscriptionWrapper = styled.div`
 `;
 
 const ManageWrapper = styled.ul`
-  padding-top: 24px;
   & > li:last-of-type > div {
     border-bottom: none;
   }
@@ -384,6 +382,9 @@ const MypageItem = styled.li`
   cursor: pointer;
   padding: 0 24px;
   list-style: none;
+  &:first-of-type > div {
+    border-top: 1px solid ${theme.greyScale3};
+  }
   > div {
     border-bottom: 1px solid ${theme.greyScale3};
   }

@@ -371,6 +371,7 @@ const Col = styled.div`
 `;
 
 const BtnWrapper = styled.div`
+  cursor: pointer;
   position: relative;
   width: 100%;
   width: 400px;

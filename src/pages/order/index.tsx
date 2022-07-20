@@ -1067,7 +1067,7 @@ const OrderPage = () => {
             delivery={delivery}
             deliveryDetail={deliveryDetail}
             dayFormatter={dayFormatter}
-            spotName={previewOrder?.destination.name!}
+            destinationName={previewOrder?.destination.name!}
             spotPickupName={spotPickupName}
             deliveryStartTime={deliveryStartTime}
             deliveryEndTime={deliveryEndTime}
