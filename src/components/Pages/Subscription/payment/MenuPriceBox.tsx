@@ -65,7 +65,7 @@ const MenuPriceBox = ({
         )}
         <MenuPriceLi>
           <TextB2R>배송비</TextB2R>
-          <TextB2R>{deliveryPrice === 0 ? '무료배송' : '3,500'}</TextB2R>
+          <TextB2R>{deliveryPrice === 0 ? '무료배송' : '3,500원'}</TextB2R>
         </MenuPriceLi>
       </MenuPriceUl>
       <FlexBetween padding="16px 0 0" className="btB">
