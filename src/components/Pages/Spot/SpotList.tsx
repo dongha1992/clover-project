@@ -19,6 +19,7 @@ import { useOnLike } from 'src/queries';
 import { spotSelector } from '@store/spot';
 import { getSpotDistanceUnit } from '@utils/spot';
 import { Button } from '@components/Shared/Button';
+import { postDestinationApi } from '@api/destination';
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
@@ -34,17 +35,13 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const { isDelivery, orderId } = routers.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
-  const { userLocation } = useSelector(destinationForm);
+  const { userLocation, userTempDestination } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
   const { showToast, hideToast } = useToast();
-  const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
 
-  const checkHandler = () => {
-    setNoticeChecked(!noticeChecked);
-  };
 
   const goToDetail = (): void => {
     router.push({
@@ -70,65 +67,72 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = () => {
-      // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push('/cart');
+    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+      const reqBody = { 
+        name: userTempDestination?.name!,
+        delivery: 'SPOT',
+        deliveryMessage: userTempDestination?.deliveryMessage ? userTempDestination.deliveryMessage : '',
+        main: userTempDestination?.main!,
+        receiverName: userTempDestination?.receiverName,
+        receiverTel: userTempDestination?.receiverTel,
+        location: {
+          addressDetail: userTempDestination?.location?.addressDetail!,
+          address: userTempDestination?.location?.address!,
+          zipCode: userTempDestination?.location?.zipCode!,
+          dong: userTempDestination?.location?.dong!,
+        },
+        spotPickupId: spotPickupId,
+      };
+      try{
+        const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
+          if (data.code === 200) {
+            const response = data.data;
+            const destinationId = response.id;
+            dispatch(
+              SET_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: response.main,
+                deliveryMessage: response.deliveryMessage,
+                receiverName: response.receiverName,
+                receiverTel: response.receiverTel,
+                deliveryMessageType: '',
+                delivery: response.delivery,
+                id: destinationId,
+                spotId: list.id,
+              })
+            );
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
+            // dispatch(SET_DESTINATION(destinationInfo));
+            router.push({ pathname: '/cart', query: { isClosed: !!list.closedDate } });      
+          };
+      }catch(e){
+        console.error(e);
+      };
+      // dispatch(SET_USER_DELIVERY_TYPE('spot'));
+      // dispatch(SET_DESTINATION(destinationInfo));
+      // router.push('/cart');
     };
 
-    const goToDeliveryInfo = () => {
-      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: list.id } });
-    };
-
-    const goToSelectMenu = () => {
-      // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push('/search');
-    };
-
-    if (isLoginSuccess) {
-      // 로그인o
-      if (orderId) {
-        // 배송정보 변경에서 넘어온 경우
+    if (isLoginSuccess) { // 로그인o
+      if (orderId) { // 배송정보 변경에서 넘어온 경우
         dispatch(SET_TEMP_DESTINATION(destinationInfo));
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
           query: { orderId },
         });
         return;
-      }
-      if (cartLists.length) {
-        // 로그인o and 장바구니 o
-        if (isDelivery) {
-          // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToDeliveryInfo} />,
-            })
-          );
-        } else {
-          // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToCart} />,
-            })
-          );
-        }
-      } else {
-        // 로그인o and 장바구니 x, 메뉴 검색으로 이동
-        dispatch(
-          SET_BOTTOM_SHEET({
-            content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToSelectMenu} />,
-          })
-        );
-      }
+      };
+      dispatch( // 로그인 o, 장바구니 o, 이벤트 스팟 - 주문하기 클릭  cart로 이동
+        SET_BOTTOM_SHEET({
+          content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToCart} />,
+        })
+      );
     } else {
       // 로그인x, 로그인 이동
       dispatch(
@@ -139,7 +143,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
           onSubmit: () => router.push('/onboarding'),
         })
       );
-    }
+    };
   };
 
   const onClickLike = (e: any) => {
