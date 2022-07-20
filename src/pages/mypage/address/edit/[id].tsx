@@ -117,7 +117,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     },
     {
       onSuccess: (data) => {
-        dispatch(SET_BOTTOM_SHEET({ content: <PickupSheet pickupInfo={data!} isMypage /> }));
+        dispatch(SET_BOTTOM_SHEET({ content: <PickupSheet pickupInfo={data!} isMypage spotPickUpid={spotPickupId} /> }));
       },
       enabled: false,
       refetchOnWindowFocus: false,
