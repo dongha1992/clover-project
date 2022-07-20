@@ -298,6 +298,8 @@ const CartSheet = ({ menuItem }: any) => {
     setSelectedMenus(newSelectedMenus);
   };
 
+  console.log(menuItem, 'menuItem');
+
   const addNonMemberCart = () => {
     const menuObj = {
       isSold: menuItem.isSold,
