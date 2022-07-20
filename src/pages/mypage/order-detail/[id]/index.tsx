@@ -313,6 +313,7 @@ const OrderDetailPage = () => {
     spotPickupId,
     spotPickupName,
     spotPickupType,
+    name,
   } = orderDeliveries!;
 
   return (
@@ -378,6 +379,7 @@ const OrderDetailPage = () => {
           spotName={spotName}
           spotPickupName={spotPickupName}
           status={status}
+          name={name!}
         />
         {isSubOrder && <SubOrderInfo isDestinationChange />}
         <ButtonWrapper>

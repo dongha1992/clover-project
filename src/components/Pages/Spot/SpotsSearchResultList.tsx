@@ -130,7 +130,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
     const goToCart = () => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });
+      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });
     };
 
     const goToDeliveryInfo = async() => { // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
@@ -337,28 +337,25 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           )}
         </ImageWrapper>
-        
-        {
-          !recommand && (
-            item.isOpened && !item.isClosed ? (
-              // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
-              <Button
-                backgroundColor={theme.white}
-                color={theme.black}
-                width="75px"
-                height="38px"
-                border
-                onClick={(e) => orderHandler(e)}
-              >
-                주문하기
-              </Button>
-            ) : (
-              <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
-                주문하기
-              </Button>
-            )
-          )
-        }
+
+        {!recommand &&
+          (item.isOpened && !item.isClosed ? (
+            // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+            <Button
+              backgroundColor={theme.white}
+              color={theme.black}
+              width="75px"
+              height="38px"
+              border
+              onClick={(e) => orderHandler(e)}
+            >
+              주문하기
+            </Button>
+          ) : (
+            <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
+              주문하기
+            </Button>
+          ))}
       </FlexCol>
     </Container>
   );

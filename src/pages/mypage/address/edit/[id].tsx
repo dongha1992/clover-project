@@ -162,6 +162,9 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
           SET_ALERT({
             alertMessage: '내용을 수정했어요!',
             submitBtnText: '확인',
+            onSubmit: () => {
+              router.push('/mypage/address');
+            },
           })
         );
       },
