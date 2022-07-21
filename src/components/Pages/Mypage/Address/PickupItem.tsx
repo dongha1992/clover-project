@@ -83,13 +83,23 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{name}</TextH5B>
             {
-              spotPickup?.spot.type === 'PRIVATE' && (
-                <>
-                  <Tag margin="0 4px 0 0" {...mapper[spotPickup?.spot.type!]}>
-                    {mapper[spotPickup?.spot.type!]?.name}
+              spotPickup?.spot.isTrial ? (
+                <Tag margin="0 4px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                  트라이얼
+                </Tag>
+              ) : (
+                spotPickup?.spot.type === 'PRIVATE' ? (
+                  <Tag margin="0 4px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                    프라이빗
                   </Tag>
-                  {main && <Tag>기본 프코스팟</Tag>}
-                </>
+                ) : (
+                  null
+                )
+              )
+            }
+            {
+              main && (
+                <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>기본 프코스팟</Tag>
               )
             }
           </FlexRow>
