@@ -71,7 +71,7 @@ const CardBox = styled.div`
   background-color: #fff;
   justify-content: space-between;
   align-items: center;
-  margin-right: 16px;
+  /* margin-right: 16px; */
   &:last-child {
     margin-right: 0;
   }

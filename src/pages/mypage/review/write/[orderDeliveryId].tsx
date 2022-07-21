@@ -241,6 +241,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
       menuDetailId: Number(menuDetailId),
       menuId: Number(menuId),
       orderDeliveryId: Number(orderDeliveryId),
+      orderType: orderType,
       rating,
     };
 

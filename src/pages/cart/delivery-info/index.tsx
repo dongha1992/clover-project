@@ -169,27 +169,26 @@ const DeliverInfoPage = () => {
       if (isSubscription) {
         if (isSpot) {
           const reqBody = {
-            name: tempDestination?.name! ?? userDestination?.name,
+            name: tempDestination?.name!,
             delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
-            deliveryMessage: tempDestination?.deliveryMessage
-              ? tempDestination.deliveryMessage
-              : '' ?? userDestination?.deliveryMessage,
-            main: tempDestination?.main! ?? userDestination?.main,
-            receiverName: tempDestination?.receiverName ?? userDestination?.receiverName,
-            receiverTel: tempDestination?.receiverTel ?? userDestination?.receiverTel,
+            deliveryMessage: tempDestination?.deliveryMessage ? tempDestination.deliveryMessage : '',
+            main: tempDestination?.main!,
+            receiverName: tempDestination?.receiverName,
+            receiverTel: tempDestination?.receiverTel,
             location: {
-              addressDetail: tempDestination?.location?.addressDetail! ?? userDestination?.location?.addressDetail,
-              address: tempDestination?.location?.address! ?? userDestination?.location?.address,
-              zipCode: tempDestination?.location?.zipCode! ?? userDestination?.location?.zipCode,
-              dong: tempDestination?.location?.dong! ?? userDestination?.location?.dong,
+              addressDetail: tempDestination?.location?.addressDetail!,
+              address: tempDestination?.location?.address!,
+              zipCode: tempDestination?.location?.zipCode!,
+              dong: tempDestination?.location?.dong!,
             },
-            spotPickupId: tempDestination?.spotPickupId ?? userDestination?.spotPickupId,
+            spotPickupId: tempDestination?.spotPickupId,
           };
 
           try {
             const { data } = await postDestinationApi(reqBody);
             if (data.code === 200) {
               const response = data.data;
+
               dispatch(
                 SET_DESTINATION({
                   name: response.name,
@@ -208,6 +207,7 @@ const DeliverInfoPage = () => {
                   id: response.id,
                   availableTime: tempDestination.availableTime,
                   spaceType: tempDestination.spaceType,
+                  spotPickup: response?.spotPickup,
                   spotPickupId: tempDestination?.spotPickupId,
                 })
               );

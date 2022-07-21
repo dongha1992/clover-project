@@ -301,7 +301,7 @@ export interface IRegisterDestination {
   main: boolean;
   createdAt: string;
   deliveryMessage: string;
-  spotPickup: ISpotPickupInDestinaion;
+  spotPickup?: ISpotPickupInDestinaion;
 }
 
 export interface IRegisterDestinationResponse {

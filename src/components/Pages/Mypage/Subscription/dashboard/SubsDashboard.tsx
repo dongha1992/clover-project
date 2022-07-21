@@ -21,6 +21,9 @@ const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders, showBoar
         <FlexBetween>
           <TextH4B>구독 관리</TextH4B>
           <FlexRow>
+            <TextB2R padding="0 8px 0 0" pointer>
+              {subsOrders.length} 건
+            </TextB2R>
             <div className="rightArrow">
               <SVGIcon name="arrowRight" />
             </div>
@@ -36,32 +39,10 @@ const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders, showBoar
   );
 };
 const DashBoardBox = styled.div`
-  padding: 24px 24px 0;
+  padding: 24px;
   .rightArrow {
     cursor: pointer;
   }
 `;
-const Wrapper = styled.div`
-  background-color: ${theme.greyScale3};
-  margin-top: 15px;
-  border-radius: 8px;
-`;
 
-const ArrowWrapper = styled.div`
-  padding-bottom: 16px;
-`;
-
-const SubsInfoBox = styled.div`
-  padding-left: 22px;
-  position: relative;
-  padding-top: 8px;
-  svg {
-    position: absolute;
-    top: 7px;
-    left: 0;
-  }
-  b {
-    font-weight: bold;
-  }
-`;
 export default SubsDashboard;

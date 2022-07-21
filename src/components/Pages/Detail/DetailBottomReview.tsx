@@ -27,13 +27,13 @@ interface IProps {
 const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
+  const { me } = useSelector(userForm);
+
   const { menuReviews } = reviews;
   const hasImageReviews = reviewsImages?.images?.length !== 0;
   const hasReviews = menuReviews.length !== 0;
 
   const { rating, reviewCount } = menuItem;
-
-  const { me } = useSelector(userForm);
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -104,7 +104,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
             margin="0 0 32px 0"
             onClick={goToWriteReview}
           >
-            후기 작성하기 (최대 3,000포인트 적립)
+            {me ? '후기 작성하기 (최대 3,000포인트 적립)' : '로그인 후 후기 작성하기'}
           </Button>
         </Empty>
       )}
