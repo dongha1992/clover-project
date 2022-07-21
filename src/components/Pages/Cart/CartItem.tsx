@@ -39,7 +39,6 @@ const CartItem = ({
         menu={menu}
       />
       {menu?.menuDetails.map((menuDetail: IMenuDetailsInCart, index: number) => {
-        console.log(menu, 'menuDetail');
         return (
           <CartActualItem
             key={index}
@@ -50,7 +49,6 @@ const CartItem = ({
             menuId={menu?.menuId!}
             holiday={menu.holiday}
             menuName={menu.name}
-            cartId={menuDetail.cartId!}
           />
         );
       })}
