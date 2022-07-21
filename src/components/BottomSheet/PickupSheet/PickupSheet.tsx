@@ -10,7 +10,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import { ISpotPickupInfo, ISpotPickupInfoInDestination } from '@model/index';
 
 type TPrams = {
-  pickupInfo?: ISpotPickupInfo[] | ISpotPickupInfoInDestination[];
+  pickupInfo?: any;
   spotType?: string;
   onSubmit?: () => void;
   isMypage?: boolean;
@@ -18,7 +18,7 @@ type TPrams = {
 
 const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
-  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo![0].id);
+  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo[0].id);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
         <TextH5B padding="24px 0 16px 0" center>
           {isMypage ? '픽업 장소 변경' : '픽업 장소 선택'}
         </TextH5B>
-        {pickupInfo?.map((i, index) => {
+        {pickupInfo?.map((i: any, index: number) => {
           return (
             <PickWrapper key={index}>
               <RadioButton onChange={() => changeRadioHandler(i.id)} isSelected={selectedPickupId === i.id} />

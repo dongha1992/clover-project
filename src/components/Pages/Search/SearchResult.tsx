@@ -1,16 +1,13 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { Item } from '@components/Item';
-import { SpotsSearchResultList } from '@components/Pages/Spot';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { MenuFilter } from '@components/Filter';
 import { theme } from '@styles/theme';
-import { Button } from '@components/Shared/Button';
-import { spotSelector } from '@store/spot';
 import { ISpotsDetail } from '@model/index';
 
 interface IProps {
