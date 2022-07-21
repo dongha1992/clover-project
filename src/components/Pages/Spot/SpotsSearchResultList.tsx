@@ -40,6 +40,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   const { userLocation, userTempDestination } = useSelector(destinationForm);
   const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const [isSubs, setIsSubs] = useState<boolean>();
+  const [isLocker, setIsLocker] = useState<boolean>();
 
   const store = useStore();
 
@@ -61,6 +62,17 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       }
     }
   }, [router.isReady, router.query.isSubscription]);
+
+  useEffect(() => {
+    item.pickups.forEach((p: any) => {
+      if (p.type === 'PICKUP') {
+        setIsLocker(false);
+        return;
+      } else {
+        setIsLocker(true);
+      }
+    });
+  }, []);
 
   const renderSpotMsg = () => {
     switch (true) {
@@ -127,8 +139,9 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       delivery: 'SPOT',
     };
 
-    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
-      const reqBody = { 
+    const goToCart = async () => {
+      // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
+      const reqBody = {
         name: item?.name!,
         delivery: 'SPOT',
         deliveryMessage: '',
@@ -143,65 +156,70 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
         },
         spotPickupId: spotPickupId,
       };
-      try{
+      try {
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
-          if (data.code === 200) {
-            const response = data.data;
-            const destinationId = response.id;
-            dispatch(
-              SET_DESTINATION({
-                name: response.name,
-                location: {
-                  addressDetail: response.location.addressDetail,
-                  address: response.location.address,
-                  dong: response.location.dong,
-                  zipCode: response.location.zipCode,
-                },
-                main: response.main,
-                deliveryMessage: response.deliveryMessage,
-                receiverName: response.receiverName,
-                receiverTel: response.receiverTel,
-                deliveryMessageType: '',
-                delivery: response.delivery,
-                id: destinationId,
-                spotId: item.id,
-              })
-            );
-            dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({ 
-              pathname: '/cart', 
-              query: { isClosed: !!closedDate } 
-            });      
-          };
-      }catch(e){
+        if (data.code === 200) {
+          const response = data.data;
+          const destinationId = response.id;
+          dispatch(
+            SET_DESTINATION({
+              name: response.name,
+              location: {
+                addressDetail: response.location.addressDetail,
+                address: response.location.address,
+                dong: response.location.dong,
+                zipCode: response.location.zipCode,
+              },
+              main: response.main,
+              deliveryMessage: response.deliveryMessage,
+              receiverName: response.receiverName,
+              receiverTel: response.receiverTel,
+              deliveryMessageType: '',
+              delivery: response.delivery,
+              id: destinationId,
+              spotId: item.id,
+            })
+          );
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
+          router.push({
+            pathname: '/cart',
+            query: { isClosed: !!closedDate },
+          });
+        }
+      } catch (e) {
         console.error(e);
-      };
+      }
     };
 
-    const goToDeliveryInfo = () => { // 장바구니 o, 배송 정보에서 픽업장소 변경하기(스팟검색)로 넘어온 경우
+    const goToDeliveryInfo = () => {
+      // 장바구니 o, 배송 정보에서 픽업장소 변경하기(스팟검색)로 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       // CHECK_LIST : destinationId 쿼리 지워야 하는지 체크
-      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });  
+      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });
     };
-    
+
     const handleSubsDeliveryType = () => {
       destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
+
       router.push({
         pathname: '/cart/delivery-info',
         query: { isSubscription, subsDeliveryType, menuId },
       });
     };
 
-    if (!item.isOpened) { // 스찻 오픈 예정인 상태 - 주문 불가
+    if (!item.isOpened) {
+      // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if (item.isClosed) { // 스팟 종료된 상태 - 주문 불가ㅇ
+    if (item.isClosed) {
+      // 스팟 종료된 상태 - 주문 불가ㅇ
       return;
     }
-    if (isLoginSuccess) { //로그인 o
+    if (isLoginSuccess) {
+      //로그인 o
       if (orderId) {
         dispatch(
           SET_TEMP_EDIT_SPOT({
@@ -216,10 +234,14 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
         });
         return;
       }
-      if (hasCart) { // 로그인o and 장바구니 o
-        if (isDelivery) { // 장바구니 o, 배송 정보에서 넘어온 경우
-          if (isSubscription) { // 구독에서 넘어옴
-            if (!!closedDate) { // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
+      if (hasCart) {
+        // 로그인o and 장바구니 o
+        if (isDelivery) {
+          // 장바구니 o, 배송 정보에서 넘어온 경우
+          if (isSubscription) {
+            // 구독에서 넘어옴
+            if (!!closedDate) {
+              // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
               dispatch(
                 SET_ALERT({
                   alertMessage: `운영 종료 예정된 프코스팟은\n구독을 이용할 수 없어요!`,
@@ -236,23 +258,28 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
                 })
               );
             }
-          } else { // 장바구니 o , 배송 정보에서 넘어온 경우
+          } else {
+            // 장바구니 o , 배송 정보에서 넘어온 경우
             dispatch(
               SET_BOTTOM_SHEET({
                 content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToDeliveryInfo} />,
               })
             );
           }
-        } else { // 장바구니 o, 스팟 검색에서 cart로 이동
+        } else {
+          // 장바구니 o, 스팟 검색에서 cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
             })
           );
         }
-      } else { // 로그인o and 장바구니 x
-        if (isSubscription) { // 구독에서 넘어옴
-          if (!!item.closedDate) { // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
+      } else {
+        // 로그인o and 장바구니 x
+        if (isSubscription) {
+          // 구독에서 넘어옴
+          if (!!item.closedDate) {
+            // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
             dispatch(
               SET_ALERT({
                 alertMessage: `운영 종료 예정된 프코스팟은\n구독을 이용할 수 없어요!`,
@@ -269,7 +296,8 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
               })
             );
           }
-        } else { // 로그인o and 장바구니 x, cart로 이동
+        } else {
+          // 로그인o and 장바구니 x, cart로 이동
           dispatch(
             SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={goToCart} />,
@@ -277,7 +305,8 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
           );
         }
       }
-    } else { // 로그인x, 로그인 이동
+    } else {
+      // 로그인x, 로그인 이동
       dispatch(
         SET_ALERT({
           alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
@@ -290,26 +319,36 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   };
 
   const goToDetail = (id: number | undefined) => {
-    if(isDelivery){
+    if (isDelivery && !isSubs) {
       router.push({
         pathname: `/spot/detail/${id}`,
-        query: { 
-          isSpot: true, 
-          isDelivery: true, 
+        query: {
+          isSpot: true,
+          isDelivery: true,
         },
       });
-  
+    } else if (isDelivery && isSubs) {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true, destinationId: item?.id, isSubscription, isDelivery: true, subsDeliveryType, menuId },
+      });
     } else {
       router.push({
         pathname: `/spot/detail/${id}`,
-        query: { 
-          isSpot: true,        },
-      });  
+        query: {
+          isSpot: true,
+        },
+      });
     }
   };
 
   return (
-    <Container map={map} onClick={() => goToDetail(item.id)}>
+    <Container
+      map={map}
+      onClick={() => {
+        isSubs && (item.isTrial || isLocker) ? null : goToDetail(item.id);
+      }}
+    >
       <FlexColStart>
         <TextH5B>{item.name}</TextH5B>
         <TextB3R padding="2px 0 0 0">{item?.location?.address}</TextB3R>
@@ -352,22 +391,43 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
             <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
           )}
         </ImageWrapper>
-
         {!recommand &&
           (item.isOpened && !item.isClosed ? (
             // 오픈예정 or 종료된스팟 둘중 하나라도 false하면 주문하기 disabled
+            isSubs && (item.isTrial || isLocker) ? (
+              <Button
+                backgroundColor={theme.white}
+                width="75px"
+                height="38px"
+                disabled
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                주문하기
+              </Button>
+            ) : (
+              <Button
+                backgroundColor={theme.white}
+                color={theme.black}
+                width="75px"
+                height="38px"
+                border
+                onClick={(e) => orderHandler(e)}
+              >
+                주문하기
+              </Button>
+            )
+          ) : (
             <Button
               backgroundColor={theme.white}
-              color={theme.black}
               width="75px"
               height="38px"
-              border
-              onClick={(e) => orderHandler(e)}
+              disabled
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
             >
-              주문하기
-            </Button>
-          ) : (
-            <Button backgroundColor={theme.white} width="75px" height="38px" disabled>
               주문하기
             </Button>
           ))}

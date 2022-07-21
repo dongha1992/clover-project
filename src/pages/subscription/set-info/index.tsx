@@ -98,7 +98,7 @@ const SubsSetInfoPage = () => {
     try {
       if (subsDeliveryType === 'SPOT') {
         if ((userDestination?.delivery === 'spot' || userDestination?.delivery === 'SPOT') && userDestination) {
-          setSpotMainDestination(userDestination.location?.address);
+          setSpotMainDestination(userDestination.name);
         } else {
           const { data } = await getMainDestinationsApi({
             delivery: 'SPOT',

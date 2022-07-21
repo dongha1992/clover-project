@@ -16,7 +16,7 @@ const DeliveryPlaceBox = ({ place, type }: any): ReactElement => {
           </FlexRow>
         </PlaceName>
         <TextB3R padding="4px 0" color={theme.greyScale65}>
-          {place.location.address}
+          {place.location.address} {place.location.addressDetail}
         </TextB3R>
       </DelvieryPlaceInfo>
     </FlexCol>
