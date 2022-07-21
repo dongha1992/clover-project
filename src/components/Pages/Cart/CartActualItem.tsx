@@ -50,8 +50,6 @@ const CartActualItem = ({
     price: menuDetail?.price,
   });
 
-  console.log(menuDetail.availabilityInfo, holiday, 'menuDetail.availabilityInfo, holiday');
-
   const hasLimitDate = holiday?.length! > 0;
   const isSold = menuDetail.isSold;
   const { availability, remainingQuantity, menuDetailAvailabilityMessage } = menuDetail?.availabilityInfo!;

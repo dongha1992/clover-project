@@ -364,18 +364,16 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async ({ reqBody, cartIds }: { reqBody: IDeleteCartRequest[]; cartIds: number[] }) => {
-      // const { data } = await deleteCartsApi(reqBody, cartId);
-
-      const data = await cartIds?.map((cartId: number) => {
-        return deleteCartsApi(reqBody, cartId);
-      });
-
-      console.log(data, 'AFTER DELETE');
+    async ({ reqBody, cartId }: { reqBody: IDeleteCartRequest; cartId: number }) => {
+      const { data } = await deleteCartsApi([reqBody], cartId);
+      return data;
     },
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getCartList');
+      },
+      onError: () => {
+        alert('장바구니 삭제에 실패했습니다.');
       },
     }
   );
@@ -482,13 +480,12 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
-    const cartIds = checkedMenus.flatMap((item) => item.menuDetails.map((detail) => detail.cartId))! as number[];
-    console.log(cartIds, 'cartIds');
-    const reqBody = pipe(
+    const selectedMenuDetails = pipe(
       checkedMenus,
       flatMap((item) =>
         item.menuDetails.map((detail) => {
           return {
+            cartId: detail?.cartId,
             menuId: item?.menuId!,
             menuDetailId: detail.id,
           };
@@ -509,7 +506,14 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem({ reqBody, cartIds: cartIds! });
+            try {
+              const result = selectedMenuDetails.map((detail) => {
+                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         },
       })
@@ -588,7 +592,7 @@ const CartPage = () => {
 
             setNonMemberCartListsHandler(filtered);
           } else {
-            mutateDeleteItem({ reqBody, cartIds: [cartId] });
+            // mutateDeleteItem({ reqBody, cartIds: [cartId] });
           }
         },
       })
@@ -596,9 +600,9 @@ const CartPage = () => {
   };
 
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
-    const cartIds = menu.menuDetails.map((item) => item.cartId)! as number[];
-    const reqBody = menu.menuDetails.map((item) => {
+    const selectedMenuDetails = menu.menuDetails.map((item) => {
       return {
+        cartId: item.cartId!,
         menuId: menu?.menuId!,
         menuDetailId: item.id,
       };
@@ -615,7 +619,14 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem({ reqBody, cartIds: cartIds! });
+            try {
+              const result = selectedMenuDetails.map((detail) => {
+                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         },
       })

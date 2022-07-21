@@ -13,7 +13,6 @@ interface IProps {
 }
 
 const CountButton = ({ menuDetailId, quantity, clickPlusButton, clickMinusButton, isSold }: IProps) => {
-  console.log(isSold, 'isSoldisSolisSolisSolddd');
   return (
     <Container isSold={isSold}>
       <Wrapper>
