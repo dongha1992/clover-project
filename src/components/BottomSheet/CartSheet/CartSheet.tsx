@@ -5,7 +5,7 @@ import { Select, MenuOption } from '@components/Shared/Dropdown';
 import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
-import { cartForm } from '@store/cart';
+import { cartForm, SET_CART_LISTS } from '@store/cart';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import CartSheetItem from './CartSheetItem';
 import { Button } from '@components/Shared/Button';
@@ -101,17 +101,15 @@ const CartSheet = ({ menuItem }: any) => {
       // const result = checkAlreadyInCart();
 
       const { data } = await postCartsApi(reqBody);
-      console.log(data, 'data after cart');
     },
     {
       onError: (error: any) => {
         dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
       },
-      onSuccess: async (message) => {
+      onSuccess: async () => {
         showToast({ message: '상품을 장바구니에 담았어요! 😍' });
         dispatch(INIT_BOTTOM_SHEET());
         await queryClient.refetchQueries('getCartList');
-        // dispatch(UPDATE_CART_LIST());
       },
     }
   );
@@ -299,6 +297,8 @@ const CartSheet = ({ menuItem }: any) => {
 
     setSelectedMenus(newSelectedMenus);
   };
+
+  console.log(menuItem, 'menuItem');
 
   const addNonMemberCart = () => {
     const menuObj = {

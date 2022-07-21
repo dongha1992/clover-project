@@ -154,11 +154,12 @@ const DeliverInfoPage = () => {
     if (!tempDestination) {
       return;
     }
-    // spotId:tempDestination.spotPickup?.id:null
+
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
-    if (destinationId || isMainDestination || isSpot) {
-      console.log(tempDestination, 'tempDestination');
-      dispatch(SET_DESTINATION({ ...tempDestination }));
+
+    if (destinationId || isMainDestination) {
+      console.log(tempDestination, 'tempDestination 160');
+      dispatch(SET_DESTINATION({ ...tempDestination, spotId: tempDestination.spotId }));
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
@@ -262,7 +263,7 @@ const DeliverInfoPage = () => {
         router.push('/cart');
       }
     } else {
-      /* TODO spotPickupId 형 체크 */
+      console.log(tempDestination, 'tempDestination here 265');
       if (tempDestination) {
         const reqBody = {
           name: tempDestination?.name!,
@@ -277,6 +278,7 @@ const DeliverInfoPage = () => {
             zipCode: tempDestination?.location?.zipCode!,
             dong: tempDestination?.location?.dong!,
           },
+          spotPickupId: tempDestination?.spotPickupId ?? userDestination?.spotPickupId,
         };
 
         try {
@@ -299,6 +301,7 @@ const DeliverInfoPage = () => {
                 deliveryMessageType: '',
                 delivery: response.delivery,
                 id: response.id,
+                spotPickup: response.spotPickup ? response.spotPickup : null,
               })
             );
             dispatch(SET_AFTER_SETTING_DELIVERY());
@@ -446,10 +449,10 @@ const DeliverInfoPage = () => {
 
     try {
       const { data } = await getMainDestinationsApi(params);
-      console.log(data, '000');
       if (data.code === 200) {
+        console.log(data, '---dat-------453');
         if (data.data) {
-          setTempDestination({ ...data.data });
+          setTempDestination({ ...data.data, spotId: data.data.spotPickup?.spotId });
           setIsMaindestination(true);
         } else {
           setTempDestination(null);

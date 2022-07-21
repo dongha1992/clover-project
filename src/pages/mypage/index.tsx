@@ -157,6 +157,7 @@ const MypagePage = () => {
     removeCookie({ name: 'autoL' });
     removeCookie({ name: 'acstk' });
     localStorage.removeItem('persist:nextjs');
+
     if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
       window.Kakao.Auth.logout();
     }

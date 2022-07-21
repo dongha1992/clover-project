@@ -132,11 +132,13 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 스팟 주문하기 - 스팟 검색 : 최근 픽업 이력
+  // item.id : 배송지 id, item.spotPickup.id: 스팟픽업 id, item.spotPickup.spotId: 스팟 id
   const orderHandler = (e: any) => {
     e.stopPropagation();
-    /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
 
     const destinationInfo = {
+      spotId: item?.spotPickup?.spot.id,
       id: item?.id,
       name: item?.name!,
       location: {
@@ -149,7 +151,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       main: false,
       availableTime: recentPickupTime!,
       spaceType: item?.spotPickup?.spot.type!,
-      spotPickupId: spotPickupId!,
+      spotPickupId: spotPickupId! || item?.spotPickup?.id,
       closedDate: closedDate,
     };
 
@@ -184,6 +186,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       // 스팟 종료된 상태 - 주문 불가
       return;
     }
+
     if (isLoginSuccess) {
       if (orderId) {
         dispatch(
@@ -261,14 +264,19 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   const goToDetail = (id: number | undefined) => {
-    if (isSubs) {
+    if (isDelivery && !isSubs) {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true, isDelivery: true },
+      });
+    } else if (isDelivery && isSubs) {
       router.push({
         pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
-        query: { isSpot: true, isSubscription, subsDeliveryType, menuId },
+        query: { isSpot: true, isSubscription, subsDeliveryType, menuId, isDelivery: true },
       });
     } else {
       router.push({
-        pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
+        pathname: `/spot/detail/${id}`,
         query: { isSpot: true },
       });
     }
