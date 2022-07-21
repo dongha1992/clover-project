@@ -9,6 +9,11 @@ import InfoMessage from '@components/Shared/Message';
 import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
 import { getFormatPrice } from '@utils/common';
+import { getHolidayByMenu } from '@utils/menu';
+/* TODO: 최대 구매? */
+
+// 판매중지일 먼저
+// 어느 날짜에나 스태퍼는 동일. 인당 제한만
 interface IProps {
   removeCartActualItemHandler: ({
     menuDetailId,
@@ -45,8 +50,54 @@ const CartActualItem = ({
     price: menuDetail?.price,
   });
 
+  console.log(menuDetail.availabilityInfo, holiday, 'menuDetail.availabilityInfo, holiday');
+
+  const hasLimitDate = holiday?.length! > 0;
+  const isSold = menuDetail.isSold;
+  const { availability, remainingQuantity, menuDetailAvailabilityMessage } = menuDetail?.availabilityInfo!;
+  const personLimitQuantity = menuDetailAvailabilityMessage === 'PERSON';
+  const hasPersonLimit = personLimitQuantity && (!remainingQuantity || !availability);
+
+  const hasLimitQuantity = !personLimitQuantity && remainingQuantity !== 0;
+  const defaultStatus = availability && !remainingQuantity;
+  const soldCases = isSold || hasPersonLimit || !availability;
+
+  const checkMenuStatus = (): string => {
+    switch (true) {
+      case hasLimitDate: {
+        return `${getHolidayByMenu(holiday!)} 배송이 불가능해요`;
+      }
+      case isSold:
+      case !availability: {
+        return '품절된 상품이에요.';
+      }
+
+      case hasLimitQuantity: {
+        let message = '';
+        if (availability) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
+        } else {
+          message = '품절된 상품이에요.';
+        }
+        return message;
+      }
+      case personLimitQuantity: {
+        let message = '';
+        if (hasPersonLimit) {
+          message = '구매 가능한 수량을 초과했어요';
+        } else {
+          message = `최대 ${remainingQuantity}개까지 구매 가능해요`;
+        }
+        return message;
+      }
+
+      default:
+        return '';
+    }
+  };
+
   return (
-    <Container isSold={menuDetail?.isSold}>
+    <Container isSold={soldCases}>
       <ContentWrapper>
         <FlexBetween>
           <TextB3R margin="0 16px 0 0">
@@ -63,25 +114,16 @@ const CartActualItem = ({
         </FlexBetween>
         <FlexCol>
           <PriceWrapper>
-            <TextH5B color={menuDetail?.isSold ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
+            <TextH5B color={soldCases ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
               {discount}%
             </TextH5B>
             <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
           </PriceWrapper>
           <InfoContainer>
-            {menuDetail?.availabilityInfo || holiday ? (
-              <InfoMessage
-                isSold={menuDetail?.isSold}
-                availabilityInfo={menuDetail?.availabilityInfo}
-                holiday={holiday}
-              />
-            ) : (
-              <div />
-            )}
-
+            {!defaultStatus ? <InfoMessage message={checkMenuStatus()} /> : <div />}
             <CountButtonContainer>
               <CountButton
-                isSold={menuDetail?.isSold}
+                isSold={soldCases}
                 menuDetailId={menuDetail?.id}
                 quantity={menuDetail?.quantity}
                 clickPlusButton={clickPlusButton}
