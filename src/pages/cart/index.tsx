@@ -141,7 +141,9 @@ const CartPage = () => {
     {
       onError: (error: any) => {},
       onSuccess: async (message) => {
-        // dispatch(INIT_NON_MEMBER_CART_LISTS());
+        if (nonMemberCartLists.length !== 0) {
+          dispatch(INIT_NON_MEMBER_CART_LISTS());
+        }
       },
     }
   );
@@ -480,7 +482,8 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
-    const cartIds = checkedMenus.map((item) => item.cartId)! as number[];
+    const cartIds = checkedMenus.flatMap((item) => item.menuDetails.map((detail) => detail.cartId))! as number[];
+    console.log(cartIds, 'cartIds');
     const reqBody = pipe(
       checkedMenus,
       flatMap((item) =>
@@ -593,7 +596,7 @@ const CartPage = () => {
   };
 
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
-    const cartIds = menu.cartId!;
+    const cartIds = menu.menuDetails.map((item) => item.cartId)! as number[];
     const reqBody = menu.menuDetails.map((item) => {
       return {
         menuId: menu?.menuId!,
@@ -612,7 +615,7 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem({ reqBody, cartIds: [cartIds] });
+            mutateDeleteItem({ reqBody, cartIds: cartIds! });
           }
         },
       })
@@ -1087,7 +1090,7 @@ const CartPage = () => {
     if (!me) {
       reorderCartList(nonMemberCartLists ?? []);
     } else {
-      // 회원일 경우 비회원 장바구니 리스트 있는 조회
+      // 로그인 경우 비회원 장바구니 리스트 있는 조회
       const hasNonMemberCarts = nonMemberCartLists.length !== 0;
       if (hasNonMemberCarts) {
         const reqBody = nonMemberCartLists.flatMap((item) =>

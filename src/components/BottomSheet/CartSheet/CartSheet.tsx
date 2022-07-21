@@ -311,6 +311,7 @@ const CartSheet = ({ menuItem }: any) => {
     let formatCartLists: IMenuDetailsInCart[] = selectedMenus?.map((item) => {
       //id: item.menuId! -> item.menuDetailId!
       return {
+        cartId: null,
         availabilityInfo: null,
         menuDetailId: item.menuDetailId,
         name: item.name,
@@ -330,7 +331,6 @@ const CartSheet = ({ menuItem }: any) => {
     });
 
     let cartMenus: IGetCart = {
-      cartId: null,
       menuId: menuObj.menuId,
       holiday: null,
       name: menuObj.name,

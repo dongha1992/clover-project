@@ -2090,7 +2090,8 @@ export interface ICartAvailabilty {
 }
 
 export interface IMenuDetailsInCart {
-  availabilityInfo: { availability: boolean; remainingQuantity: number } | null;
+  cartId: number | null;
+  availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string } | null;
   menuDetailId: number;
   name: string;
   price: number;
@@ -2108,8 +2109,6 @@ export interface IMenuDetailsInCart {
   // menuQuantity?: number;
 }
 export interface IGetCart {
-  // availabilityInfo: ICartAvailabilty;
-  cartId: number | null;
   menuId?: number;
   holiday: number[][] | null;
   name: string;
