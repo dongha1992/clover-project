@@ -30,7 +30,6 @@ interface IProps {
   menuDetail: IMenuDetailsInCart;
   holiday: number[][] | null;
   menuName: string;
-  cartId: number;
 }
 
 /* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
@@ -43,16 +42,19 @@ const CartActualItem = ({
   menuDetail,
   holiday,
   menuName,
-  cartId,
 }: IProps) => {
   const { discount, discountedPrice } = getDiscountPrice({
     discountPrice: menuDetail?.discountPrice,
     price: menuDetail?.price,
   });
 
+  console.log(menuDetail, 'menuDetail');
+
   const hasLimitDate = holiday?.length! > 0;
   const isSold = menuDetail.isSold;
-  const { availability, remainingQuantity, menuDetailAvailabilityMessage } = menuDetail?.availabilityInfo!;
+
+  const { availability, remainingQuantity, menuDetailAvailabilityMessage } =
+    menuDetail?.availabilityInfo && menuDetail?.availabilityInfo!;
   const personLimitQuantity = menuDetailAvailabilityMessage === 'PERSON';
   const hasPersonLimit = personLimitQuantity && (!remainingQuantity || !availability);
 
@@ -93,7 +95,7 @@ const CartActualItem = ({
         return '';
     }
   };
-
+  console.log(menuDetail, menuId, '@@@#!@#!@#!');
   return (
     <Container isSold={soldCases}>
       <ContentWrapper>
@@ -104,7 +106,11 @@ const CartActualItem = ({
           <div
             onClick={() =>
               removeCartActualItemHandler &&
-              removeCartActualItemHandler({ menuDetailId: menuDetail?.menuDetailId, menuId, cartId })
+              removeCartActualItemHandler({
+                menuId,
+                menuDetailId: menuDetail?.menuDetailId || menuDetail?.id,
+                cartId: menuDetail?.cartId!,
+              })
             }
           >
             <SVGIcon name="defaultCancel" />

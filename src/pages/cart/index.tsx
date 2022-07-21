@@ -529,11 +529,12 @@ const CartPage = () => {
     menuDetailId: number;
     cartId: number;
   }) => {
+    console.log(menuDetailId, menuId, cartId, ' menuDetailId,menuId,cartId,');
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
 
     const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
 
-    let reqBody = [{ menuId, menuDetailId }];
+    let selectedMenuDetails = [{ menuId, menuDetailId, cartId: cartId ? cartId : null }];
     let alertMessage = '';
 
     if (isMain) {
@@ -549,9 +550,10 @@ const CartPage = () => {
                 return {
                   menuDetailId: item.menuDetailId,
                   menuId: menuId,
+                  cartId: item.cartId,
                 };
               })! || [];
-          reqBody = [...reqBody, ...foundOptional];
+          selectedMenuDetails = [...selectedMenuDetails, ...foundOptional];
         } else {
           alertMessage = '상품을 삭제하시겠어요?';
         }
@@ -561,7 +563,7 @@ const CartPage = () => {
     } else {
       alertMessage = '상품을 삭제하시겠어요?';
     }
-
+    console.log(selectedMenuDetails, 'selectedMenuDetails');
     dispatch(
       SET_ALERT({
         alertMessage,
@@ -570,7 +572,7 @@ const CartPage = () => {
         onSubmit: () => {
           /* TODO: 비회원일 때 선택옵션 끼고 테스트 해봐야함 */
           if (!me) {
-            const menuDetailIds = reqBody.map((ids) => ids.menuDetailId);
+            const menuDetailIds = selectedMenuDetails.map((ids) => ids.menuDetailId);
             let filtered = cartItemList.map((item) => {
               if (item.menuId === menuId) {
                 return {
@@ -592,7 +594,14 @@ const CartPage = () => {
 
             setNonMemberCartListsHandler(filtered);
           } else {
-            // mutateDeleteItem({ reqBody, cartIds: [cartId] });
+            try {
+              const result = selectedMenuDetails.map((detail) => {
+                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         },
       })
