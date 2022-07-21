@@ -127,19 +127,19 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       delivery: 'SPOT',
     };
 
-    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
       const reqBody = { 
-        name: userTempDestination?.name!,
+        name: item?.name!,
         delivery: 'SPOT',
-        deliveryMessage: userTempDestination?.deliveryMessage ? userTempDestination.deliveryMessage : '',
-        main: userTempDestination?.main!,
-        receiverName: userTempDestination?.receiverName,
-        receiverTel: userTempDestination?.receiverTel,
+        deliveryMessage: '',
+        main: false,
+        receiverName: '',
+        receiverTel: '',
         location: {
-          addressDetail: userTempDestination?.location?.addressDetail!,
-          address: userTempDestination?.location?.address!,
-          zipCode: userTempDestination?.location?.zipCode!,
-          dong: userTempDestination?.location?.dong!,
+          addressDetail: item?.location?.addressDetail!,
+          address: item?.location?.address!,
+          zipCode: item?.location?.zipCode!,
+          dong: item?.location?.dong!,
         },
         spotPickupId: spotPickupId,
       };
@@ -168,8 +168,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            // dispatch(SET_DESTINATION(destinationInfo));
-            router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });      
+            router.push({ 
+              pathname: '/cart', 
+              query: { isClosed: !!closedDate } 
+            });      
           };
       }catch(e){
         console.error(e);
@@ -180,7 +182,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       // CHECK_LIST : destinationId 쿼리 지워야 하는지 체크
-      router.push({ pathname: '/cart/delivery-info', query: { destinationId: destinationId, isClosed: !!closedDate } });  
+      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });  
     };
     
     const handleSubsDeliveryType = () => {
@@ -189,7 +191,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId },
+        query: { isSubscription, subsDeliveryType, menuId },
       });
     };
 
@@ -288,13 +290,22 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   };
 
   const goToDetail = (id: number | undefined) => {
-    router.push({
-      pathname: `/spot/detail/${id}`,
-      query: { 
-        isSpot: true, 
-        isDelivery: isDelivery ? isDelivery : false, 
-      },
-    });
+    if(isDelivery){
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { 
+          isSpot: true, 
+          isDelivery: true, 
+        },
+      });
+  
+    } else {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { 
+          isSpot: true,        },
+      });  
+    }
   };
 
   return (

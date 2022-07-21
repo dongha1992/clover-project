@@ -14,12 +14,11 @@ type TPrams = {
   spotType?: string;
   onSubmit?: () => void;
   isMypage?: boolean;
-  spotPickUpid?: number;
 };
 
-const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage, spotPickUpid }: TPrams): JSX.Element => {
+const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
-  const [selectedPickupId, setSelectedPickupId] = useState<number>(spotPickUpid!);
+  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo[0].id);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   useEffect(() => {

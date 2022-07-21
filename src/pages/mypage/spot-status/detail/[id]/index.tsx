@@ -169,17 +169,17 @@ const SpotStatusDetailPage = (): ReactElement => {
 
       // 주문하기 클릭 후 장바구니로 이동
       const reqBody = { 
-        name: userTempDestination?.name!,
+        name: statusDetail?.placeName!,
         delivery: 'SPOT',
-        deliveryMessage: userTempDestination?.deliveryMessage ? userTempDestination.deliveryMessage : '',
-        main: userTempDestination?.main!,
-        receiverName: userTempDestination?.receiverName,
-        receiverTel: userTempDestination?.receiverTel,
+        deliveryMessage: '',
+        main: false!,
+        receiverName: statusDetail?.userName,
+        receiverTel: statusDetail?.userTel,
         location: {
-          addressDetail: userTempDestination?.location?.addressDetail!,
-          address: userTempDestination?.location?.address!,
-          zipCode: userTempDestination?.location?.zipCode!,
-          dong: userTempDestination?.location?.dong!,
+          addressDetail: statusDetail?.location?.addressDetail!,
+          address: statusDetail?.location?.address!,
+          zipCode: statusDetail?.location?.zipCode!,
+          dong: statusDetail?.location?.dong!,
         },
         spotPickupId: statusDetail?.id,
       };
@@ -204,11 +204,10 @@ const SpotStatusDetailPage = (): ReactElement => {
                 deliveryMessageType: '',
                 delivery: response.delivery,
                 id: destinationId,
-                spotId: statusDetail?.id,
+                spotId: statusDetail?.spotId,
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            // dispatch(SET_DESTINATION(destinationInfo));
             router.push({ pathname: '/cart', query: { isClosed: false } });      
           };
       }catch(e){

@@ -126,7 +126,6 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   // item.id : 배송지 id, item.spotPickup.id: 스팟픽업 id, item.spotPickup.spotId: 스팟 id
   const orderHandler = (e: any) => {
     e.stopPropagation();
-    /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
 
     const destinationInfo = {
       spotId: item?.spotPickup?.spot.id,
@@ -240,10 +239,17 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   const goToDetail = (id: number | undefined) => {
-    router.push({
-      pathname: `/spot/detail/${id}`,
-      query: { isSpot: true },
-    });
+    if (isDelivery) {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true, isDelivery: true, },
+      });
+    } else {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true },
+      });
+    };
   };
 
   return (
