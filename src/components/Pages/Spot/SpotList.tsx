@@ -67,21 +67,21 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
       const reqBody = { 
-        name: userTempDestination?.name!,
+        name: list?.name!,
         delivery: 'SPOT',
-        deliveryMessage: userTempDestination?.deliveryMessage ? userTempDestination.deliveryMessage : '',
-        main: userTempDestination?.main!,
-        receiverName: userTempDestination?.receiverName,
-        receiverTel: userTempDestination?.receiverTel,
+        deliveryMessage: '',
+        main: false,
+        receiverName: '',
+        receiverTel: '',
         location: {
-          addressDetail: userTempDestination?.location?.addressDetail!,
-          address: userTempDestination?.location?.address!,
-          zipCode: userTempDestination?.location?.zipCode!,
-          dong: userTempDestination?.location?.dong!,
+          addressDetail: list?.location?.addressDetail!,
+          address: list?.location?.address!,
+          zipCode: list?.location?.zipCode!,
+          dong: list?.location?.dong!,
         },
-        spotPickupId: spotPickupId,
+        spotPickupId: spotPickupId!,
       };
       try{
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
@@ -108,15 +108,11 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            // dispatch(SET_DESTINATION(destinationInfo));
             router.push({ pathname: '/cart', query: { isClosed: !!list.closedDate } });      
           };
       }catch(e){
         console.error(e);
       };
-      // dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      // dispatch(SET_DESTINATION(destinationInfo));
-      // router.push('/cart');
     };
 
     if (isLoginSuccess) { // 로그인o
