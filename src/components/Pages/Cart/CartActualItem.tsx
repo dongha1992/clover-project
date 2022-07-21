@@ -45,8 +45,6 @@ const CartActualItem = ({
     price: menuDetail?.price,
   });
 
-  console.log(menuDetail, holiday);
-
   return (
     <Container isSold={menuDetail?.isSold}>
       <ContentWrapper>
