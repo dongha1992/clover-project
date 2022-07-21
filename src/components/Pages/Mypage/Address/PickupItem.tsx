@@ -8,6 +8,8 @@ import { Obj } from '@model/index';
 import { IDestinationsResponse } from '@model/index';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
+import { useSelector } from 'react-redux';
+import { userForm } from '@store/user';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
 
@@ -21,10 +23,11 @@ const now = dayjs();
 
 const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
   const { spotPickup, main, location, name, receiverName, receiverTel } = item;
+  const { me } = useSelector(userForm);
   const mapper: Obj = {
     PRIVATE: {
       name: '프라이빗',
-      backgroundColor: theme.brandColor5,
+      backgroundColor: theme.brandColor5P,
       color: theme.brandColor,
     },
     // PUBLIC: { name: '퍼블릭', backgroundColor: theme.greyScale6, color: theme.greyScale45 },
@@ -44,7 +47,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
         return (
           <FlexRow margin="0 0 16px 0">
             <SVGIcon name="exclamationMark" />
-            <TextB3R margin="0 0 0 4px" padding='2px 0 0 0' color={theme.brandColor}>
+            <TextB3R margin="0 0 0 4px" padding="2px 0 0 0" color={theme.brandColor}>
               운영 종료된 프코스팟이에요
             </TextB3R>
           </FlexRow>
@@ -55,20 +58,20 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           return (
             <FlexRow margin="0 0 16px 0">
               <SVGIcon name="exclamationMark" />
-              <TextB3R margin="0 0 0 4px" padding='1px 0 0 0' color={theme.brandColor}>
+              <TextB3R margin="0 0 0 4px" padding="1px 0 0 0" color={theme.brandColor}>
                 운영 종료 예정인 프코스팟이에요
               </TextB3R>
             </FlexRow>
-          );  
+          );
         }
       }
       default: {
         return (
-          <FlexRow>
-            <TextH6B padding="0 4px 0 0">픽업</TextH6B>
-            <TextB3R>{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
+          <FlexRow padding='4px 0 0 0'>
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">픽업</TextH6B>
+            <TextB3R color={theme.greyScale65}>{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
           </FlexRow>
-        )
+        );
       }
     }
   }, []);
@@ -79,10 +82,26 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
         <FlexBetween>
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{name}</TextH5B>
-            <Tag margin="0 4px 0 0" {...mapper[spotPickup?.spot.type!]}>
-              {mapper[spotPickup?.spot.type!].name}
-            </Tag>
-            {main && <Tag>기본 프코스팟</Tag>}
+            {
+              spotPickup?.spot.isTrial ? (
+                <Tag margin="0 4px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                  트라이얼
+                </Tag>
+              ) : (
+                spotPickup?.spot.type === 'PRIVATE' ? (
+                  <Tag margin="0 4px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                    프라이빗
+                  </Tag>
+                ) : (
+                  null
+                )
+              )
+            }
+            {
+              main && (
+                <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>기본 프코스팟</Tag>
+              )
+            }
           </FlexRow>
           <TextH6B
             color={theme.greyScale65}
@@ -92,14 +111,18 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
             편집
           </TextH6B>
         </FlexBetween>
-        <TextB3R padding="4px 0 0 0">{location?.address}</TextB3R>
-        <FlexRow padding="5px 0 9px 0">
-          <TextB3R color={theme.greyScale65} padding="">
-            {receiverName}
-          </TextB3R>
-          <Col />
-          <TextB3R color={theme.greyScale65}>{receiverTel}</TextB3R>
-        </FlexRow>
+        <TextB3R padding="4px 0 4px 0">{location?.address}</TextB3R>
+        {
+          receiverName && receiverTel && (
+            <FlexRow padding="0 0 0 0">
+              <TextB3R color={theme.greyScale65} padding="">
+                {receiverName}
+              </TextB3R>
+              <Col />
+              <TextB3R color={theme.greyScale65}>{receiverTel}</TextB3R>
+            </FlexRow>
+          )
+        }
       </FlexCol>
       {renderSpotMsg()}
       <Button

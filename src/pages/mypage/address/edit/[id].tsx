@@ -162,6 +162,9 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
           SET_ALERT({
             alertMessage: '내용을 수정했어요!',
             submitBtnText: '확인',
+            onSubmit: () => {
+              router.push('/mypage/address');
+            },
           })
         );
       },
@@ -318,7 +321,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
                 <FlexColEnd>
                   <TextB2R>{selectedAddress?.spotPickup?.name}</TextB2R>
                   <TextB3R color={theme.greyScale65}>
-                    ({selectedAddress.location?.zipCode}) {selectedAddress?.location?.address}
+                    ({selectedAddress?.location?.zipCode}) {selectedAddress?.location?.address}
                   </TextB3R>
                 </FlexColEnd>
               </FlexBetweenStart>

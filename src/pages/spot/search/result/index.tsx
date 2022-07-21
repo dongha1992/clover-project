@@ -35,7 +35,7 @@ const SpotSearchResultPage = (): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { orderId, isDelivery, keyword, subsDeliveryType, isSubscription, menuId } = router.query;
+  const { orderId, isDelivery, keyword } = router.query;
   const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, isMapSwitch } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
 

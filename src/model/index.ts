@@ -403,11 +403,12 @@ export interface IDestinationsResponse {
   location?: ILocation;
   main?: boolean;
   createdAt?: string;
-  spotPickup?: ISpotPickupInDestinaion;
-  spotPickupId?: number;
+  spotPickup?: ISpotPickupInDestinaion | null;
+  spotPickupId?: number | null;
   spaceType?: string;
   availableTime?: string;
   closedDate?: string;
+  spotId?: number;
 }
 
 export interface IGetDestinationsResponse {
@@ -1216,6 +1217,7 @@ export interface IOrderDetailInOrderDeliveries {
   status: string;
   orderMenus: IOrderMenus[];
   type: string;
+  name?: string;
   subOrderDelivery: ISubOrderDelivery;
 }
 
