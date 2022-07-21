@@ -13,8 +13,6 @@ const CartIcon = ({ onClick }: any) => {
   const cartCount = me ? cartLists?.length : nonMemberCartLists.length;
   const displayCount = cartCount > 9 ? '+9' : cartCount;
 
-  console.log(cartLists, 'cartLists');
-
   return (
     <Container onClick={onClick}>
       <div className="cart">

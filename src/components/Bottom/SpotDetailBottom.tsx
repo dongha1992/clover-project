@@ -13,12 +13,13 @@ import { SPOT_ITEM } from '@store/spot';
 import { userForm } from '@store/user';
 import { cartForm } from '@store/cart';
 import { useDispatch } from 'react-redux';
-import { SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { useQuery } from 'react-query';
 import { useMutation, useQueryClient } from 'react-query';
+import { postDestinationApi } from '@api/destination';
 
 const SpotDetailBottom = () => {
   const dispatch = useDispatch();
@@ -27,13 +28,14 @@ const SpotDetailBottom = () => {
   const { isLoginSuccess, me } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupId } = useSelector(spotSelector);
+  const { userTempDestination } = useSelector(destinationForm);
 
   const pickUpTime = `${spotDetail?.lunchDeliveryStartTime}-${spotDetail?.lunchDeliveryEndTime} / ${spotDetail?.dinnerDeliveryStartTime}-${spotDetail?.dinnerDeliveryEndTime}`;
   // 날짜 커스텀
   const dt = new Date(spotDetail?.openedAt!);
   const openDate = `${dt?.getMonth() + 1}월 ${dt.getDate()}일 ${dt.getHours()}시 오픈 예정이에요.`;
 
-  //주문하기 btn
+  // 스팟 주문하기 - 스팟 상세 주문하기 버튼
   const orderHandler = (e: any): void => {
     e.stopPropagation();
     const destinationInfo = {
@@ -50,20 +52,60 @@ const SpotDetailBottom = () => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = () => {
-      // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });
+    const goToCart = async() => { // 로그인 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
+      const reqBody = { 
+        name: spotDetail?.name!,
+        delivery: 'SPOT',
+        deliveryMessage: '',
+        main: false,
+        receiverName: '',
+        receiverTel: '',
+        location: {
+          addressDetail: spotDetail?.location?.addressDetail!,
+          address: spotDetail?.location?.address!,
+          zipCode: spotDetail?.location?.zipCode!,
+          dong: spotDetail?.location?.dong!,
+        },
+        spotPickupId: spotPickupId,
+      };
+      try{
+        const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
+          if (data.code === 200) {
+            const response = data.data;
+            const destinationId = response.id;
+            dispatch(
+              SET_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: response.main,
+                deliveryMessage: response.deliveryMessage,
+                receiverName: response.receiverName,
+                receiverTel: response.receiverTel,
+                deliveryMessageType: '',
+                delivery: response.delivery,
+                id: destinationId,
+                spotId: spotDetail?.id,
+              })
+            );
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
+            router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });      
+          };
+      }catch(e){
+        console.error(e);
+      };
     };
 
-    const goToDeliveryInfo = () => {
-      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
+    const goToDeliveryInfo = () => { // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({
         pathname: '/cart/delivery-info',
-        query: { destinationId: spotDetail?.id, isClosed: !!spotDetail?.closedDate },
+        query: { isClosed: !!spotDetail?.closedDate },
       });
     };
 
@@ -84,20 +126,16 @@ const SpotDetailBottom = () => {
       });
     };
 
-    if (!spotDetail?.isOpened) {
-      // 스찻 오픈 예정인 상태 - 주문 불가
+    if (!spotDetail?.isOpened) { // 스찻 오픈 예정인 상태 - 주문 불가
       return;
     }
-    if (spotDetail?.isClosed) {
-      // 스팟 종료된 상태 - 주문 불가
+    if (spotDetail?.isClosed) { // 스팟 종료된 상태 - 주문 불가
       return;
     }
-    if (isLoginSuccess) {
-      //로그인 o
-      if (cartLists.length) {
-        // 장바구니 o
-        if (isDelivery) {
-          if (isSubscription) {
+    if (isLoginSuccess) { //로그인 o
+      if (cartLists.length) { // 장바구니 o
+        if (isDelivery) { // 장바구니 o, 배송 정보에서 넘어온 경우
+          if (isSubscription) {  // 구독에서 넘어옴
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
@@ -109,8 +147,7 @@ const SpotDetailBottom = () => {
                 ),
               })
             );
-          } else {
-            // 장바구니 o , 배송 정보에서 넘어온 경우
+          } else { // 장바구니 o , 배송 정보에서 넘어온 경우
             dispatch(
               SET_BOTTOM_SHEET({
                 content: (
@@ -123,18 +160,15 @@ const SpotDetailBottom = () => {
               })
             );
           }
-        } else {
-          // 로그인 o, 장바구니 o, 스팟 검색에서 cart로 이동
+        } else { // 로그인 o, 장바구니 o, 스팟 검색에서 장바구니(cart)로 이동
           dispatch(
             SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
             })
           );
         }
-      } else {
-        // 장바구니 x
-        if (isSubscription) {
-          // 구독에서 넘어옴
+      } else { // 장바구니 x
+        if (isSubscription) { // 구독에서 넘어옴
           dispatch(
             SET_BOTTOM_SHEET({
               content: (
@@ -146,8 +180,7 @@ const SpotDetailBottom = () => {
               ),
             })
           );
-        } else {
-          // 로그인o and 장바구니 x, cart로 이동
+        } else { // 로그인o and 장바구니 x, 장바구니(cart)로 이동
           dispatch(
             SET_BOTTOM_SHEET({
               content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
@@ -155,8 +188,7 @@ const SpotDetailBottom = () => {
           );
         }
       }
-    } else {
-      // 로그인x, 로그인 이동
+    } else { // 로그인x, 로그인 이동
       dispatch(
         SET_ALERT({
           alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,

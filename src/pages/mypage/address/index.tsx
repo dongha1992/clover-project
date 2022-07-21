@@ -49,6 +49,7 @@ const AddressManagementPage = () => {
     setSelectedTab(tabItem.link);
   };
 
+  // 스팟 주문하기 - 주문관리 스팟 픽업 주문하기
   const goToCart = (item: IDestinationsResponse) => {
     dispatch(SET_DESTINATION({ ...item, closedDate: item.spotPickup?.spot.closedDate }));
     dispatch(SET_USER_DELIVERY_TYPE(item?.delivery?.toLowerCase()!));

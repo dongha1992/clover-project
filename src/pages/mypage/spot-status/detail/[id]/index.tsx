@@ -14,9 +14,10 @@ import router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
-import { SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
+import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store/destination';
 import { useToast } from '@hooks/useToast';
 import { SET_SPOT_STATUS_DETAIL_ITEMS } from '@store/spot';
+import { postDestinationApi } from '@api/destination';
 
 const PLAN_GUIDE = [
   {
@@ -50,6 +51,7 @@ const SpotStatusDetailPage = (): ReactElement => {
   const dispatch = useDispatch();
   const { join, recruited } = router.query;
   const { isLoginSuccess, me } = useSelector(userForm);
+  const { userTempDestination } = useSelector(destinationForm);
   const currentRef = useRef<HTMLDivElement>(null);
   const [locationInfo, setLocationInfo] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<boolean>(false);
@@ -161,27 +163,56 @@ const SpotStatusDetailPage = (): ReactElement => {
     };
   };
 
-  const orderHandler = () => {
-    const destinationInfo = {
-      name: statusDetail?.placeName!,
-      location: {
-        addressDetail: statusDetail?.location.addressDetail!,
-        address: statusDetail?.location.address!,
-        dong: statusDetail?.placeName!,
-        zipCode: statusDetail?.location.zipCode!,
-      },
-      main: false,
-      availableTime: statusDetail?.lunchTime,
-      spaceType: statusDetail?.type,
-      // 스팟 픽업 id check!
-      spotPickupId: id,
-    };
+  // 스팟 주문하기 - 스팟 관리 현황 상세 : 트라이얼 or 오픈 완료 주문하기
+  const orderHandler = async() => {
+    if (isLoginSuccess) { // 로그인 o
 
-    if (isLoginSuccess) {
-      // 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_DESTINATION(destinationInfo));
-      router.push('/cart');
+      // 주문하기 클릭 후 장바구니로 이동
+      const reqBody = { 
+        name: statusDetail?.placeName!,
+        delivery: 'SPOT',
+        deliveryMessage: '',
+        main: false!,
+        receiverName: statusDetail?.userName,
+        receiverTel: statusDetail?.userTel,
+        location: {
+          addressDetail: statusDetail?.location?.addressDetail!,
+          address: statusDetail?.location?.address!,
+          zipCode: statusDetail?.location?.zipCode!,
+          dong: statusDetail?.location?.dong!,
+        },
+        spotPickupId: statusDetail?.id,
+      };
+      try{
+        const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
+          if (data.code === 200) {
+            const response = data.data;
+            const destinationId = response.id;
+            dispatch(
+              SET_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: response.main,
+                deliveryMessage: response.deliveryMessage,
+                receiverName: response.receiverName,
+                receiverTel: response.receiverTel,
+                deliveryMessageType: '',
+                delivery: response.delivery,
+                id: destinationId,
+                spotId: statusDetail?.spotId,
+              })
+            );
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
+            router.push({ pathname: '/cart', query: { isClosed: false } });      
+          };
+      }catch(e){
+        console.error(e);
+      };
     } else {
       // 로그인x, 로그인 이동
       dispatch(

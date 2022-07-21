@@ -122,9 +122,10 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 스팟 주문하기 - 스팟 검색 : 최근 픽업 이력 
+  // item.id : 배송지 id, item.spotPickup.id: 스팟픽업 id, item.spotPickup.spotId: 스팟 id
   const orderHandler = (e: any) => {
     e.stopPropagation();
-    /* NOTICE: destinationInfo의 인터페이스가 서버 response임 */
 
     const destinationInfo = {
       spotId: item?.spotPickup?.spot.id,
@@ -144,15 +145,13 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       closedDate: closedDate,
     };
 
-    const goToCart = () => {
-      // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
+    const goToCart = () => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
       router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });
     };
 
-    const goToDeliveryInfo = () => {
-      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
+    const goToDeliveryInfo = () => { // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!closedDate } });
@@ -167,14 +166,13 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       });
     };
 
-    if (!isOpened) {
-      // 스찻 오픈 예정인 상태 - 주문 불가
+    if (!isOpened) { // 스찻 오픈 예정인 상태 - 주문 불가
       return;
-    }
-    if (isClosed) {
-      // 스팟 종료된 상태 - 주문 불가
+    };
+    if (isClosed) { // 스팟 종료된 상태 - 주문 불가
       return;
-    }
+    };
+
     if (isLoginSuccess) {
       if (orderId) {
         dispatch(
@@ -189,16 +187,12 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           query: { orderId, destinationId },
         });
         return;
-      }
+      };
 
-      if (hasCart) {
-        // 로그인o and 장바구니 o
-        if (isDelivery) {
-          // 장바구니 o, 배송 정보에서 넘어온 경우
-          if (isSubscription) {
-            // 구독에서 넘어옴
-            if (!!closedDate) {
-              // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
+      if (hasCart) { // 로그인o and 장바구니 o
+        if (isDelivery) { // 장바구니 o, 배송 정보에서 넘어온 경우
+          if (isSubscription) { // 구독에서 넘어옴
+            if (!!closedDate) { // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
               dispatch(
                 SET_ALERT({
                   alertMessage: `운영 종료 예정된 프코스팟은\n구독을 이용할 수 없어요!`,
@@ -209,20 +203,15 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             } else {
               handleSubsDeliveryType();
             }
-          } else {
-            // 장바구니 o , 배송 정보에서 넘어온 경우
+          } else { // 장바구니 o , 배송 정보에서 넘어온 경우
             goToDeliveryInfo();
           }
-        } else {
-          // 장바구니 o, 스팟 검색에서 cart로 이동
+        } else { // 장바구니 o, 스팟 검색에서 cart로 이동
           goToCart();
         }
-      } else {
-        // 로그인o and 장바구니 x
-        if (isSubscription) {
-          // 구독에서 넘어옴
-          if (!!closedDate) {
-            // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
+      } else { // 로그인o and 장바구니 x
+        if (isSubscription) { // 구독에서 넘어옴
+          if (!!closedDate) { // 종료 예정인 스팟 - 정기구독 주문 불가 팝업
             dispatch(
               SET_ALERT({
                 alertMessage: `운영 종료 예정된 프코스팟은\n구독을 이용할 수 없어요!`,
@@ -233,13 +222,11 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           } else {
             handleSubsDeliveryType();
           }
-        } else {
-          // 로그인o and 장바구니 x, cart로 이동
+        } else { // 로그인o and 장바구니 x, cart로 이동
           goToCart();
         }
       }
-    } else {
-      // 로그인x, 로그인 이동
+    } else { // 로그인x, 로그인 이동
       dispatch(
         SET_ALERT({
           alertMessage: `로그인이 필요한 기능이에요.\n로그인 하시겠어요?`,
@@ -248,14 +235,21 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           onSubmit: () => router.push('/onboarding'),
         })
       );
-    }
+    };
   };
 
   const goToDetail = (id: number | undefined) => {
-    router.push({
-      pathname: `/spot/detail/${id}`,
-      query: { isSpot: true },
-    });
+    if (isDelivery) {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true, isDelivery: true, },
+      });
+    } else {
+      router.push({
+        pathname: `/spot/detail/${id}`,
+        query: { isSpot: true },
+      });
+    };
   };
 
   return (
