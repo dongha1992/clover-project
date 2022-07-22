@@ -67,7 +67,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = async() => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
+    const goToCart = async(pickupId: number) => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
       const reqBody = { 
         name: list?.name!,
         delivery: 'SPOT',
@@ -81,7 +81,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
           zipCode: list?.location?.zipCode!,
           dong: list?.location?.dong!,
         },
-        spotPickupId: spotPickupId!,
+        spotPickupId: pickupId!,
       };
       try{
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출

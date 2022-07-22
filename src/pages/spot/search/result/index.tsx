@@ -197,7 +197,7 @@ const SpotSearchResultPage = (): ReactElement => {
       refetch();
       setInputKeyword(value);
       router.replace({
-        query: routerQueries,
+        query: {...routerQueries, keyword: value},
       });
     }
   };
@@ -275,7 +275,7 @@ const SpotSearchResultPage = (): ReactElement => {
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());
     router.replace({
-      query: routerQueries,
+      query: {...routerQueries, keyword: keyword},
     });
   };
 
