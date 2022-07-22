@@ -311,7 +311,7 @@ const CartSheet = ({ menuItem }: any) => {
       //id: item.menuId! -> item.menuDetailId!
       return {
         cartId: null,
-        availabilityInfo: null,
+        availabilityInfo: { availability: true, remainingQuantity: 0, menuDetailAvailabilityMessage: 'NONE' },
         menuDetailId: item.menuDetailId,
         name: item.name,
         price: item.price,
