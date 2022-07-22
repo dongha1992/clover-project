@@ -52,7 +52,7 @@ const SpotSearchResult = ({
           <TextH5B>검색결과 {totalCount}개</TextH5B>
           <FilterWrapper onClick={clickFilterHandler}>
             <SVGIcon name="filter" />
-            <TextH6B padding="0 0 0 4px">필터 및 정렬</TextH6B>
+            <TextH6B padding="0 0 0 4px">정렬 및 필터</TextH6B>
           </FilterWrapper>
         </FilterRow>
       )}

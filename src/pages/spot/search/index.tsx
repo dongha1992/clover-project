@@ -191,7 +191,7 @@ const SpotSearchPage = (): ReactElement => {
 
   // 스팟 검색 - 추천 스팟 api
   const { data: spotRecommendList, isLoading: isLoadingRecomand } = useQuery(
-    ['spotRecommendList'],
+    ['spotRecommendList', spotsPosition],
     async () => {
       const params: IParamsSpots = {
         latitude: latitude,
@@ -210,7 +210,7 @@ const SpotSearchPage = (): ReactElement => {
   
   // 스팟 검색 - 이벤트 스팟 api
   const { data: eventSpotList, isLoading: isLoadingEventSpot } = useQuery(
-    ['spotList', 'EVENT'],
+    ['spotList', 'EVENT', spotsPosition],
     async () => {
       const params: IParamsSpots = {
         latitude: latitude,
@@ -437,7 +437,7 @@ const SpotSearchPage = (): ReactElement => {
                             // 최근 픽업 이력이 있는 경우
                             <DefaultSearchContainer>
                               <RecentPickWrapper>
-                                <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                                <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
                                 {pickUpList?.map((item: IDestinationsResponse, index: number) => (
                                   // 스팟 최근 픽업 이력 리스트
                                   <SpotRecentPickupList item={item} key={index} hasCart={true} />
@@ -464,7 +464,7 @@ const SpotSearchPage = (): ReactElement => {
                             // 최근 픽업 이력이 있는 경우
                             <DefaultSearchContainer>
                               <RecentPickWrapper>
-                                <TextH3B padding="0 0 24px 0">최근 픽업 이력</TextH3B>
+                                <TextH3B padding="0 0 12px 0">최근 픽업 이력</TextH3B>
                                 {pickUpList?.map((item: IDestinationsResponse, index: number) => (
                                   // 스팟 최근 픽업 이력 리스트
                                   <SpotRecentPickupList item={item} key={index} hasCart={true} />
