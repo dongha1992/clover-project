@@ -1053,7 +1053,6 @@ const CartPage = () => {
     }
 
     if (selectedDeliveryDay) {
-      console.log('refetched');
       refetch();
     }
   }, [selectedDeliveryDay]);

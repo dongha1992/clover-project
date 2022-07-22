@@ -10,10 +10,7 @@ import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
 import { getFormatPrice } from '@utils/common';
 import { getHolidayByMenu } from '@utils/menu';
-/* TODO: 최대 구매? */
 
-// 판매중지일 먼저
-// 어느 날짜에나 스태퍼는 동일. 인당 제한만
 interface IProps {
   removeCartActualItemHandler: ({
     menuDetailId,
@@ -31,8 +28,6 @@ interface IProps {
   holiday: number[][] | null;
   menuName: string;
 }
-
-/* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
 
 const CartActualItem = ({
   removeCartActualItemHandler,
@@ -129,6 +124,8 @@ const CartActualItem = ({
                 quantity={menuDetail?.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}
+                available={menuDetail?.availabilityInfo}
+                personLimit={personLimit}
               />
             </CountButtonContainer>
           </InfoContainer>
