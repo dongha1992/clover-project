@@ -16,11 +16,14 @@ const OrderDashboard = ({ orderList }: IProps) => {
   const total = reservedCount + preparingCount + deliveringCount + completedCount;
 
   return (
-    <>
+    <Container>
       <FlexCol>
         <FlexBetween pointer onClick={() => router.push('/mypage/order-delivery-history')}>
           <TextH4B>주문/배송 내역</TextH4B>
           <FlexRow>
+            <TextB2R padding="0 8px 0 0" pointer>
+              {total} 건
+            </TextB2R>
             <div>
               <SVGIcon name="arrowRight" />
             </div>
@@ -56,10 +59,22 @@ const OrderDashboard = ({ orderList }: IProps) => {
           </FlexColCenter>
         </FlexBetween>
       </Wrapper>
-    </>
+    </Container>
   );
 };
-
+const Container = styled.div`
+  padding-bottom: 24px;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: ${theme.greyScale3};
+    bottom: 0;
+    left: 0;
+  }
+`;
 const Wrapper = styled.div`
   background-color: ${theme.greyScale3};
   margin-top: 15px;

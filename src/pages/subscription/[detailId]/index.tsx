@@ -169,7 +169,7 @@ const SubsDetailPage = () => {
   return (
     <Container>
       <InfoBox>
-        <TextH4B padding="0 0 24px 0">
+        <TextH4B padding="0 0 24px 0" color={`${orderDetail?.status === 'CANCELED' && '#717171'}`}>
           {status} {orderDetail?.subscriptionPeriod === 'UNLIMITED' && `- ${orderDetail.subscriptionRound}회차`}
         </TextH4B>
         <SubsOrderItem
@@ -186,14 +186,6 @@ const SubsDetailPage = () => {
             unsubscriptionMessage={orderDetail?.unsubscriptionMessage}
             subscriptionPaymentDate={orderDetail?.subscriptionPaymentDate}
           />
-          // <FlexBetween padding="16px" margin="16px 0 0 0" className="failInfoBox">
-          //   {subsFailType === 'payment' ||
-          //     (subsFailType === 'destination' && <TextH6B color={theme.greyScale65}>정기구독 자동 해지 안내</TextH6B>)}
-          //   {subsFailType === 'close' && <TextH6B color={theme.greyScale65}>정기구독 결제 실패 안내</TextH6B>}
-          //   <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={subsCloseSheetHandler}>
-          //     자세히
-          //   </TextH6B>
-          // </FlexBetween>
         )}
       </InfoBox>
 
