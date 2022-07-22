@@ -47,12 +47,19 @@ const SpotSearchResultPage = (): ReactElement => {
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
+  const [routerQueries, setRouterQueries] = useState({});
 
   const userLocationLen = userLocation.emdNm?.length! > 0;
   const latLen = spotsPosition?.latitude !== null;
   const latitude = latLen ? Number(spotsPosition?.latitude) : null;
   const lonLen = spotsPosition?.longitude !== null;
   const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
+
+  useEffect(() => {
+    if (router.isReady) {
+      setRouterQueries(router.query);
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -182,7 +189,7 @@ const SpotSearchResultPage = (): ReactElement => {
         getSpotsAllList();
         setSearchResult([]);
         return;
-      };
+      }
       defaultSortRedioId();
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
       setSpotListAllCheck(false);
@@ -190,10 +197,7 @@ const SpotSearchResultPage = (): ReactElement => {
       refetch();
       setInputKeyword(value);
       router.replace({
-        query: { 
-          keyword: value, 
-          isDelivery: isDelivery ? isDelivery: false,
-          },
+        query: routerQueries,
       });
     }
   };
@@ -271,10 +275,7 @@ const SpotSearchResultPage = (): ReactElement => {
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());
     router.replace({
-      query: { 
-        keyword: keyword, 
-        isDelivery: isDelivery ? isDelivery: false,
-       },
+      query: routerQueries,
     });
   };
 

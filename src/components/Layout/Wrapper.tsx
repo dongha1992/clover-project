@@ -99,7 +99,7 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  background-color: grey;
+  background-color: #f4f4f4;
   /* width: 100vw;
   height: 100vh;
   overflow-y: scroll;

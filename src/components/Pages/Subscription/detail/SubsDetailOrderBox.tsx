@@ -56,7 +56,11 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
     );
   };
 
-  const goToReview = () => {};
+  const goToReview = () => {
+    // router.push(
+    //   `/mypage/review/write/${item.id}?menuId=${review.menuId}&menuDetailId=${item.orderMenus[0].menuDetailId}&orderType=${review.orderType}`
+    // )
+  };
 
   const deliveryInfoChangeHandler = () => {
     router.push({
@@ -125,7 +129,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
               </MenuTextBox>
             </MenuLi>
           ))}
-          {item?.status === 'COMPLETED' && (
+          {item?.status === 'COMPLETED' && !item.orderMenus[0].hasReview && (
             <MenuLi className="menuLi">
               <Button backgroundColor="#fff" color="#242424" border onClick={goToReview}>
                 후기 작성하기

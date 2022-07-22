@@ -16,7 +16,7 @@ const SubsDetailOrderInfo = ({ status, orderId }: IProps) => {
   const orderStatus = useSubsOrderStatus(subsCalendarSelectOrders[0]?.status, status);
   return (
     <Container>
-      <TextH4B padding="24px 24px 0">
+      <TextH4B padding="24px 24px 0" color={`${subsCalendarSelectOrders[0]?.status === 'CANCELED' && '#717171'}`}>
         {orderStatus} ({subsCalendarSelectOrders.length})
       </TextH4B>
       <ul className="SubsDetailOrderWrapper">

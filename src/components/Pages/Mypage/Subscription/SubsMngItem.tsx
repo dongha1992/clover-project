@@ -38,7 +38,9 @@ const SubsMngItem = ({ item }: IProps) => {
     <Container>
       <FlexBetween>
         <FlexRowStart>
-          <TextH5B margin="0 8px 0 0">{SUBS_STATUS[item?.status]}</TextH5B>
+          <TextH5B margin="0 8px 0 0" color={`${item?.status === 'CANCELED' && '#717171'}`}>
+            {SUBS_STATUS[item?.status]}
+          </TextH5B>
           <SubsLabel
             subsPeriod={item?.subscriptionPeriod!}
             delivery={item?.delivery}
