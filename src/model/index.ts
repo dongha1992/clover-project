@@ -2089,6 +2089,12 @@ export interface ICartAvailabilty {
   remainingQuantity: number;
 }
 
+export interface ICartCountResponse {
+  code: number;
+  message: string;
+  data: number;
+}
+
 export interface IMenuDetailsInCart {
   cartId: number | null;
   availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string } | null;

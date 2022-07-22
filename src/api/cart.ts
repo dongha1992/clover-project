@@ -1,6 +1,13 @@
 import { AxiosResponse } from 'axios';
 import { Api } from './Api';
-import { IGetCartResponse, IResponse, ICreateCartRequest, IDeleteCartRequest, IPatchCartRequest } from '@model/index';
+import {
+  IGetCartResponse,
+  IResponse,
+  ICreateCartRequest,
+  IDeleteCartRequest,
+  IPatchCartRequest,
+  ICartCountResponse,
+} from '@model/index';
 
 export const getCartsApi = ({
   params,
@@ -28,4 +35,8 @@ export const deleteCartsApi = (data: IDeleteCartRequest[], cartId: number): Prom
 
 export const patchCartsApi = (data: IPatchCartRequest): Promise<AxiosResponse<IResponse>> => {
   return Api.patch(`cart/v1/carts/menu`, data);
+};
+
+export const getCartCountApi = (): Promise<AxiosResponse<ICartCountResponse>> => {
+  return Api.get(`cart/v1/carts/count`);
 };

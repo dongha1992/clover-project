@@ -109,7 +109,8 @@ const CartSheet = ({ menuItem }: any) => {
       onSuccess: async () => {
         showToast({ message: '상품을 장바구니에 담았어요! 😍' });
         dispatch(INIT_BOTTOM_SHEET());
-        await queryClient.refetchQueries('getCartList');
+        // await queryClient.refetchQueries('getCartList');
+        await queryClient.refetchQueries('getCartCount');
       },
     }
   );
@@ -297,8 +298,6 @@ const CartSheet = ({ menuItem }: any) => {
 
     setSelectedMenus(newSelectedMenus);
   };
-
-  console.log(menuItem, 'menuItem');
 
   const addNonMemberCart = () => {
     const menuObj = {
