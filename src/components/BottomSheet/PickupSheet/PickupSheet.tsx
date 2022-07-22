@@ -12,7 +12,7 @@ import { ISpotPickupInfo, ISpotPickupInfoInDestination } from '@model/index';
 type TPrams = {
   pickupInfo?: any;
   spotType?: string;
-  onSubmit?: () => void;
+  onSubmit?: (pickupId: number) => void;
   isMypage?: boolean;
 };
 
@@ -25,24 +25,21 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
     dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
   }, [selectedPickupId]);
 
-  const changeRadioHandler = (id: number) => {
-    setSelectedPickupId(id);
-  };
-
   const checkHandler = () => {
     setNoticeChecked(!noticeChecked);
   };
-
+  
   const submitHandler = (): void => {
+    
     if (spotType === 'PRIVATE') {
       if (noticeChecked) {
-        onSubmit && onSubmit();
+        onSubmit && onSubmit(selectedPickupId);
         dispatch(INIT_BOTTOM_SHEET());
       } else {
         return;
       }
     } else {
-      onSubmit && onSubmit();
+      onSubmit && onSubmit(selectedPickupId);
       dispatch(INIT_BOTTOM_SHEET());
     }
   };
@@ -57,7 +54,7 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
         {pickupInfo?.map((i: any, index: number) => {
           return (
             <PickWrapper key={index}>
-              <RadioButton onChange={() => changeRadioHandler(i.id)} isSelected={selectedPickupId === i.id} />
+              <RadioButton onChange={() => setSelectedPickupId(i.id)} isSelected={selectedPickupId === i.id} />
               <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
             </PickWrapper>
           );
