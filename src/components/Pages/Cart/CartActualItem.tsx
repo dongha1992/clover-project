@@ -48,52 +48,51 @@ const CartActualItem = ({
     price: menuDetail?.price,
   });
 
-  const hasLimitDate = holiday?.length! > 0;
+  const { menuDetailAvailabilityMessage, availability, remainingQuantity } = menuDetail?.availabilityInfo;
+
+  //PERIOD?
+  const defaultStatus = availability && !remainingQuantity;
   const isSold = menuDetail.isSold;
 
-  const personLimitQuantity = menuDetail?.availabilityInfo?.menuDetailAvailabilityMessage === 'PERSON';
-  const hasPersonLimit =
-    personLimitQuantity &&
-    (!menuDetail?.availabilityInfo?.remainingQuantity || !menuDetail?.availabilityInfo?.availability);
+  const personLimit = menuDetailAvailabilityMessage === 'PERSON';
+  const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
+  const dateLimit = menuDetailAvailabilityMessage === 'DAILY' || 'WEEKLY';
 
-  const hasLimitQuantity = !personLimitQuantity && menuDetail?.availabilityInfo?.remainingQuantity !== 0;
-  const defaultStatus = menuDetail?.availabilityInfo?.availability && !menuDetail?.availabilityInfo?.remainingQuantity;
-  const soldCases = isSold || hasPersonLimit || !menuDetail?.availabilityInfo?.availability;
+  const isPersonLimit = personLimit && (!remainingQuantity || !availability);
+  const soldCases = isSold;
 
   const checkMenuStatus = (): string => {
     switch (true) {
-      case hasLimitDate: {
+      case holidayLimit: {
         return `${getHolidayByMenu(holiday!)} 배송이 불가능해요`;
       }
       case isSold:
-      case !menuDetail?.availabilityInfo?.availability: {
         return '품절된 상품이에요.';
-      }
 
-      case hasLimitQuantity: {
+      case dateLimit: {
         let message = '';
-        if (menuDetail?.availabilityInfo?.availability) {
-          message = `품절 임박! 상품이 ${menuDetail?.availabilityInfo?.remainingQuantity}개 남았어요.`;
+        if (availability) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
         } else {
-          message = '품절된 상품이에요.';
+          message = '선택한 날짜에 상품이 품절됐어요';
         }
         return message;
       }
-      case personLimitQuantity: {
+      case personLimit: {
         let message = '';
-        if (hasPersonLimit) {
+        if (isPersonLimit) {
           message = '구매 가능한 수량을 초과했어요';
         } else {
-          message = `최대 ${menuDetail?.availabilityInfo?.remainingQuantity}개까지 구매 가능해요`;
+          message = `최대 ${remainingQuantity}개까지 구매 가능해요`;
         }
         return message;
       }
 
       default:
-        return '';
+        return '품절된 상품이에요.(임시메시지)';
     }
   };
-  console.log(menuDetail, menuId, '@@@#!@#!@#!');
+
   return (
     <Container isSold={soldCases}>
       <ContentWrapper>

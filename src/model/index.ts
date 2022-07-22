@@ -2109,7 +2109,7 @@ export interface ICartCountResponse {
 
 export interface IMenuDetailsInCart {
   cartId: number | null;
-  availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string } | null;
+  availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string };
   menuDetailId: number;
   name: string;
   price: number;

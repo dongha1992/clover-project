@@ -868,9 +868,7 @@ const CartPage = () => {
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
   const getCanCheckedMenus = (list: IGetCart[]) => {
-    return list?.filter(
-      (item) => !item.isSold && !checkIsAllSoldout(item.menuDetails) && checkCartMenuStatus(item.menuDetails)
-    )!;
+    return list?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
   };
 
   const goToDeliveryInfo = () => {
@@ -893,6 +891,25 @@ const CartPage = () => {
       dispatch(
         SET_ALERT({
           alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
+          onSubmit: () => {
+            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
+            window.scrollTo({
+              behavior: 'smooth',
+              left: 0,
+              top: offsetTop,
+            });
+          },
+        })
+      );
+      return;
+    }
+
+    const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
+
+    if (!allAvailableMenus) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '현재 주문할 수 없는 상품이 있어요.',
           onSubmit: () => {
             const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
             window.scrollTo({
@@ -1036,6 +1053,7 @@ const CartPage = () => {
     }
 
     if (selectedDeliveryDay) {
+      console.log('refetched');
       refetch();
     }
   }, [selectedDeliveryDay]);
@@ -1073,7 +1091,6 @@ const CartPage = () => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
       const canCheckMenus = getCanCheckedMenus(cartItemList);
-      console.log(canCheckMenus, 'canCheckMenus');
 
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
         setIsAllchecked(true);
