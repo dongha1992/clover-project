@@ -49,6 +49,8 @@ const SpotSearchKakaoMap = ({
   const [selectedSpotIdx, setSelectedSpotIdx] = useState<number | null>(0);
   const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false);
   const [successPosition, setSuccessPosition] = useState<boolean>(false);
+  const [maxZoonOut, setMaxZoomOut] = useState<boolean>(false);
+  const [minZoomIn, setMinZoomIn] = useState<boolean>(false);
   const spotList = spotSearchList ?? [];
   const idx = currentSlickIdx&&currentSlickIdx;
   const SelectedSpotArr = spotListAllCheck ?  spotList[selectedSpotIdx!] : spotList[idx!];
@@ -324,14 +326,24 @@ const SpotSearchKakaoMap = ({
 
         // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수
         const zoomIn = () => {
-          const level = map.getLevel() - 1;
+          const getLevel = map.getLevel();
+          const level = getLevel - 1;
           map.setLevel(level);
+          setMaxZoomOut(false);
+          if(getLevel <= 2) {
+            setMinZoomIn(true);
+          };
         };
       
         // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수
         const zoomOut = () => {
-          const level = map.getLevel() + 1;
+          const getLevel = map.getLevel();
+          const level = getLevel + 1;
           map.setLevel(level);
+          setMinZoomIn(false);
+          if(getLevel >= 8){
+            setMaxZoomOut(true);
+          };
         };
 
         window.zoomIn = zoomIn;
@@ -355,11 +367,11 @@ const SpotSearchKakaoMap = ({
     <MapWrapper>
       <ZoomContralWrapper>
         <ZoomIn onClick={()=>window.zoomIn()}>
-          <SVGIcon name='mapZoomIn' />
+          <SVGIcon name={`${minZoomIn ? 'mapNoneZoomIn' : 'mapZoomIn'}`} />
         </ZoomIn>
         <Col />
         <ZoomOut onClick={()=>window.zoomOut()}>
-          <SVGIcon name='mapZoomOut' />
+          <SVGIcon name={`${maxZoonOut ? 'mapNoneZoomOut' : 'mapZoomOut'}`} />
         </ZoomOut>
       </ZoomContralWrapper>
       <SvgWrapper show={showInfoWindow} onClick={()=>window.getCurrentPosBtn()}>
