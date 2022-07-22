@@ -244,7 +244,7 @@ const SpotPage = () => {
       <HeaderTitle>
         <TextH2B padding="24px 24px 0 24px">
           {`${spotCount.toLocaleString()}개의 프코스팟이\n`}
-          {isLoginSuccess ? <span>{me?.name}</span> : '회원'}님을 기다려요!
+          {isLoginSuccess ? <span>{me?.nickName ? me?.nickName : me?.name}</span> : '회원'}님을 기다려요!
         </TextH2B>
       </HeaderTitle>
       <RegistrationsCTAWrapper>
