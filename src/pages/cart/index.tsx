@@ -42,6 +42,8 @@ import {
   IDeleteCartRequest,
   IOrderOptionsInOrderPreviewRequest,
   ICreateCartRequest,
+  IMenuDetailsId,
+  IDisposable,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -75,20 +77,6 @@ import { DeliveryTypeInfoSheet } from '@components/BottomSheet/DeliveryTypeInfoS
 dayjs.locale('ko');
 
 /*TODO: 카트 삭제 id 처리 */
-
-interface IMenuDetailsId {
-  menuDetailId: number;
-  menuQuantity: number;
-}
-
-export interface IDisposable {
-  id: number;
-  value?: string;
-  quantity: number;
-  name: string;
-  price: number;
-  isSelected: boolean;
-}
 
 const now = dayjs();
 const REST_HEIGHT = 60;
@@ -141,7 +129,9 @@ const CartPage = () => {
     {
       onError: (error: any) => {},
       onSuccess: async (message) => {
-        // dispatch(INIT_NON_MEMBER_CART_LISTS());
+        if (nonMemberCartLists.length !== 0) {
+          dispatch(INIT_NON_MEMBER_CART_LISTS());
+        }
       },
     }
   );
@@ -210,7 +200,6 @@ const CartPage = () => {
         const validDestination = userDestination?.delivery?.toUpperCase() === userDeliveryType.toUpperCase();
 
         if (validDestination && userDeliveryType && userDestination) {
-          console.log(userDestination, 'userDestination');
           const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -316,7 +305,6 @@ const CartPage = () => {
     },
     {
       onSuccess: async (data) => {
-        console.log(data, '--');
         if (userDeliveryType === Object.keys(data)[0]) {
           const availability = Object.values(data)[0];
           if (!availability) {
@@ -358,22 +346,21 @@ const CartPage = () => {
       onSuccess: async () => {
         await queryClient.refetchQueries('getCartList');
       },
+      onError: () => {},
     }
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async ({ reqBody, cartIds }: { reqBody: IDeleteCartRequest[]; cartIds: number[] }) => {
-      // const { data } = await deleteCartsApi(reqBody, cartId);
-
-      const data = await cartIds?.map((cartId: number) => {
-        return deleteCartsApi(reqBody, cartId);
-      });
-
-      console.log(data, 'AFTER DELETE');
+    async ({ reqBody, cartId }: { reqBody: IDeleteCartRequest; cartId: number }) => {
+      const { data } = await deleteCartsApi([reqBody], cartId);
+      return data;
     },
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getCartList');
+      },
+      onError: () => {
+        alert('장바구니 삭제에 실패했습니다.');
       },
     }
   );
@@ -480,12 +467,12 @@ const CartPage = () => {
   };
 
   const removeSelectedItemHandler = async () => {
-    const cartIds = checkedMenus.map((item) => item.cartId)! as number[];
-    const reqBody = pipe(
+    const selectedMenuDetails = pipe(
       checkedMenus,
       flatMap((item) =>
         item.menuDetails.map((detail) => {
           return {
+            cartId: detail?.cartId,
             menuId: item?.menuId!,
             menuDetailId: detail.id,
           };
@@ -506,7 +493,14 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem({ reqBody, cartIds: cartIds! });
+            try {
+              const result = selectedMenuDetails.map((detail) => {
+                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         },
       })
@@ -526,7 +520,7 @@ const CartPage = () => {
 
     const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
 
-    let reqBody = [{ menuId, menuDetailId }];
+    let selectedMenuDetails = [{ menuId, menuDetailId, cartId: cartId ? cartId : null }];
     let alertMessage = '';
 
     if (isMain) {
@@ -542,9 +536,10 @@ const CartPage = () => {
                 return {
                   menuDetailId: item.menuDetailId,
                   menuId: menuId,
+                  cartId: item.cartId,
                 };
               })! || [];
-          reqBody = [...reqBody, ...foundOptional];
+          selectedMenuDetails = [...selectedMenuDetails, ...foundOptional];
         } else {
           alertMessage = '상품을 삭제하시겠어요?';
         }
@@ -554,7 +549,7 @@ const CartPage = () => {
     } else {
       alertMessage = '상품을 삭제하시겠어요?';
     }
-
+    console.log(selectedMenuDetails, 'selectedMenuDetails');
     dispatch(
       SET_ALERT({
         alertMessage,
@@ -563,7 +558,7 @@ const CartPage = () => {
         onSubmit: () => {
           /* TODO: 비회원일 때 선택옵션 끼고 테스트 해봐야함 */
           if (!me) {
-            const menuDetailIds = reqBody.map((ids) => ids.menuDetailId);
+            const menuDetailIds = selectedMenuDetails.map((ids) => ids.menuDetailId);
             let filtered = cartItemList.map((item) => {
               if (item.menuId === menuId) {
                 return {
@@ -585,7 +580,14 @@ const CartPage = () => {
 
             setNonMemberCartListsHandler(filtered);
           } else {
-            mutateDeleteItem({ reqBody, cartIds: [cartId] });
+            try {
+              const result = selectedMenuDetails.map((detail) => {
+                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         },
       })
@@ -593,9 +595,9 @@ const CartPage = () => {
   };
 
   const removeCartDisplayItemHandler = (menu: IGetCart) => {
-    const cartIds = menu.cartId!;
-    const reqBody = menu.menuDetails.map((item) => {
+    const selectedMenuDetails = menu.menuDetails.map((item) => {
       return {
+        cartId: item.cartId!,
         menuId: menu?.menuId!,
         menuDetailId: item.id,
       };
@@ -612,7 +614,14 @@ const CartPage = () => {
             setNonMemberCartListsHandler(filtered);
             return;
           } else {
-            mutateDeleteItem({ reqBody, cartIds: [cartIds] });
+            try {
+              const result = selectedMenuDetails.map((detail) => {
+                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         },
       })
@@ -1042,7 +1051,9 @@ const CartPage = () => {
   useEffect(() => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
-      const canCheckMenus = cartItemList?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
+      const canCheckMenus = cartItemList?.filter(
+        (item) => item.holiday?.length === 0 && !item.isSold && !checkIsAllSoldout(item.menuDetails)
+      )!;
 
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
         setIsAllchecked(true);
@@ -1087,7 +1098,7 @@ const CartPage = () => {
     if (!me) {
       reorderCartList(nonMemberCartLists ?? []);
     } else {
-      // 회원일 경우 비회원 장바구니 리스트 있는 조회
+      // 로그인 경우 비회원 장바구니 리스트 있는 조회
       const hasNonMemberCarts = nonMemberCartLists.length !== 0;
       if (hasNonMemberCarts) {
         const reqBody = nonMemberCartLists.flatMap((item) =>

@@ -49,7 +49,6 @@ const CartItem = ({
             menuId={menu?.menuId!}
             holiday={menu.holiday}
             menuName={menu.name}
-            cartId={menu.cartId!}
           />
         );
       })}

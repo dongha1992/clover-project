@@ -236,13 +236,21 @@ const svgMap: TSvg = {
   ),
   minus: ({ color }: IStyle) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="5" y="8.25" width="8" height="1.5" rx="0.75" fill="#242424" />
+      <rect x="5" y="8.25" width="8" height="1.5" rx="0.75" fill={color ? color : theme.black} />
     </svg>
   ),
   plus: ({ color }: IStyle) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="9.75" y="4" width="10" height="1.5" rx="0.75" transform="rotate(90 9.75 4)" fill="#242424" />
-      <rect x="4" y="8.25" width="10" height="1.5" rx="0.75" fill="#242424" />
+      <rect
+        x="9.75"
+        y="4"
+        width="10"
+        height="1.5"
+        rx="0.75"
+        transform="rotate(90 9.75 4)"
+        fill={color ? color : theme.black}
+      />
+      <rect x="4" y="8.25" width="10" height="1.5" rx="0.75" fill={color ? color : theme.black} />
     </svg>
   ),
   plus18: () => (
