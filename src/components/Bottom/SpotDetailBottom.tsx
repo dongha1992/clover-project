@@ -63,7 +63,7 @@ const SpotDetailBottom = () => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = async () => {
+    const goToCart = async (pickupId: number) => {
       // 로그인 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
       const reqBody = {
         name: spotDetail?.name!,
@@ -78,7 +78,7 @@ const SpotDetailBottom = () => {
           zipCode: spotDetail?.location?.zipCode!,
           dong: spotDetail?.location?.dong!,
         },
-        spotPickupId: spotPickupId,
+        spotPickupId: pickupId,
       };
       try {
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
