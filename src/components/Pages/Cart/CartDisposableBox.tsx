@@ -4,7 +4,7 @@ import { TextB2R, TextH4B, TextH5B, TextH6B, TextH7B, TextB3R, TextH3B } from '@
 import { FlexBetween } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
-import { IDisposable } from '@pages/cart';
+import { IDisposable } from '@model/index';
 
 interface IProps {
   disposableList: IDisposable[];

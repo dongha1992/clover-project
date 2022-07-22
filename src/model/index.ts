@@ -2078,6 +2078,18 @@ export interface IGetOrderMenusResponse {
 }
 
 /* CART */
+export interface IMenuDetailsId {
+  menuDetailId: number;
+  menuQuantity: number;
+}
+export interface IDisposable {
+  id: number;
+  value?: string;
+  quantity: number;
+  name: string;
+  price: number;
+  isSelected: boolean;
+}
 
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
