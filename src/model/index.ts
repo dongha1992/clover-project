@@ -2078,6 +2078,18 @@ export interface IGetOrderMenusResponse {
 }
 
 /* CART */
+export interface IMenuDetailsId {
+  menuDetailId: number;
+  menuQuantity: number;
+}
+export interface IDisposable {
+  id: number;
+  value?: string;
+  quantity: number;
+  name: string;
+  price: number;
+  isSelected: boolean;
+}
 
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
@@ -2089,8 +2101,15 @@ export interface ICartAvailabilty {
   remainingQuantity: number;
 }
 
+export interface ICartCountResponse {
+  code: number;
+  message: string;
+  data: number;
+}
+
 export interface IMenuDetailsInCart {
-  availabilityInfo: { availability: boolean; remainingQuantity: number } | null;
+  cartId: number | null;
+  availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string } | null;
   menuDetailId: number;
   name: string;
   price: number;
@@ -2108,8 +2127,6 @@ export interface IMenuDetailsInCart {
   // menuQuantity?: number;
 }
 export interface IGetCart {
-  // availabilityInfo: ICartAvailabilty;
-  cartId: number | null;
   menuId?: number;
   holiday: number[][] | null;
   name: string;

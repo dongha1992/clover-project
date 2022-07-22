@@ -109,7 +109,8 @@ const CartSheet = ({ menuItem }: any) => {
       onSuccess: async () => {
         showToast({ message: '상품을 장바구니에 담았어요! 😍' });
         dispatch(INIT_BOTTOM_SHEET());
-        await queryClient.refetchQueries('getCartList');
+        // await queryClient.refetchQueries('getCartList');
+        await queryClient.refetchQueries('getCartCount');
       },
     }
   );
@@ -298,8 +299,6 @@ const CartSheet = ({ menuItem }: any) => {
     setSelectedMenus(newSelectedMenus);
   };
 
-  console.log(menuItem, 'menuItem');
-
   const addNonMemberCart = () => {
     const menuObj = {
       isSold: menuItem.isSold,
@@ -311,6 +310,7 @@ const CartSheet = ({ menuItem }: any) => {
     let formatCartLists: IMenuDetailsInCart[] = selectedMenus?.map((item) => {
       //id: item.menuId! -> item.menuDetailId!
       return {
+        cartId: null,
         availabilityInfo: null,
         menuDetailId: item.menuDetailId,
         name: item.name,
@@ -330,7 +330,6 @@ const CartSheet = ({ menuItem }: any) => {
     });
 
     let cartMenus: IGetCart = {
-      cartId: null,
       menuId: menuObj.menuId,
       holiday: null,
       name: menuObj.name,
