@@ -396,7 +396,7 @@ const CartPage = () => {
         setIsAllchecked(!isAllChecked);
       }
     } else {
-      const isAllSoldout = checkIsAllSoldout(menu.menuDetails);
+      const isAllSoldout = checkIsAllSoldout(menu.menuDetails) || !checkCartMenuStatus(menu.menuDetails);
       if (isAllSoldout) return;
 
       tempCheckedMenus.push(menu);
@@ -406,14 +406,15 @@ const CartPage = () => {
   };
 
   const selectAllCartItemHandler = () => {
-    const canCheckMenus = cartItemList.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails));
+    const canCheckMenus = getCanCheckedMenus(cartItemList);
+    const canNotCheckAllMenus = canCheckMenus.length === 0;
 
     if (!isAllChecked) {
       setCheckedMenus(canCheckMenus);
     } else {
       setCheckedMenus([]);
     }
-    setIsAllchecked((prev) => !prev);
+    setIsAllchecked((prev) => (canNotCheckAllMenus ? false : !prev));
   };
 
   const selectDisposableHandler = (id: number) => {
@@ -625,13 +626,6 @@ const CartPage = () => {
     return changedCartItemList;
   };
 
-  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
-  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
-  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
-  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
-  //   return { foundMenu, isMain, hasOptionalMenu };
-  // };
-
   const clickDisposableItemCount = (id: number, quantity: number) => {
     const findItem = disposableList.map((item) => {
       if (item.id === id) {
@@ -667,6 +661,13 @@ const CartPage = () => {
   const subDelieryHandler = (deliveryId: number) => {
     setSubDeliveryId(deliveryId);
   };
+
+  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
+  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
+  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
+  //   return { foundMenu, isMain, hasOptionalMenu };
+  // };
 
   const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
@@ -865,6 +866,12 @@ const CartPage = () => {
       return 0;
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
+
+  const getCanCheckedMenus = (list: IGetCart[]) => {
+    return list?.filter(
+      (item) => !item.isSold && !checkIsAllSoldout(item.menuDetails) && checkCartMenuStatus(item.menuDetails)
+    )!;
+  };
 
   const goToDeliveryInfo = () => {
     const callback = router.push('/cart/delivery-info');
@@ -1065,10 +1072,7 @@ const CartPage = () => {
   useEffect(() => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
-      const canCheckMenus = cartItemList?.filter(
-        (item) => !item.isSold && !checkIsAllSoldout(item.menuDetails) && !checkCartMenuStatus(item.menuDetails)
-      )!;
-
+      const canCheckMenus = getCanCheckedMenus(cartItemList);
       console.log(canCheckMenus, 'canCheckMenus');
 
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
