@@ -42,6 +42,8 @@ import {
   IDeleteCartRequest,
   IOrderOptionsInOrderPreviewRequest,
   ICreateCartRequest,
+  IMenuDetailsId,
+  IDisposable,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -75,20 +77,6 @@ import { DeliveryTypeInfoSheet } from '@components/BottomSheet/DeliveryTypeInfoS
 dayjs.locale('ko');
 
 /*TODO: 카트 삭제 id 처리 */
-
-interface IMenuDetailsId {
-  menuDetailId: number;
-  menuQuantity: number;
-}
-
-export interface IDisposable {
-  id: number;
-  value?: string;
-  quantity: number;
-  name: string;
-  price: number;
-  isSelected: boolean;
-}
 
 const now = dayjs();
 const REST_HEIGHT = 60;
@@ -212,7 +200,6 @@ const CartPage = () => {
         const validDestination = userDestination?.delivery?.toUpperCase() === userDeliveryType.toUpperCase();
 
         if (validDestination && userDeliveryType && userDestination) {
-          console.log(userDestination, 'userDestination');
           const destinationId = userDestination?.id!;
           setDestinationObj({
             ...destinationObj,
@@ -318,7 +305,6 @@ const CartPage = () => {
     },
     {
       onSuccess: async (data) => {
-        console.log(data, '--');
         if (userDeliveryType === Object.keys(data)[0]) {
           const availability = Object.values(data)[0];
           if (!availability) {
@@ -360,6 +346,7 @@ const CartPage = () => {
       onSuccess: async () => {
         await queryClient.refetchQueries('getCartList');
       },
+      onError: () => {},
     }
   );
 
@@ -529,7 +516,6 @@ const CartPage = () => {
     menuDetailId: number;
     cartId: number;
   }) => {
-    console.log(menuDetailId, menuId, cartId, ' menuDetailId,menuId,cartId,');
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
 
     const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
@@ -1065,7 +1051,9 @@ const CartPage = () => {
   useEffect(() => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
-      const canCheckMenus = cartItemList?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
+      const canCheckMenus = cartItemList?.filter(
+        (item) => item.holiday?.length === 0 && !item.isSold && !checkIsAllSoldout(item.menuDetails)
+      )!;
 
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
         setIsAllchecked(true);
