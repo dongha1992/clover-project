@@ -56,12 +56,6 @@ const AddressDetailPage = () => {
           latitude,
           longitude,
         });
-        dispatch(
-          SET_SPOT_POSITIONS({
-            latitude: latitude,
-            longitude: longitude,
-          })
-        );
       } else {
         // 검색 결과가 없는 경우?
       }
@@ -71,6 +65,12 @@ const AddressDetailPage = () => {
   const setUserLocationHandler = () => {
     dispatch(SET_LOCATION(tempLocation));
     dispatch(INIT_LOCATION_TEMP());
+    dispatch(
+      SET_SPOT_POSITIONS({
+        latitude: latitudeLongitude.latitude,
+        longitude: latitudeLongitude.longitude,
+      })
+    );
     if (isSpot) {
       router.push('/spot');
     } else {
