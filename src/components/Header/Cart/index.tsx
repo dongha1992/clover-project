@@ -5,12 +5,35 @@ import { useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
 import { theme } from '@styles/theme';
 import { userForm } from '@store/user';
+import { getCartCountApi } from '@api/cart';
+import { useQuery, useQueryClient } from 'react-query';
 
 const CartIcon = ({ onClick }: any) => {
   const { cartLists, nonMemberCartLists } = useSelector(cartForm);
   const { me } = useSelector(userForm);
 
-  const cartCount = me ? cartLists?.length : nonMemberCartLists.length;
+  const {
+    data: count,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery(
+    ['getCartCount'],
+    async () => {
+      const { data } = await getCartCountApi();
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      cacheTime: 0,
+      enabled: !!me,
+      onSuccess: (data) => {},
+      onError: (error: any) => {},
+    }
+  );
+
+  const cartCount = me ? count! : nonMemberCartLists.length!;
   const displayCount = cartCount > 9 ? '+9' : cartCount;
 
   return (
