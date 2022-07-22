@@ -42,6 +42,7 @@ const SpotSearchResultPage = (): ReactElement => {
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [defaultSpotList, setDefaultSpotList] = useState<ISpotsDetail[]>([]);
   const [paginatedSpotList, setPaginatedSpotList] = useState<ISpotsDetail[]>([]);
+  const [spotAllList, setSpotAllList] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [inputKeyword, setInputKeyword] = useState<any>('');
   const [size, setSize] = useState<number>(10);
@@ -186,7 +187,7 @@ const SpotSearchResultPage = (): ReactElement => {
     const { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
       if (!value) {
-        getSpotsAllList();
+        getSpotsAllList(); // 검색 키워드 없는 상태로 엔터 -> 전체 스팟 리스트 호출
         setSearchResult([]);
         return;
       }
@@ -228,6 +229,9 @@ const SpotSearchResultPage = (): ReactElement => {
         spotFiltered(data.spots);
         setDefaultSpotList(data.spots);
         setSize(10);
+        if(data.spots.length === 0) { // 스팟 결과없는 경우 전체 스팟 리스트 호출
+          getSpotsAllList();
+        }
       },
     }
   );
@@ -242,7 +246,7 @@ const SpotSearchResultPage = (): ReactElement => {
       const { data } = await getSpotsAllListApi(params);
       if (data.code === 200) {
         const list = data.data;
-        setSearchResult(list);
+        setSpotAllList(list);
         setSpotListAllCheck(true);
       }
     } catch (e) {
@@ -285,13 +289,13 @@ const SpotSearchResultPage = (): ReactElement => {
     defaultSortRedioId();
     dispatch(INIT_SEARCH_SELECTED_FILTERS());
     if (!value) {
-      setIsSearched(false);
       setInputKeyword('');
     }
   };
 
   const clearInputHandler = () => {
     if (inputRef.current?.value.length! > 0) {
+      getSpotsAllList();
       defaultSortRedioId();
       dispatch(INIT_SEARCH_SELECTED_FILTERS());
       initInputHandler();
@@ -315,9 +319,9 @@ const SpotSearchResultPage = (): ReactElement => {
     }
   };
 
-  const goToSwitchMap = () => {
+  const noSpotResultSwitchMap = () => {
     // 검색 결과 없는 경우, 내 주변 프코스팟 찾기 버튼
-    getSpotsAllList();
+    // getSpotsAllList();
     dispatch(SET_SPOT_MAP_SWITCH(true));
   };
 
@@ -341,7 +345,7 @@ const SpotSearchResultPage = (): ReactElement => {
   return (
     <Container>
       {isMapSwitch ? (
-        <SpotSearchMapPage spotListAllCheck={spotListAllCheck} spotSearchList={searchResult} isSearched={isSearched} />
+        <SpotSearchMapPage spotListAllCheck={spotListAllCheck} spotSearchList={spotListAllCheck ? spotAllList : searchResult} isSearched={isSearched} />
       ) : (
         <>
           <SearchBarWrapper>
@@ -384,7 +388,7 @@ const SpotSearchResultPage = (): ReactElement => {
                 orderId={orderId}
                 hasCart={true}
                 getLocation={getLocation}
-                goToSwitchMap={goToSwitchMap}
+                noSpotResultSwitchMap={noSpotResultSwitchMap}
                 goToSpotsRegistrations={goToSpotsRegistrations}
                 totalCount={searchResult.length}
               />
