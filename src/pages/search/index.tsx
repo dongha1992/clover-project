@@ -1,22 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { CATEGORY } from '@constants/search';
 import { TextB1R, TextH3B, TextB2R, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { Item } from '@components/Item';
-import { homePadding, FlexWrapWrapper, theme, FlexBetween } from '@styles/theme';
+import { homePadding, textBody2, theme, FlexBetween } from '@styles/theme';
 import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
-import { getMenusApi, getRecommendMenusApi } from '@api/menu';
+import { getRecommendMenusApi } from '@api/menu';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
 import { INIT_MENU_KEYWORD } from '@store/menu';
 import { IMenus, Obj } from '@model/index';
 import router from 'next/router';
+import TextInput from '@components/Shared/TextInput';
 
 const SearchPage = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
+  const [keyword, setKeyword] = useState<string>('');
+
   const {
     data: menus,
     error: mdMenuError,
@@ -32,6 +36,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     dispatch(INIT_MENU_KEYWORD());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkIsSold = (menuList: IMenus[]) => {
@@ -40,8 +45,37 @@ const SearchPage = () => {
     });
   };
 
-  const changeInputHandler = () => {
-    router.push('/search/main');
+  const getSearchResult = async(e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { value } = e.target as HTMLInputElement;
+    if (e.key === 'Enter') {
+      router.push({
+        pathname: '/search/result',
+        query: { keyword: keyword, },
+      });
+    };
+  };
+
+  const changeInputHandler = (e: any) => {
+    const value = e.target.value;
+    setKeyword(value);
+    if (!value) {
+      // setIsSearched(false);
+      setKeyword('');
+    };
+  };
+
+  const clearInputHandler = () => {
+    if (inputRef.current?.value.length! > 0) {
+      initInputHandler();
+      // setIsSearched(false);
+      setKeyword('');
+    };
+  };
+
+  const initInputHandler = () => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
   };
 
   const goToMore = () => {};
@@ -52,16 +86,30 @@ const SearchPage = () => {
 
   return (
     <Container>
-      <Wrapper>
-        <TextInputButton onClick={changeInputHandler}>
-          <div className="sgv">
-            <SVGIcon name="searchIcon" />
-          </div>
-          <TextB2R color={theme.greyScale45} padding="1px 0 0 0">
-            원하시는 상품을 검색해보세요.
-          </TextB2R>
-        </TextInputButton>
-      </Wrapper>
+      <SearchBarWrapper>
+        <label className='textLabel'>
+          {
+            keyword.length === 0 &&
+              <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
+          }
+          <TextInput
+            inputType="text"
+            svg="searchIcon"
+            fontSize='14px'
+            keyPressHandler={getSearchResult}
+            eventHandler={changeInputHandler}
+            value={keyword}
+            ref={inputRef}
+          />
+        </label>
+        {
+          keyword.length > 0 && (
+            <div className="removeSvg" onClick={clearInputHandler}>
+              <SVGIcon name="removeItem" />
+            </div>
+          )
+        }
+      </SearchBarWrapper>
       <DefaultSearchContainer>
         <CategoryWrapper>
           <TextH3B>카테고리</TextH3B>
@@ -125,30 +173,26 @@ const ItemListRowWrapper = styled.div`
   margin-bottom: 48px;
 `;
 
-const TextInputButton = styled.div`
+const SearchBarWrapper = styled.div`
   position: relative;
-  width: 100%;
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid ${theme.greyScale15};
-  outline: none;
-  cursor: pointer;
-  padding: 12px 48px;
-  .sgv {
-    position: absolute;
-    left: 15px;
-    top: 11px;
+  padding-top: 8px;
+  margin: 0 24px;
+  .textLabel {
+    width: 100%;
+    .textPlaceholde {
+      position: absolute;
+      top: 22px;
+      left: 49px;
+      z-index: 100;
+      color: ${theme.greyScale45};
+      ${textBody2};
+    }
   }
-`;
-
-const Wrapper = styled.div`
-  padding: 8px 24px;
-  position: relative;
   .removeSvg {
-    cursor: pointer;
     position: absolute;
-    right: 10%;
-    top: 35%;
+    right: 0;
+    top: 0;
+    padding: 23px 14px 0 0;
   }
 `;
 
