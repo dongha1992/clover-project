@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH2B, TextH5B } from '@components/Shared/Text';
-import { TextH1B } from '@components/Shared/Text';
+import { TextH2B, TextH5B, TextH4B, TextH1B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
@@ -32,7 +31,7 @@ const ReviewOnlyImage = ({
             <TextH5B>{`(${totalReviews})`}</TextH5B>
           </Count>
           <Star>
-            <StarRating rating={Number(averageRating)} width={'30'} height={'30'} />
+            <StarRating rating={Number(averageRating)} width="18" height="18" />
           </Star>
         </Header>
         <ReviewSwipe>
@@ -43,10 +42,11 @@ const ReviewOnlyImage = ({
 
             if (index > 3) return;
             if (reviewsImages?.length > 4 && index === 3) {
+              const numOfImages = reviewsImages.length - 4;
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
-                    <TextH1B color={theme.white}>+ {reviewsImages.length - 4}</TextH1B>
+                    <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
                   <Image
                     src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url}

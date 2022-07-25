@@ -5,11 +5,12 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import { IBanners } from '@model/index';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
+import { IViewer } from '@store/common';
 
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
-  // images: IBanners[];
-  images: any[] | any;
+  currentImg: number;
+  images: IViewer;
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -28,12 +29,13 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
+const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
 
   const settings = {
     arrows: isArrowShow ? true : false,
     dots: false,
+    initialSlide: currentImg,
     spped: 500,
     sliderToShow: 1,
     slidersToScroll: 1,
@@ -56,17 +58,16 @@ const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
       }}
     >
       <Slider {...settings}>
-        {images?.map((url: string, index: number) => {
+        {images.images?.map((url: string, index: number) => {
           //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
           const fromS3 = url.includes('/menu');
           const s3Url = IMAGE_S3_URL + url;
-
           return (
             <ImageWrapper
               src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + url}
               alt="리뷰이미지"
               key={index}
-              isLast={index === images.length + 1}
+              isLast={index === images.images.length + 1}
             />
           );
         })}
@@ -118,13 +119,16 @@ const NextArrowWrapper = styled.div`
   position: absolute;
   right: 0%;
   top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000000;
 `;
 
 const PreviousArrowWrapper = styled.div`
   position: absolute;
   top: 50%;
   left: 0%;
-  z-index: 10;
+  transform: translateY(-50%);
+  z-index: 1000000;
 `;
 
 export default React.memo(ViewerCarousel);
