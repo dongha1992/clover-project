@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import { postSpotRegistrationsRecruiting } from '@api/spot';
 import { ISpotsDetail } from '@model/index';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { SpotAddressDetailFormSheet } from '@components/BottomSheet/SpotAddressDetailFormSheet';
 
 type TPrams = {
   items: ISpotsDetail | undefined;
@@ -24,6 +23,7 @@ type TPrams = {
 const SpotRegisterSheet = ({ items, type, recruited }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();  
+  const { keyword }: any = router.query;
 
   const joinPublicSpotRecruiting = async(id: number) => {
     try{
@@ -41,17 +41,14 @@ const SpotRegisterSheet = ({ items, type, recruited }: TPrams): JSX.Element => {
 
   const submitHandler = (): void => {
     if (type === 'PRIVATE') {
-      dispatch(INIT_BOTTOM_SHEET());  
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: (
-            <SpotAddressDetailFormSheet
-              title="주소 검색"
-            />
-          ),
-          height: '100vh'
-        })
-      );
+      dispatch(INIT_BOTTOM_SHEET());
+      router.push({
+        pathname: '/spot/location/address',
+        query: {
+          type: type,
+          keyword: keyword,
+        }
+      });
   } else if(type === 'PUBLIC') {
       dispatch(INIT_BOTTOM_SHEET());  
       joinPublicSpotRecruiting(items?.id!);
