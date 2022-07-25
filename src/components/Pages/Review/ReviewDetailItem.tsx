@@ -12,7 +12,7 @@ import { getImageApi } from '@api/image';
 interface IProps {
   review: any;
   isDetailPage?: boolean;
-  clickImgViewHandler?: (imgUrlForViwer: string[]) => void;
+  clickImgViewHandler?: (imgUrlForViwer: string[], index: number) => void;
 }
 
 const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
@@ -46,7 +46,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               </RatingAndUser>
               <TagWrapper>
                 <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                  {review?.orderCount}번 째 구매
+                  {review?.orderCount}번째 구매
                 </Tag>
               </TagWrapper>
             </ReviewHeader>
@@ -57,6 +57,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               <ImgWrapper>
                 {review?.images?.map((img: any, index: number) => {
                   //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
+                  if (index > 1) return;
                   const fromS3 = img.url.includes('/menu');
                   const s3Url = IMAGE_S3_URL + img?.url;
 
@@ -64,7 +65,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                   return (
                     <ReviewImageWrapper
                       isFirst
-                      onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForViwer)}
+                      onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
                       <Image
@@ -97,7 +98,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
           </ReviewContent>
         </Wrapper>
       </Container>
-      <BorderLine margin="0 0 24px 0" height={1} />
+      <BorderLine margin="24px 0 24px 0" height={1} />
     </>
   );
 };

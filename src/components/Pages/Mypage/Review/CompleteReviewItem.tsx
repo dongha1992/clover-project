@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-import { theme, showMoreText, FlexBetween } from '@styles/theme';
-import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { theme, showMoreText, FlexBetween, FlexRow } from '@styles/theme';
+import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
@@ -11,22 +11,23 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import { getImageApi } from '@api/image';
+import NextImage from 'next/image';
 
 // 빌드에러남
 // import { ThumborImage } from 'react-thumbor-img';
 
+const MAX_LINE = 5;
 interface IProps {
   review: ICompletionReviews;
-  clickImgViewHandler: (imgUrlForViwer: string[]) => void;
+  clickImgViewHandler: (imgUrlForViwer: string[], index: number) => void;
   goToReviewDetail: ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => void;
 }
 
 const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
+  const [isContentHide, setIsContentHide] = useState<boolean>(false);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-
-  const isContentHide = review.content.length >= 280;
 
   const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
     const formatUrl = url.replace('/image', '');
@@ -46,15 +47,35 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
     return data;
   };
 
+  useEffect(() => {
+    const lines = review.content?.split(/\r|\r\n|\n/);
+    const count = lines?.length;
+    if (count > MAX_LINE) {
+      setIsContentHide(true);
+    }
+  }, []);
+
   return (
     <>
       <Container>
         <Wrapper>
           <ReviewContent>
             <FlexBetween padding="0 0 16px 0">
-              <TextH5B pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
-                {review.menuName}
-              </TextH5B>
+              <FlexRow>
+                <MenuImgWrapper>
+                  <NextImage
+                    src={IMAGE_S3_URL + review?.menuImage?.url}
+                    alt="상품이미지"
+                    width={'100%'}
+                    height={'100%'}
+                    layout="responsive"
+                    className="rounded"
+                  />
+                </MenuImgWrapper>
+                <TextH5B margin="0 0 0 8px" pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
+                  {review.displayMenuName}
+                </TextH5B>
+              </FlexRow>
               <TextH6B
                 pointer
                 color={theme.greyScale65}
@@ -64,7 +85,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                     url: review.menuImage.url,
                     menuId: review.menuId,
                     id: review.id,
-                    name: review.menuName,
+                    name: review.displayMenuName!,
                   })
                 }
               >
@@ -86,7 +107,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
               </RatingAndUser>
             </ReviewHeader>
             <ReviewBody isShow={isShow}>
-              <TextB3R>{review.content}</TextB3R>
+              <TextB2R>{review.content}</TextB2R>
             </ReviewBody>
             {isContentHide ? (
               isShow ? (
@@ -120,7 +141,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                   return (
                     <ReviewImageWrapper
                       isFirst
-                      onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer)}
+                      onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
                       <Image
@@ -214,7 +235,14 @@ const RatingAndUser = styled.div`
 const ImgWrapper = styled.div`
   display: flex;
   width: 100%;
-  /* height: 72px; */
+
+  .rounded {
+    border-radius: 8px;
+  }
+`;
+
+const MenuImgWrapper = styled.div`
+  width: 60px;
   .rounded {
     border-radius: 8px;
   }

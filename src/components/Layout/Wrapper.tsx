@@ -36,7 +36,7 @@ const Wrapper: React.FC = ({ children }) => {
   const toast = useSelector(toastSelector);
   const { imagesForViewer } = useSelector(commonSelector);
 
-  const isClickReviewImg = imagesForViewer.length > 0;
+  const isClickReviewImg = imagesForViewer?.images?.length > 0;
 
   // set 1vh for all devices
   useEffect(() => {
@@ -69,7 +69,7 @@ const Wrapper: React.FC = ({ children }) => {
               {alert.children}
             </Alert>
           )}
-          {isClickReviewImg && <ImageViewer images={imagesForViewer} />}
+          {isClickReviewImg && <ImageViewer imagesForViewer={imagesForViewer} />}
           <Left>
             <div className="left-contents">
               {/* <Image

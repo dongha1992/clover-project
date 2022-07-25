@@ -20,7 +20,7 @@ interface IProps {
   hasCart?: boolean;
   getLocation?: any;
   totalCount?: number;
-  goToSwitchMap?: () => void;
+  noSpotResultSwitchMap?: () => void;
   goToSpotsRegistrations?: () => void;
 }
 
@@ -31,7 +31,7 @@ const SpotSearchResult = ({
   hasCart,
   totalCount,
   goToSpotsRegistrations,
-  goToSwitchMap,
+  noSpotResultSwitchMap,
 }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -75,7 +75,7 @@ const SpotSearchResult = ({
                 backgroundColor={theme.white}
                 color={theme.black}
                 border
-                onClick={goToSwitchMap}
+                onClick={noSpotResultSwitchMap}
               >
                 지도로 주변 프코스팟 찾기
               </Button>

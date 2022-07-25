@@ -32,6 +32,7 @@ const Container = styled.div<{ isSticky: boolean }>`
         top: 56px;
         width: 100%;
         max-width: ${breakpoints.mobile}px;
+        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
       `;
     }
   }}
