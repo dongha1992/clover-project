@@ -4,7 +4,7 @@ import CartDisplayItem from './CartDisplayItem';
 import CartActualItem from './CartActualItem';
 import { IGetCart, IMenuDetailsInCart } from '@model/index';
 interface handleSelectCartItemIProps {
-  handleSelectCartItem: (menu: IGetCart) => void;
+  selectCartItemHandler: (menu: IGetCart) => void;
   clickPlusButton: (menuDetailId: number, quantity: number) => void;
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
   removeCartActualItemHandler: ({
@@ -22,7 +22,7 @@ interface handleSelectCartItemIProps {
 }
 
 const CartItem = ({
-  handleSelectCartItem,
+  selectCartItemHandler,
   checkedMenus,
   clickPlusButton,
   clickMinusButton,
@@ -33,7 +33,7 @@ const CartItem = ({
   return (
     <Container>
       <CartDisplayItem
-        handleSelectCartItem={handleSelectCartItem}
+        selectCartItemHandler={selectCartItemHandler}
         checkedMenus={checkedMenus}
         removeCartDisplayItemHandler={removeCartDisplayItemHandler}
         menu={menu}
