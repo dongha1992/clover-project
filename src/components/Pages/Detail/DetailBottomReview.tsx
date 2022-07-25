@@ -62,8 +62,9 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
     router.push(`/mypage/review`);
   };
 
-  const clickImgViewHandler = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const clickImgViewHandler = (images: string[], index: number) => {
+    const payload = { images, index };
+    dispatch(SET_IMAGE_VIEWER(payload));
   };
 
   return (
