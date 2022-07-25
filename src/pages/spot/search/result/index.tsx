@@ -69,7 +69,7 @@ const SpotSearchResultPage = (): ReactElement => {
     if (inputKeyword?.length === 0) {
       //   getSpotsAllList();
       setSpotListAllCheck(true);
-    }
+    };
 
     const handleScroll = () => {
       const scrollHeight = document.documentElement.scrollHeight;
