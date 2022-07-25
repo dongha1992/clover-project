@@ -133,11 +133,10 @@ const SpotPage = () => {
   };
 
   const goToSpotReq = (type: string): void => {
-    switch (type) {
-      case 'PRIVATE':
-        {
-          if (isLoginSuccess) {
-            // 로그인 o
+    if (isLoginSuccess) { // 로그인 o
+      switch (type) {
+        case 'PRIVATE':
+          {
             if (info?.canPrivateSpotRegistration) {
               // 프라이빗 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 프라이빗 신청 제한: 1개 - 신청 불가
@@ -153,18 +152,10 @@ const SpotPage = () => {
                 })
               );
             }
-          } else {
-            router.push({
-              pathname: '/spot/join/main',
-              query: { type },
-            });
           }
-        }
-        break;
-      case 'PUBLIC':
-        {
-          if (isLoginSuccess) {
-            // 로그인 o
+          break;
+        case 'PUBLIC':
+          {
             if (info?.canPublicSpotRegistraion) {
               // 퍼블릭 스팟 신청 진행중인게 3개 미민안 경우 true (0~2개) - 신청 가능
               // 퍼블릭(단골가게) 스팟 신청 제한: 3개 - 신청 불가
@@ -180,18 +171,10 @@ const SpotPage = () => {
                 })
               );
             }
-          } else {
-            router.push({
-              pathname: '/spot/join/main',
-              query: { type },
-            });
           }
-        }
-        break;
-      case 'OWNER':
-        {
-          if (isLoginSuccess) {
-            // 로그인 o
+          break;
+        case 'OWNER':
+          {
             if (info?.canOwnerSpotRegistraion) {
               // 우리가게(owner) 스팟 신청 진행중인게 1개 미민안 경우 true (0개) - 신청 가능
               // 우리가게 스팟 신청 제한: 1개 - 신청 불가
@@ -207,15 +190,15 @@ const SpotPage = () => {
                 })
               );
             }
-          } else {
-            router.push({
-              pathname: '/spot/join/main',
-              query: { type },
-            });
           }
-        }
-        break;
-    }
+          break;
+      };  
+    } else { // 로그인 x
+      router.push({
+        pathname: '/spot/join/main',
+        query: { type },
+      });
+    };
   };
 
   const goToRegiList = (): void => {
@@ -244,7 +227,7 @@ const SpotPage = () => {
       <HeaderTitle>
         <TextH2B padding="24px 24px 0 24px">
           {`${spotCount.toLocaleString()}개의 프코스팟이\n`}
-          {isLoginSuccess ? <span>{me?.nickName ? me?.nickName : me?.name}</span> : '회원'}님을 기다려요!
+          {isLoginSuccess ? <span>{me?.nickName.length! > 0 ? me?.nickName : me?.name}</span> : '회원'}님을 기다려요!
         </TextH2B>
       </HeaderTitle>
       <RegistrationsCTAWrapper>
