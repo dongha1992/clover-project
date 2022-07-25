@@ -4,6 +4,7 @@ import getDisplayMenuName from './getDisplayMenuName';
 import { getFilteredMenus, reorderedMenusBySoldout } from './getFilteredMenu';
 import { getHolidayByMenu } from './getHolidayByMenu';
 import { getMenuAverageRate } from './getMenuAverageRate';
+import checkCartMenuStatus from './checkCartMenuStatus';
 import getLimitDateOfReview from './getLimitDateOfReview';
 export {
   getMenuDisplayPrice,
@@ -14,5 +15,6 @@ export {
   reorderedMenusBySoldout,
   getMenuAverageRate,
   getHolidayByMenu,
+  checkCartMenuStatus,
   getLimitDateOfReview,
 };
