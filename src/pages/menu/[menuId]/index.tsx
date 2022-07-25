@@ -81,7 +81,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { menuItem } = useSelector(menuSelector);
   const { tab } = router.query;
 
-  console.log(router, 'tab');
   let timer: any = null;
 
   const dispatch = useDispatch();

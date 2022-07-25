@@ -524,7 +524,7 @@ const CartPage = () => {
     } else {
       alertMessage = '상품을 삭제하시겠어요?';
     }
-    console.log(selectedMenuDetails, 'selectedMenuDetails');
+
     dispatch(
       SET_ALERT({
         alertMessage,

@@ -109,9 +109,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
                 <Col />
               </>
             )}
-            <TextPickup>
-              픽업
-            </TextPickup>
+            <TextPickup>픽업</TextPickup>
             <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
           </MeterAndTime>
         );
@@ -178,6 +176,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
               delivery: response.delivery,
               id: destinationId,
               spotId: item.id,
+              availableTime: pickUpTime,
             })
           );
           dispatch(SET_USER_DELIVERY_TYPE('spot'));

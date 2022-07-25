@@ -245,8 +245,6 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
       rating,
     };
 
-    console.log(reqBody, 'reqBody');
-
     mutateCreateMenuReview(reqBody);
   };
 
