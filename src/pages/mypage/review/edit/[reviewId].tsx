@@ -5,7 +5,7 @@ import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon, getImageSize } from '@utils/common';
-import { ButtonGroup } from '@components/Shared/Button';
+import { Button, ButtonGroup } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
@@ -21,6 +21,7 @@ import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
 import NextImage from 'next/image';
 import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
+import { getLimitDateOfReview } from '@utils/menu';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -124,6 +125,10 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       },
     }
   );
+
+  console.log(selectedReviewDetail, 'selectedReviewDetail');
+
+  const { limitAt, deliveryAt, isAvailable } = getLimitDateOfReview(selectedReviewDetail?.menuReview?.createdAt!);
 
   useEffect(() => {
     return () => {
@@ -349,7 +354,6 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip message={'사진과 함께 등록 시 300P 적립!'} top="-45px" width="200px" left="20px" isBottom />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
@@ -393,12 +397,20 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       <PointInfoWrapper>
         <ReviewInfoBottom />
       </PointInfoWrapper>
-      <ButtonGroup
-        leftButtonHandler={deleteReview}
-        rightButtonHandler={finishWriteReview}
-        leftText="삭제하기"
-        rightText="수정하기"
-      />
+      {isAvailable ? (
+        <ButtonGroup
+          leftButtonHandler={deleteReview}
+          rightButtonHandler={finishWriteReview}
+          leftText="삭제하기"
+          rightText="수정하기"
+        />
+      ) : (
+        <ButtonWrapper>
+          <Button height="100%" width="100%" borderRadius="0" onClick={finishWriteReview}>
+            수정하기
+          </Button>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };
@@ -453,6 +465,10 @@ const UploadInputWrapper = styled.label`
     left: 40%;
     top: 35%;
   }
+`;
+
+const ButtonWrapper = styled.div`
+  ${fixedBottom}
 `;
 
 const PreviewImgWrapper = styled.div`

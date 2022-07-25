@@ -90,7 +90,6 @@ const ReviewPage = () => {
 
   const clickImgViewHandler = (images: string[], index: number) => {
     const payload = { images, index };
-    console.log(payload, 'payload');
     dispatch(SET_IMAGE_VIEWER(payload));
   };
 

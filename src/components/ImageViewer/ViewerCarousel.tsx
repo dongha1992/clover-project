@@ -9,6 +9,7 @@ import { IViewer } from '@store/common';
 
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
+  currentImg: number;
   images: IViewer;
 }
 
@@ -28,13 +29,13 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
-  console.log(images, 'images');
+const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
 
   const settings = {
     arrows: isArrowShow ? true : false,
     dots: false,
+    initialSlide: currentImg,
     spped: 500,
     sliderToShow: 1,
     slidersToScroll: 1,
@@ -61,7 +62,6 @@ const ViewerCarousel = ({ images, setCountIndex }: IProps) => {
           //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
           const fromS3 = url.includes('/menu');
           const s3Url = IMAGE_S3_URL + url;
-
           return (
             <ImageWrapper
               src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + url}
@@ -119,13 +119,16 @@ const NextArrowWrapper = styled.div`
   position: absolute;
   right: 0%;
   top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000000;
 `;
 
 const PreviousArrowWrapper = styled.div`
   position: absolute;
   top: 50%;
   left: 0%;
-  z-index: 10;
+  transform: translateY(-50%);
+  z-index: 1000000;
 `;
 
 export default React.memo(ViewerCarousel);
