@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
@@ -16,6 +16,7 @@ import NextImage from 'next/image';
 // 빌드에러남
 // import { ThumborImage } from 'react-thumbor-img';
 
+const MAX_LINE = 5;
 interface IProps {
   review: ICompletionReviews;
   clickImgViewHandler: (imgUrlForViwer: string[], index: number) => void;
@@ -24,10 +25,9 @@ interface IProps {
 
 const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
+  const [isContentHide, setIsContentHide] = useState<boolean>(false);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-
-  const isContentHide = review.content.length >= 280;
 
   const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
     const formatUrl = url.replace('/image', '');
@@ -47,7 +47,13 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
     return data;
   };
 
-  console.log(review);
+  useEffect(() => {
+    const lines = review.content?.split(/\r|\r\n|\n/);
+    const count = lines?.length;
+    if (count > MAX_LINE) {
+      setIsContentHide(true);
+    }
+  }, []);
 
   return (
     <>
