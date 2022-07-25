@@ -60,7 +60,7 @@ const ReviewItem = ({ review, onClick }: IProps) => {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  margin-right: 16px;
+  /* margin-right: 16px; */
 `;
 
 const Wrapper = styled.div`

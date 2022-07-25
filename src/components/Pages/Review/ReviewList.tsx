@@ -10,7 +10,7 @@ interface IProps {
 
 const ReviewList = ({ reviews, onClick }: IProps) => {
   return (
-    <ScrollHorizonList height="106px">
+    <ScrollHorizonList>
       {reviews?.map((review: any, index: number) => {
         if (index > 3) return;
         return <ReviewItem review={review!} key={index} onClick={() => onClick(review)} />;
