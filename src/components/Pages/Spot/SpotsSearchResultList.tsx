@@ -120,22 +120,6 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   // 스팟 주문하기 - 스팟 검색 결과 리스트, 지도뷰 리스트 주문하기
   const orderHandler = (e: any) => {
     e.stopPropagation();
-    const destinationInfo = {
-      id: item.id,
-      name: item.name,
-      location: {
-        addressDetail: item.location.addressDetail,
-        address: item.location.address,
-        dong: item.location.dong,
-        zipCode: item.location.zipCode,
-      },
-      main: false,
-      availableTime: pickUpTime,
-      spaceType: item.type,
-      spotPickupId: spotPickupId!,
-      closedDate: item.closedDate,
-      delivery: 'SPOT',
-    };
 
     const goToCart = async (pickupId: number) => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
@@ -190,17 +174,49 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       }
     };
 
-    const goToDeliveryInfo = () => {
+    const goToDeliveryInfo = (pickupId: number) => {
+      const deliveryInfoDestinationInfo = {
+        id: item.id,
+        name: item.name,
+        location: {
+          addressDetail: item.location.addressDetail,
+          address: item.location.address,
+          dong: item.location.dong,
+          zipCode: item.location.zipCode,
+        },
+        main: false,
+        availableTime: pickUpTime,
+        spaceType: item.type,
+        spotPickupId: pickupId!,
+        closedDate: item.closedDate,
+        delivery: 'SPOT',
+      };
+  
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기(스팟검색)로 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+      dispatch(SET_TEMP_DESTINATION(deliveryInfoDestinationInfo));
       // CHECK_LIST : destinationId 쿼리 지워야 하는지 체크
       router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });
     };
 
-    const handleSubsDeliveryType = () => {
-      destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
-      dispatch(SET_TEMP_DESTINATION(destinationInfo));
+    const handleSubsDeliveryType = (pickupId: number) => {
+      const subsDestinationInfo = {
+        id: item.id,
+        name: item.name,
+        location: {
+          addressDetail: item.location.addressDetail,
+          address: item.location.address,
+          dong: item.location.dong,
+          zipCode: item.location.zipCode,
+        },
+        main: false,
+        availableTime: pickUpTime,
+        spaceType: item.type,
+        spotPickupId: pickupId!,
+        closedDate: item.closedDate,
+        delivery: 'SPOT',
+      };
+      dispatch(SET_TEMP_DESTINATION(subsDestinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
 
       router.push({
