@@ -22,7 +22,6 @@ const SpotDetailHeader = ({ title }: TProps) => {
   const { isMobile } = useSelector(commonSelector);
 
   const router = useRouter();
-  const { isSpot } = router.query;
 
   useEffect(() => {
     return () => {
