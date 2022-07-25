@@ -100,7 +100,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
             alertMessage: `후기 수정이 완료되었습니다.`,
             submitBtnText: '확인',
             onSubmit: () => {
-              router.replace('/mypage/review');
+              router.replace('/mypage/review?tab=/completed');
             },
           })
         );

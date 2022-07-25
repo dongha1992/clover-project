@@ -76,6 +76,12 @@ const ReviewPage = () => {
     });
   }, [selectedTab]);
 
+  useEffect(() => {
+    if (router.query.tab) {
+      setSelectedTab((router.query.tab as string) ? (router.query.tab as string) : 'willWrite');
+    }
+  }, []);
+
   const goToReviewDetail = useCallback(
     ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => {
       dispatch(SET_MENU_IMAGE({ url, name }));
