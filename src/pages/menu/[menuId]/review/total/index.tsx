@@ -118,8 +118,9 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     router.push(`/menu/${menuId}/review/${id}`);
   };
 
-  const clickImgViewHandler = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const clickImgViewHandler = (images: string[], index: number) => {
+    const payload = { images, index };
+    dispatch(SET_IMAGE_VIEWER(payload));
   };
 
   const hasImageReview = reviewsImages?.images?.length! !== 0;

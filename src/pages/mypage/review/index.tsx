@@ -68,7 +68,7 @@ const ReviewPage = () => {
     }
   );
   useEffect(() => {
-    const offsetTop = ref.current?.offsetTop;
+    const offsetTop = ref?.current?.offsetTop! - 70;
     window.scrollTo({
       behavior: 'smooth',
       left: 0,
@@ -88,8 +88,10 @@ const ReviewPage = () => {
     setSelectedTab(tabItem.link);
   };
 
-  const clickImgViewHandler = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const clickImgViewHandler = (images: string[], index: number) => {
+    const payload = { images, index };
+    console.log(payload, 'payload');
+    dispatch(SET_IMAGE_VIEWER(payload));
   };
 
   const countObj = {
@@ -114,12 +116,12 @@ const ReviewPage = () => {
       </InfoWrapper>
       {isWillWrite && !willWriteList?.length && (
         <Center>
-          <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
+          <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없어요 😭</TextB2R>
         </Center>
       )}
       {isComplete && !completeWriteList?.length && (
         <Center>
-          <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없습니다.</TextB2R>
+          <TextB2R color={theme.greyScale65}>후기를 작성할 상품이 없어요 😭</TextB2R>
         </Center>
       )}
       {isWillWrite ? (

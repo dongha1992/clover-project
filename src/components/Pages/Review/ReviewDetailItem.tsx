@@ -12,7 +12,7 @@ import { getImageApi } from '@api/image';
 interface IProps {
   review: any;
   isDetailPage?: boolean;
-  clickImgViewHandler?: (imgUrlForViwer: string[]) => void;
+  clickImgViewHandler?: (imgUrlForViwer: string[], index: number) => void;
 }
 
 const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
@@ -65,7 +65,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                   return (
                     <ReviewImageWrapper
                       isFirst
-                      onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForViwer)}
+                      onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
                       <Image
