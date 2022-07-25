@@ -44,7 +44,7 @@ const SpotSearchResultPage = (): ReactElement => {
   const [paginatedSpotList, setPaginatedSpotList] = useState<ISpotsDetail[]>([]);
   const [spotAllList, setSpotAllList] = useState<ISpotsDetail[]>([]);
   const [isSearched, setIsSearched] = useState<boolean>(false);
-  const [inputKeyword, setInputKeyword] = useState<any>('');
+  const [inputKeyword, setInputKeyword] = useState<string>('');
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isFocusing, setIsFocusing] = useState<boolean>(false);
