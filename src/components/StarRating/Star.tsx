@@ -50,7 +50,7 @@ const Container = styled.div`
   display: flex;
   cursor: pointer;
   > div {
-    padding-right: 8px;
+    padding-right: 2px;
   }
 `;
 

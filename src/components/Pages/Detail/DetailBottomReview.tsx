@@ -37,11 +37,11 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
   const { rating, reviewCount } = menuItem;
 
   const goToReviewImages = useCallback(() => {
-    router.push(`/menu/${menuId}/review/photo`);
+    router.push(`/menu/${menuId}/review/photo?tab=review`);
   }, []);
 
   const goToTotalReview = () => {
-    router.push(`/menu/${menuId}/review/total`);
+    router.push(`/menu/${menuId}/review/total?tab=review`);
   };
 
   const goToReviewDetail = (id: number) => {
@@ -77,6 +77,20 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
             averageRating={rating}
             totalReviews={reviewCount}
           />
+        </Wrapper>
+      )}
+      {hasReviews && (
+        <Wrapper>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            borderRadius="8"
+            margin="0 0 32px 0"
+            onClick={goToWriteReview}
+          >
+            {me ? `후기 작성하기 (최대 ${isSub ? '3,000P' : '300P'} 적립)` : '로그인 후 후기 작성하기'}
+          </Button>
         </Wrapper>
       )}
       {hasReviews ? (

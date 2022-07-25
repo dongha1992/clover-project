@@ -22,7 +22,7 @@ import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ, TAG_MAP } from '@constant
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
-import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
+import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM, SET_REVIEW_IMAGES_COUNT } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
@@ -79,7 +79,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
 
   const { me } = useSelector(userForm);
   const { menuItem } = useSelector(menuSelector);
+  const { tab } = router.query;
 
+  console.log(router, 'tab');
   let timer: any = null;
 
   const dispatch = useDispatch();
@@ -155,7 +157,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     },
 
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        dispatch(SET_REVIEW_IMAGES_COUNT(data.pagination.total));
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId,
@@ -680,7 +684,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
-  console.log(params, '@@@@@@@@@@@@@');
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
 
   return {
