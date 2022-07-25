@@ -10,42 +10,37 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { getComputeDistance } from '@utils/spot';
 import { spotSelector } from '@store/spot';
+import useCurrentLocation from '@hooks/useCurrentLocation';
 
 const SpotHeader = () => {
   const dispatch = useDispatch();
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [distance, setDistance] = useState<number>(0);
+  const { location: currentLocation, error: currentError, currentArrowed, onClickCurrentPosition } = useCurrentLocation();
+  console.log(currentLocation, currentError, currentArrowed );
 
   useEffect(() => {
     if (userLocation?.emdNm) {
-      getLocation();
-    }
+      onClickCurrentPosition();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //GPS - 현재위치 가져오기
-  const getCurrentPosition = () =>
-    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
+  useEffect(()=> {
+    getLocation();
+  }, [currentLocation])
 
   const getLocation = async () => {
-    try {
-      const position: any = await getCurrentPosition();
-      if (position) {
-        // console.log('현재 위치', position.coords.latitude + ' ' + position.coords.longitude);
-        const distance = getComputeDistance(
-          spotsPosition.latitude,
-          spotsPosition.longitude,
-          position.coords.latitude,
-          position.coords.longitude
-        );
-        setDistance(distance);
-      }
-      return { Status: true, position };
-    } catch (error) {
-      console.error('getCurrentLatLong::catcherror =>', error);
-      return { Status: false };
-    }
+    if(currentLocation) {
+      const distance = getComputeDistance(
+        spotsPosition.latitude,
+        spotsPosition.longitude,
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+      );
+      setDistance(distance);  
+    };
   };
 
   const goToCart = () => {
