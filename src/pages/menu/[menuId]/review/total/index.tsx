@@ -157,7 +157,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
               router.push('/mypage/review');
             }}
           >
-            후기 작성하기 (최대 3,000포인트 적립)
+            {me ? '후기 작성하기 (최대 300P 적립)' : '로그인 후 후기 작성하기'}
           </Button>
         </ImageWrapper>
         <BorderLine height={8} />

@@ -22,9 +22,10 @@ interface IProps {
   isSticky: boolean;
   menuId: number;
   reviewsImages?: { images: IDetailImage[]; pagination: IPagination };
+  isSub?: boolean;
 }
 
-const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
+const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }: IProps) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
   const { me } = useSelector(userForm);
@@ -104,7 +105,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
             margin="0 0 32px 0"
             onClick={goToWriteReview}
           >
-            {me ? '후기 작성하기 (최대 3,000포인트 적립)' : '로그인 후 후기 작성하기'}
+            {me ? `후기 작성하기 (최대 ${isSub ? '3,000P' : '300P'} 적립)` : '로그인 후 후기 작성하기'}
           </Button>
         </Empty>
       )}
