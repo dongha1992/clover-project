@@ -22,6 +22,7 @@ const LIMIT = 20;
 
 const MenuSearchResultPage = () => {
     const router = useRouter();
+    const dispatch = useDispatch();
     const { keyword }: any = router.query;
 
     const [defaultMenus, setDefaultMenus] = useState<IMenus[]>();
@@ -30,10 +31,8 @@ const MenuSearchResultPage = () => {
     const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
     const [isSearched, setIsSearched] = useState<boolean>(false);
   
-    const dispatch = useDispatch();
     const { categoryFilters, type } = useSelector(filterSelector);
     const { menuKeyword } = useSelector(menuSelector);
-  
     const isFilter = categoryFilters?.order || categoryFilters?.filter;
 
     useEffect(() => {
@@ -70,15 +69,33 @@ const MenuSearchResultPage = () => {
       };
 
       if (keyword) {  
-        console.log('top', keyword);
+        startMenuSearch(keyword);
         dispatch(SET_MENU_KEYWORD(keyword));
         dispatch(INIT_CATEGORY_FILTER());
-        startMenuSearch(keyword);
         reOrderRecentKeywords(keyword);
         // refetch();
       };
     }, [keyword]);
-  
+    
+    const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      const { value } = e.target as HTMLInputElement;
+      if (e.key === 'Enter') {
+        if (!value) {
+          setSearchResult([]);
+          return;
+        }
+        dispatch(SET_MENU_KEYWORD(value));
+        dispatch(INIT_CATEGORY_FILTER());
+        startMenuSearch(value);
+        reOrderRecentKeywords(value);
+        setInputKeyword(value);
+        refetch();
+        router.replace({
+          query: { keyword: value },
+        });
+      }
+    };
+
     const {
       error: menuError,
       refetch,
@@ -88,8 +105,8 @@ const MenuSearchResultPage = () => {
       ['getMenus'],
       async () => {
         const params = {
-          type: '',
           keyword: inputKeyword,
+          type: '',
         };
         const { data } = await getMenusApi(params);
         return data.data;
@@ -129,24 +146,6 @@ const MenuSearchResultPage = () => {
       if (!value) {
         setSearchResult([]);
         setIsSearched(false);
-      }
-    };
-  
-    const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-      const { value } = e.target as HTMLInputElement;
-      if (e.key === 'Enter') {
-        if (!value) {
-          setSearchResult([]);
-          return;
-        }
-        dispatch(SET_MENU_KEYWORD(value));
-        dispatch(INIT_CATEGORY_FILTER());
-        startMenuSearch(value);
-        reOrderRecentKeywords(value);
-        refetch();
-        router.replace({
-          query: {keyword: value},
-        });
       }
     };
   
@@ -215,6 +214,7 @@ const MenuSearchResultPage = () => {
       <Container>
         <Wrapper>
           <TextInput
+            inputType="text"
             placeholder="원하시는 상품을 검색해보세요."
             svg="searchIcon"
             keyPressHandler={getSearchResult}
