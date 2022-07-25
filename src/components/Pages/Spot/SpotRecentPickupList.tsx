@@ -151,7 +151,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       main: false,
       availableTime: recentPickupTime!,
       spaceType: item?.spotPickup?.spot.type!,
-      spotPickupId: spotPickupId! || item?.spotPickup?.id,
+      spotPickupId: item?.spotPickup?.id,
       closedDate: closedDate,
     };
 
@@ -286,7 +286,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     <Container
       spotClose={isClosed}
       onClick={() => {
-        isSubs && (item?.spotPickup?.spot.isTrial || isLocker) ? null : goToDetail(item?.id);
+        isSubs && (item?.spotPickup?.spot.isTrial || isLocker) ? null : goToDetail(item?.spotPickup?.spotId);
       }}
     >
       <FlexColStart>
