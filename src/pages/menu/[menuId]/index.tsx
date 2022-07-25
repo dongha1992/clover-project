@@ -17,13 +17,12 @@ import Image from 'next/image';
 import { Tag } from '@components/Shared/Tag';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
-import { ReviewList } from '@components/Pages/Review';
+import { ReviewList, ReviewItem } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ, TAG_MAP } from '@constants/menu';
-import Link from 'next/link';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartForm } from '@store/cart';
-import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
+import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM, SET_REVIEW_IMAGES_COUNT } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
@@ -57,6 +56,8 @@ import cloneDeep from 'lodash-es/cloneDeep';
 import { getPromotionCodeApi } from '@api/promotion';
 import { getBannersApi } from '@api/banner';
 import { IMAGE_S3_URL } from '@constants/mock';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -78,7 +79,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
 
   const { me } = useSelector(userForm);
   const { menuItem } = useSelector(menuSelector);
+  const { tab } = router.query;
 
+  console.log(router, 'tab');
   let timer: any = null;
 
   const dispatch = useDispatch();
@@ -154,7 +157,9 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     },
 
     {
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        dispatch(SET_REVIEW_IMAGES_COUNT(data.pagination.total));
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId,
@@ -254,6 +259,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   };
 
   const renderBottomContent = () => {
+    const isSub = menuDetail?.type === 'SUBSCRIPTION';
+
     switch (selectedTab) {
       case '/menu/detail/review': {
         if (isOpenSoon) {
@@ -265,6 +272,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
             isSticky={isSticky}
             menuId={menuDetail?.id!}
             reviewsImages={reviewsImages!}
+            isSub={isSub}
           />
         );
       }
@@ -445,21 +453,28 @@ const MenuDetailPage = ({ menuId }: IProps) => {
         </MenuDetailWrapper>
         {bestReviews?.length! > 0 && !isTempSold && !isReOpen ? (
           <ReviewContainer>
-            <ReviewWrapper>
-              <ReviewHeader>
-                <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
-                <TextH6B
-                  textDecoration="underline"
-                  color={theme.greyScale65}
-                  padding="0 24px 0 0"
-                  onClick={goToReviewSection}
-                  pointer
-                >
-                  더보기
-                </TextH6B>
-              </ReviewHeader>
-              <ReviewList reviews={bestReviews!} onClick={goToReviewDetail} />
-            </ReviewWrapper>
+            <ReviewHeader>
+              <TextH4B padding="0 0 16px 0">베스트 후기</TextH4B>
+              <TextH6B
+                textDecoration="underline"
+                color={theme.greyScale65}
+                padding="0 24px 0 0"
+                onClick={goToReviewSection}
+                pointer
+              >
+                더보기
+              </TextH6B>
+            </ReviewHeader>
+            <ReviewSwipeContainer className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+              {bestReviews?.map((review: any, index: number) => {
+                if (index > 3) return;
+                return (
+                  <SwiperSlide className="swiper-slide" key={index}>
+                    <ReviewItem review={review!} key={index} onClick={() => goToReviewDetail(review)} />{' '}
+                  </SwiperSlide>
+                );
+              })}
+            </ReviewSwipeContainer>
           </ReviewContainer>
         ) : (
           <BorderLine height={1} margin="0 auto" width={'calc(100% - 48px)'} />
@@ -600,6 +615,16 @@ const CountWrapper = styled.div`
 
 const ReviewContainer = styled.div`
   background-color: ${theme.greyScale3};
+  padding: 24px 0 24px 24px;
+`;
+
+const ReviewSwipeContainer = styled(Swiper)`
+  width: 100%;
+
+  cursor: pointer;
+  .swiper-slide {
+    width: 300px;
+  }
 `;
 
 const AdWrapper = styled.div`
@@ -614,9 +639,6 @@ const BannerImg = styled.img`
   height: 100%;
 `;
 
-const ReviewWrapper = styled.div`
-  padding: 24px 0 24px 24px;
-`;
 const ReviewHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -662,7 +684,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: { menuId: string } }) {
-  console.log(params, '@@@@@@@@@@@@@');
   const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
 
   return {

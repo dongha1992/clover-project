@@ -5,7 +5,7 @@ import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon, getImageSize } from '@utils/common';
-import { ButtonGroup } from '@components/Shared/Button';
+import { Button, ButtonGroup } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
@@ -21,6 +21,7 @@ import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
 import NextImage from 'next/image';
 import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
+import { getLimitDateOfReview } from '@utils/menu';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -99,7 +100,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
             alertMessage: `후기 수정이 완료되었습니다.`,
             submitBtnText: '확인',
             onSubmit: () => {
-              router.replace('/mypage/review');
+              router.replace('/mypage/review?tab=/completed');
             },
           })
         );
@@ -124,6 +125,10 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       },
     }
   );
+
+  console.log(selectedReviewDetail, 'selectedReviewDetail');
+
+  const { limitAt, deliveryAt, isAvailable } = getLimitDateOfReview(selectedReviewDetail?.menuReview?.createdAt!);
 
   useEffect(() => {
     return () => {
@@ -301,7 +306,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>{me?.nickName}님</TextH3B>
+          <TextH3B color={theme.brandColor}>{me?.nickName}님</TextH3B>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
@@ -322,16 +327,15 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
         <RateWrapper>
           <StarRating rating={rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
-            터치하여 별점을 선택해주세요.
+            별점을 선택해 주세요.
           </TextH6B>
         </RateWrapper>
         <TextArea
           name="reviewArea"
-          placeholder=" - 후기 작성 후 조건에 부합할 시 포인트가 자동 지급&#13;&#10;
-          - 후기 내용은 띄어쓰기를 포함한 글자 수로 체크&#13;&#10;
-          - 비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제 가능&#13;&#10;
-          - 상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 적립금 미지급&#13;&#10;
-          - 사진이 자사 제품과 무관할 경우 자동 지급된 포인트 삭제 및 미지급의 불이익이 발생할 수 있음"
+          placeholder=" - 맛과 양, 신선도, 패키지, 조리법 등 상품 대해 만족한 점, 아쉬운 점 모두 솔직하게 남겨주세요. &#13;&#10;
+          - 띄어쓰기 포함한 최소 30자 이상 작성해 주세요.&#13;&#10;
+          - 비방성, 광고글, 문의사항 관련 내용이 포함된 후기는 관리자에 의해 삭제될 수 있어요.&#13;&#10;
+          "
           minLength={0}
           maxLength={1000}
           rows={20}
@@ -341,14 +345,15 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
         />
         <FlexBetween margin="8px 0 0 0">
           <TextB3R color={theme.brandColor}>
-            {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
+            {!over30Letter
+              ? '글자 수 조건 충족!'
+              : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{numberOfReivewContent}/1,000</TextB3R>
+          <TextB3R>{numberOfReivewContent.toLocaleString()}/1,000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" isBottom />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
@@ -392,12 +397,20 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       <PointInfoWrapper>
         <ReviewInfoBottom />
       </PointInfoWrapper>
-      <ButtonGroup
-        leftButtonHandler={deleteReview}
-        rightButtonHandler={finishWriteReview}
-        leftText="삭제하기"
-        rightText="수정하기"
-      />
+      {isAvailable ? (
+        <ButtonGroup
+          leftButtonHandler={deleteReview}
+          rightButtonHandler={finishWriteReview}
+          leftText="삭제하기"
+          rightText="수정하기"
+        />
+      ) : (
+        <ButtonWrapper>
+          <Button height="100%" width="100%" borderRadius="0" onClick={finishWriteReview}>
+            수정하기
+          </Button>
+        </ButtonWrapper>
+      )}
     </Container>
   );
 };
@@ -407,7 +420,7 @@ const Wrapper = styled.div`
   ${homePadding}
 `;
 const ImgWrapper = styled.div`
-  width: 30%;
+  width: 70px;
   .rounded {
     border-radius: 8px;
   }
@@ -452,6 +465,10 @@ const UploadInputWrapper = styled.label`
     left: 40%;
     top: 35%;
   }
+`;
+
+const ButtonWrapper = styled.div`
+  ${fixedBottom}
 `;
 
 const PreviewImgWrapper = styled.div`
