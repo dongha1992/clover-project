@@ -69,7 +69,7 @@ const Wrapper: React.FC = ({ children }) => {
               {alert.children}
             </Alert>
           )}
-          {isClickReviewImg && <ImageViewer images={imagesForViewer} />}
+          {isClickReviewImg && <ImageViewer imagesForViewer={imagesForViewer} />}
           <Left>
             <div className="left-contents">
               {/* <Image

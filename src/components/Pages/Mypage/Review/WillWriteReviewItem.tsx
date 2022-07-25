@@ -6,22 +6,19 @@ import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/common/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
-import getCustomDate from '@utils/destination/getCustomDate';
 import { getDisplayMenuName } from '@utils/menu';
-import dayjs from 'dayjs';
 import { IWillWriteReview } from '@model/index';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import { DeliveryTag } from '@components/Shared/Tag';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { IMAGE_ERROR } from '@constants/menu';
+import { getLimitDateOfReview } from '@utils/menu';
 interface IProps {
   review: IWillWriteReview;
 }
 
 const WillWriteReviewItem = ({ review }: IProps) => {
-  const { dayFormatter: deliveryAt } = getCustomDate(new Date(review.deliveryDate));
-  const writeReviewLimit = dayjs(review.deliveryDate).add(6, 'day').format('YYYY-MM-DD');
-  const { dayFormatter: limitAt } = getCustomDate(new Date(writeReviewLimit));
+  const { limitAt, deliveryAt, isAvailable } = getLimitDateOfReview(review.deliveryDate);
 
   const isSpot = review.delivery === 'SPOT';
   const isSubscription = review.orderType === 'SUBSCRIPTION';
