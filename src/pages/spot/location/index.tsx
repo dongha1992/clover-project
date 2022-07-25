@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { HomeContainer, FlexRow, FlexRowStart, theme } from '@styles/theme';
-import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
+import { HomeContainer, theme } from '@styles/theme';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
@@ -13,7 +13,6 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import { Tag } from '@components/Shared/Tag';
 import { getAvailabilityDestinationApi } from '@api/destination';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
@@ -22,23 +21,38 @@ import { ISpotsDetail } from '@model/index';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SpotRegisterSheet } from '@components/BottomSheet/SpotRegisterSheet';
 import { userForm } from '@store/user';
-import { SpotAddressDetailFormSheet } from '@components/BottomSheet/SpotAddressDetailFormSheet';
+import { useQuery } from 'react-query';
 
 /* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { type } = router.query;
+  const { type, keyword }: any = router.query;
   const { me } = useSelector(userForm);
   const addressRef = useRef<HTMLInputElement>(null);
   const [resultAddress, setResultAddress] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [isTyping, setIsTyping] = useState(false);
+  const [inputKeyword, setInputKeyword] = useState<string>('');
+  const [routerQueries, setRouterQueries] = useState({});
 
   const userId = Number(me?.id);
+
+  useEffect(() => {
+    if (router.isReady) {
+      setRouterQueries(router.query);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if(keyword) {
+      startAddressSearch(keyword);
+      setIsSearched(true);
+    };
+  }, [keyword]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,10 +75,10 @@ const LocationPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-      getSearchAddressResult();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  // useEffect(() => {
+  //     getSearchAddressResult();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [page]);
 
 
   const setCurrentLoc = (location: string) => {
@@ -91,42 +105,78 @@ const LocationPage = () => {
     }
   };
 
-  const addressInputHandler = () => {
-    const keyword = addressRef.current?.value.length;
-    setIsTyping(true);
-    if (addressRef.current) {
-      if (!keyword) {
-        setResultAddress([]);
-        setIsSearched(false);
-        clearInputHandler();
-      }
-    }
+  const startAddressSearch = (keyword: string) => {
+    setInputKeyword(keyword);
+    setIsSearched(true);
+  };
+
+  const changeInputHandler = (e: any) => {
+    const value =  e.target.value;
+    setInputKeyword(value);
+    if (!value) {
+      setInputKeyword('');
+    };
   };
 
   const getSearchAddressResult = async () => {
-    if (addressRef.current) {
-      let query = addressRef.current?.value;
-      const params = {
-        query,
-        page: page,
-      };
-      try {
-        let { data } = await searchAddressJuso(params);
-        const list = data?.results.juso ?? [];
-        setResultAddress((prevList) => [...prevList, ...list]);
-        setTotalCount(data.results.common.totalCount);
-      } catch (err) {
-        console.error(err);
-      }
-    }
+    const params = {
+      query: inputKeyword,
+      page: page,
+    };
+    try {
+      let { data } = await searchAddressJuso(params);
+      const list = data?.results.juso ?? [];
+      setResultAddress((prevList) => [...prevList, ...list]);
+      setTotalCount(data.results.common.totalCount);
+    } catch (err) {
+      console.error(err);
+    };
   };
 
-  const getSearchAddress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      setResultAddress([]);
-      getSearchAddressResult();
-      setIsSearched(true);
+  const {
+    error,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useQuery(
+    ['addressResultList'],
+    async () => {
+      const params = {
+        query: inputKeyword,
+        page: page,
+      };
+        const { data } = await searchAddressJuso(params);
+      return data
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!isSearched,
+      onError: () => {},
+      onSuccess: (data) => {
+        const list = data.results.juso ?? [];
+        setResultAddress((prevList) => [...prevList, ...list]);
+        setTotalCount(data.results.common.totalCount);
+      },
     }
+  );
+
+  const getSearchAddress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const { value } = e.target as HTMLInputElement;
+    if (e.key === 'Enter') {
+      if(value.length === 0) {
+        setResultAddress([]);
+      };
+      startAddressSearch(value);
+      // setResultAddress([]);
+      // getSearchAddressResult();
+      setIsSearched(true);
+      refetch();
+      setInputKeyword(value);
+      router.replace({
+        query: {...routerQueries, keyword: value},
+      });
+    };
   };
 
   const clearInputHandler = () => {
@@ -136,12 +186,8 @@ const LocationPage = () => {
       };
       setResultAddress([]);
       setIsSearched(false);
+      setInputKeyword('');
     };
-
-    if (addressRef.current) {
-      addressRef.current.value = '';
-    }
-    setIsTyping(false);
   };
 
   const alertNoSpotRecruiting = () => {
@@ -175,21 +221,28 @@ const LocationPage = () => {
           );
           return;
         }
-        dispatch(
-          SET_BOTTOM_SHEET({
-            content: (
-              <SpotAddressDetailFormSheet
-                title="주소 검색"
-              />
-            ),
-            height: '100vh'
-          })
-        );
-      }
+        goToAddressDetailPage();
+      };
     } catch (err) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '알 수 없는 에러가 발생했습니다.\n다시 한번 시도해 주세요.',
+          submitBtnText: '확인',
+        })
+      );
       console.error(err);
-    }
+    };
   };
+
+  const goToAddressDetailPage = () => {
+    router.push({
+      pathname: '/spot/location/address',
+      query: {
+        type: type,
+        keyword: inputKeyword,
+      },
+    });
+  }
 
   const getSpotRegistrationSearch = async (i: IJuso) => {
     const params = {
@@ -283,6 +336,10 @@ const LocationPage = () => {
     getSpotRegistrationSearch(i);
   };
 
+  if(isFetching){
+    return <div>로딩중..</div>
+  };
+
   return (
     <HomeContainer>
       <Wrapper>
@@ -292,9 +349,10 @@ const LocationPage = () => {
             placeholder="도로명, 건물명 또는 지번으로 검색"
             inputType="text"
             svg="searchIcon"
-            eventHandler={addressInputHandler}
+            eventHandler={changeInputHandler}
             keyPressHandler={getSearchAddress}
             ref={addressRef}
+            value={inputKeyword}
           />
           {
             addressRef.current?.value && (
