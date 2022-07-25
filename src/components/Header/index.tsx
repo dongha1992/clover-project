@@ -62,7 +62,7 @@ const Header = () => {
   const renderComponent = (currentPath: string) => {
     const headerTitleMap: Obj = {
       '/search': '검색',
-      '/search/main': '검색',
+      '/search/result': '검색',
       '/location': '내 위치 설정하기',
       '/location/address-detail': '내 위치 설정하기',
       '/category/[category]': CATEGORY_TITLE_MAP[category?.toString()!],
@@ -191,7 +191,7 @@ const Header = () => {
 
       case [
         '/search',
-        '/search/main',
+        '/search/result',
         '/mypage/dib/general',
         '/mypage/dib/subscription',
         '/mypage/order-detail',
