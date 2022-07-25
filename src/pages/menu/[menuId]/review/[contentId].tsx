@@ -33,8 +33,9 @@ const ReviewDetailPage = ({ contentId, menuId }: { contentId: string; menuId: st
     }
   );
 
-  const clickImgViewHandler = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const clickImgViewHandler = (images: string[], index: number) => {
+    const payload = { images, index };
+    dispatch(SET_IMAGE_VIEWER(payload));
   };
 
   if (isLoading) {

@@ -2022,6 +2022,7 @@ export interface ICompletionReviews {
   menuId: number;
   menuDetailId?: number;
   orderDeliveryId: number;
+  displayMenuName?: string;
 }
 
 export interface ICompletionReviewsResponse {

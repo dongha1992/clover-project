@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { theme, FlexColStart } from '@styles/theme';
+import { theme, FlexColStart, textH6 } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
@@ -109,9 +109,9 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
                 <Col />
               </>
             )}
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+            <TextPickup>
               픽업
-            </TextH6B>
+            </TextPickup>
             <TextH6B color={theme.greyScale65}>{pickUpTime}</TextH6B>
           </MeterAndTime>
         );
@@ -503,6 +503,13 @@ const Col = styled.div`
   width: 1px;
   background-color: ${theme.greyScale6};
   margin: 0 4px;
+`;
+
+const TextPickup = styled.div`
+  width: 26px;
+  ${textH6};
+  padding: 0 4px 0 0;
+  color: ${theme.greyScale65};
 `;
 
 export default React.memo(SpotsSearchResultList);

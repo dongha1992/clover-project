@@ -62,7 +62,7 @@ const Header = () => {
   const renderComponent = (currentPath: string) => {
     const headerTitleMap: Obj = {
       '/search': '검색',
-      '/search/main': '검색',
+      '/search/result': '검색',
       '/location': '내 위치 설정하기',
       '/location/address-detail': '내 위치 설정하기',
       '/category/[category]': CATEGORY_TITLE_MAP[category?.toString()!],
@@ -87,7 +87,7 @@ const Header = () => {
       '/mypage/friend': '친구 초대',
       '/mypage/review': '후기 관리',
       '/mypage/review/write/[orderDeliveryId]': '후기 작성',
-      '/mypage/review/edit/[reviewId]': '후기 작성',
+      '/mypage/review/edit/[reviewId]': '후기 편집',
       '/mypage/rank': '회원등급',
       '/mypage/customer-service': '고객센터',
       '/mypage/point': '포인트',
@@ -191,7 +191,7 @@ const Header = () => {
 
       case [
         '/search',
-        '/search/main',
+        '/search/result',
         '/mypage/dib/general',
         '/mypage/dib/subscription',
         '/mypage/order-detail',
