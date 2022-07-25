@@ -46,15 +46,18 @@ const CartActualItem = ({
   const { menuDetailAvailabilityMessage, availability, remainingQuantity } = menuDetail?.availabilityInfo;
 
   //PERIOD?
-  const defaultStatus = availability && !remainingQuantity;
-  const isSold = menuDetail.isSold;
 
+  const isSold = menuDetail.isSold;
+  console.log(holiday, '---');
+  const noneLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
   const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
-  const dateLimit = menuDetailAvailabilityMessage === 'DAILY' || 'WEEKLY';
+  const dateLimit = ['DAILY', 'WEEKLY', 'PERIOD'].includes(menuDetailAvailabilityMessage);
 
   const isPersonLimit = personLimit && (!remainingQuantity || !availability);
   const soldCases = isSold;
+
+  const defaultStatus = availability && remainingQuantity === 0;
 
   const checkMenuStatus = (): string => {
     switch (true) {
@@ -83,8 +86,15 @@ const CartActualItem = ({
         return message;
       }
 
-      default:
-        return '품절된 상품이에요.(임시메시지)';
+      default: {
+        let message = '';
+        if (availability) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
+        } else {
+          message = '선택한 날짜에 상품이 품절됐어요';
+        }
+        return message;
+      }
     }
   };
 

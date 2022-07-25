@@ -37,7 +37,7 @@ const DestinationSearchPage = () => {
         delivery: userDeliveryType.toUpperCase(),
       };
       const { data } = await getDestinationsApi(params);
-      console.log(data, '-dd');
+
       return data.data.destinations;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
@@ -128,12 +128,6 @@ const DestinationSearchPage = () => {
             ref={addressRef}
           />
         </TextWrapper>
-        <CurrentLocBtn>
-          <SVGIcon name="locationBlack" />
-          <TextH6B pointer padding="0 0 0 4px">
-            현 위치로 설정하기
-          </TextH6B>
-        </CurrentLocBtn>
         {beforeSearch ? (
           <RecentDelivery
             filteredList={filteredList ?? []}
@@ -160,6 +154,7 @@ const Wrapper = styled.div`
 
 const TextWrapper = styled.div`
   position: relative;
+  margin-bottom: 24px;
 `;
 
 const CurrentLocBtn = styled.div`
