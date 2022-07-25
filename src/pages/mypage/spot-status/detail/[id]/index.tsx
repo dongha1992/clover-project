@@ -40,9 +40,7 @@ const PLAN_GUIDE = [
   },
   {
     title: '우리가게 프코스팟 오픈 기준에 미달인 경우',
-    desc: [
-      '점주 인터뷰 진행 후, 스팟 오픈 요건에 부합하지 않는 경우',
-    ],
+    desc: ['점주 인터뷰 진행 후, 스팟 오픈 요건에 부합하지 않는 경우'],
   },
 ];
 
@@ -60,21 +58,21 @@ const SpotStatusDetailPage = (): ReactElement => {
   const { showToast, hideToast } = useToast();
 
   const loginUserId = me?.id;
-  
-  useEffect(()=> {
-    if(router.isReady) {
+
+  useEffect(() => {
+    if (router.isReady) {
       setId(Number(router.query?.id));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
-  useEffect(()=> {
-    if(recruited){
+  useEffect(() => {
+    if (recruited) {
       const message = '참여해 주셔서 감사해요:)';
       showToast({ message });
       return () => hideToast();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: statusDetail } = useQuery(
@@ -83,58 +81,59 @@ const SpotStatusDetailPage = (): ReactElement => {
       const response = await getSpotsRegistrationStatusDetail(id!);
       return response.data.data;
     },
-    { 
+    {
       onSuccess: (response) => {
         dispatch(SET_SPOT_STATUS_DETAIL_ITEMS(response));
       },
-      refetchOnMount: true, 
-      refetchOnWindowFocus: false, 
-      enabled: !!id, }
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+    }
   );
 
   const tagType = () => {
-    switch(statusDetail?.type){
+    switch (statusDetail?.type) {
       case 'PRIVATE':
-        return '프라이빗'
+        return '프라이빗';
       case 'PUBLIC':
-        return '단골가게'
+        return '단골가게';
       case 'OWNER':
-        return '우리가게'
-    };
+        return '우리가게';
+    }
   };
 
   const spotStatusStep = (i: IGetRegistrationStatus) => {
     if (i?.rejected) {
-      return '오픈 미진행'
-    };
+      return '오픈 미진행';
+    }
     if (i?.type === 'PRIVATE') {
-      if(i?.trialUserCount! >= i?.trialTargetUserCount!) {
-        return '오픈 검토 중'
-      };
-      switch(i?.step) {
+      if (i?.trialUserCount! >= i?.trialTargetUserCount!) {
+        return '오픈 검토 중';
+      }
+      switch (i?.step) {
         case 'CONFIRM':
-          return '검토 중'
+          return '검토 중';
         case 'TRIAL':
-          return '트라이얼 진행 중'
+          return '트라이얼 진행 중';
         case 'OPEN':
-          return '오픈완료'
-      };  
+          return '오픈완료';
+      }
     } else if (i?.type === 'PUBLIC') {
-      switch(i?.step) {
+      switch (i?.step) {
         case 'RECRUITING':
-          return '모집 중'
+          return '모집 중';
         case 'CONFIRM':
-          return '오픈 검토 중'
+          return '오픈 검토 중';
         case 'OPEN':
-          return '오픈완료'
-      };  
+          return '오픈완료';
+      }
     } else if (i?.type === 'OWNER') {
-      switch(i?.step) {
+      switch (i?.step) {
         case 'CONFIRM':
-          return '오픈 검토 중'
+          return '오픈 검토 중';
         case 'OPEN':
-          return '오픈완료'
-      };  
+          return '오픈완료';
+      }
     }
   };
 
@@ -156,19 +155,26 @@ const SpotStatusDetailPage = (): ReactElement => {
   };
 
   const orderCondition = (): boolean | undefined => {
-    if(statusDetail?.type === 'PRIVATE' && (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') && !statusDetail?.rejected) {
+    if (
+      statusDetail?.type === 'PRIVATE' &&
+      (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') &&
+      !statusDetail?.rejected
+    ) {
       return true;
     } else {
       return false;
-    };
+    }
   };
 
   // 스팟 주문하기 - 스팟 관리 현황 상세 : 트라이얼 or 오픈 완료 주문하기
-  const orderHandler = async() => {
-    if (isLoginSuccess) { // 로그인 o
+  const orderHandler = async () => {
+    // const pickUpTime = `${item.lunchDeliveryStartTime}-${item.lunchDeliveryEndTime} / ${item.dinnerDeliveryStartTime}-${item.dinnerDeliveryEndTime}`;
+
+    if (isLoginSuccess) {
+      // 로그인 o
 
       // 주문하기 클릭 후 장바구니로 이동
-      const reqBody = { 
+      const reqBody = {
         name: statusDetail?.placeName!,
         delivery: 'SPOT',
         deliveryMessage: '',
@@ -183,36 +189,36 @@ const SpotStatusDetailPage = (): ReactElement => {
         },
         spotPickupId: statusDetail?.id,
       };
-      try{
+      try {
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
-          if (data.code === 200) {
-            const response = data.data;
-            const destinationId = response.id;
-            dispatch(
-              SET_DESTINATION({
-                name: response.name,
-                location: {
-                  addressDetail: response.location.addressDetail,
-                  address: response.location.address,
-                  dong: response.location.dong,
-                  zipCode: response.location.zipCode,
-                },
-                main: response.main,
-                deliveryMessage: response.deliveryMessage,
-                receiverName: response.receiverName,
-                receiverTel: response.receiverTel,
-                deliveryMessageType: '',
-                delivery: response.delivery,
-                id: destinationId,
-                spotId: statusDetail?.spotId,
-              })
-            );
-            dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({ pathname: '/cart', query: { isClosed: false } });      
-          };
-      }catch(e){
+        if (data.code === 200) {
+          const response = data.data;
+          const destinationId = response.id;
+          dispatch(
+            SET_DESTINATION({
+              name: response.name,
+              location: {
+                addressDetail: response.location.addressDetail,
+                address: response.location.address,
+                dong: response.location.dong,
+                zipCode: response.location.zipCode,
+              },
+              main: response.main,
+              deliveryMessage: response.deliveryMessage,
+              receiverName: response.receiverName,
+              receiverTel: response.receiverTel,
+              deliveryMessageType: '',
+              delivery: response.delivery,
+              id: destinationId,
+              spotId: statusDetail?.spotId,
+            })
+          );
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
+          router.push({ pathname: '/cart', query: { isClosed: false } });
+        }
+      } catch (e) {
         console.error(e);
-      };
+      }
     } else {
       // 로그인x, 로그인 이동
       dispatch(
@@ -225,7 +231,7 @@ const SpotStatusDetailPage = (): ReactElement => {
       );
     }
   };
-  
+
   return (
     <Container order={orderCondition()}>
       <TopStatusWrapper>
@@ -239,12 +245,13 @@ const SpotStatusDetailPage = (): ReactElement => {
         <TextB2R>{`${statusDetail?.location.address} ${statusDetail?.location.addressDetail}`}</TextB2R>
       </TopStatusWrapper>
       <SpotStatusDetailProgressBar item={statusDetail!} />
-      {
-        statusDetail?.type === 'PRIVATE' && !statusDetail?.rejected &&
+      {statusDetail?.type === 'PRIVATE' && !statusDetail?.rejected && (
         <BtnWrapper>
-          <Button color={theme.black} backgroundColor={theme.white} border onClick={privateRegistrationBenefit}>모집 혜택 확인하기</Button>
+          <Button color={theme.black} backgroundColor={theme.white} border onClick={privateRegistrationBenefit}>
+            모집 혜택 확인하기
+          </Button>
         </BtnWrapper>
-      }
+      )}
       <ToggleWrapper>
         <FlexBetween padding="24px" onClick={toggleLocationInfo} pointer>
           <TextH4B>장소 정보</TextH4B>
@@ -255,11 +262,8 @@ const SpotStatusDetailPage = (): ReactElement => {
         </SlideToggle>
       </ToggleWrapper>
       <Row10 />
-      {
-        statusDetail?.type !== 'PUBLIC' && 
-          loginUserId === statusDetail?.userId &&
-            !join &&
-            // join 링크등 다른 경로로 들어온 경우 ture
+      {statusDetail?.type !== 'PUBLIC' && loginUserId === statusDetail?.userId && !join && (
+        // join 링크등 다른 경로로 들어온 경우 ture
         <>
           <ToggleWrapper>
             <FlexBetween padding="24px" onClick={toggleUserInfo} pointer>
@@ -272,10 +276,10 @@ const SpotStatusDetailPage = (): ReactElement => {
           </ToggleWrapper>
           <Row10 />
         </>
-      }
-      <ToggleWrapper  ref={currentRef}>
+      )}
+      <ToggleWrapper ref={currentRef}>
         <FlexBetween padding="24px" onClick={toggleOpenInfo} pointer>
-          <TextH4B >{`${tagType()} 프코스팟 오픈방법 알아보기`}</TextH4B>
+          <TextH4B>{`${tagType()} 프코스팟 오픈방법 알아보기`}</TextH4B>
           <SVGIcon name={openInfo ? 'triangleUp' : 'triangleDown'} />
         </FlexBetween>
         <SlideToggle state={openInfo} duration={0.5}>
@@ -287,23 +291,26 @@ const SpotStatusDetailPage = (): ReactElement => {
           프코스팟 오픈 관련 유의사항
         </TextH5B>
         <Row />
-        <TextB3R color={theme.greyScale65} margin='0 0 16px 0'>프코스팟 오픈 진행 중 아래 사항에 해당하는 경우 오픈이 미진행될 수 있습니다. (이외 자세한 내용은 오픈 미진행 시, 신청자에게 안내 예정)</TextB3R>
+        <TextB3R color={theme.greyScale65} margin="0 0 16px 0">
+          프코스팟 오픈 진행 중 아래 사항에 해당하는 경우 오픈이 미진행될 수 있습니다. (이외 자세한 내용은 오픈 미진행
+          시, 신청자에게 안내 예정)
+        </TextB3R>
         {PLAN_GUIDE.map((item, index) => {
           return (
             <PlanGuidContent key={index}>
-              <TextH6B color={theme.greyScale65} margin='0 0 4px 0'>{item.title}</TextH6B>
-            {
-              item.desc.map((i, idx)=> {
+              <TextH6B color={theme.greyScale65} margin="0 0 4px 0">
+                {item.title}
+              </TextH6B>
+              {item.desc.map((i, idx) => {
                 return (
-                  <FlexWrapper key={idx} >
+                  <FlexWrapper key={idx}>
                     <Dot>•</Dot>
                     <TextB3R color={theme.greyScale65} margin="0 0 4px 0">
-                    {i}
-                    </TextB3R>  
+                      {i}
+                    </TextB3R>
                   </FlexWrapper>
-                )
-              })
-            }
+                );
+              })}
             </PlanGuidContent>
           );
         })}
@@ -311,33 +318,25 @@ const SpotStatusDetailPage = (): ReactElement => {
           채팅 문의
         </Button>
       </PlanGuideWrapper>
-      {
-        orderCondition() && (
-          <FixedButton onClick={orderHandler}>
-            <Button
-              borderRadius="0"
-              height="100%"
-              padding="10px 0 0 0"
-              backgroundColor={theme.balck}
-            >
-              주문하기
-            </Button>
-          </FixedButton>
-
-        )
-      }
+      {orderCondition() && (
+        <FixedButton onClick={orderHandler}>
+          <Button borderRadius="0" height="100%" padding="10px 0 0 0" backgroundColor={theme.balck}>
+            주문하기
+          </Button>
+        </FixedButton>
+      )}
     </Container>
   );
 };
 
-const Container = styled.div<{order: boolean | undefined}>`
-${({order})=> {
-  if(order) {
-    return css`
-      margin-bottom: 56px;
-    `
-  }
-}}
+const Container = styled.div<{ order: boolean | undefined }>`
+  ${({ order }) => {
+    if (order) {
+      return css`
+        margin-bottom: 56px;
+      `;
+    }
+  }}
 `;
 
 const TopStatusWrapper = styled.section`
@@ -350,7 +349,7 @@ const Flex = styled.div`
   margin-bottom: 8px;
 `;
 
-const BtnWrapper =styled.div`
+const BtnWrapper = styled.div`
   padding: 24px;
 `;
 
@@ -380,7 +379,7 @@ const FlexWrapper = styled.div`
 
 const Dot = styled.span`
   padding-top: 1px;
-  color: ${theme.greyScale65}
+  color: ${theme.greyScale65};
 `;
 
 const FixedButton = styled.section`

@@ -126,8 +126,6 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
     }
   );
 
-  console.log(selectedReviewDetail, 'selectedReviewDetail');
-
   const { limitAt, deliveryAt, isAvailable } = getLimitDateOfReview(selectedReviewDetail?.menuReview?.createdAt!);
 
   useEffect(() => {
