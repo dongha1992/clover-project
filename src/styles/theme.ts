@@ -388,3 +388,20 @@ export const customSelect = css`
     ${textBody2}
   }
 `;
+
+export const LiCircle3 = styled.li<{ top: number; left: number; color: string }>`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  padding-left: 19px;
+  &::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 3px;
+    top: ${({ top }) => `${top}px`};
+    left: ${({ left }) => `${left}px`};
+    background-color: ${({ color }) => color};
+  }
+`;
