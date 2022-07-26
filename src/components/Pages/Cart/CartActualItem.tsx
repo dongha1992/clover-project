@@ -10,10 +10,7 @@ import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
 import { getFormatPrice } from '@utils/common';
 import { getHolidayByMenu } from '@utils/menu';
-/* TODO: 최대 구매? */
 
-// 판매중지일 먼저
-// 어느 날짜에나 스태퍼는 동일. 인당 제한만
 interface IProps {
   removeCartActualItemHandler: ({
     menuDetailId,
@@ -32,8 +29,6 @@ interface IProps {
   menuName: string;
 }
 
-/* TODO: InfoMessage 이거 수정해야 함. 서버에서 들어오는 값 보고  */
-
 const CartActualItem = ({
   removeCartActualItemHandler,
   clickPlusButton,
@@ -48,52 +43,61 @@ const CartActualItem = ({
     price: menuDetail?.price,
   });
 
-  const hasLimitDate = holiday?.length! > 0;
+  const { menuDetailAvailabilityMessage, availability, remainingQuantity } = menuDetail?.availabilityInfo;
+
+  //PERIOD?
+
   const isSold = menuDetail.isSold;
+  console.log(holiday, '---');
+  const noneLimit = menuDetailAvailabilityMessage === 'NONE';
+  const personLimit = menuDetailAvailabilityMessage === 'PERSON';
+  const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
+  const dateLimit = ['DAILY', 'WEEKLY', 'PERIOD'].includes(menuDetailAvailabilityMessage);
 
-  const personLimitQuantity = menuDetail?.availabilityInfo?.menuDetailAvailabilityMessage === 'PERSON';
-  const hasPersonLimit =
-    personLimitQuantity &&
-    (!menuDetail?.availabilityInfo?.remainingQuantity || !menuDetail?.availabilityInfo?.availability);
+  const isPersonLimit = personLimit && (!remainingQuantity || !availability);
+  const soldCases = isSold;
 
-  const hasLimitQuantity = !personLimitQuantity && menuDetail?.availabilityInfo?.remainingQuantity !== 0;
-  const defaultStatus = menuDetail?.availabilityInfo?.availability && !menuDetail?.availabilityInfo?.remainingQuantity;
-  const soldCases = isSold || hasPersonLimit || !menuDetail?.availabilityInfo?.availability;
+  const defaultStatus = availability && remainingQuantity === 0;
 
   const checkMenuStatus = (): string => {
     switch (true) {
-      case hasLimitDate: {
+      case holidayLimit: {
         return `${getHolidayByMenu(holiday!)} 배송이 불가능해요`;
       }
       case isSold:
-      case !menuDetail?.availabilityInfo?.availability: {
         return '품절된 상품이에요.';
-      }
 
-      case hasLimitQuantity: {
+      case dateLimit: {
         let message = '';
-        if (menuDetail?.availabilityInfo?.availability) {
-          message = `품절 임박! 상품이 ${menuDetail?.availabilityInfo?.remainingQuantity}개 남았어요.`;
+        if (availability) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
         } else {
-          message = '품절된 상품이에요.';
+          message = '선택한 날짜에 상품이 품절됐어요';
         }
         return message;
       }
-      case personLimitQuantity: {
+      case personLimit: {
         let message = '';
-        if (hasPersonLimit) {
+        if (isPersonLimit) {
           message = '구매 가능한 수량을 초과했어요';
         } else {
-          message = `최대 ${menuDetail?.availabilityInfo?.remainingQuantity}개까지 구매 가능해요`;
+          message = `최대 ${remainingQuantity}개까지 구매 가능해요`;
         }
         return message;
       }
 
-      default:
-        return '';
+      default: {
+        let message = '';
+        if (availability) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
+        } else {
+          message = '선택한 날짜에 상품이 품절됐어요';
+        }
+        return message;
+      }
     }
   };
-  console.log(menuDetail, menuId, '@@@#!@#!@#!');
+
   return (
     <Container isSold={soldCases}>
       <ContentWrapper>
@@ -130,6 +134,8 @@ const CartActualItem = ({
                 quantity={menuDetail?.quantity}
                 clickPlusButton={clickPlusButton}
                 clickMinusButton={clickMinusButton}
+                available={menuDetail?.availabilityInfo}
+                personLimit={personLimit}
               />
             </CountButtonContainer>
           </InfoContainer>

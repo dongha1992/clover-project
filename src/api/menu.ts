@@ -21,7 +21,7 @@ import {
 } from '@model/index';
 
 export const getMenusApi = (params: IGetMenus): Promise<AxiosResponse<IGetMenusResponse>> => {
-  return Api.get(`menu/v1/menus/`, { params });
+  return Api.get(`menu/v1/menus`, { params });
 };
 
 export const getMenuDetailApi = (id: number): Promise<AxiosResponse<IMenuDetailsResponse>> => {

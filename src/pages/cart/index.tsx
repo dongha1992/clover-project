@@ -13,7 +13,7 @@ import {
   fixedBottom,
 } from '@styles/theme';
 import Checkbox from '@components/Shared/Checkbox';
-import { SVGIcon, getFormatPrice } from '@utils/common';
+import { SVGIcon, getFormatPrice, getCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
 import { Calendar } from '@components/Calendar';
@@ -49,7 +49,7 @@ import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getCustomDate } from '@utils/destination';
-import { checkIsAllSoldout } from '@utils/menu';
+import { checkIsAllSoldout, checkCartMenuStatus } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
@@ -69,6 +69,7 @@ import {
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import { INIT_ACCESS_METHOD } from '@store/common';
 import { useToast } from '@hooks/useToast';
+import { setCookie } from '@utils/common';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -166,9 +167,11 @@ const CartPage = () => {
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
           if (isFirstRender) {
+            const checkedDisposable = getCookie({ name: 'disposableChecked' });
             setDisposableList(
               data?.menuDetailOptions?.map((item) => {
-                return { ...item, isSelected: true };
+                const isSelected = checkedDisposable ? checkedDisposable.includes(item.id) : true;
+                return { ...item, isSelected: isSelected };
               })
             );
           }
@@ -383,36 +386,7 @@ const CartPage = () => {
     setCartItemList(data);
   };
 
-  const getTotalNutrition = (
-    menus: IGetCart[]
-  ): {
-    calorie: number;
-    protein: number;
-  } => {
-    return menus?.reduce(
-      (total, menu) => {
-        return menu.menuDetails.reduce((total, cur) => {
-          return {
-            calorie: total.calorie + cur?.calorie! * cur.quantity,
-            protein: total.protein + cur?.protein! * cur.quantity,
-          };
-        }, total);
-      },
-      { ...INITIAL_NUTRITION }
-    );
-  };
-
-  const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
-    const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
-      const sameDeliveryAddress = isEqual(location, destinationObj?.location);
-      return sameDeliveryAddress && sameDeliveryType;
-    };
-
-    return canSubOrderlist.filter((subOrder: ISubOrderDelivery) => checkAvailableSubDelivery(subOrder));
-  };
-
-  const handleSelectCartItem = (menu: IGetCart) => {
+  const selectCartItemHandler = (menu: IGetCart) => {
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
     let tempCheckedMenus: IGetCart[] = checkedMenus.slice();
     if (foundItem) {
@@ -422,7 +396,7 @@ const CartPage = () => {
         setIsAllchecked(!isAllChecked);
       }
     } else {
-      const isAllSoldout = checkIsAllSoldout(menu.menuDetails);
+      const isAllSoldout = checkIsAllSoldout(menu.menuDetails) || !checkCartMenuStatus(menu.menuDetails);
       if (isAllSoldout) return;
 
       tempCheckedMenus.push(menu);
@@ -431,18 +405,19 @@ const CartPage = () => {
     setCheckedMenus(tempCheckedMenus);
   };
 
-  const handleSelectAllCartItem = () => {
-    const canCheckMenus = cartItemList.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails));
+  const selectAllCartItemHandler = () => {
+    const canCheckMenus = getCanCheckedMenus(cartItemList);
+    const canNotCheckAllMenus = canCheckMenus.length === 0;
 
     if (!isAllChecked) {
       setCheckedMenus(canCheckMenus);
     } else {
       setCheckedMenus([]);
     }
-    setIsAllchecked((prev) => !prev);
+    setIsAllchecked((prev) => (canNotCheckAllMenus ? false : !prev));
   };
 
-  const handleSelectDisposable = (id: number) => {
+  const selectDisposableHandler = (id: number) => {
     const newDisposableList = disposableList.map((item) => {
       if (item.id === id) {
         return { ...item, isSelected: !item.isSelected };
@@ -454,7 +429,7 @@ const CartPage = () => {
     setDisposableList(newDisposableList);
   };
 
-  const handleLunchOrDinner = (selectedItem: ILunchOrDinner) => {
+  const lunchOrDinnerHandler = (selectedItem: ILunchOrDinner) => {
     if (selectedItem.isDisabled) {
       return;
     }
@@ -628,59 +603,7 @@ const CartPage = () => {
     );
   };
 
-  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
-  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
-  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
-  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
-  //   return { foundMenu, isMain, hasOptionalMenu };
-  // };
-
-  const setNonMemberCartListsHandler = (list: any) => {
-    dispatch(SET_NON_MEMBER_CART_LISTS(list));
-    setCartItemList(list);
-  };
-
-  const clickDisposableItemCount = (id: number, quantity: number) => {
-    const findItem = disposableList.map((item) => {
-      if (item.id === id) {
-        item.quantity = quantity;
-      }
-      return item;
-    });
-    setDisposableList(findItem);
-  };
-
-  const deliveryTimeInfoRenderer = () => {
-    const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
-    const today: number = new Date().getDate();
-    const selectedTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected);
-    const selectToday = dates === today;
-
-    try {
-      switch (destinationObj.delivery) {
-        case 'parcel': {
-          return <TextH6B>{`${dates}일 도착`}</TextH6B>;
-        }
-        case 'morning': {
-          return <TextH6B>{`${dates}일 새벽 7시 전 도착`}</TextH6B>;
-        }
-        case 'quick':
-        case 'spot': {
-          if (selectToday) {
-            return <TextH6B>{`오늘 ${selectedTime?.time} 전 도착`}</TextH6B>;
-          } else {
-            return <TextH6B>{`${dates}일 ${selectedTime?.time} 전 도착`}</TextH6B>;
-          }
-        }
-        default:
-          return;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const chnagedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+  const changedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
     let changedCartItemList: any = [];
     list.forEach((item) => {
       let menuId;
@@ -703,10 +626,81 @@ const CartPage = () => {
     return changedCartItemList;
   };
 
+  const clickDisposableItemCount = (id: number, quantity: number) => {
+    const findItem = disposableList.map((item) => {
+      if (item.id === id) {
+        item.quantity = quantity;
+      }
+      return item;
+    });
+    setDisposableList(findItem);
+  };
+
+  const displayAlertForSubDelivery = (callback: any) => {
+    dispatch(
+      SET_ALERT({
+        alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
+        alertSubMessage: '(배송정보는 함께 받을 기존 주문에서 변경할 수 있어요)',
+        submitBtnText: '변경하기',
+        closeBtnText: '취소',
+        onSubmit: () => callback,
+      })
+    );
+  };
+
+  const changeDeliveryDate = (dateValue: string) => {
+    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
+
+    if (!canSubDelivery && subDeliveryId) {
+      displayAlertForSubDelivery(setSelectedDeliveryDay(dateValue));
+      setSubDeliveryId(null);
+    }
+    setSelectedDeliveryDay(dateValue);
+  };
+
+  const subDelieryHandler = (deliveryId: number) => {
+    setSubDeliveryId(deliveryId);
+  };
+
+  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
+  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
+  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
+  //   return { foundMenu, isMain, hasOptionalMenu };
+  // };
+
+  const checkHasSubOrderDeliery = (canSubOrderlist: ISubOrderDelivery[]) => {
+    const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
+      const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
+      const sameDeliveryAddress = isEqual(location, destinationObj?.location);
+      return sameDeliveryAddress && sameDeliveryType;
+    };
+
+    return canSubOrderlist.filter((subOrder: ISubOrderDelivery) => checkAvailableSubDelivery(subOrder));
+  };
+
+  const checkSameDateSubDelivery = () => {
+    const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
+
+    for (const subOrder of subOrderDelivery) {
+      const { deliveryDate, deliveryDetail } = subOrder;
+
+      const sameDeliveryTime = isSpotOrQuick
+        ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
+        : true;
+      const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
+      const canSubDelivery = sameDeliveryDate && sameDeliveryTime;
+
+      if (canSubDelivery) {
+        goToSubDeliverySheet(subOrder?.id);
+      }
+    }
+  };
+
   const clickPlusButton = (menuDetailId: number, quantity: number) => {
     if (!me) {
       const sliced = cartItemList.slice();
-      const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
+      const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
 
       reorderCartList(changedCartItemList);
       return;
@@ -722,7 +716,7 @@ const CartPage = () => {
   const clickMinusButton = (menuDetailId: number, quantity: number) => {
     if (!me) {
       const sliced = cartItemList.slice();
-      const changedCartItemList = chnagedQuantityHandler(sliced, menuDetailId, quantity);
+      const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
       reorderCartList(changedCartItemList);
       return;
     }
@@ -735,89 +729,36 @@ const CartPage = () => {
     mutateItemQuantity(parmas);
   };
 
-  const changeDeliveryDate = (dateValue: string) => {
-    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
-
-    if (!canSubDelivery && subDeliveryId) {
-      displayAlertForSubDelivery(setSelectedDeliveryDay(dateValue));
-      setSubDeliveryId(null);
-    }
-    setSelectedDeliveryDay(dateValue);
+  const setNonMemberCartListsHandler = (list: any) => {
+    dispatch(SET_NON_MEMBER_CART_LISTS(list));
+    setCartItemList(list);
   };
 
-  const displayAlertForSubDelivery = (callback: any) => {
-    dispatch(
-      SET_ALERT({
-        alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
-        alertSubMessage: '(배송정보는 함께 받을 기존 주문에서 변경할 수 있어요)',
-        submitBtnText: '변경하기',
-        closeBtnText: '취소',
-        onSubmit: () => callback,
-      })
+  const setPemanentedDisposableItem = () => {
+    const checkedId = disposableList.filter((item) => item.isSelected).map((item) => item.id);
+    setCookie({
+      name: 'disposableChecked',
+      value: JSON.stringify(checkedId),
+    });
+  };
+
+  const getTotalNutrition = (
+    menus: IGetCart[]
+  ): {
+    calorie: number;
+    protein: number;
+  } => {
+    return menus?.reduce(
+      (total, menu) => {
+        return menu.menuDetails.reduce((total, cur) => {
+          return {
+            calorie: total.calorie + cur?.calorie! * cur.quantity,
+            protein: total.protein + cur?.protein! * cur.quantity,
+          };
+        }, total);
+      },
+      { ...INITIAL_NUTRITION }
     );
-  };
-
-  const goToDeliveryInfo = () => {
-    const callback = router.push('/cart/delivery-info');
-    // 합배송 선택한 경우
-    if (subDeliveryId) {
-      displayAlertForSubDelivery(callback);
-    } else {
-      router.push('/cart/delivery-info');
-    }
-  };
-
-  const goToSearchPage = () => {
-    router.push('/');
-  };
-
-  const goToOrder = () => {
-    if (!me) return;
-    if (isInvalidDestination) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
-          onSubmit: () => {
-            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
-            window.scrollTo({
-              behavior: 'smooth',
-              left: 0,
-              top: offsetTop,
-            });
-          },
-        })
-      );
-      return;
-    }
-
-    const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
-    const isUnderMinimum = totalAmount < minimum;
-
-    if (isNil(destinationObj) || isUnderMinimum) return;
-
-    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
-    const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
-
-    const orderMenus = getMenuDetailsId(checkedMenus);
-    const orderOptions = getOptionsItemId(disposableList);
-
-    const reqBody = {
-      destinationId: destinationObj.destinationId!,
-      delivery: destinationObj.delivery?.toUpperCase()!,
-      deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
-      isSubOrderDelivery: subDeliveryId ? true : false,
-      orderDeliveries: [
-        {
-          orderMenus,
-          orderOptions,
-          deliveryDate: selectedDeliveryDay,
-        },
-      ],
-
-      type: 'GENERAL',
-    };
-    dispatch(SET_ORDER(reqBody));
-    router.push('/order');
   };
 
   const getMenuDetailsId = (list: IGetCart[]): IMenuDetailsId[] => {
@@ -866,28 +807,6 @@ const CartPage = () => {
         ),
       })
     );
-  };
-
-  const subDelieryHandler = (deliveryId: number) => {
-    setSubDeliveryId(deliveryId);
-  };
-
-  const checkSameDateSubDelivery = () => {
-    const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
-
-    for (const subOrder of subOrderDelivery) {
-      const { deliveryDate, deliveryDetail } = subOrder;
-
-      const sameDeliveryTime = isSpotOrQuick
-        ? deliveryDetail === lunchOrDinner.find((item) => item.isSelected)?.value!
-        : true;
-      const sameDeliveryDate = deliveryDate === selectedDeliveryDay;
-      const canSubDelivery = sameDeliveryDate && sameDeliveryTime;
-
-      if (canSubDelivery) {
-        goToSubDeliverySheet(subOrder?.id);
-      }
-    }
   };
 
   const getDisposableItem = useCallback((): { price: number; quantity: number } => {
@@ -948,6 +867,95 @@ const CartPage = () => {
     }
   }, [destinationObj?.delivery, disposableList, totalAmount]);
 
+  const getCanCheckedMenus = (list: IGetCart[]) => {
+    return list?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
+  };
+
+  const goToDeliveryInfo = () => {
+    const callback = router.push('/cart/delivery-info');
+    // 합배송 선택한 경우
+    if (subDeliveryId) {
+      displayAlertForSubDelivery(callback);
+    } else {
+      router.push('/cart/delivery-info');
+    }
+  };
+
+  const goToSearchPage = () => {
+    router.push('/');
+  };
+
+  const goToOrder = () => {
+    if (!me) return;
+    if (isInvalidDestination) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
+          onSubmit: () => {
+            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
+            window.scrollTo({
+              behavior: 'smooth',
+              left: 0,
+              top: offsetTop,
+            });
+          },
+        })
+      );
+      return;
+    }
+
+    const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
+
+    if (!allAvailableMenus) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '현재 주문할 수 없는 상품이 있어요.',
+          onSubmit: () => {
+            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
+            window.scrollTo({
+              behavior: 'smooth',
+              left: 0,
+              top: offsetTop,
+            });
+          },
+        })
+      );
+      return;
+    }
+
+    const { minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
+    const isUnderMinimum = totalAmount < minimum;
+
+    if (isNil(destinationObj) || isUnderMinimum) return;
+
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
+    const deliveryDetail = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.value!;
+
+    const orderMenus = getMenuDetailsId(checkedMenus);
+    const orderOptions = getOptionsItemId(disposableList);
+
+    const reqBody = {
+      destinationId: destinationObj.destinationId!,
+      delivery: destinationObj.delivery?.toUpperCase()!,
+      deliveryDetail: isSpotOrQuick ? deliveryDetail : '',
+      isSubOrderDelivery: subDeliveryId ? true : false,
+      orderDeliveries: [
+        {
+          orderMenus,
+          orderOptions,
+          deliveryDate: selectedDeliveryDay,
+        },
+      ],
+
+      type: 'GENERAL',
+    };
+
+    dispatch(SET_ORDER(reqBody));
+    setPemanentedDisposableItem();
+
+    router.push('/order');
+  };
+
   const goToBottomSheet = () => {
     dispatch(SET_BOTTOM_SHEET({ content: <DeliveryTypeInfoSheet /> }));
   };
@@ -986,6 +994,36 @@ const CartPage = () => {
           배송정보를 입력해주세요.
         </Button>
       );
+    }
+  };
+
+  const deliveryTimeInfoRenderer = () => {
+    const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
+    const today: number = new Date().getDate();
+    const selectedTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected);
+    const selectToday = dates === today;
+
+    try {
+      switch (destinationObj.delivery) {
+        case 'parcel': {
+          return <TextH6B>{`${dates}일 도착`}</TextH6B>;
+        }
+        case 'morning': {
+          return <TextH6B>{`${dates}일 새벽 7시 전 도착`}</TextH6B>;
+        }
+        case 'quick':
+        case 'spot': {
+          if (selectToday) {
+            return <TextH6B>{`오늘 ${selectedTime?.time} 전 도착`}</TextH6B>;
+          } else {
+            return <TextH6B>{`${dates}일 ${selectedTime?.time} 전 도착`}</TextH6B>;
+          }
+        }
+        default:
+          return;
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -1051,9 +1089,7 @@ const CartPage = () => {
   useEffect(() => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
-      const canCheckMenus = cartItemList?.filter(
-        (item) => item.holiday?.length === 0 && !item.isSold && !checkIsAllSoldout(item.menuDetails)
-      )!;
+      const canCheckMenus = getCanCheckedMenus(cartItemList);
 
       if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
         setIsAllchecked(true);
@@ -1164,7 +1200,7 @@ const CartPage = () => {
           <CartListWrapper>
             <ListHeader>
               <div className="itemCheckbox">
-                <Checkbox onChange={handleSelectAllCartItem} isSelected={isAllChecked ? true : false} />
+                <Checkbox onChange={selectAllCartItemHandler} isSelected={isAllChecked ? true : false} />
                 <TextB2R padding="0 0 0 8px">전체선택 ({`${checkedMenus?.length}/${cartItemList?.length}`})</TextB2R>
               </div>
               <Right>
@@ -1183,7 +1219,7 @@ const CartPage = () => {
               {cartItemList?.map((menu: any, index) => (
                 <CartItem
                   menu={menu}
-                  handleSelectCartItem={handleSelectCartItem}
+                  selectCartItemHandler={selectCartItemHandler}
                   checkedMenus={checkedMenus}
                   clickPlusButton={clickPlusButton}
                   clickMinusButton={clickMinusButton}
@@ -1204,7 +1240,7 @@ const CartPage = () => {
                 {disposableList?.map((item, index) => (
                   <DisposableItem key={index}>
                     <div className="disposableLeft">
-                      <Checkbox onChange={() => handleSelectDisposable(item.id)} isSelected={item.isSelected!} />
+                      <Checkbox onChange={() => selectDisposableHandler(item.id)} isSelected={item.isSelected!} />
                       <div className="disposableText">
                         <TextB2R padding="0 4px 0 8px">{item.name}</TextB2R>
                         <TextH5B>{item.price}원</TextH5B>
@@ -1267,7 +1303,7 @@ const CartPage = () => {
               lunchOrDinner.map((item, index) => {
                 return (
                   <FlexRow key={index} padding="16px 0 0 0">
-                    <RadioButton onChange={() => handleLunchOrDinner(item)} isSelected={item.isSelected} />
+                    <RadioButton onChange={() => lunchOrDinnerHandler(item)} isSelected={item.isSelected} />
                     {item.isDisabled ? (
                       <>
                         <TextH5B padding="0 4px 0 8px" color={theme.greyScale25}>

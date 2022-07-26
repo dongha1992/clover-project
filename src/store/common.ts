@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IAccessMethod } from '@pages/order';
+
+export interface IViewer {
+  images: string[];
+  index: number;
+}
 interface IState {
-  imagesForViewer: string[];
+  imagesForViewer: IViewer;
   isMobile: boolean;
   isLoading: boolean;
   loginType: string;
@@ -13,7 +18,7 @@ interface IState {
 }
 
 const INITIAL_STATE: IState = {
-  imagesForViewer: [],
+  imagesForViewer: { images: [], index: 0 },
   isMobile: false,
   isLoading: false,
   loginType: 'NONMEMBER',
@@ -27,11 +32,11 @@ export const commonSlice = createSlice({
   name: 'common',
   initialState: INITIAL_STATE,
   reducers: {
-    SET_IMAGE_VIEWER: (state: any, { payload }: PayloadAction<string[]>) => {
+    SET_IMAGE_VIEWER: (state: any, { payload }: PayloadAction<IViewer>) => {
       state.imagesForViewer = payload;
     },
     INIT_IMAGE_VIEWER: (state: any, action: PayloadAction) => {
-      state.imagesForViewer = [];
+      state.imagesForViewer = { url: [], index: 0 };
     },
     SET_IS_MOBILE: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isMobile = payload;

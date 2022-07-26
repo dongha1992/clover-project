@@ -118,8 +118,9 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     router.push(`/menu/${menuId}/review/${id}`);
   };
 
-  const clickImgViewHandler = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const clickImgViewHandler = (images: string[], index: number) => {
+    const payload = { images, index };
+    dispatch(SET_IMAGE_VIEWER(payload));
   };
 
   const hasImageReview = reviewsImages?.images?.length! !== 0;
@@ -157,7 +158,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
               router.push('/mypage/review');
             }}
           >
-            후기 작성하기 (최대 3,000포인트 적립)
+            {me ? '후기 작성하기 (최대 300P 적립)' : '로그인 후 후기 작성하기'}
           </Button>
         </ImageWrapper>
         <BorderLine height={8} />

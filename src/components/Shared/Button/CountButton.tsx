@@ -5,6 +5,8 @@ import { theme, verticalCenter } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 
 interface IProps {
+  personLimit?: boolean;
+  available?: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string };
   isSold?: boolean;
   menuDetailId: number;
   quantity: number;
@@ -12,13 +14,23 @@ interface IProps {
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
 }
 
-const CountButton = ({ menuDetailId, quantity, clickPlusButton, clickMinusButton, isSold }: IProps) => {
+const CountButton = ({
+  menuDetailId,
+  quantity,
+  clickPlusButton,
+  clickMinusButton,
+  isSold,
+  personLimit,
+  available,
+}: IProps) => {
   return (
     <Container isSold={isSold}>
       <Wrapper>
         <Minus
           onClick={() => {
-            if (isSold) return;
+            if (isSold) {
+              return;
+            }
             clickMinusButton(menuDetailId, quantity < 2 ? 1 : (quantity = quantity - 1));
           }}
         >
@@ -30,6 +42,9 @@ const CountButton = ({ menuDetailId, quantity, clickPlusButton, clickMinusButton
         <Plus
           onClick={() => {
             if (isSold) return;
+            if (personLimit && quantity === available?.remainingQuantity) {
+              return;
+            }
             clickPlusButton(menuDetailId, (quantity = quantity + 1));
           }}
         >

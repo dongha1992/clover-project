@@ -2026,6 +2026,7 @@ export interface ICompletionReviews {
   menuId: number;
   menuDetailId?: number;
   orderDeliveryId: number;
+  displayMenuName?: string;
 }
 
 export interface ICompletionReviewsResponse {
@@ -2113,7 +2114,7 @@ export interface ICartCountResponse {
 
 export interface IMenuDetailsInCart {
   cartId: number | null;
-  availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string } | null;
+  availabilityInfo: { availability: boolean; remainingQuantity: number; menuDetailAvailabilityMessage: string };
   menuDetailId: number;
   name: string;
   price: number;

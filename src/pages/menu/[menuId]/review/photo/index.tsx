@@ -91,16 +91,17 @@ const ReviewPage = ({ menuId }: any) => {
           const fromS3 = image.url.includes('menu');
           const s3Url = IMAGE_S3_URL + image?.url;
           return (
-            <NextImage
-              src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + image?.url}
-              alt="리뷰이미지"
-              key={index}
-              onClick={() => goToReviewDetail(image)}
-              width={'100%'}
-              height={'100%'}
-              layout="responsive"
-              className="rounded"
-            />
+            <ImageWrapper key={index}>
+              <NextImage
+                src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + image?.url}
+                alt="리뷰이미지"
+                onClick={() => goToReviewDetail(image)}
+                width={'100%'}
+                height={'100%'}
+                layout="responsive"
+                className="rounded"
+              />
+            </ImageWrapper>
           );
         })}
         <div ref={ref} />
@@ -121,6 +122,11 @@ const Wrapper = styled.div`
   .rounded {
     border-radius: 8px;
   }
+`;
+
+const ImageWrapper = styled.div`
+  border: 1px solid #f2f2f2;
+  border-radius: 8px;
 `;
 
 export async function getServerSideProps(context: any) {
