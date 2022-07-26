@@ -72,23 +72,6 @@ const LocationPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startAddressSearch = (keyword: string) => {
-    setInputKeyword(keyword);
-    setIsSearched(true);
-  };
-
-  const changeInputHandler = (e: any) => {
-    const value =  e.target.value;
-    setInputKeyword(value);
-    if(value.length){
-      setResultAddress([]);
-      setIsSearched(false);
-    };
-    if (!value) {
-      setInputKeyword('');
-    };
-  };
-
   const {
     error,
     refetch,
@@ -129,6 +112,23 @@ const LocationPage = () => {
       router.replace({
         query: {...routerQueries, keyword: value},
       });
+    };
+  };
+
+  const startAddressSearch = (keyword: string) => {
+    setInputKeyword(keyword);
+    setIsSearched(true);
+  };
+
+  const changeInputHandler = (e: any) => {
+    const value =  e.target.value;
+    setInputKeyword(value);
+    if(value.length){
+      setResultAddress([]);
+      setIsSearched(false);
+    };
+    if (!value) {
+      setInputKeyword('');
     };
   };
 
