@@ -1914,6 +1914,9 @@ export interface ISearchReviews {
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
+  orderType: string;
+  displayMenuName: string;
+  deliveryRound: number;
 }
 
 export interface ICreateReivewRequest {
@@ -2009,6 +2012,7 @@ export interface ICompletionReviewImg {
 export interface ICompletionReviews {
   id: number;
   userNickName: string;
+  displayMenuName: string;
   menuName: string;
   menuDetailName: string;
   rating: number;
