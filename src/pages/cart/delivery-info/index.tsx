@@ -302,6 +302,7 @@ const DeliverInfoPage = () => {
                 delivery: response.delivery,
                 id: response.id,
                 spotPickup: response.spotPickup ? response.spotPickup : null,
+                availableTime: tempDestination?.availableTime,
               })
             );
             dispatch(SET_AFTER_SETTING_DELIVERY());

@@ -21,6 +21,7 @@ import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
 import NextImage from 'next/image';
 import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
+import { NickName } from '../write/[orderDeliveryId]';
 
 interface IWriteMenuReviewObj {
   imgFiles: string[] | undefined;
@@ -31,11 +32,12 @@ interface IWriteMenuReviewObj {
 interface IProp {
   menuId: string;
   reviewId: string;
+  menuImage: string;
 }
 
 const LIMIT = 30;
 
-const EditReviewPage = ({ reviewId, menuId }: IProp) => {
+const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const [isShow, setIsShow] = useState(false);
   const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
     imgFiles: [],
@@ -295,19 +297,26 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   if (isLoading) {
     return <div>로딩</div>;
   }
+  console.log('selectedReviewDetail', selectedReviewDetail);
 
   return (
     <Container>
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>{me?.nickName}님</TextH3B>
-          <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
+          <TextH3B>
+            <NickName>{me?.nickName}</NickName>님
+          </TextH3B>
+          {selectedReviewDetail?.menuReview.orderType === 'SUBSCRIPTION' ? (
+            <TextH3B>이용 중인 구독은 만족하셨나요?</TextH3B>
+          ) : (
+            <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
+          )}
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
             <NextImage
-              src={IMAGE_S3_URL + menu?.url}
+              src={IMAGE_S3_URL + menuImage}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
@@ -316,7 +325,12 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{selectedReviewDetail?.menuReview.menuName}</TextB2R>
+            <TextB2R>{selectedReviewDetail?.menuReview.displayMenuName}</TextB2R>
+            {selectedReviewDetail?.menuReview.orderType === 'SUBSCRIPTION' && (
+              <TextB3R padding="4px 0 0" color={theme.greyScale65}>
+                <b>배송</b> {selectedReviewDetail?.menuReview.deliveryRound}회차
+              </TextB3R>
+            )}
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
@@ -402,7 +416,9 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding-top: 8px;
+`;
 const Wrapper = styled.div`
   ${homePadding}
 `;
@@ -415,8 +431,10 @@ const ImgWrapper = styled.div`
 
 const TextWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-self: flex-start;
   width: 100%;
+  padding-left: 16px;
 `;
 
 const RateWrapper = styled.div`
@@ -482,13 +500,13 @@ const PreviewImgWrapper = styled.div`
 const PointInfoWrapper = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
-  margin-bottom: 105px;
+  margin-bottom: 56px;
 `;
 
 export async function getServerSideProps(context: any) {
-  const { reviewId, menuId } = context.query;
+  const { reviewId, menuId, menuImage } = context.query;
   return {
-    props: { reviewId, menuId },
+    props: { reviewId, menuId, menuImage },
   };
 }
 

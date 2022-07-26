@@ -47,112 +47,110 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
   };
 
   return (
-    <>
-      <Container>
-        <Wrapper>
-          <ReviewContent>
-            <FlexBetween padding="0 0 16px 0">
-              <TextH5B pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
-                {review.menuName}
-              </TextH5B>
+    <Container>
+      <Wrapper>
+        <ReviewContent>
+          <FlexBetween padding="0 0 16px 0">
+            <TextH5B pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
+              {review.displayMenuName}
+            </TextH5B>
+            <TextH6B
+              pointer
+              color={theme.greyScale65}
+              textDecoration="underline"
+              onClick={() =>
+                goToReviewDetail({
+                  url: review.menuImage.url,
+                  menuId: review.menuId,
+                  id: review.id,
+                  name: review.displayMenuName,
+                })
+              }
+            >
+              편집
+            </TextH6B>
+          </FlexBetween>
+          <ReviewHeader>
+            <RatingAndUser>
+              <Rating>
+                <SVGIcon name="singleStar" />
+                <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
+              </Rating>
+              <UserInfo>
+                <TextH6B color={theme.brandColor} padding="0 8px 0 0">
+                  {review.userNickName}
+                </TextH6B>
+                <TextB3R color={theme.greyScale65}>{dayFormatter}</TextB3R>
+              </UserInfo>
+            </RatingAndUser>
+          </ReviewHeader>
+          <ReviewBody isShow={isShow}>
+            <TextB3R>{review.content}</TextB3R>
+          </ReviewBody>
+          {isContentHide ? (
+            isShow ? (
               <TextH6B
-                pointer
+                padding="0 0 4px 0"
                 color={theme.greyScale65}
-                textDecoration="underline"
-                onClick={() =>
-                  goToReviewDetail({
-                    url: review.menuImage.url,
-                    menuId: review.menuId,
-                    id: review.id,
-                    name: review.menuName,
-                  })
-                }
+                textDecoration="underLine"
+                onClick={() => setIsShow(!isShow)}
+                pointer
               >
-                편집
+                전체 보기
               </TextH6B>
-            </FlexBetween>
-            <ReviewHeader>
-              <RatingAndUser>
-                <Rating>
-                  <SVGIcon name="singleStar" />
-                  <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
-                </Rating>
-                <UserInfo>
-                  <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.userNickName}
-                  </TextH6B>
-                  <TextB3R color={theme.greyScale65}>{dayFormatter}</TextB3R>
-                </UserInfo>
-              </RatingAndUser>
-            </ReviewHeader>
-            <ReviewBody isShow={isShow}>
-              <TextB3R>{review.content}</TextB3R>
-            </ReviewBody>
-            {isContentHide ? (
-              isShow ? (
-                <TextH6B
-                  padding="0 0 4px 0"
-                  color={theme.greyScale65}
-                  textDecoration="underLine"
-                  onClick={() => setIsShow(!isShow)}
-                  pointer
-                >
-                  전체 보기
-                </TextH6B>
-              ) : (
-                <TextH6B
-                  padding="0 0 4px 0"
-                  color={theme.greyScale65}
-                  textDecoration="underLine"
-                  onClick={() => setIsShow(!isShow)}
-                  pointer
-                >
-                  접기
-                </TextH6B>
-              )
             ) : (
-              ''
-            )}
-            {review.reviewImages && (
-              <ImgWrapper>
-                {review.reviewImages?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review?.reviewImages?.map((item: any) => item.url);
-                  return (
-                    <ReviewImageWrapper
-                      isFirst
-                      onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer)}
-                      key={index}
-                    >
-                      <Image
-                        src={process.env.REVIEW_IMAGE_URL + img.url}
-                        alt="리뷰이미지"
-                        width={'100%'}
-                        height={'100%'}
-                        layout="responsive"
-                        className="rounded"
-                      />
-                    </ReviewImageWrapper>
-                  );
-                })}
-              </ImgWrapper>
-            )}
-            {review.commentCreatedAt && review.comment ? (
-              <ReplyContent>
-                <ReplyHeader>
-                  <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
-                  <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
-                    {review.commentCreatedAt}
-                  </TextB3R>
-                </ReplyHeader>
-                <ReplyBody>
-                  <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
-                </ReplyBody>
-              </ReplyContent>
-            ) : null}
-          </ReviewContent>
-        </Wrapper>
-      </Container>
-    </>
+              <TextH6B
+                padding="0 0 4px 0"
+                color={theme.greyScale65}
+                textDecoration="underLine"
+                onClick={() => setIsShow(!isShow)}
+                pointer
+              >
+                접기
+              </TextH6B>
+            )
+          ) : (
+            ''
+          )}
+          {review.reviewImages && (
+            <ImgWrapper>
+              {review.reviewImages?.map((img: any, index: number) => {
+                const imgUrlForViwer = review?.reviewImages?.map((item: any) => item.url);
+                return (
+                  <ReviewImageWrapper
+                    isFirst
+                    onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer)}
+                    key={index}
+                  >
+                    <Image
+                      src={process.env.REVIEW_IMAGE_URL + img.url}
+                      alt="리뷰이미지"
+                      width={'100%'}
+                      height={'100%'}
+                      layout="responsive"
+                      className="rounded"
+                    />
+                  </ReviewImageWrapper>
+                );
+              })}
+            </ImgWrapper>
+          )}
+          {review.commentCreatedAt && review.comment ? (
+            <ReplyContent>
+              <ReplyHeader>
+                <TextH6B color={theme.greyScale65}>{review.commenter}</TextH6B>
+                <TextB3R color={theme.greyScale65} padding="0 0 0 8px">
+                  {review.commentCreatedAt}
+                </TextB3R>
+              </ReplyHeader>
+              <ReplyBody>
+                <TextB3R color={theme.greyScale65}>{review.comment}</TextB3R>
+              </ReplyBody>
+            </ReplyContent>
+          ) : null}
+        </ReviewContent>
+      </Wrapper>
+    </Container>
   );
 };
 
@@ -160,6 +158,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 24px 0;
+  border-bottom: 1px solid ${theme.greyScale6};
+  &:last-of-type {
+    border-bottom: none;
+  }
 `;
 
 const Wrapper = styled.div`
