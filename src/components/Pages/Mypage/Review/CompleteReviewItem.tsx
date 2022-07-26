@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-import { theme, showMoreText, FlexBetween, FlexRow } from '@styles/theme';
+import { theme, showMoreText, FlexBetween, FlexRow, FlexRowStart, FlexBetweenStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -60,8 +60,8 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
       <Container>
         <Wrapper>
           <ReviewContent>
-            <FlexBetween padding="0 0 16px 0">
-              <FlexRow>
+            <FlexBetweenStart padding="0 0 16px 0">
+              <FlexRowStart>
                 <MenuImgWrapper>
                   <NextImage
                     src={IMAGE_S3_URL + review?.menuImage?.url}
@@ -75,7 +75,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                 <TextH5B margin="0 0 0 8px" pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
                   {review.displayMenuName}
                 </TextH5B>
-              </FlexRow>
+              </FlexRowStart>
               <TextH6B
                 pointer
                 color={theme.greyScale65}
@@ -91,7 +91,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
               >
                 편집
               </TextH6B>
-            </FlexBetween>
+            </FlexBetweenStart>
             <ReviewHeader>
               <RatingAndUser>
                 <Rating>
@@ -181,6 +181,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 24px 0;
+  border-bottom: 1px solid ${theme.greyScale6};
+  &:last-of-type {
+    border-bottom: none;
+  }
 `;
 
 const Wrapper = styled.div`
