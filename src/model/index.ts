@@ -2012,7 +2012,6 @@ export interface ICompletionReviewImg {
 export interface ICompletionReviews {
   id: number;
   userNickName: string;
-  displayMenuName: string;
   menuName: string;
   menuDetailName: string;
   rating: number;
