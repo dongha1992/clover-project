@@ -23,6 +23,8 @@ const DefaultKakaoMap = ({
   centerLat,
   centerLng,
 }: IProps) => {
+  const [maxZoonOut, setMaxZoomOut] = useState<boolean>(false);
+  const [minZoomIn, setMinZoomIn] = useState<boolean>(false);
 
   useEffect(() => {
     const mapScript = document.createElement("script");
@@ -60,14 +62,24 @@ const DefaultKakaoMap = ({
 
       // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수
       const zoomIn = () => {
-        const level = map.getLevel() - 1;
+        const getLevel = map.getLevel();
+        const level = getLevel - 1;
         map.setLevel(level);
+        setMaxZoomOut(false);
+        if(getLevel <= 2) {
+          setMinZoomIn(true);
+        };
       };
 
       // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수
       const zoomOut = () => {
-        const level = map.getLevel() + 1;
+        const getLevel = map.getLevel();
+        const level = getLevel + 1;
         map.setLevel(level);
+        setMinZoomIn(false);
+        if(getLevel >= 6){
+          setMaxZoomOut(true);
+        };
       };
 
       window.zoomIn = zoomIn;
@@ -80,11 +92,11 @@ const DefaultKakaoMap = ({
     <MapWrapper>
       <ZoomContralWrapper>
         <ZoomIn onClick={()=>window.zoomIn()}>
-          <SVGIcon name='mapZoomIn' />
+          <SVGIcon name={`${minZoomIn ? 'mapNoneZoomIn' : 'mapZoomIn'}`} />
         </ZoomIn>
         <Col />
         <ZoomOut onClick={()=>window.zoomOut()}>
-          <SVGIcon name='mapZoomOut' />
+          <SVGIcon name={`${maxZoonOut ? 'mapNoneZoomOut' : 'mapZoomOut'}`} />
         </ZoomOut>
       </ZoomContralWrapper>
       <Map id="map"></Map>

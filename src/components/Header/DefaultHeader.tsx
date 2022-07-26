@@ -8,7 +8,7 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { useQuery, useQueryClient } from 'react-query';
-import { getMenuDetailApi } from '@api/menu';
+import { Obj } from '@model/index';
 
 type TProps = {
   title?: string;
@@ -18,11 +18,17 @@ const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { menuItem } = useSelector(menuSelector);
-  const { rating, reviewCount } = menuItem;
+  const { menuItem, reviewImagesCount } = useSelector(menuSelector);
+  const { reviewCount } = menuItem;
 
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
+  const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
+
+  const countMap: Obj = {
+    '/menu/[menuId]/review/total': reviewCount,
+    '/menu/[menuId]/review/photo': reviewImagesCount,
+  };
 
   const goBack = (): void => {
     if (router.pathname === '/spot/join/main/form') {
@@ -57,7 +63,9 @@ const DefaultHeader = ({ title }: TProps) => {
             <SVGIcon name="arrowLeft" />
           </div>
         )}
-        <TextH4B padding="2px 0 0 0">{totalReview ? `${title} (${reviewCount})` : title}</TextH4B>
+        <TextH4B padding="2px 0 0 0">
+          {totalReview || totalPhotoReview ? `${title} (${countMap[router.pathname]})` : title}
+        </TextH4B>
       </Wrapper>
     </Container>
   );
