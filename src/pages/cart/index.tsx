@@ -871,6 +871,34 @@ const CartPage = () => {
     return list?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
   };
 
+  const getUniqueInArray = (list: (number[] | null)[]) => {
+    const getUnique: string[] = [];
+
+    list?.forEach((item, index) => {
+      const toString = item?.join()!;
+      if (!getUnique.includes(toString!)) {
+        getUnique.push(toString!);
+      }
+    });
+    return getUnique;
+  };
+  const checkCanOrderThatDate = () => {
+    const holidays = checkedMenus.flatMap((item) => item.holiday)!;
+    const uniqueHolidays = getUniqueInArray(holidays!);
+    const formatDate = selectedDeliveryDay
+      .split('-')
+      .map((item, index) => {
+        console.log(item, '--1-');
+        if (index) {
+          return item.replace('0', '');
+        }
+        return item;
+      })
+      .join(',');
+    console.log(formatDate, 'formatDate');
+    return uniqueHolidays.includes(formatDate);
+  };
+
   const goToDeliveryInfo = () => {
     const callback = router.push('/cart/delivery-info');
     // 합배송 선택한 경우
@@ -905,7 +933,8 @@ const CartPage = () => {
     }
 
     const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
-
+    const canOrderThatDate = checkCanOrderThatDate();
+    console.log(canOrderThatDate, 'canOrderThatDate');
     if (!allAvailableMenus) {
       dispatch(
         SET_ALERT({

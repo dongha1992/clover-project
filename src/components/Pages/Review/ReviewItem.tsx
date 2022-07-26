@@ -45,7 +45,7 @@ const ReviewItem = ({ review, onClick }: IProps) => {
               <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
             </Rating>
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 16px 0 0">
-              {review.orderCount}번째 구매
+              {review?.tag}번째 구매
             </Tag>
           </ReviewHeader>
           <ReviewBody>
