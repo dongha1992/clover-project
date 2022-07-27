@@ -89,7 +89,7 @@ const SpotSearchKakaoMap = ({
         };
         const map = new window.kakao.maps.Map(container, options); // 지도 생성
         if (spotListAllCheck) {
-          map.setCenter(new window.kakao.maps.LatLng(37.5206007, 127.005454));
+          map.setCenter(new window.kakao.maps.LatLng(37.52066637532468, 126.98082602361164));
         };
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 54);
@@ -102,6 +102,7 @@ const SpotSearchKakaoMap = ({
       
           // 지도 이동(기존 위치와 가깝다면 부드럽게 이동)
           map.panTo(currentPos);
+          map.setLevel(3);
       
           // 마커 생성
           const imageSrc = `${IMAGE_S3_DEV_URL}/ic_current_position.png`;
@@ -266,9 +267,8 @@ const SpotSearchKakaoMap = ({
               position: latlng, // 마커를 표시할 위치
               image : typeMarkersImage, // 마커 이미지 
               zIndex: 600,
-              
           });
-          // markers.normalImage = typeMarkersImage;
+          markers.typeMarkersImage = typeMarkersImage;
           markersArr.push(markers);
 
           if(currentSlickIdx === idx) { // 검색 결과에서 슬라이드 정보창 이동시 선택된 마커 유지
@@ -281,19 +281,18 @@ const SpotSearchKakaoMap = ({
               // 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면 마커의 이미지를 클릭 이미지로 변경
               if (!selectedMarker || selectedMarker !== markers) {
                 // 클릭된 마커 객체가 null이 아니면 클릭된 마커의 이미지를 기본 이미지로 변경
-                !!selectedMarker && selectedMarker.setImage(typeMarkersImage);
+                !!selectedMarker && selectedMarker.setImage(selectedMarker.typeMarkersImage);
                 // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경
                 markers.setImage(selectedMarkerImage); 
                 markers.setZIndex(700);
               };
+              selectedMarker = markers;
               // 클릭된 마커를 현재 클릭된 마커 객체로 설정
-              selectedMarker = markers; 
-            } else {
-              if(currentSlickIdx === idx) { // 검색 결과에서 클릭한 마커 아이콘 변경
+            } else if(currentSlickIdx === idx) { // 검색 결과에서 클릭한 마커 아이콘 변경
                 markers.setImage(selectedMarkerImage);
                 markers.setZIndex(700);
-              };  
-            }
+            };  
+            
             map.setLevel(3); // 마커 클릭시 zoom level 3
 
             const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon); 
@@ -328,7 +327,7 @@ const SpotSearchKakaoMap = ({
         const zoomIn = () => {
           const getLevel = map.getLevel();
           const level = getLevel - 1;
-          map.setLevel(level);
+          map.setLevel(level, {animate: true});
           setMaxZoomOut(false);
           if(getLevel <= 2) {
             setMinZoomIn(true);
@@ -339,7 +338,7 @@ const SpotSearchKakaoMap = ({
         const zoomOut = () => {
           const getLevel = map.getLevel();
           const level = getLevel + 1;
-          map.setLevel(level);
+          map.setLevel(level, {animate: true});
           setMinZoomIn(false);
           if(getLevel >= 8){
             setMaxZoomOut(true);
