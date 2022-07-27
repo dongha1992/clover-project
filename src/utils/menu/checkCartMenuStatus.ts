@@ -18,5 +18,12 @@ export const checkCartMenuStatus = (list: IMenuDetailsInCart[]): boolean => {
 };
 
 export const checkPeriodCartMenuStatus = (list: IMenuDetailsInCart[]): boolean => {
-  return list.filter((item) => item.main).some((item) => !item.availabilityInfo?.availability);
+  return list
+    .filter((item) => item.main)
+    .some((item) => {
+      const exception = item.availabilityInfo.menuDetailAvailabilityMessage === 'PERIOD';
+      if (exception) {
+        return !item.availabilityInfo?.availability;
+      }
+    });
 };

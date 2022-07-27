@@ -396,8 +396,10 @@ const CartPage = () => {
         setIsAllchecked(!isAllChecked);
       }
     } else {
-      const isAllSoldout = checkIsAllSoldout(menu.menuDetails) || !checkCartMenuStatus(menu.menuDetails);
-      if (isAllSoldout) return;
+      const isAllSoldout = checkIsAllSoldout(menu.menuDetails);
+      const canOrderPeriodMenus = !checkPeriodCartMenuStatus(menu.menuDetails);
+
+      if (isAllSoldout || !canOrderPeriodMenus) return;
 
       tempCheckedMenus.push(menu);
     }
@@ -407,10 +409,16 @@ const CartPage = () => {
 
   const selectAllCartItemHandler = () => {
     const canCheckMenus = getCanCheckedMenus(cartItemList);
-    const canNotCheckAllMenus = canCheckMenus.length === 0;
+    // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
+    const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
+    const filtered = canCheckMenus.filter(
+      (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
+    );
+
+    const canNotCheckAllMenus = filtered.length === 0;
 
     if (!isAllChecked) {
-      setCheckedMenus(canCheckMenus);
+      setCheckedMenus(filtered);
     } else {
       setCheckedMenus([]);
     }
