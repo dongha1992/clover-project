@@ -15,8 +15,10 @@ interface IProps {
 const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday, placeTel}: IProps): ReactElement => {
   return (
     <Container>
-      <Wrapper>
-        <StoreInfoWrapper>
+
+      <table>
+        <tbody>
+        <tr>
           <th>
             <TextTitle>연락처</TextTitle>
           </th>
@@ -30,16 +32,20 @@ const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday, placeTel}:
             }
             </Tel>
           </td>
-        </StoreInfoWrapper>
-        <StoreInfoWrapper>
+        </tr>
+        </tbody>
+        <tbody>
+        <tr>
           <th>
             <TextTitle>영업시간</TextTitle>
           </th>
           <td>
             <TextB2R padding='0 0 16px 0'>{placeOpenTime}</TextB2R> 
           </td>
-        </StoreInfoWrapper>
-        <StoreInfoWrapper>
+        </tr>
+        </tbody>
+        <tbody>
+        <tr>
           <th>
             <TextTitle>휴무일</TextTitle>
           </th>
@@ -53,28 +59,28 @@ const DetailBottomStoreInfo= ({lat, lon, placeOpenTime, placeHoliday, placeTel}:
                 }
             </Holiday>
           </td>
-        </StoreInfoWrapper>
-      </Wrapper>
+        </tr>
+        </tbody>
+      </table>
       <MapWrapper>
-        <DefaultKakaoMap centerLat={lat ? lat : 37.54669189732} centerLng={lon ? lon : 126.833485621837} />
+        <DefaultKakaoMap centerLat={lat} centerLng={lon} />
       </MapWrapper>
     </Container>
   );
 }
 
-const Container = styled.section``;
-
-const Wrapper = styled.table`
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-`;
-
-const StoreInfoWrapper = styled.tr`
-  display: flex;
-  flex-direction: row;
-  th {
-    text-align: left;
+const Container = styled.section`
+  table {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;  
+    tr{
+      display: flex;
+      flex-direction: row;
+      th {
+        text-align: left;
+      }    
+    }
   }
 `;
 
