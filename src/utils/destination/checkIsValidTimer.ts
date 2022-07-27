@@ -59,7 +59,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
     // 일부 서울 및 경기권
     case 'morning': {
       // 새벽 배송 타이머만 노출
-      if (isSpot || isParcel) {
+      if (isParcel) {
         return '새벽배송';
       } else {
         return deliveryType;
@@ -68,7 +68,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
     // 지방
     case 'parcel': {
       // 택배배송 타이머만 노출
-      if (isSpot || isMorning) {
+      if (isMorning) {
         return '택배배송';
       } else {
         return deliveryType;
