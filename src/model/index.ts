@@ -1914,6 +1914,7 @@ export interface ISearchReviews {
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
+  editable: boolean;
 }
 
 export interface ICreateReivewRequest {

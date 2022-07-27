@@ -113,7 +113,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
           SET_ALERT({
             children: <FinishReview />,
             alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
-            onSubmit: () => router.replace('/mypage/review'),
+            onSubmit: () => router.replace('/mypage/review?tab=/completed'),
             submitBtnText: '확인',
           })
         );
@@ -259,7 +259,10 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B color={theme.brandColor}>{me?.nickName}님</TextH3B>
+          <FlexRow>
+            <TextH3B color={theme.brandColor}>{me?.nickName}</TextH3B>
+            <TextH3B>님</TextH3B>
+          </FlexRow>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>

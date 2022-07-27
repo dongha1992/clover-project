@@ -304,7 +304,10 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B color={theme.brandColor}>{me?.nickName}님</TextH3B>
+          <FlexRow>
+            <TextH3B color={theme.brandColor}>{me?.nickName}</TextH3B>
+            <TextH3B>님</TextH3B>
+          </FlexRow>
           <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
         </FlexCol>
         <FlexRow>
@@ -395,7 +398,7 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
       <PointInfoWrapper>
         <ReviewInfoBottom />
       </PointInfoWrapper>
-      {isAvailable ? (
+      {selectedReviewDetail?.menuReview.editable ? (
         <ButtonGroup
           leftButtonHandler={deleteReview}
           rightButtonHandler={finishWriteReview}
@@ -404,8 +407,8 @@ const EditReviewPage = ({ reviewId, menuId }: IProp) => {
         />
       ) : (
         <ButtonWrapper>
-          <Button height="100%" width="100%" borderRadius="0" onClick={finishWriteReview}>
-            수정하기
+          <Button height="100%" width="100%" borderRadius="0" onClick={deleteReview}>
+            삭제하기
           </Button>
         </ButtonWrapper>
       )}

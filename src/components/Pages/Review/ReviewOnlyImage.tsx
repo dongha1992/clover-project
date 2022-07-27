@@ -48,26 +48,13 @@ const ReviewOnlyImage = ({
                   <LastImg>
                     <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
-                  <Image
-                    src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url}
-                    alt="리뷰이미지"
-                    width={'100%'}
-                    height={'100%'}
-                    layout="responsive"
-                  />
+                  <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" />
                 </LastImgWrapper>
               );
             }
             return (
               <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
-                <Image
-                  src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url}
-                  alt="리뷰이미지"
-                  key={index}
-                  width={'100%'}
-                  height={'100%'}
-                  layout="responsive"
-                />
+                <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" key={index} />
               </ReviewImgWrapper>
             );
           })}
@@ -111,9 +98,22 @@ const ReviewSwipe = styled.div`
 `;
 
 const ReviewImgWrapper = styled.div`
+  position: relative;
   width: calc((100% - 24px) / 4);
   margin-right: 6px;
+  overflow: hidden;
+  height: 0;
+  padding-bottom: 25%;
 
+  > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
   > span {
     border-radius: 8px;
   }
@@ -122,6 +122,18 @@ const ReviewImgWrapper = styled.div`
 const LastImgWrapper = styled.div`
   position: relative;
   width: calc((100% - 24px) / 4);
+  overflow: hidden;
+  height: 0;
+  padding-bottom: 25%;
+  > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
   > span {
     border-radius: 8px;
   }

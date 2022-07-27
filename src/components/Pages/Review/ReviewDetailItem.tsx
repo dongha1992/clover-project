@@ -68,13 +68,21 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                       onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
-                      <Image
+                      {/* <Image
                         src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + img.url}
                         // src={fromS3 ? s3Url : getResizeImg({ width: 500, url: img.url })}
                         alt="리뷰이미지"
                         width={'100%'}
                         height={'100%'}
                         layout="responsive"
+                        className="rounded"
+                      /> */}
+                      <img
+                        src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + img.url}
+                        // src={fromS3 ? s3Url : getResizeImg({ width: 500, url: img.url })}
+                        alt="리뷰이미지"
+                        width={'100%'}
+                        height={'100%'}
                         className="rounded"
                       />
                     </ReviewImageWrapper>
@@ -163,10 +171,12 @@ const ImgWrapper = styled.div`
 `;
 
 const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`
-  width: calc((100% - 24px) / 4);
-  /* height: 100%; */
+  width: 72px;
+  height: 72px;
   margin-right: ${({ isFirst }) => isFirst && 8}px;
   .rounded {
+    object-fit: cover;
+    width: 100%;
     border-radius: 8px;
   }
 `;

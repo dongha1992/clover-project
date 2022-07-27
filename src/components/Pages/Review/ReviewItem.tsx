@@ -60,15 +60,16 @@ const ReviewItem = ({ review, onClick }: IProps) => {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100%;
   /* margin-right: 16px; */
 `;
 
 const Wrapper = styled.div`
   background-color: ${theme.white};
-  padding: 16px 0 16px 16px;
+  padding: 16px;
   border-radius: 8px;
   display: flex;
-  width: 294px;
+  width: 100%;
 `;
 
 const ImgWrapper = styled.div`
