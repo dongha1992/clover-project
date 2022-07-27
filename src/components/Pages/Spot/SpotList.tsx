@@ -42,7 +42,6 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
 
-
   const goToDetail = (): void => {
     router.push({
       pathname: `/spot/detail/${id}`,
@@ -67,8 +66,9 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = async(pickupId: number) => { // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
-      const reqBody = { 
+    const goToCart = async (pickupId: number) => {
+      // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
+      const reqBody = {
         name: list?.name!,
         delivery: 'SPOT',
         deliveryMessage: '',
@@ -83,48 +83,52 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
         },
         spotPickupId: pickupId!,
       };
-      try{
+      try {
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
-          if (data.code === 200) {
-            const response = data.data;
-            const destinationId = response.id;
-            dispatch(
-              SET_DESTINATION({
-                name: response.name,
-                location: {
-                  addressDetail: response.location.addressDetail,
-                  address: response.location.address,
-                  dong: response.location.dong,
-                  zipCode: response.location.zipCode,
-                },
-                main: response.main,
-                deliveryMessage: response.deliveryMessage,
-                receiverName: response.receiverName,
-                receiverTel: response.receiverTel,
-                deliveryMessageType: '',
-                delivery: response.delivery,
-                id: destinationId,
-                spotId: list.id,
-              })
-            );
-            dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({ pathname: '/cart', query: { isClosed: !!list.closedDate } });      
-          };
-      }catch(e){
+        if (data.code === 200) {
+          const response = data.data;
+          const destinationId = response.id;
+          dispatch(
+            SET_DESTINATION({
+              name: response.name,
+              location: {
+                addressDetail: response.location.addressDetail,
+                address: response.location.address,
+                dong: response.location.dong,
+                zipCode: response.location.zipCode,
+              },
+              main: response.main,
+              deliveryMessage: response.deliveryMessage,
+              receiverName: response.receiverName,
+              receiverTel: response.receiverTel,
+              deliveryMessageType: '',
+              delivery: response.delivery,
+              id: destinationId,
+              spotId: list.id,
+              availableTime: pickUpTime,
+            })
+          );
+          dispatch(SET_USER_DELIVERY_TYPE('spot'));
+          router.push({ pathname: '/cart', query: { isClosed: !!list.closedDate } });
+        }
+      } catch (e) {
         console.error(e);
-      };
+      }
     };
 
-    if (isLoginSuccess) { // 로그인o
-      if (orderId) { // 배송정보 변경에서 넘어온 경우
+    if (isLoginSuccess) {
+      // 로그인o
+      if (orderId) {
+        // 배송정보 변경에서 넘어온 경우
         dispatch(SET_TEMP_DESTINATION(destinationInfo));
         router.push({
           pathname: '/mypage/order-detail/edit/[orderId]',
           query: { orderId },
         });
         return;
-      };
-      dispatch( // 로그인 o, 장바구니 o, 이벤트 스팟 - 주문하기 클릭  cart로 이동
+      }
+      dispatch(
+        // 로그인 o, 장바구니 o, 이벤트 스팟 - 주문하기 클릭  cart로 이동
         SET_BOTTOM_SHEET({
           content: <PickupSheet pickupInfo={list?.pickups} spotType={list?.type} onSubmit={goToCart} />,
         })
@@ -139,7 +143,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
           onSubmit: () => router.push('/onboarding'),
         })
       );
-    };
+    }
   };
 
   const onClickLike = (e: any) => {
@@ -176,21 +180,19 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
     );
   };
 
-  const joinPublicSpotRecruiting = async(id: number) => {
-    try{
-      const {data} = await postSpotRegistrationsRecruiting(id);
-      if(data.code === 200){
+  const joinPublicSpotRecruiting = async (id: number) => {
+    try {
+      const { data } = await postSpotRegistrationsRecruiting(id);
+      if (data.code === 200) {
         router.push({
           pathname: `/mypage/spot-status/detail/${id}`,
-          query: { recruited: true }
+          query: { recruited: true },
         });
       }
-    } catch(e){
+    } catch (e) {
       console.error(e);
-    };
+    }
   };
-
-
 
   const SpotsListTypeRender = () => {
     switch (type) {
@@ -234,7 +236,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       case 'event':
         return (
           <Container type="event" onClick={goToDetail}>
-            <StorImgWrapper >
+            <StorImgWrapper>
               <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
               </LikeWrapper>

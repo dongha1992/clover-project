@@ -45,7 +45,7 @@ const ReviewItem = ({ review, onClick }: IProps) => {
               <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
             </Rating>
             <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 16px 0 0">
-              {review.orderCount}번 째 구매
+              {review?.tag}번째 구매
             </Tag>
           </ReviewHeader>
           <ReviewBody>
@@ -60,15 +60,16 @@ const ReviewItem = ({ review, onClick }: IProps) => {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  margin-right: 16px;
+  width: 100%;
+  /* margin-right: 16px; */
 `;
 
 const Wrapper = styled.div`
   background-color: ${theme.white};
-  padding: 16px 0 16px 16px;
+  padding: 16px;
   border-radius: 8px;
   display: flex;
-  width: 294px;
+  width: 100%;
 `;
 
 const ImgWrapper = styled.div`
@@ -97,6 +98,7 @@ const Rating = styled.div`
 `;
 
 const ReviewBody = styled.div`
+  width: 100%;
   margin-top: 8px;
   padding-right: 24px;
   ${showMoreText}

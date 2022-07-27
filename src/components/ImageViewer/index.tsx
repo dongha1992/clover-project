@@ -9,16 +9,22 @@ import { useDispatch } from 'react-redux';
 import { INIT_IMAGE_VIEWER } from '@store/common';
 import ViewerCarousel from './ViewerCarousel';
 import { breakpoints } from '@utils/common/getMediaQuery';
+import { IViewer } from '@store/common';
+interface IProps {
+  imagesForViewer: IViewer;
+}
 
-const ImageViewer = ({ images }: any) => {
-  const [currentImg, setCurrentImg] = useState(0);
+const ImageViewer = ({ imagesForViewer }: IProps) => {
+  const [currentImg, setCurrentImg] = useState(imagesForViewer?.index);
   const dispatch = useDispatch();
 
   const closeModal = () => {
     dispatch(INIT_IMAGE_VIEWER());
   };
 
-  const totalImg = images.length;
+  console.log(currentImg, 'currentImg');
+
+  const totalImg = imagesForViewer?.images?.length;
 
   return (
     <ModalFullScreen height="300px" padding="10px" style={{ borderRadius: '8px' }}>
@@ -31,7 +37,7 @@ const ImageViewer = ({ images }: any) => {
             <SVGIcon name="defaultCancel24White" />
           </div>
         </Header>
-        <ViewerCarousel images={images} setCountIndex={setCurrentImg} />
+        <ViewerCarousel images={imagesForViewer} setCountIndex={setCurrentImg} currentImg={currentImg} />
       </Container>
     </ModalFullScreen>
   );
@@ -57,7 +63,7 @@ const Header = styled.div`
   .close {
     cursor: pointer;
     position: absolute;
-    right: 10%;
+    right: 24px;
     ${({ theme }) => theme.mobile`
       right:20%
   `};

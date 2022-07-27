@@ -11,13 +11,13 @@ import isNil from 'lodash-es/isNil';
 import InfoMessage from '@components/Shared/Message';
 
 interface IProps {
-  handleSelectCartItem: (menu: IGetCart) => void;
+  selectCartItemHandler: (menu: IGetCart) => void;
   checkedMenus: IGetCart[];
   removeCartDisplayItemHandler: (menu: IGetCart) => void;
   menu: IGetCart;
 }
 
-const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplayItemHandler, menu }: IProps) => {
+const CartDisplayItem = ({ checkedMenus, selectCartItemHandler, removeCartDisplayItemHandler, menu }: IProps) => {
   const isSelected = !isNil(checkedMenus?.find((item) => item.menuId === menu.menuId));
   const isDisabled = menu.isSold;
 
@@ -31,7 +31,7 @@ const CartDisplayItem = ({ checkedMenus, handleSelectCartItem, removeCartDisplay
                 if (isDisabled) {
                   return;
                 }
-                handleSelectCartItem(menu);
+                selectCartItemHandler(menu);
               }}
               isSelected={isSelected}
               disabled={isDisabled}

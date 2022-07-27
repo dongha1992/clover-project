@@ -33,7 +33,7 @@ const CartIcon = ({ onClick }: any) => {
     }
   );
 
-  const cartCount = me ? count! : nonMemberCartLists.length!;
+  const cartCount = me ? count! : nonMemberCartLists?.length!;
   const displayCount = cartCount > 9 ? '+9' : cartCount;
 
   return (
