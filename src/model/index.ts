@@ -1915,6 +1915,9 @@ export interface ISearchReviews {
   commenter?: string;
   commentCreatedAt?: string;
   editable: boolean;
+  orderType: string;
+  displayMenuName: string;
+  deliveryRound: number;
 }
 
 export interface ICreateReivewRequest {

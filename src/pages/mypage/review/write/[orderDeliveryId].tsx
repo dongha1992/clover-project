@@ -48,9 +48,10 @@ interface IProps {
   orderDeliveryId: number;
   menuDetailId: number;
   orderType: string;
+  deliveryRound: string;
 }
 
-const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: IProps) => {
+const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, deliveryRound }: IProps) => {
   const [isShow, setIsShow] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
@@ -259,11 +260,14 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <FlexRow>
-            <TextH3B color={theme.brandColor}>{me?.nickName}</TextH3B>
-            <TextH3B>님</TextH3B>
-          </FlexRow>
-          <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
+          <TextH3B>
+            <NickName>{me?.nickName}</NickName>님
+          </TextH3B>
+          {orderType === 'SUBSCRIPTION' ? (
+            <TextH3B>이용 중인 구독은 만족하셨나요?</TextH3B>
+          ) : (
+            <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
+          )}
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
@@ -277,7 +281,12 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{data?.name}</TextB2R>
+            <TextB2R>{data?.name}</TextB2R>
+            {orderType === 'SUBSCRIPTION' && (
+              <TextB3R padding="4px 0 0" color={theme.greyScale65}>
+                <b>배송</b> {deliveryRound}회차
+              </TextB3R>
+            )}
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
@@ -361,7 +370,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding-top: 8px;
+`;
 const Wrapper = styled.div`
   ${homePadding}
 `;
@@ -374,8 +385,10 @@ const ImgWrapper = styled.div`
 
 const TextWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-self: flex-start;
   width: 100%;
+  padding-left: 16px;
 `;
 
 const RateWrapper = styled.div`
@@ -441,7 +454,7 @@ const PreviewImgWrapper = styled.div`
 const PointInfoWrapper = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
-  margin-bottom: 105px;
+  margin-bottom: 56px;
 `;
 
 const BtnWrapper = styled.div`
@@ -460,10 +473,14 @@ const FinishComplete = styled.div`
   }
 `;
 
+export const NickName = styled.span`
+  color: ${theme.brandColor};
+`;
+
 export async function getServerSideProps(context: any) {
-  const { menuId, orderDeliveryId, menuDetailId, orderType } = context.query;
+  const { menuId, orderDeliveryId, menuDetailId, orderType, deliveryRound } = context.query;
   return {
-    props: { menuId, orderDeliveryId, menuDetailId, orderType },
+    props: { menuId, orderDeliveryId, menuDetailId, orderType, deliveryRound },
   };
 }
 

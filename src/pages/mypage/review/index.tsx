@@ -85,7 +85,7 @@ const ReviewPage = () => {
   const goToReviewDetail = useCallback(
     ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => {
       dispatch(SET_MENU_IMAGE({ url, name }));
-      router.push(`/mypage/review/edit/${id}?menuId=${menuId}`);
+      router.push(`/mypage/review/edit/${id}?menuId=${menuId}&menuImage=${encodeURIComponent(url)}`);
     },
     []
   );
@@ -133,10 +133,7 @@ const ReviewPage = () => {
         <Wrapper>
           <WillReviewItmesWrapper>
             {willWriteList?.map((review, index) => (
-              <div key={index}>
-                <WillWriteReviewItem review={review} />
-                {willWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
-              </div>
+              <WillWriteReviewItem key={index} review={review} />
             ))}
           </WillReviewItmesWrapper>
         </Wrapper>
@@ -145,14 +142,12 @@ const ReviewPage = () => {
           <WillReviewItmesWrapper>
             {completeWriteList?.map((review, index) => {
               return (
-                <div key={index}>
-                  <CompleteReviewItem
-                    review={review}
-                    clickImgViewHandler={clickImgViewHandler}
-                    goToReviewDetail={goToReviewDetail}
-                  />
-                  {completeWriteList?.length - 1 !== index && <BorderLine height={1} margin="24px 0" />}
-                </div>
+                <CompleteReviewItem
+                  key={index}
+                  review={review}
+                  clickImgViewHandler={clickImgViewHandler}
+                  goToReviewDetail={goToReviewDetail}
+                />
               );
             })}
           </WillReviewItmesWrapper>
@@ -168,12 +163,12 @@ const ReviewPage = () => {
 };
 
 const Container = styled.div`
-  padding-bottom: 24px;
+  /* padding-bottom: 24px; */
 `;
 
 const InfoWrapper = styled.div`
   ${homePadding}
-  padding-top:50px;
+  padding-top:74px;
 `;
 
 const FixedTab = styled.div<{ scroll: boolean }>`
@@ -204,9 +199,7 @@ const ReviewInfoWrapper = styled.div`
   text-align: center;
 `;
 
-const WillReviewItmesWrapper = styled.div`
-  margin-bottom: 24px;
-`;
+const WillReviewItmesWrapper = styled.div``;
 const Center = styled.div`
   display: flex;
   justify-content: center;
