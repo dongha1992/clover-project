@@ -1,4 +1,4 @@
-import { FlexBetween, FlexCol, FlexColStart, FlexRow, theme } from '@styles/theme';
+import { FlexColStart, FlexRow, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
@@ -6,9 +6,8 @@ import { Tag } from '@components/Shared/Tag';
 import SVGIcon from '@utils/common/SVGIcon';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
-import { getDisplayMenuName } from '@utils/menu';
 import { IWillWriteReview } from '@model/index';
-import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
+import { DELIVERY_TIME_MAP } from '@constants/order';
 import { DeliveryTag } from '@components/Shared/Tag';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { IMAGE_ERROR } from '@constants/menu';
@@ -31,7 +30,11 @@ const WillWriteReviewItem = ({ review }: IProps) => {
       <Wrapper>
         <FlexRow margin="0 0 8px 0">
           <TextH5B>배송완료</TextH5B>
-          {isSubscription && <Tag margin="0 4px 0 8px">정기구독</Tag>}
+          {isSubscription && (
+            <Tag margin="0 4px 0 8px" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+              정기구독
+            </Tag>
+          )}
           <DeliveryTag deliveryType={review?.delivery!} margin="0 4px" />
           {isSpot && (
             <Tag backgroundColor={theme.white} border={theme.brandColor} color={theme.brandColor}>
@@ -40,8 +43,11 @@ const WillWriteReviewItem = ({ review }: IProps) => {
           )}
         </FlexRow>
         <FlexRow padding="0 0 8px 0">
-          <SVGIcon name="deliveryTruckIcon" />
-          <TextH5B padding="2px 0 0 4px">{deliveryAt} 도착</TextH5B>
+          {review.orderType === 'SUBSCRIPTION' ? <SVGIcon name="subscription" /> : <SVGIcon name="deliveryTruckIcon" />}
+          <TextH5B padding="2px 0 0 4px">
+            {review.orderType === 'SUBSCRIPTION' && `배송 ${review.deliveryRound}회차 - `}
+            {deliveryAt} 도착
+          </TextH5B>
         </FlexRow>
         <FlexRow padding="0 0 16px 0">
           <ImageWrapper>
@@ -62,7 +68,7 @@ const WillWriteReviewItem = ({ review }: IProps) => {
             margin="0 8px 0 0"
             onClick={() =>
               router.push(
-                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderType=${review.orderType}`
+                `/mypage/review/write/${review.orderDeliveryId}?menuId=${review.menuId}&menuDetailId=${review.menuDetailId}&orderType=${review.orderType}&deliveryRound=${review.deliveryRound}`
               )
             }
           >
@@ -74,7 +80,13 @@ const WillWriteReviewItem = ({ review }: IProps) => {
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding: 24px 0;
+  border-bottom: 1px solid ${theme.greyScale6};
+  &:last-of-type {
+    border-bottom: none;
+  }
+`;
 
 const Wrapper = styled.div`
   width: 100%;
