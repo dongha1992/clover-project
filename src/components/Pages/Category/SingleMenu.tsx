@@ -151,7 +151,7 @@ const SingleMenu = ({ menuList, title, isAllMenu, allMenus }: IProps) => {
 
 const Container = styled.div`
   width: 100%;
-  margin-top: 42px;
+  margin-top: 8px;
 `;
 
 const Section = styled.div`
