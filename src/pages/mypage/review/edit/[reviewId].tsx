@@ -394,7 +394,6 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
           {writeMenuReviewObj?.preview?.length! > 0 &&
             writeMenuReviewObj?.preview?.map((img: string, index: number) => {
               const base64 = img?.includes('data:image');
-
               return (
                 <PreviewImgWrapper key={index}>
                   <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
@@ -500,6 +499,7 @@ const PreviewImgWrapper = styled.div`
     width: 100%;
     height: 100%;
     border-radius: 8px;
+    object-fit: cover;
   }
 
   .svgWrapper {

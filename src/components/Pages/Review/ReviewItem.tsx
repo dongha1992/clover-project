@@ -98,6 +98,7 @@ const Rating = styled.div`
 `;
 
 const ReviewBody = styled.div`
+  width: 100%;
   margin-top: 8px;
   padding-right: 24px;
   ${showMoreText}
