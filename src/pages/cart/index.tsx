@@ -49,7 +49,7 @@ import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getCustomDate } from '@utils/destination';
-import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus } from '@utils/menu';
+import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
@@ -1449,10 +1449,13 @@ const CartPage = () => {
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                프코 회원
+                {me?.grade?.name}
               </Tag>
-              <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-              <TextH6B> n 포인트 (n%) 적립 예정</TextH6B>
+              <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
+              <TextH6B>
+                {calculatePoint({ rate: me?.grade.benefit.purchaseRate!, total: totalAmount + getDeliveryFee() })}P (
+                {me?.grade.benefit.purchaseRate}%) 적립 예정
+              </TextH6B>
             </FlexEnd>
           </TotalPriceWrapper>
         )}
