@@ -147,7 +147,7 @@ const DeliverInfoPage = () => {
       setUserSelectDeliveryType(value);
     }
   };
-
+  console.log(tempDestination, 'tempDestination');
   const finishDeliverySetting = async () => {
     const isSpot = userSelectDeliveryType === 'spot';
 
@@ -285,6 +285,7 @@ const DeliverInfoPage = () => {
           const { data } = await postDestinationApi(reqBody);
           if (data.code === 200) {
             const response = data.data;
+            console.log(response, 'after post');
             dispatch(
               SET_DESTINATION({
                 name: response.name,
@@ -302,7 +303,8 @@ const DeliverInfoPage = () => {
                 delivery: response.delivery,
                 id: response.id,
                 spotPickup: response.spotPickup ? response.spotPickup : null,
-                availableTime: tempDestination?.availableTime,
+                availableTime: tempDestination.availableTime ? tempDestination.availableTime! : undefined,
+                spaceType: tempDestination.spaceType ? tempDestination.spaceType : undefined,
               })
             );
             dispatch(SET_AFTER_SETTING_DELIVERY());
@@ -321,6 +323,7 @@ const DeliverInfoPage = () => {
           }
         } catch (error) {
           console.error(error);
+          dispatch(SET_ALERT({ alertMessage: '다시 시도해주세요.' }));
           return;
         }
       }
@@ -451,7 +454,7 @@ const DeliverInfoPage = () => {
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        console.log(data, '---dat-------453');
+        console.log(data, 'getMainDestinationsApi');
         if (data.data) {
           setTempDestination({ ...data.data, spotId: data.data.spotPickup?.spotId });
           setIsMaindestination(true);

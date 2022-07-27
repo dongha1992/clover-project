@@ -48,34 +48,46 @@ const CartActualItem = ({
   //PERIOD?
 
   const isSold = menuDetail.isSold;
-  console.log(holiday, '---');
-  const noneLimit = menuDetailAvailabilityMessage === 'NONE';
+  const hasHoliday = holiday?.length! > 0;
+  console.log(holiday, 'holiday from Menu');
+  console.log(menuDetail?.availabilityInfo, 'menuDetail?.availabilityInfo');
+
+  const noLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
   const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
-  const dateLimit = ['DAILY', 'WEEKLY', 'PERIOD'].includes(menuDetailAvailabilityMessage);
+  const periodLimit = menuDetailAvailabilityMessage === 'PERIOD';
+  const dateLimit = ['DAILY', 'WEEKLY'].includes(menuDetailAvailabilityMessage);
 
   const isPersonLimit = personLimit && (!remainingQuantity || !availability);
   const soldCases = isSold;
 
-  const defaultStatus = availability && remainingQuantity === 0;
+  const defaultStatus = (availability && remainingQuantity === 0) || holidayLimit || noLimit;
 
   const checkMenuStatus = (): string => {
     switch (true) {
-      case holidayLimit: {
-        return `${getHolidayByMenu(holiday!)} 배송이 불가능해요`;
-      }
       case isSold:
         return '품절된 상품이에요.';
 
       case dateLimit: {
         let message = '';
-        if (availability) {
+        if (availability && remainingQuantity > 0) {
           message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
         } else {
           message = '선택한 날짜에 상품이 품절됐어요';
         }
         return message;
       }
+
+      case periodLimit: {
+        let message = '';
+        if (availability && remainingQuantity > 0) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
+        } else {
+          message = '품절된 상품이에요.';
+        }
+        return message;
+      }
+
       case personLimit: {
         let message = '';
         if (isPersonLimit) {
@@ -126,7 +138,10 @@ const CartActualItem = ({
             <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
           </PriceWrapper>
           <InfoContainer>
-            {!defaultStatus ? <InfoMessage message={checkMenuStatus()} /> : <div />}
+            <FlexCol>
+              {!defaultStatus ? <InfoMessage message={checkMenuStatus()} /> : <div />}
+              {hasHoliday ? <InfoMessage message={`${getHolidayByMenu(holiday!)} 배송이 불가능해요`} /> : <div />}
+            </FlexCol>
             <CountButtonContainer>
               <CountButton
                 isSold={soldCases}
