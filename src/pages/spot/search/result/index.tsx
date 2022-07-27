@@ -10,7 +10,6 @@ import { SpotSearchMapPage } from '@components/Pages/Spot';
 import { SVGIcon } from '@utils/common';
 import { ISpotsDetail } from '@model/index';
 import { useQuery } from 'react-query';
-import { IParamsSpots } from '@model/index';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import 'swiper/css';
@@ -28,8 +27,7 @@ import { IDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider, SpotRecentPickupList } from '@components/Pages/Spot';
 import { getFilteredSpotList } from '@utils/spot';
 import { SET_ALERT } from '@store/alert';
-// import { getCartsApi } from '@api/cart';
-// import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
+import useCurrentLocation from '@hooks/useCurrentLocation';
 
 const SpotSearchResultPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -38,6 +36,7 @@ const SpotSearchResultPage = (): ReactElement => {
   const { orderId, isDelivery, keyword } = router.query;
   const { spotsPosition, spotSearchSelectedFilters, spotSearchSort, isMapSwitch } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
+  const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
 
   const [searchResult, setSearchResult] = useState<ISpotsDetail[]>([]);
   const [defaultSpotList, setDefaultSpotList] = useState<ISpotsDetail[]>([]);
@@ -47,7 +46,6 @@ const SpotSearchResultPage = (): ReactElement => {
   const [inputKeyword, setInputKeyword] = useState<string>('');
   const [size, setSize] = useState<number>(10);
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
-  const [isFocusing, setIsFocusing] = useState<boolean>(false);
   const [routerQueries, setRouterQueries] = useState({});
 
   const userLocationLen = userLocation.emdNm?.length! > 0;
@@ -136,33 +134,26 @@ const SpotSearchResultPage = (): ReactElement => {
     }
   }, [isDelivery]);
 
-  // GPS - 현재위치 가져오기
-  const getCurrentPosition = () =>
-    new Promise((resolve, error) => navigator.geolocation.getCurrentPosition(resolve, error));
-
-  const getLocation = async () => {
-    try {
-      const position: any = await getCurrentPosition();
-      if (position) {
-        // console.log('위치 들어옴', position.coords.latitude + ' ' + position.coords.longitude);
-        dispatch(
-          SET_SPOT_POSITIONS({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-      }
-      return { Status: true, position };
-    } catch (error) {
+  useEffect(()=> {
+    if(currentLocation){
       dispatch(
-        SET_ALERT({
-          alertMessage: '알 수 없는 에러가 발생했습니다.',
-          submitBtnText: '확인',
+        SET_SPOT_POSITIONS({
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
         })
       );
-      console.error('getCurrentLatLong::catcherror =>', error);
-      return { Status: false };
-    }
+    };
+  }, [currentLocation]);
+
+  const getLocation = async () => {
+    if(currentLocation){
+      dispatch(
+        SET_SPOT_POSITIONS({
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        })
+      );
+    };
   };
 
   // 최근 픽업 이력 조회 api
@@ -387,7 +378,7 @@ const SpotSearchResultPage = (): ReactElement => {
                 searchResult={paginatedSpotList}
                 orderId={orderId}
                 hasCart={true}
-                getLocation={getLocation}
+                getLocation={handlerCurrentPosition}
                 noSpotResultSwitchMap={noSpotResultSwitchMap}
                 goToSpotsRegistrations={goToSpotsRegistrations}
                 totalCount={searchResult.length}
