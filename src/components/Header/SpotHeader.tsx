@@ -17,12 +17,11 @@ const SpotHeader = () => {
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [distance, setDistance] = useState<number>(0);
-  const { location: currentLocation, error: currentError, currentArrowed, onClickCurrentPosition } = useCurrentLocation();
-  console.log(currentLocation, currentError, currentArrowed );
+  const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
 
   useEffect(() => {
-    if (userLocation?.emdNm) {
-      onClickCurrentPosition();
+    if (userLocation?.emdNm && currentArrowed) {
+      handlerCurrentPosition();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
