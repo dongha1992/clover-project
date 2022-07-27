@@ -52,14 +52,16 @@ const CartActualItem = ({
   console.log(holiday, 'holiday from Menu');
   console.log(menuDetail?.availabilityInfo, 'menuDetail?.availabilityInfo');
 
+  const noLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
   const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
-  const dateLimit = ['DAILY', 'WEEKLY', 'PERIOD'].includes(menuDetailAvailabilityMessage);
+  const periodLimit = menuDetailAvailabilityMessage === 'PERIOD';
+  const dateLimit = ['DAILY', 'WEEKLY'].includes(menuDetailAvailabilityMessage);
 
   const isPersonLimit = personLimit && (!remainingQuantity || !availability);
   const soldCases = isSold;
 
-  const defaultStatus = (availability && remainingQuantity === 0) || holidayLimit;
+  const defaultStatus = (availability && remainingQuantity === 0) || holidayLimit || noLimit;
 
   const checkMenuStatus = (): string => {
     switch (true) {
@@ -75,6 +77,17 @@ const CartActualItem = ({
         }
         return message;
       }
+
+      case periodLimit: {
+        let message = '';
+        if (availability && remainingQuantity > 0) {
+          message = `품절 임박! 상품이 ${remainingQuantity}개 남았어요.`;
+        } else {
+          message = '품절된 상품이에요.';
+        }
+        return message;
+      }
+
       case personLimit: {
         let message = '';
         if (isPersonLimit) {

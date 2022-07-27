@@ -50,7 +50,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
   useEffect(() => {
     const lines = review.content?.split(/\r|\r\n|\n/);
     const count = lines?.length;
-    if (count > MAX_LINE) {
+    if (count >= MAX_LINE || review.content.length >= 280) {
       setIsContentHide(true);
     }
   }, []);

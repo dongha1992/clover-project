@@ -622,7 +622,8 @@ const ReviewSwipeContainer = styled(Swiper)`
 
   cursor: pointer;
   .swiper-slide {
-    width: 300px;
+    max-width: 488px;
+    width: 100%;
   }
 `;
 
