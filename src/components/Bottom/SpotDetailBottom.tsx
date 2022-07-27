@@ -349,7 +349,7 @@ const SpotDetailBottom = () => {
           {spotDetail?.isOpened && spotDetail?.discountRate !== 0 && (
             <TooltipWrapper>
               <SpotDetailEventTooltip
-                message={`${spotDetail?.discountRate}% 할인 중`}
+                message={`${spotDetail?.discountRate}% 할인 중 (구독 상품 제외)`}
                 bgColor={theme.brandColor}
                 color={theme.white}
                 minWidth="78px"
@@ -435,10 +435,10 @@ const TooltipWrapper = styled.div`
   position: absolute;
   width: 100%;
   top: -17%;
-  left: 45%;
+  left: 38%;
 
   ${({ theme }) => theme.mobile`
-    left: 43%;
+    left: 34%;
   `};
 `;
 
