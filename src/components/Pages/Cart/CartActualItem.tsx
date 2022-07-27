@@ -49,8 +49,9 @@ const CartActualItem = ({
 
   const isSold = menuDetail.isSold;
   const hasHoliday = holiday?.length! > 0;
-  console.log(holiday, 'holiday from Menu');
-  console.log(menuDetail?.availabilityInfo, 'menuDetail?.availabilityInfo');
+
+  // console.log(holiday, 'holiday from Menu');
+  // console.log(menuDetail?.availabilityInfo, 'menuDetail?.availabilityInfo');
 
   const noLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
@@ -59,7 +60,7 @@ const CartActualItem = ({
   const dateLimit = ['DAILY', 'WEEKLY'].includes(menuDetailAvailabilityMessage);
 
   const isPersonLimit = personLimit && (!remainingQuantity || !availability);
-  const soldCases = isSold;
+  const soldCases = isSold || (periodLimit && !availability);
 
   const defaultStatus = (availability && remainingQuantity === 0) || holidayLimit || noLimit;
 
