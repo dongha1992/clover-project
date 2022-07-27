@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
-import { TextB3R } from '@components/Shared/Text';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { Item, HorizontalItem } from '@components/Item';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBannersApi } from '@api/banner';
@@ -65,7 +65,12 @@ const Home = () => {
       <SectionWrapper>
         <MainTab />
         <BorderLine height={1} margin="24px 0 24px 0" />
+      </SectionWrapper>
+      <FlexSpace>
         <SectionTitle>MD 추천</SectionTitle>
+        <TextH5B color={theme.greyScale65} textDecoration='underline' pointer>더보기</TextH5B>
+      </FlexSpace>
+      <SectionWrapper>
         <FlexWrapWrapper>
           {menus?.length! > 0
             ? menus?.map((item, index) => {
@@ -84,28 +89,30 @@ const Home = () => {
           alt="홈 배너"
         />
       </LineBanner>
-      <FlexSpace>
-        <SectionTitle>메인 콘텐츠 기획전 - 1</SectionTitle>
-        <TextB3R color={theme.greyScale65}>더보기</TextB3R>
-      </FlexSpace>
-      <Image
-        src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
-        height="300px"
-        width="512px"
-        layout="responsive"
-        alt="메인 콘텐츠 기획전"
-      />
-      {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
-      <ItemListRowWrapper>
-        <ItemListRow>
-          {menus?.length! > 0
-            ? menus?.map((item, index) => {
-                if (index > 3) return;
-                return <Item item={item} key={index} isHorizontal />;
-              })
-            : '상품을 준비 중입니다.'}
-        </ItemListRow>
-      </ItemListRowWrapper>
+      <PromotionWrapper>
+        <FlexSpace>
+          <SectionTitle>메인 콘텐츠 기획전 - 1</SectionTitle>
+          <TextH5B color={theme.greyScale65} textDecoration='underline' pointer>더보기</TextH5B>
+        </FlexSpace>
+        <Image
+          src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
+          height="300px"
+          width="512px"
+          layout="responsive"
+          alt="메인 콘텐츠 기획전"
+        />
+        {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
+        <ItemListRowWrapper>
+          <ItemListRow>
+            {menus?.length! > 0
+              ? menus?.map((item, index) => {
+                  if (index > 3) return;
+                  return <Item item={item} key={index} isHorizontal />;
+                })
+              : '상품을 준비 중입니다.'}
+          </ItemListRow>
+        </ItemListRowWrapper>
+      </PromotionWrapper>
     </Container>
   );
 };
@@ -131,11 +138,15 @@ export const ItemListCol = styled.div`
   grid-gap: 16px;
 `;
 
-const LineBanner = styled.div`
+const LineBanner = styled.section`
   height: 96px;
   max-width: 512px;
   width: 100%;
   margin: 24px 0px;
+`;
+
+const PromotionWrapper = styled.section`
+  width: 100%;
 `;
 
 const FlexSpace = styled.div`
@@ -151,7 +162,7 @@ const ItemListRowWrapper = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
-  margin-bottom: 12px;
+  //margin-bottom: 12px;
 `;
 
 export const ItemListRow = styled.div`
