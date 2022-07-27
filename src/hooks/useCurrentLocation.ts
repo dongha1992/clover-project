@@ -33,7 +33,7 @@ const useCurrentLocation = (options = {}) => {
     };
   }, []);
 
-  const onClickCurrentPosition = () => {
+  const handlerCurrentPosition = () => {
     const { geolocation } = navigator;
     if (!geolocation) {
         setCurrentArrowed(true);
@@ -44,7 +44,7 @@ const useCurrentLocation = (options = {}) => {
       geolocation.getCurrentPosition(handleSuccess, handleError, options);
   };
 
-  return { location, error, currentArrowed, onClickCurrentPosition };
+  return { location, error, currentArrowed, handlerCurrentPosition };
 };
 
 export default useCurrentLocation;

@@ -13,6 +13,7 @@ import { SET_LOCATION_TEMP } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
 import { SET_SPOT_POSITIONS } from '@store/spot';
 import { useQuery } from 'react-query';
+import useCurrentLocation from '@hooks/useCurrentLocation';
 
 declare global {
   interface Window {
@@ -30,6 +31,7 @@ const LocationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { isSpot, keyword }: any = router.query;
+  const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
 
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
@@ -86,6 +88,20 @@ const LocationPage = () => {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyword]);
+
+  useEffect(()=>{
+    if(currentLocation){
+      dispatch(
+        SET_SPOT_POSITIONS({
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        })
+      );
+      window.getCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
+    };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLocation]);
 
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
   const onLoadKakaoMap = () => { 
@@ -171,17 +187,7 @@ const LocationPage = () => {
   // 현 위치로 설정하기 - 위도,경도 좌표값 저장
   const getGeoLocation = () => { 
     setIsSearchingPosition(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        dispatch(
-          SET_SPOT_POSITIONS({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-        window.getCurrentPositionAddress(position.coords.latitude, position.coords.longitude);
-      });
-    };
+    handlerCurrentPosition();
   };
 
   const getSearchAddress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
