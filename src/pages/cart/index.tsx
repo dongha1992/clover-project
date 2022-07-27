@@ -49,7 +49,7 @@ import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getCustomDate } from '@utils/destination';
-import { checkIsAllSoldout, checkCartMenuStatus } from '@utils/menu';
+import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
@@ -956,9 +956,11 @@ const CartPage = () => {
 
     const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
     const canOrderThatDate = checkCanOrderThatDate();
+
+    const canOrderPeriodMenus = checkedMenus.filter((item) => checkPeriodCartMenuStatus(item.menuDetails)).length === 0;
     const canOrderdMenus = getCanCheckedMenus(checkedMenus);
 
-    const hasSoldOutMenus = canOrderdMenus.length !== checkedMenus.length;
+    const hasSoldOutMenus = canOrderdMenus.length !== checkedMenus.length || !canOrderPeriodMenus;
     if (hasSoldOutMenus) {
       dispatch(
         SET_ALERT({
