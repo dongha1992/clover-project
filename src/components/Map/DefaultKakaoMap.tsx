@@ -64,7 +64,7 @@ const DefaultKakaoMap = ({
       const zoomIn = () => {
         const getLevel = map.getLevel();
         const level = getLevel - 1;
-        map.setLevel(level);
+        map.setLevel(level, {animate: true});
         setMaxZoomOut(false);
         if(getLevel <= 2) {
           setMinZoomIn(true);
@@ -75,7 +75,7 @@ const DefaultKakaoMap = ({
       const zoomOut = () => {
         const getLevel = map.getLevel();
         const level = getLevel + 1;
-        map.setLevel(level);
+        map.setLevel(level, {animate: true});
         setMinZoomIn(false);
         if(getLevel >= 6){
           setMaxZoomOut(true);
