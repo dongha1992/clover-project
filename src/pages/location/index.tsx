@@ -10,10 +10,10 @@ import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
-import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
-import { getAddressFromLonLat } from '@api/location';
 import { SET_ALERT } from '@store/alert';
 import { SET_SPOT_POSITIONS } from '@store/spot';
+import { useQuery } from 'react-query';
+import useCurrentLocation from '@hooks/useCurrentLocation';
 
 declare global {
   interface Window {
@@ -27,18 +27,27 @@ interface IPosition {
 };
 
 const LocationPage = () => {
+  const addressRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { isSpot, keyword }: any = router.query;
+  const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
+
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
-  const [isFocus, setIsFocus] = useState<boolean>(false);
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [currentValueLen, setCurrentValurLen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [isSeachingPosition, setIsSearchingPosition] = useState<boolean>(false);
-  const addressRef = useRef<HTMLInputElement>(null);
+  const [inputKeyword, setInputKeyword] = useState<string>('');
+  const [routerQueries, setRouterQueries] = useState({});
 
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { isSpot } = router.query;
+  useEffect(() => {
+    if (router.isReady) {
+      setRouterQueries(router.query);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,11 +70,6 @@ const LocationPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-      getSearchAddressResult();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
-
   useEffect(()=> {
     const mapScript = document.createElement("script");
     mapScript.async = true;
@@ -76,6 +80,28 @@ const LocationPage = () => {
     return () => mapScript.removeEventListener("load", onLoadKakaoMap);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if(keyword) {
+      startAddressSearch(keyword);
+      setIsSearched(true);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword]);
+
+  useEffect(()=>{
+    if(currentLocation){
+      dispatch(
+        SET_SPOT_POSITIONS({
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        })
+      );
+      window.getCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
+    };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLocation]);
 
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
   const onLoadKakaoMap = () => { 
@@ -101,9 +127,9 @@ const LocationPage = () => {
           alertMessage: '알 수 없는 에러가 발생했습니다.',
           submitBtnText: '확인',
         })
-      );  
+      );
       console.error(e);
-    }
+    };
   };
     
   // 현 위치로 설정하기 - 폼에 맞게 주소값 세팅 
@@ -161,28 +187,7 @@ const LocationPage = () => {
   // 현 위치로 설정하기 - 위도,경도 좌표값 저장
   const getGeoLocation = () => { 
     setIsSearchingPosition(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        dispatch(
-          SET_SPOT_POSITIONS({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-        window.getCurrentPositionAddress(position.coords.latitude, position.coords.longitude);
-      });
-    };
-  };
-
-  const addressInputHandler = () => {
-    const keyword = addressRef.current?.value.length;
-    if (addressRef.current) {
-      if (!keyword) {
-        setResultAddress([]);
-        setIsSearched(false);
-        clearInputHandler();
-      }
-    }
+    handlerCurrentPosition();
   };
 
   const getSearchAddress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -192,40 +197,70 @@ const LocationPage = () => {
     };
 
     if (e.key === 'Enter') {
-      getSearchAddressResult();
+      // getSearchAddressResult();
+      startAddressSearch(value);
       setIsSearched(true);
+      setInputKeyword(value);
+      router.replace({
+        query: {...routerQueries, keyword: value},
+      });
+
     }
   };
 
-  const getSearchAddressResult = async () => {
-    if (addressRef.current) {
-      let query = addressRef.current?.value;
+  const {
+    error,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useQuery(
+    ['addressResultList', page],
+    async () => {
       const params = {
-        query,
+        query: inputKeyword,
         page: page,
       };
-      if (SPECIAL_REGX.test(query) || ADDRESS_KEYWORD_REGX.includes(query)) {
-        alert('포함할 수 없는 문자입니다.');
-        return;
-      }
-      try {
-        /* data.results.juso 검색결과 없으면 null */
-        let { data } = await searchAddressJuso(params);
-        const list = data?.results.juso ?? [];
+        const { data } = await searchAddressJuso(params);
+      return data
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!isSearched,
+      onError: () => {},
+      onSuccess: (data) => {
+        const list = data.results.juso ?? [];
         setResultAddress((prevList) => [...prevList, ...list]);
         setTotalCount(data.results.common.totalCount);
-      } catch (error) {
-        console.error(error);
-      }
+      },
     }
+  );
+
+  const startAddressSearch = (keyword: string) => {
+    setInputKeyword(keyword);
+    setIsSearched(true);
   };
+
 
   const clearInputHandler = () => {
     if (addressRef.current) {
       addressRef.current.value = '';
-    }
+    };
     setResultAddress([]);
     setIsSearched(false);
+    setInputKeyword('');
+  };
+
+  const changeInputHandler = (e: any) => {
+    const value =  e.target.value;
+    setInputKeyword(value);
+    if(value.length){
+      setResultAddress([]);
+      setIsSearched(false);
+    };
+    if (!value) {
+      setInputKeyword('');
+    };
   };
 
   const goToMapDetail = (address: any): void => {
@@ -256,9 +291,10 @@ const LocationPage = () => {
             placeholder="도로명, 건물명 또는 지번으로 검색"
             inputType="text"
             svg="searchIcon"
-            eventHandler={addressInputHandler}
+            eventHandler={changeInputHandler}
             keyPressHandler={getSearchAddress}
             ref={addressRef}
+            value={inputKeyword}
           />
           {
             currentValueLen && (

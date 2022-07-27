@@ -39,7 +39,7 @@ const CategorySubHeader = ({ title }: TProps) => {
     scrollToAllMenusItemOffsetLeft(targetOffset);
     setSelectedTab(tabItem.link);
     dispatch(SET_MENU_TAB(tabItem.value));
-    new Promise((res, err) => res(initFilters())).then(() => router.push(`/category/${tabItem.value}`));
+    new Promise((res, err) => res(initFilters())).then(() => router.replace(`/category/${tabItem.value}`));
   };
 
   const initFilters = () => {

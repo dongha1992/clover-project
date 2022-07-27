@@ -12,18 +12,14 @@ import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
-import { SPECIAL_REGX, ADDRESS_KEYWORD_REGX } from '@constants/regex/index';
 import { getAvailabilityDestinationApi } from '@api/destination';
 import { useSelector } from 'react-redux';
-import { destinationForm } from '@store/destination';
 import { getRegistrationSearch } from '@api/spot';
 import { ISpotsDetail } from '@model/index';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SpotRegisterSheet } from '@components/BottomSheet/SpotRegisterSheet';
 import { userForm } from '@store/user';
 import { useQuery } from 'react-query';
-
-/* TODO: geolocation 에러케이스 추가 */
 
 const LocationPage = () => {
   const router = useRouter();
@@ -52,6 +48,7 @@ const LocationPage = () => {
       startAddressSearch(keyword);
       setIsSearched(true);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyword]);
 
   useEffect(() => {
@@ -75,71 +72,13 @@ const LocationPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //     getSearchAddressResult();
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [page]);
-
-
-  const setCurrentLoc = (location: string) => {
-    const locationInfoMsg = `${location}(으)로\n설정되었습니다.`;
-    dispatch(
-      SET_ALERT({
-        alertMessage: locationInfoMsg,
-        onSubmit: () => {},
-        submitBtnText: '확인',
-        closeBtnText: '취소',
-      })
-    );
-  };
-
-  const getGeoLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { data } = await getAddressFromLonLat({
-          y: position.coords.latitude?.toString(),
-          x: position.coords.longitude?.toString(),
-        });
-        setCurrentLoc(data.documents[0].address_name);
-      });
-    }
-  };
-
-  const startAddressSearch = (keyword: string) => {
-    setInputKeyword(keyword);
-    setIsSearched(true);
-  };
-
-  const changeInputHandler = (e: any) => {
-    const value =  e.target.value;
-    setInputKeyword(value);
-    if (!value) {
-      setInputKeyword('');
-    };
-  };
-
-  const getSearchAddressResult = async () => {
-    const params = {
-      query: inputKeyword,
-      page: page,
-    };
-    try {
-      let { data } = await searchAddressJuso(params);
-      const list = data?.results.juso ?? [];
-      setResultAddress((prevList) => [...prevList, ...list]);
-      setTotalCount(data.results.common.totalCount);
-    } catch (err) {
-      console.error(err);
-    };
-  };
-
   const {
     error,
     refetch,
     isLoading,
     isFetching,
   } = useQuery(
-    ['addressResultList'],
+    ['addressResultList', page],
     async () => {
       const params = {
         query: inputKeyword,
@@ -168,14 +107,28 @@ const LocationPage = () => {
         setResultAddress([]);
       };
       startAddressSearch(value);
-      // setResultAddress([]);
-      // getSearchAddressResult();
       setIsSearched(true);
-      refetch();
       setInputKeyword(value);
       router.replace({
         query: {...routerQueries, keyword: value},
       });
+    };
+  };
+
+  const startAddressSearch = (keyword: string) => {
+    setInputKeyword(keyword);
+    setIsSearched(true);
+  };
+
+  const changeInputHandler = (e: any) => {
+    const value =  e.target.value;
+    setInputKeyword(value);
+    if(value.length){
+      setResultAddress([]);
+      setIsSearched(false);
+    };
+    if (!value) {
+      setInputKeyword('');
     };
   };
 
@@ -334,10 +287,6 @@ const LocationPage = () => {
   const goToSpotRegisterationDetailInfo = (i: IJuso): void => {
     dispatch(SET_LOCATION_TEMP(i));
     getSpotRegistrationSearch(i);
-  };
-
-  if(isFetching){
-    return <div>로딩중..</div>
   };
 
   return (
