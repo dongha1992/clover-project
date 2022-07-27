@@ -111,7 +111,6 @@ const SignupOptionalPage = () => {
       gender: gender ? gender : '',
       nickName: nickname ? nickname : signupUser.name,
     };
-    console.log(optionalForm, 'optionalForm');
 
     let appleToken = null;
 

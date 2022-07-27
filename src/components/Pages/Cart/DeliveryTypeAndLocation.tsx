@@ -22,7 +22,7 @@ const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDesti
         return `${deliveryDestination?.name}`;
       }
 
-      case isNotSpot: {
+      case isNotSpot && deliveryDestination?.location !== null: {
         return `${deliveryDestination?.location?.address} ${deliveryDestination?.location?.addressDetail} `;
       }
       default:

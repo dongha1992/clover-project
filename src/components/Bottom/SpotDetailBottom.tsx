@@ -102,6 +102,7 @@ const SpotDetailBottom = () => {
               delivery: response.delivery,
               id: destinationId,
               spotId: spotDetail?.id,
+              availableTime: pickUpTime,
             })
           );
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
@@ -112,7 +113,21 @@ const SpotDetailBottom = () => {
       }
     };
 
-    const goToDeliveryInfo = () => {
+    const goToDeliveryInfo = (pickupId: number) => {
+      const destinationInfo = {
+        name: spotDetail?.name!,
+        location: {
+          addressDetail: spotDetail?.location.addressDetail!,
+          address: spotDetail?.location.address!,
+          dong: spotDetail?.name!,
+          zipCode: spotDetail?.location.zipCode!,
+        },
+        main: false,
+        availableTime: pickUpTime,
+        spaceType: spotDetail?.type,
+        spotPickupId: pickupId!,
+      };
+  
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));

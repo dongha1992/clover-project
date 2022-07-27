@@ -22,9 +22,10 @@ interface IProps {
   isSticky: boolean;
   menuId: number;
   reviewsImages?: { images: IDetailImage[]; pagination: IPagination };
+  isSub?: boolean;
 }
 
-const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps) => {
+const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }: IProps) => {
   const dispatch = useDispatch();
   const { menuItem } = useSelector(menuSelector);
   const { me } = useSelector(userForm);
@@ -36,11 +37,11 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
   const { rating, reviewCount } = menuItem;
 
   const goToReviewImages = useCallback(() => {
-    router.push(`/menu/${menuId}/review/photo`);
+    router.push(`/menu/${menuId}/review/photo?tab=review`);
   }, []);
 
   const goToTotalReview = () => {
-    router.push(`/menu/${menuId}/review/total`);
+    router.push(`/menu/${menuId}/review/total?tab=review`);
   };
 
   const goToReviewDetail = (id: number) => {
@@ -61,8 +62,9 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
     router.push(`/mypage/review`);
   };
 
-  const clickImgViewHandler = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const clickImgViewHandler = (images: string[], index: number) => {
+    const payload = { images, index };
+    dispatch(SET_IMAGE_VIEWER(payload));
   };
 
   return (
@@ -78,13 +80,32 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
           />
         </Wrapper>
       )}
+      {hasReviews && (
+        <Wrapper>
+          <Button
+            backgroundColor={theme.white}
+            color={theme.black}
+            border
+            borderRadius="8"
+            margin="0 0 32px 0"
+            onClick={goToWriteReview}
+          >
+            {me ? `후기 작성하기 (최대 ${isSub ? '3,000P' : '300P'} 적립)` : '로그인 후 후기 작성하기'}
+          </Button>
+        </Wrapper>
+      )}
       {hasReviews ? (
         <>
           <BorderLine height={8} />
           <ReviewWrapper>
             {menuReviews?.map((review: any, index: number) => {
               if (index > 10) return;
-              return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
+              return (
+                <>
+                  <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />
+                  <BorderLine margin="24px 0 24px 0" height={1} />
+                </>
+              );
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
               {reviewCount}개 후기 전체보기
@@ -104,7 +125,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages }: IProps
             margin="0 0 32px 0"
             onClick={goToWriteReview}
           >
-            {me ? '후기 작성하기 (최대 3,000포인트 적립)' : '로그인 후 후기 작성하기'}
+            {me ? `후기 작성하기 (최대 ${isSub ? '3,000P' : '300P'} 적립)` : '로그인 후 후기 작성하기'}
           </Button>
         </Empty>
       )}

@@ -48,9 +48,10 @@ interface IProps {
   orderDeliveryId: number;
   menuDetailId: number;
   orderType: string;
+  deliveryRound: string;
 }
 
-const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: IProps) => {
+const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, deliveryRound }: IProps) => {
   const [isShow, setIsShow] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
@@ -113,7 +114,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
           SET_ALERT({
             children: <FinishReview />,
             alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
-            onSubmit: () => router.replace('/mypage/review'),
+            onSubmit: () => router.replace('/mypage/review?tab=/completed'),
             submitBtnText: '확인',
           })
         );
@@ -245,8 +246,6 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
       rating,
     };
 
-    console.log(reqBody, 'reqBody');
-
     mutateCreateMenuReview(reqBody);
   };
 
@@ -261,8 +260,14 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
       <Wrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
-          <TextH3B>{me?.nickName}님</TextH3B>
-          <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
+          <TextH3B>
+            <NickName>{me?.nickName}</NickName>님
+          </TextH3B>
+          {orderType === 'SUBSCRIPTION' ? (
+            <TextH3B>이용 중인 구독은 만족하셨나요?</TextH3B>
+          ) : (
+            <TextH3B>구매하신 상품은 만족하셨나요?</TextH3B>
+          )}
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
@@ -276,22 +281,26 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
             />
           </ImgWrapper>
           <TextWrapper>
-            <TextB2R padding="0 0 0 16px">{data?.name}</TextB2R>
+            <TextB2R>{data?.name}</TextB2R>
+            {orderType === 'SUBSCRIPTION' && (
+              <TextB3R padding="4px 0 0" color={theme.greyScale65}>
+                <b>배송</b> {deliveryRound}회차
+              </TextB3R>
+            )}
           </TextWrapper>
         </FlexRow>
         <RateWrapper>
           <StarRating rating={rating} hoverRating={hoverRating} onClick={onStarHoverRating} />
           <TextH6B color={theme.greyScale45} padding="8px 0 0 0">
-            터치하여 별점을 선택해주세요.
+            별점을 선택해 주세요.
           </TextH6B>
         </RateWrapper>
         <TextArea
           name="reviewArea"
-          placeholder=" - 후기 작성 후 조건에 부합할 시 포인트가 자동 지급&#13;&#10;
-          - 후기 내용은 띄어쓰기를 포함한 글자 수로 체크&#13;&#10;
-          - 비방성, 광고글, 문의사항 후기는 관리자 임의로 삭제 가능&#13;&#10;
-          - 상품을 교환하여 후기를 수정하거나 추가 작성하는 경우 적립금 미지급&#13;&#10;
-          - 사진이 자사 제품과 무관할 경우 자동 지급된 포인트 삭제 및 미지급의 불이익이 발생할 수 있음"
+          placeholder=" - 맛과 양, 신선도, 패키지, 조리법 등 상품 대해 만족한 점, 아쉬운 점 모두 솔직하게 남겨주세요. &#13;&#10;
+          - 띄어쓰기 포함한 최소 30자 이상 작성해 주세요.&#13;&#10;
+          - 비방성, 광고글, 문의사항 관련 내용이 포함된 후기는 관리자에 의해 삭제될 수 있어요.&#13;&#10;
+          "
           minLength={0}
           maxLength={1000}
           rows={20}
@@ -300,14 +309,16 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
         />
         <FlexBetween margin="8px 0 0 0">
           <TextB3R color={theme.brandColor}>
-            {!over30Letter ? '글자수충족!' : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
+            {!over30Letter
+              ? '글자 수 조건 충족!'
+              : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{numberOfReivewContent}/1,000</TextB3R>
+          <TextB3R>{numberOfReivewContent.toLocaleString()}/1,000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
       <UploadPhotoWrapper>
-        <Tooltip message={'사진과 함께 등록 시 300원 적립!'} top="-45px" width="200px" left="20px" isBottom />
+        <Tooltip message={'사진과 함께 등록 시 300P 적립!'} top="-45px" width="200px" left="20px" isBottom />
         <FlexRow>
           <TextH3B>사진도 등록해보세요</TextH3B>
           <TextB2R padding="0 0 0 4px">(최대 2장)</TextB2R>
@@ -351,7 +362,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
         <ReviewInfoBottom />
       </PointInfoWrapper>
       <BtnWrapper onClick={finishWriteReview}>
-        <Button height="100%" borderRadius="0" disabled={over30Letter}>
+        <Button height="100%" borderRadius="0">
           작성하기
         </Button>
       </BtnWrapper>
@@ -359,12 +370,14 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType }: I
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding-top: 8px;
+`;
 const Wrapper = styled.div`
   ${homePadding}
 `;
 const ImgWrapper = styled.div`
-  width: 30%;
+  width: 70px;
   .rounded {
     border-radius: 8px;
   }
@@ -372,8 +385,10 @@ const ImgWrapper = styled.div`
 
 const TextWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-self: flex-start;
   width: 100%;
+  padding-left: 16px;
 `;
 
 const RateWrapper = styled.div`
@@ -424,6 +439,7 @@ const PreviewImgWrapper = styled.div`
     width: 100%;
     height: 100%;
     border-radius: 8px;
+    object-fit: cover;
   }
 
   .svgWrapper {
@@ -439,7 +455,7 @@ const PreviewImgWrapper = styled.div`
 const PointInfoWrapper = styled.div`
   padding: 24px;
   background-color: ${theme.greyScale3};
-  margin-bottom: 105px;
+  margin-bottom: 56px;
 `;
 
 const BtnWrapper = styled.div`
@@ -458,10 +474,14 @@ const FinishComplete = styled.div`
   }
 `;
 
+export const NickName = styled.span`
+  color: ${theme.brandColor};
+`;
+
 export async function getServerSideProps(context: any) {
-  const { menuId, orderDeliveryId, menuDetailId, orderType } = context.query;
+  const { menuId, orderDeliveryId, menuDetailId, orderType, deliveryRound } = context.query;
   return {
-    props: { menuId, orderDeliveryId, menuDetailId, orderType },
+    props: { menuId, orderDeliveryId, menuDetailId, orderType, deliveryRound },
   };
 }
 
