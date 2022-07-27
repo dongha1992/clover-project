@@ -81,7 +81,6 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   const { menuItem } = useSelector(menuSelector);
   const { tab } = router.query;
 
-  console.log(router, 'tab');
   let timer: any = null;
 
   const dispatch = useDispatch();
@@ -615,7 +614,7 @@ const CountWrapper = styled.div`
 
 const ReviewContainer = styled.div`
   background-color: ${theme.greyScale3};
-  padding: 24px 0 24px 24px;
+  padding: 24px;
 `;
 
 const ReviewSwipeContainer = styled(Swiper)`
@@ -623,7 +622,8 @@ const ReviewSwipeContainer = styled(Swiper)`
 
   cursor: pointer;
   .swiper-slide {
-    width: 300px;
+    max-width: 488px;
+    width: 100%;
   }
 `;
 

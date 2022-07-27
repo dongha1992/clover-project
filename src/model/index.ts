@@ -1765,7 +1765,7 @@ export interface IBestReviews {
   userNickName: string;
   menuName?: string;
   menuDetailName?: string;
-  orderCount?: number;
+  tag?: number;
   rating: number;
   content: string;
   createdAt: string;
@@ -1906,7 +1906,7 @@ export interface ISearchReviews {
   userNickName: string;
   menuName?: string;
   menuDetailName?: string;
-  orderCount?: number;
+  tag?: number;
   rating: number;
   content: string;
   createdAt: string;
@@ -1914,6 +1914,7 @@ export interface ISearchReviews {
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
+  editable: boolean;
   orderType: string;
   displayMenuName: string;
   deliveryRound: number;

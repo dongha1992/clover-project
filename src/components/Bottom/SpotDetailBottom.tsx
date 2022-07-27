@@ -102,6 +102,7 @@ const SpotDetailBottom = () => {
               delivery: response.delivery,
               id: destinationId,
               spotId: spotDetail?.id,
+              availableTime: pickUpTime,
             })
           );
           dispatch(SET_USER_DELIVERY_TYPE('spot'));

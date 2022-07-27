@@ -524,7 +524,7 @@ const CartPage = () => {
     } else {
       alertMessage = '상품을 삭제하시겠어요?';
     }
-    console.log(selectedMenuDetails, 'selectedMenuDetails');
+
     dispatch(
       SET_ALERT({
         alertMessage,
@@ -871,6 +871,33 @@ const CartPage = () => {
     return list?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
   };
 
+  const getUniqueInArray = (list: (number[] | null)[]) => {
+    const getUnique: string[] = [];
+
+    list?.forEach((item, index) => {
+      const toString = item?.join()!;
+      if (!getUnique.includes(toString!)) {
+        getUnique.push(toString!);
+      }
+    });
+    return getUnique;
+  };
+  const checkCanOrderThatDate = () => {
+    const holidays = checkedMenus.flatMap((item) => item.holiday)!;
+    const uniqueHolidays = getUniqueInArray(holidays!);
+    const formatDate = selectedDeliveryDay
+      .split('-')
+      .map((item, index) => {
+        if (index) {
+          return item.replace('0', '');
+        }
+        return item;
+      })
+      .join(',');
+
+    return !uniqueHolidays.includes(formatDate);
+  };
+
   const goToDeliveryInfo = () => {
     const callback = router.push('/cart/delivery-info');
     // 합배송 선택한 경우
@@ -885,39 +912,56 @@ const CartPage = () => {
     router.push('/');
   };
 
+  const scrollToTop = () => {
+    const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
+    window.scrollTo({
+      behavior: 'smooth',
+      left: 0,
+      top: offsetTop,
+    });
+  };
+
   const goToOrder = () => {
     if (!me) return;
     if (isInvalidDestination) {
       dispatch(
         SET_ALERT({
           alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
-          onSubmit: () => {
-            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
-            window.scrollTo({
-              behavior: 'smooth',
-              left: 0,
-              top: offsetTop,
-            });
-          },
+          onSubmit: () => scrollToTop(),
         })
       );
       return;
     }
 
     const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
+    const canOrderThatDate = checkCanOrderThatDate();
+    const canOrderdMenus = getCanCheckedMenus(checkedMenus);
+
+    const hasSoldOutMenus = canOrderdMenus.length !== checkedMenus.length;
+    if (hasSoldOutMenus) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '품절된 상품이 포함되어 있어 주문할 수 없어요.',
+          onSubmit: () => scrollToTop(),
+        })
+      );
+      return;
+    }
+    if (!canOrderThatDate) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '선택한 날짜에 배송 불가능한 상품을 확인해 주세요.',
+          onSubmit: () => scrollToTop(),
+        })
+      );
+      return;
+    }
 
     if (!allAvailableMenus) {
       dispatch(
         SET_ALERT({
-          alertMessage: '현재 주문할 수 없는 상품이 있어요.',
-          onSubmit: () => {
-            const offsetTop = containerRef.current?.offsetTop! - REST_HEIGHT;
-            window.scrollTo({
-              behavior: 'smooth',
-              left: 0,
-              top: offsetTop,
-            });
-          },
+          alertMessage: '주문 가능 수량이 초과된 상품을 확인 후 변경해 주세요.',
+          onSubmit: () => scrollToTop(),
         })
       );
       return;
