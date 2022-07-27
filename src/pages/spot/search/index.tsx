@@ -35,6 +35,7 @@ import { ISpotsDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { truncate } from 'lodash-es';
 import TextInput from '@components/Shared/TextInput';
+import useCurrentLocation from '@hooks/useCurrentLocation';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -53,6 +54,8 @@ const SpotSearchPage = (): ReactElement => {
     isMapSwitch,
   } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
+  const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
+
   const [spotListAllCheck, setSpotListAllCheck] = useState<boolean>(false);
   const [isSeachingPosition, setIsSearchingPosition] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
@@ -60,6 +63,7 @@ const SpotSearchPage = (): ReactElement => {
   const [pickUpList, setPickUpList] = useState<any>([]);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [currentPosition, setCurrentPosition] = useState<any>();
 
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
@@ -88,9 +92,9 @@ const SpotSearchPage = (): ReactElement => {
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
 
-      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
         // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
-        setPage(page + 1);
+        setPage((prev) => prev + 1);
       }
     };
     // scroll event listener 등록
@@ -102,6 +106,19 @@ const SpotSearchPage = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickUpList.length > 0]);
 
+  useEffect(()=>{
+    if(currentLocation){
+      dispatch(
+        SET_SPOT_POSITIONS({
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+        })
+      );
+      window.getCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
+    };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLocation]);
 
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
   const onLoadKakaoMap = () => { 
@@ -176,17 +193,7 @@ const SpotSearchPage = (): ReactElement => {
   // 현 위치로 설정하기 - 위도,경도 좌표값 저장
   const getGeoLocation = () => { 
     setIsSearchingPosition(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        dispatch(
-          SET_SPOT_POSITIONS({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-        window.getCurrentPositionAddress(position.coords.latitude, position.coords.longitude);
-      });
-    };
+    handlerCurrentPosition();
   };
 
   // 스팟 검색 - 추천 스팟 api
@@ -225,7 +232,7 @@ const SpotSearchPage = (): ReactElement => {
 
   // 최근 픽업 이력 조회 api
   const { data: recentPickedSpotList, isLoading: isLoadingPickup } = useQuery<IGetDestinationsResponse>(
-    'getDestinationList',
+    ['getDestinationList', page, spotsPosition],
     async () => {
       const params = {
         page: page,
@@ -264,7 +271,7 @@ const SpotSearchPage = (): ReactElement => {
         setSpotListAllCheck(true);
       },
       refetchOnMount: true, 
-      refetchOnWindowFocus: false 
+      refetchOnWindowFocus: false,
     }
   );
 
