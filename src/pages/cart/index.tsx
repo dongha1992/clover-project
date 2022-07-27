@@ -438,7 +438,16 @@ const CartPage = () => {
       return item.id === selectedItem.id ? { ...item, isSelected: true } : { ...item, isSelected: false };
     });
 
-    setLunchOrDinner(newLunchDinner);
+    if (subDeliveryId) {
+      const callback = () => {
+        setLunchOrDinner(newLunchDinner);
+        setSubDeliveryId(null);
+      };
+      displayAlertForSubDelivery({ callback });
+      return;
+    } else {
+      setLunchOrDinner(newLunchDinner);
+    }
   };
 
   const removeSelectedItemHandler = async () => {
@@ -636,24 +645,36 @@ const CartPage = () => {
     setDisposableList(findItem);
   };
 
-  const displayAlertForSubDelivery = (callback: any) => {
+  const displayAlertForSubDelivery = ({ type, callback }: { type?: string; callback?: () => void }) => {
+    const isRouting = type! === 'route';
     dispatch(
       SET_ALERT({
         alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
         alertSubMessage: '(배송정보는 함께 받을 기존 주문에서 변경할 수 있어요)',
         submitBtnText: '변경하기',
         closeBtnText: '취소',
-        onSubmit: () => callback,
+        onSubmit: () => {
+          if (isRouting) {
+            router.push('/cart/delivery-info');
+          } else {
+            callback && callback();
+          }
+        },
       })
     );
+    return;
   };
 
   const changeDeliveryDate = (dateValue: string) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
 
     if (!canSubDelivery && subDeliveryId) {
-      displayAlertForSubDelivery(setSelectedDeliveryDay(dateValue));
-      setSubDeliveryId(null);
+      const callback = () => {
+        setSelectedDeliveryDay(dateValue);
+        setSubDeliveryId(null);
+      };
+      displayAlertForSubDelivery({ callback });
+      return;
     }
     setSelectedDeliveryDay(dateValue);
   };
@@ -899,10 +920,10 @@ const CartPage = () => {
   };
 
   const goToDeliveryInfo = () => {
-    const callback = router.push('/cart/delivery-info');
     // 합배송 선택한 경우
     if (subDeliveryId) {
-      displayAlertForSubDelivery(callback);
+      displayAlertForSubDelivery({ type: 'route' });
+      return;
     } else {
       router.push('/cart/delivery-info');
     }
