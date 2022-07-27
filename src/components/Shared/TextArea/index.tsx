@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
-import { textBody3, theme } from '@styles/theme';
+import { textBody3, textBody2, theme } from '@styles/theme';
 
 export interface ITextAreaProps {
   eventHandler?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -83,7 +83,7 @@ const Container = styled.div<{
   margin?: string;
 }>`
   position: relative;
-  margin: ${({ margin }) => margin && margin}px;
+  margin: ${({ margin }) => margin && margin};
   width: 100%;
   white-space: pre-wrap;
   textarea {
@@ -102,9 +102,10 @@ const Container = styled.div<{
   }
 
   textarea::placeholder {
-    ${textBody3}
+    ${textBody2}
     position: absolute;
     color: ${({ theme }) => theme.greyScale45};
+    padding: 4px 16px 4px 4px;
   }
 
   &:focus {

@@ -166,11 +166,14 @@ const TotalReviewPage = ({ menuId }: IProps) => {
         {data?.pages[0]?.result?.length !== 0 ? (
           data?.pages?.map((page: any, index: number) => {
             return (
-              <List key={index}>
-                {page.result?.map((review: ISearchReviews, index: number) => {
-                  return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
-                })}
-              </List>
+              <>
+                <List key={index}>
+                  {page.result?.map((review: ISearchReviews, index: number) => {
+                    return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
+                  })}
+                </List>
+                <BorderLine margin="24px 0 24px 0" height={1} />
+              </>
             );
           })
         ) : (

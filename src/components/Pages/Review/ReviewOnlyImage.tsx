@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH5B, TextH4B, TextH1B } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
+import { theme, responsiveImg, responsiveImgWrapper } from '@styles/theme';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { StarRating } from '@components/StarRating';
@@ -98,21 +98,11 @@ const ReviewSwipe = styled.div`
 `;
 
 const ReviewImgWrapper = styled.div`
-  position: relative;
   width: calc((100% - 24px) / 4);
   margin-right: 6px;
-  overflow: hidden;
-  height: 0;
-  padding-bottom: 25%;
-
+  ${responsiveImgWrapper}
   > img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
+    ${responsiveImg}
   }
   > span {
     border-radius: 8px;
@@ -120,19 +110,10 @@ const ReviewImgWrapper = styled.div`
 `;
 
 const LastImgWrapper = styled.div`
-  position: relative;
   width: calc((100% - 24px) / 4);
-  overflow: hidden;
-  height: 0;
-  padding-bottom: 25%;
+  ${responsiveImgWrapper}
   > img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
+    ${responsiveImg}
   }
   > span {
     border-radius: 8px;

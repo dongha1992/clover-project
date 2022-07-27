@@ -614,7 +614,7 @@ const CountWrapper = styled.div`
 
 const ReviewContainer = styled.div`
   background-color: ${theme.greyScale3};
-  padding: 24px 0 24px 24px;
+  padding: 24px;
 `;
 
 const ReviewSwipeContainer = styled(Swiper)`
