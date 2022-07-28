@@ -66,6 +66,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
 
   const { data } = useGetOrderDetail(['getOrderDetail', orderId], orderId, {
     onSuccess: (data) => {
+      console.log('data', data);
+
       // TODO(young) : 구독에서 destinationId있으면 orderDeliveries에서 같은 destinationId로
       // 일반 주문도 orderId가 아닌 destinationId가 필요한지 확인 필요
       let orderDetail;
@@ -285,13 +287,19 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
       goToDeliverySearch();
     }
   };
-
+  // TODO : lastdeliverydate 추가 전체 회차 변경하는부분 체크
   const goToDeliverySearch = () => {
     if (isSpot) {
       const IsSubs = isSubscription === 'true';
       router.push({
         pathname: '/spot/search/result',
-        query: { orderId, destinationId, isSubscription: IsSubs, deliveryDate },
+        query: {
+          orderId,
+          destinationId,
+          isSubscription: IsSubs,
+          deliveryDate,
+          lastDeliveryDate: data.lastDeliveryDate,
+        },
       });
     } else {
       router.push({ pathname: '/destination/search', query: { orderId, destinationId } });
