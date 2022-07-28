@@ -511,9 +511,9 @@ const CartPage = () => {
   }) => {
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
 
-    const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+    const isMain = foundMenu?.menuDetails.find((item) => item.id === menuDetailId)?.main;
 
-    let selectedMenuDetails = [{ menuId, menuDetailId, cartId: cartId ? cartId : null }];
+    let selectedMenuDetails = [{ menuDetailId }];
     let alertMessage = '';
 
     if (isMain) {
@@ -527,9 +527,7 @@ const CartPage = () => {
               .filter((item) => !item.main)
               .map((item) => {
                 return {
-                  menuDetailId: item.menuDetailId,
-                  menuId: menuId,
-                  cartId: item.cartId,
+                  menuDetailId: item.id,
                 };
               })! || [];
           selectedMenuDetails = [...selectedMenuDetails, ...foundOptional];

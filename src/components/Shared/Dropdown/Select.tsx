@@ -7,7 +7,7 @@ import { theme } from '@styles/theme';
 import { TextB2R } from '@components/Shared/Text';
 
 type TProps = {
-  children: ReactNode | ReactNode[];
+  children: ReactNode | ReactNode[] | any;
   value?: string;
   placeholder?: string;
   type?: string;
@@ -16,10 +16,15 @@ type TProps = {
 const Select = ({ children, value, placeholder, type }: TProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false);
-
+  const hasChildren = children?.filter((item: any) => item).length !== 0;
   const selectPlaceholder = placeholder || '디폴트 플레이스 홀더입니다.';
 
   const showDropdownHandler = (): void => {
+    if (!hasChildren) {
+      setIsShowDropdown(false);
+      return;
+    }
+
     setIsShowDropdown(!isShowDropdown);
   };
 
@@ -68,6 +73,7 @@ const SelectContainer = styled.div`
 
 const OptionContainer = styled.ul<{
   isShowDropdown: boolean;
+  props?: boolean;
 }>`
   margin: 0;
   padding: 0;
