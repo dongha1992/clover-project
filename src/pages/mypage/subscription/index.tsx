@@ -44,12 +44,13 @@ const SubscriptionManagementPage = () => {
   }, [handleObserver]);
 
   useEffect(() => {
-    if (page <= data?.pages[0].totalPage!) {
-      fetchNextPage();
+    if (!isFetching) {
+      if (data?.pages.length! < data?.pages[0].totalPage!) {
+        fetchNextPage();
+      }
     }
   }, [page]);
 
-  console.log(data, 'sub data');
   const goToSubscription = () => {
     router.push('/subscription');
   };
@@ -58,13 +59,15 @@ const SubscriptionManagementPage = () => {
     <Container ref={parentRef}>
       {data?.pages[0]?.result.length !== 0 ? (
         <>
-          {data?.pages?.map((page: any, index) => (
-            <SubsMngList key={index}>
-              {page.result?.map((item: IGetOrders, index: number) => (
-                <SubsMngItem item={item} key={index} />
-              ))}
-            </SubsMngList>
-          ))}
+          <article>
+            {data?.pages?.map((page: any, index) => (
+              <SubsMngList key={index}>
+                {page.result?.map((item: IGetOrders, index: number) => (
+                  <SubsMngItem item={item} key={index} />
+                ))}
+              </SubsMngList>
+            ))}
+          </article>
           {isFetching && <div>... 로딩중</div>}
           <InfoBox>
             <TextB3R color={theme.greyScale65}>
@@ -91,6 +94,11 @@ const SubscriptionManagementPage = () => {
 const Container = styled.div``;
 const SubsMngList = styled.div`
   padding: 24px;
+  &:last-of-type {
+    > div:last-of-type {
+      border-bottom: none;
+    }
+  }
 `;
 const InfoBox = styled.div`
   padding: 24px;
