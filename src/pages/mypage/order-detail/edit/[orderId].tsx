@@ -38,9 +38,10 @@ interface IProps {
   orderId: number;
   destinationId: number;
   isSubscription: string;
+  deliveryDate: string;
 }
 
-const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, deliveryDate }: IProps) => {
   const router = useRouter();
 
   const { userAccessMethod } = useSelector(commonSelector);
@@ -288,7 +289,10 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: 
   const goToDeliverySearch = () => {
     if (isSpot) {
       const IsSubs = isSubscription === 'true';
-      router.push({ pathname: '/spot/search/result', query: { orderId, destinationId, isSubscription: IsSubs } });
+      router.push({
+        pathname: '/spot/search/result',
+        query: { orderId, destinationId, isSubscription: IsSubs, deliveryDate },
+      });
     } else {
       router.push({ pathname: '/destination/search', query: { orderId, destinationId } });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
@@ -521,10 +525,15 @@ const BtnWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, destinationId, isSubscription } = context.query;
+  const { orderId, destinationId, isSubscription, deliveryDate } = context.query;
 
   return {
-    props: { orderId: Number(orderId), destinationId: Number(destinationId), isSubscription: String(isSubscription) },
+    props: {
+      orderId: Number(orderId),
+      destinationId: Number(destinationId),
+      isSubscription: String(isSubscription),
+      deliveryDate: String(deliveryDate),
+    },
   };
 }
 export default OrderDetailAddressEditPage;
