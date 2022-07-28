@@ -14,7 +14,7 @@ import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DEST
 import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
-import { SVGIcon } from '@utils/common';
+import { dateN, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { getSpotDistanceUnit } from '@utils/spot';
@@ -30,7 +30,8 @@ const now = dayjs();
 const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId }: any = router.query;
+  const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId, deliveryDate }: any =
+    router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
@@ -189,18 +190,29 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
 
     if (isLoginSuccess) {
       if (orderId) {
-        dispatch(
-          SET_TEMP_EDIT_SPOT({
-            spotPickupId: item?.spotPickup?.id!,
-            name: item?.name!,
-            spotPickup: item?.spotPickup?.name!,
-          })
-        );
-        router.push({
-          pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId, destinationId },
-        });
-        return;
+        if (closedDate && dateN(deliveryDate) > dateN(closedDate)) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
+              submitBtnText: '확인',
+              onSubmit: () => {},
+            })
+          );
+          return;
+        } else {
+          dispatch(
+            SET_TEMP_EDIT_SPOT({
+              spotPickupId: item?.spotPickup?.id!,
+              name: item?.name!,
+              spotPickup: item?.spotPickup?.name!,
+            })
+          );
+          router.push({
+            pathname: '/mypage/order-detail/edit/[orderId]',
+            query: { orderId, destinationId },
+          });
+          return;
+        }
       }
 
       if (hasCart) {
