@@ -405,3 +405,20 @@ export const LiCircle3 = styled.li<{ top: number; left: number; color: string }>
     background-color: ${({ color }) => color};
   }
 `;
+
+export const responsiveImgWrapper = styled.div`
+  position: relative;
+  overflow: hidden;
+  height: 0;
+  padding-bottom: 25%;
+`;
+
+export const responsiveImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+`;

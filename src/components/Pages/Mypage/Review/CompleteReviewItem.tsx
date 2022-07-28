@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-import { theme, showMoreText, FlexBetween, FlexRow, FlexRowStart, FlexBetweenStart } from '@styles/theme';
+import { theme, responsiveImgWrapper, responsiveImg, FlexRow, FlexRowStart, FlexBetweenStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
@@ -50,7 +50,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
   useEffect(() => {
     const lines = review.content?.split(/\r|\r\n|\n/);
     const count = lines?.length;
-    if (count > MAX_LINE) {
+    if (count >= MAX_LINE || review.content.length >= 280) {
       setIsContentHide(true);
     }
   }, []);
@@ -144,14 +144,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                       onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
-                      <Image
-                        src={process.env.REVIEW_IMAGE_URL + img.url}
-                        alt="리뷰이미지"
-                        width={'100%'}
-                        height={'100%'}
-                        layout="responsive"
-                        className="rounded"
-                      />
+                      <img src={process.env.REVIEW_IMAGE_URL + img.url} alt="리뷰이미지" />
                     </ReviewImageWrapper>
                   );
                 })}
@@ -270,8 +263,12 @@ const ReplyBody = styled.div`
 
 const ReviewImageWrapper = styled.div<{ isFirst?: boolean }>`
   width: 72px;
+  height: 72px;
   margin-right: ${({ isFirst }) => isFirst && 8}px;
-  .rounded {
+  > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
   }
 `;

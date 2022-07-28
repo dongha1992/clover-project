@@ -18,25 +18,29 @@ interface IProps {
   currentTime?: number;
 }
 
+// 위치없음, 스팟배송 가능 지역은 타임라인 같음
+
 /* 현재 시간 관련하여 배송 마감 타이머 / 배송 정보 롤링 체크 */
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244 */
 
 const checkTimerLimitHelper = (): TResult => {
-  let { days, currentTime } = getCustomDate(new Date());
-  let { locationStatus } = useSelector(destinationForm);
+  const { days, currentTime } = getCustomDate(new Date());
+  const { locationStatus } = useSelector(destinationForm);
 
   // let currentTime;
   /* 스팟 런치 테스트 */
-  // currentTime = 9.2;
+  // currentTime = 9.4;
 
   /* 스팟 저녁 테스트 */
-  // currentTime = 10.4;
+  // currentTime = 10.3;
 
   /* 새벽 테스트 */
   // currentTime = 16.4;
 
   /* 택배 테스트 */
   // currentTime = 16.4;
+
+  // currentTime = 16.3;
 
   const spotLunchDinnerToday = currentTime >= 0.0 && currentTime < 9.0;
   const spotLunchTimer = currentTime >= 9.0 && currentTime < 9.3;
@@ -47,9 +51,10 @@ const checkTimerLimitHelper = (): TResult => {
   const parcelTimer = currentTime >= 16.3 && currentTime < 17.0;
   const spotLunchDinnerTomorrow = currentTime >= 17.0 && currentTime < 24.0;
 
-  let isFriday = days === '금';
-  let isSunday = days === '일';
-  let isWeekends = ['토', '일'].includes(days);
+  const isFriday = days === '금';
+  const isSunday = days === '일';
+  const isWeekends = ['토', '일'].includes(days);
+
   const isParcel = locationStatus === 'parcel';
   const isMorning = locationStatus === 'morning';
 
@@ -70,9 +75,15 @@ const checkTimerLimitHelper = (): TResult => {
         return '스팟점심타이머';
       }
       case spotDinnerTimer: {
+        if (isParcel || isMorning) {
+          return '스팟저녁';
+        }
         return '스팟저녁타이머';
       }
       case morningTimer: {
+        // if (isParcel) {
+        //   return '스팟점심';
+        // }
         return '새벽배송타이머';
       }
       case parcelTimer: {

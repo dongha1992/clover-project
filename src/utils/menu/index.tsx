@@ -1,10 +1,11 @@
 import checkIsAllSoldout from './checkIsAllSoldout';
 import { getMenuDisplayPrice, getDiscountPrice } from './getMenuDisplayPrice';
 import getDisplayMenuName from './getDisplayMenuName';
+import calculatePoint from './calculatePoint';
 import { getFilteredMenus, reorderedMenusBySoldout } from './getFilteredMenu';
 import { getHolidayByMenu } from './getHolidayByMenu';
 import { getMenuAverageRate } from './getMenuAverageRate';
-import checkCartMenuStatus from './checkCartMenuStatus';
+import { checkCartMenuStatus, checkPeriodCartMenuStatus } from './checkCartMenuStatus';
 import getLimitDateOfReview from './getLimitDateOfReview';
 export {
   getMenuDisplayPrice,
@@ -17,4 +18,6 @@ export {
   getHolidayByMenu,
   checkCartMenuStatus,
   getLimitDateOfReview,
+  checkPeriodCartMenuStatus,
+  calculatePoint,
 };
