@@ -1,16 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { TextH4B, TextH5B } from '@components/Shared/Text';
+import { TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 const TABS = [
   { title: '카테고리', link: '/category/all' },
-  { title: 'HOT썸머 할인!!', link: '/recommendation' },
+  { title: 'HOT썸머 할인', link: '/recommendation' },
   { title: '기획전', link: '/' },
-  { title: '이벤트', link: '/event' },
+  { title: '이벤트·소식', link: '/event' },
 ];
 
 const MainTab = () => {
@@ -26,9 +26,9 @@ const MainTab = () => {
               width="80px"
               className="rounded"
             />
-            <TextH5B padding="12px 0" pointer>
+            <TextB2R padding="12px 0" pointer>
               {tab.title}
-            </TextH5B>
+            </TextB2R>
           </TabWrapper>
         );
       })}

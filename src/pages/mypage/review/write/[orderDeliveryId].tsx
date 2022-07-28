@@ -114,7 +114,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
           SET_ALERT({
             children: <FinishReview />,
             alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
-            onSubmit: () => router.replace('/mypage/review'),
+            onSubmit: () => router.replace('/mypage/review?tab=/completed'),
             submitBtnText: '확인',
           })
         );
@@ -439,6 +439,7 @@ const PreviewImgWrapper = styled.div`
     width: 100%;
     height: 100%;
     border-radius: 8px;
+    object-fit: cover;
   }
 
   .svgWrapper {

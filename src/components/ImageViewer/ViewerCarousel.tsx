@@ -111,7 +111,7 @@ const Container = styled.div`
 
 const ImageWrapper = styled.img<{ isLast: boolean }>`
   width: 100%;
-  height: 390px;
+  /* height: 390px; */
   object-fit: fill;
   /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
 `;

@@ -35,12 +35,16 @@ const PickupPlaceBox = ({ place }: any) => {
         <TextB3R padding="4px 0" color={theme.black}>
           {place.location.address}
         </TextB3R>
-        <PlaceInfo>
-          <TextH6B padding="0 4px 0 0" color={theme.greyScale65}>
-            픽업
-          </TextH6B>
-          <TextB3R color={theme.greyScale65}>{availableTime}</TextB3R>
-        </PlaceInfo>
+        {availableTime ? (
+          <PlaceInfo>
+            <TextH6B padding="0 4px 0 0" color={theme.greyScale65}>
+              픽업
+            </TextH6B>
+            <TextB3R color={theme.greyScale65}>{availableTime}</TextB3R>
+          </PlaceInfo>
+        ) : (
+          ''
+        )}
       </PickPlaceInfo>
     </FlexCol>
   );

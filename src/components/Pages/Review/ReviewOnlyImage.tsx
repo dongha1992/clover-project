@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH5B, TextH4B, TextH1B } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
+import { theme, responsiveImg, responsiveImgWrapper } from '@styles/theme';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
 import { StarRating } from '@components/StarRating';
@@ -48,26 +48,13 @@ const ReviewOnlyImage = ({
                   <LastImg>
                     <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
-                  <Image
-                    src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url}
-                    alt="리뷰이미지"
-                    width={'100%'}
-                    height={'100%'}
-                    layout="responsive"
-                  />
+                  <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" />
                 </LastImgWrapper>
               );
             }
             return (
               <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
-                <Image
-                  src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url}
-                  alt="리뷰이미지"
-                  key={index}
-                  width={'100%'}
-                  height={'100%'}
-                  layout="responsive"
-                />
+                <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" key={index} />
               </ReviewImgWrapper>
             );
           })}
@@ -113,15 +100,21 @@ const ReviewSwipe = styled.div`
 const ReviewImgWrapper = styled.div`
   width: calc((100% - 24px) / 4);
   margin-right: 6px;
-
+  ${responsiveImgWrapper}
+  > img {
+    ${responsiveImg}
+  }
   > span {
     border-radius: 8px;
   }
 `;
 
 const LastImgWrapper = styled.div`
-  position: relative;
   width: calc((100% - 24px) / 4);
+  ${responsiveImgWrapper}
+  > img {
+    ${responsiveImg}
+  }
   > span {
     border-radius: 8px;
   }
