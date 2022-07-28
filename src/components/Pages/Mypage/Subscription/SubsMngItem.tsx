@@ -71,8 +71,8 @@ const SubsMngItem = ({ item }: IProps) => {
         <InfoBox>
           <TextB2R padding="0 0 4px">간편하게 비건식단</TextB2R>
           <TextB3R className="date" color="#717171">
-            <b>구독 {item?.subscriptionRound}회차</b> - {getFormatDate(item?.firstDeliveryDate)} ~{' '}
-            {getFormatDate(item?.lastDeliveryDate)}
+            {item.subscriptionPeriod !== 'UNLIMITED' ? <b>기간</b> : <b>구독 {item?.subscriptionRound}회차</b>} -{' '}
+            {getFormatDate(item?.firstDeliveryDate)} ~ {getFormatDate(item?.lastDeliveryDate)}
           </TextB3R>
         </InfoBox>
       </FlexRowStart>
@@ -108,9 +108,6 @@ const Container = styled.div`
   padding-top: 24px;
   &:first-of-type {
     padding-top: 0;
-  }
-  &:last-of-type {
-    border-bottom: none;
   }
 `;
 const ImgBox = styled.div`
