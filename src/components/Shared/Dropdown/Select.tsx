@@ -73,7 +73,6 @@ const OptionContainer = styled.ul<{
   padding: 0;
   text-align: center;
   border-radius: 5px;
-
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -83,7 +82,7 @@ const OptionContainer = styled.ul<{
   ${({ isShowDropdown }) => {
     if (isShowDropdown) {
       return css`
-        height: auto;
+        height: 110px;
         opacity: 1;
         visibility: visible;
         overflow: scroll;

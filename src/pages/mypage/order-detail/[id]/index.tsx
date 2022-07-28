@@ -102,7 +102,7 @@ const OrderDetailPage = () => {
         };
       });
 
-      const { data } = await postCartsApi(reqBody);
+      const { data } = await postCartsApi(reqBody!);
     },
     {
       onError: (error: any) => {
