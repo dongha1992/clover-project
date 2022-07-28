@@ -1249,8 +1249,8 @@ const CartPage = () => {
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
           <Left>
-            <TextH4B>로그인 후 배송방법과</TextH4B>
-            <TextH4B>배송지를 설정해주세요</TextH4B>
+            <TextH3B>로그인 후 배송방법과</TextH3B>
+            <TextH3B>배송지를 설정해주세요</TextH3B>
           </Left>
           <Right>
             <SVGIcon name="arrowRight" />

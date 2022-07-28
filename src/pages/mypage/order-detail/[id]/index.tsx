@@ -161,6 +161,10 @@ const OrderDetailPage = () => {
     }
   };
 
+  const goToCart = () => {
+    console.log(orderMenus, 'orderMenus');
+  };
+
   const changeDeliveryInfoHandler = () => {
     if (!canChangeDelivery || isCanceled) {
       return;
@@ -334,9 +338,9 @@ const OrderDetailPage = () => {
       </DeliveryStatusWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
-        <FlexBetween>
+        <FlexBetween onClick={() => showSectionHandler()}>
           <TextH4B>주문상품</TextH4B>
-          <FlexRow onClick={() => showSectionHandler()}>
+          <FlexRow>
             <SVGIcon name={isShowOrderItemSection ? 'triangleUp' : 'triangleDown'} />
           </FlexRow>
         </FlexBetween>
@@ -344,8 +348,8 @@ const OrderDetailPage = () => {
           {orderMenus?.map((menu: IOrderMenus, index: number) => {
             return <OrderItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
           })}
-          <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0">
-            재주문하기
+          <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0" onClick={goToCart}>
+            장바구니 담기
           </Button>
         </OrderListWrapper>
       </OrderItemsWrapper>
@@ -527,6 +531,7 @@ const DeliveryStatusWrapper = styled.div`
 
 const OrderItemsWrapper = styled.div`
   padding: 24px;
+  cursor: pointer;
 `;
 
 const OrderListWrapper = styled.div<{ isShow: boolean; status: string }>`
