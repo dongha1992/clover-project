@@ -30,10 +30,18 @@ const now = dayjs();
 const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId, deliveryDate }: any =
-    router.query;
+  const {
+    isDelivery,
+    orderId,
+    destinationId,
+    isSubscription,
+    subsDeliveryType,
+    menuId,
+    deliveryDate,
+    lastDeliveryDate,
+  }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
-  const { userLocation } = useSelector(destinationForm);
+  const { userLocation, applyAll } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
 
   const userLocationLen = !!userLocation.emdNm?.length;
@@ -190,7 +198,11 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
 
     if (isLoginSuccess) {
       if (orderId) {
-        if (closedDate && dateN(deliveryDate) > dateN(closedDate)) {
+        if (
+          closedDate &&
+          ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
+            (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
+        ) {
           dispatch(
             SET_ALERT({
               alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
