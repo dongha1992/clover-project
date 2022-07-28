@@ -95,6 +95,7 @@ const ReviewSwipe = styled.div`
   width: 100%;
   margin: 16px 0 24px 0;
   cursor: pointer;
+  position: relative;
 `;
 
 const ReviewImgWrapper = styled.div`

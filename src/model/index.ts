@@ -2179,8 +2179,7 @@ export interface ICreateCartRequest {
 }
 
 export interface IDeleteCartRequest {
-  menuDetailId?: number;
-  menuId: number;
+  menuDetailId: number;
 }
 
 export interface IPatchCartRequest {
