@@ -28,7 +28,7 @@ interface IMe {
   joinType: string;
   createdAt: string;
   grade: {
-    benefit: { purchaseRate: number };
+    benefit: { accumulationRate: number };
     level: number;
     name: string;
   };

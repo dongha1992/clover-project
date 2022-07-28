@@ -28,7 +28,7 @@ import {
   INIT_NON_MEMBER_CART_LISTS,
 } from '@store/cart';
 import { SET_ORDER } from '@store/order';
-import { Item } from '@components/Item';
+import { Item, DetailItem } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
@@ -44,6 +44,7 @@ import {
   ICreateCartRequest,
   IMenuDetailsId,
   IDisposable,
+  IOrderedMenuDetails,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
@@ -1420,9 +1421,9 @@ const CartPage = () => {
               <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
               <ScrollHorizonList>
                 <ScrollHorizonListGroup>
-                  {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
-                  return <Item item={item} key={index} isHorizontal />;
-                })} */}
+                  {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
+                    return <DetailItem item={item} key={index} isHorizontal />;
+                  })}
                 </ScrollHorizonListGroup>
               </ScrollHorizonList>
             </MenuListHeader>
@@ -1461,8 +1462,8 @@ const CartPage = () => {
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
               <TextH6B>
-                {calculatePoint({ rate: me?.grade.benefit.purchaseRate!, total: totalAmount + getDeliveryFee() })}P (
-                {me?.grade.benefit.purchaseRate}%) 적립 예정
+                {calculatePoint({ rate: me?.grade.benefit.accumulationRate!, total: totalAmount + getDeliveryFee() })}P
+                ({me?.grade.benefit.accumulationRate}%) 적립 예정
               </TextH6B>
             </FlexEnd>
           </TotalPriceWrapper>
