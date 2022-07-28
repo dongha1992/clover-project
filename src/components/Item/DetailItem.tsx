@@ -3,17 +3,12 @@ import styled, { css } from 'styled-components';
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { theme, FlexCol, showMoreText } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import { Tag } from '@components/Shared/Tag';
 import { useDispatch, useSelector } from 'react-redux';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { menuSelector, SET_MENU_ITEM } from '@store/menu';
-import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
-import Badge from './Badge';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { TAG_MAP } from '@constants/menu';
 import Image from 'next/image';
-import { onMenuLikes } from '@queries/menu';
 import { getDiscountPrice } from '@utils/menu/getMenuDisplayPrice';
 import { Obj, IMenuDetails, IMenus, IOrderedMenuDetails } from '@model/index';
 import dayjs from 'dayjs';
@@ -21,11 +16,11 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import 'dayjs/locale/ko';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
-import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
-import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
+import { postCartsApi } from '@api/cart';
+import { useToast } from '@hooks/useToast';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -44,6 +39,8 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
   const { categoryMenus } = useSelector(menuSelector);
 
   const { type } = useSelector(filterSelector);
+
+  const { showToast } = useToast();
 
   // const { mutate: mutatePostMenuLike } = useMutation(
   //   async () => {
@@ -88,13 +85,39 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
   //   }
   // );
 
+  console.log(item, 'item');
+  const { mutateAsync: mutateAddCartItem } = useMutation(
+    async () => {
+      const reqBody = [
+        {
+          menuId: item.menu.id,
+          menuDetailId: item.id,
+          quantity: 1,
+          main: true,
+        },
+      ];
+
+      const { data } = await postCartsApi(reqBody);
+    },
+    {
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+      },
+      onSuccess: async () => {
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        await queryClient.refetchQueries('getCartList');
+        await queryClient.refetchQueries('getCartCount');
+      },
+    }
+  );
+
   const { me } = useSelector(userForm);
 
   const { discount, discountedPrice } = getDiscountPrice(item);
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
-    console.log(item, 'clickn');
+    mutateAddCartItem();
   };
 
   // const menuLikeHandler = (e: any) => {
@@ -188,7 +211,7 @@ const Container = styled.div<{ isHorizontal?: boolean }>`
 
 const PriceWrapper = styled.div`
   display: flex;
-  margin-top: 24px;
+  margin-top: 18px;
 `;
 
 const CartBtn = styled.div`
@@ -202,7 +225,8 @@ const CartBtn = styled.div`
 
 const ImageWrapper = styled.div`
   position: relative;
-  width: 100%;
+  width: 132px;
+  height: 132px;
   .rounded {
     border-radius: 8px;
   }

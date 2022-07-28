@@ -1404,10 +1404,11 @@ const CartPage = () => {
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
+              <TextH3B padding="0 0 24px 0">{me?.nickName}님이 찜한 상품이에요</TextH3B>
               <ScrollHorizonList>
                 <ScrollHorizonListGroup>
                   {likeMenusList?.map((item: IMenus, index: number) => {
+                    if (index > 9) return;
                     return <Item item={item} key={index} isHorizontal />;
                   })}
                 </ScrollHorizonListGroup>
@@ -1422,6 +1423,7 @@ const CartPage = () => {
               <ScrollHorizonList>
                 <ScrollHorizonListGroup>
                   {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
+                    if (index > 9) return;
                     return <DetailItem item={item} key={index} isHorizontal />;
                   })}
                 </ScrollHorizonListGroup>
