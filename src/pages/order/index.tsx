@@ -13,6 +13,7 @@ import {
   FlexBetweenStart,
   GridWrapper,
   fixedBottom,
+  FlexColCenter,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
@@ -725,7 +726,32 @@ const OrderPage = () => {
           })
         );
       } else {
-        mutateCreateOrder();
+        if (previewOrder?.order?.isSubOrderDelivery) {
+          dispatch(
+            SET_ALERT({
+              children: (
+                <FlexColCenter>
+                  <TextB2R>함께배송 주문을 결제 하시겠습니까?</TextB2R>
+                  <TextB2R color={theme.greyScale65} center>
+                    (함께배송은 주문 건당 총 1회 가능,
+                  </TextB2R>
+                  <TextB2R color={theme.greyScale65} center>
+                    주문취소 시 재주문은 불가해요)
+                  </TextB2R>
+                </FlexColCenter>
+              ),
+
+              closeBtnText: '취소',
+              submitBtnText: '확인',
+              onSubmit: () => {
+                mutateCreateOrder();
+              },
+            })
+          );
+          return;
+        } else {
+          mutateCreateOrder();
+        }
       }
     }
   };

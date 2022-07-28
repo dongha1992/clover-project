@@ -2064,15 +2064,16 @@ export interface IWillWriteReviewsResponse {
 }
 
 export interface IOrderedMenuDetails {
-  calorie: number;
+  calorie?: number;
   discountPrice: number;
   id: number;
+  name: string;
   isSold: boolean;
   main: boolean;
-  menu: IMenus;
+  menu: { id: number; name: string; orderCount: number; priority: number };
   personalMaximum: number;
   price: number;
-  protein: number;
+  protein?: number;
   thumbnail: IDetailImage;
 }
 
