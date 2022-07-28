@@ -433,60 +433,72 @@ const CartSheet = ({ menuItem }: any) => {
       <TextH5B padding="24px 0 16px 0" center>
         옵션 선택
       </TextH5B>
-      <Wrapper>
-        <MainOption>
-          <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
-            필수옵션
-          </TextH5B>
-          <Select placeholder="필수옵션" type={'main'}>
-            {menuItem?.menuDetails?.map((option: any, index: number) => {
-              if (option.main) {
-                return (
-                  <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
-                );
-              }
-            })}
-          </Select>
-        </MainOption>
-        <OptionalOption>
-          <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
-            선택옵션
-          </TextH5B>
-          <Select placeholder="선택옵션" type={'optional'}>
-            {menuItem?.menuDetails?.map((option: any, index: number) => {
-              if (!option.main) {
-                return (
-                  <MenuOption key={index} option={option} selectMenuHandler={selectMenuHandler} menuId={menuItem.id} />
-                );
-              }
-            })}
-          </Select>
-        </OptionalOption>
-        {selectedMenus.length > 0 ? (
-          <SelectedCartItemContainer>
-            {selectedMenus.map((menu: any, index: number) => (
-              <CartSheetItem
-                menu={menu}
-                key={index}
-                padding="16px"
-                removeCartItemHandler={removeCartItemHandler}
-                clickPlusButton={clickPlusButton}
-                clickMinusButton={clickMinusButton}
-              />
-            ))}
-          </SelectedCartItemContainer>
-        ) : null}
-      </Wrapper>
-      <OrderInfoContainer>
-        <TotalSumContainer>
-          <TextH5B>총 {selectedMenus.length}개</TextH5B>
-          <TextH5B>{getCalculateTotalPrice().toLocaleString()}원</TextH5B>
-        </TotalSumContainer>
-        <BorderLine height={1} margin="13px 0 10px 0" />
-        <DeliveryInforContainer>
-          {isTimerTooltip ? <CheckTimerByDelivery isCartSheet /> : <Rolling list={rollingData} />}
-        </DeliveryInforContainer>
-      </OrderInfoContainer>
+      <ContentWrapper>
+        <Wrapper>
+          <MainOption>
+            <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
+              필수옵션
+            </TextH5B>
+            <Select placeholder="필수옵션" type={'main'}>
+              {menuItem?.menuDetails?.map((option: any, index: number) => {
+                if (option.main) {
+                  return (
+                    <MenuOption
+                      key={index}
+                      option={option}
+                      selectMenuHandler={selectMenuHandler}
+                      menuId={menuItem.id}
+                    />
+                  );
+                }
+              })}
+            </Select>
+          </MainOption>
+          <OptionalOption>
+            <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
+              선택옵션
+            </TextH5B>
+            <Select placeholder="선택옵션" type={'optional'}>
+              {menuItem?.menuDetails?.map((option: any, index: number) => {
+                if (!option.main) {
+                  return (
+                    <MenuOption
+                      key={index}
+                      option={option}
+                      selectMenuHandler={selectMenuHandler}
+                      menuId={menuItem.id}
+                    />
+                  );
+                }
+              })}
+            </Select>
+          </OptionalOption>
+          {selectedMenus.length > 0 ? (
+            <SelectedCartItemContainer>
+              {selectedMenus.map((menu: any, index: number) => (
+                <CartSheetItem
+                  menu={menu}
+                  key={index}
+                  padding="16px"
+                  removeCartItemHandler={removeCartItemHandler}
+                  clickPlusButton={clickPlusButton}
+                  clickMinusButton={clickMinusButton}
+                />
+              ))}
+            </SelectedCartItemContainer>
+          ) : null}
+        </Wrapper>
+        <OrderInfoContainer>
+          <TotalSumContainer>
+            <TextH5B>총 {selectedMenus.length}개</TextH5B>
+            <TextH5B>{getCalculateTotalPrice().toLocaleString()}원</TextH5B>
+          </TotalSumContainer>
+          <BorderLine height={1} margin="13px 0 10px 0" />
+          <DeliveryInforContainer>
+            {isTimerTooltip ? <CheckTimerByDelivery isCartSheet /> : <Rolling list={rollingData} />}
+          </DeliveryInforContainer>
+        </OrderInfoContainer>
+      </ContentWrapper>
       <ButtonContainer onClick={() => addToCart()}>
         <Button height="100%" width="100%" borderRadius="0">
           장바구니에 담기
@@ -498,7 +510,7 @@ const CartSheet = ({ menuItem }: any) => {
 
 const Container = styled.div`
   width: 100%;
-  max-height: 700px;
+  max-height: 85vh;
   height: 100%;
 `;
 
@@ -506,6 +518,8 @@ const Wrapper = styled.div`
   padding: 0 24px;
   width: 100%;
 `;
+
+const ContentWrapper = styled.div``;
 
 const MainOption = styled.div`
   width: 100%;

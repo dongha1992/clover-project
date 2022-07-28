@@ -355,8 +355,8 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async ({ reqBody, cartId }: { reqBody: IDeleteCartRequest; cartId: number }) => {
-      const { data } = await deleteCartsApi([reqBody], cartId);
+    async ({ reqBody }: { reqBody: IDeleteCartRequest }) => {
+      const { data } = await deleteCartsApi([reqBody]);
       return data;
     },
     {
@@ -476,7 +476,7 @@ const CartPage = () => {
 
     dispatch(
       SET_ALERT({
-        alertMessage: '선택을 상품을 삭제하시겠어요?',
+        alertMessage: '선택하신 상품을 모두 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
@@ -488,8 +488,8 @@ const CartPage = () => {
           } else {
             try {
               const result = selectedMenuDetails.map((detail) => {
-                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
-                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+                const reqBody = { menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody });
               });
             } catch (error) {
               console.error(error);
@@ -521,7 +521,7 @@ const CartPage = () => {
       if (hasOptionalMenu) {
         const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main).length === 1;
         if (hasMoreOneMainMenu) {
-          alertMessage = '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.';
+          alertMessage = '선택옵션 상품도 함께 삭제돼요. \n 삭제하시겠어요?';
           const foundOptional =
             foundMenu?.menuDetails
               .filter((item) => !item.main)
@@ -575,8 +575,8 @@ const CartPage = () => {
           } else {
             try {
               const result = selectedMenuDetails.map((detail) => {
-                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
-                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+                const reqBody = { menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody });
               });
             } catch (error) {
               console.error(error);
@@ -598,7 +598,7 @@ const CartPage = () => {
 
     dispatch(
       SET_ALERT({
-        alertMessage: '선택을 상품을 삭제하시겠어요?',
+        alertMessage: '선택하신 상품을 모두 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
@@ -609,8 +609,8 @@ const CartPage = () => {
           } else {
             try {
               const result = selectedMenuDetails.map((detail) => {
-                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
-                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+                const reqBody = { menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody });
               });
             } catch (error) {
               console.error(error);
@@ -953,6 +953,7 @@ const CartPage = () => {
 
   const goToOrder = () => {
     if (!me) return;
+    if (!destinationObj.destinationId) return;
     if (isInvalidDestination) {
       dispatch(
         SET_ALERT({
@@ -1038,6 +1039,7 @@ const CartPage = () => {
 
   const orderButtonRender = () => {
     let buttonMessage = '';
+    const hasDestination = destinationObj.destinationId !== null;
 
     if (!me) {
       return (
@@ -1060,13 +1062,14 @@ const CartPage = () => {
       }
 
       return (
-        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj) || isUnderMinimum}>
+        <Button borderRadius="0" height="100%" disabled={!hasDestination || isUnderMinimum}>
           {buttonMessage}
         </Button>
       );
     } else {
+      console.log(destinationObj, 'destinationObj');
       return (
-        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj)}>
+        <Button borderRadius="0" height="100%" disabled={!hasDestination}>
           배송정보를 입력해주세요.
         </Button>
       );
@@ -1399,7 +1402,7 @@ const CartPage = () => {
           </FlexCol>
         </>
       )}
-      <BorderLine height={8} margin="32px 0" />
+      {me && <BorderLine height={8} margin="32px 0" />}
       <MenuListContainer>
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>

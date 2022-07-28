@@ -126,7 +126,7 @@ const DeliverInfoPage = () => {
     if (tempDestination && !isMainDestination) {
       dispatch(
         SET_ALERT({
-          alertMessage: '설정하신 주소는 저장되지 않습니다. 배송방법을 변경하시겠어요?',
+          alertMessage: '설정하기 전 주소는 저장되지 않아요.  \n 배송방법을 변경하시겠어요?',
           onSubmit: () => {
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_TYPE());
