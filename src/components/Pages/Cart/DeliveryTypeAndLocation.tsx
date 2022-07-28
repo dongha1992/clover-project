@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH4B } from '@components/Shared/Text';
+import { TextH4B, TextH3B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { isNil, isEqual } from 'lodash-es';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
@@ -32,8 +32,8 @@ const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDesti
   return (
     <Container onClick={goToDeliveryInfo}>
       <Left>
-        <TextH4B>{deliveryType ? DELIVERY_TYPE_MAP[deliveryType.toUpperCase()] : '배송방법과'}</TextH4B>
-        <TextH4B>{renderDestinationInfo()}</TextH4B>
+        <TextH3B>{deliveryType ? DELIVERY_TYPE_MAP[deliveryType.toUpperCase()] : '배송방법과'}</TextH3B>
+        <TextH3B>{renderDestinationInfo()}</TextH3B>
       </Left>
       <Right>
         <SVGIcon name="arrowRight" />
