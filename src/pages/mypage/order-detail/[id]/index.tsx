@@ -22,10 +22,10 @@ import { IOrderMenus } from '@model/index';
 import { getCustomDate } from '@utils/destination';
 import { OrderDetailInfo, SubOrderInfo, OrderInfo } from '@components/Pages/Mypage/OrderDelivery';
 import { getOrderDetailApi, deleteDeliveryApi } from '@api/order';
+import { postCartsApi } from '@api/cart';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
-import isNil from 'lodash-es/isNil';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
@@ -88,6 +88,31 @@ const OrderDetailPage = () => {
         await queryClient.refetchQueries('getOrderLists');
       },
       onError: async (error: AxiosError) => {},
+    }
+  );
+
+  const { mutateAsync: mutateAddCartItem } = useMutation(
+    async () => {
+      const reqBody = orderDeliveries?.orderMenus.map((item) => {
+        return {
+          menuId: item.menuId,
+          menuDetailId: item.menuDetailId,
+          quantity: item.menuQuantity,
+          main: true,
+        };
+      });
+
+      const { data } = await postCartsApi(reqBody);
+    },
+    {
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+      },
+      onSuccess: async () => {
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        await queryClient.refetchQueries('getCartList');
+        await queryClient.refetchQueries('getCartCount');
+      },
     }
   );
 
@@ -162,7 +187,7 @@ const OrderDetailPage = () => {
   };
 
   const goToCart = () => {
-    console.log(orderMenus, 'orderMenus');
+    mutateAddCartItem();
   };
 
   const changeDeliveryInfoHandler = () => {
