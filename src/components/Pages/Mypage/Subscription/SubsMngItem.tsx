@@ -109,9 +109,6 @@ const Container = styled.div`
   &:first-of-type {
     padding-top: 0;
   }
-  &:last-of-type {
-    border-bottom: none;
-  }
 `;
 const ImgBox = styled.div`
   width: 60px;
