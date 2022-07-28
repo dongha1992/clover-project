@@ -101,10 +101,10 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
             {menuReviews?.map((review: any, index: number) => {
               if (index > 10) return;
               return (
-                <>
-                  <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />
-                  <BorderLine margin="24px 0 24px 0" height={1} />
-                </>
+                <div key={index}>
+                  <ReviewDetailItem review={review} clickImgViewHandler={clickImgViewHandler} />
+                  <BorderLine margin="12px 0 24px 0" height={1} />
+                </div>
               );
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>

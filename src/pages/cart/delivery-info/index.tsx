@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { TextH3B, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
+import { TextH3B, TextH5B, TextH6B, TextB3R, TextH4B } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { Tag } from '@components/Shared/Tag';
 import { FlexBetween, homePadding, theme } from '@styles/theme';
@@ -263,7 +263,6 @@ const DeliverInfoPage = () => {
         router.push('/cart');
       }
     } else {
-      console.log(tempDestination, 'tempDestination here 265');
       if (tempDestination) {
         const reqBody = {
           name: tempDestination?.name!,
@@ -285,7 +284,7 @@ const DeliverInfoPage = () => {
           const { data } = await postDestinationApi(reqBody);
           if (data.code === 200) {
             const response = data.data;
-            console.log(response, 'after post');
+
             dispatch(
               SET_DESTINATION({
                 name: response.name,
@@ -454,7 +453,6 @@ const DeliverInfoPage = () => {
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        console.log(data, 'getMainDestinationsApi');
         if (data.data) {
           setTempDestination({ ...data.data, spotId: data.data.spotPickup?.spotId });
           setIsMaindestination(true);
@@ -538,7 +536,7 @@ const DeliverInfoPage = () => {
   return (
     <Container>
       <Wrapper>
-        <TextH3B padding="24px 0">배송방법</TextH3B>
+        <TextH4B padding="24px 0">배송방법</TextH4B>
         <DeliveryMethodWrapper>
           {!subsParcelAndMorning && (
             <>

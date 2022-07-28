@@ -498,6 +498,8 @@ const CartSheet = ({ menuItem }: any) => {
 
 const Container = styled.div`
   width: 100%;
+  max-height: 700px;
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
