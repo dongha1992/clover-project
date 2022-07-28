@@ -85,7 +85,6 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
   //   }
   // );
 
-  console.log(item, 'item');
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
       const reqBody = [
