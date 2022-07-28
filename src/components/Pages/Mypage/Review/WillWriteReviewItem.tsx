@@ -32,7 +32,7 @@ const WillWriteReviewItem = ({ review }: IProps) => {
           <TextH5B>배송완료</TextH5B>
           {isSubscription && (
             <Tag margin="0 4px 0 8px" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-              정기구독
+              {review.tag}
             </Tag>
           )}
           <DeliveryTag deliveryType={review?.delivery!} margin="0 4px" />

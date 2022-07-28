@@ -2055,6 +2055,7 @@ export interface IWillWriteReview {
   menuDetailId: number;
   orderDeliveryId: number;
   orderType?: string;
+  tag: string;
 }
 
 export interface IWillWriteReviewsResponse {
