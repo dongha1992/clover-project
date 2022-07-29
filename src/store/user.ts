@@ -27,6 +27,11 @@ interface IMe {
   recommendCode: string;
   joinType: string;
   createdAt: string;
+  grade: {
+    benefit: { accumulationRate: number };
+    level: number;
+    name: string;
+  };
 }
 
 export interface IUser {

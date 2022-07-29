@@ -52,7 +52,7 @@ const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IPr
     }`;
 
     const isSpot = item.delivery === 'SPOT';
-
+    console.log(item.location, 'item.location');
     return (
       <FlexCol>
         <TextH5B>
@@ -64,7 +64,7 @@ const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IPr
           </TextH5B>
         ) : (
           <TextH5B>
-            {item.location.addressDetail}-{item.location.addressDetail}
+            {item.location.address} {item.location.addressDetail}
           </TextH5B>
         )}
       </FlexCol>

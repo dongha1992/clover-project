@@ -28,7 +28,7 @@ import {
   INIT_NON_MEMBER_CART_LISTS,
 } from '@store/cart';
 import { SET_ORDER } from '@store/order';
-import { Item } from '@components/Item';
+import { Item, DetailItem } from '@components/Item';
 import { SET_ALERT, INIT_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
@@ -44,12 +44,13 @@ import {
   ICreateCartRequest,
   IMenuDetailsId,
   IDisposable,
+  IOrderedMenuDetails,
 } from '@model/index';
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getCustomDate } from '@utils/destination';
-import { checkIsAllSoldout, checkCartMenuStatus } from '@utils/menu';
+import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
@@ -354,8 +355,8 @@ const CartPage = () => {
   );
 
   const { mutate: mutateDeleteItem } = useMutation(
-    async ({ reqBody, cartId }: { reqBody: IDeleteCartRequest; cartId: number }) => {
-      const { data } = await deleteCartsApi([reqBody], cartId);
+    async ({ reqBody }: { reqBody: IDeleteCartRequest }) => {
+      const { data } = await deleteCartsApi([reqBody]);
       return data;
     },
     {
@@ -396,8 +397,10 @@ const CartPage = () => {
         setIsAllchecked(!isAllChecked);
       }
     } else {
-      const isAllSoldout = checkIsAllSoldout(menu.menuDetails) || !checkCartMenuStatus(menu.menuDetails);
-      if (isAllSoldout) return;
+      const isAllSoldout = checkIsAllSoldout(menu.menuDetails);
+      const canOrderPeriodMenus = !checkPeriodCartMenuStatus(menu.menuDetails);
+
+      if (isAllSoldout || !canOrderPeriodMenus) return;
 
       tempCheckedMenus.push(menu);
     }
@@ -407,10 +410,16 @@ const CartPage = () => {
 
   const selectAllCartItemHandler = () => {
     const canCheckMenus = getCanCheckedMenus(cartItemList);
-    const canNotCheckAllMenus = canCheckMenus.length === 0;
+    // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
+    const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
+    const filtered = canCheckMenus.filter(
+      (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
+    );
+
+    const canNotCheckAllMenus = filtered.length === 0;
 
     if (!isAllChecked) {
-      setCheckedMenus(canCheckMenus);
+      setCheckedMenus(filtered);
     } else {
       setCheckedMenus([]);
     }
@@ -438,7 +447,16 @@ const CartPage = () => {
       return item.id === selectedItem.id ? { ...item, isSelected: true } : { ...item, isSelected: false };
     });
 
-    setLunchOrDinner(newLunchDinner);
+    if (subDeliveryId) {
+      const callback = () => {
+        setLunchOrDinner(newLunchDinner);
+        setSubDeliveryId(null);
+      };
+      displayAlertForSubDelivery({ callback });
+      return;
+    } else {
+      setLunchOrDinner(newLunchDinner);
+    }
   };
 
   const removeSelectedItemHandler = async () => {
@@ -458,7 +476,7 @@ const CartPage = () => {
 
     dispatch(
       SET_ALERT({
-        alertMessage: '선택을 상품을 삭제하시겠어요?',
+        alertMessage: '선택하신 상품을 모두 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
@@ -470,8 +488,8 @@ const CartPage = () => {
           } else {
             try {
               const result = selectedMenuDetails.map((detail) => {
-                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
-                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+                const reqBody = { menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody });
               });
             } catch (error) {
               console.error(error);
@@ -493,9 +511,9 @@ const CartPage = () => {
   }) => {
     let foundMenu = cartItemList.find((item) => item.menuId === menuId);
 
-    const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
+    const isMain = foundMenu?.menuDetails.find((item) => item.id === menuDetailId)?.main;
 
-    let selectedMenuDetails = [{ menuId, menuDetailId, cartId: cartId ? cartId : null }];
+    let selectedMenuDetails = [{ menuDetailId }];
     let alertMessage = '';
 
     if (isMain) {
@@ -503,15 +521,13 @@ const CartPage = () => {
       if (hasOptionalMenu) {
         const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main).length === 1;
         if (hasMoreOneMainMenu) {
-          alertMessage = '선택옵션 상품도 함께 삭제돼요. 삭제하시겠어요.';
+          alertMessage = '선택옵션 상품도 함께 삭제돼요. \n 삭제하시겠어요?';
           const foundOptional =
             foundMenu?.menuDetails
               .filter((item) => !item.main)
               .map((item) => {
                 return {
-                  menuDetailId: item.menuDetailId,
-                  menuId: menuId,
-                  cartId: item.cartId,
+                  menuDetailId: item.id,
                 };
               })! || [];
           selectedMenuDetails = [...selectedMenuDetails, ...foundOptional];
@@ -557,8 +573,8 @@ const CartPage = () => {
           } else {
             try {
               const result = selectedMenuDetails.map((detail) => {
-                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
-                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+                const reqBody = { menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody });
               });
             } catch (error) {
               console.error(error);
@@ -580,7 +596,7 @@ const CartPage = () => {
 
     dispatch(
       SET_ALERT({
-        alertMessage: '선택을 상품을 삭제하시겠어요?',
+        alertMessage: '선택하신 상품을 모두 삭제하시겠어요?',
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
@@ -591,8 +607,8 @@ const CartPage = () => {
           } else {
             try {
               const result = selectedMenuDetails.map((detail) => {
-                const reqBody = { menuId: detail.menuId, menuDetailId: detail.menuDetailId };
-                return mutateDeleteItem({ reqBody, cartId: detail.cartId! });
+                const reqBody = { menuDetailId: detail.menuDetailId };
+                return mutateDeleteItem({ reqBody });
               });
             } catch (error) {
               console.error(error);
@@ -636,24 +652,36 @@ const CartPage = () => {
     setDisposableList(findItem);
   };
 
-  const displayAlertForSubDelivery = (callback: any) => {
+  const displayAlertForSubDelivery = ({ type, callback }: { type?: string; callback?: () => void }) => {
+    const isRouting = type! === 'route';
     dispatch(
       SET_ALERT({
         alertMessage: '기본 주문과 배송정보가 다른 경우 함께배송이 불가해요!',
         alertSubMessage: '(배송정보는 함께 받을 기존 주문에서 변경할 수 있어요)',
         submitBtnText: '변경하기',
         closeBtnText: '취소',
-        onSubmit: () => callback,
+        onSubmit: () => {
+          if (isRouting) {
+            router.push('/cart/delivery-info');
+          } else {
+            callback && callback();
+          }
+        },
       })
     );
+    return;
   };
 
   const changeDeliveryDate = (dateValue: string) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
 
     if (!canSubDelivery && subDeliveryId) {
-      displayAlertForSubDelivery(setSelectedDeliveryDay(dateValue));
-      setSubDeliveryId(null);
+      const callback = () => {
+        setSelectedDeliveryDay(dateValue);
+        setSubDeliveryId(null);
+      };
+      displayAlertForSubDelivery({ callback });
+      return;
     }
     setSelectedDeliveryDay(dateValue);
   };
@@ -899,10 +927,10 @@ const CartPage = () => {
   };
 
   const goToDeliveryInfo = () => {
-    const callback = router.push('/cart/delivery-info');
     // 합배송 선택한 경우
     if (subDeliveryId) {
-      displayAlertForSubDelivery(callback);
+      displayAlertForSubDelivery({ type: 'route' });
+      return;
     } else {
       router.push('/cart/delivery-info');
     }
@@ -923,6 +951,7 @@ const CartPage = () => {
 
   const goToOrder = () => {
     if (!me) return;
+    if (!destinationObj.destinationId) return;
     if (isInvalidDestination) {
       dispatch(
         SET_ALERT({
@@ -935,9 +964,11 @@ const CartPage = () => {
 
     const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
     const canOrderThatDate = checkCanOrderThatDate();
+
+    const canOrderPeriodMenus = checkedMenus.filter((item) => checkPeriodCartMenuStatus(item.menuDetails)).length === 0;
     const canOrderdMenus = getCanCheckedMenus(checkedMenus);
 
-    const hasSoldOutMenus = canOrderdMenus.length !== checkedMenus.length;
+    const hasSoldOutMenus = canOrderdMenus.length !== checkedMenus.length || !canOrderPeriodMenus;
     if (hasSoldOutMenus) {
       dispatch(
         SET_ALERT({
@@ -1006,6 +1037,7 @@ const CartPage = () => {
 
   const orderButtonRender = () => {
     let buttonMessage = '';
+    const hasDestination = destinationObj.destinationId !== null;
 
     if (!me) {
       return (
@@ -1028,13 +1060,14 @@ const CartPage = () => {
       }
 
       return (
-        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj) || isUnderMinimum}>
+        <Button borderRadius="0" height="100%" disabled={!hasDestination || isUnderMinimum}>
           {buttonMessage}
         </Button>
       );
     } else {
+      console.log(destinationObj, 'destinationObj');
       return (
-        <Button borderRadius="0" height="100%" disabled={isNil(destinationObj)}>
+        <Button borderRadius="0" height="100%" disabled={!hasDestination}>
           배송정보를 입력해주세요.
         </Button>
       );
@@ -1217,8 +1250,8 @@ const CartPage = () => {
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
           <Left>
-            <TextH4B>로그인 후 배송방법과</TextH4B>
-            <TextH4B>배송지를 설정해주세요</TextH4B>
+            <TextH3B>로그인 후 배송방법과</TextH3B>
+            <TextH3B>배송지를 설정해주세요</TextH3B>
           </Left>
           <Right>
             <SVGIcon name="arrowRight" />
@@ -1367,15 +1400,16 @@ const CartPage = () => {
           </FlexCol>
         </>
       )}
-      <BorderLine height={8} margin="32px 0" />
+      {me && <BorderLine height={8} margin="32px 0" />}
       <MenuListContainer>
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="0 0 24px 0">{me?.name}님이 찜한 상품이에요</TextH3B>
+              <TextH3B padding="0 0 24px 0">{me?.nickName}님이 찜한 상품이에요</TextH3B>
               <ScrollHorizonList>
                 <ScrollHorizonListGroup>
                   {likeMenusList?.map((item: IMenus, index: number) => {
+                    if (index > 9) return;
                     return <Item item={item} key={index} isHorizontal />;
                   })}
                 </ScrollHorizonListGroup>
@@ -1389,9 +1423,10 @@ const CartPage = () => {
               <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
               <ScrollHorizonList>
                 <ScrollHorizonListGroup>
-                  {/* {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
-                  return <Item item={item} key={index} isHorizontal />;
-                })} */}
+                  {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
+                    if (index > 9) return;
+                    return <DetailItem item={item} key={index} isHorizontal />;
+                  })}
                 </ScrollHorizonListGroup>
               </ScrollHorizonList>
             </MenuListHeader>
@@ -1426,10 +1461,13 @@ const CartPage = () => {
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                프코 회원
+                {me?.grade?.name}
               </Tag>
-              <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-              <TextH6B> n 포인트 (n%) 적립 예정</TextH6B>
+              <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
+              <TextH6B>
+                {calculatePoint({ rate: me?.grade.benefit.accumulationRate!, total: totalAmount + getDeliveryFee() })}P
+                ({me?.grade.benefit.accumulationRate}%) 적립 예정
+              </TextH6B>
             </FlexEnd>
           </TotalPriceWrapper>
         )}

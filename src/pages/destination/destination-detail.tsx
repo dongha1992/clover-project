@@ -4,11 +4,12 @@ import { CheckDestinationPlace } from '@components/Pages/Destination';
 import { DefaultKakaoMap } from '@components/Map';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import { fixedBottom, FlexCol, FlexRow } from '@styles/theme';
-import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
+import { TextH5B, TextB2R } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
+import { getMainDestinationsApi } from '@api/destination';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -17,15 +18,12 @@ import {
   SET_TEMP_DESTINATION,
   SET_DESTINATION_TYPE,
   SET_USER_DELIVERY_TYPE,
-  INIT_TEMP_DESTINATION,
-  SET_DESTINATION,
   INIT_DESTINATION_TYPE,
   INIT_AVAILABLE_DESTINATION,
 } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
-import isNil from 'lodash-es/isNil';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -36,6 +34,7 @@ const deliveryMap: Obj = {
 
 const DestinationDetailPage = () => {
   const [isDefaultDestination, setIsDefaultDestination] = useState(false);
+  const [hasDefaultDestination, setHasDefaultDestination] = useState(false);
   const [destinationStatusByRule, setDestinationStatusByRule] = useState<string>('');
   const [isMaybeChangeType, setIsMaybeChangeType] = useState<boolean>(false);
   const [latitudeLongitude, setLatitudeLongitude] = useState({
@@ -93,7 +92,7 @@ const DestinationDetailPage = () => {
           dong: tempLocation.emdNm!,
           zipCode: tempLocation.zipNo!,
         },
-        main: isDefaultDestination,
+        main: !hasDefaultDestination ? true : isDefaultDestination,
       };
       if (orderId) {
         dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
@@ -120,6 +119,24 @@ const DestinationDetailPage = () => {
     }
   };
 
+  const checkHasMainDestination = async () => {
+    const params = {
+      delivery: userDeliveryType.toUpperCase(),
+    };
+
+    try {
+      const { data } = await getMainDestinationsApi(params);
+      if (data.code === 200) {
+        console.log(data.data, 'asdasdasdasdas');
+        if (!data.data) {
+          setHasDefaultDestination(false);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const goToSearch = () => {
     router.push('/destination/search');
   };
@@ -135,6 +152,10 @@ const DestinationDetailPage = () => {
   // useEffect(() => {
   //   if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
   // }, []);
+
+  useEffect(() => {
+    checkHasMainDestination();
+  }, []);
 
   useEffect(() => {
     /* TODO: 리팩토링 필요 */
@@ -192,7 +213,10 @@ const DestinationDetailPage = () => {
     <Container>
       <CheckDestinationPlace />
       <MapWrapper>
-        <DefaultKakaoMap centerLat={Number(latitudeLongitude.latitude)} centerLng={Number(latitudeLongitude.longitude)} />
+        <DefaultKakaoMap
+          centerLat={Number(latitudeLongitude.latitude)}
+          centerLng={Number(latitudeLongitude.longitude)}
+        />
       </MapWrapper>
       <DestinationInfoWrarpper>
         <FlexCol>

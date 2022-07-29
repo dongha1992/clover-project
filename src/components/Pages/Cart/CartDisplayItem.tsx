@@ -24,7 +24,7 @@ const CartDisplayItem = ({ checkedMenus, selectCartItemHandler, removeCartDispla
   return (
     <Container>
       <Wrapper>
-        <FlexRowStart width="40%">
+        <FlexRowStart>
           <CheckboxWrapper>
             <Checkbox
               onChange={() => {
@@ -86,7 +86,7 @@ const Wrapper = styled.div`
 
 const ImageWrapper = styled.div`
   position: relative;
-  width: 100%;
+  width: 60px;
   .rounded {
     border-radius: 8px;
   }
