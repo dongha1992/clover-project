@@ -13,12 +13,14 @@ import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
 import Image from 'next/image';
 import BorderLine from '@components/Shared/BorderLine';
+import { useRouter } from 'next/router';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
+  const router = useRouter();
   const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
 
@@ -55,9 +57,13 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  const goToMd = () => {
+    router.push('/md');
+  };
+
   if (isLoading) {
     return <div>로딩</div>;
-  }
+  };
 
   return (
     <Container>
@@ -68,7 +74,12 @@ const Home = () => {
       </SectionWrapper>
       <FlexSpace>
         <SectionTitle>MD 추천</SectionTitle>
-        <TextH5B color={theme.greyScale65} textDecoration='underline' pointer>더보기</TextH5B>
+        <TextH5B 
+          onClick={goToMd}
+          color={theme.greyScale65} 
+          textDecoration='underline' 
+          pointer
+        >더보기</TextH5B>
       </FlexSpace>
       <SectionWrapper>
         <FlexWrapWrapper>
