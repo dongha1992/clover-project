@@ -21,10 +21,6 @@ export const getCartsApi = ({
   return Api.get(`cart/v1/carts`, { params });
 };
 
-export const getRecentDeliveryApi = (): Promise<AxiosResponse<IResponse>> => {
-  return Api.get(`cart/v1/carts/delivery`);
-};
-
 export const postCartsApi = (data: ICreateCartRequest[]): Promise<AxiosResponse<IResponse>> => {
   return Api.post(`cart/v1/carts`, data);
 };
