@@ -16,7 +16,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
-import { SVGIcon } from '@utils/common';
+import { dateN, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { getSpotDistanceUnit } from '@utils/spot';
@@ -35,9 +35,18 @@ const now = dayjs();
 const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isDelivery, orderId, destinationId, isSubscription, subsDeliveryType, menuId }: any = router.query;
+  const {
+    isDelivery,
+    orderId,
+    destinationId,
+    isSubscription,
+    subsDeliveryType,
+    menuId,
+    deliveryDate,
+    lastDeliveryDate,
+  }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
-  const { userLocation, userTempDestination } = useSelector(destinationForm);
+  const { userLocation, userTempDestination, applyAll } = useSelector(destinationForm);
   const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const [isSubs, setIsSubs] = useState<boolean>();
   const [isLocker, setIsLocker] = useState<boolean>();
@@ -191,7 +200,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
         closedDate: item.closedDate,
         delivery: 'SPOT',
       };
-  
+
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기(스팟검색)로 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(deliveryInfoDestinationInfo));
@@ -236,18 +245,32 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
     if (isLoginSuccess) {
       //로그인 o
       if (orderId) {
-        dispatch(
-          SET_TEMP_EDIT_SPOT({
-            spotPickupId: item.pickups[0].id,
-            name: item.name,
-            spotPickup: item.pickups[0].name,
-          })
-        );
-        router.push({
-          pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId, destinationId },
-        });
-        return;
+        if (
+          closedDate &&
+          ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
+            (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
+        ) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
+              submitBtnText: '확인',
+              onSubmit: () => {},
+            })
+          );
+        } else {
+          dispatch(
+            SET_TEMP_EDIT_SPOT({
+              spotPickupId: item.pickups[0].id,
+              name: item.name,
+              spotPickup: item.pickups[0].name,
+            })
+          );
+          router.push({
+            pathname: '/mypage/order-detail/edit/[orderId]',
+            query: { orderId, destinationId },
+          });
+          return;
+        }
       }
       if (hasCart) {
         // 로그인o and 장바구니 o

@@ -38,9 +38,10 @@ interface IProps {
   orderId: number;
   destinationId: number;
   isSubscription: string;
+  deliveryDate: string;
 }
 
-const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, deliveryDate }: IProps) => {
   const router = useRouter();
 
   const { userAccessMethod } = useSelector(commonSelector);
@@ -65,6 +66,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: 
 
   const { data } = useGetOrderDetail(['getOrderDetail', orderId], orderId, {
     onSuccess: (data) => {
+      console.log('data', data);
+
       // TODO(young) : 구독에서 destinationId있으면 orderDeliveries에서 같은 destinationId로
       // 일반 주문도 orderId가 아닌 destinationId가 필요한지 확인 필요
       let orderDetail;
@@ -284,11 +287,20 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription }: 
       goToDeliverySearch();
     }
   };
-
+  // TODO : lastdeliverydate 추가 전체 회차 변경하는부분 체크
   const goToDeliverySearch = () => {
     if (isSpot) {
       const IsSubs = isSubscription === 'true';
-      router.push({ pathname: '/spot/search/result', query: { orderId, destinationId, isSubscription: IsSubs } });
+      router.push({
+        pathname: '/spot/search/result',
+        query: {
+          orderId,
+          destinationId,
+          isSubscription: IsSubs,
+          deliveryDate,
+          lastDeliveryDate: data.lastDeliveryDate,
+        },
+      });
     } else {
       router.push({ pathname: '/destination/search', query: { orderId, destinationId } });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
@@ -521,10 +533,15 @@ const BtnWrapper = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { orderId, destinationId, isSubscription } = context.query;
+  const { orderId, destinationId, isSubscription, deliveryDate } = context.query;
 
   return {
-    props: { orderId: Number(orderId), destinationId: Number(destinationId), isSubscription: String(isSubscription) },
+    props: {
+      orderId: Number(orderId),
+      destinationId: Number(destinationId),
+      isSubscription: String(isSubscription),
+      deliveryDate: String(deliveryDate),
+    },
   };
 }
 export default OrderDetailAddressEditPage;
