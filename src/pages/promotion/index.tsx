@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
@@ -28,10 +28,11 @@ const CONTENTS = [
 const PromotionPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [page, setPage] = useState<number>(1);
 
-  useEffect(()=> {
+  useEffect(() => {
     dispatch(INIT_EVENT_TITLE());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goToDetail = (title: string, subs: boolean, id: number, edit: boolean) => {

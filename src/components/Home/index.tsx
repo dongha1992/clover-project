@@ -68,7 +68,7 @@ const Home = () => {
   };
 
   const goToPromotion = () => {
-    dispatch(SET_EVENT_TITLE('친구 초대하기!'));
+    dispatch(SET_EVENT_TITLE('친구 초대하기러기토마토스위스역삼역'));
     router.push({
       pathname: '/promotion/detail',
       query: {
@@ -121,7 +121,12 @@ const Home = () => {
       <PromotionWrapper>
         <FlexSpace>
           <SectionTitle>메인 콘텐츠 기획전 - 1</SectionTitle>
-          <TextH5B color={theme.greyScale65} textDecoration='underline' pointer>더보기</TextH5B>
+          <TextH5B 
+            onClick={goToPromotion}
+            color={theme.greyScale65} 
+            textDecoration='underline' 
+            pointer
+          >더보기</TextH5B>
         </FlexSpace>
         <Image
           src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
