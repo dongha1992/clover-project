@@ -1,5 +1,5 @@
 import SubsMngCalendar from '@components/Calendar/subscription/SubsMngCalendar';
-import { ClosedGuideBox } from '@components/Pages/Subscription/detail';
+import { ClosedGuideBox, SubsBottomBtn } from '@components/Pages/Subscription/detail';
 import PaymentGuideBox from '@components/Pages/Subscription/detail/GuideBox/PaymentGuideBox';
 import SubsDetailOrderInfo from '@components/Pages/Subscription/detail/SubsDetailOrderInfo';
 import { SubsInfoBox, SubsOrderItem } from '@components/Pages/Subscription/payment';
@@ -295,44 +295,18 @@ const SubsDetailPage = () => {
         subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
       />
 
-      {orderDetail?.isSubscribing === false &&
-        (orderDetail?.status === 'COMPLETED' || orderDetail?.status === 'CANCELED') && (
-          <>
-            <BorderLine height={8} />
-            <FlexRow padding="24px">
-              <Button backgroundColor="#fff" color="#242424" border onClick={reorderHandler}>
-                재주문하기
-              </Button>
-            </FlexRow>
-          </>
-        )}
-      {orderDetail?.isSubscribing === false &&
-        orderDetail?.status !== 'COMPLETED' &&
-        orderDetail?.status !== 'CANCELED' &&
-        orderDetail?.subscriptionPeriod !== 'UNLIMITED' &&
-        last(orderDetail?.orderDeliveries as any[]).status !== 'CANCELED' && (
-          <>
-            <BorderLine height={8} />
-            <FlexRow padding="24px">
-              <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
-                주문 취소하기
-              </Button>
-            </FlexRow>
-          </>
-        )}
-      {orderDetail?.isSubscribing === true &&
-        orderDetail?.status !== 'COMPLETED' &&
-        orderDetail?.status !== 'CANCELED' &&
-        orderDetail?.subscriptionPeriod === 'UNLIMITED' && (
-          <>
-            <BorderLine height={8} />
-            <FlexRow padding="24px">
-              <Button backgroundColor="#fff" color="#242424" border onClick={orderCancelHandler}>
-                구독 해지하기
-              </Button>
-            </FlexRow>
-          </>
-        )}
+      {orderDetail?.subscriptionPeriod === 'UNLIMITED' &&
+      orderDetail?.isSubscribing &&
+      orderDetail?.status === 'COMPLETED' ? null : (
+        <BorderLine height={8} />
+      )}
+      <SubsBottomBtn
+        subscriptionPeriod={orderDetail?.subscriptionPeriod}
+        isSubscribing={orderDetail?.isSubscribing}
+        status={orderDetail?.status}
+        reorderHandler={reorderHandler}
+        orderCancelHandler={orderCancelHandler}
+      />
     </Container>
   );
 };

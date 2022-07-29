@@ -10,6 +10,7 @@ import {
   todayN,
   subsClosedDateN,
   subsClosedDate,
+  dateN,
 } from './getFormatDate';
 import getFormatPrice from './getFormatPrice';
 import { setCookie, getCookie, removeCookie } from './cookie';
@@ -34,4 +35,5 @@ export {
   getFormatPrice,
   getValidBirthday,
   getUnCommaPrice,
+  dateN,
 };
