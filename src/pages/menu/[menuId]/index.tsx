@@ -13,7 +13,6 @@ import {
   TextB4R,
   TextH5B,
 } from '@components/Shared/Text';
-import Image from 'next/image';
 import { Tag } from '@components/Shared/Tag';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
@@ -21,7 +20,6 @@ import { ReviewList, ReviewItem } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ, TAG_MAP } from '@constants/menu';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
-import { cartForm } from '@store/cart';
 import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM, SET_REVIEW_IMAGES_COUNT } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
@@ -44,14 +42,12 @@ import { DELIVERY_TYPE_MAP } from '@constants/order';
 import { IMenus, Obj, IMenuDetails } from '@model/index';
 import isEmpty from 'lodash-es/isEmpty';
 import dayjs from 'dayjs';
-import getCustomDate from '@utils/destination/getCustomDate';
 import Badge from '@components/Item/Badge';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { SET_INFO } from '@store/menu';
 import { PERIOD_NUMBER } from '@constants/subscription';
-import MenuItem from '@components/Pages/Subscription/register/MenuItem';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { getPromotionCodeApi } from '@api/promotion';
 import { getBannersApi } from '@api/banner';
