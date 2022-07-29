@@ -110,20 +110,13 @@ const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IPr
               기존 주문의 배송정보를 변경해주세요)
             </TextB3R>
           </InfoWrapper>
-          <InfoWrapper>
-            <Dot />
-            <TextB3R padding="0 0 0 12px">
-              기존 주문 + 현재 주문의 결제액이 무료 배송 기준을 충족하면 기존 주문 시 결제한 배송비는 함께배송되는 현재
-              주문금액에서 차감됩니다.
-            </TextB3R>
-          </InfoWrapper>
-          <InfoWrapper>
+          {/* <InfoWrapper>
             <Dot />
             <TextB3R padding="0 0 0 12px">
               기존 주문을 취소하면 함께배송 주문도 취소됩니다. (함께배송 주문을 취소할 경우 기존 주문은 취소되지
               않습니다.)
             </TextB3R>
-          </InfoWrapper>
+          </InfoWrapper> */}
         </FlexCol>
         <BtnWrapper>
           <Button height="100%" width="100%" borderRadius="0" onClick={goToNewOrder}>
