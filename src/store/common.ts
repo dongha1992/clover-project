@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IAccessMethod } from '@pages/order';
+import { IAccessMethod } from '@model/index';
 
 export interface IViewer {
   images: string[];
