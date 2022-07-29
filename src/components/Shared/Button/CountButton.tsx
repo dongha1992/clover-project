@@ -37,7 +37,9 @@ const CountButton = ({
           <SVGIcon name="minus" color={isSold ? theme.greyScale25 : ''} />
         </Minus>
         <Count>
-          <TextH5B margin="4px 0 0 0">{quantity}</TextH5B>
+          <TextH5B color={isSold ? theme.greyScale25 : theme.black} margin="4px 0 0 0">
+            {quantity}
+          </TextH5B>
         </Count>
         <Plus
           onClick={() => {

@@ -1152,13 +1152,18 @@ const CartPage = () => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
       const canCheckMenus = getCanCheckedMenus(cartItemList);
+      // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
+      const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
+      const filtered = canCheckMenus.filter(
+        (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
+      );
 
-      if (cartItemList?.length! > 0 && canCheckMenus?.length === cartItemList?.length) {
+      if (cartItemList?.length! > 0 && filtered?.length === cartItemList?.length) {
         setIsAllchecked(true);
         setCheckedMenus(cartItemList);
       } else {
         setIsAllchecked(false);
-        setCheckedMenus(canCheckMenus);
+        setCheckedMenus(filtered);
       }
       setIsFirstRender(false);
       getSubOrderDelivery();
@@ -1311,6 +1316,7 @@ const CartPage = () => {
                     </div>
                     <Right>
                       <CountButton
+                        isSold={!item.isSelected}
                         menuDetailId={item.id}
                         quantity={item.quantity}
                         clickPlusButton={clickDisposableItemCount}
