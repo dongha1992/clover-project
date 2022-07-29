@@ -5,22 +5,19 @@ import BorderLine from '@components/Shared/BorderLine';
 import {
   homePadding,
   FlexBetween,
-  FlexEnd,
   theme,
   FlexRow,
   FlexCol,
-  FlexColEnd,
-  FlexBetweenStart,
   GridWrapper,
   fixedBottom,
   FlexColCenter,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
-import { Tag } from '@components/Shared/Tag';
+
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import { DeliveryDateBox, OrderItem } from '@components/Pages/Order';
+import { DeliveryDateBox, GeneralMenusPriceBox, OrderItem, CancelOrderInfoBox } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -28,7 +25,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { couponForm, INIT_COUPON } from '@store/coupon';
-import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD_VALUE } from '@constants/order';
+import {
+  ACCESS_METHOD_PLACEHOLDER,
+  ACCESS_METHOD_VALUE,
+  PAYMENT_METHOD_IN_ORDER_PAGE,
+  DELIVERY_TYPE_MAP,
+  DELIVERY_TIME_MAP,
+} from '@constants/order';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import {
   createOrderPreviewApi,
@@ -39,8 +42,16 @@ import {
   postNicePaymnetApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
-import { Obj, IGetCard, ILocation, ICoupon, ICreateOrder, IGetNicePaymentResponse } from '@model/index';
-import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
+import {
+  Obj,
+  IGetCard,
+  ILocation,
+  ICoupon,
+  ICreateOrder,
+  IGetNicePaymentResponse,
+  IUserInputObj,
+  IAccessMethod,
+} from '@model/index';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
@@ -53,9 +64,7 @@ import { SET_IS_LOADING } from '@store/common';
 import { userForm } from '@store/user';
 import { subscriptionForm } from '@store/subscription';
 import { periodMapper } from '@constants/subscription';
-import dayjs from 'dayjs';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
-import CancelOrderInfoBox from '@components/Pages/Order/CancelOrderInfoBox';
 
 declare global {
   interface Window {
@@ -65,49 +74,9 @@ declare global {
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
 /* TODO: 배송 출입 부분 함수로 */
-/* TODO: 결제 금액 부분 함수로 */
 /* TODO: 배송예정 어떻게? */
 
-const PAYMENT_METHOD = [
-  {
-    id: 1,
-    text: '프코페이',
-    value: 'NICE_BILLING',
-  },
-  {
-    id: 2,
-    text: '신용카드',
-    value: 'NICE_CARD',
-  },
-  {
-    id: 3,
-    text: '계좌이체',
-    value: 'NICE_BANK',
-  },
-  {
-    id: 4,
-    text: '카카오페이',
-    value: 'KAKAO_CARD',
-  },
-  {
-    id: 5,
-    text: '페이코',
-    value: 'PAYCO_EASY',
-  },
-  {
-    id: 6,
-    text: '토스',
-    value: 'TOSS_CARD',
-  },
-];
-
 const successOrderPath: string = 'order/finish';
-
-export interface IAccessMethod {
-  id: number;
-  text: string;
-  value: string;
-}
 
 const OrderPage = () => {
   const dispatch = useDispatch();
@@ -123,14 +92,7 @@ const OrderPage = () => {
     alwaysPointAll: { isSelected: false },
     orderMethodReuse: { isSelected: false },
   });
-  const [userInputObj, setUserInputObj] = useState<{
-    receiverName: string;
-    receiverTel: string;
-    point: number;
-    deliveryMessage: string;
-    deliveryMessageType: string;
-    coupon: number;
-  }>({
+  const [userInputObj, setUserInputObj] = useState<IUserInputObj>({
     receiverName: '',
     receiverTel: '',
     point: 0,
@@ -894,7 +856,7 @@ const OrderPage = () => {
     } else {
       dispatch(
         SET_ALERT({
-          alertMessage: '알수없는 에러발생',
+          alertMessage: '알 수 없는 에러발생',
           onSubmit: () => router.push('/cart'),
         })
       );
@@ -1087,7 +1049,6 @@ const OrderPage = () => {
               <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>
             )}
           </FlexBetween>
-
           <DeliveryDateBox
             location={location}
             delivery={delivery}
@@ -1270,7 +1231,7 @@ const OrderPage = () => {
             </FlexRow>
           </FlexBetween>
           <GridWrapper gap={16}>
-            {PAYMENT_METHOD.map((method, index) => {
+            {PAYMENT_METHOD_IN_ORDER_PAGE.map((method, index) => {
               const isSelected = selectedOrderMethod === method.value;
               return (
                 <Button
@@ -1307,95 +1268,19 @@ const OrderPage = () => {
           subscriptionPaymentDate={previewOrder?.order?.subscriptionPaymentDate!}
         />
       )}
-
       {previewOrder?.order.type === 'GENERAL' && (
-        <TotalPriceWrapper>
-          <FlexBetween>
-            <TextH5B>총 상품 금액</TextH5B>
-            <TextB2R>{menuAmount}원</TextB2R>
-          </FlexBetween>
-          <BorderLine height={1} margin="16px 0" />
-          <FlexBetween padding="8px 0 0 0">
-            <TextH5B>총 할인 금액</TextH5B>
-            <TextB2R>{menuDiscount}원</TextB2R>
-          </FlexBetween>
-          <FlexBetween padding="8px 0 0 0">
-            <TextB2R>상품 할인</TextB2R>
-            <TextB2R>{menuDiscount}원</TextB2R>
-          </FlexBetween>
-          {eventDiscount > 0 && (
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>스팟 이벤트 할인</TextB2R>
-              <TextB2R>{eventDiscount}원</TextB2R>
-            </FlexBetween>
-          )}
-          {userInputObj.coupon && (
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>쿠폰 사용</TextB2R>
-              <TextB2R>{coupon}원</TextB2R>
-            </FlexBetween>
-          )}
-          <BorderLine height={1} margin="8px 0" />
-          <FlexBetween padding="8px 0 0 0">
-            <TextH5B>환경부담금 (일회용품)</TextH5B>
-            <TextB2R>{optionAmount}원</TextB2R>
-          </FlexBetween>
-          {orderOptions.length > 0 &&
-            orderOptions.map((optionItem, index) => {
-              const { optionId, optionPrice, optionQuantity, optionName } = optionItem;
-              const hasFork = optionId === 1;
-              const hasChopsticks = optionId === 2;
-              return (
-                <div key={index}>
-                  {hasFork && (
-                    <FlexBetween padding="8px 0 0 0">
-                      <TextB2R>포크+물티슈</TextB2R>
-                      <TextB2R>
-                        {optionQuantity}개 / {optionPrice * optionQuantity}원
-                      </TextB2R>
-                    </FlexBetween>
-                  )}
-                  {hasChopsticks && (
-                    <FlexBetween padding="8px 0 0 0">
-                      <TextB2R>젓가락+물티슈</TextB2R>
-                      <TextB2R>
-                        {optionQuantity}개 / {optionPrice * optionQuantity}원
-                      </TextB2R>
-                    </FlexBetween>
-                  )}
-                </div>
-              );
-            })}
-
-          <BorderLine height={1} margin="16px 0" />
-          <FlexBetween>
-            <TextH5B>배송비</TextH5B>
-            <TextB2R>{deliveryFee}원</TextB2R>
-          </FlexBetween>
-          <FlexBetween padding="8px 0 0 0">
-            <TextB2R>배송비 할인</TextB2R>
-            <TextB2R>{deliveryFeeDiscount}원</TextB2R>
-          </FlexBetween>
-          <BorderLine height={1} margin="16px 0" />
-          {userInputObj.point > 0 && (
-            <FlexBetween>
-              <TextH5B>포인트 사용</TextH5B>
-              <TextB2R>{userInputObj.point}원</TextB2R>
-            </FlexBetween>
-          )}
-          <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
-          <FlexBetween>
-            <TextH4B>최종 결제금액</TextH4B>
-            <TextB2R>{payAmount - userInputObj.point}원</TextB2R>
-          </FlexBetween>
-          <FlexEnd padding="11px 0 0 0">
-            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-              프코 회원
-            </Tag>
-            <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-            <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
-          </FlexEnd>
-        </TotalPriceWrapper>
+        <GeneralMenusPriceBox
+          menuAmount={menuAmount}
+          menuDiscount={menuDiscount}
+          eventDiscount={eventDiscount}
+          userInputObj={userInputObj}
+          coupon={coupon}
+          optionAmount={optionAmount}
+          orderOptions={orderOptions}
+          deliveryFee={deliveryFee}
+          deliveryFeeDiscount={deliveryFeeDiscount}
+          payAmount={payAmount}
+        />
       )}
       {previewOrder?.order.type === 'SUBSCRIPTION' && (
         <MenusPriceBox
