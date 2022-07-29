@@ -50,9 +50,6 @@ const CartActualItem = ({
   const isSold = menuDetail.isSold;
   const hasHoliday = holiday?.length! > 0;
 
-  // console.log(holiday, 'holiday from Menu');
-  // console.log(menuDetail?.availabilityInfo, 'menuDetail?.availabilityInfo');
-
   const noLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
   const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';

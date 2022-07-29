@@ -183,7 +183,7 @@ const MypagePage = () => {
               <FlexBetween padding="8px 0 0 0">
                 <FlexRow>
                   <Tag color={theme.brandColor} margin="0 8px 0 0">
-                    프코회원
+                    {me.grade.name}
                   </Tag>
                   <TextB3R color={theme.brandColor} padding="2px 0 0 0">
                     다음 등급까지 12,000원 남았어요
