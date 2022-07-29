@@ -90,3 +90,36 @@ export const PAYMENT_METHOD: Obj = {
   PAYCO_EASY: '페이코',
   TOSS_CARD: '토스',
 };
+
+export const PAYMENT_METHOD_IN_ORDER_PAGE = [
+  {
+    id: 1,
+    text: '프코페이',
+    value: 'NICE_BILLING',
+  },
+  {
+    id: 2,
+    text: '신용카드',
+    value: 'NICE_CARD',
+  },
+  {
+    id: 3,
+    text: '계좌이체',
+    value: 'NICE_BANK',
+  },
+  {
+    id: 4,
+    text: '카카오페이',
+    value: 'KAKAO_CARD',
+  },
+  {
+    id: 5,
+    text: '페이코',
+    value: 'PAYCO_EASY',
+  },
+  {
+    id: 6,
+    text: '토스',
+    value: 'TOSS_CARD',
+  },
+];

@@ -50,9 +50,6 @@ const CartActualItem = ({
   const isSold = menuDetail.isSold;
   const hasHoliday = holiday?.length! > 0;
 
-  // console.log(holiday, 'holiday from Menu');
-  // console.log(menuDetail?.availabilityInfo, 'menuDetail?.availabilityInfo');
-
   const noLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
   const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
@@ -141,7 +138,11 @@ const CartActualItem = ({
           <InfoContainer>
             <FlexCol>
               {!defaultStatus ? <InfoMessage message={checkMenuStatus()} /> : <div />}
-              {hasHoliday ? <InfoMessage message={`${getHolidayByMenu(holiday!)} 배송이 불가능해요`} /> : <div />}
+              {!soldCases && hasHoliday ? (
+                <InfoMessage message={`${getHolidayByMenu(holiday!)} 배송이 불가능해요`} />
+              ) : (
+                <div />
+              )}
             </FlexCol>
             <CountButtonContainer>
               <CountButton

@@ -61,9 +61,6 @@ const Oauth = () => {
           router.replace('/');
         }
       } else {
-        /* TODO: 아래 사항들 */
-        // 비회원 -> 회원 장바구니 옮기기
-        // 쿼리, 쿠키에 따라 페이지 리다이렉트 분기
       }
     } catch (error: any) {
       if (error.code === 2010) {

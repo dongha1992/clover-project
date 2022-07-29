@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextH3B, TextH5B, TextH6B, TextB3R, TextH4B } from '@components/Shared/Text';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { Tag } from '@components/Shared/Tag';
-import { FlexBetween, homePadding, theme } from '@styles/theme';
+import { fixedBottom, FlexBetween, homePadding, theme } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
@@ -536,7 +536,7 @@ const DeliverInfoPage = () => {
   return (
     <Container>
       <Wrapper>
-        <TextH4B padding="24px 0">배송방법</TextH4B>
+        <TextH4B padding="24px">배송방법</TextH4B>
         <DeliveryMethodWrapper>
           {!subsParcelAndMorning && (
             <>
@@ -623,9 +623,9 @@ const DeliverInfoPage = () => {
             </>
           )}
         </DeliveryMethodWrapper>
+        <BorderLine height={8} margin="32px 0" />
         {userSelectDeliveryType && (
-          <>
-            <BorderLine height={8} margin="32px 0" />
+          <PlaceWrapper>
             <FlexBetween>
               <TextH3B padding="0 0 14px 0">{isSpotPickupPlace ? '픽업장소' : '배송지'}</TextH3B>
               {tempDestination && (
@@ -642,7 +642,7 @@ const DeliverInfoPage = () => {
                 </Button>
               </BtnWrapper>
             )}
-          </>
+          </PlaceWrapper>
         )}
       </Wrapper>
       <SettingBtnWrapper onClick={finishDeliverySetting}>
@@ -658,13 +658,18 @@ const Container = styled.div`
   width: 100%;
   margin-bottom: 56px;
 `;
+
+const PlaceWrapper = styled.div`
+  ${homePadding}
+`;
+
 const Wrapper = styled.div`
   width: 100%;
-  ${homePadding}
   padding-bottom: 32px;
 `;
 const DeliveryMethodWrapper = styled.div`
   width: 100%;
+  ${homePadding}
 `;
 const RadioWrapper = styled.div`
   display: flex;
@@ -705,6 +710,7 @@ const SettingBtnWrapper = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
+  ${fixedBottom}
 `;
 
 export default DeliverInfoPage;

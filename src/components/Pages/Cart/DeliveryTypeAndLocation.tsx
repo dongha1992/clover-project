@@ -33,7 +33,7 @@ const DeliveryTypeAndLocation = ({ goToDeliveryInfo, deliveryType, deliveryDesti
     <Container onClick={goToDeliveryInfo}>
       <Left>
         <TextH3B>{deliveryType ? DELIVERY_TYPE_MAP[deliveryType.toUpperCase()] : '배송방법과'}</TextH3B>
-        <TextH3B>{renderDestinationInfo()}</TextH3B>
+        <TextH3B textHide>{renderDestinationInfo()}</TextH3B>
       </Left>
       <Right>
         <SVGIcon name="arrowRight" />
@@ -52,6 +52,8 @@ const Container = styled.div`
 const Left = styled.div`
   display: flex;
   flex-direction: column;
+  max-width: 360px;
+  width: 100%;
 `;
 
 const Right = styled.div`

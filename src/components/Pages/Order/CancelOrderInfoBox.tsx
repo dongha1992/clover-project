@@ -7,7 +7,6 @@ interface IProps {
 }
 const CancelOrderInfoBox = ({ delivery, deliveryDetail }: IProps) => {
   const isLunch = deliveryDetail === 'LUNCH';
-  console.log('delivery', delivery);
 
   return (
     <div>
