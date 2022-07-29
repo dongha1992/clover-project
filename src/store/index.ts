@@ -15,6 +15,7 @@ import mypage from './mypage';
 import subscription from './subscription';
 import filter from './filter';
 import review from './review';
+import event from './event';
 import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 
 const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
@@ -41,6 +42,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     subscription,
     filter,
     review,
+    event,
   })(state, action);
 };
 
@@ -89,6 +91,7 @@ const makeStore = (context: any) => {
         'mypage',
         'user',
         'review',
+        'event',
       ],
     };
 

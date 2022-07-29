@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
@@ -13,14 +13,22 @@ import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
 import Image from 'next/image';
 import BorderLine from '@components/Shared/BorderLine';
+import { useRouter } from 'next/router';
+import { SET_EVENT_TITLE , INIT_EVENT_TITLE} from '@store/event';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
+  const router = useRouter();
   const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
+
+  useEffect(()=> {
+    dispatch(INIT_EVENT_TITLE());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { error: carouselError } = useQuery(
     'carouselBanners',
@@ -55,9 +63,25 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  const goToMd = () => {
+    router.push('/md');
+  };
+
+  const goToPromotion = () => {
+    dispatch(SET_EVENT_TITLE('친구 초대하기!'));
+    router.push({
+      pathname: '/promotion/detail',
+      query: {
+        id: 1,
+        subs: false,
+        edit_feed: true,
+      },
+    });
+  };
+
   if (isLoading) {
     return <div>로딩</div>;
-  }
+  };
 
   return (
     <Container>
@@ -68,7 +92,12 @@ const Home = () => {
       </SectionWrapper>
       <FlexSpace>
         <SectionTitle>MD 추천</SectionTitle>
-        <TextH5B color={theme.greyScale65} textDecoration='underline' pointer>더보기</TextH5B>
+        <TextH5B 
+          onClick={goToMd}
+          color={theme.greyScale65} 
+          textDecoration='underline' 
+          pointer
+        >더보기</TextH5B>
       </FlexSpace>
       <SectionWrapper>
         <FlexWrapWrapper>
@@ -80,7 +109,7 @@ const Home = () => {
             : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>
       </SectionWrapper>
-      <LineBanner>
+      <LineBanner onClick={goToPromotion}>
         <Image
           src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_banner.png`}
           height="120px"
