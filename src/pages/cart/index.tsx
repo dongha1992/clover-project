@@ -670,9 +670,8 @@ const CartPage = () => {
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
       const sameDeliveryAddress = isEqual(location, destinationObj?.location);
-      return sameDeliveryAddress && sameDeliveryType;
+      return sameDeliveryAddress;
     };
 
     return canSubOrderlist.filter((subOrder: ISubOrderDelivery) => checkAvailableSubDelivery(subOrder));
@@ -1018,7 +1017,7 @@ const CartPage = () => {
       );
     }
 
-    if (destinationObj.delivery) {
+    if (destinationObj.delivery && destinationObj.destinationId) {
       const { fee, amountForFree, minimum } = DELIVERY_FEE_OBJ[destinationObj?.delivery?.toLowerCase()!];
       const isUnderMinimum = totalAmount < minimum;
 
@@ -1036,9 +1035,8 @@ const CartPage = () => {
         </Button>
       );
     } else {
-      console.log(destinationObj, 'destinationObj');
       return (
-        <Button borderRadius="0" height="100%" disabled={!hasDestination}>
+        <Button borderRadius="0" height="100%" disabled={hasDestination}>
           배송정보를 입력해주세요.
         </Button>
       );
@@ -1136,8 +1134,11 @@ const CartPage = () => {
 
   const getSubOrderDelivery = async () => {
     if (me) {
+      const params = {
+        delivery: destinationObj.delivery!.toUpperCase(),
+      };
       try {
-        const { data } = await getSubOrdersCheckApi();
+        const { data } = await getSubOrdersCheckApi(params);
         if (data.code === 200) {
           const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
           setSubOrderDeliery(result);
@@ -1579,7 +1580,9 @@ const NutritionInfoWrapper = styled.div`
   }
 `;
 
-const GetMoreBtn = styled.div``;
+const GetMoreBtn = styled.div`
+  padding: 12px 24px 24px 24px;
+`;
 const BtnWrapper = styled.div`
   margin: 0 24px;
 `;

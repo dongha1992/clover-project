@@ -371,7 +371,7 @@ const OrderFinishPage = () => {
               price={menuAmount}
             />
           ) : (
-            <FinishOrderItem menu={orderDetail} getTotalPrice={getTotalPrice} />
+            <FinishOrderItem menu={orderDetail} payAmount={payAmount} />
           )}
         </SingleOrderItemWrapper>
       </OrderItemsWrapper>
