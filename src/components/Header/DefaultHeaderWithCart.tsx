@@ -63,6 +63,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 16px 24px;
   .arrow {
+    width: 24px;
     cursor: pointer;
     > svg {
       position: absolute;
