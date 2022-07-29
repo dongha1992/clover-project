@@ -407,14 +407,14 @@ export const LiCircle3 = styled.li<{ top: number; left: number; color: string }>
   }
 `;
 
-export const responsiveImgWrapper = styled.div`
+export const responsiveImgWrapper = css`
   position: relative;
   overflow: hidden;
   height: 0;
   padding-bottom: 25%;
 `;
 
-export const responsiveImg = styled.img`
+export const responsiveImg = css`
   position: absolute;
   top: 0;
   left: 0;

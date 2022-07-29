@@ -49,6 +49,7 @@ const StarRating = ({ count = 5, rating, hoverRating, onRating, onClick, width, 
 const Container = styled.div`
   display: flex;
   cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   > div {
     padding-right: 2px;
   }

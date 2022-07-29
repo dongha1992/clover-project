@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
-import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
 import Image from 'next/image';
@@ -65,7 +65,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
             </ReviewHeader>
             <ReviewBody>
               <TextBody isShow={isShow}>
-                <TextB3R>{review?.content}</TextB3R>
+                <TextB2R>{review?.content}</TextB2R>
               </TextBody>
               {isContentHide ? (
                 isShow ? (

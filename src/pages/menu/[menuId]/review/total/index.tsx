@@ -162,17 +162,20 @@ const TotalReviewPage = ({ menuId }: IProps) => {
           </Button>
         </ImageWrapper>
         <BorderLine height={8} />
-
         {data?.pages[0]?.result?.length !== 0 ? (
           data?.pages?.map((page: any, index: number) => {
             return (
               <>
                 <List key={index}>
                   {page.result?.map((review: ISearchReviews, index: number) => {
-                    return <ReviewDetailItem review={review} key={index} clickImgViewHandler={clickImgViewHandler} />;
+                    return (
+                      <div key={index}>
+                        <ReviewDetailItem review={review} clickImgViewHandler={clickImgViewHandler} />
+                        <BorderLine margin="24px 0 24px 0" height={1} />
+                      </div>
+                    );
                   })}
                 </List>
-                <BorderLine margin="24px 0 24px 0" height={1} />
               </>
             );
           })
@@ -208,7 +211,6 @@ const EmptyWrapper = styled.div`
 `;
 
 const ImageWrapper = styled.div<{ hasImageReview?: boolean }>`
-  ${homePadding}
   display: flex;
   flex-direction: column;
   width: 100%;

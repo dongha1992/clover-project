@@ -65,7 +65,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
   const deliveryInfoChangeHandler = () => {
     router.push({
       pathname: `/mypage/order-detail/edit/${orderId}`,
-      query: { destinationId: item.id, isSubscription: true },
+      query: { destinationId: item.id, isSubscription: true, deliveryDate: item.deliveryDate },
     });
   };
   if (isLoading) return <div>...로딩중</div>;
