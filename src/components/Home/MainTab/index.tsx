@@ -5,29 +5,50 @@ import { TextH4B, TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
 
 const TABS = [
   { title: '카테고리', link: '/category/all' },
-  { title: 'HOT썸머 할인', link: '/recommendation' },
-  { title: '기획전', link: '/' },
+  { title: 'HOT썸머 할인', link: '/promotion/detail', edit: true, id: 21 },
+  { title: '기획전', link: '/promotion' },
   { title: '이벤트·소식', link: '/event' },
 ];
 
 const MainTab = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const goToPromotion = (path: string, edit?: boolean, id?: number) => {
+    dispatch(SET_EVENT_TITLE('친구 초대하기!')); // 고정 기획전 타이틀
+    if(path === '/promotion/detail') {
+      router.push({
+        pathname: '/promotion/detail',
+        query: {
+          id: id,
+          subs: false,
+          edit_feed: edit,
+        },
+      });  
+    } else {
+      router.push(path);
+    };
+  };
+
   return (
     <Container>
-      {TABS.map((tab, index) => {
+      {TABS.map((item, index) => {
         return (
-          <TabWrapper key={index} onClick={() => router.push(`${tab.link}`)}>
+          <TabWrapper key={index} onClick={() => goToPromotion(item.link, item.edit, item.id)}>
             <Image
               src={`${process.env.IMAGE_S3_URL}/menu/img_thumbnail_empty.jpg`}
               height="80px"
               width="80px"
               className="rounded"
+              alt='홈탭'
             />
             <TextB2R padding="12px 0" pointer>
-              {tab.title}
+              {item.title}
             </TextB2R>
           </TabWrapper>
         );

@@ -232,7 +232,7 @@ const MypagePage = () => {
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <MypageMenu title="주소 관리" link="/mypage/address" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
-              <MypageMenu title="이벤트" link="/mypage/event" />
+              <MypageMenu title="이벤트" link="/event" />
               <MypageMenu title="배송 안내" link="/mypage/deliver-infomation" hideBorder />
               <ImageWrapper>
                 <Image
