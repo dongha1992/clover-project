@@ -2,7 +2,6 @@ import React from 'react';
 import { TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, theme } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
   deliveryFee: number;

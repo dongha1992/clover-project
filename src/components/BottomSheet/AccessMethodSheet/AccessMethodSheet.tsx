@@ -6,7 +6,7 @@ import { RadioButton, Button } from '@components/Shared/Button';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { ACCESS_METHOD } from '@constants/order';
-import { IAccessMethod } from '@pages/order';
+import { IAccessMethod } from '@model/index';
 import { SET_ACCESS_METHOD } from '@store/common';
 
 interface IProps {
