@@ -670,9 +670,8 @@ const CartPage = () => {
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryType = delivery === destinationObj.delivery?.toUpperCase();
       const sameDeliveryAddress = isEqual(location, destinationObj?.location);
-      return sameDeliveryAddress && sameDeliveryType;
+      return sameDeliveryAddress;
     };
 
     return canSubOrderlist.filter((subOrder: ISubOrderDelivery) => checkAvailableSubDelivery(subOrder));
@@ -1136,8 +1135,11 @@ const CartPage = () => {
 
   const getSubOrderDelivery = async () => {
     if (me) {
+      const params = {
+        delivery: destinationObj.delivery!.toUpperCase(),
+      };
       try {
-        const { data } = await getSubOrdersCheckApi();
+        const { data } = await getSubOrdersCheckApi(params);
         if (data.code === 200) {
           const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
           setSubOrderDeliery(result);
