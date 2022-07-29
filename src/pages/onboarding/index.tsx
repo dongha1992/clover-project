@@ -8,7 +8,7 @@ import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
 import router, { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
-import { Obj } from '@model/index';
+import { IAuthObj, Obj } from '@model/index';
 import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setRefreshToken } from '@components/Auth';
@@ -16,6 +16,8 @@ import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
 import { SET_ALERT } from '@store/alert';
+import Oauth from '@pages/oauth';
+import { useSuccessKaKao } from '@hooks/auth';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -35,26 +37,50 @@ const OnBoarding: NextPage = () => {
     EMAIL: 15,
   };
 
-  const dispatch = useDispatch();
-  const [returnPath, setReturnPath] = useState<string | string[]>('');
   const onRouter = useRouter();
+  const dispatch = useDispatch();
   const { loginType } = useSelector(commonSelector);
+  const [returnPath, setReturnPath] = useState<string | string[]>('');
+
+  const onKaKao = useSuccessKaKao();
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
-  }, []);
+  }, [onRouter.query.returnPath]);
+
+  useEffect(() => {
+    if (window.ReactNativeWebView) {
+      window.addEventListener('message', kakaoListener);
+    }
+    return () => {
+      window.removeEventListener('message', kakaoListener);
+    };
+  }, [window.ReactNativeWebView]);
+
+  const kakaoListener = async (e: any) => {
+    let { cmd, data = null } = await JSON.parse(e.data);
+    onKaKao({
+      access_token: data.accessToken,
+      expires_in: data.accessTokenExpiresAt,
+      refresh_token: data.refreshToken,
+      refresh_token_expires_in: data.refreshTokenExpiresAt,
+      scope: data.scopes,
+      token_type: 'bearer',
+    });
+  };
 
   const kakaoLoginHandler = () => {
     /* 웹뷰 */
-
-    // window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
-    // return;
-
-    window.Kakao.Auth.authorize({
-      redirectUri:
-        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
-      scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
-    });
+    if (window.navigator.userAgent === 'fco-clover-webview') {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
+      // return;
+    } else {
+      window.Kakao.Auth.authorize({
+        redirectUri:
+          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
+      });
+    }
   };
 
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
@@ -124,6 +150,8 @@ const OnBoarding: NextPage = () => {
   };
 
   const goToHomeWithoutLogin = () => {
+    // router.replace(`${returnPath}`, null);
+    // TODO : returnPath를 가지고 onBoarding으로 이동 => 둘러보기 클릭 => returnPath로 이동 => 뒤로가기 클릭시 다시 onBoarding으로 이동
     router.push('/');
   };
 
