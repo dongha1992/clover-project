@@ -6,10 +6,10 @@ import { IMAGE_S3_URL } from '@constants/mock';
 
 interface IProps {
   menu: any;
-  getTotalPrice: () => void;
+  payAmount: number;
 }
 
-const FinishOrderItem = ({ menu, getTotalPrice }: IProps) => {
+const FinishOrderItem = ({ menu, payAmount }: IProps) => {
   const menuImg = menu.orderDeliveries[0].orderMenus[0].image.url;
 
   return (
@@ -22,7 +22,7 @@ const FinishOrderItem = ({ menu, getTotalPrice }: IProps) => {
           <TextB3R>{menu.name}</TextB3R>
           <FlexBetween>
             <PriceWrapper>
-              <TextH5B>{getTotalPrice()}원</TextH5B>
+              <TextH5B>{payAmount.toLocaleString()}원</TextH5B>
             </PriceWrapper>
           </FlexBetween>
         </ContentWrapper>

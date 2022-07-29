@@ -1050,6 +1050,19 @@ export type TPayMethod =
   | 'PAYCO_EASY'
   | 'TOSS_CARD'
   | 'TOSS_MONEY';
+export interface IAccessMethod {
+  id: number;
+  text: string;
+  value: string;
+}
+export interface IUserInputObj {
+  receiverName: string;
+  receiverTel: string;
+  point: number;
+  deliveryMessage: string;
+  deliveryMessageType: string;
+  coupon: number;
+}
 export interface ICreateOrderRequest {
   /*TODO: 모델 수정해야함 */
 

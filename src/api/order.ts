@@ -105,8 +105,12 @@ export const editDeliveryDateApi = ({
   return Api.post(`order/v1/deliveries/${deliveryId}/date`, { deliveryDate: selectedDeliveryDay });
 };
 
-export const getSubOrdersCheckApi = (): Promise<AxiosResponse<IGetSubOrdersResponse>> => {
-  return Api.get(`order/v1/deliveries/together`);
+export const getSubOrdersCheckApi = ({
+  delivery,
+}: {
+  delivery: string;
+}): Promise<AxiosResponse<IGetSubOrdersResponse>> => {
+  return Api.get(`order/v1/deliveries/together`, { params: { delivery } });
 };
 
 /* pg */
