@@ -46,7 +46,9 @@ const PromotionDetailPage = () => {
     <Container>
       {
         edit_feed === 'true' && (
-          <EditWrapper></EditWrapper>
+          <EditWrapper>
+            어드민 에디터 영역삼역
+          </EditWrapper>
         )
       }
       {
@@ -98,6 +100,9 @@ const EditWrapper = styled.section`
   height: 500px;
   background: ${theme.greyScale25};
   margin: 0 0 24px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default PromotionDetailPage;
