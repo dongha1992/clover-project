@@ -26,7 +26,7 @@ import { Obj } from '@model/index';
 import router from 'next/router';
 import { getValues } from '@utils/common';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP } from '@constants/order';
-import { IAccessMethod } from '@pages/order';
+import { IAccessMethod } from '@model/index';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useQuery, useMutation, useQueryClient } from 'react-query';

@@ -138,7 +138,11 @@ const CartActualItem = ({
           <InfoContainer>
             <FlexCol>
               {!defaultStatus ? <InfoMessage message={checkMenuStatus()} /> : <div />}
-              {hasHoliday ? <InfoMessage message={`${getHolidayByMenu(holiday!)} 배송이 불가능해요`} /> : <div />}
+              {!soldCases && hasHoliday ? (
+                <InfoMessage message={`${getHolidayByMenu(holiday!)} 배송이 불가능해요`} />
+              ) : (
+                <div />
+              )}
             </FlexCol>
             <CountButtonContainer>
               <CountButton
