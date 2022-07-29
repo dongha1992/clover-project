@@ -196,7 +196,7 @@ const OrderPage = () => {
         if (error && error?.code === 5005) {
           dispatch(
             SET_ALERT({
-              alertMessage: '잘못된 결제 정보입니다.',
+              alertMessage: '잘못된 배송일 입니다.',
             })
           );
           router.replace('/cart');
@@ -262,6 +262,12 @@ const OrderPage = () => {
               alertMessage: '잘못된 쿠폰입니다.',
             })
           );
+        } else if (error.code === 5004) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '사용할 수 없는 쿠폰 입니다.',
+            })
+          );
         } else if (error.code === 5005) {
           dispatch(
             SET_ALERT({
@@ -270,7 +276,6 @@ const OrderPage = () => {
             })
           );
           router.replace('/cart');
-          /* TODO: 확인 필요 */
         } else if (error.code === 4351) {
           dispatch(
             SET_ALERT({
@@ -291,6 +296,8 @@ const OrderPage = () => {
               alertMessage: '카드를 등록해주세요.',
             })
           );
+        } else if (error.code === 5018) {
+          dispatch(SET_ALERT({ alertMessage: '결제에 실패했습니다. 다시 시도해주세요.' }));
         } else {
           dispatch(SET_ALERT({ alertMessage: '결제에 실패했습니다. 다시 시도해주세요.' }));
         }
@@ -881,6 +888,7 @@ const OrderPage = () => {
     coupon,
     type,
   } = previewOrder?.order!;
+  const { grade } = me!;
 
   const { deliveryDate, spotName, spotPickupName, orderOptions, deliveryStartTime, deliveryEndTime } =
     previewOrder?.order?.orderDeliveries[0]!;
@@ -1274,12 +1282,12 @@ const OrderPage = () => {
           menuDiscount={menuDiscount}
           eventDiscount={eventDiscount}
           userInputObj={userInputObj}
-          coupon={coupon}
           optionAmount={optionAmount}
           orderOptions={orderOptions}
           deliveryFee={deliveryFee}
           deliveryFeeDiscount={deliveryFeeDiscount}
           payAmount={payAmount}
+          grade={grade!}
         />
       )}
       {previewOrder?.order.type === 'SUBSCRIPTION' && (
@@ -1436,13 +1444,6 @@ const DeletePoint = styled.div`
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-`;
-
-const TotalPriceWrapper = styled.div`
-  padding: 24px;
-  background-color: ${theme.greyScale3};
-  display: flex;
-  flex-direction: column;
 `;
 
 const OrderTermWrapper = styled.div`
