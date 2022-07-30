@@ -1,2 +1,3 @@
-import useSuccessKaKao from './useSuccessKaKao';
-export { useSuccessKaKao };
+import useKakaoLogin from './useKakaoLogin';
+import useAppleLogin from './useAppleLogin';
+export { useKakaoLogin, useAppleLogin };
