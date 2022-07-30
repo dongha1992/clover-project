@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { SET_ALERT } from '@store/alert';
 import { IAuthObj } from '@model/index';
 
-const useSuccessKaKao = () => {
+const useKakaoLogin = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -20,7 +20,7 @@ const useSuccessKaKao = () => {
         loginType: 'KAKAO',
         accessToken: `bearer ${authObj.access_token}`,
       });
-      console.log('result', result);
+
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-msg', data: result }));
 
       if (result.data.code === 200) {
@@ -136,4 +136,4 @@ const useSuccessKaKao = () => {
 
   return onKaKao;
 };
-export default useSuccessKaKao;
+export default useKakaoLogin;
