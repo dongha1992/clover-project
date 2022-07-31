@@ -7,7 +7,7 @@ interface IProps {
   disposable?: boolean;
   menuPrice: number;
   menuDiscount: number;
-  eventDiscount: number;
+  // eventDiscount: number;
   menuOption1: option;
   menuOption2: option;
   deliveryPrice: number;
@@ -18,7 +18,7 @@ const MenuPriceBox = ({
   disposable,
   menuPrice,
   menuDiscount,
-  eventDiscount,
+  // eventDiscount,
   menuOption1,
   menuOption2,
   deliveryPrice,
@@ -37,12 +37,12 @@ const MenuPriceBox = ({
             <TextB2R>{menuDiscount ? `-${getFormatPrice(String(menuDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
         )}
-        {deliveryType === 'SPOT' && eventDiscount !== 0 && (
+        {/* {deliveryType === 'SPOT' && eventDiscount !== 0 && (
           <MenuPriceLi>
             <TextB2R>스팟 이벤트 할인</TextB2R>
             <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
-        )}
+        )} */}
         {disposable && (
           <>
             {menuOption1.quantity !== 0 && (
@@ -73,10 +73,11 @@ const MenuPriceBox = ({
         <TextH4B>
           {disposable
             ? getFormatPrice(
-                String(menuPrice + menuOption1.price + menuOption2.price + deliveryPrice - menuDiscount - eventDiscount)
+                String(menuPrice + menuOption1.price + menuOption2.price + deliveryPrice - menuDiscount)
+                // String(menuPrice + menuOption1.price + menuOption2.price + deliveryPrice - menuDiscount - eventDiscount)
               )
-            : getFormatPrice(String(menuPrice + deliveryPrice - menuDiscount - eventDiscount))}
-          원
+            : getFormatPrice(String(menuPrice + deliveryPrice - menuDiscount))}
+          {/* : getFormatPrice(String(menuPrice + deliveryPrice - menuDiscount - eventDiscount))} */}원
         </TextH4B>
       </FlexBetween>
     </MenuPriceContainer>

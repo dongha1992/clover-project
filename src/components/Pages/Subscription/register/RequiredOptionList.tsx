@@ -19,8 +19,6 @@ const RequiredOptionList = ({ selectId }: IProps) => {
     const selectMenu = cloneDeep(subsCalendarSelectMenu);
     const orderMenus = cloneDeep(subsOrderMenus);
 
-    console.log('필수메뉴 체인지', selectMenu, orderMenus);
-
     selectMenu?.menuTableItems.map((item) => {
       if (item.id === id) {
         item.selected = true;

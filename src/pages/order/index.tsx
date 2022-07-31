@@ -1295,7 +1295,7 @@ const OrderPage = () => {
           disposable={true}
           menuPrice={menuAmount!}
           menuDiscount={menuDiscount!}
-          eventDiscount={eventDiscount!}
+          // eventDiscount={eventDiscount!}
           menuOption1={options?.option1!}
           menuOption2={options?.option2!}
           deliveryPrice={(deliveryFee - deliveryFeeDiscount)!}
