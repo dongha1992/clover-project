@@ -87,10 +87,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   }, []);
 
   const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.placeOpenDays!,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays)),
-    dayOfWeek: dayOfWeek(deliveryDate),
-    isAll: applyAll,
+    placeOpenDays: item?.placeOpenDays! ?? null,
+    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+    isAll: applyAll ?? null,
   });
 
   const renderSpotMsg = () => {

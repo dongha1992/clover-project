@@ -18,6 +18,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const { isSubscription, menuId } = router.query;
   const { menuItem, reviewImagesCount } = useSelector(menuSelector);
   const { reviewCount } = menuItem;
 
@@ -47,7 +48,13 @@ const DefaultHeader = ({ title }: TProps) => {
     } else if (router.pathname === '/login') {
       router.replace('/onboarding');
     } else if (router.pathname === '/cart/delivery-info') {
-      router.replace('/cart');
+      if (!isSubscription) {
+        router.replace('/cart');
+      } else {
+        router.replace({ pathname: '/subscription/set-info', query: router.query });
+      }
+    } else if (router.pathname === '/subscription/set-info') {
+      router.replace(`/menu/${menuId}`);
     } else {
       router.back();
     }
