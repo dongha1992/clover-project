@@ -123,7 +123,7 @@ const DetailBottom = () => {
         menuDetail?.subscriptionDeliveries?.includes('PARCEL') ||
         menuDetail?.subscriptionDeliveries?.includes('MORNING')
       ) {
-        setSubsDeliveryType('PARCEL');
+        setSubsDeliveryType(menuDetail?.subscriptionDeliveries[0]);
       }
     }
   }, [menuDetail]);
@@ -224,7 +224,7 @@ const DetailBottom = () => {
     dispatch(INIT_DESTINATION());
     dispatch(INIT_TEMP_DESTINATION());
     if (me) {
-      router.push(`/subscription/set-info?menuId=${menuDetail?.id}&subsDeliveryType=${subsDeliveryType}`);
+      router.replace(`/subscription/set-info?menuId=${menuDetail?.id}&subsDeliveryType=${subsDeliveryType}`);
     } else {
       goToLogin();
     }
