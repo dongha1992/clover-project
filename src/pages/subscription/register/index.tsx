@@ -280,7 +280,7 @@ const SubsRegisterPage = () => {
 
           <DisposableAddBox>
             <TextH4B className="title">일회용품 추가</TextH4B>
-            <TextB2R className="content">샐러드·도시락 상품의 수량만큼 일회용품을 추가합니다.</TextB2R>
+            <TextB2R className="content">구독 전체 상품의 일회용품 수량이에요.</TextB2R>
             <FlexRow>
               <Checkbox
                 onChange={() => {
