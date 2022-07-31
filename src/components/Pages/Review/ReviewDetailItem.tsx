@@ -59,7 +59,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               </RatingAndUser>
               <TagWrapper>
                 <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                  {review?.tag}번째 구매
+                  {review?.orderType === 'SUBSCRIPTION' ? review?.tag : `${review?.tag}번째 구매`}
                 </Tag>
               </TagWrapper>
             </ReviewHeader>

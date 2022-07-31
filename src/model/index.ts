@@ -1795,6 +1795,7 @@ export interface IBestReviews {
   comment?: string;
   commenter?: string;
   commentCreatedAt?: string;
+  orderType: string;
 }
 
 export interface IBestReviewResponse {
