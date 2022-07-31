@@ -1076,7 +1076,11 @@ const OrderPage = () => {
                 주문 변경 및 취소 시 반드시 확인해주세요!
               </TextH6B>
             </FlexRow>
-            <CancelOrderInfoBox delivery={delivery} deliveryDetail={deliveryDetail} />
+            <CancelOrderInfoBox
+              delivery={delivery}
+              deliveryDetail={deliveryDetail}
+              orderType={previewOrder?.order.type!}
+            />
           </FlexCol>
         </MustCheckAboutDelivery>
       </DevlieryInfoWrapper>
