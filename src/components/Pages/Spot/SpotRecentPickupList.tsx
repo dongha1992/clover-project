@@ -83,10 +83,10 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   }, [item?.spotPickup?.type]);
 
   const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.spotPickup?.spot.placeOpenDays!,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays)),
-    dayOfWeek: dayOfWeek(deliveryDate),
-    isAll: applyAll,
+    placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
+    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+    isAll: applyAll ?? null,
   });
 
   const renderSpotMsg = useCallback(() => {
