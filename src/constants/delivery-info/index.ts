@@ -1,3 +1,5 @@
+import { Obj } from '@model/index';
+
 export const DELIVERY_METHOD: any = {
   pickup: [
     {
@@ -35,4 +37,14 @@ export const DELIVERY_METHOD: any = {
       feeInfo: '- 배송비 3,500원 (3만 5천 원 이상 배송비 무료)',
     },
   ],
+};
+
+export const weeks: Obj = {
+  MONDAY: '월',
+  TUESDAY: '화',
+  WEDNESDAY: '수',
+  THURSDAY: '목',
+  FRIDAY: '금',
+  SATURDAY: '토',
+  SUNDAY: '일',
 };

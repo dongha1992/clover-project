@@ -18,6 +18,9 @@ import { dateN, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { getSpotDistanceUnit } from '@utils/spot';
+import { weeks } from '@constants/delivery-info';
+import { dayOfWeek } from '@utils/common/getFormatDate';
+import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
 
 interface IProps {
   item: IDestinationsResponse | undefined;
@@ -39,6 +42,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     menuId,
     deliveryDate,
     lastDeliveryDate,
+    pickupDays,
   }: any = router.query;
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation, applyAll } = useSelector(destinationForm);
@@ -77,6 +81,13 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       setIsLocker(true);
     }
   }, [item?.spotPickup?.type]);
+
+  const isSubsSpot = useSubsSpotOpenCheck({
+    placeOpenDays: item?.spotPickup?.spot.placeOpenDays!,
+    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays)),
+    dayOfWeek: dayOfWeek(deliveryDate),
+    isAll: applyAll,
+  });
 
   const renderSpotMsg = useCallback(() => {
     switch (true) {
@@ -211,6 +222,15 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             })
           );
           return;
+        } else if (!isSubsSpot && isSubs) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
+              submitBtnText: '확인',
+              onSubmit: () => {},
+            })
+          );
+          return;
         } else {
           dispatch(
             SET_TEMP_EDIT_SPOT({
@@ -288,21 +308,44 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
   };
 
   const goToDetail = (id: number | undefined) => {
-    if (isDelivery && !isSubs) {
-      router.push({
-        pathname: `/spot/detail/${id}`,
-        query: { isSpot: true, isDelivery: true },
-      });
-    } else if (isDelivery && isSubs) {
-      router.push({
-        pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
-        query: { isSpot: true, isSubscription, subsDeliveryType, menuId, isDelivery: true },
-      });
+    if (
+      orderId &&
+      closedDate &&
+      ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
+        (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
+          submitBtnText: '확인',
+          onSubmit: () => {},
+        })
+      );
+    } else if (orderId && !isSubsSpot && isSubs) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
+          submitBtnText: '확인',
+          onSubmit: () => {},
+        })
+      );
     } else {
-      router.push({
-        pathname: `/spot/detail/${id}`,
-        query: { isSpot: true },
-      });
+      if (isDelivery && !isSubs) {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: { isSpot: true, isDelivery: true },
+        });
+      } else if (isDelivery && isSubs) {
+        router.push({
+          pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
+          query: { isSpot: true, isSubscription, subsDeliveryType, menuId, isDelivery: true },
+        });
+      } else {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: { isSpot: true },
+        });
+      }
     }
   };
 

@@ -21,6 +21,9 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { getSpotDistanceUnit } from '@utils/spot';
 import { postDestinationApi } from '@api/destination';
+import { weeks } from '@constants/delivery-info';
+import { dayOfWeek } from '@utils/common/getFormatDate';
+import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
 
 interface IProps {
   item: ISpotsDetail | any;
@@ -44,14 +47,14 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
     menuId,
     deliveryDate,
     lastDeliveryDate,
+    pickupDays,
   }: any = router.query;
+  const store = useStore();
   const { isLoginSuccess } = useSelector(userForm);
   const { userLocation, userTempDestination, applyAll } = useSelector(destinationForm);
   const { spotPickupId, spotsPosition } = useSelector(spotSelector);
   const [isSubs, setIsSubs] = useState<boolean>();
   const [isLocker, setIsLocker] = useState<boolean>();
-
-  const store = useStore();
 
   const userLocationLen = !!userLocation.emdNm?.length;
   const positionLen = spotsPosition?.latitude !== null;
@@ -82,6 +85,13 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
       }
     });
   }, []);
+
+  const isSubsSpot = useSubsSpotOpenCheck({
+    placeOpenDays: item?.placeOpenDays!,
+    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays)),
+    dayOfWeek: dayOfWeek(deliveryDate),
+    isAll: applyAll,
+  });
 
   const renderSpotMsg = () => {
     switch (true) {
@@ -257,6 +267,14 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
               onSubmit: () => {},
             })
           );
+        } else if (!isSubsSpot && isSubs) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
+              submitBtnText: '확인',
+              onSubmit: () => {},
+            })
+          );
         } else {
           dispatch(
             SET_TEMP_EDIT_SPOT({
@@ -357,26 +375,49 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
   };
 
   const goToDetail = (id: number | undefined) => {
-    if (isDelivery && !isSubs) {
-      router.push({
-        pathname: `/spot/detail/${id}`,
-        query: {
-          isSpot: true,
-          isDelivery: true,
-        },
-      });
-    } else if (isDelivery && isSubs) {
-      router.push({
-        pathname: `/spot/detail/${id}`,
-        query: { isSpot: true, destinationId: item?.id, isSubscription, isDelivery: true, subsDeliveryType, menuId },
-      });
+    if (
+      orderId &&
+      closedDate &&
+      ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
+        (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
+          submitBtnText: '확인',
+          onSubmit: () => {},
+        })
+      );
+    } else if (orderId && !isSubsSpot && isSubs) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
+          submitBtnText: '확인',
+          onSubmit: () => {},
+        })
+      );
     } else {
-      router.push({
-        pathname: `/spot/detail/${id}`,
-        query: {
-          isSpot: true,
-        },
-      });
+      if (isDelivery && !isSubs) {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: {
+            isSpot: true,
+            isDelivery: true,
+          },
+        });
+      } else if (isDelivery && isSubs) {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: { isSpot: true, destinationId: item?.id, isSubscription, isDelivery: true, subsDeliveryType, menuId },
+        });
+      } else {
+        router.push({
+          pathname: `/spot/detail/${id}`,
+          query: {
+            isSpot: true,
+          },
+        });
+      }
     }
   };
 
