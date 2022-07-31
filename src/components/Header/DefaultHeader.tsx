@@ -54,7 +54,8 @@ const DefaultHeader = ({ title }: TProps) => {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }
     } else if (router.pathname === '/subscription/set-info') {
-      router.replace(`/menu/${menuId}`);
+      // router.replace(`/menu/${menuId}`);
+      router.back();
     } else if (router.pathname === '/subscription/[detailId]') {
       returnPath ? router.replace('/subscription') : router.back();
     } else {
