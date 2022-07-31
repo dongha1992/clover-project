@@ -1304,6 +1304,7 @@ const OrderPage = () => {
           type={'last'}
           deliveryType={previewOrder?.order.delivery}
           subscriptionDiscountRates={previewOrder?.order.subscriptionDiscountRates}
+          grade={grade!}
         />
       )}
       <OrderTermWrapper>
