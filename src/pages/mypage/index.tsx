@@ -156,8 +156,10 @@ const MypagePage = () => {
     removeCookie({ name: 'refreshTokenObj' });
     removeCookie({ name: 'autoL' });
     localStorage.removeItem('persist:nextjs');
-
-    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+    if (window.navigator.userAgent === 'fco-clover-webview' && window.Kakao && window.Kakao.Auth.getAccessToken()) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
+      // return;
+    } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
       window.Kakao.Auth.logout();
     }
     router.push('/mypage');
