@@ -3,6 +3,7 @@ import { TextB2R, TextB3R, TextH4B, TextH5B, TextH7B } from '@components/Shared/
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
+import { calculatePoint } from '@utils/menu';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -26,6 +27,7 @@ interface IProps {
   type?: string | 'progress' | 'last' | 'management';
   deliveryType: string;
   subscriptionDiscountRates: number[];
+  grade: any;
 }
 
 const MenusPriceBox = ({
@@ -41,6 +43,7 @@ const MenusPriceBox = ({
   type,
   deliveryType,
   subscriptionDiscountRates,
+  grade,
 }: IProps) => {
   const dispatch = useDispatch();
 
@@ -147,10 +150,24 @@ const MenusPriceBox = ({
       </FlexBetween>
       <FlexEnd>
         <Badge>
-          <TextH7B>프코회원</TextH7B>
+          <TextH7B>{grade?.name!}</TextH7B>
         </Badge>
         <TextB3R>
-          구매 시 <b>nP (n%) 적립 예정</b>
+          구매 시
+          <b>
+            {' '}
+            {getFormatPrice(
+              String(
+                calculatePoint({
+                  rate: grade.benefit.accumulationRate!,
+                  total: disposable
+                    ? menuPrice + menuOption1?.price + menuOption2?.price + deliveryPrice - menuDiscount
+                    : menuPrice + deliveryPrice - menuDiscount,
+                })
+              )
+            )}
+            P ({grade.benefit.accumulationRate}%) 적립 예정
+          </b>
         </TextB3R>
       </FlexEnd>
     </MenuPriceContainer>

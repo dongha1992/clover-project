@@ -18,6 +18,7 @@ import { destinationForm } from '@store/destination';
 import { periodMapper } from '@constants/subscription';
 import { DELIVERY_TIME_MAP2, DELIVERY_TYPE_MAP } from '@constants/order';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
+import { userForm } from '@store/user';
 
 interface IReceipt {
   menuPrice: number;
@@ -42,6 +43,7 @@ const SubsRegisterPage = () => {
   const router = useRouter();
   const { subsOrderMenus, subsDeliveryExpectedDate, subsInfo } = useSelector(subscriptionForm);
   const { userDestination } = useSelector(destinationForm);
+  const { me } = useSelector(userForm);
   const [toggleState, setToggleState] = useState(false);
   const [disposable, setDisposable] = useState(true);
   const [selectDate, setSelectDate] = useState<Date | undefined>(
@@ -315,6 +317,7 @@ const SubsRegisterPage = () => {
               deliveryLength={subsOrderMenus?.length!}
               deliveryType={subsInfo?.deliveryType!}
               subscriptionDiscountRates={subsInfo?.subscriptionDiscountRates!}
+              grade={me?.grade}
             />
           )}
           <BottomButton onClick={onSubscribe}>
