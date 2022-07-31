@@ -1587,9 +1587,7 @@ const BtnWrapper = styled.div`
   margin: 0 24px;
 `;
 
-const CartInfoContainer = styled.div`
-  /* ${homePadding} */
-`;
+const CartInfoContainer = styled.div``;
 const MenuListContainer = styled.div`
   ${homePadding}
 `;
@@ -1600,16 +1598,6 @@ const MenuListWarpper = styled.div`
 `;
 
 const MenuListHeader = styled.div``;
-
-// const ScrollHorizonListGroup = styled.div`
-//   display: flex;
-
-//   > div {
-//     width: 120px;
-//     height: 100%;
-//     margin-right: 18px;
-//   }
-// `;
 
 const ScrollHorizonListGroup = styled(Swiper)`
   width: 100%;
