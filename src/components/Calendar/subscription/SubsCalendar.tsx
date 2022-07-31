@@ -54,7 +54,7 @@ const SubsCalendar = ({
   const { subsOrderMenus, subsCalendarSelectMenu, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
   const today = dayjs().format('YYYY-MM-DD');
   const [value, setValue] = useState<Date>();
-  const [minDate, setMinDate] = useState<Date>(new Date(subsActiveDates[0]?.deliveryDate));
+  const [minDate, setMinDate] = useState<Date>(new Date(today));
   const [maxDate, setMaxDate] = useState<Date>(new Date(subsActiveDates[subsActiveDates.length - 1]?.deliveryDate));
 
   useEffect(() => {
