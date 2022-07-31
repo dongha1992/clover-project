@@ -18,7 +18,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { isSubscription, menuId } = router.query;
+  const { isSubscription, menuId, returnPath } = router.query;
   const { menuItem, reviewImagesCount } = useSelector(menuSelector);
   const { reviewCount } = menuItem;
 
@@ -55,6 +55,8 @@ const DefaultHeader = ({ title }: TProps) => {
       }
     } else if (router.pathname === '/subscription/set-info') {
       router.replace(`/menu/${menuId}`);
+    } else if (router.pathname === '/subscription/[detailId]') {
+      returnPath ? router.replace('/subscription') : router.back();
     } else {
       router.back();
     }

@@ -1080,6 +1080,7 @@ const OrderPage = () => {
               delivery={delivery}
               deliveryDetail={deliveryDetail}
               orderType={previewOrder?.order.type!}
+              color={theme.brandColor}
             />
           </FlexCol>
         </MustCheckAboutDelivery>
