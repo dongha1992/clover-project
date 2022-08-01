@@ -18,7 +18,7 @@ const GeneralDibPage = () => {
       return data.data;
     },
     {
-      refetchOnMount: false,
+      refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
