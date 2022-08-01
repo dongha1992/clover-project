@@ -249,6 +249,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
           if (typeof img === 'string') {
             location.push(img);
           } else {
+            console.log('here');
             formData.append('media', img!);
             const result = await postImageApi(formData);
             formData = new FormData();

@@ -111,7 +111,7 @@ const OrderPage = () => {
   const token = getCookie({ name: 'acstk' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
-  const { selectedCoupon } = useSelector(couponForm);
+  const { selectedCoupon, prevValue } = useSelector(couponForm);
   const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
@@ -193,7 +193,7 @@ const OrderPage = () => {
         }
       },
       onError: (error: any) => {
-        if (error && error?.code === 5005) {
+        if (error?.code === 5005) {
           dispatch(
             SET_ALERT({
               alertMessage: '잘못된 배송일 입니다.',
@@ -226,7 +226,7 @@ const OrderPage = () => {
         cardId: needCard ? card?.id! : null,
         point: userInputObj?.point,
         payAmount: payAmount - (userInputObj.point + (userInputObj.coupon! || 0)),
-        couponId: selectedCoupon?.id || null,
+        couponId: selectedCoupon?.id! || null,
         deliveryMessage: userInputObj?.deliveryMessage,
         deliveryMessageType: userAccessMethod?.value.toString(),
         receiverName: userInputObj?.receiverName!,
@@ -622,6 +622,7 @@ const OrderPage = () => {
     const isParcel = previewOrder?.order?.delivery === 'PARCEL';
 
     if (isLoading) return;
+
     if (!checkTermList.privacy) {
       dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
       return;
@@ -632,7 +633,9 @@ const OrderPage = () => {
     }
 
     if (isMorning) {
-      if (!userInputObj?.deliveryMessage && !userInputObj.deliveryMessageType) {
+      const isFreeAccess = userInputObj?.deliveryMessageType === 'FREE';
+
+      if (!isFreeAccess && (!userInputObj?.deliveryMessage || !userInputObj.deliveryMessageType)) {
         dispatch(SET_ALERT({ alertMessage: '출입 방법과 메시지를 입력해주세요.' }));
         return;
       }
@@ -784,7 +787,9 @@ const OrderPage = () => {
   }, [previewOrder]);
 
   useEffect(() => {
-    const value = userInputObj.point > 0 ? userInputObj.point - userInputObj?.coupon : 0;
+    const counpon = userInputObj?.coupon ?? 0;
+    const value = userInputObj.point > 0 ? userInputObj.point - counpon : 0;
+    console.log(selectedCoupon, userInputObj.coupon, prevValue, 'userInputObj.point - userInputObj?.coupon');
     setUserInputObj({ ...userInputObj, point: value });
   }, [userInputObj.coupon]);
 
