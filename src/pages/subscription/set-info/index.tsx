@@ -302,7 +302,7 @@ const SubsSetInfoPage = () => {
           submitBtnText: '확인',
           closeBtnText: '취소',
           onSubmit: () => {
-            router.push({
+            router.replace({
               pathname: '/cart/delivery-info',
               query: {
                 subsDeliveryType: subsDeliveryType,
@@ -315,7 +315,7 @@ const SubsSetInfoPage = () => {
         })
       );
     } else {
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: {
           subsDeliveryType: subsDeliveryType,

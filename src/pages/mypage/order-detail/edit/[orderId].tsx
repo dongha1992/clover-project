@@ -17,7 +17,7 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { SVGIcon } from '@utils/common';
+import { dateN, SVGIcon } from '@utils/common';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import router, { useRouter } from 'next/router';
@@ -32,6 +32,8 @@ import { Obj } from '@model/index';
 import debounce from 'lodash-es/debounce';
 import { useGetOrderDetail } from 'src/queries/order';
 import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 /* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
@@ -60,6 +62,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   const [deliveryRound, setDeliveryRound] = useState();
   const [isSub, setIsSub] = useState(false);
 
+  const pickupDays = useRef<string>();
   const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
@@ -67,12 +70,14 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   const { data } = useGetOrderDetail(['getOrderDetail', orderId], orderId, {
     onSuccess: (data) => {
       console.log('data', data);
+      console.log('data', dateN(deliveryDate));
 
       // TODO(young) : 구독에서 destinationId있으면 orderDeliveries에서 같은 destinationId로
       // 일반 주문도 orderId가 아닌 destinationId가 필요한지 확인 필요
       let orderDetail;
+      let pickupDaysObj = new Set();
 
-      data.orderDeliveries.forEach((o: any) => {
+      for (const o of data.orderDeliveries) {
         if (o.type === 'SUB') {
           setIsSub(true);
         }
@@ -82,7 +87,14 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
         if (o.id === destinationId) {
           orderDetail = o;
         }
-      });
+
+        // 구독에서 배송지 변경할려는 날짜부터 마지막까지 검증
+        if (dateN(o.deliveryDate) >= dateN(deliveryDate)) {
+          pickupDaysObj.add(dayjs(o.deliveryDate).format('dd'));
+        }
+      }
+
+      pickupDays.current = encodeURIComponent(JSON.stringify(Array.from(pickupDaysObj)));
 
       if (!destinationId) {
         orderDetail = data?.orderDeliveries[0];
@@ -299,6 +311,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
           isSubscription: IsSubs,
           deliveryDate,
           lastDeliveryDate: data.lastDeliveryDate,
+          pickupDays: pickupDays.current,
         },
       });
     } else {
@@ -387,7 +400,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
           <FlexBetween padding="0 0 24px 0">
             <FlexBetween>
               <TextH4B>{isSpot ? '픽업지' : '배송지'}</TextH4B>
-              <TextH6B color={theme.greyScale65} onClick={changeDeliveryPlace} textDecoration="underLine">
+              <TextH6B color={theme.greyScale65} onClick={changeDeliveryPlace} textDecoration="underLine" pointer>
                 배송지 변경
               </TextH6B>
             </FlexBetween>

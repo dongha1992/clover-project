@@ -29,6 +29,7 @@ import { SET_ALERT } from '@store/alert';
 import { getOrderListsApi } from '@api/order';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { SET_SUBS_DELIVERY_EXPECTED_DATE, SET_SUBS_INFO_STATE, SET_SUBS_START_DATE } from '@store/subscription';
+import { useMenuDetail } from '@queries/menu';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -43,7 +44,7 @@ const DeliverInfoPage = () => {
   const [timerDevlieryType, setTimerDeliveryType] = useState<string>('');
   const [tempDestination, setTempDestination] = useState<IDestinationsResponse | null>();
   const [isMainDestination, setIsMaindestination] = useState<boolean>(false);
-
+  const [menuId, setMenuId] = useState<number>();
   const {
     destinationDeliveryType,
     userTempDestination,
@@ -56,8 +57,14 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId, isSubscription, subsDeliveryType, menuId, selected } = router.query;
+  const { destinationId, isSubscription, subsDeliveryType, selected } = router.query;
   const { isTimerTooltip } = useSelector(orderForm);
+
+  useEffect(() => {
+    if (router.isReady) {
+      setMenuId(Number(router.query.menuId));
+    }
+  }, [router.isReady, router.query.menuId]);
 
   const { data: recentOrderDelivery } = useQuery(
     'getOrderLists',
@@ -81,6 +88,13 @@ const DeliverInfoPage = () => {
       refetchOnWindowFocus: false,
     }
   );
+
+  const { data: menuDetail, isFetching } = useMenuDetail('getMenuDetail', Number(menuId!), {
+    onSuccess: () => {},
+    enabled: !!menuId,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
 
   // 배송 마감 타이머 체크 + 위치 체크
   let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
@@ -533,6 +547,8 @@ const DeliverInfoPage = () => {
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
   const subsParcelAndMorning = ['PARCEL', 'MORNING'].includes(subsDeliveryType as string);
 
+  if (isFetching) return <div>...로딩중</div>;
+
   return (
     <Container>
       <Wrapper>
@@ -587,7 +603,12 @@ const DeliverInfoPage = () => {
               </TextH5B>
               {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
                 // 구독하기로 들어오면 퀵배송은 제외하고 출력
-                if (isSubscription && item.name === '퀵배송') return;
+
+                if (isSubscription && item.name === '퀵배송') {
+                  return;
+                } else {
+                  if (!menuDetail?.subscriptionDeliveries.includes(item.value.toUpperCase())) return;
+                }
 
                 const isSelected = userSelectDeliveryType === item.value;
                 return (
