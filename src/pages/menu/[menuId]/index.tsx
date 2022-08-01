@@ -378,7 +378,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
                   </OriginPrice>
                 )}
                 <DiscountedPrice>
-                  {!isTempSold && menuDetail?.type !== 'SUBSCRIPTION' && (
+                  {getMenuDetailPrice().discount > 0 && !isTempSold && menuDetail?.type !== 'SUBSCRIPTION' && (
                     <TextH3B padding={'0 4px 0 0px'} color={theme.brandColor}>
                       {getMenuDetailPrice().discount}%
                     </TextH3B>
