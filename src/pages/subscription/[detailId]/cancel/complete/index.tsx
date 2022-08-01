@@ -53,7 +53,9 @@ const SubOrderCancelCompletePage = () => {
           </div>
           <div className="textBox">
             <TextB3R textHideMultiline>{orderDetail?.name}</TextB3R>
-            <TextH5B>{getFormatPrice(String(orderDetail?.payAmount))}원</TextH5B>
+            <TextH5B>
+              {getFormatPrice(String(orderDetail?.refundMenuAmount + orderDetail?.refundOptionAmount))}원
+            </TextH5B>
           </div>
         </OrderItem>
       </div>
