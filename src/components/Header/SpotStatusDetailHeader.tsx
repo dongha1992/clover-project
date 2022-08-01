@@ -18,6 +18,7 @@ type TProps = {
 
 const SpotStatusDetailHeader = ({}: TProps) => {
   const dispatch = useDispatch();
+  const { q_share, q_trial } = router.query;
   const { isMobile } = useSelector(commonSelector);
   const { spotStatusDetail } = useSelector(spotSelector);
   const { me } = useSelector(userForm);
@@ -30,16 +31,24 @@ const SpotStatusDetailHeader = ({}: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    router.back();
+    if (q_share) {
+      router.push('/spot');
+    } else if (q_trial) {
+      router.push('/mypage/spot-status');
+    } else {
+      router.back();
+    }
   };
 
   const goToShare = () => {
+    const currentUrl = window.location.href;
+    const spotLink = `${currentUrl}?join=true&q_trial=true`;
     if (isMobile) {
       if (navigator.share) {
         navigator
           .share({
-            title: 'test',
-            url: 'test',
+            title: '트라이얼 프코스팟 공유 링크',
+            url: spotLink,
           })
           .then(() => {
             alert('공유가 완료되었습니다.');
@@ -52,7 +61,7 @@ const SpotStatusDetailHeader = ({}: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet />,
+          content: <ShareSheet spotLink={spotLink} />,
         })
       );
     }

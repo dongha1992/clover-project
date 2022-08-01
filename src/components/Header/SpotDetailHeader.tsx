@@ -19,9 +19,10 @@ type TProps = {
 
 const SpotDetailHeader = ({ title }: TProps) => {
   const dispatch = useDispatch();
-  const { isMobile } = useSelector(commonSelector);
-
   const router = useRouter();
+
+  const { q_share } = router.query;
+  const { isMobile } = useSelector(commonSelector);
 
   useEffect(() => {
     return () => {
@@ -30,16 +31,22 @@ const SpotDetailHeader = ({ title }: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    router.back();
+    if (q_share) {
+      router.push('/spot');
+    } else {
+      router.back();
+    };
   };
 
   const goToShare = () => {
+    const currentUrl = window.location.href;
+    const spotLink = `${currentUrl}&q_share=true`;
     if (isMobile) {
       if (navigator.share) {
         navigator
           .share({
-            title: 'test',
-            url: 'test',
+            title: '프코스팟 상세 페이지 링크',
+            url: spotLink,
           })
           .then(() => {
             alert('공유가 완료되었습니다.');
@@ -52,7 +59,7 @@ const SpotDetailHeader = ({ title }: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet />,
+          content: <ShareSheet spotLink={spotLink} />,
         })
       );
     }
