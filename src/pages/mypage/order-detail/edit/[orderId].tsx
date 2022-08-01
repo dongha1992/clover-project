@@ -74,6 +74,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
 
       // TODO(young) : 구독에서 destinationId있으면 orderDeliveries에서 같은 destinationId로
       // 일반 주문도 orderId가 아닌 destinationId가 필요한지 확인 필요
+
       let orderDetail;
       let pickupDaysObj = new Set();
 

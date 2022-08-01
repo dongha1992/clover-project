@@ -29,13 +29,15 @@ const OrderItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
           </TextB3R>
           <FlexBetween>
             <PriceWrapper>
-              <TextH5B
-                color={isCanceled ? theme.greyScale26 : theme.brandColor}
-                padding={'0 4px 0 0'}
-                className="percent"
-              >
-                {discount}%
-              </TextH5B>
+              {discount > 0 && (
+                <TextH5B
+                  color={isCanceled ? theme.greyScale26 : theme.brandColor}
+                  padding={'0 4px 0 0'}
+                  className="percent"
+                >
+                  {discount}%
+                </TextH5B>
+              )}
               <TextH5B>{discountedPrice}원</TextH5B>
               <Col />
               <TextB2R>{menu.menuQuantity}개</TextB2R>
