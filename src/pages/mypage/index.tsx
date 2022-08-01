@@ -24,6 +24,7 @@ import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { SET_LOGIN_SUCCESS } from '@store/user';
 import { INIT_CART_LISTS } from '@store/cart';
+import { commonSelector } from '@store/common';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -34,6 +35,7 @@ interface IMypageMenu {
 const MypagePage = () => {
   const dispatch = useDispatch();
   const { me, isLoginSuccess } = useSelector(userForm);
+  const { loginType } = useSelector(commonSelector);
   const [subsOrders, setSubsOrders] = useState([]);
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
@@ -158,9 +160,10 @@ const MypagePage = () => {
     localStorage.removeItem('persist:nextjs');
     if (window.navigator.userAgent === 'fco-clover-webview' && window.Kakao && window.Kakao.Auth.getAccessToken()) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
-      // return;
     } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
       window.Kakao.Auth.logout();
+    } else if (window.navigator.userAgent === 'fco-clover-webview' && loginType === 'APPLE') {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-apple' }));
     }
     router.push('/mypage');
   };

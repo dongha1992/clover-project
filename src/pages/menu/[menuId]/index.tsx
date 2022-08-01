@@ -349,9 +349,11 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           <MenuNameWrapper>
             <TextH2B padding={'0 0 8px 0'}>{menuDetail?.name}</TextH2B>
             <div className="tagBox">
-              {menuDetail?.constitutionTag && menuDetail?.constitutionTag !== 'NONE' && (
-                <Tag margin="0 4px 0 0">{TAG_MAP[menuDetail?.constitutionTag]}</Tag>
-              )}
+              {menuDetail?.type !== 'SUBSCRIPTION' &&
+                menuDetail?.constitutionTag &&
+                menuDetail?.constitutionTag !== 'NONE' && (
+                  <Tag margin="0 4px 0 0">{TAG_MAP[menuDetail?.constitutionTag]}</Tag>
+                )}
               {menuDetail?.subscriptionDeliveries?.map((item: string, index: number) => (
                 <Label className={item} key={index}>
                   {DELIVERY_TYPE_MAP[item]}
