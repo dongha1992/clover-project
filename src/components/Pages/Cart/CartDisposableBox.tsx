@@ -17,7 +17,7 @@ const CartDisposableBox = ({ disposableList, disposableItems }: IProps) => {
       {disposableList.some((item: IDisposable) => item.isSelected) && (
         <>
           <BorderLine height={1} margin="16px 0" />
-          <FlexBetween padding="16px 0 8px">
+          <FlexBetween padding="0px">
             <TextH5B>환경부담금 (일회용품)</TextH5B>
             <TextB2R>
               {disposableItems.quantity}개 / {getFormatPrice(String(disposableItems.price))}원
