@@ -264,9 +264,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
       <FlexCol>
         <NameWrapper>
           {isHorizontal ? (
-            <TextB3R margin="8px 0 0px 0" width="100%" textHideMultiline>
+            <TextB2R margin="8px 0 0px 0" width="100%" textHideMultiline>
               {item.name.trim()}
-            </TextB3R>
+            </TextB2R>
           ) : (
             <TextB2R margin="8px 0 0px 0" width="100%" textHide>
               {item.name.trim()}
@@ -400,7 +400,7 @@ const NameWrapper = styled.div`
 
 const PriceWrapper = styled.div<{ isHorizontal?: boolean }>`
   display: flex;
-  margin-top: ${({ isHorizontal }) => isHorizontal && '12px'};
+  margin-top: ${({ isHorizontal }) => isHorizontal && '22px'};
 `;
 
 const LikeAndReview = styled.div`

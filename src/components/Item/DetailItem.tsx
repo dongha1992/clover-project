@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB3R, TextH5B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol, showMoreText } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -165,9 +165,9 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
       </ImageWrapper>
       <FlexCol>
         <NameWrapper>
-          <TextB3R margin="8px 0 0 0" width="100%" textHideMultiline>
+          <TextB2R margin="8px 0 0 0" width="100%" textHideMultiline>
             {item.menu.name} {item.name.trim()}
-          </TextB3R>
+          </TextB2R>
         </NameWrapper>
         <PriceWrapper>
           {discount > 0 && (
@@ -212,7 +212,7 @@ const Container = styled.div<{ isHorizontal?: boolean }>`
 
 const PriceWrapper = styled.div`
   display: flex;
-  margin-top: 18px;
+  margin-top: 28px;
 `;
 
 const CartBtn = styled.div`
