@@ -296,6 +296,7 @@ const SubsDetailPage = () => {
         deliveryType={orderDetail?.delivery!}
         subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
         grade={me?.grade}
+        coupon={orderDetail?.coupon}
       />
 
       {orderDetail?.subscriptionPeriod === 'UNLIMITED' &&
