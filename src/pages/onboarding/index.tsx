@@ -17,7 +17,7 @@ import { SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
 import { SET_ALERT } from '@store/alert';
 import Oauth from '@pages/oauth';
-import { useSuccessKaKao } from '@hooks/auth';
+import { useAppleLogin, useKakaoLogin } from '@hooks/auth';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -42,7 +42,8 @@ const OnBoarding: NextPage = () => {
   const { loginType } = useSelector(commonSelector);
   const [returnPath, setReturnPath] = useState<string | string[]>('');
 
-  const onKaKao = useSuccessKaKao();
+  const onKaKao = useKakaoLogin();
+  const onApple = useAppleLogin();
 
   useEffect(() => {
     setReturnPath(onRouter.query.returnPath || '/');
@@ -50,30 +51,39 @@ const OnBoarding: NextPage = () => {
 
   useEffect(() => {
     if (window.ReactNativeWebView) {
-      window.addEventListener('message', kakaoListener);
+      window.addEventListener('message', webviewListener);
     }
     return () => {
-      window.removeEventListener('message', kakaoListener);
+      window.removeEventListener('message', webviewListener);
     };
   }, [window.ReactNativeWebView]);
 
-  const kakaoListener = async (e: any) => {
+  const webviewListener = async (e: any) => {
     let { cmd, data = null } = await JSON.parse(e.data);
-    onKaKao({
-      access_token: data.accessToken,
-      expires_in: data.accessTokenExpiresAt,
-      refresh_token: data.refreshToken,
-      refresh_token_expires_in: data.refreshTokenExpiresAt,
-      scope: data.scopes,
-      token_type: 'bearer',
-    });
+    switch (cmd) {
+      case 'rn-sign-kakao':
+        onKaKao({
+          access_token: data.accessToken,
+          expires_in: data.accessTokenExpiresAt,
+          refresh_token: data.refreshToken,
+          refresh_token_expires_in: data.refreshTokenExpiresAt,
+          scope: data.scopes,
+          token_type: 'bearer',
+        });
+        break;
+      case 'rn-sign-apple':
+        onApple(data);
+        break;
+
+      default:
+        break;
+    }
   };
 
   const kakaoLoginHandler = () => {
     /* 웹뷰 */
     if (window.navigator.userAgent === 'fco-clover-webview') {
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
-      // return;
     } else {
       window.Kakao.Auth.authorize({
         redirectUri:
@@ -86,52 +96,56 @@ const OnBoarding: NextPage = () => {
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
     if (typeof window !== undefined) {
-      window.AppleID.auth.init({
-        clientId: 'com.freshcode.www',
-        scope: 'email',
-        redirectURI: `${process.env.SERVICE_URL}`,
-        usePopup: true,
-      });
-      try {
-        const appleResponse = await window.AppleID.auth.signIn();
-        const appleToken = appleResponse?.authorization.id_token;
-        if (appleToken) {
-          const params = { appleToken };
-          const { data } = await getAppleTokenApi({ params });
-          if (data.data.availability) {
-            localStorage.setItem('appleToken', appleToken);
-            router.replace('/signup?isApple=true');
-            dispatch(SET_SIGNUP_USER({ email: data.data.email }));
-          } else {
-            const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
-            if (result.data.code == 200) {
-              const userTokenObj = result.data?.data;
+      if (window.navigator.userAgent === 'fco-clover-webview') {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-apple' }));
+      } else {
+        window.AppleID.auth.init({
+          clientId: 'com.freshcode.www',
+          scope: 'email',
+          redirectURI: `${process.env.SERVICE_URL}`,
+          usePopup: true,
+        });
+        try {
+          const appleResponse = await window.AppleID.auth.signIn();
+          const appleToken = appleResponse?.authorization.id_token;
+          if (appleToken) {
+            const params = { appleToken };
+            const { data } = await getAppleTokenApi({ params });
+            if (data.data.availability) {
+              localStorage.setItem('appleToken', appleToken);
+              router.replace('/signup?isApple=true');
+              dispatch(SET_SIGNUP_USER({ email: data.data.email }));
+            } else {
+              const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
+              if (result.data.code == 200) {
+                const userTokenObj = result.data?.data;
 
-              dispatch(SET_USER_AUTH(userTokenObj));
-              dispatch(SET_LOGIN_SUCCESS(true));
-              dispatch(SET_LOGIN_TYPE('APPLE'));
+                dispatch(SET_USER_AUTH(userTokenObj));
+                dispatch(SET_LOGIN_SUCCESS(true));
+                dispatch(SET_LOGIN_TYPE('APPLE'));
 
-              const { data } = await userProfile().then((res) => {
-                return res?.data;
-              });
+                const { data } = await userProfile().then((res) => {
+                  return res?.data;
+                });
 
-              dispatch(SET_USER(data));
-              // success
-              router.push('/');
+                dispatch(SET_USER(data));
+                // success
+                router.push('/');
+              }
             }
           }
-        }
-      } catch (error: any) {
-        if (error.code === 2103) {
-          dispatch(SET_ALERT({ alertMessage: '잘못된 애플 토큰입니다.' }));
-        } else if (error.code === 2102) {
-          dispatch(SET_ALERT({ alertMessage: '애플 토큰이 만료되었습니다.' }));
-        } else if (error.code === 2101) {
-          dispatch(SET_ALERT({ alertMessage: '애플 인증정보가 잘못되었습니다.' }));
-        } else if (error.code === 2104) {
-          dispatch(SET_ALERT({ alertMessage: '애플 회원 정보를 찾을 수 없습니다.' }));
-        } else {
-          dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+        } catch (error: any) {
+          if (error.code === 2103) {
+            dispatch(SET_ALERT({ alertMessage: '잘못된 애플 토큰입니다.' }));
+          } else if (error.code === 2102) {
+            dispatch(SET_ALERT({ alertMessage: '애플 토큰이 만료되었습니다.' }));
+          } else if (error.code === 2101) {
+            dispatch(SET_ALERT({ alertMessage: '애플 인증정보가 잘못되었습니다.' }));
+          } else if (error.code === 2104) {
+            dispatch(SET_ALERT({ alertMessage: '애플 회원 정보를 찾을 수 없습니다.' }));
+          } else {
+            dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+          }
         }
       }
     }

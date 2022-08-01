@@ -17,6 +17,7 @@ import { IOrderDetail, IResponse } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
+import { userForm } from '@store/user';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
@@ -33,6 +34,7 @@ const SubsDetailPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { subsCalendarSelectOrders } = useSelector(subscriptionForm);
+  const { me } = useSelector(userForm);
   const [detailId, setDetailId] = useState<any>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
@@ -284,7 +286,7 @@ const SubsDetailPage = () => {
         disposable={true}
         menuPrice={orderDetail?.menuAmount!}
         menuDiscount={orderDetail?.menuDiscount!}
-        eventDiscount={orderDetail?.eventDiscount!}
+        // eventDiscount={orderDetail?.eventDiscount!}
         menuOption1={optionsPrice.option1}
         menuOption2={optionsPrice.option2}
         deliveryPrice={orderDetail?.deliveryFee! - orderDetail?.deliveryFeeDiscount!}
@@ -293,6 +295,7 @@ const SubsDetailPage = () => {
         type="management"
         deliveryType={orderDetail?.delivery!}
         subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
+        grade={me?.grade}
       />
 
       {orderDetail?.subscriptionPeriod === 'UNLIMITED' &&

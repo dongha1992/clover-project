@@ -8,7 +8,7 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query';
-import { getMenuDetailReviewApi } from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
 
 interface IProps {
   previous: any;
@@ -16,6 +16,17 @@ interface IProps {
   likeCount: number;
   liked: boolean;
 }
+
+export const useMenuDetail = (key: QueryKey, menuId: number, options?: UseQueryOptions<any>) =>
+  useQuery(
+    key,
+    async () => {
+      const { data } = await getMenuDetailApi(menuId);
+      return data?.data;
+    },
+    options
+  );
+
 export const onMenuLikes = ({ previous, id, likeCount, liked }: IProps) => {
   return previous?.map((preItem: IMenus) => {
     let prevLiked, prevLikeCount;

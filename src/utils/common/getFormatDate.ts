@@ -22,6 +22,10 @@ export const dateN = (date: string): number => {
   return Number(dayjs(date).format('YYYYMMDD'));
 };
 
+export const dayOfWeek = (date: string) => {
+  return dayjs(date).format('dd');
+};
+
 export const subsClosedDate = (subscriptionPaymentDate: string) => {
   return `${dayjs(subscriptionPaymentDate).add(2, 'day').format('M')}월 ${dayjs(subscriptionPaymentDate)
     .add(2, 'day')
