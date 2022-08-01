@@ -125,7 +125,7 @@ const OrderFinishPage = () => {
     if (orderDetail?.type === 'SUBSCRIPTION') {
       router.push(`/subscription/${orderDetail?.id}?returnPath=${encodeURIComponent('/subscription')}`);
     } else {
-      router.push({ pathname: `/mypage/order-detail/${orderId}` });
+      router.push({ pathname: `/mypage/order-detail/${orderId}`, query: { isFinish: 1 } });
     }
   };
 

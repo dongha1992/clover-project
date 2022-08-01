@@ -121,7 +121,7 @@ const CartPage = () => {
     {
       onError: (error: any) => {},
       onSuccess: async (message) => {
-        if (nonMemberCartLists.length !== 0) {
+        if (nonMemberCartLists?.length !== 0) {
           dispatch(INIT_NON_MEMBER_CART_LISTS());
         }
       },
@@ -387,7 +387,7 @@ const CartPage = () => {
       (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
     );
 
-    const canNotCheckAllMenus = filtered.length === 0;
+    const canNotCheckAllMenus = filtered?.length === 0;
 
     if (!isAllChecked) {
       setCheckedMenus(filtered);
@@ -490,7 +490,7 @@ const CartPage = () => {
     if (isMain) {
       const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
       if (hasOptionalMenu) {
-        const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main).length === 1;
+        const hasMoreOneMainMenu = foundMenu?.menuDetails.filter((item) => item.main)?.length === 1;
         if (hasMoreOneMainMenu) {
           alertMessage = '선택옵션 상품도 함께 삭제돼요. \n 삭제하시겠어요?';
           const foundOptional =
@@ -932,13 +932,14 @@ const CartPage = () => {
       return;
     }
 
-    const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails)).length === 0;
+    const allAvailableMenus = checkedMenus.filter((item) => checkCartMenuStatus(item.menuDetails))?.length === 0;
     const canOrderThatDate = checkCanOrderThatDate();
 
-    const canOrderPeriodMenus = checkedMenus.filter((item) => checkPeriodCartMenuStatus(item.menuDetails)).length === 0;
+    const canOrderPeriodMenus =
+      checkedMenus.filter((item) => checkPeriodCartMenuStatus(item.menuDetails))?.length === 0;
     const canOrderdMenus = getCanCheckedMenus(checkedMenus);
 
-    const hasSoldOutMenus = canOrderdMenus.length !== checkedMenus.length || !canOrderPeriodMenus;
+    const hasSoldOutMenus = canOrderdMenus?.length !== checkedMenus?.length || !canOrderPeriodMenus;
     if (hasSoldOutMenus) {
       dispatch(
         SET_ALERT({
@@ -1120,7 +1121,7 @@ const CartPage = () => {
 
   useEffect(() => {
     // 합배송 관련
-    if (subOrderDelivery.length > 0) {
+    if (subOrderDelivery?.length > 0) {
       checkSameDateSubDelivery();
     }
   }, [selectedDeliveryDay, lunchOrDinner, subOrderDelivery]);
@@ -1204,7 +1205,7 @@ const CartPage = () => {
       reorderCartList(nonMemberCartLists ?? []);
     } else {
       // 로그인 경우 비회원 장바구니 리스트 있는 조회
-      const hasNonMemberCarts = nonMemberCartLists.length !== 0;
+      const hasNonMemberCarts = nonMemberCartLists?.length !== 0;
       if (hasNonMemberCarts) {
         const reqBody = nonMemberCartLists.flatMap((item) =>
           item.menuDetails.map((detail) => {
@@ -1251,7 +1252,7 @@ const CartPage = () => {
         </DeliveryMethodAndPickupLocation>
       )}
       <BorderLine height={8} margin="24px 0" />
-      {cartItemList.length === 0 ? (
+      {cartItemList?.length === 0 ? (
         <EmptyContainer>
           <FlexCol width="100%">
             <TextB2R padding="0 0 32px 0" center>
@@ -1406,8 +1407,7 @@ const CartPage = () => {
           <MenuListWarpper>
             <MenuListHeader>
               <TextH3B padding="0 0 24px 0">{me?.nickName}님이 찜한 상품이에요</TextH3B>
-
-              <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+              <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
                 {likeMenusList?.map((item: IMenus, index: number) => {
                   if (index > 9) return;
                   return (
@@ -1438,7 +1438,7 @@ const CartPage = () => {
           </MenuListWarpper>
         )}
       </MenuListContainer>
-      {cartItemList.length > 0 && (
+      {cartItemList?.length > 0 && (
         <TotalPriceWrapper>
           <FlexBetween>
             <TextH5B>총 상품금액</TextH5B>
@@ -1449,7 +1449,7 @@ const CartPage = () => {
             totalDiscountPrice={getTotalDiscountPrice()}
             itemDiscountPrice={getItemDiscountPrice()}
             spotDiscountPrice={getSpotDiscountPrice()}
-            hasSpotEvent={cartResponse?.discountInfos.length !== 0}
+            hasSpotEvent={cartResponse?.discountInfos?.length !== 0}
             isSpot={isSpot}
           />
           <CartDisposableBox disposableList={disposableList} disposableItems={getDisposableItem()} />
@@ -1461,7 +1461,7 @@ const CartPage = () => {
             onClick={goToBottomSheet}
           />
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
-          <FlexBetween padding="8px 0 0 0">
+          <FlexBetween padding="0 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
             <TextH4B>{getFormatPrice(String(totalAmount + getDeliveryFee()))}원</TextH4B>
           </FlexBetween>
@@ -1587,9 +1587,7 @@ const BtnWrapper = styled.div`
   margin: 0 24px;
 `;
 
-const CartInfoContainer = styled.div`
-  /* ${homePadding} */
-`;
+const CartInfoContainer = styled.div``;
 const MenuListContainer = styled.div`
   ${homePadding}
 `;
@@ -1600,16 +1598,6 @@ const MenuListWarpper = styled.div`
 `;
 
 const MenuListHeader = styled.div``;
-
-// const ScrollHorizonListGroup = styled.div`
-//   display: flex;
-
-//   > div {
-//     width: 120px;
-//     height: 100%;
-//     margin-right: 18px;
-//   }
-// `;
 
 const ScrollHorizonListGroup = styled(Swiper)`
   width: 100%;
