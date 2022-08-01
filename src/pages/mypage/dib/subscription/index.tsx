@@ -17,7 +17,7 @@ const SubscriptionDibPage = () => {
       return data.data;
     },
     {
-      refetchOnMount: false,
+      refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );

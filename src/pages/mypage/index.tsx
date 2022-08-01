@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween } from '@styles/theme';
-import { SVGIcon } from '@utils/common';
+import { getFormatPrice, SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
@@ -210,7 +210,7 @@ const MypagePage = () => {
                   사용 가능한 포인트
                 </TextH6B>
                 <TextH5B onClick={() => router.push('/mypage/point')} pointer>
-                  {userInfo?.availablePoint} P
+                  {getFormatPrice(String(userInfo?.availablePoint))} P
                 </TextH5B>
               </FlexCol>
               <FlexCol width="50%">
