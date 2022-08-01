@@ -25,6 +25,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
   const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
+  const cart = router.pathname === '/cart';
 
   const countMap: Obj = {
     '/menu/[menuId]/review/total': reviewCount,
@@ -62,6 +63,8 @@ const DefaultHeader = ({ title }: TProps) => {
       router.back();
     }
   };
+
+  console.log(router);
 
   if (totalReview && !reviewCount) {
     return <div>로딩</div>;
