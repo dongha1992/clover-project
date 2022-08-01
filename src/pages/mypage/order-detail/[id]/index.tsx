@@ -34,7 +34,7 @@ import { AxiosError } from 'axios';
 
 const disabledDates: any = [];
 
-/* TODO: delvieryId의 경우 orderDeliveris[0].id 사용 */
+/* delvieryId의 경우 orderDeliveris[0].id 사용 */
 /* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
 
 const OrderDetailPage = () => {
