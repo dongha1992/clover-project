@@ -1461,7 +1461,7 @@ const CartPage = () => {
             onClick={goToBottomSheet}
           />
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
-          <FlexBetween padding="8px 0 0 0">
+          <FlexBetween padding="0 0 0 0">
             <TextH4B>결제예정금액</TextH4B>
             <TextH4B>{getFormatPrice(String(totalAmount + getDeliveryFee()))}원</TextH4B>
           </FlexBetween>
