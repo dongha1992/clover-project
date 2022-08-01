@@ -61,7 +61,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
         <Wrapper>
           <ReviewContent>
             <FlexBetweenStart padding="0 0 16px 0">
-              <FlexRowStart>
+              <FlexRowStart onClick={() => router.push(`/menu/${review.menuId}`)} pointer>
                 <MenuImgWrapper>
                   <NextImage
                     src={IMAGE_S3_URL + review?.menuImage?.url}
@@ -72,7 +72,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                     className="rounded"
                   />
                 </MenuImgWrapper>
-                <TextH5B margin="0 0 0 8px" pointer onClick={() => router.push(`/menu/${review.menuId}`)}>
+                <TextH5B margin="0 0 0 8px" pointer>
                   {review.displayMenuName}
                 </TextH5B>
               </FlexRowStart>
