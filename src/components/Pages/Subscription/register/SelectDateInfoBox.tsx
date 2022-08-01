@@ -21,7 +21,7 @@ interface IProps {
 interface IReceipt {
   menuPrice: number;
   menuDiscount: number;
-  // eventDiscount: number;
+  eventDiscount: number;
   menuOption1: {
     id: number;
     name: string;
@@ -46,7 +46,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
     const data = {
       menuPrice: 0,
       menuDiscount: 0,
-      // eventDiscount: 0,
+      eventDiscount: 0,
       menuOption1: {
         id: 1,
         name: '',
@@ -67,11 +67,11 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
         if (item.main) {
           data.menuPrice = data.menuPrice + item.menuPrice;
           data.menuDiscount = data.menuDiscount + item.menuDiscount;
-          // data.eventDiscount = data.eventDiscount + item.eventDiscount;
+          data.eventDiscount = data.eventDiscount + item.eventDiscount;
         } else {
           data.menuPrice = data.menuPrice + item.menuPrice * item.count!;
           data.menuDiscount = data.menuDiscount + item.menuDiscount * item.count!;
-          // data.eventDiscount = data.eventDiscount + item.eventDiscount * item.count!;
+          data.eventDiscount = data.eventDiscount + item.eventDiscount * item.count!;
         }
 
         item.menuOptions.forEach((option) => {
@@ -90,7 +90,9 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
       });
     data.deliveryPrice =
       // data.menuPrice + data.menuOption1.price + data.menuOption2.price - data.menuDiscount - data.eventDiscount > 35000
-      data.menuPrice + data.menuOption1.price + data.menuOption2.price - data.menuDiscount > 35000 ? 0 : 3500;
+      data.menuPrice + data.menuOption1.price + data.menuOption2.price - data.menuDiscount - data.eventDiscount > 35000
+        ? 0
+        : 3500;
     setReceiptInfo(data);
   }, [subsCalendarSelectMenu?.menuTableItems, subsOrderMenus]);
 
@@ -130,7 +132,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           disposable={disposable}
           menuPrice={receiptInfo.menuPrice}
           menuDiscount={receiptInfo.menuDiscount}
-          // eventDiscount={receiptInfo.eventDiscount}
+          eventDiscount={receiptInfo.eventDiscount}
           menuOption1={receiptInfo.menuOption1}
           menuOption2={receiptInfo.menuOption2}
           deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : receiptInfo.deliveryPrice}
