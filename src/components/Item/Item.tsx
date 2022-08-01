@@ -121,6 +121,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
+        queryClient.invalidateQueries(['getLikeMenus', 'GENERAL']);
       },
       onMutate: async () => {},
       onError: async (error: any) => {
