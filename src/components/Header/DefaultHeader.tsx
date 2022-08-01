@@ -25,7 +25,8 @@ const DefaultHeader = ({ title }: TProps) => {
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
   const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
-  const cart = router.pathname === '/cart';
+  const finishOrder = router.pathname === '/order/finish';
+  const orderDetail = router.pathname === '/mypage/order-detail/[id]';
 
   const countMap: Obj = {
     '/menu/[menuId]/review/total': reviewCount,
@@ -44,8 +45,6 @@ const DefaultHeader = ({ title }: TProps) => {
           },
         })
       );
-    } else if (router.pathname === '/order/finish') {
-      router.replace('/');
     } else if (router.pathname === '/login') {
       router.replace('/onboarding');
     } else if (router.pathname === '/cart/delivery-info') {
@@ -59,12 +58,16 @@ const DefaultHeader = ({ title }: TProps) => {
       router.back();
     } else if (router.pathname === '/subscription/[detailId]') {
       returnPath ? router.replace('/subscription') : router.back();
+    } else if (orderDetail) {
+      if (router.query.isFinish) {
+        router.replace('/');
+      } else {
+        router.back();
+      }
     } else {
       router.back();
     }
   };
-
-  console.log(router);
 
   if (totalReview && !reviewCount) {
     return <div>로딩</div>;
@@ -73,7 +76,7 @@ const DefaultHeader = ({ title }: TProps) => {
   return (
     <Container>
       <Wrapper>
-        {!oauth && (
+        {!oauth && !finishOrder && (
           <div className="arrow" onClick={goBack}>
             <SVGIcon name="arrowLeft" />
           </div>

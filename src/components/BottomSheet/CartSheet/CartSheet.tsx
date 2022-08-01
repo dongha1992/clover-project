@@ -92,11 +92,9 @@ const CartSheet = ({ menuItem }: any) => {
           menuId: menuItem.id,
           menuDetailId: item.menuDetailId,
           quantity: item.quantity,
-          main: item.main,
+          main: item.main, // TODO : 삭제예정 BY 제이슨
         };
       });
-
-      /* TODO: 장바구니에 이미 있는지? */
 
       // const result = checkAlreadyInCart();
 
