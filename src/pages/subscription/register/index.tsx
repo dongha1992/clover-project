@@ -23,7 +23,7 @@ import { userForm } from '@store/user';
 interface IReceipt {
   menuPrice: number;
   menuDiscount: number;
-  // eventDiscount: number;
+  eventDiscount: number;
   menuOption1: {
     id: number;
     name: string;
@@ -78,7 +78,7 @@ const SubsRegisterPage = () => {
     const all = {
       menuPrice: 0,
       menuDiscount: 0,
-      // eventDiscount: 0,
+      eventDiscount: 0,
       menuOption1: {
         id: 1,
         name: '',
@@ -109,12 +109,12 @@ const SubsRegisterPage = () => {
             menuQuantity: 1,
           });
           // 배송비 계산을 위한 변수
-          // subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount - item.eventDiscount);
-          subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount);
+          subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount - item.eventDiscount);
+          // subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount);
 
           all.menuPrice = all.menuPrice + item.menuPrice;
           all.menuDiscount = all.menuDiscount + item.menuDiscount;
-          // all.eventDiscount = all.eventDiscount + item.eventDiscount;
+          all.eventDiscount = all.eventDiscount + item.eventDiscount;
 
           item.menuOptions.forEach((option: any) => {
             if (option.id === 1) {
@@ -310,7 +310,7 @@ const SubsRegisterPage = () => {
               disposable={disposable}
               menuPrice={allMenuPriceInfo.menuPrice}
               menuDiscount={allMenuPriceInfo.menuDiscount}
-              // eventDiscount={allMenuPriceInfo.eventDiscount}
+              eventDiscount={allMenuPriceInfo.eventDiscount}
               menuOption1={allMenuPriceInfo.menuOption1}
               menuOption2={allMenuPriceInfo.menuOption2}
               deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : allMenuPriceInfo.deliveryPrice}
