@@ -404,6 +404,7 @@ const UploadPhotoWrapper = styled.div`
 `;
 
 const UploadInputWrapper = styled.label`
+  cursor: pointer;
   position: relative;
   display: block;
   width: 72px;
@@ -416,6 +417,7 @@ const UploadInputWrapper = styled.label`
     left: 0;
     top: 0;
     opacity: 0;
+    display: none;
   }
 
   .plusBtn {
