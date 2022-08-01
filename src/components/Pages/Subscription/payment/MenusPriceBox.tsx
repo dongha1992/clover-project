@@ -28,6 +28,7 @@ interface IProps {
   deliveryType: string;
   subscriptionDiscountRates: number[];
   grade: any;
+  coupon?: number;
 }
 
 const MenusPriceBox = ({
@@ -44,6 +45,7 @@ const MenusPriceBox = ({
   deliveryType,
   subscriptionDiscountRates,
   grade,
+  coupon,
 }: IProps) => {
   const dispatch = useDispatch();
 
@@ -64,7 +66,18 @@ const MenusPriceBox = ({
       <MenuPriceUl>
         <MenuPriceLi>
           <TextH5B>총 할인금액</TextH5B>
-          <TextB2R>-{getFormatPrice(String(menuDiscount + eventDiscount))}원</TextB2R>
+          {type === 'management' ? (
+            <TextB2R>
+              {menuDiscount + eventDiscount + coupon! !== 0
+                ? `-${getFormatPrice(String(menuDiscount + eventDiscount + coupon!))}`
+                : 0}
+              원
+            </TextB2R>
+          ) : (
+            <TextB2R>
+              {menuDiscount + eventDiscount !== 0 ? `-${getFormatPrice(String(menuDiscount + eventDiscount))}` : 0}원
+            </TextB2R>
+          )}
           {/* <TextB2R>-{getFormatPrice(String(menuDiscount))}원</TextB2R> */}
         </MenuPriceLi>
         {menuDiscount !== 0 && (
@@ -80,6 +93,12 @@ const MenusPriceBox = ({
           <MenuPriceLi>
             <TextB2R>이벤트 할인</TextB2R>
             <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
+          </MenuPriceLi>
+        )}
+        {coupon !== 0 && type === 'management' && (
+          <MenuPriceLi>
+            <TextB2R>쿠폰 사용</TextB2R>
+            <TextB2R>-{coupon}원</TextB2R>
           </MenuPriceLi>
         )}
       </MenuPriceUl>
