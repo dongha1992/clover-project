@@ -25,7 +25,7 @@ export const DELIVERY_METHOD: any = {
       value: 'parcel',
       name: '택배배송',
       tag: '',
-      description: '- 서울 전체, 경기/인천 일부 지역 이용 가능',
+      description: '- 전국 어디서나 이용 가능 (제주, 도서 산간지역 제외)',
       feeInfo: '- 배송비 3,500원 (3만 5천 원 이상 배송비 무료)',
     },
     {
@@ -33,8 +33,8 @@ export const DELIVERY_METHOD: any = {
       value: 'quick',
       name: '퀵배송',
       tag: '',
-      description: '- 서울 전체, 경기/인천 일부 지역 이용 가능',
-      feeInfo: '- 배송비 3,500원 (3만 5천 원 이상 배송비 무료)',
+      description: '- 서울 전 지역 이용 가능',
+      feeInfo: '- 배송비 4,000원 (4만 원 이상 배송비 무료) | 점심, 저녁배송',
     },
   ],
 };

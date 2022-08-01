@@ -607,7 +607,7 @@ const DeliverInfoPage = () => {
                 if (isSubscription && item.name === '퀵배송') {
                   return;
                 } else {
-                  if (!menuDetail?.subscriptionDeliveries.includes(item.value.toUpperCase())) return;
+                  if (isSubscription && !menuDetail?.subscriptionDeliveries.includes(item.value.toUpperCase())) return;
                 }
 
                 const isSelected = userSelectDeliveryType === item.value;
