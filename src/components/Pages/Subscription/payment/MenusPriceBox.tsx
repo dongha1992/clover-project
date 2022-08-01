@@ -66,7 +66,7 @@ const MenusPriceBox = ({
       <MenuPriceUl>
         <MenuPriceLi>
           <TextH5B>총 할인금액</TextH5B>
-          {type === 'management' ? (
+          {coupon ? (
             <TextB2R>
               {menuDiscount + eventDiscount + coupon! !== 0
                 ? `-${getFormatPrice(String(menuDiscount + eventDiscount + coupon!))}`
@@ -95,7 +95,7 @@ const MenusPriceBox = ({
             <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
         )}
-        {coupon !== 0 && type === 'management' && (
+        {coupon && coupon !== 0 && (
           <MenuPriceLi>
             <TextB2R>쿠폰 사용</TextB2R>
             <TextB2R>-{coupon}원</TextB2R>
