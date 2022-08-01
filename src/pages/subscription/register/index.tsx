@@ -18,11 +18,12 @@ import { destinationForm } from '@store/destination';
 import { periodMapper } from '@constants/subscription';
 import { DELIVERY_TIME_MAP2, DELIVERY_TYPE_MAP } from '@constants/order';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
+import { userForm } from '@store/user';
 
 interface IReceipt {
   menuPrice: number;
   menuDiscount: number;
-  eventDiscount: number;
+  // eventDiscount: number;
   menuOption1: {
     id: number;
     name: string;
@@ -42,6 +43,7 @@ const SubsRegisterPage = () => {
   const router = useRouter();
   const { subsOrderMenus, subsDeliveryExpectedDate, subsInfo } = useSelector(subscriptionForm);
   const { userDestination } = useSelector(destinationForm);
+  const { me } = useSelector(userForm);
   const [toggleState, setToggleState] = useState(false);
   const [disposable, setDisposable] = useState(true);
   const [selectDate, setSelectDate] = useState<Date | undefined>(
@@ -76,7 +78,7 @@ const SubsRegisterPage = () => {
     const all = {
       menuPrice: 0,
       menuDiscount: 0,
-      eventDiscount: 0,
+      // eventDiscount: 0,
       menuOption1: {
         id: 1,
         name: '',
@@ -107,11 +109,12 @@ const SubsRegisterPage = () => {
             menuQuantity: 1,
           });
           // 배송비 계산을 위한 변수
-          subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount - item.eventDiscount);
+          // subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount - item.eventDiscount);
+          subsDayPrice = subsDayPrice + (item.menuPrice - item.menuDiscount);
 
           all.menuPrice = all.menuPrice + item.menuPrice;
           all.menuDiscount = all.menuDiscount + item.menuDiscount;
-          all.eventDiscount = all.eventDiscount + item.eventDiscount;
+          // all.eventDiscount = all.eventDiscount + item.eventDiscount;
 
           item.menuOptions.forEach((option: any) => {
             if (option.id === 1) {
@@ -277,7 +280,7 @@ const SubsRegisterPage = () => {
 
           <DisposableAddBox>
             <TextH4B className="title">일회용품 추가</TextH4B>
-            <TextB2R className="content">샐러드·도시락 상품의 수량만큼 일회용품을 추가합니다.</TextB2R>
+            <TextB2R className="content">구독 전체 상품의 일회용품 수량이에요.</TextB2R>
             <FlexRow>
               <Checkbox
                 onChange={() => {
@@ -307,13 +310,14 @@ const SubsRegisterPage = () => {
               disposable={disposable}
               menuPrice={allMenuPriceInfo.menuPrice}
               menuDiscount={allMenuPriceInfo.menuDiscount}
-              eventDiscount={allMenuPriceInfo.eventDiscount}
+              // eventDiscount={allMenuPriceInfo.eventDiscount}
               menuOption1={allMenuPriceInfo.menuOption1}
               menuOption2={allMenuPriceInfo.menuOption2}
               deliveryPrice={subsInfo?.deliveryType === 'SPOT' ? 0 : allMenuPriceInfo.deliveryPrice}
               deliveryLength={subsOrderMenus?.length!}
               deliveryType={subsInfo?.deliveryType!}
               subscriptionDiscountRates={subsInfo?.subscriptionDiscountRates!}
+              grade={me?.grade}
             />
           )}
           <BottomButton onClick={onSubscribe}>

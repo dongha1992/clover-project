@@ -12,7 +12,7 @@ import {
   fixedBottom,
 } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
-import { FinishOrderItem } from '@components/Pages/Order';
+import { CancelOrderInfoBox, FinishOrderItem } from '@components/Pages/Order';
 import { ButtonGroup } from '@components/Shared/Button';
 import { getOrderDetailApi } from '@api/order';
 import { useRouter } from 'next/router';
@@ -35,6 +35,7 @@ import { SET_ALERT } from '@store/alert';
 import { INIT_COUPON } from '@store/coupon';
 import { useGetOrderDetail } from 'src/queries/order';
 import { cartForm, INIT_CART_LISTS, SET_CART_LISTS, ICartLists } from '@store/cart';
+import { periodMapper } from '@constants/subscription';
 
 interface IProps {
   orderId: number;
@@ -122,14 +123,18 @@ const OrderFinishPage = () => {
 
   const goToOrderDetail = () => {
     if (orderDetail?.type === 'SUBSCRIPTION') {
-      router.push(`/subscription/${orderDetail?.id}`);
+      router.push(`/subscription/${orderDetail?.id}?returnPath=${encodeURIComponent('/subscription')}`);
     } else {
       router.push({ pathname: `/mypage/order-detail/${orderId}` });
     }
   };
 
   const goToShopping = () => {
-    router.push('/');
+    if (orderDetail.type === 'SUBSCRIPTION') {
+      router.push('/subscription');
+    } else {
+      router.push('/');
+    }
   };
 
   const deliveryDateRenderer = ({
@@ -256,40 +261,6 @@ const OrderFinishPage = () => {
     }
   };
 
-  const cancelOrderInfoRenderer = (delivery: string, deliveryDetail: string) => {
-    const isLunch = deliveryDetail === 'LUNCH';
-
-    switch (delivery) {
-      case 'QUICK':
-      case 'SPOT': {
-        return (
-          <>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              주문 변경 및 취소는 수령일 당일 오전 7시까지 가능해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
-              단, 수령일 오전 7시~{isLunch ? '9시 25' : '10시 55'}분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및
-              취소할 수 있어요!
-            </TextB3R>
-          </>
-        );
-      }
-      case 'PARCEL':
-      case 'MORNING': {
-        return (
-          <>
-            <TextB3R color={theme.greyScale65} padding="16px 0 0 0">
-              주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능해요!
-            </TextB3R>
-            <TextB3R color={theme.greyScale65}>
-              단, 수령일 오후 3시~4시 55분 사이에 주문하면 주문완료 후 5분 이내로 주문 변경 및 취소할 수 있어요!
-            </TextB3R>
-          </>
-        );
-      }
-    }
-  };
-
   useEffect(() => {
     if (router.isReady) {
       checkPg();
@@ -341,7 +312,8 @@ const OrderFinishPage = () => {
         <div className="title">
           {type === 'SUBSCRIPTION' ? (
             <TextH2B color={theme.brandColor}>
-              {DELIVERY_TYPE_MAP[delivery]} - {subscriptionPeriod === 'UNLIMITED' ? '정기구독' : '단기구독'}
+              {DELIVERY_TYPE_MAP[delivery]} -{' '}
+              {subscriptionPeriod === 'UNLIMITED' ? '정기구독' : `${periodMapper[subscriptionPeriod]} 구독`}
             </TextH2B>
           ) : (
             <TextH2B color={theme.brandColor}>{isSubOrder ? '함께배송' : DELIVERY_TYPE_MAP[delivery]}</TextH2B>
@@ -353,7 +325,14 @@ const OrderFinishPage = () => {
             <TextH2B>주문이 완료되었습니다.</TextH2B>
           )}
         </div>
-        <div className="discription">{cancelOrderInfoRenderer(delivery, deliveryDetail)}</div>
+        <div className="discription">
+          <CancelOrderInfoBox
+            delivery={orderDetail?.delivery}
+            deliveryDetail={orderDetail?.deliveryDetail}
+            orderType={orderDetail?.type}
+            color={theme.greyScale65}
+          />
+        </div>
       </PlaceInfoWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
@@ -460,6 +439,7 @@ const PlaceInfoWrapper = styled.div`
 
   .discription {
     width: 100%;
+    padding-top: 16px;
   }
 `;
 

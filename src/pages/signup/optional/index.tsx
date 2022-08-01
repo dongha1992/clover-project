@@ -64,6 +64,8 @@ const SignupOptionalPage = () => {
     {
       onSuccess: ({ data }) => {
         const userTokenObj = data.data;
+        console.log('userTokenObj', userTokenObj);
+
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(INIT_SIGNUP_USER());
