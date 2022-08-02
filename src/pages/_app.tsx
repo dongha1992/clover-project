@@ -172,6 +172,11 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           src="https://developers.kakao.com/sdk/js/kakao.min.js"
           strategy="beforeInteractive"
         ></Script>
+        <Script
+          type="text/javascript"
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`}
+          strategy="beforeInteractive"
+        ></Script>
         <Script src="https://web.nicepay.co.kr/v3/webstd/js/nicepay-2.0.js" type="text/javascript"></Script>
         <Script id="test">
           {`  // 결제 최종 요청시 실행됩니다. <<'nicepaySubmit()' 이름 수정 불가능>>
