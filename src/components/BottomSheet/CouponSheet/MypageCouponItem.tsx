@@ -26,7 +26,7 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
   const isMoreThenOneMenu = coupon?.descriptions?.join().includes('특정 상품');
   const tagetIndex = coupon?.descriptions?.findIndex((item) => item.includes('특정 상품'));
   const canNotUse = !coupon.canUse;
-  const tagColorSet = canNotUse ? theme.greyScale6 : theme.brandColor;
+  const tagColorSet = canNotUse ? theme.greyScale6 : theme.brandColor5;
   const priceColorSet = canNotUse ? theme.greyScale25 : theme.brandColor;
   const tagNameColorSet = canNotUse ? theme.greyScale45 : theme.brandColor;
   const nameColorSet = canNotUse ? theme.greyScale25 : theme.black;

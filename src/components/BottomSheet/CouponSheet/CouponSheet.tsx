@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextH6B, TextB2R } from '@components/Shared/Text';
 import { theme, bottomSheetButton, fixedBottom } from '@styles/theme';
-import { COUPON_LIST } from '@constants/menu';
 import CouponItem from './CouponItem';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +13,6 @@ import { postPromotionCodeApi } from '@api/promotion';
 import { useMutation, useQueryClient } from 'react-query';
 import { SET_IS_LOADING } from '@store/common';
 import { userForm } from '@store/user';
-import { dateN } from '@utils/common';
 
 interface IProps {
   coupons?: IPromotion[];
@@ -41,7 +39,8 @@ const CouponSheet = ({ coupons }: IProps) => {
     },
     {
       onSuccess: async (data) => {
-        const updated = updateCouponHandler(data.id);
+        const updated = updateCouponHandler(data?.id!);
+        setCouponList(updated);
         dispatch(
           SET_ALERT({
             alertMessage: '쿠폰을 다운받았습니다.',
@@ -69,8 +68,16 @@ const CouponSheet = ({ coupons }: IProps) => {
     }
   );
 
-  const updateCouponHandler = (id) => {
-    // const update =
+  useEffect(() => {}, []);
+
+  const updateCouponHandler = (id: number) => {
+    return couponList.map((item) => {
+      if (item.id === id) {
+        return { ...item, participationStatus: 'COMPLETED' };
+      } else {
+        return item;
+      }
+    });
   };
 
   const goToLogin = () => {
@@ -93,9 +100,10 @@ const CouponSheet = ({ coupons }: IProps) => {
     }
 
     dispatch(SET_IS_LOADING(true));
-    if (coupons?.length! > 0) {
-      for (let i = 0; i < coupons?.length!; i++) {
-        const couponItem = coupons && coupons[i]!;
+    const available = couponList.filter((item) => item.participationStatus === 'POSSIBLE');
+    if (available?.length! > 0) {
+      for (let i = 0; i < available?.length!; i++) {
+        const couponItem = coupons && available[i]!;
 
         const params = {
           code: couponItem?.code!,
@@ -106,9 +114,11 @@ const CouponSheet = ({ coupons }: IProps) => {
           const { data } = await postPromotionCodeApi(params);
           if (data.code === 200) {
             aleadyDownloadedCount++;
+            const updated = updateCouponHandler(couponItem?.id!);
+            setCouponList(updated);
           }
 
-          if (i + 1 === coupons?.length!) {
+          if (i + 1 === available?.length!) {
             if (aleadyDownloadedCount > 0) {
               dispatch(SET_ALERT({ alertMessage: '모든 쿠폰을 다운받았습니다.' }));
             } else {

@@ -165,6 +165,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     data: coupons,
     isLoading: couponsLoading,
     error: couponError,
+    refetch,
   } = useQuery(
     'getPromotion',
     async () => {
@@ -182,7 +183,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       refetchOnWindowFocus: false,
     }
   );
-  console.log(coupons, 'menu coupons');
+
   const {
     data: banners,
     isLoading: bannerLoading,
@@ -220,11 +221,17 @@ const MenuDetailPage = ({ menuId }: IProps) => {
         })
       );
     } else {
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <CouponSheet coupons={coupons && coupons} />,
-        })
-      );
+      refetch().then((res) => {
+        console.log(res, 'res');
+        if (!res.isLoading) {
+          const data = res.data;
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <CouponSheet coupons={data} />,
+            })
+          );
+        }
+      });
     }
   };
 
