@@ -172,6 +172,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
     if (!checkBeforeEdit()) {
       return;
     }
+
     if (data.type === 'SUBSCRIPTION') {
       if (applyAll) {
         // 정기구독 배송지 남은 전체 회차 변경
@@ -234,16 +235,16 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   };
 
   const checkBeforeEdit = (): boolean => {
-    // const noMsg = !deliveryEditObj.deliveryMessage.length;
-    const noMsg = false;
+    const noAccessMethod = !deliveryEditObj.deliveryMessageType;
+    const noMsg = !deliveryEditObj.deliveryMessage.length;
+    const isFreeAccess = deliveryEditObj.deliveryMessageType === 'FREE';
 
     switch (true) {
       case isMorning: {
-        if (noMsg) {
-          // const noMsg = !deliveryEditObj.deliveryMessage.length;
+        if (noMsg && !isFreeAccess) {
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
-        } else if (!deliveryEditObj.deliveryMessageType) {
+        } else if (noAccessMethod && !isFreeAccess) {
           dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
           return false;
         } else {
@@ -251,15 +252,14 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
         }
       }
 
-      case isParcel: {
-        if (noMsg) {
-          // const noMsg = !deliveryEditObj.deliveryMessage.length;
-          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-          return false;
-        } else {
-          return true;
-        }
-      }
+      // case isParcel: {
+      //   if (noMsg) {
+      //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
+      //     return false;
+      //   } else {
+      //     return true;
+      //   }
+      // }
 
       default: {
         return true;
