@@ -102,6 +102,7 @@ export const editDeliveryDateApi = ({
   selectedDeliveryDay: string;
   deliveryId: number;
 }): Promise<AxiosResponse<IResponse>> => {
+  console.log(deliveryId, 'deliveryId');
   return Api.post(`order/v1/deliveries/${deliveryId}/date`, { deliveryDate: selectedDeliveryDay });
 };
 

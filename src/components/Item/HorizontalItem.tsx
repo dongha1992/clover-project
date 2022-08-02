@@ -65,9 +65,11 @@ const HorizontalItem = ({ item }: TProps) => {
           </TextB3R>
         </NameWrapper>
         <PriceWrapper>
-          <TextH5B color={theme.brandColor} padding="0 4px 0 0">
-            {discount}%
-          </TextH5B>
+          {discount > 0 && (
+            <TextH5B color={theme.brandColor} padding="0 4px 0 0">
+              {discount}%
+            </TextH5B>
+          )}
           <TextH5B>{price}원</TextH5B>
         </PriceWrapper>
         <TagWrapper>

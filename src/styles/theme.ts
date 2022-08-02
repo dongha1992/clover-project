@@ -94,12 +94,13 @@ export const FlexBetweenStart = styled.div<{
   height: ${({ height }) => height && height};
 `;
 
-export const FlexRowStart = styled.div<{ padding?: string; margin?: string; width?: string }>`
+export const FlexRowStart = styled.div<{ padding?: string; margin?: string; width?: string; pointer?: boolean }>`
   display: flex;
   align-items: start;
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   width: ${({ width }) => width && width};
+  cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
 `;
 
 export const FlexRow = styled.div<{
@@ -162,7 +163,7 @@ export const GridWrapper = styled.div<{ gap: number }>`
   grid-gap: ${({ gap }) => gap && gap}px;
 `;
 
-export const FlexWrapWrapper = styled.div<{padding?: string}>`
+export const FlexWrapWrapper = styled.div<{ padding?: string }>`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;

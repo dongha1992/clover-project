@@ -98,7 +98,7 @@ const DestinationDetailPage = () => {
         dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
         dispatch(INIT_DESTINATION_TYPE());
         dispatch(INIT_AVAILABLE_DESTINATION());
-        router.push({
+        router.replace({
           pathname: '/mypage/order-detail/edit/[orderId]',
           query: { orderId, destinationId },
         });
@@ -113,7 +113,7 @@ const DestinationDetailPage = () => {
             query: { subsDeliveryType, isSubscription: true, menuId },
           });
         } else {
-          router.push('/cart/delivery-info');
+          router.replace('/cart/delivery-info');
         }
       }
     }
@@ -138,11 +138,11 @@ const DestinationDetailPage = () => {
   };
 
   const goToSearch = () => {
-    router.push('/destination/search');
+    router.replace('/destination/search');
   };
 
   const goToHome = () => {
-    router.push('/');
+    router.replace('/');
   };
 
   useEffect(() => {
