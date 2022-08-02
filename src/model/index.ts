@@ -2259,6 +2259,7 @@ export interface ICoupon {
   isApp: false;
   name: string;
   value: number;
+  canUse: boolean;
 }
 
 export interface ICouponResponse {
