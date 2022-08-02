@@ -133,6 +133,8 @@ const CouponSheet = ({ coupons }: IProps) => {
           dispatch(SET_ALERT({ alertMessage }));
         }
       }
+    } else {
+      dispatch(SET_ALERT({ alertMessage: '다운 가능한 쿠폰이 없습니다.' }));
     }
 
     dispatch(SET_IS_LOADING(false));
