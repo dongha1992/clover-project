@@ -256,6 +256,8 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     refetch();
   };
 
+  const editAddressHandler = () => {};
+
   useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
   }, [userAccessMethod]);
@@ -413,7 +415,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
         </FlexRow>
       </Wrapper>
       <ButtonGroup
-        rightButtonHandler={mutationEditAddress}
+        rightButtonHandler={editAddressHandler}
         leftButtonHandler={removeAddressHandler}
         leftText="삭제하기"
         rightText="수정하기"
