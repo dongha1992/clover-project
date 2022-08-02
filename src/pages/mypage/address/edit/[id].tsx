@@ -217,15 +217,15 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
         }
       }
 
-      case isParcel: {
-        const noMsg = !deliveryEditObj.deliveryMessage.length;
-        if (noMsg) {
-          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-          return false;
-        } else {
-          return true;
-        }
-      }
+      // case isParcel: {
+      //   const noMsg = !deliveryEditObj.deliveryMessage.length;
+      //   if (noMsg) {
+      //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
+      //     return false;
+      //   } else {
+      //     return true;
+      //   }
+      // }
 
       default: {
         return true;
@@ -256,7 +256,12 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     refetch();
   };
 
-  const editAddressHandler = () => {};
+  const editAddressHandler = () => {
+    // if (cheekBeforeEdit()) {
+    //   mutationEditAddress();
+    // }
+    mutationEditAddress();
+  };
 
   useEffect(() => {
     setSelectedAccessMethod(userAccessMethod);
