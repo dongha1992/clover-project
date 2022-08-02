@@ -182,7 +182,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
       refetchOnWindowFocus: false,
     }
   );
-
+  console.log(coupons, 'menu coupons');
   const {
     data: banners,
     isLoading: bannerLoading,

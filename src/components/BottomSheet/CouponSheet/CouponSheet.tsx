@@ -19,6 +19,7 @@ interface IProps {
   coupons?: IPromotion[];
 }
 const CouponSheet = ({ coupons }: IProps) => {
+  console.log(coupons, 'coupons');
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
@@ -42,7 +43,7 @@ const CouponSheet = ({ coupons }: IProps) => {
             alertMessage: '쿠폰을 다운받았습니다.',
           })
         );
-        await queryClient.refetchQueries('getCouponList');
+        // await queryClient.refetchQueries('getCouponList');
         await queryClient.refetchQueries('getPromotion');
         dispatch(SET_IS_LOADING(false));
       },

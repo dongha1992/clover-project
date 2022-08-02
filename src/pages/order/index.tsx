@@ -13,7 +13,7 @@ import {
   FlexColCenter,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
-
+import Script from 'next/script';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
@@ -640,12 +640,12 @@ const OrderPage = () => {
       }
     }
 
-    if (isParcel) {
-      if (!userInputObj?.deliveryMessage) {
-        dispatch(SET_ALERT({ alertMessage: '출입 메시지를 입력해주세요.' }));
-        return;
-      }
-    }
+    // if (isParcel) {
+    //   if (!userInputObj?.deliveryMessage) {
+    //     dispatch(SET_ALERT({ alertMessage: '출입 메시지를 입력해주세요.' }));
+    //     return;
+    //   }
+    // }
 
     if (userInputObj.receiverName.length === 0 || userInputObj.receiverTel.length === 0) {
       dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));

@@ -323,10 +323,10 @@ const CartPage = () => {
     {
       onSuccess: async (params) => {
         const { menuDetailId, quantity } = params!;
-        console.log(menuDetailId, quantity, 'menuDetailId, quantity');
+
         const sliced = cartItemList.slice();
-        const changedCartItemList = changeCartQuantity(sliced, menuDetailId, quantity);
-        console.log(changedCartItemList, 'changedCartItemList');
+        const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
+
         reorderCartList(changedCartItemList);
       },
       onError: () => {
@@ -353,19 +353,27 @@ const CartPage = () => {
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
 
-  const changeCartQuantity = (list: IGetCart[], menuDetailId: number, quantity: number) => {
-    // 회월일 때
-    const changedList = [];
-    cartItemList.forEach((details) => {
-      const changed = details.menuDetails.map((detail) => {
-        if (detail.id === menuDetailId) {
-          return { ...detail, quantity };
-        } else {
-          return detail;
-        }
-      });
-    });
-  };
+  // const changeCartQuantity = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+  //   // 회월일 때
+  //   const changedCartItemList = [];
+  //   let menuId: number;
+  //   cartItemList.forEach((item) => {
+  //     const changed = item.menuDetails.map((detail) => {
+  //       if (detail.id === menuDetailId) {
+  //         menuId = item.id!;
+  //         return { ...detail, quantity };
+  //       } else {
+  //         return detail;
+  //       }
+  //     });
+  //     if (item.menuId === menuId) {
+  //       const found = { ...item, menuDetails: changed };
+  //       changedCartItemList.push(found);
+  //     } else {
+  //       changedCartItemList.push(item);
+  //     }
+  //   });
+  // };
 
   const reorderLikeMenus = (menus: IMenus[]) => {
     let copiedMenus = menus.slice();
@@ -377,6 +385,7 @@ const CartPage = () => {
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
 
     setCheckedMenus(updatedQuantityCart);
+    console.log(data, '----data----');
     setCartItemList(data);
   };
 
@@ -539,7 +548,6 @@ const CartPage = () => {
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
-          /* TODO: 비회원일 때 선택옵션 끼고 테스트 해봐야함 */
           if (!me) {
             const menuDetailIds = selectedMenuDetails.map((ids) => ids.menuDetailId);
             let filtered = cartItemList.map((item) => {
@@ -614,11 +622,12 @@ const CartPage = () => {
   const changedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
     // 비회원일때
     let changedCartItemList: any = [];
+
     list.forEach((item) => {
       let menuId;
       const changed = item.menuDetails.map((detail) => {
-        if (detail.menuDetailId === menuDetailId) {
-          menuId = detail.menuId!;
+        if (detail.menuDetailId ?? detail.id === menuDetailId) {
+          menuId = item.menuId;
           return { ...detail, quantity };
         } else {
           return detail;
