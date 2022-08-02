@@ -113,13 +113,18 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
     if(type === 'OWNER' && (Number(loginUserId) !== userId)) {
       return;
     }
-      router.push(`/mypage/spot-status/detail/${id}`);
+      router.push({
+        pathname: `/mypage/spot-status/detail/${id}`,
+        query: {
+          type: type,
+        }
+      });
   };
 
   const goToSpotShare = (id: number) => {
-    const currentUrl = window.location.href;
+    const currentUrl = window.location.origin;
     const trialSpotId = id;
-    const spotLink = `${currentUrl}/open?trialId=${trialSpotId}`;
+    const spotLink = `${currentUrl}/spot/open?trialId=${trialSpotId}`;
     if (isMobile) {
       if (navigator.share) {
         navigator
