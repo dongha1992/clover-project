@@ -15,7 +15,7 @@ import subsMainBanner from '@public/images/subsMainBanner.svg';
 import dayjs from 'dayjs';
 import { parcelDeliveryCompledN, spotDeliveryCompledN, todayN } from '@utils/common';
 import Lottie from 'react-lottie';
-import test from '@public/images/test.json';
+import test from '@public/images/test1.json';
 import { useEffect, useState } from 'react';
 
 const SubscriptiopPage = () => {
