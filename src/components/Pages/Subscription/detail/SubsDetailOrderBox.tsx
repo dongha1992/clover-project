@@ -145,9 +145,9 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
         <MenuPriceBox
           menuPrice={priceInfo.menuPrice}
           menuDiscount={priceInfo.menuDiscount}
-          eventDiscount={0}
           menuOption1={priceInfo.option1}
           menuOption2={priceInfo.option2}
+          eventDiscount={0}
           deliveryPrice={priceInfo.deliveryPrice}
           deliveryType={item.delivery}
           disposable={true}

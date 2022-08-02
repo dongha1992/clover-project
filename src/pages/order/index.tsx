@@ -13,7 +13,7 @@ import {
   FlexColCenter,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
-
+import Script from 'next/script';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
@@ -111,7 +111,7 @@ const OrderPage = () => {
   const token = getCookie({ name: 'acstk' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
-  const { selectedCoupon } = useSelector(couponForm);
+  const { selectedCoupon, prevValue } = useSelector(couponForm);
   const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
@@ -193,7 +193,7 @@ const OrderPage = () => {
         }
       },
       onError: (error: any) => {
-        if (error && error?.code === 5005) {
+        if (error?.code === 5005) {
           dispatch(
             SET_ALERT({
               alertMessage: '잘못된 배송일 입니다.',
@@ -226,7 +226,7 @@ const OrderPage = () => {
         cardId: needCard ? card?.id! : null,
         point: userInputObj?.point,
         payAmount: payAmount - (userInputObj.point + (userInputObj.coupon! || 0)),
-        couponId: selectedCoupon?.id || null,
+        couponId: selectedCoupon?.id! || null,
         deliveryMessage: userInputObj?.deliveryMessage,
         deliveryMessageType: userAccessMethod?.value.toString(),
         receiverName: userInputObj?.receiverName!,
@@ -622,6 +622,7 @@ const OrderPage = () => {
     const isParcel = previewOrder?.order?.delivery === 'PARCEL';
 
     if (isLoading) return;
+
     if (!checkTermList.privacy) {
       dispatch(SET_ALERT({ alertMessage: '개인정보 수집·이용 동의를 체크해주세요.' }));
       return;
@@ -632,18 +633,19 @@ const OrderPage = () => {
     }
 
     if (isMorning) {
-      if (!userInputObj?.deliveryMessage && !userInputObj.deliveryMessageType) {
+      const isFreeAccess = userInputObj?.deliveryMessageType === 'FREE';
+      if (!isFreeAccess && (!userInputObj?.deliveryMessage || !userInputObj.deliveryMessageType)) {
         dispatch(SET_ALERT({ alertMessage: '출입 방법과 메시지를 입력해주세요.' }));
         return;
       }
     }
 
-    if (isParcel) {
-      if (!userInputObj?.deliveryMessage) {
-        dispatch(SET_ALERT({ alertMessage: '출입 메시지를 입력해주세요.' }));
-        return;
-      }
-    }
+    // if (isParcel) {
+    //   if (!userInputObj?.deliveryMessage) {
+    //     dispatch(SET_ALERT({ alertMessage: '출입 메시지를 입력해주세요.' }));
+    //     return;
+    //   }
+    // }
 
     if (userInputObj.receiverName.length === 0 || userInputObj.receiverTel.length === 0) {
       dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));
@@ -784,7 +786,9 @@ const OrderPage = () => {
   }, [previewOrder]);
 
   useEffect(() => {
-    const value = userInputObj.point > 0 ? userInputObj.point - userInputObj?.coupon : 0;
+    const counpon = userInputObj?.coupon ?? 0;
+    const value = userInputObj.point > 0 ? userInputObj.point - counpon : 0;
+    console.log(selectedCoupon, userInputObj.coupon, prevValue, 'userInputObj.point - userInputObj?.coupon');
     setUserInputObj({ ...userInputObj, point: value });
   }, [userInputObj.coupon]);
 
@@ -1300,7 +1304,7 @@ const OrderPage = () => {
           disposable={true}
           menuPrice={menuAmount!}
           menuDiscount={menuDiscount!}
-          // eventDiscount={eventDiscount!}
+          eventDiscount={eventDiscount!}
           menuOption1={options?.option1!}
           menuOption2={options?.option2!}
           deliveryPrice={(deliveryFee - deliveryFeeDiscount)!}

@@ -68,6 +68,7 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
+        queryClient.invalidateQueries(['getLikeMenus', 'SUBSCRIPTION']);
       },
       onMutate: async () => {},
       onError: async (error: any) => {

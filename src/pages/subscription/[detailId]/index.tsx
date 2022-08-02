@@ -286,7 +286,7 @@ const SubsDetailPage = () => {
         disposable={true}
         menuPrice={orderDetail?.menuAmount!}
         menuDiscount={orderDetail?.menuDiscount!}
-        // eventDiscount={orderDetail?.eventDiscount!}
+        eventDiscount={orderDetail?.eventDiscount!}
         menuOption1={optionsPrice.option1}
         menuOption2={optionsPrice.option2}
         deliveryPrice={orderDetail?.deliveryFee! - orderDetail?.deliveryFeeDiscount!}
@@ -296,6 +296,7 @@ const SubsDetailPage = () => {
         deliveryType={orderDetail?.delivery!}
         subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
         grade={me?.grade}
+        coupon={orderDetail?.coupon}
       />
 
       {orderDetail?.subscriptionPeriod === 'UNLIMITED' &&

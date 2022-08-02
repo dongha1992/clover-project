@@ -43,12 +43,14 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
         )}
         {option.isSold && <TextH7B color={theme.greyScale25}>품절</TextH7B>}
       </FlexBetween>
-      <FlexRowStart padding="0 0 4px 0">
-        {/* <TextH7B color={theme.brandColor}>{option.personalMaximum}</TextH7B> */}
-      </FlexRowStart>
+      <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
       <FlexRow>
-        <TextH6B color={!option.isSold ? theme.brandColor : theme.greyScale25}>{discount}%</TextH6B>
-        <TextH6B padding="0 4px">{discountedPrice.toLocaleString()}원</TextH6B>
+        {discount < 0 && (
+          <TextH6B padding="0 0 0 4px" color={!option.isSold ? theme.brandColor : theme.greyScale25}>
+            {discount}%
+          </TextH6B>
+        )}
+        <TextH6B padding="0 4px 0 0">{discountedPrice.toLocaleString()}원</TextH6B>
         <TextH6B color={theme.greyScale25} textDecoration="line-through">
           {price.toLocaleString()}원
         </TextH6B>

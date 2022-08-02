@@ -217,15 +217,15 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
         }
       }
 
-      case isParcel: {
-        const noMsg = !deliveryEditObj.deliveryMessage.length;
-        if (noMsg) {
-          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-          return false;
-        } else {
-          return true;
-        }
-      }
+      // case isParcel: {
+      //   const noMsg = !deliveryEditObj.deliveryMessage.length;
+      //   if (noMsg) {
+      //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
+      //     return false;
+      //   } else {
+      //     return true;
+      //   }
+      // }
 
       default: {
         return true;
@@ -254,6 +254,13 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
 
   const changePickUpPlace = () => {
     refetch();
+  };
+
+  const editAddressHandler = () => {
+    // if (cheekBeforeEdit()) {
+    //   mutationEditAddress();
+    // }
+    mutationEditAddress();
   };
 
   useEffect(() => {
@@ -413,7 +420,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
         </FlexRow>
       </Wrapper>
       <ButtonGroup
-        rightButtonHandler={mutationEditAddress}
+        rightButtonHandler={editAddressHandler}
         leftButtonHandler={removeAddressHandler}
         leftText="삭제하기"
         rightText="수정하기"

@@ -14,6 +14,9 @@ import Image from 'next/image';
 import subsMainBanner from '@public/images/subsMainBanner.svg';
 import dayjs from 'dayjs';
 import { parcelDeliveryCompledN, spotDeliveryCompledN, todayN } from '@utils/common';
+import Lottie from 'react-lottie';
+import test from '@public/images/test1.json';
+import { useEffect, useState } from 'react';
 
 const SubscriptiopPage = () => {
   const { me } = useSelector(userForm);
@@ -85,6 +88,16 @@ const SubscriptiopPage = () => {
       enabled: !!me,
     }
   );
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: test,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  };
+
   const goToSpot = () => {
     router.push('/subscription/products?tab=spot');
   };
@@ -96,9 +109,19 @@ const SubscriptiopPage = () => {
   const goToSubsInformation = () => {
     router.push('/subscription/information');
   };
-
-  if (isMenusLoading && isOrdersLoading) {
-    return <div>...로딩중</div>;
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, []);
+  // isMenusLoading && isOrdersLoading && 수정
+  if (loading) {
+    return (
+      <Loading>
+        <Lottie options={defaultOptions} height={500} width={500} />
+      </Loading>
+    );
   }
 
   return (
@@ -122,6 +145,18 @@ const Container = styled.div`
 const Banner = styled.div`
   background-color: #f2f2f2;
   cursor: pointer;
+`;
+const Loading = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999;
+  background-color: #fff;
 `;
 
 export default SubscriptiopPage;

@@ -27,6 +27,7 @@ import { INIT_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
 import { subscriptionForm } from '@store/subscription';
 import { INIT_ORDER, INIT_CARD } from '@store/order';
+import { INIT_PREV_SELECT_COUPON } from '@store/coupon';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
@@ -111,6 +112,7 @@ const OrderFinishPage = () => {
       dispatch(INIT_ORDER());
       dispatch(INIT_CARD());
       dispatch(INIT_ACCESS_METHOD());
+      dispatch(INIT_PREV_SELECT_COUPON());
       // 장바구니 품절 상품이 있나 확인
       // TODO: 결제 해서 테스트 해봐야함
       // const filteredCartLists: ICartLists[] = cartLists
@@ -125,7 +127,7 @@ const OrderFinishPage = () => {
     if (orderDetail?.type === 'SUBSCRIPTION') {
       router.push(`/subscription/${orderDetail?.id}?returnPath=${encodeURIComponent('/subscription')}`);
     } else {
-      router.push({ pathname: `/mypage/order-detail/${orderId}` });
+      router.push({ pathname: `/mypage/order-detail/${orderId}`, query: { isFinish: 1 } });
     }
   };
 

@@ -17,7 +17,7 @@ export const DELIVERY_FEE_OBJ: Obj = {
     minimum: 10000,
   },
   parcel: {
-    fee: 4000,
+    fee: 3500,
     amountForFree: 35000,
     minimum: 10000,
   },
