@@ -316,10 +316,18 @@ const CartPage = () => {
       // }
 
       const { data } = await patchCartsApi(params);
+      if (data.code === 200) {
+        return params;
+      }
     },
     {
-      onSuccess: async () => {
-        await queryClient.refetchQueries('getCartList');
+      onSuccess: async (params) => {
+        const { menuDetailId, quantity } = params!;
+        console.log(menuDetailId, quantity, 'menuDetailId, quantity');
+        const sliced = cartItemList.slice();
+        const changedCartItemList = changeCartQuantity(sliced, menuDetailId, quantity);
+        console.log(changedCartItemList, 'changedCartItemList');
+        reorderCartList(changedCartItemList);
       },
       onError: () => {
         dispatch(SET_ALERT({ alertMessage: '실패했습니다.' }));
@@ -344,6 +352,20 @@ const CartPage = () => {
 
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
+
+  const changeCartQuantity = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+    // 회월일 때
+    const changedList = [];
+    cartItemList.forEach((details) => {
+      const changed = details.menuDetails.map((detail) => {
+        if (detail.id === menuDetailId) {
+          return { ...detail, quantity };
+        } else {
+          return detail;
+        }
+      });
+    });
+  };
 
   const reorderLikeMenus = (menus: IMenus[]) => {
     let copiedMenus = menus.slice();
@@ -381,7 +403,6 @@ const CartPage = () => {
 
   const selectAllCartItemHandler = () => {
     const canCheckMenus = getCanCheckedMenus(cartItemList);
-    // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
     const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
     const filtered = canCheckMenus.filter(
       (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
@@ -591,6 +612,7 @@ const CartPage = () => {
   };
 
   const changedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+    // 비회원일때
     let changedCartItemList: any = [];
     list.forEach((item) => {
       let menuId;
