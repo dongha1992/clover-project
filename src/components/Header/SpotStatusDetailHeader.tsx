@@ -42,7 +42,7 @@ const SpotStatusDetailHeader = ({}: TProps) => {
 
   const goToShare = () => {
     const currentUrl = window.location.href;
-    const spotLink = `${currentUrl}?join=true&q_trial=true`;
+    const spotLink = `${currentUrl}?q_trial=true`;
     if (isMobile) {
       if (navigator.share) {
         navigator

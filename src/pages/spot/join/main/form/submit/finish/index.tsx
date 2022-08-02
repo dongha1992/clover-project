@@ -21,6 +21,7 @@ const FinishPage = () => {
     router.push({
       pathname: `/mypage/spot-status/detail/${spotRegistrationsPostResult?.id}`,
       query: {
+        type: type,
         q_share: true,
       }
     });
