@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextH6B, TextB2R } from '@components/Shared/Text';
 import { theme, bottomSheetButton, fixedBottom } from '@styles/theme';
-import { COUPON_LIST } from '@constants/menu';
 import CouponItem from './CouponItem';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +18,7 @@ interface IProps {
   coupons?: IPromotion[];
 }
 const CouponSheet = ({ coupons }: IProps) => {
+  const [couponList, setCouponList] = useState<IPromotion[]>(coupons!);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
@@ -33,17 +33,19 @@ const CouponSheet = ({ coupons }: IProps) => {
       };
 
       const { data } = await postPromotionCodeApi(reqBody);
-      return data;
+      if (data.code === 200) {
+        return couponItem;
+      }
     },
     {
       onSuccess: async (data) => {
+        const updated = updateCouponHandler(data?.id!);
+        setCouponList(updated);
         dispatch(
           SET_ALERT({
             alertMessage: '쿠폰을 다운받았습니다.',
           })
         );
-        await queryClient.refetchQueries('getCouponList');
-        await queryClient.refetchQueries('getPromotion');
         dispatch(SET_IS_LOADING(false));
       },
       onError: async (error: any) => {
@@ -66,6 +68,18 @@ const CouponSheet = ({ coupons }: IProps) => {
     }
   );
 
+  useEffect(() => {}, []);
+
+  const updateCouponHandler = (id: number) => {
+    return couponList.map((item) => {
+      if (item.id === id) {
+        return { ...item, participationStatus: 'COMPLETED' };
+      } else {
+        return item;
+      }
+    });
+  };
+
   const goToLogin = () => {
     return dispatch(
       SET_ALERT({
@@ -86,9 +100,10 @@ const CouponSheet = ({ coupons }: IProps) => {
     }
 
     dispatch(SET_IS_LOADING(true));
-    if (coupons?.length! > 0) {
-      for (let i = 0; i < coupons?.length!; i++) {
-        const couponItem = coupons && coupons[i]!;
+    const available = couponList.filter((item) => item.participationStatus === 'POSSIBLE');
+    if (available?.length! > 0) {
+      for (let i = 0; i < available?.length!; i++) {
+        const couponItem = coupons && available[i]!;
 
         const params = {
           code: couponItem?.code!,
@@ -99,9 +114,11 @@ const CouponSheet = ({ coupons }: IProps) => {
           const { data } = await postPromotionCodeApi(params);
           if (data.code === 200) {
             aleadyDownloadedCount++;
+            const updated = updateCouponHandler(couponItem?.id!);
+            setCouponList(updated);
           }
 
-          if (i + 1 === coupons?.length!) {
+          if (i + 1 === available?.length!) {
             if (aleadyDownloadedCount > 0) {
               dispatch(SET_ALERT({ alertMessage: '모든 쿠폰을 다운받았습니다.' }));
             } else {
@@ -116,6 +133,8 @@ const CouponSheet = ({ coupons }: IProps) => {
           dispatch(SET_ALERT({ alertMessage }));
         }
       }
+    } else {
+      dispatch(SET_ALERT({ alertMessage: '다운 가능한 쿠폰이 없습니다.' }));
     }
 
     dispatch(SET_IS_LOADING(false));
@@ -144,12 +163,14 @@ const CouponSheet = ({ coupons }: IProps) => {
         <InfoWrapper>
           <TextB3R color={theme.greyScale65}>{'마이페이지>쿠폰함으로 저장돼요!'}</TextB3R>
           <TextH6B textDecoration="underLine" color={theme.greyScale65} onClick={downloadAllCoupon} pointer>
-            {coupons?.length! > 0 ? '전체 다운받기' : ''}
+            {couponList?.length! > 0 ? '전체 다운받기' : ''}
           </TextH6B>
         </InfoWrapper>
         <CouponListWrapper>
-          {coupons?.length! > 0 ? (
-            coupons?.map((coupon, index) => <CouponItem coupon={coupon} key={index} onClick={downloadCouponHandler} />)
+          {couponList?.length! > 0 ? (
+            couponList?.map((coupon, index) => (
+              <CouponItem coupon={coupon} key={index} onClick={downloadCouponHandler} />
+            ))
           ) : (
             <TextB2R>다운로드 가능한 쿠폰이 없습니다.</TextB2R>
           )}

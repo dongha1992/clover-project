@@ -6,7 +6,7 @@ import { Button } from '@components/Shared/Button';
 import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
 import { useRouter } from 'next/router';
-import { couponForm, INIT_COUPON, SET_USER_SELECT_COUPON } from '@store/coupon';
+import { couponForm, INIT_COUPON, SET_USER_SELECT_COUPON, SET_PREVIOUS_SELECT_COUPON } from '@store/coupon';
 import { useDispatch, useSelector } from 'react-redux';
 import { ICoupon } from '@model/index';
 import { useMutation, useQueryClient } from 'react-query';
