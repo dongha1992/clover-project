@@ -115,7 +115,7 @@ const SubscriptiopPage = () => {
       setLoading(false);
     }, 500);
   }, []);
-  // isMenusLoading && isOrdersLoading &&
+  // isMenusLoading && isOrdersLoading && 수정
   if (loading) {
     return (
       <Loading>
