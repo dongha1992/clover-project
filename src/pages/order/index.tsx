@@ -349,10 +349,6 @@ const OrderPage = () => {
       uncommaValue = limitPoint;
     }
 
-    // if (uncommaValue < 0) {
-    //   uncommaValue = 0;
-    // }
-
     setUserInputObj({ ...userInputObj, point: uncommaValue });
   };
 
@@ -788,11 +784,12 @@ const OrderPage = () => {
   useEffect(() => {
     const counpon = userInputObj?.coupon ?? 0;
     const value = userInputObj.point > 0 ? userInputObj.point - counpon : 0;
-    console.log(selectedCoupon, userInputObj.coupon, prevValue, 'userInputObj.point - userInputObj?.coupon');
+    console.log(selectedCoupon, userInputObj.coupon, prevValue, 'selectedCoupon, userInputObj.coupon');
     setUserInputObj({ ...userInputObj, point: value });
   }, [userInputObj.coupon]);
 
   useEffect(() => {
+    console.log(selectedCoupon, userInputObj.coupon, prevValue, 'selectedCoupon,userInputObj.coupon');
     setUserInputObj({ ...userInputObj, coupon: selectedCoupon?.value! });
   }, [selectedCoupon]);
 

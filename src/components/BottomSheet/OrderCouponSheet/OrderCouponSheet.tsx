@@ -23,7 +23,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (selectedCoupon) setUseSelectedCoupon(selectedCoupon);
+    dispatch(INIT_COUPON());
   }, []);
 
   const promotionCodeRef = useRef<HTMLInputElement>(null);
@@ -32,19 +32,11 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
 
   const goToOrder = () => {
     dispatch(INIT_BOTTOM_SHEET());
-    if (useSelectedCoupon === selectedCoupon) {
-      dispatch(INIT_COUPON());
-    } else {
-      dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
-    }
+    dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
   };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
-    if (useSelectedCoupon === selectedCoupon) {
-      setUseSelectedCoupon(null);
-    } else {
-      setUseSelectedCoupon(coupon);
-    }
+    setUseSelectedCoupon(coupon);
   };
 
   const registerPromotionCode = () => {};
