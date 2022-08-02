@@ -66,13 +66,7 @@ const SpotSearchKakaoMap = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
-  // window 글로벌로 선언된 함수들 정리할 필요가 있다. 
-  // 홈으로 가서도 저 함수들이 남아있을수있어서 메모리 누수가 있을 가능성 있음
   useEffect(() => {
-    // script 돔을 들어올떄마다 추가됨
-    // 돔을 여기서 관리하지 말자
-
-    // 하나의 컴포넌트로 해야할 필요성이 있다. 
     onLoadKakaoMap();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotList, currentSlickIdx]);
