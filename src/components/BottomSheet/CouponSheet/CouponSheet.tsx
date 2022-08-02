@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB3R, TextH6B, TextB2R } from '@components/Shared/Text';
 import { theme, bottomSheetButton, fixedBottom } from '@styles/theme';
@@ -14,12 +14,13 @@ import { postPromotionCodeApi } from '@api/promotion';
 import { useMutation, useQueryClient } from 'react-query';
 import { SET_IS_LOADING } from '@store/common';
 import { userForm } from '@store/user';
+import { dateN } from '@utils/common';
 
 interface IProps {
   coupons?: IPromotion[];
 }
 const CouponSheet = ({ coupons }: IProps) => {
-  console.log(coupons, 'coupons');
+  const [couponList, setCouponList] = useState<IPromotion[]>(coupons!);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
@@ -34,17 +35,18 @@ const CouponSheet = ({ coupons }: IProps) => {
       };
 
       const { data } = await postPromotionCodeApi(reqBody);
-      return data;
+      if (data.code === 200) {
+        return couponItem;
+      }
     },
     {
       onSuccess: async (data) => {
+        const updated = updateCouponHandler(data.id);
         dispatch(
           SET_ALERT({
             alertMessage: '쿠폰을 다운받았습니다.',
           })
         );
-        // await queryClient.refetchQueries('getCouponList');
-        await queryClient.refetchQueries('getPromotion');
         dispatch(SET_IS_LOADING(false));
       },
       onError: async (error: any) => {
@@ -66,6 +68,10 @@ const CouponSheet = ({ coupons }: IProps) => {
       },
     }
   );
+
+  const updateCouponHandler = (id) => {
+    // const update =
+  };
 
   const goToLogin = () => {
     return dispatch(
@@ -145,12 +151,14 @@ const CouponSheet = ({ coupons }: IProps) => {
         <InfoWrapper>
           <TextB3R color={theme.greyScale65}>{'마이페이지>쿠폰함으로 저장돼요!'}</TextB3R>
           <TextH6B textDecoration="underLine" color={theme.greyScale65} onClick={downloadAllCoupon} pointer>
-            {coupons?.length! > 0 ? '전체 다운받기' : ''}
+            {couponList?.length! > 0 ? '전체 다운받기' : ''}
           </TextH6B>
         </InfoWrapper>
         <CouponListWrapper>
-          {coupons?.length! > 0 ? (
-            coupons?.map((coupon, index) => <CouponItem coupon={coupon} key={index} onClick={downloadCouponHandler} />)
+          {couponList?.length! > 0 ? (
+            couponList?.map((coupon, index) => (
+              <CouponItem coupon={coupon} key={index} onClick={downloadCouponHandler} />
+            ))
           ) : (
             <TextB2R>다운로드 가능한 쿠폰이 없습니다.</TextB2R>
           )}

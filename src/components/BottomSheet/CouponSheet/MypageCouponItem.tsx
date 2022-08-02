@@ -23,25 +23,47 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
 
   const dDay = now.diff(dayjs(coupon.expiredDate), 'day');
 
+  const isMoreThenOneMenu = coupon?.descriptions?.join().includes('특정 상품');
+  const tagetIndex = coupon?.descriptions?.findIndex((item) => item.includes('특정 상품'));
+  const canNotUse = !coupon.canUse;
+  const tagColorSet = canNotUse ? theme.greyScale6 : theme.brandColor;
+  const priceColorSet = canNotUse ? theme.greyScale25 : theme.brandColor;
+  const tagNameColorSet = canNotUse ? theme.greyScale45 : theme.brandColor;
+  const nameColorSet = canNotUse ? theme.greyScale25 : theme.black;
+  const desColorSet = canNotUse ? theme.systemRed : theme.black;
   return (
-    <Container isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
+    <Container isDownload={canNotUse} isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">
-            <TextH4B color={theme.brandColor}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH4B>
-            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+            <TextH4B color={priceColorSet}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH4B>
+            <Tag backgroundColor={tagColorSet} color={tagNameColorSet}>
               D-{dDay}
             </Tag>
           </FlexBetween>
-          <TextB2R18>{coupon.name}</TextB2R18>
+          <TextB2R18 color={nameColorSet}>{coupon.name}</TextB2R18>
           <FlexCol padding="8px 0 0 0">
             {coupon.descriptions.map((description, index) => {
+              if (index === tagetIndex + 1 && !isShow) {
+                return;
+              }
               return (
-                <TextB4R color={theme.greyScale65} key={index}>
+                <TextB4R color={desColorSet} key={index}>
                   {description}
                 </TextB4R>
               );
             })}
+            {isMoreThenOneMenu && (
+              <TextH7B
+                textDecoration="underline"
+                onClick={() => setIsShow(!isShow)}
+                color={theme.greyScale65}
+                pointer
+                padding="2px 0 8px 0"
+              >
+                {isShow ? '접기' : '더보기'}
+              </TextH7B>
+            )}
           </FlexCol>
           <FlexRow margin="8px 0 0 0">
             {coupon.isApp && (
@@ -51,27 +73,6 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
             )}
             <TextB4R color={theme.brandColor}>{expiredDate} 까지</TextB4R>
           </FlexRow>
-
-          {/* {isShow &&
-            coupon.canUseMenu.map((menu: any, index: number) => {
-              return (
-                <FlexRow key={index}>
-                  <Dot />
-                  <TextB4R color={theme.greyScale65}>{menu}</TextB4R>
-                </FlexRow>
-              );
-            })}
-          {isMoreThenOneMenu && (
-            <TextH7B
-              textDecoration="underline"
-              onClick={() => setIsShow(!isShow)}
-              color={theme.greyScale65}
-              pointer
-              padding="4px 0 0 0"
-            >
-              {isShow ? '접기' : '더보기'}
-            </TextH7B>
-          )} */}
         </Content>
       </Wrapper>
     </Container>
@@ -79,7 +80,9 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
 };
 
 const Container = styled.div<{ isDownload?: boolean; isSelected?: boolean }>`
-  border: 1px solid ${({ isSelected }) => (isSelected ? theme.brandColor : theme.brandColor5)};
+  border: 1px solid
+    ${({ isSelected, isDownload }) =>
+      isDownload ? theme.greyScale15 : isSelected ? theme.brandColor : theme.brandColor5};
   box-sizing: border-box;
   border-radius: 8px;
   margin-bottom: 8px;

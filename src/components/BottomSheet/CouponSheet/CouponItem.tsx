@@ -5,8 +5,6 @@ import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { FlexRow } from '@styles/theme';
-import dayjs from 'dayjs';
-import { Tag } from '@components/Shared/Tag';
 import { getCustomDate } from '@utils/destination';
 import { commonSelector } from '@store/common';
 import { useSelector } from 'react-redux';
