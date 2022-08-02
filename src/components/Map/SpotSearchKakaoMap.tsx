@@ -66,15 +66,14 @@ const SpotSearchKakaoMap = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
+  // window 글로벌로 선언된 함수들 정리할 필요가 있다. 
+  // 홈으로 가서도 저 함수들이 남아있을수있어서 메모리 누수가 있을 가능성 있음
   useEffect(() => {
-    const mapScript = document.createElement("script");
-    mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
-    document.head.appendChild(mapScript);
+    // script 돔을 들어올떄마다 추가됨
+    // 돔을 여기서 관리하지 말자
 
-    mapScript.addEventListener("load", onLoadKakaoMap);
-    return () => mapScript.removeEventListener("load", onLoadKakaoMap);
-    
+    // 하나의 컴포넌트로 해야할 필요성이 있다. 
+    onLoadKakaoMap();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotList, currentSlickIdx]);
     
@@ -197,13 +196,13 @@ const SpotSearchKakaoMap = ({
         //ic_group_pin.png // 클러스터링 마커 
         let selectedMarker: any = null;
 
-      //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
-      //   const result = filterResult?.reduce((acc: any, cur: any) => {
-      //     acc[cur.location.address] = (acc[cur.location.address] || 0) + 1;
-      //     return acc;
-      //   }, {});
+        //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
+        //   const result = filterResult?.reduce((acc: any, cur: any) => {
+        //     acc[cur.location.address] = (acc[cur.location.address] || 0) + 1;
+        //     return acc;
+        //   }, {});
 
-      // console.log('result', result);
+        // console.log('result', result);
 
         for (let i = 0; i < spotList.length; i++) {
           displayMarker(spotList[i], i);
