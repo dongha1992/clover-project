@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
-import { textH5 } from '@styles/theme';
+import { TextH5B } from '@components/Shared/Text';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
 import router from 'next/router';
@@ -61,12 +61,12 @@ const SpotHeader = () => {
   return (
     <Container>
       <Wrapper>
-        <Left>
+        <Left onClick={goToLocation}>
           <SVGIcon name="location" />
           <AddressWrapper>
-            <div onClick={goToLocation}>
+            <TextH5B>
               {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
-            </div>
+            </TextH5B>
             {distance > 3 && <Tooltip message="현재 위치가 맞나요?" width="141px" left="-5px" top="29px" />}
           </AddressWrapper>
         </Left>
@@ -112,7 +112,6 @@ const Wrapper = styled.div`
 `;
 
 const AddressWrapper = styled.div`
-  ${textH5}
   padding-left: 8px;
 `;
 
