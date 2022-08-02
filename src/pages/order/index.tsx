@@ -634,7 +634,6 @@ const OrderPage = () => {
 
     if (isMorning) {
       const isFreeAccess = userInputObj?.deliveryMessageType === 'FREE';
-
       if (!isFreeAccess && (!userInputObj?.deliveryMessage || !userInputObj.deliveryMessageType)) {
         dispatch(SET_ALERT({ alertMessage: '출입 방법과 메시지를 입력해주세요.' }));
         return;
