@@ -138,6 +138,7 @@ const OrderCancelPage = ({ orderId }: IProps) => {
               <TextH5B padding="2px 0 0 4px">{deliverAt} 도착예정</TextH5B>
             </FlexRow>
             <TextH6B
+              pointer
               textDecoration="underline"
               color="#757575"
               onClick={() =>

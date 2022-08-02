@@ -49,7 +49,7 @@ const OrderDetailPage = () => {
   const queryClient = useQueryClient();
 
   const { data: orderDetail, isLoading } = useQuery(
-    ['getOrderDetail', orderId],
+    ['getOrderDetail'],
     async () => {
       const { data } = await getOrderDetailApi(orderId!);
       return data?.data;

@@ -316,10 +316,18 @@ const CartPage = () => {
       // }
 
       const { data } = await patchCartsApi(params);
+      if (data.code === 200) {
+        return params;
+      }
     },
     {
-      onSuccess: async () => {
-        await queryClient.refetchQueries('getCartList');
+      onSuccess: async (params) => {
+        const { menuDetailId, quantity } = params!;
+
+        const sliced = cartItemList.slice();
+        const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
+
+        reorderCartList(changedCartItemList);
       },
       onError: () => {
         dispatch(SET_ALERT({ alertMessage: '실패했습니다.' }));
@@ -345,6 +353,28 @@ const CartPage = () => {
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
 
+  // const changeCartQuantity = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+  //   // 회월일 때
+  //   const changedCartItemList = [];
+  //   let menuId: number;
+  //   cartItemList.forEach((item) => {
+  //     const changed = item.menuDetails.map((detail) => {
+  //       if (detail.id === menuDetailId) {
+  //         menuId = item.id!;
+  //         return { ...detail, quantity };
+  //       } else {
+  //         return detail;
+  //       }
+  //     });
+  //     if (item.menuId === menuId) {
+  //       const found = { ...item, menuDetails: changed };
+  //       changedCartItemList.push(found);
+  //     } else {
+  //       changedCartItemList.push(item);
+  //     }
+  //   });
+  // };
+
   const reorderLikeMenus = (menus: IMenus[]) => {
     let copiedMenus = menus.slice();
     return copiedMenus.filter((menu, index) => !menu.isSold && index < 10);
@@ -355,6 +385,7 @@ const CartPage = () => {
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
 
     setCheckedMenus(updatedQuantityCart);
+    console.log(data, '----data----');
     setCartItemList(data);
   };
 
@@ -381,7 +412,6 @@ const CartPage = () => {
 
   const selectAllCartItemHandler = () => {
     const canCheckMenus = getCanCheckedMenus(cartItemList);
-    // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
     const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
     const filtered = canCheckMenus.filter(
       (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
@@ -518,7 +548,6 @@ const CartPage = () => {
         closeBtnText: '취소',
         submitBtnText: '확인',
         onSubmit: () => {
-          /* TODO: 비회원일 때 선택옵션 끼고 테스트 해봐야함 */
           if (!me) {
             const menuDetailIds = selectedMenuDetails.map((ids) => ids.menuDetailId);
             let filtered = cartItemList.map((item) => {
@@ -591,12 +620,14 @@ const CartPage = () => {
   };
 
   const changedQuantityHandler = (list: IGetCart[], menuDetailId: number, quantity: number) => {
+    // 비회원일때
     let changedCartItemList: any = [];
+
     list.forEach((item) => {
       let menuId;
       const changed = item.menuDetails.map((detail) => {
-        if (detail.menuDetailId === menuDetailId) {
-          menuId = detail.menuId!;
+        if (detail.menuDetailId ?? detail.id === menuDetailId) {
+          menuId = item.menuId;
           return { ...detail, quantity };
         } else {
           return detail;
