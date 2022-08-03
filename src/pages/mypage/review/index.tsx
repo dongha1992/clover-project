@@ -3,18 +3,16 @@ import styled, { css } from 'styled-components';
 import { fixedTab, homePadding, textBody3, theme } from '@styles/theme';
 import { TabList } from '@components/Shared/TabList';
 import { TextB2R } from '@components/Shared/Text';
-import BorderLine from '@components/Shared/BorderLine';
 import { WillWriteReviewItem, ReviewInfo, CompleteReviewItem } from '@components/Pages/Mypage/Review';
-import { breakpoints } from '@utils/common/getMediaQuery';
-import { useQuery } from 'react-query';
-import { getCompleteReviews, getWillWriteReviews } from '@api/menu';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { getCompleteReviews, getWillWriteReviews, deleteReviewApi } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';
 import { useDispatch } from 'react-redux';
-import { SET_IMAGE_VIEWER, commonSelector } from '@store/common';
-import { useSelector } from 'react-redux';
+import { SET_IMAGE_VIEWER } from '@store/common';
 import useScrollCheck from '@hooks/useScrollCheck';
 import { SET_MENU_IMAGE } from '@store/review';
 import { useRouter } from 'next/router';
+import { SET_ALERT } from '@store/alert';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -28,6 +26,7 @@ const ReviewPage = () => {
   const dispatch = useDispatch();
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // const { isScroll } = useSelector(commonSelector);
   const isScroll = useScrollCheck();
@@ -67,6 +66,20 @@ const ReviewPage = () => {
       refetchOnWindowFocus: false,
     }
   );
+
+  const { mutateAsync: mutateDeleteMenuReview } = useMutation(
+    async (id: number) => {
+      const { data } = await deleteReviewApi({ id });
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getCompleteWriteReview');
+      },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+    }
+  );
   useEffect(() => {
     const offsetTop = ref?.current?.offsetTop! - 70;
     window.scrollTo({
@@ -97,6 +110,17 @@ const ReviewPage = () => {
   const clickImgViewHandler = (images: string[], index: number) => {
     const payload = { images, index };
     dispatch(SET_IMAGE_VIEWER(payload));
+  };
+
+  const deleteReviewHandler = (id: number) => {
+    dispatch(
+      SET_ALERT({
+        alertMessage: `삭제 후 재작성은 불가합니다. \n작성한 후기를 삭제하시겠어요?`,
+        submitBtnText: '확인',
+        closeBtnText: '취소',
+        onSubmit: () => mutateDeleteMenuReview(id),
+      })
+    );
   };
 
   const countObj = {
@@ -147,6 +171,7 @@ const ReviewPage = () => {
                   review={review}
                   clickImgViewHandler={clickImgViewHandler}
                   goToReviewDetail={goToReviewDetail}
+                  deleteReviewHandler={deleteReviewHandler}
                 />
               );
             })}

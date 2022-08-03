@@ -2050,6 +2050,7 @@ export interface ICompletionReviews {
   menuDetailId?: number;
   orderDeliveryId: number;
   displayMenuName?: string;
+  editable: boolean;
 }
 
 export interface ICompletionReviewsResponse {

@@ -237,7 +237,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   const checkBeforeEdit = (): boolean => {
     const noAccessMethod = !deliveryEditObj.deliveryMessageType;
     const noMsg = !deliveryEditObj.deliveryMessage.length;
-    const isFreeAccess = deliveryEditObj.deliveryMessageType === 'FREE';
+    const isFreeAccess =
+      deliveryEditObj.deliveryMessageType === 'FREE' ||
+      deliveryEditObj.deliveryMessageType === 'DELIVERY_SECURITY_OFFICE';
 
     switch (true) {
       case isMorning: {
