@@ -385,7 +385,6 @@ const CartPage = () => {
     const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
 
     setCheckedMenus(updatedQuantityCart);
-    console.log(data, '----data----');
     setCartItemList(data);
   };
 

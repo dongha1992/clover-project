@@ -2260,6 +2260,7 @@ export interface ICoupon {
   name: string;
   value: number;
   canUse: boolean;
+  usedValue: number;
 }
 
 export interface ICouponResponse {
