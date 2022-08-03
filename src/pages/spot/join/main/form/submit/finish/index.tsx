@@ -18,7 +18,13 @@ const FinishPage = () => {
   };
 
   const goToSpotStatusDetail = () => {
-    router.push(`/mypage/spot-status/detail/${spotRegistrationsPostResult?.id}`);
+    router.push({
+      pathname: `/mypage/spot-status/detail/${spotRegistrationsPostResult?.id}`,
+      query: {
+        type: type,
+        q_share: true,
+      }
+    });
   };
 
   const msgMapper = () => {

@@ -13,6 +13,9 @@ import { useRouter } from 'next/router';
 import { SET_SPOT_INFO } from '@store/spot';
 import router from 'next/router';
 import { userForm } from '@store/user';
+import { commonSelector } from '@store/common';
+import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 
 interface IProps {
   item: IGetRegistrationStatus;
@@ -22,6 +25,7 @@ interface IProps {
 const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const routers = useRouter();
+  const { isMobile } = useSelector(commonSelector);
   const { me } = useSelector(userForm);
 
   const loginUserId = me?.id!;
@@ -109,8 +113,42 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
     if(type === 'OWNER' && (Number(loginUserId) !== userId)) {
       return;
     }
-      router.push(`/mypage/spot-status/detail/${id}`);
+      router.push({
+        pathname: `/mypage/spot-status/detail/${id}`,
+        query: {
+          type: type,
+        }
+      });
   };
+
+  const goToSpotShare = (id: number) => {
+    const currentUrl = window.location.origin;
+    const trialSpotId = id;
+    const spotLink = `${currentUrl}/spot/open?trialId=${trialSpotId}`;
+    if (isMobile) {
+      if (navigator.share) {
+        navigator
+          .share({
+            title: '프코스팟 신청 공유 링크',
+            url: spotLink,
+          })
+          .then(() => {
+            alert('공유가 완료되었습니다.');
+          })
+          .catch(console.error);
+      } else {
+        return 'null';
+      };
+    } else {
+      dispatch(INIT_BOTTOM_SHEET());
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <ShareSheet spotLink={spotLink} />,
+        })
+      );
+    };
+  };
+
 
   return (
     <Container>
@@ -147,7 +185,7 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
           </FlexStart>
         }
         {item?.type === 'PRIVATE' && item?.step === 'TRIAL' && !item?.rejected && !item?.canRetrial && (Number(loginUserId) === item.userId) && (
-          <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
+          <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0" onClick={() => goToSpotShare(item?.id!)}>
             오픈 참여 공유하고 포인트 받기
           </Button>
         )}

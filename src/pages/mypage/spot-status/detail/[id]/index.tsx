@@ -47,7 +47,7 @@ const PLAN_GUIDE = [
 const SpotStatusDetailPage = (): ReactElement => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { join, recruited } = router.query;
+  const { recruited, type } = router.query;
   const { isLoginSuccess, me } = useSelector(userForm);
   const { userTempDestination } = useSelector(destinationForm);
   const currentRef = useRef<HTMLDivElement>(null);
@@ -67,6 +67,9 @@ const SpotStatusDetailPage = (): ReactElement => {
   }, [router.isReady]);
 
   useEffect(() => {
+    if( type === 'OWNER' && me === null) {
+      router.replace('/spot'); // 우리가게, 외부 링크로 접속시 스팟 메인으로 리다이렉트
+    };
     if (recruited) {
       const message = '참여해 주셔서 감사해요:)';
       showToast({ message });
@@ -154,7 +157,7 @@ const SpotStatusDetailPage = (): ReactElement => {
     currentRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const orderCondition = (): boolean | undefined => {
+  const orderCondition = (): boolean => {
     if (
       statusDetail?.type === 'PRIVATE' &&
       (statusDetail?.step === 'TRIAL' || statusDetail?.step === 'OPEN') &&
@@ -233,7 +236,7 @@ const SpotStatusDetailPage = (): ReactElement => {
   };
 
   return (
-    <Container order={orderCondition()}>
+    <Container order={orderCondition()!}>
       <TopStatusWrapper>
         <Flex>
           <Tag color={theme.brandColor} backgroundColor={theme.brandColor5P} margin="0 4px 0 0">
@@ -262,8 +265,7 @@ const SpotStatusDetailPage = (): ReactElement => {
         </SlideToggle>
       </ToggleWrapper>
       <Row10 />
-      {statusDetail?.type !== 'PUBLIC' && loginUserId === statusDetail?.userId && !join && (
-        // join 링크등 다른 경로로 들어온 경우 ture
+      {statusDetail?.type !== 'PUBLIC' && me !== null && loginUserId === statusDetail?.userId &&(
         <>
           <ToggleWrapper>
             <FlexBetween padding="24px" onClick={toggleUserInfo} pointer>
@@ -329,7 +331,7 @@ const SpotStatusDetailPage = (): ReactElement => {
   );
 };
 
-const Container = styled.div<{ order: boolean | undefined }>`
+const Container = styled.div<{ order: boolean }>`
   ${({ order }) => {
     if (order) {
       return css`

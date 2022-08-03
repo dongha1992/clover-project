@@ -27,15 +27,7 @@ const DefaultKakaoMap = ({
   const [minZoomIn, setMinZoomIn] = useState<boolean>(false);
 
   useEffect(() => {
-    const mapScript = document.createElement("script");
-    mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
-    document.head.appendChild(mapScript);
-
-    mapScript.addEventListener("load", onLoadKakaoMap);
-
-    return () => mapScript.removeEventListener("load", onLoadKakaoMap);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    onLoadKakaoMap();
   }, [centerLat, centerLng]);
 
   const onLoadKakaoMap = () => {
