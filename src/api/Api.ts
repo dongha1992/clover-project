@@ -1,127 +1,109 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { CLOVER_URL } from '@constants/mock';
-import cloneDeep from 'lodash-es/cloneDeep';
-import { getCookie, removeCookie, setCookie } from '@utils/common';
-import { userRefreshToken } from './user';
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import {getCookie, removeCookie, setCookie} from '@utils/common';
+import {userRefreshToken} from './authentication';
 import router from 'next/router';
+import {EventEmitter} from "events";
 
+const refreshTokenEvent = new EventEmitter();
+const TOKEN_REFRESHED_EVENT = 'TOKEN_REFRESHED_EVENT';
 let isTokenRefreshing = false;
-let refreshSubscribers: any[] = [];
-
-const onTokenRefreshed = (accessToken: string) => {
-  console.log('onTokenRefreshed COUNT', refreshSubscribers.length);
-  refreshSubscribers.map((callback) => {
-    callback(accessToken);
-  });
-
-  while (refreshSubscribers.length) {
-    refreshSubscribers.pop();
-  }
-};
-
-const addRefreshSubscriber = (callback: any) => {
-  refreshSubscribers.push(callback);
-};
 
 export const onUnauthorized = () => {
-  router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`);
+    console.log('onUnauthorized');
+    isTokenRefreshing = false;
+    refreshTokenEvent.removeAllListeners(TOKEN_REFRESHED_EVENT);
+    removeCookie({name: 'acstk'});
+    removeCookie({name: 'refreshTokenObj'});
+    //returnPath를 파라미터로 입력받아서 처리해야함.
+    //returnPath=onboarding 이라면 로그인이후 다시 onboarding으로 이동됨.
+    router.push(`/onboarding?returnPath=${encodeURIComponent(location.pathname)}`);
 };
 
 export const Api = axios.create({
-  baseURL: CLOVER_URL,
-  headers: {
-    accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-  responseType: 'json',
+    baseURL: process.env.API_URL
 });
 
-Api.interceptors.response.use(
-  (res: AxiosResponse) => {
-    console.log(res, 'res');
-    return res;
-  },
-  async (error) => {
-    const { config, response } = error;
-    let pendingRequest = config;
-    console.log(config, 'config');
-    console.log(response, 'response');
-    console.log(error, 'error');
+export const retryApiInstance = axios.create({
+    baseURL: process.env.API_URL
+});
 
-    try {
-      if (response?.status === 401) {
-        console.log('status 401');
+const addPendingRequest = (config: AxiosRequestConfig) => {
+    return new Promise((resolve) => {
+        refreshTokenEvent.once(TOKEN_REFRESHED_EVENT, () => {
+            const accessTokenObj = getCookie({name: 'acstk'}) || {};
+            config.headers!.Authorization = `Bearer ${accessTokenObj.accessToken}`;
+            resolve(retryApiInstance(config));
+        })
+    })
+}
 
-        if (response?.data.code !== 2003) {
-          if (!isTokenRefreshing) {
-            console.log('## I response TokenRefreshing');
-            isTokenRefreshing = true;
-            removeCookie({ name: 'acstk' });
-            const refreshTokenObj = getCookie({ name: 'refreshTokenObj' });
-            if (refreshTokenObj) {
-              console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
-              const { data } = await userRefreshToken(refreshTokenObj.refreshToken);
-              console.log(refreshTokenObj.refreshToken);
-              const userTokenObj: any = data.data;
-
-              const accessTokenObj = {
-                accessToken: userTokenObj.accessToken,
-                expiresIn: userTokenObj.expiresIn,
-              };
-
-              // sessionStorage.setItem('accessToken', JSON.stringify(accessTokenObj));
-              setCookie({
-                name: 'acstk',
-                value: JSON.stringify(accessTokenObj),
-                option: {
-                  path: '/',
-                  maxAge: accessTokenObj.expiresIn,
-                },
-              });
-
-              isTokenRefreshing = false;
-              // Api.defaults.headers.common.Authorization = `Bearer ${userTokenObj.accessToken}`;
-              onTokenRefreshed(userTokenObj.accessToken);
-              return Api(pendingRequest);
-            }
-          } else {
-            return new Promise((resolve) => {
-              addRefreshSubscriber((accessToken: string) => {
-                console.log(accessToken, 'accessToken in addRefreshSubscriber');
-                pendingRequest.headers.Authorization = `Bearer ${accessToken}`;
-                return resolve(Api(pendingRequest));
-              });
-            });
-          }
-        }
-      } else {
-        return onError(error as AxiosError);
-      }
-    } catch (error) {
-      return onError(error as AxiosError);
+const refreshToken = async() => {
+    isTokenRefreshing = true;
+    removeCookie({name: 'acstk'});
+    const refreshTokenObj = getCookie({name: 'refreshTokenObj'});
+    if (!refreshTokenObj) {
+        return onUnauthorized();
     }
-  }
+    console.log(refreshTokenObj.refreshToken, 'refreshTokenObj');
+    try {
+        const {data} = await userRefreshToken(refreshTokenObj.refreshToken);
+        console.log(refreshTokenObj.refreshToken);
+        const userTokenObj: any = data.data;
+
+        const accessTokenObj = {
+            accessToken: userTokenObj.accessToken,
+            expiresIn: userTokenObj.expiresIn,
+        };
+        setCookie({
+            name: 'acstk',
+            value: JSON.stringify(accessTokenObj),
+            option: {
+                path: '/',
+                maxAge: accessTokenObj.expiresIn,
+            },
+        });
+        isTokenRefreshing = false;
+        refreshTokenEvent.emit(TOKEN_REFRESHED_EVENT);
+    } catch (e) {
+        console.error(e);
+        onUnauthorized();
+    }
+}
+
+const onError = (error: AxiosError): Promise<never> => {
+    return Promise.reject(error.response?.data);
+};
+
+Api.interceptors.response.use(
+    (res: AxiosResponse) => res,
+    async (error) => {
+        const {config, response} = error;
+        console.log(config, 'config');
+        console.log(response, 'response');
+        console.log(error, 'error');
+
+        try {
+            if (response?.status === 401) {
+                //EXPIRED_TOKEN(2110, "토큰이 만료되었습니다."),
+                //INVALID_TOKEN(2111, "잘못된 토큰입니다."),
+                console.log('status 401');
+                const pendingRequest = addPendingRequest(config);
+                if (!isTokenRefreshing) {
+                    refreshToken();
+                }
+                return pendingRequest;
+            } else {
+                return onError(error as AxiosError);
+            }
+        } catch (e) {
+            return Promise.reject(e);
+        }
+
+    }
 );
 
 Api.interceptors.request.use((req) => {
-  const request = cloneDeep(req);
-  if (request.url === '/user/v1/token/refresh' || request.url === '/user/v1/login') {
-    delete request.headers?.Authorization;
-  }
-
-  // const accessTokenObj = JSON.parse(sessionStorage.getItem('accessToken') ?? '{}') ?? '';
-  const accessTokenObj = getCookie({ name: 'acstk' }) ?? '';
-
-  request.headers = {
-    ...req.headers,
-
-    Authorization: `Bearer ${accessTokenObj.accessToken}`,
-  };
-  console.log(request, 'req');
-  return request;
+    const accessTokenObj = getCookie({name: 'acstk'}) || {};
+    req.headers!.Authorization = `Bearer ${accessTokenObj.accessToken}`;
+    return req;
 });
-
-export const onError = (error: AxiosError): Promise<never> => {
-  const { status } = (error?.response as AxiosResponse) || 500;
-  return Promise.reject(error.response?.data);
-};
