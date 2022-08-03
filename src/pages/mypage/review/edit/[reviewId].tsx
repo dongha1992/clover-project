@@ -11,7 +11,6 @@ import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi, deleteReviewApi } from '@api/menu';
 import { StarRating } from '@components/StarRating';
