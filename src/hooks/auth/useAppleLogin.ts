@@ -1,4 +1,5 @@
-import { getAppleTokenApi, userLoginApi, userProfile } from '@api/user';
+import { getAppleTokenApi, userProfile } from '@api/user';
+import { userLoginApi } from '@api/authentication';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER, SET_USER_AUTH } from '@store/user';
 import router from 'next/router';

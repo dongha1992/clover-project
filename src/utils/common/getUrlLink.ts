@@ -1,6 +1,6 @@
-const getUrlLink = (e: any, cb: any) => {
+const getUrlLink = (e: any, cb: any, spotLink?: string) => {
   e.preventDefault();
-  const url = window.location.href;
+  const url = spotLink ? spotLink : window.location.href;
 
   if (window.navigator.clipboard === undefined) {
     alert('지원하지 않습니다.');
