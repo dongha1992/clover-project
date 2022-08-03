@@ -388,7 +388,7 @@ const DeliverInfoPage = () => {
     }
 
     // 획득 위치 정보만 있음
-    if (locationStatus && !destinationDeliveryType) {
+    if (locationStatus && !destinationDeliveryType && !recentOrderDelivery) {
       switch (true) {
         case locationCanEverything:
           {

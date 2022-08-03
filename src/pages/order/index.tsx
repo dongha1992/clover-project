@@ -444,7 +444,6 @@ const OrderPage = () => {
 
   const getAllOfPointHandler = () => {
     const { point } = previewOrder!;
-
     const { payAmount } = previewOrder?.order!;
 
     const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon || 0);
@@ -683,6 +682,18 @@ const OrderPage = () => {
     }
   };
 
+  const checkCouponHandler = () => {
+    const { payAmount } = previewOrder?.order!;
+    const isFixedCounponValue = selectedCoupon?.criteria === 'FIXED';
+
+    const coupon = selectedCoupon?.usedValue ?? 0;
+    const usePointOverAmount = userInputObj.point === payAmount;
+    const isUsePoint = userInputObj.point > 0;
+
+    const value = isUsePoint && usePointOverAmount ? userInputObj.point - coupon : userInputObj.point;
+    return { value, coupon };
+  };
+
   const paymentHandler = () => {
     const isMorning = previewOrder?.order?.delivery === 'MORNING';
     const isParcel = previewOrder?.order?.delivery === 'PARCEL';
@@ -852,10 +863,12 @@ const OrderPage = () => {
   }, [previewOrder]);
 
   useEffect(() => {
-    const counpon = selectedCoupon?.value ?? 0;
-    const value = userInputObj.point > 0 ? userInputObj.point - counpon : 0;
-    setUserInputObj({ ...userInputObj, coupon: selectedCoupon?.value!, point: value });
-  }, [selectedCoupon]);
+    if (previewOrder) {
+      const { coupon, value } = checkCouponHandler();
+      console.log(coupon, 'coupon');
+      setUserInputObj({ ...userInputObj, coupon, point: value });
+    }
+  }, [selectedCoupon, previewOrder]);
 
   useEffect(() => {
     const { isSelected } = checkForm.samePerson;
