@@ -5,11 +5,18 @@ import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/
 import { theme, FlexBetween, FlexCenter, FlexCol } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
-import { getNewSpots, getSpotEvent, getSpotPopular, getSpotInfo, getSpotRegistrationsRecruiting } from '@api/spot';
+import { 
+  getNewSpots, 
+  getSpotEvent, 
+  getSpotPopular, 
+  getSpotInfo, 
+  getSpotRegistrationsRecruiting, 
+  getSpotsRegistrationStatus 
+} from '@api/spot';
 import { IParamsSpots, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -23,6 +30,7 @@ import { getAddressFromLonLat } from '@api/location';
 import { getComputeDistance } from '@utils/spot';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { Button } from '@components/Shared/Button';
+import { commonSelector } from '@store/common';
 
 const FCO_SPOT_BANNER = [
   {
@@ -50,6 +58,7 @@ const FCO_SPOT_BANNER = [
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { isMobile } = useSelector(commonSelector);
   const { me, isLoginSuccess } = useSelector(userForm);
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
@@ -123,15 +132,7 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const goToShare = (e: any): void => {
-    // dispatch(initBottomSheet());
-    dispatch(
-      SET_BOTTOM_SHEET({
-        content: <ShareSheet />,
-      })
-    );
-  };
-
+  
   const goToSpotReq = (type: string): void => {
     if (isLoginSuccess) { // 로그인 o
       switch (type) {
@@ -216,6 +217,34 @@ const SpotPage = () => {
     });
   };
 
+  const goToSpotShare = () => {
+    const currentUrl = window.location.href;
+    const trialSpotId = info?.trialSpotRegistration?.id;
+    const spotLink = `${currentUrl}/open?trialId=${trialSpotId}`;
+    if (isMobile) {
+      if (navigator.share) {
+        navigator
+          .share({
+            title: '트라이얼 프코스팟 공유 링크',
+            url: spotLink,
+          })
+          .then(() => {
+            alert('공유가 완료되었습니다.');
+          })
+          .catch(console.error);
+      } else {
+        return 'null';
+      };
+    } else {
+      dispatch(INIT_BOTTOM_SHEET());
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <ShareSheet spotLink={spotLink} />,
+        })
+      );
+    };
+  };
+
   const isLoading = isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
 
   if (isLoading) {
@@ -246,7 +275,7 @@ const SpotPage = () => {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
             info?.trialSpotRegistration?.trialUserCount! < 5 && (
               <SwiperSlide className="swiper-slide">
-                <BoxHandlerWrapper onClick={goToShare}>
+                <BoxHandlerWrapper onClick={goToSpotShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
                       {`[${info?.trialSpotRegistration?.placeName}]\n`}
@@ -268,7 +297,7 @@ const SpotPage = () => {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
             info?.trialSpotRegistration?.trialUserCount! >= 5 && (
               <SwiperSlide className="swiper-slide">
-                <BoxHandlerWrapper onClick={goToShare}>
+                <BoxHandlerWrapper onClick={goToSpotShare}>
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>{`[${info?.trialSpotRegistration?.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}</TextH4B>
                     <IconWrapper>

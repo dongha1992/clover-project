@@ -67,14 +67,7 @@ const SpotSearchKakaoMap = ({
   }, []);
   
   useEffect(() => {
-    const mapScript = document.createElement("script");
-    mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false&libraries=services,clusterer`;
-    document.head.appendChild(mapScript);
-
-    mapScript.addEventListener("load", onLoadKakaoMap);
-    return () => mapScript.removeEventListener("load", onLoadKakaoMap);
-    
+    onLoadKakaoMap();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotList, currentSlickIdx]);
     
@@ -197,13 +190,13 @@ const SpotSearchKakaoMap = ({
         //ic_group_pin.png // 클러스터링 마커 
         let selectedMarker: any = null;
 
-      //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
-      //   const result = filterResult?.reduce((acc: any, cur: any) => {
-      //     acc[cur.location.address] = (acc[cur.location.address] || 0) + 1;
-      //     return acc;
-      //   }, {});
+        //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
+        //   const result = filterResult?.reduce((acc: any, cur: any) => {
+        //     acc[cur.location.address] = (acc[cur.location.address] || 0) + 1;
+        //     return acc;
+        //   }, {});
 
-      // console.log('result', result);
+        // console.log('result', result);
 
         for (let i = 0; i < spotList.length; i++) {
           displayMarker(spotList[i], i);

@@ -18,11 +18,15 @@ const SHARE_ICONS = [
   { value: 'urlIcon', name: '링크 복사' },
 ];
 
-const ShareSheet = () => {
+interface IParams {
+  spotLink?: string
+}
+
+const ShareSheet = ({ spotLink }: IParams) => {
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
-    let url = window.location.href;
+    let url = spotLink? spotLink : window.location.href;
     const shareMapper: { [index: string]: () => void } = {
       kakao: () => {
         handleKakaoTalk();
@@ -39,7 +43,7 @@ const ShareSheet = () => {
         window.open(link, 'share', 'width=500, height=500');
       },
       urlIcon: () => {
-        getUrlLink(e, toastHandler);
+        getUrlLink(e, toastHandler, spotLink);
       },
     };
 
