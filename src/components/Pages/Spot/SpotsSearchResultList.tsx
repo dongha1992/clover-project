@@ -30,12 +30,13 @@ interface IProps {
   hasCart?: boolean;
   map?: boolean;
   recommand?: boolean;
+  dragging?: boolean;
 }
 const now = dayjs();
 
 // 스팟 검색 - 검색 결과
 // 추천 스팟, 스팟 검색 결과, 스팟 검색 결과 지도뷰 리스트
-const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): ReactElement => {
+const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const {
@@ -374,7 +375,12 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
     }
   };
 
-  const goToDetail = (id: number | undefined) => {
+  const goToDetail = useCallback((id: number | undefined, e: React.SyntheticEvent) => {
+    if (dragging) {
+      e.stopPropagation();
+      return;
+    };
+
     if (
       orderId &&
       closedDate &&
@@ -417,15 +423,16 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand }: IProps): React
             isSpot: true,
           },
         });
-      }
-    }
-  };
+      };
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dragging]);
 
   return (
     <Container
       map={map}
-      onClick={() => {
-        isSubs && (item.isTrial || isLocker) ? null : goToDetail(item.id);
+      onClick={(e) => {
+        isSubs && (item.isTrial || isLocker) ? null : goToDetail(item.id, e);
       }}
     >
       <FlexColStart>

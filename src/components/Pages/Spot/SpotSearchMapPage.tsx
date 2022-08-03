@@ -27,6 +27,8 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
   const [selectedSpotList, setSelectedSpotList] = useState([]);
   const [selected, setSelected] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [dragging, setDragging] = useState<boolean>(false);
+
   const list = spotSearchList ?? [];
   const searchListLen = list.length;
   
@@ -35,6 +37,29 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
       slideRef.current?.slickGoTo(selectedCarouselIndex);
     }
   }, [selectedCarouselIndex]);
+
+  useEffect(()=> {
+    setTimeout(()=> {
+      setDragging(false);
+    }, 500);
+  }, []);
+
+  const handleBeforeChange = useCallback(({current, next}) => {
+    setCurrentIdx({current: current, next: next}),
+    setDragging(true);
+  }, [setDragging]);
+
+  const handleAfterChange = useCallback((): void => {
+    setDragging(false);
+  }, [setDragging]);
+
+  const selectedCurrentSlickIdx = useCallback((idx: number) => {
+    setSelectedCarouselIndex(idx)
+  }, []);
+
+  const getSpotInfo = (i: any) => {
+    setSelectedSpotList(i);
+  };
 
   const setting = {
     arrows: false,
@@ -45,16 +70,10 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
     infinite: false,
     centerPadding: '30px',
     speed: 700,
+    draggable: true,
+    afterChange: handleAfterChange,
     beforeChange: (current: number, next: number) =>
-    setCurrentIdx({current: current, next: next}),
-  };
-
-  const selectedCurrentSlickIdx = useCallback((idx: number) => {
-    setSelectedCarouselIndex(idx)
-  }, []);
-
-  const getSpotInfo = (i: any) => {
-    setSelectedSpotList(i);
+    handleBeforeChange({current: current, next: next}),
   };
 
   return (
@@ -80,7 +99,7 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
             <SpotListWrapper>
               <SpotListSlider {...setting} ref={slideRef}>
                 {list?.map((item, index) => (
-                  <SpotsSearchResultList map item={item} key={index} />
+                  <SpotsSearchResultList map item={item} key={index} dragging={dragging} />
                 ))}
               </SpotListSlider>
             </SpotListWrapper>
