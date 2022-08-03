@@ -59,6 +59,7 @@ const SpotSearchKakaoMap = ({
   const level = zoom ? zoom : 3;
   const levelControl = spotListAllCheck ? 9 : level;
 
+  
   useEffect(()=> {
     if(spotListAllCheck) {
       setShowInfoWindow(true);
@@ -113,14 +114,22 @@ const SpotSearchKakaoMap = ({
         };
       
         // 현재 위치 에러 팝업창
-        const locationLoadError = (pos: any) => {
-            setSuccessPosition(false);
-            alert('위치 정보를 가져오는데 실패했습니다.');
+        const locationLoadError = (error: any) => {
+          setSuccessPosition(false);
+          console.error(error.message);
+          dispatch(
+            SET_ALERT({
+              alertMessage: '위치 서비스를 사용하려면\n접근 권한을 허용해 주세요.',
+              submitBtnText: '확인',
+            })
+          );  
         };
       
         // 현재 위치 가져오기 btn
         const getCurrentPosBtn = () =>{
+          if(navigator.geolocation){
             navigator.geolocation.getCurrentPosition(locationLoadSuccess,locationLoadError);
+          };
         };
 
         window.getCurrentPosBtn = getCurrentPosBtn;
