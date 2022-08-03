@@ -1,6 +1,4 @@
 import { GetStaticProps, GetStaticPropsContext } from 'next';
-import { AxiosError } from 'axios';
-import { onError } from '@api/Api';
 
 export default function withGetStaticProps(
   getStaticProps: GetStaticProps

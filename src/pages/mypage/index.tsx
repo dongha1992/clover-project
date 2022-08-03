@@ -138,6 +138,7 @@ const MypagePage = () => {
       refetchOnWindowFocus: false,
       enabled: !!me,
       onError: () => {
+        //accessToken 만료로 401 발생시에 refresh토큰이 동작하지 않고 로그인페이지로 이동됨!!!
         router.replace('/onboarding');
       },
     }
