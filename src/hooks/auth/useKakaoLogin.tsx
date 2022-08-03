@@ -1,4 +1,5 @@
-import { userLoginApi, userProfile } from '@api/user';
+import { userProfile } from '@api/user';
+import { userLoginApi } from '@api/authentication';
 import { NAME_REGX } from '@constants/regex';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_LOGIN_TYPE } from '@store/common';

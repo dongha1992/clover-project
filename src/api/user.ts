@@ -21,10 +21,6 @@ import {
   IAppleTokenResponse,
 } from '@model/index';
 
-export const userLoginApi = (data: ILogin): Promise<AxiosResponse<ILoginResponse>> => {
-  return Api.post('/user/v1/login', data);
-};
-
 export const userAuthTel = (data: IAuthTel): Promise<AxiosResponse<IResponse>> => {
   return Api.post('/user/v1/auth/tel', data);
 };
@@ -42,12 +38,6 @@ export const userSignup = (data: ISignupUser): Promise<AxiosResponse<ISignupResp
 
 export const userSecessionApi = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
   return Api.delete('/user/v1/users', { data });
-};
-
-export const userRefreshToken = (refreshToken: string): Promise<AxiosResponse<ILoginResponse>> => {
-  return Api.post('/user/v1/token/refresh', {
-    refreshToken: `Bearer ${refreshToken}`,
-  });
 };
 
 export const userProfile = (): Promise<AxiosResponse<any>> => {
