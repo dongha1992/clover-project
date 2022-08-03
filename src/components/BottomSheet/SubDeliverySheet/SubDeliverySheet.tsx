@@ -52,7 +52,7 @@ const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IPr
     }`;
 
     const isSpot = item.delivery === 'SPOT';
-    console.log(item.location, 'item.location');
+
     return (
       <FlexCol>
         <TextH5B>

@@ -32,7 +32,16 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
   const nameColorSet = canNotUse ? theme.greyScale25 : theme.black;
   const desColorSet = canNotUse ? theme.systemRed : theme.black;
   return (
-    <Container isDownload={canNotUse} isSelected={isSelected} onClick={() => selectCouponHandler(coupon)}>
+    <Container
+      isDownload={canNotUse}
+      isSelected={isSelected}
+      onClick={() => {
+        if (canNotUse) {
+          return;
+        }
+        selectCouponHandler(coupon);
+      }}
+    >
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">

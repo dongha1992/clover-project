@@ -111,7 +111,7 @@ const OrderPage = () => {
   const token = getCookie({ name: 'acstk' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
-  const { selectedCoupon, prevValue } = useSelector(couponForm);
+  const { selectedCoupon } = useSelector(couponForm);
   const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
@@ -206,7 +206,6 @@ const OrderPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      // keepPreviousData: false,
       staleTime: 0,
       cacheTime: 0,
     }
@@ -262,6 +261,30 @@ const OrderPage = () => {
               alertMessage: '잘못된 쿠폰입니다.',
             })
           );
+        } else if (error.code === 5000) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 배송방법 입니다.',
+            })
+          );
+        } else if (error.code === 5001) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 배송상태 입니다.',
+            })
+          );
+        } else if (error.code === 5002) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '[BOX25] 지원되지 않는 작업입니다.',
+            })
+          );
+        } else if (error.code === 5003) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '[코레일] 지원되지 않는 작업입니다.',
+            })
+          );
         } else if (error.code === 5004) {
           dispatch(
             SET_ALERT({
@@ -276,20 +299,67 @@ const OrderPage = () => {
             })
           );
           router.replace('/cart');
-        } else if (error.code === 4351) {
+        } else if (error.code === 5006) {
           dispatch(
             SET_ALERT({
-              alertMessage: '상품 금액이 변경되었습니다. 주문을 다시 시도해주세요.',
+              alertMessage: '잘못된 결제 금액입니다.',
+            })
+          );
+        } else if (error.code === 5007) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '포인트가 부족합니다.',
+            })
+          );
+        } else if (error.code === 5008) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 주문 타입입니다.',
             })
           );
           router.replace('/cart');
-        } else if (error.code === 4352) {
+        } else if (error.code === 5009) {
           dispatch(
             SET_ALERT({
-              alertMessage: '상품 할인에 변동이 있습니다. 주문을 다시 시도해주세요.',
+              alertMessage: '카드를 등록해주세요.',
             })
           );
-          router.replace('/cart');
+        } else if (error.code === 5010) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 주문 포인트입니다.',
+            })
+          );
+        } else if (error.code === 5011) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 주문 상태입니다.',
+            })
+          );
+        } else if (error.code === 5012) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '잘못된 결제 방법입니다.',
+            })
+          );
+        } else if (error.code === 5013) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '함께 배송에 지원되지 않는 작업입니다.',
+            })
+          );
+        } else if (error.code === 5014) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '정기 구독에 지원되지 않는 작업입니다.',
+            })
+          );
+        } else if (error.code === 5015) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '함께 배송 상태가 잘못되었습니다.',
+            })
+          );
         } else if (error.code === 1104) {
           dispatch(
             SET_ALERT({
@@ -349,10 +419,6 @@ const OrderPage = () => {
       uncommaValue = limitPoint;
     }
 
-    // if (uncommaValue < 0) {
-    //   uncommaValue = 0;
-    // }
-
     setUserInputObj({ ...userInputObj, point: uncommaValue });
   };
 
@@ -378,7 +444,6 @@ const OrderPage = () => {
 
   const getAllOfPointHandler = () => {
     const { point } = previewOrder!;
-
     const { payAmount } = previewOrder?.order!;
 
     const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon || 0);
@@ -617,6 +682,18 @@ const OrderPage = () => {
     }
   };
 
+  const checkCouponHandler = () => {
+    const { payAmount } = previewOrder?.order!;
+    const isFixedCounponValue = selectedCoupon?.criteria === 'FIXED';
+
+    const coupon = selectedCoupon?.usedValue ?? 0;
+    const usePointOverAmount = userInputObj.point === payAmount;
+    const isUsePoint = userInputObj.point > 0;
+
+    const value = isUsePoint && usePointOverAmount ? userInputObj.point - coupon : userInputObj.point;
+    return { value, coupon };
+  };
+
   const paymentHandler = () => {
     const isMorning = previewOrder?.order?.delivery === 'MORNING';
     const isParcel = previewOrder?.order?.delivery === 'PARCEL';
@@ -786,15 +863,12 @@ const OrderPage = () => {
   }, [previewOrder]);
 
   useEffect(() => {
-    const counpon = userInputObj?.coupon ?? 0;
-    const value = userInputObj.point > 0 ? userInputObj.point - counpon : 0;
-    console.log(selectedCoupon, userInputObj.coupon, prevValue, 'userInputObj.point - userInputObj?.coupon');
-    setUserInputObj({ ...userInputObj, point: value });
-  }, [userInputObj.coupon]);
-
-  useEffect(() => {
-    setUserInputObj({ ...userInputObj, coupon: selectedCoupon?.value! });
-  }, [selectedCoupon]);
+    if (previewOrder) {
+      const { coupon, value } = checkCouponHandler();
+      console.log(coupon, 'coupon');
+      setUserInputObj({ ...userInputObj, coupon, point: value });
+    }
+  }, [selectedCoupon, previewOrder]);
 
   useEffect(() => {
     const { isSelected } = checkForm.samePerson;

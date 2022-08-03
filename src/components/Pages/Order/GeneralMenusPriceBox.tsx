@@ -33,7 +33,7 @@ const GeneralMenusPriceBox = ({
   grade,
 }: IProps) => {
   const total = payAmount - (userInputObj.point + (userInputObj.coupon! || 0));
-
+  const totalDiscount = menuDiscount + eventDiscount + userInputObj.coupon;
   return (
     <TotalPriceWrapper>
       <FlexBetween>
@@ -43,22 +43,25 @@ const GeneralMenusPriceBox = ({
       <BorderLine height={1} margin="16px 0" />
       <FlexBetween padding="8px 0 0 0">
         <TextH5B>총 할인 금액</TextH5B>
-        <TextB2R>{getFormatPrice(String(menuDiscount))}원</TextB2R>
+        <TextB2R>{getFormatPrice(String(totalDiscount))}원</TextB2R>
       </FlexBetween>
-      <FlexBetween padding="8px 0 0 0">
-        <TextB2R>상품 할인</TextB2R>
-        <TextB2R>{getFormatPrice(String(menuDiscount))}원</TextB2R>
-      </FlexBetween>
+      {menuDiscount > 0 && (
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>상품 할인</TextB2R>
+          <TextB2R>-{getFormatPrice(String(menuDiscount))}원</TextB2R>
+        </FlexBetween>
+      )}
+
       {eventDiscount > 0 && (
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>{getFormatPrice(String(eventDiscount))}원</TextB2R>
+          <TextB2R>-{getFormatPrice(String(eventDiscount))}원</TextB2R>
         </FlexBetween>
       )}
-      {userInputObj.coupon && (
+      {userInputObj.coupon > 0 && (
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>{getFormatPrice(String(userInputObj.coupon))}원</TextB2R>
+          <TextB2R>-{getFormatPrice(String(userInputObj.coupon))}원</TextB2R>
         </FlexBetween>
       )}
       <BorderLine height={1} margin="8px 0" />
