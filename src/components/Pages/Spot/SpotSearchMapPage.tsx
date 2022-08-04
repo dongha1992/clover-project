@@ -26,7 +26,7 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
   const [selectedCarouselIndex, setSelectedCarouselIndex] = useState<number>(0);
   const [selectedSpotList, setSelectedSpotList] = useState([]);
   const [selected, setSelected] = useState<boolean>(false);
-  const [visible, setVisible] = useState<boolean>(false);
+  const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false);
   const [dragging, setDragging] = useState<boolean>(false);
 
   const list = spotSearchList ?? [];
@@ -79,10 +79,10 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
   return (
     <Container>
       <MapWrapper>
-        <SpotSearchKakaoMap spotListAllCheck={spotListAllCheck} spotSearchList={list} zoom={3} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setVisible={setVisible}   />
+        <SpotSearchKakaoMap spotListAllCheck={spotListAllCheck} spotSearchList={list} zoom={3} currentSlickIdx={currentIdx.next} onClickCurrentSlickIdx={selectedCurrentSlickIdx} getSpotInfo={getSpotInfo} setSelected={setSelected} setShowInfoWindow={setShowInfoWindow} showInfoWindow={showInfoWindow}   />
         {
           selected && spotListAllCheck && (
-            !visible &&
+            !showInfoWindow &&
             <SpotListWrapper>
               <SpotListSlider {...setting} ref={slideRef}>
                 {selectedSpotList?.map((item, index) => (
@@ -95,7 +95,7 @@ const SpotSearchMapPage = ({isSearched, spotSearchList, spotListAllCheck}: IProp
         {
           searchListLen! > 0 && !spotListAllCheck && 
           (
-            !visible &&
+            !showInfoWindow &&
             <SpotListWrapper>
               <SpotListSlider {...setting} ref={slideRef}>
                 {list?.map((item, index) => (
