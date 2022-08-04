@@ -61,7 +61,7 @@ const InviteFriendPaage = () => {
     },
     {
       onSuccess: async (data) => {
-        if (sessionStorage.getItem('sessionStorage')) {
+        if (sessionStorage.getItem('recommendCode')) {
           sessionStorage.removeItem('recommendCode');
         }
         dispatch(

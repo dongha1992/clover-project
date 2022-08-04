@@ -15,12 +15,12 @@ const InfoCard = ({ subsCount }: IProps) => {
       {isLoginSuccess &&
         (subsCount === 0 ? (
           <TextH2B>
-            <span>{me?.nickName}</span>님 <br />
+            <span>{me?.nickname}</span>님 <br />
             건강한 식단을 구독해 보세요!
           </TextH2B>
         ) : (
           <TextH2B>
-            <span>{me?.nickName}</span>님 <br />
+            <span>{me?.nickname}</span>님 <br />
             건강한 식단을 구독 중이에요!
           </TextH2B>
         ))}

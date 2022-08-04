@@ -157,6 +157,7 @@ const SignupAuthPage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
+        setAuthCodeConfirm(false);
         resetTimer();
         if (isOverTime) {
           setIsOverTime(false);
@@ -334,6 +335,7 @@ const SignupAuthPage = () => {
               ref={authCodeNumberRef}
               inputType="number"
               eventHandler={authCodeInputHandler}
+              value={signupUser.authCode ? signupUser.authCode : ''}
             />
             <Button
               width="30%"

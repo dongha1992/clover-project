@@ -106,7 +106,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.userNickName}
+                    {review.userNickname}
                   </TextH6B>
                   <TextB3R color={theme.greyScale65}>{dayFormatter}</TextB3R>
                 </UserInfo>

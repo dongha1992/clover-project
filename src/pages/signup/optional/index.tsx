@@ -6,9 +6,11 @@ import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS, INIT_SIGNUP_USER } from '@store/user';
+import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS, INIT_SIGNUP_USER, SET_USER } from '@store/user';
+import { SET_LOGIN_TYPE } from '@store/common';
 import { ISignupUser } from '@model/index';
-import { userSignup } from '@api/user';
+import { userSignup, userProfile } from '@api/user';
+import { userLoginApi } from '@api/authentication';
 import { useMutation } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
@@ -19,8 +21,8 @@ import Validation from '@components/Pages/User/Validation';
 import { NAME_REGX } from '@constants/regex';
 import { getValidBirthday } from '@utils/common';
 import { SET_ALERT } from '@store/alert';
-import { errorMonitor } from 'events';
 
+// TODO: 로그인 핸들러 모듈
 export const GENDER = [
   {
     id: 1,
@@ -63,18 +65,19 @@ const SignupOptionalPage = () => {
   const { mutateAsync: mutateRegisterUser } = useMutation(
     async (reqBody: ISignupUser) => {
       const { data } = await userSignup(reqBody);
-      return data.data;
+      return { data: data.data, reqBody };
     },
     {
-      onSuccess: (data) => {
+      onSuccess: async ({ data, reqBody }) => {
         const userTokenObj = data;
-        console.log('userTokenObj', userTokenObj);
-
+        console.log(data, reqBody, 'data, reqBody');
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(INIT_SIGNUP_USER());
         localStorage.removeItem('appleToken');
-        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
+        if (signupUser.loginType === 'EMAIL') {
+          await signupAfterLoign(reqBody);
+        }
 
         if (window.Kakao) {
           window.Kakao.cleanup();
@@ -85,6 +88,30 @@ const SignupOptionalPage = () => {
       },
     }
   );
+
+  const signupAfterLoign = async (reqBody: ISignupUser) => {
+    const { data } = await userLoginApi({
+      email: reqBody.email,
+      password: reqBody.password,
+      loginType: 'EMAIL',
+    });
+    try {
+      if (data.code === 200) {
+        dispatch(SET_LOGIN_TYPE('EMAIL'));
+        const userInfo = await userProfile().then((res) => {
+          return res?.data;
+        });
+        dispatch(SET_USER(userInfo.data));
+        dispatch(
+          SET_BOTTOM_SHEET({
+            content: <WelcomeSheet recommendCode={recommendCode as string} />,
+          })
+        );
+      }
+    } catch (error: any) {
+      dispatch(SET_ALERT({ alertMessage: error.message }));
+    }
+  };
 
   const checkGenderHandler = (value: string | null) => {
     setChcekGender(value);
@@ -118,7 +145,7 @@ const SignupOptionalPage = () => {
     const optionalForm = {
       birthDate: hasBirthDate ? birthDate : '',
       gender: gender ? gender : '',
-      nickName: nickname ? nickname : signupUser.name,
+      nickname: nickname ? nickname : signupUser.name,
     };
 
     let appleToken = null;
@@ -134,15 +161,6 @@ const SignupOptionalPage = () => {
       })
     );
     mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
-    // try {
-    //   let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
-    //   const { recommendCode } = router.query;
-    //   if (data.code === 200) {
-    //     dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
   };
 
   useEffect(() => {

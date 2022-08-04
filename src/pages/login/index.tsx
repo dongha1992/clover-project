@@ -28,6 +28,8 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const recommendCode = sessionStorage.getItem('recommendCode');
+
   useEffect(() => {
     setReturnPath(router.query.returnPath || '/');
   }, []);
@@ -64,7 +66,6 @@ const LoginPage = () => {
   const finishLogin = async () => {
     if (!isValid) return;
     dispatch(SET_LOGIN_SUCCESS(false));
-    const { recommendCode } = router.query;
 
     if (emailRef.current && passwordRef.current) {
       const email = emailRef.current?.value;
@@ -82,9 +83,7 @@ const LoginPage = () => {
           if (userTokenObj?.tmpPasswordUsed) {
             dispatch(SET_USER_AUTH(userTokenObj));
             dispatch(SET_TEMP_PASSWORD(password));
-            recommendCode
-              ? router.push(`/mypage/profile/password?recommendCode=${recommendCode}`)
-              : router.push('/mypage/profile/password');
+            router.push('/mypage/profile/password');
             return;
           }
           dispatch(SET_USER_AUTH(userTokenObj));
@@ -110,7 +109,7 @@ const LoginPage = () => {
           // router.push('/mypage/profile/dormant');
           switch (true) {
             case hasCode: {
-              router.push(`/mypage/friend?recommendCode=${recommendCode}`);
+              router.push(`/mypage/friend`);
               return;
             }
             default: {

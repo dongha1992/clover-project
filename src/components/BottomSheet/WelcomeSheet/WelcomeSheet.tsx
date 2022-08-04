@@ -79,12 +79,16 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
     },
     {
       onSuccess: async (data) => {
-        return dispatch(
+        if (sessionStorage.getItem('recommendCode')) {
+          sessionStorage.removeItem('recommendCode');
+        }
+        dispatch(
           SET_ALERT({
             alertMessage: '등록을 완료했어요!',
             submitBtnText: '확인',
           })
         );
+        return;
       },
       onError: async (error: any) => {
         let alertMessage = '';
@@ -129,7 +133,7 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
       <Body>
         <FlexCol>
           <TextH2B>
-            <span className="brandColor">{me?.nickName || me?.name}</span>님,
+            <span className="brandColor">{me?.nickname ?? me?.name}</span>님,
           </TextH2B>
           <TextH2B>프레시코드 회원이 되신걸</TextH2B>
           <TextH2B>진심으로 축하드려요!</TextH2B>
