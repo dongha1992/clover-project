@@ -234,7 +234,7 @@ const Container = styled.div``;
 const Wrppaer = styled.div`
   padding: 24px 0;
   border-bottom: 1px solid ${theme.greyScale6};
-  &: last-child {
+  &:last-child {
     border: none;
   }
 `;
