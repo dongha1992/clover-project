@@ -21,13 +21,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { destinationForm } from '@store/destination';
+import { destinationForm, SET_LOCATION } from '@store/destination';
 import { 
   spotSelector,
   SET_SPOT_MAP_SWITCH,
   SET_SPOT_POSITIONS,
 } from '@store/spot';
-import { SET_LOCATION } from '@store/destination';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse, IGetDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
@@ -38,12 +37,6 @@ import TextInput from '@components/Shared/TextInput';
 import useCurrentLocation from '@hooks/useCurrentLocation';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
-
-declare global {
-  interface Window {
-    getCurrentPositionAddress: any;
-  }
-};
 
 const SpotSearchPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -73,7 +66,7 @@ const SpotSearchPage = (): ReactElement => {
   const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   useEffect(()=> {
-    onLoadKakaoMap();
+    onLoadKakaoCurrentPositionAddress();
     dispatch(SET_SPOT_MAP_SWITCH(false));
     // getSpotAllList();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,7 +100,7 @@ const SpotSearchPage = (): ReactElement => {
           longitude: currentLocation.longitude,
         })
       );
-      window.getCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
+      onLoadKakaoCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude)
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
@@ -119,22 +112,19 @@ const SpotSearchPage = (): ReactElement => {
   }, [currentArrowed]);
 
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
-  const onLoadKakaoMap = () => { 
+  const onLoadKakaoCurrentPositionAddress = (currentLat?: number, currentLon?: number) => { 
     try {
       window.kakao.maps.load(() => {
-        const getCurrentPositionAddress = (lat: number,lng: number) => {
-          let geocoder = new window.kakao.maps.services.Geocoder();
-          let coord = new window.kakao.maps.LatLng(lat, lng);
-          let callback = function(result: any, status: any) {
-              if (status === window.kakao.maps.services.Status.OK) {
-                const address = result[0];
-                setIsSearchingPosition(false);
-                setCurrentPositionAddress(address);
-              };
-          };
-          geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+        let geocoder = new window.kakao.maps.services.Geocoder();
+        let coord = new window.kakao.maps.LatLng(currentLat, currentLon);
+        let callback = function(result: any, status: any) {
+            if (status === window.kakao.maps.services.Status.OK) {
+              const address = result[0];
+              setIsSearchingPosition(false);
+              setCurrentPositionAddress(address);
+            };
         };
-        window.getCurrentPositionAddress = getCurrentPositionAddress;
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
       });
     } catch (e) {
       dispatch(
@@ -144,7 +134,7 @@ const SpotSearchPage = (): ReactElement => {
         })
       );  
       console.error(e);
-    }
+    };
   };
 
   // 현 위치로 설정하기 - 폼에 맞게 주소값 세팅 
