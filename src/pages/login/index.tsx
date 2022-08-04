@@ -5,7 +5,7 @@ import { FlexCenter, FlexCol, FlexRow, homePadding, theme } from '@styles/theme'
 import { TextB2R } from '@components/Shared/Text';
 import Checkbox from '@components/Shared/Checkbox';
 import { Button } from '@components/Shared/Button';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import Validation from '@components/Pages/User/Validation';
 import { useSelector, useDispatch } from 'react-redux';
 import { userForm, SET_USER_AUTH, SET_LOGIN_SUCCESS, SET_TEMP_PASSWORD, SET_USER } from '@store/user';
@@ -25,14 +25,13 @@ const LoginPage = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const { isLoginSuccess } = useSelector(userForm);
-  const { cartLists } = useSelector(cartForm);
-
   const dispatch = useDispatch();
-  const onRouter = useRouter();
+  const router = useRouter();
+
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
   useEffect(() => {
-    setReturnPath(onRouter.query.returnPath || '/');
+    setReturnPath(router.query.returnPath || '/');
   }, []);
 
   const passwordInputHandler = () => {
@@ -80,7 +79,6 @@ const LoginPage = () => {
         });
 
         if (data.code === 200) {
-          const isDormantAccount = false;
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {
             dispatch(SET_USER_AUTH(userTokenObj));
@@ -106,11 +104,18 @@ const LoginPage = () => {
           });
 
           dispatch(SET_USER(userInfo.data));
-
-          if (isDormantAccount) {
-            router.push('/mypage/profile/dormant');
-          } else {
-            router.push(`${returnPath}`);
+          // TODO: 휴면 처리
+          const hasCode = recommendCode?.length! > 0;
+          // router.push('/mypage/profile/dormant');
+          switch (true) {
+            case hasCode: {
+              router.push(`/mypage/friend`);
+              return;
+            }
+            default: {
+              router.push(`${returnPath}`);
+              return;
+            }
           }
         }
       } catch (error) {
@@ -125,20 +130,6 @@ const LoginPage = () => {
       finishLogin();
     }
   };
-
-  // TODO : finish 이후에 넣는게 맞는거같음
-
-  // useEffect(() => {
-  //   if (isLoginSuccess) {
-  //     const isDormantAccount = false;
-  //     if (isDormantAccount) {
-  //       router.push('/mypage/profile/dormant');
-  //     } else {
-  //       router.push(`${returnPath}`);
-  //     }
-  //   }
-  //   return () => {};
-  // }, [isLoginSuccess]);
 
   return (
     <Container>

@@ -80,8 +80,8 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
       if (token) {
         const { data } = await userProfile();
         if (data.code === 200) {
-          data.data.nickName ??= data.data.name;
-          data.data.nickName ||= data.data.name;
+          data.data.nickname ??= data.data.name;
+          data.data.nickname ||= data.data.name;
           dispatch(SET_USER(data.data));
           dispatch(SET_LOGIN_SUCCESS(true));
           if (!NAME_REGX.test(data.data.name)) {
@@ -96,8 +96,8 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
         if (isAutoLogin === 'Y') {
           const { data } = await userProfile();
           if (data.code === 200) {
-            data.data.nickName ??= data.data.name;
-            data.data.nickName ||= data.data.name;
+            data.data.nickname ??= data.data.name;
+            data.data.nickname ||= data.data.name;
             dispatch(SET_USER(data.data));
             dispatch(SET_LOGIN_SUCCESS(true));
             if (!NAME_REGX.test(data.data.name)) {

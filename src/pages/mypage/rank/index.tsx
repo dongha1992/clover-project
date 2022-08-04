@@ -17,7 +17,7 @@ const RankPage = () => {
       {isLoginSuccess ? (
         <Wrapper>
           <FlexCol padding="24px 0 32px 0">
-            <TextH2B>{me?.nickName}님은</TextH2B>
+            <TextH2B>{me?.nickname}님은</TextH2B>
             <FlexRow>
               <TextH2B color={theme.brandColor}>프코팡</TextH2B>
               <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
