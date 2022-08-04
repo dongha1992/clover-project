@@ -15,6 +15,7 @@ import Image from 'next/image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
 import { SET_EVENT_TITLE , INIT_EVENT_TITLE} from '@store/event';
+import { getMainPromotionContentsApi } from '@api/promotion';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
@@ -63,6 +64,22 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
+  const {
+    data: contentsData,
+    error: mainContentsError,
+  } = useQuery (
+    'getMainPromotionContents',
+    async () => {
+      const { data } = await getMainPromotionContentsApi();
+      return data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const mdRecommendedData = contentsData?.mainContents?.filter((i: any) => i.type === 'EXHIBITION').find((i: any) => i.exhibition.type === 'MD_RECOMMENDED');
+  const mdMenu = mdRecommendedData?.exhibition.exhibitionMenus;
+
+  // const promotionContentsData = contentsData?.mainContents?.filter((i: any) => i.type === 'EXHIBITION' &&  i.exhibition.type !== 'MD_RECOMMENDED' );
   const goToMd = () => {
     router.push('/md');
   };
@@ -91,7 +108,7 @@ const Home = () => {
         <BorderLine height={1} margin="24px 0 24px 0" />
       </SectionWrapper>
       <FlexSpace>
-        <SectionTitle>MD 추천</SectionTitle>
+        <SectionTitle>{mdRecommendedData?.exhibition.title}</SectionTitle>
         <TextH5B 
           onClick={goToMd}
           color={theme.greyScale65} 
@@ -101,10 +118,10 @@ const Home = () => {
       </FlexSpace>
       <SectionWrapper>
         <FlexWrapWrapper>
-          {menus?.length! > 0
-            ? menus?.map((item, index) => {
+          {mdMenu?.length! > 0
+            ? mdMenu?.map((item, index) => {
                 if (index > 3) return;
-                return <Item item={item} key={index} />;
+                return <Item item={item.menu} key={index} />;
               })
             : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>

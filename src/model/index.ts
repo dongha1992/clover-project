@@ -2428,3 +2428,82 @@ export interface ISubscribeInfo {
 export interface ISubsManage {
   changeDate: string | null;
 }
+
+export interface IMainPromotionContentsResponse {
+  code: number;
+  message: string;
+  data: {
+    mainContents: [
+      {
+        banner: IBanners;
+        createdAt: string;
+        exhibition: IExhibition;
+        id: number;
+        type: TMainPromotion;
+      }
+    ]
+  };
+}
+
+type TMainPromotion = 'BANNER' | 'EXHIBITION' | string;
+
+type TExhibition = 'FIXED' | 'GENERAL_MENU' | 'MD_RECOMMENDED' | 'SUBSCRIPTION_MENU' | string;
+ 
+interface IExhibition {
+  content: string;
+  createdAt: string;
+  exhibitionMenus: [
+    {
+      id: number;
+      menu: IMenus;
+    },
+  ];
+  id: number;
+  image: {
+    contentId: number;
+    createdAt: string;
+    height: number;
+    id: number;
+    size: number;
+    url: string;
+    width: number;
+  };
+  title: string;
+  type: TExhibition;
+}
+
+export interface IExhibitionResponse {
+  code: number;
+  data: {
+    pagination?: IPagination,
+    exhibitions: [
+      {
+        content: string;
+        createdAt: string;
+        exhibitionMenus: [
+          {
+            id: number;
+            menu: IMenus;
+          },
+        ];
+        id: number;
+        image: {
+          contentId: number;
+          createdAt: string;
+          height: number;
+          id: number;
+          size: number;
+          url: string;
+          width: number;      
+        };
+        title: string;
+        type: TExhibition;
+      }
+    ]
+  };
+  message: string;
+  metaData: {
+    responsedAt: string;
+    trackingId: string;
+  };
+}
