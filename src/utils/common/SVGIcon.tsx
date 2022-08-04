@@ -2095,19 +2095,6 @@ const svgMap: TSvg = {
       <line x1="24" y1="19" x2="14" y2="19" stroke="#242424" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
-  mapNoneZoomIn: () => (
-    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 12.8C0 8.31958 0 6.07937 0.871948 4.36808C1.63893 2.86278 2.86278 1.63893 4.36808 0.871948C6.07937 0 8.31958 0 12.8 0H25.2C29.6804 0 31.9206 0 33.6319 0.871948C35.1372 1.63893 36.3611 2.86278 37.1281 4.36808C38 6.07937 38 8.31958 38 12.8V38H0V12.8Z" fill="#FBFBFB"/>
-      <line x1="19" y1="13" x2="19" y2="25" stroke="#C8C8C8" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="25" y1="19" x2="13" y2="19" stroke="#C8C8C8" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
-  mapNoneZoomOut: () => (
-    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 0H38V25.2C38 29.6804 38 31.9206 37.1281 33.6319C36.3611 35.1372 35.1372 36.3611 33.6319 37.1281C31.9206 38 29.6804 38 25.2 38H12.8C8.31958 38 6.07937 38 4.36808 37.1281C2.86278 36.3611 1.63893 35.1372 0.871948 33.6319C0 31.9206 0 29.6804 0 25.2V0Z" fill="#FBFBFB"/>
-      <line x1="24" y1="19" x2="14" y2="19" stroke="#C8C8C8" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
   instaLink: () => (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="32" height="32" rx="16" fill="#242424" />
