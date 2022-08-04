@@ -160,15 +160,13 @@ const EmailAndPasswordPage = () => {
   };
 
   const goToOptionalInfo = () => {
-    const { recommendCode } = router.query;
-
     dispatch(
       SET_SIGNUP_USER({
         email: emailRef.current?.value,
         password: passwordRef.current?.value,
       })
     );
-    recommendCode ? router.push(`/signup/optional?recommendCode=${recommendCode}`) : router.push('/signup/optional');
+    router.push('/signup/optional');
   };
 
   const isAllVaild =

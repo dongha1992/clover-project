@@ -44,6 +44,8 @@ const OnBoarding: NextPage = () => {
   const onKaKao = useKakaoLogin();
   const onApple = useAppleLogin();
 
+  const { recommendCode } = router.query;
+
   useEffect(() => {
     setReturnPath(router.query.returnPath || '/');
   }, [router.query.returnPath]);
@@ -84,9 +86,11 @@ const OnBoarding: NextPage = () => {
     if (window.navigator.userAgent === 'fco-clover-webview') {
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     } else {
+      const url =
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`;
+      recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
       window.Kakao.Auth.authorize({
-        redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        redirectUri: url,
         scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
       });
     }
@@ -107,13 +111,14 @@ const OnBoarding: NextPage = () => {
         try {
           const appleResponse = await window.AppleID.auth.signIn();
           const appleToken = appleResponse?.authorization.id_token;
+          recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
           if (appleToken) {
             const params = { appleToken };
             const { data } = await getAppleTokenApi({ params });
             if (data.data.availability) {
+              dispatch(SET_SIGNUP_USER({ email: data.data.email }));
               localStorage.setItem('appleToken', appleToken);
               router.replace('/signup?isApple=true');
-              dispatch(SET_SIGNUP_USER({ email: data.data.email }));
             } else {
               const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
               if (result.data.code == 200) {
@@ -129,7 +134,7 @@ const OnBoarding: NextPage = () => {
 
                 dispatch(SET_USER(data));
                 // success
-                router.push('/');
+                recommendCode ? router.replace('/mypage/friend') : router.push('/');
               }
             }
           }
@@ -152,22 +157,23 @@ const OnBoarding: NextPage = () => {
 
   const emailSignUpHandler = (): void => {
     const { recommendCode } = router.query;
-    recommendCode ? router.push(`/signup?recommendCode=${recommendCode}`) : router.push('/signup');
+    recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
+    router.push('/signup');
   };
 
   const emailLoginHandler = (): void => {
     const hasReturnPath = returnPath === router.query.returnPath;
     const { recommendCode } = router.query;
-    const hasCode = recommendCode?.length! > 0;
+
     switch (true) {
       case hasReturnPath: {
         router.push(`/login?returnPath=${encodeURIComponent(String(returnPath))}`);
-      }
-      case hasCode: {
-        router.push(`/login?recommendCode=${recommendCode}`);
+        return;
       }
       default: {
+        recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
         router.push('/login');
+        return;
       }
     }
   };
