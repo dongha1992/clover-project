@@ -18,7 +18,11 @@ import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { commonSelector } from '@store/common';
 
-const WelcomeSheet = () => {
+interface IProps {
+  recommendCode: string;
+}
+
+const WelcomeSheet = ({ recommendCode }: IProps) => {
   const dispatch = useDispatch();
   const codeRef = useRef<HTMLInputElement>(null);
 
@@ -71,19 +75,16 @@ const WelcomeSheet = () => {
         };
 
         const { data } = await userRecommendationApi(params);
-        if (data.code === 200) {
-          return dispatch(
-            SET_ALERT({
-              alertMessage: '등록을 완료했어요!',
-              submitBtnText: '확인',
-            })
-          );
-        }
       }
     },
     {
       onSuccess: async (data) => {
-        console.log(data, 'ON SUCCESS');
+        return dispatch(
+          SET_ALERT({
+            alertMessage: '등록을 완료했어요!',
+            submitBtnText: '확인',
+          })
+        );
       },
       onError: async (error: any) => {
         let alertMessage = '';
@@ -149,7 +150,7 @@ const WelcomeSheet = () => {
           <TextB2R>가입 이후 마이페이지 {'>'} 친구 초대, 쿠폰, 포인트에서 등록할 수 있어요!</TextB2R>
           <FlexCol padding="24px 0 0 0">
             <FlexRow>
-              <TextInput margin="0 8px 0 0" ref={codeRef} />
+              <TextInput margin="0 8px 0 0" ref={codeRef} value={recommendCode ? recommendCode : ''} />
               <Button width="30%" height="48px" onClick={() => mutatePostPromotionCode()}>
                 등록하기
               </Button>

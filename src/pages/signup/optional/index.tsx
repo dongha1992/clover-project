@@ -18,6 +18,8 @@ import { SVGIcon } from '@utils/common';
 import Validation from '@components/Pages/User/Validation';
 import { NAME_REGX } from '@constants/regex';
 import { getValidBirthday } from '@utils/common';
+import { SET_ALERT } from '@store/alert';
+import { errorMonitor } from 'events';
 
 export const GENDER = [
   {
@@ -75,6 +77,9 @@ const SignupOptionalPage = () => {
           window.Kakao.cleanup();
         }
       },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
     }
   );
 
@@ -103,7 +108,6 @@ const SignupOptionalPage = () => {
     if (!isValidBirthDay) return;
 
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
-
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
     const hasBirthDate = birthDayObj.year > 0 && birthDayObj.month > 0 && birthDayObj.day > 0;
     const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month)}-${getFormatTime(birthDayObj.day)}`;
@@ -129,21 +133,21 @@ const SignupOptionalPage = () => {
 
     try {
       let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
-
+      const { recommendCode } = router.query;
       if (data.code === 200) {
-        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  // useEffect(() => {
-  //   // 마지막 페이지에서 새로고침 시 처음으로
-  //   if (!signupUser.email) {
-  //     router.replace('/signup');
-  //   }
-  // }, [signupUser]);
+  useEffect(() => {
+    // 마지막 페이지에서 새로고침 시 처음으로
+    if (!signupUser.email) {
+      router.replace('/signup');
+    }
+  }, [signupUser]);
 
   useEffect(() => {
     setIsValidBirthDay(getValidBirthday(birthDayObj));

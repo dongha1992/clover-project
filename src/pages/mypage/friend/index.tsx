@@ -40,6 +40,7 @@ const InviteFriendPaage = () => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -51,19 +52,17 @@ const InviteFriendPaage = () => {
         };
 
         const { data } = await userRecommendationApi(params);
-        if (data.code === 200) {
-          return dispatch(
-            SET_ALERT({
-              alertMessage: '등록을 완료했어요!',
-              submitBtnText: '확인',
-            })
-          );
-        }
+        return data;
       }
     },
     {
       onSuccess: async (data) => {
-        console.log(data, 'ON SUCCESS');
+        return dispatch(
+          SET_ALERT({
+            alertMessage: '등록을 완료했어요!',
+            submitBtnText: '확인',
+          })
+        );
       },
       onError: async (error: any) => {
         let alertMessage = '';
@@ -96,7 +95,9 @@ const InviteFriendPaage = () => {
   };
 
   const goToShare = () => {
-    dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet /> }));
+    // const recommendCodeUrl = `${process.env.SERVICE_URL}/onboarding?recommendCode=${me?.recommendCode}`;
+    const recommendCodeUrl = `http://localhost:9009/onboarding?recommendCode=${me?.recommendCode}`;
+    dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet customUrl={recommendCodeUrl} /> }));
   };
 
   if (isLoading) {

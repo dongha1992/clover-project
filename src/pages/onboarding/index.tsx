@@ -11,13 +11,11 @@ import { Tag } from '@components/Shared/Tag';
 import { IAuthObj, Obj } from '@model/index';
 import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
-// import { setRefreshToken } from '@components/Auth';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userProfile } from '@api/user';
 import { userLoginApi } from '@api/authentication';
 import { SET_ALERT } from '@store/alert';
-import Oauth from '@pages/oauth';
 import { useAppleLogin, useKakaoLogin } from '@hooks/auth';
 
 const OnBoarding: NextPage = () => {
@@ -153,7 +151,8 @@ const OnBoarding: NextPage = () => {
   };
 
   const emailSignUpHandler = (): void => {
-    router.push('/signup');
+    const { recommendCode } = router.query;
+    recommendCode ? router.push(`/signup?recommendCode=${recommendCode}`) : router.push('/signup');
   };
 
   const emailLoginHandler = (): void => {
