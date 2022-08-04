@@ -211,7 +211,7 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
-    if (!authCodeValidation || isOverTime) return;
+    if (!authCodeValidation || isOverTime || authCodeConfirm) return;
 
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
@@ -252,6 +252,7 @@ const SignupAuthPage = () => {
     if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
+    const { recommendCode } = router.query;
     const isApple = signUpInfo.loginType === 'APPLE';
 
     dispatch(
@@ -262,10 +263,22 @@ const SignupAuthPage = () => {
         email: isApple ? signUpInfo.email : '',
       })
     );
-    if (isApple) {
-      router.push('/signup/optional');
-    } else {
-      router.push('/signup/email-password');
+
+    const hasCode = recommendCode?.length !== 0;
+
+    switch (true) {
+      case isApple: {
+        router.push('/signup/optional');
+      }
+      case isApple && hasCode: {
+        router.push(`/signup/optional?recommendCode=${recommendCode}`);
+      }
+      case hasCode: {
+        router.push(`/signup/email-password?recommendCode=${recommendCode}`);
+      }
+      default: {
+        router.push('/signup/email-password');
+      }
     }
   };
 

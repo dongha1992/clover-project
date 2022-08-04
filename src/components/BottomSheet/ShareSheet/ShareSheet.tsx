@@ -19,17 +19,17 @@ const SHARE_ICONS = [
 ];
 
 interface IParams {
-  spotLink?: string
+  customUrl?: string;
 }
 
-const ShareSheet = ({ spotLink }: IParams) => {
+const ShareSheet = ({ customUrl }: IParams) => {
   const dispatch = useDispatch();
   const { showToast, hideToast } = useToast();
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
-    let url = spotLink? spotLink : window.location.href;
+    let url = customUrl ? customUrl : window.location.href;
     const shareMapper: { [index: string]: () => void } = {
       kakao: () => {
-        handleKakaoTalk();
+        handleKakaoTalk(url);
       },
       facebook: () => {
         url = `http://www.facebook.com/sharer/sharer.php?u=${url}`;
@@ -43,7 +43,7 @@ const ShareSheet = ({ spotLink }: IParams) => {
         window.open(link, 'share', 'width=500, height=500');
       },
       urlIcon: () => {
-        getUrlLink(e, toastHandler, spotLink);
+        getUrlLink(e, toastHandler, customUrl);
       },
     };
 
@@ -59,9 +59,7 @@ const ShareSheet = ({ spotLink }: IParams) => {
     window.open(url, '', 'width=600,height=300,top=100,left=100,scrollbars=yes');
   };
 
-  const handleKakaoTalk = () => {
-    const url = location.href;
-
+  const handleKakaoTalk = (url: string) => {
     window.Kakao.Link.sendDefault({
       objectType: 'feed',
       content: {

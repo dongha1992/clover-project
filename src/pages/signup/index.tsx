@@ -74,6 +74,8 @@ const SignupPage = () => {
     }
     const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
     const loginType = router.query.isApple ? 'APPLE' : 'EMAIL';
+    const { recommendCode } = router.query;
+
     dispatch(
       SET_SIGNUP_USER({
         loginType,
@@ -81,7 +83,8 @@ const SignupPage = () => {
         marketingSmsReceived: userAgreeMarketingTerm.includes(4),
       })
     );
-    router.push('/signup/auth');
+
+    recommendCode ? router.push(`/signup/auth?recommendCode=${recommendCode}`) : router.push('/signup/auth');
   };
 
   return (
