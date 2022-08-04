@@ -12,14 +12,6 @@ import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
 
-declare global {
-  interface Window {
-    getCurrentPosBtn: any;
-    zoomIn: any;
-    zoomOut: any;
-  }
-}
-
 interface IProps {
   spotSearchList?: ISpotsDetail[];
   zoom?: number;

@@ -27,6 +27,9 @@ const SpotSearchFilter = ({ getLocation }: IProps) => {
   const { spotSearchSelectedFilters, spotSearchSort, spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>(spotSearchSelectedFilters);
+  const [selectedRadioId, setSelectedRadioId] = useState<string>(spotSearchSort);
+  const userLocationLen = userLocation.emdNm?.length! > 0;
+
   const defaultRedioId = () => {
     if (userLocationLen) {
       return setSelectedRadioId('nearest');
@@ -34,8 +37,6 @@ const SpotSearchFilter = ({ getLocation }: IProps) => {
       return setSelectedRadioId('frequency');
     }
   };
-  const [selectedRadioId, setSelectedRadioId] = useState<string>(spotSearchSort);
-  const userLocationLen = userLocation.emdNm?.length! > 0;
 
   // 필터 api
   const { data: spotsFilter } = useQuery(['spotFilter'], async () => {
