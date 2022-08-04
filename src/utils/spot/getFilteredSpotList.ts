@@ -27,7 +27,7 @@ const getFilteredSpotList = ({spotList, sort, filter }: IProps) => {
             });
           case 'frequency':
             return copiedSpotList.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
-              return b.score - a.score;
+              return b.score! - a.score!;
             });
           case 'user':
             return copiedSpotList.sort((a: ISpotsDetail, b: ISpotsDetail): number => {
