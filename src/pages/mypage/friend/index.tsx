@@ -14,6 +14,7 @@ import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import { useRouter } from 'next/router';
 
 const textStyle = {
   color: theme.greyScale65,
@@ -24,6 +25,8 @@ const InviteFriendPaage = () => {
   const codeRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
+  const router = useRouter();
+  const { recommendCode } = router.query;
 
   const {
     data,
@@ -140,7 +143,11 @@ const InviteFriendPaage = () => {
         <FlexCol>
           <TextH4B padding="0 0 24px 0">친구의 초대코드 등록</TextH4B>
           <FlexRow margin="0 0 48px 0">
-            <TextInput placeholder="초대코드 등록하고 3,000p 받기" ref={codeRef} />
+            <TextInput
+              placeholder="초대코드 등록하고 3,000p 받기"
+              ref={codeRef}
+              value={recommendCode ? recommendCode : ''}
+            />
             <Button width="30%" margin="0 0 0 8px" onClick={() => mutatePostRecommendationCode()}>
               등록하기
             </Button>

@@ -61,17 +61,21 @@ const SignupOptionalPage = () => {
 
   const { mutateAsync: mutateRegisterUser } = useMutation(
     async (reqBody: ISignupUser) => {
-      return userSignup(reqBody);
+      const { data } = await userSignup(reqBody);
+      return data.data;
     },
     {
-      onSuccess: ({ data }) => {
-        const userTokenObj = data.data;
+      onSuccess: (data) => {
+        const userTokenObj = data;
         console.log('userTokenObj', userTokenObj);
 
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(INIT_SIGNUP_USER());
         localStorage.removeItem('appleToken');
+
+        const { recommendCode } = router.query;
+        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
 
         if (window.Kakao) {
           window.Kakao.cleanup();
@@ -130,16 +134,16 @@ const SignupOptionalPage = () => {
         appleToken,
       })
     );
-
-    try {
-      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
-      const { recommendCode } = router.query;
-      if (data.code === 200) {
-        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
+    // try {
+    //   let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
+    //   const { recommendCode } = router.query;
+    //   if (data.code === 200) {
+    //     dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   useEffect(() => {
