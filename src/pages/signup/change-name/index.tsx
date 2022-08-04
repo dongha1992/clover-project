@@ -46,7 +46,7 @@ const ChangeNamePage = () => {
       marketingPushReceived: me?.marketingPushReceived!,
       marketingSmsReceived: me?.marketingSmsReceived!,
       name: name,
-      nickName: me?.nickName || name,
+      nickname: me?.nickname || name,
       notiPushReceived: me?.notiPushReceived!,
       primePushReceived: me?.primePushReceived!,
       tel: me?.tel!,

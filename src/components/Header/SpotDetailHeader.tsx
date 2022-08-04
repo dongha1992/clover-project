@@ -35,7 +35,7 @@ const SpotDetailHeader = ({ title }: TProps) => {
       router.push('/spot');
     } else {
       router.back();
-    };
+    }
   };
 
   const goToShare = () => {
@@ -59,7 +59,7 @@ const SpotDetailHeader = ({ title }: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet spotLink={spotLink} />,
+          content: <ShareSheet customUrl={spotLink} />,
         })
       );
     }

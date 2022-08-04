@@ -59,7 +59,7 @@ const SpotStatusDetailHeader = ({}: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet spotLink={spotLink} />,
+          content: <ShareSheet customUrl={spotLink} />,
         })
       );
     }
@@ -72,13 +72,11 @@ const SpotStatusDetailHeader = ({}: TProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <BtnWrapper>
-          {
-            spotStatusDetail?.type === 'PRIVATE' && (loginUserId === spotStatusDetail?.userId) && (
-              <div className="share" onClick={goToShare}>
-                <SVGIcon name="share" />
-              </div>  
-            )
-          }
+          {spotStatusDetail?.type === 'PRIVATE' && loginUserId === spotStatusDetail?.userId && (
+            <div className="share" onClick={goToShare}>
+              <SVGIcon name="share" />
+            </div>
+          )}
         </BtnWrapper>
       </Wrapper>
     </Container>

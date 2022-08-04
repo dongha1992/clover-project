@@ -14,6 +14,7 @@ import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import { useRouter } from 'next/router';
 
 const textStyle = {
   color: theme.greyScale65,
@@ -24,7 +25,10 @@ const InviteFriendPaage = () => {
   const codeRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
+  const router = useRouter();
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
+  console.log(recommendCode, 'recommendCode');
   const {
     data,
     error: menuError,
@@ -40,6 +44,7 @@ const InviteFriendPaage = () => {
       onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      enabled: !!me,
     }
   );
 
@@ -51,19 +56,21 @@ const InviteFriendPaage = () => {
         };
 
         const { data } = await userRecommendationApi(params);
-        if (data.code === 200) {
-          return dispatch(
-            SET_ALERT({
-              alertMessage: '등록을 완료했어요!',
-              submitBtnText: '확인',
-            })
-          );
-        }
+        return data;
       }
     },
     {
       onSuccess: async (data) => {
-        console.log(data, 'ON SUCCESS');
+        if (sessionStorage.getItem('recommendCode')) {
+          sessionStorage.removeItem('recommendCode');
+        }
+        dispatch(
+          SET_ALERT({
+            alertMessage: '등록을 완료했어요!',
+            submitBtnText: '확인',
+          })
+        );
+        return;
       },
       onError: async (error: any) => {
         let alertMessage = '';
@@ -90,13 +97,15 @@ const InviteFriendPaage = () => {
   const getCodeCopy = (e: any) => {
     e.preventDefault();
     const { clipboard } = window.navigator;
-    clipboard.writeText(me?.recommendCode!).then(() => {
+    clipboard.writeText(me?.promotionCode!).then(() => {
       showToast({ message: '초대코드를 복사했어요.' });
     });
   };
 
   const goToShare = () => {
-    dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet /> }));
+    // const recommendCodeUrl = `${process.env.SERVICE_URL}/onboarding?recommendCode=${me?.promotionCode}`;
+    const recommendCodeUrl = `http://localhost:9009/onboarding?recommendCode=${me?.promotionCode}`;
+    dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet customUrl={recommendCodeUrl} /> }));
   };
 
   if (isLoading) {
@@ -113,7 +122,7 @@ const InviteFriendPaage = () => {
         <FlexCol>
           <TextH6B>내 초대코드</TextH6B>
           <TextH1B color={theme.brandColor} padding="4px 0 0 0">
-            {me?.recommendCode}
+            {me?.promotionCode}
           </TextH1B>
         </FlexCol>
         <FlexRow width="70%" padding="24px 0 0 0">
@@ -139,7 +148,11 @@ const InviteFriendPaage = () => {
         <FlexCol>
           <TextH4B padding="0 0 24px 0">친구의 초대코드 등록</TextH4B>
           <FlexRow margin="0 0 48px 0">
-            <TextInput placeholder="초대코드 등록하고 3,000p 받기" ref={codeRef} />
+            <TextInput
+              placeholder="초대코드 등록하고 3,000p 받기"
+              ref={codeRef}
+              value={recommendCode ? recommendCode : ''}
+            />
             <Button width="30%" margin="0 0 0 8px" onClick={() => mutatePostRecommendationCode()}>
               등록하기
             </Button>

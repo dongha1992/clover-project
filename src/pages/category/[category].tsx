@@ -16,7 +16,6 @@ import { IAllMenus } from '@components/Pages/Category/SingleMenu';
 import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 import { CategoryFilter } from '@components/Pages/Category';
 
-/* TODO: 로그인 체크 알림신청 */
 /* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
 const categoryTypeMap: Obj = {
   meal: ['CONVENIENCE_FOOD', 'LUNCH_BOX'],

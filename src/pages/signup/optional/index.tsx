@@ -6,9 +6,11 @@ import TextInput from '@components/Shared/TextInput';
 import router from 'next/router';
 import { Button, RadioButton } from '@components/Shared/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS, INIT_SIGNUP_USER } from '@store/user';
-import { ISignupUser } from '@model/index';
-import { userSignup } from '@api/user';
+import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS, INIT_SIGNUP_USER, SET_USER } from '@store/user';
+import { SET_LOGIN_TYPE } from '@store/common';
+import { ISignupUser, ILogin } from '@model/index';
+import { userSignup, userProfile } from '@api/user';
+import { userLoginApi } from '@api/authentication';
 import { useMutation } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
@@ -18,7 +20,10 @@ import { SVGIcon } from '@utils/common';
 import Validation from '@components/Pages/User/Validation';
 import { NAME_REGX } from '@constants/regex';
 import { getValidBirthday } from '@utils/common';
+import { SET_ALERT } from '@store/alert';
 
+// TODO: 로그인 핸들러 모듈
+// TODO: 애플 회원가입/로그인 분리 제발...
 export const GENDER = [
   {
     id: 1,
@@ -56,27 +61,64 @@ const SignupOptionalPage = () => {
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
   const { mutateAsync: mutateRegisterUser } = useMutation(
     async (reqBody: ISignupUser) => {
-      return userSignup(reqBody);
+      const { data } = await userSignup(reqBody);
+      return { data: data.data, reqBody };
     },
     {
-      onSuccess: ({ data }) => {
-        const userTokenObj = data.data;
-        console.log('userTokenObj', userTokenObj);
-
+      onSuccess: async ({ data, reqBody }) => {
+        const userTokenObj = data;
+        console.log(data, reqBody, 'data, reqBody');
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(INIT_SIGNUP_USER());
-        localStorage.removeItem('appleToken');
+        await signupAfterLoign(reqBody);
 
         if (window.Kakao) {
           window.Kakao.cleanup();
         }
       },
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
     }
   );
+
+  const signupAfterLoign = async (reqBody: ISignupUser) => {
+    let type = '';
+    let body = {} as ILogin;
+
+    if (signupUser.loginType === 'EMAIL') {
+      type = 'EMAIL';
+      body = { email: reqBody.email, password: reqBody.password, loginType: 'EMAIL' };
+    } else if (signupUser.loginType === 'APPLE') {
+      type = 'APPLE';
+      body = { accessToken: `${reqBody.appleToken}`, loginType: 'APPLE' };
+    }
+
+    const { data } = await userLoginApi(body);
+
+    try {
+      if (data.code === 200) {
+        dispatch(SET_LOGIN_TYPE(type));
+        const userInfo = await userProfile().then((res) => {
+          return res?.data;
+        });
+        dispatch(SET_USER(userInfo.data));
+        dispatch(
+          SET_BOTTOM_SHEET({
+            content: <WelcomeSheet recommendCode={recommendCode as string} />,
+          })
+        );
+        localStorage.removeItem('appleToken');
+      }
+    } catch (error: any) {
+      dispatch(SET_ALERT({ alertMessage: error.message }));
+    }
+  };
 
   const checkGenderHandler = (value: string | null) => {
     setChcekGender(value);
@@ -103,7 +145,6 @@ const SignupOptionalPage = () => {
     if (!isValidBirthDay) return;
 
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
-
     /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
     const hasBirthDate = birthDayObj.year > 0 && birthDayObj.month > 0 && birthDayObj.day > 0;
     const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month)}-${getFormatTime(birthDayObj.day)}`;
@@ -111,7 +152,7 @@ const SignupOptionalPage = () => {
     const optionalForm = {
       birthDate: hasBirthDate ? birthDate : '',
       gender: gender ? gender : '',
-      nickName: nickname ? nickname : signupUser.name,
+      nickname: nickname ? nickname : signupUser.name,
     };
 
     let appleToken = null;
@@ -126,24 +167,15 @@ const SignupOptionalPage = () => {
         appleToken,
       })
     );
-
-    try {
-      let { data } = await mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
-
-      if (data.code === 200) {
-        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    mutateRegisterUser({ ...signupUser, ...optionalForm, appleToken } as ISignupUser);
   };
 
-  // useEffect(() => {
-  //   // 마지막 페이지에서 새로고침 시 처음으로
-  //   if (!signupUser.email) {
-  //     router.replace('/signup');
-  //   }
-  // }, [signupUser]);
+  useEffect(() => {
+    // 마지막 페이지에서 새로고침 시 처음으로
+    if (!signupUser.email) {
+      router.replace('/signup');
+    }
+  }, [signupUser]);
 
   useEffect(() => {
     setIsValidBirthDay(getValidBirthday(birthDayObj));
