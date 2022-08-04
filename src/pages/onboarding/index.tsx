@@ -6,7 +6,7 @@ import { TextH6B, TextH3B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { IAuthObj, Obj } from '@model/index';
 import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
@@ -36,7 +36,7 @@ const OnBoarding: NextPage = () => {
     EMAIL: 15,
   };
 
-  const onRouter = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch();
   const { loginType } = useSelector(commonSelector);
   const [returnPath, setReturnPath] = useState<string | string[]>('');
@@ -45,8 +45,8 @@ const OnBoarding: NextPage = () => {
   const onApple = useAppleLogin();
 
   useEffect(() => {
-    setReturnPath(onRouter.query.returnPath || '/');
-  }, [onRouter.query.returnPath]);
+    setReturnPath(router.query.returnPath || '/');
+  }, [router.query.returnPath]);
 
   useEffect(() => {
     if (window.ReactNativeWebView) {
@@ -156,10 +156,19 @@ const OnBoarding: NextPage = () => {
   };
 
   const emailLoginHandler = (): void => {
-    if (returnPath === onRouter.query.returnPath) {
-      router.push(`/login?returnPath=${encodeURIComponent(String(returnPath))}`);
-    } else {
-      router.push('/login');
+    const hasReturnPath = returnPath === router.query.returnPath;
+    const { recommendCode } = router.query;
+    const hasCode = recommendCode?.length! > 0;
+    switch (true) {
+      case hasReturnPath: {
+        router.push(`/login?returnPath=${encodeURIComponent(String(returnPath))}`);
+      }
+      case hasCode: {
+        router.push(`/login?recommendCode=${recommendCode}`);
+      }
+      default: {
+        router.push('/login');
+      }
     }
   };
 

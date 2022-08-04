@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
-import { textH5 } from '@styles/theme';
+import { TextH5B } from '@components/Shared/Text';
 import Link from 'next/link';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
@@ -33,6 +33,10 @@ const HomeHeader = () => {
     router.push('/cart');
   };
 
+  const goToLocation = () => {
+    router.push('/location');
+  };
+
   useEffect(() => {
     setIsBottomSheet(content ? true : false);
   }, [content]);
@@ -40,10 +44,10 @@ const HomeHeader = () => {
   return (
     <Container isBottomSheet={isBottomSheet}>
       <Wrapper>
-        <Left>
+        <Left onClick={goToLocation}>
           <SVGIcon name="location" />
           <AddressWrapper>
-            <Link href="/location">{userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}</Link>
+            <TextH5B>{userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}</TextH5B>
             {userLocation?.emdNm && formatAvailableDestination && (
               <Tooltip
                 message={mapper[formatAvailableDestination]?.text}
@@ -106,13 +110,13 @@ const Wrapper = styled.div`
 `;
 
 const AddressWrapper = styled.div`
-  ${textH5}
   padding-left: 8px;
 `;
 
 const Left = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Right = styled.div`

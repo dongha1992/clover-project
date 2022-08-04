@@ -94,6 +94,12 @@ const LocationPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
 
+  useEffect(()=> {
+    if(currentArrowed){
+      setIsSearchingPosition(false);
+    };
+  }, [currentArrowed]);
+
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
   const onLoadKakaoMap = () => { 
     try {
@@ -269,8 +275,10 @@ const LocationPage = () => {
     }
   };
 
-  if(isSeachingPosition){
-    return <div>현재 위치 찾는 중..😊</div>
+  if(currentArrowed){
+    if(isSeachingPosition){
+      return <div>현재 위치 찾는 중..😊</div>
+    };  
   };
 
   return (
