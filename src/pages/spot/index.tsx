@@ -240,7 +240,7 @@ const SpotPage = () => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet spotLink={spotLink} />,
+          content: <ShareSheet customUrl={spotLink} />,
         })
       );
     }

@@ -88,6 +88,7 @@ const OnBoarding: NextPage = () => {
     } else {
       const url =
         location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`;
+      console.log(recommendCode, 'recommendCode');
       recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
       window.Kakao.Auth.authorize({
         redirectUri: url,
@@ -112,6 +113,7 @@ const OnBoarding: NextPage = () => {
           const appleResponse = await window.AppleID.auth.signIn();
           const appleToken = appleResponse?.authorization.id_token;
           recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
+
           if (appleToken) {
             const params = { appleToken };
             const { data } = await getAppleTokenApi({ params });
