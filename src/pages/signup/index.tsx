@@ -5,10 +5,9 @@ import { TextB2R, TextB3R, TextH5B, TextH6B, TextH2B } from '@components/Shared/
 import BorderLine from '@components/Shared/BorderLine';
 import { FlexRow, FlexCol, theme, homePadding, fixedBottom } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const textPaddingStyle = {
   padding: '0 0 0 8px',
@@ -74,7 +73,6 @@ const SignupPage = () => {
     }
     const userAgreeMarketingTerm = checkTermList.filter((id) => id >= 3);
     const loginType = router.query.isApple ? 'APPLE' : 'EMAIL';
-    const { recommendCode } = router.query;
 
     dispatch(
       SET_SIGNUP_USER({
@@ -83,8 +81,7 @@ const SignupPage = () => {
         marketingSmsReceived: userAgreeMarketingTerm.includes(4),
       })
     );
-
-    recommendCode ? router.push(`/signup/auth?recommendCode=${recommendCode}`) : router.push('/signup/auth');
+    router.push('/signup/auth');
   };
 
   return (

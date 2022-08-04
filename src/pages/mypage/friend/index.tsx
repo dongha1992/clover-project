@@ -26,8 +26,9 @@ const InviteFriendPaage = () => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
   const router = useRouter();
-  const { recommendCode } = router.query;
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
+  console.log(recommendCode, 'recommendCode');
   const {
     data,
     error: menuError,
@@ -60,12 +61,16 @@ const InviteFriendPaage = () => {
     },
     {
       onSuccess: async (data) => {
-        return dispatch(
+        if (sessionStorage.getItem('sessionStorage')) {
+          sessionStorage.removeItem('recommendCode');
+        }
+        dispatch(
           SET_ALERT({
             alertMessage: '등록을 완료했어요!',
             submitBtnText: '확인',
           })
         );
+        return;
       },
       onError: async (error: any) => {
         let alertMessage = '';
@@ -92,14 +97,14 @@ const InviteFriendPaage = () => {
   const getCodeCopy = (e: any) => {
     e.preventDefault();
     const { clipboard } = window.navigator;
-    clipboard.writeText(me?.recommendCode!).then(() => {
+    clipboard.writeText(me?.promotionCode!).then(() => {
       showToast({ message: '초대코드를 복사했어요.' });
     });
   };
 
   const goToShare = () => {
-    // const recommendCodeUrl = `${process.env.SERVICE_URL}/onboarding?recommendCode=${me?.recommendCode}`;
-    const recommendCodeUrl = `http://localhost:9009/onboarding?recommendCode=${me?.recommendCode}`;
+    // const recommendCodeUrl = `${process.env.SERVICE_URL}/onboarding?recommendCode=${me?.promotionCode}`;
+    const recommendCodeUrl = `http://localhost:9009/onboarding?recommendCode=${me?.promotionCode}`;
     dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet customUrl={recommendCodeUrl} /> }));
   };
 
@@ -117,7 +122,7 @@ const InviteFriendPaage = () => {
         <FlexCol>
           <TextH6B>내 초대코드</TextH6B>
           <TextH1B color={theme.brandColor} padding="4px 0 0 0">
-            {me?.recommendCode}
+            {me?.promotionCode}
           </TextH1B>
         </FlexCol>
         <FlexRow width="70%" padding="24px 0 0 0">

@@ -58,6 +58,7 @@ const SignupOptionalPage = () => {
 
   const dispatch = useDispatch();
   const { signupUser } = useSelector(userForm);
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
   const { mutateAsync: mutateRegisterUser } = useMutation(
     async (reqBody: ISignupUser) => {
@@ -73,8 +74,6 @@ const SignupOptionalPage = () => {
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(INIT_SIGNUP_USER());
         localStorage.removeItem('appleToken');
-
-        const { recommendCode } = router.query;
         dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
 
         if (window.Kakao) {

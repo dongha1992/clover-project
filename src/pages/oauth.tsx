@@ -26,8 +26,9 @@ const Oauth = () => {
   };
 
   const router = useRouter();
-  const { code } = router.query;
   const dispatch = useDispatch();
+  const { code } = router.query;
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
   const onSuccessKakao = async (authObj: IAuthObj) => {
     window.Kakao.Auth.setAccessToken(authObj.access_token);
@@ -52,16 +53,18 @@ const Oauth = () => {
 
         dispatch(SET_USER(data));
 
+        const needToChangeName = !NAME_REGX.test(data.name) || data.name.length === 0;
+
         if (isRegister) {
-          if (!NAME_REGX.test(data.name) || data.name.length === 0) {
+          if (needToChangeName) {
             router.push('/signup/change-name');
           } else {
-            dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+            dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
           }
         } else {
-          router.replace('/');
+          console.log(recommendCode, 'recommendCode');
+          recommendCode ? router.push(`/mypage/friend`) : router.push('/');
         }
-      } else {
       }
     } catch (error: any) {
       if (error.code === 2010) {

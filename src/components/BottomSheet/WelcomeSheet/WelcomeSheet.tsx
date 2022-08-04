@@ -19,7 +19,7 @@ import { userForm } from '@store/user';
 import { commonSelector } from '@store/common';
 
 interface IProps {
-  recommendCode: string;
+  recommendCode?: string;
 }
 
 const WelcomeSheet = ({ recommendCode }: IProps) => {

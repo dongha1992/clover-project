@@ -252,7 +252,7 @@ const SignupAuthPage = () => {
     if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
-    const { recommendCode } = router.query;
+
     const isApple = signUpInfo.loginType === 'APPLE';
 
     dispatch(
@@ -264,21 +264,12 @@ const SignupAuthPage = () => {
       })
     );
 
-    const hasCode = recommendCode?.length !== 0;
-
     switch (true) {
       case isApple: {
         router.push('/signup/optional');
         return;
       }
-      case isApple && hasCode: {
-        router.push(`/signup/optional?recommendCode=${recommendCode}`);
-        return;
-      }
-      case hasCode: {
-        router.push(`/signup/email-password?recommendCode=${recommendCode}`);
-        return;
-      }
+
       default: {
         router.push('/signup/email-password');
         return;
