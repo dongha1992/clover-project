@@ -8,7 +8,7 @@ import { Button, RadioButton } from '@components/Shared/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { userForm, SET_SIGNUP_USER, SET_USER_AUTH, SET_LOGIN_SUCCESS, INIT_SIGNUP_USER, SET_USER } from '@store/user';
 import { SET_LOGIN_TYPE } from '@store/common';
-import { ISignupUser } from '@model/index';
+import { ISignupUser, ILogin } from '@model/index';
 import { userSignup, userProfile } from '@api/user';
 import { userLoginApi } from '@api/authentication';
 import { useMutation } from 'react-query';
@@ -23,6 +23,7 @@ import { getValidBirthday } from '@utils/common';
 import { SET_ALERT } from '@store/alert';
 
 // TODO: 로그인 핸들러 모듈
+// TODO: 애플 회원가입/로그인 분리 제발...
 export const GENDER = [
   {
     id: 1,
@@ -74,10 +75,7 @@ const SignupOptionalPage = () => {
         dispatch(SET_USER_AUTH(userTokenObj));
         dispatch(SET_LOGIN_SUCCESS(true));
         dispatch(INIT_SIGNUP_USER());
-        localStorage.removeItem('appleToken');
-        if (signupUser.loginType === 'EMAIL') {
-          await signupAfterLoign(reqBody);
-        }
+        await signupAfterLoign(reqBody);
 
         if (window.Kakao) {
           window.Kakao.cleanup();
@@ -90,14 +88,22 @@ const SignupOptionalPage = () => {
   );
 
   const signupAfterLoign = async (reqBody: ISignupUser) => {
-    const { data } = await userLoginApi({
-      email: reqBody.email,
-      password: reqBody.password,
-      loginType: 'EMAIL',
-    });
+    let type = '';
+    let body = {} as ILogin;
+
+    if (signupUser.loginType === 'EMAIL') {
+      type = 'EMAIL';
+      body = { email: reqBody.email, password: reqBody.password, loginType: 'EMAIL' };
+    } else if (signupUser.loginType === 'APPLE') {
+      type = 'APPLE';
+      body = { accessToken: `${reqBody.appleToken}`, loginType: 'APPLE' };
+    }
+
+    const { data } = await userLoginApi(body);
+
     try {
       if (data.code === 200) {
-        dispatch(SET_LOGIN_TYPE('EMAIL'));
+        dispatch(SET_LOGIN_TYPE(type));
         const userInfo = await userProfile().then((res) => {
           return res?.data;
         });
@@ -107,6 +113,7 @@ const SignupOptionalPage = () => {
             content: <WelcomeSheet recommendCode={recommendCode as string} />,
           })
         );
+        localStorage.removeItem('appleToken');
       }
     } catch (error: any) {
       dispatch(SET_ALERT({ alertMessage: error.message }));
