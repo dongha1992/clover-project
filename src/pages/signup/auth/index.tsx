@@ -269,15 +269,19 @@ const SignupAuthPage = () => {
     switch (true) {
       case isApple: {
         router.push('/signup/optional');
+        return;
       }
       case isApple && hasCode: {
         router.push(`/signup/optional?recommendCode=${recommendCode}`);
+        return;
       }
       case hasCode: {
         router.push(`/signup/email-password?recommendCode=${recommendCode}`);
+        return;
       }
       default: {
         router.push('/signup/email-password');
+        return;
       }
     }
   };

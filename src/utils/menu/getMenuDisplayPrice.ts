@@ -13,8 +13,6 @@ interface IPriceResult {
 }
 
 const getMenuDisplayPrice = (menuDetails: any): IPriceResult => {
-  /* TODO: 케이스 추가 */
-
   // if (!menuDetails) return;
 
   const [result]: any = pipe(

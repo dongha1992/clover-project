@@ -110,9 +110,12 @@ const LoginPage = () => {
           // router.push('/mypage/profile/dormant');
           switch (true) {
             case hasCode: {
+              router.push(`/mypage/friend?recommendCode=${recommendCode}`);
+              return;
             }
             default: {
               router.push(`${returnPath}`);
+              return;
             }
           }
         }
@@ -128,20 +131,6 @@ const LoginPage = () => {
       finishLogin();
     }
   };
-
-  // TODO : finish 이후에 넣는게 맞는거같음
-
-  // useEffect(() => {
-  //   if (isLoginSuccess) {
-  //     const isDormantAccount = false;
-  //     if (isDormantAccount) {
-  //       router.push('/mypage/profile/dormant');
-  //     } else {
-  //       router.push(`${returnPath}`);
-  //     }
-  //   }
-  //   return () => {};
-  // }, [isLoginSuccess]);
 
   return (
     <Container>

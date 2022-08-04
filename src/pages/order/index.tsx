@@ -214,7 +214,7 @@ const OrderPage = () => {
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       /*TODO: 모델 수정해야함 */
-      /*TODO: 쿠폰 퍼센테이지 */
+
       const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
         previewOrder?.order!;
 
