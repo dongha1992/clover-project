@@ -65,6 +65,7 @@ const SpotSearchKakaoMap = ({
   useEffect(()=> {
     if(spotListAllCheck) {
       setShowInfoWindow(true);
+      setMaxZoomOut(true);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -316,10 +317,10 @@ const SpotSearchKakaoMap = ({
                   image: currentPositionIcon,
                   zIdex: 900,
               });
-              // 기존에 마커가 있다면 제거
-              // markersArr.push(marker);
               marker.setMap(map);
               setSuccessPosition(true);
+              setMaxZoomOut(false);
+              setMinZoomIn(false);
             },
             (error) => { // `getCurrentPosition` 메소드에 대한 실패 callback 핸들러
               setSuccessPosition(false);
