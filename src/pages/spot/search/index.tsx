@@ -109,9 +109,14 @@ const SpotSearchPage = (): ReactElement => {
       );
       window.getCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
     };
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
+
+  useEffect(()=> {
+    if(currentArrowed){
+      setIsSearchingPosition(false);
+    };
+  }, [currentArrowed]);
 
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
   const onLoadKakaoMap = () => { 
@@ -318,9 +323,11 @@ const SpotSearchPage = (): ReactElement => {
     return <div>로딩</div>;
   };
 
+ if(currentArrowed){
   if(isSeachingPosition){
     return <div>현재 위치 찾는중...😊</div>
-  }
+  };
+ };
 
   // 위치 정보 있는 경우 
   // -> 추천, 이벤트 스팟 있으면 노출
