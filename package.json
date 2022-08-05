@@ -37,7 +37,6 @@
     "react-query": "^3.34.12",
     "react-redux": "^7.2.6",
     "react-slick": "^0.28.1",
-    "react-thumbor-img": "^4.0.3",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "remark-gfm": "^3.0.1",
