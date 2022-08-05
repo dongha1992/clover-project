@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH5B, TextH4B, TextH1B } from '@components/Shared/Text';
 import { theme, responsiveImg, responsiveImgWrapper } from '@styles/theme';
-import { IMAGE_S3_URL } from '@constants/mock';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { StarRating } from '@components/StarRating';
 import { IDetailImage } from '@model/index';
 
@@ -44,13 +43,13 @@ const ReviewOnlyImage = ({
                   <LastImg>
                     <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
-                  <img src={process.env.IMAGE_SERVER_URL + review.url} alt="리뷰이미지" />
+                  <Image src={review.url} alt="리뷰이미지" layout={"fill"}></Image>
                 </LastImgWrapper>
               );
             }
             return (
               <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
-                <img src={process.env.IMAGE_SERVER_URL + review.url} alt="리뷰이미지" key={index} />
+                <Image src={review.url} alt="리뷰이미지" key={index} layout={"fill"}/>
               </ReviewImgWrapper>
             );
           })}

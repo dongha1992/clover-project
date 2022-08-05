@@ -10,7 +10,7 @@ import { userForm } from '@store/user';
 import { FlexWrapWrapper, theme } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import { getMenuDisplayPrice } from '@utils/menu';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
@@ -134,7 +134,7 @@ const SubsItem = ({ item, height, width, testType }: IProps) => {
     <ItemBox width={width}>
       <ImageWrapper height={height} onClick={goToDetail}>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail[0].url}
+          src={item.thumbnail[0].url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}

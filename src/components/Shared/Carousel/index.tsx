@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SVGIcon } from '@utils/common';
-import { getImageUrl } from '@api/image';
+import Image from '@components//Shared/Image';
 import {TextH6B} from "@components/Shared/Text";
 import {theme} from "@styles/theme";
 
@@ -63,11 +63,13 @@ const Carousel = ({ images }: ICarouselProps) => {
       <Slider {...settings}>
         {images?.map((image: ICarouselImageProps, index: number) => {
           return (
-            <ImageWrapper
-              src={getImageUrl({url: image.src})}
+            <Image
+              src={image.src}
               alt={image.alt || ""}
+              width="512px"
+              height="383px"
+              layout="responsive"
               key={index}
-              isLast={index === images.length + 1}
             />
           );
         })}
@@ -111,12 +113,6 @@ const Container = styled.div`
   }
 `;
 
-const ImageWrapper = styled.img<{ isLast: boolean }>`
-  width: 100%;
-  /* height: 100%; */
-  /* object-fit: cover; */
-  /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
-`;
 const NextArrowWrapper = styled.div`
   position: absolute;
   right: 0%;
