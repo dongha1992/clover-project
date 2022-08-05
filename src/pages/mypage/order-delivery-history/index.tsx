@@ -8,10 +8,14 @@ import dynamic from 'next/dynamic';
 import { FlexCol, FlexEnd, homePadding, theme } from '@styles/theme';
 import { OrderDeliveryItem } from '@components/Pages/Mypage/OrderDelivery';
 import BorderLine from '@components/Shared/BorderLine';
-import { IGetOrderList, IGetOrderListResponse, Obj } from '@model/index';
+import { IGetOrderList, IOrderMenusInOrderList, Obj } from '@model/index';
 import { useInfiniteOrderList } from '@queries/mypage';
 import { Button } from '@components/Shared/Button';
 import router from 'next/router';
+import { useMutation, useQueryClient } from 'react-query';
+import { postCartsApi } from '@api/cart';
+import { useToast } from '@hooks/useToast';
+import { SET_ALERT } from '@store/alert';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
 
@@ -37,11 +41,15 @@ const OrderDeliveryHistoryPage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
+  const { showToast } = useToast();
+
   const option = {
     root: parentRef?.current!, // 관찰대상의 부모요소를 지정
     rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
     threshold: 1.0,
   };
+
+  const queryClient = useQueryClient();
 
   // const { data, isLoading } = useQuery(
   //   ['getOrderLists', withInDays],
@@ -84,9 +92,35 @@ const OrderDeliveryHistoryPage = () => {
     );
   };
 
-  const buttonHandler = ({ id, isDelivering }: { id: number; isDelivering: boolean }) => {
+  const { mutateAsync: mutateAddCartItem } = useMutation(
+    async (menus: IOrderMenusInOrderList[]) => {
+      const reqBody = menus?.map((item) => {
+        return {
+          menuId: item.menuId!,
+          menuDetailId: item.menuDetailId,
+          quantity: item.menuQuantity,
+          main: true,
+        };
+      });
+
+      const { data } = await postCartsApi(reqBody!);
+    },
+    {
+      onError: (error: any) => {
+        dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
+      },
+      onSuccess: async () => {
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        await queryClient.refetchQueries('getCartList');
+        await queryClient.refetchQueries('getCartCount');
+      },
+    }
+  );
+
+  const buttonHandler = ({ menus, isDelivering }: { menus: IOrderMenusInOrderList[]; isDelivering: boolean }) => {
     if (isDelivering) {
       // 장바구니 담기
+      mutateAddCartItem(menus);
     } else {
       // 배송조회
     }
