@@ -502,7 +502,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           {banners?.map((banner, index) => {
             return (
               <AdWrapper key={index}>
-                <BannerImg src={IMAGE_S3_URL + banner.imageUrl} />
+                <BannerImg src={IMAGE_S3_URL + banner.image.url} />
               </AdWrapper>
             );
           })}

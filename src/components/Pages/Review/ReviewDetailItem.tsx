@@ -2,28 +2,15 @@ import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
-import { theme, showMoreText } from '@styles/theme';
+import { theme } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
-import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
-import Image from 'next/image';
-import { getImageApi } from '@api/image';
 
 interface IProps {
   review: any;
   isDetailPage?: boolean;
   clickImgViewHandler?: (imgUrlForViwer: string[], index: number) => void;
 }
-
-const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
-  const params = {
-    width,
-    url,
-  };
-  const data = await getImageApi(params);
-
-  return data;
-};
 
 const MAX_LINE = 5;
 
@@ -106,7 +93,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
                       key={index}
                     >
                       <img
-                        src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + img.url}
+                        src={process.env.IMAGE_SERVER_URL + img.url}
                         // src={fromS3 ? s3Url : getResizeImg({ width: 500, url: img.url })}
                         alt="리뷰이미지"
                         width={'100%'}

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 // import Image from 'next/image';
 import { IMAGE_S3_URL } from '@constants/mock';
-import { IMenuImage } from '@model/index';
+import { IImage } from '@model/index';
 import { TextB2R } from '@components/Shared/Text';
 
 const DeliveryInfoPage = () => {
@@ -14,10 +14,10 @@ const DeliveryInfoPage = () => {
     <Container>
       <Wrapper>
         {info?.deliveryMethods?.length > 0 ? (
-          info?.deliveryMethods?.map((item: IMenuImage, index: number) => {
+          info?.deliveryMethods?.map((item: IImage, index: number) => {
             return (
               <ImageWrapper key={index}>
-                <Image src={IMAGE_S3_URL + item?.url} alt="배송방법이미지" width={'100%'} height={'100%'} />
+                <IImage src={IMAGE_S3_URL + item?.url} alt="배송방법이미지" width={'100%'} height={'100%'} />
               </ImageWrapper>
             );
           })

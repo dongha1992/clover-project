@@ -4,11 +4,7 @@ import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
-import Image from 'next/image';
 import { IBestReviews } from '@model/index';
-import { getImageApi } from '@api/image';
-import { IMAGE_ERROR } from '@constants/menu';
 
 interface IProps {
   review: IBestReviews;
@@ -16,25 +12,15 @@ interface IProps {
 }
 
 const ReviewItem = ({ review, onClick }: IProps) => {
-  // const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
-  //   const data = await getImageApi(width, url);
-  //
-  // };
-
-  //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
-
   const hasImage = review?.images.length !== 0;
   const url = hasImage && review?.images[0]?.url;
-  const fromS3 = url && url?.includes('/menu');
-  const s3Url = IMAGE_S3_URL + url;
 
   return (
     <Container onClick={() => onClick(review)}>
       <Wrapper>
         {hasImage && (
           <ImgWrapper>
-            {/* {getResizeImg({ width: 500, url: review?.images[0]?.url! })} */}
-            <ReviewImg src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL! + url} alt="후기사진" />
+            <ReviewImg src={process.env.IMAGE_SERVER_URL! + url} alt="후기사진" />
           </ImgWrapper>
         )}
 
