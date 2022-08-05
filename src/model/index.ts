@@ -1064,6 +1064,7 @@ export interface IAccessMethod {
   text: string;
   value: string;
 }
+
 export interface IUserInputObj {
   receiverName: string;
   receiverTel: string;
@@ -1274,6 +1275,7 @@ export interface IGetOrderInImage {
 export interface IOrderMenusInOrderList {
   menuDetailId: number;
   menuQuantity: number;
+  menuId?: number;
 }
 
 export interface IOrderOptions {

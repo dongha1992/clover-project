@@ -10,9 +10,11 @@ import DeliveryStatusInfo from './DeliveryStatusInfo';
 import ItemInfo from './ItemInfo';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP } from '@constants/order';
+import { IOrderMenusInOrderList } from '@model/index';
+
 interface IProps {
   orderDeliveryItem: IGetOrderList;
-  buttonHandler: ({ id, isDelivering }: { id: number; isDelivering: boolean }) => void;
+  buttonHandler: ({ menus, isDelivering }: { menus: IOrderMenusInOrderList[]; isDelivering: boolean }) => void;
 }
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
@@ -36,7 +38,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
     url: orderDeliveryItem?.subOrderDelivery?.image.url!,
     amount: orderDeliveryItem?.subOrderDelivery?.order.amount!,
   };
-  console.log(orderDeliveryItem, 'orderDeliveryItem');
+  console.log(orderDeliveryItem.orderMenus, 'orderDeliveryItem');
   return (
     <Container>
       <Wrapper>
@@ -64,7 +66,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
             color={theme.black}
             border
             margin="16px 8px 0 0"
-            onClick={() => buttonHandler({ id: orderDeliveryItem.order.id, isDelivering })}
+            onClick={() => buttonHandler({ menus: orderDeliveryItem.orderMenus, isDelivering })}
           >
             {isDelivering ? '배송조회하기' : '장바구니 담기'}
           </Button>
