@@ -3,13 +3,15 @@ import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { TextH6B } from '@components/Shared/Text';
+import { TextH6B, TextB2R } from '@components/Shared/Text';
 import dynamic from 'next/dynamic';
-import { FlexCol, FlexEnd, homePadding } from '@styles/theme';
+import { FlexCol, FlexEnd, homePadding, theme } from '@styles/theme';
 import { OrderDeliveryItem } from '@components/Pages/Mypage/OrderDelivery';
 import BorderLine from '@components/Shared/BorderLine';
 import { IGetOrderList, IGetOrderListResponse, Obj } from '@model/index';
 import { useInfiniteOrderList } from '@queries/mypage';
+import { Button } from '@components/Shared/Button';
+import router from 'next/router';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
 
@@ -90,6 +92,10 @@ const OrderDeliveryHistoryPage = () => {
     }
   };
 
+  const goToShop = () => {
+    router.push('/');
+  };
+
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
     console.log(target, 'target');
@@ -139,7 +145,16 @@ const OrderDeliveryHistoryPage = () => {
           );
         })
       ) : (
-        <div>none</div>
+        <NoSubsBox>
+          <FlexCol width="100%">
+            <TextB2R padding="0 0 24px" color={theme.greyScale65} center>
+              주문/배송 내역이 없어요 😭
+            </TextB2R>
+            <Button backgroundColor="#fff" color="#242424" width="100%" border onClick={goToShop}>
+              상품 보러가기
+            </Button>
+          </FlexCol>
+        </NoSubsBox>
       )}
       <div className="last" ref={ref}></div>
     </Container>
@@ -151,5 +166,11 @@ const Container = styled.div`
 `;
 
 const List = styled.div``;
+const NoSubsBox = styled.div`
+  height: calc(100vh - 104px);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+`;
 
 export default OrderDeliveryHistoryPage;
