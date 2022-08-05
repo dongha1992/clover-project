@@ -81,7 +81,7 @@ export interface ISignupUser {
   marketingEmailReceived: boolean;
   marketingSmsReceived: boolean;
   name: string;
-  nickName: string;
+  nickname: string;
   password: string;
   tel: string;
 }
@@ -208,7 +208,7 @@ export interface IChangeMe {
   marketingPushReceived: boolean;
   marketingSmsReceived: boolean;
   name: string;
-  nickName: string;
+  nickname: string;
   notiPushReceived: boolean;
   primePushReceived: boolean;
   tel: string;
@@ -1773,7 +1773,7 @@ export interface IMenuDetails {
 export interface IBestReviews {
   id: number;
   menuId?: number;
-  userNickName: string;
+  userNickname: string;
   menuName?: string;
   menuDetailName?: string;
   tag?: number;
@@ -1915,7 +1915,7 @@ export interface IGetMenusResponse {
 export interface ISearchReviews {
   id: number;
   menuId?: number;
-  userNickName: string;
+  userNickname: string;
   menuName?: string;
   menuDetailName?: string;
   tag?: number;
@@ -2024,7 +2024,7 @@ export interface ICompletionReviewImg {
 }
 export interface ICompletionReviews {
   id: number;
-  userNickName: string;
+  userNickname: string;
   menuName: string;
   menuDetailName: string;
   rating: number;
@@ -2039,6 +2039,7 @@ export interface ICompletionReviews {
   menuDetailId?: number;
   orderDeliveryId: number;
   displayMenuName?: string;
+  editable: boolean;
 }
 
 export interface ICompletionReviewsResponse {

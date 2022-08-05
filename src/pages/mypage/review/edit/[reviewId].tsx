@@ -11,7 +11,6 @@ import TextArea from '@components/Shared/TextArea';
 import TextInput from '@components/Shared/TextInput';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getReviewDetailApi, editMenuReviewApi, deleteReviewApi } from '@api/menu';
 import { StarRating } from '@components/StarRating';
@@ -309,7 +308,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
           <TextH3B>
-            <NickName>{me?.nickName}</NickName>님
+            <NickName>{me?.nickname}</NickName>님
           </TextH3B>
           {selectedReviewDetail?.menuReview.orderType === 'SUBSCRIPTION' ? (
             <TextH3B>이용 중인 구독은 만족하셨나요?</TextH3B>

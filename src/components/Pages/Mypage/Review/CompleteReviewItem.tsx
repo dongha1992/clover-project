@@ -8,15 +8,17 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import NextImage from 'next/image';
+import { deleteReviewApi } from '@api/menu';
 
 const MAX_LINE = 5;
 interface IProps {
   review: ICompletionReviews;
   clickImgViewHandler: (imgUrlForViwer: string[], index: number) => void;
   goToReviewDetail: ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => void;
+  deleteReviewHandler: (id: number) => void;
 }
 
-const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: IProps) => {
+const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, deleteReviewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
 
@@ -55,16 +57,20 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                 pointer
                 color={theme.greyScale65}
                 textDecoration="underline"
-                onClick={() =>
-                  goToReviewDetail({
-                    url: review.menuImage.url,
-                    menuId: review.menuId,
-                    id: review.id,
-                    name: review.displayMenuName!,
-                  })
-                }
+                onClick={() => {
+                  if (review.editable) {
+                    goToReviewDetail({
+                      url: review.menuImage.url,
+                      menuId: review.menuId,
+                      id: review.id,
+                      name: review.displayMenuName!,
+                    });
+                  } else {
+                    deleteReviewHandler(review.id);
+                  }
+                }}
               >
-                편집
+                {review.editable ? '편집' : '삭제'}
               </TextH6B>
             </FlexBetweenStart>
             <ReviewHeader>
@@ -75,7 +81,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail }: I
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.userNickName}
+                    {review.userNickname}
                   </TextH6B>
                   <TextB3R color={theme.greyScale65}>{dayFormatter}</TextB3R>
                 </UserInfo>

@@ -157,6 +157,7 @@ const SignupAuthPage = () => {
         );
         setOneMinuteDisabled(true);
         setDelay(1000);
+        setAuthCodeConfirm(false);
         resetTimer();
         if (isOverTime) {
           setIsOverTime(false);
@@ -211,7 +212,7 @@ const SignupAuthPage = () => {
   };
 
   const getAuthCodeConfirm = async () => {
-    if (!authCodeValidation || isOverTime) return;
+    if (!authCodeValidation || isOverTime || authCodeConfirm) return;
 
     if (authCodeNumberRef.current) {
       if (phoneValidation && authCodeValidation) {
@@ -252,6 +253,7 @@ const SignupAuthPage = () => {
     if (!nameValidation || !phoneValidation || !authCodeConfirm) {
       return;
     }
+
     const isApple = signUpInfo.loginType === 'APPLE';
 
     dispatch(
@@ -262,10 +264,17 @@ const SignupAuthPage = () => {
         email: isApple ? signUpInfo.email : '',
       })
     );
-    if (isApple) {
-      router.push('/signup/optional');
-    } else {
-      router.push('/signup/email-password');
+
+    switch (true) {
+      case isApple: {
+        router.push('/signup/optional');
+        return;
+      }
+
+      default: {
+        router.push('/signup/email-password');
+        return;
+      }
     }
   };
 
@@ -326,6 +335,7 @@ const SignupAuthPage = () => {
               ref={authCodeNumberRef}
               inputType="number"
               eventHandler={authCodeInputHandler}
+              value={signupUser.authCode ? signupUser.authCode : ''}
             />
             <Button
               width="30%"

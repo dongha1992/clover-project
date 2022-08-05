@@ -6,18 +6,16 @@ import { TextH6B, TextH3B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { IAuthObj, Obj } from '@model/index';
 import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
-// import { setRefreshToken } from '@components/Auth';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { SET_USER_AUTH, SET_USER } from '@store/user';
 import { getAppleTokenApi, userProfile } from '@api/user';
 import { userLoginApi } from '@api/authentication';
 import { SET_ALERT } from '@store/alert';
-import Oauth from '@pages/oauth';
 import { useAppleLogin, useKakaoLogin } from '@hooks/auth';
 
 const OnBoarding: NextPage = () => {
@@ -38,7 +36,7 @@ const OnBoarding: NextPage = () => {
     EMAIL: 15,
   };
 
-  const onRouter = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch();
   const { loginType } = useSelector(commonSelector);
   const [returnPath, setReturnPath] = useState<string | string[]>('');
@@ -46,9 +44,11 @@ const OnBoarding: NextPage = () => {
   const onKaKao = useKakaoLogin();
   const onApple = useAppleLogin();
 
+  const { recommendCode } = router.query;
+
   useEffect(() => {
-    setReturnPath(onRouter.query.returnPath || '/');
-  }, [onRouter.query.returnPath]);
+    setReturnPath(router.query.returnPath || '/');
+  }, [router.query.returnPath]);
 
   useEffect(() => {
     if (window.ReactNativeWebView) {
@@ -86,9 +86,12 @@ const OnBoarding: NextPage = () => {
     if (window.navigator.userAgent === 'fco-clover-webview') {
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     } else {
+      const url =
+        location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`;
+      console.log(recommendCode, 'recommendCode');
+      recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
       window.Kakao.Auth.authorize({
-        redirectUri:
-          location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`,
+        redirectUri: url,
         scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
       });
     }
@@ -109,13 +112,15 @@ const OnBoarding: NextPage = () => {
         try {
           const appleResponse = await window.AppleID.auth.signIn();
           const appleToken = appleResponse?.authorization.id_token;
+          recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
+
           if (appleToken) {
             const params = { appleToken };
             const { data } = await getAppleTokenApi({ params });
             if (data.data.availability) {
+              dispatch(SET_SIGNUP_USER({ email: data.data.email }));
               localStorage.setItem('appleToken', appleToken);
               router.replace('/signup?isApple=true');
-              dispatch(SET_SIGNUP_USER({ email: data.data.email }));
             } else {
               const result = await userLoginApi({ accessToken: `${appleToken}`, loginType: 'APPLE' });
               if (result.data.code == 200) {
@@ -131,7 +136,7 @@ const OnBoarding: NextPage = () => {
 
                 dispatch(SET_USER(data));
                 // success
-                router.push('/');
+                recommendCode ? router.replace('/mypage/friend') : router.push('/');
               }
             }
           }
@@ -153,14 +158,25 @@ const OnBoarding: NextPage = () => {
   };
 
   const emailSignUpHandler = (): void => {
+    const { recommendCode } = router.query;
+    recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
     router.push('/signup');
   };
 
   const emailLoginHandler = (): void => {
-    if (returnPath === onRouter.query.returnPath) {
-      router.push(`/login?returnPath=${encodeURIComponent(String(returnPath))}`);
-    } else {
-      router.push('/login');
+    const hasReturnPath = returnPath === router.query.returnPath;
+    const { recommendCode } = router.query;
+
+    switch (true) {
+      case hasReturnPath: {
+        router.push(`/login?returnPath=${encodeURIComponent(String(returnPath))}`);
+        return;
+      }
+      default: {
+        recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
+        router.push('/login');
+        return;
+      }
     }
   };
 

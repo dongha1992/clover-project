@@ -13,7 +13,7 @@ import { useQuery } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import 'swiper/css';
-import { destinationForm } from '@store/destination';
+import { destinationForm, SET_LOCATION } from '@store/destination';
 import {
   spotSelector,
   INIT_SEARCH_SELECTED_FILTERS,
@@ -61,6 +61,8 @@ const SpotSearchResultPage = (): ReactElement => {
   }, [router.isReady]);
 
   useEffect(() => {
+    defaultSortRedioId();
+    dispatch(INIT_SEARCH_SELECTED_FILTERS());
     inputRef.current?.focus();
     // setKeyword(queryKeyword);
     dispatch(SET_SPOT_MAP_SWITCH(false));
@@ -134,26 +136,97 @@ const SpotSearchResultPage = (): ReactElement => {
     }
   }, [isDelivery]);
 
-  useEffect(()=> {
+  useEffect(()=>{
     if(currentLocation){
-      dispatch(
-        SET_SPOT_POSITIONS({
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-        })
-      );
+      onLoadKakaoCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude)
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
 
-  const getLocation = async () => {
-    if(currentLocation){
+  const onLoadKakaoCurrentPositionAddress = (currentLat?: number, currentLon?: number) => { 
+    try {
+      window.kakao.maps.load(() => {
+        let geocoder = new window.kakao.maps.services.Geocoder();
+        let coord = new window.kakao.maps.LatLng(currentLat, currentLon);
+        let callback = function(result: any, status: any) {
+            if (status === window.kakao.maps.services.Status.OK) {
+              const address = result[0].address;
+              const setAddress = `${address.region_1depth_name} ${address.region_2depth_name} ${address.region_3depth_name}`
+              dispatch(
+                SET_ALERT({
+                  alertMessage: `${setAddress}(으)로\n위치 설정하시겠어요?`,
+                  submitBtnText: '확인',
+                  closeBtnText: '취소',
+                  onSubmit: () => setCurrentPositionAddress(result[0]),
+                  onClose: () => {},
+                })
+              ); 
+            };
+        };
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+      });
+    } catch (e) {
       dispatch(
-        SET_SPOT_POSITIONS({
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
+        SET_ALERT({
+          alertMessage: '알 수 없는 에러가 발생했습니다.',
+          submitBtnText: '확인',
         })
-      );
+      );  
+      console.error(e);
     };
+  };
+
+  // 현 위치로 모든 위치값 수정 - 폼에 맞게 주소값 세팅 
+  // 현위치에 맞게 모든 스팟 세팅 & 각 스팟 distance 생성
+  const setCurrentPositionAddress = (address: any) => {
+    const noneRoadAddress = address.road_address === null;
+    const jibunJuso = address.address.address_name;
+    const jibunZipNo = `${address.address.main_address_no}-${address.address.sub_address_no}`;
+
+    const setRoadAddressPart1 = noneRoadAddress ? jibunJuso : address.road_address.address_name;
+    const setRoadAddress = noneRoadAddress ? jibunJuso : `${address.road_address.address_name}(${address.address.region_3depth_name})`;
+    const setJibunAddr = noneRoadAddress ? jibunJuso : `${address.address.address_name} ${address.road_address.building_name}`;
+    const setZipNo = noneRoadAddress ? jibunZipNo : address.road_address.zone_no;
+    const setBdNm = noneRoadAddress? null : address.road_address.building_name;
+
+    dispatch(
+      SET_SPOT_POSITIONS({
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+      })
+    );
+
+    dispatch(SET_LOCATION({
+      roadAddr: setRoadAddress,
+      roadAddrPart1: setRoadAddressPart1,
+      roadAddrPart2: null,
+      jibunAddr: setJibunAddr,
+      engAddr: null,
+      zipNo: setZipNo,
+      admCd: null,
+      rnMgtSn: null,
+      bdMgtSn: null,
+      detBdNmList: null,
+      bdNm: setBdNm,
+      bdKdcd: null,
+      siNm: null,
+      sggNm: null,
+      emdNm: address.address.region_3depth_name,
+      liNm: null,
+      rn: null,
+      udrtYn: null,
+      buldMnnm: null,
+      buldSlno: null,
+      mtYn: null,
+      lnbrMnnm: null,
+      lnbrSlno: null,
+      emdNo: null,
+    }));
+  };
+
+
+  const getGeoLocation = () => { // 필터 정렬 -> 가까운순 클릭시 현 위치 값 hanlder
+    handlerCurrentPosition();
   };
 
   // 최근 픽업 이력 조회 api
@@ -201,7 +274,7 @@ const SpotSearchResultPage = (): ReactElement => {
     isLoading,
     isFetching,
   } = useQuery(
-    ['spotSearchList'],
+    ['spotSearchList', spotsPosition],
     async () => {
       const params = {
         keyword: inputKeyword,
@@ -378,7 +451,7 @@ const SpotSearchResultPage = (): ReactElement => {
                 searchResult={paginatedSpotList}
                 orderId={orderId}
                 hasCart={true}
-                getLocation={handlerCurrentPosition}
+                getLocation={getGeoLocation}
                 noSpotResultSwitchMap={noSpotResultSwitchMap}
                 goToSpotsRegistrations={goToSpotsRegistrations}
                 totalCount={searchResult.length}

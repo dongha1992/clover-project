@@ -15,12 +15,6 @@ import { SET_SPOT_POSITIONS } from '@store/spot';
 import { useQuery } from 'react-query';
 import useCurrentLocation from '@hooks/useCurrentLocation';
 
-declare global {
-  interface Window {
-    getCurrentPositionAddress: any;
-  }
-}
-
 interface IPosition {
   latitude: number | null;
   longitude: number | null
@@ -50,7 +44,7 @@ const LocationPage = () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    onLoadKakaoMap();
+    onLoadKakaoCurrentPositionAddress();
 
     const handleScroll = () => {
       const scrollHeight = document.documentElement.scrollHeight;
@@ -88,29 +82,32 @@ const LocationPage = () => {
           longitude: currentLocation.longitude,
         })
       );
-      window.getCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
+      onLoadKakaoCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
     };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
 
+  useEffect(()=> {
+    if(currentArrowed){
+      setIsSearchingPosition(false);
+    };
+  }, [currentArrowed]);
+
   // 현 위치로 설정하기 - 카카오지도api 사용하여 좌표값으로 주소 호출
-  const onLoadKakaoMap = () => { 
+  const onLoadKakaoCurrentPositionAddress = (currentLat?: number, currentLon?: number) => { 
     try {
       window.kakao.maps.load(() => {
-        const getCurrentPositionAddress = (lat: number,lng: number) => {
-          let geocoder = new window.kakao.maps.services.Geocoder();
-          let coord = new window.kakao.maps.LatLng(lat, lng);
-          let callback = function(result: any, status: any) {
-              if (status === window.kakao.maps.services.Status.OK) {
-                const address = result[0];
-                  setIsSearchingPosition(false);
-                  setCurrentPositionAddress(address);
-              };
-          };
-          geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+        let geocoder = new window.kakao.maps.services.Geocoder();
+        let coord = new window.kakao.maps.LatLng(currentLat, currentLon);
+        let callback = function(result: any, status: any) {
+            if (status === window.kakao.maps.services.Status.OK) {
+              const address = result[0];
+                setIsSearchingPosition(false);
+                setCurrentPositionAddress(address);
+            };
         };
-        window.getCurrentPositionAddress = getCurrentPositionAddress;
+        geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
       });
     } catch (e) {
       dispatch(
@@ -269,8 +266,10 @@ const LocationPage = () => {
     }
   };
 
-  if(isSeachingPosition){
-    return <div>현재 위치 찾는 중..😊</div>
+  if(currentArrowed){
+    if(isSeachingPosition){
+      return <div>현재 위치 찾는 중..😊</div>
+    };  
   };
 
   return (

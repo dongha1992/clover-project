@@ -14,7 +14,7 @@ const PrivateOpenPage = () => {
     router.replace({
       pathname: `/mypage/spot-status/detail/${trialId}`,
       query: {
-        q_trial: true,
+        q_share: true,
       }
     })
   };
