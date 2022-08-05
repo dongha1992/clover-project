@@ -36,10 +36,6 @@ const ReviewOnlyImage = ({
         </Header>
         <ReviewSwipe>
           {reviewsImages?.map((review: any, index: number) => {
-            //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
-            const fromS3 = review.url.includes('menu');
-            const s3Url = IMAGE_S3_URL + review?.url;
-
             if (index > 3) return;
             if (reviewsImages?.length > 4 && index === 3) {
               const numOfImages = reviewsImages.length - 4;
@@ -48,13 +44,13 @@ const ReviewOnlyImage = ({
                   <LastImg>
                     <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
-                  <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" />
+                  <img src={process.env.IMAGE_SERVER_URL + review.url} alt="리뷰이미지" />
                 </LastImgWrapper>
               );
             }
             return (
               <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
-                <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" key={index} />
+                <img src={process.env.IMAGE_SERVER_URL + review.url} alt="리뷰이미지" key={index} />
               </ReviewImgWrapper>
             );
           })}

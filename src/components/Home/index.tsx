@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Banner from '@components/Banner';
 import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
-import { TextB3R, TextH5B } from '@components/Shared/Text';
-import { Item, HorizontalItem } from '@components/Item';
+import { TextH5B } from '@components/Shared/Text';
+import { Item } from '@components/Item';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import { getMenusApi, getRecommendMenusApi } from '@api/menu';
+import { getRecommendMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
-import { SET_EVENT_TITLE , INIT_EVENT_TITLE} from '@store/event';
+import { SET_EVENT_TITLE , INIT_EVENT_TITLE } from '@store/event';
+import Carousel from "@components/Shared/Carousel";
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
@@ -39,6 +39,7 @@ const Home = () => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
+
 
   const { error: eventsError } = useQuery(
     'eventsBanners',
@@ -85,7 +86,9 @@ const Home = () => {
 
   return (
     <Container>
-      <Banner bannerList={bannerList} />
+        <Container>
+            <Carousel images={bannerList.map(banner => ({ src: banner.image.url }))} />
+        </Container>
       <SectionWrapper>
         <MainTab />
         <BorderLine height={1} margin="24px 0 24px 0" />
@@ -111,7 +114,7 @@ const Home = () => {
       </SectionWrapper>
       <LineBanner onClick={goToPromotion}>
         <Image
-          src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_banner.png`}
+          src="/banner/img_home_contents_banner.png"
           height="120px"
           width="512px"
           layout="responsive"
@@ -129,13 +132,13 @@ const Home = () => {
           >더보기</TextH5B>
         </FlexSpace>
         <Image
-          src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
+          src="/banner/img_home_contents_event.png"
           height="300px"
           width="512px"
           layout="responsive"
           alt="메인 콘텐츠 기획전"
         />
-        {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
+        {eventbannerList.length !== 0 && <Carousel images={eventbannerList.map(banner => ({src: banner.image.url}))}></Carousel>}
         <ItemListRowWrapper>
           <ItemListRow>
             {menus?.length! > 0

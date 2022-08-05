@@ -1,14 +1,20 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IBanners } from '@model/index';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
-interface IProps {
-  setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
-  // images: IBanners[];
-  images: any[] | any;
+import { getImageUrl } from '@api/image';
+import {TextH6B} from "@components/Shared/Text";
+import {theme} from "@styles/theme";
+
+export interface ICarouselImageProps {
+  src: string
+  alt?: string
+  width?: number
+}
+
+interface ICarouselProps {
+  images: ICarouselImageProps[];
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -27,19 +33,19 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const Carousel = ({ images, setCountIndex }: IProps) => {
+const Carousel = ({ images }: ICarouselProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
+  const [currentPageNumber, setCurrentPageNumber] = useState(0);
 
   const settings = {
-    arrows: isArrowShow ? true : false,
+    arrows: isArrowShow,
     dots: false,
     spped: 500,
     sliderToShow: 1,
     slidersToScroll: 1,
     centerMode: true,
     infinite: true,
-    customPaging: () => <div />,
-    afterChange: (current: number) => setCountIndex && setCountIndex(current),
+    afterChange: setCurrentPageNumber,
     centerPadding: '0px',
     nextArrow: <NextArrow />,
     prevArrow: <PreviousArrow />,
@@ -55,23 +61,24 @@ const Carousel = ({ images, setCountIndex }: IProps) => {
       }}
     >
       <Slider {...settings}>
-        {images?.map((image: any, index: number) => {
-          // temp
-          if (typeof image === 'string') {
-            image = {
-              imageUrl: image,
-            };
-          }
+        {images?.map((image: ICarouselImageProps, index: number) => {
           return (
             <ImageWrapper
-              src={`${IMAGE_S3_URL}${image.url ? image.url : image.imageUrl}`}
-              alt="리뷰이미지"
+              src={getImageUrl({url: image.src})}
+              alt={image.alt || ""}
               key={index}
               isLast={index === images.length + 1}
             />
           );
         })}
       </Slider>
+      <Count>
+        <TextH6B color={theme.white}>{currentPageNumber + 1}</TextH6B>
+        <TextH6B color={theme.white} padding="0 4px">
+          /
+        </TextH6B>
+        <TextH6B color={theme.white}>{images.length}</TextH6B>
+      </Count>
     </Container>
   );
 };
@@ -125,6 +132,19 @@ const PreviousArrowWrapper = styled.div`
   transform: translateY(-50%);
   z-index: 10;
   cursor: pointer;
+`;
+
+const Count = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 46px;
+  background: rgba(36, 36, 36, 0.5);
+  right: 5%;
+  bottom: 5%;
+  padding: 4px 8px 2px;
+  border-radius: 24px;
 `;
 
 export default React.memo(Carousel);
