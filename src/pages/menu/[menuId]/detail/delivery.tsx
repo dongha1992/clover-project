@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
-// import Image from 'next/image';
-import { IMAGE_S3_URL } from '@constants/mock';
+import Image from '@components/Shared/Image';
 import { IImage } from '@model/index';
 import { TextB2R } from '@components/Shared/Text';
 
@@ -17,7 +16,7 @@ const DeliveryInfoPage = () => {
           info?.deliveryMethods?.map((item: IImage, index: number) => {
             return (
               <ImageWrapper key={index}>
-                <IImage src={IMAGE_S3_URL + item?.url} alt="배송방법이미지" width={'100%'} height={'100%'} />
+                <Image src={item?.url} alt="배송방법이미지" width="512px" height="100%" layout={"fill"}/>
               </ImageWrapper>
             );
           })
@@ -34,6 +33,14 @@ const Wrapper = styled.div`
   margin-top: 120px;
 `;
 
-const ImageWrapper = styled.div``;
-const Image = styled.img``;
+const ImageWrapper = styled.div`
+  position: relative;
+  span {
+    position: relative!important;
+  }
+  img {
+    position: relative!important;
+    height: auto!important;
+  }
+`;
 export default DeliveryInfoPage;

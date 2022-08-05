@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import newUserImg from '@public/images/newUserImg.svg';
 import friendPushEventImg from '@public/images/friendPushEventImg.svg';
 import { IGetOrders } from '@model/index';
@@ -22,7 +22,6 @@ import { userInvitationApi, getUserInfoApi } from '@api/user';
 import isNil from 'lodash-es/isNil';
 import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
-import { SET_LOGIN_SUCCESS } from '@store/user';
 import { INIT_CART_LISTS } from '@store/cart';
 import { commonSelector } from '@store/common';
 interface IMypageMenu {
@@ -246,7 +245,7 @@ const MypagePage = () => {
                   height={96}
                   layout="responsive"
                   objectFit="cover"
-                  src="http://www.newsworks.co.kr/news/photo/202011/502748_392695_2953.jpg"
+                  src="/banner/mypage_banner.jpg"
                   alt="Friend invitation banner"
                 />
               </ImageWrapper>

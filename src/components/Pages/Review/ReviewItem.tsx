@@ -4,6 +4,7 @@ import { SVGIcon } from '@utils/common';
 import { Tag } from '@components/Shared/Tag';
 import { theme, showMoreText } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
+import Image from '@components/Shared/Image';
 import { IBestReviews } from '@model/index';
 
 interface IProps {
@@ -13,14 +14,14 @@ interface IProps {
 
 const ReviewItem = ({ review, onClick }: IProps) => {
   const hasImage = review?.images.length !== 0;
-  const url = hasImage && review?.images[0]?.url;
+  const url = hasImage ? review?.images[0]?.url : '';
 
   return (
     <Container onClick={() => onClick(review)}>
       <Wrapper>
         {hasImage && (
           <ImgWrapper>
-            <ReviewImg src={process.env.IMAGE_SERVER_URL! + url} alt="후기사진" />
+            <Image src={url} alt="후기사진" width="72px" height="72px"></Image>
           </ImgWrapper>
         )}
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import router from 'next/router';
 import styled from 'styled-components';
-import { homePadding, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
 import {
   TextH2B,
   TextB2R,
@@ -10,13 +10,12 @@ import {
   TextH7B,
   TextB3R,
   TextH4B,
-  TextB4R,
   TextH5B,
 } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
-import { ReviewList, ReviewItem } from '@components/Pages/Review';
+import { ReviewItem } from '@components/Pages/Review';
 import { MENU_DETAIL_INFORMATION, MENU_REVIEW_AND_FAQ, TAG_MAP } from '@constants/menu';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,12 +24,12 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { CouponSheet } from '@components/BottomSheet/CouponSheet';
 import dynamic from 'next/dynamic';
 import { DetailBottomInfo } from '@components/Pages/Detail';
-import Carousel from '@components/Shared/Carousel';
+import Carousel, { ICarouselImageProps } from '@components/Shared/Carousel';
+import Image from '@components/Shared/Image';
 import { useQuery } from 'react-query';
 import {
   getMenuDetailApi,
   getMenuDetailReviewApi,
-  getMenusApi,
   getMenuDetailReviewImageApi,
   getBestReviewApi,
 } from '@api/menu';
@@ -39,7 +38,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
-import { IMenus, Obj, IMenuDetails } from '@model/index';
+import { Obj } from '@model/index';
 import isEmpty from 'lodash-es/isEmpty';
 import dayjs from 'dayjs';
 import Badge from '@components/Item/Badge';
@@ -51,7 +50,6 @@ import { PERIOD_NUMBER } from '@constants/subscription';
 import cloneDeep from 'lodash-es/cloneDeep';
 import { getPromotionCodeApi } from '@api/promotion';
 import { getBannersApi } from '@api/banner';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
@@ -68,14 +66,13 @@ interface IProps {
 const MenuDetailPage = ({ menuId }: IProps) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
+  const [thumbnailList, setThumbnailList] = useState<ICarouselImageProps[]>([])
   const tabRef = useRef<HTMLDivElement>(null);
-  const [currentImg, setCurrentImg] = useState(0);
 
   const HEADER_HEIGHT = 56;
 
   const { me } = useSelector(userForm);
   const { menuItem } = useSelector(menuSelector);
-  const { tab } = router.query;
 
   let timer: any = null;
 
@@ -89,7 +86,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     'getMenuDetail',
     async () => {
       const { data } = await getMenuDetailApi(Number(menuId)!);
-
+      setThumbnailList(data.data.thumbnail.map(image =>({src: image.url})));
       return data?.data;
     },
 
@@ -345,11 +342,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={menuDetail?.thumbnail} setCountIndex={setCurrentImg} />
+        <Carousel images={thumbnailList}/>
         <DailySaleNumber>{badgeRenderer()}</DailySaleNumber>
-        <CountWrapper>
-          <TextH6B color={theme.white}>{`${currentImg + 1} / ${menuDetail?.thumbnail.length}`}</TextH6B>
-        </CountWrapper>
       </ImgWrapper>
       <Top>
         <MenuDetailWrapper>
@@ -502,7 +496,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
           {banners?.map((banner, index) => {
             return (
               <AdWrapper key={index}>
-                <BannerImg src={IMAGE_S3_URL + banner.image.url} />
+                <Image src={banner.image.url} width="512px" height="100%"></Image>
               </AdWrapper>
             );
           })}
@@ -637,11 +631,6 @@ const AdWrapper = styled.div`
   height: 96px;
   /* background-color: #dedede; */
   margin-bottom: 16px;
-`;
-
-const BannerImg = styled.img`
-  width: 100%;
-  height: 100%;
 `;
 
 const ReviewHeader = styled.div`
