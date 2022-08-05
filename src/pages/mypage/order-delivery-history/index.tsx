@@ -32,7 +32,7 @@ export const deliveryDetailMap: Obj = {
   DINNER: '저녁',
 };
 
-const DEFAULT_SIZE = 10;
+const DEFAULT_SIZE = 100;
 
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();

@@ -94,6 +94,7 @@ const DestinationDetailPage = () => {
         },
         main: !hasDefaultDestination ? true : isDefaultDestination,
       };
+
       if (orderId) {
         dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
         dispatch(INIT_DESTINATION_TYPE());
@@ -127,7 +128,6 @@ const DestinationDetailPage = () => {
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        console.log(data.data, 'asdasdasdasdas');
         if (!data.data) {
           setHasDefaultDestination(false);
         }

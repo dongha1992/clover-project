@@ -72,7 +72,7 @@ const DestinationSearchPage = () => {
     if (orderId) {
       router.push({
         pathname: '/mypage/order-detail/edit/[orderId]',
-        query: { orderId, destinationId },
+        query: { orderId, destinationId: destination.id },
       });
       dispatch(SET_TEMP_EDIT_DESTINATION(destination));
     } else {
