@@ -63,11 +63,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     queryClient.current = new QueryClient({
       defaultOptions: {
         queries: {
-          retry: false,
-          // retry: process.env.STAGE === Stage.Development ? false : 3,
-          // refetchOnWindowFocus: false,
-          // refetchOnMount: false,
-          // staleTime: 10000,
+          retry: false
         },
       },
     });

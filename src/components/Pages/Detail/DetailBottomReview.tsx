@@ -10,11 +10,10 @@ import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { IDetailImage, IPagination } from '@model/index';
-import { Obj, ISearchReviews } from '@model/index';
+import { ISearchReviews } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
-import { getMenuAverageRate } from '@utils/menu';
 import { menuSelector } from '@store/menu';
 
 interface IProps {
