@@ -48,6 +48,8 @@ const CartActualItem = ({
   const isSold = menuDetail.isSold;
   const hasHoliday = holiday?.length! > 0;
 
+  // TODO: MENU_DETAIL_SOLD CASE
+
   const noLimit = menuDetailAvailabilityMessage === 'NONE';
   const personLimit = menuDetailAvailabilityMessage === 'PERSON';
   const holidayLimit = menuDetailAvailabilityMessage === 'HOLIDAY';
