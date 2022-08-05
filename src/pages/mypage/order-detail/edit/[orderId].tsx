@@ -28,8 +28,6 @@ import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { destinationForm, SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { pipe, indexBy } from '@fxts/core';
-import { Obj } from '@model/index';
-import debounce from 'lodash-es/debounce';
 import { useGetOrderDetail } from 'src/queries/order';
 import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 import dayjs from 'dayjs';
@@ -97,6 +95,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
       if (!destinationId) {
         orderDetail = data?.orderDeliveries[0];
       }
+      console.log(orderDetail, 'orderDetail');
 
       const userAccessMethodMap = pipe(
         ACCESS_METHOD,
@@ -126,6 +125,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
     async (reqBody: any) => {
       const deliveryId = orderDetail?.id!;
 
+      console.log(deliveryEditObj, 'deliveryEditObj');
+
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
@@ -150,6 +151,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
         if (isSubscription && destinationId) {
           router.push({ pathname: `/subscription/${orderId}` });
         }
+        router.push(`/mypage/order-detail/${orderId}`);
         await queryClient.refetchQueries(['getOrderDetail', orderId]);
         dispatch(INIT_TEMP_EDIT_DESTINATION());
       },
@@ -232,52 +234,53 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   };
 
   const checkBeforeEdit = (): boolean => {
-    const noAccessMethod = !deliveryEditObj.deliveryMessageType;
-    const noMsg = !deliveryEditObj.deliveryMessage.length;
-    const isFreeAccess =
-      deliveryEditObj.deliveryMessageType === 'FREE' ||
-      deliveryEditObj.deliveryMessageType === 'DELIVERY_SECURITY_OFFICE';
+    if (orderDetail?.delivery === 'MORNING') {
+      const noAccessMethod = !deliveryEditObj.deliveryMessageType;
+      const noMsg = !deliveryEditObj.deliveryMessage.length;
+      const isFreeAccess =
+        deliveryEditObj.deliveryMessageType === 'FREE' ||
+        deliveryEditObj.deliveryMessageType === 'DELIVERY_SECURITY_OFFICE';
 
-    switch (true) {
-      case isMorning: {
-        if (noMsg && !isFreeAccess) {
-          dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-          return false;
-        } else if (noAccessMethod && !isFreeAccess) {
-          dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
-          return false;
-        } else {
+      switch (true) {
+        case isMorning: {
+          if (noMsg && !isFreeAccess) {
+            dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
+            return false;
+          } else if (noAccessMethod && !isFreeAccess) {
+            dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
+            return false;
+          } else {
+            return true;
+          }
+        }
+
+        // case isParcel: {
+        //   if (noMsg) {
+        //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
+        //     return false;
+        //   } else {
+        //     return true;
+        //   }
+        // }
+
+        default: {
           return true;
         }
       }
-
-      // case isParcel: {
-      //   if (noMsg) {
-      //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-      //     return false;
-      //   } else {
-      //     return true;
-      //   }
-      // }
-
-      default: {
-        return true;
-      }
+    } else {
+      return true;
     }
   };
 
-  const changeInputHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value, name } = e.target;
+  const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
 
-      if (isSamePerson) {
-        setIsSamePerson(false);
-      }
+    if (isSamePerson) {
+      setIsSamePerson(false);
+    }
 
-      setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
-    },
-    [deliveryEditObj]
-  );
+    setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
+  };
 
   const selectAccessMethodHandler = () => {
     dispatch(
@@ -357,7 +360,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
     if (!isSamePerson) {
       dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
     }
-  }, [isSamePerson]);
+  }, [isSamePerson, orderDetail]);
 
   useEffect(() => {
     dispatch(INIT_ACCESS_METHOD());

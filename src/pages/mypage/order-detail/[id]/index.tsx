@@ -138,8 +138,6 @@ const OrderDetailPage = () => {
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
 
-  console.log(orderDetail, '--');
-
   const showSectionHandler = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
   };
@@ -196,11 +194,11 @@ const OrderDetailPage = () => {
   };
 
   const changeDeliveryInfoHandler = () => {
-    if (!canChangeDelivery || isCanceled) {
-      return;
-    }
+    // if (!canChangeDelivery || isCanceled) {
+    //   return;
+    // }
 
-    if (!isSubOrder) {
+    if (isSubOrder) {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송정보를 변경하시면 함께배송 주문 배송정보도 함께 변경됩니다. 변경하시겠어요?',
@@ -353,8 +351,6 @@ const OrderDetailPage = () => {
     name,
     orderOptions,
   } = orderDeliveries!;
-
-  console.log(orderDetail, 'orderDetail');
 
   return (
     <Container>

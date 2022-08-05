@@ -11,7 +11,7 @@ import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
-import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
+import { SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { dateN, SVGIcon } from '@utils/common';
@@ -241,7 +241,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           );
           router.push({
             pathname: '/mypage/order-detail/edit/[orderId]',
-            query: { orderId, destinationId },
+            query: { orderId, destinationId: item?.id },
           });
           return;
         }
