@@ -36,7 +36,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
     url: orderDeliveryItem?.subOrderDelivery?.image.url!,
     amount: orderDeliveryItem?.subOrderDelivery?.order.amount!,
   };
-
+  console.log(orderDeliveryItem, 'orderDeliveryItem');
   return (
     <Container>
       <Wrapper>
