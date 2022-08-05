@@ -296,6 +296,7 @@ const CartPage = () => {
         }
       },
       onError: (error: any) => {
+        console.log(error, '1231');
         dispatch(SET_ALERT({ alertMessage: error.message }));
         return;
       },
@@ -1042,7 +1043,7 @@ const CartPage = () => {
 
     if (!me) {
       return (
-        <Button borderRadius="0" height="100%" disabled={true} onClick={onUnauthorized}>
+        <Button borderRadius="0" height="100%" onClick={onUnauthorized}>
           로그인을 해주세요
         </Button>
       );
@@ -1067,7 +1068,7 @@ const CartPage = () => {
       );
     } else {
       return (
-        <Button borderRadius="0" height="100%" disabled={hasDestination}>
+        <Button borderRadius="0" height="100%" onClick={() => router.push('/cart/delivery-info')}>
           배송정보를 입력해주세요.
         </Button>
       );
@@ -1436,7 +1437,7 @@ const CartPage = () => {
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="0 0 24px 0">{me?.nickName}님이 찜한 상품이에요</TextH3B>
+              <TextH3B padding="0 0 24px 0">{me?.nickname}님이 찜한 상품이에요</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
                 {likeMenusList?.map((item: IMenus, index: number) => {
                   if (index > 9) return;

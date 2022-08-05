@@ -200,7 +200,12 @@ const EmailAndPasswordPage = () => {
           <TextH5B padding="0 0 9px 0">비밀번호</TextH5B>
           <FlexCol>
             <FirstPasswordWrapper>
-              <TextInput placeholder="비밀번호" ref={passwordRef} eventHandler={passwordInputHandler} />
+              <TextInput
+                inputType="password"
+                placeholder="비밀번호"
+                ref={passwordRef}
+                eventHandler={passwordInputHandler}
+              />
               {passwordValidation.isValid && passwordLengthValidation.isValid && <SVGIcon name="confirmCheck" />}
               <ValidationWrapper>
                 {!passwordValidation.isValid && <Validation>{passwordValidation.message}</Validation>}
@@ -213,6 +218,7 @@ const EmailAndPasswordPage = () => {
                 ref={passwordAgainRef}
                 eventHandler={passwordAginInputHandler}
                 margin="8px 0 0 0"
+                inputType="password"
               />
               {passwordValidation.isValid && passwordLengthValidation.isValid && passwordSameValidation.isValid && (
                 <SVGIcon name="confirmCheck" />

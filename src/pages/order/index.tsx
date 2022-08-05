@@ -214,7 +214,7 @@ const OrderPage = () => {
   const { mutateAsync: mutateCreateOrder } = useMutation(
     async () => {
       /*TODO: 모델 수정해야함 */
-      /*TODO: 쿠폰 퍼센테이지 */
+
       const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
         previewOrder?.order!;
 
@@ -710,7 +710,9 @@ const OrderPage = () => {
     }
 
     if (isMorning) {
-      const isFreeAccess = userInputObj?.deliveryMessageType === 'FREE';
+      const isFreeAccess =
+        userInputObj?.deliveryMessageType === 'FREE' ||
+        userInputObj?.deliveryMessageType === 'DELIVERY_SECURITY_OFFICE';
       if (!isFreeAccess && (!userInputObj?.deliveryMessage || !userInputObj.deliveryMessageType)) {
         dispatch(SET_ALERT({ alertMessage: '출입 방법과 메시지를 입력해주세요.' }));
         return;

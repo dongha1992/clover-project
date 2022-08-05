@@ -18,7 +18,7 @@ type TProps = {
 
 const SpotStatusDetailHeader = ({}: TProps) => {
   const dispatch = useDispatch();
-  const { q_share, q_trial } = router.query;
+  const { q_share } = router.query;
   const { isMobile } = useSelector(commonSelector);
   const { spotStatusDetail } = useSelector(spotSelector);
   const { me } = useSelector(userForm);
@@ -33,8 +33,6 @@ const SpotStatusDetailHeader = ({}: TProps) => {
   const goBack = (): void => {
     if (q_share) {
       router.push('/spot');
-    } else if (q_trial) {
-      router.push('/mypage/spot-status');
     } else {
       router.back();
     }
@@ -42,7 +40,7 @@ const SpotStatusDetailHeader = ({}: TProps) => {
 
   const goToShare = () => {
     const currentUrl = window.location.href;
-    const spotLink = `${currentUrl}?q_trial=true`;
+    const spotLink = `${currentUrl}?q_share=true`;
     if (isMobile) {
       if (navigator.share) {
         navigator
@@ -61,7 +59,7 @@ const SpotStatusDetailHeader = ({}: TProps) => {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet spotLink={spotLink} />,
+          content: <ShareSheet customUrl={spotLink} />,
         })
       );
     }
@@ -74,13 +72,11 @@ const SpotStatusDetailHeader = ({}: TProps) => {
           <SVGIcon name="arrowLeft" />
         </div>
         <BtnWrapper>
-          {
-            spotStatusDetail?.type === 'PRIVATE' && (loginUserId === spotStatusDetail?.userId) && (
-              <div className="share" onClick={goToShare}>
-                <SVGIcon name="share" />
-              </div>  
-            )
-          }
+          {spotStatusDetail?.type === 'PRIVATE' && loginUserId === spotStatusDetail?.userId && (
+            <div className="share" onClick={goToShare}>
+              <SVGIcon name="share" />
+            </div>
+          )}
         </BtnWrapper>
       </Wrapper>
     </Container>

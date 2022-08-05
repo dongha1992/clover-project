@@ -12,14 +12,6 @@ import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
 
-declare global {
-  interface Window {
-    getCurrentPosBtn: any;
-    zoomIn: any;
-    zoomOut: any;
-  }
-}
-
 interface IProps {
   spotSearchList?: ISpotsDetail[];
   zoom?: number;
@@ -29,7 +21,8 @@ interface IProps {
   onClickCurrentSlickIdx?: any;
   getSpotInfo?: any
   setSelected?: any;
-  setVisible?: any;
+  setShowInfoWindow?: any;
+  showInfoWindow?: boolean;
   spotListAllCheck?: boolean;
 };
 
@@ -42,22 +35,22 @@ const SpotSearchKakaoMap = ({
   onClickCurrentSlickIdx,
   getSpotInfo,
   setSelected,
-  setVisible,
+  setShowInfoWindow,
+  showInfoWindow,
   spotListAllCheck,
 }: IProps) => {
   const dispatch = useDispatch();
   const [selectedSpotIdx, setSelectedSpotIdx] = useState<number | null>(0);
-  const [showInfoWindow, setShowInfoWindow] = useState<boolean>(false);
   const [successPosition, setSuccessPosition] = useState<boolean>(false);
-  const [maxZoonOut, setMaxZoomOut] = useState<boolean>(false);
-  const [minZoomIn, setMinZoomIn] = useState<boolean>(false);
+
   const spotList = spotSearchList ?? [];
   const idx = currentSlickIdx&&currentSlickIdx;
   const SelectedSpotArr = spotListAllCheck ?  spotList[selectedSpotIdx!] : spotList[idx!];
-  const currentPositionLat = SelectedSpotArr?.coordinate.lat;
-  const currentPositionLon =  SelectedSpotArr?.coordinate.lon;
+  const currentPositionLat = spotListAllCheck ? 37.52066637532468 : SelectedSpotArr?.coordinate.lat;
+  const currentPositionLon =  spotListAllCheck ? 126.98082602361164 : SelectedSpotArr?.coordinate.lon;
   const level = zoom ? zoom : 3;
   const levelControl = spotListAllCheck ? 9 : level;
+
 
   useEffect(()=> {
     if(spotListAllCheck) {
@@ -81,49 +74,10 @@ const SpotSearchKakaoMap = ({
           maxLevel: 9,
         };
         const map = new window.kakao.maps.Map(container, options); // 지도 생성
-        if (spotListAllCheck) {
-          map.setCenter(new window.kakao.maps.LatLng(37.52066637532468, 126.98082602361164));
-        };
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 54);
         const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
         const selectedMarkerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); // 선택된 마커 이미지
-
-        const locationLoadSuccess = (pos: any) => {
-          // 현재 위치 받아오기
-          const currentPos = new window.kakao.maps.LatLng(pos.coords.latitude,pos.coords.longitude);
-      
-          // 지도 이동(기존 위치와 가깝다면 부드럽게 이동)
-          map.panTo(currentPos);
-          map.setLevel(3);
-      
-          // 마커 생성
-          const imageSrc = `${IMAGE_S3_DEV_URL}/ic_current_position.png`;
-          const imageSize = new window.kakao.maps.Size(32, 36);
-          const currentPositionIcon = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
-          const marker = new window.kakao.maps.Marker({
-              position: currentPos,
-              image: currentPositionIcon,
-              zIdex: 900,
-          });
-      
-          // 기존에 마커가 있다면 제거
-          marker.setMap(map);
-          setSuccessPosition(true);
-        };
-      
-        // 현재 위치 에러 팝업창
-        const locationLoadError = (pos: any) => {
-            setSuccessPosition(false);
-            alert('위치 정보를 가져오는데 실패했습니다.');
-        };
-      
-        // 현재 위치 가져오기 btn
-        const getCurrentPosBtn = () =>{
-            navigator.geolocation.getCurrentPosition(locationLoadSuccess,locationLoadError);
-        };
-
-        window.getCurrentPosBtn = getCurrentPosBtn;
 
         const clusterStyles = [
           {
@@ -197,13 +151,13 @@ const SpotSearchKakaoMap = ({
         //   }, {});
 
         // console.log('result', result);
+        const markersArr: any[] =[];
 
         for (let i = 0; i < spotList.length; i++) {
           displayMarker(spotList[i], i);
         };
 
         function displayMarker (item: ISpotsDetail, idx: number) {
-          const markersArr =[];
 
           const placeType = () => {
             switch(item.spotMarker) {
@@ -291,8 +245,7 @@ const SpotSearchKakaoMap = ({
             const moveLatLng = new window.kakao.maps.LatLng(item.coordinate.lat, item.coordinate.lon); 
             map.panTo(moveLatLng); // 클릭된 마커를 맵 중심으로 이동, 부드럽게 이동
 
-            setVisible(false); // 지도 클릭시 정보창 숨김 여부
-            setShowInfoWindow(false);
+            setShowInfoWindow(false); // 지도 클릭시 정보창 숨김 여부
             onClickCurrentSlickIdx(idx); // 검색 결과에서 마커 클릭시 해당 정보창으로 slide 이동
             setSelectedSpotIdx(idx);
 
@@ -303,8 +256,7 @@ const SpotSearchKakaoMap = ({
 
           new window.kakao.maps.event.addListener(map, 'click', function() { // 지도 click 이벤트 등록, 마커 클릭 해제
             markers.setImage(typeMarkersImage); // 지도 클릭시 선택된 마커 원복
-            setVisible(true); // 지도 클릭시 정보창 숨김 여부
-            setShowInfoWindow(true);
+            setShowInfoWindow(true); // 지도 클릭시 정보창 숨김 여부
           });
           clusterer.addMarkers(markersArr);
         };
@@ -317,29 +269,52 @@ const SpotSearchKakaoMap = ({
         });
 
         // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수
-        const zoomIn = () => {
+        document.getElementById('zoomIn')?.addEventListener('click', function () {
           const getLevel = map.getLevel();
           const level = getLevel - 1;
           map.setLevel(level, {animate: true});
-          setMaxZoomOut(false);
-          if(getLevel <= 2) {
-            setMinZoomIn(true);
-          };
-        };
-      
+        });
+
         // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수
-        const zoomOut = () => {
+        document.getElementById('zoomOut')?.addEventListener('click', function () {
           const getLevel = map.getLevel();
           const level = getLevel + 1;
           map.setLevel(level, {animate: true});
-          setMinZoomIn(false);
-          if(getLevel >= 8){
-            setMaxZoomOut(true);
+        });
+
+        // 현재 위치 Geolocation API 호출
+        const getCurrentPosBtn = () =>{
+          if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition((position) => { // `getCurrentPosition` 메소드에 대한 성공 callback 핸들러
+              const currentPos = new window.kakao.maps.LatLng(position.coords.latitude,position.coords.longitude);
+              map.setCenter(currentPos); // 현재 위치로 지도 이동
+              map.setLevel(3);
+              // 마커 생성
+              const imageSrc = `${IMAGE_S3_DEV_URL}/ic_current_position.png`;
+              const imageSize = new window.kakao.maps.Size(32, 36);
+              const currentPositionIcon = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
+              const marker = new window.kakao.maps.Marker({
+                  position: currentPos,
+                  image: currentPositionIcon,
+                  zIdex: 900,
+              });
+              marker.setMap(map);
+              setSuccessPosition(true);
+            },
+            (error) => { // `getCurrentPosition` 메소드에 대한 실패 callback 핸들러
+              setSuccessPosition(false);
+              console.error(error.message);
+              dispatch(
+                SET_ALERT({
+                  alertMessage: '위치 서비스를 사용하려면\n접근 권한을 허용해 주세요.',
+                  submitBtnText: '확인',
+                })
+              );  
+            });
           };
         };
+        document.getElementById('currentGeolocation')?.addEventListener('click', getCurrentPosBtn);
 
-        window.zoomIn = zoomIn;
-        window.zoomOut = zoomOut;
       });
     } catch(e){
       dispatch(
@@ -358,15 +333,15 @@ const SpotSearchKakaoMap = ({
   return (
     <MapWrapper>
       <ZoomContralWrapper>
-        <ZoomIn onClick={()=>window.zoomIn()}>
-          <SVGIcon name={`${minZoomIn ? 'mapNoneZoomIn' : 'mapZoomIn'}`} />
+        <ZoomIn id='zoomIn'>
+          <SVGIcon name='mapZoomIn' />
         </ZoomIn>
         <Col />
-        <ZoomOut onClick={()=>window.zoomOut()}>
-          <SVGIcon name={`${maxZoonOut ? 'mapNoneZoomOut' : 'mapZoomOut'}`} />
+        <ZoomOut id='zoomOut'>
+          <SVGIcon name='mapZoomOut' />
         </ZoomOut>
       </ZoomContralWrapper>
-      <SvgWrapper show={showInfoWindow} onClick={()=>window.getCurrentPosBtn()}>
+      <SvgWrapper id='currentGeolocation' show={showInfoWindow!}>
         <SVGIcon name={successPosition ? "mapCurrentPositionActivedBtn" : "mapCurrentPositionBtn"} />
       </SvgWrapper>
       <Map id="map" ></Map>

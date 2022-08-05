@@ -33,7 +33,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { userForm } from '@store/user';
 import { getSpotPickups } from '@api/spot';
 import { spotSelector } from '@store/spot';
-/*TODO: 주문자와 동일 기능 */
+
 /*TODO: reqBody Type  */
 
 interface IProps {
