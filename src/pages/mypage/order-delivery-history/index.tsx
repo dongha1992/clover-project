@@ -119,10 +119,10 @@ const OrderDeliveryHistoryPage = () => {
 
   const buttonHandler = ({ menus, isDelivering }: { menus: IOrderMenusInOrderList[]; isDelivering: boolean }) => {
     if (isDelivering) {
+      // 배송조회
+    } else {
       // 장바구니 담기
       mutateAddCartItem(menus);
-    } else {
-      // 배송조회
     }
   };
 
@@ -132,7 +132,7 @@ const OrderDeliveryHistoryPage = () => {
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
-    console.log(target, 'target');
+
     if (target.isIntersecting) {
       setPage((prev) => prev + 1);
     }
