@@ -22,7 +22,6 @@ import { SET_ALERT } from '@store/alert';
 import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu';
 import { useMutation, useQueryClient } from 'react-query';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
-import { IMAGE_ERROR } from '@constants/menu';
 import { filterSelector } from '@store/filter';
 import { onMenuLikes } from '@queries/menu';
 import { useToast } from '@hooks/useToast';
@@ -232,7 +231,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper isHorizontal={isHorizontal}>
         <Image
-          src={item.thumbnail[0]?.url ? item.thumbnail[0]?.url : IMAGE_ERROR}
+          src={item.thumbnail[0]?.url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}

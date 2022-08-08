@@ -2114,7 +2114,15 @@ export interface IDisposable {
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 
-export type TCartRemainingQuantity = 'DAILY' | 'HOLIDAY' | 'NONE' | 'WEEKLY' | 'PERIOD' | 'PERSON' | string;
+export type TCartRemainingQuantity =
+  | 'DAILY'
+  | 'HOLIDAY'
+  | 'NONE'
+  | 'WEEKLY'
+  | 'EVENT'
+  | 'PERSON'
+  | 'MENU_DETAIL_SOLD'
+  | string;
 export interface ICartAvailabilty {
   availability: boolean;
   menuDetailAvailabilityMessage: TCartRemainingQuantity;

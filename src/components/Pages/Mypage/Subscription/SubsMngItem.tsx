@@ -1,7 +1,6 @@
 import { SubsLabel } from '@components/Pages/Subscription';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { SUBS_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import useSubsSetProgress from '@hooks/subscription/useSubsSetProgress';
@@ -9,7 +8,7 @@ import { useSubsStatusMsg } from '@hooks/subscription/useSubsStatusMsg';
 import { IGetOrders } from '@model/index';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
 import { getFormatDate, SVGIcon } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -61,7 +60,7 @@ const SubsMngItem = ({ item }: IProps) => {
       <FlexRowStart>
         <ImgBox>
           <Image
-            src={IMAGE_S3_URL + item?.image.url}
+            src={item?.image.url}
             alt="상품이미지"
             width={'100%'}
             height={'100%'}

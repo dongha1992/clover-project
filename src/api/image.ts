@@ -15,8 +15,3 @@ export const postImageApi = (formData: any) => {
     },
   });
 };
-
-export const getImageUrl = ({ width, url }: { width?: number; url: string }) => {
-  const baseUrl = `${process.env.IMAGE_SERVER_URL}/image`;
-  return width ? `${baseUrl}/unsafe/${width}x/smart${url}`: `${baseUrl}${url}`;
-};
