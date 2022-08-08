@@ -135,7 +135,7 @@ const Home = () => {
                     height="120px"
                     width="512px"
                     layout="responsive"
-                    alt="홈 배너"
+                    alt="홈 배너형 기획전 이미지"
                   />
                 </PromotionBanner>
               )
@@ -157,7 +157,7 @@ const Home = () => {
                       height="300px"
                       width="512px"
                       layout="responsive"
-                      alt="메인 콘텐츠 기획전"
+                      alt="홈 기획전 이미지"
                     />
                     <ItemListRowWrapper>
                       <ItemListRow>
