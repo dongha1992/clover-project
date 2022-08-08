@@ -356,7 +356,7 @@ export interface ISpotInSpotPickUp {
   distance: number;
   distanceUnit: string;
   id: number;
-  images: IMenuImage[];
+  images: IImage[];
   location: ILocation;
   lunchDeliveryEndTime: string;
   lunchDeliveryStartTime: string;
@@ -773,18 +773,7 @@ export interface IBanners {
   endedAt: string;
   href: string;
   id: number;
-  imageHeight: number;
-  imageUrl: string;
-  imageWidth: number;
-  login: boolean;
-  option: {
-    bgColor: string;
-    fontColor: string;
-    mobileImageHeight: number;
-    mobileImageUrl: string;
-    mobileImageWidth: string;
-    paths: string[];
-  };
+  image: IImage;
   priority: number;
   startedAt: string;
   status: string;
@@ -1372,7 +1361,7 @@ export interface IGetOrders {
   status: string;
   paidAt: string;
   orderDeliveries: IOrderDeliverie[];
-  image: IMenuImage;
+  image: IImage;
   firstDeliveryDate?: string;
   firstDeliveryDateOrigin?: string;
   lastDeliveryDate?: string;
@@ -1749,7 +1738,7 @@ export interface IGetMenus {
   type: TType | string;
 }
 
-export interface IMenuImage {
+export interface IImage {
   height: number;
   id: number;
   url: string;
@@ -1821,7 +1810,7 @@ export interface IMenuDetail {
   rating: number;
   orderCount: number;
   priority: number;
-  thumbnail: IMenuImage[];
+  thumbnail: IImage[];
   liked: boolean;
   type: string;
   subscriptionDeliveries: string[];
@@ -1835,7 +1824,7 @@ export interface IMenuDetail {
   productInfoNotis: IProductInfo[];
   summary: string;
   nutritionInfoNotis: INutitionInfo[];
-  deliveryMethods: IMenuImage[];
+  deliveryMethods: IImage[];
   reviewCount: number;
 }
 
@@ -1850,7 +1839,7 @@ export interface IMenus {
   type: string;
   category: string;
   summary: string;
-  thumbnail: IMenuImage[];
+  thumbnail: IImage[];
   badgeMessage: string;
   launchedAt?: string;
   liked: boolean;
@@ -1873,7 +1862,7 @@ export interface IMenus {
   menuFaq: IMenuFaq;
   productInfoNotis: IProductInfo[];
   nutritionInfoNotis: INutitionInfo[];
-  deliveryMethods: IMenuImage[];
+  deliveryMethods: IImage[];
   description: string;
 }
 
@@ -2042,7 +2031,7 @@ export interface ICompletionReviews {
   rating: number;
   content: string;
   createdAt: string;
-  menuImage: IMenuImage;
+  menuImage: IImage;
   reviewImages: ICompletionReviewImg[];
   commentCreatedAt?: string;
   comment?: string;
@@ -2126,7 +2115,15 @@ export interface IDisposable {
 export type TCartMenuSize = 'BOX' | 'EA' | 'LARGE' | 'MEDIUM' | 'SMALL' | string;
 export type TCartMenuStatus = 'DELETED' | 'HIDDEN' | 'NORMAL' | string;
 
-export type TCartRemainingQuantity = 'DAILY' | 'HOLIDAY' | 'NONE' | 'WEEKLY' | 'PERIOD' | 'PERSON' | string;
+export type TCartRemainingQuantity =
+  | 'DAILY'
+  | 'HOLIDAY'
+  | 'NONE'
+  | 'WEEKLY'
+  | 'EVENT'
+  | 'PERSON'
+  | 'MENU_DETAIL_SOLD'
+  | string;
 export interface ICartAvailabilty {
   availability: boolean;
   menuDetailAvailabilityMessage: TCartRemainingQuantity;
@@ -2434,4 +2431,89 @@ export interface IDeviceRequest {
   token: string;
   type: string;
   uniqueId: string;
+}
+type TMainPromotion = 'BANNER' | 'EXHIBITION' | string;
+
+type TExhibition = 'FIXED' | 'GENERAL_MENU' | 'MD_RECOMMENDED' | 'SUBSCRIPTION_MENU' | string;
+
+interface IExhibition {
+  content: string;
+  createdAt: string;
+  menus: IMenus[];
+  id: number;
+  image: IImages;
+  title: string;
+  type: TExhibition;
+}
+
+interface IExhibitionBanners {
+  content: string;
+  createdAt: string;
+  endedAt: string;
+  href: string;
+  id: number;
+  image: IImages;
+  login: boolean;
+  option: {
+    bgColor: string;
+    fontColor: string;
+    mobileImageHeight: number;
+    mobileImageUrl: string;
+    mobileImageWidth: string;
+    paths: string[];
+  };
+  priority: number;
+  startedAt: string;
+  status: string;
+  title: string;
+  type: string;
+}
+
+interface IImages {
+  contentId: number;
+  createdAt: string;
+  height: number;
+  id: number;
+  size: number;
+  url: string;
+  width: number;
+}
+
+export interface IMainPromotionContentsResponse {
+  code: number;
+  message: string;
+  data: {
+    mainContents: [
+      {
+        banner: IExhibitionBanners;
+        createdAt: string;
+        exhibition: IExhibition;
+        id: number;
+        type: TMainPromotion;
+      }
+    ];
+  };
+}
+
+export interface IExhibitionContentsResponse {
+  code: number;
+  data: IExhibition;
+  message: string;
+  metaData?: {
+    responsedAt: string;
+    trackingId: string;
+  };
+}
+
+export interface IExhibitionListResponse {
+  code: number;
+  data: {
+    pagination?: IPagination;
+    exhibitions: IExhibition[];
+  };
+  message: string;
+  metaData: {
+    responsedAt: string;
+    trackingId: string;
+  };
 }

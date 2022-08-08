@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextH5B, TextH4B, TextH1B } from '@components/Shared/Text';
 import { theme, responsiveImg, responsiveImgWrapper } from '@styles/theme';
-import { IMAGE_S3_URL } from '@constants/mock';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { StarRating } from '@components/StarRating';
 import { IDetailImage } from '@model/index';
 
@@ -36,10 +35,6 @@ const ReviewOnlyImage = ({
         </Header>
         <ReviewSwipe>
           {reviewsImages?.map((review: any, index: number) => {
-            //TODO TAYLER : s3에서 리뷰 이미지 mock으로 받는 게 있어서 임시로 분기. 나중에 제거
-            const fromS3 = review.url.includes('menu');
-            const s3Url = IMAGE_S3_URL + review?.url;
-
             if (index > 3) return;
             if (reviewsImages?.length > 4 && index === 3) {
               const numOfImages = reviewsImages.length - 4;
@@ -48,13 +43,13 @@ const ReviewOnlyImage = ({
                   <LastImg>
                     <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
-                  <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" />
+                  <Image src={review.url} alt="리뷰이미지" layout={"fill"}></Image>
                 </LastImgWrapper>
               );
             }
             return (
               <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
-                <img src={fromS3 ? s3Url : process.env.REVIEW_IMAGE_URL + review.url} alt="리뷰이미지" key={index} />
+                <Image src={review.url} alt="리뷰이미지" key={index} layout={"fill"}/>
               </ReviewImgWrapper>
             );
           })}

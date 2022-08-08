@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon, getImageSize } from '@utils/common';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
@@ -18,7 +17,7 @@ import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
-import NextImage from 'next/image';
+import NextImage from '@components/Shared/Image';
 import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
 import { NickName } from '../write/[orderDeliveryId]';
 import { getLimitDateOfReview } from '@utils/menu';
@@ -319,7 +318,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
         <FlexRow>
           <ImgWrapper>
             <NextImage
-              src={IMAGE_S3_URL + menuImage}
+              src={menuImage}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
@@ -396,7 +395,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
               const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
+                  <img src={base64 ? img : `${process.env.IMAGE_SERVER_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>

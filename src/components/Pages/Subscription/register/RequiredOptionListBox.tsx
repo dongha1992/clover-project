@@ -1,11 +1,10 @@
 import { SubsMenuSheet } from '@components/BottomSheet/SubsSheet';
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { MenuImgBox, MenuTextBox } from '@pages/subscription/register';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { theme } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
@@ -34,7 +33,7 @@ const RequiredOptionListBox = ({ list }: IProps) => {
               <OptionLi key={index}>
                 <MenuImgBox>
                   <Image
-                    src={IMAGE_S3_URL + item.menuImage.url}
+                    src={item.menuImage.url}
                     alt="상품이미지"
                     width={'100%'}
                     height={'100%'}

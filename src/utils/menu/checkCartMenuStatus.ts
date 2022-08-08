@@ -8,7 +8,7 @@ export const checkCartMenuStatus = (list: IMenuDetailsInCart[]): boolean => {
     .filter((item) => item.main)
     .some((item) => {
       const exception =
-        item.availabilityInfo.menuDetailAvailabilityMessage !== 'PERIOD' &&
+        item.availabilityInfo.menuDetailAvailabilityMessage !== 'EVENT' &&
         item.availabilityInfo.menuDetailAvailabilityMessage !== 'HOLIDAY';
 
       if (exception) {
@@ -21,7 +21,7 @@ export const checkPeriodCartMenuStatus = (list: IMenuDetailsInCart[]): boolean =
   return list
     .filter((item) => item.main)
     .some((item) => {
-      const exception = item.availabilityInfo.menuDetailAvailabilityMessage === 'PERIOD';
+      const exception = item.availabilityInfo.menuDetailAvailabilityMessage === 'EVENT';
       if (exception) {
         return !item.availabilityInfo?.availability;
       }

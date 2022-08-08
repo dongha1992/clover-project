@@ -1,61 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
+import { homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
-import { getMenusApi, getRecommendMenusApi } from '@api/menu';
 import { Item } from '@components/Item';
-import { SubsParcelList, SubsSpotList } from '@components/Pages/Subscription';
 import { SubsItem } from '@components/Pages/Subscription';
+import { getExhibitionInquireApi } from '@api/promotion';
 
 // 기획전 상세 페이지
 const PromotionDetailPage = () => {
   const router = useRouter();
-  const { subs, id, edit_feed }: any = router.query;
+  const [id, setId] = useState<number>();
+  const [items, setItems] = useState<any>([]);
+
+  useEffect(() => {
+    if (router.isReady) {
+      setId(Number(router.query?.id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
 
   const {
-    data: menus,
-    error: menuError,
+    data: list,
+    error: listError,
     isLoading,
   } = useQuery(
     'getRecommendMenus',
     async () => {
-      const { data } = await getRecommendMenusApi();
-      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+      const { data } = await getExhibitionInquireApi(id!);
+      setItems(data.data);
+      return data.data.menus;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
-
-  const { data: subsMenus, isLoading: isMenusLoading } = useQuery(
-    'getSubscriptionMenus',
-    async () => {
-      const params = { categories: '', keyword: '', type: 'SUBSCRIPTION' };
-
-      const { data } = await getMenusApi(params);
-      return data.data;
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { 
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false, 
+      enabled: !!id, 
+    }
   );
 
   const goToSpot = () => {
     // router.push('/subscription/products?tab=spot');
   };
 
+  if(isLoading){
+    return <div>로딩..</div>;
+  };
+
   return (
     <Container>
       {
-        edit_feed === 'true' && (
+        items.content && (
           <EditWrapper>
             어드민 에디터 영역삼역
           </EditWrapper>
         )
       }
       {
-        subs === 'true' ? ( // 구독 기획전
+        items?.type === 'SUBSCRIPTION_MENU' ? ( // 구독 기획전
           <SubsWrapper>
             {
-              subsMenus?.map((item, idx)=> {
+              list?.map((item, idx)=> {
                 return (
                   <SubsContent key={idx}>
                     <SubsItem item={item} />
@@ -67,8 +72,8 @@ const PromotionDetailPage = () => {
         ) : ( // 일반 기획전
           <FlexWrapWrapper padding='0 24px 0 24px'>
             {
-              menus?.length! > 0 ? ( 
-                menus?.map((item, index) => {
+              list?.length! > 0 ? ( 
+                list?.map((item, index) => {
                   return <Item item={item} key={index} />;
                 })
               ) : (

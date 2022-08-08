@@ -2,7 +2,6 @@ import { SubsDeliveryDateChangeSheet } from '@components/BottomSheet/SubsSheet';
 import { Button } from '@components/Shared/Button';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import useOrderPrice from '@hooks/subscription/useOrderPrice';
 import useSubsPaymentFail from '@hooks/subscription/useSubsPaymentFail';
@@ -11,7 +10,7 @@ import { useGetOrderDetail } from '@queries/order';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import router from 'next/router';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -108,7 +107,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
             <MenuLi key={index} className="menuLi">
               <MenuImgBox>
                 <Image
-                  src={IMAGE_S3_URL + menu.image.url}
+                  src={menu.image.url}
                   alt="상품이미지"
                   width={'100%'}
                   height={'100%'}
