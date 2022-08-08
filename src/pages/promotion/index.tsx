@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { TextH6B, TextH3B } from '@components/Shared/Text';
 import { theme, homePadding } from '@styles/theme';
 import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
