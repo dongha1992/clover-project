@@ -75,7 +75,6 @@ export const userInvitationApi = (): Promise<AxiosResponse<IInvitationResponse>>
 };
 
 export const userChangeInfo = (data: IChangeMe): Promise<AxiosResponse<IResponse>> => {
-  console.log(data, 'data');
   return Api.patch('/user/v1/me', data);
 };
 
