@@ -9,7 +9,7 @@ import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
 import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
-import { ISpotsDetail } from '@model/index';
+import { ISpotsDetail, ISpotPickupInfoInDestination } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
@@ -66,7 +66,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = async (pickupId: number) => {
+    const goToCart = async (pickupInfo: ISpotPickupInfoInDestination) => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
       const reqBody = {
         name: list?.name!,
@@ -81,7 +81,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
           zipCode: list?.location?.zipCode!,
           dong: list?.location?.dong!,
         },
-        spotPickupId: pickupId!,
+        spotPickupId: pickupInfo.id!,
       };
       try {
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
