@@ -10,14 +10,6 @@ import { SET_ALERT } from '@store/alert';
 import { Obj } from '@model/index';
 import { userForm } from '@store/user';
 
-interface INotiSet {
-  primePushReceived: boolean;
-  marketingPushReceived: boolean;
-  notiPushReceived: boolean;
-  marketingEmailReceived: boolean;
-  marketingSmsReceived: boolean;
-}
-
 const SettingPage = () => {
   const [notiSet, setNotiSet] = useState<Obj>({
     primePushReceived: false,
