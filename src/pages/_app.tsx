@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import GlobalStyle from '@styles/GlobalStyle';
 import Wrapper from '@components/Layout/Wrapper';
 import { theme } from '@styles/theme';
@@ -12,12 +12,8 @@ import { useDispatch, useSelector, useStore } from 'react-redux';
 import { wrapper } from '@store/index';
 import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
 import MobileDetect from 'mobile-detect';
-import { Stage } from '@enum/index';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
-import { commonSelector, SET_IS_LOADING } from '@store/common';
-import { getCartsApi } from '@api/cart';
-import { useQuery } from 'react-query';
 import { NAME_REGX } from '@constants/regex';
 import { useRouter } from 'next/router';
 
@@ -30,9 +26,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { INIT_USER, SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
-import { useToast } from '@hooks/useToast';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
+import useWebviewListener from '@hooks/useWebviewListener';
 
 declare global {
   interface Window {
@@ -58,6 +52,8 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
+
+  useWebviewListener();
 
   if (!queryClient.current) {
     queryClient.current = new QueryClient({
