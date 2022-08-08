@@ -1,19 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ReviewDetailItem } from '@components/Pages/Review';
-import { homePadding } from '@styles/theme';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import { useQuery } from 'react-query';
 import { getReviewDetailApi } from '@api/menu';
-import assignIn from 'lodash-es/assignIn';
 
 const ReviewDetailPage = ({ contentId, menuId }: { contentId: string; menuId: string }) => {
   const dispatch = useDispatch();
 
   const {
     data: menuReview,
-    error,
     isLoading,
   } = useQuery(
     'getReviewDetail',
