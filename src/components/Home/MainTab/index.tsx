@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Link from 'next/link';
-import { TextH4B, TextB2R } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
-import Image from 'next/image';
+import { TextB2R } from '@components/Shared/Text';
+import Image from '@components/Shared/Image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
@@ -41,7 +39,7 @@ const MainTab = () => {
         return (
           <TabWrapper key={index} onClick={() => goToPromotion(item.link, item.edit, item.id)}>
             <Image
-              src={`${process.env.IMAGE_S3_URL}/menu/img_thumbnail_empty.jpg`}
+              src="/menu/img_thumbnail_empty.jpg"
               height="80px"
               width="80px"
               className="rounded"
