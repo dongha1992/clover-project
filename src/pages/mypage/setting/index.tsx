@@ -1,15 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
 import styled from 'styled-components';
 import { TextH4B, TextB1R, TextB2R } from '@components/Shared/Text';
 import { ToggleButton } from '@components/Shared/Button';
+import { userChangeInfo } from '@api/user';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { SET_ALERT } from '@store/alert';
+import { Obj } from '@model/index';
+import { userForm } from '@store/user';
+
+interface INotiSet {
+  primePushReceived: boolean;
+  marketingPushReceived: boolean;
+  notiPushReceived: boolean;
+  marketingEmailReceived: boolean;
+  marketingSmsReceived: boolean;
+}
 
 const SettingPage = () => {
-  const [isNotiOn, setIsNotiOn] = useState(false);
-  const [isImportNotiOn, setIsImportNotiOn] = useState(false);
-  const [isActivityOn, setIsActivityOn] = useState(false);
-  const [isEmailNotiOn, setIsEmailNotiOn] = useState(false);
-  const [isSMSNotiOn, setIsSMSNotiOn] = useState(false);
+  const [notiSet, setNotiSet] = useState<Obj>({
+    primePushReceived: false,
+    marketingPushReceived: false,
+    notiPushReceived: false,
+    marketingEmailReceived: false,
+    marketingSmsReceived: false,
+  });
+
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const { me } = useSelector(userForm);
+
+  const { mutateAsync: mutationEditProfile } = useMutation(
+    async () => {
+      const reqBody = {
+        ...notiSet,
+      };
+      const { data } = await userChangeInfo(reqBody);
+      return data;
+    },
+    {
+      onSuccess: async () => {
+        await queryClient.refetchQueries('getUserProfile');
+      },
+      onError: async (error: any) => {
+        console.error(error);
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+    }
+  );
+
+  const changeNotificationHandler = (name: string) => {
+    setNotiSet({ ...notiSet, [name]: !notiSet[name] });
+  };
+
+  useEffect(() => {
+    return () => {
+      mutationEditProfile();
+    };
+  }, []);
+
+  useEffect(() => {
+    setNotiSet({
+      marketingEmailReceived: me?.marketingEmailReceived,
+      marketingPushReceived: me?.marketingPushReceived,
+      marketingSmsReceived: me?.marketingSmsReceived,
+      notiPushReceived: me?.notiPushReceived,
+      primePushReceived: me?.primePushReceived,
+    });
+  }, [me]);
 
   return (
     <Container>
@@ -18,35 +77,50 @@ const SettingPage = () => {
           <ListItem>
             <FlexBetween>
               <TextH4B>중요 알림</TextH4B>
-              <ToggleButton onChange={() => setIsImportNotiOn(!isImportNotiOn)} status={isImportNotiOn} />
+              <ToggleButton
+                onChange={() => changeNotificationHandler('primePushReceived')}
+                status={notiSet.primePushReceived}
+              />
             </FlexBetween>
             <TextB2R color={theme.greyScale65}>상품 주문/배송/픽업/재입고/구독 알림</TextB2R>
           </ListItem>
           <ListItem>
             <FlexBetween>
               <TextH4B>활동 알림</TextH4B>
-              <ToggleButton onChange={() => setIsActivityOn(!isActivityOn)} status={isActivityOn} />
+              <ToggleButton
+                onChange={() => changeNotificationHandler('notiPushReceived')}
+                status={notiSet.notiPushReceived}
+              />
             </FlexBetween>
             <TextB2R color={theme.greyScale65}>후기/스팟/친구초대 활동 알림</TextB2R>
           </ListItem>
           <ListItem>
             <FlexBetween>
               <TextH4B>마케팅/이벤트 알림</TextH4B>
-              <ToggleButton onChange={() => setIsNotiOn(!isNotiOn)} status={isNotiOn} />
+              <ToggleButton
+                onChange={() => changeNotificationHandler('marketingPushReceived')}
+                status={notiSet.marketingPushReceived}
+              />
             </FlexBetween>
             <TextB2R color={theme.greyScale65}>마케팅 정보 수신 해제 YYYY-MM-DD</TextB2R>
           </ListItem>
         </ListBox>
 
-        {!isNotiOn && (
+        {notiSet.marketingPushReceived && (
           <FlexCol>
             <FlexBetween padding="0 0 18px 0">
               <TextB1R>이메일</TextB1R>
-              <ToggleButton onChange={() => setIsEmailNotiOn(!isEmailNotiOn)} status={isEmailNotiOn} />
+              <ToggleButton
+                onChange={() => changeNotificationHandler('marketingEmailReceived')}
+                status={notiSet.marketingEmailReceived}
+              />
             </FlexBetween>
             <FlexBetween>
               <TextB1R>SMS</TextB1R>
-              <ToggleButton onChange={() => setIsSMSNotiOn(!isSMSNotiOn)} status={isSMSNotiOn} />
+              <ToggleButton
+                onChange={() => changeNotificationHandler('marketingSmsReceived')}
+                status={notiSet.marketingSmsReceived}
+              />
             </FlexBetween>
           </FlexCol>
         )}
