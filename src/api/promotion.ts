@@ -5,7 +5,8 @@ import {
   IResponse, 
   IMenuPromotionResponse,
   IMainPromotionContentsResponse,
-  IExhibitionResponse,
+  IExhibitionListResponse,
+  IExhibitionContentsResponse,
 } from '@model/index';
 
 export const postPromotionCodeApi = (data: IPromotionRequest): Promise<AxiosResponse<IResponse>> => {
@@ -20,10 +21,14 @@ export const getMainPromotionContentsApi = (): Promise<AxiosResponse<IMainPromot
   return Api.get('/main/v1/contents');
 };
 
-export const getExhibitionApi = (params: { page: number, size: number}): Promise<AxiosResponse<IExhibitionResponse>> => {
+export const getExhibitionApi = (params: { page: number, size: number}): Promise<AxiosResponse<IExhibitionListResponse>> => {
   return Api.get('/exhibition/v1/exhibitions', { params });
 };
 
-export const getExhibitionInquireApi = (id: number): Promise<AxiosResponse<IExhibitionResponse>> => {
+export const getExhibitionInquireApi = (id: number): Promise<AxiosResponse<IExhibitionContentsResponse>> => {
   return Api.get(`/exhibition/v1/exhibition/${id}`);
+};
+
+export const getExhibitionMdRecommendApi = (): Promise<AxiosResponse<IExhibitionContentsResponse>> => {
+  return Api.get('/exhibition/v1/exhibitions/md');
 };

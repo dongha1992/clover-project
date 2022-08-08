@@ -2429,22 +2429,6 @@ export interface ISubsManage {
   changeDate: string | null;
 }
 
-export interface IMainPromotionContentsResponse {
-  code: number;
-  message: string;
-  data: {
-    mainContents: [
-      {
-        banner: IBanners;
-        createdAt: string;
-        exhibition: IExhibition;
-        id: number;
-        type: TMainPromotion;
-      }
-    ]
-  };
-}
-
 type TMainPromotion = 'BANNER' | 'EXHIBITION' | string;
 
 type TExhibition = 'FIXED' | 'GENERAL_MENU' | 'MD_RECOMMENDED' | 'SUBSCRIPTION_MENU' | string;
@@ -2452,54 +2436,77 @@ type TExhibition = 'FIXED' | 'GENERAL_MENU' | 'MD_RECOMMENDED' | 'SUBSCRIPTION_M
 interface IExhibition {
   content: string;
   createdAt: string;
-  exhibitionMenus: [
-    {
-      id: number;
-      menu: IMenus;
-    },
-  ];
+  menus: IMenus[];
   id: number;
-  image: {
-    contentId: number;
-    createdAt: string;
-    height: number;
-    id: number;
-    size: number;
-    url: string;
-    width: number;
-  };
+  image: IImage;
   title: string;
   type: TExhibition;
 }
 
-export interface IExhibitionResponse {
+interface IExhibitionBanners {
+  content: string;
+  createdAt: string;
+  endedAt: string;
+  href: string;
+  id: number;
+  image: IImage;
+  login: boolean;
+  option: {
+    bgColor: string;
+    fontColor: string;
+    mobileImageHeight: number;
+    mobileImageUrl: string;
+    mobileImageWidth: string;
+    paths: string[];
+  }
+  priority: number;
+  startedAt: string;
+  status: string;
+  title: string;
+  type: string;
+}
+
+interface IImage {
+  contentId: number;
+  createdAt: string;
+  height: number;
+  id: number;
+  size: number;
+  url: string;
+  width: number;
+}
+
+export interface IMainPromotionContentsResponse {
+  code: number;
+  message: string;
+  data: {
+    mainContents: [
+      {
+        banner: IExhibitionBanners;
+        createdAt: string;
+        exhibition: IExhibition;
+        id: number;
+        type: TMainPromotion;
+      }
+    ];
+  };
+}
+
+export interface IExhibitionContentsResponse{
+  code: number;
+  data: IExhibition;
+  message: string;
+  metaData?: {
+    responsedAt: string;
+    trackingId: string;
+  };
+}
+
+export interface IExhibitionListResponse {
   code: number;
   data: {
-    pagination?: IPagination,
-    exhibitions: [
-      {
-        content: string;
-        createdAt: string;
-        exhibitionMenus: [
-          {
-            id: number;
-            menu: IMenus;
-          },
-        ];
-        id: number;
-        image: {
-          contentId: number;
-          createdAt: string;
-          height: number;
-          id: number;
-          size: number;
-          url: string;
-          width: number;      
-        };
-        title: string;
-        type: TExhibition;
-      }
-    ]
+    pagination?: IPagination;
+    exhibitions: IExhibition[];
   };
   message: string;
   metaData: {

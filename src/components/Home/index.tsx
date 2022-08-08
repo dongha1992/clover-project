@@ -9,13 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import { getMenusApi, getRecommendMenusApi } from '@api/menu';
+import { getMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
 import Image from 'next/image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
 import { SET_EVENT_TITLE , INIT_EVENT_TITLE} from '@store/event';
-import { getMainPromotionContentsApi } from '@api/promotion';
+import { getExhibitionMdRecommendApi, getMainPromotionContentsApi } from '@api/promotion';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
@@ -51,35 +51,39 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const {
-    data: menus,
-    error: menuError,
-    isLoading,
+  // MD 추천 api 호출
+  const { 
+    data: mdMenu,
+    error: mdMenuError,
+    isLoading: isLoadingMdMenu,
   } = useQuery(
     'getRecommendMenus',
     async () => {
-      const { data } = await getRecommendMenusApi();
-      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+      const { data } = await getExhibitionMdRecommendApi();
+      return data.data.menus;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const {
-    data: contentsData,
-    error: mainContentsError,
-  } = useQuery (
-    'getMainPromotionContents',
+    data: mainContents,
+    error: exhiError,
+    isLoading: isLoadingExhibition,
+  } = useQuery(
+    'exhibitionList',
     async () => {
       const { data } = await getMainPromotionContentsApi();
-      return data.data;
+      return data.data.mainContents;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const mdRecommendedData = contentsData?.mainContents?.filter((i: any) => i.type === 'EXHIBITION').find((i: any) => i.exhibition.type === 'MD_RECOMMENDED');
-  const mdMenu = mdRecommendedData?.exhibition.exhibitionMenus;
+  console.log(mainContents);
 
-  // const promotionContentsData = contentsData?.mainContents?.filter((i: any) => i.type === 'EXHIBITION' &&  i.exhibition.type !== 'MD_RECOMMENDED' );
+  const renderExhibition = () => {
+    
+  };
+
   const goToMd = () => {
     router.push('/md');
   };
@@ -96,7 +100,7 @@ const Home = () => {
     });
   };
 
-  if (isLoading) {
+  if (isLoadingMdMenu) {
     return <div>로딩</div>;
   };
 
@@ -108,7 +112,7 @@ const Home = () => {
         <BorderLine height={1} margin="24px 0 24px 0" />
       </SectionWrapper>
       <FlexSpace>
-        <SectionTitle>{mdRecommendedData?.exhibition.title}</SectionTitle>
+        <SectionTitle>MD 추천</SectionTitle>
         <TextH5B 
           onClick={goToMd}
           color={theme.greyScale65} 
@@ -119,51 +123,67 @@ const Home = () => {
       <SectionWrapper>
         <FlexWrapWrapper>
           {mdMenu?.length! > 0
-            ? mdMenu?.map((item, index) => {
+            ? mdMenu?.map((item: any, index: number) => {
                 if (index > 3) return;
-                return <Item item={item.menu} key={index} />;
+                return <Item item={item} key={index} />;
               })
             : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>
       </SectionWrapper>
-      <LineBanner onClick={goToPromotion}>
-        <Image
-          src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_banner.png`}
-          height="120px"
-          width="512px"
-          layout="responsive"
-          alt="홈 배너"
-        />
-      </LineBanner>
-      <PromotionWrapper>
-        <FlexSpace>
-          <SectionTitle>메인 콘텐츠 기획전 - 1</SectionTitle>
-          <TextH5B 
-            onClick={goToPromotion}
-            color={theme.greyScale65} 
-            textDecoration='underline' 
-            pointer
-          >더보기</TextH5B>
-        </FlexSpace>
-        <Image
-          src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
-          height="300px"
-          width="512px"
-          layout="responsive"
-          alt="메인 콘텐츠 기획전"
-        />
-        {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
-        <ItemListRowWrapper>
-          <ItemListRow>
-            {menus?.length! > 0
-              ? menus?.map((item, index) => {
-                  if (index > 3) return;
-                  return <Item item={item} key={index} isHorizontal />;
-                })
-              : '상품을 준비 중입니다.'}
-          </ItemListRow>
-        </ItemListRowWrapper>
-      </PromotionWrapper>
+      {
+        mainContents?.map((item, idx) => {
+          // <MainContentsWrapper key={idx}>
+          if (item.type === "BANNER") {
+            return (
+              <PromotionBanner onClick={goToPromotion}> 
+                <Image
+                  src={`${process.env.IMAGE_S3_URL}${item.banner?.image?.url}`}
+                  height="120px"
+                  width="512px"
+                  layout="responsive"
+                  alt="홈 배너"
+                />
+              </PromotionBanner>
+            )
+          } else if (item.type === "EXHIBITION") {
+            if(item.exhibition.type !== "MD_RECOMMENDED") {
+              return (
+                <PromotionWrapper>
+                  {/* <FlexSpace>
+                    <SectionTitle>{item.exhibition.title}</SectionTitle>
+                    <TextH5B 
+                      onClick={goToPromotion}
+                      color={theme.greyScale65} 
+                      textDecoration='underline' 
+                      pointer
+                    >더보기</TextH5B>
+                  </FlexSpace>
+                  <Image
+                    src={`${process.env.IMAGE_S3_URL}/banner/img_home_contents_event.png`}
+                    height="300px"
+                    width="512px"
+                    layout="responsive"
+                    alt="메인 콘텐츠 기획전"
+                  />
+                  {eventbannerList.length !== 0 && <Banner bannerList={eventbannerList} />}
+                  <ItemListRowWrapper>
+                    <ItemListRow>
+                      {menus?.length! > 0
+                        ? menus?.map((item, index) => {
+                            if (index > 3) return;
+                            return <Item item={item} key={index} isHorizontal />;
+                          })
+                        : '상품을 준비 중입니다.'}
+                    </ItemListRow>
+                  </ItemListRowWrapper> */}
+                </PromotionWrapper>
+              )
+            }
+          }
+      // </MainContentsWrapper>
+        })
+        
+      }
     </Container>
   );
 };
@@ -189,12 +209,14 @@ export const ItemListCol = styled.div`
   grid-gap: 16px;
 `;
 
-const LineBanner = styled.section`
+const PromotionBanner = styled.section`
   height: 96px;
   max-width: 512px;
   width: 100%;
   margin: 24px 0px;
 `;
+
+const MainContentsWrapper = styled.div``;
 
 const PromotionWrapper = styled.section`
   width: 100%;

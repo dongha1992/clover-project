@@ -401,7 +401,7 @@ const NameWrapper = styled.div`
 
 const PriceWrapper = styled.div<{ isHorizontal?: boolean }>`
   display: flex;
-  margin-top: ${({ isHorizontal }) => isHorizontal && '22px'};
+  // margin-top: ${({ isHorizontal }) => isHorizontal && '22px'};
 `;
 
 const LikeAndReview = styled.div`
