@@ -134,7 +134,6 @@ const Wrapper = styled.div`
   }
 `;
 
-
 const PromotionWrapper = styled.div`
   width: 100%;
   padding-bottom: 9px;
