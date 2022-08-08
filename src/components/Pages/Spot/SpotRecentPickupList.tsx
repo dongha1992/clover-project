@@ -208,7 +208,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
 
     if (isLoginSuccess) {
-      if (orderId) {
+      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
         if (
           closedDate &&
           ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
@@ -338,12 +338,22 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       } else if (isDelivery && isSubs) {
         router.push({
           pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
-          query: { isSpot: true, isSubscription, subsDeliveryType, menuId, isDelivery: true },
+          query: { 
+            isSpot: true, 
+            isSubscription, 
+            subsDeliveryType, 
+            menuId, 
+            isDelivery: true 
+          },
         });
       } else {
         router.push({
           pathname: `/spot/detail/${id}`,
-          query: { isSpot: true },
+          query: { 
+            isSpot: true, 
+            orderId, 
+            destinationId, 
+          },
         });
       }
     }

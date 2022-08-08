@@ -7,23 +7,23 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { SET_SPOT_PICKUP_ID } from '@store/spot';
 import Checkbox from '@components/Shared/Checkbox';
-import { ISpotPickupInfo, ISpotPickupInfoInDestination } from '@model/index';
+import { ISpotPickupInfoInDestination } from '@model/index';
 
 type TPrams = {
   pickupInfo?: any;
   spotType?: string;
-  onSubmit?: (pickupId: number) => void;
+  onSubmit?: (pickupInfo: ISpotPickupInfoInDestination) => void;
   isMypage?: boolean;
 };
 
 const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
-  const [selectedPickupId, setSelectedPickupId] = useState<number>(pickupInfo[0].id);
+  const [selectedPickupInfo, setSelectedPickupInfo] = useState<any>(pickupInfo[0]);
   const [noticeChecked, setNoticeChecked] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(SET_SPOT_PICKUP_ID(selectedPickupId));
-  }, [selectedPickupId]);
+    dispatch(SET_SPOT_PICKUP_ID(selectedPickupInfo?.id));
+  }, [selectedPickupInfo.id]);
 
   const checkHandler = () => {
     setNoticeChecked(!noticeChecked);
@@ -33,13 +33,13 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
     
     if (spotType === 'PRIVATE') {
       if (noticeChecked) {
-        onSubmit && onSubmit(selectedPickupId);
+        onSubmit && onSubmit(selectedPickupInfo);
         dispatch(INIT_BOTTOM_SHEET());
       } else {
         return;
       }
     } else {
-      onSubmit && onSubmit(selectedPickupId);
+      onSubmit && onSubmit(selectedPickupInfo);
       dispatch(INIT_BOTTOM_SHEET());
     }
   };
@@ -54,7 +54,7 @@ const PickupSheet = ({ pickupInfo, spotType, onSubmit, isMypage }: TPrams): JSX.
         {pickupInfo?.map((i: any, index: number) => {
           return (
             <PickWrapper key={index}>
-              <RadioButton onChange={() => setSelectedPickupId(i.id)} isSelected={selectedPickupId === i.id} />
+              <RadioButton onChange={() => setSelectedPickupInfo(i)} isSelected={selectedPickupInfo.id === i.id} />
               <TextH5B padding="0 0 0 8px">{i.name}</TextH5B>
             </PickWrapper>
           );
