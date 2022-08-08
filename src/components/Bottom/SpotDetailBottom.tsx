@@ -20,12 +20,14 @@ import { PickupSheet } from '@components/BottomSheet/PickupSheet';
 import { useQuery } from 'react-query';
 import { useMutation, useQueryClient } from 'react-query';
 import { postDestinationApi } from '@api/destination';
+import { SET_TEMP_EDIT_SPOT } from '@store/mypage';
+import { ISpotPickupInfoInDestination } from '@model/index';
 
 const SpotDetailBottom = () => {
   const store = useStore();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { isDelivery, subsDeliveryType, menuId }: any = router.query;
+  const { isDelivery, subsDeliveryType, menuId, orderId, destinationId }: any = router.query;
   const { isLoginSuccess, me } = useSelector(userForm);
   const { cartLists } = useSelector(cartForm);
   const { spotDetail, spotPickupId } = useSelector(spotSelector);
@@ -63,7 +65,7 @@ const SpotDetailBottom = () => {
       spotPickupId: spotPickupId!,
     };
 
-    const goToCart = async (pickupId: number) => {
+    const getDestinationInfo = async (pickupInfo: ISpotPickupInfoInDestination) => {
       // 로그인 o, 스팟 검색 내에서 장바구니(cart)로 넘어간 경우
       const reqBody = {
         name: spotDetail?.name!,
@@ -78,42 +80,56 @@ const SpotDetailBottom = () => {
           zipCode: spotDetail?.location?.zipCode!,
           dong: spotDetail?.location?.dong!,
         },
-        spotPickupId: pickupId,
+        spotPickupId: pickupInfo.id,
       };
       try {
         const { data } = await postDestinationApi(reqBody); // 배송지 id 값을 위해 api 호출
         if (data.code === 200) {
           const response = data.data;
           const destinationId = response.id;
-          dispatch(
-            SET_DESTINATION({
-              name: response.name,
-              location: {
-                addressDetail: response.location.addressDetail,
-                address: response.location.address,
-                dong: response.location.dong,
-                zipCode: response.location.zipCode,
-              },
-              main: response.main,
-              deliveryMessage: response.deliveryMessage,
-              receiverName: response.receiverName,
-              receiverTel: response.receiverTel,
-              deliveryMessageType: '',
-              delivery: response.delivery,
-              id: destinationId,
-              spotId: spotDetail?.id,
-              availableTime: pickUpTime,
-            })
-          );
-          dispatch(SET_USER_DELIVERY_TYPE('spot'));
-          router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });
+          if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+            dispatch(
+              SET_TEMP_EDIT_SPOT({
+                spotPickupId: pickupInfo.id,
+                name: spotDetail?.name!,
+                spotPickup: pickupInfo.name,
+              })
+            );
+            router.push({
+              pathname: '/mypage/order-detail/edit/[orderId]',
+              query: { orderId, destinationId },
+            });  
+          } else {
+            dispatch(
+              SET_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: response.main,
+                deliveryMessage: response.deliveryMessage,
+                receiverName: response.receiverName,
+                receiverTel: response.receiverTel,
+                deliveryMessageType: '',
+                delivery: response.delivery,
+                id: destinationId,
+                spotId: spotDetail?.id,
+                availableTime: pickUpTime,
+              })
+            );
+            dispatch(SET_USER_DELIVERY_TYPE('spot'));
+            router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });  
+          }
         }
       } catch (e) {
         console.error(e);
       }
     };
 
-    const goToDeliveryInfo = (pickupId: number) => {
+    const goToDeliveryInfo = (pickupInfo: ISpotPickupInfoInDestination) => {
       const destinationInfo = {
         name: spotDetail?.name!,
         location: {
@@ -125,7 +141,7 @@ const SpotDetailBottom = () => {
         main: false,
         availableTime: pickUpTime,
         spaceType: spotDetail?.type,
-        spotPickupId: pickupId!,
+        spotPickupId: pickupInfo.id!,
       };
   
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
@@ -168,6 +184,10 @@ const SpotDetailBottom = () => {
     }
     if (isLoginSuccess) {
       //로그인 o
+      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
+        <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />
+      };
+
       if (cartLists.length) {
         // 장바구니 o
         if (isDelivery) {
@@ -203,7 +223,7 @@ const SpotDetailBottom = () => {
           // 로그인 o, 장바구니 o, 스팟 검색에서 장바구니(cart)로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />,
             })
           );
         }
@@ -226,7 +246,7 @@ const SpotDetailBottom = () => {
           // 로그인o and 장바구니 x, 장바구니(cart)로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={goToCart} />,
+              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />,
             })
           );
         }
