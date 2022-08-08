@@ -2427,7 +2427,7 @@ interface IExhibition {
   createdAt: string;
   menus: IMenus[];
   id: number;
-  image: IImage;
+  image: IImages;
   title: string;
   type: TExhibition;
 }
@@ -2438,7 +2438,7 @@ interface IExhibitionBanners {
   endedAt: string;
   href: string;
   id: number;
-  image: IImage;
+  image: IImages;
   login: boolean;
   option: {
     bgColor: string;
@@ -2455,10 +2455,10 @@ interface IExhibitionBanners {
   type: string;
 }
 
-interface IImage {
+interface IImages {
   contentId: number;
   createdAt: string;
-  height: number;
+  height: number
   id: number;
   size: number;
   url: string;
