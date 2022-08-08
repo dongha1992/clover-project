@@ -19,12 +19,12 @@ const RankPage = () => {
           <FlexCol padding="24px 0 32px 0">
             <TextH2B>{me?.nickname}님은</TextH2B>
             <FlexRow>
-              <TextH2B color={theme.brandColor}>프코팡</TextH2B>
+              <TextH2B color={theme.brandColor}>{me?.grade.name}</TextH2B>
               <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
             </FlexRow>
           </FlexCol>
           <FlexCol>
-            <UserRankInfo title="적립금" count={1} id={1} />
+            <UserRankInfo title="적립금" count={me?.grade.benefit.accumulationRate} id={1} />
             <UserRankInfo title="할인 쿠폰" count={7} id={2} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
