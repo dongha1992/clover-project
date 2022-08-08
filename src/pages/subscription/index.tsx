@@ -1,8 +1,6 @@
-import { InfoCard, SubsItem, SubsParcelList, SubsSpotList } from '@components/Pages/Subscription';
+import { InfoCard, SubsParcelList, SubsSpotList } from '@components/Pages/Subscription';
 import { MySubsList } from '@components/Pages/Subscription';
-import { TextB2R, TextH3B, TextH6B } from '@components/Shared/Text';
 import { userForm } from '@store/user';
-import { ScrollHorizonList, theme } from '@styles/theme';
 import { useSelector } from 'react-redux';
 import router from 'next/router';
 import styled from 'styled-components';
