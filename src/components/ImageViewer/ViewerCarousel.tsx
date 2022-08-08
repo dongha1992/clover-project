@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IBanners } from '@model/index';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
 import { IViewer } from '@store/common';
+import Image from '@components/Shared/Image';
 
 interface IProps {
   setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
@@ -33,7 +32,7 @@ const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
 
   const settings = {
-    arrows: isArrowShow ? true : false,
+    arrows: isArrowShow,
     dots: false,
     initialSlide: currentImg,
     spped: 500,
@@ -41,7 +40,6 @@ const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
     slidersToScroll: 1,
     centerMode: true,
     infinite: true,
-    customPaging: () => <div />,
     afterChange: (current: number) => setCountIndex && setCountIndex(current),
     centerPadding: '0px',
     nextArrow: <NextArrow />,
@@ -60,12 +58,14 @@ const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
       <Slider {...settings}>
         {images.images?.map((url: string, index: number) => {
           return (
-            <ImageWrapper
-              src={process.env.IMAGE_SERVER_URL + url}
-              alt="리뷰이미지"
+            <Image
+              src={url}
               key={index}
-              isLast={index === images.images.length + 1}
-            />
+              className={"review-image"}
+              width="512px"
+              height="1024px"
+              layout={"responsive"}>
+            </Image>
           );
         })}
       </Slider>
@@ -104,14 +104,12 @@ const Container = styled.div`
       color: #767e90;
     }
   }
+  .review-image {
+    height:auto!important;
+    min-height: 0px!important;
+  }
 `;
 
-const ImageWrapper = styled.img<{ isLast: boolean }>`
-  width: 100%;
-  /* height: 390px; */
-  object-fit: fill;
-  /* padding-right: ${(props) => (props.isLast ? '0px' : '8px')}; */
-`;
 const NextArrowWrapper = styled.div`
   position: absolute;
   right: 0%;
