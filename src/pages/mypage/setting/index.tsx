@@ -8,7 +8,7 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { Obj } from '@model/index';
-import { userForm } from '@store/user';
+import { userForm, SET_USER } from '@store/user';
 
 const SettingPage = () => {
   const [notiSet, setNotiSet] = useState<Obj>({
@@ -23,7 +23,7 @@ const SettingPage = () => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
 
-  const { mutateAsync: mutationEditProfile } = useMutation(
+  const { mutate: mutationEditProfile } = useMutation(
     async () => {
       const reqBody = {
         ...notiSet,
@@ -34,6 +34,7 @@ const SettingPage = () => {
     {
       onSuccess: async () => {
         await queryClient.refetchQueries('getUserProfile');
+        dispatch(SET_USER({ ...me!, ...notiSet }));
       },
       onError: async (error: any) => {
         console.error(error);
@@ -47,9 +48,7 @@ const SettingPage = () => {
   };
 
   useEffect(() => {
-    return () => {
-      mutationEditProfile();
-    };
+    return () => mutationEditProfile();
   }, []);
 
   useEffect(() => {
