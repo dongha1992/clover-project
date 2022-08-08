@@ -2,7 +2,7 @@ import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { MenuImgBox, MenuLi, MenuTextBox } from '@pages/subscription/register';
 import { getFormatPrice, SVGIcon } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 
 type TButtonType = 'select' | 'change' | 'delete';
 interface IProps {
@@ -27,7 +27,7 @@ const MenuItem = ({ item, menuSelectHandler, menuDeleteHandler, buttonState = tr
       )}
       <MenuImgBox>
         <Image
-          src={IMAGE_S3_URL + item.menuImage.url}
+          src={item.menuImage.url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
