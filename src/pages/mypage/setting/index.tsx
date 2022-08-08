@@ -44,6 +44,18 @@ const SettingPage = () => {
   );
 
   const changeNotificationHandler = (name: string) => {
+    if (name === 'marketingPushReceived' && notiSet.marketingPushReceived) {
+      dispatch(
+        SET_ALERT({
+          alertMessage:
+            '프레시코드의 인기 상품이나 프로모션, 신규 서비스 출시 정보를 받지 못할 수 있어요. 그래도 알림을 해제하시겠어요?',
+          onSubmit: () => {
+            setNotiSet({ ...notiSet, marketingPushReceived: !notiSet.marketingPushReceived });
+          },
+        })
+      );
+      return;
+    }
     setNotiSet({ ...notiSet, [name]: !notiSet[name] });
   };
 
