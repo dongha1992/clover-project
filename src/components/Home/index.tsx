@@ -79,10 +79,6 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const renderExhibition = () => {
-    
-  };
-
   const goToMd = () => {
     router.push('/md');
   };
