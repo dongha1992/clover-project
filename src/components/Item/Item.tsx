@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import { theme, FlexCol, showMoreText } from '@styles/theme';
@@ -10,15 +10,12 @@ import { menuSelector, SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
 import Badge from './Badge';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { TAG_MAP } from '@constants/menu';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
-import getCustomDate from '@utils/destination/getCustomDate';
-import { Obj, IMenuDetails, IMenus, IOrderedMenuDetails } from '@model/index';
+import { Obj, IMenus } from '@model/index';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 import 'dayjs/locale/ko';
 import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
@@ -235,7 +232,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper isHorizontal={isHorizontal}>
         <Image
-          src={item.thumbnail[0]?.url ? IMAGE_S3_URL + item.thumbnail[0]?.url : IMAGE_ERROR}
+          src={item.thumbnail[0]?.url ? item.thumbnail[0]?.url : IMAGE_ERROR}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}

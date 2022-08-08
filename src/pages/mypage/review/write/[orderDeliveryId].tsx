@@ -261,7 +261,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
         <FlexCol padding="16px 0 24px 0">
           <TextH3B>
-            <NickName>{me?.nickName}</NickName>님
+            <NickName>{me?.nickname}</NickName>님
           </TextH3B>
           {orderType === 'SUBSCRIPTION' ? (
             <TextH3B>이용 중인 구독은 만족하셨나요?</TextH3B>
@@ -349,7 +349,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
               const base64 = img?.includes('data:image');
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${process.env.REVIEW_IMAGE_URL}${img}`} />
+                  <img src={base64 ? img : `${process.env.IMAGE_SERVER_URL}${img}`} />
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>

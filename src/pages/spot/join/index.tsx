@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
-import { TextB1B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
@@ -14,6 +13,7 @@ import { getSpotInfo } from '@api/spot';
 import { ISpotsInfo } from '@model/index';
 import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { Button } from '@components/Shared/Button';
+import Image from '@components/Shared/Image';
 
 const RegistrationsListPage = () => {
   const router = useRouter();
@@ -91,7 +91,7 @@ const RegistrationsListPage = () => {
   return (
     <Container>
       <ImgWrapper>
-        <BacngroundImg src={`${IMAGE_S3_DEV_URL}/img_detail_fco_add.png`} />
+        <Image src="/img_detail_fco_add.png"></Image>
       </ImgWrapper>
       <BtnWrapper onClick={() =>goToRegistration('PRIVATE')}>
         <Button margin="24px 0 24px 0" border color={theme.black} backgroundColor={theme.white}>

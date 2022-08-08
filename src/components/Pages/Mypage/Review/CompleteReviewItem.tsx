@@ -1,21 +1,14 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
-import { Tag } from '@components/Shared/Tag';
-import { theme, responsiveImgWrapper, responsiveImg, FlexRow, FlexRowStart, FlexBetweenStart } from '@styles/theme';
+import { theme, FlexRowStart, FlexBetweenStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
-import BorderLine from '@components/Shared/BorderLine';
 import { IMAGE_S3_URL } from '@constants/mock';
-import Image from 'next/image';
 import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
-import { getImageApi } from '@api/image';
 import NextImage from 'next/image';
 import { deleteReviewApi } from '@api/menu';
-
-// 빌드에러남
-// import { ThumborImage } from 'react-thumbor-img';
 
 const MAX_LINE = 5;
 interface IProps {
@@ -30,24 +23,6 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
 
   const { dayFormatter } = getCustomDate(new Date(review.createdAt));
-  console.log(review, 'review');
-  const getResizeImg = async ({ width, url }: { width: number; url: string }) => {
-    const formatUrl = url.replace('/image', '');
-
-    const params = {
-      width,
-      url: formatUrl,
-    };
-
-    // const params = {
-    //   width,
-    //   url,
-    // };
-
-    const data = await getImageApi(params);
-    console.log(data);
-    return data;
-  };
 
   useEffect(() => {
     const lines = review.content?.split(/\r|\r\n|\n/);
@@ -106,7 +81,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
                 </Rating>
                 <UserInfo>
                   <TextH6B color={theme.greyScale65} padding="0 8px 0 0">
-                    {review.userNickName}
+                    {review.userNickname}
                   </TextH6B>
                   <TextB3R color={theme.greyScale65}>{dayFormatter}</TextB3R>
                 </UserInfo>
@@ -150,7 +125,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
                       onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
-                      <img src={process.env.REVIEW_IMAGE_URL + img.url} alt="리뷰이미지" />
+                      <img src={process.env.IMAGE_SERVER_URL + img.url} alt="리뷰이미지" />
                     </ReviewImageWrapper>
                   );
                 })}
