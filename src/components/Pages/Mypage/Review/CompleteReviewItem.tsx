@@ -3,11 +3,10 @@ import styled, { css } from 'styled-components';
 import { SVGIcon } from '@utils/common';
 import { theme, FlexRowStart, FlexBetweenStart } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
-import NextImage from 'next/image';
+import Image from '@components/Shared/Image';
 import { deleteReviewApi } from '@api/menu';
 
 const MAX_LINE = 5;
@@ -40,8 +39,8 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
             <FlexBetweenStart padding="0 0 16px 0">
               <FlexRowStart onClick={() => router.push(`/menu/${review.menuId}`)} pointer>
                 <MenuImgWrapper>
-                  <NextImage
-                    src={IMAGE_S3_URL + review?.menuImage?.url}
+                  <Image
+                    src={review?.menuImage?.url}
                     alt="상품이미지"
                     width={'100%'}
                     height={'100%'}

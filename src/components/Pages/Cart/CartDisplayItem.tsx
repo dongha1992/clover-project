@@ -4,8 +4,7 @@ import { TextB2R } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, theme, FlexRowStart, FlexCol } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import Checkbox from '@components/Shared/Checkbox';
-import { IMAGE_S3_URL } from '@constants/mock';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { IGetCart } from '@model/index';
 import isNil from 'lodash-es/isNil';
 import InfoMessage from '@components/Shared/Message';
@@ -39,7 +38,7 @@ const CartDisplayItem = ({ checkedMenus, selectCartItemHandler, removeCartDispla
           </CheckboxWrapper>
           <ImageWrapper>
             <Image
-              src={IMAGE_S3_URL + menu.image.url}
+              src={menu.image.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}

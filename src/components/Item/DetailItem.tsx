@@ -6,9 +6,7 @@ import { SVGIcon } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuSelector, SET_MENU_ITEM } from '@store/menu';
 import { useRouter } from 'next/router';
-import { IMAGE_S3_URL } from '@constants/mock';
-import { TAG_MAP } from '@constants/menu';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { getDiscountPrice } from '@utils/menu/getMenuDisplayPrice';
 import { Obj, IMenuDetails, IMenus, IOrderedMenuDetails } from '@model/index';
 import dayjs from 'dayjs';
@@ -152,7 +150,7 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper>
         <Image
-          src={item.thumbnail.url ? IMAGE_S3_URL + item.thumbnail.url : IMAGE_ERROR}
+          src={item.thumbnail.url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
