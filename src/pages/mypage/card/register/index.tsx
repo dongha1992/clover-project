@@ -268,7 +268,7 @@ const CardRegisterPage = () => {
                   router.push({ pathname: `/subscription/${orderId}` });
                 } else if (isOrder && isSubscription) {
                   router.push({ pathname: '/order', query: { isSubscription } });
-                } else if (isOrder) {
+                } else if (isFromOrder) {
                   router.push({ pathname: '/order' });
                 } else {
                   router.push({ pathname: '/mypage/card', query: { isOrder: isFromOrder } });
@@ -499,6 +499,7 @@ const CardInputGroup = styled.div`
     width: calc(100% / 4);
     ${customInput}
     ::placeholder {
+      padding-top: 3px;
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
@@ -531,6 +532,7 @@ const CustomInputWrapper = styled.div`
   > input {
     ${customInput}
     ::placeholder {
+      padding-top: 3px;
       ${textBody2}
       position: absolute;
       color: ${({ theme }) => theme.greyScale45};
