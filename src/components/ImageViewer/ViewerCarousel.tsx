@@ -62,8 +62,9 @@ const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
               src={url}
               key={index}
               className={"review-image"}
-              width="512px"
-              height="0"
+              width="640"
+              height="480"
+              alt="리뷰이미지"
               layout={"responsive"}>
             </Image>
           );
