@@ -8,7 +8,7 @@ import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
 
 const TABS = [
   { title: '카테고리', link: '/category/all' },
-  { title: 'HOT썸머 할인', link: '/promotion/detail', edit: true, id: 21 },
+  { title: 'HOT썸머 할인', link: '/promotion/detail', id: 1 },
   { title: '기획전', link: '/promotion' },
   { title: '이벤트·소식', link: '/event' },
 ];
@@ -17,17 +17,11 @@ const MainTab = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const goToPromotion = (path: string, edit?: boolean, id?: number) => {
-    dispatch(SET_EVENT_TITLE('친구 초대하기!')); // 고정 기획전 타이틀
+  const goToPromotion = (path: string, id?: number) => {
+    
     if(path === '/promotion/detail') {
-      router.push({
-        pathname: '/promotion/detail',
-        query: {
-          id: id,
-          subs: false,
-          edit_feed: edit,
-        },
-      });  
+      dispatch(SET_EVENT_TITLE('HOT썸머 할인!')); // 고정 기획전 타이틀
+      router.push(`/promotion/detail/${id}`);
     } else {
       router.push(path);
     };
@@ -37,7 +31,7 @@ const MainTab = () => {
     <Container>
       {TABS.map((item, index) => {
         return (
-          <TabWrapper key={index} onClick={() => goToPromotion(item.link, item.edit, item.id)}>
+          <TabWrapper key={index} onClick={() => goToPromotion(item.link, item.id)}>
             <Image
               src="/menu/img_thumbnail_empty.jpg"
               height="80px"

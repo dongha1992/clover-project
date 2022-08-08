@@ -201,7 +201,7 @@ const Header = () => {
         '/mypage/dib/general',
         '/mypage/dib/subscription',
         '/mypage/order-detail',
-        '/promotion/detail',
+        '/promotion/detail/[id]',
         '/md',
       ].includes(currentPath): {
         return (
