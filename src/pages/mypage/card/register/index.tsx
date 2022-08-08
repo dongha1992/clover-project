@@ -264,9 +264,9 @@ const CardRegisterPage = () => {
               alertMessage: successMsg,
               submitBtnText: '확인',
               onSubmit: () => {
-                if (isOrder && orderId && isSubscription) {
+                if (isFromOrder && orderId && isSubscription) {
                   router.push({ pathname: `/subscription/${orderId}` });
-                } else if (isOrder && isSubscription) {
+                } else if (isFromOrder && isSubscription) {
                   router.push({ pathname: '/order', query: { isSubscription } });
                 } else if (isFromOrder) {
                   router.push({ pathname: '/order' });
