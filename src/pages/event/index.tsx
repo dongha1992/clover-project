@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
@@ -76,7 +76,7 @@ const EventPage = () => {
           return (
             <BannerWrapper key={idx} onClick={() => goToEvent(item.promotion, item.id, item.edit, item.title)}>
               <Image
-                src={`${process.env.IMAGE_S3_URL}${item.img}`}
+                src={item.img}
                 height="300px"
                 width="512px"
                 layout="responsive"

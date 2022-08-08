@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
@@ -15,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
-import NextImage from 'next/image';
+import ThumborImage from '@components/Shared/Image';
 import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
 import { ICreateReivewRequest } from '@model/index';
@@ -271,8 +270,8 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
-            <NextImage
-              src={IMAGE_S3_URL + data?.thumbnail[0].url}
+            <ThumborImage
+              src={data?.thumbnail[0].url || ''}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}

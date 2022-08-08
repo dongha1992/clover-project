@@ -1,8 +1,7 @@
 import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { FlexBetween, FlexRow } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import router from 'next/router';
 import styled from 'styled-components';
 import RefundPriceBox from './RefundPriceBox';
@@ -30,7 +29,7 @@ const RefundOrderBox = ({ subOrder }: IProps) => {
         <OrderItem>
           <div className="imgBox">
             <Image
-              src={IMAGE_S3_URL + subOrder.image.url}
+              src={subOrder.image.url}
               alt="상품이미지"
               width={'100%'}
               height={'100%'}
