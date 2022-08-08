@@ -202,7 +202,6 @@ export const ItemListCol = styled.div`
 `;
 
 const PromotionBanner = styled.section`
-  height: 96px;
   max-width: 512px;
   width: 100%;
   margin: 24px 0px;
