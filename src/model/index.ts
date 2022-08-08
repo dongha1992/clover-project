@@ -1456,6 +1456,7 @@ export interface IOrderDetail {
   status: string;
   subscriptionRound?: number;
   subscriptionPeriod?: string;
+  canCancel: boolean;
 }
 
 export interface IGetOrderDetailResponse {
@@ -2427,4 +2428,10 @@ export interface ISubscribeInfo {
 
 export interface ISubsManage {
   changeDate: string | null;
+}
+
+export interface IDeviceRequest {
+  token: string;
+  type: string;
+  uniqueId: string;
 }
