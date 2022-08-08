@@ -194,9 +194,9 @@ const OrderDetailPage = () => {
   };
 
   const changeDeliveryInfoHandler = () => {
-    // if (!canChangeDelivery || isCanceled) {
-    //   return;
-    // }
+    if (!canChangeDelivery || isCanceled) {
+      return;
+    }
 
     if (isSubOrder) {
       dispatch(
@@ -352,6 +352,16 @@ const OrderDetailPage = () => {
     orderOptions,
   } = orderDeliveries!;
 
+  const totalDiscount =
+    menuDiscount + eventDiscount + coupon > 0
+      ? `-${getFormatPrice(String(menuDiscount + eventDiscount + coupon))}}원`
+      : '0원';
+
+  const totalRefundDiscount =
+    refundMenuDiscount + refundEventDiscount + refundCoupon > 0
+      ? `-${getFormatPrice(String(refundMenuDiscount + refundEventDiscount + refundCoupon))}}원`
+      : '0원';
+
   return (
     <Container>
       <DeliveryStatusWrapper>
@@ -450,7 +460,7 @@ const OrderDetailPage = () => {
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>-{getFormatPrice(String(menuDiscount + eventDiscount + coupon))}원</TextB2R>
+          <TextB2R>{totalDiscount}</TextB2R>
         </FlexBetween>
         {menuDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
@@ -532,7 +542,7 @@ const OrderDetailPage = () => {
             </FlexBetween>
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>총 할인 금액</TextH5B>
-              <TextB2R>-{getFormatPrice(String(refundMenuDiscount + refundEventDiscount + refundCoupon))}원</TextB2R>
+              <TextB2R>{totalRefundDiscount}</TextB2R>
             </FlexBetween>
             {refundMenuDiscount > 0 && (
               <FlexBetween padding="8px 0 0 0">
@@ -567,15 +577,19 @@ const OrderDetailPage = () => {
               <TextH4B>총 결제 금액</TextH4B>
               <TextB2R>{getFormatPrice(String(refundCoupon + refundPoint + refundPayAmount))}원</TextB2R>
             </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>환불 금액</TextB2R>
-              <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
-            </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>환불 쿠폰</TextB2R>
-              <TextB2R>{getFormatPrice(String(refundCoupon))}원</TextB2R>
-            </FlexBetween>
-            {refundPoint && (
+            {refundPayAmount > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 금액</TextB2R>
+                <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
+              </FlexBetween>
+            )}
+            {refundCoupon > 0 && coupon > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 쿠폰</TextB2R>
+                <TextB2R>1개</TextB2R>
+              </FlexBetween>
+            )}
+            {refundPoint > 0 && (
               <FlexBetween padding="8px 0 0 0">
                 <TextB2R>환불 포인트</TextB2R>
                 <TextB2R>{getFormatPrice(String(refundPoint))}원</TextB2R>
