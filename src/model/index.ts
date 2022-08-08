@@ -1445,6 +1445,7 @@ export interface IOrderDetail {
   status: string;
   subscriptionRound?: number;
   subscriptionPeriod?: string;
+  canCancel: boolean;
 }
 
 export interface IGetOrderDetailResponse {
@@ -2426,10 +2427,15 @@ export interface ISubsManage {
   changeDate: string | null;
 }
 
+export interface IDeviceRequest {
+  token: string;
+  type: string;
+  uniqueId: string;
+}
 type TMainPromotion = 'BANNER' | 'EXHIBITION' | string;
 
 type TExhibition = 'FIXED' | 'GENERAL_MENU' | 'MD_RECOMMENDED' | 'SUBSCRIPTION_MENU' | string;
- 
+
 interface IExhibition {
   content: string;
   createdAt: string;
@@ -2455,7 +2461,7 @@ interface IExhibitionBanners {
     mobileImageUrl: string;
     mobileImageWidth: string;
     paths: string[];
-  }
+  };
   priority: number;
   startedAt: string;
   status: string;
@@ -2466,7 +2472,7 @@ interface IExhibitionBanners {
 interface IImages {
   contentId: number;
   createdAt: string;
-  height: number
+  height: number;
   id: number;
   size: number;
   url: string;
@@ -2489,7 +2495,7 @@ export interface IMainPromotionContentsResponse {
   };
 }
 
-export interface IExhibitionContentsResponse{
+export interface IExhibitionContentsResponse {
   code: number;
   data: IExhibition;
   message: string;

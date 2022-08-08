@@ -95,7 +95,7 @@ const MenusPriceBox = ({
             <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
         )}
-        {coupon && coupon !== 0 && (
+        {!!coupon && coupon !== 0 && (
           <MenuPriceLi>
             <TextB2R>쿠폰 사용</TextB2R>
             <TextB2R>-{coupon}원</TextB2R>

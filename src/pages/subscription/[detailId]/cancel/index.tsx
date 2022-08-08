@@ -19,11 +19,22 @@ const OrderCancelPage = () => {
       router.replace(`/subscription/${detailId}/cancel/complete`);
     },
     onError: (error: IResponse | any) => {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `${error.message}`,
-        })
-      );
+      if (error.code === 5011) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: '이미 취소된 주문이에요.',
+            onSubmit: () => {
+              router.replace(`/subscription/${detailId}`);
+            },
+          })
+        );
+      } else {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `${error.message}`,
+          })
+        );
+      }
     },
   });
 
