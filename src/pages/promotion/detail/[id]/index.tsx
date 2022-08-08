@@ -7,6 +7,7 @@ import { useQuery } from 'react-query';
 import { Item } from '@components/Item';
 import { SubsItem } from '@components/Pages/Subscription';
 import { getExhibitionInquireApi } from '@api/promotion';
+import MarkdownRenderer from '@components/Shared/Markdown';
 
 // 기획전 상세 페이지
 const PromotionDetailPage = () => {
@@ -51,9 +52,9 @@ const PromotionDetailPage = () => {
     <Container>
       {
         items.content && (
-          <EditWrapper>
-            어드민 에디터 영역삼역
-          </EditWrapper>
+          <MarkDownWrapper>
+            <MarkdownRenderer content={items.content!} />
+          </MarkDownWrapper>
         )
       }
       {
@@ -100,14 +101,9 @@ const SubsContent =styled.div`
   padding: 0 0 24px 0;
 `;
 
-const EditWrapper = styled.section`
-  width: 100%;
-  height: 500px;
-  background: ${theme.greyScale25};
-  margin: 0 0 24px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const MarkDownWrapper = styled.div`
+  padding-bottom: 24px;
 `;
+
 
 export default PromotionDetailPage;
