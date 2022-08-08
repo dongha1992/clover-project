@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/*TODO: 렌더 3번 됨 */
-/* TODO: useLocalStorage 정리해야함 */
 export const useLocalStorage = (key: string, initialValue?: any) => {
   const [storedValue, setStoredValue] = useState<any>(() => {
     try {

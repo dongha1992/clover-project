@@ -10,7 +10,7 @@ interface IMe {
   marketingPushReceived: boolean;
   gender: string | null;
   name: string;
-  nickName: string;
+  nickname: string;
   password: string;
   marketingSmsReceived: boolean;
   notiPushReceived: boolean;
@@ -43,7 +43,7 @@ export interface IUser {
     marketingEmailReceived?: boolean;
     gender?: string | null;
     name?: string;
-    nickName?: string;
+    nickname?: string;
     password?: string;
     marketingSmsReceived?: boolean;
     tel?: string;
@@ -62,7 +62,7 @@ const initialState: IUser = {
     marketingEmailReceived: false,
     gender: null,
     name: '',
-    nickName: '',
+    nickname: '',
     password: '',
     marketingSmsReceived: false,
     tel: '',

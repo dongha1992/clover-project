@@ -81,7 +81,7 @@ export interface ISignupUser {
   marketingEmailReceived: boolean;
   marketingSmsReceived: boolean;
   name: string;
-  nickName: string;
+  nickname: string;
   password: string;
   tel: string;
 }
@@ -208,7 +208,7 @@ export interface IChangeMe {
   marketingPushReceived: boolean;
   marketingSmsReceived: boolean;
   name: string;
-  nickName: string;
+  nickname: string;
   notiPushReceived: boolean;
   primePushReceived: boolean;
   tel: string;
@@ -356,7 +356,7 @@ export interface ISpotInSpotPickUp {
   distance: number;
   distanceUnit: string;
   id: number;
-  images: IMenuImage[];
+  images: IImage[];
   location: ILocation;
   lunchDeliveryEndTime: string;
   lunchDeliveryStartTime: string;
@@ -773,18 +773,7 @@ export interface IBanners {
   endedAt: string;
   href: string;
   id: number;
-  imageHeight: number;
-  imageUrl: string;
-  imageWidth: number;
-  login: boolean;
-  option: {
-    bgColor: string;
-    fontColor: string;
-    mobileImageHeight: number;
-    mobileImageUrl: string;
-    mobileImageWidth: string;
-    paths: string[];
-  };
+  image: IImage;
   priority: number;
   startedAt: string;
   status: string;
@@ -1372,7 +1361,7 @@ export interface IGetOrders {
   status: string;
   paidAt: string;
   orderDeliveries: IOrderDeliverie[];
-  image: IMenuImage;
+  image: IImage;
   firstDeliveryDate?: string;
   firstDeliveryDateOrigin?: string;
   lastDeliveryDate?: string;
@@ -1748,7 +1737,7 @@ export interface IGetMenus {
   type: TType | string;
 }
 
-export interface IMenuImage {
+export interface IImage {
   height: number;
   id: number;
   url: string;
@@ -1784,7 +1773,7 @@ export interface IMenuDetails {
 export interface IBestReviews {
   id: number;
   menuId?: number;
-  userNickName: string;
+  userNickname: string;
   menuName?: string;
   menuDetailName?: string;
   tag?: number;
@@ -1820,7 +1809,7 @@ export interface IMenuDetail {
   rating: number;
   orderCount: number;
   priority: number;
-  thumbnail: IMenuImage[];
+  thumbnail: IImage[];
   liked: boolean;
   type: string;
   subscriptionDeliveries: string[];
@@ -1834,7 +1823,7 @@ export interface IMenuDetail {
   productInfoNotis: IProductInfo[];
   summary: string;
   nutritionInfoNotis: INutitionInfo[];
-  deliveryMethods: IMenuImage[];
+  deliveryMethods: IImage[];
   reviewCount: number;
 }
 
@@ -1849,7 +1838,7 @@ export interface IMenus {
   type: string;
   category: string;
   summary: string;
-  thumbnail: IMenuImage[];
+  thumbnail: IImage[];
   badgeMessage: string;
   launchedAt?: string;
   liked: boolean;
@@ -1872,7 +1861,7 @@ export interface IMenus {
   menuFaq: IMenuFaq;
   productInfoNotis: IProductInfo[];
   nutritionInfoNotis: INutitionInfo[];
-  deliveryMethods: IMenuImage[];
+  deliveryMethods: IImage[];
   description: string;
 }
 
@@ -1926,7 +1915,7 @@ export interface IGetMenusResponse {
 export interface ISearchReviews {
   id: number;
   menuId?: number;
-  userNickName: string;
+  userNickname: string;
   menuName?: string;
   menuDetailName?: string;
   tag?: number;
@@ -2035,13 +2024,13 @@ export interface ICompletionReviewImg {
 }
 export interface ICompletionReviews {
   id: number;
-  userNickName: string;
+  userNickname: string;
   menuName: string;
   menuDetailName: string;
   rating: number;
   content: string;
   createdAt: string;
-  menuImage: IMenuImage;
+  menuImage: IImage;
   reviewImages: ICompletionReviewImg[];
   commentCreatedAt?: string;
   comment?: string;

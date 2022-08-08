@@ -35,7 +35,7 @@ interface IVaildation {
 }
 
 interface IUserInfo {
-  nickName: string;
+  nickname: string;
   name: string;
   email: string;
   tel: string;
@@ -66,7 +66,7 @@ const ProfilePage = () => {
   const [phoneValidation, setPhoneValidation] = useState(false);
   const [isValidName, setIsValidName] = useState<boolean>(true);
   const [userInfo, setUserInfo] = useState<IUserInfo>({
-    nickName: '',
+    nickname: '',
     name: '',
     email: '',
     tel: '',
@@ -353,7 +353,7 @@ const ProfilePage = () => {
 
       if (name === 'name') {
         checkNameValid(value);
-      } else if (name === 'nickName') {
+      } else if (name === 'nickname') {
         checkNickNameValid(value);
       }
       setUserInfo({ ...userInfo, [name]: isBirthDate ? Number(value) : value });
@@ -388,7 +388,7 @@ const ProfilePage = () => {
       marketingPushReceived: me?.marketingPushReceived!,
       marketingSmsReceived: me?.marketingSmsReceived!,
       name: userInfo.name,
-      nickName: userInfo.nickName,
+      nickname: userInfo.nickname,
       notiPushReceived: me?.notiPushReceived!,
       primePushReceived: me?.primePushReceived!,
       tel: userInfo.tel,
@@ -443,7 +443,7 @@ const ProfilePage = () => {
     setChcekGender(me?.gender!);
     setUserInfo({
       ...userInfo,
-      nickName: me?.nickName ? me?.nickName : me?.name!,
+      nickname: me?.nickname ? me?.nickname : me?.name!,
       name: me?.name!,
       email: me?.email!,
       tel: me?.tel!,
@@ -523,7 +523,7 @@ const ProfilePage = () => {
           </FlexCol>
           <FlexCol padding="0 0 24px 0">
             <TextH5B padding="0 0 9px 0">닉네임</TextH5B>
-            <TextInput name="nickName" value={userInfo.nickName || ''} eventHandler={onChangeUserInfo} />
+            <TextInput name="nickname" value={userInfo.nickname || ''} eventHandler={onChangeUserInfo} />
             {!isValidNickname && (
               <TextB3R color={theme.systemRed}>최소 2자 최대 20자 이내, 한글/영문만 입력 가능해요.</TextB3R>
             )}

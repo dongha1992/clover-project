@@ -42,8 +42,6 @@ const SpotSearchKakaoMap = ({
   const dispatch = useDispatch();
   const [selectedSpotIdx, setSelectedSpotIdx] = useState<number | null>(0);
   const [successPosition, setSuccessPosition] = useState<boolean>(false);
-  const [maxZoonOut, setMaxZoomOut] = useState<boolean>(false);
-  const [minZoomIn, setMinZoomIn] = useState<boolean>(false);
 
   const spotList = spotSearchList ?? [];
   const idx = currentSlickIdx&&currentSlickIdx;
@@ -57,7 +55,6 @@ const SpotSearchKakaoMap = ({
   useEffect(()=> {
     if(spotListAllCheck) {
       setShowInfoWindow(true);
-      setMaxZoomOut(true);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -276,10 +273,6 @@ const SpotSearchKakaoMap = ({
           const getLevel = map.getLevel();
           const level = getLevel - 1;
           map.setLevel(level, {animate: true});
-          setMaxZoomOut(false);
-          if(getLevel <= 2) {
-            setMinZoomIn(true);
-          };
         });
 
         // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수
@@ -287,10 +280,6 @@ const SpotSearchKakaoMap = ({
           const getLevel = map.getLevel();
           const level = getLevel + 1;
           map.setLevel(level, {animate: true});
-          setMinZoomIn(false);
-          if(getLevel >= 8){
-            setMaxZoomOut(true);
-          };
         });
 
         // 현재 위치 Geolocation API 호출
@@ -311,8 +300,6 @@ const SpotSearchKakaoMap = ({
               });
               marker.setMap(map);
               setSuccessPosition(true);
-              setMaxZoomOut(false);
-              setMinZoomIn(false);
             },
             (error) => { // `getCurrentPosition` 메소드에 대한 실패 callback 핸들러
               setSuccessPosition(false);
@@ -347,11 +334,11 @@ const SpotSearchKakaoMap = ({
     <MapWrapper>
       <ZoomContralWrapper>
         <ZoomIn id='zoomIn'>
-          <SVGIcon name={`${minZoomIn ? 'mapNoneZoomIn' : 'mapZoomIn'}`} />
+          <SVGIcon name='mapZoomIn' />
         </ZoomIn>
         <Col />
         <ZoomOut id='zoomOut'>
-          <SVGIcon name={`${maxZoonOut ? 'mapNoneZoomOut' : 'mapZoomOut'}`} />
+          <SVGIcon name='mapZoomOut' />
         </ZoomOut>
       </ZoomContralWrapper>
       <SvgWrapper id='currentGeolocation' show={showInfoWindow!}>

@@ -9,13 +9,13 @@ import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
-import { 
-  getNewSpots, 
-  getSpotEvent, 
-  getSpotPopular, 
-  getSpotInfo, 
-  getSpotRegistrationsRecruiting, 
-  getSpotsRegistrationStatus 
+import {
+  getNewSpots,
+  getSpotEvent,
+  getSpotPopular,
+  getSpotInfo,
+  getSpotRegistrationsRecruiting,
+  getSpotsRegistrationStatus,
 } from '@api/spot';
 import { IParamsSpots, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
@@ -132,9 +132,9 @@ const SpotPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  
   const goToSpotReq = (type: string): void => {
-    if (isLoginSuccess) { // 로그인 o
+    if (isLoginSuccess) {
+      // 로그인 o
       switch (type) {
         case 'PRIVATE':
           {
@@ -193,13 +193,14 @@ const SpotPage = () => {
             }
           }
           break;
-      };  
-    } else { // 로그인 x
+      }
+    } else {
+      // 로그인 x
       router.push({
         pathname: '/spot/join/main',
         query: { type },
       });
-    };
+    }
   };
 
   const goToRegiList = (): void => {
@@ -234,15 +235,15 @@ const SpotPage = () => {
           .catch(console.error);
       } else {
         return 'null';
-      };
+      }
     } else {
       dispatch(INIT_BOTTOM_SHEET());
       dispatch(
         SET_BOTTOM_SHEET({
-          content: <ShareSheet spotLink={spotLink} />,
+          content: <ShareSheet customUrl={spotLink} />,
         })
       );
-    };
+    }
   };
 
   const isLoading = isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
@@ -256,7 +257,7 @@ const SpotPage = () => {
       <HeaderTitle>
         <TextH2B padding="24px 24px 0 24px">
           {`${spotCount.toLocaleString()}개의 프코스팟이\n`}
-          {isLoginSuccess ? <span>{me?.nickName.length! > 0 ? me?.nickName : me?.name}</span> : '회원'}님을 기다려요!
+          {isLoginSuccess ? <span>{me?.nickname.length! > 0 ? me?.nickname : me?.name}</span> : '회원'}님을 기다려요!
         </TextH2B>
       </HeaderTitle>
       <RegistrationsCTAWrapper>
@@ -349,7 +350,7 @@ const SpotPage = () => {
                 color={theme.black}
                 width="111px"
                 height="38px"
-                margin='16px 0 0 0'
+                margin="16px 0 0 0"
                 border
                 onClick={goToLocation}
               >
@@ -392,25 +393,24 @@ const SpotPage = () => {
         )
       }
       {
-      // 오픈 진행중인 스팟 (단골가게)
-      uerLocationInfo &&
-      trialSpotList?.spotRegistrations?.length! > 0 && (
-        <>
-          <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
-          <SpotOpenBannerWrapper>
-            <ImgBanner src={`${IMAGE_S3_DEV_URL}/img_banner_fco_open.png`} />
-          </SpotOpenBannerWrapper>
-          <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
-            {trialSpotList?.spotRegistrations.map((list, idx) => {
-              return (
-                <SwiperSlide className="swiper-slide" key={idx}>
-                  <SpotList list={list} type="trial" />
-                </SwiperSlide>
-              );
-            })}
-          </TrialSlider>
-        </>
-      )
+        // 오픈 진행중인 스팟 (단골가게)
+        uerLocationInfo && trialSpotList?.spotRegistrations?.length! > 0 && (
+          <>
+            <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
+            <SpotOpenBannerWrapper>
+              <ImgBanner src={`${IMAGE_S3_DEV_URL}/img_banner_fco_open.png`} />
+            </SpotOpenBannerWrapper>
+            <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+              {trialSpotList?.spotRegistrations.map((list, idx) => {
+                return (
+                  <SwiperSlide className="swiper-slide" key={idx}>
+                    <SpotList list={list} type="trial" />
+                  </SwiperSlide>
+                );
+              })}
+            </TrialSlider>
+          </>
+        )
       }
       {
         //퍼블릭 스팟 신청 CTA
@@ -544,7 +544,6 @@ const SpotRegistration = styled.div`
   border-radius: 8px;
   cursor: pointer;
 `;
-
 
 const SpotOpenBannerWrapper = styled.div`
   width: 100%;
