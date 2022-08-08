@@ -2425,3 +2425,89 @@ export interface ISubscribeInfo {
 export interface ISubsManage {
   changeDate: string | null;
 }
+
+type TMainPromotion = 'BANNER' | 'EXHIBITION' | string;
+
+type TExhibition = 'FIXED' | 'GENERAL_MENU' | 'MD_RECOMMENDED' | 'SUBSCRIPTION_MENU' | string;
+ 
+interface IExhibition {
+  content: string;
+  createdAt: string;
+  menus: IMenus[];
+  id: number;
+  image: IImages;
+  title: string;
+  type: TExhibition;
+}
+
+interface IExhibitionBanners {
+  content: string;
+  createdAt: string;
+  endedAt: string;
+  href: string;
+  id: number;
+  image: IImages;
+  login: boolean;
+  option: {
+    bgColor: string;
+    fontColor: string;
+    mobileImageHeight: number;
+    mobileImageUrl: string;
+    mobileImageWidth: string;
+    paths: string[];
+  }
+  priority: number;
+  startedAt: string;
+  status: string;
+  title: string;
+  type: string;
+}
+
+interface IImages {
+  contentId: number;
+  createdAt: string;
+  height: number
+  id: number;
+  size: number;
+  url: string;
+  width: number;
+}
+
+export interface IMainPromotionContentsResponse {
+  code: number;
+  message: string;
+  data: {
+    mainContents: [
+      {
+        banner: IExhibitionBanners;
+        createdAt: string;
+        exhibition: IExhibition;
+        id: number;
+        type: TMainPromotion;
+      }
+    ];
+  };
+}
+
+export interface IExhibitionContentsResponse{
+  code: number;
+  data: IExhibition;
+  message: string;
+  metaData?: {
+    responsedAt: string;
+    trackingId: string;
+  };
+}
+
+export interface IExhibitionListResponse {
+  code: number;
+  data: {
+    pagination?: IPagination;
+    exhibitions: IExhibition[];
+  };
+  message: string;
+  metaData: {
+    responsedAt: string;
+    trackingId: string;
+  };
+}
