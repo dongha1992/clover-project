@@ -98,12 +98,14 @@ const GeneralMenusPriceBox = ({
       <BorderLine height={1} margin="16px 0" />
       <FlexBetween>
         <TextH5B>배송비</TextH5B>
-        <TextB2R>{getFormatPrice(String(deliveryFee))}원</TextB2R>
+        <TextB2R>{deliveryFee > 0 ? `${getFormatPrice(String(deliveryFee))}원` : '무료배송'}</TextB2R>
       </FlexBetween>
-      <FlexBetween padding="8px 0 0 0">
-        <TextB2R>배송비 할인</TextB2R>
-        <TextB2R>{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
-      </FlexBetween>
+      {deliveryFeeDiscount > 0 && (
+        <FlexBetween padding="8px 0 0 0">
+          <TextB2R>배송비 할인</TextB2R>
+          <TextB2R>{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
+        </FlexBetween>
+      )}
       <BorderLine height={1} margin="16px 0" />
       {userInputObj.point > 0 && (
         <FlexBetween>
@@ -111,10 +113,10 @@ const GeneralMenusPriceBox = ({
           <TextB2R>{getFormatPrice(String(userInputObj.point))}원</TextB2R>
         </FlexBetween>
       )}
-      <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+      {userInputObj.point > 0 && <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />}
       <FlexBetween>
         <TextH4B>최종 결제금액</TextH4B>
-        <TextB2R>{getFormatPrice(String(total))}원</TextB2R>
+        <TextH5B>{getFormatPrice(String(total))}원</TextH5B>
       </FlexBetween>
       <FlexEnd padding="11px 0 0 0">
         <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -124,7 +126,7 @@ const GeneralMenusPriceBox = ({
         <TextH6B>
           {calculatePoint({
             rate: grade.benefit.accumulationRate!,
-            total,
+            total: total + userInputObj.point,
           })}
           P ({grade.benefit.accumulationRate}%) 적립 예정
         </TextH6B>

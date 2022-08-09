@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
 import { IMAGE_S3_URL } from '@constants/mock';
-
+import { getFormatPrice } from '@utils/common';
 interface IProps {
   url: string;
   name: string;
@@ -20,7 +20,7 @@ const ItemInfo = ({ url, name, amount, paidAt }: IProps) => {
       <FlexCol width="80%" margin="0 0 0 16px">
         <TextB2R padding="0 0 4px 0">{name}</TextB2R>
         <FlexBetween>
-          <TextH5B>{amount}원</TextH5B>
+          <TextH5B>{getFormatPrice(String(amount))}원</TextH5B>
           {paidAt && <TextB3R color={theme.greyScale65}>{paidAt} 결제</TextB3R>}
         </FlexBetween>
       </FlexCol>

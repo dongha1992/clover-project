@@ -67,9 +67,13 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
       }
       default: {
         return (
-          <FlexRow padding='4px 0 0 0'>
-            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">픽업</TextH6B>
-            <TextB3R color={theme.greyScale65}>{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
+          <FlexRow padding="4px 0 0 0">
+            <TextH6B color={theme.greyScale65} padding="0 4px 0 0">
+              픽업
+            </TextH6B>
+            <TextB3R
+              color={theme.greyScale65}
+            >{`${spotPickup?.spot.pickupStartTime}-${spotPickup?.spot.pickupEndTime}`}</TextB3R>
           </FlexRow>
         );
       }
@@ -82,28 +86,23 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
         <FlexBetween>
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{name}</TextH5B>
-            {
-              spotPickup?.spot.isTrial ? (
-                <Tag margin="0 4px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
-                  트라이얼
-                </Tag>
-              ) : (
-                spotPickup?.spot.type === 'PRIVATE' ? (
-                  <Tag margin="0 4px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
-                    프라이빗
-                  </Tag>
-                ) : (
-                  null
-                )
-              )
-            }
-            {
-              main && (
-                <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>기본 프코스팟</Tag>
-              )
-            }
+            {spotPickup?.spot.isTrial ? (
+              <Tag margin="0 4px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                트라이얼
+              </Tag>
+            ) : spotPickup?.spot.type === 'PRIVATE' ? (
+              <Tag margin="0 4px 0 0" backgroundColor={theme.brandColor5P} color={theme.brandColor}>
+                프라이빗
+              </Tag>
+            ) : null}
+            {main && (
+              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                기본 프코스팟
+              </Tag>
+            )}
           </FlexRow>
           <TextH6B
+            pointer
             color={theme.greyScale65}
             textDecoration="underline"
             onClick={() => goToEdit({ id: item?.id!, spotPickupId: item?.spotPickup?.id! })}
@@ -112,17 +111,15 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           </TextH6B>
         </FlexBetween>
         <TextB3R padding="4px 0 4px 0">{location?.address}</TextB3R>
-        {
-          receiverName && receiverTel && (
-            <FlexRow padding="0 0 0 0">
-              <TextB3R color={theme.greyScale65} padding="">
-                {receiverName}
-              </TextB3R>
-              <Col />
-              <TextB3R color={theme.greyScale65}>{receiverTel}</TextB3R>
-            </FlexRow>
-          )
-        }
+        {receiverName && receiverTel && (
+          <FlexRow padding="0 0 0 0">
+            <TextB3R color={theme.greyScale65} padding="">
+              {receiverName}
+            </TextB3R>
+            <Col />
+            <TextB3R color={theme.greyScale65}>{receiverTel}</TextB3R>
+          </FlexRow>
+        )}
       </FlexCol>
       {renderSpotMsg()}
       <Button

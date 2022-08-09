@@ -15,7 +15,6 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_USER_DELIVERY_TYPE } from '@store/destination';
 import { DeliveryInfoSheet } from '@components/BottomSheet/DeliveryInfoSheet';
 import { CalendarSheet } from '@components/BottomSheet/CalendarSheet';
-import { mypageSelector } from '@store/mypage';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import { IOrderMenus } from '@model/index';
@@ -26,10 +25,15 @@ import { postCartsApi } from '@api/cart';
 import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
+import { getFormatPrice } from '@utils/common';
+import { calculatePoint } from '@utils/menu';
+import { userForm } from '@store/user';
+import { INIT_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION, INIT_TEMP_EDIT_SPOT } from '@store/mypage';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
 import { AxiosError } from 'axios';
+import { INIT_ACCESS_METHOD } from '@store/common';
 // temp
 
 const disabledDates: any = [];
@@ -45,6 +49,7 @@ const OrderDetailPage = () => {
   const dispatch = useDispatch();
 
   const router = useRouter();
+  const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
 
@@ -165,7 +170,7 @@ const OrderDetailPage = () => {
                 textDecoration="underline"
                 onClick={deliveryInfoSheetHandler}
               >
-                복사복사
+                {orderDeliveries?.invoiceNumber}
               </TextH5B>
             </FlexRow>
           </FlexBetween>
@@ -195,7 +200,7 @@ const OrderDetailPage = () => {
       return;
     }
 
-    if (!isSubOrder) {
+    if (isSubOrder) {
       dispatch(
         SET_ALERT({
           alertMessage: '기존 주문 배송정보를 변경하시면 함께배송 주문 배송정보도 함께 변경됩니다. 변경하시겠어요?',
@@ -252,9 +257,9 @@ const OrderDetailPage = () => {
   };
 
   const changeDevlieryDateHandler = () => {
-    // if (!canChangeDelivery || isSubOrder) {
-    //   return;
-    // }
+    if (!canChangeDelivery || isSubOrder) {
+      return;
+    }
 
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
@@ -303,6 +308,13 @@ const OrderDetailPage = () => {
     }
   }, [router.isReady]);
 
+  useEffect(() => {
+    dispatch(INIT_TEMP_ORDER_INFO());
+    dispatch(INIT_TEMP_EDIT_DESTINATION());
+    dispatch(INIT_ACCESS_METHOD());
+    dispatch(INIT_TEMP_EDIT_SPOT());
+  }, []);
+
   if (!orderDetail) {
     return <div>로딩</div>;
   }
@@ -327,6 +339,9 @@ const OrderDetailPage = () => {
     point,
     optionAmount,
     coupon,
+    payMethod,
+    refundCoupon,
+    refundMenuQuantity,
   } = orderDetail!;
 
   const {
@@ -343,7 +358,18 @@ const OrderDetailPage = () => {
     spotPickupName,
     spotPickupType,
     name,
+    orderOptions,
   } = orderDeliveries!;
+
+  const totalDiscount =
+    menuDiscount + eventDiscount + coupon > 0
+      ? `-${getFormatPrice(String(menuDiscount + eventDiscount + coupon))}원`
+      : '0원';
+
+  const totalRefundDiscount =
+    refundMenuDiscount + refundEventDiscount + refundCoupon > 0
+      ? `-${getFormatPrice(String(refundMenuDiscount + refundEventDiscount + refundCoupon))}원`
+      : '0원';
 
   return (
     <Container>
@@ -381,7 +407,7 @@ const OrderDetailPage = () => {
       <BorderLine height={8} />
       <OrderInfoWrapper>
         <TextH4B>주문정보</TextH4B>
-        <OrderInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} />
+        <OrderInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} payMethod={payMethod} />
         {isSubOrder && <SubOrderInfo isChange />}
         <Button
           backgroundColor={theme.white}
@@ -438,55 +464,80 @@ const OrderDetailPage = () => {
         <TextH4B padding="0 0 24px 0">결제정보</TextH4B>
         <FlexBetween>
           <TextH5B>총 상품 금액</TextH5B>
-          <TextB2R>{menuAmount}원</TextB2R>
+          <TextB2R>{getFormatPrice(String(menuAmount))}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>총 할인 금액</TextH5B>
-          <TextB2R>{menuDiscount + eventDiscount + coupon}원</TextB2R>
+          <TextB2R>{totalDiscount}</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>상품 할인</TextB2R>
-          <TextB2R>{menuDiscount}원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>스팟 이벤트 할인</TextB2R>
-          <TextB2R>{eventDiscount}원</TextB2R>
-        </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>{coupon}원</TextB2R>
-        </FlexBetween>
+        {menuDiscount > 0 && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>상품 할인</TextB2R>
+            <TextB2R>{getFormatPrice(String(menuDiscount))}원</TextB2R>
+          </FlexBetween>
+        )}
+        {eventDiscount > 0 && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>스팟 이벤트 할인</TextB2R>
+            <TextB2R>{getFormatPrice(String(eventDiscount))}원</TextB2R>
+          </FlexBetween>
+        )}
+        {coupon > 0 && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>쿠폰 사용</TextB2R>
+            <TextB2R>{getFormatPrice(String(coupon))}원</TextB2R>
+          </FlexBetween>
+        )}
         <BorderLine height={1} margin="8px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>환경부담금 (일회용품)</TextH5B>
-          <TextB2R>{optionAmount}원</TextB2R>
+          <TextB2R>{getFormatPrice(String(optionAmount))}원</TextB2R>
         </FlexBetween>
+        {orderOptions.map((item) => {
+          return (
+            <FlexBetween padding="8px 0 0 0" key={item.id}>
+              <TextB2R>{item.optionName}</TextB2R>
+              <TextB2R>
+                {item.optionQuantity}개 / {getFormatPrice(String(item.optionPrice * item.optionQuantity))}원
+              </TextB2R>
+            </FlexBetween>
+          );
+        })}
+
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween>
           <TextH5B>배송비</TextH5B>
-          <TextB2R>{deliveryFee}원</TextB2R>
+          <TextB2R>{getFormatPrice(String(deliveryFee))}원</TextB2R>
         </FlexBetween>
-        <FlexBetween padding="8px 0 0 0">
-          <TextB2R>배송비 할인</TextB2R>
-          <TextB2R>{deliveryFeeDiscount}원</TextB2R>
-        </FlexBetween>
+        {deliveryFeeDiscount > 0 && (
+          <FlexBetween padding="8px 0 0 0">
+            <TextB2R>배송비 할인</TextB2R>
+            <TextB2R>{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
+          </FlexBetween>
+        )}
         <BorderLine height={1} margin="16px 0" />
         <FlexBetween padding="8px 0 0 0">
           <TextH5B>포인트 사용</TextH5B>
-          <TextB2R>{point}원</TextB2R>
+          <TextB2R>{getFormatPrice(String(point))}원</TextB2R>
         </FlexBetween>
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>{payAmount}원</TextH4B>
+          <TextH4B>{getFormatPrice(String(payAmount + point))}원</TextH4B>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-            프코 회원
+            {me?.grade?.name!}
           </Tag>
-          <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-          <TextH6B>n 포인트 (n%) 적립 예정</TextH6B>
+          <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
+          <TextH6B>
+            {calculatePoint({
+              rate: me?.grade.benefit.accumulationRate!,
+              total: payAmount + point,
+            })}
+            P ({me?.grade.benefit.accumulationRate}%) 적립 예정
+          </TextH6B>
         </FlexEnd>
       </TotalPriceWrapper>
       {isCanceled && (
@@ -496,50 +547,80 @@ const OrderDetailPage = () => {
             <TextH4B padding="0 0 24px 0">환불정보</TextH4B>
             <FlexBetween>
               <TextH5B>총 상품 금액</TextH5B>
-              <TextB2R>{menuAmount}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(refundMenuAmount))}원</TextB2R>
             </FlexBetween>
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>총 할인 금액</TextH5B>
-              <TextB2R>{menuDiscount}원</TextB2R>
+              <TextB2R>{totalRefundDiscount}</TextB2R>
             </FlexBetween>
+            {refundMenuDiscount > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>상품 할인</TextB2R>
+                <TextB2R>{getFormatPrice(String(refundMenuDiscount))}원</TextB2R>
+              </FlexBetween>
+            )}
+            {refundEventDiscount > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>스팟 이벤트 할인</TextB2R>
+                <TextB2R>{getFormatPrice(String(refundEventDiscount))}원</TextB2R>
+              </FlexBetween>
+            )}
+            {refundCoupon > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>쿠폰 사용</TextB2R>
+                <TextB2R>{getFormatPrice(String(refundCoupon))}원</TextB2R>
+              </FlexBetween>
+            )}
             <BorderLine height={1} margin="8px 0" />
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>환경부담금 (일회용품)</TextH5B>
-              <TextB2R>{refundOptionAmount}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(refundOptionAmount))}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
               <TextH5B>배송비</TextH5B>
-              <TextB2R>{refundDeliveryFee}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(refundDeliveryFee))}원</TextB2R>
             </FlexBetween>
             <BorderLine height={1} margin="16px 0" />
             <FlexBetween>
               <TextH4B>총 결제 금액</TextH4B>
-              <TextB2R>{1111}원</TextB2R>
+              <TextB2R>{getFormatPrice(String(refundCoupon + refundPoint + refundPayAmount))}원</TextB2R>
             </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>환불 금액</TextB2R>
-              <TextB2R>{refundPoint}원</TextB2R>
-            </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>환불 쿠폰</TextB2R>
-              <TextB2R>{11111}원</TextB2R>
-            </FlexBetween>
-            <FlexBetween padding="8px 0 0 0">
-              <TextB2R>환불 포인트</TextB2R>
-              <TextB2R>{refundPoint}원</TextB2R>
-            </FlexBetween>
+            {refundPayAmount > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 금액</TextB2R>
+                <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
+              </FlexBetween>
+            )}
+            {refundCoupon > 0 && coupon > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 쿠폰</TextB2R>
+                <TextB2R>1개</TextB2R>
+              </FlexBetween>
+            )}
+            {refundPoint > 0 && (
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 포인트</TextB2R>
+                <TextB2R>{getFormatPrice(String(refundPoint))}원</TextB2R>
+              </FlexBetween>
+            )}
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween>
               <TextH4B>최종 환불금액</TextH4B>
-              <TextH4B>{refundPayAmount}원</TextH4B>
+              <TextH4B>{getFormatPrice(String(refundCoupon + refundPoint + refundPayAmount))}원</TextH4B>
             </FlexBetween>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                프코 회원
+                {me?.grade?.name!}
               </Tag>
-              <TextB3R padding="0 0 0 3px">구매 시</TextB3R>
-              <TextH6B>n 포인트 (n%) 취소 예정</TextH6B>
+              <TextB3R padding="0 0 0 3px">환불 시 </TextB3R>
+              <TextH6B>
+                {calculatePoint({
+                  rate: me?.grade.benefit.accumulationRate!,
+                  total: refundCoupon + refundPoint + refundPayAmount,
+                })}
+                P ({me?.grade.benefit.accumulationRate}%) 환불 예정
+              </TextH6B>
             </FlexEnd>
           </RefundInfoWrapper>
         </>
