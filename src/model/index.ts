@@ -201,17 +201,17 @@ export interface IInvitationResponse {
 
 export interface IChangeMe {
   authCode?: string | null;
-  birthDate: string | null;
-  gender: string;
-  email: string;
-  marketingEmailReceived: boolean;
-  marketingPushReceived: boolean;
-  marketingSmsReceived: boolean;
-  name: string;
-  nickname: string;
-  notiPushReceived: boolean;
-  primePushReceived: boolean;
-  tel: string;
+  birthDate?: string | null;
+  gender?: string;
+  email?: string;
+  marketingEmailReceived?: boolean;
+  marketingPushReceived?: boolean;
+  marketingSmsReceived?: boolean;
+  name?: string;
+  nickname?: string;
+  notiPushReceived?: boolean;
+  primePushReceived?: boolean;
+  tel?: string;
 }
 
 export interface IUserInfoResponse {

@@ -1,54 +1,75 @@
 import React, { useState } from 'react';
-import { FlexBetween, FlexCol, homePadding, theme } from '@styles/theme';
+import { FlexBetween, homePadding, theme } from '@styles/theme';
 import styled from 'styled-components';
-import { TextH4B, TextB1R, TextB2R, TextB3R } from '@components/Shared/Text';
+import { TextH4B, TextB2R, TextB3R } from '@components/Shared/Text';
 import { ToggleButton } from '@components/Shared/Button';
 import { useFatchUserProfile, useGetUserProfile } from '@queries/user';
 import { useQueryClient } from 'react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { useDispatch } from 'react-redux';
+import { SET_ALERT } from '@store/alert';
+
 dayjs.locale('ko');
 
 const SettingPage = () => {
   const queryClient = useQueryClient();
-  const [isNotiOn, setIsNotiOn] = useState(false);
-  const [isImportNotiOn, setIsImportNotiOn] = useState(false);
-  const [isActivityOn, setIsActivityOn] = useState(false);
-  const [fetchReqBody, setFetchReqBody] = useState<any>();
-
+  const dispatch = useDispatch();
+  const [appSettings, setAppSettings] = useState<any>();
+  const { mutate: fatchUserProfile } = useFatchUserProfile('userProfile');
   const { data: me, isLoading } = useGetUserProfile('userProfile', {
     onSuccess: (data) => {
-      setFetchReqBody({
-        authCode: data.authCode,
-        birthDate: data.birthDate,
-        gender: data.gender,
-        email: data.email!,
+      setAppSettings({
         marketingEmailReceived: data.marketingEmailReceived!,
         marketingPushReceived: data.marketingPushReceived!,
         marketingSmsReceived: data.marketingSmsReceived!,
-        name: data.name,
-        nickname: data.nickname,
         notiPushReceived: data.notiPushReceived!,
         primePushReceived: data.primePushReceived!,
-        tel: data.tel!,
       });
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
 
-  const { mutate: fatchUserProfile } = useFatchUserProfile('userProfile');
   const checkHandler = (value: any, value2?: any) => {
+    if (
+      value === 'marketingEmailReceived' &&
+      value2 === 'marketingSmsReceived' &&
+      me.marketingEmailReceived &&
+      me.marketingSmsReceived
+    ) {
+      dispatch(
+        SET_ALERT({
+          alertMessage:
+            '프레시코드의 인기 상품이나 프로모션, 신규 서비스 출시 정보를 받지 못할 수 있어요. 그래도 알림을 해제하시겠어요?',
+          closeBtnText: '취소',
+          onSubmit: () => {
+            fatchUserProfile(
+              { ...appSettings, [value]: !me[value], [value2]: !me[value2] },
+              {
+                onSettled: () => {
+                  queryClient.refetchQueries('userProfile');
+                },
+              }
+            );
+          },
+        })
+      );
+      return;
+    }
+
     fatchUserProfile(
-      { ...fetchReqBody, [value]: !me[value], [value2]: !me[value2] },
+      { ...appSettings, [value]: !me[value], [value2]: !me[value2] },
       {
-        onSettled: (data) => {
+        onSettled: () => {
           queryClient.refetchQueries('userProfile');
         },
       }
     );
   };
+
   if (isLoading) return <div>...로딩중</div>;
+
   return (
     <Container>
       <Wrapper>
