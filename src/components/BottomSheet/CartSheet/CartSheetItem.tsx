@@ -37,8 +37,9 @@ const CartSheetItem = ({
   const { discount, discountedPrice } = getMenuOptionPrice(menu);
 
   // TAYLER 이거 객체로 들어와서 수정하겠습니다.
+
   // const thumbnailUrl = (menu.thumbnail || [])[0] || {};
-  const thumbnailUrl = menu.thumbnail.url || '';
+  const thumbnailUrl = menu?.thumbnail?.url || '';
 
   return (
     <Container isSold={menu.isSold} padding={padding} isCart={isCart}>
