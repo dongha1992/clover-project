@@ -87,18 +87,20 @@ const SpotDetailBottom = () => {
         if (data.code === 200) {
           const response = data.data;
           const destinationId = response.id;
-          if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+          if (orderId) {
+            // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
             dispatch(
               SET_TEMP_EDIT_SPOT({
                 spotPickupId: pickupInfo.id,
                 name: spotDetail?.name!,
                 spotPickup: pickupInfo.name,
+                location: response.location,
               })
             );
             router.push({
               pathname: '/mypage/order-detail/edit/[orderId]',
               query: { orderId, destinationId },
-            });  
+            });
           } else {
             dispatch(
               SET_DESTINATION({
@@ -121,7 +123,7 @@ const SpotDetailBottom = () => {
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });  
+            router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });
           }
         }
       } catch (e) {
@@ -143,7 +145,7 @@ const SpotDetailBottom = () => {
         spaceType: spotDetail?.type,
         spotPickupId: pickupInfo.id!,
       };
-  
+
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
@@ -184,9 +186,10 @@ const SpotDetailBottom = () => {
     }
     if (isLoginSuccess) {
       //로그인 o
-      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
-        <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />
-      };
+      if (orderId) {
+        // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
+        <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />;
+      }
 
       if (cartLists.length) {
         // 장바구니 o
@@ -223,7 +226,13 @@ const SpotDetailBottom = () => {
           // 로그인 o, 장바구니 o, 스팟 검색에서 장바구니(cart)로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />,
+              content: (
+                <PickupSheet
+                  pickupInfo={spotDetail?.pickups}
+                  spotType={spotDetail?.type}
+                  onSubmit={getDestinationInfo}
+                />
+              ),
             })
           );
         }
@@ -246,7 +255,13 @@ const SpotDetailBottom = () => {
           // 로그인o and 장바구니 x, 장바구니(cart)로 이동
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <PickupSheet pickupInfo={spotDetail?.pickups} spotType={spotDetail?.type} onSubmit={getDestinationInfo} />,
+              content: (
+                <PickupSheet
+                  pickupInfo={spotDetail?.pickups}
+                  spotType={spotDetail?.type}
+                  onSubmit={getDestinationInfo}
+                />
+              ),
             })
           );
         }
