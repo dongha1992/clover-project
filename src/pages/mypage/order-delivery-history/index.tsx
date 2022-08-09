@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { SVGIcon } from '@utils/common';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { TextH6B, TextB2R } from '@components/Shared/Text';
 import dynamic from 'next/dynamic';

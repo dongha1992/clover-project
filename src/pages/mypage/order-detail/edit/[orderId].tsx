@@ -32,6 +32,7 @@ import { useGetOrderDetail } from 'src/queries/order';
 import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { toUnicode } from 'punycode';
 
 /* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
@@ -126,8 +127,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   const { mutateAsync: mutationDeliveryInfo } = useMutation(
     async (reqBody: any) => {
       const deliveryId = orderDetail?.id!;
-
-      console.log(deliveryEditObj, 'deliveryEditObj');
 
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
@@ -444,10 +443,10 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
                 <TextH5B>배송지</TextH5B>
                 <FlexColEnd>
                   <TextB2R>{deliveryEditObj.name}</TextB2R>
-                  <FlexColEnd>
-                    <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
-                    <TextB2R> {deliveryEditObj?.location?.addressDetail}</TextB2R>
-                  </FlexColEnd>
+                  <FlexRow>
+                    <TextB3R color={theme.greyScale65}>{deliveryEditObj?.location?.address}</TextB3R>
+                    <TextB3R color={theme.greyScale65}> {deliveryEditObj?.location?.addressDetail}</TextB3R>
+                  </FlexRow>
                 </FlexColEnd>
               </FlexBetweenStart>
               <BorderLine height={8} margin="24px 0 0 0" />

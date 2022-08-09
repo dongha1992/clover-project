@@ -13,7 +13,6 @@ import {
   FlexColCenter,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
-import { INIT_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
@@ -921,8 +920,6 @@ const OrderPage = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(INIT_TEMP_ORDER_INFO());
-    dispatch(INIT_TEMP_EDIT_DESTINATION());
     return () => {
       // 컴포넌트 마운트 해제될때 선택된쿠폰 초기화
       dispatch(INIT_COUPON());
