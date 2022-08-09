@@ -1,12 +1,11 @@
 import { OrderItem } from '@components/Pages/Order/Refund/RefundOrderBox';
 import { Button } from '@components/Shared/Button';
 import { TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { IResponse } from '@model/index';
 import { useDeleteOrderCancel } from '@queries/order';
 import { FlexBetween, FlexRow, theme } from '@styles/theme';
 import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -67,7 +66,7 @@ const CancelFailList = ({ cancelFailList }: IProps) => {
           <OrderItem key={item.id}>
             <div className="imgBox">
               <Image
-                src={IMAGE_S3_URL + item?.image.url}
+                src={item?.image.url}
                 alt="상품이미지"
                 width={'100%'}
                 height={'100%'}

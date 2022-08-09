@@ -9,8 +9,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_MENU_ITEM } from '@store/menu';
 import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { IMAGE_S3_URL } from '@constants/mock';
+import Image from '@components/Shared/Image';
 import { getMenuDisplayPrice } from '@utils/menu/getMenuDisplayPrice';
 
 type TProps = {
@@ -42,7 +41,7 @@ const HorizontalItem = ({ item }: TProps) => {
     <Container onClick={() => goToDetail(item.id)}>
       <ImageWrapper>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail}
+          src={item.thumbnail}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}

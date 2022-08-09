@@ -1,9 +1,8 @@
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { IMenus } from '@model/index';
 import { MenuImgBox, MenuLi, MenuTextBox } from '@pages/subscription/register';
 import { getMenuDisplayPrice } from '@utils/menu';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 
 interface IProps {
   item: IMenus;
@@ -14,7 +13,7 @@ const SelectOptionItem = ({ item }: IProps) => {
     <MenuLi key={item.id}>
       <MenuImgBox>
         <Image
-          src={IMAGE_S3_URL + item.thumbnail}
+          src={item.thumbnail[0].url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
