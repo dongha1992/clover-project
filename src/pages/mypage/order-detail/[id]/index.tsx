@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 import { getFormatPrice } from '@utils/common';
 import { calculatePoint } from '@utils/menu';
 import { userForm } from '@store/user';
+import { INIT_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
@@ -305,6 +306,11 @@ const OrderDetailPage = () => {
       setOrderId(Number(router.query?.id));
     }
   }, [router.isReady]);
+
+  useEffect(() => {
+    dispatch(INIT_TEMP_ORDER_INFO());
+    dispatch(INIT_TEMP_EDIT_DESTINATION());
+  }, []);
 
   if (!orderDetail) {
     return <div>로딩</div>;
