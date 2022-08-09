@@ -25,6 +25,7 @@ import {
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
+import { SET_ALERT } from '@store/alert';
 
 /* TODO: receiverName, receiverTel  */
 
@@ -81,6 +82,16 @@ const DestinationDetailPage = () => {
       return;
     }
 
+    if (!destinationDetailRef?.current?.value) {
+      dispatch(SET_ALERT({ alertMessage: '상세 주소를 입력해주세요.' }));
+      return;
+    }
+
+    if (!destinationNameRef?.current?.value) {
+      dispatch(SET_ALERT({ alertMessage: '배송지명을 입력해주세요.' }));
+      return;
+    }
+
     if (destinationDetailRef.current && destinationNameRef.current) {
       const addressDetail = destinationDetailRef.current.value.toString();
       const name = destinationNameRef.current.value.toString();
@@ -96,6 +107,7 @@ const DestinationDetailPage = () => {
         main: !hasDefaultDestination ? true : isDefaultDestination,
       };
 
+      console.log(hasDefaultDestination, 'hasDefaultDestination');
       if (orderId) {
         const reqBody = {
           name,
@@ -179,9 +191,7 @@ const DestinationDetailPage = () => {
     try {
       const { data } = await getMainDestinationsApi(params);
       if (data.code === 200) {
-        if (!data.data) {
-          setHasDefaultDestination(false);
-        }
+        !data.data ? setHasDefaultDestination(false) : setHasDefaultDestination(true);
       }
     } catch (error) {
       console.error(error);
