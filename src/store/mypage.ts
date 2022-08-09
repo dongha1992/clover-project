@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IDestinationsResponse } from '@model/index';
+import { IDestinationsResponse, ILocation } from '@model/index';
 
 interface IEditSpot {
   spotPickupId: number;
   name: string;
   spotPickup: string;
+  location: ILocation;
 }
 
 interface IState {
@@ -54,6 +55,9 @@ export const mypageSlice = createSlice({
     SET_TEMP_EDIT_SPOT: (state, action: PayloadAction<IEditSpot | null>) => {
       state.tempEditSpot = action.payload;
     },
+    INIT_TEMP_EDIT_SPOT: (state, action: PayloadAction) => {
+      state.tempEditSpot = null;
+    },
   },
 });
 
@@ -63,6 +67,7 @@ export const {
   SET_TEMP_EDIT_DESTINATION,
   INIT_TEMP_EDIT_DESTINATION,
   SET_TEMP_EDIT_SPOT,
+  INIT_TEMP_EDIT_SPOT,
 } = mypageSlice.actions;
 export const mypageSelector = (state: AppState): IState => state.mypage;
 export default mypageSlice.reducer;

@@ -3,6 +3,7 @@ import {
   MutationKey,
   QueryKey,
   useInfiniteQuery,
+  QueryFunction,
   useMutation,
   UseMutationOptions,
   useQuery,
@@ -49,6 +50,24 @@ export const onMenuLikes = ({ previous, id, likeCount, liked }: IProps) => {
   });
 };
 
+const useInfinite = (key: string, fetchDatas: QueryFunction) => {
+  return useInfiniteQuery(key, fetchDatas, {
+    getNextPageParam: (lastPage: any, pages) => {
+      if (lastPage.totalPage >= lastPage.nextPage) {
+        return lastPage.nextPage;
+      } else {
+        return null;
+      }
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+    retry: 1,
+    cacheTime: 0,
+    staleTime: 0,
+  });
+};
+
 export const useInfiniteMenuReviews = ({ id, page, size }: { id: number; size: number; page: number }) => {
   const fetchDatas = async ({ pageParam = 1 }) => {
     const { data } = await getMenuDetailReviewApi({ id, page: pageParam, size });
@@ -60,9 +79,7 @@ export const useInfiniteMenuReviews = ({ id, page, size }: { id: number; size: n
     };
   };
 
-  //getMenuDetailReview
-
-  const query = useInfiniteQuery('infiniteReviews', fetchDatas, {
+  const query = useInfiniteQuery('infinite', fetchDatas, {
     getNextPageParam: (lastPage, pages) => {
       if (lastPage.totalPage >= lastPage.nextPage) {
         return lastPage.nextPage;

@@ -93,7 +93,7 @@ const OrderDetailInfo = ({
             <FlexColEnd>
               <TextB2R>{name}</TextB2R>
               <TextB3R color={theme.greyScale65}>
-                {location.address}
+                {location.address}&nbsp;
                 {location.addressDetail}
               </TextB3R>
             </FlexColEnd>

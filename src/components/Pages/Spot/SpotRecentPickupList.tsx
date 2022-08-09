@@ -11,7 +11,7 @@ import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
-import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
+import { SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { dateN, SVGIcon } from '@utils/common';
@@ -82,12 +82,16 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
   }, [item?.spotPickup?.type]);
 
-  const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
-    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
-    isAll: applyAll ?? null,
-  });
+  // const isSubsSpot = useSubsSpotOpenCheck({
+  //   placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
+  //   pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+  //   dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+  //   isAll: applyAll ?? null,
+  // });
+
+  // temp TO YOUNG
+
+  const isSubsSpot = false;
 
   const renderSpotMsg = useCallback(() => {
     switch (true) {
@@ -208,7 +212,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
 
     if (isLoginSuccess) {
-      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+      if (orderId) {
+        // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
         if (
           closedDate &&
           ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
@@ -237,6 +242,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               spotPickupId: item?.spotPickup?.id!,
               name: item?.name!,
               spotPickup: item?.spotPickup?.name!,
+              location: item?.location!,
             })
           );
           router.push({
@@ -338,21 +344,21 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       } else if (isDelivery && isSubs) {
         router.push({
           pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
-          query: { 
-            isSpot: true, 
-            isSubscription, 
-            subsDeliveryType, 
-            menuId, 
-            isDelivery: true 
+          query: {
+            isSpot: true,
+            isSubscription,
+            subsDeliveryType,
+            menuId,
+            isDelivery: true,
           },
         });
       } else {
         router.push({
           pathname: `/spot/detail/${id}`,
-          query: { 
-            isSpot: true, 
-            orderId, 
-            destinationId, 
+          query: {
+            isSpot: true,
+            orderId,
+            destinationId,
           },
         });
       }
