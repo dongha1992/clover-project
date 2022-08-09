@@ -22,7 +22,6 @@ import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styl
 import { getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { last } from 'lodash-es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -60,7 +59,8 @@ const SubsDetailPage = () => {
         if (
           o?.subOrderDelivery &&
           o?.subOrderDelivery.status !== 'COMPLETED' &&
-          o?.subOrderDelivery.status !== 'CANCELED'
+          o?.subOrderDelivery.status !== 'CANCELED' &&
+          o?.subOrderDelivery.status !== 'DELIVERING'
         ) {
           subArr.push(o.subOrderDelivery.order.id);
         }
@@ -310,6 +310,7 @@ const SubsDetailPage = () => {
         status={orderDetail?.status}
         reorderHandler={reorderHandler}
         orderCancelHandler={orderCancelHandler}
+        canCancel={orderDetail?.canCancel}
       />
     </Container>
   );

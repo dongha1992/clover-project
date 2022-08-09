@@ -5,7 +5,7 @@ import router from 'next/router';
 import { getMenuDetailReviewImageApi } from '@api/menu';
 import { useQuery } from 'react-query';
 import { IDetailImage } from '@model/index';
-import NextImage from 'next/image';
+import NextImage from '@components/Shared/Image';
 /* 사진 전체 후기 */
 
 const DEFAULT_SIZE = 30;
@@ -88,7 +88,7 @@ const ReviewPage = ({ menuId }: any) => {
           return (
             <ImageWrapper key={index}>
               <NextImage
-                src={process.env.IMAGE_SERVER_URL + image?.url}
+                src={image?.url}
                 alt="리뷰이미지"
                 onClick={() => goToReviewDetail(image)}
                 width={'100%'}

@@ -141,7 +141,7 @@ const Header = () => {
         '/subscription/[detailId]/cancel/complete': '취소완료',
         '/promotion': '기획전',
         '/event': '이벤트',
-        '/promotion/detail': `${eventTitle ? eventTitle: '기획전'}`,
+        '/promotion/detail/[id]': `${eventTitle ? eventTitle: '기획전'}`,
         '/md': 'MD추천',
   };
 
@@ -201,7 +201,7 @@ const Header = () => {
         '/mypage/dib/general',
         '/mypage/dib/subscription',
         '/mypage/order-detail',
-        '/promotion/detail',
+        '/promotion/detail/[id]',
         '/md',
       ].includes(currentPath): {
         return (
