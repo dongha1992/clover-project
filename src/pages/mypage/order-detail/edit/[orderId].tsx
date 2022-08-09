@@ -100,14 +100,20 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         ACCESS_METHOD,
         indexBy((item) => item.value)
       );
-
+      console.log(orderDetail, 'orderDetail');
       setDeliveryEditObj({
         selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
         deliveryMessageType: orderDetail?.deliveryMessageType!,
         deliveryMessage: orderDetail?.deliveryMessage!,
         receiverName: tempOrderInfo?.receiverName ? tempOrderInfo?.receiverName : orderDetail?.receiverName!,
         receiverTel: tempOrderInfo?.receiverTel ? tempOrderInfo?.receiverTel : orderDetail?.receiverTel!,
-        location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
+        location: tempEditSpot
+          ? tempEditSpot.location
+          : tempEditDestination?.location
+          ? tempEditDestination.location
+          : orderDetail?.location,
+        name: tempEditSpot?.name ? tempEditSpot.name : orderDetail?.spotName,
+        spotPickup: tempEditSpot?.spotPickup ? tempEditSpot.spotPickup : orderDetail?.spotPickupName,
       });
     },
     refetchOnMount: true,
@@ -342,8 +348,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
     setDeliveryEditObj({
       ...deliveryEditObj,
       location: tempEditDestination?.location,
-      name: tempEditSpot?.name,
-      spotPickup: tempEditSpot?.spotPickup,
     });
   }, [tempEditDestination]);
 
@@ -369,10 +373,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
       dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
     }
   }, [isSamePerson, orderDetail]);
-
-  // useEffect(() => {
-  //   dispatch(INIT_ACCESS_METHOD());
-  // }, []);
 
   return (
     <Container>
@@ -437,9 +437,11 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
                 </TextB2R>
                 <FlexRow>
                   <TextB3R color={theme.greyScale65} padding="0 4px 0 0">
-                    {`${tempEditSpot ? deliveryEditObj.location.zipcode : `${orderDetail?.location?.zipCode}`} `}
+                    {`${tempEditSpot ? deliveryEditObj.location.zipCode : orderDetail?.location?.zipCode}`}
                   </TextB3R>
-                  <TextB3R color={theme.greyScale65}>{orderDetail?.location?.address}</TextB3R>
+                  <TextB3R color={theme.greyScale65}>
+                    {`${tempEditSpot ? deliveryEditObj.location.address : orderDetail?.location?.address}`}
+                  </TextB3R>
                 </FlexRow>
               </FlexColEnd>
             </FlexBetweenStart>
