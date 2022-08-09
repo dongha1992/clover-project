@@ -124,7 +124,7 @@ const GeneralMenusPriceBox = ({
         <TextH6B>
           {calculatePoint({
             rate: grade.benefit.accumulationRate!,
-            total,
+            total: total + userInputObj.point,
           })}
           P ({grade.benefit.accumulationRate}%) 적립 예정
         </TextH6B>
