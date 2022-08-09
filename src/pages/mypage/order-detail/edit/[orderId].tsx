@@ -23,7 +23,13 @@ import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi }
 import { useRouter } from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
-import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
+import {
+  mypageSelector,
+  INIT_TEMP_ORDER_INFO,
+  SET_TEMP_ORDER_INFO,
+  INIT_TEMP_EDIT_DESTINATION,
+  INIT_TEMP_EDIT_SPOT,
+} from '@store/mypage';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { destinationForm, SET_USER_DELIVERY_TYPE } from '@store/destination';
@@ -158,6 +164,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         router.push(`/mypage/order-detail/${orderId}`);
         await queryClient.refetchQueries(['getOrderDetail', orderId]);
         dispatch(INIT_TEMP_EDIT_DESTINATION());
+        dispatch(INIT_TEMP_EDIT_SPOT());
       },
       onError: async (error: any) => {
         if (error.code === 5001) {
