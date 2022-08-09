@@ -1,8 +1,7 @@
 import { TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { FlexRow, FlexRowStart } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
-import Image from 'next/image';
+import Image from '@components/Shared/Image';
 import styled from 'styled-components';
 import SubsLabel from '../SubsLabel';
 
@@ -20,7 +19,7 @@ const SubsOrderItem = ({ deliveryType, deliveryDetail, subscriptionPeriod, name,
     <SubsOrderContainer>
       <FlexRowStart>
         <ImgBox>
-          <Image src={IMAGE_S3_URL + menuImage} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
+          <Image src={menuImage} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
         </ImgBox>
         <InfoBox>
           <div className="labelBox">

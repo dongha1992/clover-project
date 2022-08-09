@@ -13,6 +13,7 @@ import { filterSelector } from '@store/filter';
 import Image from '@components/Shared/Image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
+import { getExhibitionMdRecommendApi, getMainPromotionContentsApi } from '@api/promotion';
 import { SET_EVENT_TITLE , INIT_EVENT_TITLE } from '@store/event';
 import Carousel from "@components/Shared/Carousel";
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
@@ -51,15 +52,29 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const {
-    data: menus,
-    error: menuError,
-    isLoading,
+  // MD 추천 api 호출
+  const { 
+    data: mdMenu,
+    error: mdMenuError,
+    isLoading: isLoadingMdMenu,
   } = useQuery(
     'getRecommendMenus',
     async () => {
-      const { data } = await getRecommendMenusApi();
-      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+      const { data } = await getExhibitionMdRecommendApi();
+      return data.data.menus;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const {
+    data: mainContents,
+    error: exhiError,
+    isLoading: isLoadingExhibition,
+  } = useQuery(
+    'exhibitionList',
+    async () => {
+      const { data } = await getMainPromotionContentsApi();
+      return data.data.mainContents;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -68,19 +83,12 @@ const Home = () => {
     router.push('/md');
   };
 
-  const goToPromotion = () => {
-    dispatch(SET_EVENT_TITLE('친구 초대하기러기토마토스위스역삼역'));
-    router.push({
-      pathname: '/promotion/detail',
-      query: {
-        id: 1,
-        subs: false,
-        edit_feed: true,
-      },
-    });
+  const goToPromotion = (id: number, title: string) => {
+    dispatch(SET_EVENT_TITLE(title ? title : '기획전'));
+    router.push(`/promotion/detail/${id}`);
   };
 
-  if (isLoading) {
+  if (isLoadingMdMenu) {
     return <div>로딩</div>;
   };
 
@@ -104,52 +112,66 @@ const Home = () => {
       </FlexSpace>
       <SectionWrapper>
         <FlexWrapWrapper>
-          {menus?.length! > 0
-            ? menus?.map((item, index) => {
+          {mdMenu?.length! > 0
+            ? mdMenu?.map((item: any, index: number) => {
                 if (index > 3) return;
                 return <Item item={item} key={index} />;
               })
             : '상품을 준비 중입니다.'}
         </FlexWrapWrapper>
       </SectionWrapper>
-      <LineBanner onClick={goToPromotion}>
-        <Image
-          src="/banner/img_home_contents_banner.png"
-          height="120px"
-          width="512px"
-          layout="responsive"
-          alt="홈 배너"
-        />
-      </LineBanner>
-      <PromotionWrapper>
-        <FlexSpace>
-          <SectionTitle>메인 콘텐츠 기획전 - 1</SectionTitle>
-          <TextH5B 
-            onClick={goToPromotion}
-            color={theme.greyScale65} 
-            textDecoration='underline' 
-            pointer
-          >더보기</TextH5B>
-        </FlexSpace>
-        <Image
-          src="/banner/img_home_contents_event.png"
-          height="300px"
-          width="512px"
-          layout="responsive"
-          alt="메인 콘텐츠 기획전"
-        />
-        {eventbannerList.length !== 0 && <Carousel images={eventbannerList.map(banner => ({src: banner.image.url}))}></Carousel>}
-        <ItemListRowWrapper>
-          <ItemListRow>
-            {menus?.length! > 0
-              ? menus?.map((item, index) => {
-                  if (index > 3) return;
-                  return <Item item={item} key={index} isHorizontal />;
-                })
-              : '상품을 준비 중입니다.'}
-          </ItemListRow>
-        </ItemListRowWrapper>
-      </PromotionWrapper>
+      {
+        mainContents?.length! > 0
+          ? mainContents?.map((item, iex) => {
+            if(item.type === "BANNER") {
+              return (
+                <PromotionBanner key={iex} onClick={() => goToPromotion(item.banner.id, item.banner.title)}>
+                  <Image
+                    src={item.banner.image.url}
+                    height="120px"
+                    width="512px"
+                    layout="responsive"
+                    alt="홈 배너형 기획전 이미지"
+                  />
+                </PromotionBanner>
+              )
+            } else if (item.type === "EXHIBITION") {
+              if(item.exhibition.type === "GENERAL_MENU") {
+                return (
+                  <PromotionWrapper key={iex}>
+                    <FlexSpace>
+                      <SectionTitle>{item.exhibition.title}</SectionTitle>
+                      <TextH5B 
+                        onClick={() => goToPromotion(item.exhibition.id, item.exhibition.title)}
+                        color={theme.greyScale65} 
+                        textDecoration='underline' 
+                        pointer
+                      >더보기</TextH5B>
+                    </FlexSpace>
+                    <Image
+                      src={item.exhibition.image.url}
+                      height="300px"
+                      width="512px"
+                      layout="responsive"
+                      alt="홈 기획전 이미지"
+                    />
+                    <ItemListRowWrapper>
+                      <ItemListRow>
+                        {item.exhibition.menus?.length! > 0
+                          ? item.exhibition.menus?.map((item, index) => {
+                              if (index > 9) return;
+                              return <Item item={item} key={index} isHorizontal />;
+                            })
+                          : '상품을 준비 중입니다.'}
+                      </ItemListRow>
+                    </ItemListRowWrapper>
+                  </PromotionWrapper>
+                )
+              }
+            }
+          })
+          : null
+      }
     </Container>
   );
 };
@@ -175,12 +197,13 @@ export const ItemListCol = styled.div`
   grid-gap: 16px;
 `;
 
-const LineBanner = styled.section`
-  height: 96px;
+const PromotionBanner = styled.section`
   max-width: 512px;
   width: 100%;
   margin: 24px 0px;
 `;
+
+const MainContentsWrapper = styled.div``;
 
 const PromotionWrapper = styled.section`
   width: 100%;

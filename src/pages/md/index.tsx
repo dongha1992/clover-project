@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import { useQuery } from 'react-query';
-import { getRecommendMenusApi } from '@api/menu';
+import { getExhibitionMdRecommendApi } from '@api/promotion';
 import { Item } from '@components/Item';
 
 // MD 추천 
@@ -15,8 +15,8 @@ const MdRecommandPage = () => {
   } = useQuery(
     'getRecommendMenus',
     async () => {
-      const { data } = await getRecommendMenusApi();
-      return data.data.sort((a: any, b: any) => a.isSold - b.isSold);
+      const { data } = await getExhibitionMdRecommendApi();
+      return data.data.menus;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
