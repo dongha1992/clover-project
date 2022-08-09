@@ -25,7 +25,7 @@ const SettingPage = () => {
 
   const { mutate: mutationEditProfile } = useMutation(
     async () => {
-      const reqBody = {
+      const reqBody: any = {
         ...notiSet,
       };
       const { data } = await userChangeInfo(reqBody);
