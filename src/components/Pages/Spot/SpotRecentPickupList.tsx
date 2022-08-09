@@ -242,6 +242,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               spotPickupId: item?.spotPickup?.id!,
               name: item?.name!,
               spotPickup: item?.spotPickup?.name!,
+              location: item?.location!,
             })
           );
           router.push({

@@ -56,6 +56,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
     deliveryMessage: '',
     receiverTel: '',
     receiverName: '',
+    name: '',
+    spotPickup: '',
   });
   const [deliveryRound, setDeliveryRound] = useState();
   const [isSub, setIsSub] = useState(false);
@@ -340,8 +342,19 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
     setDeliveryEditObj({
       ...deliveryEditObj,
       location: tempEditDestination?.location,
+      name: tempEditSpot?.name,
+      spotPickup: tempEditSpot?.spotPickup,
     });
   }, [tempEditDestination]);
+
+  useEffect(() => {
+    setDeliveryEditObj({
+      ...deliveryEditObj,
+      location: tempEditSpot?.location,
+      name: tempEditSpot?.name,
+      spotPickup: tempEditSpot?.spotPickup,
+    });
+  }, [tempEditSpot]);
 
   useEffect(() => {
     if (isSamePerson && orderDetail) {
@@ -418,13 +431,13 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
               <TextH5B>픽업장소</TextH5B>
               <FlexColEnd>
                 <TextB2R>
-                  {`${tempEditSpot ? tempEditSpot.name : orderDetail?.spotName} ${
-                    tempEditSpot ? tempEditSpot.spotPickup : orderDetail?.spotPickupName!
+                  {`${tempEditSpot ? deliveryEditObj.name : orderDetail?.spotName} ${
+                    tempEditSpot ? deliveryEditObj.spotPickup : orderDetail?.spotPickupName!
                   }`}
                 </TextB2R>
                 <FlexRow>
                   <TextB3R color={theme.greyScale65} padding="0 4px 0 0">
-                    ({orderDetail?.location?.zipCode})
+                    {`${tempEditSpot ? deliveryEditObj.location.zipcode : `${orderDetail?.location?.zipCode}`} `}
                   </TextB3R>
                   <TextB3R color={theme.greyScale65}>{orderDetail?.location?.address}</TextB3R>
                 </FlexRow>

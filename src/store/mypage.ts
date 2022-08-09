@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
-import { IDestinationsResponse } from '@model/index';
+import { IDestinationsResponse, ILocation } from '@model/index';
 
 interface IEditSpot {
   spotPickupId: number;
   name: string;
   spotPickup: string;
+  location: ILocation;
 }
 
 interface IState {

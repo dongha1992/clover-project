@@ -174,6 +174,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
                 spotPickupId: pickupInfo.id,
                 name: item.name,
                 spotPickup: pickupInfo.name,
+                location: response.location,
               })
             );
             router.push({
