@@ -190,6 +190,11 @@ const OrderPage = () => {
           // 정기구독은 카드결제만 가능
           setSelectedOrderMethod('NICE_BILLING');
         }
+        setUserInputObj({
+          ...userInputObj,
+          receiverName: data?.order.userName!,
+          receiverTel: data?.order.userTel!,
+        });
       },
       onError: (error: any) => {
         if (error?.code === 5005) {
@@ -404,7 +409,7 @@ const OrderPage = () => {
   };
 
   const checkFormHanlder = (name: string) => {
-    if (tempOrder?.isSubOrderDelivery) {
+    if (tempOrder?.isSubOrderDelivery && name === 'samePerson') {
       return;
     }
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
@@ -809,9 +814,23 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
+    const { isSelected } = checkForm.samePerson;
+
+    if (previewOrder?.order && isSelected) {
+      const { userName, userTel } = previewOrder?.order;
+
+      setUserInputObj({
+        ...userInputObj,
+        receiverName: userName,
+        receiverTel: userTel,
+      });
+    }
+  }, [checkForm.samePerson.isSelected]);
+
+  useEffect(() => {
     if (previewOrder) {
       const isParcelAndMorning = ['MORNING', 'PARCEL'].includes(previewOrder?.order?.delivery!);
-      const { userName, userTel } = previewOrder?.order!;
+      const { userName, userTel, receiverName, receiverTel } = previewOrder?.order!;
       const { deliveryMessage, deliveryMessageType } = previewOrder?.destination;
 
       if (recentPayment) {
@@ -842,6 +861,7 @@ const OrderPage = () => {
             receiverTel: userTel,
           });
         }
+        return;
       } else {
         setUserInputObj({
           ...userInputObj,
@@ -853,6 +873,8 @@ const OrderPage = () => {
       }
     }
   }, [previewOrder, userAccessMethod?.value]);
+
+  console.log(userInputObj, 'userInputObj');
 
   useEffect(() => {
     const card = selectedCard
@@ -869,23 +891,9 @@ const OrderPage = () => {
   useEffect(() => {
     if (previewOrder) {
       const { coupon, value } = checkCouponHandler();
-      console.log(coupon, 'coupon');
       setUserInputObj({ ...userInputObj, coupon, point: value });
     }
   }, [selectedCoupon, previewOrder]);
-
-  useEffect(() => {
-    const { isSelected } = checkForm.samePerson;
-
-    if (previewOrder?.order && isSelected) {
-      const { userName, userTel } = previewOrder?.order;
-      setUserInputObj({
-        ...userInputObj,
-        receiverName: userName,
-        receiverTel: userTel,
-      });
-    }
-  }, [checkForm.samePerson.isSelected]);
 
   useEffect(() => {
     if (router.isReady && message) {
@@ -1079,7 +1087,7 @@ const OrderPage = () => {
               className="checkBox"
               onChange={() => checkFormHanlder('samePerson')}
               isSelected={checkForm.samePerson.isSelected}
-              disabled={tempOrder?.isSubOrderDelivery}
+              // disabled={tempOrder?.isSubOrderDelivery}
             />
             <TextB2R padding="0 0 0 8px" color={tempOrder?.isSubOrderDelivery ? theme.greyScale45 : theme.black}>
               주문자와 동일
