@@ -16,15 +16,16 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
+import { getFormatPrice } from '@utils/common';
 
 interface IProps {
   orderId: number;
 }
 
 interface IRefund {
-  refundPayAmount: number;
-  refundPoint: number;
-  refundCoupon: number;
+  payAmount: number;
+  coupon: number;
+  point: number;
 }
 
 const OrderCancelPage = ({ orderId }: IProps) => {
@@ -89,8 +90,8 @@ const OrderCancelPage = ({ orderId }: IProps) => {
     deleteOrderMutation(deliveryId);
   };
 
-  const getTotalRefund = ({ refundPayAmount, refundCoupon, refundPoint }: IRefund): number => {
-    return refundPoint + refundPayAmount + refundCoupon;
+  const getTotalRefund = ({ payAmount, coupon, point }: IRefund): string => {
+    return getFormatPrice(String(payAmount + coupon + point));
   };
 
   if (isLoading) {
@@ -157,33 +158,33 @@ const OrderCancelPage = ({ orderId }: IProps) => {
             <TextH4B>총 결제 금액</TextH4B>
             <TextB2R>
               {getTotalRefund({
-                refundPayAmount,
-                refundCoupon,
-                refundPoint,
+                payAmount,
+                coupon,
+                point,
               })}
               원
             </TextB2R>
           </FlexBetween>
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>환불 금액</TextB2R>
-            <TextB2R>{refundPayAmount}원</TextB2R>
+            <TextB2R>{getFormatPrice(String(payAmount))}원</TextB2R>
           </FlexBetween>
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>환불 쿠폰</TextB2R>
-            <TextB2R>{refundCoupon}원</TextB2R>
+            <TextB2R>{getFormatPrice(String(coupon))}원</TextB2R>
           </FlexBetween>
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>환불 포인트</TextB2R>
-            <TextB2R>{refundPoint}원</TextB2R>
+            <TextB2R>{getFormatPrice(String(point))}원</TextB2R>
           </FlexBetween>
           <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
           <FlexBetween>
             <TextH4B>최종 환불금액</TextH4B>
             <TextH4B>
               {getTotalRefund({
-                refundPayAmount,
-                refundCoupon,
-                refundPoint,
+                payAmount,
+                coupon,
+                point,
               })}
               원
             </TextH4B>
